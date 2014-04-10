@@ -1,3 +1,10 @@
+2014-04-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed bot maintenance. Re-add a number of passing
+        tests, and turn off a few failures.
+
+        * platform/win/TestExpectations:
+
 2014-04-09  Chris Fleizach  <cfleizach@apple.com>
 
         Regression: AX: list heuristics sometimes determined as presentational even when explicit roles applied

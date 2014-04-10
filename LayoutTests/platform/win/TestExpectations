@@ -788,12 +788,9 @@ webkit.org/b/24810 security/block-test.html [ Failure ]
 webkit.org/b/24810 svg/W3C-SVG-1.1/animate-elem-30-t.svg [ Failure ]
 webkit.org/b/24810 svg/W3C-SVG-1.1/coords-viewattr-02-b.svg [ Failure ]
 webkit.org/b/24810 svg/W3C-SVG-1.1/render-elems-03-t.svg [ Failure ]
-webkit.org/b/24810 svg/batik/paints/patternRegionA.svg [ Failure ]
-webkit.org/b/24810 svg/css/getComputedStyle-basic.xhtml [ Failure ]
 webkit.org/b/24810 svg/hixie/viewbox/preserveAspectRatio/001.xml [ Failure ]
 webkit.org/b/24810 tables/mozilla/core/bloomberg.html [ Failure ]
 webkit.org/b/24810 transforms/2d/zoom-menulist.html [ Failure ]
-platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
 
 # Timed out as of 41995. Pass now, will mark as flaky for the time being.
 webkit.org/b/24810 fast/dom/cssTarget-crash.html [ Pass Timeout ]
@@ -963,7 +960,6 @@ fast/loader/crash-copying-backforwardlist.html
 
 webkit.org/b/34447 http/tests/media/video-referer.html [ Failure ]
 
-fast/frames/flattening/frameset-flattening-simple.html [ Failure ]
 fast/frames/flattening/scrolling-in-object.html [ Pass ImageOnlyFailure Failure ]
 fast/text-autosizing/narrow-iframe-flattened.html [ ImageOnlyFailure ]
 
@@ -1119,30 +1115,6 @@ fast/events/scroll-event-during-modal-dialog.html
 fast/dom/Window/open-window-min-size.html
 js/dom/function-length.html
 
-# These tests fail when showModalDialog is unsupported, even though they don't
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T1.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T10.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T3.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T4.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T5.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T6.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T7.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T8.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T9.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T1.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T2.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T3.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T4.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T5.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T6.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T7.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T8.html [ Failure ]
-webkit.org/b/53676 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T9.html [ Failure ]
-
 # LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for WIN.
 printing/page-format-data.html
 
@@ -1206,7 +1178,6 @@ fast/forms/file/input-file-directory-upload.html
 
 # Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
 webkit.org/b/20011 printing/setPrinting.html [ Failure ]
-webkit.org/b/20011 printing/single-line-must-not-be-split-into-two-pages.html [ Failure ]
 webkit.org/b/20011 printing/width-overflow.html [ Failure ]
 
 # Need to call Settings::setInteractiveFormValidationEnabled(true).
@@ -1820,7 +1791,6 @@ webkit.org/b/97026 fast/html/progress-user-modify.html [ Failure ]
 webkit.org/b/97026 media/audio-controls-rendering.html [ Failure ]
 webkit.org/b/97026 media/audio-repaint.html [ Failure ]
 webkit.org/b/97026 media/controls-styling-strict.html [ Failure ]
-webkit.org/b/97026 media/media-controls-clone.html [ Failure ]
 webkit.org/b/97026 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/97026 svg/custom/glyph-selection-bidi-mirror.svg [ Failure ]
 webkit.org/b/97206 svg/custom/relative-sized-use-on-symbol.xhtml [ Failure ]
@@ -1903,8 +1873,6 @@ webkit.org/b/128979 inspector/dom/content-node-region-info.html [ Pass Failure ]
 webkit.org/b/128979 [ Debug ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Crash ]
 webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Pass Failure ]
 
-webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Failure ]
-
 # CSS3_TEXT is disabled on Windows
 fast/css3-text [ Skip ]
 
@@ -1927,8 +1895,6 @@ webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html [ Failure 
 webkit.org/b/103043 fast/events/frame-scroll-fake-mouse-move.html [ Skip ]
 webkit.org/b/103043 fast/events/overflow-scroll-fake-mouse-move.html [ Skip ]
 
-webkit.org/b/97132 media/track/track-cue-rendering-horizontal.html [ Failure ]
-webkit.org/b/97132 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
 webkit.org/b/97132 media/track/track-cue-rendering-vertical.html [ Failure ]
 
 webkit.org/b/106477 media/video-controls-captions-trackmenu-localized.html [ Failure ]
@@ -2072,9 +2038,6 @@ webkit.org/b/113946 compositing/filters/sw-shadow-overlaps-hw-shadow.html [ Fail
 # No concept of secure text input
 editing/secure-input [ Failure ]
 
-# Worker-specific crashes
-webkit.org/b/129006 fast/workers/worker-call.html [ Failure ]
-
 # Disable crashing tests, being investigated under https://bugs.webkit.org/show_bug.cgi?id=116562
 webkit.org/b/116562 [ Debug ] js/dom/callback-function-with-handle-event.html [ Crash ]
 [ Release ] js/dom/callback-function-with-handle-event.html [ Failure ]
@@ -2098,10 +2061,6 @@ webkit.org/b/116564 fast/overflow/infiniteRecursionGuard.html [ Pass Failure ]
 webkit.org/b/116564 fast/text/text-combine-different-fonts.html [ Failure ]
 webkit.org/b/116564 fast/writing-mode/Kusa-Makura-background-canvas.html [ Pass Failure ]
 webkit.org/b/116564 media/click-volume-bar-not-pausing.html [ Failure ]
-webkit.org/b/116564 media/track/track-css-user-override.html [ Failure ]
-webkit.org/b/116564 platform/win/editing/pasteboard/pasting-crlf-isnt-translated-to-crcrlf-win.html [ Failure ]
-webkit.org/b/116564 printing/allowed-page-breaks.html [ Failure ]
-webkit.org/b/116564 printing/no-content-empty-pages.html [ Failure ]
 webkit.org/b/116564 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Failure ]
 webkit.org/b/116564 transitions/svg-text-shadow-transition.html [ Failure ]
 
@@ -2111,7 +2070,6 @@ webkit.org/b/129006 fast/workers/storage [ Skip ]
 
 # Exclude some MathML tests that do not work properly under windows
 webkit.org/b/119002 mathml/presentation/bug97990.html [ ImageOnlyFailure ]
-webkit.org/b/118900 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
 webkit.org/b/119002 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 webkit.org/b/127495 mathml/presentation/maction-toggle.html [ ImageOnlyFailure ]
 
@@ -2127,7 +2085,7 @@ webkit.org/b/117322 fast/css/text-indent-first-line-006.html [ ImageOnlyFailure 
 webkit.org/b/117322 fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
 webkit.org/b/117322 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
 webkit.org/b/117322 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
-webkit.org/b/117322 fast/text/stroking-decorations.html [ ImageOnlyFailure Timeout ]
+webkit.org/b/117322 fast/text/stroking-decorations.html [ Pass Timeout ]
 webkit.org/b/117322 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 webkit.org/b/117322 media/video-poster-background.html [ ImageOnlyFailure ]
 webkit.org/b/117322 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
@@ -2243,10 +2201,6 @@ webkit.org/b/121509 loader/go-back-to-different-window-size.html	[ Skip ]
 webkit.org/b/62024 http/tests/media/video-cross-site.html [ Failure ]
 media/audio-constructor-src.html	[ Failure ]
 media/audio-delete-while-slider-thumb-clicked.html	[ Failure ]
-media/audio-no-installed-engines.html	[ Failure ]
-media/track/track-remove-crash.html	[ Failure ]
-media/track/track-cue-nothing-to-render.html	[ Failure ]
-media/track/track-delete-during-setup.html	[ Failure ]
 editing/selection/caret-ltr-right.html [ Failure ]
 editing/selection/context-menu-on-text.html [ Failure ]
 editing/spelling/grammar-markers-hidpi.html [ Failure ]
@@ -2264,12 +2218,9 @@ fast/events/wheelevent-basic.html [ Failure ]
 fast/events/wheelevent-constructor.html [ Failure ]
 fast/forms/select/listbox-click-on-scrollbar.html [ Failure ]
 fast/loader/file-protocol-fragment.html [ Failure ]
-js/dom/exception-sequencing-binops2.html [ Failure ]
 js/dom/exception-sequencing.html [ Failure ]
-media/track/track-css-all-cues.html [ Failure ]
 media/track/track-in-band-legacy-api.html [ Failure ]
 media/track/track-in-band-mode.html [ Failure ]
-media/track/track-in-band.html [ Failure ]
 security/block-test-no-port.html [ Failure ]
 svg/dom/SVGViewSpec.html [ Failure ]
 editing/selection/caret-rtl-2-left.html [ Failure ]
@@ -2288,12 +2239,10 @@ css3/filters/should-not-have-compositing-layer.html [ Failure Pass ]
 # Image-only failures
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 css1/box_properties/padding_left.html [ ImageOnlyFailure ]
-css1/units/percentage_units.html [ ImageOnlyFailure Timeout ]
+css1/units/percentage_units.html [ Pass Timeout ]
 css3/filters/css-opacity-with-drop-shadow.html [ Pass ImageOnlyFailure ]
 css3/filters/effect-reference-delete.html [ Pass ImageOnlyFailure ]
 css3/filters/filter-mask-clip-order.html [ Pass ImageOnlyFailure ]
-editing/selection/5131716-4.html [ ImageOnlyFailure Timeout ]
-editing/selection/extend-by-character-004.html [ ImageOnlyFailure Timeout ]
 fast/filter-image/filter-image.html [ ImageOnlyFailure ]
 fast/images/pdf-as-image-with-annotations.html [ ImageOnlyFailure ]
 fast/media/mq-transform-02.html [ Pass ImageOnlyFailure ]
@@ -2575,7 +2524,6 @@ fast/xpath/xpath-detached-import-assert.html [ Pass Timeout ]
 fast/xpath/4XPath/Core/test_literal_expr.html [ Pass Failure ]
 
 # Failures on the test bots
-animations/animation-on-inline-crash.html [ Failure ]
 animations/cross-fade-webkit-mask-box-image.html [ Pass Failure ImageOnlyFailure ]
 animations/transition-and-animation-2.html [ Pass Failure ]
 css2.1/20110323 [ Pass Failure Timeout ]
@@ -2607,13 +2555,11 @@ dom/xhtml/level3/core/documentrenamenode23.xhtml [ Pass Timeout ]
 dom/xhtml/level3/core/documentsetdocumenturi03.xhtml [ Pass Failure ]
 dom/xhtml/level3/core/nodeisequalnode19.xhtml [ Pass Timeout ]
 dom/xhtml/level3/core/nodelookupprefix04.xhtml [ Pass Timeout ]
-editing/execCommand/print.html [ Failure ]
 editing/caret/caret-color.html [ Pass Timeout ]
 editing/deleting/5115601.html [ Pass Failure ]
 editing/deleting/delete-block-merge-contents-018.html [ Pass Timeout ]
 editing/deleting/delete-br-003.html [ Pass Timeout ]
 editing/execCommand/4917055.html [ Pass Timeout ]
-editing/input/password-echo-textnode.html [ Failure ]
 editing/inserting/insert-after-delete-001.html [ Pass Failure ImageOnlyFailure ]
 editing/inserting/insert-at-end-02.html [ Pass Timeout ]
 editing/inserting/insert-br-quoted-001.html [ Pass Timeout ]
@@ -2653,11 +2599,9 @@ fast/dom/Element/id-in-frame.html [ Pass Failure Timeout ]
 fast/dom/HTMLProgressElement/progress-element.html [ Pass Timeout ]
 fast/dom/HTMLSelectElement/remove-element-from-within-focus-handler-crash.html [ Pass Timeout ]
 fast/dom/HTMLScriptElement/defer-inline-script.html [ Pass Timeout ]
-fast/dom/HTMLStyleElement/insert-parser-generated.html [ Failure ]
 fast/dynamic/positioned-movement-with-positioned-children.html [ Pass Timeout ]
 fast/dynamic/subtree-unrooted.html [ Pass Timeout ]
 fast/events/window-events-bubble2.html [ Pass Timeout ]
-fast/forms/mailto/formenctype-attribute-input-2.html [ Failure ]
 fast/frames/adopt-object-into-itself.html [ Pass Timeout ]
 fast/html/script-allowed-types-languages.html [ Pass Timeout ]
 fast/images/exif-orientation.html [ Failure ]
@@ -2683,7 +2627,6 @@ fast/table/remove-td-display-none.html [ Pass Timeout ]
 fast/table/scale-nested-percent-width-cols.html [ Pass Timeout ]
 fast/table/table-after-child-in-table.html [ Pass Timeout ]
 fast/table/table-cell-change-last-row-with-needsCellRecalc-section.html [ Pass Timeout ]
-fast/table/table-column-generates-anonymous-table.html [ ImageOnlyFailure ]
 fast/text/emphasis-vertical-over-right.html [ Pass Timeout ]
 fast/text/backslash-to-yen-sign-dynamic.html [ Pass Timeout ]
 fast/text/bidi-isolate-nextlinebreak-failure.html [ Pass Failure ]
@@ -2758,14 +2701,7 @@ svg/foreignObject/no-crash-with-svg-content-in-html-document.svg [ Pass Failure 
 [ Debug ] fast/selectors/querySelector-id-with-multiple-elements-with-same-id.html [ Crash ]
 
 # Reporting DRT output instead of text dump. Investigate!
-dom/html/level2/html/HTMLTableElement16.html [ Failure ]
-dom/xhtml/level2/html/table20.xhtml [ Failure ]
-dom/xhtml/level3/core/textwholetext02.xhtml [ Failure ]
 editing/selection/modify-up-on-rtl-wrapping-text.html [ Failure ]
-fast/dom/attribute-legacy-colors.html [ Failure ]
-fast/encoding/GBK/x-euc-cn.html [ Failure ]
-fast/images/cmyk-jpeg-with-color-profile.html [ Failure ]
-fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
 [ Debug ] ietestcenter/Javascript/15.2.3.2-2-4.html [ Failure ]
 fast/canvas/canvas-isPointInPath-winding.html [ Pass Failure ]
 fast/css/getComputedStyle/getComputedStyle-outline-shorthand.html [ Pass Failure ]
@@ -2773,6 +2709,9 @@ fast/forms/mailto/post-multiple-items-x-www-form-urlencoded.html [ Pass Failure 
 fast/workers/worker-terminate-forever.html [ Pass Failure ]
 js/caller-property.html [ Pass Failure ]
 js/mod-crash.html [ Pass Failure ]
+dom/html/level1/core/hc_elementgetattributenodenull.html [ Pass Failure ]
+dom/html/level2/html/hasFeature01.html [ Pass Failure ]
+dom/xhtml/level2/html/HTMLLabelElement02.xhtml [ Pass Failure ]
 
 # Remove these expected failures when the Windows test bots are upgraded to support
 # WAV files with AVCF:
@@ -2797,4 +2736,10 @@ webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 media [ Skip ]
 
 platform/win/plugins/iframe-inside-overflow.html [ Failure ]
-fast/repaint/background-shorthand-with-gradient-and-height-changes.html [ Failure ]
+
+# CRASHES
+ietestcenter/Javascript/15.2.3.3-4-18.html [ Crash ]
+media/track/track-in-band-legacy-api.html [ Crash ]
+media/track/track-in-band-mode.html	 [ Crash ]
+fast/canvas/canvas-path-addPath.html [ Crash ]
+
