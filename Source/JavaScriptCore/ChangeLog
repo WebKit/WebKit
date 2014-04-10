@@ -1,3 +1,20 @@
+2014-04-10  Mark Lam  <mark.lam@apple.com>
+
+        LLINT loadisFromInstruction should handle the big endian case.
+        <https://webkit.org/b/131495>
+
+        Reviewed by Mark Hahnenberg.
+
+        The LLINT loadisFromInstruction macro aims to load the least significant
+        32-bit word from the 64-bit bytecode instruction stream and sign extend
+        it.  For big endian machines, the current implementation would load the
+        wrong 32-bit word.
+
+        Without this fix, the JSC tests will crash on big endian machines.
+        Thanks to Tomas Popela for diagnosing this issue.
+
+        * llint/LowLevelInterpreter.asm:
+
 2014-04-09  Mark Lam  <mark.lam@apple.com>
 
         Temporarily disable the JIT for the Windows port.
