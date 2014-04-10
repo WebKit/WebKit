@@ -1,3 +1,13 @@
+2014-04-09  Juergen Ributzka  <juergen@apple.com>
+
+        [FTL] Emit multibyte NOPs on X86-64
+        https://bugs.webkit.org/show_bug.cgi?id=131394
+
+        Reviewed by Michael Saboff.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::fillNops):
+
 2014-04-09  Julien Brianceau  <jbriance@cisco.com>
 
         Get rid of JITOperationWrappers.h header file.

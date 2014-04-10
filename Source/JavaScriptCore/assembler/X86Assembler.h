@@ -2244,10 +2244,49 @@ public:
     {
         m_formatter.oneByteOp(OP_NOP);
     }
-    
+
     static void fillNops(void* base, size_t size)
     {
+#if CPU(X86_64)
+        static const uint8_t nops[10][10] = {
+            // nop
+            {0x90},
+            // xchg %ax,%ax
+            {0x66, 0x90},
+            // nopl (%[re]ax)
+            {0x0f, 0x1f, 0x00},
+            // nopl 8(%[re]ax)
+            {0x0f, 0x1f, 0x40, 0x08},
+            // nopl 8(%[re]ax,%[re]ax,1)
+            {0x0f, 0x1f, 0x44, 0x00, 0x08},
+            // nopw 8(%[re]ax,%[re]ax,1)
+            {0x66, 0x0f, 0x1f, 0x44, 0x00, 0x08},
+            // nopl 512(%[re]ax)
+            {0x0f, 0x1f, 0x80, 0x00, 0x02, 0x00, 0x00},
+            // nopl 512(%[re]ax,%[re]ax,1)
+            {0x0f, 0x1f, 0x84, 0x00, 0x00, 0x02, 0x00, 0x00},
+            // nopw 512(%[re]ax,%[re]ax,1)
+            {0x66, 0x0f, 0x1f, 0x84, 0x00, 0x00, 0x02, 0x00, 0x00},
+            // nopw %cs:512(%[re]ax,%[re]ax,1)
+            {0x66, 0x2e, 0x0f, 0x1f, 0x84, 0x00, 0x00, 0x02, 0x00, 0x00}
+        };
+
+        uint8_t* where = reinterpret_cast<uint8_t*>(base);
+        while (size) {
+            unsigned nopSize = std::min(size, 15UL);
+            unsigned numPrefixes = nopSize <= 10 ? 0 : nopSize - 10;
+            for (unsigned i = 0; i != numPrefixes; ++i)
+                *where++ = 0x66;
+
+            unsigned nopRest = nopSize - numPrefixes;
+            for (unsigned i = 0; i != nopRest; ++i)
+                *where++ = nops[nopRest-1][i];
+
+            size -= nopSize;
+        }
+#else
         memset(base, OP_NOP, size);
+#endif
     }
 
     // This is a no-op on x86
