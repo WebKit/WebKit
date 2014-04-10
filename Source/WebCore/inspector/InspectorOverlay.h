@@ -59,7 +59,6 @@ public:
     Color border;
     Color margin;
     bool showInfo;
-    bool showRulers;
     bool usePageCoordinates;
 };
 
@@ -71,7 +70,6 @@ enum HighlightType {
 struct Highlight {
     Highlight()
         : type(HighlightTypeNode)
-        , showRulers(false)
     {
     }
 
@@ -82,7 +80,6 @@ struct Highlight {
         paddingColor = highlightConfig.padding;
         borderColor = highlightConfig.border;
         marginColor = highlightConfig.margin;
-        showRulers = highlightConfig.showRulers;
         usePageCoordinates = highlightConfig.usePageCoordinates;
     }
 
@@ -96,7 +93,6 @@ struct Highlight {
     // When the type is Rects, this is just a list of quads.
     HighlightType type;
     Vector<FloatQuad> quads;
-    bool showRulers;
     bool usePageCoordinates;
 };
 

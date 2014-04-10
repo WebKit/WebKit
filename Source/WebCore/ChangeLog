@@ -1,3 +1,33 @@
+2014-04-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused ruler in overlay code
+        https://bugs.webkit.org/show_bug.cgi?id=131507
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightConfigFromInspectorObject):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForHighlight):
+        * inspector/InspectorOverlay.h:
+        (WebCore::Highlight::Highlight):
+        (WebCore::Highlight::setDataFromConfig):
+        * inspector/InspectorOverlayPage.js:
+        (_drawFragmentHighlight):
+        (_drawRegionNumber): Deleted.
+        (quadToPath): Deleted.
+        (drawOutlinedQuad): Deleted.
+        (pathCommand): Deleted.
+        (drawPath): Deleted.
+        (drawOutlinedQuadWithClip): Deleted.
+        (quadEquals): Deleted.
+        (drawGutter): Deleted.
+        (drawNodeHighlight): Deleted.
+        (drawQuadHighlight): Deleted.
+        (setPlatform): Deleted.
+        (dispatch): Deleted.
+        (log): Deleted.
+
 2014-04-10  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: memoize plugin data for navigator.mimeTypes and navigator.plugins

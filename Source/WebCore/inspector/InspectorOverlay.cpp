@@ -391,7 +391,6 @@ static PassRefPtr<InspectorObject> buildObjectForHighlight(const Highlight& high
     for (size_t i = 0; i < highlight.quads.size(); ++i)
         array->pushArray(buildArrayForQuad(highlight.quads[i]));
     object->setArray("quads", array.release());
-    object->setBoolean("showRulers", highlight.showRulers);
     object->setString("contentColor", highlight.contentColor.serialized());
     object->setString("contentOutlineColor", highlight.contentOutlineColor.serialized());
     object->setString("paddingColor", highlight.paddingColor.serialized());

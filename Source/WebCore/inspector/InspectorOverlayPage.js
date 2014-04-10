@@ -30,124 +30,6 @@ function drawPausedInDebuggerMessage(message)
     document.body.classList.add("dimmed");
 }
 
-function _drawGrid(highlight, rulerAtRight, rulerAtBottom)
-{
-    if (!highlight.showRulers)
-        return;
-    context.save();
-
-    var width = canvas.width;
-    var height = canvas.height;
-
-    const gridSubStep = 5;
-    const gridStep = 50;
-
-    {
-        // Draw X grid background
-        context.save();
-        context.fillStyle = gridBackgroundColor;
-        if (rulerAtBottom)
-            context.fillRect(0, height - 15, width, height);
-        else
-            context.fillRect(0, 0, width, 15);
-
-        // Clip out backgrounds intersection
-        context.globalCompositeOperation = "destination-out";
-        context.fillStyle = "red";
-        if (rulerAtRight)
-            context.fillRect(width - 15, 0, width, height);
-        else
-            context.fillRect(0, 0, 15, height);
-        context.restore();
-
-        // Draw Y grid background
-        context.fillStyle = gridBackgroundColor;
-        if (rulerAtRight)
-            context.fillRect(width - 15, 0, width, height);
-        else
-            context.fillRect(0, 0, 15, height);
-    }
-
-    context.lineWidth = 1;
-    context.strokeStyle = darkGridColor;
-    context.fillStyle = darkGridColor;
-    {
-        // Draw labels.
-        context.save();
-        context.translate(-highlight.scrollX, 0.5 - highlight.scrollY);
-        for (var y = 2 * gridStep; y < height + highlight.scrollY; y += 2 * gridStep) {
-            context.save();
-            context.translate(highlight.scrollX, y);
-            context.rotate(-Math.PI / 2);
-            context.fillText(y, 2, rulerAtRight ? width - 7 : 13);
-            context.restore();
-        }
-        context.translate(0.5, -0.5);
-        for (var x = 2 * gridStep; x < width + highlight.scrollX; x += 2 * gridStep) {
-            context.save();
-            context.fillText(x, x + 2, rulerAtBottom ? highlight.scrollY + height - 7 : highlight.scrollY + 13);
-            context.restore();
-        }
-        context.restore();
-    }
-
-    {
-        // Draw vertical grid
-        context.save();
-        if (rulerAtRight) {
-            context.translate(width, 0);
-            context.scale(-1, 1);
-        }
-        context.translate(-highlight.scrollX, 0.5 - highlight.scrollY);
-        for (var y = gridStep; y < height + highlight.scrollY; y += gridStep) {
-            context.beginPath();
-            context.moveTo(highlight.scrollX, y);
-            var markLength = (y % (gridStep * 2)) ? 5 : 8;
-            context.lineTo(highlight.scrollX + markLength, y);
-            context.stroke();
-        }
-        context.strokeStyle = lightGridColor;
-        for (var y = gridSubStep; y < highlight.scrollY + height; y += gridSubStep) {
-            if (!(y % gridStep))
-                continue;
-            context.beginPath();
-            context.moveTo(highlight.scrollX, y);
-            context.lineTo(highlight.scrollX + gridSubStep, y);
-            context.stroke();
-        }
-        context.restore();
-    }
-
-    {
-        // Draw horizontal grid
-        context.save();
-        if (rulerAtBottom) {
-            context.translate(0, height);
-            context.scale(1, -1);
-        }
-        context.translate(0.5 - highlight.scrollX, -highlight.scrollY);
-        for (var x = gridStep; x < width + highlight.scrollX; x += gridStep) {
-            context.beginPath();
-            context.moveTo(x, highlight.scrollY);
-            var markLength = (x % (gridStep * 2)) ? 5 : 8;
-            context.lineTo(x, highlight.scrollY + markLength);
-            context.stroke();
-        }
-        context.strokeStyle = lightGridColor;
-        for (var x = gridSubStep; x < highlight.scrollX + width; x += gridSubStep) {
-            if (!(x % gridStep))
-                continue;
-            context.beginPath();
-            context.moveTo(x, highlight.scrollY);
-            context.lineTo(x, highlight.scrollY + gridSubStep);
-            context.stroke();
-        }
-        context.restore();
-    }
-
-    context.restore();
-}
-
 function _drawRegionNumber(quad, number)
 {
     context.save();
@@ -458,68 +340,6 @@ function _drawElementTitle(elementInfo, fragmentHighlight, scroll)
     elementTitle.style.left = (boxX + 3) + "px";
 }
 
-function _drawRulers(highlight, rulerAtRight, rulerAtBottom)
-{
-    if (!highlight.showRulers)
-        return;
-    context.save();
-    var width = canvas.width;
-    var height = canvas.height;
-    context.strokeStyle = "rgba(128, 128, 128, 0.3)";
-    context.lineWidth = 1;
-    context.translate(0.5, 0.5);
-    var leftmostXForY = {};
-    var rightmostXForY = {};
-    var topmostYForX = {};
-    var bottommostYForX = {};
-
-    for (var i = 0; i < highlight.quads.length; ++i) {
-        var quad = highlight.quads[i];
-        for (var j = 0; j < quad.length; ++j) {
-            var x = quad[j].x;
-            var y = quad[j].y;
-            leftmostXForY[Math.round(y)] = Math.min(leftmostXForY[y] || Number.MAX_VALUE, Math.round(quad[j].x));
-            rightmostXForY[Math.round(y)] = Math.max(rightmostXForY[y] || Number.MIN_VALUE, Math.round(quad[j].x));
-            topmostYForX[Math.round(x)] = Math.min(topmostYForX[x] || Number.MAX_VALUE, Math.round(quad[j].y));
-            bottommostYForX[Math.round(x)] = Math.max(bottommostYForX[x] || Number.MIN_VALUE, Math.round(quad[j].y));
-        }
-    }
-
-    if (rulerAtRight) {
-        for (var y in rightmostXForY) {
-            context.beginPath();
-            context.moveTo(width, y);
-            context.lineTo(rightmostXForY[y], y);
-            context.stroke();
-        }
-    } else {
-        for (var y in leftmostXForY) {
-            context.beginPath();
-            context.moveTo(0, y);
-            context.lineTo(leftmostXForY[y], y);
-            context.stroke();
-        }
-    }
-
-    if (rulerAtBottom) {
-        for (var x in bottommostYForX) {
-            context.beginPath();
-            context.moveTo(x, height);
-            context.lineTo(x, topmostYForX[x]);
-            context.stroke();
-        }
-    } else {
-        for (var x in topmostYForX) {
-            context.beginPath();
-            context.moveTo(x, 0);
-            context.lineTo(x, topmostYForX[x]);
-            context.stroke();
-        }
-    }
-
-    context.restore();
-}
-
 function _quadMidPoint(quad)
 {
     return {
@@ -576,10 +396,8 @@ function _drawShapeHighlight(shapeInfo) {
 
 function _drawFragmentHighlight(highlight)
 {
-    if (!highlight.quads.length) {
-        _drawGrid(highlight, false, false);
+    if (!highlight.quads.length)
         return;
-    }
 
     context.save();
 
@@ -629,12 +447,6 @@ function _drawFragmentHighlight(highlight)
     }
 
     context.restore();
-
-    var rulerAtRight = minX < 20 && maxX + 20 < width;
-    var rulerAtBottom = minY < 20 && maxY + 20 < height;
-
-    _drawGrid(highlight, rulerAtRight, rulerAtBottom);
-    _drawRulers(highlight, rulerAtRight, rulerAtBottom);
 }
 
 function showPageIndication()
