@@ -1,3 +1,18 @@
+2014-04-10  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: memoize plugin data for navigator.mimeTypes and navigator.plugins
+        https://bugs.webkit.org/show_bug.cgi?id=131341
+
+        Reviewed by Timothy Hatcher.
+
+        Add support for different setup methods before the initial navigation of
+        capture and replay. This is necessary to test that the value of
+        navigator.plugins is the same on replay even if the underlying data changed.
+
+        * http/tests/inspector/replay/replay-test.js:
+        (InspectorTestProxy.runSingleSegmentRefTest): Add calls to optional setup
+        functions in the test page called setupPreCapture and setupPreReplay.
+
 2014-04-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

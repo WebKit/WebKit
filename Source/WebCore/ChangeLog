@@ -1,3 +1,46 @@
+2014-04-10  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: memoize plugin data for navigator.mimeTypes and navigator.plugins
+        https://bugs.webkit.org/show_bug.cgi?id=131341
+
+        Reviewed by Timothy Hatcher.
+
+        Information about plugins and mime types is nondeterministic and can change
+        at any time, whether by system events, browser settings changes, or
+        triggered by script. To avoid interposing on all those code paths, just
+        memoize the plugin data used by DOMPluginArray and DOMMimeTypeArray.
+
+        This is less efficient than controlling mutations to the underlying PluginData
+        of a Page, but that can be done later if better plugin support is desired.
+        The point of this change is to make analytics trackers deterministic across
+        enabling/disabling of plugins.
+
+        Test: LayoutTests/inspector/window-navigator-plugins-memoized.hml
+
+        * plugins/DOMMimeTypeArray.cpp:
+        (WebCore::DOMMimeTypeArray::getPluginData):
+        * plugins/DOMPluginArray.cpp:
+        (WebCore::DOMPluginArray::pluginData): Save or restore memoized plugin
+        data during capture and replay, respectively.
+
+        * plugins/PluginData.h:
+        (WebCore::PluginData::PluginData): Add a constructor that uses the
+        provided plugin data rather than fetching live plugin data. This is
+        marked protected so it's only used by a subclass specifically for
+        deserialization.
+
+        * replay/SerializationMethods.cpp: Add encoder specializations.
+        (JSC::EncodingTraits<MimeClassInfo>::encodeValue):
+        (JSC::EncodingTraits<MimeClassInfo>::decodeValue):
+        (JSC::EncodingTraits<PluginInfo>::encodeValue):
+        (JSC::EncodingTraits<PluginInfo>::decodeValue):
+        (JSC::EncodingTraits<PluginData>::encodeValue):
+        (JSC::DeserializedPluginData::DeserializedPluginData): Add a custom
+        subclass of PluginData that can be initialized from deserialized data.
+        (JSC::EncodingTraits<PluginData>::decodeValue):
+        * replay/SerializationMethods.h:
+        * replay/WebInputs.json: Add new input FetchPluginData.
+
 2014-04-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove "System Font" from character width calculations

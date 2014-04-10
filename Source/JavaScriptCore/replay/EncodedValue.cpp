@@ -158,6 +158,15 @@ template<> uint64_t EncodedValue::convertTo<uint64_t>()
     return result;
 }
 
+template<> unsigned long EncodedValue::convertTo<unsigned long>()
+{
+    unsigned long result;
+    bool castSucceeded = m_value->asNumber(&result);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);
+
+    return result;
+}
+
 template<> String EncodedValue::convertTo<String>()
 {
     String result;

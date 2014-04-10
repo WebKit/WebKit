@@ -17,6 +17,9 @@ InspectorTest.Replay.runSingleSegmentRefTest = function(stateComparator)
     })
     .then(function() {
         InspectorTest.log("Test page initial load done.");
+        return RuntimeAgent.evaluate.promise("if (typeof \"setupPreCapture\" === \"function\") setupPreCapture()");
+    })
+    .then(function() {
         return new Promise(function startCapturing(resolve, reject) {
             InspectorTest.log("Waiting for capturing to start...");
             WebInspector.replayManager.startCapturing();
@@ -40,6 +43,9 @@ InspectorTest.Replay.runSingleSegmentRefTest = function(stateComparator)
             WebInspector.replayManager.stopCapturing();
             WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStopped, resolve);
         });
+    })
+    .then(function() {
+        return RuntimeAgent.evaluate.promise("if (typeof \"setupPreCapture\" === \"function\") setupPreReplay()");
     })
     .then(function() {
         InspectorTest.log("Capture stopped, now starting replay to completion...")

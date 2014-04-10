@@ -26,6 +26,12 @@
 #include "PluginData.h"
 #include <wtf/text/AtomicString.h>
 
+#if ENABLE(WEB_REPLAY)
+#include "Document.h"
+#include "WebReplayInputs.h"
+#include <replay/InputCursor.h>
+#endif
+
 namespace WebCore {
 
 DOMPluginArray::DOMPluginArray(Frame* frame)
@@ -90,11 +96,28 @@ void DOMPluginArray::refresh(bool reload)
 PluginData* DOMPluginArray::pluginData() const
 {
     if (!m_frame)
-        return 0;
+        return nullptr;
+
     Page* page = m_frame->page();
     if (!page)
-        return 0;
-    return &page->pluginData();
+        return nullptr;
+
+    PluginData* pluginData = &page->pluginData();
+
+#if ENABLE(WEB_REPLAY)
+    if (!m_frame->document())
+        return pluginData;
+
+    InputCursor& cursor = m_frame->document()->inputCursor();
+    if (cursor.isCapturing())
+        cursor.appendInput<FetchPluginData>(pluginData);
+    else if (cursor.isReplaying()) {
+        if (FetchPluginData* input = cursor.fetchInput<FetchPluginData>())
+            pluginData = input->pluginData().get();
+    }
+#endif
+
+    return pluginData;
 }
 
 } // namespace WebCore

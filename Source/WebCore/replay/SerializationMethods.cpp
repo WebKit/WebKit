@@ -39,6 +39,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
+#include "PluginData.h"
 #include "ReplayInputTypes.h"
 #include "SecurityOrigin.h"
 #include "URL.h"
@@ -46,12 +47,15 @@
 
 using WebCore::KeypressCommand;
 using WebCore::IntPoint;
+using WebCore::MimeClassInfo;
 using WebCore::MouseButton;
 using WebCore::PlatformEvent;
 using WebCore::PlatformKeyboardEvent;
 using WebCore::PlatformMouseEvent;
 using WebCore::PlatformWheelEvent;
 using WebCore::PlatformWheelEventGranularity;
+using WebCore::PluginData;
+using WebCore::PluginInfo;
 using WebCore::SecurityOrigin;
 using WebCore::URL;
 using WebCore::inputTypes;
@@ -146,6 +150,31 @@ Frame* frameFromFrameIndex(Page* page, unsigned long frameIndex)
     DECODE_OPTIONAL_TYPE_WITH_KEY_TO_LVALUE(_encodedValue, _type, _key, _key)
 
 namespace JSC {
+
+template<>
+EncodedValue EncodingTraits<MimeClassInfo>::encodeValue(const MimeClassInfo& input)
+{
+    EncodedValue encodedData = EncodedValue::createObject();
+
+    ENCODE_TYPE_WITH_KEY(encodedData, String, type, input.type);
+    ENCODE_TYPE_WITH_KEY(encodedData, String, desc, input.desc);
+    ENCODE_TYPE_WITH_KEY(encodedData, Vector<String>, extensions, input.extensions);
+
+    return encodedData;
+}
+
+template<>
+bool EncodingTraits<MimeClassInfo>::decodeValue(EncodedValue& encodedData, MimeClassInfo& input)
+{
+    MimeClassInfo info;
+
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, String, type, info.type);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, String, desc, info.desc);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, Vector<String>, extensions, info.extensions);
+
+    input = info;
+    return true;
+}
 
 EncodedValue EncodingTraits<NondeterministicInputBase>::encodeValue(const NondeterministicInputBase& input)
 {
@@ -421,6 +450,65 @@ bool EncodingTraits<PlatformWheelEvent>::decodeValue(EncodedValue& encodedData, 
 #else
     input = std::make_unique<PlatformWheelEvent>(event);
 #endif
+    return true;
+}
+
+EncodedValue EncodingTraits<PluginData>::encodeValue(RefPtr<PluginData> input)
+{
+    EncodedValue encodedData = EncodedValue::createObject();
+
+    ENCODE_TYPE_WITH_KEY(encodedData, Vector<PluginInfo>, plugins, input->plugins());
+    ENCODE_TYPE_WITH_KEY(encodedData, Vector<MimeClassInfo>, mimes, input->mimes());
+    ENCODE_TYPE_WITH_KEY(encodedData, Vector<size_t>, mimePluginIndices, input->mimePluginIndices());
+
+    return encodedData;
+}
+
+class DeserializedPluginData : public PluginData {
+public:
+    DeserializedPluginData(Vector<PluginInfo> plugins, Vector<MimeClassInfo> mimes, Vector<size_t> indices)
+        : PluginData(plugins, mimes, indices)
+    {
+    }
+};
+
+bool EncodingTraits<PluginData>::decodeValue(EncodedValue& encodedData, RefPtr<PluginData>& input)
+{
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, Vector<PluginInfo>, plugins);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, Vector<MimeClassInfo>, mimes);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, Vector<size_t>, mimePluginIndices);
+
+    input = adoptRef(new DeserializedPluginData(plugins, mimes, mimePluginIndices));
+
+    return true;
+}
+
+template<>
+EncodedValue EncodingTraits<PluginInfo>::encodeValue(const PluginInfo& input)
+{
+    EncodedValue encodedData = EncodedValue::createObject();
+
+    ENCODE_TYPE_WITH_KEY(encodedData, String, name, input.name);
+    ENCODE_TYPE_WITH_KEY(encodedData, String, file, input.file);
+    ENCODE_TYPE_WITH_KEY(encodedData, String, desc, input.desc);
+    ENCODE_TYPE_WITH_KEY(encodedData, Vector<MimeClassInfo>, mimes, input.mimes);
+    ENCODE_TYPE_WITH_KEY(encodedData, bool, isApplicationPlugin, input.isApplicationPlugin);
+
+    return encodedData;
+}
+
+template<>
+bool EncodingTraits<PluginInfo>::decodeValue(EncodedValue& encodedData, PluginInfo& input)
+{
+    PluginInfo info;
+
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, String, name, info.name);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, String, file, info.file);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, String, desc, info.desc);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, Vector<MimeClassInfo>, mimes, info.mimes);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, bool, isApplicationPlugin, info.isApplicationPlugin);
+
+    input = info;
     return true;
 }
 

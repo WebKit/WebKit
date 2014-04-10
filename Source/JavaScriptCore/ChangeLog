@@ -1,3 +1,17 @@
+2014-04-10  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: memoize plugin data for navigator.mimeTypes and navigator.plugins
+        https://bugs.webkit.org/show_bug.cgi?id=131341
+
+        Reviewed by Timothy Hatcher.
+
+        Add support for encoding/decoding unsigned long with EncodedValue.
+        It is a distinct type from uint32_t and uint64_t.
+
+        * replay/EncodedValue.cpp:
+        (JSC::EncodedValue::convertTo<unsigned long>):
+        * replay/EncodedValue.h:
+
 2014-04-10  Mark Lam  <mark.lam@apple.com>
 
         LLINT loadisFromInstruction should handle the big endian case.

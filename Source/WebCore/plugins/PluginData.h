@@ -73,6 +73,16 @@ private:
     void initPlugins(const Page*);
     const PluginInfo* pluginInfoForMimeType(const String& mimeType) const;
 
+protected:
+#if ENABLE(WEB_REPLAY)
+    PluginData(Vector<PluginInfo> plugins, Vector<MimeClassInfo> mimes, Vector<size_t> indices)
+        : m_plugins(plugins)
+        , m_mimes(mimes)
+        , m_mimePluginIndices(indices)
+    {
+    }
+#endif
+
     Vector<PluginInfo> m_plugins;
     Vector<MimeClassInfo> m_mimes;
     Vector<size_t> m_mimePluginIndices;

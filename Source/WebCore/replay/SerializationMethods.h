@@ -42,6 +42,7 @@ class Page;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
+class PluginData;
 class SecurityOrigin;
 class URL;
 
@@ -94,6 +95,13 @@ template<> struct EncodingTraits<WebCore::PlatformWheelEvent> {
 
     static EncodedValue encodeValue(const WebCore::PlatformWheelEvent& value);
     static bool decodeValue(EncodedValue&, std::unique_ptr<WebCore::PlatformWheelEvent>& value);
+};
+
+template<> struct EncodingTraits<WebCore::PluginData> {
+    typedef RefPtr<WebCore::PluginData> DecodedType;
+
+    static EncodedValue encodeValue(RefPtr<WebCore::PluginData> value);
+    static bool decodeValue(EncodedValue&, RefPtr<WebCore::PluginData>& value);
 };
 
 template<> struct EncodingTraits<WebCore::URL> {

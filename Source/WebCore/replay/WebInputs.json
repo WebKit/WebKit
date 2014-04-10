@@ -88,6 +88,10 @@
                 "header": "platform/PlatformWheelEvent.h"
             },
             {
+                "name": "PluginData", "mode": "SHARED",
+                "header": "plugins/PluginData.h"
+            },
+            {
                 "name": "ScrollDirection", "mode": "SCALAR", "storage": "uint64_t",
                 "flags": ["ENUM"],
                 "values": ["ScrollUp", "ScrollDown", "ScrollLeft", "ScrollRight"],
@@ -216,6 +220,14 @@
                 { "name": "securityOrigin", "type": "SecurityOrigin" },
                 { "name": "url", "type": "URL" },
                 { "name": "referrer", "type": "String" }
+            ]
+        },
+        {
+            "name": "FetchPluginData",
+            "description": "Plugin data was requested through DOMPluginArray or DOMMimeTypeArray.",
+            "queue": "SCRIPT_MEMOIZED",
+            "members": [
+                { "name": "pluginData", "type": "PluginData" }
             ]
         },
         {
