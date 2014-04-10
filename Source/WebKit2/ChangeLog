@@ -1,3 +1,12 @@
+2014-04-10  Owen Taylor  <otaylor@redhat.com>
+
+        [Cairo] Implement ShareableBitmap::paint() with scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=64665
+
+        Reviewed by Martin Robinson.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp (WebKit::ShareableBitmap::paint):
+
 2014-04-10  Enrica Casucci  <enrica@apple.com>
 
         Unreviewed iOS build fix after http://trac.webkit.org/changeset/167074
