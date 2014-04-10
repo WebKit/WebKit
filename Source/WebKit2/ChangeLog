@@ -1,3 +1,10 @@
+2014-04-10  Enrica Casucci  <enrica@apple.com>
+
+        Unreviewed iOS build fix after http://trac.webkit.org/changeset/167074
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+
 2014-04-10  Alexey Proskuryakov  <ap@apple.com>
 
         Gtk build fix.
