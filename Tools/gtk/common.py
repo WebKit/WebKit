@@ -61,7 +61,6 @@ def get_build_path(fatal=True):
 
     def is_valid_build_directory(path):
         return os.path.exists(os.path.join(path, 'CMakeCache.txt')) or \
-            os.path.exists(os.path.join(path, 'bin/GtkLauncher')) or \
             os.path.exists(os.path.join(path, 'bin/MiniBrowser'))
 
     if len(sys.argv[1:]) > 1 and os.path.exists(sys.argv[-1]) and is_valid_build_directory(sys.argv[-1]):

@@ -48,7 +48,6 @@ exclude Source/WebKit2/gtk/NEWS$
 file Source/WebKit2/gtk/NEWS NEWS
 
 directory Tools/gtk
-directory Tools/GtkLauncher
 directory Tools/ImageDiff
 directory Tools/MiniBrowser
 directory Tools/TestWebKitAPI

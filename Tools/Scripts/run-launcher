@@ -45,13 +45,13 @@ my @jhbuildWrapper;
 checkFrameworks();
 
 # Set paths according to the build system used
-if (isGtk() || isEfl()) {
+if (isGtk()) {
+    $launcherPath = catdir($productDir, "bin", "MiniBrowser");
+} elsif (isEfl()) {
     if (isWK2()) {
         $launcherPath = catdir($productDir, "bin", "MiniBrowser");
-    } elsif (isEfl()) {
+    } else {
         $launcherPath = catdir($productDir, "bin", "EWebLauncher");
-    } elsif (isGtk()) {
-        $launcherPath = catdir($productDir, "bin", "GtkLauncher");
     }
 }
 
