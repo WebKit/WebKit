@@ -347,6 +347,8 @@ webkit.org/b/131349 http/tests/xmlhttprequest/access-control-preflight-credentia
 webkit.org/b/131349 http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Failure ]
 webkit.org/b/131349 http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html [ Failure ]
 
+webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
