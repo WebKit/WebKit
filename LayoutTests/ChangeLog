@@ -1,3 +1,15 @@
+2014-04-10  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: expose aria-busy state of current and ancestor nodes
+        https://bugs.webkit.org/show_bug.cgi?id=130826
+
+        Reviewed by Timothy Hatcher.
+
+        Expose if node is contained by any "busy" ancestor nodes, too.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2014-04-10  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: memoize plugin data for navigator.mimeTypes and navigator.plugins

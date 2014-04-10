@@ -1478,7 +1478,12 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             if (AccessibilityObject* activeDescendant = axObject->activeDescendant())
                 activeDescendantNode = activeDescendant->node();
 
-            busy = axObject->ariaLiveRegionBusy();
+            // An AX object is "busy" if it or any ancestor has aria-busy="true" set.
+            AccessibilityObject* current = axObject;
+            while (!busy && current) {
+                busy = current->ariaLiveRegionBusy();
+                current = current->parentObject();
+            }
 
             supportsChecked = axObject->supportsChecked();
             if (supportsChecked) {

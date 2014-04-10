@@ -1,3 +1,17 @@
+2014-04-10  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: expose aria-busy state of current and ancestor nodes
+        https://bugs.webkit.org/show_bug.cgi?id=130826
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        Expose if node is contained by any "busy" ancestor nodes, too.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+
 2014-04-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused ruler in overlay code

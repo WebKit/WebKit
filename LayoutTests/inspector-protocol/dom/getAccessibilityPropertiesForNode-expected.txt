@@ -4,10 +4,10 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 42
+    childNodeIds.length: 43
 
 
-Total elements to be tested: 63.
+Total elements to be tested: 65.
 
 <div onclick="void(0);">click</div>
     exists: true
@@ -53,6 +53,20 @@ Total elements to be tested: 63.
     childNodeIds.length: 3
     parentNodeId: exists
     selectedChildNodeIds.length: 1
+
+<div role="option" aria-busy="true">busy (self)</div>
+    exists: true
+    label: 
+    role: option
+    busy: true
+    parentNodeId: exists
+
+<div role="option">busy (parent)</div>
+    exists: true
+    label: 
+    role: option
+    busy: true
+    parentNodeId: exists
 
 <div role="listbox" aria-multiselectable="true">
     <div role="option" aria-selected="true">selected</div>
