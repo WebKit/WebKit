@@ -1,3 +1,15 @@
+2014-04-09  James Craig  <jcraig@apple.com>
+
+        AX: Bug in AccessibilityNodeObject::helpText
+        https://bugs.webkit.org/show_bug.cgi?id=130386
+
+        Reviewed by Chris Fleizach.
+
+        Tests accessibility help text in a variety of examples.
+
+        * accessibility/help-text-expected.txt: Added.
+        * accessibility/help-text.html: Added.
+
 2014-04-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed bot maintenance. Re-add a number of passing

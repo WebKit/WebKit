@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="examples">
+
+    <a class="ex" href="#" data-expected="">foo</a>
+    <a class="ex" href="#" title="bar" data-expected="bar">foo</a>
+    <a class="ex" href="#" title="bar" aria-help="baz" data-expected="baz">foo</a>
+    <a class="ex" href="#" title="foo" data-expected=""><!-- no contents, so @title used as label, not help --></a>
+    
+    <h1 class="ex" title="bar" data-expected="bar"><a class="ex" href="#" data-expected="">foo</a></h1>
+
+    <button class="ex" data-expected="">foo</button>
+    <button class="ex" title="bar" data-expected="bar">foo</button>
+    <button class="ex" title="bar" aria-help="baz" data-expected="baz">foo</button>
+    <button class="ex" title="foo" data-expected=""><!-- no contents, so @title used as label, not help --></button>
+
+    <table class="ex" summary="table summary" data-expected="table summary">
+        <caption class="ex" data-expected="">caption</caption>
+        <tr>
+            <td>
+                <input class="ex" type="checkbox" data-expected="">
+                <div class="ex" role="text" data-expected="">text</div>
+            </td>
+        </tr>
+    </table>
+
+    <main class="ex" aria-help="bar" data-expected="bar">
+        <button class="ex" data-expected="">foo</button>
+    </main>
+
+    <main class="ex" role="group" title="bar" data-expected="">
+        <div class="ex" role="group" data-expected="">foo</div>
+    </main>
+
+    <a href="" class="ex" title="bar" data-expected="bar">
+        <div class="ex" data-expected="">foo</div>
+    </a>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    if (window.testRunner && window.accessibilityController) {
+
+        description("Tests accessibility help text in a variety of examples.");
+
+        var examples = document.querySelectorAll("#examples .ex");
+        for (var i = 0, c = examples.length; i < c; i++) {
+            var el = examples[i];
+            if (!el)
+                continue;
+            var expectation = el.getAttribute("data-expected");
+            var id = el.id;
+            var tag = el.tagName.toLowerCase();
+            if (!id)
+                el.id = id = "generatedId_" + i;
+            var ax = accessibilityController.accessibleElementById(id);
+            if (!ax)
+                continue;
+            var output = ax.helpText.replace("AXHelp: ", "");
+            var result = document.getElementById("console");
+            if (expectation === output)
+                result.textContent += "PASS: Help text for <" + tag +"> is \"" + output + "\"\n";
+            else
+                result.textContent += "FAIL: Help text for <" + tag +"> is \"" + output + "\" but expected \"" + expectation + "\"\n";
+        }
+
+        // Once tests are complete, hide all the example markup.
+        document.getElementById("examples").style.display = "none";
+
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

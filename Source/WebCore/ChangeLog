@@ -1,3 +1,17 @@
+2014-04-09  James Craig  <jcraig@apple.com>
+
+        AX: Bug in AccessibilityNodeObject::helpText
+        https://bugs.webkit.org/show_bug.cgi?id=130386
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/help-text.html
+
+        Ancestor loop was always checking attribute of original node rather than current node.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::helpText):
+
 2014-04-09  Chris Fleizach  <cfleizach@apple.com>
 
         Regression: AX: list heuristics sometimes determined as presentational even when explicit roles applied
