@@ -45,7 +45,6 @@ namespace WebCore {
     class Page;
     class PlatformMouseEvent;
 
-    struct DragSession;
     struct DragState;
 
     class DragController {
@@ -58,11 +57,14 @@ namespace WebCore {
 
         DragClient& client() const { return m_client; }
 
-        DragSession dragEntered(DragData&);
+        DragOperation dragEntered(DragData&);
         void dragExited(DragData&);
-        DragSession dragUpdated(DragData&);
+        DragOperation dragUpdated(DragData&);
         bool performDragOperation(DragData&);
-        
+
+        bool mouseIsOverFileInput() const { return m_fileInputElementUnderMouse; }
+        unsigned numberOfItemsToBeAccepted() const { return m_numberOfItemsToBeAccepted; }
+
         // FIXME: It should be possible to remove a number of these accessors once all
         // drag logic is in WebCore.
         void setDidInitiateDrag(bool initiated) { m_didInitiateDrag = initiated; } 
@@ -95,9 +97,9 @@ namespace WebCore {
         bool dispatchTextInputEventFor(Frame*, DragData&);
         bool canProcessDrag(DragData&);
         bool concludeEditDrag(DragData&);
-        DragSession dragEnteredOrUpdated(DragData&);
+        DragOperation dragEnteredOrUpdated(DragData&);
         DragOperation operationForLoad(DragData&);
-        bool tryDocumentDrag(DragData&, DragDestinationAction, DragSession&);
+        bool tryDocumentDrag(DragData&, DragDestinationAction, DragOperation&);
         bool tryDHTMLDrag(DragData&, DragOperation&);
         DragOperation dragOperation(DragData&);
         void cancelDrag();
@@ -117,6 +119,7 @@ namespace WebCore {
         RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.
         RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.
         RefPtr<HTMLInputElement> m_fileInputElementUnderMouse;
+        unsigned m_numberOfItemsToBeAccepted;
         bool m_documentIsHandlingDrag;
 
         DragDestinationAction m_dragDestinationAction;

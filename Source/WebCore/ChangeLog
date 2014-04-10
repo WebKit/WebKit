@@ -1,3 +1,26 @@
+2014-04-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Eliminate DragSession structure
+        https://bugs.webkit.org/show_bug.cgi?id=131465
+
+        Reviewed by Benjamin Poulain.
+
+        DragSession is really just a transient response to NSDragDestination delegate methods.
+        The "session" name was quite misleading, and thankfully, we don't need a class for this
+        bag of data at all.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DragController.cpp:
+        (WebCore::DragController::DragController):
+        (WebCore::DragController::dragEntered):
+        (WebCore::DragController::dragUpdated):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::tryDocumentDrag):
+        * page/DragController.h:
+        (WebCore::DragController::mouseIsOverFileInput):
+        (WebCore::DragController::numberOfItemsToBeAccepted):
+        * page/DragSession.h: Removed.
+
 2014-04-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [GStreamer] No CORS support for media elements

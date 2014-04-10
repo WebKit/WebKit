@@ -37,7 +37,6 @@
 #include "DragClient.h"
 #include "DragData.h"
 #include "DragImage.h"
-#include "DragSession.h"
 #include "DragState.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -101,9 +100,7 @@ static PlatformMouseEvent createMouseEvent(DragData& dragData)
 DragController::DragController(Page& page, DragClient& client)
     : m_page(page)
     , m_client(client)
-    , m_documentUnderMouse(0)
-    , m_dragInitiator(0)
-    , m_fileInputElementUnderMouse(0)
+    , m_numberOfItemsToBeAccepted(0)
     , m_documentIsHandlingDrag(false)
     , m_dragDestinationAction(DragDestinationActionNone)
     , m_dragSourceAction(DragSourceActionNone)
@@ -176,7 +173,7 @@ void DragController::dragEnded()
     m_client.dragEnded();
 }
 
-DragSession DragController::dragEntered(DragData& dragData)
+DragOperation DragController::dragEntered(DragData& dragData)
 {
     return dragEnteredOrUpdated(dragData);
 }
@@ -196,7 +193,7 @@ void DragController::dragExited(DragData& dragData)
     m_fileInputElementUnderMouse = 0;
 }
 
-DragSession DragController::dragUpdated(DragData& dragData)
+DragOperation DragController::dragUpdated(DragData& dragData)
 {
     return dragEnteredOrUpdated(dragData);
 }
@@ -247,21 +244,21 @@ void DragController::mouseMovedIntoDocument(Document* newDocument)
     m_documentUnderMouse = newDocument;
 }
 
-DragSession DragController::dragEnteredOrUpdated(DragData& dragData)
+DragOperation DragController::dragEnteredOrUpdated(DragData& dragData)
 {
     mouseMovedIntoDocument(m_page.mainFrame().documentAtPoint(dragData.clientPosition()));
 
     m_dragDestinationAction = m_client.actionMaskForDrag(dragData);
     if (m_dragDestinationAction == DragDestinationActionNone) {
         cancelDrag(); // FIXME: Why not call mouseMovedIntoDocument(0)?
-        return DragSession();
+        return DragOperationNone;
     }
 
-    DragSession dragSession;
-    m_documentIsHandlingDrag = tryDocumentDrag(dragData, m_dragDestinationAction, dragSession);
+    DragOperation dragOperation = DragOperationNone;
+    m_documentIsHandlingDrag = tryDocumentDrag(dragData, m_dragDestinationAction, dragOperation);
     if (!m_documentIsHandlingDrag && (m_dragDestinationAction & DragDestinationActionLoad))
-        dragSession.operation = operationForLoad(dragData);
-    return dragSession;
+        dragOperation = operationForLoad(dragData);
+    return dragOperation;
 }
 
 static HTMLInputElement* asFileInput(Node* node)
@@ -297,7 +294,7 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     return toElement(n);
 }
 
-bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction actionMask, DragSession& dragSession)
+bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction actionMask, DragOperation& dragOperation)
 {
     if (!m_documentUnderMouse)
         return false;
@@ -307,7 +304,7 @@ bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction a
 
     bool isHandlingDrag = false;
     if (actionMask & DragDestinationActionDHTML) {
-        isHandlingDrag = tryDHTMLDrag(dragData, dragSession.operation);
+        isHandlingDrag = tryDHTMLDrag(dragData, dragOperation);
         // Do not continue if m_documentUnderMouse has been reset by tryDHTMLDrag.
         // tryDHTMLDrag fires dragenter event. The event listener that listens
         // to this event may create a nested message loop (open a modal dialog),
@@ -330,7 +327,7 @@ bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction a
 
     if ((actionMask & DragDestinationActionEdit) && canProcessDrag(dragData)) {
         if (dragData.containsColor()) {
-            dragSession.operation = DragOperationGeneric;
+            dragOperation = DragOperationGeneric;
             return true;
         }
 
@@ -350,28 +347,27 @@ bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction a
             m_page.dragCaretController().setCaretPosition(m_documentUnderMouse->frame()->visiblePositionForPoint(point));
 
         Frame* innerFrame = element->document().frame();
-        dragSession.operation = dragIsMove(innerFrame->selection(), dragData) ? DragOperationMove : DragOperationCopy;
-        dragSession.mouseIsOverFileInput = m_fileInputElementUnderMouse;
-        dragSession.numberOfItemsToBeAccepted = 0;
+        dragOperation = dragIsMove(innerFrame->selection(), dragData) ? DragOperationMove : DragOperationCopy;
+        m_numberOfItemsToBeAccepted = 0;
 
         unsigned numberOfFiles = dragData.numberOfFiles();
         if (m_fileInputElementUnderMouse) {
             if (m_fileInputElementUnderMouse->isDisabledFormControl())
-                dragSession.numberOfItemsToBeAccepted = 0;
+                m_numberOfItemsToBeAccepted = 0;
             else if (m_fileInputElementUnderMouse->multiple())
-                dragSession.numberOfItemsToBeAccepted = numberOfFiles;
+                m_numberOfItemsToBeAccepted = numberOfFiles;
             else if (numberOfFiles > 1)
-                dragSession.numberOfItemsToBeAccepted = 0;
+                m_numberOfItemsToBeAccepted = 0;
             else
-                dragSession.numberOfItemsToBeAccepted = 1;
+                m_numberOfItemsToBeAccepted = 1;
             
-            if (!dragSession.numberOfItemsToBeAccepted)
-                dragSession.operation = DragOperationNone;
-            m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(dragSession.numberOfItemsToBeAccepted);
+            if (!m_numberOfItemsToBeAccepted)
+                dragOperation = DragOperationNone;
+            m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(m_numberOfItemsToBeAccepted);
         } else {
             // We are not over a file input element. The dragged item(s) will only
             // be loaded into the view the number of dragged items is 1.
-            dragSession.numberOfItemsToBeAccepted = numberOfFiles != 1 ? 0 : 1;
+            m_numberOfItemsToBeAccepted = numberOfFiles != 1 ? 0 : 1;
         }
         
         return true;

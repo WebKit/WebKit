@@ -89,7 +89,6 @@
 #include "WebSecurityOrigin.h"
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
-#include <WebCore/DragSession.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -320,6 +319,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_hasSpellDocumentTag(false)
     , m_pendingLearnOrIgnoreWordMessageCount(0)
     , m_mainFrameHasCustomContentProvider(false)
+    , m_currentDragOperation(DragOperationNone)
+    , m_currentDragIsOverFileInput(false)
+    , m_currentDragNumberOfFilesToBeAccepted(0)
     , m_delegatesScrolling(false)
     , m_mainFrameHasHorizontalScrollbar(false)
     , m_mainFrameHasVerticalScrollbar(false)
@@ -1205,9 +1207,13 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
 #endif
 }
 
-void WebPageProxy::didPerformDragControllerAction(WebCore::DragSession dragSession)
+void WebPageProxy::didPerformDragControllerAction(uint64_t dragOperation, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted)
 {
-    m_currentDragSession = dragSession;
+    MESSAGE_CHECK(dragOperation <= DragOperationDelete);
+
+    m_currentDragOperation = static_cast<DragOperation>(dragOperation);
+    m_currentDragIsOverFileInput = mouseIsOverFileInput;
+    m_currentDragNumberOfFilesToBeAccepted = numberOfItemsToBeAccepted;
 }
 
 #if PLATFORM(GTK)

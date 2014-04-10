@@ -1,3 +1,33 @@
+2014-04-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Eliminate DragSession structure
+        https://bugs.webkit.org/show_bug.cgi?id=131465
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DragSession>::encode): Deleted.
+        (IPC::ArgumentCoder<DragSession>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView draggingEntered:]):
+        (-[WKView draggingUpdated:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::currentDragOperation):
+        (WebKit::WebPageProxy::currentDragIsOverFileInput):
+        (WebKit::WebPageProxy::currentDragNumberOfFilesToBeAccepted):
+        (WebKit::WebPageProxy::resetCurrentDragInformation):
+        (WebKit::WebPageProxy::dragSession): Deleted.
+        (WebKit::WebPageProxy::resetDragSession): Deleted.
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+
 2014-04-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] LayerTreeHostGtk is creating a software scene graph

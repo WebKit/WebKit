@@ -1,5 +1,16 @@
 2014-04-09  Alexey Proskuryakov  <ap@apple.com>
 
+        Eliminate DragSession structure
+        https://bugs.webkit.org/show_bug.cgi?id=131465
+
+        Reviewed by Benjamin Poulain.
+
+        * WebView/WebView.mm:
+        (-[WebView draggingEntered:]):
+        (-[WebView draggingUpdated:]):
+
+2014-04-09  Alexey Proskuryakov  <ap@apple.com>
+
         Rename some dragging functions
         https://bugs.webkit.org/show_bug.cgi?id=131460
 

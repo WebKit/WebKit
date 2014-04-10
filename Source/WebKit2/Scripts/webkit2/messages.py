@@ -172,7 +172,6 @@ def struct_or_class(namespace, type):
         'WebCore::EditorCommandsForKeyEvent',
         'WebCore::CompositionUnderline',
         'WebCore::Cookie',
-        'WebCore::DragSession',
         'WebCore::FloatPoint3D',
         'WebCore::FileChooserSettings',
         'WebCore::GrammarDetail',

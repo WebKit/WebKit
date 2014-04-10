@@ -78,7 +78,6 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
-#import <WebCore/DragSession.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/Image.h>
 #import <WebCore/IntRect.h>
@@ -2237,7 +2236,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
 
-    _data->_page->resetDragSession();
+    _data->_page->resetCurrentDragInformation();
     _data->_page->dragEntered(dragData, [[draggingInfo draggingPasteboard] name]);
     return NSDragOperationCopy;
 }
@@ -2249,10 +2248,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
     _data->_page->dragUpdated(dragData, [[draggingInfo draggingPasteboard] name]);
     
-    WebCore::DragSession dragSession = _data->_page->dragSession();
-    NSInteger numberOfValidItemsForDrop = dragSession.numberOfItemsToBeAccepted;
+    NSInteger numberOfValidItemsForDrop = _data->_page->currentDragNumberOfFilesToBeAccepted();
     NSDraggingFormation draggingFormation = NSDraggingFormationNone;
-    if (dragSession.mouseIsOverFileInput && numberOfValidItemsForDrop > 0)
+    if (_data->_page->currentDragIsOverFileInput() && numberOfValidItemsForDrop > 0)
         draggingFormation = NSDraggingFormationList;
 
     if ([draggingInfo numberOfValidItemsForDrop] != numberOfValidItemsForDrop)
@@ -2260,7 +2258,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if ([draggingInfo draggingFormation] != draggingFormation)
         [draggingInfo setDraggingFormation:draggingFormation];
 
-    return dragSession.operation;
+    return _data->_page->currentDragOperation();
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
@@ -2269,7 +2267,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
     _data->_page->dragExited(dragData, [[draggingInfo draggingPasteboard] name]);
-    _data->_page->resetDragSession();
+    _data->_page->resetCurrentDragInformation();
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)draggingInfo

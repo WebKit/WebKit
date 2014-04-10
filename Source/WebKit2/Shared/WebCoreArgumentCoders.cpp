@@ -35,7 +35,6 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DictationAlternative.h>
-#include <WebCore/DragSession.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FilterOperation.h>
@@ -1306,24 +1305,6 @@ bool ArgumentCoder<TextCheckingResult>::decode(ArgumentDecoder& decoder, TextChe
     if (!decoder.decode(result.details))
         return false;
     if (!decoder.decode(result.replacement))
-        return false;
-    return true;
-}
-
-void ArgumentCoder<DragSession>::encode(ArgumentEncoder& encoder, const DragSession& result)
-{
-    encoder.encodeEnum(result.operation);
-    encoder << result.mouseIsOverFileInput;
-    encoder << result.numberOfItemsToBeAccepted;
-}
-
-bool ArgumentCoder<DragSession>::decode(ArgumentDecoder& decoder, DragSession& result)
-{
-    if (!decoder.decodeEnum(result.operation))
-        return false;
-    if (!decoder.decode(result.mouseIsOverFileInput))
-        return false;
-    if (!decoder.decode(result.numberOfItemsToBeAccepted))
         return false;
     return true;
 }
