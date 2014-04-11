@@ -389,6 +389,10 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     [[self window] orderOut:self];
     [[self window] setFrame:NSZeroRect display:YES];
 
+    [_scaleAnimation stopAnimation];
+    [_scaleAnimation setWindow:nil];
+    _scaleAnimation = nullptr;
+
     [_fadeAnimation stopAnimation];
     [_fadeAnimation setWindow:nil];
     _fadeAnimation = nullptr;
@@ -441,6 +445,11 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     
     if (_fullScreenState == ExitingFullScreen)
         [self finishedExitFullScreenAnimation:YES];
+
+    [_scaleAnimation stopAnimation];
+    [_scaleAnimation setWindow:nil];
+    [_fadeAnimation stopAnimation];
+    [_fadeAnimation setWindow:nil];
 
     _webView = nil;
 

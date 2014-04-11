@@ -1,3 +1,17 @@
+2014-04-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Prevent crash when exiting fullscreen mode
+        https://bugs.webkit.org/show_bug.cgi?id=131528
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        Clean up the _scaleAnimation controller, not just the _fadeAnimation controller.
+        (-[WKFullScreenWindowController close]): If we are doing an immediate
+        close of the view, we need to stop animations so we avoid any
+        final timer events from interacting with invalid window handles.
+
 2014-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         wk2-gtk does not display anything
