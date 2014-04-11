@@ -1,3 +1,15 @@
+2014-04-11  Dirk Schulze  <krit@webkit.org>
+
+        Optimize Canvas fill and drawImage with SourceIn, DestinationIn, SourceOut, and DestinationAtop using transparencyLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=79659
+
+        Reviewed by Andreas Kling.
+
+        Add performance tests for fillRect() and drawImage() on composited contexts.
+
+        * Canvas/compositing-drawimage.html: Added.
+        * Canvas/compositing-fillRect.html: Added.
+
 2014-04-09  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add no shapes version of RegionsShapes performance test
