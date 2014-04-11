@@ -863,13 +863,33 @@ GraphicsContext3D::Attributes GraphicsContext3D::getContextAttributes()
     return m_attrs;
 }
 
+bool GraphicsContext3D::moveErrorsToSyntheticErrorList()
+{
+    makeContextCurrent();
+    bool movedAnError = false;
+
+    // Set an arbitrary limit of 100 here to avoid creating a hang if
+    // a problem driver has a bug that causes it to never clear the error.
+    // Otherwise, we would just loop until we got NO_ERROR.
+    for (unsigned i = 0; i < 100; ++i) {
+        GC3Denum error = glGetError();
+        if (error == NO_ERROR)
+            break;
+        m_syntheticErrors.add(error);
+        movedAnError = true;
+    }
+
+    return movedAnError;
+}
+
 GC3Denum GraphicsContext3D::getError()
 {
-    if (m_syntheticErrors.size() > 0) {
-        ListHashSet<GC3Denum>::iterator iter = m_syntheticErrors.begin();
-        GC3Denum err = *iter;
-        m_syntheticErrors.remove(iter);
-        return err;
+    if (!m_syntheticErrors.isEmpty()) {
+        // Need to move the current errors to the synthetic error list in case
+        // that error is already there, since the expected behavior of both
+        // glGetError and getError is to only report each error code once.
+        moveErrorsToSyntheticErrorList();
+        return m_syntheticErrors.takeFirst();
     }
 
     makeContextCurrent();
@@ -1622,6 +1642,10 @@ void GraphicsContext3D::deleteTexture(Platform3DObject texture)
 
 void GraphicsContext3D::synthesizeGLError(GC3Denum error)
 {
+    // Need to move the current errors to the synthetic error list to
+    // preserve the order of errors, so a caller to getError will get
+    // any errors from glError before the error we are synthesizing.
+    moveErrorsToSyntheticErrorList();
     m_syntheticErrors.add(error);
 }
 

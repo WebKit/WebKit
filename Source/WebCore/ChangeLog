@@ -1,3 +1,32 @@
+2014-04-10  Darin Adler  <darin@apple.com>
+
+        WebGL: need error checking after texture and buffer uploads in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=62902
+        rdar://problem/9640309
+
+        Reviewed by Dean Jackson.
+
+        Not clear how to write a test for this.
+
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::disassociateBufferData): Added.
+        * html/canvas/WebGLBuffer.h: Added disassociateBufferData.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::bufferData): Check for errors by calling
+        moveErrorsToSyntheticErrorList twice, once before and once after. If an error
+        occurred, call the WebGLBuffer so it doesn't think it has data.
+        (WebCore::WebGLRenderingContext::bufferSubData): Ditto.
+
+        * platform/graphics/GraphicsContext3D.h: Added moveErrorsToSyntheticErrorList.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::moveErrorsToSyntheticErrorList): Added. Calls
+        glError and moves any errors to the synthetic error list.
+        (WebCore::GraphicsContext3D::getError): Added call to moveErrorsToSyntheticErrorList
+        to preserve error ordering.
+        (WebCore::GraphicsContext3D::synthesizeGLError): Ditto.
+
 2014-04-10  Enrica Casucci  <enrica@apple.com>
 
         iOS build fix to deal with CoreText changes.

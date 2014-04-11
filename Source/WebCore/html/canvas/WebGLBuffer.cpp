@@ -81,7 +81,7 @@ bool WebGLBuffer::associateBufferDataImpl(const void* data, GC3Dsizeiptr byteLen
                 memcpy(m_elementArrayBuffer->data(), data, byteLength);
             }
         } else
-            m_elementArrayBuffer = 0;
+            m_elementArrayBuffer = nullptr;
         return true;
     case GraphicsContext3D::ARRAY_BUFFER:
         m_byteLength = byteLength;
@@ -151,6 +151,12 @@ bool WebGLBuffer::associateBufferSubData(GC3Dintptr offset, ArrayBufferView* arr
     if (!array)
         return false;
     return associateBufferSubDataImpl(offset, array->baseAddress(), array->byteLength());
+}
+
+void WebGLBuffer::disassociateBufferData()
+{
+    m_byteLength = 0;
+    clearCachedMaxIndices();
 }
 
 GC3Dsizeiptr WebGLBuffer::byteLength() const

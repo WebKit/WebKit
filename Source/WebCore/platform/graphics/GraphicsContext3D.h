@@ -875,6 +875,10 @@ public:
     // getError in the order they were added.
     void synthesizeGLError(GC3Denum error);
 
+    // Read real OpenGL errors, and move them to the synthetic
+    // error list. Return true if at least one error is moved.
+    bool moveErrorsToSyntheticErrorList();
+
     // Support for extensions. Returns a non-null object, though not
     // all methods it contains may necessarily be supported on the
     // current hardware. Must call Extensions3D::supports() to

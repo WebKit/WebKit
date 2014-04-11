@@ -1133,7 +1133,12 @@ void WebGLRenderingContext::bufferData(GC3Denum target, long long size, GC3Denum
         }
     }
 
+    m_context->moveErrorsToSyntheticErrorList();
     m_context->bufferData(target, static_cast<GC3Dsizeiptr>(size), usage);
+    if (m_context->moveErrorsToSyntheticErrorList()) {
+        // The bufferData function failed. Tell the buffer it doesn't have the data it thinks it does.
+        buffer->disassociateBufferData();
+    }
 }
 
 void WebGLRenderingContext::bufferData(GC3Denum target, ArrayBuffer* data, GC3Denum usage, ExceptionCode& ec)
@@ -1155,7 +1160,12 @@ void WebGLRenderingContext::bufferData(GC3Denum target, ArrayBuffer* data, GC3De
         }
     }
 
+    m_context->moveErrorsToSyntheticErrorList();
     m_context->bufferData(target, data->byteLength(), data->data(), usage);
+    if (m_context->moveErrorsToSyntheticErrorList()) {
+        // The bufferData function failed. Tell the buffer it doesn't have the data it thinks it does.
+        buffer->disassociateBufferData();
+    }
 }
 
 void WebGLRenderingContext::bufferData(GC3Denum target, ArrayBufferView* data, GC3Denum usage, ExceptionCode& ec)
@@ -1177,7 +1187,12 @@ void WebGLRenderingContext::bufferData(GC3Denum target, ArrayBufferView* data, G
         }
     }
 
+    m_context->moveErrorsToSyntheticErrorList();
     m_context->bufferData(target, data->byteLength(), data->baseAddress(), usage);
+    if (m_context->moveErrorsToSyntheticErrorList()) {
+        // The bufferData function failed. Tell the buffer it doesn't have the data it thinks it does.
+        buffer->disassociateBufferData();
+    }
 }
 
 void WebGLRenderingContext::bufferSubData(GC3Denum target, long long offset, ArrayBuffer* data, ExceptionCode& ec)
@@ -1201,7 +1216,12 @@ void WebGLRenderingContext::bufferSubData(GC3Denum target, long long offset, Arr
         }
     }
 
+    m_context->moveErrorsToSyntheticErrorList();
     m_context->bufferSubData(target, static_cast<GC3Dintptr>(offset), data->byteLength(), data->data());
+    if (m_context->moveErrorsToSyntheticErrorList()) {
+        // The bufferSubData function failed. Tell the buffer it doesn't have the data it thinks it does.
+        buffer->disassociateBufferData();
+    }
 }
 
 void WebGLRenderingContext::bufferSubData(GC3Denum target, long long offset, ArrayBufferView* data, ExceptionCode& ec)
@@ -1225,7 +1245,12 @@ void WebGLRenderingContext::bufferSubData(GC3Denum target, long long offset, Arr
         }
     }
 
+    m_context->moveErrorsToSyntheticErrorList();
     m_context->bufferSubData(target, static_cast<GC3Dintptr>(offset), data->byteLength(), data->baseAddress());
+    if (m_context->moveErrorsToSyntheticErrorList()) {
+        // The bufferSubData function failed. Tell the buffer it doesn't have the data it thinks it does.
+        buffer->disassociateBufferData();
+    }
 }
 
 GC3Denum WebGLRenderingContext::checkFramebufferStatus(GC3Denum target)

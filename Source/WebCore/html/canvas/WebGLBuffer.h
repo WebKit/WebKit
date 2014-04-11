@@ -49,6 +49,8 @@ public:
     bool associateBufferSubData(GC3Dintptr offset, JSC::ArrayBuffer*);
     bool associateBufferSubData(GC3Dintptr offset, JSC::ArrayBufferView*);
 
+    void disassociateBufferData();
+
     GC3Dsizeiptr byteLength() const;
     const JSC::ArrayBuffer* elementArrayBuffer() const { return m_elementArrayBuffer.get(); }
 
