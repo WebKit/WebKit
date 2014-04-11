@@ -1,3 +1,10 @@
+2014-04-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Try to fix the debug bots after r167102
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-04-10  Gavin Barraclough  <barraclough@apple.com>
 
         Add user default for FTL JIT

@@ -184,9 +184,10 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     if (!JSC::Options::useJITWasOverridden())
         JSC::Options::useJIT() = parameters.shouldEnableJIT;
-
+#if ENABLE(FTL_JIT)
     if (!JSC::Options::useFTLJITWasOverridden())
         JSC::Options::useFTLJIT() = parameters.shouldEnableFTLJIT;
+#endif
 
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 
