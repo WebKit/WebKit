@@ -503,7 +503,6 @@ webkit.org/b/85532 fast/sub-pixel/zoomed-image-tiles.html [ ImageOnlyFailure ]
 
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
-http/tests/security/video-cross-origin-accessfailure.html
 
 # media/audio-repaint.html sometimes fails on Lion Debug (Tests)
 webkit.org/b/84357 media/audio-repaint.html [ Failure ]

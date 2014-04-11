@@ -304,6 +304,9 @@ webkit.org/b/79203 fast/events/constructors/media-stream-event-constructor.html 
 webkit.org/b/79203 webaudio/mediastreamaudiodestinationnode.html [ Skip ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Skip ]
 
+# No CORS support for media elements is implemented yet.
+webkit.org/b/99037 http/tests/security/video-cross-origin-readback.html [ Failure ]
+
 # New test infrastructure required -- need isolated worlds
 webkit.org/b/31508 http/tests/security/isolatedWorld [ Skip ]
 webkit.org/b/31508 plugins/npruntime/overrides-all-properties.html [ Skip ]
