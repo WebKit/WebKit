@@ -31,6 +31,9 @@
 #include "IntSize.h"
 #include <cairo.h>
 
+// This function was added pretty much simultaneous to when 1.13 was branched.
+#define HAVE_CAIRO_SURFACE_SET_DEVICE_SCALE CAIRO_VERSION_MAJOR > 1 || (CAIRO_VERSION_MAJOR == 1 && CAIRO_VERSION_MINOR >= 13)
+
 namespace WebCore {
 class AffineTransform;
 class Color;
@@ -56,6 +59,7 @@ void copyRectFromCairoSurfaceToContext(cairo_surface_t* from, cairo_t* to, const
 void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo_surface_t* to, const IntSize& offset, const IntRect&, const IntSize& = IntSize(), cairo_operator_t = CAIRO_OPERATOR_OVER);
 
 IntSize cairoSurfaceSize(cairo_surface_t*);
+void cairoSurfaceSetDeviceScale(cairo_surface_t*, double xScale, double yScale);
 
 } // namespace WebCore
 

@@ -19,6 +19,7 @@
 #include "config.h"
 #include "WidgetBackingStoreGtkX11.h"
 
+#include "CairoUtilities.h"
 #include "GtkVersioning.h"
 #include "RefPtrCairo.h"
 #include <cairo-xlib.h>
@@ -27,23 +28,28 @@
 
 namespace WebCore {
 
-PassOwnPtr<WidgetBackingStore> WidgetBackingStoreGtkX11::create(GtkWidget* widget, const IntSize& size)
+PassOwnPtr<WidgetBackingStore> WidgetBackingStoreGtkX11::create(GtkWidget* widget, const IntSize& size, float deviceScaleFactor)
 {
-    return adoptPtr(new WidgetBackingStoreGtkX11(widget, size));
+    return adoptPtr(new WidgetBackingStoreGtkX11(widget, size, deviceScaleFactor));
 }
 
-WidgetBackingStoreGtkX11::WidgetBackingStoreGtkX11(GtkWidget* widget, const IntSize& size)
-    : WidgetBackingStore(size)
+WidgetBackingStoreGtkX11::WidgetBackingStoreGtkX11(GtkWidget* widget, const IntSize& size, float deviceScaleFactor)
+    : WidgetBackingStore(size, deviceScaleFactor)
 {
+    IntSize scaledSize = size;
+    scaledSize.scale(deviceScaleFactor);
+
     GdkVisual* visual = gtk_widget_get_visual(widget);
     GdkScreen* screen = gdk_visual_get_screen(visual);
     m_display = GDK_SCREEN_XDISPLAY(screen);
     m_pixmap = XCreatePixmap(m_display, GDK_WINDOW_XID(gdk_screen_get_root_window(screen)),
-        size.width(), size.height(), gdk_visual_get_depth(visual));
+        scaledSize.width(), scaledSize.height(), gdk_visual_get_depth(visual));
     m_gc = XCreateGC(m_display, m_pixmap, 0, 0);
 
     m_surface = adoptRef(cairo_xlib_surface_create(m_display, m_pixmap,
-        GDK_VISUAL_XVISUAL(visual), size.width(), size.height()));
+        GDK_VISUAL_XVISUAL(visual), scaledSize.width(), scaledSize.height()));
+
+    cairoSurfaceSetDeviceScale(m_surface.get(), deviceScaleFactor, deviceScaleFactor);
 }
 
 WidgetBackingStoreGtkX11::~WidgetBackingStoreGtkX11()
@@ -67,9 +73,14 @@ void WidgetBackingStoreGtkX11::scroll(const IntRect& scrollRect, const IntSize& 
     if (targetRect.isEmpty())
         return;
 
+    targetRect.scale(m_deviceScaleFactor);
+
+    IntSize scaledScrollOffset = scrollOffset;
+    scaledScrollOffset.scale(m_deviceScaleFactor);
+
     cairo_surface_flush(m_surface.get());
     XCopyArea(m_display, m_pixmap, m_pixmap, m_gc, 
-        targetRect.x() - scrollOffset.width(), targetRect.y() - scrollOffset.height(),
+        targetRect.x() - scaledScrollOffset.width(), targetRect.y() - scaledScrollOffset.height(),
         targetRect.width(), targetRect.height(),
         targetRect.x(), targetRect.y());
     cairo_surface_mark_dirty_rectangle(m_surface.get(),

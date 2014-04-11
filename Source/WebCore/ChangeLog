@@ -1,3 +1,23 @@
+2014-04-11  Owen Taylor  <otaylor@redhat.com>
+
+        [GTK] Add HighDPI support for non-accelerated compositing contents
+        https://bugs.webkit.org/show_bug.cgi?id=131562
+
+        Reviewed by Martin Robinson.
+
+        No new tests. This will be tested once we have the proper dependencies in the WebKit testing
+        JHBuild.
+
+        * platform/cairo/WidgetBackingStore.h:
+        (WebCore::WidgetBackingStore::WidgetBackingStore): Accept a device scale argument.
+        * platform/cairo/WidgetBackingStoreCairo.cpp: Use the device scale argument to make the surface the proper size and set the surface device scale.
+        * platform/cairo/WidgetBackingStoreCairo.h: Accept a device scale argument.
+        * platform/graphics/cairo/CairoUtilities.cpp: Add a new helper to set the device scale if Cairo built against is new enough.
+        * platform/graphics/cairo/CairoUtilities.h:
+        * platform/gtk/GtkVersioning.h: Add the HAVE_GTK_SCALE_FACTOR macro.
+        * platform/gtk/WidgetBackingStoreGtkX11.cpp: Use the device scale argument to make the surface the proper size and set the surface device scale.
+        * platform/gtk/WidgetBackingStoreGtkX11.h: Accept a device scale argument.
+
 2014-04-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Assertion failure changing select element size during focus event

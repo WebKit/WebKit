@@ -46,6 +46,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebViewBaseInputMethodFilter.h"
+#include <WebCore/CairoUtilities.h>
 #include <WebCore/ClipboardUtilitiesGtk.h>
 #include <WebCore/DataObjectGtk.h>
 #include <WebCore/DragData.h>
@@ -77,6 +78,10 @@
 #if USE(TEXTURE_MAPPER_GL) && defined(GDK_WINDOWING_X11)
 #include <WebCore/RedirectedXCompositeWindow.h>
 #endif
+
+// gtk_widget_get_scale_factor() appeared in GTK 3.10, but we also need
+// to make sure we have cairo new enough to support cairo_surface_set_device_scale
+#define HAVE_GTK_SCALE_FACTOR HAVE_CAIRO_SURFACE_SET_DEVICE_SCALE && GTK_CHECK_VERSION(3, 10, 0)
 
 using namespace WebKit;
 using namespace WebCore;
@@ -961,6 +966,15 @@ void webkitWebViewBaseUpdatePreferences(WebKitWebViewBase* webkitWebViewBase)
     priv->pageProxy->pageGroup().preferences().setAcceleratedCompositingEnabled(false);
 }
 
+#if HAVE(GTK_SCALE_FACTOR)
+static void scaleFactorChanged(GObject* object, GParamSpec*)
+{
+    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(object)->priv;
+    ASSERT(priv->pageProxy);
+    priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(object)));
+}
+#endif // HAVE(GTK_SCALE_FACTOR)
+
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebContext* context, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
@@ -974,6 +988,12 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
 #if USE(TEXTURE_MAPPER_GL)
     if (priv->redirectedWindow)
         priv->pageProxy->setAcceleratedCompositingWindowId(priv->redirectedWindow->windowId());
+#endif
+
+#if HAVE(GTK_SCALE_FACTOR)
+    // We attach this here, because changes in scale factor are passed directly to the page proxy.
+    priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
+    g_signal_connect(object, "notify::scale-factor", G_CALLBACK(scaleFactorChanged), NULL);
 #endif
 
     webkitWebViewBaseUpdatePreferences(webkitWebViewBase);
