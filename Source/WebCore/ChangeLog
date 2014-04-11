@@ -1,3 +1,20 @@
+2014-04-11  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: memoize nondeterministic attributes of the Navigator interface
+        https://bugs.webkit.org/show_bug.cgi?id=131340
+
+        Reviewed by Timothy Hatcher.
+
+        Most attributes of window.navigator do not change very often, but they
+        could be easily changed by the user or embedder. So, memoize attribute values.
+
+        This change does not include navigator.mimeTypes and navigator.plugins,
+        which will be handled at a different level. <https://webkit.org/b/131341>
+
+        Test: ManualTests/inspector/replay-window-navigator-basic.html
+
+        * page/Navigator.idl: Add Nondeterministic attribute.
+
 2014-04-10  Jer Noble  <jer.noble@apple.com>
 
         [iOS][WK2] Videos should animate into and out of fullscreen.

@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<script src="./resources/crypto-md5.js"></script>
+<script type="text/javascript" language="javascript" charset="utf-8">
+
+    window.dumpedStates = [];
+
+    function dumpState() {
+        obj = {
+            appCodeName: window.navigator.appCodeName,
+            appName: window.navigator.appName,
+            appVersion: window.navigator.appVersion,
+            language: window.navigator.language,
+            userAgent: window.navigator.userAgent,
+            platform: window.navigator.platform,
+            product: window.navigator.product,
+            productSub: window.navigator.productSub,
+            vendor: window.navigator.vendor,
+            vendorSub: window.navigator.vendorSub,
+            cookieEnabled: window.navigator.cookieEnabled,
+            javaEnabled: window.navigator.javaEnabled(),
+        };
+
+        dumpedStates.push(obj);
+
+        var block = createBlock(hex_md5(JSON.stringify(obj)));
+        var blocksContainer = document.getElementById("blocks");
+        blocksContainer.appendChild(block);
+
+        var hashLabel = document.getElementById("hash");
+        hash.textContent = hex_md5(JSON.stringify(dumpedStates));
+
+        appendDetails(obj);
+    }
+
+    function appendDetails(obj) {
+        var detailsContainer = document.getElementById("details");
+        var tableElement = document.createElement("table");
+        for (var key in obj) {
+            var rowElement = document.createElement("tr");
+            var keyElement = document.createElement("td");
+            keyElement.textContent = key;
+            rowElement.appendChild(keyElement);
+            var valueElement = document.createElement("td");
+            valueElement.textContent = obj[key];
+            rowElement.appendChild(valueElement);
+            tableElement.appendChild(rowElement);
+        }
+        detailsContainer.appendChild(tableElement);
+        detailsContainer.appendChild(document.createElement("hr"));
+    }
+
+    function createBlock(hash) {
+        var color = "#" + hash.substr(0,6);
+        var block = document.createElement("span");
+        block.style.backgroundColor = color;
+        return block;
+    }
+
+</script>
+
+<style type="text/css">
+body {
+    max-width: 800px;
+}
+#blocks {
+    display: -webkit-flex;
+    width: 600px;
+    -webkit-flex-flow: row wrap;
+}
+
+table {
+    text-decoration: bold;
+    font-family: monospace;
+}
+
+#blocks > span {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: sans-serif;
+    color: #fff;
+    text-align: center;
+}
+</style>
+</head>
+<body onload="dumpState()">
+<p>This page is a manual test for capture and replay of parts of the Navigator DOM API.</p>
+<p>Below, a block is created for each button press that dumps state. The color is derived from a hash of the state. At the bottom is a cumulative hash of all dumped data.</p>
+<hr/>
+<p>
+To test the replay functionality, open the Web Inspector and start capturing. Then change your browser configuration in one of the following ways to change navigator state:
+</p>
+<ul>
+    <li>Change the default language.</li>
+    <li>Toggle Java or cookies support.</li>
+    <li>Change the user agent string.</li>
+</ul>
+</p>
+Then, stop capturing and replay the recording. The replayed execution should produce the same sequence of blocks. More importantly, the cumulative hash value should be the same at the end of capturing and at the end of any subsequent replays.</p>
+</p>
+<hr/>
+<form>
+<input type="button" value="Dump window.navigator Values" onclick="dumpState()" />
+</form>
+<div id="hash"></div>
+<div id="blocks"></div>
+<div id="details"></div>
+</body>
+</html>

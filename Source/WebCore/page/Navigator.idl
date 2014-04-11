@@ -20,20 +20,20 @@
 [
     GenerateIsReachable=ImplFrame,
 ] interface Navigator {
-    readonly attribute DOMString appCodeName;
-    readonly attribute DOMString appName;
-    readonly attribute DOMString appVersion;
-    readonly attribute DOMString language;
-    readonly attribute DOMString userAgent;
-    readonly attribute DOMString platform;
+    [Nondeterministic] readonly attribute DOMString appCodeName;
+    [Nondeterministic] readonly attribute DOMString appName;
+    [Nondeterministic] readonly attribute DOMString appVersion;
+    [Nondeterministic] readonly attribute DOMString language;
+    [Nondeterministic] readonly attribute DOMString userAgent;
+    [Nondeterministic] readonly attribute DOMString platform;
     readonly attribute DOMPluginArray plugins;
     readonly attribute DOMMimeTypeArray mimeTypes;
-    readonly attribute DOMString product;
-    readonly attribute DOMString productSub;
-    readonly attribute DOMString vendor;
-    readonly attribute DOMString vendorSub;
-    readonly attribute boolean cookieEnabled;
-    boolean javaEnabled();
+    [Nondeterministic] readonly attribute DOMString product;
+    [Nondeterministic] readonly attribute DOMString productSub;
+    [Nondeterministic] readonly attribute DOMString vendor;
+    [Nondeterministic] readonly attribute DOMString vendorSub;
+    [Nondeterministic] readonly attribute boolean cookieEnabled;
+    [Nondeterministic] boolean javaEnabled();
 
     readonly attribute boolean onLine;
 
