@@ -179,23 +179,13 @@ SharedMemory::~SharedMemory()
     closeWithRetry(m_fileDescriptor);
 }
 
-static inline int accessModeFile(SharedMemory::Protection protection)
-{
-    switch (protection) {
-    case SharedMemory::ReadOnly:
-        return O_RDONLY;
-    case SharedMemory::ReadWrite:
-        return O_RDWR;
-    }
-
-    ASSERT_NOT_REACHED();
-    return O_RDWR;
-}
-
-bool SharedMemory::createHandle(Handle& handle, Protection protection)
+bool SharedMemory::createHandle(Handle& handle, Protection)
 {
     ASSERT_ARG(handle, !handle.m_size);
     ASSERT_ARG(handle, handle.isNull());
+
+    // FIXME: Handle the case where the passed Protection is ReadOnly.
+    // See https://bugs.webkit.org/show_bug.cgi?id=131542.
 
     int duplicatedHandle;
     while ((duplicatedHandle = dup(m_fileDescriptor)) == -1) {
@@ -205,7 +195,7 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
         }
     }
 
-    while (fcntl(duplicatedHandle, F_SETFD, FD_CLOEXEC) == -1 || fcntl(duplicatedHandle, F_SETFL, accessModeFile(protection)) == -1) {
+    while (fcntl(duplicatedHandle, F_SETFD, FD_CLOEXEC) == -1) {
         if (errno != EINTR) {
             ASSERT_NOT_REACHED();
             closeWithRetry(duplicatedHandle);
