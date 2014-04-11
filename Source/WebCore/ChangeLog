@@ -1,5 +1,30 @@
 2014-04-11  Brent Fulgham  <bfulgham@apple.com>
 
+        Regression: media controls and status messages are no longer localized.
+        https://bugs.webkit.org/show_bug.cgi?id=120956
+
+        Reviewed by Jer Noble.
+
+        * English.lproj/mediaControlsLocalizedStrings.js: Added.
+        (mediaControlsLocalizedStrings): Moved from mediaControlsApple.js.
+        * English.lproj/mediaControlsLocalizedStringsiOS.js: Added.
+        (mediaControlsLocalizedStringsiOS): Moved from mediaControlsiOS.js.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.UIString): Get strings from external file.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.UIString): Ditto.
+        * WebCore.vcxproj/copyWebCoreResourceFiles.cmd: Copy to Windows bundle.
+        * WebCore.xcodeproj/project.pbxproj: Copy new files to bundle.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsScript): Load the locale-specific
+        string resource when loading the media controls.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsScript): Ditto.
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::mediaControlsScript): Ditto.
+
+2014-04-11  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Build fix after r167138
 
         * platform/graphics/ca/GraphicsLayerCA.h: The TileController is

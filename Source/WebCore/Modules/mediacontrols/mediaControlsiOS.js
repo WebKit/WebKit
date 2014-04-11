@@ -67,18 +67,14 @@ ControllerIOS.prototype = {
         if (string)
             return string;
 
+        if (!this.localizedStrings)
+            this.localizedStrings = mediaControlsLocalizedStringsiOS();
+
         if (this.localizedStrings[s])
             return this.localizedStrings[s];
-        else
-            return s; // FIXME: LOG something if string not localized.
-    },
-    localizedStrings: {
-        // FIXME: Move localization to ext strings file <http://webkit.org/b/120956>
-        '##AIRPLAY_DEVICE_TYPE##': 'AirPlay',
-        '##AIRPLAY_DEVICE_NAME##': 'This video is playing on "##DEVICE_NAME##".',
 
-        '##TVOUT_DEVICE_TYPE##': 'TV Connected',
-        '##TVOUT_DEVICE_NAME##': 'This video is playing on the TV.',
+        console.error("Localized string \"" + s + "\" not found.");
+        return "LOCALIZED STRING NOT FOUND";
     },
 
     shouldHaveStartPlaybackButton: function() {

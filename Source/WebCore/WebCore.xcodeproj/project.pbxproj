@@ -2285,6 +2285,8 @@
 		7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A0E770C10C00A8800A0276E /* InspectorFrontendHost.h */; };
 		7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */; };
 		7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */; };
+		7A1D7FCB18F85F0F00C385AD /* mediaControlsLocalizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = 7A1D7FC918F85F0F00C385AD /* mediaControlsLocalizedStrings.js */; };
+		7A1D7FCE18F86E5600C385AD /* mediaControlsLocalizedStringsiOS.js in Resources */ = {isa = PBXBuildFile; fileRef = 7A1D7FCC18F86E5600C385AD /* mediaControlsLocalizedStringsiOS.js */; };
 		7A1F2B52126C61B20006A7E6 /* InspectorClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */; };
 		7A24587B1021EAF4000A00AA /* InspectorDOMAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A2458791021EAF4000A00AA /* InspectorDOMAgent.cpp */; };
 		7A24587C1021EAF4000A00AA /* InspectorDOMAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A24587A1021EAF4000A00AA /* InspectorDOMAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9317,6 +9319,8 @@
 		7A0E770D10C00A8800A0276E /* InspectorFrontendHost.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = InspectorFrontendHost.idl; sourceTree = "<group>"; };
 		7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorFrontendHost.cpp; sourceTree = "<group>"; };
 		7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectorFrontendHost.h; sourceTree = "<group>"; };
+		7A1D7FCA18F85F0F00C385AD /* English */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = English; path = English.lproj/mediaControlsLocalizedStrings.js; sourceTree = SOURCE_ROOT; };
+		7A1D7FCD18F86E5600C385AD /* English */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = English; path = English.lproj/mediaControlsLocalizedStringsiOS.js; sourceTree = SOURCE_ROOT; };
 		7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorClient.cpp; sourceTree = "<group>"; };
 		7A2458791021EAF4000A00AA /* InspectorDOMAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDOMAgent.cpp; sourceTree = "<group>"; };
 		7A24587A1021EAF4000A00AA /* InspectorDOMAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDOMAgent.h; sourceTree = "<group>"; };
@@ -14594,6 +14598,8 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7A1D7FCC18F86E5600C385AD /* mediaControlsLocalizedStringsiOS.js */,
+				7A1D7FC918F85F0F00C385AD /* mediaControlsLocalizedStrings.js */,
 				CD0DBB3E142274E600280263 /* audio */,
 				65998A650E5F5FD3004E097A /* images */,
 				46F9D5DA0B0D60170028EE36 /* aliasCursor.png */,
@@ -26429,6 +26435,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A1D7FCE18F86E5600C385AD /* mediaControlsLocalizedStringsiOS.js in Resources */,
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				93153BDE141959F400FCF5BE /* deleteButton.png in Resources */,
@@ -26461,6 +26468,7 @@
 				85136CA30AED665900F90A3D /* northWestSouthEastResizeCursor.png in Resources */,
 				46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */,
 				85136CA40AED665900F90A3D /* southEastResizeCursor.png in Resources */,
+				7A1D7FCB18F85F0F00C385AD /* mediaControlsLocalizedStrings.js in Resources */,
 				85136CA50AED665900F90A3D /* southResizeCursor.png in Resources */,
 				85136CA60AED665900F90A3D /* southWestResizeCursor.png in Resources */,
 				BE8C753110681324001E93F5 /* SpellingDot.png in Resources */,
@@ -29562,6 +29570,22 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		7A1D7FC918F85F0F00C385AD /* mediaControlsLocalizedStrings.js */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7A1D7FCA18F85F0F00C385AD /* English */,
+			);
+			name = mediaControlsLocalizedStrings.js;
+			sourceTree = "<group>";
+		};
+		7A1D7FCC18F86E5600C385AD /* mediaControlsLocalizedStringsiOS.js */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7A1D7FCD18F86E5600C385AD /* English */,
+			);
+			name = mediaControlsLocalizedStringsiOS.js;
+			sourceTree = "<group>";
+		};
 		BCAD1808131C7A0D00990406 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
