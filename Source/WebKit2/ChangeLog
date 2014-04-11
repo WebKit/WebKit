@@ -6,6 +6,20 @@
         Reviewed by Benjamin Poulain.
 
         * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::decode):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebContext::platformInitializeWebProcess):
+            - D'oh, whitespace.
+
+2014-04-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Add user default for FTL JIT
+        https://bugs.webkit.org/show_bug.cgi?id=131520
+
+        Reviewed by Benjamin Poulain.
+
+        * Shared/WebProcessCreationParameters.cpp:
         (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
         (WebKit::WebProcessCreationParameters::encode):
         (WebKit::WebProcessCreationParameters::decode):
