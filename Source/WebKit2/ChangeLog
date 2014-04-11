@@ -1,3 +1,14 @@
+2014-04-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebProcess at com.apple.WebCore: WebCore::AXObjectCache::rootObject + 18
+        https://bugs.webkit.org/show_bug.cgi?id=131522
+
+        Reviewed by Anders Carlsson.
+
+        Protect against documents that have had their render tree destroyed, and no longer return a valid cache.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+
 2014-04-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Prevent crash when exiting fullscreen mode

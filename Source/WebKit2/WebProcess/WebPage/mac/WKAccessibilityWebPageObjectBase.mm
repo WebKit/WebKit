@@ -66,11 +66,14 @@ using namespace WebKit;
     if (!core.document())
         return nil;
     
-    AccessibilityObject* root = core.document()->axObjectCache()->rootObject();
-    if (!root)
+    WebCore::AXObjectCache* cache = core.document()->axObjectCache();
+    if (!cache)
         return nil;
     
-    return root->wrapper();
+    if (AccessibilityObject* root = cache->rootObject())
+        return root->wrapper();
+    
+    return nil;
 }
 
 - (void)setWebPage:(WebPage*)page
