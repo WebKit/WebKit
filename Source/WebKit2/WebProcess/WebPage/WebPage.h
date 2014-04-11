@@ -358,7 +358,10 @@ public:
     void listenForLayoutMilestones(uint32_t /* LayoutMilestones */);
 
     void setSuppressScrollbarAnimations(bool);
-
+    
+    void setEnableVerticalRubberBanding(bool);
+    void setEnableHorizontalRubberBanding(bool);
+    
     void setBackgroundExtendsBeyondPage(bool);
 
     void setPaginationMode(uint32_t /* WebCore::Pagination::Mode */);

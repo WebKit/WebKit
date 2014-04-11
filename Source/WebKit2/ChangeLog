@@ -1,3 +1,31 @@
+2014-04-11  Beth Dakin  <bdakin@apple.com>
+
+        Need WK2 API to disable rubber-banding
+        https://bugs.webkit.org/show_bug.cgi?id=131567
+
+        Reviewed by Simon Fraser.
+
+        New API allows the client to enable/disable horizontal or vertical rubber-banding. 
+        By default, rubber-banding is enabled.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageVerticalRubberBandingIsEnabled):
+        (WKPageSetEnableVerticalRubberBanding):
+        (WKPageHorizontalRubberBandingIsEnabled):
+        (WKPageSetEnableHorizontalRubberBanding):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setEnableVerticalRubberBanding):
+        (WebKit::WebPageProxy::verticalRubberBandingIsEnabled):
+        (WebKit::WebPageProxy::setEnableHorizontalRubberBanding):
+        (WebKit::WebPageProxy::horizontalRubberBandingIsEnabled):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setEnableVerticalRubberBanding):
+        (WebKit::WebPage::setEnableHorizontalRubberBanding):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-04-11  Tim Horton  <timothy_horton@apple.com>
 
         Fix the Mac build.

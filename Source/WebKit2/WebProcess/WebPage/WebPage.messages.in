@@ -173,6 +173,9 @@ messages -> WebPage LegacyReceiver {
     ListenForLayoutMilestones(uint32_t milestones)
     SetSuppressScrollbarAnimations(bool suppressAnimations)
 
+    SetEnableVerticalRubberBanding(bool enableVerticalRubberBanding)
+    SetEnableHorizontalRubberBanding(bool enableHorizontalRubberBanding)
+
     SetBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
 
     SetPaginationMode(uint32_t mode)

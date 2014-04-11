@@ -337,6 +337,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_rubberBandsAtRight(true)
     , m_rubberBandsAtTop(true)
     , m_rubberBandsAtBottom(true)
+    , m_enableVerticalRubberBanding(true)
+    , m_enableHorizontalRubberBanding(true)
     , m_backgroundExtendsBeyondPage(false)
     , m_shouldRecordNavigationSnapshots(false)
     , m_pageCount(0)
@@ -1856,6 +1858,40 @@ bool WebPageProxy::rubberBandsAtBottom() const
 void WebPageProxy::setRubberBandsAtBottom(bool rubberBandsAtBottom)
 {
     m_rubberBandsAtBottom = rubberBandsAtBottom;
+}
+    
+void WebPageProxy::setEnableVerticalRubberBanding(bool enableVerticalRubberBanding)
+{
+    if (enableVerticalRubberBanding == m_enableVerticalRubberBanding)
+        return;
+
+    m_enableVerticalRubberBanding = enableVerticalRubberBanding;
+
+    if (!isValid())
+        return;
+    m_process->send(Messages::WebPage::SetEnableVerticalRubberBanding(enableVerticalRubberBanding), m_pageID);
+}
+    
+bool WebPageProxy::verticalRubberBandingIsEnabled() const
+{
+    return m_enableVerticalRubberBanding;
+}
+    
+void WebPageProxy::setEnableHorizontalRubberBanding(bool enableHorizontalRubberBanding)
+{
+    if (enableHorizontalRubberBanding == m_enableHorizontalRubberBanding)
+        return;
+
+    m_enableHorizontalRubberBanding = enableHorizontalRubberBanding;
+
+    if (!isValid())
+        return;
+    m_process->send(Messages::WebPage::SetEnableHorizontalRubberBanding(enableHorizontalRubberBanding), m_pageID);
+}
+    
+bool WebPageProxy::horizontalRubberBandingIsEnabled() const
+{
+    return m_enableHorizontalRubberBanding;
 }
 
 void WebPageProxy::setBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)

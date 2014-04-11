@@ -769,7 +769,12 @@ public:
 
     void setShouldUseImplicitRubberBandControl(bool shouldUseImplicitRubberBandControl) { m_shouldUseImplicitRubberBandControl = shouldUseImplicitRubberBandControl; }
     bool shouldUseImplicitRubberBandControl() const { return m_shouldUseImplicitRubberBandControl; }
-
+        
+    void setEnableVerticalRubberBanding(bool);
+    bool verticalRubberBandingIsEnabled() const;
+    void setEnableHorizontalRubberBanding(bool);
+    bool horizontalRubberBandingIsEnabled() const;
+        
     void setBackgroundExtendsBeyondPage(bool);
     bool backgroundExtendsBeyondPage() const;
 
@@ -1609,6 +1614,9 @@ private:
     bool m_rubberBandsAtRight;
     bool m_rubberBandsAtTop;
     bool m_rubberBandsAtBottom;
+        
+    bool m_enableVerticalRubberBanding;
+    bool m_enableHorizontalRubberBanding;
 
     bool m_backgroundExtendsBeyondPage;
 

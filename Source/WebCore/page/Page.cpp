@@ -162,6 +162,8 @@ Page::Page(PageClients& pageClients)
     , m_deviceScaleFactor(1)
     , m_topContentInset(0)
     , m_suppressScrollbarAnimations(false)
+    , m_verticalScrollElasticity(ScrollElasticityAllowed)
+    , m_horizontalScrollElasticity(ScrollElasticityAllowed)
     , m_didLoadUserStyleSheet(false)
     , m_userStyleSheetModificationTime(0)
     , m_group(0)
@@ -810,6 +812,28 @@ void Page::lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars)
             scrollableArea->lockOverlayScrollbarStateToHidden(lockOverlayScrollbars);
         }
     }
+}
+    
+void Page::setVerticalScrollElasticity(ScrollElasticity elasticity)
+{
+    if (m_verticalScrollElasticity == elasticity)
+        return;
+    
+    m_verticalScrollElasticity = elasticity;
+    
+    if (FrameView* view = mainFrame().view())
+        view->setVerticalScrollElasticity(elasticity);
+}
+    
+void Page::setHorizontalScrollElasticity(ScrollElasticity elasticity)
+{
+    if (m_horizontalScrollElasticity == elasticity)
+        return;
+    
+    m_horizontalScrollElasticity = elasticity;
+    
+    if (FrameView* view = mainFrame().view())
+        view->setHorizontalScrollElasticity(elasticity);
 }
 
 void Page::setPagination(const Pagination& pagination)

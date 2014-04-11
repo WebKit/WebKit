@@ -1398,6 +1398,16 @@ void WebPage::setSuppressScrollbarAnimations(bool suppressAnimations)
 {
     m_page->setShouldSuppressScrollbarAnimations(suppressAnimations);
 }
+    
+void WebPage::setEnableVerticalRubberBanding(bool enableVerticalRubberBanding)
+{
+    m_page->setVerticalScrollElasticity(enableVerticalRubberBanding ? ScrollElasticityAllowed : ScrollElasticityNone);
+}
+    
+void WebPage::setEnableHorizontalRubberBanding(bool enableHorizontalRubberBanding)
+{
+    m_page->setHorizontalScrollElasticity(enableHorizontalRubberBanding ? ScrollElasticityAllowed : ScrollElasticityNone);
+}
 
 void WebPage::setBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
 {

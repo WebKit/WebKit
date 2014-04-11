@@ -1,3 +1,29 @@
+2014-04-11  Beth Dakin  <bdakin@apple.com>
+
+        Need WK2 API to disable rubber-banding
+        https://bugs.webkit.org/show_bug.cgi?id=131567
+
+        Reviewed by Simon Fraser.
+
+        Page will now store a vertical and horizontal ScrollElasticity in case the API has 
+        been called before the FrameView even exists.
+
+        New Page functions.
+        * WebCore.exp.in:
+
+        Use Page’s cached ScrollElasticity.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+
+        If there is already a FrameView, then assign it the new ScrollElasticity.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setVerticalScrollElasticity):
+        (WebCore::Page::setHorizontalScrollElasticity):
+        * page/Page.h:
+        (WebCore::Page::verticalScrollElasticity):
+        (WebCore::Page::horizontalScrollElasticity):
+
 2014-04-11  Martin Robinson  <mrobinson@igalia.com>
 
         REGRESSION(167145): Many media tests fail

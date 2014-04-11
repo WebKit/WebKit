@@ -193,8 +193,8 @@ FrameView::FrameView(Frame& frame)
     init();
 
     if (frame.isMainFrame()) {
-        ScrollableArea::setVerticalScrollElasticity(ScrollElasticityAllowed);
-        ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityAllowed);
+        ScrollableArea::setVerticalScrollElasticity(m_frame->page() ? m_frame->page()->verticalScrollElasticity() : ScrollElasticityAllowed);
+        ScrollableArea::setHorizontalScrollElasticity(m_frame->page() ? m_frame->page()->horizontalScrollElasticity() : ScrollElasticityAllowed);
     }
 }
 

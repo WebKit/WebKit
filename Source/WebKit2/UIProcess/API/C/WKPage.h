@@ -165,7 +165,11 @@ WK_EXPORT bool WKPageIsPinnedToLeftSide(WKPageRef page);
 WK_EXPORT bool WKPageIsPinnedToRightSide(WKPageRef page);
 WK_EXPORT bool WKPageIsPinnedToTopSide(WKPageRef page);
 WK_EXPORT bool WKPageIsPinnedToBottomSide(WKPageRef page);
-
+    
+// This API is poorly named. Even when these values are set to false, rubber-banding will
+// still be allowed to occur at the end of a momentum scroll. These values are used along
+// with pin state to determine if wheel events should be handled in the web process or if
+// they should be passed up to the client.
 WK_EXPORT bool WKPageRubberBandsAtLeft(WKPageRef);
 WK_EXPORT void WKPageSetRubberBandsAtLeft(WKPageRef, bool rubberBandsAtLeft);
 WK_EXPORT bool WKPageRubberBandsAtRight(WKPageRef);
@@ -174,7 +178,13 @@ WK_EXPORT bool WKPageRubberBandsAtTop(WKPageRef);
 WK_EXPORT void WKPageSetRubberBandsAtTop(WKPageRef, bool rubberBandsAtTop);
 WK_EXPORT bool WKPageRubberBandsAtBottom(WKPageRef);
 WK_EXPORT void WKPageSetRubberBandsAtBottom(WKPageRef, bool rubberBandsAtBottom);
-
+    
+// Rubber-banding is enabled by default.
+WK_EXPORT bool WKPageVerticalRubberBandingIsEnabled(WKPageRef);
+WK_EXPORT void WKPageSetEnableVerticalRubberBanding(WKPageRef, bool enableVerticalRubberBanding);
+WK_EXPORT bool WKPageHorizontalRubberBandingIsEnabled(WKPageRef);
+WK_EXPORT void WKPageSetEnableHorizontalRubberBanding(WKPageRef, bool enableHorizontalRubberBanding);
+    
 WK_EXPORT void WKPageSetBackgroundExtendsBeyondPage(WKPageRef, bool backgroundExtendsBeyondPage);
 WK_EXPORT bool WKPageBackgroundExtendsBeyondPage(WKPageRef);
 

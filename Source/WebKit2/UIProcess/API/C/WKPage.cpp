@@ -521,6 +521,26 @@ void WKPageSetRubberBandsAtBottom(WKPageRef pageRef, bool rubberBandsAtBottom)
     toImpl(pageRef)->setRubberBandsAtBottom(rubberBandsAtBottom);
 }
 
+bool WKPageVerticalRubberBandingIsEnabled(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->verticalRubberBandingIsEnabled();
+}
+
+void WKPageSetEnableVerticalRubberBanding(WKPageRef pageRef, bool enableVerticalRubberBanding)
+{
+    toImpl(pageRef)->setEnableVerticalRubberBanding(enableVerticalRubberBanding);
+}
+
+bool WKPageHorizontalRubberBandingIsEnabled(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->horizontalRubberBandingIsEnabled();
+}
+
+void WKPageSetEnableHorizontalRubberBanding(WKPageRef pageRef, bool enableHorizontalRubberBanding)
+{
+    toImpl(pageRef)->setEnableHorizontalRubberBanding(enableHorizontalRubberBanding);
+}
+
 void WKPageSetBackgroundExtendsBeyondPage(WKPageRef pageRef, bool backgroundExtendsBeyondPage)
 {
     toImpl(pageRef)->setBackgroundExtendsBeyondPage(backgroundExtendsBeyondPage);
