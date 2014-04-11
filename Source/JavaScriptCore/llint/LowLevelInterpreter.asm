@@ -228,10 +228,11 @@ macro assert(assertion)
 end
 
 macro checkStackPointerAlignment(tempReg, location)
-    if ARM64 or C_LOOP
+    if ARM64 or C_LOOP or SH4
         # ARM64 will check for us!
         # C_LOOP does not need the alignment, and can use a little perf
         # improvement from avoiding useless work.
+        # SH4 does not need specific alignment (4 bytes).
     else
         if ARM or ARMv7 or ARMv7_TRADITIONAL
             # ARM can't do logical ops with the sp as a source
@@ -300,7 +301,7 @@ macro functionPrologue()
         push cfr
     elsif ARM64
         pushLRAndFP
-    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         push lr
         push cfr
     end
@@ -312,7 +313,7 @@ macro functionEpilogue()
         pop cfr
     elsif ARM64
         popLRAndFP
-    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         pop cfr
         pop lr
     end
@@ -326,7 +327,7 @@ macro callToJavaScriptPrologue()
         push cfr
     elsif ARM64
         pushLRAndFP
-    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         push lr
         push cfr
     end
@@ -381,7 +382,7 @@ macro callToJavaScriptEpilogue()
         pop cfr
     elsif ARM64
         popLRAndFP
-    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         pop cfr
         pop lr
     end
@@ -716,7 +717,10 @@ macro initPCRelative(pcBase)
     elsif MIPS
         crash()  # Need to replace with any initialization steps needed to step up PC relative address calculation
     elsif SH4
-        crash()  # Need to replace with any initialization steps needed to step up PC relative address calculation
+        mova _relativePCBase, t0
+        move t0, pcBase
+        alignformova
+    _relativePCBase:
     end
 end
 
@@ -741,7 +745,12 @@ macro setEntryAddress(index, label)
     elsif MIPS
         crash()  # Need to replace with code to turn label into and absolute address and save at index
     elsif SH4
-        crash()  # Need to replace with code to turn label into and absolute address and save at index
+        move label, t2
+        subp _relativePCBase, t2
+        addp t1, t2
+        move index, t3
+        storep t2, [a0, t3, 4]
+        flushcp # Force constant pool flush to avoid "pcrel too far" link error.
     end
 end
 

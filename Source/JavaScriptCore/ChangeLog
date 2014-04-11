@@ -1,3 +1,18 @@
+2014-04-11  Julien Brianceau  <jbriance@cisco.com>
+
+        Fix LLInt for sh4 architecture (broken since C stack merge).
+        https://bugs.webkit.org/show_bug.cgi?id=131532
+
+        Reviewed by Mark Lam.
+
+        This patch fixes build and also implements sh4 parts for initPCRelative and
+        setEntryAddress macros introduced in http://trac.webkit.org/changeset/167094.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * offlineasm/instructions.rb:
+        * offlineasm/sh4.rb:
+
 2014-04-10  Michael Saboff  <msaboff@apple.com>
 
         Crash beneath DFG JIT code @ video.disney.com

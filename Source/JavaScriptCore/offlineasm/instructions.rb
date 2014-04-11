@@ -292,6 +292,9 @@ MIPS_INSTRUCTIONS =
 
 SH4_INSTRUCTIONS =
     [
+    "flushcp",
+    "alignformova",
+    "mova",
     "shllx",
     "shlrx",
     "shld",

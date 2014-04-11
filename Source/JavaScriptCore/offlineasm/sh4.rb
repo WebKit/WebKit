@@ -150,6 +150,12 @@ class AbsoluteAddress
     end
 end
 
+class LabelReference
+    def sh4Operand
+        value
+    end
+end
+
 class ConstPool < Node
     attr_reader :size
     attr_reader :entries
@@ -456,7 +462,7 @@ def sh4LowerMisplacedLabels(list)
             newOperands = []
             operands.each {
                 | operand |
-                if operand.is_a? LabelReference
+                if operand.is_a? LabelReference and node.opcode != "mova"
                     tmp = Tmp.new(operand.codeOrigin, :gpr)
                     newList << Instruction.new(operand.codeOrigin, "move", [operand, tmp])
                     newOperands << tmp
@@ -549,8 +555,13 @@ def sh4LowerConstPool(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when "jmp", "ret"
-                newList << node
+            when "jmp", "ret", "flushcp"
+                if node.opcode == "flushcp"
+                    outlabel = LocalLabel.unique("flushcp")
+                    newList << Instruction.new(codeOrigin, "jmp", [LocalLabelReference.new(codeOrigin, outlabel)])
+                else
+                    newList << node
+                end
                 if not currentPool16.empty?
                     newList << ConstPool.new(codeOrigin, currentPool16, 16)
                     currentPool16 = []
@@ -558,6 +569,9 @@ def sh4LowerConstPool(list)
                 if not currentPool32.empty?
                     newList << ConstPool.new(codeOrigin, currentPool32, 32)
                     currentPool32 = []
+                end
+                if node.opcode == "flushcp"
+                    newList << outlabel
                 end
             when "move"
                 if node.operands[0].is_a? Immediate and not (-128..127).include? node.operands[0].value
@@ -843,7 +857,10 @@ class Instruction
             end
         when "subi", "subp"
             if operands.size == 3
-                if operands[1].sh4Operand == operands[2].sh4Operand
+                if operands[1].is_a? Immediate
+                    $asm.puts "mov #{sh4Operands([Immediate.new(codeOrigin, -1 * operands[1].value), operands[2]])}"
+                    $asm.puts "add #{sh4Operands([operands[0], operands[2]])}"
+                elsif operands[1].sh4Operand == operands[2].sh4Operand
                     $asm.puts "neg #{sh4Operands([operands[2], operands[2]])}"
                     $asm.puts "add #{sh4Operands([operands[0], operands[2]])}"
                 else
@@ -877,6 +894,9 @@ class Instruction
             else
                 $asm.puts "shl#{opcode[3, 1]}#{operands[0].value} #{operands[1].sh4Operand}"
             end
+        when "shalx", "sharx"
+            raise "Unhandled parameters for opcode #{opcode}" unless operands[0].is_a? Immediate and operands[0].value == 1
+            $asm.puts "sha#{opcode[3, 1]} #{operands[1].sh4Operand}"
         when "shld", "shad"
             $asm.puts "#{opcode} #{sh4Operands(operands)}"
         when "loaddReversedAndIncrementAddress"
@@ -1008,6 +1028,10 @@ class Instruction
             $asm.puts "extu.w #{sh4Operands([operands[1], operands[1]])}"
         when "loadi", "loadis", "loadp", "storei", "storep"
             $asm.puts "mov.l #{sh4Operands(operands)}"
+        when "alignformova"
+            $asm.puts ".balign 4"
+        when "mova"
+            $asm.puts "mova #{sh4Operands(operands)}"
         when "move"
             if operands[0].is_a? ConstPoolEntry
                 if operands[0].size == 16
@@ -1045,17 +1069,25 @@ class Instruction
             $asm.puts "sts pr, #{sh4Operands(operands)}"
         when "memfence"
             $asm.puts "synco"
+        when "pop"
+            if operands[0].sh4Operand == "pr"
+                $asm.puts "lds.l @r15+, #{sh4Operands(operands)}"
+            else
+                $asm.puts "mov.l @r15+, #{sh4Operands(operands)}"
+            end
+        when "push"
+            if operands[0].sh4Operand == "pr"
+                $asm.puts "sts.l #{sh4Operands(operands)}, @-r15"
+            else
+                $asm.puts "mov.l #{sh4Operands(operands)}, @-r15"
+            end
         when "popCalleeSaves"
             $asm.puts "mov.l @r15+, r8"
             $asm.puts "mov.l @r15+, r9"
             $asm.puts "mov.l @r15+, r10"
             $asm.puts "mov.l @r15+, r11"
             $asm.puts "mov.l @r15+, r13"
-            $asm.puts "lds.l @r15+, pr"
-            $asm.puts "mov.l @r15+, r14"
         when "pushCalleeSaves"
-            $asm.puts "mov.l r14, @-r15"
-            $asm.puts "sts.l pr, @-r15"
             $asm.puts "mov.l r13, @-r15"
             $asm.puts "mov.l r11, @-r15"
             $asm.puts "mov.l r10, @-r15"
