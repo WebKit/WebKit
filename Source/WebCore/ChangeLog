@@ -1,3 +1,19 @@
+2014-04-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Assertion failure changing select element size during focus event
+        dispatch
+        <https://bugs.webkit.org/show_bug.cgi?id=131566>
+        <rdar://problem/16400735>
+
+        Reviewed by Andy Estes.
+
+        Test: fast/forms/select-change-size-during-focus.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        Adopt the fix from Chromium r171216; check that the renderer is still
+        of the expected type, and return early if it is not.
+
 2014-04-11  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Clear sibling floats while splitting inline flow

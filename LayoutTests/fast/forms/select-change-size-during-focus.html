@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <script>
+            function setup() {
+                if (window.testRunner) {
+                    window.testRunner.dumpAsText();
+                    window.testRunner.waitUntilDone();
+                }
+
+                s = document.getElementById("select");
+
+                s.addEventListener("focus", function() {
+                    s.size = 1;
+
+                    window.setTimeout(function() {
+                        if (window.testRunner)
+                            window.testRunner.notifyDone();
+                    }, 0);
+                });
+
+                ev = document.createEvent("MouseEvent");
+                ev.initMouseEvent("mousedown", true, true, window, 0, 0, 0, 20, 20, false, false, false, false, 0, null);
+                s.dispatchEvent(ev);
+            }
+        </script>
+    </head>
+    <body onload="setup()">
+        <p>
+            WebKit bug #<a href="https://bugs.webkit.org/show_bug.cgi?id=131566">131566</a>: Assertion failure changing select element size during focus event dispatch. This test passes if it does not assert in a debug build.
+        </p>
+        <select id="select" size="2">
+            <option>option 1</option>
+            <option>option 2</option>
+        </select>
+    </body>
+</html>

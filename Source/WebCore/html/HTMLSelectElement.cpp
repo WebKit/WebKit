@@ -1340,8 +1340,8 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
 
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && toMouseEvent(event)->button() == LeftButton) {
         focus();
-        // Calling focus() may cause us to lose our renderer, in which case do not want to handle the event.
-        if (!renderer())
+        // Calling focus() may remove or change our renderer, in which case we don't want to handle the event further.
+        if (!renderer() || !renderer()->isListBox())
             return;
 
         // Convert to coords relative to the list box if needed.
