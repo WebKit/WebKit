@@ -30,11 +30,14 @@
 #include "PlatformCAAnimation.h"
 #include "PlatformCALayer.h"
 #include "PlatformCALayerClient.h"
-#include "TileController.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringHash.h>
+
+#if PLATFORM(COCOA)
+#include "TileController.h"
+#endif
 
 // Enable this to add a light red wash over the visible portion of Tiled Layers, as computed
 // by flushCompositingState().

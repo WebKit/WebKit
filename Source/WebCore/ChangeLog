@@ -1,3 +1,10 @@
+2014-04-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Build fix after r167138
+
+        * platform/graphics/ca/GraphicsLayerCA.h: The TileController is
+        only available on Mac/Cocoa builds.
+
 2014-04-11  Mark Lam  <mark.lam@apple.com>
 
         JSMainThreadExecState::call() should clear exceptions before returning.
