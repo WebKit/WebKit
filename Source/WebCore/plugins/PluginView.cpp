@@ -387,8 +387,8 @@ void PluginView::stop()
     if (savedData) {
         // TODO: Actually save this data instead of just discarding it
         if (savedData->buf)
-            NPN_MemFree(savedData->buf);
-        NPN_MemFree(savedData);
+            m_plugin->browserFuncs()->memfree(savedData->buf);
+        m_plugin->browserFuncs()->memfree(savedData);
     }
 #endif
 
@@ -1386,7 +1386,7 @@ NPError PluginView::getValueForURL(NPNURLVariable variable, const char* url, cha
                 const CString cookieStr = cookies(frame->document(), u).utf8();
                 if (!cookieStr.isNull()) {
                     const int size = cookieStr.length();
-                    *value = static_cast<char*>(NPN_MemAlloc(size+1));
+                    *value = static_cast<char*>(m_plugin->browserFuncs()->memalloc(size+1));
                     if (*value) {
                         memset(*value, 0, size+1);
                         memcpy(*value, cookieStr.data(), size+1);
@@ -1409,7 +1409,7 @@ NPError PluginView::getValueForURL(NPNURLVariable variable, const char* url, cha
             const CString proxyStr = toString(proxyServersForURL(u, context)).utf8();
             if (!proxyStr.isNull()) {
                 const int size = proxyStr.length();
-                *value = static_cast<char*>(NPN_MemAlloc(size+1));
+                *value = static_cast<char*>(m_plugin->browserFuncs()->memalloc(size+1));
                 if (*value) {
                     memset(*value, 0, size+1);
                     memcpy(*value, proxyStr.data(), size+1);

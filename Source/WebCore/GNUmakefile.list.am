@@ -4266,7 +4266,6 @@ webcore_sources += \
 	Source/WebCore/plugins/PluginViewBase.h \
 	Source/WebCore/plugins/PluginView.cpp \
 	Source/WebCore/plugins/PluginView.h \
-	Source/WebCore/plugins/npapi.cpp \
 	Source/WebCore/plugins/npapi.h \
 	Source/WebCore/plugins/npfunctions.h \
 	Source/WebCore/plugins/npruntime.h \

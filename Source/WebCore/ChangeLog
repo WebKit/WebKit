@@ -1,3 +1,50 @@
+2014-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Plugin process crashes when loading totem plugin
+        https://bugs.webkit.org/show_bug.cgi?id=131357
+
+        Make Netscape browser functions static to avoid conflicts with
+        plugins defining those functions as well.
+
+        * GNUmakefile.list.am: Do not build npapi.cpp.
+        * plugins/PluginPackage.cpp:
+        (WebCore::pluginViewForInstance):
+        (WebCore::NPN_MemAlloc):
+        (WebCore::NPN_MemFree):
+        (WebCore::NPN_MemFlush):
+        (WebCore::NPN_ReloadPlugins):
+        (WebCore::NPN_RequestRead):
+        (WebCore::NPN_GetURLNotify):
+        (WebCore::NPN_GetURL):
+        (WebCore::NPN_PostURLNotify):
+        (WebCore::NPN_PostURL):
+        (WebCore::NPN_NewStream):
+        (WebCore::NPN_Write):
+        (WebCore::NPN_DestroyStream):
+        (WebCore::NPN_UserAgent):
+        (WebCore::NPN_Status):
+        (WebCore::NPN_InvalidateRect):
+        (WebCore::NPN_InvalidateRegion):
+        (WebCore::NPN_ForceRedraw):
+        (WebCore::NPN_GetValue):
+        (WebCore::NPN_SetValue):
+        (WebCore::NPN_GetJavaEnv):
+        (WebCore::NPN_GetJavaPeer):
+        (WebCore::NPN_PushPopupsEnabledState):
+        (WebCore::NPN_PopPopupsEnabledState):
+        (WebCore::NPN_PluginThreadAsyncCall):
+        (WebCore::NPN_GetValueForURL):
+        (WebCore::NPN_SetValueForURL):
+        (WebCore::NPN_GetAuthenticationInfo):
+        (WebCore::NPN_PopUpContextMenu):
+        * plugins/PluginPackage.h:
+        (WebCore::PluginPackage::browserFuncs): Add accessor to browser
+        function pointers.
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::stop): Use browser function pointers instead
+        of NPN wrappers that are now private.
+        (WebCore::PluginView::getValueForURL): Ditto.
+
 2014-04-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Readonly attributes installed as readwrite in GObject DOM bindings
