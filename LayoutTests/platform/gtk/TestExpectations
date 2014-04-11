@@ -769,7 +769,9 @@ Bug(GTK) fast/workers/storage/transaction-in-transaction-sync.html [ Failure Pas
 Bug(GTK) http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure Pass ]
 Bug(GTK) media/video-transformed.html [ Failure Pass ]
 Bug(GTK) media/W3C/audio/networkState/networkState_during_loadstart.html [ Failure Pass ]
-
+webkit.org/b/131533 media/track/track-remove-active-cue-crash.html [ Timeout Pass ]
+webkit.org/b/131534 media/media-ended.html [ Timeout Pass ]
+webkit.org/b/131535 media/audio-mpeg-supported.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

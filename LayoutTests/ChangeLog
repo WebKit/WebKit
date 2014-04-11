@@ -1,3 +1,14 @@
+2014-04-11  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Update test expectations for flaky tests timing out:
+          media/track/track-remove-active-cue-crash.html
+          media/media-ended.html
+          media/audio-mpeg-supported.html
+
+        * platform/gtk/TestExpectations:
+
 2014-04-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167073.
