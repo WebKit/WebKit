@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 5: Exception to trigger unwinding in MutationObserver
+CONSOLE MESSAGE: Pending exception before MutationObservers are called.
+Regression test for https://webkit.org/b/131530. This test should not crash.
+
+Mutate that node

@@ -1,3 +1,13 @@
+2014-04-11  Mark Lam  <mark.lam@apple.com>
+
+        JSMainThreadExecState::call() should clear exceptions before returning.
+        <https://webkit.org/b/131530>
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/regress-131530-expected.txt: Added.
+        * fast/dom/regress-131530.html: Added.
+
 2014-04-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

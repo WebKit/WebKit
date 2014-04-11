@@ -120,12 +120,19 @@ id createJSWrapper(JSC::JSObject* object, PassRefPtr<JSC::Bindings::RootObject> 
     return [[[WebScriptObject alloc] _initWithJSObject:object originRootObject:origin rootObject:root] autorelease];
 }
 
-static void addExceptionToConsole(ExecState* exec)
+static void addExceptionToConsole(ExecState* exec, JSC::JSValue& exception)
 {
     JSDOMWindow* window = asJSDOMWindow(exec->vmEntryGlobalObject());
-    if (!window || !exec->hadException())
+    if (!window || !exception)
         return;
-    reportCurrentException(exec);
+    reportException(exec, exception);
+}
+
+static void addExceptionToConsole(ExecState* exec)
+{
+    JSC::JSValue exception = exec->exception();
+    exec->clearException();
+    addExceptionToConsole(exec, exception);
 }
 
 } // namespace WebCore
@@ -334,12 +341,12 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (![self _isSafeScript])
         return nil;
 
-    JSC::JSValue result = JSMainThreadExecState::call(exec, function, callType, callData, [self _imp], argList);
+    JSC::JSValue exception;
+    JSC::JSValue result = JSMainThreadExecState::call(exec, function, callType, callData, [self _imp], argList, &exception);
 
-    if (exec->hadException()) {
-        addExceptionToConsole(exec);
+    if (exception) {
+        addExceptionToConsole(exec, exception);
         result = jsUndefined();
-        exec->clearException();
     }
 
     // Convert and return the result of the function call.

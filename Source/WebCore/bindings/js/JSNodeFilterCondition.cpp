@@ -67,7 +67,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 
-    JSValue result = JSMainThreadExecState::call(exec, filter, callType, callData, m_filter.get(), args);
+    JSValue result = JSC::call(exec, filter, callType, callData, m_filter.get(), args);
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 

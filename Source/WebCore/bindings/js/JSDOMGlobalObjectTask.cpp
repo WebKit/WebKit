@@ -64,6 +64,7 @@ public:
             JSMainThreadExecState::runTask(exec, *m_task.get());
         else
             m_task->run(exec);
+        ASSERT(!exec->hadException());
     }
 
 private:

@@ -71,7 +71,7 @@ private:
 
 class JS_EXPORT_PRIVATE ScriptFunctionCall : public ScriptCallArgumentHandler {
 public:
-    typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args);
+    typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::JSValue* exception);
     ScriptFunctionCall(const ScriptObject& thisObject, const String& name, ScriptFunctionCallHandler handler = nullptr);
     ScriptValue call(bool& hadException);
     ScriptValue call();

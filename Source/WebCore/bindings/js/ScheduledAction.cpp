@@ -99,15 +99,16 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
 
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
 
+    JSValue exception;
     if (context->isDocument())
-        JSMainThreadExecState::call(exec, m_function.get(), callType, callData, thisValue, args);
+        JSMainThreadExecState::call(exec, m_function.get(), callType, callData, thisValue, args, &exception);
     else
-        JSC::call(exec, m_function.get(), callType, callData, thisValue, args);
+        JSC::call(exec, m_function.get(), callType, callData, thisValue, args, &exception);
 
     InspectorInstrumentation::didCallFunction(cookie, context);
 
-    if (exec->hadException())
-        reportCurrentException(exec);
+    if (exception)
+        reportException(exec, exception);
 }
 
 void ScheduledAction::execute(Document* document)

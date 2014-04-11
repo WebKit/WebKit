@@ -122,9 +122,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(scriptExecutionContext, callType, callData);
 
         JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event->currentTarget()) : jsFunction;
+        JSValue exception;
         JSValue retval = scriptExecutionContext->isDocument()
-            ? JSMainThreadExecState::call(exec, handleEventFunction, callType, callData, thisValue, args)
-            : JSC::call(exec, handleEventFunction, callType, callData, thisValue, args);
+            ? JSMainThreadExecState::call(exec, handleEventFunction, callType, callData, thisValue, args, &exception)
+            : JSC::call(exec, handleEventFunction, callType, callData, thisValue, args, &exception);
 
         InspectorInstrumentation::didCallFunction(cookie, scriptExecutionContext);
 
@@ -136,9 +137,9 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
                 toWorkerGlobalScope(scriptExecutionContext)->script()->forbidExecution();
         }
 
-        if (exec->hadException()) {
+        if (exception) {
             event->target()->uncaughtExceptionInEventHandler();
-            reportCurrentException(exec);
+            reportException(exec, exception);
         } else {
             if (!retval.isUndefinedOrNull() && event->isBeforeUnloadEvent())
                 toBeforeUnloadEvent(event)->setReturnValue(retval.toString(exec)->value(exec));

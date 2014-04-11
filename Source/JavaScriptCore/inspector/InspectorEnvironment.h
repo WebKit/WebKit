@@ -34,7 +34,7 @@ class SourceCode;
 
 namespace Inspector {
 
-typedef JSC::JSValue (*InspectorFunctionCallHandler)(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args);
+typedef JSC::JSValue (*InspectorFunctionCallHandler)(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::JSValue* exception);
 typedef JSC::JSValue (*InspectorEvaluateHandler)(JSC::ExecState*, const JSC::SourceCode&, JSC::JSValue thisValue, JSC::JSValue* exception);
 
 class InspectorEnvironment {

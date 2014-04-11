@@ -1,3 +1,32 @@
+2014-04-11  Mark Lam  <mark.lam@apple.com>
+
+        JSMainThreadExecState::call() should clear exceptions before returning.
+        <https://webkit.org/b/131530>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a version of JSC::call() that return any uncaught exception instead
+        of leaving it pending in the VM.
+
+        As part of this change, I updated various parts of the code base to use the
+        new API as needed.
+
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        - ScriptFunctionCall::call() is only used by the inspector to inject scripts.
+          The injected scripts that will include Inspector scripts that should catch
+          and handle any exceptions that were thrown.  We should not be seeing any
+          exceptions returned from this call.  However, we do have checks for
+          exceptions in case there are bugs in the Inspector scripts which allowed
+          the exception to leak through.  Hence, it is proper to clear the exception
+          here, and only record the fact that an exception was seen (if present).
+
+        * bindings/ScriptFunctionCall.h:
+        * inspector/InspectorEnvironment.h:
+        * runtime/CallData.cpp:
+        (JSC::call):
+        * runtime/CallData.h:
+
 2014-04-11  Oliver Hunt  <oliver@apple.com>
 
         Add BuiltinLog function to make debugging builtins easier

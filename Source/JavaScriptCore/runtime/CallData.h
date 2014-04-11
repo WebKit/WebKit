@@ -58,6 +58,7 @@ union CallData {
 };
 
 JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&);
+JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&, JSValue* exception);
 
 } // namespace JSC
 

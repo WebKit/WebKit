@@ -50,16 +50,15 @@ public:
         return s_mainThreadState;
     };
     
-    static JSC::JSValue call(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args)
+    static JSC::JSValue call(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::JSValue* exception)
     {
         JSMainThreadExecState currentState(exec);
-        return JSC::call(exec, functionObject, callType, callData, thisValue, args);
+        return JSC::call(exec, functionObject, callType, callData, thisValue, args, exception);
     };
 
     static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::JSValue* exception)
     {
         JSMainThreadExecState currentState(exec);
-        JSC::JSLockHolder lock(exec);
         return JSC::evaluate(exec, source, thisValue, exception);
     };
 
@@ -74,6 +73,7 @@ public:
 private:
     explicit JSMainThreadExecState(JSC::ExecState* exec)
         : m_previousState(s_mainThreadState)
+        , m_lock(exec)
     {
         ASSERT(isMainThread());
         s_mainThreadState = exec;
@@ -82,6 +82,7 @@ private:
     ~JSMainThreadExecState()
     {
         ASSERT(isMainThread());
+        ASSERT(!s_mainThreadState->hadException());
 
         bool didExitJavaScript = s_mainThreadState && !m_previousState;
 
@@ -93,6 +94,7 @@ private:
 
     static JSC::ExecState* s_mainThreadState;
     JSC::ExecState* m_previousState;
+    JSC::JSLockHolder m_lock;
 
     static void didLeaveScriptContext();
 };
@@ -119,7 +121,7 @@ private:
     JSC::ExecState* m_previousState;
 };
 
-JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState*, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args);
+JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState*, JSC::JSValue functionObject, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::JSValue* exception);
 JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState*, const JSC::SourceCode&, JSC::JSValue thisValue, JSC::JSValue* exception);
 
 } // namespace WebCore

@@ -1,3 +1,77 @@
+2014-04-11  Mark Lam  <mark.lam@apple.com>
+
+        JSMainThreadExecState::call() should clear exceptions before returning.
+        <https://webkit.org/b/131530>
+
+        Reviewed by Geoffrey Garen.
+
+        Test: fast/dom/regress-131530.html
+
+        Previously, JSMainThreadExecState::call() did not clear any pending
+        exceptions in the VM before returning.  On returning, the
+        JSMainThreadExecState destructor may re-enter the VM to notify
+        MutationObservers.  This may result in a crash because the VM expects
+        exceptions to be cleared at entry.
+
+        We now change JSMainThreadExecState::call() to return the exception
+        (if present) via an argument, and clear it from the VM before returning.
+
+        As part of this change, I updated various parts of the code base to use the
+        new API as needed.
+
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        - Assert that there's no unhandled exception after the Microtask returns.
+          See comment for WebCore::JSMainThreadExecState::runTask below for more
+          details.
+
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open):
+        - Document.open() cannot be the first function on the JS stack.  Hence,
+          there is no need to use JSMainThreadExecState to call into the VM, as
+          this is only needed to catch the event of returning from the first
+          function for the purpose of notifying MutationObservers.  Change to
+          call JSC::call() directly.
+
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore::functionCallHandlerFromAnyThread):
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::call):
+        (WebCore::JSMainThreadExecState::evaluate):
+        - Remove the explicitly acquisition of the JSLock here because we now
+          acquire the JSLock as part of the JSMainThreadExecState instance.
+        (WebCore::JSMainThreadExecState::runTask):
+        - Added an assert to verify that the task does not return with an
+          unhandled exception.  Currently, the only Microtask in use is for the
+          Promise implementation, which will eat the exception before returning.
+          This assertion is added here to verify that this contract does not
+          inadvertantly change in the future.
+        (WebCore::JSMainThreadExecState::JSMainThreadExecState):
+        - Now acquires the JSLock as well since by definition, we're only
+          instantiating the JSMainThreadExecState because we're about to enter
+          the VM.
+
+        * bindings/js/JSMutationCallback.cpp:
+        (WebCore::JSMutationCallback::call):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        - acceptNode() is only used in the TreeWalker and NodeIterator APIs which
+          cannot be the first function on the JS stack.  Hence, we should call
+          JSC::call() directly instead of going through JSMainThreadExecState.
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/objc/WebScriptObject.mm:
+        (WebCore::addExceptionToConsole):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+
 2014-04-11  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: CodeGeneratorJS should guard includes of replay-related headers
