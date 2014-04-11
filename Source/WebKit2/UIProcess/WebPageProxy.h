@@ -607,6 +607,7 @@ public:
     void applicationWillEnterForeground();
     void applicationWillResignActive();
     void applicationDidBecomeActive();
+    void zoomToRect(WebCore::FloatRect rect, double minimumScale, double maximumScale);
 #endif
 
     const EditorState& editorState() const { return m_editorState; }

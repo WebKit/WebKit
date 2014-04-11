@@ -1957,6 +1957,11 @@ WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const Stri
 }
 #endif
 
+void WebPage::zoomToRect(FloatRect rect, double minimumScale, double maximumScale)
+{
+    send(Messages::WebPageProxy::ZoomToRect(rect, minimumScale, maximumScale));
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)
