@@ -174,6 +174,8 @@ void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance* utteranc
 {
     ASSERT(utterance);
     ASSERT(m_currentSpeechUtterance);
+    RefPtr<SpeechSynthesisUtterance> protect(utterance);
+    
     m_currentSpeechUtterance = 0;
 
     fireEvent(errorOccurred ? eventNames().errorEvent : eventNames().endEvent, utterance, 0, String());

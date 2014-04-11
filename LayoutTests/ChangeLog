@@ -1,3 +1,13 @@
+2014-04-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Heap-use-after-free in WebCore::SpeechSynthesisUtterance::startTime
+        https://bugs.webkit.org/show_bug.cgi?id=131482
+
+        Reviewed by David Kilzer.
+
+        * platform/mac/fast/speechsynthesis/speech-synthesis-gc-utterance-crash-expected.txt: Added.
+        * platform/mac/fast/speechsynthesis/speech-synthesis-gc-utterance-crash.html: Added.
+
 2014-04-11  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] inset args and radial args should serialize to the simplest form
