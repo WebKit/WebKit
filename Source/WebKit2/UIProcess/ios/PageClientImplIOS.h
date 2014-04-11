@@ -122,7 +122,7 @@ private:
     virtual void hideInspectorIndication() override;
 #endif
 
-    virtual void zoomToRect(WebCore::FloatRect rect, double minimumScale, double maximumScale) override;
+    virtual void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) override;
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
