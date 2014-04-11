@@ -1,3 +1,24 @@
+2014-04-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Add user default for FTL JIT
+        https://bugs.webkit.org/show_bug.cgi?id=131520
+
+        Reviewed by Benjamin Poulain.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+            - pass setting to WebContent process.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebContext::platformInitializeWebProcess):
+            - read user default.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+            - set JSC::Option.
+
 2014-04-10  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Notify the form delegate when the custom button in the form accessory view is tapped

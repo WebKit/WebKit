@@ -185,6 +185,9 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     if (!JSC::Options::useJITWasOverridden())
         JSC::Options::useJIT() = parameters.shouldEnableJIT;
 
+    if (!JSC::Options::useFTLJITWasOverridden())
+        JSC::Options::useFTLJIT() = parameters.shouldEnableFTLJIT;
+
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 
 #if USE(APPKIT)
