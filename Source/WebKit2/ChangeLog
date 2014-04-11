@@ -1,3 +1,19 @@
+2014-04-10  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] Dispatch to main thread's run loop to handle cookie requests.
+        https://bugs.webkit.org/show_bug.cgi?id=131524
+
+        Reviewed by Brady Eidson.
+
+        When using synchronous network APIs from the main thread (e.g., -[NSImage
+        initWithContentsOfURL:]) our cookie shim would attempt to dispath_async
+        to the main thread to handle the cookie request, and block against the original
+        request. CFNetwork is still servicing the run loop however, so rather than
+        dispatch_async to the main queue, use the RunLoop to dispatch to the main thread.
+
+        * Shared/mac/CookieStorageShim.mm:
+        (-[WKNSURLSessionLocal _getCookieHeadersForTask:completionHandler:]):
+
 2014-04-11  Tim Horton  <timothy_horton@apple.com>
 
         Make the stylebot happier with r167154.

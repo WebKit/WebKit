@@ -39,6 +39,7 @@
 #include <dlfcn.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 
 typedef const struct _CFURLRequest* CFURLRequestRef;
@@ -120,8 +121,9 @@ void CookieStorageShim::initialize()
     if (!completionHandler)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        completionHandler(WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL(nullptr, (CFURLRef)[[task currentRequest] URL]));
+    RetainPtr<NSURLSessionTask> strongTask = task;
+    RunLoop::main().dispatch([strongTask, completionHandler]{
+        completionHandler(WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL(nullptr, (CFURLRef)[[strongTask currentRequest] URL]));
     });
 }
 #endif
