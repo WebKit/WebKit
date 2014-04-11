@@ -236,7 +236,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (documentBeingDestroyed() || document().inPageCache())
         return;
 
-    if (hasBoxDecorations() || hasMask())
+    if (hasBoxDecorations() || hasMask() || hasShapeOutside())
         RenderReplaced::imageChanged(newImage, rect);
 
     if (newImage != imageResource().imagePtr() || !newImage)

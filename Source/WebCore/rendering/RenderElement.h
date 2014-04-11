@@ -143,6 +143,12 @@ public:
     bool hasBlendMode() const { return false; }
 #endif
 
+#if ENABLE(CSS_SHAPES)
+    bool hasShapeOutside() const { return style().shapeOutside(); }
+#else
+    bool hasShapeOutside() const { return false; }
+#endif
+
     bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect);
     bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
     void setHasPausedImageAnimations(bool b) { m_hasPausedImageAnimations = b; }

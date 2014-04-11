@@ -1,3 +1,20 @@
+2014-04-11  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] shape-outside from image doesn't load properly
+        https://bugs.webkit.org/show_bug.cgi?id=131491
+
+        Reviewed by Bem Jones-Bey.
+
+        Make RenderImage::imageChanged() call super if there's a shape-outside
+        image because the shape-outside imageChanged() logic is in RenderBox.
+
+        Test: http/tests/css/shape-image-file.html
+
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::hasShapeOutside):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+
 2014-04-11  Brady Eidson  <beidson@apple.com>
 
         Aggregate multiple "respondToChangedSelection" calls to one scan for telephone numbers
