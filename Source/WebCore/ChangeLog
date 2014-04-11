@@ -1,3 +1,20 @@
+2014-04-11  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix (r167151): Do not dereference Node::document() before passing to Range::create()
+        <https://webkit.org/b/131475>
+
+        Fixes the following build failure:
+
+            WebCore/editing/AlternativeTextController.cpp:275:71: error: indirection requires pointer operand ('WebCore::Document' invalid)
+                int paragraphStartIndex = TextIterator::rangeLength(Range::create(*rootNode.document(), &rootNode, 0, paragraphRangeContainingCorrection.get()->startContainer(), paragraphRangeContainingCorrection.get()->startOffset()).get());
+                                                                                  ^~~~~~~~~~~~~~~~~~~~
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        Remove unneeded '*' operator since Node::document() returns a
+        Document& and Range::create() accepts a Document& for its first
+        argument.
+
 2014-04-11  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: memoize nondeterministic attributes of the Navigator interface
