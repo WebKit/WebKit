@@ -103,12 +103,15 @@ add_executable(TestWTF
     ${TESTWEBKITAPI_DIR}/Tests/WTF/AtomicString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CheckedArithmeticOperations.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Deque.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Functional.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashMap.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/HashSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/IntegerToStringConversion.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ListHashSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MD5.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MathExtras.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/MediaTime.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MetaAllocator.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RedBlackTree.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Ref.cpp
@@ -119,6 +122,7 @@ add_executable(TestWTF
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringHasher.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringImpl.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringOperators.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringView.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/TemporaryChange.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Vector.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp

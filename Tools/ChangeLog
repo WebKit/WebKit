@@ -1,3 +1,13 @@
+2014-04-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Add missing WTF unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=131459
+
+        Reviewed by Martin Robinson.
+
+        * TestWebKitAPI/CMakeLists.txt: Add a few missing source files
+        that should be compiled into the TestWTF binary.
+
 2014-04-10  Brendan Long  <b.long@cablelabs.com>
 
         [Gtk] run-launcher doesn't work by default
