@@ -1,3 +1,24 @@
+2014-04-10  Jer Noble  <jer.noble@apple.com>
+
+        [iOS][WK2] Videos should animate into and out of fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=131497
+
+        Reviewed by Simon Fraser.
+
+        Use AVPlayerViewController's new enterFullScreenWithCompletionHandler: and exitFullScreenWithCompletionHandler:
+        methods to animate into and out of full screen. To do so, use the provided initialFrame and finalFrame screen
+        rects to correctly place the AVPlayerViewController's view before entering or exiting fullscreen.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController enterFullscreen:]): Pass the media element's screen rect.
+        (-[WebVideoFullscreenController exitFullscreen]): Ditto.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController playerViewController:shouldExitFullScreenWithReason:]): Renamed from shouldDismissWithReason.
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen): Use the new AVKit APIs.
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen): Ditto.
+        * WebCore.exp.in: Modify the exported symbols for enter and exitFullscreen.
+
 2014-04-11  Tim Horton  <timothy_horton@apple.com>
 
         Support document-relative and custom-frame page overlays

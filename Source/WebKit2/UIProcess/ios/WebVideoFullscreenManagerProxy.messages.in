@@ -29,7 +29,7 @@ messages -> WebVideoFullscreenManagerProxy {
     SetLegibleMediaSelectionOptions(Vector<String> options, uint64_t selectedIndex);
     SetDuration(double duration)
     SetRate(bool isPlaying, double rate)
-    EnterFullscreenWithID(uint32_t videoLayerID)
-    ExitFullscreen()
+    EnterFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect)
+    ExitFullscreen(WebCore::IntRect finalRect)
 }
 #endif

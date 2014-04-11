@@ -123,12 +123,12 @@ public:
     _interface->setWebVideoFullscreenModel(_model.get());
     _model->setMediaElement(_mediaElement.get());
     _model->setVideoFullscreenLayer(_videoFullscreenLayer.get());
-    _interface->enterFullscreen(*_videoFullscreenLayer.get());
+    _interface->enterFullscreen(*_videoFullscreenLayer.get(), _mediaElement->screenRect());
 }
 
 - (void)exitFullscreen
 {
-    _interface->exitFullscreen();
+    _interface->exitFullscreen(_mediaElement->screenRect());
 }
 
 - (void)didEnterFullscreen

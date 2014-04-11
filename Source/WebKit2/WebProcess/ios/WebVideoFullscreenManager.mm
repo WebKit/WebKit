@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS)
 
+#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebVideoFullscreenManagerMessages.h"
@@ -34,8 +35,12 @@
 #include <QuartzCore/CoreAnimation.h>
 #include <WebCore/Event.h>
 #include <WebCore/EventNames.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/PlatformCALayer.h>
+#include <WebCore/RenderLayer.h>
+#include <WebCore/RenderLayerBacking.h>
+#include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
 #include <WebCore/TimeRanges.h>
 #include <WebCore/WebCoreThreadRun.h>
@@ -43,6 +48,14 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+static IntRect screenRectForNode(Node* node)
+{
+    if (!node || !node->isElementNode())
+        return IntRect();
+
+    return toElement(node)->screenRect();
+}
 
 PassRefPtr<WebVideoFullscreenManager> WebVideoFullscreenManager::create(PassRefPtr<WebPage> page)
 {
@@ -86,10 +99,10 @@ void WebVideoFullscreenManager::enterFullscreenForNode(Node* node)
     m_layerHostingContext->setRootLayer(videoLayer);
     setVideoFullscreenLayer(videoLayer);
 
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreenWithID(m_layerHostingContext->contextID()), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreenWithID(m_layerHostingContext->contextID(), screenRectForNode(node)), m_page->pageID());
 }
 
-void WebVideoFullscreenManager::exitFullscreenForNode(Node*)
+void WebVideoFullscreenManager::exitFullscreenForNode(Node* node)
 {
     m_node.clear();
     m_targetIsFullscreen = false;
@@ -98,7 +111,7 @@ void WebVideoFullscreenManager::exitFullscreenForNode(Node*)
         return;
 
     m_isAnimating = true;
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(screenRectForNode(node)), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::setDuration(double duration)

@@ -110,7 +110,7 @@ SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend)
 @property (retain) NSArray *legibleMediaSelectionOptions;
 @property (retain) WebAVMediaSelectionOption *currentLegibleMediaSelectionOption;
 
-- (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldDismissWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
+- (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
 @end
 
 @implementation WebAVPlayerController
@@ -144,12 +144,13 @@ SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend)
     return self.playerControllerProxy;
 }
 
-- (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldDismissWithReason:(AVPlayerViewControllerExitFullScreenReason)reason
+- (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason
 {
     UNUSED_PARAM(playerViewController);
     UNUSED_PARAM(reason);
     ASSERT(self.delegate);
-    self.delegate->pause();
+    if (reason == AVPlayerViewControllerExitFullScreenReasonDoneButtonTapped || reason == AVPlayerViewControllerExitFullScreenReasonRemoteControlStopEventReceived)
+        self.delegate->pause();
     self.delegate->requestExitFullscreen();
     return NO;
 }
@@ -509,7 +510,7 @@ void WebVideoFullscreenInterfaceAVKit::setLegibleMediaSelectionOptions(const Vec
         playerController().currentLegibleMediaSelectionOption = webOptions[(size_t)selectedIndex];
 }
 
-void WebVideoFullscreenInterfaceAVKit::enterFullscreen(PlatformLayer& videoLayer)
+void WebVideoFullscreenInterfaceAVKit::enterFullscreen(PlatformLayer& videoLayer, WebCore::IntRect initialRect)
 {
     __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
     
@@ -530,16 +531,25 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen(PlatformLayer& videoLayer
         [m_playerViewController setDelegate:playerController()];
         
         m_viewController = adoptNS([[classUIViewController alloc] init]);
-        
+
         m_window = adoptNS([[classUIWindow alloc] initWithFrame:[[classUIScreen mainScreen] bounds]]);
         [m_window setBackgroundColor:[classUIColor clearColor]];
         [m_window setRootViewController:m_viewController.get()];
         [m_window makeKeyAndVisible];
-        
+
+        [m_viewController addChildViewController:m_playerViewController.get()];
+        [[m_viewController view] addSubview:[m_playerViewController view]];
+        [m_playerViewController view].frame = initialRect;
+        [m_playerViewController didMoveToParentViewController:m_viewController.get()];
+
+        // FIXME: remove the following once <rdar://problem/16578727> is fixed.
+        if ([m_playerViewController respondsToSelector:@selector(_updatePlaybackControlsViewController)])
+            [m_playerViewController performSelector:@selector(_updatePlaybackControlsViewController)];
+
         __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect2(this);
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            [m_viewController presentViewController:m_playerViewController.get() animated:YES completion:^{
+            [m_playerViewController enterFullScreenWithCompletionHandler:^(BOOL, NSError*){
                 if (m_fullscreenChangeObserver)
                     m_fullscreenChangeObserver->didEnterFullscreen();
                 protect2.clear();
@@ -550,14 +560,15 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen(PlatformLayer& videoLayer
     });
 }
 
-void WebVideoFullscreenInterfaceAVKit::exitFullscreen()
+void WebVideoFullscreenInterfaceAVKit::exitFullscreen(WebCore::IntRect finalRect)
 {
     __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
 
     m_playerController.clear();
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [m_viewController dismissViewControllerAnimated:YES completion:^{
+        [m_playerViewController view].frame = finalRect;
+        [m_playerViewController exitFullScreenWithCompletionHandler:^(BOOL, NSError*){
             [m_window setHidden:YES];
             [m_window setRootViewController:nil];
             [m_playerViewController setDelegate:nil];

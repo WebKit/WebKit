@@ -52,7 +52,7 @@ private:
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     // Translate to FullscreenInterface
-    virtual void enterFullscreenWithID(uint32_t);
+    virtual void enterFullscreenWithID(uint32_t, WebCore::IntRect initialRect);
     virtual void setSeekableRangesVector(Vector<std::pair<double, double>>&);
 
     // Fullscreen Observer

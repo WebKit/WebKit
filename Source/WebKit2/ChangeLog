@@ -1,3 +1,22 @@
+2014-04-10  Jer Noble  <jer.noble@apple.com>
+
+        [iOS][WK2] Videos should animate into and out of fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=131497
+
+        Reviewed by Simon Fraser.
+
+        Pass a starting rect for the enterFullscreen animation and an ending rect
+        for the exitFullscreen animation.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::enterFullscreenWithID): Pass initialFrame.
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::screenRectOfContents): Casts node -> element and returns its screenRect().
+        (WebKit::WebVideoFullscreenManager::enterFullscreenForNode): Pass initialFrame.
+        (WebKit::WebVideoFullscreenManager::exitFullscreenForNode): Pass finalFrame.
+
 2014-04-11  Tim Horton  <timothy_horton@apple.com>
 
         Support document-relative and custom-frame page overlays
