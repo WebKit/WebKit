@@ -106,7 +106,11 @@ static double highResUpTime()
 
     LARGE_INTEGER qpc;
     QueryPerformanceCounter(&qpc);
+#if defined(_M_IX86) || defined(__i386__)
     DWORD tickCount = GetTickCount();
+#else
+    ULONGLONG tickCount = GetTickCount64();
+#endif
 
     if (inited) {
         __int64 qpcElapsed = ((qpc.QuadPart - qpcLast.QuadPart) * 1000) / qpcFrequency.QuadPart;

@@ -479,7 +479,6 @@
       </BrowseInformationFile>
       <StringPooling>
       </StringPooling>
-      <PreprocessorDefinitions>WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -518,7 +517,6 @@
       </BrowseInformationFile>
       <StringPooling>
       </StringPooling>
-      <PreprocessorDefinitions>WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -635,7 +633,6 @@
       </BrowseInformationFile>
       <StringPooling>
       </StringPooling>
-      <PreprocessorDefinitions>WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -672,7 +669,6 @@
       </BrowseInformationFile>
       <StringPooling>
       </StringPooling>
-      <PreprocessorDefinitions>WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

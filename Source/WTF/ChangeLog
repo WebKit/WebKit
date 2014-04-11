@@ -1,3 +1,19 @@
+2014-04-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Clean up some 64-bit warnings from Visual Studio analyzer
+        https://bugs.webkit.org/show_bug.cgi?id=131514
+
+        Reviewed by Tim Horton.
+
+        * WTF.vcxproj/WTF.vcxproj: Use correct platform settings for
+        64-bit build.
+        * config.h: Ditto.
+        * wtf/CurrentTime.cpp:
+        (WTF::highResUpTime): Resolve warning about deprecated API.
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::initialize): Silence warning about
+        an uninitialized variable.
+
 2014-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled back in r166972.

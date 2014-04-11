@@ -119,7 +119,7 @@ void StackBounds::initialize()
 
 void StackBounds::initialize()
 {
-    MEMORY_BASIC_INFORMATION stackOrigin;
+    MEMORY_BASIC_INFORMATION stackOrigin = { 0 };
     VirtualQuery(&stackOrigin, &stackOrigin, sizeof(stackOrigin));
     // stackOrigin.AllocationBase points to the reserved stack memory base address.
 
