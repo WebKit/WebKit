@@ -1,5 +1,12 @@
 2014-04-11  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the Mac build.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+
+2014-04-11  Tim Horton  <timothy_horton@apple.com>
+
         [iOS WebKit2] Find-in-page indicator
         https://bugs.webkit.org/show_bug.cgi?id=131510
         <rdar://problem/16547777>

@@ -303,16 +303,16 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
         return false;
 
     // We want the selection rect in window coordinates.
-    IntRect selectionRectInWindowCoordinates = selectedFrame->view()->contentsToWindow(selectionRect);
+    IntRect selectionRectInWindowCoordinates = selectedFrame.view()->contentsToWindow(selectionRect);
 
     Vector<FloatRect> textRects;
-    selectedFrame->selection().getClippedVisibleTextRectangles(textRects);
+    selectedFrame.selection().getClippedVisibleTextRectangles(textRects);
 
     // We want the text rects in selection rect coordinates.
     Vector<FloatRect> textRectsInSelectionRectCoordinates;
     
     for (size_t i = 0; i < textRects.size(); ++i) {
-        IntRect textRectInSelectionRectCoordinates = selectedFrame->view()->contentsToWindow(enclosingIntRect(textRects[i]));
+        IntRect textRectInSelectionRectCoordinates = selectedFrame.view()->contentsToWindow(enclosingIntRect(textRects[i]));
         textRectInSelectionRectCoordinates.move(-selectionRectInWindowCoordinates.x(), -selectionRectInWindowCoordinates.y());
 
         textRectsInSelectionRectCoordinates.append(textRectInSelectionRectCoordinates);
