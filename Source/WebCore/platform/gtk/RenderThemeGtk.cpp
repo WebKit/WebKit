@@ -763,6 +763,7 @@ int RenderThemeGtk::sliderTickOffsetFromTrackCenter() const
 String RenderThemeGtk::mediaControlsScript()
 {
     StringBuilder scriptBuilder;
+    scriptBuilder.append(mediaControlsLocalizedStringsJavaScript, sizeof(mediaControlsLocalizedStringsJavaScript));
     scriptBuilder.append(mediaControlsAppleJavaScript, sizeof(mediaControlsAppleJavaScript));
     scriptBuilder.append(mediaControlsGtkJavaScript, sizeof(mediaControlsGtkJavaScript));
     return scriptBuilder.toString();

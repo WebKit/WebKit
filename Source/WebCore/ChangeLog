@@ -1,3 +1,14 @@
+2014-04-11  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION(167145): Many media tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=131569
+
+        Reviewed by Brent Fulgham.
+
+        * PlatformGTK.cmake: Add the localized strings file to the list of user agent scripts.
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::mediaControlsScript): Include the localized strings file in the script body.
+
 2014-04-11  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] Find-in-page indicator

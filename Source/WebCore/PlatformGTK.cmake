@@ -259,6 +259,7 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
 )
 
 set(WebCore_USER_AGENT_SCRIPTS
+    ${WEBCORE_DIR}/English.lproj/mediaControlsLocalizedStrings.js
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.js
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsGtk.js
 )
