@@ -1,3 +1,9 @@
+2014-04-11  Antti Koivisto  <antti@apple.com>
+
+        Try to fix windows build.
+        
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2014-04-11  Brent Fulgham  <bfulgham@apple.com>
 
         Regression: media controls and status messages are no longer localized.
