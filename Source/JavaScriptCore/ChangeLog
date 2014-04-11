@@ -1,3 +1,14 @@
+2014-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        Compile fix for Win64.
+        https://bugs.webkit.org/show_bug.cgi?id=131508
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::fillNops):
+        Added unsigned template parameter to distinguish between size_t and unsigned long.
+
 2014-04-10  Michael Saboff  <msaboff@apple.com>
 
         LLInt interpreter code should be generated as part of one function
