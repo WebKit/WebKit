@@ -1,3 +1,22 @@
+2014-04-10  Michael Saboff  <msaboff@apple.com>
+
+        Crash beneath DFG JIT code @ video.disney.com
+        https://bugs.webkit.org/show_bug.cgi?id=131447
+
+        Reviewed by Geoffrey Garen.
+
+        The 32-bit path of speculateMisc() uses an 'is not int32' check followed by
+        'tag not less than Undefined' check.  The first check was incorrectly elided if we
+        knew that the value *was* an int32, when it should have been elided if we already
+        knew that the value *was not* an int32.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateMisc):
+        * tests/stress/test-spec-misc.js: Added test.
+        (getX):
+        (foo):
+        (bar):
+
 2014-04-08  Filip Pizlo  <fpizlo@apple.com>
 
         Make room for additional types in SpeculatedType.h
