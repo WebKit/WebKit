@@ -1,3 +1,13 @@
+2014-04-11  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Add IconServices to WebProcess sandbox profile
+        https://bugs.webkit.org/show_bug.cgi?id=131558
+        <rdar://problem/16552397>
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2014-04-11  Antti Koivisto  <antti@apple.com>
 
         Pipe initial scale factor to TileController
