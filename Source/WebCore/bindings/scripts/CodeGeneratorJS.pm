@@ -2196,19 +2196,21 @@ sub GenerateImplementation
             }
 
             if ($attribute->signature->extendedAttributes->{"Nondeterministic"}) {
-                $implIncludes{"<replay/InputCursor.h>"} = 1;
+                AddToImplIncludes("MemoizedDOMResult.h", "WEB_REPLAY");
+                AddToImplIncludes("<replay/InputCursor.h>", "WEB_REPLAY");
+                AddToImplIncludes("<wtf/NeverDestroyed.h>", "WEB_REPLAY");
+
                 push(@implContent, "#if ENABLE(WEB_REPLAY)\n");
                 push(@implContent, "    JSGlobalObject* globalObject = exec->lexicalGlobalObject();\n");
                 push(@implContent, "    InputCursor& cursor = globalObject->inputCursor();\n");
 
-                $implIncludes{"MemoizedDOMResult.h"} = 1;
                 my $nativeType = GetNativeType($type);
                 my $memoizedType = GetNativeTypeForMemoization($type);
                 my $exceptionCode = $getterExceptions ? "ec" : "0";
-                push(@implContent, "    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, bindingName, (\"$interfaceName.$name\", AtomicString::ConstructFromLiteral));\n");
+                push(@implContent, "    static NeverDestroyed<const AtomicString> bindingName(\"$interfaceName.$name\", AtomicString::ConstructFromLiteral);\n");
                 push(@implContent, "    if (cursor.isCapturing()) {\n");
                 push(@implContent, "        $memoizedType memoizedResult = castedThis->impl().$implGetterFunctionName(" . join(", ", @arguments) . ");\n");
-                push(@implContent, "        cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName, memoizedResult, $exceptionCode);\n");
+                push(@implContent, "        cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName.get().string(), memoizedResult, $exceptionCode);\n");
                 push(@implContent, "        JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "memoizedResult", "castedThis") . ";\n");
                 push(@implContent, "        setDOMException(exec, ec);\n") if $getterExceptions;
                 push(@implContent, "        return JSValue::encode(result);\n");
@@ -3555,7 +3557,7 @@ sub GenerateImplementationFunctionCall()
 
     if ($function->signature->type eq "void") {
         if ($nondeterministic) {
-            $implIncludes{"<replay/InputCursor.h>"} = 1;
+            AddToImplIncludes("<replay/InputCursor.h>", "WEB_REPLAY");
             push(@implContent, "#if ENABLE(WEB_REPLAY)\n");
             push(@implContent, $indent . "InputCursor& cursor = exec->lexicalGlobalObject()->inputCursor();\n");
             push(@implContent, $indent . "if (!cursor.isReplaying()) {\n");
@@ -3584,19 +3586,21 @@ sub GenerateImplementationFunctionCall()
     } else {
         my $thisObject = $function->isStatic ? 0 : "castedThis";
         if ($nondeterministic) {
-            $implIncludes{"MemoizedDOMResult.h"} = 1;
-            $implIncludes{"<replay/InputCursor.h>"} = 1;
+            AddToImplIncludes("MemoizedDOMResult.h", "WEB_REPLAY");
+            AddToImplIncludes("<replay/InputCursor.h>", "WEB_REPLAY");
+            AddToImplIncludes("<wtf/NeverDestroyed.h>", "WEB_REPLAY");
+
             my $nativeType = GetNativeTypeFromSignature($function->signature);
             my $memoizedType = GetNativeTypeForMemoization($function->signature->type);
             my $bindingName = $interfaceName . "." . $function->signature->name;
             push(@implContent, $indent . "JSValue result;\n");
             push(@implContent, "#if ENABLE(WEB_REPLAY)\n");
             push(@implContent, $indent . "InputCursor& cursor = exec->lexicalGlobalObject()->inputCursor();\n");
-            push(@implContent, $indent . "DEFINE_STATIC_LOCAL(const AtomicString, bindingName, (\"$bindingName\", AtomicString::ConstructFromLiteral));\n");
+            push(@implContent, $indent . "static NeverDestroyed<const AtomicString> bindingName(\"$bindingName\", AtomicString::ConstructFromLiteral);\n");
             push(@implContent, $indent . "if (cursor.isCapturing()) {\n");
             push(@implContent, $indent . "    $nativeType memoizedResult = $functionString;\n");
             my $exceptionCode = $raisesException ? "ec" : "0";
-            push(@implContent, $indent . "    cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName, memoizedResult, $exceptionCode);\n");
+            push(@implContent, $indent . "    cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName.get().string(), memoizedResult, $exceptionCode);\n");
             push(@implContent, $indent . "    result = " . NativeToJSValue($function->signature, 1, $interfaceName, "memoizedResult", $thisObject) . ";\n");
             push(@implContent, $indent . "} else if (cursor.isReplaying()) {\n");
             push(@implContent, $indent . "    MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();\n");
