@@ -1,3 +1,14 @@
+2014-04-10  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Notify the form delegate when the custom button in the form accessory view is tapped
+        https://bugs.webkit.org/show_bug.cgi?id=131518
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKFormDelegate.h: Declared new delegate method.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView accessoryAutoFill]): Call the new delegate method.
+
 2014-04-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167097.

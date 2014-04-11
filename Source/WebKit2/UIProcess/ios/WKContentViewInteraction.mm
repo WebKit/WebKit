@@ -1381,6 +1381,9 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 
 - (void)accessoryAutoFill
 {
+    id <_WKFormDelegate> formDelegate = [_webView _formDelegate];
+    if ([formDelegate respondsToSelector:@selector(_webView:accessoryViewCustomButtonTappedInFormInputSession:)])
+        [formDelegate _webView:_webView accessoryViewCustomButtonTappedInFormInputSession:_formInputSession.get()];
 }
 
 - (void)accessoryClear
