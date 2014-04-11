@@ -1,3 +1,21 @@
+2014-04-11  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: WK1: Trail of cruft in redraw during animations.
+        https://bugs.webkit.org/show_bug.cgi?id=131525
+
+        Reviewed by Simon Fraser.
+
+        Use enclosing rect instead of snapping to make sure the repaint rect always
+        covers the dirty area when painting is requested in a non-compositing RenderView.
+        This only applies to WK1 as WK2 has compositing RenderView and the repainting 
+        is managed by RenderLayerBacking.
+
+        This is a temporary solution until after ScrollView/FrameView/RenderView
+        is transitioned to device pixels. (tracked here: webkit.org/b/131526).
+
+        * fast/repaint/hidpi-block-width-change-leaves-cruft-expected.html: Added.
+        * fast/repaint/hidpi-block-width-change-leaves-cruft.html: Added.
+
 2014-04-11  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

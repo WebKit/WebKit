@@ -563,13 +563,13 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
 
     frameView().addTrackedRepaintRect(pixelSnappedForPainting(repaintRect, document().deviceScaleFactor()));
 
-    // FIXME: convert all repaint rect dependencies to FloatRect/LayoutRect
-    IntRect pixelSnappedRect = pixelSnappedIntRect(repaintRect);
+    // FIXME: convert all repaint rect dependencies to FloatRect.
+    IntRect enclosingRect = enclosingIntRect(repaintRect);
     if (!m_accumulatedRepaintRegion) {
-        frameView().repaintContentRectangle(pixelSnappedRect);
+        frameView().repaintContentRectangle(enclosingRect);
         return;
     }
-    m_accumulatedRepaintRegion->unite(pixelSnappedRect);
+    m_accumulatedRepaintRegion->unite(enclosingRect);
 
     // Region will get slow if it gets too complex. Merge all rects so far to bounds if this happens.
     // FIXME: Maybe there should be a region type that does this automatically.
