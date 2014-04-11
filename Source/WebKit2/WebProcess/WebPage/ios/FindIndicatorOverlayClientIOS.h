@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FindOptions_h
-#define FindOptions_h
+#ifndef FindIndicatorOverlayClientIOS_h
+#define FindIndicatorOverlayClientIOS_h
 
-namespace WebCore {
+#import "PageOverlay.h"
+#import <WebCore/Frame.h>
+#import <WebCore/GraphicsContext.h>
 
-enum FindOptionFlag {
-    CaseInsensitive = 1 << 0,
-    AtWordStarts = 1 << 1,
-    // When combined with AtWordStarts, accepts a match in the middle of a word if the match begins with
-    // an uppercase letter followed by a lowercase or non-letter. Accepts several other intra-word matches.
-    TreatMedialCapitalAsWordStart = 1 << 2,
-    Backwards = 1 << 3,
-    WrapAround = 1 << 4,
-    StartInSelection = 1 << 5,
-    DoNotRevealSelection = 1 << 6
+namespace WebKit {
+
+class FindIndicatorOverlayClientIOS : public PageOverlay::Client {
+public:
+    FindIndicatorOverlayClientIOS(WebCore::Frame& frame)
+        : m_frame(frame)
+    {
+    }
+
+private:
+    virtual void pageOverlayDestroyed(PageOverlay*) override { }
+    virtual void willMoveToWebPage(PageOverlay*, WebPage*) override { }
+    virtual void didMoveToWebPage(PageOverlay*, WebPage*) override { }
+    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
+    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) override { return false; }
+
+    WebCore::Frame& m_frame;
 };
 
-typedef unsigned char FindOptions;
+} // namespace WebKit
 
-} // namespace WebCore
-
-#endif // FindOptions_h
+#endif // FindIndicatorOverlayClientIOS_h

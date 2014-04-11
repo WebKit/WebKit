@@ -34,13 +34,18 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(IOS)
+#include "FindIndicatorOverlayClientIOS.h"
+#endif
+
 namespace WebCore {
-    class Frame;
-    class Range;
+class Frame;
+class Range;
 }
 
 namespace WebKit {
 
+class PageOverlay;
 class WebPage;
 
 class FindController : private PageOverlay::Client {
@@ -73,10 +78,14 @@ private:
     virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
 
     Vector<WebCore::IntRect> rectsForTextMatches();
-    bool getFindIndicatorBitmapAndRect(WebCore::Frame*, ShareableBitmap::Handle&, WebCore::IntRect& selectionRect);
-    bool updateFindIndicator(WebCore::Frame* selectedFrame, bool isShowingOverlay, bool shouldAnimate = true);
+    bool getFindIndicatorBitmapAndRect(WebCore::Frame&, ShareableBitmap::Handle&, WebCore::IntRect& selectionRect);
+    bool updateFindIndicator(WebCore::Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate = true);
 
     void updateFindUIAfterPageScroll(bool found, const String&, FindOptions, unsigned maxMatchCount);
+
+    void willFindString();
+    void didFailToFindString();
+    void didHideFindIndicator();
 
     WebPage* m_webPage;
     PageOverlay* m_findPageOverlay;
@@ -86,6 +95,11 @@ private:
     bool m_isShowingFindIndicator;
     WebCore::IntRect m_findIndicatorRect;
     Vector<RefPtr<WebCore::Range>> m_findMatches;
+
+#if PLATFORM(IOS)
+    RefPtr<PageOverlay> m_findIndicatorOverlay;
+    std::unique_ptr<FindIndicatorOverlayClientIOS> m_findIndicatorOverlayClient;
+#endif
 };
 
 } // namespace WebKit

@@ -3127,7 +3127,10 @@ bool Editor::findString(const String& target, FindOptions options)
         return false;
 
     m_frame.selection().setSelection(VisibleSelection(resultRange.get(), DOWNSTREAM));
-    m_frame.selection().revealSelection();
+
+    if (!(options & DoNotRevealSelection))
+        m_frame.selection().revealSelection();
+
     return true;
 }
 

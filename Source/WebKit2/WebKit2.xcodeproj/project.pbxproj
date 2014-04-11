@@ -562,6 +562,7 @@
 		2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */; };
 		2DC6D9C318C44A610043BAD4 /* WKWebViewContentProviderRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */; };
 		2DC6D9C418C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */; };
+		2DD13BD518F7DADD00E130A1 /* FindControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD13BD318F7DADD00E130A1 /* FindControllerIOS.mm */; };
 		2DDE0AFA18298CC900F97EAA /* RemoteLayerTreePropertyApplier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDE0AF818298CC900F97EAA /* RemoteLayerTreePropertyApplier.h */; };
 		2DDE0AFB18298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DDE0AF918298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm */; };
 		2DDF731518E95060004F5A66 /* RemoteLayerBackingStoreCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDF731318E95060004F5A66 /* RemoteLayerBackingStoreCollection.h */; };
@@ -2357,6 +2358,7 @@
 		2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerCARemote.h; sourceTree = "<group>"; };
 		2DA1E4FC18C02B6A00DBC929 /* WKPDFView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPDFView.h; path = ios/WKPDFView.h; sourceTree = "<group>"; };
 		2DA1E4FD18C02B6A00DBC929 /* WKPDFView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFView.mm; path = ios/WKPDFView.mm; sourceTree = "<group>"; };
+		2DA7FDCB18F88625008DDED0 /* FindIndicatorOverlayClientIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FindIndicatorOverlayClientIOS.h; path = ios/FindIndicatorOverlayClientIOS.h; sourceTree = "<group>"; };
 		2DA944861884E3B500ED86DB /* WKViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKViewIOS.mm; path = ios/WKViewIOS.mm; sourceTree = "<group>"; };
 		2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebKeyboardEventIOS.mm; path = ios/NativeWebKeyboardEventIOS.mm; sourceTree = "<group>"; };
 		2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebTouchEventIOS.mm; path = ios/NativeWebTouchEventIOS.mm; sourceTree = "<group>"; };
@@ -2379,6 +2381,7 @@
 		2DAF06D818BD23BA0081CEB1 /* SmartMagnificationController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = SmartMagnificationController.messages.in; path = ios/SmartMagnificationController.messages.in; sourceTree = "<group>"; };
 		2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewContentProviderRegistry.h; sourceTree = "<group>"; };
 		2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewContentProviderRegistry.mm; sourceTree = "<group>"; };
+		2DD13BD318F7DADD00E130A1 /* FindControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FindControllerIOS.mm; path = ios/FindControllerIOS.mm; sourceTree = "<group>"; };
 		2DDE0AF818298CC900F97EAA /* RemoteLayerTreePropertyApplier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreePropertyApplier.h; sourceTree = "<group>"; };
 		2DDE0AF918298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreePropertyApplier.mm; sourceTree = "<group>"; };
 		2DDF731318E95060004F5A66 /* RemoteLayerBackingStoreCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStoreCollection.h; sourceTree = "<group>"; };
@@ -4548,6 +4551,8 @@
 				2DA944B61884EA3500ED86DB /* WebPageIOS.mm */,
 				29232DF518B29DCE00D0596F /* WKAccessibilityWebPageObjectIOS.h */,
 				29232DF618B29DCE00D0596F /* WKAccessibilityWebPageObjectIOS.mm */,
+				2DD13BD318F7DADD00E130A1 /* FindControllerIOS.mm */,
+				2DA7FDCB18F88625008DDED0 /* FindIndicatorOverlayClientIOS.h */,
 			);
 			name = ios;
 			sourceTree = "<group>";
@@ -8333,6 +8338,7 @@
 				1A1B0EB518A424950038481A /* WKNavigationResponse.mm in Sources */,
 				1A0EC907124C0AB8007EF4A5 /* PluginProcessConnection.cpp in Sources */,
 				1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */,
+				2DD13BD518F7DADD00E130A1 /* FindControllerIOS.mm in Sources */,
 				1A7865B916CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp in Sources */,
 				1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */,
 				1A2D90D31281C966001EB962 /* PluginProcessCreationParameters.cpp in Sources */,
