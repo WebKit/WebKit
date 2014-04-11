@@ -125,7 +125,7 @@ private:
 #endif
 
 #if PLATFORM(GTK)
-    bool executePendingEditorCommands(WebCore::Frame*, Vector<WTF::String>, bool);
+    bool executePendingEditorCommands(WebCore::Frame*, const Vector<WTF::String>&, bool);
     void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<WTF::String>&);
     void updateGlobalSelection(WebCore::Frame*);
 #endif

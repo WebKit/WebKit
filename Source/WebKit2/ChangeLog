@@ -1,3 +1,16 @@
+2014-04-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WK2] Move Vector objects into WebEditorClient::executePendingEditorCommands() invocations
+        https://bugs.webkit.org/show_bug.cgi?id=131454
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::executePendingEditorCommands): Take a const reference of the Vector
+        object to avoid unnecessary copies. Also deploy two range-based for loops and efficiently move
+        the Editor::Command objects into the other Vector.
+
 2014-04-10  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/16582465> [Cocoa] Avoid casts from CF types to unrelated Objective-C types

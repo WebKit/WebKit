@@ -47,19 +47,19 @@ void WebEditorClient::getEditorCommandsForKeyEvent(const KeyboardEvent* event, V
                                                 m_page->pageID(), std::chrono::milliseconds::max());
 }
 
-bool WebEditorClient::executePendingEditorCommands(Frame* frame, Vector<WTF::String> pendingEditorCommands, bool allowTextInsertion)
+bool WebEditorClient::executePendingEditorCommands(Frame* frame, const Vector<WTF::String>& pendingEditorCommands, bool allowTextInsertion)
 {
     Vector<Editor::Command> commands;
-    for (size_t i = 0; i < pendingEditorCommands.size(); i++) {
-        Editor::Command command = frame->editor().command(pendingEditorCommands.at(i).utf8().data());
+    for (auto& commandString : pendingEditorCommands) {
+        Editor::Command command = frame->editor().command(commandString.utf8().data());
         if (command.isTextInsertion() && !allowTextInsertion)
             return false;
 
-        commands.append(command);
+        commands.append(std::move(command));
     }
 
-    for (size_t i = 0; i < commands.size(); i++) {
-        if (!commands.at(i).execute())
+    for (auto& command : commands) {
+        if (!command.execute())
             return false;
     }
 
