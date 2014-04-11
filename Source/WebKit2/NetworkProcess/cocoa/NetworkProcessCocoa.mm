@@ -44,6 +44,12 @@ extern "C" void CFURLConnectionInvalidateConnectionCache();
 extern "C" void _CFURLCacheSetMinSizeForVMCachedResource(CFURLCacheRef, CFIndex);
 #endif
 
+#if PLATFORM(IOS)
+@interface NSURLCache (WKDetails)
+-(id)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
+@end
+#endif
+
 namespace WebKit {
 
 void NetworkProcess::platformLowMemoryHandler(bool)
@@ -54,20 +60,24 @@ void NetworkProcess::platformLowMemoryHandler(bool)
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
+#if PLATFORM(IOS)
+    if (!parameters.uiProcessBundleIdentifier.isNull()) {
+        [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
+            _initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
+            diskCapacity:parameters.nsURLCacheDiskCapacity
+            relativePath:parameters.uiProcessBundleIdentifier]).get()];
+    }
+#else
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
     if (!m_diskCacheDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
-#if PLATFORM(IOS)
-        NSString *diskCachePath = nil;
-#else
-        NSString *diskCachePath = parameters.diskCacheDirectory;
-#endif
         [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
             initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
             diskCapacity:parameters.nsURLCacheDiskCapacity
-            diskPath:diskCachePath]).get()];
+            diskPath:parameters.diskCacheDirectory]).get()];
     }
+#endif
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());

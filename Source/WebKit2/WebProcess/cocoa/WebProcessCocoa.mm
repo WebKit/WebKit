@@ -53,6 +53,12 @@
 #import <objc/runtime.h>
 #import <stdio.h>
 
+#if PLATFORM(IOS)
+@interface NSURLCache (WKDetails)
+-(id)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
+@end
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -164,17 +170,21 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     // When the network process is enabled, each web process wants a stand-alone
     // NSURLCache, which it can disable to save memory.
     if (!usesNetworkProcess()) {
-        if (!parameters.diskCacheDirectory.isNull()) {
 #if PLATFORM(IOS)
-            NSString *diskCachePath = nil;
+        if (!parameters.uiProcessBundleIdentifier.isNull()) {
+            [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
+                _initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
+                diskCapacity:parameters.nsURLCacheDiskCapacity
+                relativePath:parameters.uiProcessBundleIdentifier]).get()];
+        }
 #else
-            NSString *diskCachePath = parameters.diskCacheDirectory;
-#endif
+        if (!parameters.diskCacheDirectory.isNull()) {
             [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
                 initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
                 diskCapacity:parameters.nsURLCacheDiskCapacity
-                diskPath:diskCachePath]).get()];
+                diskPath:parameters.diskCacheDirectory]).get()];
         }
+#endif
     }
 
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
