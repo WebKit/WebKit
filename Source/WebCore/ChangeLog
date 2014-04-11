@@ -1,3 +1,29 @@
+2014-04-11  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Clear sibling floats while splitting inline flow
+        https://bugs.webkit.org/show_bug.cgi?id=130905
+
+        Reviewed by David Hyatt.
+
+        This is a port of a Blink patch by kenrb@chromium.org.
+        (https://src.chromium.org/viewvc/blink?revision=169658&view=revision)
+
+        During RenderInline::splitFlow(), floats are cleared on an anonymous
+        containingBlock() for the inline being split. This is a problem if
+        siblings of the block contain references to the same floats, since the
+        float removal code in markSiblingsWithFloatsForLayout() will not later
+        find them.
+
+        This change also affects RenderBlock::splitFlow() and
+        RenderBoxModelObject::moveChildrenTo, since those are called in
+        similar situations as RenderInline::splitFlow().
+
+        Test: fast/block/float/split-inline-sibling-of-float-crash.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::removeFloatingObjects): Add call to
+            markSiblingsWithFloatsForLayout() before removing floats.
+
 2014-04-11  Gavin Barraclough  <baraclough@apple.com>
 
         Rollout - Rewrite Function.bind as a builtin

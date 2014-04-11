@@ -1,3 +1,16 @@
+2014-04-11  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Clear sibling floats while splitting inline flow
+        https://bugs.webkit.org/show_bug.cgi?id=130905
+
+        Reviewed by David Hyatt.
+
+        This test will only crash if run with Address Sanitizer or some other
+        address checking tool.
+
+        * fast/block/float/split-inline-sibling-of-float-crash-expected.txt: Added.
+        * fast/block/float/split-inline-sibling-of-float-crash.html: Added.
+
 2014-04-11  Gavin Barraclough  <baraclough@apple.com>
 
         Rollout - Rewrite Function.bind as a builtin
