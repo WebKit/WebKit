@@ -58,7 +58,6 @@ FindController::FindController(WebPage* webPage)
     : m_webPage(webPage)
     , m_findPageOverlay(0)
     , m_isShowingFindIndicator(false)
-    , m_shouldShowOverlay(true)
 {
 }
 
@@ -269,26 +268,19 @@ void FindController::selectFindMatch(uint32_t matchIndex)
     frame->selection().setSelection(VisibleSelection(m_findMatches[matchIndex].get()));
 }
 
-void FindController::hideFindOverlay()
-{
-    if (!m_findPageOverlay)
-        return;
-
-    m_webPage->uninstallPageOverlay(m_findPageOverlay, PageOverlay::FadeMode::Fade);
-}
-
 void FindController::hideFindUI()
 {
     m_findMatches.clear();
+    if (m_findPageOverlay)
+        m_webPage->uninstallPageOverlay(m_findPageOverlay, PageOverlay::FadeMode::Fade);
 
     PluginView* pluginView = pluginViewForFrame(m_webPage->mainFrame());
-
+    
     if (pluginView)
         pluginView->findString(emptyString(), 0, 0);
     else
         m_webPage->corePage()->unmarkAllTextMatches();
-
-    hideFindOverlay();
+    
     hideFindIndicator();
 }
 
@@ -449,17 +441,6 @@ bool FindController::mouseEvent(PageOverlay*, const WebMouseEvent& mouseEvent)
         hideFindUI();
 
     return false;
-}
-
-void FindController::setShouldShowOverlay(bool shouldShowOverlay)
-{
-    if (m_shouldShowOverlay == shouldShowOverlay)
-        return;
-
-    m_shouldShowOverlay = shouldShowOverlay;
-
-    if (isShowingOverlay() && !m_shouldShowOverlay)
-        hideFindOverlay();
 }
 
 } // namespace WebKit

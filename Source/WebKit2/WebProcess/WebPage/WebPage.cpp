@@ -2639,8 +2639,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         m_drawingArea->updatePreferences(store);
 
     m_pageOverlayController.didChangePreferences();
-
-    m_findController.setShouldShowOverlay(store.getBoolValueForKey(WebPreferencesKey::findInPageOverlayEnabledKey()));
 }
 
 #if PLATFORM(COCOA)
