@@ -1,3 +1,14 @@
+2014-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Make room for additional types in SpeculatedType.h
+        https://bugs.webkit.org/show_bug.cgi?id=131422
+
+        Reviewed by Sam Weinig.
+        
+        This'll make it easier to add DoubleHeavyNaN and DoubleEmptyNaN.
+
+        * bytecode/SpeculatedType.h:
+
 2014-04-10  Alex Christensen  <achristensen@webkit.org>
 
         Compile fix for Win64.
