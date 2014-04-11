@@ -44,6 +44,7 @@ namespace Inspector {
 class InspectorArray;
 class InspectorConsoleAgent;
 class InspectorObject;
+class ScriptDebugServer;
 }
 
 namespace WebCore {
@@ -77,6 +78,9 @@ public:
     virtual void start(ErrorString* = nullptr) override;
     virtual void stop(ErrorString* = nullptr) override;
 
+    Inspector::ScriptDebugServer* scriptDebugServer() const { return m_scriptDebugServer; }
+    void setScriptDebugServer(Inspector::ScriptDebugServer*);
+
     void disable(bool skipRecompile);
     void enable(bool skipRecompile);
     bool enabled() const { return m_enabled; }
@@ -104,6 +108,7 @@ private:
     PassRefPtr<Inspector::TypeBuilder::Profiler::ProfileHeader> createProfileHeader(const ScriptProfile&);
 
     Inspector::InspectorConsoleAgent* m_consoleAgent;
+    Inspector::ScriptDebugServer* m_scriptDebugServer;
     WebInjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<Inspector::InspectorProfilerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorProfilerBackendDispatcher> m_backendDispatcher;

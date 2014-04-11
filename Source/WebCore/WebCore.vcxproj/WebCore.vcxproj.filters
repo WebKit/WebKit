@@ -4500,9 +4500,6 @@
     <ClCompile Include="..\bindings\js\JSXSLTProcessorCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\PageScriptDebugServer.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\ScheduledAction.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -4831,6 +4828,9 @@
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\PageRuntimeAgent.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\PageScriptDebugServer.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\TimelineRecordFactory.cpp">
@@ -11404,9 +11404,6 @@
     <ClInclude Include="..\bindings\js\JSWorkerGlobalScopeBase.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
-    <ClInclude Include="..\bindings\js\PageScriptDebugServer.h">
-      <Filter>bindings\js</Filter>
-    </ClInclude>
     <ClInclude Include="..\bindings\js\ScheduledAction.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
@@ -12452,6 +12449,9 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\PageRuntimeAgent.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\PageScriptDebugServer.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\TimelineRecordFactory.h">

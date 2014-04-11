@@ -54,6 +54,7 @@ class InstrumentingAgents;
 class IntRect;
 class URL;
 class Page;
+class PageScriptDebugServer;
 class RenderObject;
 class ResourceRequest;
 class ResourceResponse;
@@ -138,6 +139,8 @@ public:
     virtual void stop(ErrorString*) override;
 
     int id() const { return m_id; }
+
+    void setPageScriptDebugServer(PageScriptDebugServer*);
 
     void didCommitLoad();
 
@@ -247,6 +250,7 @@ private:
     Page* page();
 
     InspectorPageAgent* m_pageAgent;
+    PageScriptDebugServer* m_scriptDebugServer;
     TimelineTimeConverter m_timeConverter;
 
     std::unique_ptr<Inspector::InspectorTimelineFrontendDispatcher> m_frontendDispatcher;

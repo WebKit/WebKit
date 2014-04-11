@@ -45,7 +45,6 @@
 namespace Inspector {
 class InspectorAgent;
 class InspectorBackendDispatcher;
-class InspectorDebuggerAgent;
 class InspectorFrontendChannel;
 class InspectorObject;
 }
@@ -66,6 +65,7 @@ class InspectorResourceAgent;
 class InstrumentingAgents;
 class Node;
 class Page;
+class PageDebuggerAgent;
 class WebInjectedScriptManager;
 struct Highlight;
 
@@ -142,7 +142,7 @@ private:
     InspectorDOMAgent* m_domAgent;
     InspectorResourceAgent* m_resourceAgent;
     InspectorPageAgent* m_pageAgent;
-    Inspector::InspectorDebuggerAgent* m_debuggerAgent;
+    PageDebuggerAgent* m_debuggerAgent;
     InspectorDOMDebuggerAgent* m_domDebuggerAgent;
     InspectorProfilerAgent* m_profilerAgent;
 

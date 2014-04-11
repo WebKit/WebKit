@@ -1,3 +1,80 @@
+2014-04-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove shared PageScriptDebugServer, create per-Page
+        https://bugs.webkit.org/show_bug.cgi?id=131523
+
+        Reviewed by Timothy Hatcher.
+
+        Having a shared PageScriptDebugServer was causing issues when we called
+        JSC::Debugger::clearBreakpoints() closing one inspector while another
+        is open for another WebCore::Page in the same process. Having the same
+        JSC::Debugger underlying multiple InspectorDebuggerAgent instances
+        means that when clearBreakpoints is called, the real JSC breakpoints
+        underlying other InspectorDebuggerAgent's get removed. When those
+        InspectorDebuggerAgents attempt to remove their breakpoints they
+        encounter unexpected issues.
+
+        This entirely rebuilds PageScriptDebugServer to be per-Page instead
+        of shared across all pages. So take this opportunity to move the
+        file from WebCore/bindings/js to WebCore/inspector.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/PageScriptDebugServer.h: Removed.
+        * inspector/InspectorAllInOne.cpp:
+        Move PageScriptDebugServer.
+
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        Set the ScriptDebugServer directly on some other agents that
+        were previously using the global debug server.
+
+        * inspector/InspectorProfilerAgent.h:
+        (WebCore::InspectorProfilerAgent::scriptDebugServer):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::setScriptDebugServer):
+        (WebCore::InspectorProfilerAgent::start):
+        (WebCore::InspectorProfilerAgent::willDestroyFrontendAndBackend): Deleted.
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::start):
+        (WebCore::InspectorTimelineAgent::stop):
+        (WebCore::InspectorTimelineAgent::setPageScriptDebugServer):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        Refactor these two agents to take in a script debug server.
+        The server is expected to be set during initialization and
+        to always be valid (like debug server on RuntimeAgent).
+
+        * inspector/PageDebuggerAgent.h:
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::PageDebuggerAgent):
+        (WebCore::PageDebuggerAgent::startListeningScriptDebugServer):
+        (WebCore::PageDebuggerAgent::stopListeningScriptDebugServer):
+        (WebCore::PageDebuggerAgent::scriptDebugServer):
+        Have PageDebuggerAgent hold the PageScriptDebugServer.
+        Update for the simplified interfaces.
+
+        * inspector/PageScriptDebugServer.h: Added.
+        * inspector/PageScriptDebugServer.cpp: Renamed from Source/WebCore/bindings/js/PageScriptDebugServer.cpp.
+        (WebCore::PageScriptDebugServer::PageScriptDebugServer):
+        (WebCore::PageScriptDebugServer::addListener):
+        (WebCore::PageScriptDebugServer::removeListener):
+        (WebCore::PageScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::PageScriptDebugServer::didPause):
+        (WebCore::PageScriptDebugServer::didContinue):
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePaused):
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePausedInternal):
+        (WebCore::PageScriptDebugServer::isContentScript):
+        (WebCore::PageScriptDebugServer::reportException):
+        (WebCore::PageScriptDebugServer::setJavaScriptPaused):
+        Model after JSGlobalObjectScriptDebugServer, the PageScriptDebugServer
+        holds a reference to a Page.
+
 2014-04-11  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] inset args and radial args should serialize to the simplest form

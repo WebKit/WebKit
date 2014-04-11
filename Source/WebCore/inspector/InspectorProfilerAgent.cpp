@@ -35,15 +35,14 @@
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
-#include "PageScriptDebugServer.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include "URL.h"
 #include "WebInjectedScriptManager.h"
-#include "WorkerScriptDebugServer.h"
 #include <bindings/ScriptObject.h>
 #include <inspector/InjectedScript.h>
 #include <inspector/InspectorValues.h>
+#include <inspector/ScriptDebugServer.h>
 #include <inspector/agents/InspectorConsoleAgent.h>
 #include <runtime/ConsoleTypes.h>
 #include <wtf/CurrentTime.h>
@@ -65,7 +64,8 @@ public:
 private:
     virtual void recompileScript() override
     {
-        PageScriptDebugServer::shared().recompileAllJSFunctions();
+        if (ScriptDebugServer *debugServer = scriptDebugServer())
+            debugServer->recompileAllJSFunctions();
     }
 
     virtual void startProfiling(const String& title) override
@@ -116,6 +116,7 @@ std::unique_ptr<InspectorProfilerAgent> InspectorProfilerAgent::create(Instrumen
 InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, WebInjectedScriptManager* injectedScriptManager)
     : InspectorAgentBase(ASCIILiteral("Profiler"), instrumentingAgents)
     , m_consoleAgent(consoleAgent)
+    , m_scriptDebugServer(nullptr)
     , m_injectedScriptManager(injectedScriptManager)
     , m_enabled(false)
     , m_profileHeadersRequested(false)
@@ -164,6 +165,14 @@ PassRefPtr<Inspector::TypeBuilder::Profiler::ProfileHeader> InspectorProfilerAge
         .setUid(profile.uid())
         .setTitle(profile.title())
         .release();
+}
+
+void InspectorProfilerAgent::setScriptDebugServer(ScriptDebugServer* scriptDebugServer)
+{
+    ASSERT(!m_enabled);
+    ASSERT(!m_scriptDebugServer);
+
+    m_scriptDebugServer = scriptDebugServer;
 }
 
 void InspectorProfilerAgent::enable(ErrorString*)
@@ -274,7 +283,8 @@ void InspectorProfilerAgent::start(ErrorString*)
         return;
     if (!enabled()) {
         enable(true);
-        PageScriptDebugServer::shared().recompileAllJSFunctions();
+        if (m_scriptDebugServer)
+            m_scriptDebugServer->recompileAllJSFunctions();
     }
     m_recordingCPUProfile = true;
     String title = getCurrentUserInitiatedProfileName(true);

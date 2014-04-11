@@ -54,6 +54,7 @@ PageDebuggerAgent::PageDebuggerAgent(InjectedScriptManager* injectedScriptManage
     : WebDebuggerAgent(injectedScriptManager, instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_overlay(overlay)
+    , m_scriptDebugServer(*pageAgent->page())
 {
 }
 
@@ -92,17 +93,17 @@ String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
 
 void PageDebuggerAgent::startListeningScriptDebugServer()
 {
-    scriptDebugServer().addListener(this, m_pageAgent->page());
+    scriptDebugServer().addListener(this);
 }
 
 void PageDebuggerAgent::stopListeningScriptDebugServer(bool isBeingDestroyed)
 {
-    scriptDebugServer().removeListener(this, m_pageAgent->page(), isBeingDestroyed);
+    scriptDebugServer().removeListener(this, isBeingDestroyed);
 }
 
 PageScriptDebugServer& PageDebuggerAgent::scriptDebugServer()
 {
-    return PageScriptDebugServer::shared();
+    return m_scriptDebugServer;
 }
 
 void PageDebuggerAgent::muteConsole()

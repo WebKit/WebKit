@@ -140,7 +140,6 @@
 #include "JSXMLHttpRequestCustom.cpp"
 #include "JSXPathResultCustom.cpp"
 #include "JSXSLTProcessorCustom.cpp"
-#include "PageScriptDebugServer.cpp"
 #include "ScheduledAction.cpp"
 #include "ScriptCachedFrameData.cpp"
 #include "ScriptController.cpp"

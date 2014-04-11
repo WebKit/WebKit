@@ -66,6 +66,7 @@
 #include "PageConsoleAgent.h"
 #include "PageDebuggerAgent.h"
 #include "PageRuntimeAgent.h"
+#include "PageScriptDebugServer.h"
 #include "Settings.h"
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"
@@ -132,8 +133,9 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
     m_agents.append(std::move(domStorageAgentPtr));
 
-    m_agents.append(std::make_unique<InspectorTimelineAgent>(m_instrumentingAgents.get(), pageAgent, InspectorTimelineAgent::PageInspector, inspectorClient));
-    m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(m_instrumentingAgents.get(), pageAgent));
+    auto timelineAgentPtr = std::make_unique<InspectorTimelineAgent>(m_instrumentingAgents.get(), pageAgent, InspectorTimelineAgent::PageInspector, inspectorClient);
+    InspectorTimelineAgent* timelineAgent = timelineAgentPtr.get();
+    m_agents.append(std::move(timelineAgentPtr));
 
     auto resourceAgentPtr = std::make_unique<InspectorResourceAgent>(m_instrumentingAgents.get(), pageAgent, inspectorClient);
     m_resourceAgent = resourceAgentPtr.get();
@@ -156,8 +158,8 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_profilerAgent = profilerAgentPtr.get();
     m_agents.append(std::move(profilerAgentPtr));
 
+    m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(m_instrumentingAgents.get(), pageAgent));
     m_agents.append(std::make_unique<InspectorWorkerAgent>(m_instrumentingAgents.get()));
-
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(m_instrumentingAgents.get()));
 
     ASSERT(m_injectedScriptManager->commandLineAPIHost());
@@ -173,6 +175,8 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     }
 
     runtimeAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
+    m_profilerAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
+    timelineAgent->setPageScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
 }
 
 InspectorController::~InspectorController()

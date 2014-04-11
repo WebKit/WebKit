@@ -98,7 +98,10 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
     m_timeConverter.reset();
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
-    PageScriptDebugServer::shared().addListener(this, page());
+
+    if (m_scriptDebugServer)
+        m_scriptDebugServer->addListener(this);
+
     m_enabled = true;
 }
 
@@ -109,11 +112,21 @@ void InspectorTimelineAgent::stop(ErrorString*)
 
     m_weakFactory.revokeAll();
     m_instrumentingAgents->setInspectorTimelineAgent(nullptr);
-    PageScriptDebugServer::shared().removeListener(this, page(), true);
+
+    if (m_scriptDebugServer)
+        m_scriptDebugServer->removeListener(this, true);
 
     clearRecordStack();
 
     m_enabled = false;
+}
+
+void InspectorTimelineAgent::setPageScriptDebugServer(PageScriptDebugServer* scriptDebugServer)
+{
+    ASSERT(!m_enabled);
+    ASSERT(!m_scriptDebugServer);
+
+    m_scriptDebugServer = scriptDebugServer;
 }
 
 void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine, Frame* frame)
@@ -568,6 +581,7 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
 InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorType type, InspectorClient* client)
     : InspectorAgentBase(ASCIILiteral("Timeline"), instrumentingAgents)
     , m_pageAgent(pageAgent)
+    , m_scriptDebugServer(nullptr)
     , m_id(1)
     , m_maxCallStackDepth(5)
     , m_inspectorType(type)

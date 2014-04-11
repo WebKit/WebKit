@@ -1159,7 +1159,6 @@ set(WebCore_SOURCES
     bindings/js/JSXMLHttpRequestCustom.cpp
     bindings/js/JSXPathResultCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
-    bindings/js/PageScriptDebugServer.cpp
     bindings/js/ScheduledAction.cpp
     bindings/js/ScriptCachedFrameData.cpp
     bindings/js/ScriptController.cpp
@@ -1770,6 +1769,7 @@ set(WebCore_SOURCES
     inspector/PageConsoleAgent.cpp
     inspector/PageDebuggerAgent.cpp
     inspector/PageRuntimeAgent.cpp
+    inspector/PageScriptDebugServer.cpp
     inspector/TimelineRecordFactory.cpp
     inspector/WebConsoleAgent.cpp
     inspector/WebDebuggerAgent.cpp

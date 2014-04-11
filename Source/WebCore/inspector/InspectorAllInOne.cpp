@@ -59,6 +59,7 @@
 #include "PageConsoleAgent.cpp"
 #include "PageDebuggerAgent.cpp"
 #include "PageRuntimeAgent.cpp"
+#include "PageScriptDebugServer.cpp"
 #include "TimelineRecordFactory.cpp"
 #include "WebConsoleAgent.cpp"
 #include "WebDebuggerAgent.cpp"

@@ -3726,6 +3726,8 @@
 		A5DEBDA416FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEBDA016FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.h */; };
 		A5E616731894581F009ADF50 /* WebDebuggerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E616711894581F009ADF50 /* WebDebuggerAgent.cpp */; };
 		A5E616741894581F009ADF50 /* WebDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E616721894581F009ADF50 /* WebDebuggerAgent.h */; };
+		A5F36D3A18F758720054C024 /* PageScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F36D3818F758720054C024 /* PageScriptDebugServer.cpp */; };
+		A5F36D3B18F758720054C024 /* PageScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = A5F36D3918F758720054C024 /* PageScriptDebugServer.h */; };
 		A5F6E16B132ED46E008EDAE3 /* Autocapitalize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F6E16C132ED46E008EDAE3 /* Autocapitalize.cpp */; };
 		A5F9EF701266750D00FCCF52 /* DiskImageCacheIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5F9EF6E1266750D00FCCF52 /* DiskImageCacheIOS.mm */; };
 		A5F9EF711266750D00FCCF52 /* DiskImageCacheIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A5F9EF6F1266750D00FCCF52 /* DiskImageCacheIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6127,8 +6129,6 @@
 		F34742DD134362F000531BC2 /* PageDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F34742DB134362F000531BC2 /* PageDebuggerAgent.h */; };
 		F34742E01343631F00531BC2 /* WorkerDebuggerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F34742DE1343631F00531BC2 /* WorkerDebuggerAgent.cpp */; };
 		F34742E11343631F00531BC2 /* WorkerDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F34742DF1343631F00531BC2 /* WorkerDebuggerAgent.h */; };
-		F34742E41343633C00531BC2 /* PageScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F34742E21343633C00531BC2 /* PageScriptDebugServer.cpp */; };
-		F34742E51343633C00531BC2 /* PageScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = F34742E31343633C00531BC2 /* PageScriptDebugServer.h */; };
 		F34742E81343635000531BC2 /* WorkerScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F34742E61343635000531BC2 /* WorkerScriptDebugServer.cpp */; };
 		F34742E91343635000531BC2 /* WorkerScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = F34742E71343635000531BC2 /* WorkerScriptDebugServer.h */; };
 		F350B73513F1377D00880C43 /* InstrumentingAgents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F350B73413F1377D00880C43 /* InstrumentingAgents.cpp */; };
@@ -10788,6 +10788,8 @@
 		A5DEBDA116FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitPlaybackTargetAvailabilityEvent.idl; sourceTree = "<group>"; };
 		A5E616711894581F009ADF50 /* WebDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDebuggerAgent.cpp; sourceTree = "<group>"; };
 		A5E616721894581F009ADF50 /* WebDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDebuggerAgent.h; sourceTree = "<group>"; };
+		A5F36D3818F758720054C024 /* PageScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageScriptDebugServer.cpp; sourceTree = "<group>"; };
+		A5F36D3918F758720054C024 /* PageScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageScriptDebugServer.h; sourceTree = "<group>"; };
 		A5F6E16C132ED46E008EDAE3 /* Autocapitalize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Autocapitalize.cpp; sourceTree = "<group>"; };
 		A5F9EF6E1266750D00FCCF52 /* DiskImageCacheIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DiskImageCacheIOS.mm; sourceTree = "<group>"; };
 		A5F9EF6F1266750D00FCCF52 /* DiskImageCacheIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiskImageCacheIOS.h; sourceTree = "<group>"; };
@@ -13533,8 +13535,6 @@
 		F34742DB134362F000531BC2 /* PageDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageDebuggerAgent.h; sourceTree = "<group>"; };
 		F34742DE1343631F00531BC2 /* WorkerDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerDebuggerAgent.cpp; sourceTree = "<group>"; };
 		F34742DF1343631F00531BC2 /* WorkerDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerDebuggerAgent.h; sourceTree = "<group>"; };
-		F34742E21343633C00531BC2 /* PageScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageScriptDebugServer.cpp; sourceTree = "<group>"; };
-		F34742E31343633C00531BC2 /* PageScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageScriptDebugServer.h; sourceTree = "<group>"; };
 		F34742E61343635000531BC2 /* WorkerScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerScriptDebugServer.cpp; sourceTree = "<group>"; };
 		F34742E71343635000531BC2 /* WorkerScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerScriptDebugServer.h; sourceTree = "<group>"; };
 		F350B73413F1377D00880C43 /* InstrumentingAgents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InstrumentingAgents.cpp; sourceTree = "<group>"; };
@@ -15039,6 +15039,8 @@
 				F34742DB134362F000531BC2 /* PageDebuggerAgent.h */,
 				F382088C147D35F90010BC06 /* PageRuntimeAgent.cpp */,
 				F382088D147D35F90010BC06 /* PageRuntimeAgent.h */,
+				A5F36D3818F758720054C024 /* PageScriptDebugServer.cpp */,
+				A5F36D3918F758720054C024 /* PageScriptDebugServer.h */,
 				9FA37EEF1172FD4100C4CD55 /* ScriptProfile.idl */,
 				9FA37EF01172FD4100C4CD55 /* ScriptProfileNode.idl */,
 				7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */,
@@ -20434,8 +20436,6 @@
 				14CD8D81106B529000A46D23 /* JSSharedWorkerCustom.cpp */,
 				E1C36D320EB0A094007410BC /* JSWorkerGlobalScopeBase.cpp */,
 				E1C36D330EB0A094007410BC /* JSWorkerGlobalScopeBase.h */,
-				F34742E21343633C00531BC2 /* PageScriptDebugServer.cpp */,
-				F34742E31343633C00531BC2 /* PageScriptDebugServer.h */,
 				BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */,
 				BCA378BB0D15F64200B793D6 /* ScheduledAction.h */,
 				41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */,
@@ -23054,6 +23054,7 @@
 				2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */,
 				2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */,
 				2EDEF1F8121B0EFC00726DB2 /* BlobStorageData.h in Headers */,
+				A5F36D3B18F758720054C024 /* PageScriptDebugServer.h in Headers */,
 				976D6C7F122B8A3D001FD1F7 /* BlobURL.h in Headers */,
 				93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
@@ -25073,7 +25074,6 @@
 				7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */,
 				FBDB61A116D6037E00BB3394 /* PageRuleCollector.h in Headers */,
 				F3820895147D35F90010BC06 /* PageRuntimeAgent.h in Headers */,
-				F34742E51343633C00531BC2 /* PageScriptDebugServer.h in Headers */,
 				371E65CC13661EDC00BEEDB0 /* PageSerializer.h in Headers */,
 				A7197F24175689C4007B9442 /* PageThrottler.h in Headers */,
 				E1284AE110447D4500EAEB52 /* PageTransitionEvent.h in Headers */,
@@ -28540,7 +28540,6 @@
 				1C26497C0D7E24EC00BD10F2 /* PageMac.cpp in Sources */,
 				FBDB619D16D6034600BB3394 /* PageRuleCollector.cpp in Sources */,
 				F3820894147D35F90010BC06 /* PageRuntimeAgent.cpp in Sources */,
-				F34742E41343633C00531BC2 /* PageScriptDebugServer.cpp in Sources */,
 				371E65CE13661EED00BEEDB0 /* PageSerializer.cpp in Sources */,
 				A7197F2617568AE5007B9442 /* PageThrottler.cpp in Sources */,
 				E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */,
@@ -28659,6 +28658,7 @@
 				0F3F0E59157030C3006DA57F /* RenderGeometryMap.cpp in Sources */,
 				BC128B01137C8D4600CAC845 /* RenderGrid.cpp in Sources */,
 				BCEA4869097D93020094C9E4 /* RenderHTMLCanvas.cpp in Sources */,
+				A5F36D3A18F758720054C024 /* PageScriptDebugServer.cpp in Sources */,
 				0FD308D5117D168500A791F7 /* RenderIFrame.cpp in Sources */,
 				BCEA4875097D93020094C9E4 /* RenderImage.cpp in Sources */,
 				08F2F0091213E61700DCEC48 /* RenderImageResource.cpp in Sources */,
