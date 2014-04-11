@@ -260,6 +260,23 @@ bool CSSBasicShapePolygon::equals(const CSSBasicShape& shape) const
         && compareCSSValueVector<CSSPrimitiveValue>(m_values, rhs.m_values);
 }
 
+static bool buildInsetRadii(Vector<String>& radii, const String& topLeftRadius, const String& topRightRadius, const String& bottomRightRadius, const String& bottomLeftRadius)
+{
+    bool showBottomLeft = topRightRadius != bottomLeftRadius;
+    bool showBottomRight = showBottomLeft || (bottomRightRadius != topLeftRadius);
+    bool showTopRight = showBottomRight || (topRightRadius != topLeftRadius);
+
+    radii.append(topLeftRadius);
+    if (showTopRight)
+        radii.append(topRightRadius);
+    if (showBottomRight)
+        radii.append(bottomRightRadius);
+    if (showBottomLeft)
+        radii.append(bottomLeftRadius);
+
+    return radii.size() == 1 && radii[0] == "0px";
+}
+
 static String buildInsetString(const String& top, const String& right, const String& bottom, const String& left,
     const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
     const String& topRightRadiusWidth, const String& topRightRadiusHeight,
@@ -273,43 +290,50 @@ static String buildInsetString(const String& top, const String& right, const Str
     StringBuilder result;
     result.appendLiteral(opening);
     result.append(top);
-    if (!right.isNull()) {
+
+    bool showLeftArg = !left.isNull() && left != right;
+    bool showBottomArg = !bottom.isNull() && (bottom != top || showLeftArg);
+    bool showRightArg = !right.isNull() && (right != top || showBottomArg);
+    if (showRightArg) {
         result.appendLiteral(separator);
         result.append(right);
     }
-    if (!bottom.isNull()) {
+    if (showBottomArg) {
         result.appendLiteral(separator);
         result.append(bottom);
     }
-    if (!left.isNull()) {
+    if (showLeftArg) {
         result.appendLiteral(separator);
         result.append(left);
     }
 
     if (!topLeftRadiusWidth.isNull() && !topLeftRadiusHeight.isNull()) {
-        result.appendLiteral(separator);
-        result.appendLiteral(cornersSeparator);
-        result.appendLiteral(separator);
+        Vector<String> horizontalRadii;
+        bool areDefaultCornerRadii = buildInsetRadii(horizontalRadii, topLeftRadiusWidth, topRightRadiusWidth, bottomRightRadiusWidth, bottomLeftRadiusWidth);
 
-        result.append(topLeftRadiusWidth);
-        result.appendLiteral(separator);
-        result.append(topRightRadiusWidth);
-        result.appendLiteral(separator);
-        result.append(bottomRightRadiusWidth);
-        result.appendLiteral(separator);
-        result.append(bottomLeftRadiusWidth);
+        Vector<String> verticalRadii;
+        areDefaultCornerRadii &= buildInsetRadii(verticalRadii, topLeftRadiusHeight, topRightRadiusHeight, bottomRightRadiusHeight, bottomLeftRadiusHeight);
 
-        result.appendLiteral(separator);
-        result.append('/');
-        result.appendLiteral(separator);
+        if (!areDefaultCornerRadii) {
+            result.appendLiteral(separator);
+            result.appendLiteral(cornersSeparator);
 
-        result.append(topLeftRadiusHeight);
-        result.appendLiteral(separator);
-        result.append(topRightRadiusHeight);
-        result.appendLiteral(separator);
-        result.append(bottomRightRadiusHeight);
-        result.appendLiteral(separator);
-        result.append(bottomLeftRadiusHeight);
+            for (size_t i = 0; i < horizontalRadii.size(); ++i) {
+                result.appendLiteral(separator);
+                result.append(horizontalRadii[i]);
+            }
+
+            if (verticalRadii.size() != horizontalRadii.size()
+                || !VectorComparer<false, String>::compare(verticalRadii.data(), horizontalRadii.data(), verticalRadii.size())) {
+                result.appendLiteral(separator);
+                result.appendLiteral("/");
+
+                for (size_t i = 0; i < verticalRadii.size(); ++i) {
+                    result.appendLiteral(separator);
+                    result.append(verticalRadii[i]);
+                }
+            }
+        }
     }
     result.append(')');
     if (box.length()) {

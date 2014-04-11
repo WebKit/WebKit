@@ -11,7 +11,7 @@ Moving Text
 Moving Text
 Moving Text
 Moving Text
-PASS - "webkitShapeOutside" property for "inset-box" element at 1s saw something close to: inset(10% 10% 10% 10% round 0px 0px 0px 0px / 0px 0px 0px 0px)
+PASS - "webkitShapeOutside" property for "inset-box" element at 1s saw something close to: inset(10%)
 PASS - "webkitShapeOutside" property for "circle-box" element at 1s saw something close to: circle(35% at 35% 35%)
 PASS - "webkitShapeOutside" property for "ellipse-box" element at 1s saw something close to: ellipse(35% 30% at 35% 35%)
 PASS - "webkitShapeOutside" property for "polygon-box" element at 1s saw something close to: polygon(10% 10%, 90% 10%, 90% 90%, 10% 90%)

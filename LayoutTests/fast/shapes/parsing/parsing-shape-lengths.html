@@ -41,11 +41,11 @@ testStyleValue("circle(1px at +1px -1px)", "circle(1px at 1px -1px)");
 testStyleValue("circle(1.5px at -1.5px +1.5px)", "circle(1.5px at -1.5px 1.5px)");
 testStyleValue("circle(.5px at -.5px +.5px)", "circle(0.5px at -0.5px 0.5px)");
 
-testStyleValue("inset(1cm 1mm 1in 1px round 1pt 1pc)", "inset(1cm 1mm 1in 1px round 1pt 1pc 1pt 1pc / 1pt 1pc 1pt 1pc)");
-testStyleValue("inset(-1px 1px 1px 1px round 1px 1px 1px 1px)", "inset(-1px 1px 1px 1px round 1px 1px 1px 1px / 1px 1px 1px 1px)");
-testStyleValue("inset(1px -1px 1px 1px round 1px 1px 1px 1px)", "inset(1px -1px 1px 1px round 1px 1px 1px 1px / 1px 1px 1px 1px)");
-testStyleValue("inset(1px 1px -1px 1px round 1px 1px 1px 1px)", "inset(1px 1px -1px 1px round 1px 1px 1px 1px / 1px 1px 1px 1px)");
-testStyleValue("inset(1px 1px 1px -1px round 1px 1px 1px 1px)", "inset(1px 1px 1px -1px round 1px 1px 1px 1px / 1px 1px 1px 1px)");
+testStyleValue("inset(1cm 1mm 1in 1px round 1pt 1pc)", "inset(1cm 1mm 1in 1px round 1pt 1pc)");
+testStyleValue("inset(-1px 1px 1px 1px round 1px 1px 1px 1px)", "inset(-1px 1px 1px round 1px)");
+testStyleValue("inset(1px -1px 1px 1px round 1px 1px 1px 1px)", "inset(1px -1px 1px 1px round 1px)");
+testStyleValue("inset(1px 1px -1px 1px round 1px 1px 1px 1px)", "inset(1px 1px -1px round 1px)");
+testStyleValue("inset(1px 1px 1px -1px round 1px 1px 1px 1px)", "inset(1px 1px 1px -1px round 1px)");
 
 // font-relative lengths - number serialization, units, resolution
 testStyleValue("circle(1em at -1em +1em)", "circle(1em at -1em 1em)");
@@ -70,12 +70,12 @@ testComputedStyleValue("circle(1.5vmin at .5vmin 1vmin)", "circle(1.5vmin at 0.5
 
 // percentage lengths - units
 testStyleValue("circle(100% at 100% 100%)", "circle(100% at 100% 100%)");
-testStyleValue("inset(45% 45% 90% 60% round 25% 10%)", "inset(45% 45% 90% 60% round 25% 10% 25% 10% / 25% 10% 25% 10%)");
+testStyleValue("inset(45% 45% 90% 60% round 25% 10%)", "inset(45% 45% 90% 60% round 25% 10%)");
 testStyleValue("ellipse(100% 100% at 100% 100%)", "ellipse(100% 100% at 100% 100%)");
 testStyleValue("polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(10% 20%, 30% 40%, 40% 50%)");
 
 testComputedStyleValue("circle(150% at 50% 100%)", "circle(150% at 50% 100%)");
-testComputedStyleValue("inset(45% 45% 90% 60% round 25% 10%)", "inset(45% 45% 90% 60% round 25% 10% 25% 10% / 25% 10% 25% 10%)");
+testComputedStyleValue("inset(45% 45% 90% 60% round 25% 10%)", "inset(45% 45% 90% 60% round 25% 10%)");
 testComputedStyleValue("ellipse(100% 100% at 100% 100%)", "ellipse(100% 100% at 100% 100%)");
 testComputedStyleValue("polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(10% 20%, 30% 40%, 40% 50%)");
 

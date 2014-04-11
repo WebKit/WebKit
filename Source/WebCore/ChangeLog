@@ -1,3 +1,20 @@
+2014-04-11  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] inset args and radial args should serialize to the simplest form
+        https://bugs.webkit.org/show_bug.cgi?id=129825
+
+        Reviewed by Dirk Schulze.
+
+        Modify inset serialization to omit components where possible. The insets simplify
+        according to the margin shorthand, while the corner radii simplify according to
+        the border-radius shorthand.
+
+        Modifying existing parsing tests.
+
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildInsetRadii): Add the necessary radii, omitting components where possible.
+        (WebCore::buildInsetString): Omit components where possible.
+
 2014-04-11  Praveen R Jadhav  <praveen.j@samsung.com>
 
         "playbackTime" parameter is not present in AudioProcessingEvent Interface as per W3C spec
