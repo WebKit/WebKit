@@ -1,3 +1,14 @@
+2014-04-10  Dan Bernstein  <mitz@apple.com>
+
+        BundlePageDiagnosticLoggingClient leaks every string passing through it.
+        https://bugs.webkit.org/show_bug.cgi?id=130140
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp:
+        (WebKit::InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessage): Don’t copy the
+        strings passed into the bundle client.
+
 2014-04-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Try to fix the debug bots after r167102

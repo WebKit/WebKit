@@ -35,7 +35,7 @@ void InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessage(WebPage* pa
 {
     if (!m_client.logDiagnosticMessage)
         return;
-    m_client.logDiagnosticMessage(toAPI(page), toCopiedAPI(message), toCopiedAPI(description), toCopiedAPI(success), m_client.base.clientInfo);
+    m_client.logDiagnosticMessage(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), toAPI(success.impl()), m_client.base.clientInfo);
 }
 
 }
