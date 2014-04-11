@@ -85,13 +85,32 @@ void CDMSessionMediaSourceAVFObjC::releaseKeys()
     LOG(Media, "CDMSessionMediaSourceAVFObjC::releaseKeys(%p)", this);
 }
 
+static bool isEqual(Uint8Array* data, const char* literal)
+{
+    ASSERT(data);
+    ASSERT(literal);
+    unsigned length = data->length();
+
+    for (unsigned i = 0; i < length; ++i) {
+        if (!literal[i])
+            return false;
+
+        if (data->item(i) != static_cast<uint8_t>(literal[i]))
+            return false;
+    }
+    return !literal[length];
+}
+
 bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode)
 {
+    bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew");
     if (!m_certificate) {
         LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - certificate data", this);
 
         m_certificate = key;
+    }
 
+    if (shouldGenerateKeyRequest) {
         RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
         RetainPtr<NSData> initData = adoptNS([[NSData alloc] initWithBytes:m_initData->data() length:m_initData->length()]);
 
@@ -108,14 +127,6 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
         nextMessage = Uint8Array::create([request length]);
         [request getBytes:nextMessage->data() length:nextMessage->length()];
         return false;
-    }
-
-    static NeverDestroyed<String> renewMessage("renew");
-    String keyAsString(key->data(), key->length());
-
-    if (keyAsString == renewMessage) {
-        [m_parent->parser() renewExpiringContentKeyResponseDataForTrackID:m_parent->protectedTrackID()];
-        return true;
     }
 
     LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - key data", this);

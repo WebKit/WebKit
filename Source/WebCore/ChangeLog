@@ -1,3 +1,22 @@
+2014-04-10  Jer Noble  <jer.noble@apple.com>
+
+        [EME][Mac] Using KeySession.update([renew]) should trigger KeyMessage event instead of NeedKey event
+        https://bugs.webkit.org/show_bug.cgi?id=131527
+
+        Reviewed by Eric Carlson.
+
+        Rather than triggering a needKey() event, necessatating the creation
+        of an entirely new MediaKeySession, cause a new key request to be
+        created by sending the same initData back into the AVSampleDataParser.
+
+        Also, do some drive-by clean up suggested by Darin in the review for
+        r166509.
+
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::isEqual): Support an alloc-free equality check between
+            Uint8Array and static strings.
+        (WebCore::CDMSessionMediaSourceAVFObjC::update):
+
 2014-04-11  David Kilzer  <ddkilzer@apple.com>
 
         Build fix (r167151): Do not dereference Node::document() before passing to Range::create()
