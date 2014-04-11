@@ -1,3 +1,12 @@
+2014-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Build Fix after r167151.
+
+        Unreviewed.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+
 2014-04-10  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Using KeySession.update([renew]) should trigger KeyMessage event instead of NeedKey event
