@@ -2242,6 +2242,11 @@ float RenderLayerBacking::pageScaleFactor() const
     return compositor().pageScaleFactor();
 }
 
+float RenderLayerBacking::zoomedOutPageScaleFactor() const
+{
+    return compositor().zoomedOutPageScaleFactor();
+}
+
 float RenderLayerBacking::deviceScaleFactor() const
 {
     return compositor().deviceScaleFactor();

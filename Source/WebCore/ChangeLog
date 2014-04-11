@@ -1,3 +1,34 @@
+2014-04-11  Antti Koivisto  <antti@apple.com>
+
+        Pipe initial scale factor to TileController
+        https://bugs.webkit.org/show_bug.cgi?id=131521
+
+        Reviewed by Tim Horton.
+
+        * WebCore.exp.in:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setZoomedOutPageScaleFactor):
+        * page/Page.h:
+        (WebCore::Page::zoomedOutPageScaleFactor):
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::zoomedOutPageScaleFactor):
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateContentsScale):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::setContentsScale):
+        (WebCore::TileController::setZoomedOutContentsScale):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::zoomedOutPageScaleFactor):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::zoomedOutPageScaleFactor):
+        * rendering/RenderLayerCompositor.h:
+
 2014-04-10  Chris Fleizach  <cfleizach@apple.com>
 
         Heap-use-after-free in WebCore::SpeechSynthesisUtterance::startTime

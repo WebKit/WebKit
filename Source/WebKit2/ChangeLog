@@ -1,3 +1,13 @@
+2014-04-11  Antti Koivisto  <antti@apple.com>
+
+        Pipe initial scale factor to TileController
+        https://bugs.webkit.org/show_bug.cgi?id=131521
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportConfigurationChanged):
+
 2014-04-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebProcess at com.apple.WebCore: WebCore::AXObjectCache::rootObject + 18

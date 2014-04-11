@@ -158,6 +158,7 @@ Page::Page(PageClients& pageClients)
     , m_areMemoryCacheClientCallsEnabled(true)
     , m_mediaVolume(1)
     , m_pageScaleFactor(1)
+    , m_zoomedOutPageScaleFactor(0)
     , m_deviceScaleFactor(1)
     , m_topContentInset(0)
     , m_suppressScrollbarAnimations(false)
@@ -688,6 +689,15 @@ void Page::setMediaVolume(float volume)
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         frame->document()->mediaVolumeDidChange();
     }
+}
+
+void Page::setZoomedOutPageScaleFactor(float scale)
+{
+    if (m_zoomedOutPageScaleFactor == scale)
+        return;
+    m_zoomedOutPageScaleFactor = scale;
+
+    mainFrame().deviceOrPageScaleFactorChanged();
 }
 
 void Page::setPageScaleFactor(float scale, const IntPoint& origin)

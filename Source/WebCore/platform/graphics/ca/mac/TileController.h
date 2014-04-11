@@ -147,6 +147,8 @@ private:
     virtual PlatformCALayer* tiledScrollingIndicatorLayer() override;
     virtual void setScrollingModeIndication(ScrollingModeIndication) override;
     virtual void setTileMargins(int marginTop, int marginBottom, int marginLeft, int marginRight) override;
+    virtual void setZoomedOutContentsScale(float) override;
+    virtual float zoomedOutContentsScale() const override { return m_zoomedOutContentsScale; }
 
     void scheduleTileRevalidation(double interval);
     void tileRevalidationTimerFired(Timer<TileController>*);
@@ -169,6 +171,7 @@ private:
     Timer<TileController> m_tileRevalidationTimer;
 
     float m_contentsScale;
+    float m_zoomedOutContentsScale;
     float m_deviceScaleFactor;
 
     TileCoverage m_tileCoverage;

@@ -2702,6 +2702,12 @@ float RenderLayerCompositor::pageScaleFactor() const
     return page ? page->pageScaleFactor() : 1;
 }
 
+float RenderLayerCompositor::zoomedOutPageScaleFactor() const
+{
+    Page* page = this->page();
+    return page ? page->zoomedOutPageScaleFactor() : 0;
+}
+
 float RenderLayerCompositor::contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const
 {
 #if PLATFORM(IOS)

@@ -275,6 +275,9 @@ public:
     void setPageScaleFactor(float scale, const IntPoint& origin);
     float pageScaleFactor() const { return m_pageScaleFactor; }
 
+    void setZoomedOutPageScaleFactor(float);
+    float zoomedOutPageScaleFactor() const { return m_zoomedOutPageScaleFactor; }
+
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
     void setDeviceScaleFactor(float);
 
@@ -490,6 +493,7 @@ private:
     float m_mediaVolume;
 
     float m_pageScaleFactor;
+    float m_zoomedOutPageScaleFactor;
     float m_deviceScaleFactor;
 
     float m_topContentInset;

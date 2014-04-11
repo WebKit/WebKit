@@ -1836,11 +1836,14 @@ void WebPage::viewportConfigurationChanged()
 {
     setFixedLayoutSize(m_viewportConfiguration.layoutSize());
 
+    double initialScale = m_viewportConfiguration.initialScale();
     double scale;
     if (m_userHasChangedPageScaleFactor)
         scale = std::max(std::min(pageScaleFactor(), m_viewportConfiguration.maximumScale()), m_viewportConfiguration.minimumScale());
     else
-        scale = m_viewportConfiguration.initialScale();
+        scale = initialScale;
+
+    m_page->setZoomedOutPageScaleFactor(initialScale);
 
     FrameView& frameView = *m_page->mainFrame().view();
     IntPoint scrollPosition = frameView.scrollPosition();

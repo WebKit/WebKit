@@ -180,6 +180,7 @@ public:
     virtual bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const override;
 
     virtual float pageScaleFactor() const override;
+    virtual float zoomedOutPageScaleFactor() const override;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const override;
     virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const override;
 

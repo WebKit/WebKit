@@ -2982,6 +2982,12 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty
 void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 {
     float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor * pageScaleFactor * deviceScaleFactor());
+
+    if (m_isPageTiledBackingLayer && tiledBacking()) {
+        float zoomedOutScale = m_client->zoomedOutPageScaleFactor() * deviceScaleFactor();
+        tiledBacking()->setZoomedOutContentsScale(zoomedOutScale);
+    }
+
     if (contentsScale == m_layer->contentsScale())
         return;
 

@@ -86,6 +86,7 @@ public:
     virtual float deviceScaleFactor() const { return 1; }
     // Page scale factor.
     virtual float pageScaleFactor() const { return 1; }
+    virtual float zoomedOutPageScaleFactor() const { return 0; }
 
     virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const { return 1; }
     virtual bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const { return false; }

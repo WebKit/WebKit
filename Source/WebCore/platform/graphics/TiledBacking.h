@@ -88,6 +88,9 @@ public:
     virtual int leftMarginWidth() const = 0;
     virtual int rightMarginWidth() const = 0;
 
+    virtual void setZoomedOutContentsScale(float) = 0;
+    virtual float zoomedOutContentsScale() const = 0;
+
     // Includes margins.
     virtual IntRect bounds() const = 0;
 

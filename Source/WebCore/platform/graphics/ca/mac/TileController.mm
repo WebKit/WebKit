@@ -60,6 +60,7 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_tileSize(defaultTileWidth, defaultTileHeight)
     , m_tileRevalidationTimer(this, &TileController::tileRevalidationTimerFired)
     , m_contentsScale(1)
+    , m_zoomedOutContentsScale(0)
     , m_deviceScaleFactor(1)
     , m_tileCoverage(CoverageForVisibleArea)
     , m_marginTop(0)
@@ -104,9 +105,9 @@ void TileController::setNeedsDisplayInRect(const IntRect& rect)
 
 void TileController::setContentsScale(float scale)
 {
-    m_contentsScale = scale;
-    
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
+
+    m_contentsScale = scale;
 
     float deviceScaleFactor = owningGraphicsLayer()->platformCALayerDeviceScaleFactor();
 
@@ -121,6 +122,15 @@ void TileController::setContentsScale(float scale)
     m_deviceScaleFactor = deviceScaleFactor;
 
     tileGrid().setScale(scale);
+}
+
+void TileController::setZoomedOutContentsScale(float scale)
+{
+    ASSERT(owningGraphicsLayer()->isCommittingChanges());
+
+    if (m_zoomedOutContentsScale == scale)
+        return;
+    m_zoomedOutContentsScale = scale;
 }
 
 void TileController::setAcceleratesDrawing(bool acceleratesDrawing)
