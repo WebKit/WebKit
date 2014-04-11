@@ -255,9 +255,13 @@ void ScriptProcessorNode::fireProcessEvent()
     if (context()->scriptExecutionContext()) {
         // Let the audio thread know we've gotten to the point where it's OK for it to make another request.
         m_isRequestOutstanding = false;
-        
+
+        // Calculate playbackTime with the buffersize which needs to be processed each time when onaudioprocess is called.
+        // The outputBuffer being passed to JS will be played after exhausting previous outputBuffer by double-buffering.
+        double playbackTime = (context()->currentSampleFrame() + m_bufferSize) / static_cast<double>(context()->sampleRate());
+
         // Call the JavaScript event handler which will do the audio processing.
-        dispatchEvent(AudioProcessingEvent::create(inputBuffer, outputBuffer));
+        dispatchEvent(AudioProcessingEvent::create(inputBuffer, outputBuffer, playbackTime));
     }
 }
 

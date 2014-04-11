@@ -38,19 +38,20 @@ PassRefPtr<AudioProcessingEvent> AudioProcessingEvent::create()
     return adoptRef(new AudioProcessingEvent);
 }
 
-PassRefPtr<AudioProcessingEvent> AudioProcessingEvent::create(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer)
+PassRefPtr<AudioProcessingEvent> AudioProcessingEvent::create(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer, double playbackTime)
 {
-    return adoptRef(new AudioProcessingEvent(inputBuffer, outputBuffer));
+    return adoptRef(new AudioProcessingEvent(inputBuffer, outputBuffer, playbackTime));
 }
 
 AudioProcessingEvent::AudioProcessingEvent()
 {
 }
 
-AudioProcessingEvent::AudioProcessingEvent(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer)
+AudioProcessingEvent::AudioProcessingEvent(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer, double playbackTime)
     : Event(eventNames().audioprocessEvent, true, false)
     , m_inputBuffer(inputBuffer)
     , m_outputBuffer(outputBuffer)
+    , m_playbackTime(playbackTime)
 {
 }
 

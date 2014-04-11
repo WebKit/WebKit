@@ -1,3 +1,28 @@
+2014-04-11  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        "playbackTime" parameter is not present in AudioProcessingEvent Interface as per W3C spec
+        https://bugs.webkit.org/show_bug.cgi?id=105518
+
+        Reviewed by Jer Noble.
+
+        Attribute "playbackTime" in AudioProcessingEvent implemented to pass playback time of
+        audiobuffer associated with ScriptProcessorNode of the context.
+ 
+        Reference: https://codereview.chromium.org/210973002
+
+        Spec: http://www.w3.org/TR/webaudio/#AudioProcessingEvent
+
+        Test: webaudio/audioprocessingevent.html
+
+        * Modules/webaudio/AudioProcessingEvent.cpp:
+        (WebCore::AudioProcessingEvent::create):
+        (WebCore::AudioProcessingEvent::AudioProcessingEvent):
+        * Modules/webaudio/AudioProcessingEvent.h:
+        (WebCore::AudioProcessingEvent::playbackTime):
+        * Modules/webaudio/AudioProcessingEvent.idl:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::fireProcessEvent):
+
 2014-04-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: WK1: Trail of cruft in redraw during animations.

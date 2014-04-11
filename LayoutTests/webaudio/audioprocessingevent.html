@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests AudioProcessingEvent attributes in IDL.");
+
+var sampleRate = 44100.0;
+
+// For the current implementation of ScriptProcessorNode, when it works with OfflineAudioContext (which runs much faster
+// than real-time) the event.inputBuffer might be overwrite again before onaudioprocess ever get chance to be called.
+// We carefully arrange the renderLengthInFrames and bufferSize to have exactly the same value to avoid this issue.
+var renderLengthInFrames = 512;
+var bufferSize = 512;
+var duration = 5;
+var frequency = 100;
+var context;
+
+function processAudioData(event) {
+    shouldBeDefined("event.playbackTime");
+    shouldBeDefined("event.inputBuffer");
+    shouldBeDefined("event.outputBuffer");
+
+    var expectedTime = context.currentTime + (bufferSize / context.sampleRate);
+    var allowedTimeGap = 0.0000001;
+
+    // There may be a little time gap which is from different thread operation
+    // between currentTime when main thread fires onaudioprocess() and currenTime when read in JS
+    // since currentTime is continuously increasing on audio thread.
+    shouldBeCloseTo("event.playbackTime", expectedTime, allowedTimeGap, true);
+}
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+
+    // Create offline audio context.
+    context = new webkitOfflineAudioContext(2, renderLengthInFrames, sampleRate);
+
+    var oscillator = context.createOscillator();
+
+    oscillator.frequency.value = frequency;
+    oscillator.type = 0;
+
+    var scriptProcessorNode = context.createScriptProcessor(bufferSize, 1, 1);
+
+    oscillator.connect(scriptProcessorNode);
+    scriptProcessorNode.onaudioprocess = processAudioData;
+
+    var gainNode = context.createGainNode();
+
+    scriptProcessorNode.connect(gainNode);
+    gainNode.connect(context.destination);
+    gainNode.gain.value = 2;
+
+    var startTime = context.currentTime;
+
+    oscillator.start(startTime);
+    oscillator.stop(startTime + duration);
+
+    context.oncomplete = finishJSTest;
+    context.startRendering();
+}
+
+runTest();
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,15 @@
+2014-04-11  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        "playbackTime" parameter is not present in AudioProcessingEvent Interface as per W3C spec
+        https://bugs.webkit.org/show_bug.cgi?id=105518
+
+        Reviewed by Jer Noble.
+
+        Test case added to check AudioProcessingEvent attributes.
+
+        * webaudio/audioprocessingevent-expected.txt: Added.
+        * webaudio/audioprocessingevent.html: Added.
+
 2014-04-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: WK1: Trail of cruft in redraw during animations.

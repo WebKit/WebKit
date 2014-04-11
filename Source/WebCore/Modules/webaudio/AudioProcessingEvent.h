@@ -37,21 +37,23 @@ class AudioBuffer;
 class AudioProcessingEvent : public Event {
 public:
     static PassRefPtr<AudioProcessingEvent> create();
-    static PassRefPtr<AudioProcessingEvent> create(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer);
+    static PassRefPtr<AudioProcessingEvent> create(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer, double playbackTime);
     
     virtual ~AudioProcessingEvent();
 
     AudioBuffer* inputBuffer() { return m_inputBuffer.get(); }
     AudioBuffer* outputBuffer() { return m_outputBuffer.get(); }
+    double playbackTime() const { return m_playbackTime; }
 
     virtual EventInterface eventInterface() const override;
 
 private:
     AudioProcessingEvent();
-    AudioProcessingEvent(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer);
+    AudioProcessingEvent(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer, double playbackTime);
 
     RefPtr<AudioBuffer> m_inputBuffer;
     RefPtr<AudioBuffer> m_outputBuffer;
+    double m_playbackTime;
 };
 
 } // namespace WebCore
