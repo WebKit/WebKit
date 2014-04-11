@@ -218,6 +218,15 @@ bool WebGLTexture::isValid(GC3Denum target, GC3Dint level) const
     return info->valid;
 }
 
+void WebGLTexture::markInvalid(GC3Denum target, GC3Dint level)
+{
+    int index = mapTargetToIndex(target);
+    if (index < 0)
+        return;
+    m_info[index][level].valid = false;
+    update();
+}
+
 bool WebGLTexture::isNPOT(GC3Dsizei width, GC3Dsizei height)
 {
     ASSERT(width >= 0 && height >= 0);

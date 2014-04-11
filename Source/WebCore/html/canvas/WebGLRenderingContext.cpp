@@ -1378,8 +1378,15 @@ void WebGLRenderingContext::compressedTexImage2D(GC3Denum target, GC3Dint level,
             return;
         }
     }
-    graphicsContext3D()->compressedTexImage2D(target, level, internalformat, width, height,
-                                              border, data->byteLength(), data->baseAddress());
+    m_context->moveErrorsToSyntheticErrorList();
+    m_context->compressedTexImage2D(target, level, internalformat, width, height,
+        border, data->byteLength(), data->baseAddress());
+    if (m_context->moveErrorsToSyntheticErrorList()) {
+        // The compressedTexImage2D function failed. Tell the WebGLTexture it doesn't have the data for this level.
+        tex->markInvalid(target, level);
+        return;
+    }
+
     tex->setLevelInfo(target, level, internalformat, width, height, GraphicsContext3D::UNSIGNED_BYTE);
     tex->setCompressed();
 }
@@ -3754,7 +3761,7 @@ void WebGLRenderingContext::texImage2DBase(GC3Denum target, GC3Dint level, GC3De
         // can not be cleared with texImage2D and must be cleared by binding to an fbo and calling
         // clear.
         if (isResourceSafe())
-            m_context->texImage2D(target, level, internalformat, width, height, border, format, type, 0);
+            m_context->texImage2D(target, level, internalformat, width, height, border, format, type, nullptr);
         else {
             bool succeed = m_context->texImage2DResourceSafe(target, level, internalformat, width, height,
                                                              border, format, type, m_unpackAlignment);
@@ -3763,8 +3770,14 @@ void WebGLRenderingContext::texImage2DBase(GC3Denum target, GC3Dint level, GC3De
         }
     } else {
         ASSERT(validateSettableTexFormat("texImage2D", internalformat));
+        m_context->moveErrorsToSyntheticErrorList();
         m_context->texImage2D(target, level, internalformat, width, height,
                               border, format, type, pixels);
+        if (m_context->moveErrorsToSyntheticErrorList()) {
+            // The texImage2D function failed. Tell the WebGLTexture it doesn't have the data for this level.
+            tex->markInvalid(target, level);
+            return;
+        }
     }
     tex->setLevelInfo(target, level, internalformat, width, height, type);
 }

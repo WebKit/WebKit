@@ -1,3 +1,29 @@
+2014-04-10  Dean Jackson  <dino@apple.com>
+
+        WebGL: need error checking after texture uploads
+        https://bugs.webkit.org/show_bug.cgi?id=62902
+        rdar://problem/9640309
+
+        Reviewed by Brent Fulgham.
+
+        A followup to Darin's r167109. We need to also check for errors
+        in the texImage2D case.
+
+        This is difficult to reproducibly test because it would require
+        attempting to exhaust GPU memory.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::compressedTexImage2D): Check for errors by calling
+        moveErrorsToSyntheticErrorList twice, once before and once after. If an error
+        occurred, explicitly mark the texture as invalid.
+        (WebCore::WebGLRenderingContext::texImage2DBase): Ditto.
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::markInvalid): If the LevelInfo exists for this
+        mipmap level, then set the valid flag to false. There is a chance that
+        a previous call to texImage2D succeeded for this level, but it's probably
+        better to assume that is now invalid.
+        * html/canvas/WebGLTexture.h: New markInvalid method.
+
 2014-04-10  Darin Adler  <darin@apple.com>
 
         WebGL: need error checking after texture and buffer uploads in some cases
