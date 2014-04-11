@@ -260,8 +260,8 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range* range, 
     if (ec)
         return;
 
-    Position startPositionOfrangeWithAlternative = range->startPosition();
-    correctionStartOffsetInParagraphAsRange->setEnd(startPositionOfrangeWithAlternative.containerNode(), startPositionOfrangeWithAlternative.computeOffsetInContainerNode(), ec);
+    Position startPositionOfRangeWithAlternative = range->startPosition();
+    correctionStartOffsetInParagraphAsRange->setEnd(startPositionOfRangeWithAlternative.containerNode(), startPositionOfRangeWithAlternative.computeOffsetInContainerNode(), ec);
     if (ec)
         return;
 
@@ -270,11 +270,12 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range* range, 
 
     // Clone the range, since the caller of this method may want to keep the original range around.
     RefPtr<Range> rangeWithAlternative = range->cloneRange(ec);
-    
-    int paragraphStartIndex = TextIterator::rangeLength(Range::create(*m_frame.document(), m_frame.document(), 0, paragraphRangeContainingCorrection.get()->startContainer(), paragraphRangeContainingCorrection.get()->startOffset()).get());
+
+    ContainerNode& rootNode = paragraphRangeContainingCorrection.get()->startContainer()->treeScope().rootNode();
+    int paragraphStartIndex = TextIterator::rangeLength(Range::create(*rootNode.document(), &rootNode, 0, paragraphRangeContainingCorrection.get()->startContainer(), paragraphRangeContainingCorrection.get()->startOffset()).get());
     applyCommand(SpellingCorrectionCommand::create(rangeWithAlternative, alternative));
     // Recalculate pragraphRangeContainingCorrection, since SpellingCorrectionCommand modified the DOM, such that the original paragraphRangeContainingCorrection is no longer valid. Radar: 10305315 Bugzilla: 89526
-    paragraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(m_frame.document(), paragraphStartIndex, correctionStartOffsetInParagraph + alternative.length());
+    paragraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex, correctionStartOffsetInParagraph + alternative.length());
     
     setEnd(paragraphRangeContainingCorrection.get(), m_frame.selection().selection().start());
     RefPtr<Range> replacementRange = TextIterator::subrange(paragraphRangeContainingCorrection.get(), correctionStartOffsetInParagraph, alternative.length());

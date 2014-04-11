@@ -1,3 +1,19 @@
+2014-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Autocorrection causes ASSERT when replacing alternative string
+        https://bugs.webkit.org/show_bug.cgi?id=131475
+
+        Reviewed by Ryosuke Niwa.
+
+        In AlternativeTextController::applyAlternativeTextToRange(), we attempt to create
+        a Range that crosses from outside of a shadow root to inside of one. Instead,
+        we should keep the Range entirely within the shadow root.
+
+        Test: ManualTests/autocorrection/autocorrection-accept-crash.html
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+
 2014-04-11  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] shape-outside from image doesn't load properly
