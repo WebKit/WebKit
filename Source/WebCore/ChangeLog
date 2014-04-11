@@ -1,3 +1,19 @@
+2014-04-11  Brady Eidson  <beidson@apple.com>
+
+        Aggregate multiple "respondToChangedSelection" calls to one scan for telephone numbers
+        https://bugs.webkit.org/show_bug.cgi?id=131559
+
+        Reviewed by Gavin Barraclough.
+
+        No new tests (Perf-only change to an untested feature)
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::Editor):
+        (WebCore::Editor::respondToChangedSelection): Start a one shot timer for scanSelectionForTelephoneNumbers
+          instead of scanning synchronously.
+        (WebCore::Editor::scanSelectionForTelephoneNumbers):
+        * editing/Editor.h:
+
 2014-04-11  Antti Koivisto  <antti@apple.com>
 
         Try to fix windows build.

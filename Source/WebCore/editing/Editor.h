@@ -473,12 +473,6 @@ private:
 
     bool unifiedTextCheckerEnabled() const;
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
-    void scanSelectionForTelephoneNumbers(Vector<RefPtr<Range>>& markedRanges);
-    void scanRangeForTelephoneNumbers(Range&, const StringView&, Vector<RefPtr<Range>>& markedRanges);
-    void clearDataDetectedTelephoneNumbers();
-#endif
-
 #if PLATFORM(COCOA)
     PassRefPtr<SharedBuffer> selectionInWebArchiveFormat();
     PassRefPtr<Range> adjustedSelectionRange();
@@ -511,6 +505,14 @@ private:
     Timer<Editor> m_editorUIUpdateTimer;
     bool m_editorUIUpdateTimerShouldCheckSpellingAndGrammar;
     bool m_editorUIUpdateTimerWasTriggeredByDictation;
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+    void scanSelectionForTelephoneNumbers(Timer<Editor>&);
+    void scanRangeForTelephoneNumbers(Range&, const StringView&, Vector<RefPtr<Range>>& markedRanges);
+    void clearDataDetectedTelephoneNumbers();
+
+    Timer<Editor> m_telephoneNumberDetectionUpdateTimer;
+#endif
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)
