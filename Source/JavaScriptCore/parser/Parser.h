@@ -411,7 +411,7 @@ class Parser {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Parser(VM*, const SourceCode&, FunctionParameters*, const Identifier&, JSParserStrictness, JSParserMode, JSFunctionKind);
+    Parser(VM*, const SourceCode&, FunctionParameters*, const Identifier&, JSParserStrictness, JSParserMode);
     ~Parser();
 
     template <class ParsedNode>
@@ -954,13 +954,13 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
 }
 
 template <class ParsedNode>
-PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, JSFunctionKind functionKind, ParserError& error, JSTextPosition* positionBeforeLastNewline = 0)
+PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error, JSTextPosition* positionBeforeLastNewline = 0)
 {
     SamplingRegion samplingRegion("Parsing");
 
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
-        Parser<Lexer<LChar>> parser(vm, source, parameters, name, strictness, parserMode, functionKind);
+        Parser<Lexer<LChar>> parser(vm, source, parameters, name, strictness, parserMode);
         RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
@@ -972,7 +972,7 @@ PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameter
         }
         return result.release();
     }
-    Parser<Lexer<UChar>> parser(vm, source, parameters, name, strictness, parserMode, functionKind);
+    Parser<Lexer<UChar>> parser(vm, source, parameters, name, strictness, parserMode);
     RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error);
     if (positionBeforeLastNewline)
         *positionBeforeLastNewline = parser.positionBeforeLastNewline();

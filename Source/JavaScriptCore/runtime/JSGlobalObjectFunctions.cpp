@@ -26,7 +26,6 @@
 #include "JSGlobalObjectFunctions.h"
 
 #include "CallFrame.h"
-#include "GetterSetter.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -804,20 +803,6 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
 
     if (!thisObject->setPrototypeWithCycleCheck(exec, value))
         exec->vm().throwException(exec, createError(exec, "cyclic __proto__ value"));
-    return JSValue::encode(jsUndefined());
-}
-    
-EncodedJSValue JSC_HOST_CALL globalFuncSetTypeErrorAccessor(ExecState* exec)
-{
-    JSObject* target = jsDynamicCast<JSObject*>(exec->argument(0));
-    JSValue propertyName = exec->argument(1);
-    
-    // Setting __proto__ of a primitive should have no effect.
-    if (!target || !propertyName.isString())
-        return JSValue::encode(jsUndefined());
-    VM& vm = exec->vm();
-    Identifier property(exec, asString(propertyName)->getString(exec));
-    target->putDirectNonIndexAccessor(vm, vm.propertyNames->arguments, target->globalObject()->throwTypeErrorGetterSetter(vm), DontDelete | DontEnum | Accessor);
     return JSValue::encode(jsUndefined());
 }
     

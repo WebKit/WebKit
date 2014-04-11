@@ -394,6 +394,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSArrayBufferPrototype.cpp
     runtime/JSArrayBufferView.cpp
     runtime/JSArrayIterator.cpp
+    runtime/JSBoundFunction.cpp
     runtime/JSCJSValue.cpp
     runtime/JSCell.cpp
     runtime/JSConsole.cpp

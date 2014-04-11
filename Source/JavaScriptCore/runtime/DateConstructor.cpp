@@ -108,7 +108,7 @@ DateConstructor::DateConstructor(VM& vm, Structure* structure)
 void DateConstructor::finishCreation(VM& vm, DatePrototype* datePrototype)
 {
     Base::finishCreation(vm, datePrototype->classInfo()->className);
-    putDirectPrototypePropertyWithoutTransitions(vm, datePrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, datePrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(7), ReadOnly | DontEnum | DontDelete);
 }
 

@@ -1,3 +1,17 @@
+2014-04-11  Gavin Barraclough  <baraclough@apple.com>
+
+        Rollout - Rewrite Function.bind as a builtin
+        https://bugs.webkit.org/show_bug.cgi?id=131083
+
+        Unreviewed.
+
+        Rolling out r167020 while investigating a performance regression.
+
+        * js/dom/function-bind-expected.txt:
+        * js/regress/function-bind-expected.txt: Removed.
+        * js/regress/function-bind.html: Removed.
+        * js/regress/script-tests/function-bind.js: Removed.
+
 2014-04-11  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] shape-outside from image doesn't load properly

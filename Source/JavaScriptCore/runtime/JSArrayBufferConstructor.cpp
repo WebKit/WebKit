@@ -50,7 +50,7 @@ JSArrayBufferConstructor::JSArrayBufferConstructor(VM& vm, Structure* structure)
 void JSArrayBufferConstructor::finishCreation(VM& vm, JSArrayBufferPrototype* prototype)
 {
     Base::finishCreation(vm, "ArrayBuffer");
-    putDirectPrototypePropertyWithoutTransitions(vm, prototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontEnum | DontDelete | ReadOnly);
 
     JSGlobalObject* globalObject = this->globalObject();

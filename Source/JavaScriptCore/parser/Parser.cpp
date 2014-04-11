@@ -192,7 +192,7 @@ void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B
 }
 
 template <typename LexerType>
-Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, JSFunctionKind functionKind)
+Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode)
     : m_vm(vm)
     , m_source(&source)
     , m_hasStackOverflow(false)
@@ -207,7 +207,7 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
     , m_sourceElements(0)
     , m_parsingBuiltin(strictness == JSParseBuiltin)
 {
-    m_lexer = adoptPtr(new LexerType(vm, strictness, functionKind));
+    m_lexer = adoptPtr(new LexerType(vm, strictness));
     m_arena = m_vm->parserArena.get();
     m_lexer->setCode(source, m_arena);
     m_token.m_location.line = source.firstLine();
@@ -283,6 +283,7 @@ String Parser<LexerType>::parseInner()
     
     Vector<RefPtr<StringImpl>> closedVariables;
     if (m_parsingBuiltin) {
+        RELEASE_ASSERT(!capturedVariables.size());
         IdentifierSet usedVariables;
         scope->getUsedVariables(usedVariables);
         for (const auto& variable : usedVariables) {
@@ -292,16 +293,6 @@ String Parser<LexerType>::parseInner()
             if (scope->hasDeclaredParameter(Identifier(m_vm, variable.get())))
                 continue;
             closedVariables.append(variable);
-        }
-        if (!capturedVariables.isEmpty()) {
-            for (const auto& capturedVariable : capturedVariables) {
-                if (scope->hasDeclaredVariable(Identifier(m_vm, capturedVariable.get())))
-                    continue;
-                
-                if (scope->hasDeclaredParameter(Identifier(m_vm, capturedVariable.get())))
-                    continue;
-                RELEASE_ASSERT_NOT_REACHED();
-            }
         }
     }
     didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), features,

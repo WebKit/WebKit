@@ -39,7 +39,7 @@ const ClassInfo MapIteratorConstructor::s_info = { "MapIterator Iterator", &Base
 void MapIteratorConstructor::finishCreation(VM& vm, MapIteratorPrototype* prototype)
 {
     Base::finishCreation(vm);
-    putDirectPrototypePropertyWithoutTransitions(vm, prototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
 }
 
 }

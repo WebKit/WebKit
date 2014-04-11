@@ -41,7 +41,7 @@ const ClassInfo SetConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREA
 void SetConstructor::finishCreation(VM& vm, SetPrototype* setPrototype)
 {
     Base::finishCreation(vm, setPrototype->classInfo()->className);
-    putDirectPrototypePropertyWithoutTransitions(vm, setPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, setPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
 }
 

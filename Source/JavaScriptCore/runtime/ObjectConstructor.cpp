@@ -88,7 +88,7 @@ void ObjectConstructor::finishCreation(VM& vm, ObjectPrototype* objectPrototype)
 {
     Base::finishCreation(vm, Identifier(&vm, "Object").string());
     // ECMA 15.2.3.1
-    putDirectPrototypePropertyWithoutTransitions(vm, objectPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
     // no. of arguments for constructor
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }

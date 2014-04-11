@@ -39,7 +39,7 @@ BooleanConstructor::BooleanConstructor(VM& vm, Structure* structure)
 void BooleanConstructor::finishCreation(VM& vm, BooleanPrototype* booleanPrototype)
 {
     Base::finishCreation(vm, booleanPrototype->classInfo()->className);
-    putDirectPrototypePropertyWithoutTransitions(vm, booleanPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, booleanPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontDelete | DontEnum);

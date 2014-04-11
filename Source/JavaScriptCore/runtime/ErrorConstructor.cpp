@@ -42,7 +42,7 @@ void ErrorConstructor::finishCreation(VM& vm, ErrorPrototype* errorPrototype)
 {
     Base::finishCreation(vm, errorPrototype->classInfo()->className);
     // ECMA 15.11.3.1 Error.prototype
-    putDirectPrototypePropertyWithoutTransitions(vm, errorPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontDelete | ReadOnly | DontEnum);
 }
 

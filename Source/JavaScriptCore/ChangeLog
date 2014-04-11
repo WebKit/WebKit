@@ -1,3 +1,126 @@
+2014-04-11  Gavin Barraclough  <baraclough@apple.com>
+
+        Rollout - Rewrite Function.bind as a builtin
+        https://bugs.webkit.org/show_bug.cgi?id=131083
+
+        Unreviewed.
+
+        Rolling out r167020 while investigating a performance regression.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeConstructor):
+        * API/JSScriptRef.cpp:
+        (parseScript):
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createBuiltinExecutable):
+        * builtins/Function.prototype.js:
+        (apply):
+        (bind.bindingFunction): Deleted.
+        (bind.else.bindingFunction): Deleted.
+        (bind): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::InstanceOfNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        * parser/Lexer.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        * parser/Parser.h:
+        (JSC::parse):
+        * parser/ParserModes.h:
+        * runtime/ArgumentsIteratorConstructor.cpp:
+        (JSC::ArgumentsIteratorConstructor::finishCreation):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::finishCreation):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::finishCreation):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::finishCreation):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::checkSyntax):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::finishCreation):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        (JSC::functionProtoFuncBind):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::finishCreation):
+        * runtime/JSBoundFunction.cpp: Added.
+        (JSC::boundFunctionCall):
+        (JSC::boundFunctionConstruct):
+        (JSC::JSBoundFunction::create):
+        (JSC::JSBoundFunction::destroy):
+        (JSC::JSBoundFunction::customHasInstance):
+        (JSC::JSBoundFunction::JSBoundFunction):
+        (JSC::JSBoundFunction::finishCreation):
+        (JSC::JSBoundFunction::visitChildren):
+        * runtime/JSBoundFunction.h: Added.
+        (JSC::JSBoundFunction::targetFunction):
+        (JSC::JSBoundFunction::boundThis):
+        (JSC::JSBoundFunction::boundArgs):
+        (JSC::JSBoundFunction::createStructure):
+        * runtime/JSFunction.cpp:
+        (JSC::RetrieveCallerFunctionFunctor::RetrieveCallerFunctionFunctor):
+        (JSC::RetrieveCallerFunctionFunctor::operator()):
+        (JSC::retrieveCallerFunction):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncSetTypeErrorAccessor): Deleted.
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectPrototypeProperty): Deleted.
+        (JSC::JSObject::putDirectPrototypePropertyWithoutTransitions): Deleted.
+        * runtime/JSObject.h:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::finishCreation):
+        * runtime/MapConstructor.cpp:
+        (JSC::MapConstructor::finishCreation):
+        * runtime/MapIteratorConstructor.cpp:
+        (JSC::MapIteratorConstructor::finishCreation):
+        * runtime/NameConstructor.cpp:
+        (JSC::NameConstructor::finishCreation):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::finishCreation):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::finishCreation):
+        * runtime/SetConstructor.cpp:
+        (JSC::SetConstructor::finishCreation):
+        * runtime/SetIteratorConstructor.cpp:
+        (JSC::SetIteratorConstructor::finishCreation):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::finishCreation):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::WeakMapConstructor::finishCreation):
+
 2014-04-11  David Kilzer  <ddkilzer@apple.com>
 
         [ASan] Build broke because libCompileRuntimeToLLVMIR.a links to libclang_rt.asan_osx_dynamic.dylib
