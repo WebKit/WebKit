@@ -1,3 +1,15 @@
+2014-04-11  David Kilzer  <ddkilzer@apple.com>
+
+        [ASan] Build broke because libCompileRuntimeToLLVMIR.a links to libclang_rt.asan_osx_dynamic.dylib
+        <http://webkit.org/b/131556>
+        <rdar://problem/16591856>
+
+        Reviewed by Brent Fulgham.
+
+        * Configurations/CompileRuntimeToLLVMIR.xcconfig: Clear
+        OTHER_LDFLAGS so the ASan build does not try to link to
+        libclang_rt.asan_osx_dynamic.dylib.
+
 2014-04-11  Mark Lam  <mark.lam@apple.com>
 
         JSMainThreadExecState::call() should clear exceptions before returning.
