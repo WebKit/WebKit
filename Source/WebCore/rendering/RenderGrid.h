@@ -80,8 +80,8 @@ private:
     void insertItemIntoGrid(RenderBox*, const GridCoordinate&);
     void placeItemsOnGrid();
     void populateExplicitGridAndOrderIterator();
-    void placeSpecifiedMajorAxisItemsOnGrid(Vector<RenderBox*>);
-    void placeAutoMajorAxisItemsOnGrid(Vector<RenderBox*>);
+    void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
+    void placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     void placeAutoMajorAxisItemOnGrid(RenderBox*);
     GridTrackSizingDirection autoPlacementMajorAxisDirection() const;
     GridTrackSizingDirection autoPlacementMinorAxisDirection() const;

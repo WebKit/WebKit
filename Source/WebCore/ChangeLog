@@ -1,3 +1,16 @@
+2014-04-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Avoid Vector copies in RenderGrid::placeItemsOnGrid()
+        https://bugs.webkit.org/show_bug.cgi?id=131452
+
+        Reviewed by Sergio Villar Senin.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid): Take in a const reference to the
+        Vector object. Make the for-loop that iterates through it range-based.
+        (WebCore::RenderGrid::placeAutoMajorAxisItemsOnGrid): Ditto.
+        * rendering/RenderGrid.h:
+
 2014-04-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove shared PageScriptDebugServer, create per-Page
