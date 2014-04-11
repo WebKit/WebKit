@@ -451,6 +451,7 @@ void JSGlobalObject::reset(JSValue prototype)
     }
     
     JSFunction* setTypeErrorAccessor = JSFunction::create(vm, this, 2, vm.propertyNames->emptyIdentifier.string(), globalFuncSetTypeErrorAccessor);
+    JSFunction* builtinLog = JSFunction::create(vm, this, 1, vm.propertyNames->emptyIdentifier.string(), globalFuncBuiltinLog);
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(vm.propertyNames->NaN, jsNaN(), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->Infinity, jsNumber(std::numeric_limits<double>::infinity()), DontEnum | DontDelete | ReadOnly),
@@ -458,7 +459,8 @@ void JSGlobalObject::reset(JSValue prototype)
         GlobalPropertyInfo(vm.propertyNames->undefinedPrivateName, jsUndefined(), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->ObjectPrivateName, objectConstructor, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->TypeErrorPrivateName, m_typeErrorConstructor.get(), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->SetTypeErrorAccessorPrivateName, setTypeErrorAccessor, DontEnum | DontDelete | ReadOnly)
+        GlobalPropertyInfo(vm.propertyNames->SetTypeErrorAccessorPrivateName, setTypeErrorAccessor, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->BuiltinLogPrivateName, builtinLog, DontEnum | DontDelete | ReadOnly)
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
     

@@ -1,3 +1,19 @@
+2014-04-11  Oliver Hunt  <oliver@apple.com>
+
+        Add BuiltinLog function to make debugging builtins easier
+        https://bugs.webkit.org/show_bug.cgi?id=131550
+
+        Reviewed by Andreas Kling.
+
+        Add a logging function that builtins can use for debugging.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncBuiltinLog):
+        * runtime/JSGlobalObjectFunctions.h:
+
 2014-04-11  Julien Brianceau  <jbriance@cisco.com>
 
         Fix LLInt for sh4 architecture (broken since C stack merge).

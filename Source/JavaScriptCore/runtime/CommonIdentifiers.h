@@ -225,7 +225,8 @@
     macro(boundFunction) \
     macro(boundFunctionLength) \
     macro(prototypeForHasInstance) \
-    macro(SetTypeErrorAccessor)
+    macro(SetTypeErrorAccessor) \
+    macro(BuiltinLog)
 
 namespace JSC {
     

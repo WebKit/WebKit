@@ -821,4 +821,10 @@ EncodedJSValue JSC_HOST_CALL globalFuncSetTypeErrorAccessor(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
     
+EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState* exec)
+{
+    dataLog(exec->argument(0).toWTFString(exec), "\n");
+    return JSValue::encode(jsUndefined());
+}
+
 } // namespace JSC
