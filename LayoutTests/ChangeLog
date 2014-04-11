@@ -1,3 +1,22 @@
+2014-04-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Support for audio and video tracks was added on r158436. Stop skipping the following tests:
+          media/track/audio-track.html
+          media/track/video-track.html
+
+        Update bug number for media/track/track*in-band*.html tests
+
+        Report and update text expectations for new failing tests:
+          media/track/track-remove-track.html
+          fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html
+          media/media-event-listeners.html
+
+        Update timeout expectation for media/video-controls-captions.html
+
+        * platform/gtk/TestExpectations:
+
 2014-04-10  Chris Fleizach  <cfleizach@apple.com>
 
         Heap-use-after-free in WebCore::SpeechSynthesisUtterance::startTime

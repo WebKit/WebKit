@@ -215,10 +215,6 @@ webkit.org/b/98942 fast/workers/shared-worker-storagequota-query-usage.html [ Fa
 # GTK doesn't support smart replace.
 webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 
-# GStreamer support for audio and video tracks does not exist yet
-webkit.org/b/117039 media/track/audio-track.html [ Skip ]
-webkit.org/b/117039 media/track/video-track.html [ Skip ]
-
 # isProtocolHandlerRegistered() isn't supported yet.
 webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
 
@@ -341,13 +337,13 @@ webkit.org/b/100137 fast/media/mq-resolution-dpi-dpcm-warning.html [ Failure ]
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt [ Skip ]
 
-# No support for exposing in-band text tracks
-webkit.org/b/103771 media/track/track-forced-subtitles-in-band.html [ Timeout Failure ]
-webkit.org/b/103771 media/track/track-in-band.html [ Failure ]
-webkit.org/b/103771 media/track/track-in-band-cues-added-once.html [ Timeout ]
-webkit.org/b/103771 media/track/track-in-band-style.html [ Timeout ]
-webkit.org/b/103771 media/track/track-in-band-legacy-api.html [ Failure ]
-webkit.org/b/103771 media/track/track-in-band-mode.html [ Skip ]
+# No support for MPEG-4 caption support
+webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure ]
+webkit.org/b/131546 media/track/track-in-band.html [ Failure ]
+webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout ]
+webkit.org/b/131546 media/track/track-in-band-style.html [ Timeout ]
+webkit.org/b/131546 media/track/track-in-band-legacy-api.html [ Failure ]
+webkit.org/b/131546 media/track/track-in-band-mode.html [ Skip ]
 
 # Require ENABLE(CUSTOM_ELEMENTS) support
 webkit.org/b/110735 fast/dom/custom [ Skip ]
@@ -919,6 +915,7 @@ Bug(GTK) fast/forms/select/optgroup-clicking.html [ Timeout ]
 
 Bug(GTK) fast/media/media-query-list-04.html [ Timeout ]
 
+webkit.org/b/131545 media/media-event-listeners.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1492,7 +1489,7 @@ webkit.org/b/80129 fast/frames/flattening/frameset-flattening-advanced.html [ Fa
 webkit.org/b/89663 editing/deleting/delete-3800834-fix.html [ Failure ]
 
 # GTK is moving from the simple toggle button to a menu of tracks
-webkit.org/b/95428 media/video-controls-captions.html [ Failure ]
+webkit.org/b/95428 media/video-controls-captions.html [ Failure Timeout ]
 
 webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
@@ -1830,6 +1827,10 @@ webkit.org/b/131496 accessibility/help-text.html [ Failure ]
 webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
 
 webkit.org/b/131501 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
+
+webkit.org/b/131540 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure ]
+
+webkit.org/b/130971 media/track/track-remove-track.html [ Failure Timeout  ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
