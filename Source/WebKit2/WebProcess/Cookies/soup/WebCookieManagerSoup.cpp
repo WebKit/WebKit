@@ -27,6 +27,7 @@
 #include "WebCookieManager.h"
 
 #include "ChildProcess.h"
+#include "WebFrameNetworkingContext.h"
 #include "WebKitSoupCookieJarSqlite.h"
 #include <WebCore/CookieJarSoup.h>
 #include <WebCore/SoupNetworkSession.h>
@@ -40,22 +41,7 @@ namespace WebKit {
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
-    SoupCookieJarAcceptPolicy soupPolicy;
-
-    soupPolicy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
-    switch (policy) {
-    case HTTPCookieAcceptPolicyAlways:
-        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
-        break;
-    case HTTPCookieAcceptPolicyNever:
-        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NEVER;
-        break;
-    case HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
-        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
-        break;
-    }
-    soup_cookie_jar_set_accept_policy(cookieJar, soupPolicy);
+    WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(policy);
 }
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()

@@ -30,7 +30,10 @@
 #include "SessionTracker.h"
 #include "WebFrame.h"
 #include "WebPage.h"
+#include <WebCore/CookieJarSoup.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Settings.h>
+#include <WebCore/SoupNetworkSession.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -45,6 +48,33 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
         return;
 
     SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(String::number(sessionID)));
+}
+
+void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy policy)
+{
+    SoupCookieJarAcceptPolicy soupPolicy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
+    switch (policy) {
+    case HTTPCookieAcceptPolicyAlways:
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
+        break;
+    case HTTPCookieAcceptPolicyNever:
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NEVER;
+        break;
+    case HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
+        break;
+    }
+
+    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
+    soup_cookie_jar_set_accept_policy(cookieJar, soupPolicy);
+
+    SoupNetworkSession& soupSession = NetworkStorageSession::defaultStorageSession().soupNetworkSession();
+    soup_cookie_jar_set_accept_policy(soupSession.cookieJar(), soupPolicy);
+
+    for (const auto& session : SessionTracker::sessionMap().values()) {
+        if (session)
+            soup_cookie_jar_set_accept_policy(session->soupNetworkSession().cookieJar(), soupPolicy);
+    }
 }
 
 WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
