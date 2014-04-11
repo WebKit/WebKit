@@ -3817,7 +3817,7 @@ void WebPage::recomputeShortCircuitHorizontalWheelEventsState()
 
 Frame* WebPage::mainFrame() const
 {
-    return m_page ? &m_page->mainFrame() : 0;
+    return m_page ? &m_page->mainFrame() : nullptr;
 }
 
 FrameView* WebPage::mainFrameView() const
@@ -3825,7 +3825,7 @@ FrameView* WebPage::mainFrameView() const
     if (Frame* frame = mainFrame())
         return frame->view();
     
-    return 0;
+    return nullptr;
 }
 
 void WebPage::setScrollingPerformanceLoggingEnabled(bool enabled)
@@ -4506,9 +4506,19 @@ TelephoneNumberOverlayController& WebPage::telephoneNumberOverlayController()
 }
 #endif
 
-void WebPage::didChangeScrollOffsetForAnyFrame()
+void WebPage::didChangeScrollOffsetForFrame(Frame* frame)
 {
-    m_pageOverlayController.didScrollAnyFrame();
+    m_pageOverlayController.didScrollFrame(frame);
+
+    if (!frame->isMainFrame())
+        return;
+
+    // If this is called when tearing down a FrameView, the WebCore::Frame's
+    // current FrameView will be null.
+    if (!frame->view())
+        return;
+
+    updateMainFrameScrollOffsetPinning();
 }
 
 } // namespace WebKit

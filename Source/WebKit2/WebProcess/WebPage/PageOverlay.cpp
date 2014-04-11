@@ -42,12 +42,12 @@ namespace WebKit {
 static const double fadeAnimationDuration = 0.2;
 static const double fadeAnimationFrameRate = 30;
 
-PassRefPtr<PageOverlay> PageOverlay::create(Client* client)
+PassRefPtr<PageOverlay> PageOverlay::create(Client* client, OverlayType overlayType)
 {
-    return adoptRef(new PageOverlay(client));
+    return adoptRef(new PageOverlay(client, overlayType));
 }
 
-PageOverlay::PageOverlay(Client* client)
+PageOverlay::PageOverlay(Client* client, OverlayType overlayType)
     : m_client(client)
     , m_webPage(0)
     , m_fadeAnimationTimer(RunLoop::main(), this, &PageOverlay::fadeAnimationTimerFired)
@@ -55,6 +55,7 @@ PageOverlay::PageOverlay(Client* client)
     , m_fadeAnimationDuration(fadeAnimationDuration)
     , m_fadeAnimationType(NoAnimation)
     , m_fractionFadedIn(1.0)
+    , m_overlayType(overlayType)
 {
 }
 
@@ -64,18 +65,43 @@ PageOverlay::~PageOverlay()
 
 IntRect PageOverlay::bounds() const
 {
-    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
+    if (!m_overrideFrame.isEmpty())
+        return IntRect(IntPoint(), m_overrideFrame.size());
 
-    int width = frameView->width();
-    int height = frameView->height();
+    FrameView* frameView = m_webPage->mainFrameView();
 
-    if (!ScrollbarTheme::theme()->usesOverlayScrollbars()) {
-        if (frameView->verticalScrollbar())
-            width -= frameView->verticalScrollbar()->width();
-        if (frameView->horizontalScrollbar())
-            height -= frameView->horizontalScrollbar()->height();
-    }    
-    return IntRect(0, 0, width, height);
+    switch (m_overlayType) {
+    case OverlayType::View: {
+        int width = frameView->width();
+        int height = frameView->height();
+
+        if (!ScrollbarTheme::theme()->usesOverlayScrollbars()) {
+            if (frameView->verticalScrollbar())
+                width -= frameView->verticalScrollbar()->width();
+            if (frameView->horizontalScrollbar())
+                height -= frameView->horizontalScrollbar()->height();
+        }
+        return IntRect(0, 0, width, height);
+    }
+    case OverlayType::Document:
+        return IntRect(IntPoint(), frameView->contentsSize());
+    };
+}
+
+IntRect PageOverlay::frame() const
+{
+    if (!m_overrideFrame.isEmpty())
+        return m_overrideFrame;
+
+    return bounds();
+}
+
+void PageOverlay::setFrame(IntRect frame)
+{
+    m_overrideFrame = frame;
+
+    if (m_webPage)
+        m_webPage->pageOverlayController().didChangeOverlayFrame(this);
 }
 
 void PageOverlay::setPage(WebPage* webPage)
@@ -108,12 +134,7 @@ void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirt
         return;
 
     GraphicsContextStateSaver stateSaver(graphicsContext);
-    graphicsContext.beginTransparencyLayer(1);
-    graphicsContext.setCompositeOperation(CompositeCopy);
-
     m_client->drawRect(this, graphicsContext, paintRect);
-
-    graphicsContext.endTransparencyLayer();
 }
     
 bool PageOverlay::mouseEvent(const WebMouseEvent& mouseEvent)

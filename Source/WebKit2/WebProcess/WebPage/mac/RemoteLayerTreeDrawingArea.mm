@@ -38,6 +38,8 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/RenderLayerCompositor.h>
+#import <WebCore/RenderView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
 
@@ -89,9 +91,11 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLaye
     Vector<GraphicsLayer *> children;
     if (rootLayer) {
         children.append(rootLayer);
-        children.append(m_webPage->pageOverlayController().rootLayer());
+        children.append(m_webPage->pageOverlayController().viewOverlayRootLayer());
     }
     m_rootLayer->setChildren(children);
+
+    m_webPage->mainFrameView()->renderView()->compositor().setDocumentOverlayRootLayer(m_webPage->pageOverlayController().documentOverlayRootLayer());
 }
 
 void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition)
@@ -291,6 +295,11 @@ void RemoteLayerTreeDrawingArea::didUpdate()
         scheduleCompositingLayerFlush();
         m_hadFlushDeferredWhileWaitingForBackingStoreSwap = false;
     }
+}
+
+void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize&)
+{
+    m_webPage->pageOverlayController().didChangeDocumentSize();
 }
 
 } // namespace WebKit

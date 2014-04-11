@@ -255,6 +255,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     , m_isTrackingRepaints(false)
     , m_layersWithTiledBackingCount(0)
     , m_rootLayerAttachment(RootLayerUnattached)
+    , m_documentOverlayRootLayer(nullptr)
     , m_layerFlushTimer(this, &RenderLayerCompositor::layerFlushTimerFired)
     , m_layerFlushThrottlingEnabled(page() && page()->progress().isMainLoadProgressing())
     , m_layerFlushThrottlingTemporarilyDisabledForInteraction(false)
@@ -1460,6 +1461,9 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
 
         childLayersOfEnclosingLayer.append(layerBacking->childForSuperlayers());
     }
+
+    if (m_documentOverlayRootLayer)
+        childLayersOfEnclosingLayer.append(m_documentOverlayRootLayer);
 }
 
 void RenderLayerCompositor::rebuildRegionCompositingLayerTree(RenderNamedFlowFragment* region, Vector<GraphicsLayer*>& childList, int depth)
@@ -3808,6 +3812,14 @@ void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCo
         return;
 
     m_renderView.frameView().firePaintRelatedMilestonesIfNeeded();
+}
+
+void RenderLayerCompositor::setDocumentOverlayRootLayer(GraphicsLayer* documentOverlayRootLayer)
+{
+    if (m_documentOverlayRootLayer)
+        m_documentOverlayRootLayer->removeFromParent();
+    m_documentOverlayRootLayer = documentOverlayRootLayer;
+    scheduleCompositingLayerUpdate();
 }
 
 } // namespace WebCore

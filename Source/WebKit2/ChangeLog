@@ -1,3 +1,85 @@
+2014-04-11  Tim Horton  <timothy_horton@apple.com>
+
+        Support document-relative and custom-frame page overlays
+        https://bugs.webkit.org/show_bug.cgi?id=131560
+        <rdar://problem/16595556>
+
+        Reviewed by Simon Fraser.
+
+        Add "document-relative" overlays, which attach to (and scroll with) the document,
+        and can be given a frame rect within the document to avoid overallocation of backing store.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didChangeScrollOffset):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mainFrame):
+        (WebKit::WebPage::mainFrameView):
+        (WebKit::WebPage::didChangeScrollOffsetForFrame):
+        * WebProcess/WebPage/WebPage.h:
+        Let the PageOverlayController know *which* frame scrolled, instead of "any frame".
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        Factor out shared code.
+
+        (WebKit::FindController::willMoveToWebPage):
+        (WebKit::FindController::drawRect):
+        We can use clearRect() instead of a transparency layer and fillRect().
+        I've looked through all the other overlay clients I know of and none of them
+        depend on having a transparency layer at the overlay level.
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::create):
+        (WebKit::PageOverlay::PageOverlay):
+        (WebKit::PageOverlay::bounds):
+        (WebKit::PageOverlay::frame):
+        (WebKit::PageOverlay::setFrame):
+        (WebKit::PageOverlay::drawRect):
+        Add OverlayType, which allows creation of Document or View relative overlays.
+        All overlays up to this point are View relative, so we default to that.
+        Document-relative overlays scroll with the page instead of repainting as
+        the page scrolls. They can also be given an explicit frame, allowing them
+        to be smaller than the entire document.
+
+        * WebProcess/WebPage/PageOverlay.h:
+        (WebKit::PageOverlay::overlayType):
+        (WebKit::PageOverlay::webPage):
+        (WebKit::PageOverlay::client): Deleted.
+        * WebProcess/WebPage/PageOverlayController.cpp:
+        (WebKit::PageOverlayController::initialize):
+        (WebKit::PageOverlayController::installPageOverlay):
+        (WebKit::PageOverlayController::uninstallPageOverlay):
+        (WebKit::PageOverlayController::updateForceSynchronousScrollLayerPositionUpdates):
+        (WebKit::updateOverlayGeometry):
+        (WebKit::PageOverlayController::setPageOverlayNeedsDisplay):
+        (WebKit::PageOverlayController::didChangeViewSize):
+        (WebKit::PageOverlayController::didChangeDocumentSize):
+        (WebKit::PageOverlayController::didChangeDeviceScaleFactor):
+        (WebKit::PageOverlayController::didScrollFrame):
+        (WebKit::PageOverlayController::flushPageOverlayLayers):
+        (WebKit::PageOverlayController::didChangeOverlayFrame):
+        Keep two overlay root layers - one for view-relative
+        and one for document-relative overlays.
+        Don't force synchronous scrolling if we only have document-relative overlays.
+        Update the overlay's position as well as its size whenever necessary.
+        Update document-relative overlay geometry when the document size changes.
+        Only explicitly flush view-relative overlays; document-relative ones
+        are plugged into the WebCore layer tree and flushed along with the page.
+
+        * WebProcess/WebPage/PageOverlayController.h:
+        (WebKit::PageOverlayController::documentOverlayRootLayer):
+        (WebKit::PageOverlayController::viewOverlayRootLayer):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setRootCompositingLayer):
+        (WebKit::RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        Let the PageOverlay controller know when the document size changes.
+        When we set up compositing, push the document overlay root layer
+        down into WebCore.
+
 2014-04-11  Pratik Solanki  <psolanki@apple.com>
 
         [iOS WebKit2]: Share NSURLCache directory for webkit processes

@@ -81,6 +81,8 @@ private:
     virtual void setDeviceScaleFactor(float) override;
 #endif
 
+    virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+
     void updateScrolledExposedRect();
 
     void layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeDrawingArea>*);

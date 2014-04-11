@@ -780,7 +780,7 @@ public:
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
 #endif
 
-    void didChangeScrollOffsetForAnyFrame();
+    void didChangeScrollOffsetForFrame(WebCore::Frame*);
 
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);

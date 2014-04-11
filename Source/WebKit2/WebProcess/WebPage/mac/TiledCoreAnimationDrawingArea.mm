@@ -201,6 +201,8 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
 
 void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize&)
 {
+    m_webPage->pageOverlayController().didChangeDocumentSize();
+
     if (!m_webPage->minimumLayoutSize().width())
         return;
 
@@ -445,7 +447,9 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    [m_hostingLayer setSublayers:layer ? @[ layer, m_webPage->pageOverlayController().rootLayer()->platformLayer() ] : @[ ]];
+    [m_hostingLayer setSublayers:layer ? @[ layer, m_webPage->pageOverlayController().viewOverlayRootLayer()->platformLayer() ] : @[ ]];
+
+    m_webPage->mainFrameView()->renderView()->compositor().setDocumentOverlayRootLayer(m_webPage->pageOverlayController().documentOverlayRootLayer());
 
     bool hadRootLayer = !!m_rootLayer;
     m_rootLayer = layer;

@@ -28,13 +28,12 @@
 
 #include "APIObject.h"
 #include "WKBase.h"
+#include <WebCore/IntRect.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
-    class GraphicsContext;
-    class IntPoint;
-    class IntRect;
+class GraphicsContext;
 }
 
 namespace WebKit {
@@ -59,7 +58,12 @@ public:
         virtual WKArrayRef copyAccessibilityAttributeNames(PageOverlay*, bool /* parameterizedNames */) { return 0; }
     };
 
-    static PassRefPtr<PageOverlay> create(Client*);
+    enum class OverlayType {
+        View, // Fixed to the view size; does not scale or scroll with the document, repaints on scroll.
+        Document, // Scales and scrolls with the document.
+    };
+
+    static PassRefPtr<PageOverlay> create(Client*, OverlayType = OverlayType::View);
     virtual ~PageOverlay();
 
     void setPage(WebPage*);
@@ -81,13 +85,17 @@ public:
     Client* client() const { return m_client; }
 
     enum class FadeMode { DoNotFade, Fade };
+
+    OverlayType overlayType() { return m_overlayType; }
+
+    WebCore::IntRect bounds() const;
+    WebCore::IntRect frame() const;
+    void setFrame(WebCore::IntRect);
     
 protected:
-    explicit PageOverlay(Client*);
+    explicit PageOverlay(Client*, OverlayType);
 
 private:
-    WebCore::IntRect bounds() const;
-
     void startFadeAnimation();
     void fadeAnimationTimerFired();
 
@@ -106,6 +114,9 @@ private:
 
     FadeAnimationType m_fadeAnimationType;
     float m_fractionFadedIn;
+
+    OverlayType m_overlayType;
+    WebCore::IntRect m_overrideFrame;
 };
 
 } // namespace WebKit

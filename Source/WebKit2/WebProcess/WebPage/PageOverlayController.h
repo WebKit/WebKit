@@ -33,6 +33,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+namespace WebCore {
+class Frame;
+}
+
 namespace WebKit {
 
 class WebMouseEvent;
@@ -44,7 +48,8 @@ public:
 
     void initialize();
 
-    WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
+    WebCore::GraphicsLayer* documentOverlayRootLayer() const { return m_documentOverlayRootLayer.get(); }
+    WebCore::GraphicsLayer* viewOverlayRootLayer() const { return m_viewOverlayRootLayer.get(); }
 
     void installPageOverlay(PassRefPtr<PageOverlay>, PageOverlay::FadeMode);
     void uninstallPageOverlay(PageOverlay*, PageOverlay::FadeMode);
@@ -54,10 +59,12 @@ public:
     void clearPageOverlay(PageOverlay*);
 
     void didChangeViewSize();
+    void didChangeDocumentSize();
     void didChangePreferences();
     void didChangeDeviceScaleFactor();
     void didChangeExposedRect();
-    void didScrollAnyFrame();
+    void didScrollFrame(WebCore::Frame*);
+    void didChangeOverlayFrame(PageOverlay*);
 
     void flushPageOverlayLayers(WebCore::FloatRect);
 
@@ -69,7 +76,7 @@ public:
 
 private:
     void updateSettingsForLayer(WebCore::GraphicsLayer*);
-    void invalidateAllPageOverlayLayers();
+    void updateForceSynchronousScrollLayerPositionUpdates();
 
     // WebCore::GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double) override { }
@@ -78,7 +85,8 @@ private:
     virtual float deviceScaleFactor() const override;
     virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const override { }
 
-    std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
+    std::unique_ptr<WebCore::GraphicsLayer> m_documentOverlayRootLayer;
+    std::unique_ptr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
     HashMap<PageOverlay*, std::unique_ptr<WebCore::GraphicsLayer>> m_overlayGraphicsLayers;
     Vector<RefPtr<PageOverlay>> m_pageOverlays;
     WebPage* m_webPage;

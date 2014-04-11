@@ -29,9 +29,11 @@
 #include "DrawingArea.h"
 #include "PageOverlay.h"
 #include "WebPage.h"
+#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/Settings.h>
 #include <WebCore/TiledBacking.h>
@@ -47,17 +49,21 @@ PageOverlayController::PageOverlayController(WebPage* webPage)
 
 void PageOverlayController::initialize()
 {
-    ASSERT(!m_rootLayer);
+    ASSERT(!m_documentOverlayRootLayer);
+    ASSERT(!m_viewOverlayRootLayer);
 
-    m_rootLayer = GraphicsLayer::create(m_webPage->drawingArea()->graphicsLayerFactory(), this);
+    m_documentOverlayRootLayer = GraphicsLayer::create(m_webPage->drawingArea()->graphicsLayerFactory(), this);
+    m_viewOverlayRootLayer = GraphicsLayer::create(m_webPage->drawingArea()->graphicsLayerFactory(), this);
 #ifndef NDEBUG
-    m_rootLayer->setName("Page Overlay container");
+    m_documentOverlayRootLayer->setName("Page Overlay container (document-relative)");
+    m_viewOverlayRootLayer->setName("Page Overlay container (view-relative)");
 #endif
 }
 
 void PageOverlayController::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay, PageOverlay::FadeMode fadeMode)
 {
-    ASSERT(m_rootLayer);
+    ASSERT(m_documentOverlayRootLayer);
+    ASSERT(m_viewOverlayRootLayer);
 
     RefPtr<PageOverlay> overlay = pageOverlay;
 
@@ -71,20 +77,26 @@ void PageOverlayController::installPageOverlay(PassRefPtr<PageOverlay> pageOverl
         overlay->startFadeInAnimation();
 
     std::unique_ptr<GraphicsLayer> layer = GraphicsLayer::create(m_webPage->drawingArea()->graphicsLayerFactory(), this);
+    layer->setAnchorPoint(FloatPoint3D());
+    layer->setPosition(overlay->frame().location());
 #ifndef NDEBUG
     layer->setName("Page Overlay content");
 #endif
 
     updateSettingsForLayer(layer.get());
-    m_rootLayer->addChild(layer.get());
+
+    switch (overlay->overlayType()) {
+    case PageOverlay::OverlayType::View:
+        m_viewOverlayRootLayer->addChild(layer.get());
+        break;
+    case PageOverlay::OverlayType::Document:
+        m_documentOverlayRootLayer->addChild(layer.get());
+        break;
+    }
+
     m_overlayGraphicsLayers.set(overlay.get(), std::move(layer));
 
-#if ENABLE(ASYNC_SCROLLING)
-    if (Page* page = m_webPage->corePage()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->setForceSynchronousScrollLayerPositionUpdates(true);
-    }
-#endif
+    updateForceSynchronousScrollLayerPositionUpdates();
 }
 
 void PageOverlayController::uninstallPageOverlay(PageOverlay* overlay, PageOverlay::FadeMode fadeMode)
@@ -102,15 +114,34 @@ void PageOverlayController::uninstallPageOverlay(PageOverlay* overlay, PageOverl
     ASSERT(overlayIndex != notFound);
     m_pageOverlays.remove(overlayIndex);
 
-    if (!m_pageOverlays.isEmpty())
-        return;
+    updateForceSynchronousScrollLayerPositionUpdates();
+}
 
+void PageOverlayController::updateForceSynchronousScrollLayerPositionUpdates()
+{
 #if ENABLE(ASYNC_SCROLLING)
+    bool forceSynchronousScrollLayerPositionUpdates = false;
+
+    for (auto& overlay : m_pageOverlays) {
+        if (overlay->overlayType() == PageOverlay::OverlayType::View)
+            forceSynchronousScrollLayerPositionUpdates = true;
+    }
+
     if (Page* page = m_webPage->corePage()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->setForceSynchronousScrollLayerPositionUpdates(false);
+            scrollingCoordinator->setForceSynchronousScrollLayerPositionUpdates(forceSynchronousScrollLayerPositionUpdates);
     }
 #endif
+}
+
+static void updateOverlayGeometry(PageOverlay* overlay, GraphicsLayer* graphicsLayer)
+{
+    if (!graphicsLayer->drawsContent())
+        return;
+
+    graphicsLayer->setPosition(overlay->frame().location());
+    graphicsLayer->setSize(overlay->frame().size());
+    graphicsLayer->setNeedsDisplay();
 }
 
 void PageOverlayController::setPageOverlayNeedsDisplay(PageOverlay* overlay, const WebCore::IntRect& dirtyRect)
@@ -121,8 +152,9 @@ void PageOverlayController::setPageOverlayNeedsDisplay(PageOverlay* overlay, con
 
     if (!graphicsLayer->drawsContent()) {
         graphicsLayer->setDrawsContent(true);
-        graphicsLayer->setSize(m_webPage->size());
+        updateOverlayGeometry(overlay, graphicsLayer);
     }
+
     graphicsLayer->setNeedsDisplayInRect(dirtyRect);
 }
 
@@ -147,11 +179,17 @@ void PageOverlayController::clearPageOverlay(PageOverlay* overlay)
 
 void PageOverlayController::didChangeViewSize()
 {
-    for (auto& graphicsLayer : m_overlayGraphicsLayers.values()) {
-        if (!graphicsLayer->drawsContent())
-            continue;
-        graphicsLayer->setSize(m_webPage->size());
-        graphicsLayer->setNeedsDisplay();
+    for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
+        if (overlayAndLayer.key->overlayType() == PageOverlay::OverlayType::View)
+            updateOverlayGeometry(overlayAndLayer.key, overlayAndLayer.value.get());
+    }
+}
+
+void PageOverlayController::didChangeDocumentSize()
+{
+    for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
+        if (overlayAndLayer.key->overlayType() == PageOverlay::OverlayType::Document)
+            updateOverlayGeometry(overlayAndLayer.key, overlayAndLayer.value.get());
     }
 }
 
@@ -163,8 +201,11 @@ void PageOverlayController::didChangePreferences()
 
 void PageOverlayController::didChangeDeviceScaleFactor()
 {
-    m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
-    invalidateAllPageOverlayLayers();
+    m_documentOverlayRootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+    m_viewOverlayRootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+
+    for (auto& graphicsLayer : m_overlayGraphicsLayers.values())
+        graphicsLayer->setNeedsDisplay();
 }
 
 void PageOverlayController::didChangeExposedRect()
@@ -172,20 +213,17 @@ void PageOverlayController::didChangeExposedRect()
     m_webPage->drawingArea()->scheduleCompositingLayerFlush();
 }
 
-void PageOverlayController::didScrollAnyFrame()
+void PageOverlayController::didScrollFrame(Frame* frame)
 {
-    invalidateAllPageOverlayLayers();
-}
-
-void PageOverlayController::invalidateAllPageOverlayLayers()
-{
-    for (auto& graphicsLayer : m_overlayGraphicsLayers.values())
-        graphicsLayer->setNeedsDisplay();
+    for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
+        if (overlayAndLayer.key->overlayType() == PageOverlay::OverlayType::View || !frame->isMainFrame())
+            overlayAndLayer.value->setNeedsDisplay();
+    }
 }
 
 void PageOverlayController::flushPageOverlayLayers(FloatRect visibleRect)
 {
-    m_rootLayer->flushCompositingState(visibleRect);
+    m_viewOverlayRootLayer->flushCompositingState(visibleRect);
 }
 
 void PageOverlayController::updateSettingsForLayer(GraphicsLayer* layer)
@@ -257,6 +295,18 @@ float PageOverlayController::deviceScaleFactor() const
 void PageOverlayController::notifyFlushRequired(const WebCore::GraphicsLayer*)
 {
     m_webPage->drawingArea()->scheduleCompositingLayerFlush();
+}
+
+void PageOverlayController::didChangeOverlayFrame(PageOverlay* overlay)
+{
+    ASSERT(m_pageOverlays.contains(overlay));
+
+    GraphicsLayer* graphicsLayer = m_overlayGraphicsLayers.get(overlay);
+
+    if (!graphicsLayer->drawsContent())
+        return;
+
+    updateOverlayGeometry(overlay, graphicsLayer);
 }
 
 } // namespace WebKit

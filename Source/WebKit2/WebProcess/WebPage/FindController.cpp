@@ -162,9 +162,8 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(this);
             m_findPageOverlay = findPageOverlay.get();
             m_webPage->installPageOverlay(findPageOverlay.release(), PageOverlay::FadeMode::Fade);
-            m_findPageOverlay->setNeedsDisplay();
-        } else
-            m_findPageOverlay->setNeedsDisplay();
+        }
+        m_findPageOverlay->setNeedsDisplay();
     }
 }
 
@@ -394,7 +393,7 @@ static const float overlayBackgroundGreen = 0.1;
 static const float overlayBackgroundBlue = 0.1;
 static const float overlayBackgroundAlpha = 0.25;
 
-void FindController::drawRect(PageOverlay* /*pageOverlay*/, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+void FindController::drawRect(PageOverlay*, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
     Color overlayBackgroundColor(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha);
 
@@ -413,16 +412,13 @@ void FindController::drawRect(PageOverlay* /*pageOverlay*/, GraphicsContext& gra
         for (size_t i = 0; i < rects.size(); ++i) {
             IntRect whiteFrameRect = rects[i];
             whiteFrameRect.inflate(1);
-
             graphicsContext.fillRect(whiteFrameRect);
         }
     }
 
-    graphicsContext.setFillColor(Color::transparent, ColorSpaceSRGB);
-
     // Clear out the holes.
     for (size_t i = 0; i < rects.size(); ++i)
-        graphicsContext.fillRect(rects[i]);
+        graphicsContext.clearRect(rects[i]);
 
     if (!m_isShowingFindIndicator)
         return;

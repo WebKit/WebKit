@@ -1579,17 +1579,7 @@ void WebFrameLoaderClient::didChangeScrollOffset()
     if (!webPage)
         return;
 
-    webPage->didChangeScrollOffsetForAnyFrame();
-
-    if (!m_frame->isMainFrame())
-        return;
-
-    // If this is called when tearing down a FrameView, the WebCore::Frame's
-    // current FrameView will be null.
-    if (!m_frame->coreFrame()->view())
-        return;
-
-    webPage->updateMainFrameScrollOffsetPinning();
+    webPage->didChangeScrollOffsetForFrame(m_frame->coreFrame());
 }
 
 bool WebFrameLoaderClient::allowScript(bool enabledPerSettings)
