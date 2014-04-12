@@ -1,3 +1,39 @@
+2014-04-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::FixupPhase should insert conversion nodes after the rest of fixup so that we know how the types settled
+        https://bugs.webkit.org/show_bug.cgi?id=131424
+
+        Reviewed by Geoffrey Garen.
+        
+        This defers type conversion injection until we've decided on types. This makes the
+        process of deciding types a bit more flexible - for example we can naturally fixpoint
+        and change our minds. Only when things are settled do we actually insert conversions.
+        
+        This is a necessary prerequisite for keeping double, int52, and JSValue data flow
+        separate. A SetLocal/GetLocal will appear to be JSValue until we fixpoint and realize
+        that there are typed uses. If we were eagerly inserting type conversions then we would
+        first insert a to/from-JSValue conversion in some cases only to then replace it by
+        the other conversions. It's probably trivial to remove those redundant conversions later
+        but I think it's better if we don't insert them to begin with.
+
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::operator!):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::run):
+        (JSC::DFG::FixupPhase::fixupBlock):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupSetLocalsInBlock):
+        (JSC::DFG::FixupPhase::fixEdge):
+        (JSC::DFG::FixupPhase::fixIntEdge):
+        (JSC::DFG::FixupPhase::injectTypeConversionsInBlock):
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+        (JSC::DFG::FixupPhase::addRequiredPhantom):
+        (JSC::DFG::FixupPhase::addPhantomsIfNecessary):
+        (JSC::DFG::FixupPhase::clearPhantomsAtEnd):
+        (JSC::DFG::FixupPhase::observeUntypedEdge): Deleted.
+        (JSC::DFG::FixupPhase::fixupUntypedSetLocalsInBlock): Deleted.
+        (JSC::DFG::FixupPhase::injectInt32ToDoubleNode): Deleted.
+
 2014-04-11  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: code generator should consider enclosing class when computing duplicate type names

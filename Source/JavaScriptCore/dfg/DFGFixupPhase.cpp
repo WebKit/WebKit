@@ -65,7 +65,7 @@ public:
         }
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
-            fixupUntypedSetLocalsInBlock(m_graph.block(blockIndex));
+            injectTypeConversionsInBlock(m_graph.block(blockIndex));
         
         return true;
     }
@@ -79,8 +79,10 @@ private:
         m_block = block;
         for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
             m_currentNode = block->at(m_indexInBlock);
+            addPhantomsIfNecessary();
             fixupNode(m_currentNode);
         }
+        clearPhantomsAtEnd();
         m_insertionSet.execute(block);
     }
     
@@ -244,11 +246,8 @@ private:
                         node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                     break;
                 }
-                Edge child1 = node->child1();
-                Edge child2 = node->child2();
-                
-                injectInt32ToDoubleNode(node->child1());
-                injectInt32ToDoubleNode(node->child2());
+                fixEdge<NumberUse>(node->child1());
+                fixEdge<NumberUse>(node->child2());
 
                 // We don't need to do ref'ing on the children because we're stealing them from
                 // the original division.
@@ -261,8 +260,6 @@ private:
                     node->setArithMode(Arith::CheckOverflow);
                 else
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
-                
-                m_insertionSet.insertNode(m_indexInBlock + 1, SpecNone, Phantom, node->origin, child1, child2);
                 break;
             }
             fixEdge<NumberUse>(node->child1());
@@ -1070,34 +1067,6 @@ private:
             break;
 #endif
         }
-        
-        if (!node->containsMovHint())
-            DFG_NODE_DO_TO_CHILDREN(m_graph, node, observeUntypedEdge);
-        
-        if (node->isTerminal()) {
-            // Terminal nodes don't need post-phantoms, and inserting them would violate
-            // the current requirement that a terminal is the last thing in a block. We
-            // should eventually change that requirement but even if we did, this would
-            // still be a valid optimization. All terminals accept just one input, and
-            // if that input is a conversion node then no further speculations will be
-            // performed.
-            // FIXME: Get rid of this by allowing Phantoms after terminals.
-            // https://bugs.webkit.org/show_bug.cgi?id=126778
-            m_requiredPhantoms.resize(0);
-        // Since StoreBarriers are recursively fixed up so that their children look 
-        // identical to that of the node they're barrier-ing, we need to avoid adding
-        // any Phantoms when processing them because this would invalidate the 
-        // InsertionSet's invariant of inserting things in a monotonically increasing
-        // order. This should be okay anyways because StoreBarriers can't exit. 
-        } else
-            addPhantomsIfNecessary();
-    }
-    
-    void observeUntypedEdge(Node*, Edge& edge)
-    {
-        if (edge.useKind() != UntypedUse)
-            return;
-        fixEdge<UntypedUse>(edge);
     }
     
     template<UseKind useKind>
@@ -1376,26 +1345,6 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
-            addPhantomsIfNecessary();
-        }
-        m_insertionSet.execute(block);
-    }
-    
-    void fixupUntypedSetLocalsInBlock(BasicBlock* block)
-    {
-        if (!block)
-            return;
-        ASSERT(block->isReachable);
-        m_block = block;
-        for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
-            Node* node = m_currentNode = block->at(m_indexInBlock);
-            if (node->op() != SetLocal)
-                continue;
-            
-            if (node->child1().useKind() == UntypedUse) {
-                fixEdge<UntypedUse>(node->child1());
-                addPhantomsIfNecessary();
-            }
         }
         m_insertionSet.execute(block);
     }
@@ -1546,92 +1495,10 @@ private:
         }
     }
     
-    // Set the use kind of the edge and perform any actions that need to be done for
-    // that use kind, like inserting intermediate conversion nodes. Never call this
-    // with useKind = UntypedUse explicitly; edges have UntypedUse implicitly and any
-    // edge that survives fixup and still has UntypedUse will have this method called
-    // from observeUntypedEdge(). Also, make sure that if you do change the type of an
-    // edge, you either call fixEdge() or perform the equivalent functionality
-    // yourself. Obviously, you should have a really good reason if you do the latter.
     template<UseKind useKind>
     void fixEdge(Edge& edge)
     {
-        if (isDouble(useKind)) {
-            if (edge->shouldSpeculateInt32ForArithmetic()) {
-                injectInt32ToDoubleNode(edge, useKind);
-                return;
-            }
-            
-            if (enableInt52() && edge->shouldSpeculateMachineInt()) {
-                // Make all double uses of int52 values have an intermediate Int52ToDouble.
-                // This is for the same reason as Int52ToValue (see below) except that
-                // Int8ToDouble will convert int52's that fit in an int32 into a double
-                // rather than trying to create a boxed int32 like Int52ToValue does.
-                
-                m_requiredPhantoms.append(edge.node());
-                Node* result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecInt52AsDouble, Int52ToDouble,
-                    m_currentNode->origin, Edge(edge.node(), NumberUse));
-                edge = Edge(result, useKind);
-                return;
-            }
-        }
-        
-        if (enableInt52() && useKind != MachineIntUse
-            && edge->shouldSpeculateMachineInt() && !edge->shouldSpeculateInt32()) {
-            // We make all non-int52 uses of int52 values have an intermediate Int52ToValue
-            // node to ensure that we handle this properly:
-            //
-            // a: SomeInt52
-            // b: ArithAdd(@a, ...)
-            // c: Call(..., @a)
-            // d: ArithAdd(@a, ...)
-            //
-            // Without an intermediate node and just labeling the uses, we will get:
-            //
-            // a: SomeInt52
-            // b: ArithAdd(Int52:@a, ...)
-            // c: Call(..., Untyped:@a)
-            // d: ArithAdd(Int52:@a, ...)
-            //
-            // And now the c->Untyped:@a edge will box the value of @a into a double. This
-            // is bad, because now the d->Int52:@a edge will either have to do double-to-int
-            // conversions, or will have to OSR exit unconditionally. Alternatively we could
-            // have the c->Untyped:@a edge box the value by copying rather than in-place.
-            // But these boxings are also costly so this wouldn't be great.
-            //
-            // The solution we use is to always have non-Int52 uses of predicted Int52's use
-            // an intervening Int52ToValue node:
-            //
-            // a: SomeInt52
-            // b: ArithAdd(Int52:@a, ...)
-            // x: Int52ToValue(Int52:@a)
-            // c: Call(..., Untyped:@x)
-            // d: ArithAdd(Int52:@a, ...)
-            //
-            // Note that even if we had multiple non-int52 uses of @a, the multiple
-            // Int52ToValue's would get CSE'd together. So the boxing would only happen once.
-            // At the same time, @a would continue to be represented as a native int52.
-            //
-            // An alternative would have been to insert ToNativeInt52 nodes on int52 uses of
-            // int52's. This would have handled the above example but would fall over for:
-            //
-            // a: SomeInt52
-            // b: Call(..., @a)
-            // c: ArithAdd(@a, ...)
-            //
-            // But the solution we use handles the above gracefully.
-            
-            m_requiredPhantoms.append(edge.node());
-            Node* result = m_insertionSet.insertNode(
-                m_indexInBlock, SpecInt52, Int52ToValue,
-                m_currentNode->origin, Edge(edge.node(), UntypedUse));
-            edge = Edge(result, useKind);
-            return;
-        }
-        
         observeUseKindOnNode<useKind>(edge.node());
-        
         edge.setUseKind(useKind);
     }
     
@@ -1664,18 +1531,7 @@ private:
         observeUseKindOnNode(node, useKind);
         
         edge = Edge(newNode, KnownInt32Use);
-        m_requiredPhantoms.append(node);
-    }
-    
-    void injectInt32ToDoubleNode(Edge& edge, UseKind useKind = NumberUse)
-    {
-        m_requiredPhantoms.append(edge.node());
-        
-        Node* result = m_insertionSet.insertNode(
-            m_indexInBlock, SpecInt52AsDouble, Int32ToDouble,
-            m_currentNode->origin, Edge(edge.node(), NumberUse));
-        
-        edge = Edge(result, useKind);
+        addRequiredPhantom(node);
     }
     
     void truncateConstantToInt32(Edge& edge)
@@ -1858,25 +1714,163 @@ private:
         return true;
     }
     
+    void injectTypeConversionsInBlock(BasicBlock* block)
+    {
+        if (!block)
+            return;
+        ASSERT(block->isReachable);
+        m_block = block;
+        for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
+            m_currentNode = block->at(m_indexInBlock);
+            addPhantomsIfNecessary();
+            if (m_currentNode->containsMovHint())
+                continue;
+            DFG_NODE_DO_TO_CHILDREN(m_graph, m_currentNode, injectTypeConversionsForEdge);
+        }
+        clearPhantomsAtEnd();
+        m_insertionSet.execute(block);
+    }
+    
+    void injectTypeConversionsForEdge(Node* node, Edge& edge)
+    {
+        ASSERT(node == m_currentNode);
+        
+        if (isDouble(edge.useKind())) {
+            if (edge->shouldSpeculateInt32ForArithmetic()) {
+                addRequiredPhantom(edge.node());
+                
+                Node* result = m_insertionSet.insertNode(
+                    m_indexInBlock, SpecInt52AsDouble, Int32ToDouble,
+                    node->origin, Edge(edge.node(), NumberUse));
+                
+                edge.setNode(result);
+                return;
+            }
+            
+            if (enableInt52() && edge->shouldSpeculateMachineInt()) {
+                // Make all double uses of int52 values have an intermediate Int52ToDouble.
+                // This is for the same reason as Int52ToValue (see below) except that
+                // Int8ToDouble will convert int52's that fit in an int32 into a double
+                // rather than trying to create a boxed int32 like Int52ToValue does.
+                
+                addRequiredPhantom(edge.node());
+                Node* result = m_insertionSet.insertNode(
+                    m_indexInBlock, SpecInt52AsDouble, Int52ToDouble,
+                    node->origin, Edge(edge.node(), NumberUse));
+                edge.setNode(result);
+                return;
+            }
+        }
+        
+        if (enableInt52() && edge.useKind() != MachineIntUse
+            && edge->shouldSpeculateMachineInt() && !edge->shouldSpeculateInt32()) {
+            // We make all non-int52 uses of int52 values have an intermediate Int52ToValue
+            // node to ensure that we handle this properly:
+            //
+            // a: SomeInt52
+            // b: ArithAdd(@a, ...)
+            // c: Call(..., @a)
+            // d: ArithAdd(@a, ...)
+            //
+            // Without an intermediate node and just labeling the uses, we will get:
+            //
+            // a: SomeInt52
+            // b: ArithAdd(Int52:@a, ...)
+            // c: Call(..., Untyped:@a)
+            // d: ArithAdd(Int52:@a, ...)
+            //
+            // And now the c->Untyped:@a edge will box the value of @a into a double. This
+            // is bad, because now the d->Int52:@a edge will either have to do double-to-int
+            // conversions, or will have to OSR exit unconditionally. Alternatively we could
+            // have the c->Untyped:@a edge box the value by copying rather than in-place.
+            // But these boxings are also costly so this wouldn't be great.
+            //
+            // The solution we use is to always have non-Int52 uses of predicted Int52's use
+            // an intervening Int52ToValue node:
+            //
+            // a: SomeInt52
+            // b: ArithAdd(Int52:@a, ...)
+            // x: Int52ToValue(Int52:@a)
+            // c: Call(..., Untyped:@x)
+            // d: ArithAdd(Int52:@a, ...)
+            //
+            // Note that even if we had multiple non-int52 uses of @a, the multiple
+            // Int52ToValue's would get CSE'd together. So the boxing would only happen once.
+            // At the same time, @a would continue to be represented as a native int52.
+            //
+            // An alternative would have been to insert ToNativeInt52 nodes on int52 uses of
+            // int52's. This would have handled the above example but would fall over for:
+            //
+            // a: SomeInt52
+            // b: Call(..., @a)
+            // c: ArithAdd(@a, ...)
+            //
+            // But the solution we use handles the above gracefully.
+            
+            addRequiredPhantom(edge.node());
+            Node* result = m_insertionSet.insertNode(
+                m_indexInBlock, SpecInt52, Int52ToValue,
+                node->origin, Edge(edge.node(), UntypedUse));
+            edge.setNode(result);
+            return;
+        }
+    }
+    
+    void addRequiredPhantom(Node* node)
+    {
+        if (!m_codeOriginOfPhantoms) {
+            ASSERT(m_requiredPhantoms.isEmpty());
+            m_codeOriginOfPhantoms = m_currentNode->origin.forExit;
+        } else {
+            ASSERT(!m_requiredPhantoms.isEmpty());
+            ASSERT(m_codeOriginOfPhantoms == m_currentNode->origin.forExit);
+        }
+        
+        m_requiredPhantoms.append(node);
+    }
+
     void addPhantomsIfNecessary()
     {
         if (m_requiredPhantoms.isEmpty())
             return;
         
+        RELEASE_ASSERT(!!m_codeOriginOfPhantoms);
+        
+        if (m_currentNode->origin.forExit == m_codeOriginOfPhantoms)
+            return;
+        
         for (unsigned i = m_requiredPhantoms.size(); i--;) {
             m_insertionSet.insertNode(
-                m_indexInBlock + 1, SpecNone, Phantom, m_currentNode->origin,
+                m_indexInBlock, SpecNone, Phantom, NodeOrigin(m_codeOriginOfPhantoms),
                 Edge(m_requiredPhantoms[i], UntypedUse));
         }
         
         m_requiredPhantoms.resize(0);
+        m_codeOriginOfPhantoms = CodeOrigin();
     }
-
+    
+    void clearPhantomsAtEnd()
+    {
+        // Terminal nodes don't need post-phantoms, and inserting them would violate
+        // the current requirement that a terminal is the last thing in a block. We
+        // should eventually change that requirement but even if we did, this would
+        // still be a valid optimization. All terminals accept just one input, and
+        // if that input is a conversion node then no further speculations will be
+        // performed.
+        
+        // FIXME: Get rid of this by allowing Phantoms after terminals.
+        // https://bugs.webkit.org/show_bug.cgi?id=126778
+        
+        m_requiredPhantoms.resize(0);
+        m_codeOriginOfPhantoms = CodeOrigin();
+    }
+    
     BasicBlock* m_block;
     unsigned m_indexInBlock;
     Node* m_currentNode;
     InsertionSet m_insertionSet;
     bool m_profitabilityChanged;
+    CodeOrigin m_codeOriginOfPhantoms;
     Vector<Node*, 3> m_requiredPhantoms;
 };
     
