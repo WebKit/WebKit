@@ -134,7 +134,7 @@ public:
     void releaseDelegate();
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void schedule(WTF::SchedulePair&);
     void unschedule(WTF::SchedulePair&);
 #endif

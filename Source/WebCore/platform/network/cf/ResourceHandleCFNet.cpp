@@ -547,26 +547,26 @@ bool ResourceHandle::loadsBlocked()
 }
 
 #if PLATFORM(COCOA)
-void ResourceHandle::schedule(SchedulePair* pair)
+void ResourceHandle::schedule(SchedulePair& pair)
 {
-    CFRunLoopRef runLoop = pair->runLoop();
+    CFRunLoopRef runLoop = pair.runLoop();
     if (!runLoop)
         return;
 
-    CFURLConnectionScheduleWithRunLoop(d->m_connection.get(), runLoop, pair->mode());
+    CFURLConnectionScheduleWithRunLoop(d->m_connection.get(), runLoop, pair.mode());
     if (d->m_startWhenScheduled) {
         CFURLConnectionStart(d->m_connection.get());
         d->m_startWhenScheduled = false;
     }
 }
 
-void ResourceHandle::unschedule(SchedulePair* pair)
+void ResourceHandle::unschedule(SchedulePair& pair)
 {
-    CFRunLoopRef runLoop = pair->runLoop();
+    CFRunLoopRef runLoop = pair.runLoop();
     if (!runLoop)
         return;
 
-    CFURLConnectionUnscheduleFromRunLoop(d->m_connection.get(), runLoop, pair->mode());
+    CFURLConnectionUnscheduleFromRunLoop(d->m_connection.get(), runLoop, pair.mode());
 }
 #endif
 

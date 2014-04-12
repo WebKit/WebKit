@@ -1,5 +1,14 @@
 2014-04-12  Andy Estes  <aestes@apple.com>
 
+        Fix the iOS build after r167183.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::schedule):
+        (WebCore::ResourceHandle::unschedule):
+
+2014-04-12  Andy Estes  <aestes@apple.com>
+
         [iOS] Move QuickLookHandle from ResourceLoader to WebResourceLoader
         https://bugs.webkit.org/show_bug.cgi?id=131580
 
