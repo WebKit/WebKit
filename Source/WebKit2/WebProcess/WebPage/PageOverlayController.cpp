@@ -294,7 +294,8 @@ float PageOverlayController::deviceScaleFactor() const
 
 void PageOverlayController::notifyFlushRequired(const WebCore::GraphicsLayer*)
 {
-    m_webPage->drawingArea()->scheduleCompositingLayerFlush();
+    if (m_webPage->drawingArea())
+        m_webPage->drawingArea()->scheduleCompositingLayerFlush();
 }
 
 void PageOverlayController::didChangeOverlayFrame(PageOverlay* overlay)
