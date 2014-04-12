@@ -392,7 +392,6 @@ sub GenerateGetOwnPropertySlotBody
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
-    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
 
     my @getOwnPropertySlotImpl = ();
 
@@ -403,7 +402,7 @@ sub GenerateGetOwnPropertySlotBody
     }
 
     my $manualLookupGetterGeneration = sub {
-        my $requiresManualLookup = ($indexedGetterFunction && !$hasNumericIndexedGetter) || $namedGetterFunction;
+        my $requiresManualLookup = $indexedGetterFunction || $namedGetterFunction;
         if ($requiresManualLookup) {
             push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashTableValue* entry = getStaticValueSlotEntryWithoutCaching<$className>(exec, propertyName);\n");
             push(@getOwnPropertySlotImpl, "    if (entry) {\n");
@@ -433,11 +432,7 @@ sub GenerateGetOwnPropertySlotBody
         } else {
             push(@getOwnPropertySlotImpl, "        unsigned attributes = ${namespaceMaybe}DontDelete | ${namespaceMaybe}ReadOnly;\n");
         }
-        if ($hasNumericIndexedGetter) {
-            push(@getOwnPropertySlotImpl, "        slot.setValue(thisObject, attributes, thisObject->getByIndex(exec, index));\n");
-        } else {
-            push(@getOwnPropertySlotImpl, "        slot.setCustomIndex(thisObject, attributes, index, indexGetter);\n");
-        }
+        push(@getOwnPropertySlotImpl, "        slot.setCustomIndex(thisObject, attributes, index, indexGetter);\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
         push(@getOwnPropertySlotImpl, "    }\n");
     }
@@ -592,7 +587,6 @@ sub HasComplexGetOwnProperty
 
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
-    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
 
     my $hasImpureNamedGetter = $namedGetterFunction
         || $interface->extendedAttributes->{"CustomNamedGetter"}
@@ -614,7 +608,6 @@ sub InterfaceRequiresAttributesOnInstance
     my $interfaceName = $interface->name;
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
-    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
 
     # FIXME: All these return 1 if ... should ideally be removed.
     # Some of them are unavoidable due to DOM weirdness, in which case we should
@@ -732,7 +725,6 @@ sub InstanceOverridesGetOwnPropertySlot
 
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
-    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
 
     my $hasImpureNamedGetter = $namedGetterFunction
         || $interface->extendedAttributes->{"CustomNamedGetter"}
@@ -898,7 +890,6 @@ sub GenerateHeader
 
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
-    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
 
     my $hasImpureNamedGetter =
         $namedGetterFunction
@@ -1124,11 +1115,7 @@ sub GenerateHeader
 
     # Index getter
     if ($indexedGetterFunction) {
-        if ($hasNumericIndexedGetter) {
-            push(@headerContent, "    JSC::JSValue getByIndex(JSC::ExecState*, unsigned index);\n");
-        } else {
-            push(@headerContent, "    static JSC::EncodedJSValue indexGetter(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, unsigned);\n");
-        }
+        push(@headerContent, "    static JSC::EncodedJSValue indexGetter(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, unsigned);\n");
     }
 
     # Index setter
@@ -1725,7 +1712,6 @@ sub GenerateImplementation
 
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
-    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
 
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($interface));
@@ -2095,11 +2081,7 @@ sub GenerateImplementation
                 } else {
                     push(@implContent, "        unsigned attributes = DontDelete | ReadOnly;\n");
                 }
-                if ($hasNumericIndexedGetter) {
-                    push(@implContent, "        slot.setValue(thisObject, attributes, thisObject->getByIndex(exec, index));\n");
-                } else {
-                    push(@implContent, "        slot.setCustomIndex(thisObject, attributes, index, thisObject->indexGetter);\n");
-                }
+                push(@implContent, "        slot.setCustomIndex(thisObject, attributes, index, thisObject->indexGetter);\n");
                 push(@implContent, "        return true;\n");
                 push(@implContent, "    }\n");
             }
@@ -2850,7 +2832,7 @@ sub GenerateImplementation
         }
     }
 
-    if ($indexedGetterFunction && !$hasNumericIndexedGetter) {
+    if ($indexedGetterFunction) {
         push(@implContent, "\nEncodedJSValue ${className}::indexGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, unsigned index)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObj = jsCast<$className*>(slotBase);\n");
@@ -2863,22 +2845,6 @@ sub GenerateImplementation
         }
         push(@implContent, "}\n\n");
         if ($interfaceName =~ /^HTML\w*Collection$/ or $interfaceName eq "RadioNodeList") {
-            $implIncludes{"JSNode.h"} = 1;
-            $implIncludes{"Node.h"} = 1;
-        }
-    }
-
-    if ($hasNumericIndexedGetter) {
-        push(@implContent, "\nJSValue ${className}::getByIndex(ExecState*, unsigned index)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, info());\n");
-        push(@implContent, "    double result = impl().item(index);\n");
-        # jsNumber conversion doesn't suppress signalling NaNs, so enforce that here.
-        push(@implContent, "    if (std::isnan(result))\n");
-        push(@implContent, "        return jsNaN();\n");
-        push(@implContent, "    return JSValue(result);\n");
-        push(@implContent, "}\n\n");
-        if ($interfaceName =~ /^HTML\w*Collection$/) {
             $implIncludes{"JSNode.h"} = 1;
             $implIncludes{"Node.h"} = 1;
         }

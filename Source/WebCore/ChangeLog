@@ -1,3 +1,22 @@
+2014-04-11  Andreas Kling  <akling@apple.com>
+
+        Remove "numeric index getter" stuff from bindings code generator.
+        <https://webkit.org/b/131565>
+
+        This was used for an earlier generation of typed arrays. Now that JSC
+        has native typed array support, we're not using this functionality and
+        can just remove it.
+
+        Reviewed by Geoffrey Garen.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (HasComplexGetOwnProperty):
+        (InterfaceRequiresAttributesOnInstance):
+        (InstanceOverridesGetOwnPropertySlot):
+        (GenerateHeader):
+        (GenerateImplementation):
+
 2014-04-11  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: consolidate decoding macros used in SerializationMethods
