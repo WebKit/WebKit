@@ -1,3 +1,16 @@
+2014-04-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        ViewportConfiguration::layoutWidth() compute the width incorrectly when initial-scale+width do not fit in view
+        https://bugs.webkit.org/show_bug.cgi?id=131575
+
+        Reviewed by Enrica Casucci.
+
+        I made a mistake when writing the new viewport code: ViewportConfiguration::layoutWidth() uses m_contentSize in one place.
+        That make no sense, contentSize depends on the layout width.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::layoutWidth):
+
 2014-04-11  Andreas Kling  <akling@apple.com>
 
         Remove "numeric index getter" stuff from bindings code generator.

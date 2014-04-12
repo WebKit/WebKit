@@ -258,7 +258,7 @@ int ViewportConfiguration::layoutWidth() const
 
         // If not, make sure the viewport width and initial scale can co-exist.
         double initialContentWidthInViewportCoordinate = m_configuration.width * m_configuration.initialScale;
-        if (initialContentWidthInViewportCoordinate < m_contentSize.width()) {
+        if (initialContentWidthInViewportCoordinate < m_minimumLayoutSize.width()) {
             // The specified width does not fit in viewport. Return the minimum width that satisfy the initialScale constraint.
             return std::round(m_minimumLayoutSize.width() / m_configuration.initialScale);
         }
