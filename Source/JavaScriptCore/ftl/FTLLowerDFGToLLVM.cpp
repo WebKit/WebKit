@@ -351,6 +351,9 @@ private:
         case ArithSqrt:
             compileArithSqrt();
             break;
+        case ArithFRound:
+            compileArithFRound();
+            break;
         case ArithNegate:
             compileArithNegate();
             break;
@@ -1384,6 +1387,12 @@ private:
     void compileArithCos() { setDouble(m_out.doubleCos(lowDouble(m_node->child1()))); }
 
     void compileArithSqrt() { setDouble(m_out.doubleSqrt(lowDouble(m_node->child1()))); }
+    
+    void compileArithFRound()
+    {
+        LValue floatValue = m_out.fpCast(lowDouble(m_node->child1()), m_out.floatType);
+        setDouble(m_out.fpCast(floatValue, m_out.doubleType));
+    }
     
     void compileArithNegate()
     {

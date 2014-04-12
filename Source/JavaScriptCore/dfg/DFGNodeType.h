@@ -127,6 +127,7 @@ namespace JSC { namespace DFG {
     macro(ArithAbs, NodeResultNumber) \
     macro(ArithMin, NodeResultNumber) \
     macro(ArithMax, NodeResultNumber) \
+    macro(ArithFRound, NodeResultNumber) \
     macro(ArithSqrt, NodeResultNumber) \
     macro(ArithSin, NodeResultNumber) \
     macro(ArithCos, NodeResultNumber) \

@@ -51,6 +51,7 @@ enum Intrinsic {
     RegExpTestIntrinsic,
     StringPrototypeValueOfIntrinsic,
     IMulIntrinsic,
+    FRoundIntrinsic,
     ArrayIteratorNextValueIntrinsic,
     ArrayIteratorNextKeyIntrinsic,
     ArrayIteratorNextGenericIntrinsic,

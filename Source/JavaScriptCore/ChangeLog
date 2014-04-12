@@ -1,5 +1,42 @@
 2014-04-12  Filip Pizlo  <fpizlo@apple.com>
 
+        Math.fround() should be an intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=131583
+
+        Reviewed by Geoffrey Garen.
+        
+        Makes programs that use Math.fround() run up to 6x faster.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileArithFRound):
+        * runtime/Intrinsic.h:
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+
+2014-04-12  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should use stackmap register liveness
         https://bugs.webkit.org/show_bug.cgi?id=130791
 

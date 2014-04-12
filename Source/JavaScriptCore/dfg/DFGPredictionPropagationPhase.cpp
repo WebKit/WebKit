@@ -321,6 +321,7 @@ private:
         }
             
         case ArithSqrt:
+        case ArithFRound:
         case ArithSin:
         case ArithCos: {
             changed |= setPrediction(SpecDouble);

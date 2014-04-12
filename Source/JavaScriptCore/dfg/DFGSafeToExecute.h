@@ -150,6 +150,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ArithMin:
     case ArithMax:
     case ArithSqrt:
+    case ArithFRound:
     case ArithSin:
     case ArithCos:
     case ValueAdd:

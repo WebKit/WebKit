@@ -1706,6 +1706,14 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         return true;
     }
         
+    case FRoundIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+        VirtualRegister operand = virtualRegisterForArgument(1, registerOffset);
+        set(VirtualRegister(resultOperand), addToGraph(ArithFRound, get(operand)));
+        return true;
+    }
+        
     case DFGTrue: {
         set(VirtualRegister(resultOperand), getJSConstantForValue(jsBoolean(true)));
         return true;

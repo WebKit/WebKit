@@ -1128,6 +1128,7 @@ private:
         case ArithMin:
         case ArithMax:
         case ArithSqrt:
+        case ArithFRound:
         case ArithSin:
         case ArithCos:
         case StringCharAt:
