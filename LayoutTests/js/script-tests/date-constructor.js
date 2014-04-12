@@ -46,6 +46,10 @@ shouldBe("Number(new Date(new Date(1, 1, 1, 1, 1, 1, 1, 1, Infinity)).getTime() 
 
 shouldBe('new Date(6501480442020679337816440, 81696082856817131586190070, 1, 1, 1, 1, 1).getTime()', 'Number.NaN');
 
+shouldBe("new Date(Date.parse('28 Feb 1000 GMT')).toGMTString()", "\"Fri, 28 Feb 1000 00:00:00 GMT\"");
+shouldBe("new Date(Date.parse('1 Dec 988 GMT')).toGMTString()", "\"Mon, 01 Dec 0988 00:00:00 GMT\"");
+shouldBe("new Date(Date.parse('1 Mar 1000 GMT')).toGMTString()", "\"Sat, 01 Mar 1000 00:00:00 GMT\"");
+
 // In Firefox, the results of the following tests are timezone-dependent, which likely implies that the implementation is not quite correct.
 // Our results are even worse, though, as the dates are clipped: (new Date(1111, 1201).getTime()) == (new Date(1111, 601).getTime())
 // shouldBe('new Date(1111, 1111, 1111, 1111, 1111, 1111, 1111, 1111).getTime() - timeZoneOffset', '-24085894227889');

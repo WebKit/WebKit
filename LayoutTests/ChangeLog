@@ -1,3 +1,13 @@
+2014-04-12  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        (before-mar-1-1000) In correct date creation prior to 1 Mar 1000 
+        https://bugs.webkit.org/show_bug.cgi?id=129308
+
+        Reviewed by Darin Adler.
+
+        * js/date-constructor-expected.txt:
+        * js/script-tests/date-constructor.js:
+
 2014-04-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Assertion failure changing select element size during focus event

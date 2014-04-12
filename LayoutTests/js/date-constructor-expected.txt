@@ -33,6 +33,9 @@ PASS Number(new Date(new Date(1, 1, 1, 1, 1, Infinity, 1, 1, 1)).getTime() - tim
 PASS Number(new Date(new Date(1, 1, 1, 1, 1, 1, Infinity, 1, 1)).getTime() - timeZoneOffset) is Number.NaN
 PASS Number(new Date(new Date(1, 1, 1, 1, 1, 1, 1, 1, Infinity)).getTime() - timeZoneOffset) is -2174770738999
 PASS new Date(6501480442020679337816440, 81696082856817131586190070, 1, 1, 1, 1, 1).getTime() is Number.NaN
+PASS new Date(Date.parse('28 Feb 1000 GMT')).toGMTString() is "Fri, 28 Feb 1000 00:00:00 GMT"
+PASS new Date(Date.parse('1 Dec 988 GMT')).toGMTString() is "Mon, 01 Dec 0988 00:00:00 GMT"
+PASS new Date(Date.parse('1 Mar 1000 GMT')).toGMTString() is "Sat, 01 Mar 1000 00:00:00 GMT"
 PASS testStr is "1234567"
 PASS testStr is "1234567"
 PASS leapTestResult is true
