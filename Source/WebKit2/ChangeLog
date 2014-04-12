@@ -1,3 +1,31 @@
+2014-04-11  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Crashes when copying or pasting huge images
+        https://bugs.webkit.org/show_bug.cgi?id=131576
+        <rdar://problem/12131833>
+        <rdar://problem/14427398>
+
+        Reviewed by Darin Adler.
+
+        Added a few null checks for SharedMemory::create() return value in pasteboard code.
+        Error handling feels a bit sketchy, but
+        - I'm not sure what it should look like ideally;
+        - it matches the kind of error handling we already have in these functions;
+        - it appears to work reasonably well in practice. We get empty content, which
+        is not nice, but not particularly problematic either. When copying an animated GIF,
+        we also get the GIF in RTFD flavor, so even pasting into NSTextViews works!
+
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::createFromVMBuffer):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::getPasteboardBufferForType):
+        (WebKit::WebContext::readBufferFromPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::setBufferForType):
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm: (WebKit::WebDragClient::declareAndWriteDragImage):
+        Also renamed some variables to prevent name collisions with with nested scope.
+
 2014-04-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on the EFL port after r167152

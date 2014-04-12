@@ -133,8 +133,9 @@ PassRefPtr<SharedMemory> SharedMemory::createFromVMBuffer(void* data, size_t siz
         return 0;
     }
 
-    ASSERT(memoryObjectSize >= round_page(size));
     if (memoryObjectSize < round_page(size)) {
+        // There is a limit on how large a shared memory object can be (see <rdar://problem/16595870>).
+        LOG_ERROR("Failed to create a mach port for shared memory of size %lu (got %llu bytes).", round_page(size), memoryObjectSize);
         mach_port_deallocate(mach_task_self(), port);
         return 0;
     }

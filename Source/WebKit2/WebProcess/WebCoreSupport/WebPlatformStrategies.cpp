@@ -465,8 +465,12 @@ long WebPlatformStrategies::setBufferForType(PassRefPtr<SharedBuffer> buffer, co
     SharedMemory::Handle handle;
     if (buffer) {
         RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(buffer->size());
-        memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
-        sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+        // FIXME: Null check prevents crashing, but it is not great that we will have empty pasteboard content for this type,
+        // because we've already set the types.
+        if (sharedMemoryBuffer) {
+            memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
+            sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+        }
     }
     uint64_t newChangeCount;
     WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardBufferForType(pasteboardName, pasteboardType, handle, buffer ? buffer->size() : 0),

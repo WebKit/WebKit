@@ -306,6 +306,8 @@ void WebContext::getPasteboardBufferForType(const String& pasteboardName, const 
         return;
     size = buffer->size();
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(size);
+    if (!sharedMemoryBuffer)
+        return;
     memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
     sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
 }
@@ -399,6 +401,8 @@ void WebContext::readBufferFromPasteboard(uint64_t index, const String& pasteboa
         return;
     size = buffer->size();
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(size);
+    if (!sharedMemoryBuffer)
+        return;
     memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
     sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
 }
