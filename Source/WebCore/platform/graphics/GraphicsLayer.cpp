@@ -757,7 +757,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         unsigned totalChildCount = m_children.size();
         for (size_t childIndex = 0; childIndex < m_children.size(); childIndex++) {
             GraphicsLayer* child = m_children[childIndex];
-            if (!m_client->shouldSkipLayerInDump(child)) {
+            if (!child->client()->shouldSkipLayerInDump(child)) {
                 child->dumpLayer(childrenStream, indent + 2, behavior);
                 continue;
             }

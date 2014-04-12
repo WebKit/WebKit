@@ -84,6 +84,7 @@ private:
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect) override;
     virtual float deviceScaleFactor() const override;
     virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const override { }
+    virtual bool shouldSkipLayerInDump(const WebCore::GraphicsLayer*) const override { return true; }
 
     std::unique_ptr<WebCore::GraphicsLayer> m_documentOverlayRootLayer;
     std::unique_ptr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;

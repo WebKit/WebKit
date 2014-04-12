@@ -1,3 +1,15 @@
+2014-04-11  Tim Horton  <timothy_horton@apple.com>
+
+        Lots of compositing test failures after r167152
+        https://bugs.webkit.org/show_bug.cgi?id=131574
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+        We were asking the parent's client whether the child should be dumped,
+        but really the child's client is the one who should decide.
+
 2014-04-11  Benjamin Poulain  <bpoulain@apple.com>
 
         ViewportConfiguration::layoutWidth() compute the width incorrectly when initial-scale+width do not fit in view
