@@ -1631,15 +1631,9 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
     
 const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
-    Node* elementNode = node();
-    if (!elementNode)
-        return nullAtom;
-    
-    if (!elementNode->isElementNode())
-        return nullAtom;
-    
-    Element* element = toElement(elementNode);
-    return element->fastGetAttribute(attribute);
+    if (Element* element = this->element())
+        return element->fastGetAttribute(attribute);
+    return nullAtom;
 }
     
 // Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;

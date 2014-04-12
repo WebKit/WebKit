@@ -1,3 +1,15 @@
+2014-04-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Cleanup AccessibilityObject::getAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=131555
+
+        Reviewed by Darin Adler.
+
+        No new functionality.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::getAttribute):
+
 2014-04-12  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [SOUP] Libsoup internal credential setting should be controlled by loader decision
