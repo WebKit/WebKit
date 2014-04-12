@@ -86,6 +86,9 @@ IntRect PageOverlay::bounds() const
     case OverlayType::Document:
         return IntRect(IntPoint(), frameView->contentsSize());
     };
+
+    ASSERT_NOT_REACHED();
+    return IntRect(IntPoint(), frameView->contentsSize());
 }
 
 IntRect PageOverlay::frame() const
