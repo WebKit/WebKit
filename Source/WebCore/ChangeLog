@@ -1,3 +1,21 @@
+2014-04-11  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: consolidate decoding macros used in SerializationMethods
+        https://bugs.webkit.org/show_bug.cgi?id=131564
+
+        Reviewed by Timothy Hatcher.
+
+        We can use EncodingTraits<T>::DecodedType to create a local variable
+        with the appropriate decoded type, rather than special casing.
+
+        * replay/SerializationMethods.cpp:
+        (JSC::EncodingTraits<NondeterministicInputBase>::decodeValue):
+        (JSC::EncodingTraits<KeypressCommand>::decodeValue):
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::decodeValue):
+        (JSC::EncodingTraits<PlatformMouseEvent>::decodeValue):
+        (JSC::EncodingTraits<PlatformWheelEvent>::decodeValue):
+        (JSC::EncodingTraits<PluginData>::decodeValue):
+
 2014-04-11  Beth Dakin  <bdakin@apple.com>
 
         Need WK2 API to disable rubber-banding
