@@ -1,3 +1,26 @@
+2014-04-11  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: code generator should consider enclosing class when computing duplicate type names
+        https://bugs.webkit.org/show_bug.cgi?id=131554
+
+        Reviewed by Timothy Hatcher.
+
+        We need to prepend an enum's enclosing class, if any, so that multiple enums with the same name
+        can coexist without triggering a "duplicate types" error. Now, such enums must be referenced
+        by the enclosing class and enum name.
+
+        Added tests for the new syntax, and rebaselined one test to reflect a previous patch's change.
+
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (Type.type_name): Prepend the enclosing class name.
+        (Type.type_name.is):
+        * replay/scripts/tests/expected/fail-on-duplicate-enum-type.json-error: Added.
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.cpp: Added.
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.h: Added.
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.h: Rebaseline.
+        * replay/scripts/tests/fail-on-duplicate-enum-type.json: Added.
+        * replay/scripts/tests/generate-enums-with-same-base-name.json: Added.
+
 2014-04-11  Gavin Barraclough  <baraclough@apple.com>
 
         Rollout - Rewrite Function.bind as a builtin

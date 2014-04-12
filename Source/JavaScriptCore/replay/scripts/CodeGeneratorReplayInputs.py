@@ -330,7 +330,12 @@ class Type:
         return "::".join(components)
 
     def type_name(self, qualified=False):
-        return "%s%s" % (self.qualified_prefix(), self._name) if qualified else self._name
+        if qualified:
+            return "%s%s" % (self.qualified_prefix(), self._name)
+        elif self.enclosing_class is not None:
+            return "%s::%s" % (self.enclosing_class, self._name)
+        else:
+            return self._name
 
     def storage_type(self, qualified=False):
         if self.mode == TypeModes.OWNED:

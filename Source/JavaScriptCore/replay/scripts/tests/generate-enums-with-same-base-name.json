@@ -1,0 +1,34 @@
+{
+    "types": {
+        "JavaScriptCore": [
+            {
+                "name": "Type", "mode": "SCALAR", "storage": "uint64_t",
+                "enclosing_class": "PlatformEvent",
+                "flags": ["ENUM"],
+                "values": ["Mouse", "Keyboard"],
+                "header": "replay/PlatformEvent.h"
+            }
+        ],
+        "WebCore": [
+            {
+                "name": "Type", "mode": "SCALAR", "storage": "uint64_t",
+                "enclosing_class": "FormData",
+                "flags": ["ENUM"],
+                "values": ["Text", "Blob"],
+                "header": "replay/FormData.h"
+            }
+        ]
+    },
+
+    "inputs": [
+        {
+            "name": "FormCombo",
+            "description": "Combines an event type and form data type.",
+            "queue": "SCRIPT_MEMOIZED",
+            "members": [
+                { "name": "eventType", "type": "PlatformEvent::Type" },
+                { "name": "formType", "type": "FormData::Type" }
+            ]
+        }
+    ]
+}
