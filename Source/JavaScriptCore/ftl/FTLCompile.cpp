@@ -167,7 +167,7 @@ static RegisterSet usedRegistersFor(const StackMaps::Record& record)
 {
     if (Options::assumeAllRegsInFTLICAreLive())
         return RegisterSet::allRegisters();
-    return record.usedRegisterSet();
+    return RegisterSet(record.usedRegisterSet(), RegisterSet::calleeSaveRegisters());
 }
 
 static void fixFunctionBasedOnStackMaps(

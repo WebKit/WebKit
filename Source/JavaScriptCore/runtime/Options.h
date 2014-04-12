@@ -160,7 +160,7 @@ typedef OptionRange optionRange;
     v(bool, llvmDisallowAVX, true) \
     v(bool, ftlCrashes, false) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
     v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED) \
-    v(bool, assumeAllRegsInFTLICAreLive, true) \
+    v(bool, assumeAllRegsInFTLICAreLive, false) \
     v(bool, enableAccessInlining, true) \
     v(bool, enablePolyvariantDevirtualization, true) \
     v(bool, enablePolymorphicAccessInlining, true) \

@@ -142,6 +142,8 @@ unsigned ScratchRegisterAllocator::desiredScratchBufferSizeForCall() const
 void ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR)
 {
     RegisterSet usedRegisters = usedRegistersForCall();
+    if (!usedRegisters.numberOfSetRegisters())
+        return;
     
     unsigned count = 0;
     for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
@@ -168,6 +170,8 @@ void ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall(Macro
 void ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR)
 {
     RegisterSet usedRegisters = usedRegistersForCall();
+    if (!usedRegisters.numberOfSetRegisters())
+        return;
     
     if (scratchGPR == InvalidGPRReg) {
         // Find a scratch register.

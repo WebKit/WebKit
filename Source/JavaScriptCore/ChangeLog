@@ -1,3 +1,33 @@
+2014-04-12  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should use stackmap register liveness
+        https://bugs.webkit.org/show_bug.cgi?id=130791
+
+        Reviewed by Goeffrey Garen.
+        
+        Enable the stackmap register liveness support by fixing the two last bugs:
+        
+        - If everything is dead after the patchpoint - a good possibility for a put_by_id -
+          then we shouldn't crash due to a null scratch buffer.
+        
+        - Always consider callee-saves as if they were live. More precisely, we should
+          consider those callee-saves that are not saved by the enclosing function to be live.
+          For now we do the much simpler thing and consider callee-saves to be always live
+          since it has minimal impact on the scratch register allocator. It will know not to
+          preserve those for calls, anyway.
+        
+        I tried writing a test for the null scratch buffer thing, but failed. I will land the
+        test anyway since it seems useful.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::usedRegistersFor):
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall):
+        (JSC::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall):
+        * runtime/Options.h:
+        * tests/stress/repeated-put-by-id-reallocating-transition.js: Added.
+        (foo):
+
 2014-04-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::FixupPhase should insert conversion nodes after the rest of fixup so that we know how the types settled
