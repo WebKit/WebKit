@@ -1,3 +1,13 @@
+2014-04-12  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [SOUP] Libsoup internal credential setting should be controlled by loader decision
+        https://bugs.webkit.org/show_bug.cgi?id=130963
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::shouldUseCredentialStorage): Similarly to GTK, let soup/loader layer handle when to use credential storage. Return always true  
+
 2014-04-08  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL build fix attempt since r166956

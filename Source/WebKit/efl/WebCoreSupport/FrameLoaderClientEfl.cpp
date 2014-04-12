@@ -221,8 +221,7 @@ void FrameLoaderClientEfl::dispatchWillSendRequest(DocumentLoader* loader, unsig
 
 bool FrameLoaderClientEfl::shouldUseCredentialStorage(DocumentLoader*, unsigned long)
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 void FrameLoaderClientEfl::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& coreRequest)

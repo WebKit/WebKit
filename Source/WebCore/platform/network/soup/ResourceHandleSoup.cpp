@@ -82,12 +82,14 @@ class WebCoreSynchronousLoader : public ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(WebCoreSynchronousLoader);
 public:
 
-    WebCoreSynchronousLoader(ResourceError& error, ResourceResponse& response, SoupSession* session, Vector<char>& data)
+    WebCoreSynchronousLoader(ResourceError& error, ResourceResponse& response, SoupSession* session, Vector<char>& data, StoredCredentials storedCredentials)
         : m_error(error)
         , m_response(response)
         , m_session(session)
         , m_data(data)
         , m_finished(false)
+        , m_storedCredentials(storedCredentials)
+        
     {
         // We don't want any timers to fire while we are doing our synchronous load
         // so we replace the thread default main context. The main loop iterations
@@ -173,6 +175,11 @@ public:
         challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
     }
 
+    virtual bool shouldUseCredentialStorage(ResourceHandle*)
+    {
+        return m_storedCredentials == AllowStoredCredentials;
+    }
+
     void run()
     {
         if (!m_finished)
@@ -186,6 +193,7 @@ private:
     Vector<char>& m_data;
     bool m_finished;
     GRefPtr<GMainLoop> m_mainLoop;
+    StoredCredentials m_storedCredentials;
 };
 
 class HostTLSCertificateSet {
@@ -355,8 +363,12 @@ static void applyAuthenticationToRequest(ResourceHandle* handle, ResourceRequest
         password = d->m_initialCredential.password();
     }
 
-    if (user.isEmpty() && password.isEmpty())
+    if (user.isEmpty() && password.isEmpty()) {
+        // In case credential is not available from the handle and credential storage should not to be used,
+        // disable authentication manager so that credentials stored in libsoup are not used.
+        d->m_useAuthenticationManager = handle->shouldUseCredentialStorage();
         return;
+    }
 
     // We always put the credentials into the URL. In the CFNetwork-port HTTP family credentials are applied in
     // the didReceiveAuthenticationChallenge callback, but libsoup requires us to use this method to override
@@ -936,6 +948,8 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     g_object_set_data(G_OBJECT(soupMessage), "handle", handle);
     if (!handle->shouldContentSniff())
         soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_SNIFFER);
+    if (!d->m_useAuthenticationManager)
+        soup_message_disable_feature(soupMessage, SOUP_TYPE_AUTH_MANAGER);
 
     FormData* httpBody = request.httpBody();
     CString contentType = request.httpContentType().utf8().data();
@@ -1270,13 +1284,13 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     ASSERT(!loadingSynchronousRequest);
     if (loadingSynchronousRequest) // In practice this cannot happen, but if for some reason it does,
         return;                    // we want to avoid accidentally going into an infinite loop of requests.
 
-    WebCoreSynchronousLoader syncLoader(error, response, sessionFromContext(context), data);
+    WebCoreSynchronousLoader syncLoader(error, response, sessionFromContext(context), data, storedCredentials);
     RefPtr<ResourceHandle> handle = create(context, request, &syncLoader, false /*defersLoading*/, false /*shouldContentSniff*/);
     if (!handle)
         return;

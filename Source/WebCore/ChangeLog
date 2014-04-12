@@ -1,3 +1,23 @@
+2014-04-12  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [SOUP] Libsoup internal credential setting should be controlled by loader decision
+        https://bugs.webkit.org/show_bug.cgi?id=130963
+
+        Reviewed by Darin Adler.
+
+        Disabled libsoup internal authentication manager for messages for which no credential is available and no stored credentials should be used.
+        Updated synchronous loader to return whether using credentials or not according StoredCredential loader option parameter.
+        Unskipped test http/tests/xmlhttprequest/cross-origin-no-authorization.html covers the patch.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal): Added m_useAuthenticationManager boolean to control whether disable authentication manager or not.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader): Added m_storedCredentials member.
+        (WebCore::WebCoreSynchronousLoader::shouldUseCredentialStorage): Return true if stored credentials are allowed.
+        (WebCore::applyAuthenticationToRequest): Set m_useAuthenticationManager value to disable authentication manager if cannot use stored credentials and ResourceHandleInternal has no username and password.
+        (WebCore::createSoupMessageForHandleAndRequest): Disable authentication mananger according m_useAuthenticationManager value.
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously): Added StoredCredentials loader option to the sync loader constructor.
+
 2014-04-11  Darin Adler  <darin@apple.com>
 
         Some small loader refinements and refactoring

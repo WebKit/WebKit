@@ -1246,8 +1246,6 @@ Bug(GTK) http/tests/misc/redirect-to-external-url.html [ Failure ]
 
 Bug(GTK) http/tests/xmlhttprequest/logout.html [ Failure ]
 
-Bug(GTK) http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Failure ]
-
 Bug(GTK) media/video-size-intrinsic-scale.html [ Failure ]
 
 # eventSender.keyDown call does not get executed from the TestNetscapePlugin
