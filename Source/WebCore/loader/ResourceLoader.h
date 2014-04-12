@@ -36,10 +36,6 @@
 #include "ResourceResponse.h"
 #include <wtf/Forward.h>
 
-#if USE(QUICK_LOOK)
-#include "QuickLook.h"
-#endif
-
 namespace WTF {
 class SchedulePair;
 }
@@ -163,11 +159,6 @@ public:
 
     void setDataBufferingPolicy(DataBufferingPolicy);
 
-#if USE(QUICK_LOOK)
-    QuickLookHandle* quickLookHandle() const { return m_quickLookHandle.get(); }
-    void setQuickLookHandle(PassOwnPtr<QuickLookHandle> handle) { m_quickLookHandle = handle; }
-#endif
-
 #if PLATFORM(MAC)
     void schedule(WTF::SchedulePair&);
     void unschedule(WTF::SchedulePair&);
@@ -221,9 +212,6 @@ private:
     bool m_defersLoading;
     ResourceRequest m_deferredRequest;
     ResourceLoaderOptions m_options;
-#if USE(QUICK_LOOK)
-    OwnPtr<QuickLookHandle> m_quickLookHandle;
-#endif
 };
 
 inline const ResourceResponse& ResourceLoader::response() const

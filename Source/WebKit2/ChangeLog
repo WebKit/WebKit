@@ -1,3 +1,22 @@
+2014-04-12  Andy Estes  <aestes@apple.com>
+
+        [iOS] Move QuickLookHandle from ResourceLoader to WebResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=131580
+
+        Reviewed by Darin Adler.
+
+        There's no need to bloat WebKit1's ResourceLoader with a pointer that
+        only WebKit2's WebResourceLoader cares about.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo):
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/ios/WebResourceLoaderIOS.mm:
+        (WebKit::WebResourceLoader::setUpQuickLookHandleIfNeeded):
+
 2014-04-11  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Crashes when copying or pasting huge images

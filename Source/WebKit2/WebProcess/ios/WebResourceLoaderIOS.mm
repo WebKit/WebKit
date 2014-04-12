@@ -102,11 +102,8 @@ namespace WebKit {
 
 void WebResourceLoader::setUpQuickLookHandleIfNeeded(const ResourceResponse& response)
 {
-    ResourceLoader *coreLoader = resourceLoader();
     RetainPtr<WKWebResourceQuickLookDelegate> delegate = adoptNS([[WKWebResourceQuickLookDelegate alloc] initWithWebResourceLoader:this]);
-    OwnPtr<QuickLookHandle> quickLookHandle = QuickLookHandle::create(coreLoader, response.nsURLResponse(), delegate.get());
-    if (quickLookHandle)
-        coreLoader->setQuickLookHandle(quickLookHandle.release());
+    m_quickLookHandle = QuickLookHandle::create(resourceLoader(), response.nsURLResponse(), delegate.get());
 }
 
 } // namespace WebKit

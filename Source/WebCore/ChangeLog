@@ -1,3 +1,17 @@
+2014-04-12  Andy Estes  <aestes@apple.com>
+
+        [iOS] Move QuickLookHandle from ResourceLoader to WebResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=131580
+
+        Reviewed by Darin Adler.
+
+        There's no need to bloat WebKit1's ResourceLoader with a pointer that
+        only WebKit2's WebResourceLoader cares about.
+
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::quickLookHandle): Deleted.
+        (WebCore::ResourceLoader::setQuickLookHandle): Deleted.
+
 2014-04-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Cleanup AccessibilityObject::getAttribute

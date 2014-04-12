@@ -35,6 +35,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+#if USE(QUICK_LOOK)
+#include <WebCore/QuickLook.h>
+#endif
+
 namespace IPC {
 class DataReference;
 }
@@ -90,6 +94,8 @@ private:
 
 #if USE(QUICK_LOOK)
     void setUpQuickLookHandleIfNeeded(const WebCore::ResourceResponse&);
+
+    OwnPtr<WebCore::QuickLookHandle> m_quickLookHandle;
 #endif
 
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
