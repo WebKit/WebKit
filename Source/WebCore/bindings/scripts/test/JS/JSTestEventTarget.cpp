@@ -151,7 +151,7 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     const HashTableValue* entry = getStaticValueSlotEntryWithoutCaching<JSTestEventTarget>(exec, propertyName);
     if (entry) {
-        slot.setCustom(thisObject, entry->attributes(), entry->propertyGetter());
+        slot.setCacheableCustom(thisObject, entry->attributes(), entry->propertyGetter());
         return true;
     }
     unsigned index = propertyName.asIndex();

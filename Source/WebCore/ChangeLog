@@ -1,3 +1,22 @@
+2014-04-11  Andreas Kling  <akling@apple.com>
+
+        Make NodeList.length inline-cacheable by JSC.
+        <https://webkit.org/b/131579>
+
+        For objects with custom index or name getters, we have to make sure
+        that builtin properties take precedence. We do this by scanning the
+        ancestor chain for a suitable property slot before moving on to
+        named items.
+
+        With this patch, we now mark such builtins as cacheable. This is
+        safe since the whole point of doing this before processing named
+        items is to ensure the same slot is returned consistently.
+
+        Reviewed by Benjamin Poulain.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+
 2014-04-11  Tim Horton  <timothy_horton@apple.com>
 
         Lots of compositing test failures after r167152

@@ -406,7 +406,7 @@ sub GenerateGetOwnPropertySlotBody
         if ($requiresManualLookup) {
             push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashTableValue* entry = getStaticValueSlotEntryWithoutCaching<$className>(exec, propertyName);\n");
             push(@getOwnPropertySlotImpl, "    if (entry) {\n");
-            push(@getOwnPropertySlotImpl, "        slot.setCustom(thisObject, entry->attributes(), entry->propertyGetter());\n");
+            push(@getOwnPropertySlotImpl, "        slot.setCacheableCustom(thisObject, entry->attributes(), entry->propertyGetter());\n");
             push(@getOwnPropertySlotImpl, "        return true;\n");
             push(@getOwnPropertySlotImpl, "    }\n");
         }
