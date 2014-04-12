@@ -28,58 +28,47 @@
 
 #include "config.h"
 #include "DocumentLoader.h"
-#include "ResourceHandle.h"
+
 #include "ResourceLoader.h"
-#include <wtf/SchedulePair.h>
 
 namespace WebCore {
 
-#if !PLATFORM(IOS)
-static void scheduleAll(const ResourceLoaderMap& loaders, SchedulePair* pair)
+#if PLATFORM(MAC)
+
+static void scheduleAll(const ResourceLoaderMap& loaders, SchedulePair& pair)
 {
     Vector<RefPtr<ResourceLoader>> loadersCopy;
     copyValuesToVector(loaders, loadersCopy);
-    for (auto& loader : loadersCopy) {
-        if (ResourceHandle* handle = loader->handle())
-            handle->schedule(pair);
-    }
+    for (auto& loader : loadersCopy)
+        loader->schedule(pair);
 }
 
-static void unscheduleAll(const ResourceLoaderMap& loaders, SchedulePair* pair)
+static void unscheduleAll(const ResourceLoaderMap& loaders, SchedulePair& pair)
 {
     Vector<RefPtr<ResourceLoader>> loadersCopy;
     copyValuesToVector(loaders, loadersCopy);
-    for (auto& loader : loadersCopy) {
-        if (ResourceHandle* handle = loader->handle())
-            handle->unschedule(pair);
-    }
+    for (auto& loader : loadersCopy)
+        loader->unschedule(pair);
 }
-#endif
 
-void DocumentLoader::schedule(SchedulePair* pair)
+void DocumentLoader::schedule(SchedulePair& pair)
 {
-#if !PLATFORM(IOS)
-    if (mainResourceLoader() && mainResourceLoader()->handle())
-        mainResourceLoader()->handle()->schedule(pair);
+    if (mainResourceLoader())
+        mainResourceLoader()->schedule(pair);
     scheduleAll(m_subresourceLoaders, pair);
     scheduleAll(m_plugInStreamLoaders, pair);
     scheduleAll(m_multipartSubresourceLoaders, pair);
-#else
-    UNUSED_PARAM(pair);
-#endif
 }
 
-void DocumentLoader::unschedule(SchedulePair* pair)
+void DocumentLoader::unschedule(SchedulePair& pair)
 {
-#if !PLATFORM(IOS)
-    if (mainResourceLoader() && mainResourceLoader()->handle())
-        mainResourceLoader()->handle()->unschedule(pair);
+    if (mainResourceLoader())
+        mainResourceLoader()->unschedule(pair);
     unscheduleAll(m_subresourceLoaders, pair);
     unscheduleAll(m_plugInStreamLoaders, pair);
     unscheduleAll(m_multipartSubresourceLoaders, pair);
-#else
-    UNUSED_PARAM(pair);
-#endif
 }
+
+#endif
 
 } // namespace

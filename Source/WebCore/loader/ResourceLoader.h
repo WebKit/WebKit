@@ -34,13 +34,15 @@
 #include "ResourceLoaderTypes.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"
 #endif
+
+namespace WTF {
+class SchedulePair;
+}
 
 namespace WebCore {
 
@@ -50,7 +52,6 @@ class Frame;
 class FrameLoader;
 class URL;
 class ResourceBuffer;
-class ResourceHandle;
 
 class ResourceLoader : public RefCounted<ResourceLoader>, protected ResourceHandleClient {
 public:
@@ -126,26 +127,30 @@ public:
     virtual bool shouldUseCredentialStorage(ResourceHandle*) override { return shouldUseCredentialStorage(); }
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) override { didReceiveAuthenticationChallenge(challenge); } 
     virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) override { didCancelAuthenticationChallenge(challenge); } 
+    virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) override { receivedCancellation(challenge); }
+
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     virtual void didReceiveDataArray(ResourceHandle*, CFArrayRef dataArray) override;
 #endif
+
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace& protectionSpace) override { return canAuthenticateAgainstProtectionSpace(protectionSpace); }
 #endif
-    virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) override { receivedCancellation(challenge); }
-#if PLATFORM(COCOA)
-#if USE(CFNETWORK)
+
+#if PLATFORM(COCOA) && USE(CFNETWORK)
     virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
-#else
-    virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
 #endif
-#endif // PLATFORM(COCOA)
+
 #if PLATFORM(WIN) && USE(CFNETWORK)
     // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
     virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
 
-    const URL& url() const { return m_request.url(); } 
+#if PLATFORM(COCOA) && !USE(CFNETWORK)
+    virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
+#endif
+
+    const URL& url() const { return m_request.url(); }
     ResourceHandle* handle() const { return m_handle.get(); }
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
     void setSendCallbackPolicy(SendCallbackPolicy sendLoadCallbacks) { m_options.sendLoadCallbacks = sendLoadCallbacks; }
@@ -161,6 +166,11 @@ public:
 #if USE(QUICK_LOOK)
     QuickLookHandle* quickLookHandle() const { return m_quickLookHandle.get(); }
     void setQuickLookHandle(PassOwnPtr<QuickLookHandle> handle) { m_quickLookHandle = handle; }
+#endif
+
+#if PLATFORM(MAC)
+    void schedule(WTF::SchedulePair&);
+    void unschedule(WTF::SchedulePair&);
 #endif
 
 protected:

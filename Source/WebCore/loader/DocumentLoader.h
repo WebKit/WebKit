@@ -51,15 +51,10 @@
 #include <wtf/RunLoopTimer.h>
 #endif
 
-namespace WTF {
-class SchedulePair;
-}
-
 namespace WebCore {
+
     class ApplicationCacheHost;
-#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     class Archive;
-#endif
     class ArchiveResource;
     class ArchiveResourceCollection;
     class CachedRawResource;
@@ -144,9 +139,9 @@ namespace WebCore {
         void setTitle(const StringWithDirection&);
         const String& overrideEncoding() const { return m_overrideEncoding; }
 
-#if PLATFORM(COCOA)
-        void schedule(WTF::SchedulePair*);
-        void unschedule(WTF::SchedulePair*);
+#if PLATFORM(MAC)
+        void schedule(SchedulePair&);
+        void unschedule(SchedulePair&);
 #endif
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
@@ -157,7 +152,7 @@ namespace WebCore {
         SharedBuffer* parsedArchiveData() const;
 
         bool scheduleArchiveLoad(ResourceLoader*, const ResourceRequest&);
-#endif // ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+#endif
 
         // Return the ArchiveResource for the URL only when loading an Archive
         ArchiveResource* archiveResourceForURL(const URL&) const;

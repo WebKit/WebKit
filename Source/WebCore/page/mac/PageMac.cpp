@@ -47,9 +47,9 @@ void Page::addSchedulePair(PassRefPtr<SchedulePair> prpPair)
 #if !PLATFORM(IOS)
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         if (DocumentLoader* documentLoader = frame->loader().documentLoader())
-            documentLoader->schedule(pair.get());
+            documentLoader->schedule(*pair);
         if (DocumentLoader* documentLoader = frame->loader().provisionalDocumentLoader())
-            documentLoader->schedule(pair.get());
+            documentLoader->schedule(*pair);
     }
 #endif
 
@@ -68,9 +68,9 @@ void Page::removeSchedulePair(PassRefPtr<SchedulePair> prpPair)
 #if !PLATFORM(IOS)
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         if (DocumentLoader* documentLoader = frame->loader().documentLoader())
-            documentLoader->unschedule(pair.get());
+            documentLoader->unschedule(*pair);
         if (DocumentLoader* documentLoader = frame->loader().provisionalDocumentLoader())
-            documentLoader->unschedule(pair.get());
+            documentLoader->unschedule(*pair);
     }
 #endif
 }

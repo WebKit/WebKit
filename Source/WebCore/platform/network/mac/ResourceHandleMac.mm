@@ -297,31 +297,27 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
         wkSetNSURLConnectionDefersCallbacks(d->m_connection.get(), defers);
 }
 
-void ResourceHandle::schedule(SchedulePair* pair)
+#if PLATFORM(MAC)
+
+void ResourceHandle::schedule(SchedulePair& pair)
 {
-#if !PLATFORM(IOS)
-    NSRunLoop *runLoop = pair->nsRunLoop();
+    NSRunLoop *runLoop = pair.nsRunLoop();
     if (!runLoop)
         return;
-    [d->m_connection.get() scheduleInRunLoop:runLoop forMode:(NSString *)pair->mode()];
+    [d->m_connection.get() scheduleInRunLoop:runLoop forMode:(NSString *)pair.mode()];
     if (d->m_startWhenScheduled) {
         [d->m_connection.get() start];
         d->m_startWhenScheduled = false;
     }
-#else
-    UNUSED_PARAM(pair);
-#endif
 }
 
-void ResourceHandle::unschedule(SchedulePair* pair)
+void ResourceHandle::unschedule(SchedulePair& pair)
 {
-#if !PLATFORM(IOS)
-    if (NSRunLoop *runLoop = pair->nsRunLoop())
-        [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(NSString *)pair->mode()];
-#else
-    UNUSED_PARAM(pair);
-#endif
+    if (NSRunLoop *runLoop = pair.nsRunLoop())
+        [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(NSString *)pair.mode()];
 }
+
+#endif
 
 id ResourceHandle::delegate()
 {

@@ -33,9 +33,13 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
+#if PLATFORM(COCOA) || USE(CFNETWORK)
+#include <wtf/RetainPtr.h>
+#endif
+
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"
-#endif // USE(QUICK_LOOK)
+#endif
 
 #if USE(SOUP)
 typedef struct _GTlsCertificate GTlsCertificate;
@@ -52,10 +56,6 @@ typedef unsigned long DWORD;
 typedef unsigned long DWORD_PTR;
 typedef void* LPVOID;
 typedef LPVOID HINTERNET;
-#endif
-
-#if PLATFORM(COCOA) || USE(CFNETWORK)
-#include <wtf/RetainPtr.h>
 #endif
 
 #if PLATFORM(COCOA)
@@ -84,6 +84,7 @@ class SchedulePair;
 }
 
 namespace WebCore {
+
 class AuthenticationChallenge;
 class Credential;
 class Frame;
@@ -113,6 +114,7 @@ public:
 #if PLATFORM(COCOA) || USE(CFNETWORK)
     void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
 #endif
+
 #if PLATFORM(COCOA) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
     bool shouldUseCredentialStorage();
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
@@ -121,20 +123,22 @@ public:
     virtual void receivedCancellation(const AuthenticationChallenge&) override;
 #endif
 
-#if PLATFORM(COCOA)
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+#if PLATFORM(COCOA) && USE(PROTECTION_SPACE_AUTH_CALLBACK)
     bool canAuthenticateAgainstProtectionSpace(const ProtectionSpace&);
 #endif
-#if !USE(CFNETWORK)
+
+#if PLATFORM(COCOA) && !USE(CFNETWORK)
     void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
     NSURLConnection *connection() const;
     id delegate();
     void releaseDelegate();
 #endif
 
-    void schedule(WTF::SchedulePair*);
-    void unschedule(WTF::SchedulePair*);
+#if PLATFORM(MAC)
+    void schedule(WTF::SchedulePair&);
+    void unschedule(WTF::SchedulePair&);
 #endif
+
 #if USE(CFNETWORK)
     CFURLStorageSessionRef storageSession() const;
     CFURLConnectionRef connection() const;
@@ -142,18 +146,18 @@ public:
     const ResourceRequest& currentRequest() const;
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, CFDataRef);
+#endif
 
 #if USE(QUICK_LOOK)
     QuickLookHandle* quickLookHandle() { return m_quickLook.get(); }
     void setQuickLookHandle(PassOwnPtr<QuickLookHandle> handle) { m_quickLook = handle; }
-#endif // USE(QUICK_LOOK)
-
-#endif // USE(CFNETWORK)
+#endif
 
 #if PLATFORM(WIN) && USE(CURL)
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificateInfo(const String&, const String&, const String&);
 #endif
+
 #if PLATFORM(WIN) && USE(CURL) && USE(CF)
     static void setClientCertificate(const String& host, CFDataRef);
 #endif
@@ -215,7 +219,8 @@ public:
     // Called in response to ResourceHandleClient::willCacheResponseAsync().
 #if USE(CFNETWORK)
     void continueWillCacheResponse(CFCachedURLResponseRef);
-#elif PLATFORM(COCOA)
+#endif
+#if PLATFORM(COCOA) && !USE(CFNETWORK)
     void continueWillCacheResponse(NSCachedURLResponse *);
 #endif
 
@@ -236,6 +241,7 @@ public:
 #if PLATFORM(COCOA) || USE(CFNETWORK)
     static CFStringRef synchronousLoadRunLoopMode();
 #endif
+
 #if PLATFORM(IOS) && USE(CFNETWORK)
     static CFMutableDictionaryRef createSSLPropertiesFromNSURLRequest(const ResourceRequest&);
 #endif
@@ -271,16 +277,15 @@ private:
     virtual void derefAuthenticationClient() override { deref(); }
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-    enum class SchedulingBehavior {
-        Asynchronous,
-        Synchronous
-    };
+    enum class SchedulingBehavior { Asynchronous, Synchronous };
+#endif
 
 #if USE(CFNETWORK)
     void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior, CFDictionaryRef clientProperties);
-#else
-    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior);
 #endif
+
+#if PLATFORM(COCOA) && !USE(CFNETWORK)
+    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior);
 #endif
 
     friend class ResourceHandleInternal;
@@ -288,7 +293,7 @@ private:
 
 #if USE(QUICK_LOOK)
     OwnPtr<QuickLookHandle> m_quickLook;
-#endif // USE(QUICK_LOOK)
+#endif
 };
 
 }

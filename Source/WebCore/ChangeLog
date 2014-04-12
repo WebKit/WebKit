@@ -1,3 +1,44 @@
+2014-04-11  Darin Adler  <darin@apple.com>
+
+        Some small loader refinements and refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=131541
+
+        Reviewed by Alexey Proskuryakov.
+
+        Cut down on use of ResourceLoader::handle, which always returns null when
+        using a network process. Also streamlined conditionals and did some other
+        small refactoring.
+
+        * loader/DocumentLoader.h: Use references rather than pointers for SchedulePair.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didChangePriority): Use m_handle instead of handle(),
+        since we'd like to delete handle() entirely soon.
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge): Ditto.
+        (WebCore::ResourceLoader::schedule): Added.
+        (WebCore::ResourceLoader::unschedule): Ditto.
+        * loader/ResourceLoader.h: Rearranged header to eliminate nested conditionals.
+        Added schedule and unschedule functions for Mac.
+
+        * loader/mac/DocumentLoaderMac.cpp:
+        (WebCore::scheduleAll): Changed to take a reference and call ResourceLoader::schedule.
+        (WebCore::unscheduleAll): Ditto.
+        (WebCore::DocumentLoader::schedule): Ditto.
+        (WebCore::DocumentLoader::unschedule): Ditto.
+
+        * page/mac/PageMac.cpp:
+        (WebCore::Page::addSchedulePair): Pass a reference rather than a pointer to schedule.
+        (WebCore::Page::removeSchedulePair): Ditto.
+
+        * platform/network/ResourceHandle.h: Did a bit of reformatting and reorganizing of
+        conditionals.
+
+        * platform/network/ResourceHandleInternal.h: Removed a tiny bit of unneeded declaration.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::schedule): Updated to take a reference rather than a pointer.
+        (WebCore::ResourceHandle::unschedule): Ditto.
+
 2014-04-11  Andreas Kling  <akling@apple.com>
 
         Make NodeList.length inline-cacheable by JSC.

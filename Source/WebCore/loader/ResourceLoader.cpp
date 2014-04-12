@@ -396,8 +396,8 @@ void ResourceLoader::cleanupForError(const ResourceError& error)
 
 void ResourceLoader::didChangePriority(ResourceLoadPriority loadPriority)
 {
-    if (handle())
-        handle()->didChangePriority(loadPriority);
+    if (m_handle)
+        m_handle->didChangePriority(loadPriority);
 }
 
 void ResourceLoader::cancel()
@@ -536,7 +536,7 @@ bool ResourceLoader::shouldUseCredentialStorage()
 
 void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
-    ASSERT(handle()->hasAuthenticationChallenge());
+    ASSERT(m_handle->hasAuthenticationChallenge());
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
@@ -552,7 +552,7 @@ void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChall
     // If we can't continue with credentials, we need to cancel the load altogether.
 #if PLATFORM(COCOA) || USE(CFNETWORK) || USE(CURL) || PLATFORM(GTK) || PLATFORM(EFL)
     challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
-    ASSERT(!handle() || !handle()->hasAuthenticationChallenge());
+    ASSERT(!m_handle || !m_handle->hasAuthenticationChallenge());
 #else
     didFail(blockedError());
 #endif
@@ -567,23 +567,43 @@ void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChalle
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+
 bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
     Ref<ResourceLoader> protect(*this);
     return frameLoader()->client().canAuthenticateAgainstProtectionSpace(documentLoader(), identifier(), protectionSpace);
 }
+
 #endif
     
 #if PLATFORM(IOS)
+
 RetainPtr<CFDictionaryRef> ResourceLoader::connectionProperties(ResourceHandle*)
 {
     return frameLoader()->connectionProperties(this);
 }
+
 #endif
 
 void ResourceLoader::receivedCancellation(const AuthenticationChallenge&)
 {
     cancel();
 }
+
+#if PLATFORM(MAC)
+
+void ResourceLoader::schedule(SchedulePair& pair)
+{
+    if (m_handle)
+        m_handle->schedule(pair);
+}
+
+void ResourceLoader::unschedule(SchedulePair& pair)
+{
+    if (m_handle)
+        m_handle->unschedule(pair);
+}
+
+#endif
 
 }
