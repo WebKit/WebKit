@@ -46,7 +46,7 @@ public:
     bool isSyncMessage() const;
     bool shouldDispatchMessageWhenWaitingForSyncReply() const;
 
-#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);
 #endif
 
@@ -57,7 +57,7 @@ private:
 
     uint64_t m_destinationID;
 
-#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
 #endif
 };

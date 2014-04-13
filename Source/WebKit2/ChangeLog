@@ -1,3 +1,19 @@
+2014-04-13  Pratik Solanki  <psolanki@apple.com>
+
+        Don't use ImportanceAssertion on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=131481
+        <rdar://problem/16575830>
+
+        Reviewed by Darin Adler.
+
+        We have other API to mark processes as being in use on iOS. No need to use ImportanceAssertion.
+
+        * Platform/IPC/MessageDecoder.cpp:
+        * Platform/IPC/MessageDecoder.h:
+        * Platform/IPC/mac/ConnectionMac.cpp:
+        (IPC::Connection::receiveSourceEventHandler):
+        * Platform/IPC/mac/ImportanceAssertion.h:
+
 2014-04-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167168 and r167194.

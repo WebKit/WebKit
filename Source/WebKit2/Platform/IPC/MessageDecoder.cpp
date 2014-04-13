@@ -31,7 +31,7 @@
 #include "MessageFlags.h"
 #include "StringReference.h"
 
-#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 #include "ImportanceAssertion.h"
 #endif
 
@@ -66,7 +66,7 @@ bool MessageDecoder::shouldDispatchMessageWhenWaitingForSyncReply() const
     return m_messageFlags & DispatchMessageWhenWaitingForSyncReply;
 }
 
-#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 void MessageDecoder::setImportanceAssertion(std::unique_ptr<ImportanceAssertion> assertion)
 {
     m_importanceAssertion = std::move(assertion);

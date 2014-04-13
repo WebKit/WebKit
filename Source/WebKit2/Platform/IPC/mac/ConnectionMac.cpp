@@ -416,7 +416,7 @@ void Connection::receiveSourceEventHandler()
     std::unique_ptr<MessageDecoder> decoder = createMessageDecoder(header);
     ASSERT(decoder);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     decoder->setImportanceAssertion(std::make_unique<ImportanceAssertion>(header));
 #endif
 
