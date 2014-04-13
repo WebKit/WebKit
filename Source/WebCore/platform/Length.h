@@ -81,6 +81,7 @@ public:
     LengthType type() const;
 
     bool isAuto() const;
+    bool isCalculated() const;
     bool isFixed() const;
     bool isMaxContent() const;
     bool isMinContent() const;
@@ -113,7 +114,6 @@ public:
     float nonNanCalculatedValue(int maxValue) const;
 
 private:
-    bool isCalculated() const;
     bool isLegacyIntrinsic() const;
 
     bool isCalculatedEqual(const Length&) const;

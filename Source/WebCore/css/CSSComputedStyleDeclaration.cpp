@@ -447,62 +447,63 @@ static CSSValueID valueForRepeatRule(int rule)
     }
 }
 
+static PassRefPtr<CSSPrimitiveValue> valueForImageSliceSide(const Length& length)
+{
+    // These values can be percentages, numbers, or while an animation of mixed types is in progress,
+    // a calculation that combines a percentage and a number.
+    if (length.isPercentNotCalculated())
+        return cssValuePool().createValue(length.percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
+    if (length.isFixed())
+        return cssValuePool().createValue(length.value(), CSSPrimitiveValue::CSS_NUMBER);
+
+    // Calculating the actual length currently in use would require most of the code from RenderBoxModelObject::paintNinePieceImage.
+    // And even if we could do that, it's not clear if that's exactly what we'd want during animation.
+    // FIXME: For now, just return 0.
+    ASSERT(length.isCalculated());
+    return cssValuePool().createValue(0, CSSPrimitiveValue::CSS_NUMBER);
+}
+
 static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePieceImage& image)
 {
-    // Create the slices.
-    RefPtr<CSSPrimitiveValue> top;
+    auto& slices = image.imageSlices();
+
+    RefPtr<CSSPrimitiveValue> top = valueForImageSliceSide(slices.top());
+
     RefPtr<CSSPrimitiveValue> right;
     RefPtr<CSSPrimitiveValue> bottom;
     RefPtr<CSSPrimitiveValue> left;
 
-    if (image.imageSlices().top().isPercent())
-        top = cssValuePool().createValue(image.imageSlices().top().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
-    else
-        top = cssValuePool().createValue(image.imageSlices().top().value(), CSSPrimitiveValue::CSS_NUMBER);
-
-    if (image.imageSlices().right() == image.imageSlices().top() && image.imageSlices().bottom() == image.imageSlices().top()
-        && image.imageSlices().left() == image.imageSlices().top()) {
+    if (slices.right() == slices.top() && slices.bottom() == slices.top() && slices.left() == slices.top()) {
         right = top;
         bottom = top;
         left = top;
     } else {
-        if (image.imageSlices().right().isPercent())
-            right = cssValuePool().createValue(image.imageSlices().right().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
-        else
-            right = cssValuePool().createValue(image.imageSlices().right().value(), CSSPrimitiveValue::CSS_NUMBER);
+        right = valueForImageSliceSide(slices.right());
 
-        if (image.imageSlices().bottom() == image.imageSlices().top() && image.imageSlices().right() == image.imageSlices().left()) {
+        if (slices.bottom() == slices.top() && slices.right() == slices.left()) {
             bottom = top;
             left = right;
         } else {
-            if (image.imageSlices().bottom().isPercent())
-                bottom = cssValuePool().createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
-            else
-                bottom = cssValuePool().createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
+            bottom = valueForImageSliceSide(slices.bottom());
 
-            if (image.imageSlices().left() == image.imageSlices().right())
+            if (slices.left() == slices.right())
                 left = right;
-            else {
-                if (image.imageSlices().left().isPercent())
-                    left = cssValuePool().createValue(image.imageSlices().left().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
-                else
-                    left = cssValuePool().createValue(image.imageSlices().left().value(), CSSPrimitiveValue::CSS_NUMBER);
-            }
+            else
+                left = valueForImageSliceSide(slices.left());
         }
     }
 
     RefPtr<Quad> quad = Quad::create();
-    quad->setTop(top);
-    quad->setRight(right);
-    quad->setBottom(bottom);
-    quad->setLeft(left);
+    quad->setTop(top.release());
+    quad->setRight(right.release());
+    quad->setBottom(bottom.release());
+    quad->setLeft(left.release());
 
     return CSSBorderImageSliceValue::create(cssValuePool().createValue(quad.release()), image.fill());
 }
 
 static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box)
 {
-    // Create the slices.
     RefPtr<CSSPrimitiveValue> top;
     RefPtr<CSSPrimitiveValue> right;
     RefPtr<CSSPrimitiveValue> bottom;
@@ -653,10 +654,10 @@ static PassRef<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID
     return positionList;
 }
 
-static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, CSSPropertyID propertyID, RenderView* renderView)
+static PassRefPtr<CSSValue> positionOffsetValue(RenderStyle* style, CSSPropertyID propertyID, RenderView* renderView)
 {
     if (!style)
-        return 0;
+        return nullptr;
 
     Length l;
     switch (propertyID) {
@@ -673,7 +674,7 @@ static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, CSSProper
             l = style->bottom();
             break;
         default:
-            return 0;
+            return nullptr;
     }
 
     if (style->hasOutOfFlowPosition()) {
@@ -1377,6 +1378,7 @@ static PassRefPtr<CSSValue> fillSourceTypeToCSSValue(EMaskSourceType type)
 
     return 0;
 }
+
 static PassRef<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const RenderStyle* style)
 {
     if (fillSize.type == Contain)
@@ -1876,7 +1878,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyBorderLeftWidth:
             return zoomAdjustedPixelValue(style->borderLeftWidth(), style.get());
         case CSSPropertyBottom:
-            return getPositionOffsetValue(style.get(), CSSPropertyBottom, m_node->document().renderView());
+            return positionOffsetValue(style.get(), CSSPropertyBottom, m_node->document().renderView());
         case CSSPropertyWebkitBoxAlign:
             return cssValuePool().createValue(style->boxAlign());
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
@@ -2135,7 +2137,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(style->imageResolution(), CSSPrimitiveValue::CSS_DPPX);
 #endif
         case CSSPropertyLeft:
-            return getPositionOffsetValue(style.get(), CSSPropertyLeft, m_node->document().renderView());
+            return positionOffsetValue(style.get(), CSSPropertyLeft, m_node->document().renderView());
         case CSSPropertyLetterSpacing:
             if (!style->letterSpacing())
                 return cssValuePool().createIdentifierValue(CSSValueNormal);
@@ -2260,7 +2262,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyPosition:
             return cssValuePool().createValue(style->position());
         case CSSPropertyRight:
-            return getPositionOffsetValue(style.get(), CSSPropertyRight, m_node->document().renderView());
+            return positionOffsetValue(style.get(), CSSPropertyRight, m_node->document().renderView());
         case CSSPropertyWebkitRubyPosition:
             return cssValuePool().createValue(style->rubyPosition());
         case CSSPropertyTableLayout:
@@ -2361,7 +2363,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyTextTransform:
             return cssValuePool().createValue(style->textTransform());
         case CSSPropertyTop:
-            return getPositionOffsetValue(style.get(), CSSPropertyTop, m_node->document().renderView());
+            return positionOffsetValue(style.get(), CSSPropertyTop, m_node->document().renderView());
         case CSSPropertyUnicodeBidi:
             return cssValuePool().createValue(style->unicodeBidi());
         case CSSPropertyVerticalAlign:

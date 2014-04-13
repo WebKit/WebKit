@@ -1,3 +1,23 @@
+2014-04-12  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r166860): ASSERTION FAILED: !isCalculated() on fast/css/image-set-value-not-removed-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=131480
+
+        Reviewed by Andreas Kling.
+
+        Fixes intermittent assertion failure in fast/css/image-set-value-not-removed-crash.html.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForImageSliceSide): Added. Helper used below in valueForNinePieceImageSlice.
+        Handles calculated values by returning 0; incorrect but predictable.
+        (WebCore::valueForNinePieceImageSlice): Updated to call valueForImageSliceSide.
+        (WebCore::positionOffsetValue): Use nullptr.
+        (WebCore::ComputedStyleExtractor::propertyValue): Updated to call positionOffsetValue
+        by its new name. Removed "get" from the name.
+        (WebCore::positionOffsetValue): Renamed from getPositionOffsetValue.
+
+        * platform/Length.h: Made isCalculated public.
+
 2014-04-12  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build after r167183.

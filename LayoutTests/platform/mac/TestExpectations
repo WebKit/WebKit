@@ -1352,5 +1352,3 @@ webkit.org/b/130971 media/track/track-remove-track.html [ Pass Crash Failure ]
 webkit.org/b/130972 transitions/3d/interrupted-transition.html [ Pass Failure Timeout ]
 
 webkit.org/b/130942 fast/preloader/document-write.html [ Pass Failure ]
-
-webkit.org/b/131480 [ Debug ] fast/css/image-set-value-not-removed-crash.html [ Skip ]
