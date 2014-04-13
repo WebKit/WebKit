@@ -36,7 +36,7 @@ std::unique_ptr<CounterDirectiveMap> clone(const CounterDirectiveMap& counterDir
 {
     auto result = std::make_unique<CounterDirectiveMap>();
     *result = counterDirectives;
-    return std::move(result);
+    return result;
 }
 
 } // namespace WebCore

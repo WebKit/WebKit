@@ -130,7 +130,7 @@ public:
                 std::unique_ptr<GridCoordinate> result = std::make_unique<GridCoordinate>(GridSpan(m_rowIndex, m_rowIndex), GridSpan(m_columnIndex, m_columnIndex));
                 // Advance the iterator to avoid an infinite loop where we would return the same grid area over and over.
                 ++varyingTrackIndex;
-                return std::move(result);
+                return result;
             }
         }
         return nullptr;

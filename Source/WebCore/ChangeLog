@@ -1,3 +1,32 @@
+2014-04-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove unnecessary uses of std::move() in return statements
+        https://bugs.webkit.org/show_bug.cgi?id=131457
+
+        Reviewed by Darin Adler.
+
+        Don't use std::move() in return statements unless necessary as it inhibits
+        named return value optimizations as performed by compilers.
+
+        * Modules/battery/BatteryManager.cpp:
+        (WebCore::BatteryManager::create):
+        * html/FormController.cpp:
+        (WebCore::FormController::createSavedFormStateMap):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        * platform/RemoteCommandListener.cpp:
+        (WebCore::RemoteCommandListener::create):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayer::create):
+        * platform/ios/RemoteCommandListenerIOS.mm:
+        (WebCore::RemoteCommandListener::create):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::nextEmptyGridArea):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupFilters):
+        * rendering/style/CounterDirectives.cpp:
+        (WebCore::clone):
+
 2014-04-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167168 and r167194.

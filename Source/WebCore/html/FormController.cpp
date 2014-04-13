@@ -407,7 +407,7 @@ std::unique_ptr<FormController::SavedFormStateMap> FormController::createSavedFo
             formState = std::make_unique<SavedFormState>();
         formState->appendControlState(control->name(), control->type(), control->saveFormControlState());
     }
-    return std::move(stateMap);
+    return stateMap;
 }
 
 Vector<String> FormController::formElementsState() const

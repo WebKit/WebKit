@@ -312,7 +312,7 @@ std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* facto
 
     graphicsLayer->initialize();
 
-    return std::move(graphicsLayer);
+    return graphicsLayer;
 }
 
 #if ENABLE(CSS_FILTERS)

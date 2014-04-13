@@ -3967,7 +3967,7 @@ std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsCo
         // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
         // Note that we will still apply the clipping on the final rendering of the filter.
         paintingInfo.clipToDirtyRect = !filterInfo->renderer()->hasFilterThatMovesPixels();
-        return std::move(filterPainter);
+        return filterPainter;
     }
     return nullptr;
 }

@@ -31,7 +31,7 @@ namespace WebCore {
 #if !PLATFORM(IOS)
 std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteCommandListenerClient& client)
 {
-    return std::move(std::unique_ptr<RemoteCommandListener>(new RemoteCommandListener(client)));
+    return std::make_unique<RemoteCommandListener>(client);
 }
 #endif
 

@@ -439,7 +439,7 @@ std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasE
         LOG(WebGL, "Create a WebGL context that looks real, but will require a policy resolution if used.");
         std::unique_ptr<WebGLRenderingContext> renderingContext(new WebGLRenderingContext(canvas, attributes));
         renderingContext->suspendIfNeeded();
-        return std::move(renderingContext);
+        return renderingContext;
     }
 
     HostWindow* hostWindow = document.view()->root()->hostWindow();
@@ -457,7 +457,7 @@ std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasE
     std::unique_ptr<WebGLRenderingContext> renderingContext(new WebGLRenderingContext(canvas, context, attributes));
     renderingContext->suspendIfNeeded();
 
-    return std::move(renderingContext);
+    return renderingContext;
 }
 
 WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, GraphicsContext3D::Attributes attributes)

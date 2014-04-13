@@ -36,7 +36,7 @@ PassRef<BatteryManager> BatteryManager::create(Navigator* navigator)
 {
     auto batteryManager = adoptRef(*new BatteryManager(navigator));
     batteryManager.get().suspendIfNeeded();
-    return std::move(batteryManager);
+    return batteryManager;
 }
 
 BatteryManager::~BatteryManager()
