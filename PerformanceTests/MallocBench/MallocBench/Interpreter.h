@@ -36,7 +36,7 @@ public:
     void run();
 
 private:
-    enum Opcode { op_a, op_d };
+    enum Opcode { op_malloc, op_free, op_realloc };
     struct Op { Opcode opcode; size_t slot; size_t size; };
     struct Record { void* object; size_t size; };
 

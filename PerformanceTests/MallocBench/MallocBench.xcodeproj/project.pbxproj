@@ -13,6 +13,7 @@
 		1444AE96177E8DF200F8030A /* message.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1444AE94177E8DF200F8030A /* message.cpp */; };
 		14452CB0177D24460097E057 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14452CAF177D24460097E057 /* main.cpp */; };
 		14452CEF177D47110097E057 /* churn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14452CED177D47110097E057 /* churn.cpp */; };
+		1447AE8418FB4B2400B3D7FF /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1447AE8318FB4B2400B3D7FF /* libSystem.dylib */; };
 		1451FAED18B14B7100DB6D47 /* medium.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1451FAEB18B14B7100DB6D47 /* medium.cpp */; };
 		14976EC8177E3649006B819A /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976EC6177E3649006B819A /* list.cpp */; };
 		14976ECC177E3C87006B819A /* CommandLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976ECB177E3C87006B819A /* CommandLine.cpp */; };
@@ -21,7 +22,7 @@
 		14C5008D184016CF007A531D /* facebook.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C5008B184016CF007A531D /* facebook.cpp */; };
 		14C5009018401841007A531D /* facebook.ops in CopyFiles */ = {isa = PBXBuildFile; fileRef = 14C5008E18401726007A531D /* facebook.ops */; };
 		14C5009318403DA0007A531D /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C5009118403DA0007A531D /* Interpreter.cpp */; };
-		14CC393C18EA812B004AFE34 /* libmbmalloc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 14CC393818EA811F004AFE34 /* libmbmalloc.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
+		14CC393C18EA812B004AFE34 /* libmbmalloc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 14CC393818EA811F004AFE34 /* libmbmalloc.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
 		14CC393F18EA8184004AFE34 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CC391C18EA6759004AFE34 /* mbmalloc.cpp */; };
 		14CE4A6017BD355800288DAA /* big.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CE4A5E17BD355800288DAA /* big.cpp */; };
 		14E11932177ECC8B003A8D15 /* CPUCount.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E11930177ECC8B003A8D15 /* CPUCount.cpp */; };
@@ -63,6 +64,7 @@
 		14452CAF177D24460097E057 /* main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		14452CED177D47110097E057 /* churn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = churn.cpp; path = MallocBench/churn.cpp; sourceTree = "<group>"; };
 		14452CEE177D47110097E057 /* churn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = churn.h; path = MallocBench/churn.h; sourceTree = "<group>"; };
+		1447AE8318FB4B2400B3D7FF /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = /usr/lib/libSystem.dylib; sourceTree = "<absolute>"; };
 		1451FAEB18B14B7100DB6D47 /* medium.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = medium.cpp; path = MallocBench/medium.cpp; sourceTree = "<group>"; };
 		1451FAEC18B14B7100DB6D47 /* medium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = medium.h; path = MallocBench/medium.h; sourceTree = "<group>"; };
 		14976EC6177E3649006B819A /* list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = list.cpp; path = MallocBench/list.cpp; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1447AE8418FB4B2400B3D7FF /* libSystem.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +115,7 @@
 				14E11933177F51AC003A8D15 /* Benchmarks */,
 				14452CAE177D24460097E057 /* MallocBench */,
 				14CC391B18EA6722004AFE34 /* mbmalloc */,
+				1447AE8618FB4B5100B3D7FF /* Libraries */,
 				14452CAA177D24460097E057 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -139,6 +143,14 @@
 				14452CAF177D24460097E057 /* main.cpp */,
 			);
 			path = MallocBench;
+			sourceTree = "<group>";
+		};
+		1447AE8618FB4B5100B3D7FF /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				1447AE8318FB4B2400B3D7FF /* libSystem.dylib */,
+			);
+			name = Libraries;
 			sourceTree = "<group>";
 		};
 		14CC391B18EA6722004AFE34 /* mbmalloc */ = {

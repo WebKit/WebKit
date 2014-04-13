@@ -1,3 +1,20 @@
+2014-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        MallocBench record/replay should support realloc
+        https://bugs.webkit.org/show_bug.cgi?id=131598
+
+        Reviewed by Ryosuke Niwa.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj: Fixed some linkage
+        issues that caused us not to fully link to system malloc in the default
+        case. Also marked mbmalloc.dylib as required so the error message will
+        be clearer if we mess up.
+
+        * MallocBench/MallocBench/Interpreter.cpp:
+        (Interpreter::run):
+        * MallocBench/MallocBench/Interpreter.h: Added the realloc case, and
+        upgraded one-letter names to full words.
+
 2014-04-11  Dirk Schulze  <krit@webkit.org>
 
         Optimize Canvas fill and drawImage with SourceIn, DestinationIn, SourceOut, and DestinationAtop using transparencyLayer.
