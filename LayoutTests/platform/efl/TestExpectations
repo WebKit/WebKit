@@ -301,9 +301,6 @@ webkit.org/b/89052 fast/css/image-orientation
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html [ WontFix ]
 
-# No CORS support for media elements is implemented yet.
-Bug(EFL) http/tests/security/video-cross-origin-readback.html [ Failure ]
-
 # Perf tests are way too slow and some may fail due to timeout.
 perf/adding-radio-buttons.html [ WontFix ]
 perf/array-binary-search.html [ WontFix ]

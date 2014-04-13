@@ -27,6 +27,7 @@
 #include "CachedResourceHandle.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
+#include "CrossOriginAccessControl.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerUtilities.h"
 #include "MediaPlayer.h"
@@ -35,6 +36,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
@@ -48,6 +50,12 @@
 
 using namespace WebCore;
 
+enum CORSAccessCheckResult {
+    CORSNoCheck,
+    CORSSuccess,
+    CORSFailure
+};
+
 class StreamingClient {
     public:
         StreamingClient(WebKitWebSrc*);
@@ -58,7 +66,7 @@ class StreamingClient {
 
     protected:
         char* createReadBuffer(size_t requestedSize, size_t& actualSize);
-        void handleResponseReceived(const ResourceResponse&);
+        void handleResponseReceived(const ResourceResponse&, CORSAccessCheckResult);
         void handleDataReceived(const char*, int);
         void handleNotifyFinished();
 
@@ -68,7 +76,7 @@ class StreamingClient {
 class CachedResourceStreamingClient : public CachedRawResourceClient, public StreamingClient {
     WTF_MAKE_NONCOPYABLE(CachedResourceStreamingClient); WTF_MAKE_FAST_ALLOCATED;
     public:
-        CachedResourceStreamingClient(WebKitWebSrc*, CachedResourceLoader*, const ResourceRequest&);
+        CachedResourceStreamingClient(WebKitWebSrc*, CachedResourceLoader*, const ResourceRequest&, MediaPlayerClient::CORSMode);
         virtual ~CachedResourceStreamingClient();
 
         // StreamingClient virtual methods.
@@ -83,6 +91,7 @@ class CachedResourceStreamingClient : public CachedRawResourceClient, public Str
         virtual void notifyFinished(CachedResource*);
 
         CachedResourceHandle<CachedRawResource> m_resource;
+        RefPtr<SecurityOrigin> m_origin;
 };
 
 class ResourceHandleStreamingClient : public ResourceHandleClient, public StreamingClient {
@@ -119,6 +128,8 @@ struct _WebKitWebSrcPrivate {
     WebCore::MediaPlayer* player;
 
     StreamingClient* client;
+
+    CORSAccessCheckResult corsAccessCheck;
 
     guint64 offset;
     guint64 size;
@@ -437,6 +448,8 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
 
+    priv->corsAccessCheck = CORSNoCheck;
+
     if (!priv->uri) {
         GST_ERROR_OBJECT(src, "No URI provided");
         locker.unlock();
@@ -483,7 +496,7 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     if (priv->player) {
         if (CachedResourceLoader* loader = priv->player->cachedResourceLoader())
-            priv->client = new CachedResourceStreamingClient(src, loader, request);
+            priv->client = new CachedResourceStreamingClient(src, loader, request, priv->player->mediaPlayerClient()->mediaPlayerCORSMode());
     }
 
     if (!priv->client)
@@ -753,6 +766,11 @@ void webKitWebSrcSetMediaPlayer(WebKitWebSrc* src, WebCore::MediaPlayer* player)
     src->priv->player = player;
 }
 
+bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc* src)
+{
+    return src->priv->corsAccessCheck == CORSSuccess;
+}
+
 StreamingClient::StreamingClient(WebKitWebSrc* src)
     : m_src(adoptGRef(static_cast<GstElement*>(gst_object_ref(src))))
 {
@@ -781,22 +799,27 @@ char* StreamingClient::createReadBuffer(size_t requestedSize, size_t& actualSize
     return getGstBufferDataPointer(buffer);
 }
 
-void StreamingClient::handleResponseReceived(const ResourceResponse& response)
+void StreamingClient::handleResponseReceived(const ResourceResponse& response, CORSAccessCheckResult corsAccessCheck)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
     WebKitWebSrcPrivate* priv = src->priv;
 
     GST_DEBUG_OBJECT(src, "Received response: %d", response.httpStatusCode());
 
-    if (response.httpStatusCode() >= 400) {
-        // Received error code
-        GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received %d HTTP error code", response.httpStatusCode()), (0));
+    if (response.httpStatusCode() >= 400 || corsAccessCheck == CORSFailure) {
+        // Received error code or CORS check failed
+        if (corsAccessCheck == CORSFailure)
+            GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Cross-origin stream load denied by Cross-Origin Resource Sharing policy."), (nullptr));
+        else
+            GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received %d HTTP error code", response.httpStatusCode()), (nullptr));
         gst_app_src_end_of_stream(priv->appsrc);
         webKitWebSrcStop(src);
         return;
     }
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
+
+    priv->corsAccessCheck = corsAccessCheck;
 
     if (priv->seekSource.isActive()) {
         GST_DEBUG_OBJECT(src, "Seek in progress, ignoring response");
@@ -811,7 +834,7 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
         } else if (response.httpStatusCode() != 206) {
             // Range request completely failed.
             locker.unlock();
-            GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received unexpected %d HTTP status code", response.httpStatusCode()), (0));
+            GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received unexpected %d HTTP status code", response.httpStatusCode()), (nullptr));
             gst_app_src_end_of_stream(priv->appsrc);
             webKitWebSrcStop(src);
             return;
@@ -969,11 +992,22 @@ void StreamingClient::handleNotifyFinished()
     }
 }
 
-CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, CachedResourceLoader* resourceLoader, const ResourceRequest& request)
+CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, CachedResourceLoader* resourceLoader, const ResourceRequest& request, MediaPlayerClient::CORSMode corsMode)
     : StreamingClient(src)
 {
     DataBufferingPolicy bufferingPolicy = request.url().protocolIs("blob") ? BufferData : DoNotBufferData;
-    CachedResourceRequest cacheRequest(request, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
+    RequestOriginPolicy corsPolicy = corsMode != MediaPlayerClient::Unspecified ? PotentiallyCrossOriginEnabled : UseDefaultOriginRestrictionsForType;
+    StoredCredentials allowCredentials = corsMode == MediaPlayerClient::UseCredentials ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+    ResourceLoaderOptions options(SendCallbacks, DoNotSniffContent, bufferingPolicy, allowCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, corsPolicy);
+
+    CachedResourceRequest cacheRequest(request, options);
+
+    if (corsMode != MediaPlayerClient::Unspecified) {
+        m_origin = resourceLoader->document() ? resourceLoader->document()->securityOrigin() : nullptr;
+        updateRequestForAccessControl(cacheRequest.mutableResourceRequest(), m_origin.get(), allowCredentials);
+    }
+
+    // TODO: Decide whether to use preflight mode for cross-origin requests (see http://wkbug.com/131484).
     m_resource = resourceLoader->requestRawResource(cacheRequest);
     if (m_resource)
         m_resource->addClient(this);
@@ -1003,9 +1037,12 @@ char* CachedResourceStreamingClient::getOrCreateReadBuffer(CachedResource*, size
     return createReadBuffer(requestedSize, actualSize);
 }
 
-void CachedResourceStreamingClient::responseReceived(CachedResource*, const ResourceResponse& response)
+void CachedResourceStreamingClient::responseReceived(CachedResource* resource, const ResourceResponse& response)
 {
-    handleResponseReceived(response);
+    CORSAccessCheckResult corsAccessCheck = CORSNoCheck;
+    if (m_origin)
+        corsAccessCheck = (m_origin->canRequest(response.url()) || resource->passesAccessControlCheck(m_origin.get())) ? CORSSuccess : CORSFailure;
+    handleResponseReceived(response, corsAccessCheck);
 }
 
 void CachedResourceStreamingClient::dataReceived(CachedResource*, const char* data, int length)
@@ -1067,7 +1104,7 @@ void ResourceHandleStreamingClient::willSendRequest(ResourceHandle*, ResourceReq
 
 void ResourceHandleStreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
-    handleResponseReceived(response);
+    handleResponseReceived(response, CORSNoCheck);
 }
 
 void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int)

@@ -1891,6 +1891,13 @@ void MediaPlayerPrivateGStreamer::simulateAudioInterruption()
     gst_element_post_message(m_playBin.get(), message);
 }
 
+bool MediaPlayerPrivateGStreamer::didPassCORSAccessCheck() const
+{
+    if (WEBKIT_IS_WEB_SRC(m_source.get()))
+        return webKitSrcPassedCORSAccessCheck(WEBKIT_WEB_SRC(m_source.get()));
+    return false;
+}
+
 }
 
 #endif // USE(GSTREAMER)
