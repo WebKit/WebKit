@@ -25,11 +25,13 @@
 
 #include "bmalloc.h"
 
+#define EXPORT __attribute__((visibility("default")))
+
 extern "C" {
 
-void* mbmalloc(size_t);
-void mbfree(void*, size_t);
-void* mbrealloc(void*, size_t, size_t);
+EXPORT void* mbmalloc(size_t);
+EXPORT void mbfree(void*, size_t);
+EXPORT void* mbrealloc(void*, size_t, size_t);
 
 void* mbmalloc(size_t size)
 {

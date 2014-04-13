@@ -1,3 +1,16 @@
+2014-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed some mbmalloc exports
+        https://bugs.webkit.org/show_bug.cgi?id=131599
+
+        Reviewed by Ryosuke Niwa.
+
+        * bmalloc.xcodeproj/project.pbxproj: Made some headers a private part
+        of the project, so we can call them from API.
+
+        * bmalloc/mbmalloc.cpp: Marked the mbmalloc functions with default
+        visibility, so they show up as exported in the .dylib.
+
 2014-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Put bmalloc headers in the right place
