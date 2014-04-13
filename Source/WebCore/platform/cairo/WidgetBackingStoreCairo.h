@@ -27,8 +27,8 @@ namespace WebCore {
 class WidgetBackingStoreCairo : public WidgetBackingStore {
 
 public:
-    static PassOwnPtr<WidgetBackingStore> create(PlatformWidget, const IntSize&, float deviceScaleFactor);
-    WidgetBackingStoreCairo(PlatformWidget, const IntSize&, float deviceScaleFactor);
+    static PassOwnPtr<WidgetBackingStore> create(PlatformWidget, const IntSize&);
+    WidgetBackingStoreCairo(PlatformWidget, const IntSize&);
     ~WidgetBackingStoreCairo();
     cairo_surface_t* cairoSurface();
     void scroll(const IntRect&, const IntSize&);

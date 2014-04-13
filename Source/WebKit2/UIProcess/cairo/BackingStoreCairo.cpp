@@ -48,14 +48,14 @@ using namespace WebCore;
 namespace WebKit {
 
 #if PLATFORM(GTK)
-static OwnPtr<WidgetBackingStore> createBackingStoreForGTK(GtkWidget* widget, const IntSize& size, float deviceScaleFactor)
+static OwnPtr<WidgetBackingStore> createBackingStoreForGTK(GtkWidget* widget, const IntSize& size)
 {
 #if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_X11_DISPLAY(display))
-        return WebCore::WidgetBackingStoreGtkX11::create(widget, size, deviceScaleFactor);
+        return WebCore::WidgetBackingStoreGtkX11::create(widget, size);
 #endif
-    return WebCore::WidgetBackingStoreCairo::create(widget, size, deviceScaleFactor);
+    return WebCore::WidgetBackingStoreCairo::create(widget, size);
 }
 #endif
 
@@ -73,9 +73,9 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
 {
     if (!m_backingStore)
 #if PLATFORM(EFL)
-        m_backingStore = WidgetBackingStoreCairo::create(EwkView::toEvasObject(toAPI(m_webPageProxy)), size(), deviceScaleFactor());
+        m_backingStore = WidgetBackingStoreCairo::create(EwkView::toEvasObject(toAPI(m_webPageProxy)), size());
 #else
-        m_backingStore = createBackingStoreForGTK(m_webPageProxy->viewWidget(), size(), deviceScaleFactor());
+        m_backingStore = createBackingStoreForGTK(m_webPageProxy->viewWidget(), size());
 #endif
 
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
@@ -88,7 +88,7 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
         IntRect updateRect = updateInfo.updateRects[i];
         IntRect srcRect = updateRect;
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
-        bitmap->paint(graphicsContext, deviceScaleFactor(), updateRect.location(), srcRect);
+        bitmap->paint(graphicsContext, updateRect.location(), srcRect);
     }
 }
 
