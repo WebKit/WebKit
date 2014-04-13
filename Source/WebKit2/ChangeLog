@@ -1,3 +1,10 @@
+2014-04-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with recent cairo and GTK+ after r167168.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreateWebPage):
+
 2014-04-12  Andy Estes  <aestes@apple.com>
 
         [iOS] Move QuickLookHandle from ResourceLoader to WebResourceLoader

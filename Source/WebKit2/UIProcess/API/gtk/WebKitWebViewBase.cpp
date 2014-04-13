@@ -993,7 +993,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
 #if HAVE(GTK_SCALE_FACTOR)
     // We attach this here, because changes in scale factor are passed directly to the page proxy.
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
-    g_signal_connect(object, "notify::scale-factor", G_CALLBACK(scaleFactorChanged), NULL);
+    g_signal_connect(webkitWebViewBase, "notify::scale-factor", G_CALLBACK(scaleFactorChanged), nullptr);
 #endif
 
     webkitWebViewBaseUpdatePreferences(webkitWebViewBase);
