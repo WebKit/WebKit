@@ -614,10 +614,13 @@ def defaultRun
 end
 
 def defaultQuickRun
-    runDefault
-    runNoCJITValidate
-    runDefaultFTL
-    runFTLNoCJIT
+    if $enableFTL
+        runDefaultFTL
+        runFTLNoCJITValidate
+    else
+        runDefault
+        runNoCJITValidate
+    end
 end
 
 def defaultSpotCheck

@@ -1,5 +1,13 @@
 2014-04-12  Filip Pizlo  <fpizlo@apple.com>
 
+        Make slow-stress tests run faster by running fewer VM variants.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * jsc-layout-tests.yaml:
+
+2014-04-12  Filip Pizlo  <fpizlo@apple.com>
+
         Math.fround() should be an intrinsic
         https://bugs.webkit.org/show_bug.cgi?id=131583
 

@@ -239,7 +239,6 @@ if ($runJSCStress) {
         "PerformanceTests/SunSpider/tests/sunspider-1.0",
         "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",
         "PerformanceTests/SunSpider/tests/v8-v6",
-        "LayoutTests/js/slow-stress/script-tests",
         "Source/JavaScriptCore/tests/mozilla/mozilla-tests.yaml",
         "Source/JavaScriptCore/tests/stress",
         "LayoutTests/js/regress/script-tests",
