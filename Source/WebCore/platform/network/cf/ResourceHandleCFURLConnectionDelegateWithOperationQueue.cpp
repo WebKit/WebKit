@@ -62,8 +62,12 @@ bool ResourceHandleCFURLConnectionDelegateWithOperationQueue::hasHandle() const
     return !!m_handle;
 }
 
-void ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest(CFMutableURLRequestRef)
+void ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest(CFMutableURLRequestRef request)
 {
+    CFURLRef requestURL = CFURLRequestGetURL(request);
+    if (!requestURL)
+        return;
+    m_originalScheme = adoptCF(CFURLCopyScheme(requestURL));
 }
 
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupConnectionScheduling(CFURLConnectionRef connection)
@@ -73,6 +77,15 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupConnectionSch
 
 CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest(CFURLRequestRef cfRequest, CFURLResponseRef originalRedirectResponse)
 {
+    // If the protocols of the new request and the current request match, this is not an HSTS redirect and we don't need to synthesize a redirect response.
+    if (!originalRedirectResponse) {
+        RetainPtr<CFStringRef> newScheme = adoptCF(CFURLCopyScheme(CFURLRequestGetURL(cfRequest)));
+        if (CFStringCompare(newScheme.get(), m_originalScheme.get(), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
+            CFRetain(cfRequest);
+            return cfRequest;
+        }
+    }
+
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
 
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -84,10 +97,7 @@ CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSen
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
         RetainPtr<CFURLResponseRef> redirectResponse = synthesizeRedirectResponseIfNecessary(cfRequest, originalRedirectResponse);
-        if (!redirectResponse) {
-            m_handle->continueWillSendRequest(cfRequest);
-            return;
-        }
+        ASSERT(redirectResponse);
 
         ResourceRequest request = createResourceRequest(cfRequest, redirectResponse.get());
         m_handle->willSendRequest(request, redirectResponse.get());

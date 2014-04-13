@@ -1,3 +1,24 @@
+2014-04-10  Pratik Solanki  <psolanki@apple.com>
+
+        Move early return out of dispatch_async() block so we can return from willSendRequest quickly
+        https://bugs.webkit.org/show_bug.cgi?id=131478
+        <rdar://problem/16575535>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Do a quick check to see if we need to synthesize the redirect response on the dispatch queue
+        and return from willSendRequest callback quickly instead of always doing an effectively synchronous
+        call to the main thread. We can't call synthesizeRedirectResponseIfNecessary on the dispatch
+        queue since that accesses the ResourceRequest.
+
+        No new tests because no change in functionality.
+
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest): Save the
+        request scheme to use later for early return from willSendRequest.
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest):
+
 2014-04-08  Oliver Hunt  <oliver@apple.com>
 
         Rewrite Function.bind as a builtin

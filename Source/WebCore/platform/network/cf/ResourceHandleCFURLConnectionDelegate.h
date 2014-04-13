@@ -94,6 +94,7 @@ private:
 
 protected:
     ResourceHandle* m_handle;
+    RetainPtr<CFStringRef> m_originalScheme;
 };
 
 } // namespace WebCore.
