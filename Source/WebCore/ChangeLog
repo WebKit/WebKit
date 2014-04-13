@@ -1,3 +1,17 @@
+2014-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Hook up scrolling tree nodes when coming out of the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=131577
+
+        Reviewed by Tim Horton.
+
+        The call to scrollingCoordinator->frameViewRootLayerDidChange() was inside
+        a #if !PLATFORM(IOS) block, but now that we use the ScrollingCoordinator
+        for WK2 we want to call this.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+
 2014-04-13  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix after r167196.

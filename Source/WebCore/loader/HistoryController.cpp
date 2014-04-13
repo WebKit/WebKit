@@ -126,8 +126,6 @@ void HistoryController::restoreScrollPositionAndViewState()
     // through to the client. It's currently used only for the PDF view on Mac.
     m_frame.loader().client().restoreViewState();
 
-    // Don't restore scroll point on iOS as FrameLoaderClient::restoreViewState() does that.
-#if !PLATFORM(IOS)
     // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
     // page cache and similar work that needs to occur when it comes out. This is where we do the work
     // that needs to happen when we exit, and the work that needs to happen when we enter is in
@@ -140,14 +138,16 @@ void HistoryController::restoreScrollPositionAndViewState()
                 scrollingCoordinator->frameViewRootLayerDidChange(view);
         }
 
+#if !PLATFORM(IOS)
+        // Don't restore scroll point on iOS as FrameLoaderClient::restoreViewState() does that.
         if (!view->wasScrolledByUser()) {
             if (page && m_frame.isMainFrame() && m_currentItem->pageScaleFactor())
                 page->setPageScaleFactor(m_currentItem->pageScaleFactor(), m_currentItem->scrollPoint());
             else
                 view->setScrollPosition(m_currentItem->scrollPoint());
         }
-    }
 #endif
+    }
 }
 
 void HistoryController::updateBackForwardListForFragmentScroll()
