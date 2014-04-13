@@ -62,7 +62,7 @@ ArrayConstructor::ArrayConstructor(VM& vm, Structure* structure)
 void ArrayConstructor::finishCreation(VM& vm, ArrayPrototype* arrayPrototype)
 {
     Base::finishCreation(vm, arrayPrototype->classInfo()->className);
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectPrototypePropertyWithoutTransitions(vm, arrayPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 

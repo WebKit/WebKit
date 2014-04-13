@@ -1285,7 +1285,7 @@ RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterI
     generator.emitCheckHasInstance(dstReg.get(), src1.get(), src2.get(), target.get());
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitGetById(prototype.get(), src2.get(), generator.vm()->propertyNames->prototype);
+    generator.emitGetById(prototype.get(), src2.get(), generator.vm()->propertyNames->prototypeForHasInstancePrivateName);
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RegisterID* result = generator.emitInstanceOf(dstReg.get(), src1.get(), prototype.get());
@@ -1696,7 +1696,14 @@ bool IfElseNode::tryFoldBreakAndContinue(BytecodeGenerator& generator, Statement
 void IfElseNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
-    
+    bool constantBranch = false;
+    if (m_condition->getBooleanConstant(constantBranch)) {
+        if (constantBranch)
+            generator.emitNode(dst, m_ifBlock);
+        else if (m_elseBlock)
+            generator.emitNode(dst, m_elseBlock);
+        return;
+    }
     RefPtr<Label> beforeThen = generator.newLabel();
     RefPtr<Label> beforeElse = generator.newLabel();
     RefPtr<Label> afterElse = generator.newLabel();

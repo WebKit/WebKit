@@ -219,7 +219,14 @@
     macro(Object) \
     macro(TypeError) \
     macro(undefined) \
-    macro(BuiltinLog)
+    macro(BuiltinLog) \
+    macro(IsConstructor) \
+    macro(boundFunctionName) \
+    macro(boundFunctionParameters) \
+    macro(boundFunction) \
+    macro(boundFunctionLength) \
+    macro(prototypeForHasInstance) \
+    macro(SetTypeErrorAccessor)
 
 namespace JSC {
     

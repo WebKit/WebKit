@@ -95,7 +95,7 @@ void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype)
     ASSERT(inherits(info()));
 
     // ECMA 15.10.5.1 RegExp.prototype
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectPrototypePropertyWithoutTransitions(vm, regExpPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontDelete | DontEnum);

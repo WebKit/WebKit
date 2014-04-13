@@ -2668,5 +2668,17 @@ JSObject* throwTypeError(ExecState* exec, const String& message)
 {
     return exec->vm().throwException(exec, createTypeError(exec, message));
 }
-
+    
+void JSObject::putDirectPrototypeProperty(VM& vm, JSValue value, int attributes)
+{
+    putDirect(vm, vm.propertyNames->prototype, value, attributes);
+    putDirect(vm, vm.propertyNames->prototypeForHasInstancePrivateName, value, attributes);
+}
+    
+void JSObject::putDirectPrototypePropertyWithoutTransitions(VM& vm, JSValue value, int attributes)
+{
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, value, attributes);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototypeForHasInstancePrivateName, value, attributes);
+}
+    
 } // namespace JSC

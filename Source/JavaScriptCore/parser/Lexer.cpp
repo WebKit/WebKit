@@ -489,10 +489,11 @@ static const LChar singleCharacterEscapeValuesForASCII[128] = {
 };
 
 template <typename T>
-Lexer<T>::Lexer(VM* vm, JSParserStrictness strictness)
+Lexer<T>::Lexer(VM* vm, JSParserStrictness strictness, JSFunctionKind functionKind)
     : m_isReparsing(false)
     , m_vm(vm)
     , m_parsingBuiltinFunction(strictness == JSParseBuiltin)
+    , m_functionKind(functionKind)
 {
 }
 
@@ -819,8 +820,13 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
                 ident = m_vm->propertyNames->getPrivateName(*ident);
             else if (*ident == m_vm->propertyNames->undefinedKeyword)
                 tokenData->ident = &m_vm->propertyNames->undefinedPrivateName;
+            
             if (!ident)
                 return INVALID_PRIVATE_NAME_ERRORTOK;
+            
+            if (*ident == m_vm->propertyNames->IsConstructorPrivateName)
+                return m_functionKind == JSFunctionIsConstructorKind ? TRUETOKEN : FALSETOKEN;
+            
         }
         tokenData->ident = ident;
     } else
@@ -896,6 +902,11 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
                 ident = m_vm->propertyNames->getPrivateName(*ident);
             else if (*ident == m_vm->propertyNames->undefinedKeyword)
                 tokenData->ident = &m_vm->propertyNames->undefinedPrivateName;
+            if (m_functionKind == JSFunctionIsConstructorKind) {
+                if (*ident == m_vm->propertyNames->IsConstructorPrivateName)
+                    return TRUETOKEN;
+                return FALSETOKEN;
+            }
             if (!ident)
                 return INVALID_PRIVATE_NAME_ERRORTOK;
         }

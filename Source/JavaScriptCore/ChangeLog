@@ -1,3 +1,81 @@
+2014-04-08  Oliver Hunt  <oliver@apple.com>
+
+        Rewrite Function.bind as a builtin
+        https://bugs.webkit.org/show_bug.cgi?id=131083
+
+        Reviewed by Geoffrey Garen.
+
+        This change removes the existing function.bind implementation
+        entirely so JSBoundFunction is no more.
+
+        Instead we just return a regular JS closure with a few
+        private properties hanging off it that allow us to perform
+        the necessary bound function fakery.  While most of this is
+        simple, a couple of key changes:
+
+        - The parser and lexer now directly track whether they're
+          parsing code for call or construct and convert the private
+          name @IsConstructor into TRUETOK or FALSETOK as appropriate.
+          This automatically gives us the ability to vary behaviour
+          from within the builtin. It also leaves a lot of headroom
+          for trivial future improvements.
+        - The instanceof operator now uses the prototypeForHasInstance
+          private name, and we have a helper function to ensure that
+          all objects that need to can update their magical 'prototype'
+          property pair correctly.
+
+        * API/JSScriptRef.cpp:
+        (parseScript):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createBuiltinExecutable):
+        * builtins/Function.prototype.js:
+        (bind.bindingFunction):
+        (bind.else.bindingFunction):
+        (bind):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::InstanceOfNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        * parser/Lexer.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        * parser/Parser.h:
+        (JSC::parse):
+        * parser/ParserModes.h:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::checkSyntax):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        (JSC::functionProtoFuncBind): Deleted.
+        * runtime/JSBoundFunction.cpp: Removed.
+        * runtime/JSBoundFunction.h: Removed.
+        * runtime/JSFunction.cpp:
+        (JSC::RetrieveCallerFunctionFunctor::RetrieveCallerFunctionFunctor):
+        (JSC::RetrieveCallerFunctionFunctor::operator()):
+        (JSC::retrieveCallerFunction):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncSetTypeErrorAccessor):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSObject.h:
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+
 2014-04-12  Filip Pizlo  <fpizlo@apple.com>
 
         Math.fround() should be an intrinsic

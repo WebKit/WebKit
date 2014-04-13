@@ -47,7 +47,7 @@ FunctionConstructor::FunctionConstructor(VM& vm, Structure* structure)
 void FunctionConstructor::finishCreation(VM& vm, FunctionPrototype* functionPrototype)
 {
     Base::finishCreation(vm, functionPrototype->classInfo()->className);
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectPrototypePropertyWithoutTransitions(vm, functionPrototype, DontEnum | DontDelete | ReadOnly);
 
     // Number of arguments for constructor
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontDelete | DontEnum);

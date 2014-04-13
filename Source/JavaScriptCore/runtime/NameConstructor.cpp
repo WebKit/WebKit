@@ -44,7 +44,7 @@ NameConstructor::NameConstructor(VM& vm, Structure* structure)
 void NameConstructor::finishCreation(VM& vm, NamePrototype* prototype)
 {
     Base::finishCreation(vm, prototype->classInfo()->className);
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
+    putDirectPrototypePropertyWithoutTransitions(vm, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontDelete | ReadOnly | DontEnum);
 }
 

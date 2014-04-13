@@ -44,7 +44,6 @@
 #include "GetterSetter.h"
 #include "JSActivation.h"
 #include "JSArray.h"
-#include "JSBoundFunction.h"
 #include "JSNameScope.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
