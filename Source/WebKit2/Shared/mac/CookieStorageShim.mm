@@ -116,14 +116,17 @@ void CookieStorageShim::initialize()
 }
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-- (void)_getCookieHeadersForTask:(NSURLSessionTask*)task completionHandler:(void (^)(CFDictionaryRef))completionHandler
+using CompletionHandlerBlock = void(^)(CFDictionaryRef);
+- (void)_getCookieHeadersForTask:(NSURLSessionTask*)task completionHandler:(CompletionHandlerBlock)completionHandler
 {
     if (!completionHandler)
         return;
 
     RetainPtr<NSURLSessionTask> strongTask = task;
-    RunLoop::main().dispatch([strongTask, completionHandler]{
-        completionHandler(WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL(nullptr, (CFURLRef)[[strongTask currentRequest] URL]));
+    CompletionHandlerBlock completionHandlerCopy = [completionHandler copy];
+    RunLoop::main().dispatch([strongTask, completionHandlerCopy]{
+        completionHandlerCopy(WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL(nullptr, (CFURLRef)[[strongTask currentRequest] URL]));
+        [completionHandlerCopy release];
     });
 }
 #endif
