@@ -1,3 +1,9 @@
+2014-04-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Fixed svn:ignore on bmalloc.xcodeproj, it had erroneous leading spaces.
+
+        * bmalloc.xcodeproj: Modified property svn:ignore.
+
 2014-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed some mbmalloc exports
