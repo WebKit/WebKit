@@ -328,6 +328,9 @@ Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElemen
     else
         frame = loadSubframe(ownerElement, url, frameName, m_frame.loader().outgoingReferrer());
 
+    if (!frame)
+        return nullptr;
+
     ASSERT(ownerElement.contentFrame() == frame || !ownerElement.contentFrame());
     return ownerElement.contentFrame();
 }
