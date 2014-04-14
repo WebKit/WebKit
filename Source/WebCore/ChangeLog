@@ -1,3 +1,27 @@
+2014-04-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Eliminate CachedFrame::m_mousePressNode
+        https://bugs.webkit.org/show_bug.cgi?id=131626
+
+        Reviewed by Brady Eidson.
+
+        I couldn't find any observable effect of this change.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::CachedFrameBase):
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::clear):
+        * history/CachedFrame.h:
+        (WebCore::CachedFrame::documentLoader):
+        (WebCore::CachedFrame::mousePressNode): Deleted.
+        Eliminated m_mousePressNode, accessor, and code that reached out to EventHandler.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::mousePressNode): Deleted.
+        (WebCore::EventHandler::setMousePressNode): Deleted.
+        * page/EventHandler.h:
+        (WebCore::EventHandler::setMousePressed): Deleted. This function was already unused.
+
 2014-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         Run filter animations in the UI process with UI-side compositing

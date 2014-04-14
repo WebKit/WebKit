@@ -1094,16 +1094,6 @@ void EventHandler::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
     m_autoscrollController->stopAutoscrollTimer(rendererIsBeingDestroyed);
 }
 
-Node* EventHandler::mousePressNode() const
-{
-    return m_mousePressNode.get();
-}
-
-void EventHandler::setMousePressNode(PassRefPtr<Node> node)
-{
-    m_mousePressNode = node;
-}
-
 bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity granularity, Node* startingNode)
 {
     Node* node = startingNode;

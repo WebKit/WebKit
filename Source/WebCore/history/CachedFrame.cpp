@@ -31,7 +31,6 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "EventHandler.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FocusController.h"
@@ -64,7 +63,6 @@ CachedFrameBase::CachedFrameBase(Frame& frame)
     : m_document(frame.document())
     , m_documentLoader(frame.loader().documentLoader())
     , m_view(frame.view())
-    , m_mousePressNode(frame.eventHandler().mousePressNode())
     , m_url(frame.document()->url())
     , m_isMainFrame(!frame.tree().parent())
     , m_isComposited(frame.view()->hasCompositedContent())
@@ -94,7 +92,6 @@ void CachedFrameBase::restore()
         m_document->accessSVGExtensions()->unpauseAnimations();
 
     frame.animation().resumeAnimationsForDocument(m_document.get());
-    frame.eventHandler().setMousePressNode(m_mousePressNode.get());
     m_document->resumeActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
     m_document->resumeScriptedAnimationControllerCallbacks();
 
@@ -238,7 +235,6 @@ void CachedFrame::clear()
 
     m_document = nullptr;
     m_view = nullptr;
-    m_mousePressNode = nullptr;
     m_url = URL();
 
     m_cachedFramePlatformData = nullptr;

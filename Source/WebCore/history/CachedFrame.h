@@ -56,7 +56,6 @@ protected:
     RefPtr<Document> m_document;
     RefPtr<DocumentLoader> m_documentLoader;
     RefPtr<FrameView> m_view;
-    RefPtr<Node> m_mousePressNode;
     URL m_url;
     std::unique_ptr<ScriptCachedFrameData> m_cachedFrameScriptData;
     std::unique_ptr<CachedFramePlatformData> m_cachedFramePlatformData;
@@ -81,7 +80,6 @@ public:
     using CachedFrameBase::view;
     using CachedFrameBase::url;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
-    Node* mousePressNode() const { return m_mousePressNode.get(); }
 
     int descendantFrameCount() const;
 };

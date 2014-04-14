@@ -130,9 +130,6 @@ public:
     void updateSelectionForMouseDrag();
 #endif
 
-    Node* mousePressNode() const;
-    void setMousePressNode(PassRefPtr<Node>);
-
 #if ENABLE(PAN_SCROLLING)
     void didPanScrollStart();
     void didPanScrollStop();
@@ -154,7 +151,7 @@ public:
         const LayoutSize& padding = LayoutSize());
 
     bool mousePressed() const { return m_mousePressed; }
-    void setMousePressed(bool pressed) { m_mousePressed = pressed; }
+    Node* mousePressNode() const { return m_mousePressNode.get(); }
 
     void setCapturingMouseEventsElement(PassRefPtr<Element>); // A caller is responsible for resetting capturing element to 0.
 
