@@ -2939,4 +2939,9 @@ void Element::clearHasPendingResources()
     ensureElementRareData().setHasPendingResources(false);
 }
 
+bool Element::canContainRangeEndPoint() const
+{
+    return !equalIgnoringCase(fastGetAttribute(roleAttr), "img");
+}
+
 } // namespace WebCore

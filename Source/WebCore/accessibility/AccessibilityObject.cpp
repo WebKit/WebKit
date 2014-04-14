@@ -1069,7 +1069,7 @@ String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const V
     // when iterating text.
     return listItem->markerTextWithSuffix();
 }
-    
+
 String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     if (visiblePositionRange.isNull())

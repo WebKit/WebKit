@@ -511,4 +511,9 @@ HTMLFormElement* HTMLObjectElement::virtualForm() const
     return FormAssociatedElement::form();
 }
 
+bool HTMLObjectElement::canContainRangeEndPoint() const
+{
+    return m_useFallbackContent && HTMLPlugInImageElement::canContainRangeEndPoint();
+}
+
 }

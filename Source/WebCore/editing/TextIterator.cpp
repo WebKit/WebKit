@@ -242,6 +242,8 @@ static void setUpFullyClippedStack(BitStack& stack, Node& node)
     ASSERT(stack.size() == 1 + depthCrossingShadowBoundaries(node));
 }
 
+// FIXME: editingIgnoresContent and isRendererReplacedElement try to do the same job.
+// It's not good to have both of them.
 bool isRendererReplacedElement(RenderObject* renderer)
 {
     if (!renderer)

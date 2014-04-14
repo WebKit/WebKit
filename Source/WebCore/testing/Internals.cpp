@@ -1435,7 +1435,7 @@ unsigned Internals::countMatchesForText(const String& text, unsigned findOptions
         return 0;
 
     bool mark = markMatches == "mark";
-    return document->frame()->editor().countMatchesForText(text, nullptr, findOptions, std::numeric_limits<unsigned>::max(), mark, nullptr);
+    return document->frame()->editor().countMatchesForText(text, nullptr, findOptions, 1000, mark, nullptr);
 }
 
 const ProfilesArray& Internals::consoleProfiles() const

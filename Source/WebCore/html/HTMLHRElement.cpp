@@ -100,4 +100,9 @@ void HTMLHRElement::collectStyleForPresentationAttribute(const QualifiedName& na
         HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
+bool HTMLHRElement::canContainRangeEndPoint() const
+{
+    return hasChildNodes() && HTMLElement::canContainRangeEndPoint();
+}
+
 }

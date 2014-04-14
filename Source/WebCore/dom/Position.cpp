@@ -224,6 +224,7 @@ Position Position::parentAnchoredEquivalent() const
             return positionInParentBeforeNode(m_anchorNode.get());
         return Position(m_anchorNode.get(), 0, PositionIsOffsetInAnchor);
     }
+
     if (!m_anchorNode->offsetInCharacters()
         && (m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || static_cast<unsigned>(m_offset) == m_anchorNode->childNodeCount())
         && (editingIgnoresContent(m_anchorNode.get()) || isRenderedTable(m_anchorNode.get()))
@@ -935,9 +936,6 @@ bool Position::isCandidate() const
     if (m_anchorNode->hasTagName(htmlTag))
         return false;
         
-    if (isRendererReplacedElement(renderer))
-        return !nodeIsUserSelectNone(deprecatedNode()) && atFirstEditingPositionForNode();
-
     if (renderer->isRenderBlockFlow()) {
         RenderBlockFlow& block = toRenderBlockFlow(*renderer);
         if (block.logicalHeight() || m_anchorNode->hasTagName(bodyTag)) {

@@ -32,13 +32,12 @@ public:
     static PassRefPtr<HTMLHRElement> create(Document&);
     static PassRefPtr<HTMLHRElement> create(const QualifiedName&, Document&);
 
-    virtual bool canContainRangeEndPoint() const override { return hasChildNodes(); }
-
 private:
     HTMLHRElement(const QualifiedName&, Document&);
 
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    virtual bool canContainRangeEndPoint() const override;
 };
 
 } // namespace WebCore

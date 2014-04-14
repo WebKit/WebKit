@@ -1,3 +1,45 @@
+2014-04-13  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r158617): Find on Page can get stuck in a loop when the search string occurs in an <input> in a <fieldset>
+        https://bugs.webkit.org/show_bug.cgi?id=126322
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/Element.cpp:
+        (WebCore::Element::canContainRangeEndPoint): Now returns false when the role of the element
+        is "img". This is the same rule that's hard-coded in isRenderReplacedElement for the same
+        reason. Need more test coverage to make sure this role feature works consistently.
+
+        * dom/Element.h: Made canContainRangeEndPoint no longer inline since it's not just a
+        return statement any more.
+
+        * dom/Position.cpp:
+        (WebCore::Position::isCandidate): Took out code that calls isRendererReplacedElement
+        that was added in r158617; not needed now that we updated canContainRangeEndPoint.
+
+        * dom/Range.cpp:
+        (WebCore::Range::firstNode): Removed code here that called isRendererReplacedElement.
+        This was the wrong level to be adding editing logic, and there's a FIXME here to that
+        effect, which we are now deleting. This was the change that broke Find.
+
+        * editing/TextIterator.cpp: Added a comment about the redundancy between the
+        isRendererReplacedElement and editingIgnoresContent functions.
+
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::canContainRangeEndPoint): Call through to base class instead
+        of just returning true when we have child nodes. Lets Element::canContainRangeEndPoint
+        do its thing.
+        * html/HTMLHRElement.h: Ditto.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::canContainRangeEndPoint): Call through to base class instead
+        of just returning true when we have fallback content. Lets Element::canContainRangeEndPoint
+        do its thing.
+        * html/HTMLObjectElement.h: Ditto.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::countMatchesForText): Set the limit to 1000 instead of infinite.
+
 2014-04-12  Darin Adler  <darin@apple.com>
 
         Use unique_ptr for FillLayer::m_next

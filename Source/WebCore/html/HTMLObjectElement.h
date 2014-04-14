@@ -97,7 +97,7 @@ private:
     virtual bool isEnumeratable() const override { return true; }
     virtual bool appendFormData(FormDataList&, bool) override;
 
-    virtual bool canContainRangeEndPoint() const override { return useFallbackContent(); }
+    virtual bool canContainRangeEndPoint() const override;
 
     bool m_docNamedItem : 1;
     bool m_useFallbackContent : 1;

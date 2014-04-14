@@ -1,3 +1,16 @@
+2014-04-13  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r158617): Find on Page can get stuck in a loop when the search string occurs in an <input> in a <fieldset>
+        https://bugs.webkit.org/show_bug.cgi?id=126322
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/text-iterator/count-matches-in-form-expected.txt: Added.
+        * editing/text-iterator/count-matches-in-form.html: Added.
+
+        * fast/text/window-find.html: Tweaked the test a bit, making it a little easier to
+        see if the test hasn't even run.
+
 2014-04-08  Oliver Hunt  <oliver@apple.com>
 
         Rewrite Function.bind as a builtin
