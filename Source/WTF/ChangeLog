@@ -1,3 +1,15 @@
+2014-04-14  Mark Lam  <mark.lam@apple.com>
+
+        monotonicallyIncreasingTime() should only initialize its static timebaseInfo once.
+        <https://webkit.org/b/131630>
+
+        Reviewed by Filip Pizlo.
+
+        The current initialization of the static field is not thread safe.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::monotonicallyIncreasingTime):
+
 2014-04-14  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Improve the call site of string comparison in some hot path
