@@ -1,3 +1,18 @@
+2014-04-14  Oliver Hunt  <oliver@apple.com>
+
+        Function.bind itself is too slow
+        https://bugs.webkit.org/show_bug.cgi?id=131636
+
+        Reviewed by Geoffrey Garen.
+
+        New test, and fix bogus log in old one
+
+        * js/regress/function-bind-create-expected.html: Added.
+        * js/regress/function-bind-create.html: Added.
+        * js/regress/script-tests/function-bind-create.js: Added.
+        (test):
+        * js/regress/script-tests/function-bind.js:
+
 2014-04-14  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: memoize fallback time values for document.lastModified

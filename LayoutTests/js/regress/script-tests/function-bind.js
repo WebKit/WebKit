@@ -6,7 +6,6 @@ var g0 = foo.bind({});
 var g1 = foo.bind({}, 1);
 var g2 = foo.bind({}, 1, 2);
 var g3 = foo.bind({}, 1, 2, 3);
-var start = new Date;
 
 var result = 0;
 for (var i = 0; i < 100000; ++i) {
@@ -23,6 +22,5 @@ for (var i = 0; i < 100000; ++i) {
     result += g3(i, result);
     result |= 0;
 }
-print((new Date - start))
 if (result != 1596499010)
     throw "Bad result: " + result;

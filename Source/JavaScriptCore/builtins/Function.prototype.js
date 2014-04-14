@@ -40,9 +40,10 @@ function bind(thisValue /*, optional arguments */)
     if (typeof boundFunction !== "function")
         throw new @TypeError("Cannot bind non-function object.");
     var bindingFunction;
-    var oversizedCall = undefined;
     if (arguments.length <= 1) {
-        bindingFunction = function () {
+        bindingFunction = function bindingFunction() {
+            var thisValue = bindingFunction.@boundThisValue;
+            var boundFunction = bindingFunction.@boundFunction;
             if (@IsConstructor)
                 return new boundFunction(...arguments);
             return boundFunction.@apply(thisValue, arguments);
@@ -51,8 +52,10 @@ function bind(thisValue /*, optional arguments */)
         var length = arguments.length;
         switch (length - 1 /* skip thisValue */) {
         case 1: {
-            var boundParameter = arguments[1];
-            bindingFunction = function () {
+            bindingFunction = function bindingFunction() {
+                var thisValue = bindingFunction.@boundThisValue;
+                var boundFunction = bindingFunction.@boundFunction;
+                var boundParameter = bindingFunction.@boundParameter;
                 var argumentLength = arguments.length;
                 if (!argumentLength) {
                     if (@IsConstructor)
@@ -75,21 +78,24 @@ function bind(thisValue /*, optional arguments */)
                     return boundFunction.@call(thisValue, boundParameter, arguments[0], arguments[1], arguments[2]);
                 }
                 var completeArguments = [boundParameter, ...arguments];
-                if (!oversizedCall) {
-                    oversizedCall = function (isConstruct, boundFunction, thisValue, completeArguments) {
+                if (!bindingFunction.@boundOversizedCallThunk) {
+                   bindingFunction.@boundOversizedCallThunk = function (isConstruct, boundFunction, thisValue, completeArguments) {
                         if (isConstruct)
                             return new boundFunction(...completeArguments);
                         return boundFunction.@apply(thisValue, completeArguments);
                     }
                 }
-                return oversizedCall(@IsConstructor, boundFunction, thisValue, completeArguments);
+                return bindingFunction.@boundOversizedCallThunk(@IsConstructor, boundFunction, thisValue, completeArguments);
             }
+            bindingFunction.@boundParameter = arguments[1];
             break;
         }
         case 2: {
-            var boundParameter1 = arguments[1];
-            var boundParameter2 = arguments[2];
-            bindingFunction = function () {
+            bindingFunction = function bindingFunction() {
+                var thisValue = bindingFunction.@boundThisValue;
+                var boundFunction = bindingFunction.@boundFunction;
+                var boundParameter1 = bindingFunction.@boundParameter1;
+                var boundParameter2 = bindingFunction.@boundParameter2;
                 if (!arguments.length) {
                     if (@IsConstructor)
                         return new boundFunction(boundParameter1, boundParameter2);
@@ -111,22 +117,26 @@ function bind(thisValue /*, optional arguments */)
                     return boundFunction.@call(thisValue, boundParameter1, boundParameter2, arguments[0], arguments[1], arguments[2]);
                 }
                 var completeArguments = [boundParameter1, boundParameter2, ...arguments];
-                if (!oversizedCall) {
-                    oversizedCall = function (isConstruct, boundFunction, thisValue, completeArguments) {
+                if (!bindingFunction.@boundOversizedCallThunk) {
+                    bindingFunction.@boundOversizedCallThunk = function (isConstruct, boundFunction, thisValue, completeArguments) {
                         if (isConstruct)
                             return new boundFunction(...completeArguments);
                         return boundFunction.@apply(thisValue, completeArguments);
                     }
                 }
-                return oversizedCall(@IsConstructor, boundFunction, thisValue, completeArguments);
+                return bindingFunction.@boundOversizedCallThunk(@IsConstructor, boundFunction, thisValue, completeArguments);
             }
+            bindingFunction.@boundParameter1 = arguments[1];
+            bindingFunction.@boundParameter2 = arguments[2];
             break;
         }
         case 3: {
-            var boundParameter1 = arguments[1];
-            var boundParameter2 = arguments[2];
-            var boundParameter3 = arguments[3];
-            bindingFunction = function () {
+            bindingFunction = function bindingFunction() {
+                var thisValue = bindingFunction.@boundThisValue;
+                var boundFunction = bindingFunction.@boundFunction;
+                var boundParameter1 = bindingFunction.@boundParameter1;
+                var boundParameter2 = bindingFunction.@boundParameter2;
+                var boundParameter3 = bindingFunction.@boundParameter3;
                 if (!arguments.length) {
                     if (@IsConstructor)
                         return new boundFunction(boundParameter1, boundParameter2, boundParameter3);
@@ -148,15 +158,18 @@ function bind(thisValue /*, optional arguments */)
                     return boundFunction.@call(thisValue, boundParameter1, boundParameter2, boundParameter3, arguments[0], arguments[1], arguments[2]);
                 }
                 var completeArguments = [boundParameter1, boundParameter2, boundParameter3, ...arguments];
-                if (!oversizedCall) {
-                    oversizedCall = function (isConstruct, boundFunction, thisValue, completeArguments) {
+                if (!bindingFunction.@boundOversizedCallThunk) {
+                    bindingFunction.@boundOversizedCallThunk = function (isConstruct, boundFunction, thisValue, completeArguments) {
                         if (isConstruct)
                             return new boundFunction(...completeArguments);
                         return boundFunction.@apply(thisValue, completeArguments);
                     }
                 }
-                return oversizedCall(@IsConstructor, boundFunction, thisValue, completeArguments);
+                return bindingFunction.@boundOversizedCallThunk(@IsConstructor, boundFunction, thisValue, completeArguments);
             }
+            bindingFunction.@boundParameter1 = arguments[1];
+            bindingFunction.@boundParameter2 = arguments[2];
+            bindingFunction.@boundParameter3 = arguments[3];
             break;
         }
         default:
@@ -164,18 +177,20 @@ function bind(thisValue /*, optional arguments */)
             for (var i = 1; i < length; i++)
                 boundParameters[i - 1] = arguments[i];
             
-            bindingFunction = function () {
+            bindingFunction = function bindingFunction() {
+                var thisValue = bindingFunction.@boundThisValue;
+                var boundFunction = bindingFunction.@boundFunction;
+                var boundParameters = bindingFunction.@boundParameters;
                 if (!arguments.length) {
                     if (@IsConstructor)
-                        return new boundFunction(...boundParameters);
+                        return new boundFunction(...@boundParameters);
                     return boundFunction.@apply(thisValue, boundParameters);
                 }
                 
                 var completeArguments = [];
-                var localBoundParameters = boundParameters;
-                var boundLength = localBoundParameters.length;
+                var boundLength = boundParameters.length;
                 for (var i = 0; i < boundLength; i++)
-                    completeArguments[i] = localBoundParameters[i];
+                    completeArguments[i] = boundParameters[i];
                 for (var i = 0; i < arguments.length; i++)
                     completeArguments[i + boundLength] = arguments[i];
                 if (@IsConstructor)
@@ -183,8 +198,10 @@ function bind(thisValue /*, optional arguments */)
                 else
                     return boundFunction.@apply(thisValue, completeArguments);
             }
+            bindingFunction.@boundParameters = boundParameters;
         }
     }
+    bindingFunction.@boundThisValue = thisValue;
     bindingFunction.@boundFunctionName = this.name;
     bindingFunction.@boundFunction = boundFunction.@boundFunction || boundFunction;
     var boundLength = boundFunction.length - (arguments.length - 1);
