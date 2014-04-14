@@ -1,3 +1,13 @@
+2014-04-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Hit testing doesn't work in video
+        https://bugs.webkit.org/show_bug.cgi?id=131485
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/hit-test-region-preserve3d-container-expected.txt: Added.
+        * fast/regions/hit-test-region-preserve3d-container.html: Added.
+
 2014-04-14  Koji Ishii  <kojishi@gmail.com>
 
         Update html5lib test data to latest version

@@ -1,3 +1,22 @@
+2014-04-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Hit testing doesn't work in video
+        https://bugs.webkit.org/show_bug.cgi?id=131485
+
+        Reviewed by Andrei Bucur.
+
+        When hit testing flow thread layer through the region layer,
+        we have to pass the depth sorting information and take that
+        into account for the situation in which an ancestor of the region
+        has preserve-3d transform style.
+
+        Test: fast/regions/hit-test-region-preserve3d-container.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestFlowThreadIfRegionForFragments):
+        * rendering/RenderLayer.h:
+
 2014-04-13  Darin Adler  <darin@apple.com>
 
         userVisibleString should not try to "encode" host names

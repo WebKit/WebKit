@@ -1230,7 +1230,8 @@ private:
 
     RenderLayer* hitTestFlowThreadIfRegionForFragments(const LayerFragments&, RenderLayer*, const HitTestRequest&, HitTestResult&,
         const LayoutRect&, const HitTestLocation&,
-        const HitTestingTransformState*, double*);
+        const HitTestingTransformState*, double* zOffsetForDescendants,
+        double* zOffset, const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants);
     void paintFlowThreadIfRegionForFragments(const LayerFragments&, GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
     void mapLayerClipRectsToFragmentationLayer(RenderNamedFlowFragment*, ClipRects&) const;
 

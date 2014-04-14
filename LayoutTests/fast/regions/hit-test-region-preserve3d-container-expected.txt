@@ -1,0 +1,6 @@
+Test that hit testing of a region inside a container having transform-style preserve3d works properly.
+
+To manually test, move the mouse over the red rectangle. It should change its color to green.
+
+PASS
+

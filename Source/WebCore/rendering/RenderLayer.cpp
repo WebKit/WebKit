@@ -4930,7 +4930,8 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         return this;
     }
 
-    hitLayer = hitTestFlowThreadIfRegionForFragments(layerFragments, rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr);
+    hitLayer = hitTestFlowThreadIfRegionForFragments(layerFragments, rootLayer, request, result, hitTestRect, hitTestLocation,
+        localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
     if (hitLayer) {
         if (!depthSortDescendants)
             return hitLayer;
@@ -6883,7 +6884,8 @@ void RenderLayer::paintFlowThreadIfRegionForFragments(const LayerFragments& frag
 RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragments& fragments, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result, const LayoutRect& hitTestRect, 
     const HitTestLocation& hitTestLocation,
     const HitTestingTransformState* transformState, 
-    double* zOffsetForDescendants)
+    double* zOffsetForDescendants, double* zOffset,
+    const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants)
 {
     if (!renderer().isRenderNamedFlowFragmentContainer())
         return 0;
@@ -6927,9 +6929,17 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
         hitTestRectInFlowThread.move(hitTestOffset.width(), hitTestOffset.height());
         hitTestRectInFlowThread.expand(LayoutSize(fabs((double)hitTestOffset.width()), fabs((double)hitTestOffset.height())));
 
-        resultLayer = flowThread->layer()->hitTestLayer(flowThread->layer(), 0, newRequest, result, hitTestRectInFlowThread, newHitTestLocation, false, transformState, zOffsetForDescendants);
-        if (!resultLayer)
-            continue;
+        HitTestResult tempResult(result.hitTestLocation());
+        RenderLayer* hitLayer = flowThread->layer()->hitTestLayer(flowThread->layer(), 0, newRequest, tempResult, hitTestRectInFlowThread, newHitTestLocation, false, transformState, zOffsetForDescendants);
+        if (result.isRectBasedTest())
+            result.append(tempResult);
+        if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState)) {
+            resultLayer = hitLayer;
+            if (!result.isRectBasedTest())
+                result = tempResult;
+            if (!depthSortDescendants)
+                break;
+        }
     }
 
     return resultLayer;
