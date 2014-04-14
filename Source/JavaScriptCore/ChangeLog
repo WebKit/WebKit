@@ -1,3 +1,17 @@
+2014-04-14  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] Allow use of SubImmediates in LLINT.
+        https://bugs.webkit.org/show_bug.cgi?id=131608
+
+        Reviewed by Mark Lam.
+
+        Allow use of SubImmediates with const pool so the sh4 architecture can
+        share the arm path for setEntryAddress macro. It reduces architecture
+        specific code and lead to a more optimal generated code for sh4.
+
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/sh4.rb:
+
 2014-04-14  Andreas Kling  <akling@apple.com>
 
         Array.prototype.concat should allocate output storage only once.

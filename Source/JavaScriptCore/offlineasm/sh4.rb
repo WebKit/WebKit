@@ -156,6 +156,12 @@ class LabelReference
     end
 end
 
+class SubImmediates < Node
+    def sh4Operand
+        "#{@left.sh4Operand} - #{@right.sh4Operand}"
+    end
+end
+
 class ConstPool < Node
     attr_reader :size
     attr_reader :entries
@@ -610,6 +616,10 @@ def sh4LowerConstPool(list)
                         currentPool32 << poolEntry
                     end
                     newList << Instruction.new(codeOrigin, "move", [poolEntry, node.operands[1]])
+                elsif node.operands[0].is_a? SubImmediates
+                    poolEntry = ConstPoolEntry.new(codeOrigin, node.operands[0].sh4Operand, 32)
+                    currentPool32 << poolEntry
+                    newList << Instruction.new(codeOrigin, "move", [poolEntry, node.operands[1]])
                 else
                     newList << node
                 end
@@ -1029,7 +1039,7 @@ class Instruction
         when "loadi", "loadis", "loadp", "storei", "storep"
             $asm.puts "mov.l #{sh4Operands(operands)}"
         when "alignformova"
-            $asm.puts ".balign 4"
+            $asm.puts ".balign 4" # As balign directive is in a code section, fill value is 'nop' instruction.
         when "mova"
             $asm.puts "mova #{sh4Operands(operands)}"
         when "move"

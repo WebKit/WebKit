@@ -737,20 +737,16 @@ macro setEntryAddress(index, label)
         pcrtoaddr label, t1
         move index, t2
         storep t1, [a0, t2, 8]
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL
+    elsif ARM or ARMv7 or ARMv7_TRADITIONAL or SH4
         move (label - _relativePCBase), t2
         addp t2, t1, t2
         move index, t3
         storep t2, [a0, t3, 4]
+        if SH4
+            flushcp # Force constant pool flush to avoid "pcrel too far" link error.
+        end
     elsif MIPS
         crash()  # Need to replace with code to turn label into and absolute address and save at index
-    elsif SH4
-        move label, t2
-        subp _relativePCBase, t2
-        addp t1, t2
-        move index, t3
-        storep t2, [a0, t3, 4]
-        flushcp # Force constant pool flush to avoid "pcrel too far" link error.
     end
 end
 
