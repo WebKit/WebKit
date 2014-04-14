@@ -1,0 +1,3 @@
+EVENT(playing)
+END OF TEST
+ 

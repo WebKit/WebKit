@@ -152,6 +152,7 @@ private:
 
     virtual String engineDescription() const { return "GStreamer"; }
     virtual bool isLiveStream() const { return m_isStreaming; }
+    virtual bool didPassCORSAccessCheck() const;
 
 private:
     GRefPtr<GstElement> m_playBin;
