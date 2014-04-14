@@ -55,6 +55,8 @@
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "MainFrame.h"
+#include "MemoryCache.h"
+#include "MemoryPressureHandler.h"
 #include "OverflowEvent.h"
 #include "ProgressTracker.h"
 #include "RenderEmbeddedObject.h"
@@ -3446,16 +3448,14 @@ void FrameView::willPaintContents(GraphicsContext* context, const IntRect& dirty
 
     paintingState.isTopLevelPainter = !sCurrentPaintTimeStamp;
 
-#if PLATFORM(IOS)
-    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to MemoryPressureHandler.h.
-    if (paintingState.isTopLevelPainter && memoryPressureHandler().hasReceivedMemoryPressure()) {
+    if (paintingState.isTopLevelPainter && memoryPressureHandler().isUnderMemoryPressure()) {
         LOG(MemoryPressure, "Under memory pressure: %s", __PRETTY_FUNCTION__);
 
         // To avoid unnecessary image decoding, we don't prune recently-decoded live resources here since
         // we might need some live bitmaps on painting.
         memoryCache()->prune();
     }
-#endif
+
     if (paintingState.isTopLevelPainter)
         sCurrentPaintTimeStamp = monotonicallyIncreasingTime();
 
@@ -3490,13 +3490,10 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
     m_paintBehavior = paintingState.paintBehavior;
     m_lastPaintTime = monotonicallyIncreasingTime();
 
-#if PLATFORM(IOS)
     // Painting can lead to decoding of large amounts of bitmaps
     // If we are low on memory, wipe them out after the paint.
-    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to MemoryPressureHandler.h.
-    if (paintingState.isTopLevelPainter && memoryPressureHandler().hasReceivedMemoryPressure())
+    if (paintingState.isTopLevelPainter && memoryPressureHandler().isUnderMemoryPressure())
         memoryCache()->pruneLiveResources(true);
-#endif
 
     // Regions may have changed as a result of the visibility/z-index of element changing.
 #if ENABLE(DASHBOARD_SUPPORT)

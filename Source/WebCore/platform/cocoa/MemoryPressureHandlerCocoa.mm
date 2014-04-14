@@ -38,7 +38,6 @@
 #if PLATFORM(IOS)
 #import "SystemMemory.h"
 #import "WebCoreThread.h"
-#import <libkern/OSAtomic.h>
 #endif
 
 namespace WebCore {
@@ -177,7 +176,7 @@ void MemoryPressureHandler::installMemoryReleaseBlock(void (^releaseMemoryBlock)
 
 void MemoryPressureHandler::setReceivedMemoryPressure(MemoryPressureReason reason)
 {
-    OSAtomicTestAndSet(0, &m_receivedMemoryPressure);
+    m_underMemoryPressure = true;
 
     {
         MutexLocker locker(m_observerMutex);
@@ -191,14 +190,9 @@ void MemoryPressureHandler::setReceivedMemoryPressure(MemoryPressureReason reaso
     }
 }
 
-bool MemoryPressureHandler::hasReceivedMemoryPressure()
-{
-    return OSAtomicOr32(0, &m_receivedMemoryPressure);
-}
-
 void MemoryPressureHandler::clearMemoryPressure()
 {
-    OSAtomicTestAndClear(0, &m_receivedMemoryPressure);
+    m_underMemoryPressure = false;
 
     {
         MutexLocker locker(m_observerMutex);
@@ -221,7 +215,7 @@ void MemoryPressureHandler::respondToMemoryPressureIfNeeded()
         m_observer = 0;
     }
 
-    if (hasReceivedMemoryPressure()) {
+    if (isUnderMemoryPressure()) {
         ASSERT(m_releaseMemoryBlock);
         LOG(MemoryPressure, "Handle memory pressure at %s", __PRETTY_FUNCTION__);
         m_releaseMemoryBlock();

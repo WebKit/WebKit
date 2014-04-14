@@ -45,6 +45,7 @@
 #include "HistoryItem.h"
 #include "Logging.h"
 #include "MainFrame.h"
+#include "MemoryPressureHandler.h"
 #include "Page.h"
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
@@ -360,10 +361,8 @@ bool PageCache::canCache(Page* page) const
     logCanCachePageDecision(page);
 #endif
 
-#if PLATFORM(IOS)
-    if (memoryPressureHandler().hasReceivedMemoryPressure())
+    if (memoryPressureHandler().isUnderMemoryPressure())
         return false;
-#endif
 
     // Cache the page, if possible.
     // Don't write to the cache if in the middle of a redirect, since we will want to

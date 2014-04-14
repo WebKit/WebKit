@@ -1757,7 +1757,7 @@ void FrameLoader::commitProvisionalLoad()
     // page cache. We could still preemptively prune the page cache while navigating to a cached page if capacity > 1.
     // See <rdar://problem/11779846> for more details.
     if (!cachedPage) {
-        if (memoryPressureHandler().hasReceivedMemoryPressure()) {
+        if (memoryPressureHandler().isUnderMemoryPressure()) {
             LOG(MemoryPressure, "Pruning page cache because under memory pressure at: %s", __PRETTY_FUNCTION__);
             LOG(PageCache, "Pruning page cache to 0 due to memory pressure");
             // Don't cache any page if we are under memory pressure.

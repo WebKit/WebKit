@@ -34,6 +34,7 @@
 #include "FontGlyphs.h"
 #include "FontPlatformData.h"
 #include "FontSelector.h"
+#include "MemoryPressureHandler.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -47,7 +48,6 @@
 #endif
 
 #if PLATFORM(IOS)
-#include "MemoryPressureHandler.h"
 #include <wtf/Noncopyable.h>
 
 // FIXME: We may be able to simplify this code using C++11 threading primitives, including std::call_once().
@@ -361,12 +361,14 @@ static FontDataCache* gFontDataCache = 0;
 #if PLATFORM(IOS)
 const int cMaxInactiveFontData = 120;
 const int cTargetInactiveFontData = 100;
-const int cMaxUnderMemoryPressureInactiveFontData = 50;
-const int cTargetUnderMemoryPressureInactiveFontData = 30;
 #else
 const int cMaxInactiveFontData = 225;
 const int cTargetInactiveFontData = 200;
 #endif
+
+const int cMaxUnderMemoryPressureInactiveFontData = 50;
+const int cTargetUnderMemoryPressureInactiveFontData = 30;
+
 static ListHashSet<RefPtr<SimpleFontData>>* gInactiveFontData = 0;
 
 PassRefPtr<SimpleFontData> FontCache::getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName, ShouldRetain shouldRetain)
@@ -448,17 +450,12 @@ void FontCache::releaseFontData(const SimpleFontData* fontData)
 
 void FontCache::purgeInactiveFontDataIfNeeded()
 {
-#if PLATFORM(IOS)
-    bool underMemoryPressure = memoryPressureHandler().hasReceivedMemoryPressure();
+    bool underMemoryPressure = memoryPressureHandler().isUnderMemoryPressure();
     int inactiveFontDataLimit = underMemoryPressure ? cMaxUnderMemoryPressureInactiveFontData : cMaxInactiveFontData;
     int targetFontDataLimit = underMemoryPressure ? cTargetUnderMemoryPressureInactiveFontData : cTargetInactiveFontData;
 
     if (gInactiveFontData && !m_purgePreventCount && gInactiveFontData->size() > inactiveFontDataLimit)
         purgeInactiveFontData(gInactiveFontData->size() - targetFontDataLimit);
-#else
-    if (gInactiveFontData && !m_purgePreventCount && gInactiveFontData->size() > cMaxInactiveFontData)
-        purgeInactiveFontData(gInactiveFontData->size() - cTargetInactiveFontData);
-#endif
 }
 
 void FontCache::purgeInactiveFontData(int count)

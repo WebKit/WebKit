@@ -54,7 +54,7 @@ void TileControllerMemoryHandler::tileControllerGainedUnparentedTiles(TileContro
     m_tileControllers.appendOrMoveToLast(controller);
 
     // If we are under memory pressure, remove all unparented tiles now.
-    if (memoryPressureHandler().hasReceivedMemoryPressure()) {
+    if (memoryPressureHandler().isUnderMemoryPressure()) {
         trimUnparentedTilesToTarget(0);
         return;
     }

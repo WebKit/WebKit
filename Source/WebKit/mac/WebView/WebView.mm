@@ -1601,7 +1601,7 @@ static NSMutableSet *knownPluginMIMETypes()
 
 + (BOOL)_isUnderMemoryPressure
 {
-    return memoryPressureHandler().hasReceivedMemoryPressure();
+    return memoryPressureHandler().isUnderMemoryPressure();
 }
 
 + (void)_clearMemoryPressure

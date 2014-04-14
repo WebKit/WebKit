@@ -391,7 +391,7 @@ bool LegacyTileGrid::shouldUseMinimalTileCoverage() const
 {
     return m_tileCache->tilingMode() == LegacyTileCache::Minimal
         || !m_tileCache->isSpeculativeTileCreationEnabled()
-        || memoryPressureHandler().hasReceivedMemoryPressure();
+        || memoryPressureHandler().isUnderMemoryPressure();
 }
 
 IntRect LegacyTileGrid::adjustCoverRectForPageBounds(const IntRect& rect) const

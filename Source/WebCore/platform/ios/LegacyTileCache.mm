@@ -424,7 +424,7 @@ void LegacyTileCache::tileCreationTimerFired(Timer<LegacyTileCache>*)
 
 void LegacyTileCache::createTilesInActiveGrid(SynchronousTileCreationMode mode)
 {
-    if (memoryPressureHandler().hasReceivedMemoryPressure()) {
+    if (memoryPressureHandler().isUnderMemoryPressure()) {
         LOG(MemoryPressure, "Under memory pressure at: %s", __PRETTY_FUNCTION__);
         removeAllNonVisibleTilesInternal();
     }
