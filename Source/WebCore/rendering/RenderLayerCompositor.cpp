@@ -3003,7 +3003,12 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForOverhangAreas->setName("overhang areas");
 #endif
             m_layerForOverhangAreas->setDrawsContent(false);
-            m_layerForOverhangAreas->setSize(m_renderView.frameView().frameRect().size());
+            
+            float topContentInset = m_renderView.frameView().topContentInset();
+            IntSize overhangAreaSize = m_renderView.frameView().frameRect().size();
+            overhangAreaSize.setHeight(overhangAreaSize.height() - topContentInset);
+            m_layerForOverhangAreas->setSize(overhangAreaSize);
+            m_layerForOverhangAreas->setPosition(FloatPoint(0, topContentInset));
 
             if (m_renderView.frameView().frame().settings().backgroundShouldExtendBeyondPage())
                 m_layerForOverhangAreas->setBackgroundColor(m_renderView.frameView().documentBackgroundColor());

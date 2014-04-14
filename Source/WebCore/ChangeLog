@@ -1,3 +1,17 @@
+2014-04-14  Beth Dakin  <bdakin@apple.com>
+
+        RenderLayerCompositor's m_layerForOverhangAreas should be offset by the 
+        topContentInset
+        https://bugs.webkit.org/show_bug.cgi?id=131632
+        -and corresponding-
+        <rdar://problem/16609602>
+
+        Reviewed by Tim Horton.
+
+        Offset m_layerForOverhangAreas by the topContentInset. 
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+
 2014-04-14  Alexey Proskuryakov  <ap@apple.com>
 
         Eliminate CachedFrame::m_mousePressNode
