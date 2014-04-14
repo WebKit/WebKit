@@ -349,6 +349,7 @@ public:
     void windowScreenDidChange(uint64_t);
 
     void scalePage(double scale, const WebCore::IntPoint& origin);
+    void scalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates);
     double pageScaleFactor() const;
 
     void setUseFixedLayout(bool);

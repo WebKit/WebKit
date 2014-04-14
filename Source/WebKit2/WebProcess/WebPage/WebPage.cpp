@@ -1298,12 +1298,23 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
     send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
 }
 
+void WebPage::scalePageInViewCoordinates(double scale, IntPoint centerInViewCoordinates)
+{
+    if (scale == pageScaleFactor())
+        return;
+
+    IntPoint scrollPositionAtNewScale = mainFrameView()->rootViewToContents(-centerInViewCoordinates);
+    double scaleRatio = scale / pageScaleFactor();
+    scrollPositionAtNewScale.scale(scaleRatio, scaleRatio);
+    scalePage(scale, scrollPositionAtNewScale);
+}
+
 double WebPage::pageScaleFactor() const
 {
     PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
     if (pluginView && pluginView->handlesPageScaleFactor())
         return pluginView->pageScaleFactor();
-    
+
     return m_page->pageScaleFactor();
 }
 

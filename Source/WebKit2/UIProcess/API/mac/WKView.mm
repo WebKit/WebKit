@@ -3869,13 +3869,13 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point
 {
-    _data->_page->scalePage(magnification, roundedIntPoint(point));
+    _data->_page->scalePageInViewCoordinates(magnification, roundedIntPoint(point));
 }
 
 - (void)setMagnification:(double)magnification
 {
     FloatPoint viewCenter(NSMidX([self bounds]), NSMidY([self bounds]));
-    _data->_page->scalePage(magnification, roundedIntPoint(viewCenter));
+    _data->_page->scalePageInViewCoordinates(magnification, roundedIntPoint(viewCenter));
 }
 
 - (double)magnification

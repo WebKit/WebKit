@@ -1,5 +1,29 @@
 2014-04-14  Tim Horton  <timothy_horton@apple.com>
 
+        Make WK(Web)View magnification setters actually use view-relative positions
+        https://bugs.webkit.org/show_bug.cgi?id=131611
+        <rdar://problem/15965239>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setMagnification:centeredAtPoint:]):
+        (-[WKView setMagnification:]):
+        Use scalePageInViewCoordinates instead.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scalePageInViewCoordinates):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scalePageInViewCoordinates):
+        (WebKit::WebPage::pageScaleFactor):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add scalePageInViewCoordinates, which turns the scale centerpoint within the view
+        into what scalePage expects: a post-scale scroll offset.
+
+2014-04-14  Tim Horton  <timothy_horton@apple.com>
+
         Support setting a background color on page overlays
         https://bugs.webkit.org/show_bug.cgi?id=131600
 

@@ -731,6 +731,7 @@ public:
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
     void scalePage(double scale, const WebCore::IntPoint& origin);
+    void scalePageInViewCoordinates(double scale, const WebCore::IntPoint& centerInViewCoordinates);
     double pageScaleFactor() const { return m_pageScaleFactor; }
 
     float deviceScaleFactor() const;

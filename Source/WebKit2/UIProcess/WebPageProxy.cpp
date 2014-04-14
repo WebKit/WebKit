@@ -1730,6 +1730,15 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin)
     m_process->send(Messages::WebPage::ScalePage(scale, origin), m_pageID);
 }
 
+void WebPageProxy::scalePageInViewCoordinates(double scale, const IntPoint& centerInViewCoordinates)
+{
+    if (!isValid())
+        return;
+
+    m_pageScaleFactor = scale;
+    m_process->send(Messages::WebPage::ScalePageInViewCoordinates(scale, centerInViewCoordinates), m_pageID);
+}
+
 void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 {
     if (m_intrinsicDeviceScaleFactor == scaleFactor)
