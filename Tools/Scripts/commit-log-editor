@@ -42,7 +42,7 @@ sub createCommitMessage(@);
 sub loadTermReadKey();
 sub normalizeLineEndings($$);
 sub patchAuthorshipString($$$);
-sub removeLongestCommonPrefixEndingInDoubleNewline(\%);
+sub removeLongestCommonPrefixEndingInNewline(\%);
 sub isCommitLogEditor($);
 
 my $endl = "\n";
@@ -296,16 +296,15 @@ sub createCommitMessage(@)
         $changeLogContents{$label} = $contents;
     }
 
-    my $commonPrefix = removeLongestCommonPrefixEndingInDoubleNewline(%changeLogContents);
+    my $commonPrefix = removeLongestCommonPrefixEndingInNewline(%changeLogContents);
 
-    my $first = 1;
     my @result;
     push @result, normalizeLineEndings($commonPrefix, $endl);
     for my $sortKey (sort keys %changeLogSort) {
         my $label = $changeLogSort{$sortKey};
+        next if ($changeLogContents{$label} eq "\n");
         if (keys %changeLogSort > 1) {
-            push @result, normalizeLineEndings("\n", $endl) if !$first;
-            $first = 0;
+            push @result, normalizeLineEndings("\n", $endl);
             push @result, normalizeLineEndings("$label: ", $endl);
         }
         push @result, normalizeLineEndings($changeLogContents{$label}, $endl);
@@ -335,7 +334,7 @@ sub patchAuthorshipString($$$)
     return "Patch by $authorName <$authorEmail> on $authorDate";
 }
 
-sub removeLongestCommonPrefixEndingInDoubleNewline(\%)
+sub removeLongestCommonPrefixEndingInNewline(\%)
 {
     my ($hashOfStrings) = @_;
 
@@ -355,13 +354,13 @@ sub removeLongestCommonPrefixEndingInDoubleNewline(\%)
 
     return "" unless $prefixLength;
 
-    my $lastDoubleNewline = rindex($prefix, "\n\n");
-    return "" unless $lastDoubleNewline > 0;
+    my $lastNewline = rindex($prefix, "\n");
+    return "" unless $lastNewline > 0;
 
     foreach my $key (keys %{$hashOfStrings}) {
-        $hashOfStrings->{$key} = substr($hashOfStrings->{$key}, $lastDoubleNewline);
+        $hashOfStrings->{$key} = substr($hashOfStrings->{$key}, $lastNewline);
     }
-    return substr($prefix, 0, $lastDoubleNewline + 2);
+    return substr($prefix, 0, $lastNewline + 1);
 }
 
 sub isCommitLogEditor($)

@@ -1,3 +1,16 @@
+2014-04-14  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
+
+        Fix commit-log-editor bug revealed by r165447
+        https://bugs.webkit.org/show_bug.cgi?id=130676
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/commit-log-editor:
+        (createCommitMessage): Omitting empty Source/JavaScriptCore:... blocks.
+        Add \n before the first block too, because the longest common prefix now ends with only one newline.
+        (removeLongestCommonPrefixEndingInNewline): The longest common prefix ends with only one newline,
+        now the last block of the common prefix isn't duplicated below. Changing the function name accordingly.
+
 2014-04-13  Darin Adler  <darin@apple.com>
 
         userVisibleString should not try to "encode" host names
