@@ -1,3 +1,27 @@
+2014-04-14  Andreas Kling  <akling@apple.com>
+
+        Array.prototype.concat should allocate output storage only once.
+        <https://webkit.org/b/131609>
+
+        Do a first pass across 'this' and any arguments to compute the
+        final size of the resulting array from Array.prototype.concat.
+        This avoids having to grow the output incrementally as we go.
+
+        This also includes two other micro-optimizations:
+
+        - Mark getProperty() with ALWAYS_INLINE.
+
+        - Use JSArray::length() instead of taking the generic property
+          lookup path when we know an argument is an Array.
+
+        My MBP says ~3% progression on Dromaeo/jslib-traverse-jquery.
+
+        Reviewed by Darin Adler.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        (JSC::arrayProtoFuncConcat):
+
 2014-04-14  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Improve the call site of string comparison in some hot path
