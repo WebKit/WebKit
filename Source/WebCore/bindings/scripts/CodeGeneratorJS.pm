@@ -2196,9 +2196,9 @@ sub GenerateImplementation
                 push(@implContent, "        JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "memoizedResult", "castedThis") . ";\n");
                 push(@implContent, "        setDOMException(exec, ec);\n") if $getterExceptions;
                 push(@implContent, "        return JSValue::encode(result);\n");
-                push(@implContent, "     }\n");
+                push(@implContent, "    }\n");
                 push(@implContent, "\n");
-                push(@implContent, "     if (cursor.isReplaying()) {\n");
+                push(@implContent, "    if (cursor.isReplaying()) {\n");
                 push(@implContent, "        $memoizedType memoizedResult;\n");
                 push(@implContent, "        MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();\n");
                 push(@implContent, "        if (input && input->convertTo<$memoizedType>(memoizedResult)) {\n");

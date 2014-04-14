@@ -1,3 +1,16 @@
+2014-04-14  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Fix incorrect indentations in CodeGeneratorJS.pm introduced in r165521
+        https://bugs.webkit.org/show_bug.cgi?id=131613
+
+        Reviewed by Csaba Osztrogonác.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        Fixed 5-space indentation.
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        Updated the tests accordingly.
+
 2014-04-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [JSC] CSSStyleDeclaration report incorrect descriptor

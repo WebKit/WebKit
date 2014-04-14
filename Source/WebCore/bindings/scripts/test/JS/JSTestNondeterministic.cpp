@@ -169,9 +169,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicReadonlyAttr(ExecState* exe
         cursor.appendInput<MemoizedDOMResult<int>>(bindingName.get().string(), memoizedResult, 0);
         JSValue result = jsNumber(memoizedResult);
         return JSValue::encode(result);
-     }
+    }
 
-     if (cursor.isReplaying()) {
+    if (cursor.isReplaying()) {
         int memoizedResult;
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<int>(memoizedResult)) {
@@ -203,9 +203,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicWriteableAttr(ExecState* ex
         cursor.appendInput<MemoizedDOMResult<String>>(bindingName.get().string(), memoizedResult, 0);
         JSValue result = jsStringWithCache(exec, memoizedResult);
         return JSValue::encode(result);
-     }
+    }
 
-     if (cursor.isReplaying()) {
+    if (cursor.isReplaying()) {
         String memoizedResult;
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<String>(memoizedResult)) {
@@ -237,9 +237,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicExceptionAttr(ExecState* ex
         cursor.appendInput<MemoizedDOMResult<String>>(bindingName.get().string(), memoizedResult, 0);
         JSValue result = jsStringWithCache(exec, memoizedResult);
         return JSValue::encode(result);
-     }
+    }
 
-     if (cursor.isReplaying()) {
+    if (cursor.isReplaying()) {
         String memoizedResult;
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<String>(memoizedResult)) {
@@ -273,9 +273,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicGetterExceptionAttr(ExecSta
         JSValue result = jsStringWithCache(exec, memoizedResult);
         setDOMException(exec, ec);
         return JSValue::encode(result);
-     }
+    }
 
-     if (cursor.isReplaying()) {
+    if (cursor.isReplaying()) {
         String memoizedResult;
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<String>(memoizedResult)) {
@@ -309,9 +309,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicSetterExceptionAttr(ExecSta
         cursor.appendInput<MemoizedDOMResult<String>>(bindingName.get().string(), memoizedResult, 0);
         JSValue result = jsStringWithCache(exec, memoizedResult);
         return JSValue::encode(result);
-     }
+    }
 
-     if (cursor.isReplaying()) {
+    if (cursor.isReplaying()) {
         String memoizedResult;
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<String>(memoizedResult)) {
