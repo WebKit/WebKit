@@ -1,3 +1,67 @@
+2014-04-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: compile the :nth-child() pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=131602
+
+        Reviewed by Andreas Kling.
+
+        Tests: fast/selectors/nth-child-bounds.html
+               fast/selectors/nth-child-with-backtracking.html
+
+        Compile the :nth-child() pseudo class function + some related clean up.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::nthA):
+        (WebCore::CSSSelector::nthB):
+        Expose the parsed value of an+b filters. Those values are used to compile
+        the selector.
+
+        (WebCore::CSSSelector::RareData::parseNth):
+        While working on the patch, I discovered some severe issues with the parsing of large
+        values of a and/or b. The problem comes from the way the CSS parser handle the values:
+        the values are parsed as a double then converted to an AtomicString for CSSSelector.
+
+        There are many problems related to large values but we never got bug reports because
+        they are very uncommon. Fixing those problem would require changing the parser.
+
+        Here, CSSSelector::RareData::parseNth() is hardened a little bit to avoid absurd values
+        of a and b.
+
+        * css/CSSSelector.h:
+        * cssjit/RegisterAllocator.h:
+        It looks like I forgot RDX in the list of register. Add it now since it is required
+        for SelectorCodeGenerator::modulo().
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::modulo):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::moduloIsZero):
+        There is no modulo() operation exposed on the macro assemblers. This is a basic
+        implementation on top of idiv for x86_64.
+
+        Since idiv works exclusively with RAX and RDX, most of the code is about getting
+        those registers efficiently.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::setElementChildIndex):
+        (WebCore::SelectorCompiler::setElementChildIndexAndUpdateStyle):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        This is pretty much a straightforward implementation of :nth-child().
+        The first part counts the number of previous elements.
+        The second part updates the tree if this is style resolution.
+        The last part compares the number of previous siblings to an+b to find if the filter matches.
+
+        The only part that diverges from SelectorChecker is how childIndex is used. Instead of testing it
+        at every iteration, only the first iteration handle the cache.
+
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::childIndexMemoryOffset):
+        * dom/Node.h:
+        (WebCore::Node::rareDataMemoryOffset):
+        (WebCore::Node::flagHasRareData):
+        * rendering/style/RenderStyle.h:
+
 2014-04-14  Tim Horton  <timothy_horton@apple.com>
 
         Support setting a background color on page overlays

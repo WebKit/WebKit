@@ -571,9 +571,11 @@ public:
 
 #if ENABLE(CSS_SELECTOR_JIT)
     static ptrdiff_t nodeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_nodeFlags); }
+    static ptrdiff_t rareDataMemoryOffset() { return OBJECT_OFFSETOF(Node, m_data.m_rareData); }
     static int32_t flagIsElement() { return IsElementFlag; }
     static int32_t flagIsHTML() { return IsHTMLFlag; }
     static int32_t flagIsLink() { return IsLinkFlag; }
+    static int32_t flagHasRareData() { return HasRareDataFlag; }
     static int32_t flagIsParsingChildrenFinished() { return IsParsingChildrenFinishedFlag; }
     static int32_t flagChildrenAffectedByFirstChildRulesFlag() { return ChildrenAffectedByFirstChildRulesFlag; }
     static int32_t flagChildrenAffectedByLastChildRulesFlag() { return ChildrenAffectedByLastChildRulesFlag; }

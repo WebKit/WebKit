@@ -31,6 +31,7 @@
 #include "CSSSelector.h"
 #include "Element.h"
 #include "ElementData.h"
+#include "ElementRareData.h"
 #include "FunctionCall.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
@@ -131,6 +132,7 @@ struct SelectorFragment {
     HashSet<unsigned> pseudoClasses;
     Vector<JSC::FunctionPtr> unoptimizedPseudoClasses;
     Vector<AttributeMatchingInfo> attributes;
+    Vector<std::pair<int, int>> nthChildfilters;
 };
 
 typedef JSC::MacroAssembler Assembler;
@@ -189,9 +191,12 @@ private:
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
     void generateElementIsLink(Assembler::JumpList& failureCases);
+    void generateElementIsNthChild(Assembler::JumpList& failureCases, const SelectorFragment&);
 
     // Helpers.
     Assembler::Jump jumpIfNotResolvingStyle(Assembler::RegisterID checkingContextRegister);
+    Assembler::Jump modulo(JSC::MacroAssembler::ResultCondition, Assembler::RegisterID inputDividend, int divisor);
+    void moduloIsZero(Assembler::JumpList& failureCases, Assembler::RegisterID inputDividend, int divisor);
 
     Assembler m_assembler;
     RegisterAllocator m_registerAllocator;
@@ -251,80 +256,102 @@ static inline FunctionType mostRestrictiveFunctionType(FunctionType a, FunctionT
     return std::max(a, b);
 }
 
-static inline FunctionType addPseudoType(CSSSelector::PseudoType type, SelectorFragment& pseudoClasses, SelectorContext selectorContext)
+static inline FunctionType addPseudoType(const CSSSelector& selector, SelectorFragment& fragment, SelectorContext selectorContext)
 {
+    CSSSelector::PseudoType type = selector.pseudoType();
     switch (type) {
     // Unoptimized pseudo selector. They are just function call to a simple testing function.
     case CSSSelector::PseudoAutofill:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isAutofilled));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isAutofilled));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoChecked:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isChecked));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isChecked));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoDefault:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDefaultButtonForForm));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDefaultButtonForForm));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoDisabled:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDisabled));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDisabled));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoEnabled:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isEnabled));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isEnabled));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoFocus:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(SelectorChecker::matchesFocusPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(SelectorChecker::matchesFocusPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoIndeterminate:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(shouldAppearIndeterminate));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(shouldAppearIndeterminate));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoInvalid:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isInvalid));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isInvalid));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoOptional:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isOptionalFormControl));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isOptionalFormControl));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoReadOnly:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesReadOnlyPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesReadOnlyPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoReadWrite:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesReadWritePseudoClass));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesReadWritePseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoRequired:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isRequiredFormControl));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isRequiredFormControl));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoValid:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isValid));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isValid));
         return FunctionType::SimpleSelectorChecker;
 #if ENABLE(FULLSCREEN_API)
     case CSSSelector::PseudoFullScreen:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFullScreenPseudoClass));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFullScreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
 #if ENABLE(VIDEO_TRACK)
     case CSSSelector::PseudoFuture:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFutureCuePseudoClass));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFutureCuePseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoPast:
-        pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesPastCuePseudoClass));
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesPastCuePseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
 
     // Optimized pseudo selectors.
     case CSSSelector::PseudoAnyLink:
-        pseudoClasses.pseudoClasses.add(CSSSelector::PseudoLink);
+        fragment.pseudoClasses.add(CSSSelector::PseudoLink);
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoLink:
-        pseudoClasses.pseudoClasses.add(type);
+        fragment.pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoFirstChild:
     case CSSSelector::PseudoLastChild:
     case CSSSelector::PseudoOnlyChild:
-        pseudoClasses.pseudoClasses.add(type);
+        fragment.pseudoClasses.add(type);
         if (selectorContext == SelectorContext::QuerySelector)
             return FunctionType::SimpleSelectorChecker;
         return FunctionType::SelectorCheckerWithCheckingContext;
 
+    case CSSSelector::PseudoNthChild:
+        {
+            if (!selector.parseNth())
+                return FunctionType::CannotMatchAnything;
+
+            int a = selector.nthA();
+            int b = selector.nthB();
+
+            // The element count is always positive.
+            if (a <= 0 && b < 1)
+                return FunctionType::CannotMatchAnything;
+
+            // Anything modulo 1 is zero. Unless b restrict the range, this does not filter anything out.
+            if (a == 1 && (!b || (b == 1)))
+                return FunctionType::SimpleSelectorChecker;
+
+            fragment.nthChildfilters.append(std::pair<int, int>(a, b));
+            if (selectorContext == SelectorContext::QuerySelector)
+                return FunctionType::SimpleSelectorChecker;
+            return FunctionType::SelectorCheckerWithCheckingContext;
+        }
     default:
         break;
     }
@@ -367,7 +394,7 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
             fragment.classNames.append(selector->value().impl());
             break;
         case CSSSelector::PseudoClass:
-            m_functionType = mostRestrictiveFunctionType(m_functionType, addPseudoType(selector->pseudoType(), fragment, m_selectorContext));
+            m_functionType = mostRestrictiveFunctionType(m_functionType, addPseudoType(*selector, fragment, m_selectorContext));
             if (m_functionType == FunctionType::CannotCompile || m_functionType == FunctionType::CannotMatchAnything)
                 return;
             break;
@@ -897,6 +924,111 @@ Assembler::Jump SelectorCodeGenerator::jumpIfNotResolvingStyle(Assembler::Regist
     return m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, resolvingMode)), Assembler::TrustedImm32(SelectorChecker::ResolvingStyle));
 }
 
+// The value in inputDividend is destroyed by the modulo operation.
+Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition condition, Assembler::RegisterID inputDividend, int divisor)
+{
+    RELEASE_ASSERT(divisor);
+#if CPU(X86_64)
+    // idiv takes RAX + an arbitrary register, and return RAX + RDX. Most of this code is about doing
+    // an efficient allocation of those registers. If a register is already in use and is not the inputDividend,
+    // we first try to copy it to a temporary register, it that is not possible we fall back to the stack.
+    enum class RegisterAllocationType {
+        External,
+        AllocatedLocally,
+        CopiedToTemporary,
+        PushedToStack
+    };
+
+    // 1) Get RAX and RDX.
+    // If they are already used, push them to the stack.
+    Assembler::RegisterID dividend = JSC::X86Registers::eax;
+    RegisterAllocationType dividendAllocation = RegisterAllocationType::External;
+    StackAllocator::StackReference temporaryDividendStackReference;
+    Assembler::RegisterID temporaryDividendCopy = InvalidGPRReg;
+    if (inputDividend != dividend) {
+        bool registerIsInUse = m_registerAllocator.allocatedRegisters().contains(dividend);
+        if (registerIsInUse) {
+            if (m_registerAllocator.availableRegisterCount()) {
+                temporaryDividendCopy = m_registerAllocator.allocateRegister();
+                m_assembler.move(dividend, temporaryDividendCopy);
+                dividendAllocation = RegisterAllocationType::CopiedToTemporary;
+            } else {
+                temporaryDividendStackReference = m_stackAllocator.push(dividend);
+                dividendAllocation = RegisterAllocationType::PushedToStack;
+            }
+        } else {
+            m_registerAllocator.allocateRegister(dividend);
+            dividendAllocation = RegisterAllocationType::AllocatedLocally;
+        }
+        m_assembler.move(inputDividend, dividend);
+    }
+
+    Assembler::RegisterID remainder = JSC::X86Registers::edx;
+    RegisterAllocationType remainderAllocation = RegisterAllocationType::External;
+    StackAllocator::StackReference temporaryRemainderStackReference;
+    Assembler::RegisterID temporaryRemainderCopy = InvalidGPRReg;
+    if (inputDividend != remainder) {
+        bool registerIsInUse = m_registerAllocator.allocatedRegisters().contains(remainder);
+        if (registerIsInUse) {
+            if (m_registerAllocator.availableRegisterCount()) {
+                temporaryRemainderCopy = m_registerAllocator.allocateRegister();
+                m_assembler.move(remainder, temporaryRemainderCopy);
+                remainderAllocation = RegisterAllocationType::CopiedToTemporary;
+            } else {
+                temporaryRemainderStackReference = m_stackAllocator.push(remainder);
+                remainderAllocation = RegisterAllocationType::PushedToStack;
+            }
+        } else {
+            m_registerAllocator.allocateRegister(remainder);
+            remainderAllocation = RegisterAllocationType::AllocatedLocally;
+        }
+    }
+    m_assembler.m_assembler.cdq();
+
+    // 2) Perform the division with idiv.
+    {
+        LocalRegister divisorRegister(m_registerAllocator);
+        m_assembler.move(Assembler::TrustedImm64(divisor), divisorRegister);
+        m_assembler.m_assembler.idivl_r(divisorRegister);
+        m_assembler.test32(remainder);
+    }
+
+    // 3) Return RAX and RDX.
+    if (remainderAllocation == RegisterAllocationType::AllocatedLocally)
+        m_registerAllocator.deallocateRegister(remainder);
+    else if (remainderAllocation == RegisterAllocationType::CopiedToTemporary) {
+        m_assembler.move(temporaryRemainderCopy, remainder);
+        m_registerAllocator.deallocateRegister(temporaryRemainderCopy);
+    } else if (remainderAllocation == RegisterAllocationType::PushedToStack)
+        m_stackAllocator.pop(temporaryRemainderStackReference, remainder);
+
+    if (dividendAllocation == RegisterAllocationType::AllocatedLocally)
+        m_registerAllocator.deallocateRegister(dividend);
+    else if (dividendAllocation == RegisterAllocationType::CopiedToTemporary) {
+        m_assembler.move(temporaryDividendCopy, dividend);
+        m_registerAllocator.deallocateRegister(temporaryDividendCopy);
+    } else if (dividendAllocation == RegisterAllocationType::PushedToStack)
+        m_stackAllocator.pop(temporaryDividendStackReference, dividend);
+
+    // 4) Branch on the test.
+    return m_assembler.branch(condition);
+#else
+#error Modulo is not implemented for this architecture.
+#endif
+}
+
+void SelectorCodeGenerator::moduloIsZero(Assembler::JumpList& failureCases, Assembler::RegisterID inputDividend, int divisor)
+{
+    if (divisor == 1 || divisor == -1)
+        return;
+    if (divisor == 2 || divisor == -2) {
+        failureCases.append(m_assembler.branchTest32(Assembler::NonZero, inputDividend, Assembler::TrustedImm32(1)));
+        return;
+    }
+
+    failureCases.append(modulo(Assembler::NonZero, inputDividend, divisor));
+}
+
 static void setNodeFlag(Assembler& assembler, Assembler::RegisterID elementAddress, int32_t flag)
 {
     assembler.or32(Assembler::TrustedImm32(flag), Assembler::Address(elementAddress, Node::nodeFlagsMemoryOffset()));
@@ -1042,6 +1174,8 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
         generateElementIsFirstChild(failureCases, fragment);
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoLastChild))
         generateElementIsLastChild(failureCases, fragment);
+    if (!fragment.nthChildfilters.isEmpty())
+        generateElementIsNthChild(failureCases, fragment);
 }
 
 void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
@@ -1775,6 +1909,124 @@ void SelectorCodeGenerator::generateElementHasClasses(Assembler::JumpList& failu
 void SelectorCodeGenerator::generateElementIsLink(Assembler::JumpList& failureCases)
 {
     failureCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(elementAddressRegister, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink())));
+}
+
+static void setElementChildIndex(Element* element, int index)
+{
+    element->setChildIndex(index);
+}
+
+static void setElementChildIndexAndUpdateStyle(Element* element, int index)
+{
+    element->setChildIndex(index);
+    if (RenderStyle* childStyle = element->renderStyle())
+        childStyle->setUnique();
+}
+
+void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    Assembler::RegisterID parentElement = m_registerAllocator.allocateRegister();
+    generateWalkToParentElement(failureCases, parentElement);
+
+    // Setup the counter at 1.
+    LocalRegister elementCounter(m_registerAllocator);
+    m_assembler.move(Assembler::TrustedImm32(1), elementCounter);
+
+    // Loop over the previous adjacent elements and increment the counter.
+    {
+        LocalRegister previousSibling(m_registerAllocator);
+        m_assembler.move(elementAddressRegister, previousSibling);
+
+        // Getting the child index is very efficient when it works. When there is no child index,
+        // querying at every iteration is very inefficient. We solve this by only testing the child
+        // index on the first direct adjacent.
+        Assembler::JumpList noMoreSiblingsCases;
+
+        Assembler::JumpList noCachedChildIndexCases;
+        generateWalkToPreviousAdjacentElement(noMoreSiblingsCases, previousSibling);
+        noCachedChildIndexCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(previousSibling, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagHasRareData())));
+        {
+            LocalRegister elementRareData(m_registerAllocator);
+            m_assembler.loadPtr(Assembler::Address(previousSibling, Node::rareDataMemoryOffset()), elementRareData);
+            LocalRegister cachedChildIndex(m_registerAllocator);
+            m_assembler.load16(Assembler::Address(elementRareData, ElementRareData::childIndexMemoryOffset()), cachedChildIndex);
+            noCachedChildIndexCases.append(m_assembler.branchTest32(Assembler::Zero, cachedChildIndex));
+            m_assembler.add32(cachedChildIndex, elementCounter);
+            noMoreSiblingsCases.append(m_assembler.jump());
+        }
+        noCachedChildIndexCases.link(&m_assembler);
+        m_assembler.add32(Assembler::TrustedImm32(1), elementCounter);
+
+        Assembler::Label loopStart = m_assembler.label();
+        generateWalkToPreviousAdjacentElement(noMoreSiblingsCases, previousSibling);
+        m_assembler.add32(Assembler::TrustedImm32(1), elementCounter);
+        m_assembler.jump().linkTo(loopStart, &m_assembler);
+        noMoreSiblingsCases.link(&m_assembler);
+    }
+
+    // Tree marking when doing style resolution.
+    if (m_selectorContext != SelectorContext::QuerySelector) {
+        LocalRegister checkingContext(m_registerAllocator);
+        Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
+
+        m_registerAllocator.deallocateRegister(parentElement);
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(Element::setChildrenAffectedByForwardPositionalRules);
+        functionCall.setOneArgument(parentElement);
+        functionCall.call();
+
+        if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
+            LocalRegister childStyle(m_registerAllocator);
+            m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
+
+            LocalRegister flags(m_registerAllocator);
+            Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
+            m_assembler.load64(flagAddress, flags);
+            LocalRegister isUniqueFlagImmediate(m_registerAllocator);
+            m_assembler.move(Assembler::TrustedImm64(RenderStyle::NonInheritedFlags::flagIsUnique()), isUniqueFlagImmediate);
+            m_assembler.or64(isUniqueFlagImmediate, flags);
+            m_assembler.store64(flags, flagAddress);
+
+            Assembler::RegisterID elementAddress = elementAddressRegister;
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(setElementChildIndex);
+            functionCall.setTwoArguments(elementAddress, elementCounter);
+            functionCall.call();
+        } else {
+            Assembler::RegisterID elementAddress = elementAddressRegister;
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(setElementChildIndexAndUpdateStyle);
+            functionCall.setTwoArguments(elementAddress, elementCounter);
+            functionCall.call();
+        }
+
+        notResolvingStyle.link(&m_assembler);
+    }
+
+    // Test every the nth-child filter.
+    for (const auto& slot : fragment.nthChildfilters) {
+        int a = slot.first;
+        int b = slot.second;
+
+        if (!a)
+            failureCases.append(m_assembler.branch32(Assembler::NotEqual, Assembler::TrustedImm32(b), elementCounter));
+        else if (a > 0) {
+            if (a == 2 && b == 1) {
+                // This is the common case 2n+1 (or "odd"), we can test for odd values without doing the arithmetic.
+                failureCases.append(m_assembler.branchTest32(Assembler::Zero, elementCounter, Assembler::TrustedImm32(1)));
+            } else {
+                if (b)
+                    failureCases.append(m_assembler.branchSub32(Assembler::Signed, Assembler::TrustedImm32(b), elementCounter));
+                moduloIsZero(failureCases, elementCounter, a);
+            }
+        } else {
+            LocalRegister bRegister(m_registerAllocator);
+            m_assembler.move(Assembler::TrustedImm32(b), bRegister);
+
+            failureCases.append(m_assembler.branchSub32(Assembler::Signed, elementCounter, bRegister));
+            moduloIsZero(failureCases, bRegister, a);
+        }
+    }
 }
 
 }; // namespace SelectorCompiler.

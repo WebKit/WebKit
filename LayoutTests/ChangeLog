@@ -1,3 +1,25 @@
+2014-04-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: compile the :nth-child() pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=131602
+
+        Reviewed by Andreas Kling.
+
+        Add a couple of test for the new code:
+        -nth-child-with-backtracking tests the register pressure with backtracking.
+        -nth-child-bounds tests invalid selectors do not cause problems.
+
+        * fast/selectors/nth-child-bounds-expected.txt: Added.
+        * fast/selectors/nth-child-bounds.html: Added.
+        * fast/selectors/nth-child-with-backtracking-expected.txt: Added.
+        * fast/selectors/nth-child-with-backtracking.html: Added.
+
+        * http/tests/security/video-poster-cross-origin-crash.html:
+        Now that CSSSelector filters out ridiculously bad values, the pseudo class in this test
+        was no longer executed.
+        The particular value of nth-child is irrelevant for this test, all it needs it the tree marking
+        while not matching.
+
 2014-04-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Hit testing doesn't work in video

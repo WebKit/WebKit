@@ -39,6 +39,7 @@ namespace WebCore {
 static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
     JSC::X86Registers::eax,
     JSC::X86Registers::ecx,
+    JSC::X86Registers::edx,
     JSC::X86Registers::esi,
     JSC::X86Registers::edi,
     JSC::X86Registers::r8,

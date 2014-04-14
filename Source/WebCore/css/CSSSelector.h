@@ -217,6 +217,8 @@ namespace WebCore {
 
         bool parseNth() const;
         bool matchNth(int count) const;
+        int nthA() const;
+        int nthB() const;
 
         PseudoElementType pseudoElementType() const { ASSERT(m_match == PseudoElement); return static_cast<PseudoElementType>(m_pseudoType); }
         PagePseudoClassType pagePseudoClassType() const { ASSERT(m_match == PagePseudoClass); return static_cast<PagePseudoClassType>(m_pseudoType); }

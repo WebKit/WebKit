@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+li+li+:nth-child(-5n+7)+li+li+li~li+li+li~li {
+    color:rgb(4, 5, 6);
+}
+ul>[foo=bar]:nth-child(-3n+3)+li+li+li~li+li+li~li>span.first>span.second a {
+    background-color:rgb(1,2,3);
+}
+</style>
+</head>
+<body>
+<div>
+    <ul style="display:none">
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+    </ul>
+</div>
+</body>
+<script>
+
+description('Test nth-child inside deep backtracking.');
+
+// Nth-child inside two adjacent backtracking chains.
+shouldBe('document.querySelectorAll("li+li+:nth-child(-5n+7)+li+li+li~li+li+li~li").length', '7');
+var allItems = document.querySelectorAll('li');
+shouldBe('allItems.length', '20');
+var coloredItems = 0;
+for (var i = 0; i < allItems.length; ++i) {
+    if (getComputedStyle(allItems[i]).color === 'rgb(4, 5, 6)')
+        coloredItems++;
+}
+shouldBe('coloredItems', '7');
+
+// Nth-child inside two adjacent backtracking chains, inside one descendant backtracking chain.
+shouldBe('document.querySelectorAll("ul>[foo=bar]:nth-child(-3n+3)+li+li+li~li+li+li~li>span.first>span.second a").length', '11');
+var allLinks = document.querySelectorAll('a');
+shouldBe('allLinks.length', '20');
+var backgroundColoredCount = 0;
+for (var i = 0; i < allLinks.length; ++i) {
+    if (getComputedStyle(allLinks[i]).backgroundColor === 'rgb(1, 2, 3)')
+        backgroundColoredCount++;
+}
+shouldBe('backgroundColoredCount', '11');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

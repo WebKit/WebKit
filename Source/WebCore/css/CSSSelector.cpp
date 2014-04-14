@@ -581,6 +581,20 @@ bool CSSSelector::matchNth(int count) const
     return m_data.m_rareData->matchNth(count);
 }
 
+int CSSSelector::nthA() const
+{
+    ASSERT(m_hasRareData);
+    ASSERT(m_parsedNth);
+    return m_data.m_rareData->m_a;
+}
+
+int CSSSelector::nthB() const
+{
+    ASSERT(m_hasRareData);
+    ASSERT(m_parsedNth);
+    return m_data.m_rareData->m_b;
+}
+
 CSSSelector::RareData::RareData(PassRefPtr<AtomicStringImpl> value)
     : m_value(value.leakRef())
     , m_a(0)
@@ -618,23 +632,42 @@ bool CSSSelector::RareData::parseNth()
             if (argument[0] == '-') {
                 if (n == 1)
                     m_a = -1; // -n == -1n
-                else
-                    m_a = argument.substring(0, n).toInt();
+                else {
+                    bool ok;
+                    m_a = argument.substringSharingImpl(0, n).toIntStrict(&ok);
+                    if (!ok)
+                        return false;
+                }
             } else if (!n)
                 m_a = 1; // n == 1n
-            else
-                m_a = argument.substring(0, n).toInt();
+            else {
+                bool ok;
+                m_a = argument.substringSharingImpl(0, n).toIntStrict(&ok);
+                if (!ok)
+                    return false;
+            }
 
             size_t p = argument.find('+', n);
-            if (p != notFound)
-                m_b = argument.substring(p + 1, argument.length() - p - 1).toInt();
-            else {
+            if (p != notFound) {
+                bool ok;
+                m_b = argument.substringSharingImpl(p + 1, argument.length() - p - 1).toIntStrict(&ok);
+                if (!ok)
+                    return false;
+            } else {
                 p = argument.find('-', n);
-                if (p != notFound)
-                    m_b = -argument.substring(p + 1, argument.length() - p - 1).toInt();
+                if (p != notFound) {
+                    bool ok;
+                    m_b = -argument.substringSharingImpl(p + 1, argument.length() - p - 1).toIntStrict(&ok);
+                    if (!ok)
+                        return false;
+                }
             }
-        } else
-            m_b = argument.toInt();
+        } else {
+            bool ok;
+            m_b = argument.toIntStrict(&ok);
+            if (!ok)
+                return false;
+        }
     }
     return true;
 }
