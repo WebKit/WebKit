@@ -1,3 +1,10 @@
+2014-04-14  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Update test expectations for new failing test 'editing/editability/ignored-content.html'.
+        * platform/gtk/inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: Rebaselined.
+
 2014-04-14  Dirk Schulze  <krit@webkit.org>
 
         Optimize Canvas fill and drawImage with SourceIn, DestinationIn, SourceOut, and DestinationAtop using transparencyLayer.
