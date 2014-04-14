@@ -1,3 +1,37 @@
+2014-04-14  Dirk Schulze  <krit@webkit.org>
+
+        Optimize Canvas fill and drawImage with SourceIn, DestinationIn, SourceOut, and DestinationAtop using transparencyLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=79659
+
+        Reviewed by Darin Adler.
+
+        Optimize fill() and fillRect() operations in Canvas on composited contexts by
+        10 to 20 times on CG.
+
+        Replacing the ImageBuffer code by transparency layers allows the
+        graphics library to optimize the drawing.
+
+        Doing the same for drawImage() would give performance regressions.
+
+        An inline function will create a transparency layer for CG. Cairo graphics
+        does not composite correctly when a transparency layer gets created. 
+        The inline function is just a NOOP for Cairo.
+
+        This fixes bug 131303 as well.
+
+        Added performance tests with r167124 already.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fillInternal):
+        (WebCore::CanvasRenderingContext2D::strokeInternal):
+        (WebCore::CanvasRenderingContext2D::beginCompositeLayer):
+        (WebCore::CanvasRenderingContext2D::endCompositeLayer):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        (WebCore::CanvasRenderingContext2D::fullCanvasCompositedFill): Deleted.
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2014-04-14  Tim Horton  <timothy_horton@apple.com>
 
         Lots of compositing test failures after r167152

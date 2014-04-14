@@ -941,7 +941,9 @@ void CanvasRenderingContext2D::fillInternal(const Path& path, const String& wind
         c->setFillRule(newWindRule);
 
         if (isFullCanvasCompositeMode(state().m_globalComposite)) {
-            fullCanvasCompositedFill(path);
+            beginCompositeLayer();
+            c->fillPath(path);
+            endCompositeLayer();
             didDrawEntireCanvas();
         } else if (state().m_globalComposite == CompositeCopy) {
             clearCanvas();
@@ -971,9 +973,9 @@ void CanvasRenderingContext2D::strokeInternal(const Path& path)
 
     if (!path.isEmpty()) {
         if (isFullCanvasCompositeMode(state().m_globalComposite)) {
-            c->beginTransparencyLayer(1);
+            beginCompositeLayer();
             c->strokePath(path);
-            c->endTransparencyLayer();
+            endCompositeLayer();
             didDrawEntireCanvas();
         } else if (state().m_globalComposite == CompositeCopy) {
             clearCanvas();
@@ -1002,6 +1004,20 @@ void CanvasRenderingContext2D::clipInternal(const Path& path, const String& wind
 
     realizeSaves();
     c->canvasClip(path, newWindRule);
+}
+
+inline void CanvasRenderingContext2D::beginCompositeLayer()
+{
+#if !USE(CAIRO)
+    drawingContext()->beginTransparencyLayer(1);
+#endif
+}
+
+inline void CanvasRenderingContext2D::endCompositeLayer()
+{
+#if !USE(CAIRO)
+    drawingContext()->endTransparencyLayer();    
+#endif
 }
 
 bool CanvasRenderingContext2D::isPointInPath(const float x, const float y, const String& windingRuleString)
@@ -1126,7 +1142,9 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
         c->fillRect(rect);
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(state().m_globalComposite)) {
-        fullCanvasCompositedFill(rect);
+        beginCompositeLayer();
+        c->fillRect(rect);
+        endCompositeLayer();
         didDrawEntireCanvas();
     } else if (state().m_globalComposite == CompositeCopy) {
         clearCanvas();
@@ -1158,9 +1176,9 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
 
     FloatRect rect(x, y, width, height);
     if (isFullCanvasCompositeMode(state().m_globalComposite)) {
-        c->beginTransparencyLayer(1);
+        beginCompositeLayer();
         c->strokeRect(rect, state().m_lineWidth);
-        c->endTransparencyLayer();
+        endCompositeLayer();
         didDrawEntireCanvas();
     } else if (state().m_globalComposite == CompositeCopy) {
         clearCanvas();
@@ -1681,30 +1699,6 @@ template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(
     drawImageToContext(image, buffer->context(), styleColorSpace, adjustedDest, src, CompositeSourceOver);
 
     compositeBuffer(buffer.get(), bufferRect, op);
-}
-
-template<class T> void CanvasRenderingContext2D::fullCanvasCompositedFill(const T& area)
-{
-    ASSERT(isFullCanvasCompositeMode(state().m_globalComposite));
-
-    IntRect bufferRect = calculateCompositingBufferRect(area, 0);
-    if (bufferRect.isEmpty()) {
-        clearCanvas();
-        return;
-    }
-
-    std::unique_ptr<ImageBuffer> buffer = createCompositingBuffer(bufferRect);
-    if (!buffer)
-        return;
-
-    Path path = transformAreaToDevice(area);
-    buffer->context()->setCompositeOperation(CompositeSourceOver);
-    buffer->context()->translate(FloatSize(-bufferRect.x(), -bufferRect.y()));
-    modifiableState().m_fillStyle.applyFillColor(buffer->context());
-
-    buffer->context()->fillPath(path);
-
-    compositeBuffer(buffer.get(), bufferRect, state().m_globalComposite);
 }
 
 void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient* gradient) const
@@ -2343,9 +2337,9 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     }
 
     if (isFullCanvasCompositeMode(state().m_globalComposite)) {
-        c->beginTransparencyLayer(1);
+        beginCompositeLayer();
         c->drawBidiText(font, textRun, location, Font::UseFallbackIfFontNotReady);
-        c->endTransparencyLayer();
+        endCompositeLayer();
         didDrawEntireCanvas();
     } else if (state().m_globalComposite == CompositeCopy) {
         clearCanvas();

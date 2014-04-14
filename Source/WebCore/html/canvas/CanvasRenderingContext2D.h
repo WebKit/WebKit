@@ -304,6 +304,9 @@ private:
     void clearPathForDashboardBackwardCompatibilityMode();
 #endif
 
+    void beginCompositeLayer();
+    void endCompositeLayer();
+
     void fillInternal(const Path&, const String& winding);
     void strokeInternal(const Path&);
     void clipInternal(const Path&, const String& winding);
@@ -322,7 +325,6 @@ private:
 
     void inflateStrokeRect(FloatRect&) const;
 
-    template<class T> void fullCanvasCompositedFill(const T&);
     template<class T> void fullCanvasCompositedDrawImage(T*, ColorSpace, const FloatRect&, const FloatRect&, CompositeOperator);
 
     void prepareGradientForDashboard(CanvasGradient* gradient) const;
