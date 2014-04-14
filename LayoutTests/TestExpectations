@@ -91,3 +91,7 @@ webkit.org/b/126166 [ Debug ] js/dfg-uint32array-overflow-values.html [ Skip ]
 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
 webkit.org/b/127697 fast/writing-mode/ruby-text-logical-left.html [ Skip ]
+
+# These will be fixed soon
+[ Debug ] fast/parser/adoption-agency-crash-01.html [ Crash ]
+[ Debug ] fast/parser/adoption-agency-crash-03.html [ Crash ]

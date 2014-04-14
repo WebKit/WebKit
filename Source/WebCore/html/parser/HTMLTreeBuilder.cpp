@@ -1600,39 +1600,18 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
             if (lastNode == furthestBlock)
                 bookmark.moveToAfter(nodeEntry);
             // 9.9
-            if (ContainerNode* parent = lastNode->element()->parentNode())
-                parent->parserRemoveChild(*lastNode->element());
-            node->element()->parserAppendChild(lastNode->element());
+            m_tree.reparent(*node, *lastNode);
             // 9.10
             lastNode = node;
         }
         // 10.
-        if (ContainerNode* parent = lastNode->element()->parentNode())
-            parent->parserRemoveChild(*lastNode->element());
-        if (commonAncestor->causesFosterParenting())
-            m_tree.fosterParent(lastNode->element());
-        else {
-#if ENABLE(TEMPLATE_ELEMENT)
-            if (commonAncestor->hasTagName(templateTag))
-                toHTMLTemplateElement(commonAncestor->node())->content()->parserAppendChild(lastNode->element());
-            else
-                commonAncestor->node()->parserAppendChild(lastNode->element());
-#else
-            commonAncestor->node()->parserAppendChild(lastNode->element());
-#endif
-            ASSERT(lastNode->stackItem()->isElementNode());
-            ASSERT(lastNode->element()->parentNode());
-        }
+        m_tree.insertAlreadyParsedChild(*commonAncestor, *lastNode);
         // 11.
         RefPtr<HTMLStackItem> newItem = m_tree.createElementFromSavedToken(formattingElementRecord->stackItem().get());
         // 12.
-        newItem->element()->takeAllChildrenFrom(furthestBlock->element());
+        m_tree.takeAllChildren(*newItem, *furthestBlock);
         // 13.
-        Element* furthestBlockElement = furthestBlock->element();
-        // FIXME: All this creation / parserAppendChild / attach business should
-        //        be in HTMLConstructionSite. My guess is that steps 11--15
-        //        should all be in some HTMLConstructionSite function.
-        furthestBlockElement->parserAppendChild(newItem->element());
+        m_tree.reparent(*furthestBlock, *newItem);
         // 14.
         m_tree.activeFormattingElements()->swapTo(formattingElement, newItem, bookmark);
         // 15.
