@@ -1,0 +1,18 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>html,tr,img, table,media,body, li, em:nth-child(5){
+    height: 500px
+}
+</style>
+<script>
+function load() {
+    var cssRules = window.getMatchedCSSRules(document.documentElement);
+    cssRules[0].selectorText = 'a,td';
+}
+</script>
+This test passes if it doesn't crash.
+<iframe onload=load()>
+</html>
