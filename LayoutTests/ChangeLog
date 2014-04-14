@@ -1,3 +1,15 @@
+2014-04-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [JSC] CSSStyleDeclaration report incorrect descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=89697
+
+        Reviewed by Benjamin Poulain.
+
+        Add new test to check the descriptor of CSSStyleDeclaration properties.
+
+        * fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor-expected.txt: Added.
+        * fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor.html: Added.
+
 2014-04-14  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT: compile the :nth-child() pseudo class

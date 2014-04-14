@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        description("This tests the descriptor of CSSStyleDeclaration properties.");
+
+        var descriptor = Object.getOwnPropertyDescriptor(document.body.style, 'color');
+        shouldBeTrue("descriptor['writable']");
+        shouldBeTrue("descriptor['enumerable']");
+        shouldBeFalse("descriptor['configurable']");
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

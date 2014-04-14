@@ -336,9 +336,9 @@ bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState*, PropertyName 
         return false;
 
     if (propertyInfo.hadPixelOrPosPrefix)
-        slot.setCustomIndex(this, ReadOnly | DontDelete | DontEnum, static_cast<unsigned>(propertyInfo.propertyID), cssPropertyGetterPixelOrPosPrefixCallback);
+        slot.setCustomIndex(this, DontDelete, static_cast<unsigned>(propertyInfo.propertyID), cssPropertyGetterPixelOrPosPrefixCallback);
     else
-        slot.setCustomIndex(this, ReadOnly | DontDelete | DontEnum, static_cast<unsigned>(propertyInfo.propertyID), cssPropertyGetterCallback);
+        slot.setCustomIndex(this, DontDelete, static_cast<unsigned>(propertyInfo.propertyID), cssPropertyGetterCallback);
     return true;
 }
 

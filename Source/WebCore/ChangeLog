@@ -1,3 +1,21 @@
+2014-04-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [JSC] CSSStyleDeclaration report incorrect descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=89697
+
+        Reviewed by Benjamin Poulain.
+
+        Change descriptor of CSSStyleDeclaration properties in order to have
+        writable and enumerable attributes set to true. Configurable is kept to
+        false since the property is not deleteable.
+
+        Test: fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor.html
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getOwnPropertySlotDelegate): Only set
+        DontDelete attribute when creating the descriptor for
+        CSSStyleDeclaration properties.
+
 2014-04-14  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Improve the call site of string comparison in some hot path
