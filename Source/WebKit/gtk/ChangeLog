@@ -1,3 +1,9 @@
+2014-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.4.1 release.
+
+        * NEWS: Added release notes for 2.4.1.
+
 2014-03-28  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Too many redirects visiting www.globalforestwatch.org

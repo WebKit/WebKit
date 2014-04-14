@@ -1,4 +1,21 @@
 =================
+WebKitGTK+  2.4.1
+=================
+
+What's new in WebKitGTK+ 2.4.1?
+
+  - Add CORS support for media elements to GStreamer media backend.
+  - Fix wrong flags used in fcntl call that failed in FreeBSD.
+  - Correctly handle HTTP authentication for cross-origin requests.
+  - Correctly handle cookies for cross-origin requests.
+  - Fix a crash in the plugin process with some plugins that redefine
+    NPN functions.
+  - Fix acceletared video when the video format has an alpha component.
+  - Fix sites using geolocation after reloading when using Geoclue2.
+  - Append Safari version to UserAgent to fix redirections in
+    www.globalforestwatch.org.
+
+=================
 WebKitGTK+  2.4.0
 =================
 
