@@ -1,3 +1,22 @@
+2014-04-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Improve the call site of string comparison in some hot path
+        https://bugs.webkit.org/show_bug.cgi?id=131605
+
+        Reviewed by Darin Adler.
+
+        When resolved, the String of a JSString is never null. It can be empty but not null.
+        The null value is reserved for ropes but those would be resolved when getting the value.
+
+        Consequently, we should use the equal() operation that do not handle null values.
+        Using the StringImpl directly is already common in StringPrototype but it was not used here for some reason.
+
+        * jit/JITOperations.cpp:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::equalSlowCaseInline):
+        (JSC::JSValue::strictEqualSlowCaseInline):
+        (JSC::JSValue::pureStrictEqual):
+
 2014-04-08  Oliver Hunt  <oliver@apple.com>
 
         Rewrite Function.bind as a builtin

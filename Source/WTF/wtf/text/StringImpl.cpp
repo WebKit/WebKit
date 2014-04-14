@@ -1764,7 +1764,7 @@ PassRef<StringImpl> StringImpl::replace(StringImpl* pattern, StringImpl* replace
     return newImpl;
 }
 
-static inline bool stringImplContentEqual(const StringImpl& a, const StringImpl& b)
+static ALWAYS_INLINE bool stringImplContentEqual(const StringImpl& a, const StringImpl& b)
 {
     unsigned aLength = a.length();
     unsigned bLength = b.length();

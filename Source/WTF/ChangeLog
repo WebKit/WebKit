@@ -1,3 +1,15 @@
+2014-04-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Improve the call site of string comparison in some hot path
+        https://bugs.webkit.org/show_bug.cgi?id=131605
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::stringImplContentEqual):
+        Inline that function to reduce the call overhead for JSC.
+        This is only inlined twice, it is not catastrophic for our binary.
+
 2014-04-13  Andy Estes  <aestes@apple.com>
 
         Relax adoption requirements of RefCounted objects that are NeverDestroyed

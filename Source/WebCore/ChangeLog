@@ -1,3 +1,14 @@
+2014-04-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Improve the call site of string comparison in some hot path
+        https://bugs.webkit.org/show_bug.cgi?id=131605
+
+        Reviewed by Darin Adler.
+
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::NodeListCacheMapEntryHash::equal):
+        We should use the right comparison operation depending on the Hash Traits.
+
 2014-04-14  Andreas Kling  <akling@apple.com>
 
         Merge MemoryPressureHandler{Mac,IOS}.mm
