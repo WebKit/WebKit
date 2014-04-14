@@ -199,6 +199,11 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     double currentScaleFactor = m_webPageProxy.pageScaleFactor();
 
     FloatRect unscaledTargetRect = renderRect;
+
+    // If there was no usable element under the cursor, we'll scale towards the cursor instead.
+    if (unscaledTargetRect.isEmpty())
+        unscaledTargetRect.setLocation(origin);
+
     unscaledTargetRect.scale(1 / currentScaleFactor);
     unscaledTargetRect.inflateX(unscaledTargetRect.width() * smartMagnificationElementPadding);
     unscaledTargetRect.inflateY(unscaledTargetRect.height() * smartMagnificationElementPadding);
