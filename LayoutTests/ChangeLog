@@ -1,3 +1,74 @@
+2014-04-14  Koji Ishii  <kojishi@gmail.com>
+
+        Update html5lib test data to latest version
+        https://bugs.webkit.org/show_bug.cgi?id=131588
+
+        Reviewed by Darin Adler.
+
+        This patch imports the latest version of the "dat" files from
+        https://github.com/html5lib/html5lib-tests
+        Also updated expected files for failures of new tests.
+
+        * html5lib/generated/run-adoption01-data-expected.txt: Passes now as a bug in the test was fixed.
+        * html5lib/generated/run-adoption01-write-expected.txt: Supressed new failures.
+        * html5lib/generated/run-inbody01-data-expected.txt: Added.
+        * html5lib/generated/run-inbody01-data.html: Added.
+        * html5lib/generated/run-inbody01-write-expected.txt: Added.
+        * html5lib/generated/run-inbody01-write.html: Added.
+        * html5lib/generated/run-main-element-data-expected.txt: Added.
+        * html5lib/generated/run-main-element-data.html: Added.
+        * html5lib/generated/run-main-element-write-expected.txt: Added.
+        * html5lib/generated/run-main-element-write.html: Added.
+        * html5lib/generated/run-template-data-expected.txt: Supressed new failures.
+        * html5lib/generated/run-template-write-expected.txt: Supressed new failures.
+        * html5lib/generated/run-tests21-data-expected.txt: Supressed new failures.
+        * html5lib/generated/run-tests21-write-expected.txt: Supressed new failures.
+        * html5lib/generated/run-tests25-data-expected.txt: Supressed new failures.
+        * html5lib/generated/run-tests25-write-expected.txt: Supressed new failures.
+        * html5lib/resources/adoption01.dat:
+        * html5lib/resources/adoption02.dat:
+        * html5lib/resources/comments01.dat:
+        * html5lib/resources/doctype01.dat:
+        * html5lib/resources/domjs-unsafe.dat:
+        * html5lib/resources/entities01.dat:
+        * html5lib/resources/entities02.dat:
+        * html5lib/resources/html5test-com.dat:
+        * html5lib/resources/inbody01.dat:
+        * html5lib/resources/isindex.dat:
+        * html5lib/resources/main-element.dat: Added.
+        * html5lib/resources/pending-spec-changes-plain-text-unsafe.dat:
+        * html5lib/resources/pending-spec-changes.dat:
+        * html5lib/resources/plain-text-unsafe.dat:
+        * html5lib/resources/scriptdata01.dat:
+        * html5lib/resources/tables01.dat:
+        * html5lib/resources/template.dat:
+        * html5lib/resources/tests1.dat:
+        * html5lib/resources/tests10.dat:
+        * html5lib/resources/tests14.dat:
+        * html5lib/resources/tests15.dat:
+        * html5lib/resources/tests16.dat:
+        * html5lib/resources/tests17.dat:
+        * html5lib/resources/tests18.dat:
+        * html5lib/resources/tests19.dat:
+        * html5lib/resources/tests2.dat:
+        * html5lib/resources/tests20.dat:
+        * html5lib/resources/tests21.dat:
+        * html5lib/resources/tests22.dat:
+        * html5lib/resources/tests23.dat:
+        * html5lib/resources/tests25.dat:
+        * html5lib/resources/tests26.dat:
+        * html5lib/resources/tests3.dat:
+        * html5lib/resources/tests4.dat:
+        * html5lib/resources/tests5.dat:
+        * html5lib/resources/tests6.dat:
+        * html5lib/resources/tests7.dat:
+        * html5lib/resources/tests8.dat:
+        * html5lib/resources/tests9.dat:
+        * html5lib/resources/tests_innerHTML_1.dat:
+        * html5lib/resources/tricky01.dat:
+        * html5lib/resources/webkit01.dat:
+        * html5lib/resources/webkit02.dat:
+
 2014-04-13  Darin Adler  <darin@apple.com>
 
         REGRESSION (r158617): Find on Page can get stuck in a loop when the search string occurs in an <input> in a <fieldset>

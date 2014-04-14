@@ -1,1 +1,76 @@
-../resources/template.dat: PASS
+../resources/template.dat:
+40
+41
+68
+94
+
+Test 40 of 108 in ../resources/template.dat failed. Input:
+<frameset><template><frame></frame></template></frameset>
+Got:
+| <html>
+|   <head>
+|   <frameset>
+|     <template>
+|       content
+|         <frame>
+Expected:
+| <html>
+|   <head>
+|   <frameset>
+|     <frame>
+
+Test 41 of 108 in ../resources/template.dat failed. Input:
+<template><frame></frame></frameset><frame></frame></template>
+Got:
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <frame>
+|         <frame>
+|   <body>
+Expected:
+| <html>
+|   <head>
+|     <template>
+|       content
+|   <body>
+
+Test 68 of 108 in ../resources/template.dat failed. Input:
+<html a=b><template><frame></frame><html b=c><frame></frame></template>
+Got:
+| <html>
+|   a="b"
+|   <head>
+|     <template>
+|       content
+|         <frame>
+|         <frame>
+|   <body>
+Expected:
+| <html>
+|   a="b"
+|   <head>
+|     <template>
+|       content
+|   <body>
+
+Test 94 of 108 in ../resources/template.dat failed. Input:
+<template><template><frame>
+Got:
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <template>
+|           content
+|             <frame>
+|   <body>
+Expected:
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <template>
+|           content
+|   <body>

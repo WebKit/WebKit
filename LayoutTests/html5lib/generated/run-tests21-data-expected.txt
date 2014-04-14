@@ -1,1 +1,37 @@
-../resources/tests21.dat: PASS
+../resources/tests21.dat:
+13
+15
+
+Test 13 of 25 in ../resources/tests21.dat failed. Input:
+<!DOCTYPE html><svg><![CDATA[foo]]]>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       "foo]]]>"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       "foo]"
+
+Test 15 of 25 in ../resources/tests21.dat failed. Input:
+<!DOCTYPE html><svg><![CDATA[foo]]]]]>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       "foo]]]]]>"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       "foo]]]"

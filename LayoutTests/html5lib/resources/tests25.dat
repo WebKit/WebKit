@@ -1,6 +1,7 @@
 #data
 <!DOCTYPE html><body><foo>A
 #errors
+(1,27): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -67,7 +68,7 @@
 #data
 <!DOCTYPE html><body><col>A
 #errors
-26: Stray start tag “col”.
+(1,26): unexpected-start-tag-ignored
 #document
 | <!DOCTYPE html>
 | <html>
@@ -84,7 +85,7 @@
 |   <head>
 |   <body>
 |     <command>
-|     "A"
+|       "A"
 
 #data
 <!DOCTYPE html><body><embed>A
@@ -100,7 +101,7 @@
 #data
 <!DOCTYPE html><body><frame>A
 #errors
-26: Stray start tag “frame”.
+(1,28): unexpected-start-tag-ignored
 #document
 | <!DOCTYPE html>
 | <html>

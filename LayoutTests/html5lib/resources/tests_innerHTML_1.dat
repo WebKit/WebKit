@@ -1,6 +1,8 @@
 #data
 <body><span>
 #errors
+(1,6): unexpected-start-tag
+(1,12): expected-closing-tag-but-got-eof
 #document-fragment
 body
 #document
@@ -9,6 +11,8 @@ body
 #data
 <span><body>
 #errors
+(1,12): unexpected-start-tag
+(1,12): expected-closing-tag-but-got-eof
 #document-fragment
 body
 #document
@@ -17,6 +21,8 @@ body
 #data
 <span><body>
 #errors
+(1,12): unexpected-start-tag
+(1,12): expected-closing-tag-but-got-eof
 #document-fragment
 div
 #document
@@ -25,6 +31,7 @@ div
 #data
 <body><span>
 #errors
+(1,12): expected-closing-tag-but-got-eof
 #document-fragment
 html
 #document
@@ -35,6 +42,8 @@ html
 #data
 <frameset><span>
 #errors
+(1,10): unexpected-start-tag
+(1,16): expected-closing-tag-but-got-eof
 #document-fragment
 body
 #document
@@ -43,6 +52,8 @@ body
 #data
 <span><frameset>
 #errors
+(1,16): unexpected-start-tag
+(1,16): expected-closing-tag-but-got-eof
 #document-fragment
 body
 #document
@@ -51,6 +62,8 @@ body
 #data
 <span><frameset>
 #errors
+(1,16): unexpected-start-tag
+(1,16): expected-closing-tag-but-got-eof
 #document-fragment
 div
 #document
@@ -59,6 +72,8 @@ div
 #data
 <frameset><span>
 #errors
+(1,16): unexpected-start-tag-in-frameset
+(1,16): eof-in-frameset
 #document-fragment
 html
 #document
@@ -68,6 +83,7 @@ html
 #data
 <table><tr>
 #errors
+(1,7): unexpected-start-tag
 #document-fragment
 table
 #document
@@ -77,6 +93,7 @@ table
 #data
 </table><tr>
 #errors
+(1,8): unexpected-end-tag
 #document-fragment
 table
 #document
@@ -86,6 +103,8 @@ table
 #data
 <a>
 #errors
+(1,3): unexpected-start-tag-implies-table-voodoo
+(1,3): eof-in-table
 #document-fragment
 table
 #document
@@ -94,6 +113,8 @@ table
 #data
 <a>
 #errors
+(1,3): unexpected-start-tag-implies-table-voodoo
+(1,3): eof-in-table
 #document-fragment
 table
 #document
@@ -102,6 +123,8 @@ table
 #data
 <a><caption>a
 #errors
+(1,3): unexpected-start-tag-implies-table-voodoo
+(1,13): expected-closing-tag-but-got-eof
 #document-fragment
 table
 #document
@@ -112,6 +135,8 @@ table
 #data
 <a><colgroup><col>
 #errors
+(1,3): foster-parenting-start-token
+(1,18): expected-closing-tag-but-got-eof
 #document-fragment
 table
 #document
@@ -122,6 +147,7 @@ table
 #data
 <a><tbody><tr>
 #errors
+(1,3): foster-parenting-start-tag
 #document-fragment
 table
 #document
@@ -132,6 +158,7 @@ table
 #data
 <a><tfoot><tr>
 #errors
+(1,3): foster-parenting-start-tag
 #document-fragment
 table
 #document
@@ -142,6 +169,7 @@ table
 #data
 <a><thead><tr>
 #errors
+(1,3): foster-parenting-start-tag
 #document-fragment
 table
 #document
@@ -152,6 +180,7 @@ table
 #data
 <a><tr>
 #errors
+(1,3): foster-parenting-start-tag
 #document-fragment
 table
 #document
@@ -162,6 +191,8 @@ table
 #data
 <a><th>
 #errors
+(1,3): unexpected-start-tag-implies-table-voodoo
+(1,7): unexpected-cell-in-table-body
 #document-fragment
 table
 #document
@@ -173,6 +204,8 @@ table
 #data
 <a><td>
 #errors
+(1,3): unexpected-start-tag-implies-table-voodoo
+(1,7): unexpected-cell-in-table-body
 #document-fragment
 table
 #document
@@ -184,6 +217,7 @@ table
 #data
 <table></table><tbody>
 #errors
+(1,22): unexpected-start-tag
 #document-fragment
 caption
 #document
@@ -192,6 +226,8 @@ caption
 #data
 </table><span>
 #errors
+(1,8): unexpected-end-tag
+(1,14): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -200,6 +236,8 @@ caption
 #data
 <span></table>
 #errors
+(1,14): unexpected-end-tag
+(1,14): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -208,6 +246,8 @@ caption
 #data
 </caption><span>
 #errors
+(1,10): XXX-undefined-error
+(1,16): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -216,6 +256,8 @@ caption
 #data
 <span></caption><span>
 #errors
+(1,16): XXX-undefined-error
+(1,22): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -225,6 +267,8 @@ caption
 #data
 <span><caption><span>
 #errors
+(1,15): unexpected-start-tag
+(1,21): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -234,6 +278,8 @@ caption
 #data
 <span><col><span>
 #errors
+(1,11): unexpected-start-tag
+(1,17): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -243,6 +289,8 @@ caption
 #data
 <span><colgroup><span>
 #errors
+(1,16): unexpected-start-tag
+(1,22): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -252,6 +300,8 @@ caption
 #data
 <span><html><span>
 #errors
+(1,12): non-html-root
+(1,18): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -261,6 +311,8 @@ caption
 #data
 <span><tbody><span>
 #errors
+(1,13): unexpected-start-tag
+(1,19): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -270,6 +322,8 @@ caption
 #data
 <span><td><span>
 #errors
+(1,10): unexpected-start-tag
+(1,16): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -279,6 +333,8 @@ caption
 #data
 <span><tfoot><span>
 #errors
+(1,13): unexpected-start-tag
+(1,19): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -288,6 +344,8 @@ caption
 #data
 <span><thead><span>
 #errors
+(1,13): unexpected-start-tag
+(1,19): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -297,6 +355,8 @@ caption
 #data
 <span><th><span>
 #errors
+(1,10): unexpected-start-tag
+(1,16): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -306,6 +366,8 @@ caption
 #data
 <span><tr><span>
 #errors
+(1,10): unexpected-start-tag
+(1,16): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -315,6 +377,8 @@ caption
 #data
 <span></table><span>
 #errors
+(1,14): unexpected-end-tag
+(1,20): expected-closing-tag-but-got-eof
 #document-fragment
 caption
 #document
@@ -324,6 +388,7 @@ caption
 #data
 </colgroup><col>
 #errors
+(1,11): XXX-undefined-error
 #document-fragment
 colgroup
 #document
@@ -332,6 +397,7 @@ colgroup
 #data
 <a><col>
 #errors
+(1,3): XXX-undefined-error
 #document-fragment
 colgroup
 #document
@@ -340,6 +406,9 @@ colgroup
 #data
 <caption><a>
 #errors
+(1,9): XXX-undefined-error
+(1,12): unexpected-start-tag-implies-table-voodoo
+(1,12): eof-in-table
 #document-fragment
 tbody
 #document
@@ -348,6 +417,9 @@ tbody
 #data
 <col><a>
 #errors
+(1,5): XXX-undefined-error
+(1,8): unexpected-start-tag-implies-table-voodoo
+(1,8): eof-in-table
 #document-fragment
 tbody
 #document
@@ -356,6 +428,9 @@ tbody
 #data
 <colgroup><a>
 #errors
+(1,10): XXX-undefined-error
+(1,13): unexpected-start-tag-implies-table-voodoo
+(1,13): eof-in-table
 #document-fragment
 tbody
 #document
@@ -364,6 +439,9 @@ tbody
 #data
 <tbody><a>
 #errors
+(1,7): XXX-undefined-error
+(1,10): unexpected-start-tag-implies-table-voodoo
+(1,10): eof-in-table
 #document-fragment
 tbody
 #document
@@ -372,6 +450,9 @@ tbody
 #data
 <tfoot><a>
 #errors
+(1,7): XXX-undefined-error
+(1,10): unexpected-start-tag-implies-table-voodoo
+(1,10): eof-in-table
 #document-fragment
 tbody
 #document
@@ -380,6 +461,9 @@ tbody
 #data
 <thead><a>
 #errors
+(1,7): XXX-undefined-error
+(1,10): unexpected-start-tag-implies-table-voodoo
+(1,10): eof-in-table
 #document-fragment
 tbody
 #document
@@ -388,6 +472,9 @@ tbody
 #data
 </table><a>
 #errors
+(1,8): XXX-undefined-error
+(1,11): unexpected-start-tag-implies-table-voodoo
+(1,11): eof-in-table
 #document-fragment
 tbody
 #document
@@ -396,6 +483,7 @@ tbody
 #data
 <a><tr>
 #errors
+(1,3): unexpected-start-tag-implies-table-voodoo
 #document-fragment
 tbody
 #document
@@ -405,16 +493,8 @@ tbody
 #data
 <a><td>
 #errors
-#document-fragment
-tbody
-#document
-| <a>
-| <tr>
-|   <td>
-
-#data
-<a><td>
-#errors
+(1,3): unexpected-start-tag-implies-table-voodoo
+(1,7): unexpected-cell-in-table-body
 #document-fragment
 tbody
 #document
@@ -425,6 +505,20 @@ tbody
 #data
 <a><td>
 #errors
+(1,3): unexpected-start-tag-implies-table-voodoo
+(1,7): unexpected-cell-in-table-body
+#document-fragment
+tbody
+#document
+| <a>
+| <tr>
+|   <td>
+
+#data
+<a><td>
+#errors
+(1,3): unexpected-start-tag-implies-table-voodoo
+(1,7): unexpected-cell-in-table-body
 #document-fragment
 tbody
 #document
@@ -435,6 +529,9 @@ tbody
 #data
 <td><table><tbody><a><tr>
 #errors
+(1,4): unexpected-cell-in-table-body
+(1,21): unexpected-start-tag-implies-table-voodoo
+(1,25): eof-in-table
 #document-fragment
 tbody
 #document
@@ -448,6 +545,7 @@ tbody
 #data
 </tr><td>
 #errors
+(1,5): XXX-undefined-error
 #document-fragment
 tr
 #document
@@ -456,6 +554,8 @@ tr
 #data
 <td><table><a><tr></tr><tr>
 #errors
+(1,14): unexpected-start-tag-implies-table-voodoo
+(1,27): eof-in-table
 #document-fragment
 tr
 #document
@@ -469,6 +569,7 @@ tr
 #data
 <caption><td>
 #errors
+(1,9): XXX-undefined-error
 #document-fragment
 tr
 #document
@@ -477,6 +578,7 @@ tr
 #data
 <col><td>
 #errors
+(1,5): XXX-undefined-error
 #document-fragment
 tr
 #document
@@ -485,6 +587,7 @@ tr
 #data
 <colgroup><td>
 #errors
+(1,10): XXX-undefined-error
 #document-fragment
 tr
 #document
@@ -493,6 +596,7 @@ tr
 #data
 <tbody><td>
 #errors
+(1,7): XXX-undefined-error
 #document-fragment
 tr
 #document
@@ -501,6 +605,7 @@ tr
 #data
 <tfoot><td>
 #errors
+(1,7): XXX-undefined-error
 #document-fragment
 tr
 #document
@@ -509,6 +614,7 @@ tr
 #data
 <thead><td>
 #errors
+(1,7): XXX-undefined-error
 #document-fragment
 tr
 #document
@@ -517,6 +623,7 @@ tr
 #data
 <tr><td>
 #errors
+(1,4): XXX-undefined-error
 #document-fragment
 tr
 #document
@@ -525,6 +632,7 @@ tr
 #data
 </table><td>
 #errors
+(1,8): XXX-undefined-error
 #document-fragment
 tr
 #document
@@ -553,6 +661,8 @@ tr
 #data
 <caption><a>
 #errors
+(1,9): XXX-undefined-error
+(1,12): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -561,6 +671,8 @@ td
 #data
 <col><a>
 #errors
+(1,5): XXX-undefined-error
+(1,8): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -569,6 +681,8 @@ td
 #data
 <colgroup><a>
 #errors
+(1,10): XXX-undefined-error
+(1,13): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -577,6 +691,8 @@ td
 #data
 <tbody><a>
 #errors
+(1,7): XXX-undefined-error
+(1,10): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -585,6 +701,8 @@ td
 #data
 <tfoot><a>
 #errors
+(1,7): XXX-undefined-error
+(1,10): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -593,6 +711,8 @@ td
 #data
 <th><a>
 #errors
+(1,4): XXX-undefined-error
+(1,7): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -601,6 +721,8 @@ td
 #data
 <thead><a>
 #errors
+(1,7): XXX-undefined-error
+(1,10): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -609,6 +731,8 @@ td
 #data
 <tr><a>
 #errors
+(1,4): XXX-undefined-error
+(1,7): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -617,6 +741,8 @@ td
 #data
 </table><a>
 #errors
+(1,8): XXX-undefined-error
+(1,11): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -625,6 +751,8 @@ td
 #data
 </tbody><a>
 #errors
+(1,8): XXX-undefined-error
+(1,11): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -633,6 +761,8 @@ td
 #data
 </td><a>
 #errors
+(1,5): unexpected-end-tag
+(1,8): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -641,6 +771,8 @@ td
 #data
 </tfoot><a>
 #errors
+(1,8): XXX-undefined-error
+(1,11): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -649,6 +781,8 @@ td
 #data
 </thead><a>
 #errors
+(1,8): XXX-undefined-error
+(1,11): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -657,6 +791,8 @@ td
 #data
 </th><a>
 #errors
+(1,5): unexpected-end-tag
+(1,8): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -665,6 +801,8 @@ td
 #data
 </tr><a>
 #errors
+(1,5): XXX-undefined-error
+(1,8): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -673,6 +811,8 @@ td
 #data
 <table><td><td>
 #errors
+(1,11): unexpected-cell-in-table-body
+(1,15): expected-closing-tag-but-got-eof
 #document-fragment
 td
 #document
@@ -685,6 +825,8 @@ td
 #data
 </select><option>
 #errors
+(1,9): XXX-undefined-error
+(1,17): eof-in-select
 #document-fragment
 select
 #document
@@ -693,6 +835,8 @@ select
 #data
 <input><option>
 #errors
+(1,7): unexpected-input-in-select
+(1,15): eof-in-select
 #document-fragment
 select
 #document
@@ -701,6 +845,8 @@ select
 #data
 <keygen><option>
 #errors
+(1,8): unexpected-input-in-select
+(1,16): eof-in-select
 #document-fragment
 select
 #document
@@ -709,6 +855,8 @@ select
 #data
 <textarea><option>
 #errors
+(1,10): unexpected-input-in-select
+(1,18): eof-in-select
 #document-fragment
 select
 #document
@@ -717,6 +865,7 @@ select
 #data
 </html><!--abc-->
 #errors
+(1,7): unexpected-end-tag-after-body-innerhtml
 #document-fragment
 html
 #document
@@ -727,6 +876,7 @@ html
 #data
 </frameset><frame>
 #errors
+(1,11): unexpected-frameset-in-frameset-innerhtml
 #document-fragment
 frameset
 #document

@@ -477,9 +477,7 @@
 | <html>
 |   <head>
 |   <frameset>
-|     <template>
-|       content
-|         <frame>
+|     <frame>
 
 #data
 <template><frame></frame></frameset><frame></frame></template>
@@ -489,8 +487,6 @@
 |   <head>
 |     <template>
 |       content
-|         <frame>
-|         <frame>
 |   <body>
 
 #data
@@ -823,8 +819,6 @@
 |   <head>
 |     <template>
 |       content
-|         <frame>
-|         <frame>
 |   <body>
 
 #data
@@ -1160,7 +1154,6 @@
 |       content
 |         <template>
 |           content
-|             <frame>
 |   <body>
 
 #data
@@ -1273,6 +1266,8 @@
 #data
 <body><table><tr><td><select><template>Foo</template><caption>A</table>
 #errors
+(1,62): unexpected-caption-in-select-in-table
+(1,71): unexpected-table-end-in-caption
 #document
 | <html>
 |   <head>
@@ -1288,10 +1283,11 @@
 |       <caption>
 |         "A"
 
-
 #data
 <body></body><template>
 #errors
+(1,23): template-after-body
+(1,24): eof-in-template
 #document
 | <html>
 |   <head>
@@ -1302,6 +1298,8 @@
 #data
 <head></head><template>
 #errors
+(1,23): template-after-head
+(1,24): eof-in-template
 #document
 | <html>
 |   <head>
@@ -1312,6 +1310,7 @@
 #data
 <head></head><template>Foo</template>
 #errors
+(1,23): template-after-head
 #document
 | <html>
 |   <head>

@@ -1,6 +1,8 @@
 #data
 <foo bar=qux/>
 #errors
+(1,14): expected-doctype-but-got-start-tag
+(1,14): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -11,6 +13,7 @@
 #data
 <p id="status"><noscript><strong>A</strong></noscript><span>B</span></p>
 #errors
+(1,15): expected-doctype-but-got-start-tag
 #document
 | <html>
 |   <head>
@@ -25,6 +28,7 @@
 #data
 <div><sarcasm><div></div></sarcasm></div>
 #errors
+(1,5): expected-doctype-but-got-start-tag
 #document
 | <html>
 |   <head>
@@ -36,6 +40,8 @@
 #data
 <html><body><img src="" border="0" alt="><div>A</div></body></html>
 #errors
+(1,6): expected-doctype-but-got-start-tag
+(1,67): eof-in-attribute-value-double-quote
 #document
 | <html>
 |   <head>
@@ -44,6 +50,10 @@
 #data
 <table><td></tbody>A
 #errors
+(1,7): expected-doctype-but-got-start-tag
+(1,11): unexpected-cell-in-table-body
+(1,20): foster-parenting-character
+(1,20): eof-in-table
 #document
 | <html>
 |   <head>
@@ -57,6 +67,10 @@
 #data
 <table><td></thead>A
 #errors
+(1,7): expected-doctype-but-got-start-tag
+(1,11): unexpected-cell-in-table-body
+(1,19): XXX-undefined-error
+(1,20): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -70,6 +84,10 @@
 #data
 <table><td></tfoot>A
 #errors
+(1,7): expected-doctype-but-got-start-tag
+(1,11): unexpected-cell-in-table-body
+(1,19): XXX-undefined-error
+(1,20): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -83,6 +101,10 @@
 #data
 <table><thead><td></tbody>A
 #errors
+(1,7): expected-doctype-but-got-start-tag
+(1,18): unexpected-cell-in-table-body
+(1,26): XXX-undefined-error
+(1,27): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>

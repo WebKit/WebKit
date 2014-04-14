@@ -1,6 +1,8 @@
 #data
 <!doctype html><p><button><button>
 #errors
+(1,34): unexpected-start-tag-implies-end-tag
+(1,34): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -13,6 +15,7 @@
 #data
 <!doctype html><p><button><address>
 #errors
+(1,35): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -25,6 +28,7 @@
 #data
 <!doctype html><p><button><blockquote>
 #errors
+(1,38): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -37,6 +41,7 @@
 #data
 <!doctype html><p><button><menu>
 #errors
+(1,32): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -49,6 +54,7 @@
 #data
 <!doctype html><p><button><p>
 #errors
+(1,29): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -61,6 +67,7 @@
 #data
 <!doctype html><p><button><ul>
 #errors
+(1,30): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -73,6 +80,7 @@
 #data
 <!doctype html><p><button><h1>
 #errors
+(1,30): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -85,6 +93,7 @@
 #data
 <!doctype html><p><button><h6>
 #errors
+(1,30): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -97,6 +106,7 @@
 #data
 <!doctype html><p><button><listing>
 #errors
+(1,35): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -109,6 +119,7 @@
 #data
 <!doctype html><p><button><pre>
 #errors
+(1,31): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -121,6 +132,7 @@
 #data
 <!doctype html><p><button><form>
 #errors
+(1,32): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -133,6 +145,7 @@
 #data
 <!doctype html><p><button><li>
 #errors
+(1,30): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -145,6 +158,7 @@
 #data
 <!doctype html><p><button><dd>
 #errors
+(1,30): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -157,6 +171,7 @@
 #data
 <!doctype html><p><button><dt>
 #errors
+(1,30): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -169,6 +184,7 @@
 #data
 <!doctype html><p><button><plaintext>
 #errors
+(1,37): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -181,6 +197,7 @@
 #data
 <!doctype html><p><button><table>
 #errors
+(1,33): eof-in-table
 #document
 | <!DOCTYPE html>
 | <html>
@@ -193,6 +210,7 @@
 #data
 <!doctype html><p><button><hr>
 #errors
+(1,30): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -205,6 +223,8 @@
 #data
 <!doctype html><p><button><xmp>
 #errors
+(1,31): expected-named-closing-tag-but-got-eof
+(1,31): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -217,6 +237,8 @@
 #data
 <!doctype html><p><button></p>
 #errors
+(1,30): unexpected-end-tag
+(1,30): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -229,6 +251,7 @@
 #data
 <!doctype html><address><button></address>a
 #errors
+(1,42): end-tag-too-early
 #document
 | <!DOCTYPE html>
 | <html>
@@ -241,6 +264,7 @@
 #data
 <!doctype html><address><button></address>a
 #errors
+(1,42): end-tag-too-early
 #document
 | <!DOCTYPE html>
 | <html>
@@ -253,6 +277,10 @@
 #data
 <p><table></p>
 #errors
+(1,3): expected-doctype-but-got-start-tag
+(1,14): unexpected-end-tag-implies-table-voodoo
+(1,14): unexpected-end-tag
+(1,14): eof-in-table
 #document
 | <html>
 |   <head>
@@ -264,6 +292,7 @@
 #data
 <!doctype html><svg>
 #errors
+(1,20): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -274,6 +303,7 @@
 #data
 <!doctype html><p><figcaption>
 #errors
+(1,30): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -285,6 +315,7 @@
 #data
 <!doctype html><p><summary>
 #errors
+(1,27): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -296,6 +327,8 @@
 #data
 <!doctype html><form><table><form>
 #errors
+(1,34): unexpected-form-in-table
+(1,34): eof-in-table
 #document
 | <!DOCTYPE html>
 | <html>
@@ -307,6 +340,9 @@
 #data
 <!doctype html><table><form><form>
 #errors
+(1,28): unexpected-form-in-table
+(1,34): unexpected-form-in-table
+(1,34): eof-in-table
 #document
 | <!DOCTYPE html>
 | <html>
@@ -318,6 +354,8 @@
 #data
 <!doctype html><table><form></table><form>
 #errors
+(1,28): unexpected-form-in-table
+(1,42): unexpected-start-tag
 #document
 | <!DOCTYPE html>
 | <html>
@@ -329,6 +367,7 @@
 #data
 <!doctype html><svg><foreignObject><p>
 #errors
+(1,38): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -341,6 +380,7 @@
 #data
 <!doctype html><svg><title>abc
 #errors
+(1,30): expected-closing-tag-but-got-eof
 #document
 | <!DOCTYPE html>
 | <html>
@@ -353,6 +393,8 @@
 #data
 <option><span><option>
 #errors
+(1,8): expected-doctype-but-got-start-tag
+(1,22): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -364,6 +406,8 @@
 #data
 <option><option>
 #errors
+(1,8): expected-doctype-but-got-start-tag
+(1,16): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -374,6 +418,9 @@
 #data
 <math><annotation-xml><div>
 #errors
+(1,6): expected-doctype-but-got-start-tag
+(1,27): unexpected-html-element-in-foreign-content
+(1,27): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -385,6 +432,9 @@
 #data
 <math><annotation-xml encoding="application/svg+xml"><div>
 #errors
+(1,6): expected-doctype-but-got-start-tag
+(1,58): unexpected-html-element-in-foreign-content
+(1,58): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -397,6 +447,8 @@
 #data
 <math><annotation-xml encoding="application/xhtml+xml"><div>
 #errors
+(1,6): expected-doctype-but-got-start-tag
+(1,60): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -409,6 +461,8 @@
 #data
 <math><annotation-xml encoding="aPPlication/xhtmL+xMl"><div>
 #errors
+(1,6): expected-doctype-but-got-start-tag
+(1,60): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -421,6 +475,8 @@
 #data
 <math><annotation-xml encoding="text/html"><div>
 #errors
+(1,6): expected-doctype-but-got-start-tag
+(1,48): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -433,6 +489,8 @@
 #data
 <math><annotation-xml encoding="Text/htmL"><div>
 #errors
+(1,6): expected-doctype-but-got-start-tag
+(1,48): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
@@ -445,6 +503,9 @@
 #data
 <math><annotation-xml encoding=" text/html "><div>
 #errors
+(1,6): expected-doctype-but-got-start-tag
+(1,50): unexpected-html-element-in-foreign-content
+(1,50): expected-closing-tag-but-got-eof
 #document
 | <html>
 |   <head>
