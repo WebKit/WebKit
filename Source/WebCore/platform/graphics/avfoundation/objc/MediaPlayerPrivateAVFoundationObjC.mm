@@ -369,6 +369,9 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     [m_loaderDelegate.get() setCallback:0];
     [[m_avAsset.get() resourceLoader] setDelegate:nil queue:0];
+
+    for (auto& pair : m_resourceLoaderMap)
+        pair.value->invalidate();
 #endif
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     [m_videoOutputDelegate setCallback:0];
