@@ -50,15 +50,15 @@ public:
     virtual bool isPlatformCAAnimationRemote() const override { return true; }
 
     virtual PassRefPtr<PlatformCAAnimation> copy() const override;
-    
+
     virtual String keyPath() const override;
-    
+
     virtual CFTimeInterval beginTime() const override;
     virtual void setBeginTime(CFTimeInterval) override;
-    
+
     virtual CFTimeInterval duration() const override;
     virtual void setDuration(CFTimeInterval) override;
-    
+
     virtual float speed() const override;
     virtual void setSpeed(float) override;
 
@@ -73,7 +73,7 @@ public:
 
     virtual FillModeType fillMode() const override;
     virtual void setFillMode(FillModeType) override;
-    
+
     virtual void setTimingFunction(const WebCore::TimingFunction*, bool reverse = false) override;
     void copyTimingFunctionFrom(const WebCore::PlatformCAAnimation*) override;
 
@@ -128,7 +128,12 @@ public:
             ColorKeyType,
             PointKeyType,
             TransformKeyType,
+            FilterKeyType,
         };
+
+        ~KeyframeValue()
+        {
+        }
 
         KeyframeValue(float value = 0)
             : keyType(NumberKeyType)
@@ -153,7 +158,13 @@ public:
             , transform(value)
         {
         }
-        
+
+        KeyframeValue(PassRefPtr<WebCore::FilterOperation> value)
+            : keyType(FilterKeyType)
+            , filter(value)
+        {
+        }
+
         KeyframeValue(const KeyframeValue& other)
         {
             *this = other;
@@ -175,11 +186,14 @@ public:
             case TransformKeyType:
                 transform = other.transform;
                 break;
+            case FilterKeyType:
+                filter = other.filter;
+                break;
             }
-            
+
             return *this;
         }
-        
+
         KeyframeType keyframeType() const { return keyType; }
 
         float numberValue() const
@@ -206,6 +220,12 @@ public:
             return transform;
         }
 
+        const WebCore::FilterOperation* filterValue() const
+        {
+            ASSERT(keyType == FilterKeyType);
+            return filter.get();
+        }
+
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, KeyframeValue&);
 
@@ -217,6 +237,7 @@ public:
             WebCore::FloatPoint3D point;
             WebCore::TransformationMatrix transform;
         };
+        RefPtr<WebCore::FilterOperation> filter;
     };
 
     struct Properties {
@@ -234,10 +255,9 @@ public:
             , additive(false)
             , reverseTimingFunctions(false)
             , hasNonZeroBeginTime(false)
-        
         {
         }
-        
+
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, Properties&);
 
@@ -249,10 +269,10 @@ public:
         double timeOffset;
         float repeatCount;
         float speed;
-        
+
         PlatformCAAnimation::FillModeType fillMode;
         PlatformCAAnimation::ValueFunctionType valueFunction;
-        
+
         bool autoReverses;
         bool removedOnCompletion;
         bool additive;

@@ -33,6 +33,7 @@
 #import "PlatformCALayerRemote.h"
 #import "WebCoreArgumentCoders.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/LengthFunctions.h>
 #import <WebCore/TextStream.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/text/CString.h>
@@ -562,6 +563,7 @@ public:
     RemoteLayerTreeTextStream& operator<<(Color);
     RemoteLayerTreeTextStream& operator<<(FloatRect);
     RemoteLayerTreeTextStream& operator<<(const Vector<WebCore::GraphicsLayer::PlatformLayerID>&);
+    RemoteLayerTreeTextStream& operator<<(const FilterOperation&);
     RemoteLayerTreeTextStream& operator<<(const FilterOperations&);
     RemoteLayerTreeTextStream& operator<<(const PlatformCAAnimationRemote::Properties&);
     RemoteLayerTreeTextStream& operator<<(const RemoteLayerBackingStore&);
@@ -633,57 +635,86 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOpe
     RemoteLayerTreeTextStream& ts = *this;
     for (size_t i = 0; i < filters.size(); ++i) {
         const auto filter = filters.at(i);
-        switch (filter->type()) {
-        case FilterOperation::DEFAULT:
-            ts << "default";
-            break;
-        case FilterOperation::REFERENCE:
-            ts << "reference";
-            break;
-        case FilterOperation::GRAYSCALE:
-            ts << "grayscale";
-            break;
-        case FilterOperation::SEPIA:
-            ts << "sepia";
-            break;
-        case FilterOperation::SATURATE:
-            ts << "saturate";
-            break;
-        case FilterOperation::HUE_ROTATE:
-            ts << "hue rotate";
-            break;
-        case FilterOperation::INVERT:
-            ts << "invert";
-            break;
-        case FilterOperation::OPACITY:
-            ts << "opacity";
-            break;
-        case FilterOperation::BRIGHTNESS:
-            ts << "brightness";
-            break;
-        case FilterOperation::CONTRAST:
-            ts << "contrast";
-            break;
-        case FilterOperation::BLUR:
-            ts << "blur";
-            break;
-        case FilterOperation::DROP_SHADOW:
-            ts << "drop shadow";
-            break;
-        case FilterOperation::PASSTHROUGH:
-            ts << "passthrough";
-            break;
-        case FilterOperation::NONE:
-            ts << "none";
-            break;
-        }
-
+        ts << *filter;
         if (i < filters.size() - 1)
             ts << " ";
     }
     return ts;
 }
-
+    
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOperation& filter)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    switch (filter.type()) {
+    case FilterOperation::REFERENCE:
+        ts << "reference";
+        break;
+    case FilterOperation::GRAYSCALE: {
+        const BasicColorMatrixFilterOperation& colorMatrixFilter = toBasicColorMatrixFilterOperation(filter);
+        ts << "grayscale(" << colorMatrixFilter.amount() << ")";
+        break;
+    }
+    case FilterOperation::SEPIA: {
+        const BasicColorMatrixFilterOperation& colorMatrixFilter = toBasicColorMatrixFilterOperation(filter);
+        ts << "sepia(" << colorMatrixFilter.amount() << ")";
+        break;
+    }
+    case FilterOperation::SATURATE: {
+        const BasicColorMatrixFilterOperation& colorMatrixFilter = toBasicColorMatrixFilterOperation(filter);
+        ts << "saturate(" << colorMatrixFilter.amount() << ")";
+        break;
+    }
+    case FilterOperation::HUE_ROTATE: {
+        const BasicColorMatrixFilterOperation& colorMatrixFilter = toBasicColorMatrixFilterOperation(filter);
+        ts << "hue-rotate(" << colorMatrixFilter.amount() << ")";
+        break;
+    }
+    case FilterOperation::INVERT: {
+        const BasicComponentTransferFilterOperation& componentTransferFilter = toBasicComponentTransferFilterOperation(filter);
+        ts << "invert(" << componentTransferFilter.amount() << ")";
+        break;
+    }
+    case FilterOperation::OPACITY: {
+        const BasicComponentTransferFilterOperation& componentTransferFilter = toBasicComponentTransferFilterOperation(filter);
+        ts << "opacity(" << componentTransferFilter.amount() << ")";
+        break;
+    }
+    case FilterOperation::BRIGHTNESS: {
+        const BasicComponentTransferFilterOperation& componentTransferFilter = toBasicComponentTransferFilterOperation(filter);
+        ts << "brightness(" << componentTransferFilter.amount() << ")";
+        break;
+    }
+    case FilterOperation::CONTRAST: {
+        const BasicComponentTransferFilterOperation& componentTransferFilter = toBasicComponentTransferFilterOperation(filter);
+        ts << "contrast(" << componentTransferFilter.amount() << ")";
+        break;
+    }
+    case FilterOperation::BLUR: {
+        const BlurFilterOperation& blurFilter = toBlurFilterOperation(filter);
+        ts << "blur(" << floatValueForLength(blurFilter.stdDeviation(), 0) << ")";
+        break;
+    }
+    case FilterOperation::DROP_SHADOW: {
+        const DropShadowFilterOperation& dropShadowFilter = toDropShadowFilterOperation(filter);
+        ts << "drop-shadow(" << dropShadowFilter.x() << " " << dropShadowFilter.y() << " " << dropShadowFilter.location() << " ";
+        ts << dropShadowFilter.color() << ")";
+        break;
+    }
+    case FilterOperation::PASSTHROUGH:
+        ts << "passthrough";
+        break;
+    case FilterOperation::DEFAULT: {
+        const DefaultFilterOperation& defaultFilter = toDefaultFilterOperation(filter);
+        ts << "default type=" << (int)defaultFilter.representedType();
+        break;
+    }
+    case FilterOperation::NONE:
+        ts << "none";
+        break;
+    }
+    return ts;
+}
+    
 RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(PlatformCAAnimation::AnimationType type)
 {
     RemoteLayerTreeTextStream& ts = *this;
@@ -745,6 +776,13 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const PlatformC
     case PlatformCAAnimationRemote::KeyframeValue::TransformKeyType:
         ts << "transform=";
         ts << value.transformValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::FilterKeyType:
+        ts << "filter=";
+        if (value.filterValue())
+            ts << *value.filterValue();
+        else
+            ts << "null";
         break;
     }
     return ts;

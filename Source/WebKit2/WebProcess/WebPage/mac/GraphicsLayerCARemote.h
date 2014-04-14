@@ -57,8 +57,6 @@ private:
     // PlatformCALayerRemote can't currently proxy directly composited image contents, so opt out of this optimization.
     virtual bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
     
-    virtual bool addAnimation(const WebCore::KeyframeValueList&, const WebCore::FloatSize&, const WebCore::Animation*, const String&, double);
-    
     RemoteLayerTreeContext* m_context;
 };
 

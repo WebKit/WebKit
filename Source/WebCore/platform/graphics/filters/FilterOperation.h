@@ -69,6 +69,8 @@ public:
 
     virtual ~FilterOperation() { }
 
+    virtual PassRefPtr<FilterOperation> clone() const = 0;
+
     virtual bool operator==(const FilterOperation&) const = 0;
     bool operator!=(const FilterOperation& o) const { return !(*this == o); }
 
@@ -124,6 +126,11 @@ public:
         return adoptRef(new DefaultFilterOperation(representedType));
     }
 
+    virtual PassRefPtr<FilterOperation> clone() const override
+    {
+        return adoptRef(new DefaultFilterOperation(representedType()));
+    }
+
     OperationType representedType() const { return m_representedType; }
 
 private:
@@ -144,6 +151,11 @@ FILTEROPERATION_TYPE_CASTS(DefaultFilterOperation, type() == FilterOperation::DE
 class PassthroughFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<PassthroughFilterOperation> create()
+    {
+        return adoptRef(new PassthroughFilterOperation());
+    }
+
+    virtual PassRefPtr<FilterOperation> clone() const override
     {
         return adoptRef(new PassthroughFilterOperation());
     }
@@ -169,6 +181,13 @@ public:
         return adoptRef(new ReferenceFilterOperation(url, fragment));
     }
     virtual ~ReferenceFilterOperation();
+
+    virtual PassRefPtr<FilterOperation> clone() const override
+    {
+        // Reference filters cannot be cloned.
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 
     virtual bool affectsOpacity() const override { return true; }
     virtual bool movesPixels() const override { return true; }
@@ -204,6 +223,11 @@ public:
         return adoptRef(new BasicColorMatrixFilterOperation(amount, type));
     }
 
+    virtual PassRefPtr<FilterOperation> clone() const override
+    {
+        return adoptRef(new BasicColorMatrixFilterOperation(amount(), type()));
+    }
+
     double amount() const { return m_amount; }
 
     virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) override;
@@ -230,6 +254,11 @@ public:
     static PassRefPtr<BasicComponentTransferFilterOperation> create(double amount, OperationType type)
     {
         return adoptRef(new BasicComponentTransferFilterOperation(amount, type));
+    }
+
+    virtual PassRefPtr<FilterOperation> clone() const override
+    {
+        return adoptRef(new BasicComponentTransferFilterOperation(amount(), type()));
     }
 
     double amount() const { return m_amount; }
@@ -261,6 +290,11 @@ public:
         return adoptRef(new BlurFilterOperation(std::move(stdDeviation)));
     }
 
+    virtual PassRefPtr<FilterOperation> clone() const override
+    {
+        return adoptRef(new BlurFilterOperation(stdDeviation()));
+    }
+
     const Length& stdDeviation() const { return m_stdDeviation; }
 
     virtual bool affectsOpacity() const override { return true; }
@@ -287,6 +321,11 @@ public:
     static PassRefPtr<DropShadowFilterOperation> create(const IntPoint& location, int stdDeviation, Color color)
     {
         return adoptRef(new DropShadowFilterOperation(location, stdDeviation, color));
+    }
+
+    virtual PassRefPtr<FilterOperation> clone() const override
+    {
+        return adoptRef(new DropShadowFilterOperation(location(), stdDeviation(), color()));
     }
 
     int x() const { return m_location.x(); }

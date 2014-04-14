@@ -32,6 +32,7 @@
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/PlatformCAAnimationMac.h>
+#import <WebCore/PlatformCAFilters.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
@@ -101,6 +102,9 @@ void PlatformCAAnimationRemote::KeyframeValue::encode(IPC::ArgumentEncoder& enco
     case TransformKeyType:
         encoder << transform;
         break;
+    case FilterKeyType:
+        encoder << *filter.get();
+        break;
     }
 }
 
@@ -124,6 +128,10 @@ bool PlatformCAAnimationRemote::KeyframeValue::decode(IPC::ArgumentDecoder& deco
         break;
     case TransformKeyType:
         if (!decoder.decode(value.transform))
+            return false;
+        break;
+    case FilterKeyType:
+        if (!decodeFilterOperation(decoder, value.filter))
             return false;
         break;
     }
@@ -446,7 +454,11 @@ void PlatformCAAnimationRemote::setFromValue(const Color& value)
 #if ENABLE(CSS_FILTERS)
 void PlatformCAAnimationRemote::setFromValue(const FilterOperation* operation, int internalFilterPropertyIndex)
 {
-    ASSERT_NOT_REACHED();
+    if (animationType() != Basic)
+        return;
+
+    m_properties.keyValues.resize(2);
+    m_properties.keyValues[0] = KeyframeValue(operation->clone());
 }
 #endif
 
@@ -494,7 +506,13 @@ void PlatformCAAnimationRemote::setToValue(const Color& value)
 #if ENABLE(CSS_FILTERS)
 void PlatformCAAnimationRemote::setToValue(const FilterOperation* operation, int internalFilterPropertyIndex)
 {
-    ASSERT_NOT_REACHED();
+    if (animationType() != Basic)
+        return;
+    
+    UNUSED_PARAM(internalFilterPropertyIndex);
+    ASSERT(operation);
+    m_properties.keyValues.resize(2);
+    m_properties.keyValues[1] = KeyframeValue(operation->clone());
 }
 #endif
 
@@ -561,10 +579,20 @@ void PlatformCAAnimationRemote::setValues(const Vector<Color>& values)
 }
 
 #if ENABLE(CSS_FILTERS)
-void PlatformCAAnimationRemote::setValues(const Vector<RefPtr<FilterOperation>>&, int internalFilterPropertyIndex)
+void PlatformCAAnimationRemote::setValues(const Vector<RefPtr<FilterOperation>>& values, int internalFilterPropertyIndex)
 {
     UNUSED_PARAM(internalFilterPropertyIndex);
-    ASSERT_NOT_REACHED();
+    
+    if (animationType() != Keyframe)
+        return;
+        
+    Vector<KeyframeValue> keyframes;
+    keyframes.reserveInitialCapacity(values.size());
+    
+    for (size_t i = 0; i < values.size(); ++i)
+        keyframes.uncheckedAppend(KeyframeValue(values[i]));
+    
+    m_properties.keyValues = std::move(keyframes);
 }
 #endif
 
@@ -617,6 +645,9 @@ static NSObject* animationValueFromKeyframeValue(const PlatformCAAnimationRemote
     }
     case PlatformCAAnimationRemote::KeyframeValue::TransformKeyType:
         return [NSValue valueWithCATransform3D:keyframeValue.transformValue()];
+            
+    case PlatformCAAnimationRemote::KeyframeValue::FilterKeyType:
+        return [PlatformCAFilters::filterValueForOperation(keyframeValue.filterValue(), 0 /* unused */).leakRef() autorelease];
     }
 }
 

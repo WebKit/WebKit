@@ -276,9 +276,9 @@ bool ArgumentCoder<IntSize>::decode(ArgumentDecoder& decoder, IntSize& intSize)
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
 }
 
-template<> struct ArgumentCoder<WebCore::Region::Span> {
-    static void encode(ArgumentEncoder&, const WebCore::Region::Span&);
-    static bool decode(ArgumentDecoder&, WebCore::Region::Span&);
+template<> struct ArgumentCoder<Region::Span> {
+    static void encode(ArgumentEncoder&, const Region::Span&);
+    static bool decode(ArgumentDecoder&, Region::Span&);
 };
 
 void ArgumentCoder<Region::Span>::encode(ArgumentEncoder& encoder, const Region::Span& span)
@@ -842,7 +842,7 @@ void ArgumentCoder<SelectionRect>::encode(ArgumentEncoder& encoder, const Select
 
 bool ArgumentCoder<SelectionRect>::decode(ArgumentDecoder& decoder, SelectionRect& selectionRect)
 {
-    WebCore::IntRect rect;
+    IntRect rect;
     if (!decoder.decode(rect))
         return false;
     selectionRect.setRect(rect);
@@ -850,7 +850,7 @@ bool ArgumentCoder<SelectionRect>::decode(ArgumentDecoder& decoder, SelectionRec
     uint32_t direction;
     if (!decoder.decode(direction))
         return false;
-    selectionRect.setDirection((WebCore::TextDirection)direction);
+    selectionRect.setDirection((TextDirection)direction);
 
     int intValue;
     if (!decoder.decode(intValue))
@@ -1121,7 +1121,7 @@ static bool decodeSharedBuffer(ArgumentDecoder& decoder, RefPtr<SharedBuffer>& b
     return true;
 }
 
-void ArgumentCoder<PasteboardWebContent>::encode(ArgumentEncoder& encoder, const WebCore::PasteboardWebContent& content)
+void ArgumentCoder<PasteboardWebContent>::encode(ArgumentEncoder& encoder, const PasteboardWebContent& content)
 {
     encoder << content.canSmartCopyOrDelete;
     encoder << content.dataInStringFormat;
@@ -1136,7 +1136,7 @@ void ArgumentCoder<PasteboardWebContent>::encode(ArgumentEncoder& encoder, const
         encodeSharedBuffer(encoder, content.clientData[i].get());
 }
 
-bool ArgumentCoder<PasteboardWebContent>::decode(ArgumentDecoder& decoder, WebCore::PasteboardWebContent& content)
+bool ArgumentCoder<PasteboardWebContent>::decode(ArgumentDecoder& decoder, PasteboardWebContent& content)
 {
     if (!decoder.decode(content.canSmartCopyOrDelete))
         return false;
@@ -1160,7 +1160,7 @@ bool ArgumentCoder<PasteboardWebContent>::decode(ArgumentDecoder& decoder, WebCo
     return true;
 }
 
-void ArgumentCoder<PasteboardImage>::encode(ArgumentEncoder& encoder, const WebCore::PasteboardImage& pasteboardImage)
+void ArgumentCoder<PasteboardImage>::encode(ArgumentEncoder& encoder, const PasteboardImage& pasteboardImage)
 {
     encodeImage(encoder, pasteboardImage.image.get());
     encoder << pasteboardImage.url.url;
@@ -1170,7 +1170,7 @@ void ArgumentCoder<PasteboardImage>::encode(ArgumentEncoder& encoder, const WebC
         encodeSharedBuffer(encoder, pasteboardImage.resourceData.get());
 }
 
-bool ArgumentCoder<PasteboardImage>::decode(ArgumentDecoder& decoder, WebCore::PasteboardImage& pasteboardImage)
+bool ArgumentCoder<PasteboardImage>::decode(ArgumentDecoder& decoder, PasteboardImage& pasteboardImage)
 {
     if (!decodeImage(decoder, pasteboardImage.image))
         return false;
@@ -1319,11 +1319,11 @@ bool ArgumentCoder<URL>::decode(ArgumentDecoder& decoder, URL& result)
     String urlAsString;
     if (!decoder.decode(urlAsString))
         return false;
-    result = URL(WebCore::ParsedURLString, urlAsString);
+    result = URL(ParsedURLString, urlAsString);
     return true;
 }
 
-void ArgumentCoder<WebCore::UserStyleSheet>::encode(ArgumentEncoder& encoder, const WebCore::UserStyleSheet& userStyleSheet)
+void ArgumentCoder<UserStyleSheet>::encode(ArgumentEncoder& encoder, const UserStyleSheet& userStyleSheet)
 {
     encoder << userStyleSheet.source();
     encoder << userStyleSheet.url();
@@ -1333,7 +1333,7 @@ void ArgumentCoder<WebCore::UserStyleSheet>::encode(ArgumentEncoder& encoder, co
     encoder.encodeEnum(userStyleSheet.level());
 }
 
-bool ArgumentCoder<WebCore::UserStyleSheet>::decode(ArgumentDecoder& decoder, WebCore::UserStyleSheet& userStyleSheet)
+bool ArgumentCoder<UserStyleSheet>::decode(ArgumentDecoder& decoder, UserStyleSheet& userStyleSheet)
 {
     String source;
     if (!decoder.decode(source))
@@ -1351,19 +1351,19 @@ bool ArgumentCoder<WebCore::UserStyleSheet>::decode(ArgumentDecoder& decoder, We
     if (!decoder.decode(blacklist))
         return false;
 
-    WebCore::UserContentInjectedFrames injectedFrames;
+    UserContentInjectedFrames injectedFrames;
     if (!decoder.decodeEnum(injectedFrames))
         return false;
 
-    WebCore::UserStyleLevel level;
+    UserStyleLevel level;
     if (!decoder.decodeEnum(level))
         return false;
 
-    userStyleSheet = WebCore::UserStyleSheet(source, url, whitelist, blacklist, injectedFrames, level);
+    userStyleSheet = UserStyleSheet(source, url, whitelist, blacklist, injectedFrames, level);
     return true;
 }
 
-void ArgumentCoder<WebCore::UserScript>::encode(ArgumentEncoder& encoder, const WebCore::UserScript& userScript)
+void ArgumentCoder<UserScript>::encode(ArgumentEncoder& encoder, const UserScript& userScript)
 {
     encoder << userScript.source();
     encoder << userScript.url();
@@ -1373,7 +1373,7 @@ void ArgumentCoder<WebCore::UserScript>::encode(ArgumentEncoder& encoder, const 
     encoder.encodeEnum(userScript.injectedFrames());
 }
 
-bool ArgumentCoder<WebCore::UserScript>::decode(ArgumentDecoder& decoder, WebCore::UserScript& userScript)
+bool ArgumentCoder<UserScript>::decode(ArgumentDecoder& decoder, UserScript& userScript)
 {
     String source;
     if (!decoder.decode(source))
@@ -1391,19 +1391,19 @@ bool ArgumentCoder<WebCore::UserScript>::decode(ArgumentDecoder& decoder, WebCor
     if (!decoder.decode(blacklist))
         return false;
 
-    WebCore::UserScriptInjectionTime injectionTime;
+    UserScriptInjectionTime injectionTime;
     if (!decoder.decodeEnum(injectionTime))
         return false;
 
-    WebCore::UserContentInjectedFrames injectedFrames;
+    UserContentInjectedFrames injectedFrames;
     if (!decoder.decodeEnum(injectedFrames))
         return false;
 
-    userScript = WebCore::UserScript(source, url, whitelist, blacklist, injectionTime, injectedFrames);
+    userScript = UserScript(source, url, whitelist, blacklist, injectionTime, injectedFrames);
     return true;
 }
 
-void ArgumentCoder<WebCore::ScrollableAreaParameters>::encode(ArgumentEncoder& encoder, const WebCore::ScrollableAreaParameters& parameters)
+void ArgumentCoder<ScrollableAreaParameters>::encode(ArgumentEncoder& encoder, const ScrollableAreaParameters& parameters)
 {
     encoder.encodeEnum(parameters.horizontalScrollElasticity);
     encoder.encodeEnum(parameters.verticalScrollElasticity);
@@ -1415,7 +1415,7 @@ void ArgumentCoder<WebCore::ScrollableAreaParameters>::encode(ArgumentEncoder& e
     encoder << parameters.hasEnabledVerticalScrollbar;
 }
 
-bool ArgumentCoder<WebCore::ScrollableAreaParameters>::decode(ArgumentDecoder& decoder, WebCore::ScrollableAreaParameters& params)
+bool ArgumentCoder<ScrollableAreaParameters>::decode(ArgumentDecoder& decoder, ScrollableAreaParameters& params)
 {
     if (!decoder.decodeEnum(params.horizontalScrollElasticity))
         return false;
@@ -1435,7 +1435,7 @@ bool ArgumentCoder<WebCore::ScrollableAreaParameters>::decode(ArgumentDecoder& d
     return true;
 }
 
-void ArgumentCoder<WebCore::FixedPositionViewportConstraints>::encode(ArgumentEncoder& encoder, const WebCore::FixedPositionViewportConstraints& viewportConstraints)
+void ArgumentCoder<FixedPositionViewportConstraints>::encode(ArgumentEncoder& encoder, const FixedPositionViewportConstraints& viewportConstraints)
 {
     encoder << viewportConstraints.alignmentOffset();
     encoder << viewportConstraints.anchorEdges();
@@ -1444,7 +1444,7 @@ void ArgumentCoder<WebCore::FixedPositionViewportConstraints>::encode(ArgumentEn
     encoder << viewportConstraints.layerPositionAtLastLayout();
 }
 
-bool ArgumentCoder<WebCore::FixedPositionViewportConstraints>::decode(ArgumentDecoder& decoder, WebCore::FixedPositionViewportConstraints& viewportConstraints)
+bool ArgumentCoder<FixedPositionViewportConstraints>::decode(ArgumentDecoder& decoder, FixedPositionViewportConstraints& viewportConstraints)
 {
     FloatSize alignmentOffset;
     if (!decoder.decode(alignmentOffset))
@@ -1462,7 +1462,7 @@ bool ArgumentCoder<WebCore::FixedPositionViewportConstraints>::decode(ArgumentDe
     if (!decoder.decode(layerPositionAtLastLayout))
         return false;
 
-    viewportConstraints = WebCore::FixedPositionViewportConstraints();
+    viewportConstraints = FixedPositionViewportConstraints();
     viewportConstraints.setAlignmentOffset(alignmentOffset);
     viewportConstraints.setAnchorEdges(anchorEdges);
 
@@ -1472,7 +1472,7 @@ bool ArgumentCoder<WebCore::FixedPositionViewportConstraints>::decode(ArgumentDe
     return true;
 }
 
-void ArgumentCoder<WebCore::StickyPositionViewportConstraints>::encode(ArgumentEncoder& encoder, const WebCore::StickyPositionViewportConstraints& viewportConstraints)
+void ArgumentCoder<StickyPositionViewportConstraints>::encode(ArgumentEncoder& encoder, const StickyPositionViewportConstraints& viewportConstraints)
 {
     encoder << viewportConstraints.alignmentOffset();
     encoder << viewportConstraints.anchorEdges();
@@ -1490,7 +1490,7 @@ void ArgumentCoder<WebCore::StickyPositionViewportConstraints>::encode(ArgumentE
     encoder << viewportConstraints.layerPositionAtLastLayout();
 }
 
-bool ArgumentCoder<WebCore::StickyPositionViewportConstraints>::decode(ArgumentDecoder& decoder, WebCore::StickyPositionViewportConstraints& viewportConstraints)
+bool ArgumentCoder<StickyPositionViewportConstraints>::decode(ArgumentDecoder& decoder, StickyPositionViewportConstraints& viewportConstraints)
 {
     FloatSize alignmentOffset;
     if (!decoder.decode(alignmentOffset))
@@ -1536,7 +1536,7 @@ bool ArgumentCoder<WebCore::StickyPositionViewportConstraints>::decode(ArgumentD
     if (!decoder.decode(layerPositionAtLastLayout))
         return false;
     
-    viewportConstraints = WebCore::StickyPositionViewportConstraints();
+    viewportConstraints = StickyPositionViewportConstraints();
     viewportConstraints.setAlignmentOffset(alignmentOffset);
     viewportConstraints.setAnchorEdges(anchorEdges);
 
@@ -1556,63 +1556,58 @@ bool ArgumentCoder<WebCore::StickyPositionViewportConstraints>::decode(ArgumentD
 }
 
 #if ENABLE(CSS_FILTERS) && !USE(COORDINATED_GRAPHICS)
-static void encodeFilterOperation(ArgumentEncoder& encoder, const FilterOperation& filter)
+void ArgumentCoder<FilterOperation>::encode(ArgumentEncoder& encoder, const FilterOperation& filter)
 {
     encoder.encodeEnum(filter.type());
 
     switch (filter.type()) {
     case FilterOperation::REFERENCE: {
-        const auto& referenceFilter = static_cast<const ReferenceFilterOperation&>(filter);
-        encoder << referenceFilter.url();
-        encoder << referenceFilter.fragment();
+        ASSERT_NOT_REACHED();
         break;
     }
     case FilterOperation::GRAYSCALE:
     case FilterOperation::SEPIA:
     case FilterOperation::SATURATE:
     case FilterOperation::HUE_ROTATE:
-        encoder << static_cast<const BasicColorMatrixFilterOperation&>(filter).amount();
+        encoder << toBasicColorMatrixFilterOperation(filter).amount();
         break;
     case FilterOperation::INVERT:
     case FilterOperation::OPACITY:
     case FilterOperation::BRIGHTNESS:
     case FilterOperation::CONTRAST:
-        encoder << static_cast<const BasicComponentTransferFilterOperation&>(filter).amount();
+        encoder << toBasicComponentTransferFilterOperation(filter).amount();
         break;
     case FilterOperation::BLUR:
-        encoder << static_cast<const BlurFilterOperation&>(filter).stdDeviation();
+        encoder << toBlurFilterOperation(filter).stdDeviation();
         break;
     case FilterOperation::DROP_SHADOW: {
-        const auto& dropShadowFilter = static_cast<const DropShadowFilterOperation&>(filter);
+        const auto& dropShadowFilter = toDropShadowFilterOperation(filter);
         encoder << dropShadowFilter.location();
         encoder << dropShadowFilter.stdDeviation();
         encoder << dropShadowFilter.color();
         break;
     }
     case FilterOperation::DEFAULT:
+        encoder.encodeEnum(toDefaultFilterOperation(filter).representedType());
+        break;
     case FilterOperation::PASSTHROUGH:
     case FilterOperation::NONE:
         break;
-    };
+    }
 }
 
-static bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperation>& filter)
+bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperation>& filter)
 {
     FilterOperation::OperationType type;
     if (!decoder.decodeEnum(type))
         return false;
 
     switch (type) {
-    case FilterOperation::REFERENCE: {
-        String url;
-        String fragment;
-        if (!decoder.decode(url))
-            return false;
-        if (!decoder.decode(fragment))
-            return false;
-        filter = ReferenceFilterOperation::create(url, fragment);
+    case FilterOperation::PASSTHROUGH:
+    case FilterOperation::NONE:
+    case FilterOperation::REFERENCE:
+        ASSERT_NOT_REACHED();
         break;
-    }
     case FilterOperation::GRAYSCALE:
     case FilterOperation::SEPIA:
     case FilterOperation::SATURATE:
@@ -1653,12 +1648,15 @@ static bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperati
         filter = DropShadowFilterOperation::create(location, stdDeviation, color);
         break;
     }
-    case FilterOperation::DEFAULT:
-    case FilterOperation::PASSTHROUGH:
-    case FilterOperation::NONE:
+    case FilterOperation::DEFAULT: {
+        FilterOperation::OperationType representedType;
+        if (!decoder.decodeEnum(representedType))
+            return false;
+        filter = DefaultFilterOperation::create(representedType);
         break;
-    };
-
+    }
+    }
+            
     return true;
 }
 
@@ -1668,7 +1666,7 @@ void ArgumentCoder<FilterOperations>::encode(ArgumentEncoder& encoder, const Fil
     encoder << static_cast<uint64_t>(filters.size());
 
     for (const auto& filter : filters.operations())
-        encodeFilterOperation(encoder, *filter);
+        encoder << *filter;
 }
 
 bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOperations& filters)

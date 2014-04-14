@@ -37,6 +37,7 @@ class Credential;
 class CubicBezierTimingFunction;
 class Cursor;
 class DatabaseDetails;
+class FilterOperation;
 class FilterOperations;
 class FloatPoint;
 class FloatPoint3D;
@@ -373,6 +374,11 @@ template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(ArgumentEncoder&, const WebCore::FilterOperations&);
     static bool decode(ArgumentDecoder&, WebCore::FilterOperations&);
 };
+    
+template<> struct ArgumentCoder<WebCore::FilterOperation> {
+    static void encode(ArgumentEncoder&, const WebCore::FilterOperation&);
+};
+bool decodeFilterOperation(ArgumentDecoder&, RefPtr<WebCore::FilterOperation>&);
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
