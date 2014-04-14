@@ -1,3 +1,17 @@
+2014-04-13  Andy Estes  <aestes@apple.com>
+
+        Relax adoption requirements of RefCounted objects that are NeverDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=131593
+
+        Reviewed by Dan Bernstein.
+
+        RefCounted objects that are created by NeverDestroyed<> won't have a
+        RefPtr adopting them, so call relaxAdoptionRequirements().
+
+        * wtf/NeverDestroyed.h:
+        (WTF::NeverDestroyed::NeverDestroyed):
+        (WTF::NeverDestroyed::MaybeRelax::MaybeRelax):
+
 2014-04-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Clean up some 64-bit warnings from Visual Studio analyzer
