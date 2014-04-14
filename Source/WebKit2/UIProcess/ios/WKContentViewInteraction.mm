@@ -1241,31 +1241,43 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 - (void)_didUpdateBlockSelectionWithTouch:(SelectionTouch)touch withFlags:(SelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold
 {
     [_webSelectionAssistant blockSelectionChangedWithTouch:toUIWKSelectionTouch(touch) withFlags:toUIWKSelectionFlags(flags) growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
+    if (touch != SelectionTouch::Started && touch != SelectionTouch::Moved)
+        _usingGestureForSelection = NO;
 }
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state
 {
-    _page->selectWithGesture(WebCore::IntPoint(point), CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), GestureCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
+    _usingGestureForSelection = YES;
+    _page->selectWithGesture(WebCore::IntPoint(point), CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), GestureCallback::create([self, state](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
         selectionChangedWithGesture(error, self, point, gestureType, gestureState, flags);
+        if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
+            _usingGestureForSelection = NO;
     }));
 }
 
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart
 {
-    _page->updateSelectionWithTouches(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), baseIsStart, TouchesCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t touch) {
+    _usingGestureForSelection = YES;
+    _page->updateSelectionWithTouches(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), baseIsStart, TouchesCallback::create([self, touch](bool error, const WebCore::IntPoint& point, uint32_t touch) {
         selectionChangedWithTouch(error, self, point, touch);
+        if (touch != UIWKSelectionTouchStarted && touch != UIWKSelectionTouchMoved)
+            _usingGestureForSelection = NO;
     }));
 }
 
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState
 {
-    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(gestureState)), GestureCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
+    _usingGestureForSelection = YES;
+    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(gestureState)), GestureCallback::create([self, gestureState](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
         selectionChangedWithGesture(error, self, point, gestureType, gestureState, flags);
+        if (gestureState == UIGestureRecognizerStateEnded || gestureState == UIGestureRecognizerStateCancelled)
+            _usingGestureForSelection = NO;
     }));
 }
 
 - (void)changeBlockSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch forHandle:(UIWKHandlePosition)handle
 {
+    _usingGestureForSelection = YES;
     _page->updateBlockSelectionWithTouch(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), static_cast<uint32_t>(toSelectionHandlePosition(handle)));
 }
 
@@ -2001,6 +2013,10 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 - (void)_selectionChanged
 {
     _selectionNeedsUpdate = YES;
+    // If we are changing the selection with a gesture there is no need
+    // to wait to paint the selection.
+    if (_usingGestureForSelection)
+        [self _updateChangedSelection];
 }
 
 - (void)_updateChangedSelection

@@ -1,3 +1,24 @@
+2014-04-14  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION(r166027) Menu is shown and immediately hidden after doubletap gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=131646
+        <rdar://problem/16614374>
+
+        Reviewed by Benjamin Poulain.
+
+        This is a problem with every gesture that changes the selection
+        We don't need to delay updating the selection if the selection is
+        being changed with a gesture.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didUpdateBlockSelectionWithTouch:withFlags:growThreshold:shrinkThreshold:]):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:]):
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:]):
+        (-[WKContentView changeSelectionWithTouchesFrom:to:withGesture:withState:]):
+        (-[WKContentView changeBlockSelectionWithTouchAt:withSelectionTouch:forHandle:]):
+        (-[WKContentView _selectionChanged]):
+
 2014-04-14  Dan Bernstein  <mitz@apple.com>
 
         Let the bundle form client know whether a change in a text field was initiated by user typing

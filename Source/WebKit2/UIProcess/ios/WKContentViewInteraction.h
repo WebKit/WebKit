@@ -115,6 +115,7 @@ struct WKAutoCorrectionData {
     BOOL _hasValidPositionInformation;
     BOOL _isTapHighlightIDValid;
     BOOL _selectionNeedsUpdate;
+    BOOL _usingGestureForSelection;
 }
 
 @end
