@@ -49,13 +49,14 @@ PassRefPtr<PageOverlay> PageOverlay::create(Client* client, OverlayType overlayT
 
 PageOverlay::PageOverlay(Client* client, OverlayType overlayType)
     : m_client(client)
-    , m_webPage(0)
+    , m_webPage(nullptr)
     , m_fadeAnimationTimer(RunLoop::main(), this, &PageOverlay::fadeAnimationTimerFired)
-    , m_fadeAnimationStartTime(0.0)
+    , m_fadeAnimationStartTime(0)
     , m_fadeAnimationDuration(fadeAnimationDuration)
     , m_fadeAnimationType(NoAnimation)
-    , m_fractionFadedIn(1.0)
+    , m_fractionFadedIn(1)
     , m_overlayType(overlayType)
+    , m_backgroundColor(Color::transparent)
 {
 }
 
@@ -101,10 +102,24 @@ IntRect PageOverlay::frame() const
 
 void PageOverlay::setFrame(IntRect frame)
 {
+    if (m_overrideFrame == frame)
+        return;
+
     m_overrideFrame = frame;
 
     if (m_webPage)
-        m_webPage->pageOverlayController().didChangeOverlayFrame(this);
+        m_webPage->pageOverlayController().didChangeOverlayFrame(*this);
+}
+
+void PageOverlay::setBackgroundColor(RGBA32 backgroundColor)
+{
+    if (m_backgroundColor == backgroundColor)
+        return;
+
+    m_backgroundColor = backgroundColor;
+
+    if (m_webPage)
+        m_webPage->pageOverlayController().didChangeOverlayBackgroundColor(*this);
 }
 
 void PageOverlay::setPage(WebPage* webPage)
@@ -118,10 +133,11 @@ void PageOverlay::setPage(WebPage* webPage)
 
 void PageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
 {
-    if (m_webPage) {
-        m_webPage->pageOverlayController().setPageOverlayOpacity(this, m_fractionFadedIn);
-        m_webPage->pageOverlayController().setPageOverlayNeedsDisplay(this, dirtyRect);
-    }
+    if (!m_webPage)
+        return;
+
+    m_webPage->pageOverlayController().setPageOverlayOpacity(*this, m_fractionFadedIn);
+    m_webPage->pageOverlayController().setPageOverlayNeedsDisplay(*this, dirtyRect);
 }
 
 void PageOverlay::setNeedsDisplay()
@@ -161,7 +177,7 @@ WKArrayRef PageOverlay::copyAccessibilityAttributeNames(bool parameterizedNames)
 
 void PageOverlay::startFadeInAnimation()
 {
-    m_fractionFadedIn = 0.0;
+    m_fractionFadedIn = 0;
     m_fadeAnimationType = FadeInAnimation;
 
     startFadeAnimation();
@@ -169,7 +185,7 @@ void PageOverlay::startFadeInAnimation()
 
 void PageOverlay::startFadeOutAnimation()
 {
-    m_fractionFadedIn = 1.0;
+    m_fractionFadedIn = 1;
     m_fadeAnimationType = FadeOutAnimation;
 
     startFadeAnimation();
@@ -184,8 +200,6 @@ void PageOverlay::stopFadeOutAnimation()
 void PageOverlay::startFadeAnimation()
 {
     m_fadeAnimationStartTime = currentTime();
-    
-    // Start the timer
     m_fadeAnimationTimer.startRepeating(1 / fadeAnimationFrameRate);
 }
 
@@ -200,7 +214,7 @@ void PageOverlay::fadeAnimationTimerFired()
     float fadeAnimationValue = sine * sine;
 
     m_fractionFadedIn = (m_fadeAnimationType == FadeInAnimation) ? fadeAnimationValue : 1 - fadeAnimationValue;
-    m_webPage->pageOverlayController().setPageOverlayOpacity(this, m_fractionFadedIn);
+    m_webPage->pageOverlayController().setPageOverlayOpacity(*this, m_fractionFadedIn);
 
     if (animationProgress == 1.0) {
         m_fadeAnimationTimer.stop();
@@ -208,16 +222,15 @@ void PageOverlay::fadeAnimationTimerFired()
         bool wasFadingOut = m_fadeAnimationType == FadeOutAnimation;
         m_fadeAnimationType = NoAnimation;
 
-        if (wasFadingOut) {
-            // If this was a fade out, go ahead and uninstall the page overlay.
+        // If this was a fade out, go ahead and uninstall the page overlay.
+        if (wasFadingOut)
             m_webPage->uninstallPageOverlay(this, PageOverlay::FadeMode::DoNotFade);
-        }
     }
 }
 
 void PageOverlay::clear()
 {
-    m_webPage->pageOverlayController().clearPageOverlay(this);
+    m_webPage->pageOverlayController().clearPageOverlay(*this);
 }
 
 } // namespace WebKit

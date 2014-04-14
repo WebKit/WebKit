@@ -1,3 +1,42 @@
+2014-04-14  Tim Horton  <timothy_horton@apple.com>
+
+        Support setting a background color on page overlays
+        https://bugs.webkit.org/show_bug.cgi?id=131600
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::PageOverlay):
+        (WebKit::PageOverlay::bounds):
+        (WebKit::PageOverlay::startFadeInAnimation):
+        (WebKit::PageOverlay::startFadeOutAnimation):
+        (WebKit::PageOverlay::startFadeAnimation):
+        (WebKit::PageOverlay::fadeAnimationTimerFired):
+        Minor style adjustments.
+        Use more references everywhere.
+
+        (WebKit::PageOverlay::setBackgroundColor):
+        (WebKit::PageOverlay::setNeedsDisplay):
+        * WebProcess/WebPage/PageOverlay.h:
+        (WebKit::PageOverlay::backgroundColor):
+        Keep track of our background color, and push it down to the page overlay controller if we have one.
+
+        * WebProcess/WebPage/PageOverlayController.cpp:
+        (WebKit::updateOverlayGeometry):
+        (WebKit::PageOverlayController::clearPageOverlay):
+        Page overlays will always have the right size, and just use drawsContents to determine
+        whether or not they should tile/have backing store/etc.
+
+        (WebKit::PageOverlayController::installPageOverlay):
+        (WebKit::PageOverlayController::didChangeOverlayBackgroundColor):
+        Set the background color of the layer.
+
+        * WebProcess/WebPage/PageOverlayController.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        References!
+
 2014-04-13  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Move file system-related code into WebKit

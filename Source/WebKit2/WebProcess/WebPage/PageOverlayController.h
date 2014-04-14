@@ -44,7 +44,7 @@ class WebPage;
 
 class PageOverlayController : public WebCore::GraphicsLayerClient {
 public:
-    PageOverlayController(WebPage*);
+    PageOverlayController(WebPage&);
 
     void initialize();
 
@@ -54,9 +54,9 @@ public:
     void installPageOverlay(PassRefPtr<PageOverlay>, PageOverlay::FadeMode);
     void uninstallPageOverlay(PageOverlay*, PageOverlay::FadeMode);
 
-    void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&);
-    void setPageOverlayOpacity(PageOverlay*, float);
-    void clearPageOverlay(PageOverlay*);
+    void setPageOverlayNeedsDisplay(PageOverlay&, const WebCore::IntRect&);
+    void setPageOverlayOpacity(PageOverlay&, float);
+    void clearPageOverlay(PageOverlay&);
 
     void didChangeViewSize();
     void didChangeDocumentSize();
@@ -64,7 +64,9 @@ public:
     void didChangeDeviceScaleFactor();
     void didChangeExposedRect();
     void didScrollFrame(WebCore::Frame*);
-    void didChangeOverlayFrame(PageOverlay*);
+
+    void didChangeOverlayFrame(PageOverlay&);
+    void didChangeOverlayBackgroundColor(PageOverlay&);
 
     void flushPageOverlayLayers(WebCore::FloatRect);
 
@@ -75,7 +77,7 @@ public:
     WKArrayRef copyAccessibilityAttributesNames(bool parameterizedNames);
 
 private:
-    void updateSettingsForLayer(WebCore::GraphicsLayer*);
+    void updateSettingsForLayer(WebCore::GraphicsLayer&);
     void updateForceSynchronousScrollLayerPositionUpdates();
 
     // WebCore::GraphicsLayerClient
@@ -90,7 +92,7 @@ private:
     std::unique_ptr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
     HashMap<PageOverlay*, std::unique_ptr<WebCore::GraphicsLayer>> m_overlayGraphicsLayers;
     Vector<RefPtr<PageOverlay>> m_pageOverlays;
-    WebPage* m_webPage;
+    WebPage& m_webPage;
 };
 
 } // namespace WebKit

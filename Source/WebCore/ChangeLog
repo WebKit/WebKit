@@ -1,3 +1,16 @@
+2014-04-14  Tim Horton  <timothy_horton@apple.com>
+
+        Support setting a background color on page overlays
+        https://bugs.webkit.org/show_bug.cgi?id=131600
+
+        Reviewed by Darin Adler.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::setDocumentOverlayRootLayer):
+        Mark the compositing tree as needing a rebuild when we get a new document-relative
+        overlay layer; otherwise we were depending on something else coming along and
+        requiring a rebuild, which didn't always happen.
+
 2014-04-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Hit testing doesn't work in video

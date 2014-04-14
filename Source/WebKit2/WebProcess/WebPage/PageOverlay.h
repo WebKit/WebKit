@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "WKBase.h"
+#include <WebCore/Color.h>
 #include <WebCore/IntRect.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RunLoop.h>
@@ -91,6 +92,9 @@ public:
     WebCore::IntRect bounds() const;
     WebCore::IntRect frame() const;
     void setFrame(WebCore::IntRect);
+
+    WebCore::RGBA32 backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(WebCore::RGBA32);
     
 protected:
     explicit PageOverlay(Client*, OverlayType);
@@ -117,6 +121,8 @@ private:
 
     OverlayType m_overlayType;
     WebCore::IntRect m_overrideFrame;
+
+    WebCore::RGBA32 m_backgroundColor;
 };
 
 } // namespace WebKit

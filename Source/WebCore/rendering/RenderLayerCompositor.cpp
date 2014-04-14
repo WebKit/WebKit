@@ -3819,6 +3819,7 @@ void RenderLayerCompositor::setDocumentOverlayRootLayer(GraphicsLayer* documentO
     if (m_documentOverlayRootLayer)
         m_documentOverlayRootLayer->removeFromParent();
     m_documentOverlayRootLayer = documentOverlayRootLayer;
+    setCompositingLayersNeedRebuild(true);
     scheduleCompositingLayerUpdate();
 }
 
