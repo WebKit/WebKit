@@ -111,6 +111,7 @@ namespace WebCore {
             , m_bodyDataSent(0)
             , m_redirectCount(0)
             , m_previousPosition(0)
+            , m_useAuthenticationManager(true)
 #endif
 #if PLATFORM(MAC)
             , m_startWhenScheduled(false)
@@ -203,6 +204,7 @@ namespace WebCore {
         SoupSession* soupSession();
         int m_redirectCount;
         size_t m_previousPosition;
+        bool m_useAuthenticationManager;
 #endif
 #if PLATFORM(GTK)
         struct {
