@@ -82,6 +82,11 @@ void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, con
     m_scrollingCoordinatorProxy.scrollingTreeNodeDidScroll(nodeID, scrollPosition);
 }
 
+void RemoteScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, bool representsProgrammaticScroll)
+{
+    m_scrollingCoordinatorProxy.scrollingTreeNodeRequestsScroll(nodeID, scrollPosition, representsProgrammaticScroll);
+}
+
 PassOwnPtr<ScrollingTreeNode> RemoteScrollingTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {

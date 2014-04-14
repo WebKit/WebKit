@@ -131,6 +131,7 @@ protected:
 
     virtual bool canScrollView() override { return false; }
     virtual void scrollView(const WebCore::IntRect&, const WebCore::IntSize&) override;
+    virtual void requestScroll(const WebCore::FloatPoint&, bool) override;
 
     virtual WebCore::IntSize viewSize() override;
 

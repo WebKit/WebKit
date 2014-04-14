@@ -83,6 +83,11 @@ void PageClientImpl::scrollView(const WebCore::IntRect& scrollRect, const WebCor
     setViewNeedsDisplay(scrollRect);
 }
 
+void PageClientImpl::requestScroll(const WebCore::FloatPoint&, bool)
+{
+    notImplemented();
+}
+
 WebCore::IntSize PageClientImpl::viewSize()
 {
     if (!gtk_widget_get_realized(m_viewWidget))

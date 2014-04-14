@@ -87,6 +87,13 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& 
         m_behaviorForFixed = state.scrollBehaviorForFixedElements();
 }
 
+void ScrollingTreeScrollingNode::updateAfterChildren(const ScrollingStateNode& stateNode)
+{
+    const ScrollingStateScrollingNode& scrollingStateNode = toScrollingStateScrollingNode(stateNode);
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
+        scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), scrollingStateNode.requestedScrollPosition(), scrollingStateNode.requestedScrollPositionRepresentsProgrammaticScroll());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

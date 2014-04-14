@@ -544,6 +544,18 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return contentOffset;
 }
 
+- (void)_scrollToContentOffset:(WebCore::FloatPoint)contentOffset
+{
+    WebCore::FloatPoint scaledOffset = contentOffset;
+    CGFloat zoomScale = contentZoomScale(self);
+    scaledOffset.scale(zoomScale, zoomScale);
+
+    UIEdgeInsets inset = [_scrollView contentInset];
+    scaledOffset += WebCore::FloatSize(-inset.left, -inset.top);
+
+    [_scrollView setContentOffset:scaledOffset];
+}
+
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance
 {
     WebCore::FloatRect unobscuredContentRect([self _contentRectForUserInteraction]);

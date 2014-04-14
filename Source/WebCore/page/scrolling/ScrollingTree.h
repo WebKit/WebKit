@@ -75,6 +75,9 @@ public:
     // Updates FrameView/RenderLayer scrolling state and GraphicsLayers.
     virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
 
+    // Called for requested scroll position updates.
+    virtual void scrollingTreeNodeRequestsScroll(ScrollingNodeID, const FloatPoint& /*scrollPosition*/, bool /*representsProgrammaticScroll*/) { }
+
     // Delegated scrolling/zooming has caused the viewport to change, so update viewport-constrained layers
     // (but don't cause scroll events to be fired).
     virtual void viewportChangedViaDelegatedScrolling(ScrollingNodeID, const WebCore::FloatRect& viewportRect, double scale);

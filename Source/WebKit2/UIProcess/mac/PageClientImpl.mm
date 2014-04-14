@@ -170,6 +170,11 @@ void PageClientImpl::scrollView(const IntRect& scrollRect, const IntSize& scroll
     ASSERT_NOT_REACHED();
 }
 
+void PageClientImpl::requestScroll(const FloatPoint& scrollPosition, bool isProgrammaticScroll)
+{
+    ASSERT_NOT_REACHED();
+}
+
 IntSize PageClientImpl::viewSize()
 {
     return IntSize([m_wkView bounds].size);

@@ -160,6 +160,12 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(WebCore::Scroll
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition));
 }
 
+void RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& scrollPosition, bool representsProgrammaticScroll)
+{
+    if (scrolledNodeID == rootScrollingNodeID())
+        m_webPageProxy.requestScroll(scrollPosition, representsProgrammaticScroll);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING)

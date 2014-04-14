@@ -93,6 +93,8 @@ public:
     virtual bool canScrollView() = 0;
     // Tell the view to scroll scrollRect by scrollOffset.
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
+    // Tell the view to scroll to the given position, and whether this was a programmatic scroll.
+    virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, bool isProgrammaticScroll) = 0;
 
     // Return the size of the view the page is associated with.
     virtual WebCore::IntSize viewSize() = 0;

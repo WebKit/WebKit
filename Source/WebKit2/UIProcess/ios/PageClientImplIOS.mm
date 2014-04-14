@@ -82,15 +82,21 @@ void PageClientImpl::displayView()
     ASSERT_NOT_REACHED();
 }
 
+bool PageClientImpl::canScrollView()
+{
+    notImplemented();
+    return false;
+}
+
 void PageClientImpl::scrollView(const IntRect&, const IntSize&)
 {
     ASSERT_NOT_REACHED();
 }
 
-bool PageClientImpl::canScrollView()
+void PageClientImpl::requestScroll(const FloatPoint& scrollPosition, bool isProgrammaticScroll)
 {
-    notImplemented();
-    return false;
+    UNUSED_PARAM(isProgrammaticScroll);
+    [m_webView _scrollToContentOffset:scrollPosition];
 }
 
 IntSize PageClientImpl::viewSize()

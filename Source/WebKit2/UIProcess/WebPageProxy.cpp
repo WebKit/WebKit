@@ -1008,6 +1008,11 @@ void WebPageProxy::scrollView(const IntRect& scrollRect, const IntSize& scrollOf
     m_pageClient.scrollView(scrollRect, scrollOffset);
 }
 
+void WebPageProxy::requestScroll(const FloatPoint& scrollPosition, bool isProgrammaticScroll)
+{
+    m_pageClient.requestScroll(scrollPosition, isProgrammaticScroll);
+}
+
 void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
 {
     m_viewState &= ~flagsToUpdate;

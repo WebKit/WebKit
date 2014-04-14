@@ -1,3 +1,21 @@
+2014-04-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [WK2 iOS] Scrolling to anchor links is broken
+        https://bugs.webkit.org/show_bug.cgi?id=131618
+        <rdar://problem/16599144>
+
+        Reviewed by Tim Horton.
+
+        Have ScrollingTreeScrollingNode pass RequestedScrollPosition updates
+        to the scrolling tree, so that the scrolling tree can have custom behavior
+        for them if necessary.
+
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::scrollingTreeNodeRequestsScroll):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::updateAfterChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+
 2014-04-14  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: memoize fallback time values for document.lastModified
