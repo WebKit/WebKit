@@ -54,7 +54,7 @@ public:
     virtual void didFocusTextField(WebKit::WebPage*, WebCore::HTMLInputElement*, WebKit::WebFrame*) { }
     virtual void textFieldDidBeginEditing(WebKit::WebPage*, WebCore::HTMLInputElement*, WebKit::WebFrame*) { }
     virtual void textFieldDidEndEditing(WebKit::WebPage*, WebCore::HTMLInputElement*, WebKit::WebFrame*) { }
-    virtual void textDidChangeInTextField(WebKit::WebPage*, WebCore::HTMLInputElement*, WebKit::WebFrame*) { }
+    virtual void textDidChangeInTextField(WebKit::WebPage*, WebCore::HTMLInputElement*, WebKit::WebFrame*, bool initiatedByUserTyping) { }
     virtual void textDidChangeInTextArea(WebKit::WebPage*, WebCore::HTMLTextAreaElement*, WebKit::WebFrame*) { }
 
     enum class InputFieldAction {

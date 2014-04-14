@@ -46,7 +46,7 @@ public:
     virtual void didFocusTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*) override;
     virtual void textFieldDidBeginEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*) override;
     virtual void textFieldDidEndEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*) override;
-    virtual void textDidChangeInTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*) override;
+    virtual void textDidChangeInTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*, bool initiatedByUserTyping) override;
     virtual void textDidChangeInTextArea(WebPage*, WebCore::HTMLTextAreaElement*, WebFrame*) override;
     virtual bool shouldPerformActionInTextField(WebPage*, WebCore::HTMLInputElement*, InputFieldAction, WebFrame*) override;    
     virtual void willSubmitForm(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String>>&, RefPtr<API::Object>& userData) override;

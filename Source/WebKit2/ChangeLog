@@ -1,5 +1,33 @@
 2014-04-14  Dan Bernstein  <mitz@apple.com>
 
+        Let the bundle form client know whether a change in a text field was initiated by user typing
+        https://bugs.webkit.org/show_bug.cgi?id=131643
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h: Added
+        initiatedByUserTyping parameter to the delegate method.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]): Updated overload of
+        textDidChangeInTextField to take the initiatedByUserTyping parameter and pass it along to
+        the delegate.
+
+        * WebProcess/InjectedBundle/APIInjectedBundleFormClient.h:
+        (API::InjectedBundle::FormClient::textDidChangeInTextField): Added initiatedByUserTyping
+        parameter.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::textDidChangeInTextField): Maintained the existing
+        behavior of not calling the C SPI client if the change was not initiated by user typing.
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h: Updated for added parameter.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::textDidChangeInTextField): Changed to call the bundle client
+        function unconditionally, but pass along whether the change was initiated by user typing.
+
+2014-04-14  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Add a WKWebProcessPlugInFormDelegate method corresponding to willSendSubmitEvent
         https://bugs.webkit.org/show_bug.cgi?id=131639
 
