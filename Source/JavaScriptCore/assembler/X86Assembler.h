@@ -2273,7 +2273,7 @@ public:
 
         uint8_t* where = reinterpret_cast<uint8_t*>(base);
         while (size) {
-            unsigned nopSize = std::min<unsigned>(size, 15UL);
+            unsigned nopSize = static_cast<unsigned>(std::min<size_t>(size, 15));
             unsigned numPrefixes = nopSize <= 10 ? 0 : nopSize - 10;
             for (unsigned i = 0; i != numPrefixes; ++i)
                 *where++ = 0x66;
