@@ -71,6 +71,7 @@ private:
     Vector<RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayers;
 
+    HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_liveLayers;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_layersAwaitingAnimationStart;
 
     RemoteLayerBackingStoreCollection m_backingStoreCollection;

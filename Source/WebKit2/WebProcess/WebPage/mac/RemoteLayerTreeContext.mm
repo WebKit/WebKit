@@ -49,6 +49,8 @@ RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage* webPage)
 
 RemoteLayerTreeContext::~RemoteLayerTreeContext()
 {
+    for (auto& layer : m_liveLayers.values())
+        layer->clearContext();
 }
 
 void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote* layer, PlatformCALayer::LayerType type)
@@ -61,10 +63,13 @@ void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote* layer, Platf
         creationProperties.hostingContextID = layer->hostingContextID();
 
     m_createdLayers.append(creationProperties);
+    m_liveLayers.add(layer->layerID(), layer);
 }
 
 void RemoteLayerTreeContext::layerWillBeDestroyed(PlatformCALayerRemote* layer)
 {
+    m_liveLayers.remove(layer->layerID());
+
     ASSERT(!m_destroyedLayers.contains(layer->layerID()));
     m_destroyedLayers.append(layer->layerID());
     

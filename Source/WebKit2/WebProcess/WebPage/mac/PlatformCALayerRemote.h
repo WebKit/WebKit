@@ -153,6 +153,8 @@ public:
 
     RemoteLayerTreeTransaction::LayerProperties& properties() { return m_properties; }
 
+    void clearContext() { m_context = nullptr; }
+
 protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);
     PlatformCALayerRemote(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);

@@ -109,7 +109,9 @@ PlatformCALayerRemote::~PlatformCALayerRemote()
 {
     for (const auto& layer : m_children)
         toPlatformCALayerRemote(layer.get())->m_superlayer = nullptr;
-    m_context->layerWillBeDestroyed(this);
+
+    if (m_context)
+        m_context->layerWillBeDestroyed(this);
 }
 
 void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction& transaction)
@@ -286,8 +288,9 @@ void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnim
 {
     m_properties.addedAnimations.set(key, toPlatformCAAnimationRemote(animation)->properties());
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);
-    
-    m_context->willStartAnimationOnLayer(this);
+
+    if (m_context)
+        m_context->willStartAnimationOnLayer(this);
 }
 
 void PlatformCALayerRemote::removeAnimationForKey(const String& key)
