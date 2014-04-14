@@ -54,6 +54,7 @@
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
+#include "Logging.h"
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "MemoryPressureHandler.h"
@@ -98,7 +99,6 @@
 #if PLATFORM(IOS)
 #include "DocumentLoader.h"
 #include "LegacyTileCache.h"
-#include "Logging.h"
 #include "MemoryCache.h"
 #include "MemoryPressureHandler.h"
 #include "SystemMemory.h"

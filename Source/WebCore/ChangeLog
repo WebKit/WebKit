@@ -1,3 +1,9 @@
+2014-04-14  Andreas Kling  <akling@apple.com>
+
+        Build fixage.
+
+        * page/FrameView.cpp:
+
 2014-04-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Assertion failure !node || node->isElementNode() in
