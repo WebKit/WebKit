@@ -238,6 +238,10 @@ private:
 
     virtual bool shouldPaintBrokenImage(const WebCore::URL&) const;
 
+#if USE(QUICK_LOOK)
+    virtual void didCreateQuickLookHandle(WebCore::QuickLookHandle&) override;
+#endif
+
     RetainPtr<WebFrame> m_webFrame;
 
     RetainPtr<WebFramePolicyListener> m_policyListener;

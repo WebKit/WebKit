@@ -95,7 +95,7 @@ private:
 #if USE(QUICK_LOOK)
     void setUpQuickLookHandleIfNeeded(const WebCore::ResourceResponse&);
 
-    OwnPtr<WebCore::QuickLookHandle> m_quickLookHandle;
+    std::unique_ptr<WebCore::QuickLookHandle> m_quickLookHandle;
 #endif
 
     RefPtr<WebCore::ResourceLoader> m_coreLoader;

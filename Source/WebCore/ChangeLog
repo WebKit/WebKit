@@ -1,3 +1,61 @@
+2014-04-13  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Move file system-related code into WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=131597
+
+        Reviewed by Dan Bernstein.
+
+        QuickLookHandle should not be responsible for saving a copy of the
+        original document to disk as it might be running in a process that
+        either can't write to disk or can only write into a sandboxed
+        container. To account for this, we need to separate the concern of
+        quick look conversion from that of original document saving so that
+        each activity can run in the appropriate process.
+
+        Created a new interface between WebCore and WebKit by adding a client
+        (QuickLookHandleClient) to QuickLookHandle which is notified of incoming
+        bytes. A new function on FrameLoaderClient tells WebKit when a new
+        QuickLookHandle is created, giving WebKit the opportunity to register a
+        handle client. Moved the existing file system-related code as well as
+        code only needed by WebKit1 in QuickLookHandle into a new WebKit1
+        QuickLookHandleClient subclass.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj: Made QuickLookHandleClient.h Private.
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::didCreateQuickLookHandle): Added.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didCreateQuickLookHandle): Called FrameLoaderClient::didCreateQuickLookHandle().
+        * loader/ResourceLoader.h:
+        * platform/network/ResourceHandle.h: Made m_quickLook a unique_ptr.
+        (WebCore::ResourceHandle::setQuickLookHandle): Changed to take a unique_ptr.
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didCreateQuickLookHandle): Added.
+        * platform/network/ios/QuickLook.h: Added m_client, gave m_converter a stronger type, and made m_nsResponse a RetainPtr.
+        (WebCore::QuickLookHandle::setClient): Added.
+        (WebCore::QuickLookHandle::firstRequestURL): Added.
+        (WebCore::QuickLookHandle::converter): Added.
+        * platform/network/ios/QuickLook.mm:
+        (WebCore::registerQLPreviewConverterIfNeeded):
+        (WebCore::createTemporaryFileForQuickLook): Made non-static.
+        (WebCore::emptyClient): Returned a shared empty QuickLookHandleClient.
+        (WebCore::QuickLookHandle::QuickLookHandle): Removed file system and WebKit1-only code.
+        (WebCore::QuickLookHandle::create): Changed to return a unique_ptr.
+        (WebCore::QuickLookHandle::nsResponse):
+        (WebCore::QuickLookHandle::didReceiveDataArray): Removed file system code and called QuickLookHandleClient::didReceiveDataArray() instead.
+        (WebCore::QuickLookHandle::didReceiveData): Removed file system code and called QuickLookHandleClient::didReceiveData() instead.
+        (WebCore::QuickLookHandle::didFinishLoading): Removed file system code and called QuickLookHandleClient::didFinishLoading() instead.
+        (WebCore::QuickLookHandle::didFail): Removed file system and WebKit1-only code, calling QuickLookHandleClient::didFail() instead.
+        (WebCore::QuickLookHandle::~QuickLookHandle): Removed file system and WebKit1-only code. Cleared our reference to m_client.
+        (WebCore::QuickLookHandle::previewFileName): Retrieved from m_converter.
+        (WebCore::QuickLookHandle::previewRequestURL): Ditto.
+        * platform/network/ios/QuickLookHandleClient.h: Added.
+        (WebCore::QuickLookHandleClient::~QuickLookHandleClient):
+        (WebCore::QuickLookHandleClient::didReceiveDataArray):
+        (WebCore::QuickLookHandleClient::didReceiveData):
+        (WebCore::QuickLookHandleClient::didFinishLoading):
+        (WebCore::QuickLookHandleClient::didFail):
+
 2014-04-10  Pratik Solanki  <psolanki@apple.com>
 
         Move early return out of dispatch_async() block so we can return from willSendRequest quickly

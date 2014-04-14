@@ -49,6 +49,10 @@ class FrameLoader;
 class URL;
 class ResourceBuffer;
 
+#if USE(QUICK_LOOK)
+class QuickLookHandle;
+#endif
+
 class ResourceLoader : public RefCounted<ResourceLoader>, protected ResourceHandleClient {
 public:
     virtual ~ResourceLoader();
@@ -144,6 +148,10 @@ public:
 
 #if PLATFORM(COCOA) && !USE(CFNETWORK)
     virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
+#endif
+
+#if USE(QUICK_LOOK)
+    virtual void didCreateQuickLookHandle(QuickLookHandle&) override;
 #endif
 
     const URL& url() const { return m_request.url(); }

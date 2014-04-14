@@ -195,7 +195,7 @@ PassOwnPtr<ResourceRequest> WebCore::registerQLPreviewConverterIfNeeded(NSURL *u
         RetainPtr<NSString> uti = adoptNS(WebCore::QLTypeCopyUTIForURLAndMimeType(url, updatedMIMEType.get()));
 
         RetainPtr<id> converter = adoptNS([[QLPreviewConverterClass() alloc] initWithData:data name:nil uti:uti.get() options:nil]);
-        NSURLRequest *request = [converter.get() previewRequest];
+        NSURLRequest *request = [converter previewRequest];
 
         // We use [request URL] here instead of url since it will be
         // the URL that the WebDataSource will see during -dealloc.
@@ -321,7 +321,7 @@ const char* WebCore::QLPreviewProtocol()
 
 namespace WebCore {
 
-static NSString *createTemporaryFileForQuickLook(NSString *fileName)
+NSString *createTemporaryFileForQuickLook(NSString *fileName)
 {
     NSString *downloadDirectory = createTemporaryDirectory(@"QuickLookContent");
     if (!downloadDirectory)
@@ -339,52 +339,46 @@ static NSString *createTemporaryFileForQuickLook(NSString *fileName)
     return success ? uniqueContentPath : nil;
 }
 
+static inline QuickLookHandleClient* emptyClient()
+{
+    static NeverDestroyed<QuickLookHandleClient> emptyClient;
+    return &emptyClient.get();
+}
 
 QuickLookHandle::QuickLookHandle(NSURL *firstRequestURL, NSURLConnection *connection, NSURLResponse *nsResponse, id delegate)
     : m_firstRequestURL(firstRequestURL)
     , m_converter(adoptNS([[QLPreviewConverterClass() alloc] initWithConnection:connection delegate:delegate response:nsResponse options:nil]))
-    , m_delegate(adoptNS([delegate retain]))
+    , m_delegate(delegate)
     , m_finishedLoadingDataIntoConverter(false)
-    , m_nsResponse([m_converter.get() previewResponse])
+    , m_nsResponse([m_converter previewResponse])
+    , m_client(emptyClient())
 {
-    NSURL *previewRequestURL = [[m_converter.get() previewRequest] URL];
-    if (!applicationIsMobileSafari()) {
-        // This keeps the QLPreviewConverter alive to serve any subresource requests.
-        // It is removed by -[WebDataSource dealloc].
-        addQLPreviewConverterWithFileForURL(previewRequestURL, m_converter.get(), nil);
-        return;
-    }
-
-    // QuickLook consumes the incoming data, we need to store it so that it can be opened in the handling application.
-    NSString *quicklookContentPath = createTemporaryFileForQuickLook([m_converter.get() previewFileName]);
-    LOG(Network, "QuickLookHandle::QuickLookHandle() - quicklookContentPath: %s", [quicklookContentPath UTF8String]);
-
-    if (quicklookContentPath) {
-        m_quicklookFileHandle = adoptNS([[NSFileHandle fileHandleForWritingAtPath:quicklookContentPath] retain]);
-        // We must use the generated URL from m_converter's NSURLRequest object
-        // so that it matches the URL removed from -[WebDataSource dealloc].
-        addQLPreviewConverterWithFileForURL(previewRequestURL, m_converter.get(), quicklookContentPath);
-    }
+    LOG(Network, "QuickLookHandle::QuickLookHandle() - previewFileName: %s", [m_converter previewFileName]);
 }
 
-PassOwnPtr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, NSURLConnection *connection, NSURLResponse *nsResponse, id delegate)
+std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, NSURLConnection *connection, NSURLResponse *nsResponse, id delegate)
 {
-    if (handle->firstRequest().isMainResourceRequest() && [WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[nsResponse MIMEType]])
-        return adoptPtr(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], connection, nsResponse, delegate));
+    ASSERT_ARG(handle, handle);
+    if (!handle->firstRequest().isMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[nsResponse MIMEType]])
+        return nullptr;
 
-    return nullptr;
+    std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], connection, nsResponse, delegate));
+    handle->client()->didCreateQuickLookHandle(*quickLookHandle);
+    return std::move(quickLookHandle);
 }
 
 #if USE(CFNETWORK)
-PassOwnPtr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, SynchronousResourceHandleCFURLConnectionDelegate* connectionDelegate, CFURLResponseRef cfResponse)
+std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, SynchronousResourceHandleCFURLConnectionDelegate* connectionDelegate, CFURLResponseRef cfResponse)
 {
-    if (handle->firstRequest().isMainResourceRequest() && [WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)CFURLResponseGetMIMEType(cfResponse)]) {
-        NSURLResponse *nsResponse = [NSURLResponse _responseWithCFURLResponse:cfResponse];
-        WebQuickLookHandleAsDelegate *delegate = [[[WebQuickLookHandleAsDelegate alloc] initWithConnectionDelegate:connectionDelegate] autorelease];
-        return adoptPtr(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, nsResponse, delegate));
-    }
+    ASSERT_ARG(handle, handle);
+    if (!handle->firstRequest().isMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)CFURLResponseGetMIMEType(cfResponse)])
+        return nullptr;
 
-    return nullptr;
+    NSURLResponse *nsResponse = [NSURLResponse _responseWithCFURLResponse:cfResponse];
+    WebQuickLookHandleAsDelegate *delegate = [[[WebQuickLookHandleAsDelegate alloc] initWithConnectionDelegate:connectionDelegate] autorelease];
+    std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, nsResponse, delegate));
+    handle->client()->didCreateQuickLookHandle(*quickLookHandle);
+    return std::move(quickLookHandle);
 }
 
 CFURLResponseRef QuickLookHandle::cfResponse()
@@ -393,47 +387,39 @@ CFURLResponseRef QuickLookHandle::cfResponse()
 }
 #endif
 
-PassOwnPtr<QuickLookHandle> QuickLookHandle::create(ResourceLoader* loader, NSURLResponse *response, id delegate)
+std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceLoader* loader, NSURLResponse *response, id delegate)
 {
-    if (loader->request().isMainResourceRequest() && [WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[response MIMEType]])
-        return adoptPtr(new QuickLookHandle([loader->originalRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, response, delegate));
+    ASSERT_ARG(loader, loader);
+    if (!loader->request().isMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[response MIMEType]])
+        return nullptr;
 
-    return nullptr;
+    std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([loader->originalRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, response, delegate));
+    loader->didCreateQuickLookHandle(*quickLookHandle);
+    return std::move(quickLookHandle);
 }
 
 NSURLResponse *QuickLookHandle::nsResponse()
 {
-    return m_nsResponse;
+    return m_nsResponse.get();
 }
 
 bool QuickLookHandle::didReceiveDataArray(CFArrayRef cfDataArray)
 {
-    NSArray * const dataArray = (NSArray *)cfDataArray;
-
     if (m_finishedLoadingDataIntoConverter)
         return false;
 
     LOG(Network, "QuickLookHandle::didReceiveDataArray()");
-    [m_converter.get() appendDataArray:dataArray];
-    if (m_quicklookFileHandle) {
-        for (NSData *data in dataArray)
-            [m_quicklookFileHandle.get() writeData:data];
-    }
+    [m_converter appendDataArray:(NSArray *)cfDataArray];
+    m_client->didReceiveDataArray(cfDataArray);
     return true;
 }
 
 bool QuickLookHandle::didReceiveData(CFDataRef cfData)
 {
-    NSData * const data = (NSData *)cfData;
-
     if (m_finishedLoadingDataIntoConverter)
         return false;
-
-    LOG(Network, "QuickLookHandle::didReceiveData()");
-    [m_converter.get() appendData:data];
-    if (m_quicklookFileHandle)
-        [m_quicklookFileHandle.get() writeData:data];
-    return true;
+    
+    return didReceiveDataArray(adoptCF(CFArrayCreate(kCFAllocatorDefault, (const void**)&cfData, 1, &kCFTypeArrayCallBacks)).get());
 }
 
 bool QuickLookHandle::didFinishLoading()
@@ -443,32 +429,35 @@ bool QuickLookHandle::didFinishLoading()
 
     LOG(Network, "QuickLookHandle::didFinishLoading()");
     m_finishedLoadingDataIntoConverter = YES;
-    [m_converter.get() finishedAppendingData];
-    if (m_quicklookFileHandle)
-        [m_quicklookFileHandle.get() closeFile];
+    [m_converter finishedAppendingData];
+    m_client->didFinishLoading();
     return true;
 }
 
 void QuickLookHandle::didFail()
 {
     LOG(Network, "QuickLookHandle::didFail()");
-    m_quicklookFileHandle = nullptr;
-    // removeQLPreviewConverterForURL deletes the temporary file created.
-    removeQLPreviewConverterForURL(m_firstRequestURL.get());
-    [m_converter.get() finishConverting];
+    m_client->didFail();
+    [m_converter finishConverting];
     m_converter = nullptr;
 }
 
 QuickLookHandle::~QuickLookHandle()
 {
     LOG(Network, "QuickLookHandle::~QuickLookHandle()");
-    if (m_quicklookFileHandle) {
-        m_quicklookFileHandle = nullptr;
-        removeQLPreviewConverterForURL(m_firstRequestURL.get());
-    }
     m_converter = nullptr;
 
-    [m_delegate.get() clearHandle];
+    [m_delegate clearHandle];
+}
+
+NSString *QuickLookHandle::previewFileName() const
+{
+    return [m_converter previewFileName];
+}
+
+NSURL *QuickLookHandle::previewRequestURL() const
+{
+    return [[m_converter previewRequest] URL];
 }
 
 }

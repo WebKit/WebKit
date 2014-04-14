@@ -50,6 +50,10 @@ namespace WebCore {
     class ResourceResponse;
     class SharedBuffer;
 
+#if USE(QUICK_LOOK)
+    class QuickLookHandle;
+#endif
+
     enum CacheStoragePolicy {
         StorageAllowed,
         StorageAllowedInMemoryOnly,
@@ -124,6 +128,9 @@ namespace WebCore {
         virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *response) { return response; }
 #endif
 
+#if USE(QUICK_LOOK)
+        virtual void didCreateQuickLookHandle(QuickLookHandle&) { }
+#endif
     };
 
 }

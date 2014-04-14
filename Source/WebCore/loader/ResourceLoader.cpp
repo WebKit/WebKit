@@ -606,4 +606,11 @@ void ResourceLoader::unschedule(SchedulePair& pair)
 
 #endif
 
+#if USE(QUICK_LOOK)
+void ResourceLoader::didCreateQuickLookHandle(QuickLookHandle& handle)
+{
+    frameLoader()->client().didCreateQuickLookHandle(handle);
+}
+#endif
+
 }

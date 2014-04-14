@@ -150,7 +150,7 @@ public:
 
 #if USE(QUICK_LOOK)
     QuickLookHandle* quickLookHandle() { return m_quickLook.get(); }
-    void setQuickLookHandle(PassOwnPtr<QuickLookHandle> handle) { m_quickLook = handle; }
+    void setQuickLookHandle(std::unique_ptr<QuickLookHandle> handle) { m_quickLook = std::move(handle); }
 #endif
 
 #if PLATFORM(WIN) && USE(CURL)
@@ -292,7 +292,7 @@ private:
     OwnPtr<ResourceHandleInternal> d;
 
 #if USE(QUICK_LOOK)
-    OwnPtr<QuickLookHandle> m_quickLook;
+    std::unique_ptr<QuickLookHandle> m_quickLook;
 #endif
 };
 

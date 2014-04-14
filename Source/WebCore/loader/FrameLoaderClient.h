@@ -97,6 +97,10 @@ namespace WebCore {
     class SubstituteData;
     class Widget;
 
+#if USE(QUICK_LOOK)
+    class QuickLookHandle;
+#endif
+
     typedef std::function<void (PolicyAction)> FramePolicyFunction;
 
     class FrameLoaderClient {
@@ -334,6 +338,10 @@ namespace WebCore {
 
         // FIXME (bug 116233): We need to get rid of EmptyFrameLoaderClient completely, then this will no longer be needed.
         virtual bool isEmptyFrameLoaderClient() { return false; }
+
+#if USE(QUICK_LOOK)
+        virtual void didCreateQuickLookHandle(QuickLookHandle&) { }
+#endif
     };
 
 } // namespace WebCore

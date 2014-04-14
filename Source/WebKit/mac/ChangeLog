@@ -1,3 +1,16 @@
+2014-04-13  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Move file system-related code into WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=131597
+
+        Reviewed by Dan Bernstein.
+
+        Moved file system and WebKit1-only code from QuickLookHandle into a new
+        QuickLookHandleClient subclass.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2014-04-09  Alexey Proskuryakov  <ap@apple.com>
 
         Eliminate DragSession structure

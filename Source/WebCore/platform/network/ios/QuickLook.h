@@ -28,29 +28,21 @@
 
 #if USE(QUICK_LOOK)
 
+#import "QuickLookHandleClient.h"
 #import "ResourceRequest.h"
 #import <objc/objc-runtime.h>
 #import <wtf/PassOwnPtr.h>
+#import <wtf/RefPtr.h>
 
-#ifdef __OBJC__
-@class NSData;
-@class NSDictionary;
-@class NSFileHandle;
-@class NSSet;
-@class NSString;
-@class NSURL;
-@class NSURLConnection;
-@class NSURLResponse;
-#else
-class NSData;
-class NSDictionary;
-class NSFileHandle;
-class NSSet;
-class NSString;
-class NSURL;
-class NSURLConnection;
-class NSURLResponse;
-#endif
+OBJC_CLASS NSData;
+OBJC_CLASS NSDictionary;
+OBJC_CLASS NSFileHandle;
+OBJC_CLASS NSSet;
+OBJC_CLASS NSString;
+OBJC_CLASS NSURL;
+OBJC_CLASS NSURLConnection;
+OBJC_CLASS NSURLResponse;
+OBJC_CLASS QLPreviewConverter;
 
 #if USE(CFNETWORK)
 typedef struct _CFURLResponse* CFURLResponseRef;
@@ -59,6 +51,7 @@ typedef struct _CFURLConnection* CFURLConnectionRef;
 
 namespace WebCore {
 
+class QuickLookHandleClient;
 class ResourceHandle;
 class ResourceLoader;
 class SynchronousResourceHandleCFURLConnectionDelegate;
@@ -84,15 +77,16 @@ const URL safeQLURLForDocumentURLAndResourceURL(const URL& documentURL, const St
 
 const char* QLPreviewProtocol();
 
+NSString *createTemporaryFileForQuickLook(NSString *fileName);
 
 class QuickLookHandle {
     WTF_MAKE_NONCOPYABLE(QuickLookHandle);
 public:
-    static PassOwnPtr<QuickLookHandle> create(ResourceHandle*, NSURLConnection *, NSURLResponse *, id delegate);
+    static std::unique_ptr<QuickLookHandle> create(ResourceHandle*, NSURLConnection *, NSURLResponse *, id delegate);
 #if USE(CFNETWORK)
-    static PassOwnPtr<QuickLookHandle> create(ResourceHandle*, SynchronousResourceHandleCFURLConnectionDelegate*, CFURLResponseRef);
+    static std::unique_ptr<QuickLookHandle> create(ResourceHandle*, SynchronousResourceHandleCFURLConnectionDelegate*, CFURLResponseRef);
 #endif
-    static PassOwnPtr<QuickLookHandle> create(ResourceLoader*, NSURLResponse *, id delegate);
+    static std::unique_ptr<QuickLookHandle> create(ResourceLoader*, NSURLResponse *, id delegate);
     ~QuickLookHandle();
 
     bool didReceiveDataArray(CFArrayRef);
@@ -105,15 +99,23 @@ public:
     CFURLResponseRef cfResponse();
 #endif
 
+    void setClient(PassRefPtr<QuickLookHandleClient> client) { m_client = client; }
+
+    NSString *previewFileName() const;
+    NSURL *firstRequestURL() const { return m_firstRequestURL.get(); }
+    NSURL *previewRequestURL() const;
+    QLPreviewConverter *converter() const { return m_converter.get(); }
+
 private:
     QuickLookHandle(NSURL *, NSURLConnection *, NSURLResponse *, id delegate);
 
     RetainPtr<NSURL> m_firstRequestURL;
-    RetainPtr<id> m_converter;
+    RetainPtr<QLPreviewConverter> m_converter;
     RetainPtr<id> m_delegate;
     bool m_finishedLoadingDataIntoConverter;
     RetainPtr<NSFileHandle *> m_quicklookFileHandle;
-    NSURLResponse *m_nsResponse;
+    RetainPtr<NSURLResponse> m_nsResponse;
+    RefPtr<QuickLookHandleClient> m_client;
 };
 
 } // namespace WebCore
