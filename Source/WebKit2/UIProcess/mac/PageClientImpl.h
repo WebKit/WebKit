@@ -62,6 +62,7 @@ private:
     virtual void displayView();
     virtual bool canScrollView();
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
+    virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, bool isProgrammaticScroll);
 
     virtual WebCore::IntSize viewSize();
     virtual bool isViewWindowActive();
