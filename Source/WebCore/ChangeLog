@@ -1,3 +1,57 @@
+2014-04-12  Antti Koivisto  <antti@apple.com>
+
+        Keep secondary tile grid for zoomed-out scale
+        https://bugs.webkit.org/show_bug.cgi?id=131586
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateContentsScale):
+        
+            Don't repaint tiled backing with setNeedsDisplay, it invalidates itself correctly in setContentsScale.
+            Update custom child layers when tiled backing scale changes.
+
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::setNeedsDisplay):
+        
+            Drop the whole zoomed-out grid on full repaint.
+
+        (WebCore::TileController::setNeedsDisplayInRect):
+            
+            Drop changed zoomed-out tiles. A more sophisticated strategy is possible.
+
+        (WebCore::TileController::setContentsScale):
+        
+            Swap the zoomed-out grid in and out as needed.
+            Repaint the active grid after scale change so the client does not have to.
+
+        (WebCore::TileController::contentsScale):
+        
+            Get the content scale from the tile grid so it is not kept in two places.
+
+        (WebCore::TileController::zoomedOutContentsScale):
+        (WebCore::TileController::setZoomedOutContentsScale):
+        
+            Drop the zoomed-out grid if it no longer matches the zoomed-out scale.
+
+        (WebCore::TileController::tileRevalidationTimerFired):
+        (WebCore::TileController::retainedTileBackingStoreMemory):
+        (WebCore::TileController::containerLayers):
+        
+            Return both zoomed-out tiles and the active tiles. Active tiles are on top.
+
+        (WebCore::TileController::numberOfUnparentedTiles):
+        (WebCore::TileController::removeUnparentedTilesNow):
+        * platform/graphics/ca/mac/TileGrid.h:
+        * platform/graphics/ca/mac/TileGrid.mm:
+        (WebCore::TileGrid::dropTilesInRect):
+        
+            Add a function for dropping tiles.
+
+        (WebCore::TileGrid::revalidateTiles):
+
 2014-04-14  Oliver Hunt  <oliver@apple.com>
 
         Update test result

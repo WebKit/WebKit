@@ -54,13 +54,17 @@ public:
 
     void setNeedsDisplay();
     void setNeedsDisplayInRect(const IntRect&);
+    void dropTilesInRect(const IntRect&);
 
     void updateTilerLayerProperties();
 
     bool prepopulateRect(const FloatRect&);
 
-    typedef unsigned TileValidationPolicyFlags;
-    void revalidateTiles(TileValidationPolicyFlags);
+    enum TileValidationPolicyFlag {
+        PruneSecondaryTiles = 1 << 0,
+        UnparentAllTiles = 1 << 1
+    };
+    void revalidateTiles(unsigned validationPolicyFlags);
     bool tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect, const FloatRect& oldVisibleRect) const;
 
     IntRect tileCoverageRect() const;

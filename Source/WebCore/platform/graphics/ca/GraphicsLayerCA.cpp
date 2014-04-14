@@ -2992,6 +2992,14 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
         return;
 
     m_layer->setContentsScale(contentsScale);
+
+    if (tiledBacking()) {
+        // Scale change may swap in a different set of tiles changing the custom child layers.
+        if (m_isPageTiledBackingLayer)
+            m_uncommittedChanges |= ChildrenChanged;
+        // Tiled backing repaints automatically on scale change.
+        return;
+    }
     if (drawsContent())
         m_layer->setNeedsDisplay();
 }

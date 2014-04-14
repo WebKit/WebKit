@@ -60,7 +60,7 @@ public:
     void setNeedsDisplayInRect(const IntRect&);
 
     void setContentsScale(float);
-    float contentsScale() const { return m_contentsScale; }
+    float contentsScale() const;
 
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     void setAcceleratesDrawing(bool);
@@ -148,7 +148,7 @@ private:
     virtual void setScrollingModeIndication(ScrollingModeIndication) override;
     virtual void setTileMargins(int marginTop, int marginBottom, int marginLeft, int marginRight) override;
     virtual void setZoomedOutContentsScale(float) override;
-    virtual float zoomedOutContentsScale() const override { return m_zoomedOutContentsScale; }
+    virtual float zoomedOutContentsScale() const override;
 
     void scheduleTileRevalidation(double interval);
     void tileRevalidationTimerFired(Timer<TileController>*);
@@ -162,6 +162,7 @@ private:
     std::unique_ptr<TileCoverageMap> m_coverageMap;
 
     std::unique_ptr<TileGrid> m_tileGrid;
+    std::unique_ptr<TileGrid> m_zoomedOutTileGrid;
 
     IntSize m_tileSize;
     FloatRect m_visibleRect;
@@ -170,7 +171,6 @@ private:
 
     Timer<TileController> m_tileRevalidationTimer;
 
-    float m_contentsScale;
     float m_zoomedOutContentsScale;
     float m_deviceScaleFactor;
 

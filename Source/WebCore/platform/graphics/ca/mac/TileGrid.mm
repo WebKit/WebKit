@@ -39,11 +39,6 @@
 
 namespace WebCore {
 
-enum TileValidationPolicyFlag {
-    PruneSecondaryTiles = 1 << 0,
-    UnparentAllTiles = 1 << 1
-};
-
 TileGrid::TileGrid(TileController& controller)
     : m_controller(controller)
     , m_containerLayer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
@@ -122,6 +117,25 @@ void TileGrid::setNeedsDisplayInRect(const IntRect& rect)
 
     for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
         setTileNeedsDisplayInRect(it->key, it->value, repaintRectInTileCoords, m_primaryTileCoverageRect);
+}
+
+void TileGrid::dropTilesInRect(const IntRect& rect)
+{
+    if (m_tiles.isEmpty())
+        return;
+
+    FloatRect scaledRect(rect);
+    scaledRect.scale(m_scale);
+    IntRect dropRectInTileCoords(enclosingIntRect(scaledRect));
+
+    Vector<TileIndex> tilesToRemove;
+
+    for (auto& index : m_tiles.keys()) {
+        if (rectForTileIndex(index).intersects(dropRectInTileCoords))
+            tilesToRemove.append(index);
+    }
+
+    removeTiles(tilesToRemove);
 }
 
 void TileGrid::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& tileInfo, const IntRect& repaintRectInTileCoords, const IntRect& coverageRectInTileCoords)
@@ -323,7 +337,7 @@ void TileGrid::removeTilesInCohort(TileCohort cohort)
     removeTiles(tilesToRemove);
 }
 
-void TileGrid::revalidateTiles(TileValidationPolicyFlags validationPolicy)
+void TileGrid::revalidateTiles(unsigned validationPolicy)
 {
     FloatRect visibleRect = m_controller.visibleRect();
     IntRect bounds = m_controller.bounds();

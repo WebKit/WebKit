@@ -40,7 +40,6 @@ PlatformCALayerRemoteTiledBacking::PlatformCALayerRemoteTiledBacking(LayerType l
     : PlatformCALayerRemote(layerType, owner, context)
 {
     m_tileController = TileController::create(this);
-    m_customSublayers = std::make_unique<PlatformCALayerList>(m_tileController->containerLayers());
 }
 
 PlatformCALayerRemoteTiledBacking::~PlatformCALayerRemoteTiledBacking()
@@ -57,7 +56,8 @@ void PlatformCALayerRemoteTiledBacking::setNeedsDisplay(const FloatRect* dirtyRe
 
 const WebCore::PlatformCALayerList* PlatformCALayerRemoteTiledBacking::customSublayers() const
 {
-    return m_customSublayers.get();
+    m_customSublayers = m_tileController->containerLayers();
+    return &m_customSublayers;
 }
 
 void PlatformCALayerRemoteTiledBacking::setBounds(const WebCore::FloatRect& bounds)

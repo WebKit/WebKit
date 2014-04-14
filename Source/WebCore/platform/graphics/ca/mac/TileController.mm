@@ -44,11 +44,6 @@
 
 namespace WebCore {
 
-enum TileValidationPolicyFlag {
-    PruneSecondaryTiles = 1 << 0,
-    UnparentAllTiles = 1 << 1
-};
-
 PassOwnPtr<TileController> TileController::create(PlatformCALayer* rootPlatformLayer)
 {
     return adoptPtr(new TileController(rootPlatformLayer));
@@ -59,7 +54,6 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_tileGrid(std::make_unique<TileGrid>(*this))
     , m_tileSize(defaultTileWidth, defaultTileHeight)
     , m_tileRevalidationTimer(this, &TileController::tileRevalidationTimerFired)
-    , m_contentsScale(1)
     , m_zoomedOutContentsScale(0)
     , m_deviceScaleFactor(1)
     , m_tileCoverage(CoverageForVisibleArea)
@@ -96,21 +90,21 @@ void TileController::tileCacheLayerBoundsChanged()
 void TileController::setNeedsDisplay()
 {
     tileGrid().setNeedsDisplay();
+    m_zoomedOutTileGrid = nullptr;
 }
 
 void TileController::setNeedsDisplayInRect(const IntRect& rect)
 {
     tileGrid().setNeedsDisplayInRect(rect);
+    if (m_zoomedOutTileGrid)
+        m_zoomedOutTileGrid->dropTilesInRect(rect);
 }
 
 void TileController::setContentsScale(float scale)
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
 
-    m_contentsScale = scale;
-
     float deviceScaleFactor = owningGraphicsLayer()->platformCALayerDeviceScaleFactor();
-
     // The scale we get is the product of the page scale factor and device scale factor.
     // Divide by the device scale factor so we'll get the page scale factor.
     scale /= deviceScaleFactor;
@@ -121,16 +115,44 @@ void TileController::setContentsScale(float scale)
     m_hasTilesWithTemporaryScaleFactor = false;
     m_deviceScaleFactor = deviceScaleFactor;
 
+    if (m_zoomedOutTileGrid && m_zoomedOutTileGrid->scale() == scale) {
+        m_tileGrid = std::move(m_zoomedOutTileGrid);
+        m_tileGrid->revalidateTiles(0);
+        return;
+    }
+
+    if (m_zoomedOutContentsScale && m_zoomedOutContentsScale == tileGrid().scale() && tileGrid().scale() != scale && !m_hasTilesWithTemporaryScaleFactor) {
+        m_zoomedOutTileGrid = std::move(m_tileGrid);
+        m_tileGrid = std::make_unique<TileGrid>(*this);
+    }
+
     tileGrid().setScale(scale);
+    tileGrid().setNeedsDisplay();
+}
+
+float TileController::contentsScale() const
+{
+    return tileGrid().scale() * m_deviceScaleFactor;
+}
+
+float TileController::zoomedOutContentsScale() const
+{
+    return m_zoomedOutContentsScale * m_deviceScaleFactor;
 }
 
 void TileController::setZoomedOutContentsScale(float scale)
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
 
+    float deviceScaleFactor = owningGraphicsLayer()->platformCALayerDeviceScaleFactor();
+    scale /= deviceScaleFactor;
+
     if (m_zoomedOutContentsScale == scale)
         return;
     m_zoomedOutContentsScale = scale;
+
+    if (m_zoomedOutTileGrid && m_zoomedOutTileGrid->scale() != m_zoomedOutContentsScale)
+        m_zoomedOutTileGrid = nullptr;
 }
 
 void TileController::setAcceleratesDrawing(bool acceleratesDrawing)
@@ -322,8 +344,10 @@ void TileController::tileRevalidationTimerFired(Timer<TileController>*)
         setNeedsRevalidateTiles();
         return;
     }
+    // If we are not visible get rid of the zoomed-out tiles.
+    m_zoomedOutTileGrid = nullptr;
 
-    TileGrid::TileValidationPolicyFlags validationPolicy = (shouldAggressivelyRetainTiles() ? 0 : PruneSecondaryTiles) | UnparentAllTiles;
+    unsigned validationPolicy = (shouldAggressivelyRetainTiles() ? 0 : TileGrid::PruneSecondaryTiles) | TileGrid::UnparentAllTiles;
 
     tileGrid().revalidateTiles(validationPolicy);
 }
@@ -379,7 +403,10 @@ IntRect TileController::tileGridExtent() const
 
 double TileController::retainedTileBackingStoreMemory() const
 {
-    return tileGrid().retainedTileBackingStoreMemory();
+    double bytes = tileGrid().retainedTileBackingStoreMemory();
+    if (m_zoomedOutTileGrid)
+        bytes += m_zoomedOutTileGrid->retainedTileBackingStoreMemory();
+    return bytes;
 }
 
 // Return the rect in layer coords, not tile coords.
@@ -478,20 +505,27 @@ RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect,
 
 Vector<RefPtr<PlatformCALayer>> TileController::containerLayers()
 {
-    Vector<RefPtr<PlatformCALayer>> layerList(1);
-    layerList[0] = &tileGrid().containerLayer();
+    Vector<RefPtr<PlatformCALayer>> layerList;
+    if (m_zoomedOutTileGrid)
+        layerList.append(&m_zoomedOutTileGrid->containerLayer());
+    layerList.append(&tileGrid().containerLayer());
     return layerList;
 }
-    
+
 #if PLATFORM(IOS)
 unsigned TileController::numberOfUnparentedTiles() const
 {
-    return tileGrid().numberOfUnparentedTiles();
+    unsigned count = tileGrid().numberOfUnparentedTiles();
+    if (m_zoomedOutTileGrid)
+        count += m_zoomedOutTileGrid->numberOfUnparentedTiles();
+    return count;
 }
 
 void TileController::removeUnparentedTilesNow()
 {
     tileGrid().removeUnparentedTilesNow();
+    if (m_zoomedOutTileGrid)
+        m_zoomedOutTileGrid->removeUnparentedTilesNow();
 
     updateTileCoverageMap();
 }
