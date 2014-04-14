@@ -1,3 +1,14 @@
+2014-04-13  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Use #include instead of #import
+        https://bugs.webkit.org/show_bug.cgi?id=131604
+
+        Reviewed by Darin Adler.
+
+        Fix "warning: #import is a deprecated GCC extension [-Wdeprecated]".
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+
 2014-04-12  Filip Pizlo  <fpizlo@apple.com>
 
         Make slow-stress tests run faster by running fewer VM variants.

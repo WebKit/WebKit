@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#import <wtf/text/StringView.h>
+#include <wtf/text/StringView.h>
 
 namespace TestWebKitAPI {
 
