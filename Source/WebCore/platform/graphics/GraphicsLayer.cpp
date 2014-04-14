@@ -589,6 +589,20 @@ void GraphicsLayer::dumpLayer(TextStream& ts, int indent, LayerTreeAsTextBehavio
     ts << ")\n";
 }
 
+static void dumpChildren(TextStream& ts, const Vector<GraphicsLayer*>& children, unsigned& totalChildCount, int indent, LayerTreeAsTextBehavior behavior)
+{
+    totalChildCount += children.size();
+    for (auto* child : children) {
+        if (!child->client()->shouldSkipLayerInDump(child)) {
+            child->dumpLayer(ts, indent + 2, behavior);
+            continue;
+        }
+
+        totalChildCount--;
+        dumpChildren(ts, child->children(), totalChildCount, indent, behavior);
+    }
+}
+
 void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBehavior behavior) const
 {
     if (m_position != FloatPoint()) {
@@ -754,19 +768,9 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
     
     if (m_children.size()) {
         TextStream childrenStream;
-        unsigned totalChildCount = m_children.size();
-        for (size_t childIndex = 0; childIndex < m_children.size(); childIndex++) {
-            GraphicsLayer* child = m_children[childIndex];
-            if (!child->client()->shouldSkipLayerInDump(child)) {
-                child->dumpLayer(childrenStream, indent + 2, behavior);
-                continue;
-            }
-            
-            const Vector<GraphicsLayer*>& grandChildren = child->children();
-            totalChildCount += grandChildren.size() - 1;
-            for (size_t grandChildIndex = 0; grandChildIndex < grandChildren.size(); grandChildIndex++)
-                grandChildren[grandChildIndex]->dumpLayer(childrenStream, indent + 2, behavior);
-        }
+
+        unsigned totalChildCount = 0;
+        dumpChildren(childrenStream, m_children, totalChildCount, indent, behavior);
 
         writeIndent(childrenStream, indent + 1);
         childrenStream << ")\n";
