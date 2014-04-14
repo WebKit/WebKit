@@ -1,3 +1,30 @@
+2014-04-14  Andreas Kling  <akling@apple.com>
+
+        Merge MemoryPressureHandler{Mac,IOS}.mm
+        <https://webkit.org/b/131603>
+
+        Join the iOS and Mac platform implementations of MemoryPressureHandler
+        under the shared Cocoa banner. Each platform still has its own quirky
+        behavior, but this puts them in the same file so we can start sharing.
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm: Renamed from Source/WebCore/platform/mac/MemoryPressureHandlerMac.mm.
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::uninstall):
+        (WebCore::MemoryPressureHandler::holdOff):
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+        (WebCore::respondToMemoryPressureCallback):
+        (WebCore::MemoryPressureHandler::installMemoryReleaseBlock):
+        (WebCore::MemoryPressureHandler::setReceivedMemoryPressure):
+        (WebCore::MemoryPressureHandler::hasReceivedMemoryPressure):
+        (WebCore::MemoryPressureHandler::clearMemoryPressure):
+        (WebCore::MemoryPressureHandler::shouldWaitForMemoryClearMessage):
+        (WebCore::MemoryPressureHandler::respondToMemoryPressureIfNeeded):
+        * platform/ios/MemoryPressureHandlerIOS.mm: Removed.
+
 2014-04-14  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT: compile the :nth-child() pseudo class

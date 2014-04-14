@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011-2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,34 @@
 #import "config.h"
 #import "MemoryPressureHandler.h"
 
-#if !PLATFORM(IOS)
-
 #import "IOSurfacePool.h"
 #import "GCController.h"
 #import "LayerPool.h"
+#import "Logging.h"
 #import "WebCoreSystemInterface.h"
 #import <malloc/malloc.h>
 #import <notify.h>
 #import <wtf/CurrentTime.h>
 
+#if PLATFORM(IOS)
+#import "SystemMemory.h"
+#import "WebCoreThread.h"
+#import <libkern/OSAtomic.h>
+#endif
+
 namespace WebCore {
+
+void MemoryPressureHandler::platformReleaseMemory(bool)
+{
+#if PLATFORM(MAC)
+    LayerPool::sharedPool()->drain();
+#endif
+#if USE(IOSURFACE)
+    IOSurfacePool::sharedPool().discardAllSurfaces();
+#endif
+}
+
+#if PLATFORM(MAC)
 
 static dispatch_source_t _cache_event_source = 0;
 static dispatch_source_t _timer_event_source = 0;
@@ -140,12 +157,79 @@ void MemoryPressureHandler::respondToMemoryPressure()
     holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
 }
 
-void MemoryPressureHandler::platformReleaseMemory(bool)
+#else // !PLATFORM(MAC)
+
+static void respondToMemoryPressureCallback(CFRunLoopObserverRef observer, CFRunLoopActivity /*activity*/, void* /*info*/)
 {
-    LayerPool::sharedPool()->drain();
-    IOSurfacePool::sharedPool().discardAllSurfaces();
+    memoryPressureHandler().respondToMemoryPressureIfNeeded();
+    CFRunLoopObserverInvalidate(observer);
+    CFRelease(observer);
 }
 
-} // namespace WebCore
+void MemoryPressureHandler::installMemoryReleaseBlock(void (^releaseMemoryBlock)(), bool clearPressureOnMemoryRelease)
+{
+    if (m_installed)
+        return;
+    m_releaseMemoryBlock = Block_copy(releaseMemoryBlock);
+    m_clearPressureOnMemoryRelease = clearPressureOnMemoryRelease;
+    m_installed = true;
+}
 
-#endif // !PLATFORM(IOS)
+void MemoryPressureHandler::setReceivedMemoryPressure(MemoryPressureReason reason)
+{
+    OSAtomicTestAndSet(0, &m_receivedMemoryPressure);
+
+    {
+        MutexLocker locker(m_observerMutex);
+        if (!m_observer) {
+            m_observer = CFRunLoopObserverCreate(NULL, kCFRunLoopBeforeWaiting | kCFRunLoopExit, NO /* don't repeat */,
+                0, WebCore::respondToMemoryPressureCallback, NULL);
+            CFRunLoopAddObserver(WebThreadRunLoop(), m_observer, kCFRunLoopCommonModes);
+            CFRunLoopWakeUp(WebThreadRunLoop());
+        }
+        m_memoryPressureReason |= reason;
+    }
+}
+
+bool MemoryPressureHandler::hasReceivedMemoryPressure()
+{
+    return OSAtomicOr32(0, &m_receivedMemoryPressure);
+}
+
+void MemoryPressureHandler::clearMemoryPressure()
+{
+    OSAtomicTestAndClear(0, &m_receivedMemoryPressure);
+
+    {
+        MutexLocker locker(m_observerMutex);
+        m_memoryPressureReason = MemoryPressureReasonNone;
+    }
+}
+
+bool MemoryPressureHandler::shouldWaitForMemoryClearMessage()
+{
+    MutexLocker locker(m_observerMutex);
+    return m_memoryPressureReason & MemoryPressureReasonVMStatus;
+}
+
+void MemoryPressureHandler::respondToMemoryPressureIfNeeded()
+{
+    ASSERT(WebThreadIsLockedOrDisabled());
+
+    {
+        MutexLocker locker(m_observerMutex);
+        m_observer = 0;
+    }
+
+    if (hasReceivedMemoryPressure()) {
+        ASSERT(m_releaseMemoryBlock);
+        LOG(MemoryPressure, "Handle memory pressure at %s", __PRETTY_FUNCTION__);
+        m_releaseMemoryBlock();
+        if (m_clearPressureOnMemoryRelease)
+            clearMemoryPressure();
+    }
+}
+
+#endif
+
+} // namespace WebCore
