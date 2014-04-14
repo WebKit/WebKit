@@ -1,3 +1,30 @@
+2014-04-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Assertion failure !node || node->isElementNode() in
+        WebCore::RenderBlock::inlineElementContinuation
+  
+        https://bugs.webkit.org/show_bug.cgi?id=108829
+        <rdar://problem/13666405>
+  
+        I can't reproduce this assertion failure, but there seems to be an
+        invalid assumption in RenderBlock::inlineElementContinuation() that
+        anything with the "isInline()" bit set is a RenderInline.
+        
+        No new test because the test case in the bug does not repro for me.
+
+        Reviewed by Brent Fulgham.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::inlineElementContinuation):
+        Dave Hyatt says that this function should only return RenderInline
+        objects (not non-RenderInline inline objects), so update the checks
+        from isInline() to isRenderInline() before casting with
+        toRenderInline().
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::inlineElementContinuation):
+        Ditto.
+
 2014-04-14  Andreas Kling  <akling@apple.com>
 
         Do more things under memory pressure on non-iOS platforms.
