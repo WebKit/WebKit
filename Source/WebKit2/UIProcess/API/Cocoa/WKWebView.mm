@@ -1242,38 +1242,43 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     [self _updateVisibleContentRects];
 }
 
-- (void)_beginAnimatedResizeToSize:(CGSize)futureSize obscuredInsets:(UIEdgeInsets)futureObscuredInsets minimumLayoutSizeOverride:(CGSize)futureMinimumLayoutSize
+- (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock
 {
     _isAnimatingResize = YES;
     _resizeAnimationTransformAdjustments = CATransform3DIdentity;
 
+    CGRect oldBounds = self.bounds;
+    CGSize oldMinimumLayoutSize = oldBounds.size;
+    if (_hasStaticMinimumLayoutSize)
+        oldMinimumLayoutSize = _minimumLayoutSizeOverride;
+    WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
+
+    updateBlock();
+
     if (_customContentView)
         return;
 
-    CGSize contentSizeInContentViewCoordinates = [_contentView bounds].size;
-    [_scrollView setMinimumZoomScale:std::min(futureSize.width / contentSizeInContentViewCoordinates.width, [_scrollView minimumZoomScale])];
-
-    _obscuredInsets = futureObscuredInsets;
+    CGRect newBounds = self.bounds;
+    CGSize newMinimumLayoutSize = newBounds.size;
     if (_hasStaticMinimumLayoutSize)
-        _minimumLayoutSizeOverride = futureMinimumLayoutSize;
+        newMinimumLayoutSize = _minimumLayoutSizeOverride;
 
-    CGRect oldBounds = self.bounds;
-    WebCore::FloatRect originalUnobscuredContentRect = _page->unobscuredContentRect();
+    if (CGSizeEqualToSize(newMinimumLayoutSize, oldMinimumLayoutSize) && CGRectEqualToRect(newBounds, oldBounds))
+        return;
 
-    CGRect futureBounds = oldBounds;
-    futureBounds.size = futureSize;
-    [self setBounds:futureBounds];
+    CGSize contentSizeInContentViewCoordinates = [_contentView bounds].size;
+    [_scrollView setMinimumZoomScale:std::min(newBounds.size.width / contentSizeInContentViewCoordinates.width, [_scrollView minimumZoomScale])];
 
     // Compute the new scale to keep the current content width in the scrollview.
     CGFloat oldWebViewWidthInContentViewCoordinates = oldBounds.size.width / contentZoomScale(self);
     CGFloat visibleContentViewWidthInContentCoordinates = std::min(contentSizeInContentViewCoordinates.width, oldWebViewWidthInContentViewCoordinates);
-    CGFloat targetScale = futureBounds.size.width / visibleContentViewWidthInContentCoordinates;
+    CGFloat targetScale = newBounds.size.width / visibleContentViewWidthInContentCoordinates;
     [_scrollView setZoomScale:targetScale];
 
     // Compute a new position to keep the content centered.
-    CGPoint originalContentCenter = originalUnobscuredContentRect.center();
+    CGPoint originalContentCenter = oldUnobscuredContentRect.center();
     CGPoint originalContentCenterInSelfCoordinates = [self convertPoint:originalContentCenter fromView:_contentView.get()];
-    CGRect futureUnobscuredRectInSelfCoordinates = UIEdgeInsetsInsetRect(futureBounds, futureObscuredInsets);
+    CGRect futureUnobscuredRectInSelfCoordinates = UIEdgeInsetsInsetRect(newBounds, _obscuredInsets);
     CGPoint futureUnobscuredRectCenterInSelfCoordinates = CGPointMake(futureUnobscuredRectInSelfCoordinates.origin.x + futureUnobscuredRectInSelfCoordinates.size.width / 2, futureUnobscuredRectInSelfCoordinates.origin.y + futureUnobscuredRectInSelfCoordinates.size.height / 2);
 
     CGPoint originalContentOffset = [_scrollView contentOffset];
@@ -1283,29 +1288,29 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
     // Limit the new offset within the scrollview, we do not want to rubber band programmatically.
     CGSize futureContentSizeInSelfCoordinates = CGSizeMake(contentSizeInContentViewCoordinates.width * targetScale, contentSizeInContentViewCoordinates.height * targetScale);
-    CGFloat maxHorizontalOffset = futureContentSizeInSelfCoordinates.width - futureBounds.size.width + _obscuredInsets.right;
+    CGFloat maxHorizontalOffset = futureContentSizeInSelfCoordinates.width - newBounds.size.width + _obscuredInsets.right;
     contentOffset.x = std::min(contentOffset.x, maxHorizontalOffset);
-    CGFloat maxVerticalOffset = futureContentSizeInSelfCoordinates.height - futureBounds.size.height + _obscuredInsets.bottom;
+    CGFloat maxVerticalOffset = futureContentSizeInSelfCoordinates.height - newBounds.size.height + _obscuredInsets.bottom;
     contentOffset.y = std::min(contentOffset.y, maxVerticalOffset);
 
     contentOffset.x = std::max(contentOffset.x, -_obscuredInsets.left);
     contentOffset.y = std::max(contentOffset.y, -_obscuredInsets.top);
 
     // Make the top/bottom edges "sticky" within 1 pixel.
-    if (originalUnobscuredContentRect.maxY() > contentSizeInContentViewCoordinates.height - 1)
+    if (oldUnobscuredContentRect.maxY() > contentSizeInContentViewCoordinates.height - 1)
         contentOffset.y = maxVerticalOffset;
-    if (originalUnobscuredContentRect.y() < 1)
+    if (oldUnobscuredContentRect.y() < 1)
         contentOffset.y = -_obscuredInsets.top;
 
     // FIXME: if we have content centered after double tap to zoom, we should also try to keep that rect in view.
     [_scrollView setContentOffset:contentOffset];
 
-    CGRect visibleRectInContentCoordinates = [self convertRect:futureBounds toView:_contentView.get()];
+    CGRect visibleRectInContentCoordinates = [self convertRect:newBounds toView:_contentView.get()];
 
-    CGRect unobscuredRect = UIEdgeInsetsInsetRect(futureBounds, _obscuredInsets);
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(newBounds, _obscuredInsets);
     CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
 
-    _page->dynamicViewportSizeUpdate(WebCore::IntSize(CGCeiling(futureMinimumLayoutSize.width), CGCeiling(futureMinimumLayoutSize.height)), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, targetScale);
+    _page->dynamicViewportSizeUpdate(WebCore::IntSize(CGCeiling(newMinimumLayoutSize.width), CGCeiling(newMinimumLayoutSize.height)), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, targetScale);
 }
 
 - (void)_endAnimatedResize
