@@ -1,5 +1,36 @@
 2014-04-13  Geoffrey Garen  <ggaren@apple.com>
 
+        Added some website recordings to MallocBench -- taken from Membuster
+        https://bugs.webkit.org/show_bug.cgi?id=131601
+
+        Reviewed by Ryosuke Niwa.
+
+        Added flickr, reddit, and theverge -- each recorded from Membuster's
+        cache, with and without sending Safari a low memory warning.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj:
+        * MallocBench/MallocBench/Benchmark.cpp:
+        * MallocBench/MallocBench/flickr.cpp: Added.
+        (benchmark_flickr):
+        (benchmark_flickr_memory_warning):
+        * MallocBench/MallocBench/flickr.h: Added.
+        * MallocBench/MallocBench/flickr.ops: Added.
+        * MallocBench/MallocBench/flickr_memory_warning.ops: Added.
+        * MallocBench/MallocBench/reddit.cpp: Added.
+        (benchmark_reddit):
+        (benchmark_reddit_memory_warning):
+        * MallocBench/MallocBench/reddit.h: Added.
+        * MallocBench/MallocBench/reddit.ops: Added.
+        * MallocBench/MallocBench/reddit_memory_warning.ops: Added.
+        * MallocBench/MallocBench/theverge.cpp: Added.
+        (benchmark_theverge):
+        (benchmark_theverge_memory_warning):
+        * MallocBench/MallocBench/theverge.h: Added.
+        * MallocBench/MallocBench/theverge.ops: Added.
+        * MallocBench/MallocBench/theverge_memory_warning.ops: Added.
+
+2014-04-13  Geoffrey Garen  <ggaren@apple.com>
+
         MallocBench record/replay should support realloc
         https://bugs.webkit.org/show_bug.cgi?id=131598
 

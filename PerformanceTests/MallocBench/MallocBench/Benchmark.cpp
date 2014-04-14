@@ -29,10 +29,13 @@
 #include "big.h"
 #include "churn.h"
 #include "facebook.h"
+#include "flickr.h"
 #include "fragment.h"
 #include "list.h"
 #include "medium.h"
 #include "message.h"
+#include "reddit.h"
+#include "theverge.h"
 #include "tree.h"
 #include <dispatch/dispatch.h>
 #include <iostream>
@@ -68,6 +71,12 @@ static const BenchmarkPair benchmarkPairs[] = {
     { "big", benchmark_big },
     { "facebook", benchmark_facebook },
     { "balloon", benchmark_balloon },
+    { "flickr", benchmark_flickr },
+    { "reddit", benchmark_reddit },
+    { "theverge", benchmark_theverge },
+    { "flickr_memory_warning", benchmark_flickr_memory_warning },
+    { "reddit_memory_warning", benchmark_reddit_memory_warning },
+    { "theverge_memory_warning", benchmark_theverge_memory_warning },
 };
 
 static const size_t benchmarksPairsCount = sizeof(benchmarkPairs) / sizeof(BenchmarkPair);

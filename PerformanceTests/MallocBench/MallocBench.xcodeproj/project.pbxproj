@@ -14,13 +14,22 @@
 		14452CB0177D24460097E057 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14452CAF177D24460097E057 /* main.cpp */; };
 		14452CEF177D47110097E057 /* churn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14452CED177D47110097E057 /* churn.cpp */; };
 		1447AE8418FB4B2400B3D7FF /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1447AE8318FB4B2400B3D7FF /* libSystem.dylib */; };
+		1447AE9018FB584200B3D7FF /* flickr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1447AE8718FB584200B3D7FF /* flickr.cpp */; };
+		1447AE9118FB584200B3D7FF /* reddit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1447AE8A18FB584200B3D7FF /* reddit.cpp */; };
+		1447AE9218FB584200B3D7FF /* theverge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1447AE8D18FB584200B3D7FF /* theverge.cpp */; };
+		1447AE9318FB588600B3D7FF /* flickr.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE8918FB584200B3D7FF /* flickr.ops */; };
+		1447AE9418FB589400B3D7FF /* reddit.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE8C18FB584200B3D7FF /* reddit.ops */; };
+		1447AE9518FB58A300B3D7FF /* theverge.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE8F18FB584200B3D7FF /* theverge.ops */; };
+		1447AE9918FB59E000B3D7FF /* flickr_memory_warning.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE9618FB59D900B3D7FF /* flickr_memory_warning.ops */; };
+		1447AE9A18FB59E300B3D7FF /* reddit_memory_warning.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE9718FB59D900B3D7FF /* reddit_memory_warning.ops */; };
+		1447AE9B18FB59E600B3D7FF /* theverge_memory_warning.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE9818FB59D900B3D7FF /* theverge_memory_warning.ops */; };
 		1451FAED18B14B7100DB6D47 /* medium.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1451FAEB18B14B7100DB6D47 /* medium.cpp */; };
 		14976EC8177E3649006B819A /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976EC6177E3649006B819A /* list.cpp */; };
 		14976ECC177E3C87006B819A /* CommandLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976ECB177E3C87006B819A /* CommandLine.cpp */; };
 		14976ECE177E3D67006B819A /* Benchmark.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976ECD177E3D67006B819A /* Benchmark.cpp */; };
 		14976ED1177E4AF7006B819A /* tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976ECF177E4AF7006B819A /* tree.cpp */; };
 		14C5008D184016CF007A531D /* facebook.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C5008B184016CF007A531D /* facebook.cpp */; };
-		14C5009018401841007A531D /* facebook.ops in CopyFiles */ = {isa = PBXBuildFile; fileRef = 14C5008E18401726007A531D /* facebook.ops */; };
+		14C5009018401841007A531D /* facebook.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 14C5008E18401726007A531D /* facebook.ops */; };
 		14C5009318403DA0007A531D /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C5009118403DA0007A531D /* Interpreter.cpp */; };
 		14CC393C18EA812B004AFE34 /* libmbmalloc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 14CC393818EA811F004AFE34 /* libmbmalloc.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
 		14CC393F18EA8184004AFE34 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CC391C18EA6759004AFE34 /* mbmalloc.cpp */; };
@@ -39,14 +48,21 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		14452CA7177D24460097E057 /* CopyFiles */ = {
+		14452CA7177D24460097E057 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				14C5009018401841007A531D /* facebook.ops in CopyFiles */,
+				1447AE9418FB589400B3D7FF /* reddit.ops in Copy Files */,
+				1447AE9918FB59E000B3D7FF /* flickr_memory_warning.ops in Copy Files */,
+				1447AE9B18FB59E600B3D7FF /* theverge_memory_warning.ops in Copy Files */,
+				1447AE9A18FB59E300B3D7FF /* reddit_memory_warning.ops in Copy Files */,
+				1447AE9518FB58A300B3D7FF /* theverge.ops in Copy Files */,
+				1447AE9318FB588600B3D7FF /* flickr.ops in Copy Files */,
+				14C5009018401841007A531D /* facebook.ops in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -65,6 +81,18 @@
 		14452CED177D47110097E057 /* churn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = churn.cpp; path = MallocBench/churn.cpp; sourceTree = "<group>"; };
 		14452CEE177D47110097E057 /* churn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = churn.h; path = MallocBench/churn.h; sourceTree = "<group>"; };
 		1447AE8318FB4B2400B3D7FF /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = /usr/lib/libSystem.dylib; sourceTree = "<absolute>"; };
+		1447AE8718FB584200B3D7FF /* flickr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = flickr.cpp; path = MallocBench/flickr.cpp; sourceTree = "<group>"; };
+		1447AE8818FB584200B3D7FF /* flickr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = flickr.h; path = MallocBench/flickr.h; sourceTree = "<group>"; };
+		1447AE8918FB584200B3D7FF /* flickr.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = flickr.ops; path = MallocBench/flickr.ops; sourceTree = "<group>"; };
+		1447AE8A18FB584200B3D7FF /* reddit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reddit.cpp; path = MallocBench/reddit.cpp; sourceTree = "<group>"; };
+		1447AE8B18FB584200B3D7FF /* reddit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reddit.h; path = MallocBench/reddit.h; sourceTree = "<group>"; };
+		1447AE8C18FB584200B3D7FF /* reddit.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = reddit.ops; path = MallocBench/reddit.ops; sourceTree = "<group>"; };
+		1447AE8D18FB584200B3D7FF /* theverge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = theverge.cpp; path = MallocBench/theverge.cpp; sourceTree = "<group>"; };
+		1447AE8E18FB584200B3D7FF /* theverge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = theverge.h; path = MallocBench/theverge.h; sourceTree = "<group>"; };
+		1447AE8F18FB584200B3D7FF /* theverge.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = theverge.ops; path = MallocBench/theverge.ops; sourceTree = "<group>"; };
+		1447AE9618FB59D900B3D7FF /* flickr_memory_warning.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = flickr_memory_warning.ops; path = MallocBench/flickr_memory_warning.ops; sourceTree = "<group>"; };
+		1447AE9718FB59D900B3D7FF /* reddit_memory_warning.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = reddit_memory_warning.ops; path = MallocBench/reddit_memory_warning.ops; sourceTree = "<group>"; };
+		1447AE9818FB59D900B3D7FF /* theverge_memory_warning.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = theverge_memory_warning.ops; path = MallocBench/theverge_memory_warning.ops; sourceTree = "<group>"; };
 		1451FAEB18B14B7100DB6D47 /* medium.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = medium.cpp; path = MallocBench/medium.cpp; sourceTree = "<group>"; };
 		1451FAEC18B14B7100DB6D47 /* medium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = medium.h; path = MallocBench/medium.h; sourceTree = "<group>"; };
 		14976EC6177E3649006B819A /* list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = list.cpp; path = MallocBench/list.cpp; sourceTree = "<group>"; };
@@ -174,6 +202,10 @@
 				14C5008B184016CF007A531D /* facebook.cpp */,
 				14C5008C184016CF007A531D /* facebook.h */,
 				14C5008E18401726007A531D /* facebook.ops */,
+				1447AE9618FB59D900B3D7FF /* flickr_memory_warning.ops */,
+				1447AE8718FB584200B3D7FF /* flickr.cpp */,
+				1447AE8818FB584200B3D7FF /* flickr.h */,
+				1447AE8918FB584200B3D7FF /* flickr.ops */,
 				1444AE91177E79BB00F8030A /* fragment.cpp */,
 				1444AE92177E79BB00F8030A /* fragment.h */,
 				14976EC6177E3649006B819A /* list.cpp */,
@@ -184,6 +216,14 @@
 				1444AE95177E8DF200F8030A /* message.h */,
 				14105E8018E13EEC003A106E /* realloc.cpp */,
 				14105E8118E13EEC003A106E /* realloc.h */,
+				1447AE9718FB59D900B3D7FF /* reddit_memory_warning.ops */,
+				1447AE8A18FB584200B3D7FF /* reddit.cpp */,
+				1447AE8B18FB584200B3D7FF /* reddit.h */,
+				1447AE8C18FB584200B3D7FF /* reddit.ops */,
+				1447AE9818FB59D900B3D7FF /* theverge_memory_warning.ops */,
+				1447AE8D18FB584200B3D7FF /* theverge.cpp */,
+				1447AE8E18FB584200B3D7FF /* theverge.h */,
+				1447AE8F18FB584200B3D7FF /* theverge.ops */,
 				14976ECF177E4AF7006B819A /* tree.cpp */,
 				14976ED0177E4AF7006B819A /* tree.h */,
 			);
@@ -209,7 +249,7 @@
 			buildPhases = (
 				14452CA5177D24460097E057 /* Sources */,
 				14452CA6177D24460097E057 /* Frameworks */,
-				14452CA7177D24460097E057 /* CopyFiles */,
+				14452CA7177D24460097E057 /* Copy Files */,
 			);
 			buildRules = (
 			);
@@ -276,10 +316,13 @@
 				14452CEF177D47110097E057 /* churn.cpp in Sources */,
 				14452CB0177D24460097E057 /* main.cpp in Sources */,
 				14C5008D184016CF007A531D /* facebook.cpp in Sources */,
+				1447AE9018FB584200B3D7FF /* flickr.cpp in Sources */,
 				14976EC8177E3649006B819A /* list.cpp in Sources */,
 				14976ECC177E3C87006B819A /* CommandLine.cpp in Sources */,
+				1447AE9218FB584200B3D7FF /* theverge.cpp in Sources */,
 				1451FAED18B14B7100DB6D47 /* medium.cpp in Sources */,
 				14C5009318403DA0007A531D /* Interpreter.cpp in Sources */,
+				1447AE9118FB584200B3D7FF /* reddit.cpp in Sources */,
 				14E11932177ECC8B003A8D15 /* CPUCount.cpp in Sources */,
 				1444AE93177E79BB00F8030A /* fragment.cpp in Sources */,
 				14105E8218E13EEC003A106E /* realloc.cpp in Sources */,
