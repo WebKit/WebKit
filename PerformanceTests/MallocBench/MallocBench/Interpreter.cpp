@@ -101,14 +101,12 @@ void Interpreter::run()
             }
             case op_free: {
                 assert(m_objects[op.slot].object);
-                assert(m_objects[op.slot].size);
                 mbfree(m_objects[op.slot].object, m_objects[op.slot].size);
                 m_objects[op.slot] = { 0, 0 };
                 break;
             }
             case op_realloc: {
                 assert(m_objects[op.slot].object);
-                assert(m_objects[op.slot].size);
                 m_objects[op.slot] = { mbrealloc(m_objects[op.slot].object, m_objects[op.slot].size, op.size), op.size };
                 break;
             }

@@ -1,3 +1,23 @@
+2014-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        A few MallocBench record/replay fixes
+        https://bugs.webkit.org/show_bug.cgi?id=131627
+
+        Reviewed by Andreas Kling.
+
+        * MallocBench/MallocBench/Interpreter.cpp:
+        (Interpreter::run): Accept 0-sized allocations without asserting because
+        WebKit does that sometimes.
+
+        * MallocBench/MallocBench/flickr.ops:
+        * MallocBench/MallocBench/flickr_memory_warning.ops:
+        * MallocBench/MallocBench/reddit.ops:
+        * MallocBench/MallocBench/reddit_memory_warning.ops:
+        * MallocBench/MallocBench/theverge.ops:
+        * MallocBench/MallocBench/theverge_memory_warning.ops: Updated these
+        recordings because a bug in the recording mechanism caused one out of
+        every few thousand slot values to be bogus.
+
 2014-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Added some website recordings to MallocBench -- taken from Membuster
