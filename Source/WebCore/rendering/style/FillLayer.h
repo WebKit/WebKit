@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -26,7 +26,6 @@
 #define FillLayer_h
 
 #include "GraphicsTypes.h"
-#include "Length.h"
 #include "LengthSize.h"
 #include "RenderStyleConstants.h"
 #include "StyleImage.h"
@@ -42,29 +41,30 @@ struct FillSize {
     {
     }
 
-    FillSize(EFillSizeType t, LengthSize size)
-        : type(t)
-        , size(std::move(size))
+    FillSize(EFillSizeType type, const LengthSize& size)
+        : type(type)
+        , size(size)
     {
-    }
-
-    bool operator==(const FillSize& o) const
-    {
-        return type == o.type && size == o.size;
-    }
-    bool operator!=(const FillSize& o) const
-    {
-        return !(*this == o);
     }
 
     EFillSizeType type;
     LengthSize size;
 };
 
+inline bool operator==(const FillSize& a, const FillSize& b)
+{
+    return a.type == b.type && a.size == b.size;
+}
+
+inline bool operator!=(const FillSize& a, const FillSize& b)
+{
+    return !(a == b);
+}
+
 class FillLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FillLayer(EFillLayerType);
+    explicit FillLayer(EFillLayerType);
     ~FillLayer();
 
     StyleImage* image() const { return m_image.get(); }
@@ -84,8 +84,8 @@ public:
     FillSize size() const { return FillSize(static_cast<EFillSizeType>(m_sizeType), m_sizeLength); }
     EMaskSourceType maskSourceType() const { return static_cast<EMaskSourceType>(m_maskSourceType); }
 
-    const FillLayer* next() const { return m_next; }
-    FillLayer* next() { return m_next; }
+    const FillLayer* next() const { return m_next.get(); }
+    FillLayer* next() { return m_next.get(); }
 
     bool isImageSet() const { return m_imageSet; }
     bool isXPositionSet() const { return m_xPosSet; }
@@ -101,7 +101,7 @@ public:
     bool isSizeSet() const { return m_sizeType != SizeNone; }
     bool isMaskSourceTypeSet() const { return m_maskSourceTypeSet; }
 
-    void setImage(PassRefPtr<StyleImage> i) { m_image = i; m_imageSet = true; }
+    void setImage(PassRefPtr<StyleImage> image) { m_image = image; m_imageSet = true; }
     void setXPosition(Length length) { m_xPosition = std::move(length); m_xPosSet = true; }
     void setYPosition(Length length) { m_yPosition = std::move(length); m_yPosSet = true; }
     void setBackgroundXOrigin(BackgroundEdgeOrigin o) { m_backgroundXOrigin = o; m_backgroundOriginSet = true; }
@@ -119,16 +119,8 @@ public:
     void setMaskSourceType(EMaskSourceType m) { m_maskSourceType = m; m_maskSourceTypeSet = true; }
 
     void clearImage() { m_image.clear(); m_imageSet = false; }
-    void clearXPosition()
-    {
-        m_xPosSet = false;
-        m_backgroundOriginSet = false;
-    }
-    void clearYPosition()
-    {
-        m_yPosSet = false;
-        m_backgroundOriginSet = false;
-    }
+    void clearXPosition() { m_xPosSet = false; m_backgroundOriginSet = false; }
+    void clearYPosition() { m_yPosSet = false; m_backgroundOriginSet = false; }
 
     void clearAttachment() { m_attachmentSet = false; }
     void clearClip() { m_clipSet = false; }
@@ -140,35 +132,19 @@ public:
     void clearSize() { m_sizeType = SizeNone; }
     void clearMaskSourceType() { m_maskSourceTypeSet = false; }
 
-    void setNext(FillLayer* n) { if (m_next != n) { delete m_next; m_next = n; } }
+    void setNext(std::unique_ptr<FillLayer> next) { m_next = std::move(next); }
 
-    FillLayer& operator=(const FillLayer& o);    
-    FillLayer(const FillLayer& o);
+    FillLayer& operator=(const FillLayer&);
+    FillLayer(const FillLayer&);
 
-    bool operator==(const FillLayer& o) const;
-    bool operator!=(const FillLayer& o) const
-    {
-        return !(*this == o);
-    }
+    bool operator==(const FillLayer&) const;
+    bool operator!=(const FillLayer& other) const { return !(*this == other); }
 
-    bool containsImage(StyleImage*) const;
+    bool containsImage(StyleImage&) const;
     bool imagesAreLoaded() const;
-
-    bool hasImage() const
-    {
-        if (m_image)
-            return true;
-        return m_next ? m_next->hasImage() : false;
-    }
-
-    bool hasFixedImage() const
-    {
-        if (m_image && m_attachment == FixedBackgroundAttachment)
-            return true;
-        return m_next ? m_next->hasFixedImage() : false;
-    }
-
-    bool hasOpaqueImage(const RenderElement*) const;
+    bool hasImage() const;
+    bool hasFixedImage() const;
+    bool hasOpaqueImage(const RenderElement&) const;
     bool hasRepeatXY() const;
     bool clipOccludesNextLayers(bool firstLayer) const;
 
@@ -197,9 +173,7 @@ private:
 
     void computeClipMax() const;
 
-    FillLayer() { }
-
-    FillLayer* m_next;
+    std::unique_ptr<FillLayer> m_next;
 
     RefPtr<StyleImage> m_image;
 

@@ -520,72 +520,60 @@ public:
         if (*(styleResolver->parentStyle()->*layersFunction)() == *(styleResolver->style()->*layersFunction)())
             return;
 
-        FillLayer* currChild = (styleResolver->style()->*accessLayersFunction)();
-        FillLayer* prevChild = 0;
-        const FillLayer* currParent = (styleResolver->parentStyle()->*layersFunction)();
-        while (currParent && (currParent->*testFunction)()) {
-            if (!currChild) {
-                /* Need to make a new layer.*/
-                currChild = new FillLayer(fillLayerType);
-                prevChild->setNext(currChild);
+        auto* child = (styleResolver->style()->*accessLayersFunction)();
+        FillLayer* previousChild = nullptr;
+        for (auto* parent = (styleResolver->parentStyle()->*layersFunction)(); parent && (parent->*testFunction)(); parent = parent->next()) {
+            if (!child) {
+                previousChild->setNext(std::make_unique<FillLayer>(fillLayerType));
+                child = previousChild->next();
             }
-            (currChild->*setFunction)((currParent->*getFunction)());
-            prevChild = currChild;
-            currChild = prevChild->next();
-            currParent = currParent->next();
+            (child->*setFunction)((parent->*getFunction)());
+            previousChild = child;
+            child = previousChild->next();
         }
-
-        while (currChild) {
-            /* Reset any remaining layers to not have the property set. */
-            (currChild->*clearFunction)();
-            currChild = currChild->next();
-        }
+        for (; child; child = child->next())
+            (child->*clearFunction)();
     }
 
     static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
     {
         // Check for (single-layer) no-op before clearing anything.
         const FillLayer& layers = *(styleResolver->style()->*layersFunction)();
-        bool firstLayerHasValue = (layers.*testFunction)();
-        if (!layers.next() && (!firstLayerHasValue || (layers.*getFunction)() == (*initialFunction)(fillLayerType)))
+        if (!layers.next() && (!(layers.*testFunction)() || (layers.*getFunction)() == (*initialFunction)(fillLayerType)))
             return;
 
-        FillLayer* currChild = (styleResolver->style()->*accessLayersFunction)();
-        (currChild->*setFunction)((*initialFunction)(fillLayerType));
-        for (currChild = currChild->next(); currChild; currChild = currChild->next())
-            (currChild->*clearFunction)();
+        FillLayer* child = (styleResolver->style()->*accessLayersFunction)();
+        (child->*setFunction)((*initialFunction)(fillLayerType));
+        for (child = child->next(); child; child = child->next())
+            (child->*clearFunction)();
     }
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        FillLayer* currChild = (styleResolver->style()->*accessLayersFunction)();
-        FillLayer* prevChild = 0;
+        FillLayer* child = (styleResolver->style()->*accessLayersFunction)();
+        FillLayer* previousChild = nullptr;
         if (value->isValueList()
 #if ENABLE(CSS_IMAGE_SET)
         && !value->isImageSetValue()
 #endif
         ) {
-            /* Walk each value and put it into a layer, creating new layers as needed. */
-            CSSValueList* valueList = toCSSValueList(value);
-            for (unsigned int i = 0; i < valueList->length(); i++) {
-                if (!currChild) {
-                    /* Need to make a new layer to hold this value */
-                    currChild = new FillLayer(fillLayerType);
-                    prevChild->setNext(currChild);
+            // Walk each value and put it into a layer, creating new layers as needed.
+            CSSValueList& valueList = toCSSValueList(*value);
+            for (unsigned i = 0; i < valueList.length(); i++) {
+                if (!child) {
+                    previousChild->setNext(std::make_unique<FillLayer>(fillLayerType));
+                    child = previousChild->next();
                 }
-                (styleResolver->styleMap()->*mapFillFunction)(propertyId, currChild, valueList->itemWithoutBoundsCheck(i));
-                prevChild = currChild;
-                currChild = currChild->next();
+                (styleResolver->styleMap()->*mapFillFunction)(propertyId, child, valueList.itemWithoutBoundsCheck(i));
+                previousChild = child;
+                child = child->next();
             }
         } else {
-            (styleResolver->styleMap()->*mapFillFunction)(propertyId, currChild, value);
-            currChild = currChild->next();
+            (styleResolver->styleMap()->*mapFillFunction)(propertyId, child, value);
+            child = child->next();
         }
-        while (currChild) {
-            /* Reset all remaining layers to not have the property set. */
-            (currChild->*clearFunction)();
-            currChild = currChild->next();
-        }
+        for (; child; child = child->next())
+            (child->*clearFunction)();
     }
 
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
@@ -2499,9 +2487,9 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
 #endif
     setPropertyHandler(CSSPropertyWebkitBoxDirection, ApplyPropertyDefault<EBoxDirection, &RenderStyle::boxDirection, EBoxDirection, &RenderStyle::setBoxDirection, EBoxDirection, &RenderStyle::initialBoxDirection>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBoxFlex, ApplyPropertyDefault<float, &RenderStyle::boxFlex, float, &RenderStyle::setBoxFlex, float, &RenderStyle::initialBoxFlex>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBoxFlexGroup, ApplyPropertyDefault<unsigned int, &RenderStyle::boxFlexGroup, unsigned int, &RenderStyle::setBoxFlexGroup, unsigned int, &RenderStyle::initialBoxFlexGroup>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitBoxFlexGroup, ApplyPropertyDefault<unsigned, &RenderStyle::boxFlexGroup, unsigned, &RenderStyle::setBoxFlexGroup, unsigned, &RenderStyle::initialBoxFlexGroup>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBoxLines, ApplyPropertyDefault<EBoxLines, &RenderStyle::boxLines, EBoxLines, &RenderStyle::setBoxLines, EBoxLines, &RenderStyle::initialBoxLines>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBoxOrdinalGroup, ApplyPropertyDefault<unsigned int, &RenderStyle::boxOrdinalGroup, unsigned int, &RenderStyle::setBoxOrdinalGroup, unsigned int, &RenderStyle::initialBoxOrdinalGroup>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitBoxOrdinalGroup, ApplyPropertyDefault<unsigned, &RenderStyle::boxOrdinalGroup, unsigned, &RenderStyle::setBoxOrdinalGroup, unsigned, &RenderStyle::initialBoxOrdinalGroup>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBoxOrient, ApplyPropertyDefault<EBoxOrient, &RenderStyle::boxOrient, EBoxOrient, &RenderStyle::setBoxOrient, EBoxOrient, &RenderStyle::initialBoxOrient>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBoxPack, ApplyPropertyDefault<EBoxPack, &RenderStyle::boxPack, EBoxPack, &RenderStyle::setBoxPack, EBoxPack, &RenderStyle::initialBoxPack>::createHandler());
     setPropertyHandler(CSSPropertyWebkitColorCorrection, ApplyPropertyDefault<ColorSpace, &RenderStyle::colorSpace, ColorSpace, &RenderStyle::setColorSpace, ColorSpace, &RenderStyle::initialColorSpace>::createHandler());

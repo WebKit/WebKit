@@ -1,3 +1,42 @@
+2014-04-12  Darin Adler  <darin@apple.com>
+
+        Use unique_ptr for FillLayer::m_next
+        https://bugs.webkit.org/show_bug.cgi?id=75222
+
+        Reviewed by Dan Bernstein.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyFillLayer::applyInheritValue):
+        Renamed currChild to just child and prevChild to previousChild.
+        Changed code to pass ownership of the new FillLayer immediately.
+        Changed some loops to be for loops.
+        (WebCore::ApplyPropertyFillLayer::applyInitialValue): Ditto.
+        (WebCore::ApplyPropertyFillLayer::applyValue): Ditto.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::backgroundHasOpaqueTopLayer): Use reference
+        instead of pointer.
+        (WebCore::RenderBox::paintFillLayers): Ditto.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Ditto.
+
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer): Removed m_next initializer since it is now an
+        OwnPtr and initializes automatically. In a couple other places, changed m_next
+        initializer to use make_unique.
+        (WebCore::FillLayer::~FillLayer): Wrote loop for deletion of m_next.
+        (WebCore::FillLayer::operator=): Removed unneeded explicit deletion of m_next.
+        (WebCore::FillLayer::cullEmptyLayers): Ditto.
+        (WebCore::clipMax): Marked inline.
+        (WebCore::FillLayer::computeClipMax): Rewrote to use a loop instead of recursion.
+        (WebCore::FillLayer::containsImage): Ditto.
+        (WebCore::FillLayer::imagesAreLoaded): Ditto.
+        (WebCore::FillLayer::hasOpaqueImage): Rewrote to use && instead of multiple if.
+        (WebCore::FillLayer::hasImage): Rewrote to use a loop instead of recursion.
+        (WebCore::FillLayer::hasFixedImage): Ditto.
+
+        * rendering/style/FillLayer.h: Changed m_next to be a unique_ptr.
+
 2014-04-13  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Move file system-related code into WebKit

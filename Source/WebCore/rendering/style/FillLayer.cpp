@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,24 +25,23 @@
 namespace WebCore {
 
 struct SameSizeAsFillLayer {
-    FillLayer* m_next;
+    FillLayer* next;
 
-    RefPtr<StyleImage> m_image;
+    RefPtr<StyleImage> image;
 
-    Length m_xPosition;
-    Length m_yPosition;
+    Length x;
+    Length y;
 
-    LengthSize m_sizeLength;
+    LengthSize sizeLength;
 
-    unsigned m_bitfields: 32;
-    unsigned m_bitfields2: 1;
+    unsigned bitfields : 32;
+    unsigned bitfields2 : 11;
 };
 
 COMPILE_ASSERT(sizeof(FillLayer) == sizeof(SameSizeAsFillLayer), FillLayer_should_stay_small);
 
 FillLayer::FillLayer(EFillLayerType type)
-    : m_next(0)
-    , m_image(FillLayer::initialFillImage(type))
+    : m_image(FillLayer::initialFillImage(type))
     , m_xPosition(FillLayer::initialFillXPosition(type))
     , m_yPosition(FillLayer::initialFillYPosition(type))
     , m_sizeLength(FillLayer::initialFillSizeLength(type))
@@ -74,7 +73,7 @@ FillLayer::FillLayer(EFillLayerType type)
 }
 
 FillLayer::FillLayer(const FillLayer& o)
-    : m_next(o.m_next ? new FillLayer(*o.m_next) : 0)
+    : m_next(o.m_next ? std::make_unique<FillLayer>(*o.m_next) : nullptr)
     , m_image(o.m_image)
     , m_xPosition(o.m_xPosition)
     , m_yPosition(o.m_yPosition)
@@ -108,15 +107,13 @@ FillLayer::FillLayer(const FillLayer& o)
 
 FillLayer::~FillLayer()
 {
-    delete m_next;
+    // Delete the layers in a loop rather than allowing recursive calls to the destructors.
+    for (std::unique_ptr<FillLayer> next = std::move(m_next); next; next = std::move(next->m_next)) { }
 }
 
 FillLayer& FillLayer::operator=(const FillLayer& o)
 {
-    if (m_next != o.m_next) {
-        delete m_next;
-        m_next = o.m_next ? new FillLayer(*o.m_next) : 0;
-    }
+    m_next = o.m_next ? std::make_unique<FillLayer>(*o.m_next) : nullptr;
 
     m_image = o.m_image;
     m_xPosition = o.m_xPosition;
@@ -155,14 +152,14 @@ FillLayer& FillLayer::operator=(const FillLayer& o)
 bool FillLayer::operator==(const FillLayer& o) const
 {
     // We do not check the "isSet" booleans for each property, since those are only used during initial construction
-    // to propagate patterns into layers.  All layer comparisons happen after values have all been filled in anyway.
+    // to propagate patterns into layers. All layer comparisons happen after values have all been filled in anyway.
     return StyleImage::imagesEquivalent(m_image.get(), o.m_image.get()) && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition
-            && m_backgroundXOrigin == o.m_backgroundXOrigin && m_backgroundYOrigin == o.m_backgroundYOrigin
-            && m_attachment == o.m_attachment && m_clip == o.m_clip && m_composite == o.m_composite
-            && m_blendMode == o.m_blendMode && m_origin == o.m_origin && m_repeatX == o.m_repeatX
-            && m_repeatY == o.m_repeatY && m_sizeType == o.m_sizeType && m_maskSourceType == o.m_maskSourceType
-            && m_sizeLength == o.m_sizeLength && m_type == o.m_type
-            && ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
+        && m_backgroundXOrigin == o.m_backgroundXOrigin && m_backgroundYOrigin == o.m_backgroundYOrigin
+        && m_attachment == o.m_attachment && m_clip == o.m_clip && m_composite == o.m_composite
+        && m_blendMode == o.m_blendMode && m_origin == o.m_origin && m_repeatX == o.m_repeatX
+        && m_repeatY == o.m_repeatY && m_sizeType == o.m_sizeType && m_maskSourceType == o.m_maskSourceType
+        && m_sizeLength == o.m_sizeLength && m_type == o.m_type
+        && ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
 }
 
 void FillLayer::fillUnsetProperties()
@@ -290,18 +287,15 @@ void FillLayer::fillUnsetProperties()
 
 void FillLayer::cullEmptyLayers()
 {
-    FillLayer* next;
-    for (FillLayer* p = this; p; p = next) {
-        next = p->m_next;
-        if (next && !next->isImageSet()) {
-            delete next;
-            p->m_next = 0;
+    for (FillLayer* layer = this; layer; layer = layer->m_next.get()) {
+        if (layer->m_next && !layer->m_next->isImageSet()) {
+            layer->m_next = nullptr;
             break;
         }
     }
 }
 
-static EFillBox clipMax(EFillBox clipA, EFillBox clipB)
+static inline EFillBox clipMax(EFillBox clipA, EFillBox clipB)
 {
     if (clipA == BorderFillBox || clipB == BorderFillBox)
         return BorderFillBox;
@@ -314,11 +308,15 @@ static EFillBox clipMax(EFillBox clipA, EFillBox clipB)
 
 void FillLayer::computeClipMax() const
 {
-    if (m_next) {
-        m_next->computeClipMax();
-        m_clipMax = clipMax(clip(), m_next->clip());
-    } else
-        m_clipMax = m_clip;
+    Vector<const FillLayer*, 4> layers;
+    for (auto* layer = this; layer; layer = layer->m_next.get())
+        layers.append(layer);
+    EFillBox computedClipMax = TextFillBox;
+    for (unsigned i = layers.size(); i; --i) {
+        auto& layer = *layers[i - 1];
+        computedClipMax = clipMax(computedClipMax, layer.clip());
+        layer.m_clipMax = computedClipMax;
+    }
 }
 
 bool FillLayer::clipOccludesNextLayers(bool firstLayer) const
@@ -328,29 +326,25 @@ bool FillLayer::clipOccludesNextLayers(bool firstLayer) const
     return m_clip == m_clipMax;
 }
 
-bool FillLayer::containsImage(StyleImage* s) const
+bool FillLayer::containsImage(StyleImage& image) const
 {
-    if (!s)
-        return false;
-    if (m_image && *s == *m_image)
-        return true;
-    if (m_next)
-        return m_next->containsImage(s);
+    for (auto* layer = this; layer; layer = layer->m_next.get()) {
+        if (layer->m_image && image == *layer->m_image)
+            return true;
+    }
     return false;
 }
 
 bool FillLayer::imagesAreLoaded() const
 {
-    const FillLayer* curr;
-    for (curr = this; curr; curr = curr->next()) {
-        if (curr->m_image && !curr->m_image->isLoaded())
+    for (auto* layer = this; layer; layer = layer->m_next.get()) {
+        if (layer->m_image && !layer->m_image->isLoaded())
             return false;
     }
-
     return true;
 }
 
-bool FillLayer::hasOpaqueImage(const RenderElement* renderer) const
+bool FillLayer::hasOpaqueImage(const RenderElement& renderer) const
 {
     if (!m_image)
         return false;
@@ -358,18 +352,30 @@ bool FillLayer::hasOpaqueImage(const RenderElement* renderer) const
     if (m_composite == CompositeClear || m_composite == CompositeCopy)
         return true;
 
-    if (m_blendMode != BlendModeNormal)
-        return false;
-
-    if (m_composite == CompositeSourceOver)
-        return m_image->knownToBeOpaque(renderer);
-
-    return false;
+    return m_blendMode == BlendModeNormal && m_composite == CompositeSourceOver && m_image->knownToBeOpaque(&renderer);
 }
 
 bool FillLayer::hasRepeatXY() const
 {
     return m_repeatX == RepeatFill && m_repeatY == RepeatFill;
+}
+
+bool FillLayer::hasImage() const
+{
+    for (auto* layer = this; layer; layer = layer->m_next.get()) {
+        if (layer->m_image)
+            return true;
+    }
+    return false;
+}
+
+bool FillLayer::hasFixedImage() const
+{
+    for (auto* layer = this; layer; layer = layer->m_next.get()) {
+        if (layer->m_image && layer->m_attachment == FixedBackgroundAttachment)
+            return true;
+    }
+    return false;
 }
 
 } // namespace WebCore
