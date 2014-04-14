@@ -1,5 +1,35 @@
 2014-04-14  Tim Horton  <timothy_horton@apple.com>
 
+        Allow dynamic changes of WKThumbnailView snapshot scale
+        https://bugs.webkit.org/show_bug.cgi?id=131628
+        <rdar://problem/16584156>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView _requestSnapshotIfNeeded]):
+        Don't bail from requesting a snapshot just because we already had one; we want to resnapshot.
+        Keep track of when we bail from requesting a snapshot because we have one in-flight, so we can request it later.
+
+        (-[_WKThumbnailView _didTakeSnapshot:]):
+        Apply the scale to the bitmap size (whoops!).
+        Make CA always resize the content to fill the thumbnail view's layer, respecting aspect ratio.
+        Re-snapshot if we previously deferred a snapshot.
+
+        (-[_WKThumbnailView setScale:]):
+        If we get a scale change, request a new snapshot.
+
+        (-[_WKThumbnailView setUsesSnapshot:]):
+        Never apply thumbnail scale to the page if we're using snapshots. It's unnecessary,
+        because scale will be applied simply when painting the software snapshot.
+        Apply the thumbnail scale if we're going from usesSnapshot -> !usesSnapshot.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotAtSize):
+        Snapshots should use the greater of the two scales, so as to never leave a portion of the snapshot unpainted.
+
+2014-04-14  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (WebKit2 View Gestures): Double-tap doesn't work properly when there's no element underneath the cursor
         https://bugs.webkit.org/show_bug.cgi?id=131629
         <rdar://problem/16192821>

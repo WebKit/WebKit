@@ -53,6 +53,8 @@ using namespace WebKit;
     BOOL _originalSourceViewIsInWindow;
 
     BOOL _shouldApplyThumbnailScale;
+
+    BOOL _snapshotWasDeferred;
 }
 
 @synthesize _waitingForSnapshot = _waitingForSnapshot;
@@ -105,8 +107,13 @@ using namespace WebKit;
 
 - (void)_requestSnapshotIfNeeded
 {
-    if (!_usesSnapshot || _waitingForSnapshot || self.layer.contents)
+    if (!_usesSnapshot)
         return;
+
+    if (_waitingForSnapshot) {
+        _snapshotWasDeferred = YES;
+        return;
+    }
 
     _waitingForSnapshot = YES;
 
@@ -114,7 +121,7 @@ using namespace WebKit;
     IntRect snapshotRect(IntPoint(), _webPageProxy->viewSize());
     SnapshotOptions options = SnapshotOptionsRespectDrawingAreaTransform | SnapshotOptionsInViewCoordinates;
     IntSize bitmapSize = snapshotRect.size();
-    bitmapSize.scale(_webPageProxy->deviceScaleFactor());
+    bitmapSize.scale(_scale * _webPageProxy->deviceScaleFactor());
     _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](bool, const ShareableBitmap::Handle& imageHandle) {
         RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageHandle, SharedMemory::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();
@@ -126,7 +133,14 @@ using namespace WebKit;
 {
     _waitingForSnapshot = NO;
     self.layer.sublayers = @[];
+    self.layer.contentsGravity = kCAGravityResizeAspectFill;
     self.layer.contents = (id)image;
+
+    // If we got a scale change while snapshotting, we'll take another snapshot once the first one returns.
+    if (_snapshotWasDeferred) {
+        _snapshotWasDeferred = NO;
+        [self _requestSnapshotIfNeeded];
+    }
 }
 
 - (void)viewDidMoveToWindow
@@ -146,6 +160,9 @@ using namespace WebKit;
 
     if (self.window && _shouldApplyThumbnailScale)
         _webPageProxy->setThumbnailScale(_scale);
+
+    if (_usesSnapshot)
+        [self _requestSnapshotIfNeeded];
 }
 
 - (void)setUsesSnapshot:(BOOL)usesSnapshot
@@ -154,14 +171,17 @@ using namespace WebKit;
         return;
 
     _usesSnapshot = usesSnapshot;
+    _shouldApplyThumbnailScale = _usesSnapshot ? false : !_originalSourceViewIsInWindow;
 
     if (!self.window)
         return;
 
     if (usesSnapshot)
         [self _requestSnapshotIfNeeded];
-    else
+    else {
+        _webPageProxy->setThumbnailScale(_scale);
         [_wkView _reparentLayerTreeInThumbnailView];
+    }
 }
 
 - (void)_setThumbnailLayer:(CALayer *)layer
