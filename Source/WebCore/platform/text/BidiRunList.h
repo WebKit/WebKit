@@ -193,9 +193,7 @@ void BidiRunList<Run>::deleteRuns()
         curr = s;
     }
 
-    m_firstRun = 0;
-    m_lastRun = 0;
-    m_runCount = 0;
+    clearWithoutDestroyingRuns();
 }
 
 template <class Run>
