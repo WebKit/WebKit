@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2012 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007, 2012, 2014 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,21 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <objc/objc.h>
-
-#ifdef __OBJC__
 @class NSString;
 @class NSURL;
-#else
-OBJC_CLASS(NSString);
-OBJC_CLASS(NSURL);
-#endif
 
 namespace WebCore {
 
 NSString *userVisibleString(NSURL *);
 NSURL *URLByCanonicalizingURL(NSURL *);
-NSURL *URLWithUserTypedString(NSString *, NSURL *);
+NSURL *URLWithUserTypedString(NSString *, NSURL *baseURL);
 NSURL *URLByRemovingUserInfo(NSURL *);
 BOOL hostNameNeedsDecodingWithRange(NSString *, NSRange);
 BOOL hostNameNeedsEncodingWithRange(NSString *, NSRange);
@@ -48,10 +41,10 @@ NSString *decodeHostNameWithRange(NSString *, NSRange);
 NSString *encodeHostNameWithRange(NSString *, NSRange);
 NSString *decodeHostName(NSString *);
 NSString *encodeHostName(NSString *);
-NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *, CFIndex);
+NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *, CFURLComponentType);
 NSURL *URLWithData(NSData *, NSURL *baseURL);
 NSData *originalURLData(NSURL *);
-NSData *dataForURLComponentType(NSURL *, CFIndex);
+NSData *dataForURLComponentType(NSURL *, CFURLComponentType);
 
 NSRange rangeOfURLScheme(NSString *);
 BOOL isUserVisibleURL(NSString *);

@@ -1,5 +1,28 @@
 2014-04-13  Darin Adler  <darin@apple.com>
 
+        userVisibleString should not try to "encode" host names
+        https://bugs.webkit.org/show_bug.cgi?id=131587
+        rdar://problem/14686849
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.exp.in: Updated for WebCoreNSURLExtras argument type changes.
+
+        * platform/mac/WebCoreNSURLExtras.h: Removed unneeded code to make this
+        Objective-C++ header compile in plain C++ files, which we never need to do.
+        Added missing argument name, baseURL, and changed mysterious CFIndex arguments
+        to the correct type, CFURLComponentType.
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::isLookalikeCharacter): Removed the inline keyword from this, and added
+        more lookalike characters from the Mozilla list referenced here.
+        (WebCore::URLByTruncatingOneCharacterBeforeComponent): Updated argument type.
+        (WebCore::dataForURLComponentType): Ditto.
+        (WebCore::userVisibleString): Only call mapHostNames if host name decoding is
+        needed; no encoding here.
+
+2014-04-13  Darin Adler  <darin@apple.com>
+
         REGRESSION (r158617): Find on Page can get stuck in a loop when the search string occurs in an <input> in a <fieldset>
         https://bugs.webkit.org/show_bug.cgi?id=126322
 
