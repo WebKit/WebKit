@@ -1,3 +1,20 @@
+2014-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        wk2-gtk does not display anything
+        https://bugs.webkit.org/show_bug.cgi?id=125558
+
+        Reviewed by Martin Robinson.
+
+        Remove fcntl call to set access mode flags on the duplicated files
+        descriptor. Those flags are ignored in Linux and make fcntl to
+        fail in FreeBSD. We should handle the case where the passed
+        protection is ReadOnly.
+        Thanks to Raphael Kubo da Costa who proposed the solution.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::createHandle):
+        (WebKit::accessModeFile): Deleted.
+
 2014-04-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WK2] Move Vector objects into WebEditorClient::executePendingEditorCommands() invocations
