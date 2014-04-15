@@ -1,5 +1,15 @@
 2014-04-14  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove Gtk WebKit1 tester.
+
+        Gtk WebKit1 port no longer exists, and dashboard was trying to load its tester
+        results over and over as fast as it could.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+
+2014-04-14  Alexey Proskuryakov  <ap@apple.com>
+
         Wrong link for webkitpy tests results in dashboard popover
         https://bugs.webkit.org/show_bug.cgi?id=131664
 
