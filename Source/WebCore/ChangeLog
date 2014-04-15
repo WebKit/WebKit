@@ -1,3 +1,16 @@
+2014-04-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        ViewportConfiguration handles userZoom incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=131657
+
+        Reviewed by Darin Adler.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::viewportArgumentUserZoomIsSet):
+        (WebCore::ViewportConfiguration::updateConfiguration):
+        The other viewport values must be strictly positive, userZoom is always either zero, one or minus one.
+        As a result, the value zero was never set.
+
 2014-04-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Pages often blank on first load if page loaded by typing the URL

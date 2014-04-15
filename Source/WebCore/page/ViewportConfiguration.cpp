@@ -209,6 +209,11 @@ static inline void applyViewportArgument(ValueType& value, bool& valueIsSet, Vie
         valueIsSet = false;
 }
 
+static inline bool viewportArgumentUserZoomIsSet(float value)
+{
+    return !value || value == 1;
+}
+
 void ViewportConfiguration::updateConfiguration()
 {
     m_configuration = m_defaultConfiguration;
@@ -235,7 +240,7 @@ void ViewportConfiguration::updateConfiguration()
         m_configuration.heightIsSet = viewportArgumentsOverridesHeight;
     }
 
-    if (viewportArgumentValueIsValid(m_viewportArguments.userZoom))
+    if (viewportArgumentUserZoomIsSet(m_viewportArguments.userZoom))
         m_configuration.allowsUserScaling = m_viewportArguments.userZoom != 0.;
 }
 
