@@ -1358,4 +1358,4 @@ webkit.org/b/118153 compositing/repaint/positioned-movement.html [ Pass Failure 
 
 webkit.org/b/131715 transitions/cancel-transition.html [ Pass Failure ]
 
-webkit.org/b/131716 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
+webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
