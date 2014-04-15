@@ -38,13 +38,13 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
 {
     VM& vm = exec->vm();
 
-    unsigned length1 = s1->length();
+    int32_t length1 = s1->length();
     if (!length1)
         return s2;
-    unsigned length2 = s2->length();
+    int32_t length2 = s2->length();
     if (!length2)
         return s1;
-    if ((length1 + length2) < length1)
+    if ((length1 + length2) < 0)
         return throwOutOfMemoryError(exec);
 
     return JSRopeString::create(vm, s1, s2);
@@ -54,9 +54,13 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, const String& u1, const String& 
 {
     VM* vm = &exec->vm();
 
-    unsigned length1 = u1.length();
-    unsigned length2 = u2.length();
-    unsigned length3 = u3.length();
+    int32_t length1 = u1.length();
+    int32_t length2 = u2.length();
+    int32_t length3 = u3.length();
+    
+    if (length1 < 0 || length2 < 0 || length3 < 0)
+        return throwOutOfMemoryError(exec);
+    
     if (!length1)
         return jsString(exec, jsString(vm, u2), jsString(vm, u3));
     if (!length2)
@@ -64,9 +68,9 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, const String& u1, const String& 
     if (!length3)
         return jsString(exec, jsString(vm, u1), jsString(vm, u2));
 
-    if ((length1 + length2) < length1)
+    if ((length1 + length2) < 0)
         return throwOutOfMemoryError(exec);
-    if ((length1 + length2 + length3) < length3)
+    if ((length1 + length2 + length3) < 0)
         return throwOutOfMemoryError(exec);
 
     return JSRopeString::create(exec->vm(), jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
@@ -77,15 +81,10 @@ ALWAYS_INLINE JSValue jsStringFromRegisterArray(ExecState* exec, Register* strin
     VM* vm = &exec->vm();
     JSRopeString::RopeBuilder ropeBuilder(*vm);
 
-    unsigned oldLength = 0;
-
     for (unsigned i = 0; i < count; ++i) {
         JSValue v = strings[-static_cast<int>(i)].jsValue();
-        ropeBuilder.append(v.toString(exec));
-
-        if (ropeBuilder.length() < oldLength) // True for overflow
+        if (!ropeBuilder.append(v.toString(exec)))
             return throwOutOfMemoryError(exec);
-        oldLength = ropeBuilder.length();
     }
 
     return ropeBuilder.release();
@@ -97,15 +96,10 @@ ALWAYS_INLINE JSValue jsStringFromArguments(ExecState* exec, JSValue thisValue)
     JSRopeString::RopeBuilder ropeBuilder(*vm);
     ropeBuilder.append(thisValue.toString(exec));
 
-    unsigned oldLength = 0;
-
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
         JSValue v = exec->argument(i);
-        ropeBuilder.append(v.toString(exec));
-
-        if (ropeBuilder.length() < oldLength) // True for overflow
+        if (!ropeBuilder.append(v.toString(exec)))
             return throwOutOfMemoryError(exec);
-        oldLength = ropeBuilder.length();
     }
 
     return ropeBuilder.release();

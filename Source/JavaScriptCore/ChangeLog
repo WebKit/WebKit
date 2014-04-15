@@ -1,3 +1,46 @@
+2014-04-15  Filip Pizlo  <fpizlo@apple.com>
+
+        compileMakeRope does not emit necessary bounds checks
+        https://bugs.webkit.org/show_bug.cgi?id=130684
+        <rdar://problem/16398388>
+
+        Reviewed by Oliver Hunt.
+        
+        Add string length bounds checks in a bunch of places. We should never allow a string
+        to have a length greater than 2^31-1 because it's not clear that the language has
+        semantics for it and because there is code that assumes that this cannot happen.
+        
+        Also add a bunch of tests to that effect to cover the various ways in which this was
+        previously allowed to happen.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileMakeRope):
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::RopeBuilder::expand):
+        * runtime/JSString.h:
+        (JSC::JSString::create):
+        (JSC::JSRopeString::RopeBuilder::append):
+        (JSC::JSRopeString::RopeBuilder::release):
+        (JSC::JSRopeString::append):
+        * runtime/Operations.h:
+        (JSC::jsString):
+        (JSC::jsStringFromRegisterArray):
+        (JSC::jsStringFromArguments):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncToLowerCase):
+        * tests/stress/make-large-string-jit-strcat.js: Added.
+        (foo):
+        * tests/stress/make-large-string-jit.js: Added.
+        (foo):
+        * tests/stress/make-large-string-strcat.js: Added.
+        * tests/stress/make-large-string.js: Added.
+
 2014-04-15  Julien Brianceau  <jbriance@cisco.com>
 
         Remove invalid sh4 specific code in JITInlines header.

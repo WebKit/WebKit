@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -123,7 +123,8 @@ namespace JSC {
         static JSString* create(VM& vm, PassRefPtr<StringImpl> value)
         {
             ASSERT(value);
-            size_t length = value->length();
+            int32_t length = value->length();
+            RELEASE_ASSERT(length >= 0);
             size_t cost = value->cost();
             JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, value);
             newString->finishCreation(vm, length, cost);
@@ -228,15 +229,21 @@ namespace JSC {
             {
             }
 
-            void append(JSString* jsString)
+            bool append(JSString* jsString)
             {
                 if (m_index == JSRopeString::s_maxInternalRopeLength)
                     expand();
+                if (static_cast<int32_t>(m_jsString->length() + jsString->length()) < 0) {
+                    m_jsString = 0;
+                    return false;
+                }
                 m_jsString->append(m_vm, m_index++, jsString);
+                return true;
             }
 
             JSRopeString* release()
             {
+                RELEASE_ASSERT(m_jsString);
                 JSRopeString* tmp = m_jsString;
                 m_jsString = 0;
                 return tmp;
@@ -286,6 +293,7 @@ namespace JSC {
         {
             m_fibers[index].set(vm, this, jsString);
             m_length += jsString->m_length;
+            RELEASE_ASSERT(static_cast<int32_t>(m_length) >= 0);
             setIs8Bit(is8Bit() && jsString->is8Bit());
         }
 

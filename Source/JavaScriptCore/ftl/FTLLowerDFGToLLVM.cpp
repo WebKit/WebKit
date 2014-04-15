@@ -2943,7 +2943,10 @@ private:
         LValue length = m_out.load32(kids[0], m_heaps.JSString_length);
         for (unsigned i = 1; i < numKids; ++i) {
             flags = m_out.bitAnd(flags, m_out.load32(kids[i], m_heaps.JSString_flags));
-            length = m_out.add(length, m_out.load32(kids[i], m_heaps.JSString_length));
+            LValue lengthAndOverflow = m_out.addWithOverflow32(
+                length, m_out.load32(kids[i], m_heaps.JSString_length));
+            speculate(Uncountable, noValue(), 0, m_out.extractValue(lengthAndOverflow, 1));
+            length = m_out.extractValue(lengthAndOverflow, 0);
         }
         m_out.store32(
             m_out.bitAnd(m_out.constInt32(JSString::Is8Bit), flags),
