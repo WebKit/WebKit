@@ -94,8 +94,6 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLaye
         children.append(m_webPage->pageOverlayController().viewOverlayRootLayer());
     }
     m_rootLayer->setChildren(children);
-
-    m_webPage->mainFrameView()->renderView()->compositor().setDocumentOverlayRootLayer(m_webPage->pageOverlayController().documentOverlayRootLayer());
 }
 
 void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition)

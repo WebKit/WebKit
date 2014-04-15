@@ -255,7 +255,6 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     , m_isTrackingRepaints(false)
     , m_layersWithTiledBackingCount(0)
     , m_rootLayerAttachment(RootLayerUnattached)
-    , m_documentOverlayRootLayer(nullptr)
     , m_layerFlushTimer(this, &RenderLayerCompositor::layerFlushTimerFired)
     , m_layerFlushThrottlingEnabled(page() && page()->progress().isMainLoadProgressing())
     , m_layerFlushThrottlingTemporarilyDisabledForInteraction(false)
@@ -430,7 +429,8 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 #if PLATFORM(IOS)
         double horizontalMargin = defaultTileWidth / pageScaleFactor();
         double verticalMargin = defaultTileHeight / pageScaleFactor();
-        rootLayer->flushCompositingState(frameView.computeCoverageRect(horizontalMargin, verticalMargin));
+        FloatRect visibleRect = frameView.computeCoverageRect(horizontalMargin, verticalMargin);
+        rootLayer->flushCompositingState(visibleRect);
 #else
         // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
         IntRect visibleRect = m_clipLayer ? IntRect(IntPoint(), frameView.contentsSize()) : frameView.visibleContentRect();
@@ -597,6 +597,8 @@ bool RenderLayerCompositor::hasAnyAdditionalCompositedLayers(const RenderLayer& 
 void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
     m_updateCompositingLayersTimer.stop();
+
+    ASSERT(!m_renderView.document().inPageCache());
     
     // Compositing layers will be updated in Document::implicitClose() if suppressed here.
     if (!m_renderView.document().visualUpdatesAllowed())
@@ -689,6 +691,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
         // Host the document layer in the RenderView's root layer.
         if (isFullUpdate) {
+            appendOverlayLayers(childList);
             // Even when childList is empty, don't drop out of compositing mode if there are
             // composited layers that we didn't hit in our traversal (e.g. because of visibility:hidden).
             if (childList.isEmpty() && !hasAnyAdditionalCompositedLayers(*updateRoot))
@@ -719,6 +722,17 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     // Inform the inspector that the layer tree has changed.
     InspectorInstrumentation::layerTreeDidChange(page());
+}
+
+void RenderLayerCompositor::appendOverlayLayers(Vector<GraphicsLayer*>& childList)
+{
+    Frame& frame = m_renderView.frameView().frame();
+    Page* page = frame.page();
+    if (!page)
+        return;
+
+    if (GraphicsLayer* overlayLayer = page->chrome().client().documentOverlayLayerForFrame(frame))
+        childList.append(overlayLayer);
 }
 
 void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer& layer)
@@ -1461,9 +1475,6 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
 
         childLayersOfEnclosingLayer.append(layerBacking->childForSuperlayers());
     }
-
-    if (m_documentOverlayRootLayer)
-        childLayersOfEnclosingLayer.append(m_documentOverlayRootLayer);
 }
 
 void RenderLayerCompositor::rebuildRegionCompositingLayerTree(RenderNamedFlowFragment* region, Vector<GraphicsLayer*>& childList, int depth)
@@ -3817,15 +3828,6 @@ void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCo
         return;
 
     m_renderView.frameView().firePaintRelatedMilestonesIfNeeded();
-}
-
-void RenderLayerCompositor::setDocumentOverlayRootLayer(GraphicsLayer* documentOverlayRootLayer)
-{
-    if (m_documentOverlayRootLayer)
-        m_documentOverlayRootLayer->removeFromParent();
-    m_documentOverlayRootLayer = documentOverlayRootLayer;
-    setCompositingLayersNeedRebuild(true);
-    scheduleCompositingLayerUpdate();
 }
 
 } // namespace WebCore

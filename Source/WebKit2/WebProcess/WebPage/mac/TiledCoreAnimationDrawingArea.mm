@@ -449,8 +449,6 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
 
     [m_hostingLayer setSublayers:layer ? @[ layer, m_webPage->pageOverlayController().viewOverlayRootLayer()->platformLayer() ] : @[ ]];
 
-    m_webPage->mainFrameView()->renderView()->compositor().setDocumentOverlayRootLayer(m_webPage->pageOverlayController().documentOverlayRootLayer());
-
     bool hadRootLayer = !!m_rootLayer;
     m_rootLayer = layer;
     [m_rootLayer setSublayerTransform:m_transform];

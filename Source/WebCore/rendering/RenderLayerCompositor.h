@@ -304,8 +304,6 @@ public:
     void setRootExtendedBackgroundColor(const Color&);
     Color rootExtendedBackgroundColor() const { return m_rootExtendedBackgroundColor; }
 
-    void setDocumentOverlayRootLayer(GraphicsLayer*);
-
 private:
     class OverlapMap;
 
@@ -366,6 +364,7 @@ private:
     bool layerHas3DContent(const RenderLayer&) const;
     bool isRunningAcceleratedTransformAnimation(RenderLayerModelObject&) const;
 
+    void appendOverlayLayers(Vector<GraphicsLayer*>&);
     bool hasAnyAdditionalCompositedLayers(const RenderLayer& rootLayer) const;
 
     void ensureRootLayer();
@@ -507,8 +506,6 @@ private:
     std::unique_ptr<GraphicsLayer> m_layerForHeader;
     std::unique_ptr<GraphicsLayer> m_layerForFooter;
 #endif
-
-    GraphicsLayer* m_documentOverlayRootLayer;
 
     std::unique_ptr<GraphicsLayerUpdater> m_layerUpdater; // Updates tiled layer visible area periodically while animations are running.
 
