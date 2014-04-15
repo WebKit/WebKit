@@ -3449,7 +3449,7 @@ void FrameView::willPaintContents(GraphicsContext* context, const IntRect& dirty
     paintingState.isTopLevelPainter = !sCurrentPaintTimeStamp;
 
     if (paintingState.isTopLevelPainter && memoryPressureHandler().isUnderMemoryPressure()) {
-        LOG(MemoryPressure, "Under memory pressure: %s", __PRETTY_FUNCTION__);
+        LOG(MemoryPressure, "Under memory pressure: %s", WTF_PRETTY_FUNCTION);
 
         // To avoid unnecessary image decoding, we don't prune recently-decoded live resources here since
         // we might need some live bitmaps on painting.

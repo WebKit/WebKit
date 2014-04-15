@@ -1,3 +1,10 @@
+2014-04-14  Pratik Solanki  <psolanki@apple.com>
+
+        Unreviewed. Attempt to fix Windows build after r167277.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::willPaintContents):
+
 2014-04-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167261.
