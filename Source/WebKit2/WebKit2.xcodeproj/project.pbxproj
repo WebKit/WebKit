@@ -705,6 +705,7 @@
 		37D0B5C61845218400F6CE7D /* WKErrorRecoveryAttempting.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D0B5C51845218400F6CE7D /* WKErrorRecoveryAttempting.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37D0B5C81845232700F6CE7D /* WKErrorRecoveryAttempting.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0B5C71845232700F6CE7D /* WKErrorRecoveryAttempting.m */; };
 		37DFA7001810BB92001F4A9F /* WKFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 37DFA6FF1810BB92001F4A9F /* WKFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		37E25D6E18FDE5D6005D3A00 /* APIFormClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E25D6D18FDE5D6005D3A00 /* APIFormClient.h */; };
 		37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F623B712A57B6200E3FDF6 /* WKFindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F90DE31376560E0051CF68 /* HTTPCookieAcceptPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */; };
 		37FC19471850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2529,6 +2530,7 @@
 		37D0B5C51845218400F6CE7D /* WKErrorRecoveryAttempting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKErrorRecoveryAttempting.h; sourceTree = "<group>"; };
 		37D0B5C71845232700F6CE7D /* WKErrorRecoveryAttempting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKErrorRecoveryAttempting.m; sourceTree = "<group>"; };
 		37DFA6FF1810BB92001F4A9F /* WKFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFoundation.h; sourceTree = "<group>"; };
+		37E25D6D18FDE5D6005D3A00 /* APIFormClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFormClient.h; sourceTree = "<group>"; };
 		37F623B712A57B6200E3FDF6 /* WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindOptions.h; sourceTree = "<group>"; };
 		37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		37FC194818510D6A008CFA47 /* WKNSURLAuthenticationChallenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLAuthenticationChallenge.mm; sourceTree = "<group>"; };
@@ -5544,6 +5546,7 @@
 				BC111B47112F616900337BAB /* mac */,
 				1F7D36C018DA513F00D9D659 /* APIDownloadClient.h */,
 				00B9661518E24CBA00CE1F88 /* APIFindClient.h */,
+				37E25D6D18FDE5D6005D3A00 /* APIFormClient.h */,
 				1A6637D618B2831F00C0BCF3 /* APIHistoryClient.h */,
 				1A2464F21891E45100234C5B /* APILoaderClient.h */,
 				1AFDD3141891B54000153970 /* APIPolicyClient.h */,
@@ -6900,6 +6903,7 @@
 				1A7865BA16CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h in Headers */,
 				1A2BB6D114117B4D000F35D4 /* PluginProcessConnectionMessages.h in Headers */,
 				1A2D90D21281C966001EB962 /* PluginProcessCreationParameters.h in Headers */,
+				37E25D6E18FDE5D6005D3A00 /* APIFormClient.h in Headers */,
 				3743925818BC4C60001C8675 /* WKUIDelegatePrivate.h in Headers */,
 				1A0EC603124A9F2C007EF4A5 /* PluginProcessManager.h in Headers */,
 				0FCB4E6618BBE3D9000FCFC9 /* WKPrintingView.h in Headers */,

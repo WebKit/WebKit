@@ -27,14 +27,10 @@
 #define WebFormClient_h
 
 #include "APIClient.h"
-#include "WKPage.h"
-#include <utility>
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#include "APIFormClient.h"
+#include "WKPageFormClient.h"
 
 namespace API {
-class Object;
-
 template<> struct ClientTraits<WKPageFormClientBase> {
     typedef std::tuple<WKPageFormClientV0> Versions;
 };
@@ -42,13 +38,11 @@ template<> struct ClientTraits<WKPageFormClientBase> {
 
 namespace WebKit {
 
-class WebPageProxy;
-class WebFrameProxy;
-class WebFormSubmissionListenerProxy;
-
-class WebFormClient : public API::Client<WKPageFormClientBase> {
+class WebFormClient : public API::FormClient, API::Client<WKPageFormClientBase> {
 public:
-    bool willSubmitForm(WebPageProxy*, WebFrameProxy*, WebFrameProxy*, const Vector<std::pair<String, String>>& textFieldValues, API::Object* userData, WebFormSubmissionListenerProxy*);
+    explicit WebFormClient(const WKPageFormClientBase*);
+
+    virtual bool willSubmitForm(WebPageProxy*, WebFrameProxy*, WebFrameProxy*, const Vector<std::pair<String, String>>& textFieldValues, API::Object* userData, WebFormSubmissionListenerProxy*) override;
 };
 
 } // namespace WebKit

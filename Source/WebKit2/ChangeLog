@@ -1,3 +1,33 @@
+2014-04-15  Dan Bernstein  <mitz@apple.com>
+
+        Introduce API::FormClient
+        https://bugs.webkit.org/show_bug.cgi?id=131714
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIFormClient.h: Added.
+        (API::FormClient::~FormClient):
+        (API::FormClient::willSubmitForm):
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageFormClient): Changed to create a WebFormClient and call
+        WebPageProxy::setFormClient.
+
+        * UIProcess/WebFormClient.cpp:
+        (WebKit::WebFormClient::WebFormClient): Added a constructor from WKPageFormClientBase.
+        * UIProcess/WebFormClient.h: Added inheritance from API::FormClient, marked overrides as
+        such.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize m_formClient member.
+        (WebKit::WebPageProxy::setFormClient): Added. Updates m_formClient.
+        (WebKit::WebPageProxy::close): Updated code to clear m_formClient.
+        (WebKit::WebPageProxy::willSubmitForm): Updated for type change.
+        (WebKit::WebPageProxy::initializeFormClient): Deleted.
+        * UIProcess/WebPageProxy.h:
+
+        * WebKit2.xcodeproj/project.pbxproj: Added reference to new file.
+
 2014-04-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Pages often blank on first load if page loaded by typing the URL

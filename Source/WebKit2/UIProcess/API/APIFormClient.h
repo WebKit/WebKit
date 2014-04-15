@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebFormClient.h"
+#ifndef APIFormClient_h
+#define APIFormClient_h
 
-#include "APIString.h"
-#include "ImmutableDictionary.h"
-#include "WKAPICast.h"
+#include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
-
-WebFormClient::WebFormClient(const WKPageFormClientBase* wkClient)
-{
-    initialize(wkClient);
+class WebFormSubmissionListenerProxy;
+class WebFrameProxy;
+class WebPageProxy;
 }
 
-bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, WebFrameProxy* sourceFrame, const Vector<std::pair<String, String>>& textFieldValues, API::Object* userData, WebFormSubmissionListenerProxy* listener)
-{
-    if (!m_client.willSubmitForm)
+namespace API {
+class Object;
+
+class FormClient {
+public:
+    virtual ~FormClient() { }
+
+    virtual bool willSubmitForm(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebFrameProxy* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& textFieldValues, API::Object* userData, WebKit::WebFormSubmissionListenerProxy*)
+    {
+        UNUSED_PARAM(sourceFrame);
+        UNUSED_PARAM(textFieldValues);
+        UNUSED_PARAM(userData);
         return false;
+    }
+};
 
-    ImmutableDictionary::MapType map;
-    for (size_t i = 0; i < textFieldValues.size(); ++i)
-        map.set(textFieldValues[i].first, API::String::create(textFieldValues[i].second));
-    RefPtr<ImmutableDictionary> textFieldsMap = ImmutableDictionary::create(std::move(map));
+} // namespace API
 
-    m_client.willSubmitForm(toAPI(page), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), toAPI(userData), toAPI(listener), m_client.base.clientInfo);
-    return true;
-}
-
-} // namespace WebKit
+#endif // APIFormClient_h

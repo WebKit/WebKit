@@ -43,6 +43,7 @@
 #include "WKPagePolicyClientInternal.h"
 #include "WKPluginInformation.h"
 #include "WebBackForwardList.h"
+#include "WebFormClient.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -740,7 +741,7 @@ void WKPageSetPageFindMatchesClient(WKPageRef pageRef, const WKPageFindMatchesCl
 
 void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClientBase* wkClient)
 {
-    toImpl(pageRef)->initializeFormClient(wkClient);
+    toImpl(pageRef)->setFormClient(std::make_unique<WebFormClient>(wkClient));
 }
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* wkClient)

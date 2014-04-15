@@ -29,6 +29,7 @@
 
 #include "APIArray.h"
 #include "APIFindClient.h"
+#include "APIFormClient.h"
 #include "APILoaderClient.h"
 #include "APIPolicyClient.h"
 #include "APIUIClient.h"
@@ -256,6 +257,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     : m_pageClient(pageClient)
     , m_loaderClient(std::make_unique<API::LoaderClient>())
     , m_policyClient(std::make_unique<API::PolicyClient>())
+    , m_formClient(std::make_unique<API::FormClient>())
     , m_uiClient(std::make_unique<API::UIClient>())
     , m_findClient(std::make_unique<API::FindClient>())
     , m_process(process)
@@ -460,9 +462,14 @@ void WebPageProxy::setPolicyClient(std::unique_ptr<API::PolicyClient> policyClie
     m_policyClient = std::move(policyClient);
 }
 
-void WebPageProxy::initializeFormClient(const WKPageFormClientBase* formClient)
+void WebPageProxy::setFormClient(std::unique_ptr<API::FormClient> formClient)
 {
-    m_formClient.initialize(formClient);
+    if (!formClient) {
+        m_formClient = std::make_unique<API::FormClient>();
+        return;
+    }
+
+    m_formClient = std::move(formClient);
 }
 
 void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient> uiClient)
@@ -614,7 +621,7 @@ void WebPageProxy::close()
 
     m_loaderClient = std::make_unique<API::LoaderClient>();
     m_policyClient = std::make_unique<API::PolicyClient>();
-    m_formClient.initialize(0);
+    m_formClient = std::make_unique<API::FormClient>();
     m_uiClient = std::make_unique<API::UIClient>();
 #if PLATFORM(EFL)
     m_uiPopupMenuClient.initialize(0);
@@ -2734,7 +2741,7 @@ void WebPageProxy::willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, cons
     MESSAGE_CHECK(sourceFrame);
 
     RefPtr<WebFormSubmissionListenerProxy> listener = frame->setUpFormSubmissionListenerProxy(listenerID);
-    if (!m_formClient.willSubmitForm(this, frame, sourceFrame, textFieldValues, userData.get(), listener.get()))
+    if (!m_formClient->willSubmitForm(this, frame, sourceFrame, textFieldValues, userData.get(), listener.get()))
         listener->continueSubmission();
 }
 
