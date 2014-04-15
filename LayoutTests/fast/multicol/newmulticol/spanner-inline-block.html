@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Inline-block as spanner (not allowed)</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>There should be nothing below.</p>
+        <div style="-webkit-columns:6; columns:6; -webkit-column-gap:0; column-gap:0; width:4em; overflow:hidden;">
+            <div style="display:inline-block; -webkit-column-span:all; column-span:all; margin-left:1em;">
+                FAIL
+            </div>
+            <br><br>
+        </div>
+    </body>
+</html>

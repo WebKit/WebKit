@@ -1,3 +1,278 @@
+2014-04-14  Morten Stenshorne  <mstensho@opera.com>
+
+        [New Multicolumn] Add support for column-span:all
+        https://bugs.webkit.org/show_bug.cgi?id=129330
+
+        Reviewed by Dave Hyatt.
+
+        Column spanners are implemented as siblings of RenderMultiColumnSet
+        objects (i.e. the regions for the column rows). This means that they
+        are pulled out from the flow thread tree where they would otherwise
+        live. This causes some complexity, most of which is contained within
+        the multicol code.
+
+        A placeholder is put in the flow thread tree where the spanner's
+        renderer would otherwise live. This is needed in order make sure that
+        we interrupt line layout before after the spanner. We also need this
+        to be able to switch from one multicol set to the next.
+
+        Some extra logic is required when dynamically inserting and removing
+        flow thread descendants now, because we need to figure out if the
+        renderer added should trigger creation of new multi column sets. If
+        a spanner is inserted in the middle of a multi column set, we need to
+        detect this, split the set and put the spanner in the middle.
+
+        Wrote a bunch of tests. A few of the tests were copied from existing
+        (old-impl) tests and put in a separate directory. That directory can
+        be wiped when we turn on the new multicol implementation by default.
+
+        Tests: fast/multicol/newmulticol/adjacent-spanners.html
+               fast/multicol/newmulticol/block-becomes-spanner.html
+               fast/multicol/newmulticol/change-spanner-display.html
+               fast/multicol/newmulticol/change-spanner-parent-display.html
+               fast/multicol/newmulticol/compare-with-old-impl/anonymous-block-split-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/before-child-anonymous-column-block.html
+               fast/multicol/newmulticol/compare-with-old-impl/clone-before-after-content-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/clone-block-children-inline-mismatch-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/clone-flexbox.html
+               fast/multicol/newmulticol/compare-with-old-impl/clone-summary.html
+               fast/multicol/newmulticol/compare-with-old-impl/column-span-inside-multicol-webkit-box.html
+               fast/multicol/newmulticol/compare-with-old-impl/continuation-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/double-merge-anonymous-block-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/empty-anonymous-block-split-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/float-not-removed-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/list-multi-column-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/positioned-child-not-removed-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/positioned-objects-not-removed-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/recursive-split-flow-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/removal-of-multicol-span-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/remove-child-split-flow-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/runin-continuation-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/span-as-immediate-child-complex-splitting.html
+               fast/multicol/newmulticol/compare-with-old-impl/span-as-nested-inline-block-child.html
+               fast/multicol/newmulticol/compare-with-old-impl/split-flow-anonymous-wrapper-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/split-inline-wrong-post-block-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/table-multi-column-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/textbox-not-removed-crash.html
+               fast/multicol/newmulticol/compare-with-old-impl/update-after-content-before-child-crash.html
+               fast/multicol/newmulticol/insert-row-content1.html
+               fast/multicol/newmulticol/insert-row-content2.html
+               fast/multicol/newmulticol/insert-row-content3.html
+               fast/multicol/newmulticol/insert-row-content4.html
+               fast/multicol/newmulticol/insert-row-content5.html
+               fast/multicol/newmulticol/insert-row-content6.html
+               fast/multicol/newmulticol/insert-row-content7.html
+               fast/multicol/newmulticol/insert-row-content8.html
+               fast/multicol/newmulticol/insert-row-content9.html
+               fast/multicol/newmulticol/insert-spanner-child1.html
+               fast/multicol/newmulticol/insert-spanner-child2.html
+               fast/multicol/newmulticol/insert-spanner-child3.html
+               fast/multicol/newmulticol/insert-spanner1.html
+               fast/multicol/newmulticol/insert-spanner2.html
+               fast/multicol/newmulticol/insert-spanner3.html
+               fast/multicol/newmulticol/insert-spanner4.html
+               fast/multicol/newmulticol/insert-spanner5.html
+               fast/multicol/newmulticol/insert-spanner6.html
+               fast/multicol/newmulticol/insert-spanner7.html
+               fast/multicol/newmulticol/insert-spanner8.html
+               fast/multicol/newmulticol/multicol-with-spanner-becomes-regular-block.html
+               fast/multicol/newmulticol/remove-row-content1.html
+               fast/multicol/newmulticol/remove-row-content2.html
+               fast/multicol/newmulticol/remove-row-content3.html
+               fast/multicol/newmulticol/remove-row-content4.html
+               fast/multicol/newmulticol/remove-row-content5.html
+               fast/multicol/newmulticol/remove-row-content6.html
+               fast/multicol/newmulticol/remove-row-content7.html
+               fast/multicol/newmulticol/remove-row-content8.html
+               fast/multicol/newmulticol/remove-row-content9.html
+               fast/multicol/newmulticol/remove-spanner1.html
+               fast/multicol/newmulticol/remove-spanner2.html
+               fast/multicol/newmulticol/remove-spanner3.html
+               fast/multicol/newmulticol/remove-spanner4.html
+               fast/multicol/newmulticol/remove-spanner5.html
+               fast/multicol/newmulticol/remove-spanner6.html
+               fast/multicol/newmulticol/sole-spanner.html
+               fast/multicol/newmulticol/span-between-text.html
+               fast/multicol/newmulticol/spanner-becomes-regular-block.html
+               fast/multicol/newmulticol/spanner-first.html
+               fast/multicol/newmulticol/spanner-img.html
+               fast/multicol/newmulticol/spanner-inline-block.html
+               fast/multicol/newmulticol/spanner-last.html
+               fast/multicol/newmulticol/spanner-nested-dynamic.html
+               fast/multicol/newmulticol/spanner-nested.html
+               fast/multicol/newmulticol/spanner-pseudo-after1.html
+               fast/multicol/newmulticol/spanner-pseudo-after2.html
+               fast/multicol/newmulticol/spanner-pseudo-after3.html
+               fast/multicol/newmulticol/spanner-pseudo-after4.html
+               fast/multicol/newmulticol/spanner-pseudo-before-after1.html
+               fast/multicol/newmulticol/spanner-pseudo-before-after2.html
+               fast/multicol/newmulticol/spanner-pseudo-before-after3.html
+               fast/multicol/newmulticol/spanner-pseudo-before-after4.html
+               fast/multicol/newmulticol/spanner-pseudo-before1.html
+               fast/multicol/newmulticol/spanner-pseudo-before2.html
+               fast/multicol/newmulticol/spanner-pseudo-before3.html
+               fast/multicol/newmulticol/spanner-pseudo-before4.html
+               fast/multicol/newmulticol/spanner-table.html
+               fast/multicol/newmulticol/spanner-with-margin.html
+               fast/multicol/newmulticol/spanner1.html
+               fast/multicol/newmulticol/spanner2.html
+               fast/multicol/newmulticol/spanner3.html
+               fast/multicol/newmulticol/spanner4.html
+               fast/multicol/newmulticol/spanner5.html
+               fast/multicol/newmulticol/spanner6.html
+               fast/multicol/newmulticol/spanner7.html
+               fast/multicol/newmulticol/spanner8.html
+               fast/multicol/newmulticol/spanner9.html
+               fast/multicol/newmulticol/trailing-margin-with-spanner.html
+               fast/multicol/newmulticol/trailing-margin-with-spanner2.html
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        Disable the old anonymous multicol container and spanner anonymous
+        block generation machinery when the new multicol implementation is
+        enabled.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::createMultiColumnFlowThread):
+        (WebCore::RenderBlockFlow::destroyMultiColumnFlowThread):
+        (WebCore::RenderBlockFlow::layoutBlockChild): Need to notify the
+        flow thread when a descendant's final position is known. Spanner
+        placeholders need to know where to terminate the column set that
+        it follows.
+        (WebCore::RenderBlockFlow::styleDidChange): Remove old code that
+        isn't needed anymore. The renderers in question (flow thread and
+        column sets) set display:block on themselves already. This code
+        caused problems for spanners, which got all their style wiped.
+        (WebCore::RenderBlockFlow::setMultiColumnFlowThread): If setting
+        the flow thread to nullptr, there's no need to create the "rare
+        data" structure.
+        (WebCore::RenderBlockFlow::relayoutForPagination):
+        (WebCore::RenderBlockFlow::layoutSpecialExcludedChild):
+        (WebCore::RenderBlockFlow::addChild): beforeChild is retrieved via
+        the DOM. If it is a spanner, we need to locate the placeholder
+        here, because that's the correct location to insert siblings,
+        DOM-wise.
+        (WebCore::RenderBlockFlow::removeChild): The multicol flow thread
+        needs to know when children disappear.
+        (WebCore::RenderBlockFlow::checkForPaginationLogicalHeightChange):
+        Don't modify the height back and forth when calculating the
+        multicol container's final height, as that messes up balancing.
+        (WebCore::RenderBlockFlow::insertedIntoTree): Deleted.
+        (WebCore::RenderBlockFlow::willBeDestroyed): Deleted.
+        (WebCore::RenderBlockFlow::styleWillChange): Deleted.
+        (WebCore::RenderBlockFlow::lineAtIndex): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertedIntoTree): Set up an element's
+        layer before notifying the flow thread. The multicol flow thread
+        may decide to move the element (if it's a spanner), which may
+        involve re-insertion of layers.  Calling
+        RenderObject::insertedIntoTree() last instead of first also better
+        matches the order we used to have prior to the introduction of
+        RenderElement, FWIW.
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::removeRegionFromThread): Deleted.
+        (WebCore::RenderFlowThread::invalidateRegions): Deleted.
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::RenderMultiColumnFlowThread):
+        (WebCore::RenderMultiColumnFlowThread::removeFlowChildInfo): When
+        a flow thread descendant is inserted, the multicol flow thread
+        needs to be notified.
+        (WebCore::RenderMultiColumnFlowThread::firstMultiColumnSet):
+        (WebCore::RenderMultiColumnFlowThread::lastMultiColumnSet):
+        (WebCore::RenderMultiColumnFlowThread::firstColumnSetOrSpanner):
+        (WebCore::RenderMultiColumnFlowThread::nextColumnSetOrSpannerSiblingOf):
+        (WebCore::RenderMultiColumnFlowThread::previousColumnSetOrSpannerSiblingOf):
+        (WebCore::RenderMultiColumnFlowThread::layout):
+        (WebCore::RenderMultiColumnFlowThread::findSetRendering):
+        (WebCore::RenderMultiColumnFlowThread::populate):
+        (WebCore::RenderMultiColumnFlowThread::evacuateAndDestroy):
+        (WebCore::RenderMultiColumnFlowThread::addRegionToThread):
+        (WebCore::RenderMultiColumnFlowThread::willBeRemovedFromTree):
+        Need to detach column sets here, since they have pointers to their
+        flow thread.
+        (WebCore::RenderMultiColumnFlowThread::resolveMovedChild):
+        (WebCore::isValidColumnSpanner):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantInserted):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantBoxLaidOut):
+        (WebCore::RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset):
+        Nothing to be done here for the time being. Column sets are now
+        created during box creation. We are going to need to add some code
+        here again once multicol properly supports nested fragmentation
+        contexts (and you get adjacent column rows because of that).
+        (WebCore::RenderMultiColumnFlowThread::regionAtBlockOffset):
+        During layout, don't trust the region interval tree, as that one
+        depends on the resulting layout.
+        (WebCore::RenderMultiColumnFlowThread::setRegionRangeForBox): With
+        a convenience method to get the last column set, and column sets
+        now being created during normal box creation, this young method
+        needs an overhaul.
+        (WebCore::RenderMultiColumnFlowThread::setRegionRangeForBox):
+        (WebCore::RenderMultiColumnFlowThread::isPageLogicalHeightKnown):
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::nextSiblingMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::previousSiblingMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::firstRendererInFlowThread):
+        (WebCore::RenderMultiColumnSet::lastRendererInFlowThread):
+        (WebCore::precedesRenderer):
+        (WebCore::RenderMultiColumnSet::containsRendererInFlowThread):
+        (WebCore::RenderMultiColumnSet::setLogicalTopInFlowThread):
+        (WebCore::RenderMultiColumnSet::setLogicalBottomInFlowThread):
+        (WebCore::RenderMultiColumnSet::pageLogicalTopForOffset):
+        (WebCore::RenderMultiColumnSet::distributeImplicitBreaks):
+        (WebCore::RenderMultiColumnSet::calculateBalancedHeight):
+        (WebCore::RenderMultiColumnSet::addForcedBreak):
+        (WebCore::RenderMultiColumnSet::recalculateColumnHeight):
+        Previously only needed if columns were to be balanced, now it's
+        also needed when not balancing.
+        (WebCore::RenderMultiColumnSet::recordSpaceShortage): Some layout
+        elements actually have 0 height. Skip them, since they're not
+        taking us anywhere.
+        (WebCore::RenderMultiColumnSet::updateLogicalWidth):
+        (WebCore::RenderMultiColumnSet::requiresBalancing): Column sets
+        now have individual balancing needs. If they precede a spanner,
+        they must always be balanced. For the last column set, see if
+        height is unspecified or column-fill is 'balance' (like before).
+        (WebCore::RenderMultiColumnSet::prepareForLayout):
+        (WebCore::RenderMultiColumnSet::beginFlow):
+        (WebCore::RenderMultiColumnSet::endFlow):
+        (WebCore::RenderMultiColumnSet::layout):
+        (WebCore::RenderMultiColumnSet::calculateMaxColumnHeight):
+        (WebCore::RenderMultiColumnSet::columnRectAt):
+        (WebCore::RenderMultiColumnSet::flowThreadPortionOverflowRect):
+        (WebCore::RenderMultiColumnSet::paintColumnRules):
+        (WebCore::RenderMultiColumnSet::initialBlockOffsetForPainting):
+        (WebCore::RenderMultiColumnSet::collectLayerFragments):
+        (WebCore::RenderMultiColumnSet::columnTranslationForOffset):
+        (WebCore::RenderMultiColumnSet::setAndConstrainColumnHeight): Deleted.
+        (WebCore::RenderMultiColumnSet::findRunWithTallestColumns): Deleted.
+        (WebCore::RenderMultiColumnSet::clearForcedBreaks): Deleted.
+        (WebCore::RenderMultiColumnSet::repaintFlowThreadContent): Deleted.
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderMultiColumnSpannerPlaceholder.cpp: Added.
+        (WebCore::RenderMultiColumnSpannerPlaceholder::createAnonymous):
+        (WebCore::RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder):
+        (WebCore::RenderMultiColumnSpannerPlaceholder::renderName):
+        * rendering/RenderMultiColumnSpannerPlaceholder.h: Added.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::insertedIntoTree): Need to notify the
+        multicol flow thread when descendants are inserted. That may
+        trigger insertion of column sets, or, in the case of spanners,
+        they need to be moved out from the flow thread.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderMultiColumnSpannerPlaceholder):
+        (WebCore::RenderObject::isAnonymousBlock): Exclude column sets
+        here, so that they don't get involved in anonymous block merging
+        and other kinds of fun.
+        * rendering/RenderRegion.h:
+        * rendering/RenderRegionSet.h:
+
 2014-04-15  Simon Fraser  <simon.fraser@apple.com>
 
         LayerTreeAsTextBehavior should be in the WebCore namespace

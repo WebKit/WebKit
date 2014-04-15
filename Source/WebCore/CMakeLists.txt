@@ -2327,6 +2327,7 @@ set(WebCore_SOURCES
     rendering/RenderMeter.cpp
     rendering/RenderMultiColumnFlowThread.cpp
     rendering/RenderMultiColumnSet.cpp
+    rendering/RenderMultiColumnSpannerPlaceholder.cpp
     rendering/RenderNamedFlowFragment.cpp
     rendering/RenderNamedFlowThread.cpp
     rendering/RenderObject.cpp

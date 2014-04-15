@@ -377,7 +377,8 @@ public:
     bool hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
 
     void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
-    
+    void removeChild(RenderObject&) override;
+
     void createMultiColumnFlowThread();
     void destroyMultiColumnFlowThread();
     

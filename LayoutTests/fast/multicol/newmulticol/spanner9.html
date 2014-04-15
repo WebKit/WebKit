@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spanner following row that has floats</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>There should be no yellow below, beside or inside the blue box. Only above.</p>
+        <div style="margin:20px; -webkit-columns:4; columns:4;">
+            <div style="float:left; width:20%; height:5em; background:yellow;"></div>
+            Beside float.
+            <div style="-webkit-column-span:all; column-span:all; height:2em; border:2px solid blue;"></div>
+            Left.
+        </div>
+    </body>
+</html>

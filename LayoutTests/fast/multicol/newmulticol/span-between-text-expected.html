@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Column-span:all between text nodes</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>There should be two lines of text below (not horizontally aligned):</p>
+        <div style="float:left; width:5em; height:1px;"></div>line1<br>
+        line2
+    </body>
+</html>

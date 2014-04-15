@@ -65,7 +65,7 @@ public:
     bool hasChildInfo(RenderObject* child) const { return child && child->isBox() && m_regionRangeMap.contains(toRenderBox(child)); }
 #endif
 
-    virtual void addRegionToThread(RenderRegion*);
+    virtual void addRegionToThread(RenderRegion*) = 0;
     virtual void removeRegionFromThread(RenderRegion*);
     const RenderRegionList& renderRegionList() const { return m_regionList; }
 
@@ -80,6 +80,17 @@ public:
     void validateRegions();
     void invalidateRegions();
     bool hasValidRegionInfo() const { return !m_regionsInvalidated && !m_regionList.isEmpty(); }
+
+    // Some renderers (column spanners) are moved out of the flow thread to live among column
+    // sets. If |child| is such a renderer, resolve it to the placeholder that lives at the original
+    // location in the tree.
+    virtual RenderObject* resolveMovedChild(RenderObject* child) const { return child; }
+    // Called when a descendant of the flow thread has been inserted.
+    virtual void flowThreadDescendantInserted(RenderObject*) { }
+    // Called when a sibling or descendant of the flow thread is about to be removed.
+    virtual void flowThreadRelativeWillBeRemoved(RenderObject*) { }
+    // Called when a descendant box's layout is finished and it has been positioned within its container.
+    virtual void flowThreadDescendantBoxLaidOut(RenderBox*) { }
 
     static PassRef<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
 
@@ -102,7 +113,7 @@ public:
         DisallowRegionAutoGeneration,
     };
 
-    RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false, RegionAutoGenerationPolicy = AllowRegionAutoGeneration);
+    virtual RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false, RegionAutoGenerationPolicy = AllowRegionAutoGeneration);
 
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
     bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }
@@ -122,7 +133,7 @@ public:
     bool previousRegionCountChanged() const { return m_previousRegionCount != m_regionList.size(); };
     void updatePreviousRegionCount() { m_previousRegionCount = m_regionList.size(); };
 
-    void setRegionRangeForBox(const RenderBox*, RenderRegion*, RenderRegion*);
+    virtual void setRegionRangeForBox(const RenderBox*, RenderRegion*, RenderRegion*);
     bool getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
     bool hasRegionRangeForBox(const RenderBox* box) const { ASSERT(box); return m_regionRangeMap.contains(box); }
 
@@ -207,6 +218,8 @@ public:
     
     bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
 
+    virtual void layout() override;
+
 private:
     virtual bool isRenderFlowThread() const override final { return true; }
 
@@ -218,7 +231,6 @@ protected:
     RenderFlowThread(Document&, PassRef<RenderStyle>);
 
     virtual const char* renderName() const = 0;
-    virtual void layout() override;
 
     // Overridden by columns/pages to set up an initial logical width of the page width even when
     // no regions have been generated yet.

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Turn spanner before column row into regular block</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>You should see the word 'PASS' below:</p>
+        <div style="float:left;">
+            <div style="-webkit-columns:4; columns:4; column-gap:0; -webkit-column-gap:0; orphans:1; widows:1;">
+                <div>P</div>
+                A<br>S<br>S
+            </div>
+        </div>
+    </body>
+</html>

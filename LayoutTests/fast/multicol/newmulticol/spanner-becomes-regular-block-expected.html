@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spanner that ceases to be one</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>You should see the word "PASS" below.</p>
+        <div style="float:left;">
+            <div style="-webkit-columns:2; columns:2; -webkit-column-gap:0; column-gap:0; orphans:1; widows:1; background:blue;">
+                <div style="margin-top:0.5em;">
+                    <div id="elm" style="margin-top:0.2em; background:yellow;">
+                        PA<br>
+                        <div style="height:0.5em; background:blue;"></div>
+                        SS
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -2520,6 +2520,9 @@
     <ClCompile Include="..\rendering\RenderMultiColumnSet.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\RenderMultiColumnSpannerPlaceholder.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\RenderNamedFlowThread.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
@@ -9404,6 +9407,9 @@
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RenderMultiColumnSet.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderMultiColumnSpannerPlaceholder.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RenderNamedFlowThread.h">

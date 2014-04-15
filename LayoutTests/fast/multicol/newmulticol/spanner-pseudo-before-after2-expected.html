@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spanner as ::before and ::after pseudo elements</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>There should be five rectangles with identical sizes below. The first, third and fifth
+        one should be blue with nothing inside. The second and fourth one should be yellow with some
+        dots inside.</p>
+        <div style="line-height:100px; background:blue;">
+            &nbsp;
+            <div style="background:yellow;">..........</div>
+            &nbsp;
+            <div style="background:yellow;">..........</div>
+            &nbsp;
+        </div>
+    </body>
+</html>

@@ -82,6 +82,7 @@
 #include "RenderMeter.cpp"
 #include "RenderMultiColumnFlowThread.cpp"
 #include "RenderMultiColumnSet.cpp"
+#include "RenderMultiColumnSpannerPlaceholder.cpp"
 #include "RenderObject.cpp"
 #include "RenderProgress.cpp"
 #include "RenderQuote.cpp"

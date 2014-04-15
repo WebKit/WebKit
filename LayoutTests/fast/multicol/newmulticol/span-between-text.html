@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Column-span:all between text nodes</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>There should be two lines of text below (not horizontally aligned):</p>
+        <div style="-webkit-columns:3; columns:3; -webkit-column-gap:0; column-gap:0; width:15em; orphans:1; widows:1;">
+            <br>line1
+            <div style="-webkit-column-span:all; column-span:all;"></div>
+            line2
+        </div>
+    </body>
+</html>

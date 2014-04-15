@@ -95,13 +95,6 @@ void RenderFlowThread::removeFlowChildInfo(RenderObject* child)
         removeRenderBoxRegionInfo(toRenderBox(child));
 }
 
-void RenderFlowThread::addRegionToThread(RenderRegion* renderRegion)
-{
-    ASSERT(renderRegion);
-    m_regionList.add(renderRegion);
-    renderRegion->setIsValid(true);
-}
-
 void RenderFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
 {
     ASSERT(renderRegion);
@@ -203,9 +196,6 @@ void RenderFlowThread::layout()
     RenderBlockFlow::layout();
 
     m_pageLogicalSizeChanged = false;
-
-    if (lastRegion())
-        lastRegion()->expandToEncompassFlowThreadContentsIfNeeded();
 
     // If there are children layers in the RenderFlowThread then we need to make sure that the
     // composited children layers will land in the right RenderRegions. Also, the parent RenderRegions

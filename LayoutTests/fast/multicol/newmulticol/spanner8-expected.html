@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spanner between rows, margins</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>There should be a blue square below.</p>
+        <div style="margin:20px;">
+            <div style="width:10em; height:2em;"></div>
+            <div style="width:6em; height:3em; background:blue;"></div>
+            <div style="width:6em; height:3em; background:blue;"></div>
+        </div>
+    </body>
+</html>

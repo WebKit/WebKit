@@ -29,12 +29,43 @@
 
 #include "RenderFlowThread.h"
 
+#include <wtf/HashMap.h>
+
 namespace WebCore {
+
+class RenderMultiColumnSet;
+class RenderMultiColumnSpannerPlaceholder;
 
 class RenderMultiColumnFlowThread final : public RenderFlowThread {
 public:
     RenderMultiColumnFlowThread(Document&, PassRef<RenderStyle>);
     ~RenderMultiColumnFlowThread();
+
+    virtual void removeFlowChildInfo(RenderObject*) override;
+
+    RenderBlockFlow* multiColumnBlockFlow() const { return toRenderBlockFlow(parent()); }
+
+    RenderMultiColumnSet* firstMultiColumnSet() const;
+    RenderMultiColumnSet* lastMultiColumnSet() const;
+    RenderBox* firstColumnSetOrSpanner() const;
+    static RenderBox* nextColumnSetOrSpannerSiblingOf(const RenderBox*);
+    static RenderBox* previousColumnSetOrSpannerSiblingOf(const RenderBox*);
+
+    RenderMultiColumnSpannerPlaceholder* findColumnSpannerPlaceholder(RenderBox* spanner) const { return m_spannerMap.get(spanner); }
+
+    virtual void layout() override final;
+
+    // Find the set inside which the specified renderer would be rendered.
+    RenderMultiColumnSet* findSetRendering(RenderObject*) const;
+
+    // Populate the flow thread with what's currently its siblings. Called when a regular block
+    // becomes a multicol container.
+    void populate();
+
+    // Empty the flow thread by moving everything to the parent. Remove all multicol specific
+    // renderers. Then destroy the flow thread. Called when a multicol container becomes a regular
+    // block.
+    void evacuateAndDestroy();
 
     unsigned columnCount() const { return m_columnCount; }
     LayoutUnit columnWidth() const { return m_columnWidth; }
@@ -42,12 +73,10 @@ public:
     void setColumnHeightAvailable(LayoutUnit available) { m_columnHeightAvailable = available; }
     bool inBalancingPass() const { return m_inBalancingPass; }
     void setInBalancingPass(bool balancing) { m_inBalancingPass = balancing; }
-    bool needsRebalancing() const { return m_needsRebalancing; }
-    void setNeedsRebalancing(bool balancing) { m_needsRebalancing = balancing; }
-    
-    bool shouldRelayoutForPagination() const { return !m_inBalancingPass && m_needsRebalancing; }
-    
-    bool requiresBalancing() const { return progressionIsInline() && (!columnHeightAvailable() || parent()->style().columnFill() == ColumnFillBalance); }
+    bool needsHeightsRecalculation() const { return m_needsHeightsRecalculation; }
+    void setNeedsHeightsRecalculation(bool recalculate) { m_needsHeightsRecalculation = recalculate; }
+
+    bool shouldRelayoutForPagination() const { return !m_inBalancingPass && m_needsHeightsRecalculation; }
 
     void setColumnCountAndWidth(unsigned count, LayoutUnit width)
     {
@@ -67,24 +96,42 @@ public:
     
 private:
     virtual const char* renderName() const override;
+    virtual void addRegionToThread(RenderRegion*) override;
+    virtual void willBeRemovedFromTree() override;
+    virtual RenderObject* resolveMovedChild(RenderObject* child) const override;
+    virtual void flowThreadDescendantInserted(RenderObject*) override;
+    virtual void flowThreadRelativeWillBeRemoved(RenderObject*) override;
+    virtual void flowThreadDescendantBoxLaidOut(RenderBox*) override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
-    virtual void autoGenerateRegionsToBlockOffset(LayoutUnit) override;
     virtual LayoutUnit initialLogicalWidth() const override;
+    virtual void autoGenerateRegionsToBlockOffset(LayoutUnit) override;
     virtual void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) override;
     virtual void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) override;
+    virtual RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false, RegionAutoGenerationPolicy = AllowRegionAutoGeneration) override;
+    virtual void setRegionRangeForBox(const RenderBox*, RenderRegion*, RenderRegion*) override;
     virtual bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) override;
     virtual bool isPageLogicalHeightKnown() const override;
 
 private:
+    typedef HashMap<RenderBox*, RenderMultiColumnSpannerPlaceholder*> SpannerMap;
+    SpannerMap m_spannerMap;
+
+    // The last set we worked on. It's not to be used as the "current set". The concept of a
+    // "current set" is difficult, since layout may jump back and forth in the tree, due to wrong
+    // top location estimates (due to e.g. margin collapsing), and possibly for other reasons.
+    RenderMultiColumnSet* m_lastSetWorkedOn;
+
     unsigned m_columnCount;   // The default column count/width that are based off our containing block width. These values represent only the default,
     LayoutUnit m_columnWidth; // A multi-column block that is split across variable width pages or regions will have different column counts and widths in each.
                               // These values will be cached (eventually) for multi-column blocks.
     LayoutUnit m_columnHeightAvailable; // Total height available to columns, or 0 if auto.
+    bool m_inLayout; // Set while we're laying out the flow thread, during which colum set heights are unknown.
     bool m_inBalancingPass; // Guard to avoid re-entering column balancing.
-    bool m_needsRebalancing;
+    bool m_needsHeightsRecalculation;
     
     bool m_progressionIsInline;
     bool m_progressionIsReversed;
+    bool m_beingEvacuated;
 };
 
 } // namespace WebCore

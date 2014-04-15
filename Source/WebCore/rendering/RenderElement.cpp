@@ -965,8 +965,6 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 
 void RenderElement::insertedIntoTree()
 {
-    RenderObject::insertedIntoTree();
-
     if (auto* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
         containerFlowThread->addFlowChild(*this);
 
@@ -986,6 +984,8 @@ void RenderElement::insertedIntoTree()
         if (layer)
             layer->setHasVisibleContent();
     }
+
+    RenderObject::insertedIntoTree();
 }
 
 void RenderElement::willBeRemovedFromTree()

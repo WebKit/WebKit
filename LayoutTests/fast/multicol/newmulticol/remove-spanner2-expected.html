@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Remove spanner before column row</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>There should be a black square below, and nothing else.</p>
+        <div style="width:10em; height:10em; color:black; background:black;"></div>
+    </body>
+</html>

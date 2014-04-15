@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Change display property of spanner parent</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>You should see two lines with the word "PASS" below.</p>
+        <div style="-webkit-columns:3; columns:3; column-fill:auto; -webkit-column-fill:auto; height:5em;">
+            <div style="display:inline;">
+                <div style="-webkit-column-span:all; column-span:all;">PASS</div>
+                PA</div>SS
+        </div>
+    </body>
+</html>

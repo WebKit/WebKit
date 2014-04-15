@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spanner between rows, margins</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>There should be a blue square below.</p>
+        <!-- A bottom margin preceding the spanner shouldn't bleed through the spanner and be
+             applied to content following the spanner. -->
+        <div style="margin:20px; -webkit-columns:4; columns:4;">
+            <div style="width:10em; height:1em; -webkit-column-break-inside:avoid; break-inside:avoid; margin-bottom:7em;"></div>
+            <div style="-webkit-column-span:all; column-span:all; width:6em; height:3em; background:blue;"></div>
+            <div style="width:6em; height:3em; -webkit-column-break-inside:avoid; break-inside:avoid; background:blue;"></div>
+        </div>
+    </body>
+</html>

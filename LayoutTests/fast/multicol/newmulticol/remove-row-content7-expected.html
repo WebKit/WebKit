@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Remove all content from row after spanner, then insert some content there</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+        <style>
+            .spanner { -webkit-column-span:all; column-span:all; }
+        </style>
+    </head>
+    <body>
+        <p>You should see two lines with the word "PASS" on a lime background below.</p>
+        <div style="float:left;">
+            <div style="-webkit-columns:4; columns:4; column-gap:0; -webkit-column-gap:0; orphans:1; widows:1; background:lime;">
+                <div class="spanner">PASS</div>
+                <div>P<br>A<br>S<br>S</div>
+            </div>
+        </div>
+    </body>
+</html>

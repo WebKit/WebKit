@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Block that becomes spanner</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>Below there should be a blue box, then a yellow box, then a blue box again.</p>
+        <div style="-webkit-columns:2; columns:2; -webkit-column-gap:0; column-gap:0; orphans:1; widows:1; line-height:2em; background:blue;">
+            <div style="-webkit-column-span:all; column-span:all; margin:4em 0; background:yellow;"><br><br></div>
+        </div>
+    </body>
+</html>

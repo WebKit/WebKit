@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+    <script>
+        if (window.internals)
+            internals.settings.setRegionBasedColumnsEnabled(true);
+    </script>
+<head>
+<title>Nested spanning elements inside of an inline-block</title>
+</head>
+<body>
+<div style="-webkit-column-count: 2">
+<div style="display: inline-block">
+<p style="-webkit-column-span: all">
+This text should not be spanned across two columns.
+</p>
+
+<p>
+This text should be below the previous text, but still on the left.
+</div>
+
+<span>
+The beginning of this text should start next to or below the previous text, and still in the left column. However, when made sufficiently longer than the previous block of text, it should spill into the right column instead of staying below the block before it.
+</span>
+</div>
+</body>
+</html>

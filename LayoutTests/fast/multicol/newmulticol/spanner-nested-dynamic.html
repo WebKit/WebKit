@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nested spanner (not allowed)</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+            function test() {
+                var elm = document.getElementById('elm');
+                elm.offsetTop; // trigger layout
+                elm.style.WebkitColumns = '6';
+                elm.style.columns = '6';
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <p>There should be nothing below.</p>
+        <div id="elm" style="-webkit-column-gap:0; column-gap:0; width:4em; overflow:hidden;">
+            <div style="-webkit-column-span:all; column-span:all; padding-left:4em;">
+                <div style="-webkit-column-span:all; column-span:all;">
+                    FAIL
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

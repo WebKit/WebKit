@@ -155,8 +155,8 @@ layer at (376,71) size 48x100
       RenderText {#text} at (0,25) size 25x50
         text run at (0,25) width 25: "y"
         text run at (0,50) width 25: "z"
-layer at (496,71) size 48x79
-  RenderMultiColumnFlowThread at (8,8) size 48x79
+layer at (496,71) size 48x100
+  RenderMultiColumnFlowThread at (8,8) size 48x100
     RenderBlock (anonymous) at (0,0) size 48x25
       RenderBR {BR} at (0,0) size 0x25
     RenderBlock {DIV} at (0,25) size 48x54
@@ -165,15 +165,15 @@ layer at (496,71) size 48x79
         RenderFlexibleBox {DIV} at (0,0) size 25x25
           RenderBlock {DIV} at (0,12) size 25x1
             RenderBlock {DIV} at (0,0) size 25x0
-layer at (616,71) size 48x75
-  RenderMultiColumnFlowThread at (8,8) size 48x75
+layer at (616,71) size 48x100
+  RenderMultiColumnFlowThread at (8,8) size 48x100
     RenderBlock (anonymous) at (0,0) size 48x25
       RenderBR {BR} at (0,0) size 0x25
     RenderBlock {DIV} at (0,25) size 48x50
       RenderBR {BR} at (0,0) size 0x25
       RenderImage {IMG} at (0,25) size 25x25 [bgcolor=#ADD8E6]
-layer at (16,191) size 48x65
-  RenderMultiColumnFlowThread at (8,8) size 48x65
+layer at (16,191) size 48x100
+  RenderMultiColumnFlowThread at (8,8) size 48x100
     RenderBlock {DIV} at (0,40) size 25x25 [bgcolor=#ADD8E6]
 layer at (146,151) size 100x48
   RenderMultiColumnFlowThread at (8,8) size 100x48
@@ -209,8 +209,8 @@ layer at (416,151) size 100x48
       RenderText {#text} at (25,0) size 50x25
         text run at (25,0) width 25: "y"
         text run at (50,0) width 25: "z"
-layer at (506,151) size 79x48
-  RenderMultiColumnFlowThread at (8,8) size 79x48
+layer at (506,151) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
     RenderBlock (anonymous) at (0,0) size 25x48
       RenderBR {BR} at (0,0) size 25x0
     RenderBlock {DIV} at (25,0) size 54x48
@@ -219,15 +219,15 @@ layer at (506,151) size 79x48
         RenderFlexibleBox {DIV} at (0,0) size 25x25
           RenderBlock {DIV} at (0,12) size 25x1
             RenderBlock {DIV} at (0,0) size 25x0
-layer at (596,151) size 75x48
-  RenderMultiColumnFlowThread at (8,8) size 75x48
+layer at (596,151) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
     RenderBlock (anonymous) at (0,0) size 25x48
       RenderBR {BR} at (0,0) size 25x0
     RenderBlock {DIV} at (25,0) size 50x48
       RenderBR {BR} at (0,0) size 25x0
       RenderImage {IMG} at (25,0) size 25x25 [bgcolor=#ADD8E6]
-layer at (686,151) size 65x48
-  RenderMultiColumnFlowThread at (8,8) size 65x48
+layer at (686,151) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
     RenderBlock {DIV} at (40,0) size 25x25 [bgcolor=#ADD8E6]
 layer at (-24,271) size 100x48 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
   RenderMultiColumnFlowThread at (8,8) size 100x48
@@ -263,8 +263,8 @@ layer at (246,271) size 100x48
       RenderText {#text} at (25,0) size 50x25
         text run at (25,0) width 25: "y"
         text run at (50,0) width 25: "z"
-layer at (357,271) size 79x48
-  RenderMultiColumnFlowThread at (8,8) size 79x48
+layer at (336,271) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
     RenderBlock (anonymous) at (0,0) size 25x48
       RenderBR {BR} at (0,0) size 25x0
     RenderBlock {DIV} at (25,0) size 54x48
@@ -273,15 +273,15 @@ layer at (357,271) size 79x48
         RenderFlexibleBox {DIV} at (0,0) size 25x25
           RenderBlock {DIV} at (0,12) size 25x1
             RenderBlock {DIV} at (0,0) size 25x0
-layer at (451,271) size 75x48
-  RenderMultiColumnFlowThread at (8,8) size 75x48
+layer at (426,271) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
     RenderBlock (anonymous) at (0,0) size 25x48
       RenderBR {BR} at (0,0) size 25x0
     RenderBlock {DIV} at (25,0) size 50x48
       RenderBR {BR} at (0,0) size 25x0
       RenderImage {IMG} at (25,0) size 25x25 [bgcolor=#ADD8E6]
-layer at (551,271) size 65x48
-  RenderMultiColumnFlowThread at (8,8) size 65x48
+layer at (516,271) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
     RenderBlock {DIV} at (40,0) size 25x25 [bgcolor=#ADD8E6]
 layer at (16,96) size 25x25
   RenderBlock (positioned) {DIV} at (16,96) size 25x25 [border: (3px solid #0000FF7F)]

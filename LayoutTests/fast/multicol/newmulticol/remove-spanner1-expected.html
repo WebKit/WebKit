@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Remove spanner between column rows</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body>
+        <p>There should be three columns with a total line count of 8. The three first lines should
+        read "before". The fourth should read "before after". The last four should read "after":</p>
+        <div style="-webkit-columns:3; columns:3; orphans:1; widows:1;">
+            before<br>before<br>before<br>before
+            after<br>after<br>after<br>after<br>after<br>
+        </div>
+    </body>
+</html>

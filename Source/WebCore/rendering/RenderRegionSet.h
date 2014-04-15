@@ -46,13 +46,14 @@ class RenderFlowThread;
 // FIXME: For now we derive from RenderRegion, but this may change at some point.
 
 class RenderRegionSet : public RenderRegion {
+public:
+    void expandToEncompassFlowThreadContentsIfNeeded();
+
 protected:
     RenderRegionSet(Document&, PassRef<RenderStyle>, RenderFlowThread&);
 
 private:
     virtual void installFlowThread() override final;
-
-    virtual void expandToEncompassFlowThreadContentsIfNeeded() override final;
 
     virtual const char* renderName() const = 0;
     

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Remove spanner after column row</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+            function test() {
+                var elm = document.getElementById('elm');
+                elm.offsetTop; // trigger layout
+                elm.style.display = 'none';
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <p>There should be a black square below, and nothing else.</p>
+        <div style="width:32em;">
+            <div style="-webkit-columns:3; columns:3; -webkit-column-gap:1em; column-gap:1em; line-height:5em; orphans:1; widows:1;">
+                <div style="color:black; background:black;">x</div>
+                <div id="elm" style="-webkit-column-span:all; column-span:all;">x</div>
+            </div>
+            <div style="width:10em; height:5em; color:black; background:black;"></div>
+        </div>
+    </body>
+</html>
