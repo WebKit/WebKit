@@ -1,3 +1,12 @@
+2014-04-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Add LLVM binary drops for Mavericks using LLVM r206312.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * LLVMIncludesMavericks.tar.bz2: Added.
+        * LLVMLibrariesMavericks.tar.bz2: Added.
+
 2014-04-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Enable the CSS_GRID_LAYOUT feature.

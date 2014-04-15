@@ -1,3 +1,12 @@
+2014-04-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Update LLVM export scrpt to handle the build directory being different from the
+        source directory.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * Scripts/export-llvm-build:
+
 2014-04-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update the hyperlink to waterfall views of perf bots on build.webkit.org

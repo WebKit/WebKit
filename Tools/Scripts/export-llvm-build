@@ -28,27 +28,41 @@ require 'pathname'
 require 'shellwords'
 require 'tmpdir'
 
+def mychdir(path)
+    puts "-> #{path.to_s}"
+    Dir.chdir(path) {
+        yield
+    }
+    puts "<- #{path.to_s}"
+end
+
 def mysys(*cmd)
     cmd = cmd.map{|value| value.to_s}
     commandArray = cmd.map{|value| Shellwords.shellescape(value)}.join(' ')
-    $stderr.puts ">> #{commandArray}"
+    $stderr.puts " $ #{commandArray}"
     raise unless system(*cmd)
 end
 
 $libraryPackage = Pathname.new("LLVMLibraries.tar.bz2")
 $includePackage = Pathname.new("LLVMIncludes.tar.bz2")
-$llvmBuild = "Release+Asserts"
+$llvmBuild = Pathname.new("./llvm")
+$llvmBinary = Pathname.new("./llvm/Release")
+$llvmSource = Pathname.new("./llvm")
 $compression = "bzip2"
 
 def usage
-    puts "export-llvm-build <LLVM directory>"
+    puts "export-llvm-build"
     puts
     puts "--library-package  (-l)   Change where to put the compressed library package."
     puts "                          Default is #{$libraryPackage}."
     puts "--include-package  (-i)   Change wehre to put the compressed header package."
     puts "                          Default is #{$includePackage}."
-    puts "--llvm-build       (-b)   Change which LLVM build to use."
+    puts "--llvm-build       (-b)   Change which LLVM build directory to use."
     puts "                          Default is #{$llvmBuild}."
+    puts "--llvm-binary      (-B)   Change which LLVM binary directory to use."
+    puts "                          Default is #{$llvmBinary}."
+    puts "--llvm-source      (-s)   Change which LLVM source directory to use."
+    puts "                          Default is #{$llvmSource}."
     puts "--compression             Change what compression to do. Can be one of gzip,"
     puts "                          bzip2, or none."
     puts "                          Default is #{$compression}."
@@ -59,6 +73,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--library-package', '-l', GetoptLong::REQUIRED_ARGUMENT],
                ['--include-package', '-i', GetoptLong::REQUIRED_ARGUMENT],
                ['--llvm-build', '-b', GetoptLong::REQUIRED_ARGUMENT],
+               ['--llvm-binary', '-B', GetoptLong::REQUIRED_ARGUMENT],
+               ['--llvm-source', '-s', GetoptLong::REQUIRED_ARGUMENT],
                ['--compression', GetoptLong::REQUIRED_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -69,19 +85,17 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--include-package'
         $includePackage = Pathname.new(arg)
     when '--llvm-build'
-        $llvmBuild = arg
+        $llvmBuild = Pathname.new(arg)
+    when '--llvm-binary'
+        $llvmBinary = Pathname.new(arg)
+    when '--llvm-source'
+        $llvmSource = Pathname.new(arg)
     when '--compression'
         $compression = arg
     else
         raise
     end
 }
-
-if ARGV.length != 1
-    usage
-end
-
-$llvmPath = Pathname.new(ARGV[0])
 
 $currentPath = Pathname.pwd
 
@@ -98,7 +112,7 @@ def compressionChar
     end
 end
 
-Dir.chdir($llvmPath + $llvmBuild + "lib") {
+mychdir($llvmBinary + "lib") {
     mysys("tar", "-c#{compressionChar}vf", ($currentPath + $libraryPackage).to_s,
           *Dir.entries('.').select {
               | value |
@@ -109,7 +123,7 @@ Dir.chdir($llvmPath + $llvmBuild + "lib") {
 Dir.mktmpdir {
     | directory |
     directory = Pathname.new(directory).realpath
-    Dir.chdir($llvmPath) {
+    mychdir($llvmSource) {
         begin
             mysys("svn", "export", "include", directory + "include")
         rescue
@@ -118,7 +132,8 @@ Dir.mktmpdir {
     }
     ["include/llvm/Config"].each {
         | genDirName |
-        configSrcPath = $llvmPath + genDirName
+        configSrcPath = $llvmBuild + genDirName
+        raise unless configSrcPath.directory?
         configDstPath = directory + genDirName
         Dir.foreach(configSrcPath) {
             | filename |
@@ -128,9 +143,9 @@ Dir.mktmpdir {
     }
     ["include/llvm/Support/DataTypes.h"].each {
         | genFileName |
-        mysys("cp", $llvmPath + genFileName, directory + genFileName)
+        mysys("cp", $llvmBuild + genFileName, directory + genFileName)
     }
-    Dir.chdir(directory + "include") {
+    mychdir(directory + "include") {
         mysys("tar", "-cyvf", $currentPath + $includePackage, ".")
     }
 }
