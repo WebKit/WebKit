@@ -439,12 +439,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperationNoExceptionCheck(V_JITOpera
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(F_JITOperation_EJZZ operation, GPRReg arg1Tag, GPRReg arg1Payload, int32_t arg2, int32_t arg3)
 {
-#if CPU(SH4)
-    // We have to put arg3 in the 4th argument register (r7) as 64-bit value arg2 will be put on stack for sh4 architecure.
-    setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImm32(arg2), TrustedImm32(arg3));
-#else
     setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, TrustedImm32(arg2), TrustedImm32(arg3));
-#endif
     return appendCallWithExceptionCheck(operation);
 }
 

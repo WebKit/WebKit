@@ -1,3 +1,15 @@
+2014-04-15  Julien Brianceau  <jbriance@cisco.com>
+
+        Remove invalid sh4 specific code in JITInlines header.
+        https://bugs.webkit.org/show_bug.cgi?id=131692
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation): Prototype is not F_JITOperation_EJJZ
+        anymore since r160244, so the sh4 specific code is invalid now
+        and has to be removed.
+
 2014-04-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix precedence issue in JSCell:setRemembered
