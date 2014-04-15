@@ -1,3 +1,15 @@
+2014-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        ASSERT when firing low memory warning
+        https://bugs.webkit.org/show_bug.cgi?id=131659
+
+        Reviewed by Mark Hahnenberg.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteAllCompiledCode): Allow deleteAllCompiledCode to be
+        called when no GC is happening because that is what we do when a low
+        memory warning fires, and it is harmless.
+
 2014-04-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         emit_op_put_by_id should not emit a write barrier that filters on value

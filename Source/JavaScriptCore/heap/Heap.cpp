@@ -886,7 +886,7 @@ void Heap::deleteAllCompiledCode()
         static_cast<FunctionExecutable*>(current)->clearCodeIfNotCompiling();
     }
 
-    ASSERT(m_operationInProgress == FullCollection);
+    ASSERT(m_operationInProgress == FullCollection || m_operationInProgress == NoOperation);
     m_codeBlocks.clearMarksForFullCollection();
     m_codeBlocks.deleteUnmarkedAndUnreferenced(FullCollection);
 }
