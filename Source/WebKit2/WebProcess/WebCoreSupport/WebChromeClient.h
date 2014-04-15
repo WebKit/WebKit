@@ -202,7 +202,6 @@ private:
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
     virtual void setNeedsOneShotDrawingSynchronization() override;
     virtual void scheduleCompositingLayerFlush() override;
-    virtual WebCore::GraphicsLayer* documentOverlayLayerForFrame(WebCore::Frame&) override;
 
     virtual CompositingTriggerFlags allowedCompositingTriggers() const
     {

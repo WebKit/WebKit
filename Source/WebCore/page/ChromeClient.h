@@ -290,8 +290,6 @@ public:
     // Returns whether or not the client can render the composited layer,
     // regardless of the settings.
     virtual bool allowsAcceleratedCompositing() const { return true; }
-    // Supply a layer that will added as an overlay over other document layers (scrolling with the document).
-    virtual GraphicsLayer* documentOverlayLayerForFrame(Frame&) { return nullptr; }
 
     enum CompositingTrigger {
         ThreeDTransformTrigger = 1 << 0,

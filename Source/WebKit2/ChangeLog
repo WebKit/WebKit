@@ -1,3 +1,18 @@
+2014-04-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r167298.
+        https://bugs.webkit.org/show_bug.cgi?id=131670
+
+        Broke CSS filters (17 test crashes) (Requested by ap on
+        #webkit).
+
+        Reverted changeset:
+
+        "[iOS WK2] Pages often blank on first load if page loaded by
+        typing the URL"
+        https://bugs.webkit.org/show_bug.cgi?id=131665
+        http://trac.webkit.org/changeset/167298
+
 2014-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Pages often blank on first load if page loaded by typing the URL

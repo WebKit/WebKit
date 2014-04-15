@@ -771,14 +771,6 @@ void WebChromeClient::attachRootGraphicsLayer(Frame*, GraphicsLayer* layer)
         m_page->exitAcceleratedCompositingMode();
 }
 
-GraphicsLayer* WebChromeClient::documentOverlayLayerForFrame(Frame& frame)
-{
-    if (&frame == &m_page->corePage()->mainFrame())
-        return m_page->pageOverlayController().documentOverlayRootLayer();
-
-    return nullptr;
-}
-
 void WebChromeClient::setNeedsOneShotDrawingSynchronization()
 {
     notImplemented();
