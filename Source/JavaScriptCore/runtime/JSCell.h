@@ -155,7 +155,7 @@ public:
     void setMarked() { m_gcData = Marked; }
     void setRemembered(bool remembered)
     {
-        ASSERT(m_gcData == remembered ? Marked : MarkedAndRemembered);
+        ASSERT(m_gcData == (remembered ? Marked : MarkedAndRemembered));
         m_gcData = remembered ? MarkedAndRemembered : Marked; 
     }
     bool isMarked() const

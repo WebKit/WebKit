@@ -1,5 +1,14 @@
 2014-04-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Fix precedence issue in JSCell:setRemembered
+
+        Rubber stamped by Filip Pizlo.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::setRemembered):
+
+2014-04-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Objective-C API external object graphs don't handle generational collection properly
         https://bugs.webkit.org/show_bug.cgi?id=131634
 
