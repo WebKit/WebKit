@@ -398,7 +398,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                 swatchElement.title = WebInspector.UIString("Click to open a colorpicker. Shift-click to change color format.");
                 swatchElement.className = WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName;
                 swatchElement.addEventListener("click", this._colorSwatchClicked.bind(this));
-                            
+
                 var swatchInnerElement = document.createElement("span");
                 swatchInnerElement.style.backgroundColor = colorString;
                 swatchElement.appendChild(swatchInnerElement);
@@ -852,7 +852,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                 this._codeMirror.setValue(styleText);
 
                 if (this._prefixWhitespace)
-                    this._codeMirror.removeLine(0);
+                    this._codeMirror.replaceRange("", {line: 0, ch: 0}, {line: 1, ch: 0});
 
                 if (this._suffixWhitespace) {
                     var lineCount = this._codeMirror.lineCount();
@@ -953,7 +953,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         if (!this._style || !this._style.ownerRule || !this._style.ownerRule.sourceCodeLocation)
             this._jumpToSymbolTrackingModeEnabled = false;
         else
-            this._jumpToSymbolTrackingModeEnabled = WebInspector.modifierKeys.metaKey && !WebInspector.modifierKeys.altKey && !WebInspector.modifierKeys.shiftKey;
+            this._jumpToSymbolTrackingModeEnabled = WebInspector.modifierKeys.altKey && !WebInspector.modifierKeys.metaKey && !WebInspector.modifierKeys.shiftKey;
 
         if (oldJumpToSymbolTrackingModeEnabled !== this._jumpToSymbolTrackingModeEnabled) {
             if (this._jumpToSymbolTrackingModeEnabled) {

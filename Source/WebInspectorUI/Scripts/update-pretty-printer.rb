@@ -23,21 +23,21 @@ end
 
 # Copy the formatter and CodeMirror files from UserInterface to Tools.
 USER_INTERFACE_TO_TOOLS_MAP = {
-  "UserInterface/Controllers/CodeMirrorFormatters.js"    => "Tools/PrettyPrinting/CodeMirrorFormatters.js",
+  "UserInterface/Views/CodeMirrorFormatters.js"          => "Tools/PrettyPrinting/CodeMirrorFormatters.js",
   "UserInterface/Controllers/Formatter.js"               => "Tools/PrettyPrinting/Formatter.js",
   "UserInterface/Controllers/FormatterContentBuilder.js" => "Tools/PrettyPrinting/FormatterContentBuilder.js",
 
-  "UserInterface/External/CodeMirror/codemirror.css" => "Tools/PrettyPrinting/codemirror.css",
-  "UserInterface/External/CodeMirror/codemirror.js"  => "Tools/PrettyPrinting/codemirror.js",
-  "UserInterface/External/CodeMirror/javascript.js"  => "Tools/PrettyPrinting/javascript.js",
-  "UserInterface/External/CodeMirror/css.js"         => "Tools/PrettyPrinting/css.js",
+  "UserInterface/External/CodeMirror/codemirror.css"     => "Tools/PrettyPrinting/codemirror.css",
+  "UserInterface/External/CodeMirror/codemirror.js"      => "Tools/PrettyPrinting/codemirror.js",
+  "UserInterface/External/CodeMirror/javascript.js"      => "Tools/PrettyPrinting/javascript.js",
+  "UserInterface/External/CodeMirror/css.js"             => "Tools/PrettyPrinting/css.js",
 }
 
 # Copy only the formatter files from Tools to UserInterface.
 TOOLS_TO_USER_INTERFACE_MAP = {
-  "Tools/PrettyPrinting/CodeMirrorFormatters.js"    => "UserInterface/Controllers/CodeMirrorFormatters.js",
-  "Tools/PrettyPrinting/Formatter.js"               => "UserInterface/Controllers/Formatter.js",
-  "Tools/PrettyPrinting/FormatterContentBuilder.js" => "UserInterface/Controllers/FormatterContentBuilder.js"
+  "Tools/PrettyPrinting/CodeMirrorFormatters.js"         => "UserInterface/Views/CodeMirrorFormatters.js",
+  "Tools/PrettyPrinting/Formatter.js"                    => "UserInterface/Controllers/Formatter.js",
+  "Tools/PrettyPrinting/FormatterContentBuilder.js"      => "UserInterface/Controllers/FormatterContentBuilder.js"
 }
 
 web_inspector_path = File.expand_path File.join(File.dirname(__FILE__), "..")

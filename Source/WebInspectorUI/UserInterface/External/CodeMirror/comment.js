@@ -1,4 +1,11 @@
-(function() {
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    mod(require("../../lib/codemirror"));
+  else if (typeof define == "function" && define.amd) // AMD
+    define(["../../lib/codemirror"], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
   "use strict";
 
   var noOptions = {};
@@ -11,8 +18,21 @@
   }
 
   CodeMirror.commands.toggleComment = function(cm) {
-    var from = cm.getCursor("start"), to = cm.getCursor("end");
-    cm.uncomment(from, to) || cm.lineComment(from, to);
+    var minLine = Infinity, ranges = cm.listSelections(), mode = null;
+    for (var i = ranges.length - 1; i >= 0; i--) {
+      var from = ranges[i].from(), to = ranges[i].to();
+      if (from.line >= minLine) continue;
+      if (to.line >= minLine) to = Pos(minLine, 0);
+      minLine = from.line;
+      if (mode == null) {
+        if (cm.uncomment(from, to)) mode = "un";
+        else { cm.lineComment(from, to); mode = "line"; }
+      } else if (mode == "un") {
+        cm.uncomment(from, to);
+      } else {
+        cm.lineComment(from, to);
+      }
+    }
   };
 
   CodeMirror.defineExtension("lineComment", function(from, to, options) {
@@ -96,8 +116,9 @@
       for (var i = start; i <= end; ++i) {
         var line = self.getLine(i);
         var found = line.indexOf(lineString);
+        if (found > -1 && !/comment/.test(self.getTokenTypeAt(Pos(i, found + 1)))) found = -1;
         if (found == -1 && (i != end || i == start) && nonWS.test(line)) break lineComment;
-        if (i != start && found > -1 && nonWS.test(line.slice(0, found))) break lineComment;
+        if (found > -1 && nonWS.test(line.slice(0, found))) break lineComment;
         lines.push(line);
       }
       self.operation(function() {
@@ -124,7 +145,10 @@
       endLine = self.getLine(--end);
       close = endLine.lastIndexOf(endString);
     }
-    if (open == -1 || close == -1) return false;
+    if (open == -1 || close == -1 ||
+        !/comment/.test(self.getTokenTypeAt(Pos(start, open + 1))) ||
+        !/comment/.test(self.getTokenTypeAt(Pos(end, close + 1))))
+      return false;
 
     self.operation(function() {
       self.replaceRange("", Pos(end, close - (pad && endLine.slice(close - pad.length, close) == pad ? pad.length : 0)),
@@ -142,4 +166,4 @@
     });
     return true;
   });
-})();
+});

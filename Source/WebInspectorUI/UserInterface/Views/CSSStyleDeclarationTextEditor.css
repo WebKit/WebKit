@@ -61,7 +61,7 @@
     display: none;
 }
 
-.css-style-text-editor > .CodeMirror .CodeMirror-lines pre span:not(.css-style-declaration-property):not(.CodeMirror-widget):not(.cm-comment):not(.cm-tab),
+.css-style-text-editor > .CodeMirror .CodeMirror-lines pre > span span:not(.css-style-declaration-property):not(.CodeMirror-widget):not(.cm-comment):not(.cm-tab),
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.disabled,
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.invalid,
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.other-vendor,
@@ -72,7 +72,7 @@
     -webkit-text-stroke-color: rgba(0, 0, 0, 0.6);
 }
 
-.css-style-text-editor > .CodeMirror .CodeMirror-lines pre span:not(.css-style-declaration-property):not(.CodeMirror-widget):not(.cm-comment):not(.cm-tab),
+.css-style-text-editor > .CodeMirror .CodeMirror-lines pre > span span:not(.css-style-declaration-property):not(.CodeMirror-widget):not(.cm-comment):not(.cm-tab),
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.invalid {
     -webkit-text-stroke-color: rgba(255, 0, 0, 0.6);
 }

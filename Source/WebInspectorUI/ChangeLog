@@ -1,3 +1,60 @@
+2014-04-14  Jono Wells  <jonowells@apple.com>
+
+        Update to CodeMirror 4.0.
+        https://bugs.webkit.org/show_bug.cgi?id=130019
+
+        The CodeMirror 4.0 library adds multiple selections and the ability to
+        undo/redo selections. Selections are made by holding the Command (Cmd) key
+        and clicking into an editor, or by holding Option (Alt) and making a block
+        selection followed by entering a character or moving the cursor.
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/update-codemirror-resources.rb:
+        * Scripts/update-pretty-printer.rb:
+        Update scripts to reflect updated locations for CodeMirror files.
+        No longer copies LESS mode file as this has been integrated into CSS mode
+        in CodeMirror 4.0.
+
+        * Tools/PrettyPrinting/codemirror.css:
+        * Tools/PrettyPrinting/codemirror.js:
+        * Tools/PrettyPrinting/css.js:
+        * Tools/PrettyPrinting/javascript.js:
+        * UserInterface/External/CodeMirror/clojure.js:
+        * UserInterface/External/CodeMirror/closebrackets.js:
+        * UserInterface/External/CodeMirror/codemirror.css:
+        * UserInterface/External/CodeMirror/codemirror.js:
+        * UserInterface/External/CodeMirror/coffeescript.js:
+        * UserInterface/External/CodeMirror/comment.js:
+        * UserInterface/External/CodeMirror/css.js:
+        * UserInterface/External/CodeMirror/htmlmixed.js:
+        * UserInterface/External/CodeMirror/javascript.js:
+        * UserInterface/External/CodeMirror/livescript.js:
+        * UserInterface/External/CodeMirror/matchbrackets.js:
+        * UserInterface/External/CodeMirror/overlay.js:
+        * UserInterface/External/CodeMirror/placeholder.js:
+        * UserInterface/External/CodeMirror/runmode.js:
+        * UserInterface/External/CodeMirror/sass.js:
+        * UserInterface/External/CodeMirror/searchcursor.js:
+        * UserInterface/External/CodeMirror/sql.js:
+        * UserInterface/External/CodeMirror/xml.js:
+        Update to CodeMirror 4.0.
+
+        * UserInterface/Main.html: Remove less.js which is now part of css.js.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateJumpToSymbolTrackingMode):
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        Update styles to match CodeMirror changes. Update CSSStyleDeclarationTextEditor.js
+        to match CodeMirror API updates (doc.removeLine() has been removed, so
+        replaceRange() is used instead). Also the tokenTrackingController is now enabled in the
+        CSSStyleDeclarationTextEditor and SourceCodeTextEditor when the Option (Alt) key
+        is pressed instead of the Command (Cmd) key so as not to conflict with multiple
+        cursor placement in the CodeMirror update.
+
 2014-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Generate Optimized WebInspectorUI in Release Build

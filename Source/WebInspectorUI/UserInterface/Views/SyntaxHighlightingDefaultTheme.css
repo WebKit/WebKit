@@ -41,14 +41,16 @@
 }
 
 .cm-s-default .cm-tag,
+.cm-s-default .cm-bracket,
+.cm-s-default .cm-tag.cm-bracket,
 .cm-s-default .cm-atom,
 .cm-s-default .cm-keyword,
+.cm-s-default .cm-m-css.cm-tag,
 .cm-s-default .cm-m-css.cm-meta,
-.cm-s-default .cm-m-css.cm-property,
-.cm-s-default .cm-m-css.cm-string-2,
+.cm-s-default .cm-m-css.cm-variable-3,
 .cm-s-default .cm-m-javascript.cm-builtin,
 .syntax-highlighted .css-keyword,
-.syntax-highlighted .css-property,
+.syntax-highlighted .css-tag,
 .syntax-highlighted .css-at-rule,
 .syntax-highlighted .css-important,
 .syntax-highlighted .javascript-keyword,
@@ -69,9 +71,10 @@
 .cm-s-default .cm-qualifier,
 .cm-s-default .cm-variable,
 .cm-s-default .cm-variable-2,
-.cm-s-default .cm-variable-3,
-.cm-s-default .cm-m-css.cm-tag,
+.cm-s-default .cm-m-css.cm-string-2,
 .cm-s-default .cm-m-css.cm-builtin,
+.cm-s-default .cm-m-css.cm-property,
+.syntax-highlighted .css-property,
 .syntax-highlighted .css-selector,
 .syntax-highlighted .javascript-ident {
     color: inherit;
