@@ -1,5 +1,16 @@
 2014-04-14  Alexey Proskuryakov  <ap@apple.com>
 
+        Wrong link for webkitpy tests results in dashboard popover
+        https://bugs.webkit.org/show_bug.cgi?id=131664
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype._presentPopoverForMultipleFailureKinds):
+        Use a correct link.
+
+2014-04-14  Alexey Proskuryakov  <ap@apple.com>
+
         Update webkitpy regression test result that started to fail after http://trac.webkit.org/r167243
 
         I'm not sure whether the changes are desirable, but am not suspicious enough to roll out.

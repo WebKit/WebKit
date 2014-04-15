@@ -316,7 +316,7 @@ BuildbotTesterQueueView.prototype = {
 
         if (pythonTestResults.failureCount) {
             var message = pythonTestResults.failureCount + "\u00a0" + (pythonTestResults.failureCount === 1 ? "webkitpy test failure" : "webkitpy test failures");
-            addResultKind(message, iteration.queue.buildbot.bindingsTestResultsURLForIteration(iteration));
+            addResultKind(message, iteration.queue.buildbot.webkitpyTestResultsURLForIteration(iteration));
         }
 
         if (perlTestResults.failureCount) {
