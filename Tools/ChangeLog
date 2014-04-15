@@ -1,3 +1,17 @@
+2014-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Reduce the binary size by compressing the text based web inspector resources
+        https://bugs.webkit.org/show_bug.cgi?id=121545
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Compress text based files when compiling inspector resources. It
+        reduces the binary size in 3MB.
+
+        * gtk/generate-inspector-gresource-manifest.py:
+        (find_all_files_in_directory):
+        (is_compressible):
+
 2014-04-14  Alexey Proskuryakov  <ap@apple.com>
 
         Remove Gtk WebKit1 tester.

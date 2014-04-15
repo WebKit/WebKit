@@ -21,6 +21,7 @@ import os
 import sys
 
 ALLOWED_EXTENSIONS = ['.html', '.js', '.css', '.png', '.svg']
+COMPRESSIBLE_EXTENSIONS = ['.html', '.js', '.css', '.svg']
 
 
 def find_all_files_in_directory(directory):
@@ -38,6 +39,11 @@ def find_all_files_in_directory(directory):
 
     return to_return
 
+
+def is_compressible(filename):
+    return os.path.splitext(filename)[1] in COMPRESSIBLE_EXTENSIONS
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a GResources file for the inspector.')
     parser.add_argument('--output', nargs='?', type=argparse.FileType('w'), default=sys.stdout,
@@ -52,8 +58,13 @@ if __name__ == "__main__":
 """)
 
     for directory in extra_args[1:]:
-        for file in find_all_files_in_directory(directory):
-            arguments.output.write("            <file>%s</file>\n" % file)
+        for filename in find_all_files_in_directory(directory):
+            line = '            <file'
+            if is_compressible(filename):
+                line += ' compressed="true"'
+            line += '>%s</file>\n' % filename
+
+            arguments.output.write(line)
 
     arguments.output.write(\
     """    </gresource>
