@@ -515,7 +515,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     int value = currentInstruction[3].u.operand;
     int direct = currentInstruction[8].u.operand;
     
-    emitWriteBarrier(base, value, ShouldFilterBaseAndValue);
+    emitWriteBarrier(base, value, ShouldFilterBase);
 
     emitLoad2(base, regT1, regT0, value, regT3, regT2);
     

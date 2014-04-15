@@ -1,3 +1,20 @@
+2014-04-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        emit_op_put_by_id should not emit a write barrier that filters on value
+        https://bugs.webkit.org/show_bug.cgi?id=131654
+
+        Reviewed by Filip Pizlo.
+
+        The 32-bit implementation does this, and it can cause crashes if we later repatch the 
+        code to allocate and store new Butterflies.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier): We also weren't verifying that the base was a cell on 
+        32-bit if we were passed ShouldFilterBase. I also took the liberty of sinking the tag 
+        load down into the if statement so that we don't do it if we're not filtering on the value.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_id):
+
 2014-04-14  Oliver Hunt  <oliver@apple.com>
 
         Function.bind itself is too slow

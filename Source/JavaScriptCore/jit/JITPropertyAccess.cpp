@@ -933,21 +933,22 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode)
 {
 #if ENABLE(GGC)
-    emitLoadTag(value, regT0);
     Jump valueNotCell;
-    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue)
+    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
+        emitLoadTag(value, regT0);
         valueNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
+    }
     
     emitLoad(owner, regT0, regT1);
     Jump ownerNotCell;
-    if (mode == ShouldFilterBaseAndValue)
+    if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
         ownerNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
 
     Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(regT1);
     callOperation(operationUnconditionalWriteBarrier, regT1);
     ownerNotMarkedOrAlreadyRemembered.link(this);
 
-    if (mode == ShouldFilterBaseAndValue)
+    if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
         ownerNotCell.link(this);
     if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) 
         valueNotCell.link(this);
@@ -961,10 +962,11 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
 void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 {
 #if ENABLE(GGC)
-    emitLoadTag(value, regT0);
     Jump valueNotCell;
-    if (mode == ShouldFilterValue)
+    if (mode == ShouldFilterValue) {
+        emitLoadTag(value, regT0);
         valueNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
+    }
 
     emitWriteBarrier(owner);
 
