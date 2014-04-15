@@ -1,3 +1,9 @@
+2014-04-14  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the 32-bit build.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+
 2014-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (WebKit2): Programmatic scrolls in overflow-scrolling:touch don't work

@@ -79,12 +79,17 @@ static const float minimumScrollEventRatioForSwipe = 0.5;
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
 
-@interface WKSwipeCancellationTracker : NSObject
+@interface WKSwipeCancellationTracker : NSObject {
+@private
+    BOOL _isCancelled;
+}
+
 @property (nonatomic) BOOL isCancelled;
+
 @end
 
 @implementation WKSwipeCancellationTracker
-@synthesize isCancelled;
+@synthesize isCancelled=_isCancelled;
 @end
 
 namespace WebKit {
