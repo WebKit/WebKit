@@ -97,4 +97,5 @@ webkit.org/b/74144 fast/regions/universal-selector-children-to-the-same-region.h
 webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
 
 # Fails or asserts on most runs.
-webkit.org/b/131679 inspector/dom/content-flow-list.html  [ Skip ]
+webkit.org/b/131679 inspector/dom/content-flow-list.html [ Skip ]
+webkit.org/b/131679 inspector/dom/content-flow-content-removal.html [ Skip ]
