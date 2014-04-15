@@ -1,3 +1,21 @@
+2014-04-15  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Linking stylesheet instead of inline style definition has ruined ShapesRegions test
+        https://bugs.webkit.org/show_bug.cgi?id=131572
+
+        Reviewed by Rob Buis.
+
+        In r167022 I moved the common CSS selectors into RegionsShapes.css, then I linked it into the perf test
+        files, but the measurement results dropped down from about 400ms to 10ms. I realized it's caused by the
+        linked css rule, so I've put the selectors back into every test case, which fixes the test measurements.
+
+        * Layout/Shapes/resources/RegionsShapes.css: Removed.
+        * Layout/Shapes/resources/RegionsShapesContent.html:
+        * Layout/Shapes/resources/RegionsShapesContentNoRegionsWidth400.html:
+        * Layout/Shapes/resources/RegionsShapesContentNoRegionsWidth600.html:
+        * Layout/Shapes/resources/RegionsShapesContentNoRegionsWidth800.html:
+        * Layout/Shapes/resources/RegionsShapesContentNoShapes.html:
+
 2014-04-14  Geoffrey Garen  <ggaren@apple.com>
 
         MallocBench should scavenge explicitly instead of waiting
