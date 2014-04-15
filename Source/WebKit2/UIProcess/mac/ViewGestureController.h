@@ -41,6 +41,7 @@ OBJC_CLASS _UINavigationInteractiveTransitionBase;
 #else
 OBJC_CLASS NSEvent;
 OBJC_CLASS NSView;
+OBJC_CLASS WKSwipeCancellationTracker;
 #endif
 
 namespace WebCore {
@@ -148,6 +149,7 @@ private:
     bool m_visibleContentRectIsValid;
     bool m_frameHandlesMagnificationGesture;
 
+    RetainPtr<WKSwipeCancellationTracker> m_swipeCancellationTracker;
     RetainPtr<CALayer> m_swipeSnapshotLayer;
     Vector<RetainPtr<CALayer>> m_currentSwipeLiveLayers;
 

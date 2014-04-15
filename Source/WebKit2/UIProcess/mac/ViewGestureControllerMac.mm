@@ -79,6 +79,13 @@ static const float minimumScrollEventRatioForSwipe = 0.5;
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
 
+@interface WKSwipeCancellationTracker : NSObject
+@property (nonatomic) BOOL isCancelled;
+@end
+
+@implementation WKSwipeCancellationTracker
+@end
+
 namespace WebKit {
 
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
@@ -96,6 +103,9 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
 
 ViewGestureController::~ViewGestureController()
 {
+    if (m_swipeCancellationTracker)
+        [m_swipeCancellationTracker setIsCancelled:YES];
+
     m_webPageProxy.process().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID());
 }
 
@@ -352,7 +362,15 @@ void ViewGestureController::trackSwipeGesture(NSEvent *event, SwipeDirection dir
     RefPtr<WebBackForwardListItem> targetItem = (direction == SwipeDirection::Left) ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
     __block bool swipeCancelled = false;
 
+    ASSERT(!m_swipeCancellationTracker);
+    RetainPtr<WKSwipeCancellationTracker> swipeCancellationTracker = adoptNS([[WKSwipeCancellationTracker alloc] init]);
+    m_swipeCancellationTracker = swipeCancellationTracker;
+
     [event trackSwipeEventWithOptions:0 dampenAmountThresholdMin:minProgress max:maxProgress usingHandler:^(CGFloat progress, NSEventPhase phase, BOOL isComplete, BOOL *stop) {
+        if ([swipeCancellationTracker isCancelled]) {
+            *stop = YES;
+            return;
+        }
         if (phase == NSEventPhaseBegan)
             this->beginSwipeGesture(targetItem.get(), direction);
         CGFloat clampedProgress = std::min(std::max(progress, minProgress), maxProgress);
@@ -487,6 +505,9 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
 {
     ASSERT(m_activeGestureType == ViewGestureType::Swipe);
 
+    if (!m_webPageProxy.drawingArea())
+        return;
+
     double width;
     if (!m_customSwipeViews.isEmpty())
         width = m_currentSwipeCustomViewBounds.width();
@@ -513,6 +534,8 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
 void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled)
 {
     ASSERT(m_activeGestureType == ViewGestureType::Swipe);
+
+    m_swipeCancellationTracker = nullptr;
 
     CALayer *rootLayer = m_webPageProxy.acceleratedCompositingRootLayer();
 

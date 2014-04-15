@@ -1,3 +1,27 @@
+2014-04-14  Tim Horton  <timothy_horton@apple.com>
+
+        Sometimes-crash under handleSwipeGesture after closing a window or quitting
+        https://bugs.webkit.org/show_bug.cgi?id=131648
+        <rdar://problem/15966106>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::~ViewGestureController):
+        (WebKit::ViewGestureController::trackSwipeGesture):
+        Keep a Objective C object with a single boolean property, isCancelled, on
+        the ViewGestureController, and also retained by the swipe-tracking block.
+        When the ViewGestureController is destroyed, we set isCancelled to YES,
+        and the next time the block is invoked, we will cancel the swipe without
+        touching the destroyed ViewGestureController.
+
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        Don't try to handle a swipe gesture if the drawing area is missing.
+
+        (WebKit::ViewGestureController::endSwipeGesture):
+        Clear the swipe cancellation tracker when the gesture completes.
+
 2014-04-14  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION(r166027) Menu is shown and immediately hidden after doubletap gesture.
