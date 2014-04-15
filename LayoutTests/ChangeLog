@@ -1,5 +1,13 @@
 2014-04-15  Alexey Proskuryakov  <ap@apple.com>
 
+        ScriptProcessorNode is garbage collected while still active if unreachable (breaks multiple webaudio test)
+        https://bugs.webkit.org/show_bug.cgi?id=112521
+
+        * TestExpectations: Updated bug number, added webaudio/audioprocessingevent.html,
+        and removed a spurious additional webaudio/javascriptaudionode-downmix8-2channel-input.html line.
+
+2014-04-15  Alexey Proskuryakov  <ap@apple.com>
+
         [Mac] compositing/repaint/positioned-movement.html flaky, missing repaint
         https://bugs.webkit.org/show_bug.cgi?id=118153
 
