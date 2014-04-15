@@ -1,3 +1,12 @@
+2014-04-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Update webkitpy regression test result that started to fail after http://trac.webkit.org/r167243
+
+        I'm not sure whether the changes are desirable, but am not suspicious enough to roll out.
+
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CommitMessageForThisCommitTest):
+
 2014-04-14  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
 
         Fix commit-log-editor bug revealed by r165447

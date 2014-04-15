@@ -82,15 +82,14 @@ _changelog2 = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
 class CommitMessageForThisCommitTest(unittest.TestCase):
     expected_commit_message = u"""Unreviewed build fix to un-break webkit-patch land.
 
-Tools: 
 
+Tools: 
 Move commit_message_for_this_commit from scm to checkout
 https://bugs.webkit.org/show_bug.cgi?id=36629
 
 * Scripts/webkitpy/common/checkout/api.py: import scm.CommitMessage
 
 LayoutTests: 
-
 Second part of this complicated change by me, Tor Arne Vestb\u00f8!
 
 * Path/To/Complicated/File: Added.
