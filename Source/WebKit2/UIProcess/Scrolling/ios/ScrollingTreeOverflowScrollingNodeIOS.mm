@@ -115,24 +115,25 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
 
     const auto& scrollingStateNode = toScrollingStateScrollingNode(stateNode);
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)) {
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)
+        || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)
+        || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition)) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
         ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
 
-        if (!m_scrollViewDelegate)
-            m_scrollViewDelegate = adoptNS([[WKOverflowScrollViewDelegate alloc] initWithScrollingTreeNode:this]);
+        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)) {
+            if (!m_scrollViewDelegate)
+                m_scrollViewDelegate = adoptNS([[WKOverflowScrollViewDelegate alloc] initWithScrollingTreeNode:this]);
 
-        scrollView.delegate = m_scrollViewDelegate.get();
-        END_BLOCK_OBJC_EXCEPTIONS
-    }
+            scrollView.delegate = m_scrollViewDelegate.get();
+        }
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS
-        UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
-        ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize))
+            scrollView.contentSize = scrollingStateNode.totalContentsSize();
 
-        scrollView.contentSize = scrollingStateNode.totalContentsSize();
+        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition))
+            scrollView.contentOffset = scrollingStateNode.scrollPosition();
 
         END_BLOCK_OBJC_EXCEPTIONS
     }
