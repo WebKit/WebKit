@@ -1,3 +1,36 @@
+2014-04-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Pages often blank on first load if page loaded by typing the URL
+        https://bugs.webkit.org/show_bug.cgi?id=131665
+
+        Reviewed by Tim Horton.
+
+        The document overlay-related code in RemoteLayerTreeDrawingArea::setRootCompositingLayer()
+        was triggering a compositing layer flush when called with a null rootLayer, which happens
+        for pages going into the page cache. This would trigger a layer flush that would clobber
+        the root layer for the visible page, resulting in missing content.
+        
+        Also, rebuildCompositingLayerTree() is called recursively and the m_documentOverlayRootLayer
+        was being added to (and then removed from) every single compositing layers.
+        
+        Fix both these by changing to a pull model, where RenderLayerCompositor requests
+        the overlay layer via ChromeClient, and gets it at the end of every flush,
+        adding to the children of the root layer.
+
+        * WebCore.exp.in:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::documentOverlayLayerForFrame):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges): Put visibleRect
+        into a variable for ease of debugging.
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): Asser
+        that we're not in the page cache (this would have caught the bug).
+        (WebCore::RenderLayerCompositor::appendOverlayLayers):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::setDocumentOverlayRootLayer): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2014-04-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167199 and r167251.
