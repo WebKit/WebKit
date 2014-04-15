@@ -1,3 +1,16 @@
+2014-04-15  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Pass Mouse movement data to WebMouseEvent
+        https://bugs.webkit.org/show_bug.cgi?id=131663
+
+        Reviewed by Gyuyoung Kim.
+
+        Currently mouse movement data are not passed to WebMouseEvent. Instead, they are set to 0 as default.
+        EFL port needs to send the deltaX and deltaY for PointerLock API which will be implemented later.
+
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+
 2014-04-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167298.
