@@ -1,3 +1,16 @@
+2014-04-14  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] video.currentTime is sometimes negative.
+        https://bugs.webkit.org/show_bug.cgi?id=131644
+
+        Reviewed by Eric Carlson.
+
+        AVSampleBufferRenderSynchronizer will occasionally return slightly negative values
+        when beginning playback. Clamp the return value to 0.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::currentTimeDouble):
+
 2014-04-14  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSSExclusions] Remove FIXME referencing closed bug

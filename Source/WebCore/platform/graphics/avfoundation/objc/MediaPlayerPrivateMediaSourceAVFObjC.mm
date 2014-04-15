@@ -391,7 +391,7 @@ double MediaPlayerPrivateMediaSourceAVFObjC::durationDouble() const
 
 double MediaPlayerPrivateMediaSourceAVFObjC::currentTimeDouble() const
 {
-    return CMTimeGetSeconds(CMTimebaseGetTime([m_synchronizer timebase]));
+    return std::max<double>(0, CMTimeGetSeconds(CMTimebaseGetTime([m_synchronizer timebase])));
 }
 
 double MediaPlayerPrivateMediaSourceAVFObjC::startTimeDouble() const
