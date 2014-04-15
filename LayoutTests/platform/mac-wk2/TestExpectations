@@ -395,10 +395,6 @@ editing/secure-input/password-input-focusing-to-different-frame.html [ Failure ]
 # textInputController.hasMarkedText is implemented, but gives a wrong result for some reason.
 platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache.html
 
-# Intermittent failure due to a missing repaint
-# https://bugs.webkit.org/show_bug.cgi?id=118153
-compositing/repaint/positioned-movement.html [ Pass Failure ]
-
 webkit.org/b/123431 [ Mavericks ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure ]
 webkit.org/b/123431 [ Mavericks ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure ]
 webkit.org/b/123431 [ Mavericks ] http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
