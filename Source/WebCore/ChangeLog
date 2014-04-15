@@ -1,3 +1,20 @@
+2014-04-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove unnecessary null checking in NavigatorContentUtils
+        https://bugs.webkit.org/show_bug.cgi?id=131652
+
+        Reviewed by Darin Adler.
+
+        Some functions have checked if document is null. However, document is always not
+        null when frame is existed.
+
+        No new tests, no behavior changes.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::NavigatorContentUtils::registerProtocolHandler):
+        (WebCore::NavigatorContentUtils::isProtocolHandlerRegistered):
+        (WebCore::NavigatorContentUtils::unregisterProtocolHandler):
+
 2014-04-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167298.

@@ -136,11 +136,7 @@ void NavigatorContentUtils::registerProtocolHandler(Navigator* navigator, const 
     if (!navigator->frame())
         return;
 
-    Document* document = navigator->frame()->document();
-    if (!document)
-        return;
-
-    URL baseURL = document->baseURL();
+    URL baseURL = navigator->frame()->document()->baseURL();
 
     if (!verifyCustomHandlerURL(baseURL, url, ec))
         return;
@@ -178,11 +174,7 @@ String NavigatorContentUtils::isProtocolHandlerRegistered(Navigator* navigator, 
     if (!navigator->frame())
         return declined;
 
-    Document* document = navigator->frame()->document();
-    if (!document)
-        return declined;
-
-    URL baseURL = document->baseURL();
+    URL baseURL = navigator->frame()->document()->baseURL();
 
     if (!verifyCustomHandlerURL(baseURL, url, ec))
         return declined;
@@ -198,11 +190,7 @@ void NavigatorContentUtils::unregisterProtocolHandler(Navigator* navigator, cons
     if (!navigator->frame())
         return;
 
-    Document* document = navigator->frame()->document();
-    if (!document)
-        return;
-    
-    URL baseURL = document->baseURL();
+    URL baseURL = navigator->frame()->document()->baseURL();
 
     if (!verifyCustomHandlerURL(baseURL, url, ec))
         return;
