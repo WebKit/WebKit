@@ -106,21 +106,9 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
                 break;
             }
                 
-            case DataFormatInt52:
-            case DataFormatStrictInt52: {
-                m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-                boxInt52(gpr, gpr, spillFormat);
-                return gpr;
-            }
-                
             default:
                 m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-                if (spillFormat == DataFormatDouble) {
-                    // Need to box the double, since we want a JSValue.
-                    m_jit.sub64(GPRInfo::tagTypeNumberRegister, gpr);
-                    spillFormat = DataFormatJSDouble;
-                } else
-                    RELEASE_ASSERT(spillFormat & DataFormatJS);
+                RELEASE_ASSERT(spillFormat & DataFormatJS);
                 break;
             }
             info.fillJSValue(*m_stream, gpr, spillFormat);
@@ -143,28 +131,6 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
         return gpr;
     }
 
-    case DataFormatDouble: {
-        FPRReg fpr = info.fpr();
-        GPRReg gpr = boxDouble(fpr);
-
-        // Update all info
-        info.fillJSValue(*m_stream, gpr, DataFormatJSDouble);
-        m_fprs.release(fpr);
-        m_gprs.retain(gpr, virtualRegister, SpillOrderJS);
-
-        return gpr;
-    }
-        
-    case DataFormatInt52:
-    case DataFormatStrictInt52: {
-        GPRReg gpr = info.gpr();
-        lock(gpr);
-        GPRReg resultGPR = allocate();
-        boxInt52(gpr, resultGPR, info.registerFormat());
-        unlock(gpr);
-        return resultGPR;
-    }
-
     case DataFormatCell:
         // No retag required on JSVALUE64!
     case DataFormatJS:
@@ -179,6 +145,8 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
         
     case DataFormatBoolean:
     case DataFormatStorage:
+    case DataFormatDouble:
+    case DataFormatInt52:
         // this type currently never occurs
         RELEASE_ASSERT_NOT_REACHED();
         
@@ -769,12 +737,6 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if (info.spillFormat() == DataFormatDouble) {
-            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-            returnFormat = DataFormatInt32;
-            return allocate();
-        }
-        
         GPRReg gpr = allocate();
 
         if (edge->hasConstant()) {
@@ -788,7 +750,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         
         DataFormat spillFormat = info.spillFormat();
         
-        RELEASE_ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInt32 || spillFormat == DataFormatInt52 || spillFormat == DataFormatStrictInt52);
+        RELEASE_ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInt32);
         
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         
@@ -807,36 +769,6 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
                 m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
             info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
             returnFormat = DataFormatJSInt32;
-            return gpr;
-        }
-        if (spillFormat == DataFormatInt52 || spillFormat == DataFormatStrictInt52) {
-            // Generally, this can only happen if we've already proved that the
-            // value is an int32. That's because if a value originated as a JSValue
-            // then we would speculate that it's an int32 before representing it as
-            // an int52. Otherwise, if we knowingly produced an int52, then we would
-            // be boxing it into a value using Int52ToValue. This assertion is valid
-            // only because Int52 is something that we introduce at prediction time.
-            // However: we may have an int32-producing node replaced by an
-            // int52-producing node due to CSE. So we must do a check.
-            RELEASE_ASSERT(!(type & ~SpecMachineInt));
-            if (type & SpecInt52) {
-                GPRReg temp = allocate();
-                m_jit.signExtend32ToPtr(gpr, temp);
-                // Currently, we can't supply value profiling information here. :-/
-                speculationCheck(
-                    BadType, JSValueRegs(), 0,
-                    m_jit.branch64(MacroAssembler::NotEqual, gpr, temp));
-                unlock(temp);
-            }
-            if (spillFormat == DataFormatStrictInt52)
-                m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
-            else {
-                m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-                m_jit.rshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
-                m_jit.zeroExtend32ToPtr(gpr, gpr);
-            }
-            info.fillInt32(*m_stream, gpr);
-            returnFormat = DataFormatInt32;
             return gpr;
         }
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
@@ -897,47 +829,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         return gpr;
     }
         
-    case DataFormatStrictInt52:
-    case DataFormatInt52: {
-        GPRReg gpr = info.gpr();
-        GPRReg result;
-        DataFormat oldFormat = info.registerFormat();
-        if (m_gprs.isLocked(gpr)) {
-            result = allocate();
-            m_jit.move(gpr, result);
-        } else {
-            lock(gpr);
-            info.fillInt32(*m_stream, gpr);
-            result = gpr;
-        }
-        RELEASE_ASSERT(!(type & ~SpecMachineInt));
-        if (oldFormat == DataFormatInt52)
-            m_jit.rshift64(TrustedImm32(JSValue::int52ShiftAmount), result);
-        if (type & SpecInt52) {
-            GPRReg temp = allocate();
-            m_jit.signExtend32ToPtr(result, temp);
-            // Currently, we can't supply value profiling information here. :-/
-            speculationCheck(
-                BadType, JSValueRegs(), 0,
-                m_jit.branch64(MacroAssembler::NotEqual, result, temp));
-            unlock(temp);
-        }
-        m_jit.zeroExtend32ToPtr(result, result);
-        returnFormat = DataFormatInt32;
-        return gpr;
-    }
-
-    case DataFormatDouble:
-    case DataFormatJSDouble: {
-        if (edge->hasConstant() && isInt32Constant(edge.node())) {
-            GPRReg gpr = allocate();
-            ASSERT(isInt32Constant(edge.node()));
-            m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(edge.node())), gpr);
-            returnFormat = DataFormatInt32;
-            return gpr;
-        }
-        FALLTHROUGH;
-    }
+    case DataFormatJSDouble:
     case DataFormatCell:
     case DataFormatBoolean:
     case DataFormatJSCell:
@@ -947,7 +839,10 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         return allocate();
     }
 
+    case DataFormatDouble:
     case DataFormatStorage:
+    case DataFormatInt52:
+    case DataFormatStrictInt52:
         RELEASE_ASSERT_NOT_REACHED();
         
     default:
@@ -976,14 +871,13 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
 {
     ASSERT(desiredFormat == DataFormatInt52 || desiredFormat == DataFormatStrictInt52);
     AbstractValue& value = m_state.forNode(edge);
-    SpeculatedType type = value.m_type;
     m_interpreter.filter(value, SpecMachineInt);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if ((edge->hasConstant() && !valueOfJSConstant(edge.node()).isMachineInt()) || info.spillFormat() == DataFormatDouble) {
+        if ((edge->hasConstant() && !valueOfJSConstant(edge.node()).isMachineInt())) {
             terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
             return allocate();
         }
@@ -1004,82 +898,21 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
         
         DataFormat spillFormat = info.spillFormat();
         
-        RELEASE_ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInt32 || spillFormat == DataFormatInt52 || spillFormat == DataFormatStrictInt52);
+        RELEASE_ASSERT(spillFormat == DataFormatInt52 || spillFormat == DataFormatStrictInt52);
         
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         
-        if (spillFormat == DataFormatJSInt32 || spillFormat == DataFormatInt32) {
-            // If we know this was spilled as an integer we can fill without checking.
-            m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
-            m_jit.signExtend32ToPtr(gpr, gpr);
-            if (desiredFormat == DataFormatStrictInt52) {
-                info.fillStrictInt52(*m_stream, gpr);
-                return gpr;
-            }
-            m_jit.lshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
-            info.fillInt52(*m_stream, gpr);
-            return gpr;
-        }
-        if (spillFormat == DataFormatInt52 || spillFormat == DataFormatStrictInt52) {
-            m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-            if (desiredFormat == DataFormatStrictInt52) {
-                if (spillFormat == DataFormatInt52)
-                    m_jit.rshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
-                info.fillStrictInt52(*m_stream, gpr);
-                return gpr;
-            }
-            if (spillFormat == DataFormatStrictInt52)
-                m_jit.lshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
-            info.fillInt52(*m_stream, gpr);
-            return gpr;
-        }
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-
-        // Fill as JSValue, and fall through.
-        info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
-        m_gprs.unlock(gpr);
-        FALLTHROUGH;
-    }
-
-    case DataFormatJS: {
-        // Check the value is an integer. Note that we would *like* to unbox an Int52
-        // at this point but this is too costly. We only *prove* that this is an Int52
-        // even though we check if it's an int32.
-        GPRReg gpr = info.gpr();
-        GPRReg result;
-        if (m_gprs.isLocked(gpr)) {
-            result = allocate();
-            m_jit.move(gpr, result);
-        } else {
-            m_gprs.lock(gpr);
-            result = gpr;
+        if (desiredFormat == DataFormatStrictInt52) {
+            if (spillFormat == DataFormatInt52)
+                m_jit.rshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
+            info.fillStrictInt52(*m_stream, gpr);
+            return gpr;
         }
-        if (type & ~SpecInt32)
-            speculationCheck(BadType, JSValueRegs(result), edge, m_jit.branch64(MacroAssembler::Below, result, GPRInfo::tagTypeNumberRegister));
-        if (result == gpr) // The not-already-locked, so fill in-place, case.
-            info.fillInt52(*m_stream, gpr, desiredFormat);
-        m_jit.signExtend32ToPtr(result, result);
-        if (desiredFormat == DataFormatInt52)
-            m_jit.lshift64(TrustedImm32(JSValue::int52ShiftAmount), result);
-        return result;
-    }
-
-    case DataFormatInt32:
-    case DataFormatJSInt32: {
-        GPRReg gpr = info.gpr();
-        GPRReg result;
-        if (m_gprs.isLocked(gpr)) {
-            result = allocate();
-            m_jit.move(gpr, result);
-        } else {
-            m_gprs.lock(gpr);
-            info.fillInt52(*m_stream, gpr, desiredFormat);
-            result = gpr;
-        }
-        m_jit.signExtend32ToPtr(result, result);
-        if (desiredFormat == DataFormatInt52)
-            m_jit.lshift64(TrustedImm32(JSValue::int52ShiftAmount), result);
-        return result;
+        if (spillFormat == DataFormatStrictInt52)
+            m_jit.lshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
+        info.fillInt52(*m_stream, gpr);
+        return gpr;
     }
 
     case DataFormatStrictInt52: {
@@ -1116,31 +949,6 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
         return gpr;
     }
 
-    case DataFormatDouble:
-    case DataFormatJSDouble:
-        if (edge->hasConstant()) {
-            JSValue jsValue = valueOfJSConstant(edge.node());
-            if (jsValue.isMachineInt()) {
-                int64_t value = jsValue.asMachineInt();
-                if (desiredFormat == DataFormatInt52)
-                    value = value << JSValue::int52ShiftAmount;
-                GPRReg gpr = allocate();
-                m_jit.move(MacroAssembler::Imm64(value), gpr);
-                return gpr;
-            }
-        }
-        FALLTHROUGH;
-    case DataFormatCell:
-    case DataFormatBoolean:
-    case DataFormatJSCell:
-    case DataFormatJSBoolean: {
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-        return allocate();
-    }
-
-    case DataFormatStorage:
-        RELEASE_ASSERT_NOT_REACHED();
-        
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return InvalidGPRReg;
@@ -1149,10 +957,8 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
 
 FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
 {
-    AbstractValue& value = m_state.forNode(edge);
-    SpeculatedType type = value.m_type;
-    ASSERT(edge.useKind() != KnownNumberUse || !(value.m_type & ~SpecFullNumber));
-    m_interpreter.filter(value, SpecFullNumber);
+    ASSERT(edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse);
+    ASSERT(edge->hasDoubleResult());
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
@@ -1160,17 +966,6 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
         if (edge->hasConstant()) {
             GPRReg gpr = allocate();
 
-            if (isInt32Constant(edge.node())) {
-                FPRReg fpr = fprAllocate();
-                m_jit.move(MacroAssembler::Imm64(reinterpretDoubleToInt64(static_cast<double>(valueOfInt32Constant(edge.node())))), gpr);
-                m_jit.move64ToDouble(gpr, fpr);
-                unlock(gpr);
-
-                // Don't fill double here since that will lead to confusion: the
-                // register allocator will now think that this is a double while
-                // everyone else thinks it's an integer.
-                return fpr;
-            }
             if (isNumberConstant(edge.node())) {
                 FPRReg fpr = fprAllocate();
                 m_jit.move(MacroAssembler::Imm64(reinterpretDoubleToInt64(valueOfNumberConstant(edge.node()))), gpr);
@@ -1186,159 +981,18 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
         }
         
         DataFormat spillFormat = info.spillFormat();
-        switch (spillFormat) {
-        case DataFormatDouble: {
-            FPRReg fpr = fprAllocate();
-            m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
-            m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-            info.fillDouble(*m_stream, fpr);
-            return fpr;
-        }
-            
-        case DataFormatInt32: {
-            GPRReg gpr = allocate();
-            
-            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillInt32(*m_stream, gpr);
-            unlock(gpr);
-            break;
-        }
-            
-        case DataFormatInt52: {
-            GPRReg gpr = allocate();
-            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillInt52(*m_stream, gpr);
-            unlock(gpr);
-            break;
-        }
-            
-        case DataFormatStrictInt52: {
-            GPRReg gpr = allocate();
-            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillStrictInt52(*m_stream, gpr);
-            unlock(gpr);
-            break;
-        }
-
-        default:
-            GPRReg gpr = allocate();
-
-            RELEASE_ASSERT(spillFormat & DataFormatJS);
-            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillJSValue(*m_stream, gpr, spillFormat);
-            unlock(gpr);
-            break;
-        }
-    }
-
-    switch (info.registerFormat()) {
-    case DataFormatNone: // Should have filled, above.
-    case DataFormatBoolean: // This type never occurs.
-    case DataFormatStorage:
-        RELEASE_ASSERT_NOT_REACHED();
-
-    case DataFormatCell:
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-        return fprAllocate();
-
-    case DataFormatJSCell:
-    case DataFormatJS:
-    case DataFormatJSBoolean: {
-        GPRReg jsValueGpr = info.gpr();
-        m_gprs.lock(jsValueGpr);
+        RELEASE_ASSERT(spillFormat == DataFormatDouble);
         FPRReg fpr = fprAllocate();
-        GPRReg tempGpr = allocate();
-
-        JITCompiler::Jump isInteger = m_jit.branch64(MacroAssembler::AboveOrEqual, jsValueGpr, GPRInfo::tagTypeNumberRegister);
-
-        if (type & ~SpecFullNumber)
-            speculationCheck(BadType, JSValueRegs(jsValueGpr), edge, m_jit.branchTest64(MacroAssembler::Zero, jsValueGpr, GPRInfo::tagTypeNumberRegister));
-
-        // First, if we get here we have a double encoded as a JSValue
-        m_jit.move(jsValueGpr, tempGpr);
-        unboxDouble(tempGpr, fpr);
-        JITCompiler::Jump hasUnboxedDouble = m_jit.jump();
-
-        // Finally, handle integers.
-        isInteger.link(&m_jit);
-        m_jit.convertInt32ToDouble(jsValueGpr, fpr);
-        hasUnboxedDouble.link(&m_jit);
-
-        m_gprs.release(jsValueGpr);
-        m_gprs.unlock(jsValueGpr);
-        m_gprs.unlock(tempGpr);
+        m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
         m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
         info.fillDouble(*m_stream, fpr);
-        info.killSpilled();
         return fpr;
     }
 
-    case DataFormatJSInt32:
-    case DataFormatInt32: {
-        FPRReg fpr = fprAllocate();
-        GPRReg gpr = info.gpr();
-        m_gprs.lock(gpr);
-        m_jit.convertInt32ToDouble(gpr, fpr);
-        m_gprs.unlock(gpr);
-        return fpr;
-    }
-        
-    case DataFormatInt52: {
-        FPRReg fpr = fprAllocate();
-        GPRReg gpr = info.gpr();
-        m_gprs.lock(gpr);
-        GPRReg temp = allocate();
-        m_jit.move(gpr, temp);
-        m_jit.rshift64(TrustedImm32(JSValue::int52ShiftAmount), temp);
-        m_jit.convertInt64ToDouble(temp, fpr);
-        unlock(temp);
-        m_gprs.unlock(gpr);
-        return fpr;
-    }
-        
-    case DataFormatStrictInt52: {
-        FPRReg fpr = fprAllocate();
-        GPRReg gpr = info.gpr();
-        m_gprs.lock(gpr);
-        m_jit.convertInt64ToDouble(gpr, fpr);
-        m_gprs.unlock(gpr);
-        return fpr;
-    }
-
-    // Unbox the double
-    case DataFormatJSDouble: {
-        GPRReg gpr = info.gpr();
-        FPRReg fpr = fprAllocate();
-        if (m_gprs.isLocked(gpr)) {
-            // Make sure we don't trample gpr if it is in use.
-            GPRReg temp = allocate();
-            m_jit.move(gpr, temp);
-            unboxDouble(temp, fpr);
-            unlock(temp);
-        } else
-            unboxDouble(gpr, fpr);
-
-        m_gprs.release(gpr);
-        m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-
-        info.fillDouble(*m_stream, fpr);
-        return fpr;
-    }
-
-    case DataFormatDouble: {
-        FPRReg fpr = info.fpr();
-        m_fprs.lock(fpr);
-        return fpr;
-    }
-        
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return InvalidFPRReg;
-    }
+    RELEASE_ASSERT(info.registerFormat() == DataFormatDouble);
+    FPRReg fpr = info.fpr();
+    m_fprs.lock(fpr);
+    return fpr;
 }
 
 GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
@@ -1352,11 +1006,6 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if (info.spillFormat() == DataFormatInt32 || info.spillFormat() == DataFormatDouble) {
-            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-            return allocate();
-        }
-        
         GPRReg gpr = allocate();
 
         if (edge->hasConstant()) {
@@ -1405,16 +1054,16 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     case DataFormatJSInt32:
     case DataFormatInt32:
     case DataFormatJSDouble:
-    case DataFormatDouble:
     case DataFormatJSBoolean:
-    case DataFormatBoolean:
-    case DataFormatInt52:
-    case DataFormatStrictInt52: {
+    case DataFormatBoolean: {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         return allocate();
     }
 
+    case DataFormatDouble:
     case DataFormatStorage:
+    case DataFormatInt52:
+    case DataFormatStrictInt52:
         RELEASE_ASSERT_NOT_REACHED();
         
     default:
@@ -1433,7 +1082,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if (info.spillFormat() == DataFormatInt32 || info.spillFormat() == DataFormatDouble) {
+        if (info.spillFormat() == DataFormatInt32) {
             terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
             return allocate();
         }
@@ -1487,42 +1136,21 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
     case DataFormatJSInt32:
     case DataFormatInt32:
     case DataFormatJSDouble:
-    case DataFormatDouble:
     case DataFormatJSCell:
     case DataFormatCell:
-    case DataFormatInt52:
-    case DataFormatStrictInt52: {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         return allocate();
-    }
         
+    case DataFormatDouble:
     case DataFormatStorage:
+    case DataFormatInt52:
+    case DataFormatStrictInt52:
         RELEASE_ASSERT_NOT_REACHED();
         
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return InvalidGPRReg;
     }
-}
-
-JITCompiler::Jump SpeculativeJIT::convertToDouble(GPRReg value, FPRReg result, GPRReg tmp)
-{
-    JITCompiler::Jump isInteger = m_jit.branch64(MacroAssembler::AboveOrEqual, value, GPRInfo::tagTypeNumberRegister);
-    
-    JITCompiler::Jump notNumber = m_jit.branchTest64(MacroAssembler::Zero, value, GPRInfo::tagTypeNumberRegister);
-    
-    m_jit.move(value, tmp);
-    unboxDouble(tmp, result);
-    
-    JITCompiler::Jump done = m_jit.jump();
-    
-    isInteger.link(&m_jit);
-    
-    m_jit.convertInt32ToDouble(value, result);
-    
-    done.link(&m_jit);
-
-    return notNumber;
 }
 
 void SpeculativeJIT::compileBaseValueStoreBarrier(Edge& baseEdge, Edge& valueEdge)
@@ -1921,7 +1549,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         return;
     }
         
-    case NumberUse: {
+    case DoubleRepUse: {
         SpeculateDoubleOperand value(this, node->child1());
         FPRTemporary scratch(this);
         GPRTemporary result(this);
@@ -2060,7 +1688,7 @@ void SpeculativeJIT::emitBranch(Node* node)
     }
         
     case Int32Use:
-    case NumberUse: {
+    case DoubleRepUse: {
         if (node->child1().useKind() == Int32Use) {
             bool invert = false;
             
@@ -2153,6 +1781,8 @@ void SpeculativeJIT::compile(Node* node)
 
     switch (op) {
     case JSConstant:
+    case DoubleConstant:
+    case Int52Constant:
         initConstantInfo(node);
         break;
 
@@ -2400,24 +2030,23 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case Int32ToDouble: {
-        compileInt32ToDouble(node);
+    case DoubleRep: {
+        compileDoubleRep(node);
         break;
     }
         
-    case Int52ToValue: {
-        JSValueOperand operand(this, node->child1());
+    case ValueRep: {
+        compileValueRep(node);
+        break;
+    }
+        
+    case Int52Rep: {
+        SpeculateInt32Operand operand(this, node->child1());
         GPRTemporary result(this, Reuse, operand);
-        m_jit.move(operand.gpr(), result.gpr());
-        jsValueResult(result.gpr(), node);
-        break;
-    }
         
-    case Int52ToDouble: {
-        SpeculateDoubleOperand operand(this, node->child1());
-        FPRTemporary result(this, operand);
-        m_jit.moveDouble(operand.fpr(), result.fpr());
-        doubleResult(result.fpr(), node);
+        m_jit.signExtend32ToPtr(operand.gpr(), result.gpr());
+        
+        strictInt52Result(result.gpr(), node);
         break;
     }
         
@@ -2486,7 +2115,7 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         
-        case NumberUse: {
+        case DoubleRepUse: {
             SpeculateDoubleOperand op1(this, node->child1());
             FPRTemporary result(this);
             
@@ -2524,7 +2153,7 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         
-        case NumberUse: {
+        case DoubleRepUse: {
             SpeculateDoubleOperand op1(this, node->child1());
             SpeculateDoubleOperand op2(this, node->child2());
             FPRTemporary result(this, op1);

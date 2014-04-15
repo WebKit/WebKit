@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,9 +157,16 @@ private:
     };
     BooleanResult booleanResult(Node*, AbstractValue&);
     
+    void setBuiltInConstant(Node* node, JSValue value)
+    {
+        AbstractValue& abstractValue = forNode(node);
+        abstractValue.set(m_graph, value);
+        abstractValue.fixTypeForRepresentation(node);
+    }
+    
     void setConstant(Node* node, JSValue value)
     {
-        forNode(node).set(m_graph, value);
+        setBuiltInConstant(node, value);
         m_state.setFoundConstants(true);
     }
     

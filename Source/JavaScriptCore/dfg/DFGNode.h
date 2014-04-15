@@ -38,6 +38,7 @@
 #include "DFGNodeFlags.h"
 #include "DFGNodeOrigin.h"
 #include "DFGNodeType.h"
+#include "DFGUseKind.h"
 #include "DFGVariableAccessData.h"
 #include "GetByIdVariant.h"
 #include "JSCJSValue.h"
@@ -239,6 +240,22 @@ struct Node {
         ASSERT(!(m_flags & NodeHasVarArgs));
     }
 
+    // Construct a node with up to 3 children, no immediate value.
+    Node(NodeFlags result, NodeType op, NodeOrigin nodeOrigin, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
+        : origin(nodeOrigin)
+        , children(AdjacencyList::Fixed, child1, child2, child3)
+        , m_virtualRegister(VirtualRegister())
+        , m_refCount(1)
+        , m_prediction(SpecNone)
+        , m_opInfo(0)
+        , m_opInfo2(0)
+    {
+        misc.replacement = 0;
+        setOpAndDefaultFlags(op);
+        setResult(result);
+        ASSERT(!(m_flags & NodeHasVarArgs));
+    }
+
     // Construct a node with up to 3 children and an immediate value.
     Node(NodeType op, NodeOrigin nodeOrigin, OpInfo imm, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : origin(nodeOrigin)
@@ -251,6 +268,22 @@ struct Node {
     {
         misc.replacement = 0;
         setOpAndDefaultFlags(op);
+        ASSERT(!(m_flags & NodeHasVarArgs));
+    }
+
+    // Construct a node with up to 3 children and an immediate value.
+    Node(NodeFlags result, NodeType op, NodeOrigin nodeOrigin, OpInfo imm, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
+        : origin(nodeOrigin)
+        , children(AdjacencyList::Fixed, child1, child2, child3)
+        , m_virtualRegister(VirtualRegister())
+        , m_refCount(1)
+        , m_prediction(SpecNone)
+        , m_opInfo(imm.m_value)
+        , m_opInfo2(0)
+    {
+        misc.replacement = 0;
+        setOpAndDefaultFlags(op);
+        setResult(result);
         ASSERT(!(m_flags & NodeHasVarArgs));
     }
 
@@ -325,6 +358,18 @@ struct Node {
         return filterFlags(~flags);
     }
     
+    void setResult(NodeFlags result)
+    {
+        ASSERT(!(result & ~NodeResultMask));
+        clearFlags(NodeResultMask);
+        mergeFlags(result);
+    }
+    
+    NodeFlags result() const
+    {
+        return flags() & NodeResultMask;
+    }
+    
     void setOpAndDefaultFlags(NodeType op)
     {
         m_op = op;
@@ -341,12 +386,7 @@ struct Node {
         setOpAndDefaultFlags(Phantom);
     }
 
-    void convertToIdentity()
-    {
-        RELEASE_ASSERT(child1());
-        RELEASE_ASSERT(!child2());
-        setOpAndDefaultFlags(Identity);
-    }
+    void convertToIdentity();
 
     bool mustGenerate()
     {
@@ -368,7 +408,14 @@ struct Node {
     
     bool isConstant()
     {
-        return op() == JSConstant;
+        switch (op()) {
+        case JSConstant:
+        case DoubleConstant:
+        case Int52Constant:
+            return true;
+        default:
+            return false;
+        }
     }
     
     bool isWeakConstant()
@@ -385,6 +432,8 @@ struct Node {
     {
         switch (op()) {
         case JSConstant:
+        case DoubleConstant:
+        case Int52Constant:
         case WeakJSConstant:
         case PhantomArguments:
             return true;
@@ -401,7 +450,12 @@ struct Node {
     
     void convertToConstant(unsigned constantNumber)
     {
-        m_op = JSConstant;
+        if (hasDoubleResult())
+            m_op = DoubleConstant;
+        else if (hasInt52Result())
+            m_op = Int52Constant;
+        else
+            m_op = JSConstant;
         m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
         m_opInfo = constantNumber;
         children.reset();
@@ -502,6 +556,8 @@ struct Node {
         case WeakJSConstant:
             return JSValue(weakConstant());
         case JSConstant:
+        case DoubleConstant:
+        case Int52Constant:
             return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
         case PhantomArguments:
             return JSValue();
@@ -797,32 +853,52 @@ struct Node {
     
     bool hasResult()
     {
-        return m_flags & NodeResultMask;
+        return !!result();
     }
 
     bool hasInt32Result()
     {
-        return (m_flags & NodeResultMask) == NodeResultInt32;
+        return result() == NodeResultInt32;
+    }
+    
+    bool hasInt52Result()
+    {
+        return result() == NodeResultInt52;
     }
     
     bool hasNumberResult()
     {
-        return (m_flags & NodeResultMask) == NodeResultNumber;
+        return result() == NodeResultNumber;
+    }
+    
+    bool hasDoubleResult()
+    {
+        return result() == NodeResultDouble;
     }
     
     bool hasJSResult()
     {
-        return (m_flags & NodeResultMask) == NodeResultJS;
+        return result() == NodeResultJS;
     }
     
     bool hasBooleanResult()
     {
-        return (m_flags & NodeResultMask) == NodeResultBoolean;
+        return result() == NodeResultBoolean;
     }
 
     bool hasStorageResult()
     {
-        return (m_flags & NodeResultMask) == NodeResultStorage;
+        return result() == NodeResultStorage;
+    }
+    
+    UseKind defaultUseKind()
+    {
+        return useKindForResult(result());
+    }
+    
+    Edge defaultEdge()
+    {
+        return Edge(this, defaultUseKind());
     }
 
     bool isJump()

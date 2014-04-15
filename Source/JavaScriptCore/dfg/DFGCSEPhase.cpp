@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -161,29 +161,11 @@ private:
         return 0;
     }
     
-    Node* int32ToDoubleCSE(Node* node)
-    {
-        for (unsigned i = m_indexInBlock; i--;) {
-            Node* otherNode = m_currentBlock->at(i);
-            if (otherNode == node->child1())
-                return 0;
-            switch (otherNode->op()) {
-            case Int32ToDouble:
-                if (otherNode->child1().sanitized() == node->child1().sanitized())
-                    return otherNode;
-                break;
-            default:
-                break;
-            }
-        }
-        return 0;
-    }
-    
     Node* constantCSE(Node* node)
     {
         for (unsigned i = endIndexForPureCSE(); i--;) {
             Node* otherNode = m_currentBlock->at(i);
-            if (otherNode->op() != JSConstant)
+            if (otherNode->op() != node->op())
                 continue;
             
             if (otherNode->constantNumber() != node->constantNumber())
@@ -1148,8 +1130,9 @@ private:
         case CompareEqConstant:
         case ValueToInt32:
         case MakeRope:
-        case Int52ToDouble:
-        case Int52ToValue:
+        case DoubleRep:
+        case ValueRep:
+        case Int52Rep:
             if (cseMode == StoreElimination)
                 break;
             setReplacement(pureCSE(node));
@@ -1176,12 +1159,6 @@ private:
             setReplacement(candidate);
             break;
         }
-            
-        case Int32ToDouble:
-            if (cseMode == StoreElimination)
-                break;
-            setReplacement(int32ToDoubleCSE(node));
-            break;
             
         case GetCallee:
             if (cseMode == StoreElimination)
@@ -1261,13 +1238,15 @@ private:
             node->convertToPhantom();
             Node* dataNode = replacement->child1().node();
             ASSERT(dataNode->hasResult());
-            node->child1() = Edge(dataNode);
+            node->child1() = dataNode->defaultEdge();
             m_graph.dethread();
             m_changed = true;
             break;
         }
             
         case JSConstant:
+        case DoubleConstant:
+        case Int52Constant:
             if (cseMode == StoreElimination)
                 break;
             // This is strange, but necessary. Some phases will convert nodes to constants,

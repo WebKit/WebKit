@@ -90,7 +90,6 @@ inline CapabilityLevel canCompile(Node* node)
     case ArithFRound:
     case ArithNegate:
     case UInt32ToNumber:
-    case Int32ToDouble:
     case CompareEqConstant:
     case Jump:
     case ForceOSRExit:
@@ -103,7 +102,6 @@ inline CapabilityLevel canCompile(Node* node)
     case GetClosureRegisters:
     case GetClosureVar:
     case PutClosureVar:
-    case Int52ToValue:
     case InvalidationPoint:
     case StringCharAt:
     case CheckFunction:
@@ -152,7 +150,18 @@ inline CapabilityLevel canCompile(Node* node)
     case IsFunction:
     case CheckHasInstance:
     case InstanceOf:
+    case DoubleRep:
+    case ValueRep:
+    case Int52Rep:
+    case DoubleConstant:
+    case Int52Constant:
         // These are OK.
+        break;
+    case Identity:
+        // No backend handles this because it will be optimized out. But we may check
+        // for capabilities before optimization. It would be a deep error to remove this
+        // case because it would prevent us from catching bugs where the FTL backend
+        // pipeline failed to optimize out an Identity.
         break;
     case PutByIdDirect:
     case PutById:
@@ -235,9 +244,9 @@ inline CapabilityLevel canCompile(Node* node)
     case CompareEq:
         if (node->isBinaryUseKind(Int32Use))
             break;
-        if (node->isBinaryUseKind(MachineIntUse))
+        if (node->isBinaryUseKind(Int52RepUse))
             break;
-        if (node->isBinaryUseKind(NumberUse))
+        if (node->isBinaryUseKind(DoubleRepUse))
             break;
         if (node->isBinaryUseKind(StringIdentUse))
             break;
@@ -255,9 +264,9 @@ inline CapabilityLevel canCompile(Node* node)
     case CompareStrictEq:
         if (node->isBinaryUseKind(Int32Use))
             break;
-        if (node->isBinaryUseKind(MachineIntUse))
+        if (node->isBinaryUseKind(Int52RepUse))
             break;
-        if (node->isBinaryUseKind(NumberUse))
+        if (node->isBinaryUseKind(DoubleRepUse))
             break;
         if (node->isBinaryUseKind(StringIdentUse))
             break;
@@ -280,9 +289,9 @@ inline CapabilityLevel canCompile(Node* node)
     case CompareGreaterEq:
         if (node->isBinaryUseKind(Int32Use))
             break;
-        if (node->isBinaryUseKind(MachineIntUse))
+        if (node->isBinaryUseKind(Int52RepUse))
             break;
-        if (node->isBinaryUseKind(NumberUse))
+        if (node->isBinaryUseKind(DoubleRepUse))
             break;
         if (node->isBinaryUseKind(UntypedUse))
             break;
@@ -350,10 +359,10 @@ CapabilityLevel canCompile(Graph& graph)
                 case UntypedUse:
                 case Int32Use:
                 case KnownInt32Use:
-                case MachineIntUse:
+                case Int52RepUse:
                 case NumberUse:
-                case KnownNumberUse:
-                case RealNumberUse:
+                case DoubleRepUse:
+                case DoubleRepRealUse:
                 case BooleanUse:
                 case CellUse:
                 case KnownCellUse:

@@ -314,7 +314,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, inContext(JSValue(node->typedArray()), context));
     if (node->hasStoragePointer())
         out.print(comma, RawPointer(node->storagePointer()));
-    if (op == JSConstant) {
+    if (node->isConstant()) {
         out.print(comma, "$", node->constantNumber());
         JSValue value = valueOfJSConstant(node);
         out.print(" = ", inContext(value, context));

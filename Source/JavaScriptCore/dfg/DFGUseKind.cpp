@@ -46,17 +46,17 @@ void printInternal(PrintStream& out, UseKind useKind)
     case KnownInt32Use:
         out.print("KnownInt32");
         break;
-    case MachineIntUse:
-        out.print("MachineInt");
-        break;
-    case RealNumberUse:
-        out.print("RealNumber");
+    case Int52RepUse:
+        out.print("Int52Rep");
         break;
     case NumberUse:
         out.print("Number");
         break;
-    case KnownNumberUse:
-        out.print("KnownNumber");
+    case DoubleRepUse:
+        out.print("DoubleRep");
+        break;
+    case DoubleRepRealUse:
+        out.print("DoubleRepReal");
         break;
     case BooleanUse:
         out.print("Boolean");

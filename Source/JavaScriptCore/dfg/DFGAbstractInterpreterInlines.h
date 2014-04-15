@@ -126,9 +126,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     
     switch (node->op()) {
     case JSConstant:
+    case DoubleConstant:
+    case Int52Constant:
     case WeakJSConstant:
     case PhantomArguments: {
-        forNode(node).set(m_graph, m_graph.valueOfJSConstant(node));
+        setBuiltInConstant(node, m_graph.valueOfJSConstant(node));
         break;
     }
         
@@ -307,39 +309,39 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case Int32ToDouble: {
+    case DoubleRep: {
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
-            setConstant(node, JSValue(JSValue::EncodeAsDouble, child.asNumber()));
+            setConstant(node, jsDoubleNumber(child.asNumber()));
             break;
         }
-        if (isInt32Speculation(forNode(node->child1()).m_type))
-            forNode(node).setType(SpecDoubleReal);
-        else
-            forNode(node).setType(SpecDouble);
+        forNode(node).setType(forNode(node->child1()).m_type);
+        forNode(node).fixTypeForRepresentation(node);
         break;
     }
         
-    case Int52ToDouble: {
+    case Int52Rep: {
+        RELEASE_ASSERT(node->child1().useKind() == Int32Use);
+        
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
+        if (child && child.isInt32()) {
             setConstant(node, child);
             break;
         }
-        forNode(node).setType(SpecDouble);
+        
+        forNode(node).setType(SpecInt32);
         break;
     }
         
-    case Int52ToValue: {
-        JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            setConstant(node, child);
+    case ValueRep: {
+        JSValue value = forNode(node->child1()).value();
+        if (value) {
+            setConstant(node, value);
             break;
         }
-        SpeculatedType type = forNode(node->child1()).m_type;
-        if (type & SpecInt52)
-            type = (type | SpecInt32 | SpecInt52AsDouble) & ~SpecInt52;
-        forNode(node).setType(type);
+        
+        forNode(node).setType(forNode(node->child1()).m_type);
+        forNode(node).fixTypeForRepresentation(node);
         break;
     }
         
@@ -370,7 +372,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (shouldCheckOverflow(node->arithMode()))
                 node->setCanExit(true);
             break;
-        case MachineIntUse:
+        case Int52RepUse:
             if (left && right && left.isMachineInt() && right.isMachineInt()) {
                 JSValue result = jsNumber(left.asMachineInt() + right.asMachineInt());
                 if (result.isMachineInt()) {
@@ -383,9 +385,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 || !forNode(node->child2()).isType(SpecInt32))
                 node->setCanExit(true);
             break;
-        case NumberUse:
+        case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
-                setConstant(node, jsNumber(left.asNumber() + right.asNumber()));
+                setConstant(node, jsDoubleNumber(left.asNumber() + right.asNumber()));
                 break;
             }
             if (isFullRealNumberSpeculation(forNode(node->child1()).m_type)
@@ -426,7 +428,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (shouldCheckOverflow(node->arithMode()))
                 node->setCanExit(true);
             break;
-        case MachineIntUse:
+        case Int52RepUse:
             if (left && right && left.isMachineInt() && right.isMachineInt()) {
                 JSValue result = jsNumber(left.asMachineInt() - right.asMachineInt());
                 if (result.isMachineInt() || !shouldCheckOverflow(node->arithMode())) {
@@ -439,9 +441,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 || !forNode(node->child2()).isType(SpecInt32))
                 node->setCanExit(true);
             break;
-        case NumberUse:
+        case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
-                setConstant(node, jsNumber(left.asNumber() - right.asNumber()));
+                setConstant(node, jsDoubleNumber(left.asNumber() - right.asNumber()));
                 break;
             }
             forNode(node).setType(SpecDouble);
@@ -477,7 +479,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (shouldCheckOverflow(node->arithMode()))
                 node->setCanExit(true);
             break;
-        case MachineIntUse:
+        case Int52RepUse:
             if (child && child.isMachineInt()) {
                 double doubleResult;
                 if (shouldCheckNegativeZero(node->arithMode()))
@@ -496,9 +498,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (shouldCheckNegativeZero(node->arithMode()))
                 node->setCanExit(true);
             break;
-        case NumberUse:
+        case DoubleRepUse:
             if (child && child.isNumber()) {
-                setConstant(node, jsNumber(-child.asNumber()));
+                setConstant(node, jsDoubleNumber(-child.asNumber()));
                 break;
             }
             forNode(node).setType(SpecDouble);
@@ -533,7 +535,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (shouldCheckOverflow(node->arithMode()))
                 node->setCanExit(true);
             break;
-        case MachineIntUse:
+        case Int52RepUse:
             if (left && right && left.isMachineInt() && right.isMachineInt()) {
                 double doubleResult = left.asNumber() * right.asNumber();
                 if (!shouldCheckNegativeZero(node->arithMode()))
@@ -547,9 +549,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             forNode(node).setType(SpecInt52);
             node->setCanExit(true);
             break;
-        case NumberUse:
+        case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
-                setConstant(node, jsNumber(left.asNumber() * right.asNumber()));
+                setConstant(node, jsDoubleNumber(left.asNumber() * right.asNumber()));
                 break;
             }
             if (isFullRealNumberSpeculation(forNode(node->child1()).m_type)
@@ -585,9 +587,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             forNode(node).setType(SpecInt32);
             node->setCanExit(true);
             break;
-        case NumberUse:
+        case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
-                setConstant(node, jsNumber(left.asNumber() / right.asNumber()));
+                setConstant(node, jsDoubleNumber(left.asNumber() / right.asNumber()));
                 break;
             }
             forNode(node).setType(SpecDouble);
@@ -619,9 +621,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             forNode(node).setType(SpecInt32);
             node->setCanExit(true);
             break;
-        case NumberUse:
+        case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
-                setConstant(node, jsNumber(fmod(left.asNumber(), right.asNumber())));
+                setConstant(node, jsDoubleNumber(fmod(left.asNumber(), right.asNumber())));
                 break;
             }
             forNode(node).setType(SpecDouble);
@@ -645,11 +647,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             forNode(node).setType(SpecInt32);
             node->setCanExit(true);
             break;
-        case NumberUse:
+        case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
                 double a = left.asNumber();
                 double b = right.asNumber();
-                setConstant(node, jsNumber(a < b ? a : (b <= a ? b : a + b)));
+                setConstant(node, jsDoubleNumber(a < b ? a : (b <= a ? b : a + b)));
                 break;
             }
             forNode(node).setType(SpecDouble);
@@ -673,11 +675,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             forNode(node).setType(SpecInt32);
             node->setCanExit(true);
             break;
-        case NumberUse:
+        case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
                 double a = left.asNumber();
                 double b = right.asNumber();
-                setConstant(node, jsNumber(a > b ? a : (b >= a ? b : a + b)));
+                setConstant(node, jsDoubleNumber(a > b ? a : (b >= a ? b : a + b)));
                 break;
             }
             forNode(node).setType(SpecDouble);
@@ -703,9 +705,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             forNode(node).setType(SpecInt32);
             node->setCanExit(true);
             break;
-        case NumberUse:
+        case DoubleRepUse:
             if (child && child.isNumber()) {
-                setConstant(node, jsNumber(child.asNumber()));
+                setConstant(node, jsDoubleNumber(child.asNumber()));
                 break;
             }
             forNode(node).setType(SpecDouble);
@@ -720,7 +722,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithSqrt: {
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
-            setConstant(node, jsNumber(sqrt(child.asNumber())));
+            setConstant(node, jsDoubleNumber(sqrt(child.asNumber())));
             break;
         }
         forNode(node).setType(SpecDouble);
@@ -730,7 +732,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithFRound: {
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
-            setConstant(node, jsNumber(static_cast<float>(child.asNumber())));
+            setConstant(node, jsDoubleNumber(static_cast<float>(child.asNumber())));
             break;
         }
         forNode(node).setType(SpecDouble);
@@ -740,7 +742,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithSin: {
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
-            setConstant(node, jsNumber(sin(child.asNumber())));
+            setConstant(node, jsDoubleNumber(sin(child.asNumber())));
             break;
         }
         forNode(node).setType(SpecDouble);
@@ -750,7 +752,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithCos: {
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
-            setConstant(node, jsNumber(cos(child.asNumber())));
+            setConstant(node, jsDoubleNumber(cos(child.asNumber())));
             break;
         }
         forNode(node).setType(SpecDouble);
@@ -769,7 +771,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             switch (node->child1().useKind()) {
             case BooleanUse:
             case Int32Use:
-            case NumberUse:
+            case DoubleRepUse:
             case UntypedUse:
             case StringUse:
                 break;

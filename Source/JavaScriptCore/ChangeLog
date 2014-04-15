@@ -1,3 +1,268 @@
+2014-04-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG IR should keep the data flow of doubles and int52's separate from the data flow of JSValue's
+        https://bugs.webkit.org/show_bug.cgi?id=131423
+
+        Reviewed by Geoffrey Garen.
+        
+        This introduces more static typing into DFG IR. Previously we just had the notion of
+        JSValues and Storage. This was weird because doubles weren't always convertible to
+        JSValues, and Int52s weren't always convertible to either doubles or JSValues. We would
+        sort of insert explicit conversion nodes just for the places where we knew that an
+        implicit conversion wouldn't have been possible -- but there was no hard and fast rule so
+        we'd get bugs from forgetting to do the right conversion.
+        
+        This patch introduces a hard and fast rule: doubles can never be implicitly converted to
+        anything but doubles, and likewise Int52's can never be implicitly converted. Conversion
+        nodes are used for all of the conversions. Int52Rep, DoubleRep, and ValueRep are the
+        conversions. They are like Identity but return the same value using a different
+        representation. Likewise, constants may now be represented using either JSConstant,
+        Int52Constant, or DoubleConstant. UseKinds have been adjusted accordingly, as well.
+        Int52RepUse and DoubleRepUse are node uses that mean "the node must be of Int52 (or
+        Double) type". They don't imply checks. There is also DoubleRepRealUse, which means that
+        we speculate DoubleReal and expect Double representation.
+        
+        In addition to simplifying a bunch of rules in the IR and making the IR more verifiable,
+        this also makes it easier to introduce optimizations in the future. It's now possible for
+        AI to model when/how conversion take place. For example if doing a conversion results in
+        NaN sanitization, then AI can model this and can allow us to sink sanitizations. That's
+        what https://bugs.webkit.org/show_bug.cgi?id=131419 will be all about.
+        
+        This was a big change, so I had to do some interesting things, like finally get rid of
+        the DFG's weird variadic template macro hacks and use real C++11 variadic templates. Also
+        the ByteCodeParser no longer emits Identity nodes since that was always pointless.
+        
+        No performance change because this mostly just rationalizes preexisting behavior.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerX86.h:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::setBuiltInConstant):
+        (JSC::DFG::AbstractInterpreter::setConstant):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::fixTypeForRepresentation):
+        (JSC::DFG::AbstractValue::checkConsistency):
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGBasicBlockInlines.h:
+        (JSC::DFG::BasicBlock::appendNode):
+        (JSC::DFG::BasicBlock::appendNonTerminal):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::constantCSE):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        (JSC::DFG::CSEPhase::int32ToDoubleCSE): Deleted.
+        * dfg/DFGCapabilities.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::fixupBlock):
+        * dfg/DFGEdge.h:
+        (JSC::DFG::Edge::willNotHaveCheck):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::run):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupGetAndSetLocalsInBlock):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        (JSC::DFG::FixupPhase::fixIntEdge):
+        (JSC::DFG::FixupPhase::attemptToMakeIntegerAdd):
+        (JSC::DFG::FixupPhase::injectTypeConversionsInBlock):
+        (JSC::DFG::FixupPhase::tryToRelaxRepresentation):
+        (JSC::DFG::FixupPhase::fixEdgeRepresentation):
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+        (JSC::DFG::FixupPhase::addRequiredPhantom):
+        (JSC::DFG::FixupPhase::addPhantomsIfNecessary):
+        (JSC::DFG::FixupPhase::clearPhantomsAtEnd):
+        (JSC::DFG::FixupPhase::fixupSetLocalsInBlock): Deleted.
+        * dfg/DFGFlushFormat.h:
+        (JSC::DFG::resultFor):
+        (JSC::DFG::useKindFor):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addNode):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertNode):
+        (JSC::DFG::InsertionSet::insertConstant):
+        (JSC::DFG::InsertionSet::insertConstantForUse):
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::insertAdd):
+        (JSC::DFG::IntegerCheckCombiningPhase::insertMustAdd):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToIdentity):
+        (WTF::printInternal):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::setResult):
+        (JSC::DFG::Node::result):
+        (JSC::DFG::Node::isConstant):
+        (JSC::DFG::Node::hasConstant):
+        (JSC::DFG::Node::convertToConstant):
+        (JSC::DFG::Node::valueOfJSConstant):
+        (JSC::DFG::Node::hasResult):
+        (JSC::DFG::Node::hasInt32Result):
+        (JSC::DFG::Node::hasInt52Result):
+        (JSC::DFG::Node::hasNumberResult):
+        (JSC::DFG::Node::hasDoubleResult):
+        (JSC::DFG::Node::hasJSResult):
+        (JSC::DFG::Node::hasBooleanResult):
+        (JSC::DFG::Node::hasStorageResult):
+        (JSC::DFG::Node::defaultUseKind):
+        (JSC::DFG::Node::defaultEdge):
+        (JSC::DFG::Node::convertToIdentity): Deleted.
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        (JSC::DFG::canonicalResultRepresentation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGResurrectionForValidationPhase.cpp:
+        (JSC::DFG::ResurrectionForValidationPhase::run):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForFPR):
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::JSValueRegsTemporary::JSValueRegsTemporary):
+        (JSC::DFG::JSValueRegsTemporary::~JSValueRegsTemporary):
+        (JSC::DFG::JSValueRegsTemporary::regs):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::checkGeneratedTypeForToInt32):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::SpeculativeJIT::compileValueRep):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::speculateNumber):
+        (JSC::DFG::SpeculativeJIT::speculateDoubleReal):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateMachineInt): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateRealNumber): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::allocate):
+        (JSC::DFG::SpeculativeJIT::use):
+        (JSC::DFG::SpeculativeJIT::boxDouble):
+        (JSC::DFG::SpeculativeJIT::spill):
+        (JSC::DFG::SpeculativeJIT::jsValueResult):
+        (JSC::DFG::SpeculateInt52Operand::SpeculateInt52Operand):
+        (JSC::DFG::SpeculateStrictInt52Operand::SpeculateStrictInt52Operand):
+        (JSC::DFG::SpeculateWhicheverInt52Operand::SpeculateWhicheverInt52Operand):
+        (JSC::DFG::SpeculateDoubleOperand::SpeculateDoubleOperand):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::convertToDouble): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::convertToDouble): Deleted.
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::shouldNotHaveTypeCheck):
+        (JSC::DFG::mayHaveTypeCheck):
+        (JSC::DFG::isNumerical):
+        (JSC::DFG::isDouble):
+        (JSC::DFG::isCell):
+        (JSC::DFG::usesStructure):
+        (JSC::DFG::useKindForResult):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * dfg/DFGVariadicFunction.h: Removed.
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::createPhiVariables):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileUpsilon):
+        (JSC::FTL::LowerDFGToLLVM::compilePhi):
+        (JSC::FTL::LowerDFGToLLVM::compileDoubleConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileInt52Constant):
+        (JSC::FTL::LowerDFGToLLVM::compileWeakJSConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileDoubleRep):
+        (JSC::FTL::LowerDFGToLLVM::compileValueRep):
+        (JSC::FTL::LowerDFGToLLVM::compileInt52Rep):
+        (JSC::FTL::LowerDFGToLLVM::compileValueToInt32):
+        (JSC::FTL::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileArithDiv):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMod):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMinOrMax):
+        (JSC::FTL::LowerDFGToLLVM::compileArithAbs):
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::LowerDFGToLLVM::compare):
+        (JSC::FTL::LowerDFGToLLVM::boolify):
+        (JSC::FTL::LowerDFGToLLVM::lowInt52):
+        (JSC::FTL::LowerDFGToLLVM::lowStrictInt52):
+        (JSC::FTL::LowerDFGToLLVM::lowWhicheverInt52):
+        (JSC::FTL::LowerDFGToLLVM::lowDouble):
+        (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+        (JSC::FTL::LowerDFGToLLVM::strictInt52ToDouble):
+        (JSC::FTL::LowerDFGToLLVM::jsValueToDouble):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateNumber):
+        (JSC::FTL::LowerDFGToLLVM::speculateDoubleReal):
+        (JSC::FTL::LowerDFGToLLVM::compileInt52ToValue): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::compileInt32ToDouble): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::setInt52WithStrictValue): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::speculateRealNumber): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::speculateMachineInt): Deleted.
+        * ftl/FTLValueFormat.cpp:
+        (JSC::FTL::reboxAccordingToFormat):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::sanitizeDouble):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::boxDouble):
+
 2014-04-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167199 and r167251.

@@ -91,6 +91,15 @@ bool Node::hasVariableAccessData(Graph& graph)
     }
 }
 
+void Node::convertToIdentity()
+{
+    RELEASE_ASSERT(child1());
+    RELEASE_ASSERT(!child2());
+    NodeFlags result = canonicalResultRepresentation(this->result());
+    setOpAndDefaultFlags(Identity);
+    setResult(result);
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {
@@ -121,7 +130,10 @@ void printInternal(PrintStream& out, Node* node)
         return;
     }
     out.print("@", node->index());
-    out.print(AbbreviatedSpeculationDump(node->prediction()));
+    if (node->hasDoubleResult())
+        out.print("<Double>");
+    else if (node->hasInt52Result())
+        out.print("<Int52>");
 }
 
 } // namespace WTF

@@ -3263,8 +3263,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_to_number: {
-            set(VirtualRegister(currentInstruction[1].u.operand),
-                addToGraph(Identity, Edge(get(VirtualRegister(currentInstruction[2].u.operand)), NumberUse)));
+            Node* node = get(VirtualRegister(currentInstruction[2].u.operand));
+            addToGraph(Phantom, Edge(node, NumberUse));
+            set(VirtualRegister(currentInstruction[1].u.operand), node);
             NEXT_OPCODE(op_to_number);
         }
             

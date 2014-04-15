@@ -269,9 +269,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         
         switch (recovery.technique()) {
         case InPair:
-        case InFPR:
         case DisplacedInJSStack:
-        case DoubleDisplacedInJSStack:
             m_jit.load32(
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag,
                 GPRInfo::regT0);
@@ -286,6 +284,14 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 AssemblyHelpers::payloadFor(operand));
             break;
             
+        case InFPR:
+        case DoubleDisplacedInJSStack:
+            m_jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT0);
+            m_jit.loadDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
+            m_jit.sanitizeDouble(FPRInfo::fpRegT0);
+            m_jit.storeDouble(FPRInfo::fpRegT0, AssemblyHelpers::addressFor(operand));
+            break;
+
         case UnboxedInt32InGPR:
         case Int32DisplacedInJSStack:
             m_jit.load32(

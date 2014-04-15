@@ -194,13 +194,12 @@ private:
                 
             switch (node->op()) {
             case MovHint: {
-                ASSERT(node->child1().useKind() == UntypedUse);
+                ASSERT(node->child1().useKind() == node->child1()->defaultUseKind());
                 if (!node->child1()->shouldGenerate()) {
                     node->setOpAndDefaultFlags(ZombieHint);
                     node->child1() = Edge();
                     break;
                 }
-                node->setOpAndDefaultFlags(MovHint);
                 break;
             }
                 

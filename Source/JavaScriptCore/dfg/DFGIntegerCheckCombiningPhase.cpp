@@ -370,10 +370,10 @@ private:
         if (!addend)
             return source.node();
         return m_insertionSet.insertNode(
-            nodeIndex, source->prediction(), ArithAdd, origin, OpInfo(arithMode),
-            source, Edge(
-                m_insertionSet.insertConstant(nodeIndex, origin, jsNumber(addend)),
-                source.useKind()));
+            nodeIndex, source->prediction(), source->result(),
+            ArithAdd, origin, OpInfo(arithMode), source,
+            m_insertionSet.insertConstantForUse(
+                nodeIndex, origin, jsNumber(addend), source.useKind()));
     }
     
     Node* insertMustAdd(
@@ -381,7 +381,7 @@ private:
     {
         Node* result = insertAdd(nodeIndex, origin, source, addend);
         m_insertionSet.insertNode(
-            nodeIndex, SpecNone, HardPhantom, origin, Edge(result, UntypedUse));
+            nodeIndex, SpecNone, HardPhantom, origin, result->defaultEdge());
         return result;
     }
     

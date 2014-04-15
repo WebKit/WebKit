@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGNodeFlags.h"
 #include "SpeculatedType.h"
 #include <wtf/PrintStream.h>
 
@@ -37,10 +38,10 @@ enum UseKind {
     UntypedUse,
     Int32Use,
     KnownInt32Use,
-    MachineIntUse,
-    RealNumberUse,
+    Int52RepUse,
     NumberUse,
-    KnownNumberUse,
+    DoubleRepUse,
+    DoubleRepRealUse,
     BooleanUse,
     CellUse,
     KnownCellUse,
@@ -59,7 +60,7 @@ enum UseKind {
     LastUseKind // Must always be the last entry in the enum, as it is used to denote the number of enum elements.
 };
 
-ALWAYS_INLINE SpeculatedType typeFilterFor(UseKind useKind)
+inline SpeculatedType typeFilterFor(UseKind useKind)
 {
     switch (useKind) {
     case UntypedUse:
@@ -67,13 +68,14 @@ ALWAYS_INLINE SpeculatedType typeFilterFor(UseKind useKind)
     case Int32Use:
     case KnownInt32Use:
         return SpecInt32;
-    case MachineIntUse:
+    case Int52RepUse:
         return SpecMachineInt;
-    case RealNumberUse:
-        return SpecFullRealNumber;
     case NumberUse:
-    case KnownNumberUse:
-        return SpecFullNumber;
+        return SpecBytecodeNumber;
+    case DoubleRepUse:
+        return SpecDouble;
+    case DoubleRepRealUse:
+        return SpecDoubleReal;
     case BooleanUse:
         return SpecBoolean;
     case CellUse:
@@ -108,53 +110,53 @@ ALWAYS_INLINE SpeculatedType typeFilterFor(UseKind useKind)
     }
 }
 
-ALWAYS_INLINE bool shouldNotHaveTypeCheck(UseKind kind)
+inline bool shouldNotHaveTypeCheck(UseKind kind)
 {
     switch (kind) {
     case UntypedUse:
     case KnownInt32Use:
-    case KnownNumberUse:
     case KnownCellUse:
     case KnownStringUse:
+    case Int52RepUse:
+    case DoubleRepUse:
         return true;
     default:
         return false;
     }
 }
 
-ALWAYS_INLINE bool mayHaveTypeCheck(UseKind kind)
+inline bool mayHaveTypeCheck(UseKind kind)
 {
     return !shouldNotHaveTypeCheck(kind);
 }
 
-ALWAYS_INLINE bool isNumerical(UseKind kind)
+inline bool isNumerical(UseKind kind)
 {
     switch (kind) {
     case Int32Use:
     case KnownInt32Use:
-    case MachineIntUse:
-    case RealNumberUse:
     case NumberUse:
-    case KnownNumberUse:
+    case Int52RepUse:
+    case DoubleRepUse:
+    case DoubleRepRealUse:
         return true;
     default:
         return false;
     }
 }
 
-ALWAYS_INLINE bool isDouble(UseKind kind)
+inline bool isDouble(UseKind kind)
 {
     switch (kind) {
-    case RealNumberUse:
-    case NumberUse:
-    case KnownNumberUse:
+    case DoubleRepUse:
+    case DoubleRepRealUse:
         return true;
     default:
         return false;
     }
 }
 
-ALWAYS_INLINE bool isCell(UseKind kind)
+inline bool isCell(UseKind kind)
 {
     switch (kind) {
     case CellUse:
@@ -174,7 +176,7 @@ ALWAYS_INLINE bool isCell(UseKind kind)
 
 // Returns true if it uses structure in a way that could be clobbered by
 // things that change the structure.
-ALWAYS_INLINE bool usesStructure(UseKind kind)
+inline bool usesStructure(UseKind kind)
 {
     switch (kind) {
     case StringObjectUse:
@@ -182,6 +184,19 @@ ALWAYS_INLINE bool usesStructure(UseKind kind)
         return true;
     default:
         return false;
+    }
+}
+
+inline UseKind useKindForResult(NodeFlags result)
+{
+    ASSERT(!(result & ~NodeResultMask));
+    switch (result) {
+    case NodeResultInt52:
+        return Int52RepUse;
+    case NodeResultDouble:
+        return DoubleRepUse;
+    default:
+        return UntypedUse;
     }
 }
 

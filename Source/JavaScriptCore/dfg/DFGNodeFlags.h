@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,10 +38,11 @@ namespace JSC { namespace DFG {
 #define NodeResultMask                   0x0007
 #define NodeResultJS                     0x0001
 #define NodeResultNumber                 0x0002
-#define NodeResultInt32                  0x0003
-#define NodeResultInt52                  0x0004
-#define NodeResultBoolean                0x0005
-#define NodeResultStorage                0x0006
+#define NodeResultDouble                 0x0003
+#define NodeResultInt32                  0x0004
+#define NodeResultInt52                  0x0005
+#define NodeResultBoolean                0x0006
+#define NodeResultStorage                0x0007
                                 
 #define NodeMustGenerate                 0x0008 // set on nodes that have side effects, and may not trivially be removed by DCE.
 #define NodeHasVarArgs                   0x0010
@@ -112,6 +113,20 @@ static inline bool nodeCanSpeculateInt52(NodeFlags flags)
         return bytecodeCanIgnoreNegativeZero(flags);
     
     return true;
+}
+
+// FIXME: Get rid of this.
+// https://bugs.webkit.org/show_bug.cgi?id=131689
+static inline NodeFlags canonicalResultRepresentation(NodeFlags flags)
+{
+    switch (flags) {
+    case NodeResultDouble:
+    case NodeResultInt52:
+    case NodeResultStorage:
+        return flags;
+    default:
+        return NodeResultJS;
+    }
 }
 
 void dumpNodeFlags(PrintStream&, NodeFlags);

@@ -155,14 +155,23 @@ void InPlaceAbstractState::initialize()
             block->valuesAtHead.local(i).clear();
             block->valuesAtTail.local(i).clear();
         }
+        if (m_graph.m_form == SSA)
+            continue;
         if (!block->isOSRTarget)
             continue;
         if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
             continue;
         for (size_t i = 0; i < m_graph.m_mustHandleAbstractValues.size(); ++i) {
-            AbstractValue value = m_graph.m_mustHandleAbstractValues[i];
             int operand = m_graph.m_mustHandleAbstractValues.operandForIndex(i);
-            block->valuesAtHead.operand(operand).merge(value);
+            Node* node = block->variablesAtHead.operand(operand);
+            if (!node)
+                continue;
+            AbstractValue value = m_graph.m_mustHandleAbstractValues[i];
+            AbstractValue& abstractValue = block->valuesAtHead.operand(operand);
+            VariableAccessData* variable = node->variableAccessData();
+            FlushFormat format = variable->flushFormat();
+            abstractValue.merge(value);
+            abstractValue.fixTypeForRepresentation(resultFor(format));
         }
         block->cfaShouldRevisit = true;
     }

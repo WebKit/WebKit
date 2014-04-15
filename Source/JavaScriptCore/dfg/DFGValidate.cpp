@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,6 +114,9 @@ public:
                         continue;
                     
                     m_myRefCounts.find(edge.node())->value++;
+                    
+                    VALIDATE((node, edge), edge->hasDoubleResult() == (edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse));
+                    VALIDATE((node, edge), edge->hasInt52Result() == (edge.useKind() == Int52RepUse));
                     
                     if (m_graph.m_form == SSA) {
                         // In SSA, all edges must hasResult().

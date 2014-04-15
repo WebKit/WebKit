@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,27 +54,46 @@ public:
     {
         return insert(Insertion(index, element));
     }
-    
-#define DFG_DEFINE_INSERT_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost Node* insertNode(size_t index, SpeculatedType type valueParamsComma valueParams) \
-    { \
-        return insert(index, m_graph.addNode(type valueParamsComma valueArgs)); \
+
+    template<typename... Params>
+    Node* insertNode(size_t index, SpeculatedType type, Params... params)
+    {
+        return insert(index, m_graph.addNode(type, params...));
     }
-    DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_INSERT_NODE)
-#undef DFG_DEFINE_INSERT_NODE
     
-    Node* insertConstant(size_t index, NodeOrigin origin, JSValue value)
+    Node* insertConstant(
+        size_t index, NodeOrigin origin, JSValue value,
+        NodeType op = JSConstant)
     {
         unsigned constantReg =
             m_graph.constantRegisterForConstant(value);
         return insertNode(
-            index, speculationFromValue(value), JSConstant, origin,
-            OpInfo(constantReg));
+            index, speculationFromValue(value), op, origin, OpInfo(constantReg));
     }
     
-    Node* insertConstant(size_t index, CodeOrigin origin, JSValue value)
+    Node* insertConstant(
+        size_t index, CodeOrigin origin, JSValue value, NodeType op = JSConstant)
     {
-        return insertConstant(index, NodeOrigin(origin), value);
+        return insertConstant(index, NodeOrigin(origin), value, op);
+    }
+    
+    Edge insertConstantForUse(
+        size_t index, NodeOrigin origin, JSValue value, UseKind useKind)
+    {
+        NodeType op;
+        if (isDouble(useKind))
+            op = DoubleConstant;
+        else if (useKind == Int52RepUse)
+            op = Int52Constant;
+        else
+            op = JSConstant;
+        return Edge(insertConstant(index, origin, value, op), useKind);
+    }
+    
+    Edge insertConstantForUse(
+        size_t index, CodeOrigin origin, JSValue value, UseKind useKind)
+    {
+        return insertConstantForUse(index, NodeOrigin(origin), value, useKind);
     }
 
     void execute(BasicBlock* block)

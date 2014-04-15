@@ -57,7 +57,7 @@ public:
                 if (!node->hasResult())
                     continue;
                 insertionSet.insertNode(
-                    nodeIndex + 1, SpecNone, Phantom, node->origin, Edge(node));
+                    nodeIndex + 1, SpecNone, Phantom, node->origin, node->defaultEdge());
             }
             
             insertionSet.execute(block);

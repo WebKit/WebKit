@@ -37,6 +37,10 @@ namespace JSC { namespace DFG {
     /* A constant in the CodeBlock's constant pool. */\
     macro(JSConstant, NodeResultJS | NodeDoesNotExit) \
     \
+    /* Constants with specific representations. */\
+    macro(DoubleConstant, NodeResultDouble | NodeDoesNotExit) \
+    macro(Int52Constant, NodeResultInt52 | NodeDoesNotExit) \
+    \
     /* A constant not in the CodeBlock's constant pool. Uses get patched to jumps that exit the */\
     /* code block. */\
     macro(WeakJSConstant, NodeResultJS | NodeDoesNotExit) \
@@ -106,15 +110,13 @@ namespace JSC { namespace DFG {
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
     macro(UInt32ToNumber, NodeResultNumber) \
     \
-    /* Used to cast known integers to doubles, so as to separate the double form */\
-    /* of the value from the integer form. */\
-    macro(Int32ToDouble, NodeResultNumber) \
-    /* Used to speculate that a double value is actually an integer. */\
+    /* Attempt to truncate a double to int32; this will exit if it can't do it. */\
     macro(DoubleAsInt32, NodeResultInt32) \
-    /* Used to separate representation and register allocation of Int52's represented */\
-    /* as values. */\
-    macro(Int52ToValue, NodeResultJS) \
-    macro(Int52ToDouble, NodeResultNumber) \
+    \
+    /* Change the representation of a value. */\
+    macro(DoubleRep, NodeResultDouble) \
+    macro(Int52Rep, NodeResultInt52) \
+    macro(ValueRep, NodeResultJS) \
     \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber) \

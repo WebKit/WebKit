@@ -83,6 +83,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     
     switch (node->op()) {
     case JSConstant:
+    case DoubleConstant:
+    case Int52Constant:
     case WeakJSConstant:
     case Identity:
     case Phantom:
@@ -123,15 +125,15 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case IsNumber:
     case IsString:
     case LogicalNot:
-    case Int32ToDouble:
     case ExtractOSREntryLocal:
-    case Int52ToDouble:
-    case Int52ToValue:
     case CheckInBounds:
     case ConstantStoragePointer:
     case UInt32ToNumber:
     case DoubleAsInt32:
     case Check:
+    case DoubleRep:
+    case ValueRep:
+    case Int52Rep:
         return;
         
     case MovHint:

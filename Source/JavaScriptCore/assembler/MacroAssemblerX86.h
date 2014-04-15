@@ -157,6 +157,8 @@ public:
     }
     
     // Possibly clobbers src.
+    // FIXME: Don't do that.
+    // https://bugs.webkit.org/show_bug.cgi?id=131690
     void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
     {
         movePackedToInt32(src, dest1);

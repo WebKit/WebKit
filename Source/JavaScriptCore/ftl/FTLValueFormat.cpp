@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,6 +71,7 @@ void reboxAccordingToFormat(
     case ValueFormatDouble: {
         jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch1);
         jit.move64ToDouble(value, FPRInfo::fpRegT0);
+        jit.sanitizeDouble(FPRInfo::fpRegT0);
         jit.boxDouble(FPRInfo::fpRegT0, value);
         jit.move64ToDouble(scratch1, FPRInfo::fpRegT0);
         break;

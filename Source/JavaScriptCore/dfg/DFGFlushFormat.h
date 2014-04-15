@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ inline NodeFlags resultFor(FlushFormat format)
     case FlushedInt52:
         return NodeResultInt52;
     case FlushedDouble:
-        return NodeResultNumber;
+        return NodeResultDouble;
     case FlushedBoolean:
         return NodeResultBoolean;
     }
@@ -83,9 +83,9 @@ inline UseKind useKindFor(FlushFormat format)
     case FlushedInt32:
         return Int32Use;
     case FlushedInt52:
-        return MachineIntUse;
+        return Int52RepUse;
     case FlushedDouble:
-        return NumberUse;
+        return DoubleRepUse;
     case FlushedBoolean:
         return BooleanUse;
     }

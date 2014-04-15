@@ -299,6 +299,7 @@ private:
             AbstractValue oldValue = m_state.forNode(node);
             AbstractValue constantValue;
             constantValue.set(m_graph, value);
+            constantValue.fixTypeForRepresentation(node);
             if (oldValue.merge(constantValue))
                 continue;
                 

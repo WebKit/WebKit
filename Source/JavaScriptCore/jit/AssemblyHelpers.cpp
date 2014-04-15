@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,14 @@ Vector<BytecodeAndMachineOffset>& AssemblyHelpers::decodedCodeMapFor(CodeBlock* 
         codeBlock->jitCodeMap()->decode(result.iterator->value);
     
     return result.iterator->value;
+}
+
+void AssemblyHelpers::sanitizeDouble(FPRReg fpr)
+{
+    MacroAssembler::Jump notNaN = branchDouble(DoubleEqual, fpr, fpr);
+    static const double NaN = QNaN;
+    loadDouble(&NaN, fpr);
+    notNaN.link(this);
 }
 
 #if ENABLE(SAMPLING_FLAGS)

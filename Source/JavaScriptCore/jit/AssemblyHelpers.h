@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -417,6 +417,8 @@ public:
     void jitAssertTagsInPlace() { }
     void jitAssertArgumentCountSane() { }
 #endif
+    
+    void sanitizeDouble(FPRReg);
 
     // These methods convert between doubles, and doubles boxed and JSValues.
 #if USE(JSVALUE64)
@@ -433,6 +435,11 @@ public:
         add64(GPRInfo::tagTypeNumberRegister, gpr);
         move64ToDouble(gpr, fpr);
         return fpr;
+    }
+    
+    void boxDouble(FPRReg fpr, JSValueRegs regs)
+    {
+        boxDouble(fpr, regs.gpr());
     }
     
     // Here are possible arrangements of source, target, scratch:
@@ -466,6 +473,11 @@ public:
     void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
     {
         moveIntsToDouble(payloadGPR, tagGPR, fpr, scratchFPR);
+    }
+    
+    void boxDouble(FPRReg fpr, JSValueRegs regs)
+    {
+        boxDouble(fpr, regs.tagGPR(), regs.payloadGPR());
     }
 #endif
     

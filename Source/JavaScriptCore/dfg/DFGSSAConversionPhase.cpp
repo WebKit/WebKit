@@ -192,7 +192,7 @@ public:
                         } else {
                             m_insertionSet.insertNode(
                                 0, SpecNone, MovHint, NodeOrigin(),
-                                OpInfo(variable->local().offset()), Edge(node));
+                                OpInfo(variable->local().offset()), node->defaultEdge());
                         }
                     }
                 }
@@ -350,7 +350,9 @@ public:
                     VariableAccessData* variable = node->variableAccessData();
                     if (variable->isCaptured())
                         break;
-                    node->child1().setNode(block->variablesAtHead.operand(variable->local()));
+                    ASSERT(node->child1().useKind() == UntypedUse);
+                    node->child1() =
+                        block->variablesAtHead.operand(variable->local())->defaultEdge();
                     node->convertToPhantom();
                     // This is only for Upsilons. An Upsilon will only refer to a
                     // PhantomLocal if there were no SetLocals or GetLocals in the block.
@@ -363,7 +365,7 @@ public:
                     if (variable->isCaptured())
                         break;
                     node->setOpAndDefaultFlags(GetArgument);
-                    node->mergeFlags(resultFor(node->variableAccessData()->flushFormat()));
+                    node->setResult(resultFor(node->variableAccessData()->flushFormat()));
                     break;
                 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "ArrayProfile.h"
 #include "DFGFiltrationResult.h"
+#include "DFGNodeFlags.h"
 #include "DFGStructureAbstractValue.h"
 #include "JSCell.h"
 #include "SpeculatedType.h"
@@ -39,6 +40,7 @@
 namespace JSC { namespace DFG {
 
 class Graph;
+struct Node;
 
 struct AbstractValue {
     AbstractValue()
@@ -128,6 +130,9 @@ struct AbstractValue {
         m_value = JSValue();
         checkConsistency();
     }
+    
+    void fixTypeForRepresentation(NodeFlags representation);
+    void fixTypeForRepresentation(Node*);
     
     bool operator==(const AbstractValue& other) const
     {

@@ -490,7 +490,6 @@ private:
         case PutByValAlias:
         case GetArrayLength:
         case GetTypedArrayByteOffset:
-        case Int32ToDouble:
         case DoubleAsInt32:
         case GetLocalUnlinked:
         case GetMyArgumentsLength:
@@ -504,11 +503,15 @@ private:
         case CheckTierUpAtReturn:
         case CheckTierUpAndOSREnter:
         case InvalidationPoint:
-        case Int52ToValue:
-        case Int52ToDouble:
         case CheckInBounds:
         case ValueToInt32:
-        case HardPhantom: {
+        case HardPhantom:
+        case DoubleRep:
+        case Int52Rep:
+        case ValueRep:
+        case DoubleConstant:
+        case Int52Constant:
+        case Identity: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             RELEASE_ASSERT_NOT_REACHED();
@@ -533,10 +536,6 @@ private:
             
         case In:
             changed |= setPrediction(SpecBoolean);
-            break;
-
-        case Identity:
-            changed |= mergePrediction(node->child1()->prediction());
             break;
 
 #ifndef NDEBUG

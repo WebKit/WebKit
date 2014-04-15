@@ -33,7 +33,6 @@
 #include "DFGBranchDirection.h"
 #include "DFGFlushedAt.h"
 #include "DFGNode.h"
-#include "DFGVariadicFunction.h"
 #include "Operands.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -98,15 +97,11 @@ struct BasicBlock : RefCounted<BasicBlock> {
     void removePredecessor(BasicBlock* block);
     void replacePredecessor(BasicBlock* from, BasicBlock* to);
 
-#define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost Node* appendNode(Graph&, SpeculatedType valueParamsComma valueParams);
-    DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
-#undef DFG_DEFINE_APPEND_NODE
+    template<typename... Params>
+    Node* appendNode(Graph&, SpeculatedType, Params...);
     
-#define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost Node* appendNonTerminal(Graph&, SpeculatedType valueParamsComma valueParams);
-    DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
-#undef DFG_DEFINE_APPEND_NODE
+    template<typename... Params>
+    Node* appendNonTerminal(Graph&, SpeculatedType, Params...);
     
     void dump(PrintStream& out) const;
     

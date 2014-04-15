@@ -54,7 +54,7 @@ class SpeculateDoubleOperand;
 class SpeculateCellOperand;
 class SpeculateBooleanOperand;
 
-enum GeneratedOperandType { GeneratedOperandTypeUnknown, GeneratedOperandInteger, GeneratedOperandDouble, GeneratedOperandJSValue};
+enum GeneratedOperandType { GeneratedOperandTypeUnknown, GeneratedOperandInteger, GeneratedOperandJSValue};
 
 inline GPRReg extractResult(GPRReg result) { return result; }
 #if USE(JSVALUE64)
@@ -190,7 +190,6 @@ public:
         if (spillMe.isValid()) {
 #if USE(JSVALUE32_64)
             GenerationInfo& info = generationInfoFromVirtualRegister(spillMe);
-            RELEASE_ASSERT(info.registerFormat() != DataFormatJSDouble);
             if ((info.registerFormat() & DataFormatJS))
                 m_gprs.release(info.tagGPR() == gpr ? info.payloadGPR() : info.tagGPR());
 #endif
@@ -265,7 +264,7 @@ public:
         else if (registerFormat != DataFormatNone)
             m_gprs.release(info.gpr());
 #elif USE(JSVALUE32_64)
-        if (registerFormat == DataFormatDouble || registerFormat == DataFormatJSDouble)
+        if (registerFormat == DataFormatDouble)
             m_fprs.release(info.fpr());
         else if (registerFormat & DataFormatJS) {
             m_gprs.release(info.tagGPR());
@@ -459,6 +458,10 @@ public:
         m_jit.unboxDouble(tagGPR, payloadGPR, fpr, scratchFPR);
     }
 #endif
+    void boxDouble(FPRReg fpr, JSValueRegs regs)
+    {
+        m_jit.boxDouble(fpr, regs);
+    }
 
     // Spill a VirtualRegister to the JSStack.
     void spill(VirtualRegister spillMe)
@@ -528,11 +531,10 @@ public:
             return;
         }
 
-        case DataFormatDouble:
-        case DataFormatJSDouble: {
+        case DataFormatDouble: {
             // On JSVALUE32_64 boxing a double is a no-op.
             m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
-            info.spill(*m_stream, spillMe, DataFormatJSDouble);
+            info.spill(*m_stream, spillMe, DataFormatDouble);
             return;
         }
 
@@ -925,6 +927,14 @@ public:
         jsValueResult(tag, payload, node, DataFormatJS, mode);
     }
 #endif
+    void jsValueResult(JSValueRegs regs, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
+    {
+#if USE(JSVALUE64)
+        jsValueResult(regs.gpr(), node, format, mode);
+#else
+        jsValueResult(regs.tagGPR(), regs.payloadGPR(), node, format, mode);
+#endif
+    }
     void storageResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
         if (mode == CallUseChildren)
@@ -2080,10 +2090,12 @@ public:
     
     void compileGetArrayLength(Node*);
     
+    void compileValueRep(Node*);
+    void compileDoubleRep(Node*);
+    
     void compileValueToInt32(Node*);
     void compileUInt32ToNumber(Node*);
     void compileDoubleAsInt32(Node*);
-    void compileInt32ToDouble(Node*);
     void compileAdd(Node*);
     void compileMakeRope(Node*);
     void compileArithSub(Node*);
@@ -2185,12 +2197,6 @@ public:
 
     void emitAllocateJSArray(GPRReg resultGPR, Structure*, GPRReg storageGPR, unsigned numElements);
 
-#if USE(JSVALUE64) 
-    JITCompiler::Jump convertToDouble(GPRReg value, FPRReg result, GPRReg tmp);
-#elif USE(JSVALUE32_64)
-    JITCompiler::Jump convertToDouble(JSValueOperand&, FPRReg result);
-#endif
-    
     // Add a speculation check.
     void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail);
     void speculationCheck(ExitKind, JSValueSource, Node*, const MacroAssembler::JumpList& jumpsToFail);
@@ -2217,7 +2223,7 @@ public:
     void speculateInt32(Edge);
     void speculateMachineInt(Edge);
     void speculateNumber(Edge);
-    void speculateRealNumber(Edge);
+    void speculateDoubleReal(Edge);
     void speculateBoolean(Edge);
     void speculateCell(Edge);
     void speculateObject(Edge);
@@ -2565,6 +2571,23 @@ private:
     GPRReg m_gpr;
 };
 
+class JSValueRegsTemporary {
+public:
+    JSValueRegsTemporary();
+    JSValueRegsTemporary(SpeculativeJIT*);
+    ~JSValueRegsTemporary();
+    
+    JSValueRegs regs();
+
+private:
+#if USE(JSVALUE64)
+    GPRTemporary m_gpr;
+#else
+    GPRTemporary m_payloadGPR;
+    GPRTemporary m_tagGPR;
+#endif
+};
+
 class FPRTemporary {
 public:
     FPRTemporary(SpeculativeJIT*);
@@ -2754,12 +2777,12 @@ private:
 // Gives you a canonical Int52 (i.e. it's left-shifted by 16, low bits zero).
 class SpeculateInt52Operand {
 public:
-    explicit SpeculateInt52Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateInt52Operand(SpeculativeJIT* jit, Edge edge)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
     {
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        RELEASE_ASSERT(edge.useKind() == Int52RepUse);
         if (jit->isFilled(node()))
             gpr();
     }
@@ -2801,12 +2824,12 @@ private:
 // Gives you a strict Int52 (i.e. the payload is in the low 48 bits, high 16 bits are sign-extended).
 class SpeculateStrictInt52Operand {
 public:
-    explicit SpeculateStrictInt52Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateStrictInt52Operand(SpeculativeJIT* jit, Edge edge)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
     {
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        RELEASE_ASSERT(edge.useKind() == Int52RepUse);
         if (jit->isFilled(node()))
             gpr();
     }
@@ -2849,35 +2872,35 @@ enum OppositeShiftTag { OppositeShift };
 
 class SpeculateWhicheverInt52Operand {
 public:
-    explicit SpeculateWhicheverInt52Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateWhicheverInt52Operand(SpeculativeJIT* jit, Edge edge)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
         , m_strict(jit->betterUseStrictInt52(edge))
     {
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        RELEASE_ASSERT(edge.useKind() == Int52RepUse);
         if (jit->isFilled(node()))
             gpr();
     }
     
-    explicit SpeculateWhicheverInt52Operand(SpeculativeJIT* jit, Edge edge, const SpeculateWhicheverInt52Operand& other, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateWhicheverInt52Operand(SpeculativeJIT* jit, Edge edge, const SpeculateWhicheverInt52Operand& other)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
         , m_strict(other.m_strict)
     {
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        RELEASE_ASSERT(edge.useKind() == Int52RepUse);
         if (jit->isFilled(node()))
             gpr();
     }
     
-    explicit SpeculateWhicheverInt52Operand(SpeculativeJIT* jit, Edge edge, OppositeShiftTag, const SpeculateWhicheverInt52Operand& other, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateWhicheverInt52Operand(SpeculativeJIT* jit, Edge edge, OppositeShiftTag, const SpeculateWhicheverInt52Operand& other)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
         , m_strict(!other.m_strict)
     {
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        RELEASE_ASSERT(edge.useKind() == Int52RepUse);
         if (jit->isFilled(node()))
             gpr();
     }
@@ -2926,13 +2949,13 @@ private:
 
 class SpeculateDoubleOperand {
 public:
-    explicit SpeculateDoubleOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateDoubleOperand(SpeculativeJIT* jit, Edge edge)
         : m_jit(jit)
         , m_edge(edge)
         , m_fprOrInvalid(InvalidFPRReg)
     {
         ASSERT(m_jit);
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || isDouble(edge.useKind()));
+        RELEASE_ASSERT(isDouble(edge.useKind()));
         if (jit->isFilled(node()))
             fpr();
     }

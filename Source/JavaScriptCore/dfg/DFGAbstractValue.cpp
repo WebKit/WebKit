@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,8 +67,6 @@ void AbstractValue::set(Graph& graph, JSValue value)
     }
     
     m_type = speculationFromValue(value);
-    if (m_type == SpecInt52AsDouble)
-        m_type = SpecInt52;
     m_value = value;
     
     checkConsistency();
@@ -83,6 +81,41 @@ void AbstractValue::set(Graph& graph, Structure* structure)
     m_value = JSValue();
     
     checkConsistency();
+}
+
+void AbstractValue::fixTypeForRepresentation(NodeFlags representation)
+{
+    if (representation == NodeResultDouble) {
+        if (m_value) {
+            ASSERT(m_value.isNumber());
+            if (m_value.isInt32())
+                m_value = jsDoubleNumber(m_value.asNumber());
+        }
+        if (m_type & SpecMachineInt) {
+            m_type &= ~SpecMachineInt;
+            m_type |= SpecInt52AsDouble;
+        }
+        RELEASE_ASSERT(!(m_type & ~SpecDouble));
+    } else if (representation == NodeResultInt52) {
+        if (m_type & SpecInt52AsDouble) {
+            m_type &= ~SpecInt52AsDouble;
+            m_type |= SpecInt52;
+        }
+        RELEASE_ASSERT(!(m_type & ~SpecMachineInt));
+    } else {
+        if (m_type & SpecInt52) {
+            m_type &= ~SpecInt52;
+            m_type |= SpecInt52AsDouble;
+        }
+        RELEASE_ASSERT(!(m_type & ~SpecBytecodeTop));
+    }
+    
+    checkConsistency();
+}
+
+void AbstractValue::fixTypeForRepresentation(Node* node)
+{
+    fixTypeForRepresentation(node->result());
 }
 
 FiltrationResult AbstractValue::filter(Graph& graph, const StructureSet& other)
@@ -244,6 +277,8 @@ void AbstractValue::checkConsistency() const
     
     if (!!m_value) {
         SpeculatedType type = m_type;
+        // This relaxes the assertion below a bit, since we don't know the representation of the
+        // node.
         if (type & SpecInt52)
             type |= SpecInt52AsDouble;
         ASSERT(mergeSpeculations(type, speculationFromValue(m_value)) == type);

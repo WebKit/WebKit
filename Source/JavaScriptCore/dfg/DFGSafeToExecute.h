@@ -46,7 +46,9 @@ public:
         switch (edge.useKind()) {
         case UntypedUse:
         case Int32Use:
-        case RealNumberUse:
+        case DoubleRepUse:
+        case DoubleRepRealUse:
+        case Int52RepUse:
         case NumberUse:
         case BooleanUse:
         case CellUse:
@@ -61,16 +63,10 @@ public:
         case NotCellUse:
         case OtherUse:
         case MiscUse:
-        case MachineIntUse:
             return;
             
         case KnownInt32Use:
             if (m_state.forNode(edge).m_type & ~SpecInt32)
-                m_result = false;
-            return;
-            
-        case KnownNumberUse:
-            if (m_state.forNode(edge).m_type & ~SpecFullNumber)
                 m_result = false;
             return;
             
@@ -111,6 +107,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
 
     switch (node->op()) {
     case JSConstant:
+    case DoubleConstant:
+    case Int52Constant:
     case WeakJSConstant:
     case Identity:
     case ToThis:
@@ -137,7 +135,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case BitURShift:
     case ValueToInt32:
     case UInt32ToNumber:
-    case Int32ToDouble:
     case DoubleAsInt32:
     case ArithAdd:
     case ArithSub:
@@ -242,8 +239,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CheckTierUpAtReturn:
     case CheckTierUpAndOSREnter:
     case LoopHint:
-    case Int52ToDouble:
-    case Int52ToValue:
     case StoreBarrier:
     case StoreBarrierWithNullCheck:
     case InvalidationPoint:
@@ -255,6 +250,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case Check:
     case MultiGetByOffset:
     case MultiPutByOffset:
+    case ValueRep:
+    case DoubleRep:
+    case Int52Rep:
         return true;
         
     case GetByVal:

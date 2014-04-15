@@ -170,6 +170,62 @@ private:
             }
             break;
             
+        case ValueRep:
+        case Int52Rep:
+        case DoubleRep: {
+            // This short-circuits circuitous conversions, like ValueRep(DoubleRep(value)) or
+            // even more complicated things. Like, it can handle a beast like
+            // ValueRep(DoubleRep(Int52Rep(value))).
+            
+            // The only speculation that we would do beyond validating that we have a type that
+            // can be represented a certain way is an Int32 check that would appear on Int52Rep
+            // nodes. For now, if we see this and the final type we want is an Int52, we use it
+            // as an excuse not to fold. The only thing we would need is a Int52RepInt32Use kind.
+            bool hadInt32Check = false;
+            if (m_node->op() == Int52Rep) {
+                ASSERT(m_node->child1().useKind() == Int32Use);
+                hadInt32Check = true;
+            }
+            for (Node* node = m_node->child1().node(); ; node = node->child1().node()) {
+                if (canonicalResultRepresentation(node->result()) ==
+                    canonicalResultRepresentation(m_node->result())) {
+                    m_insertionSet.insertNode(
+                        m_nodeIndex, SpecNone, Phantom, m_node->origin, m_node->child1());
+                    if (hadInt32Check) {
+                        // FIXME: Consider adding Int52RepInt32Use or even DoubleRepInt32Use,
+                        // which would be super weird. The latter would only arise in some
+                        // seriously circuitous conversions.
+                        if (canonicalResultRepresentation(node->result()) != NodeResultJS)
+                            break;
+                        
+                        m_insertionSet.insertNode(
+                            m_nodeIndex, SpecNone, Phantom, m_node->origin,
+                            Edge(node, Int32Use));
+                    }
+                    m_node->child1() = node->defaultEdge();
+                    m_node->convertToIdentity();
+                    m_changed = true;
+                    break;
+                }
+                
+                switch (node->op()) {
+                case Int52Rep:
+                    ASSERT(node->child1().useKind() == Int32Use);
+                    hadInt32Check = true;
+                    continue;
+                    
+                case DoubleRep:
+                case ValueRep:
+                    continue;
+                    
+                default:
+                    break;
+                }
+                break;
+            }
+            break;
+        }
+            
         default:
             break;
         }

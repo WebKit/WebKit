@@ -39,7 +39,6 @@
 #include "DFGNodeAllocator.h"
 #include "DFGPlan.h"
 #include "DFGScannable.h"
-#include "DFGVariadicFunction.h"
 #include "InlineCallFrameSet.h"
 #include "JSStack.h"
 #include "MethodOfGettingAValueProfile.h"
@@ -136,15 +135,13 @@ public:
         ASSERT(!child->misc.replacement);
     }
     
-#define DFG_DEFINE_ADD_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost Node* addNode(SpeculatedType type valueParamsComma valueParams) \
-    { \
-        Node* node = new (m_allocator) Node(valueArgs); \
-        node->predict(type); \
-        return node; \
+    template<typename... Params>
+    Node* addNode(SpeculatedType type, Params... params)
+    {
+        Node* node = new (m_allocator) Node(params...);
+        node->predict(type);
+        return node;
     }
-    DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_ADD_NODE)
-#undef DFG_DEFINE_ADD_NODE
 
     void dethread();
     

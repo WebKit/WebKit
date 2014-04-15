@@ -37,7 +37,6 @@
 #include "DFGCommon.h"
 #include "DFGDriver.h"
 #include "DFGJITCode.h"
-#include "DFGNode.h"
 #include "DFGWorklist.h"
 #include "Debugger.h"
 #include "Interpreter.h"

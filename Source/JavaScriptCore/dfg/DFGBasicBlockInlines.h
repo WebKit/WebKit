@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,25 +33,21 @@
 
 namespace JSC { namespace DFG {
 
-#define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost inline Node* BasicBlock::appendNode(Graph& graph, SpeculatedType type valueParamsComma valueParams) \
-    { \
-        Node* result = graph.addNode(type valueParamsComma valueArgs); \
-        append(result); \
-        return result; \
-    }
-    DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
-#undef DFG_DEFINE_APPEND_NODE
+template<typename... Params>
+Node* BasicBlock::appendNode(Graph& graph, SpeculatedType type, Params... params)
+{
+    Node* result = graph.addNode(type, params...);
+    append(result);
+    return result;
+}
 
-#define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost inline Node* BasicBlock::appendNonTerminal(Graph& graph, SpeculatedType type valueParamsComma valueParams) \
-    { \
-        Node* result = graph.addNode(type valueParamsComma valueArgs); \
-        insertBeforeLast(result); \
-        return result; \
-    }
-    DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
-#undef DFG_DEFINE_APPEND_NODE
+template<typename... Params>
+Node* BasicBlock::appendNonTerminal(Graph& graph, SpeculatedType type, Params... params)
+{
+    Node* result = graph.addNode(type, params...);
+    insertBeforeLast(result);
+    return result;
+}
 
 } } // namespace JSC::DFG
 

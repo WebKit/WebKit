@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,7 +210,6 @@ private:
             break;
         }
             
-        case Identity: 
         case UInt32ToNumber: {
             node->child1()->mergeFlags(flags);
             break;
@@ -378,6 +377,11 @@ private:
             }
             break;
         }
+
+        case Identity: 
+            // This would be trivial to handle but we just assert that we cannot see these yet.
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
             
         // Note: ArithSqrt, ArithSin, and ArithCos and other math intrinsics don't have special
         // rules in here because they are always followed by Phantoms to signify that if the
