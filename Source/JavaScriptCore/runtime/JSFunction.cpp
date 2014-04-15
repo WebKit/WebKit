@@ -33,6 +33,7 @@
 #include "FunctionPrototype.h"
 #include "GetterSetter.h"
 #include "JSArray.h"
+#include "JSBoundFunction.h"
 #include "JSFunctionInlines.h"
 #include "JSGlobalObject.h"
 #include "JSNameScope.h" 
@@ -250,9 +251,8 @@ EncodedJSValue JSFunction::argumentsGetter(ExecState* exec, JSObject* slotBase, 
 
 class RetrieveCallerFunctionFunctor {
 public:
-    RetrieveCallerFunctionFunctor(ExecState* exec, JSFunction* functionObj)
-        : m_exec(exec)
-        , m_targetCallee(jsDynamicCast<JSObject*>(functionObj))
+    RetrieveCallerFunctionFunctor(JSFunction* functionObj)
+        : m_targetCallee(jsDynamicCast<JSObject*>(functionObj))
         , m_hasFoundFrame(false)
         , m_hasSkippedToCallerFrame(false)
         , m_result(jsNull())
@@ -265,7 +265,7 @@ public:
     {
         JSObject* callee = visitor->callee();
 
-        if (callee && callee->hasOwnProperty(m_exec, m_exec->propertyNames().boundFunctionNamePrivateName))
+        if (callee && callee->inherits(JSBoundFunction::info()))
             return StackVisitor::Continue;
 
         if (!m_hasFoundFrame && (callee != m_targetCallee))
@@ -283,7 +283,6 @@ public:
     }
 
 private:
-    ExecState* m_exec;
     JSObject* m_targetCallee;
     bool m_hasFoundFrame;
     bool m_hasSkippedToCallerFrame;
@@ -292,7 +291,7 @@ private:
 
 static JSValue retrieveCallerFunction(ExecState* exec, JSFunction* functionObj)
 {
-    RetrieveCallerFunctionFunctor functor(exec, functionObj);
+    RetrieveCallerFunctionFunctor functor(functionObj);
     exec->iterate(functor);
     return functor.result();
 }
@@ -329,59 +328,17 @@ EncodedJSValue JSFunction::nameGetter(ExecState*, JSObject* slotBase, EncodedJSV
 bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(object);
-    if (thisObject->isHostFunction())
+    if (thisObject->isHostOrBuiltinFunction())
         return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
-    if (thisObject->isBuiltinFunction()) {
-        if (propertyName == exec->propertyNames().caller) {
-            if (thisObject->jsExecutable()->isStrictMode()) {
-                bool result = Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
-                if (!result) {
-                    thisObject->putDirectAccessor(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec->vm()), DontDelete | DontEnum | Accessor);
-                    result = Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
-                    ASSERT(result);
-                }
-                return result;
-            }
-            slot.setCacheableCustom(thisObject, ReadOnly | DontEnum | DontDelete, callerGetter);
-            return true;
-        }
-        if (propertyName == exec->propertyNames().prototypeForHasInstancePrivateName) {
-            PropertySlot boundFunctionSlot(thisObject);
-            if (Base::getOwnPropertySlot(thisObject, exec, exec->propertyNames().boundFunctionPrivateName, boundFunctionSlot)) {
-                JSValue boundFunction = boundFunctionSlot.getValue(exec, exec->propertyNames().boundFunctionPrivateName);
-                PropertySlot boundPrototypeSlot(asObject(boundFunction));
-                if (asObject(boundFunction)->getPropertySlot(exec, propertyName, boundPrototypeSlot)) {
-                    slot.setValue(boundPrototypeSlot.slotBase(), boundPrototypeSlot.attributes(), boundPrototypeSlot.getValue(exec, propertyName));
-                    return true;
-                }
-            }
-        }
-        if (propertyName == exec->propertyNames().name) {
-            PropertySlot nameSlot(thisObject);
-            if (Base::getOwnPropertySlot(thisObject, exec, exec->vm().propertyNames->boundFunctionNamePrivateName, nameSlot)) {
-                slot.setValue(thisObject, DontEnum | DontDelete | ReadOnly, nameSlot.getValue(exec, exec->vm().propertyNames->boundFunctionNamePrivateName));
-                return true;
-            }
-        }
-        if (propertyName == exec->propertyNames().length) {
-            PropertySlot lengthSlot(thisObject);
-            if (Base::getOwnPropertySlot(thisObject, exec, exec->vm().propertyNames->boundFunctionLengthPrivateName, lengthSlot)) {
-                slot.setValue(thisObject, DontEnum | DontDelete | ReadOnly, lengthSlot.getValue(exec, exec->vm().propertyNames->boundFunctionLengthPrivateName));
-                return true;
-            }
-        }
-            
-        return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
-    }
-    
-    if (propertyName == exec->propertyNames().prototype || propertyName == exec->propertyNames().prototypeForHasInstancePrivateName) {
+
+    if (propertyName == exec->propertyNames().prototype) {
         VM& vm = exec->vm();
         unsigned attributes;
         PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);
         if (!isValidOffset(offset)) {
             JSObject* prototype = constructEmptyObject(exec);
             prototype->putDirect(vm, exec->propertyNames().constructor, thisObject, DontEnum);
-            thisObject->putDirectPrototypeProperty(vm, prototype, DontDelete | DontEnum);
+            thisObject->putDirect(vm, exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
             offset = thisObject->getDirectOffset(vm, exec->propertyNames().prototype, attributes);
             ASSERT(isValidOffset(offset));
         }
@@ -433,23 +390,16 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
 void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(object);
-    if (mode == IncludeDontEnumProperties) {
-        bool shouldIncludeJSFunctionProperties = !thisObject->isHostOrBuiltinFunction();
-        if (!shouldIncludeJSFunctionProperties && thisObject->isBuiltinFunction()) {
-            PropertySlot boundFunctionSlot(thisObject);
-            shouldIncludeJSFunctionProperties = Base::getOwnPropertySlot(thisObject, exec, exec->propertyNames().boundFunctionPrivateName, boundFunctionSlot);
-        }
-        if (shouldIncludeJSFunctionProperties) {
-            VM& vm = exec->vm();
-            // Make sure prototype has been reified.
-            PropertySlot slot(thisObject);
-            thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, vm.propertyNames->prototype, slot);
+    if (!thisObject->isHostOrBuiltinFunction() && (mode == IncludeDontEnumProperties)) {
+        VM& vm = exec->vm();
+        // Make sure prototype has been reified.
+        PropertySlot slot(thisObject);
+        thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, vm.propertyNames->prototype, slot);
 
-            propertyNames.add(vm.propertyNames->arguments);
-            propertyNames.add(vm.propertyNames->caller);
-            propertyNames.add(vm.propertyNames->length);
-            propertyNames.add(vm.propertyNames->name);
-        }
+        propertyNames.add(vm.propertyNames->arguments);
+        propertyNames.add(vm.propertyNames->caller);
+        propertyNames.add(vm.propertyNames->length);
+        propertyNames.add(vm.propertyNames->name);
     }
     Base::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -469,10 +419,8 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         thisObject->m_allocationProfile.clear();
         thisObject->m_allocationProfileWatchpoint.fireAll();
         // Don't allow this to be cached, since a [[Put]] must clear m_allocationProfile.
-        PutPropertySlot dontCachePrototype(thisObject);
-        Base::put(thisObject, exec, propertyName, value, dontCachePrototype);
-        PutPropertySlot dontCachePrototypeForHasInstance(thisObject);
-        Base::put(thisObject, exec, exec->propertyNames().prototypeForHasInstancePrivateName, value, dontCachePrototypeForHasInstance);
+        PutPropertySlot dontCache(thisObject);
+        Base::put(thisObject, exec, propertyName, value, dontCache);
         return;
     }
     if (thisObject->jsExecutable()->isStrictMode() && (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller)) {
@@ -517,10 +465,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_allocationProfile.clear();
         thisObject->m_allocationProfileWatchpoint.fireAll();
-        if (!Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException))
-            return false;
-        Base::defineOwnProperty(object, exec, exec->propertyNames().prototypeForHasInstancePrivateName, descriptor, throwException);
-        return true;
+        return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
     }
 
     bool valueCheck;

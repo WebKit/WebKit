@@ -66,7 +66,7 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
     ASSERT(inherits(info()));
 
     // Number.Prototype
-    putDirectPrototypePropertyWithoutTransitions(vm, numberPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);

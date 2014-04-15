@@ -39,7 +39,7 @@ const ClassInfo SetIteratorConstructor::s_info = { "Set Iterator", &Base::s_info
 void SetIteratorConstructor::finishCreation(VM& vm, SetIteratorPrototype* prototype)
 {
     Base::finishCreation(vm);
-    putDirectPrototypePropertyWithoutTransitions(vm, prototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
 }
 
 }

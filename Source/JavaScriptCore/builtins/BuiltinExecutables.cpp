@@ -46,7 +46,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const So
 {
     JSTextPosition positionBeforeLastNewline;
     ParserError error;
-    RefPtr<ProgramNode> program = parse<ProgramNode>(&m_vm, source, 0, Identifier(), JSParseBuiltin, JSParseProgramCode, JSNotFunctionKind, error, &positionBeforeLastNewline);
+    RefPtr<ProgramNode> program = parse<ProgramNode>(&m_vm, source, 0, Identifier(), JSParseBuiltin, JSParseProgramCode, error, &positionBeforeLastNewline);
 
     if (!program) {
         dataLog("Fatal error compiling builtin function '", name.string(), "': ", error.m_message);
@@ -71,7 +71,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const So
     RELEASE_ASSERT(body);
     for (const auto& closedVariable : program->closedVariables()) {
         if (closedVariable == m_vm.propertyNames->arguments.impl())
-            continue;
+        continue;
         
         if (closedVariable == m_vm.propertyNames->undefinedKeyword.impl())
             continue;

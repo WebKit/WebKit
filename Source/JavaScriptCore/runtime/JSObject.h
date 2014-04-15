@@ -932,9 +932,6 @@ protected:
         }
     }
 
-    JS_EXPORT_PRIVATE void putDirectPrototypeProperty(VM&, JSValue, int);
-    void putDirectPrototypePropertyWithoutTransitions(VM&, JSValue, int);
-    
 private:
     friend class LLIntOffsetsExtractor;
         

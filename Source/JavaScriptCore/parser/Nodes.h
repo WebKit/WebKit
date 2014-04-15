@@ -164,7 +164,6 @@ namespace JSC {
         virtual bool isSubtract() const { return false; }
         virtual bool isBoolean() const { return false; }
         virtual bool isSpreadExpression() const { return false; }
-        virtual bool getBooleanConstant(bool&) const { return false; }
 
         virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label*, Label*, FallThroughMode);
 
@@ -214,13 +213,6 @@ namespace JSC {
         NullNode(const JSTokenLocation&);
 
     private:
-        
-        bool getBooleanConstant(bool& value) const override
-        {
-            value = false;
-            return true;
-        }
-        
         virtual bool isNull() const override { return true; }
         virtual JSValue jsValue(BytecodeGenerator&) const override { return jsNull(); }
     };
@@ -229,14 +221,8 @@ namespace JSC {
     public:
         BooleanNode(const JSTokenLocation&, bool value);
         bool value() { return m_value; }
-        
-    private:
-        bool getBooleanConstant(bool& value) const override
-        {
-            value = m_value;
-            return true;
-        }
 
+    private:
         virtual bool isBoolean() const override { return true; }
         virtual JSValue jsValue(BytecodeGenerator&) const override { return jsBoolean(m_value); }
 
@@ -250,11 +236,6 @@ namespace JSC {
         void setValue(double value) { m_value = value; }
 
     private:
-        bool getBooleanConstant(bool& value) const override
-        {
-            value = (bool)m_value;
-            return true;
-        }
         virtual bool isNumber() const override { return true; }
         virtual JSValue jsValue(BytecodeGenerator&) const override { return jsNumber(m_value); }
 

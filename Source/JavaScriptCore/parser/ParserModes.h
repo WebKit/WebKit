@@ -33,8 +33,7 @@ namespace JSC {
 
 enum JSParserStrictness { JSParseNormal, JSParseBuiltin, JSParseStrict };
 enum JSParserMode { JSParseProgramCode, JSParseFunctionCode };
-enum JSFunctionKind { JSNotFunctionKind, JSFunctionIsFunctionKind, JSFunctionIsConstructorKind };
-    
+
 enum ProfilerMode { ProfilerOff, ProfilerOn };
 enum DebuggerMode { DebuggerOff, DebuggerOn };
 

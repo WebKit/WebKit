@@ -447,7 +447,7 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     ParserError error;
     VM* vm = &exec->vm();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<ProgramNode> programNode = parse<ProgramNode>(vm, m_source, 0, Identifier(), JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, JSNotFunctionKind, error);
+    RefPtr<ProgramNode> programNode = parse<ProgramNode>(vm, m_source, 0, Identifier(), JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, error);
     if (programNode)
         return 0;
     ASSERT(error.m_type != ParserError::ErrorNone);

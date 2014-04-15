@@ -40,7 +40,7 @@ const ClassInfo MapConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREA
 void MapConstructor::finishCreation(VM& vm, MapPrototype* mapPrototype)
 {
     Base::finishCreation(vm, mapPrototype->classInfo()->className);
-    putDirectPrototypePropertyWithoutTransitions(vm, mapPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, mapPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
 }
 

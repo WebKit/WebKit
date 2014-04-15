@@ -39,7 +39,7 @@ const ClassInfo ArgumentsIteratorConstructor::s_info = { "ArgumentsIterator", &B
 void ArgumentsIteratorConstructor::finishCreation(VM& vm, ArgumentsIteratorPrototype* prototype)
 {
     Base::finishCreation(vm);
-    putDirectPrototypePropertyWithoutTransitions(vm, prototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
 }
 
 }

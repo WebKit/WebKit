@@ -39,7 +39,7 @@ const ClassInfo WeakMapConstructor::s_info = { "Function", &Base::s_info, 0, 0, 
 void WeakMapConstructor::finishCreation(VM& vm, WeakMapPrototype* prototype)
 {
     Base::finishCreation(vm, prototype->classInfo()->className);
-    putDirectPrototypePropertyWithoutTransitions(vm, prototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
 }
 
