@@ -1,3 +1,26 @@
+2014-04-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash in TileController::tileRevalidationTimerFired
+        https://bugs.webkit.org/show_bug.cgi?id=131656
+        <rdar://problem/16583166>
+
+        Reviewed by Sam Weinig.
+
+        It's possible for the TileController revalidation timer to fire after
+        the GraphicsLayer has been destroyed, so the PlatformCALayer no longer
+        has an owningGraphicsLayer.
+        
+        Bail from the timer callback if owningGraphicsLayer() is null.
+        
+        Also some drive-by 0 -> nullptr changes.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::willBeDestroyed):
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::~PlatformCALayer):
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::tileRevalidationTimerFired):
+
 2014-04-14  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Remove some leftover shape-inside code

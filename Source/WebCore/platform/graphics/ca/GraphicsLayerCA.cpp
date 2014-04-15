@@ -387,19 +387,19 @@ void GraphicsLayerCA::willBeDestroyed()
     // We release our references to the PlatformCALayers here, but do not actively unparent them,
     // since that will cause a commit and break our batched commit model. The layers will
     // get released when the rootmost modified GraphicsLayerCA rebuilds its child layers.
-    
+
     // Clean up the layer.
     if (m_layer)
-        m_layer->setOwner(0);
+        m_layer->setOwner(nullptr);
     
     if (m_contentsLayer)
-        m_contentsLayer->setOwner(0);
+        m_contentsLayer->setOwner(nullptr);
 
     if (m_contentsClippingLayer)
-        m_contentsClippingLayer->setOwner(0);
+        m_contentsClippingLayer->setOwner(nullptr);
         
     if (m_structuralLayer)
-        m_structuralLayer->setOwner(0);
+        m_structuralLayer->setOwner(nullptr);
     
     removeCloneLayers();
 

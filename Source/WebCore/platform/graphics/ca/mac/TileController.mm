@@ -340,6 +340,9 @@ bool TileController::shouldTemporarilyRetainTileCohorts() const
 
 void TileController::tileRevalidationTimerFired(Timer<TileController>*)
 {
+    if (!owningGraphicsLayer())
+        return;
+
     if (m_isInWindow) {
         setNeedsRevalidateTiles();
         return;

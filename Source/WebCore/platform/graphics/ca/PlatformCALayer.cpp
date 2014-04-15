@@ -47,7 +47,7 @@ PlatformCALayer::~PlatformCALayer()
 {
     // Clear the owner, which also clears it in the delegate to prevent attempts
     // to use the GraphicsLayerCA after it has been destroyed.
-    setOwner(0);
+    setOwner(nullptr);
 }
 
 }
