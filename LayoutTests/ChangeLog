@@ -1,3 +1,12 @@
+2014-04-15  Lorenzo Tilve  <ltilve@igalia.com>
+
+        Unreviewed gardening.
+
+        * TestExpectations:
+        Corrected wrong js/regress/ path for js/slow-stress/emscripten-memops.html
+        * platform/gtk/TestExpectations:
+        Updated expectation for passing on Release plugins/unavailable-plugin-indicator-obscurity.html
+
 2014-04-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167199 and r167251.

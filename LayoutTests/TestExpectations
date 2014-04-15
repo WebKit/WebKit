@@ -21,7 +21,7 @@ webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Crash Pass ]
 
 # This test will run slowly in debug mode, but is plenty fast in release.
-[ Debug ] js/regress/emscripten-memops.html [ Skip ]
+[ Debug ] js/slow-stress/emscripten-memops.html [ Skip ]
 
 # Skip tests for the old inspector UI that will be ported or removed soon.
 inspector-obsolete [ Skip ]

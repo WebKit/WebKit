@@ -508,7 +508,7 @@ webkit.org/b/62204 svg/custom/circular-marker-reference-4.svg [ Failure Pass ]
 
 webkit.org/b/89097 plugins/plugin-initiate-popup-window.html [ Failure Pass ]
 
-webkit.org/b/119735 plugins/unavailable-plugin-indicator-obscurity.html [ Failure Crash ]
+webkit.org/b/119735 [ Debug ] plugins/unavailable-plugin-indicator-obscurity.html [ Skip ]
 
 webkit.org/b/71777 fast/lists/inlineBoxWrapperNullCheck.html [ Failure Pass ]
 
