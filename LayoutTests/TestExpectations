@@ -95,3 +95,6 @@ webkit.org/b/129817 inspector/dom/content-flow-content-removal.html [ Pass Failu
 webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]
 webkit.org/b/74144 fast/regions/universal-selector-children-to-the-same-region.html [ Skip ]
 webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
+
+# Fails or asserts on most runs.
+webkit.org/b/131679 inspector/dom/content-flow-list.html  [ Skip ]
