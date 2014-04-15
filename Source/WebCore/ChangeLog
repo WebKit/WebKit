@@ -1,3 +1,16 @@
+2014-04-15  Simon Fraser  <simon.fraser@apple.com>
+
+        LayerTreeAsTextBehavior should be in the WebCore namespace
+        https://bugs.webkit.org/show_bug.cgi?id=131683
+
+        Reviewed by Andrei Bucur.
+
+        Move LayerTreeAsTextBehavior and the bit flags into the WebCore namespace.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (showGraphicsLayerTree):
+        * platform/graphics/GraphicsLayer.h:
+
 2014-04-15  Benjamin Poulain  <bpoulain@apple.com>
 
         ViewportConfiguration handles userZoom incorrectly

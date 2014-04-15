@@ -47,6 +47,8 @@
 #include "GraphicsTypes.h"
 #endif
 
+namespace WebCore {
+
 enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextBehaviorNormal = 0,
     LayerTreeAsTextDebug = 1 << 0, // Dump extra debugging info like layer addresses.
@@ -57,8 +59,6 @@ enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextIncludeContentLayers = 1 << 5
 };
 typedef unsigned LayerTreeAsTextBehavior;
-
-namespace WebCore {
 
 class GraphicsContext;
 class GraphicsLayerFactory;
