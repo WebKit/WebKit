@@ -44,9 +44,6 @@ BidiRun::BidiRun(int start, int stop, RenderObject& renderer, BidiContext* conte
     ASSERT(!m_renderer.isText() || static_cast<unsigned>(stop) <= toRenderText(m_renderer).textLength());
     // Stored in base class to save space.
     m_hasHyphen = false;
-#if ENABLE(CSS_SHAPES)
-    m_startsSegment = false;
-#endif
 }
 
 BidiRun::~BidiRun()

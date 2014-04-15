@@ -182,7 +182,7 @@ static bool parentIsConstructedOrHaveNext(InlineFlowBox* parentBox)
     return false;
 }
 
-InlineFlowBox* RenderBlockFlow::createLineBoxes(RenderObject* obj, const LineInfo& lineInfo, InlineBox* childBox, bool startNewSegment)
+InlineFlowBox* RenderBlockFlow::createLineBoxes(RenderObject* obj, const LineInfo& lineInfo, InlineBox* childBox)
 {
     // See if we have an unconstructed line box for this object that is also
     // the last item on the line.
@@ -205,8 +205,7 @@ InlineFlowBox* RenderBlockFlow::createLineBoxes(RenderObject* obj, const LineInf
         // the same line (this can happen with very fancy language mixtures).
         bool constructedNewBox = false;
         bool allowedToConstructNewBox = !hasDefaultLineBoxContain || !inlineFlow || inlineFlow->alwaysCreateLineBoxes();
-        bool mustCreateBoxesToRoot = startNewSegment && !(parentBox && parentBox->isRootInlineBox());
-        bool canUseExistingParentBox = parentBox && !parentIsConstructedOrHaveNext(parentBox) && !mustCreateBoxesToRoot;
+        bool canUseExistingParentBox = parentBox && !parentIsConstructedOrHaveNext(parentBox);
         if (allowedToConstructNewBox && !canUseExistingParentBox) {
             // We need to make a new box for this render object.  Once
             // made, we need to place it at the end of the current line.
@@ -301,15 +300,10 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
         // then we need to construct inline boxes as necessary to properly enclose the
         // run's inline box. Segments can only be siblings at the root level, as
         // they are positioned separately.
-#if ENABLE(CSS_SHAPES)
-        bool runStartsSegment = r->m_startsSegment;
-#else
-        bool runStartsSegment = false;
-#endif
-        if (!parentBox || &parentBox->renderer() != r->renderer().parent() || runStartsSegment)
+        if (!parentBox || &parentBox->renderer() != r->renderer().parent()) {
             // Create new inline boxes all the way back to the appropriate insertion point.
-            parentBox = createLineBoxes(r->renderer().parent(), lineInfo, box, runStartsSegment);
-        else {
+            parentBox = createLineBoxes(r->renderer().parent(), lineInfo, box);
+        } else {
             // Append the inline box to this line.
             parentBox->addToLine(box);
         }
@@ -545,11 +539,6 @@ static inline void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* 
 
     size_t i = 0;
     for (BidiRun* r = firstRun; r; r = r->next()) {
-#if ENABLE(CSS_SHAPES)
-        // This method is called once per segment, do not move past the current segment.
-        if (r->m_startsSegment)
-            break;
-#endif
         if (!r->box() || r == trailingSpaceRun)
             continue;
         
@@ -672,12 +661,6 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
 
     BidiRun* r = firstRun;
     for (; r; r = r->next()) {
-#if ENABLE(CSS_SHAPES)
-        // Once we have reached the start of the next segment, we have finished
-        // computing the positions for this segment's contents.
-        if (r->m_startsSegment)
-            break;
-#endif
         if (!r->box() || r->renderer().isOutOfFlowPositioned() || r->box()->isLineBreak())
             continue; // Positioned objects are only participating to figure out their
                       // correct static x position.  They have no effect on the width.

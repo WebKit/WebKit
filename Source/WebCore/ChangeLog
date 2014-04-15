@@ -1,3 +1,25 @@
+2014-04-14  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Remove some leftover shape-inside code
+        https://bugs.webkit.org/show_bug.cgi?id=131641
+
+        Reviewed by Dean Jackson.
+
+        I discovered that some code had been leftover from the shape-inside
+        removal. This removes that leftover code.
+
+        No new tests, no behavior change.
+
+        * platform/text/BidiResolver.h:
+        * rendering/BidiRun.cpp:
+        (WebCore::BidiRun::BidiRun):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::createLineBoxes):
+        (WebCore::RenderBlockFlow::constructLine):
+        (WebCore::computeExpansionForJustifiedText):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+
 2014-04-14  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] video.currentTime is sometimes negative.
