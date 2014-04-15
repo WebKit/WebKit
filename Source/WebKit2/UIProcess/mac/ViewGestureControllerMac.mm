@@ -84,6 +84,7 @@ static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
 @end
 
 @implementation WKSwipeCancellationTracker
+@synthesize isCancelled;
 @end
 
 namespace WebKit {

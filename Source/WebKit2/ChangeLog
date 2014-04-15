@@ -1,5 +1,11 @@
 2014-04-14  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the 32-bit build.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+
+2014-04-14  Tim Horton  <timothy_horton@apple.com>
+
         Sometimes-crash under handleSwipeGesture after closing a window or quitting
         https://bugs.webkit.org/show_bug.cgi?id=131648
         <rdar://problem/15966106>
