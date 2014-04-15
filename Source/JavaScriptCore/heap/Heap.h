@@ -115,6 +115,8 @@ public:
     MarkedSpace& objectSpace() { return m_objectSpace; }
     MachineThreads& machineThreads() { return m_machineThreads; }
 
+    const SlotVisitor& slotVisitor() const { return m_slotVisitor; }
+
     JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
     JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
     JS_EXPORT_PRIVATE void setFullActivityCallback(PassRefPtr<FullGCActivityCallback>);
@@ -267,6 +269,7 @@ private:
     void gatherJSStackRoots(ConservativeRoots&);
     void gatherScratchBufferRoots(ConservativeRoots&);
     void clearLivenessData();
+    void visitExternalRememberedSet();
     void visitSmallStrings();
     void visitConservativeRoots(ConservativeRoots&);
     void visitCompilerWorklists();

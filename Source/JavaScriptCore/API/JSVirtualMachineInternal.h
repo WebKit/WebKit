@@ -26,9 +26,9 @@
 #ifndef JSVirtualMachineInternal_h
 #define JSVirtualMachineInternal_h
 
-#import <JavaScriptCore/JavaScriptCore.h>
-
 #if JSC_OBJC_API_ENABLED
+
+#import <JavaScriptCore/JavaScriptCore.h>
 
 namespace JSC {
 class VM;
@@ -51,7 +51,8 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *);
 #endif // defined(__OBJC__)
 
 void scanExternalObjectGraph(JSC::VM&, JSC::SlotVisitor&, void* root);
+void scanExternalRememberedSet(JSC::VM&, JSC::SlotVisitor&);
 
-#endif
+#endif // JSC_OBJC_API_ENABLED
 
 #endif // JSVirtualMachineInternal_h

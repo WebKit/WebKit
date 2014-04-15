@@ -30,6 +30,7 @@
 #import "JSExportTests.h"
 
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
+extern "C" void JSSynchronousEdenCollectForDebugging(JSContextRef);
 
 extern "C" bool _Block_has_signature(id);
 extern "C" const char * _Block_signature(id);
@@ -1324,6 +1325,38 @@ void testObjectiveCAPI()
         JSContext *context = [[JSContext alloc] init];
         [[JSValue valueWithInt32:42 inContext:context] toDictionary];
         [[JSValue valueWithInt32:42 inContext:context] toArray];
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+
+        // Create the root, make it reachable from JS, and force an EdenCollection
+        // so that we scan the external object graph.
+        TestObject *root = [TestObject testObject];
+        @autoreleasepool {
+            context[@"root"] = root;
+        }
+        JSSynchronousEdenCollectForDebugging([context JSGlobalContextRef]);
+
+        // Create a new Obj-C object only reachable via the external object graph
+        // through the object we already scanned during the EdenCollection.
+        TestObject *child = [TestObject testObject];
+        [context.virtualMachine addManagedReference:child withOwner:root];
+
+        // Create a new managed JSValue that will only be kept alive if we properly rescan
+        // the external object graph.
+        JSManagedValue *managedJSObject = nil;
+        @autoreleasepool {
+            JSValue *jsObject = [JSValue valueWithObject:@"hello" inContext:context];
+            managedJSObject = [JSManagedValue managedValueWithValue:jsObject];
+            [context.virtualMachine addManagedReference:managedJSObject withOwner:child];
+        }
+
+        // Force another EdenCollection. It should rescan the new part of the external object graph.
+        JSSynchronousEdenCollectForDebugging([context JSGlobalContextRef]);
+        
+        // Check that the managed JSValue is still alive.
+        checkResult(@"EdenCollection doesn't reclaim new managed values", [managedJSObject value] != nil);
     }
 
     currentThisInsideBlockGetterTest();

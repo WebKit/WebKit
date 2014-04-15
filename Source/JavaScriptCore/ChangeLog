@@ -1,3 +1,38 @@
+2014-04-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API external object graphs don't handle generational collection properly
+        https://bugs.webkit.org/show_bug.cgi?id=131634
+
+        Reviewed by Geoffrey Garen.
+
+        If the set of Objective-C objects transitively reachable through an object changes, we 
+        need to update the set of opaque roots accordingly. If we don't, the next EdenCollection 
+        won't rescan the external object graph, which would lead us to consider a newly allocated 
+        JSManagedValue to be dead.
+
+        * API/JSBase.cpp:
+        (JSSynchronousEdenCollectForDebugging):
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine initWithContextGroupRef:]):
+        (-[JSVirtualMachine dealloc]):
+        (-[JSVirtualMachine isOldExternalObject:]):
+        (-[JSVirtualMachine addExternalRememberedObject:]):
+        (-[JSVirtualMachine addManagedReference:withOwner:]):
+        (-[JSVirtualMachine removeManagedReference:withOwner:]):
+        (-[JSVirtualMachine externalRememberedSet]):
+        (scanExternalObjectGraph):
+        (scanExternalRememberedSet):
+        * API/JSVirtualMachineInternal.h:
+        * API/tests/testapi.mm:
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * heap/Heap.h:
+        (JSC::Heap::slotVisitor):
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::containsOpaqueRoot):
+        (JSC::SlotVisitor::containsOpaqueRootTriState):
+
 2014-04-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG IR should keep the data flow of doubles and int52's separate from the data flow of JSValue's

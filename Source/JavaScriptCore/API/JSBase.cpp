@@ -142,6 +142,7 @@ void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
 }
 
 extern "C" JS_EXPORT void JSSynchronousGarbageCollectForDebugging(JSContextRef);
+extern "C" JS_EXPORT void JSSynchronousEdenCollectForDebugging(JSContextRef);
 
 void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
 {
@@ -151,6 +152,16 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
     exec->vm().heap.collectAllGarbage();
+}
+
+void JSSynchronousEdenCollectForDebugging(JSContextRef ctx)
+{
+    if (!ctx)
+        return;
+
+    ExecState* exec = toJS(ctx);
+    JSLockHolder locker(exec);
+    exec->vm().heap.collect(EdenCollection);
 }
 
 void JSDisableGCTimer(void)

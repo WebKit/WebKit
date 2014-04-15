@@ -78,8 +78,8 @@ public:
     void unconditionallyAppend(JSCell*);
     
     void addOpaqueRoot(void*);
-    bool containsOpaqueRoot(void*);
-    TriState containsOpaqueRootTriState(void*);
+    bool containsOpaqueRoot(void*) const;
+    TriState containsOpaqueRootTriState(void*) const;
     int opaqueRootCount();
 
     GCThreadSharedData& sharedData() const { return m_shared; }

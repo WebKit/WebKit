@@ -41,6 +41,7 @@
 #include "JSLock.h"
 #include "JSONObject.h"
 #include "JSCInlines.h"
+#include "JSVirtualMachineInternal.h"
 #include "RecursiveAllocationScope.h"
 #include "Tracing.h"
 #include "UnlinkedCodeBlock.h"
@@ -512,6 +513,7 @@ void Heap::markRoots(double gcStartTime)
     {
         ParallelModeEnabler enabler(m_slotVisitor);
 
+        visitExternalRememberedSet();
         visitSmallStrings();
         visitConservativeRoots(conservativeRoots);
         visitCompilerWorklists();
@@ -589,6 +591,13 @@ void Heap::clearLivenessData()
     GCPHASE(ClearLivenessData);
     m_objectSpace.clearNewlyAllocated();
     m_objectSpace.clearMarks();
+}
+
+void Heap::visitExternalRememberedSet()
+{
+#if JSC_OBJC_API_ENABLED
+    scanExternalRememberedSet(*m_vm, m_slotVisitor);
+#endif
 }
 
 void Heap::visitSmallStrings()

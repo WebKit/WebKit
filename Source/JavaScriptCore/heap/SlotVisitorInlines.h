@@ -173,7 +173,7 @@ inline void SlotVisitor::addOpaqueRoot(void* root)
 #endif
 }
 
-inline bool SlotVisitor::containsOpaqueRoot(void* root)
+inline bool SlotVisitor::containsOpaqueRoot(void* root) const
 {
     ASSERT(!m_isInParallelMode);
 #if ENABLE(PARALLEL_GC)
@@ -184,7 +184,7 @@ inline bool SlotVisitor::containsOpaqueRoot(void* root)
 #endif
 }
 
-inline TriState SlotVisitor::containsOpaqueRootTriState(void* root)
+inline TriState SlotVisitor::containsOpaqueRootTriState(void* root) const
 {
     if (m_opaqueRoots.contains(root))
         return TrueTriState;
