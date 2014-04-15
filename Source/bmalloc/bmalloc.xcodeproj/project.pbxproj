@@ -13,6 +13,7 @@
 		1400274C18F89C3D00115C97 /* SegregatedFreeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 146BEE1E18C841C50002D5A2 /* SegregatedFreeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
 		1448C30118F3754C00502839 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1448C2FE18F3754300502839 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C919C818FCC59F0028DB43 /* BPlatform.h */; };
 		14CC394C18EA8858004AFE34 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F271BE18EA3963008C152F /* libbmalloc.a */; };
 		14DD788C18F48CAE00950702 /* LargeChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA8818CD17CE002201E4 /* LargeChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD788D18F48CC600950702 /* BeginTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F64518B54A700076FA3F /* BeginTag.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -120,6 +121,7 @@
 		14B650C718F39F4800751968 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		14B650C818F39F4800751968 /* iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
 		14B650C918F3A04200751968 /* mbmalloc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mbmalloc.xcconfig; sourceTree = "<group>"; };
+		14C919C818FCC59F0028DB43 /* BPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BPlatform.h; path = bmalloc/BPlatform.h; sourceTree = "<group>"; };
 		14CC394418EA8743004AFE34 /* libmbmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		14D9DB4517F2447100EAAB79 /* FixedVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = FixedVector.h; path = bmalloc/FixedVector.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		14DA32071885F9E6007269E0 /* Line.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = Line.h; path = bmalloc/Line.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -259,6 +261,7 @@
 				1421A87718EE462A00B4DD68 /* Algorithm.h */,
 				1417F65218BA88A00076FA3F /* AsyncTask.h */,
 				1413E468189EEDE400546D68 /* BAssert.h */,
+				14C919C818FCC59F0028DB43 /* BPlatform.h */,
 				14D9DB4517F2447100EAAB79 /* FixedVector.h */,
 				1413E460189DCE1E00546D68 /* Inline.h */,
 				144DCED817A728570093B2F2 /* Mutex.cpp */,
@@ -289,6 +292,7 @@
 			files = (
 				14DD78B518F48D6B00950702 /* Line.h in Headers */,
 				14DD78CF18F48D7500950702 /* Vector.h in Headers */,
+				14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */,
 				14DD788C18F48CAE00950702 /* LargeChunk.h in Headers */,
 				14DD789218F48CFC00950702 /* EndTag.h in Headers */,
 				14DD78CC18F48D7500950702 /* PerThread.h in Headers */,

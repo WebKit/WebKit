@@ -1,3 +1,46 @@
+2014-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Use 4kB pages on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=131658
+
+        Reviewed by Sam Weinig.
+
+        This reduces memory use a lot on Membuster:
+
+                                                                  base                      patch                                Δ
+                Execution Time:
+                    reddit_memory_warning                         18ms                       17ms                   ^ 1.06x faster
+                    flickr_memory_warning                         34ms                       36ms                   ! 1.06x slower
+                    theverge_memory_warning                       39ms                       41ms                   ! 1.05x slower
+
+                    <geometric mean>                              29ms                       29ms                   ! 1.02x slower
+                    <arithmetic mean>                             30ms                       31ms                   ! 1.03x slower
+                    <harmonic mean>                               27ms                       27ms                    ^ 1.0x faster
+
+                Peak Memory:
+                    reddit_memory_warning                     16,412kB                   16,436kB                    ! 1.0x bigger
+                    flickr_memory_warning                     30,120kB                   30,184kB                    ! 1.0x bigger
+                    theverge_memory_warning                   33,408kB                   33,420kB                    ! 1.0x bigger
+
+                    <geometric mean>                          25,466kB                   25,499kB                    ! 1.0x bigger
+                    <arithmetic mean>                         26,647kB                   26,680kB                    ! 1.0x bigger
+                    <harmonic mean>                           24,181kB                   24,214kB                    ! 1.0x bigger
+
+                Memory at End:
+                    reddit_memory_warning                      2,404kB                    1,920kB                  ^ 1.25x smaller
+                    flickr_memory_warning                      3,764kB                    3,072kB                  ^ 1.23x smaller
+                    theverge_memory_warning                    3,648kB                    3,132kB                  ^ 1.16x smaller
+
+                    <geometric mean>                           3,208kB                    2,644kB                  ^ 1.21x smaller
+                    <arithmetic mean>                          3,272kB                    2,708kB                  ^ 1.21x smaller
+                    <harmonic mean>                            3,139kB                    2,574kB                  ^ 1.22x smaller
+
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/BPlatform.h: Added.
+        * bmalloc/VMAllocate.h: Only use 16kB pages on iOS because the page size
+        is 4kB on Mac.
+
 2014-04-14  Alexey Proskuryakov  <ap@apple.com>
 
         Fixed svn:ignore on bmalloc.xcodeproj, it had erroneous leading spaces.
