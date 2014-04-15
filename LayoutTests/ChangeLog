@@ -1,5 +1,12 @@
 2014-04-15  Alexey Proskuryakov  <ap@apple.com>
 
+        http/tests/websocket/tests/hybi/workers/close.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=131716
+
+        * platform/mac/TestExpectations: Marking as such.
+
+2014-04-15  Alexey Proskuryakov  <ap@apple.com>
+
         transitions/cancel-transition.html is very flaky on Mac
         https://bugs.webkit.org/show_bug.cgi?id=131715
 
