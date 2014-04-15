@@ -1,3 +1,19 @@
+2014-04-14  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r158617): Find on Page can get stuck in a loop when the search string occurs in an <input> in a <fieldset>
+        https://bugs.webkit.org/show_bug.cgi?id=126322
+
+        Reviewed by Ryosuke Niwa.
+
+        One additional tweak to the fix for the bug above.
+        Fixes crash in editing/editability/ignored-content.html test.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::canContainRangeEndPoint): Call through to
+        HTMLElement::canContainRangeEndPoint, bypassing HTMLPlugInElement override
+        that always returns false. Without this change, this function was always
+        returning false.
+
 2014-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         Crash in TileController::tileRevalidationTimerFired

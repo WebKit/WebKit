@@ -513,7 +513,11 @@ HTMLFormElement* HTMLObjectElement::virtualForm() const
 
 bool HTMLObjectElement::canContainRangeEndPoint() const
 {
-    return m_useFallbackContent && HTMLPlugInImageElement::canContainRangeEndPoint();
+    // Call through to HTMLElement because we need to skip HTMLPlugInElement
+    // when calling through to the derived class since returns false unconditionally.
+    // An object element with fallback content should basically be treated like
+    // a generic HTML element.
+    return m_useFallbackContent && HTMLElement::canContainRangeEndPoint();
 }
 
 }
