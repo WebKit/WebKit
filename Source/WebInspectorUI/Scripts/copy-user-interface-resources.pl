@@ -133,10 +133,10 @@ if (defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESO
 
     # Export the license into CodeMirror.js and CodeMirror.css.
     my $targetCodeMirrorJS = File::Spec->catfile($targetResourcePath, 'CodeMirror.js');
-    seedFile($targetCodeMirrorJS, $LICENSE);
+    seedFile($targetCodeMirrorJS, $CODE_MIRROR_LICENSE);
 
     my $targetCodeMirrorCSS = File::Spec->catfile($targetResourcePath, 'CodeMirror.css');
-    seedFile($targetCodeMirrorCSS, $LICENSE);
+    seedFile($targetCodeMirrorCSS, $CODE_MIRROR_LICENSE);
 
     # Minify the Main.js and Main.css files, with Main.js appending to the license that was exported above.
     my $jsMinScript = File::Spec->catfile($scriptsRoot, 'jsmin.py');

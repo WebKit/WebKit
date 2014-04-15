@@ -1,3 +1,13 @@
+2014-04-15  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: CodeMirror LICENSE is not properly added to combined files
+        https://bugs.webkit.org/show_bug.cgi?id=131674
+
+        Reviewed by Darin Adler.
+
+        * Scripts/copy-user-interface-resources.pl: Use $CODE_MIRROR_LICENSE instead
+        for CodeMirror.css and CodeMirror.js.
+
 2014-04-14  Jono Wells  <jonowells@apple.com>
 
         Update to CodeMirror 4.0.
