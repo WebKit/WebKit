@@ -51,6 +51,11 @@ Allocator::Allocator(Deallocator& deallocator)
 
 Allocator::~Allocator()
 {
+    scavenge();
+}
+    
+void Allocator::scavenge()
+{
     for (auto& allocator : m_smallAllocators)
         log(allocator);
     processSmallAllocatorLog();

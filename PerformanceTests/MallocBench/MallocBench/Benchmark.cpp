@@ -184,14 +184,8 @@ void Benchmark::run()
     
     if (!m_measureHeap)
         return;
-
-    // Wait a bit for any async freeing to finish.
-    size_t last;
-    do {
-        last = currentMemoryBytes().resident;
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-    } while (currentMemoryBytes().resident < last);
-
+    
+    mbscavenge();
     m_memory = currentMemoryBytes();
 }
 

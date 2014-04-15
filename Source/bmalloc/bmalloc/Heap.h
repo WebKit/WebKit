@@ -61,6 +61,8 @@ public:
     void* allocateXLarge(std::lock_guard<Mutex>&, size_t);
     void deallocateXLarge(std::lock_guard<Mutex>&, void*);
 
+    void scavenge(std::unique_lock<Mutex>&, std::chrono::milliseconds sleepDuration);
+    
 private:
     ~Heap() = delete;
 
@@ -76,9 +78,9 @@ private:
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& hasPhysicalPages);
     
     void concurrentScavenge();
-    void scavengeSmallPages(std::unique_lock<Mutex>&);
-    void scavengeMediumPages(std::unique_lock<Mutex>&);
-    void scavengeLargeRanges(std::unique_lock<Mutex>&);
+    void scavengeSmallPages(std::unique_lock<Mutex>&, std::chrono::milliseconds);
+    void scavengeMediumPages(std::unique_lock<Mutex>&, std::chrono::milliseconds);
+    void scavengeLargeRanges(std::unique_lock<Mutex>&, std::chrono::milliseconds);
 
     Vector<SmallLine*> m_smallLines;
     Vector<MediumLine*> m_mediumLines;

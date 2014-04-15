@@ -38,6 +38,9 @@ namespace bmalloc {
 
 static inline void sleep(std::unique_lock<Mutex>& lock, std::chrono::milliseconds duration)
 {
+    if (duration == std::chrono::milliseconds(0))
+        return;
+    
     lock.unlock();
     std::this_thread::sleep_for(duration);
     lock.lock();
@@ -52,20 +55,25 @@ Heap::Heap(std::lock_guard<Mutex>&)
 void Heap::concurrentScavenge()
 {
     std::unique_lock<Mutex> lock(PerProcess<Heap>::mutex());
-    scavengeSmallPages(lock);
-    scavengeMediumPages(lock);
-    scavengeLargeRanges(lock);
+    scavenge(lock, scavengeSleepDuration);
+}
+    
+void Heap::scavenge(std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration)
+{
+    scavengeSmallPages(lock, sleepDuration);
+    scavengeMediumPages(lock, sleepDuration);
+    scavengeLargeRanges(lock, sleepDuration);
 
-    sleep(lock, scavengeSleepDuration);
+    sleep(lock, sleepDuration);
 }
 
-void Heap::scavengeSmallPages(std::unique_lock<Mutex>& lock)
+void Heap::scavengeSmallPages(std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration)
 {
     while (1) {
         if (m_isAllocatingPages) {
             m_isAllocatingPages = false;
 
-            sleep(lock, scavengeSleepDuration);
+            sleep(lock, sleepDuration);
             continue;
         }
 
@@ -75,13 +83,13 @@ void Heap::scavengeSmallPages(std::unique_lock<Mutex>& lock)
     }
 }
 
-void Heap::scavengeMediumPages(std::unique_lock<Mutex>& lock)
+void Heap::scavengeMediumPages(std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration)
 {
     while (1) {
         if (m_isAllocatingPages) {
             m_isAllocatingPages = false;
 
-            sleep(lock, scavengeSleepDuration);
+            sleep(lock, sleepDuration);
             continue;
         }
 
@@ -91,13 +99,13 @@ void Heap::scavengeMediumPages(std::unique_lock<Mutex>& lock)
     }
 }
 
-void Heap::scavengeLargeRanges(std::unique_lock<Mutex>& lock)
+void Heap::scavengeLargeRanges(std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration)
 {
     while (1) {
         if (m_isAllocatingPages) {
             m_isAllocatingPages = false;
 
-            sleep(lock, scavengeSleepDuration);
+            sleep(lock, sleepDuration);
             continue;
         }
 

@@ -37,16 +37,6 @@
 		14E11932177ECC8B003A8D15 /* CPUCount.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E11930177ECC8B003A8D15 /* CPUCount.cpp */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		14CC393D18EA813F004AFE34 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 14452CA1177D24460097E057 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 14CC393718EA811F004AFE34;
-			remoteInfo = mbmalloc;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		14452CA7177D24460097E057 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -254,7 +244,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				14CC393E18EA813F004AFE34 /* PBXTargetDependency */,
 			);
 			name = MallocBench;
 			productName = MallocBench;
@@ -340,14 +329,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		14CC393E18EA813F004AFE34 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 14CC393718EA811F004AFE34 /* mbmalloc */;
-			targetProxy = 14CC393D18EA813F004AFE34 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		14452CB5177D24460097E057 /* Debug */ = {

@@ -1,5 +1,47 @@
 2014-04-14  Geoffrey Garen  <ggaren@apple.com>
 
+        MallocBench should scavenge explicitly instead of waiting
+        https://bugs.webkit.org/show_bug.cgi?id=131661
+
+        Reviewed by Andreas Kling.
+
+        Added explicit scavenge support to bmalloc. This isn't a memory win,
+        since bmalloc's per-thread cache is so small. But it makes testing
+        simpler.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::~Allocator):
+        (bmalloc::Allocator::scavenge):
+        * bmalloc/Allocator.h:
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::operator new):
+        (bmalloc::Cache::operator delete):
+        (bmalloc::Cache::Cache):
+        (bmalloc::Cache::scavenge):
+        * bmalloc/Cache.h:
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::~Deallocator):
+        (bmalloc::Deallocator::scavenge):
+        * bmalloc/Deallocator.h: Factored existing scavenging code into helper
+        functions, for reuse.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::sleep):
+        (bmalloc::Heap::concurrentScavenge):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeSmallPages):
+        (bmalloc::Heap::scavengeMediumPages):
+        (bmalloc::Heap::scavengeLargeRanges):
+        * bmalloc/Heap.h: Made scavenge sleep duration a parameter. Forced
+        scavenging -- in response to a benchmark or a low memory warning --
+        wants to complete as soon as possible, so its sleep duration is 0.
+
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::scavenge):
+        * bmalloc/mbmalloc.cpp: Exported the scavenge API for MallocBench's use.
+
+2014-04-14  Geoffrey Garen  <ggaren@apple.com>
+
         Use 4kB pages on Mac
         https://bugs.webkit.org/show_bug.cgi?id=131658
 

@@ -37,7 +37,8 @@ extern "C" {
 void* mbmalloc(size_t);
 void mbfree(void*, size_t);
 void* mbrealloc(void*, size_t, size_t);
-
+void mbscavenge();
+    
 }
 
 // Catch accidental benchmark allocation through malloc and free. All benchmark

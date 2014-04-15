@@ -30,22 +30,28 @@
 
 namespace bmalloc {
 
-inline void* Cache::operator new(size_t size)
+void* Cache::operator new(size_t size)
 {
     return vmAllocate(vmSize(size));
 }
 
-inline void Cache::operator delete(void* p, size_t size)
+void Cache::operator delete(void* p, size_t size)
 {
     vmDeallocate(p, vmSize(size));
 }
 
-inline Cache::Cache()
+Cache::Cache()
     : m_deallocator()
     , m_allocator(m_deallocator)
 {
     // Ensure that the heap exists, so Allocator and Deallocator can assume it does.
     PerProcess<Heap>::get();
+}
+    
+void Cache::scavenge()
+{
+    m_allocator.scavenge();
+    m_deallocator.scavenge();
 }
 
 NO_INLINE void* Cache::allocateSlowCase(size_t size)

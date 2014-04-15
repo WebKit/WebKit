@@ -1,5 +1,25 @@
 2014-04-14  Geoffrey Garen  <ggaren@apple.com>
 
+        MallocBench should scavenge explicitly instead of waiting
+        https://bugs.webkit.org/show_bug.cgi?id=131661
+
+        Reviewed by Andreas Kling.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj: Don't build mbmalloc
+        by default because it will overwrite any other mbmalloc you're working
+        with in the WebKitBuild directory.
+
+        * MallocBench/MallocBench/Benchmark.cpp:
+        (Benchmark::run): Scavenge explicitly instead of waiting. This is faster,
+        and it's the only way to get FastMalloc to scavenge. (That's a bug in
+        FastMalloc, but we don't want it to interfere with broader testing.)
+
+        * MallocBench/MallocBench/mbmalloc.cpp:
+        * MallocBench/MallocBench/mbmalloc.h: Added a scavenge implementation
+        for system malloc.
+
+2014-04-14  Geoffrey Garen  <ggaren@apple.com>
+
         A few MallocBench record/replay fixes
         https://bugs.webkit.org/show_bug.cgi?id=131627
 

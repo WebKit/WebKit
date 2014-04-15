@@ -46,6 +46,8 @@ public:
 
     Allocator& allocator() { return m_allocator; }
     Deallocator& deallocator() { return m_deallocator; }
+    
+    void scavenge();
 
 private:
     static bool allocateFastCase(size_t, void*&);

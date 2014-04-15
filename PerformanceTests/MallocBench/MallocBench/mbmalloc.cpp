@@ -26,6 +26,7 @@
 #include <limits>
 #include <stdio.h>
 #include <stdlib.h>
+#import <malloc/malloc.h>
 
 extern "C" {
 
@@ -42,6 +43,11 @@ void mbfree(void* p, size_t)
 void* mbrealloc(void* p, size_t, size_t newSize)
 {
     return realloc(p, newSize);
+}
+
+void mbscavenge()
+{
+    malloc_zone_pressure_relief(nullptr, 0);
 }
 
 } // extern "C"

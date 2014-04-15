@@ -49,7 +49,9 @@ public:
 
     void deallocateMediumLine(std::lock_guard<Mutex>&, MediumLine*);
     MediumLine* allocateMediumLine();
-
+    
+    void scavenge();
+    
 private:
     void deallocateLarge(void*);
     void deallocateXLarge(void*);

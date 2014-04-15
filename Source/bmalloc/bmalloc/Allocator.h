@@ -46,6 +46,8 @@ public:
     void* allocate(size_t);
     bool allocateFastCase(size_t, void*&);
     void* allocateSlowCase(size_t);
+    
+    void scavenge();
 
 private:
     SmallAllocator& smallAllocatorFor(size_t);

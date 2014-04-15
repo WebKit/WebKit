@@ -24,7 +24,9 @@
  */
 
 #include "Cache.h"
+#include "Heap.h"
 #include "LargeChunk.h"
+#include "PerProcess.h"
 #include "XLargeChunk.h"
 #include "Sizes.h"
 
@@ -77,6 +79,14 @@ inline void* realloc(void* object, size_t newSize)
     memcpy(result, object, copySize);
     Cache::deallocate(object);
     return result;
+}
+    
+inline void scavenge()
+{
+    PerThread<Cache>::get()->scavenge();
+    
+    std::unique_lock<Mutex> lock(PerProcess<Heap>::mutex());
+    PerProcess<Heap>::get()->scavenge(lock, std::chrono::milliseconds(0));
 }
 
 } // namespace api

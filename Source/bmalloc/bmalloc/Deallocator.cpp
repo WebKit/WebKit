@@ -47,6 +47,11 @@ Deallocator::Deallocator()
 
 Deallocator::~Deallocator()
 {
+    scavenge();
+}
+    
+void Deallocator::scavenge()
+{
     processObjectLog();
     
     std::lock_guard<Mutex> lock(PerProcess<Heap>::mutex());
