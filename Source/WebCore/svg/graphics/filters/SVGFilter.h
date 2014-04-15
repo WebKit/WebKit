@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,9 +41,6 @@ public:
     FloatRect filterRegionInUserSpace() const { return m_filterRegion; }
     virtual FloatRect filterRegion() const override { return m_absoluteFilterRegion; }
 
-    virtual FloatPoint mapAbsolutePointToLocalPoint(const FloatPoint& point) const override { return m_absoluteTransform.inverse().mapPoint(point); }
-    const AffineTransform& absoluteTransform() const { return m_absoluteTransform; }
-
     virtual float applyHorizontalScale(float value) const override;
     virtual float applyVerticalScale(float value) const override;
 
@@ -54,7 +52,6 @@ public:
 private:
     SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
 
-    AffineTransform m_absoluteTransform;
     FloatRect m_absoluteSourceDrawingRegion;
     FloatRect m_targetBoundingBox;
     FloatRect m_absoluteFilterRegion;

@@ -1,3 +1,46 @@
+2014-04-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Assertion failure under FEImage::determineAbsolutePaintRect()
+
+        <https://bugs.webkit.org/show_bug.cgi?id=131660>
+        <rdar://problem/15669294>
+
+        This patch merges Chromium r149536 (see
+        <https://chromiumcodereview.appspot.com/14701012>), which moves
+        m_absoluteTransform out of SVGFilter and into the base Filter class, so
+        that it isn't necessary to cast a Filter to SVGFilter to get the
+        absolute transform.
+
+        Reviewed by Geoffrey Garen.
+
+        Test: svg/filters/feImage-filter-assertion.html
+
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::Filter):
+        Changed to take the absolute transform.
+        (WebCore::Filter::absoluteTransform):
+        Moved from SVGFilter.
+        (WebCore::Filter::mapAbsolutePointToLocalPoint):
+        Ditto.
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::FilterEffectRenderer):
+        Pass a default AffineTransform() to the Filter base class.
+
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::determineAbsolutePaintRect):
+        Use the Filter without casting it to SVGFilter.
+        (WebCore::FEImage::platformApplySoftware):
+        Ditto.
+
+        * svg/graphics/filters/SVGFilter.cpp:
+        (WebCore::SVGFilter::SVGFilter):
+        Pass the transform to the base class, and remove initialization of a
+        removed member var.
+
+        * svg/graphics/filters/SVGFilter.h:
+        Member var moved to Filter.h.
+
 2014-04-14  Darin Adler  <darin@apple.com>
 
         REGRESSION (r158617): Find on Page can get stuck in a loop when the search string occurs in an <input> in a <fieldset>

@@ -1,3 +1,15 @@
+2014-04-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Assertion failure under FEImage::determineAbsolutePaintRect()
+
+        <https://bugs.webkit.org/show_bug.cgi?id=131660>
+        <rdar://problem/15669294>
+
+        Reviewed by Geoffrey Garen.
+
+        * svg/filters/feImage-filter-assertion-expected.txt: Added.
+        * svg/filters/feImage-filter-assertion.html: Added.
+
 2014-04-14  Oliver Hunt  <oliver@apple.com>
 
         Function.bind itself is too slow
