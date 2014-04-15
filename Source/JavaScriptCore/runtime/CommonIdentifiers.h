@@ -223,13 +223,6 @@
     macro(IsConstructor) \
     macro(boundFunctionName) \
     macro(boundFunctionParameters) \
-    macro(boundThisValue) \
-    macro(boundParameter) \
-    macro(boundParameter1) \
-    macro(boundParameter2) \
-    macro(boundParameter3) \
-    macro(boundParameters) \
-    macro(boundOversizedCallThunk) \
     macro(boundFunction) \
     macro(boundFunctionLength) \
     macro(prototypeForHasInstance) \
