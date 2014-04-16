@@ -1,3 +1,21 @@
+2014-04-16  Robert Sipka  <sipka@inf.u-szeged.hu>
+
+        [curl] Add WEB_TIMING support
+        https://bugs.webkit.org/show_bug.cgi?id=127555
+
+        Reviewed by Brent Fulgham.
+
+        Access timing information related to navigation.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::milisecondsSinceRequest):
+        (WebCore::calculateWebTimingInformations):
+        (WebCore::sockoptfunction):
+        (WebCore::headerCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::dispatchSynchronousJob):
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2014-04-16  Zoltan Horvath  <zoltan@webkit.org>
 
         Cleanup header includes in ShapeOutsideInfo.h

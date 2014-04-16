@@ -61,6 +61,9 @@
 
 #include <errno.h>
 #include <stdio.h>
+#if ENABLE(WEB_TIMING)
+#include <wtf/CurrentTime.h>
+#endif
 #if USE(CF)
 #include <wtf/RetainPtr.h>
 #endif
@@ -146,6 +149,53 @@ static Mutex* sharedResourceMutex(curl_lock_data data) {
             return NULL;
     }
 }
+
+#if ENABLE(WEB_TIMING)
+static int milisecondsSinceRequest(double requestTime)
+{
+    return static_cast<int>((monotonicallyIncreasingTime() - requestTime) * 1000.0);
+}
+
+static void calculateWebTimingInformations(ResourceHandleInternal* d)
+{
+    double startTransfertTime;
+    double preTransferTime;
+    double dnslookupTime;
+    double connectTime;
+    double appConnectTime;
+
+    curl_easy_getinfo(d->m_handle, CURLINFO_NAMELOOKUP_TIME, &dnslookupTime);
+    curl_easy_getinfo(d->m_handle, CURLINFO_CONNECT_TIME, &connectTime);
+    curl_easy_getinfo(d->m_handle, CURLINFO_APPCONNECT_TIME, &appConnectTime);
+    curl_easy_getinfo(d->m_handle, CURLINFO_STARTTRANSFER_TIME, &startTransfertTime);
+    curl_easy_getinfo(d->m_handle, CURLINFO_PRETRANSFER_TIME, &preTransferTime);
+
+    d->m_response.resourceLoadTiming()->dnsStart = 0;
+    d->m_response.resourceLoadTiming()->dnsEnd = static_cast<int>(dnslookupTime * 1000);
+
+    d->m_response.resourceLoadTiming()->connectStart = static_cast<int>(dnslookupTime * 1000);
+    d->m_response.resourceLoadTiming()->connectEnd = static_cast<int>(connectTime * 1000);
+
+    d->m_response.resourceLoadTiming()->sendStart = static_cast<int>(connectTime *1000);
+    d->m_response.resourceLoadTiming()->sendEnd =static_cast<int>(preTransferTime * 1000);
+
+    if (appConnectTime) {
+        d->m_response.resourceLoadTiming()->sslStart = static_cast<int>(connectTime * 1000);
+        d->m_response.resourceLoadTiming()->sslEnd = static_cast<int>(appConnectTime *1000);
+    }
+}
+
+static int sockoptfunction(void* data, curl_socket_t /*curlfd*/, curlsocktype /*purpose*/)
+{
+    ResourceHandle* job = static_cast<ResourceHandle*>(data);
+    ResourceHandleInternal* d = job->getInternal();
+
+    if (d->m_response.resourceLoadTiming())
+        d->m_response.resourceLoadTiming()->requestTime = monotonicallyIncreasingTime();
+
+    return 0;
+}
+#endif
 
 // libcurl does not implement its own thread synchronization primitives.
 // these two functions provide mutexes for cookies, and for the global DNS
@@ -449,6 +499,11 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
                 d->m_multipartHandle = MultipartHandle::create(job, boundary);
         }
 
+#if ENABLE(WEB_TIMING)
+        if (d->m_response.resourceLoadTiming() && d->m_response.resourceLoadTiming()->requestTime)
+            d->m_response.resourceLoadTiming()->receiveHeadersEnd = milisecondsSinceRequest(d->m_response.resourceLoadTiming()->requestTime);
+#endif
+
         // HTTP redirection
         if (isHttpRedirect(httpCode)) {
             String location = d->m_response.httpHeaderField("location");
@@ -476,10 +531,9 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
             }
         }
 
-        if (client) {
-            client->didReceiveResponse(job, d->m_response);
+        if (client)
             CurlCacheManager::getInstance().didReceiveResponse(job, d->m_response);
-        }
+
         d->m_response.setResponseFired(true);
 
     } else {
@@ -612,7 +666,12 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
         if (CURLMSG_DONE != msg->msg)
             continue;
 
+
         if (CURLE_OK == msg->data.result) {
+
+#if ENABLE(WEB_TIMING)
+            calculateWebTimingInformations(d);
+#endif
             if (!d->m_response.responseFired()) {
                 handleLocalReceiveResponse(d->m_handle, job, d);
                 if (d->m_cancelled) {
@@ -625,6 +684,7 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
                 d->m_multipartHandle->contentEnded();
 
             if (d->client()) {
+                d->client()->didReceiveResponse(job, d->m_response);
                 d->client()->didFinishLoading(job, 0);
                 CurlCacheManager::getInstance().didFinishLoading(job->firstRequest().url().string());
             }
@@ -854,7 +914,15 @@ void ResourceHandleManager::dispatchSynchronousJob(ResourceHandle* job)
         ResourceError error(String(handle->m_url), ret, String(handle->m_url), String(curl_easy_strerror(ret)));
         error.setSSLErrors(handle->m_sslErrors);
         handle->client()->didFail(job, error);
+    } else {
+        if (handle->client())
+            handle->client()->didReceiveResponse(job, handle->m_response);
     }
+
+
+#if ENABLE(WEB_TIMING)
+    calculateWebTimingInformations(handle);
+#endif
 
     curl_easy_cleanup(handle->m_handle);
 }
@@ -1051,6 +1119,11 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
         curl_easy_setopt(d->m_handle, CURLOPT_PROXY, m_proxy.utf8().data());
         curl_easy_setopt(d->m_handle, CURLOPT_PROXYTYPE, m_proxyType);
     }
+#if ENABLE(WEB_TIMING)
+    curl_easy_setopt(d->m_handle, CURLOPT_SOCKOPTFUNCTION, sockoptfunction);
+    curl_easy_setopt(d->m_handle, CURLOPT_SOCKOPTDATA, job);
+    d->m_response.setResourceLoadTiming(ResourceLoadTiming::create());
+#endif
 }
 
 void ResourceHandleManager::initCookieSession()
