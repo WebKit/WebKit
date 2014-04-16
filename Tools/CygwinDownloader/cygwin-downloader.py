@@ -149,11 +149,9 @@ seconds_to_sleep = 10
 
 print """
 Finished downloading Cygwin. In %d seconds,
-I will run setup.exe. Select the "Install
-from Local Directory" option and browse to
-"%s"
-when asked for the "Local Package Directory".
-""" % (seconds_to_sleep, os.getcwd())
+I will run setup.exe. All the suitable options have
+been already selected for you.
+""" % (seconds_to_sleep)
 
 
 while seconds_to_sleep > 0:
@@ -164,4 +162,4 @@ while seconds_to_sleep > 0:
 print
 
 if not dry_run:
-        os.execl("setup.exe")
+        os.execv("setup.exe", list(("-L", "-l", os.getcwd(), "-P", ",".join(required_packages))))

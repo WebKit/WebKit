@@ -1,3 +1,16 @@
+2014-04-16  Andres Gomez  <agomez@igalia.com>
+
+        [Win] Pass default parameters to cygwin setup wizard
+        https://bugs.webkit.org/show_bug.cgi?id=131361
+
+        Reviewed by Brent Fulgham.
+
+        Added some parameters to the cygwin setup wizard so the user
+        doesn't really have to do any interaction.
+
+        * CygwinDownloader/cygwin-downloader.py:
+        * CygwinDownloader/cygwin-downloader.zip:
+
 2014-04-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Eliminate use of deleteAllValues in Windows Files
