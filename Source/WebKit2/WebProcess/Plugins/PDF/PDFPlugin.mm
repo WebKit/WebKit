@@ -1005,7 +1005,7 @@ void PDFPlugin::createPasswordEntryForm()
 
 void PDFPlugin::attemptToUnlockPDF(const String& password)
 {
-    [m_pdfLayerController.get() attemptToUnlockWithPassword:password];
+    [m_pdfLayerController attemptToUnlockWithPassword:password];
 
     if (![pdfDocument() isLocked]) {
         m_passwordField = nullptr;
@@ -1021,7 +1021,7 @@ void PDFPlugin::updatePageAndDeviceScaleFactors()
     if (!handlesPageScaleFactor())
         newScaleFactor *= webFrame()->page()->pageScaleFactor();
 
-    [m_pdfLayerController.get() setDeviceScaleFactor:newScaleFactor];
+    [m_pdfLayerController setDeviceScaleFactor:newScaleFactor];
 }
 
 void PDFPlugin::contentsScaleFactorChanged(float)

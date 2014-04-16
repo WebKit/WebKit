@@ -1,5 +1,13 @@
 2014-04-16  Tim Horton  <timothy_horton@apple.com>
 
+        Accidentally included some style-checker-testing changes in the last commit.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::attemptToUnlockPDF):
+        (WebKit::PDFPlugin::updatePageAndDeviceScaleFactors):
+
+2014-04-16  Tim Horton  <timothy_horton@apple.com>
+
         Fix some style checker complaints in PDFPlugin
         https://bugs.webkit.org/show_bug.cgi?id=131706
 
