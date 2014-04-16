@@ -1,3 +1,10 @@
+2014-04-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build.
+
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+
 2014-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         DataTransfer should cache its FileList

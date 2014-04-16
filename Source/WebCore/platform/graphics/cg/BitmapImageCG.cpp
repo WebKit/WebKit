@@ -204,7 +204,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
 
     image = frameAtIndex(m_currentFrame);
 #else
-    startAnimation(false);
+    startAnimation(DoNotCatchUp);
 
     CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(ctxt->platformContext()));
     RetainPtr<CGImageRef> imagePossiblyCopied;
