@@ -94,6 +94,7 @@ const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecStat
   toString       arrayProtoFuncToString       DontEnum|Function 0
   toLocaleString arrayProtoFuncToLocaleString DontEnum|Function 0
   concat         arrayProtoFuncConcat         DontEnum|Function 1
+  fill           arrayProtoFuncFill           DontEnum|Function 1
   join           arrayProtoFuncJoin           DontEnum|Function 1
   pop            arrayProtoFuncPop            DontEnum|Function 0
   push           arrayProtoFuncPush           DontEnum|Function 1

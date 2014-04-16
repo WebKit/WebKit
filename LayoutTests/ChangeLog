@@ -1,3 +1,18 @@
+2014-04-16  Oliver Hunt  <oliver@apple.com>
+
+        Simple ES6 feature:Array.prototype.fill
+        https://bugs.webkit.org/show_bug.cgi?id=131703
+
+        Reviewed by David Hyatt.
+
+        Add tests.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/array-fill-expected.txt: Added.
+        * js/array-fill.html: Added.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/array-fill.js: Added.
+
 2014-04-16  David Kilzer  <ddkilzer@apple.com>
 
         Remove test results that match platform/mac results

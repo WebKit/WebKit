@@ -1,3 +1,16 @@
+2014-04-16  Oliver Hunt  <oliver@apple.com>
+
+        Simple ES6 feature:Array.prototype.fill
+        https://bugs.webkit.org/show_bug.cgi?id=131703
+
+        Reviewed by David Hyatt.
+
+        Add support for Array.prototype.fill
+
+        * builtins/Array.prototype.js:
+        (fill):
+        * runtime/ArrayPrototype.cpp:
+
 2014-04-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         [WebKit] Cleanup the build from uninitialized variable in JavaScriptCore

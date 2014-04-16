@@ -53,7 +53,7 @@ var expectedPropertyNamesSet = {
     "Function": "['length', 'name', 'prototype']",
     "Function.prototype": "['apply', 'bind', 'call', 'constructor', 'length', 'name', 'toString']",
     "Array": "['isArray', 'length', 'name', 'prototype']",
-    "Array.prototype": "['concat', 'constructor', 'entries', 'every', 'filter', 'forEach', 'indexOf', 'join', 'keys', 'lastIndexOf', 'length', 'map', 'pop', 'push', 'reduce', 'reduceRight', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'toLocaleString', 'toString', 'unshift']",
+    "Array.prototype": "['concat', 'constructor', 'entries', 'every', 'fill', 'filter', 'forEach', 'indexOf', 'join', 'keys', 'lastIndexOf', 'length', 'map', 'pop', 'push', 'reduce', 'reduceRight', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'toLocaleString', 'toString', 'unshift']",
     "String": "['fromCharCode', 'length', 'name', 'prototype']",
     "String.prototype": "['anchor', 'big', 'blink', 'bold', 'charAt', 'charCodeAt', 'concat', 'constructor', 'fixed', 'fontcolor', 'fontsize', 'indexOf', 'italics', 'lastIndexOf', 'length', 'link', 'localeCompare', 'match', 'replace', 'search', 'slice', 'small', 'split', 'strike', 'sub', 'substr', 'substring', 'sup', 'toLocaleLowerCase', 'toLocaleUpperCase', 'toLowerCase', 'toString', 'toUpperCase', 'trim', 'trimLeft', 'trimRight', 'valueOf']",
     "Boolean": "['length', 'name', 'prototype']",

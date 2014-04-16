@@ -147,3 +147,45 @@ function some(callback /*, thisArg */) {
     }
     return false;
 }
+
+function fill(value /* [, start [, end]] */)
+{
+    "use strict";
+    if (this === null)
+        throw new @TypeError("Array.prototype.fill requires that |this| not be null");
+    
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.fill requires that |this| not be undefined");
+    var O = @Object(this);
+    var len = O.length >>> 0;
+    var relativeStart = 0;
+    if (arguments.length > 1 && arguments[1] !== undefined)
+        relativeStart = arguments[1] | 0;
+    var k = 0;
+    if (relativeStart < 0) {
+        k = len + relativeStart;
+        if (k < 0)
+            k = 0;
+    } else {
+        k = relativeStart;
+        if (k > len)
+            k = len;
+    }
+    var relativeEnd = len;
+    if (arguments.length > 2 && arguments[2] !== undefined)
+        relativeEnd = arguments[2] | 0;
+    var final = 0;
+    if (relativeEnd < 0) {
+        final = len + relativeEnd;
+        if (final < 0)
+            final = 0;
+    } else {
+        final = relativeEnd;
+        if (final > len)
+            final = len;
+    }
+    for (; k < final; k++)
+        O[k] = value;
+    return O;
+}
+

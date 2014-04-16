@@ -45,7 +45,7 @@ PASS getSortedOwnPropertyNames(Object.prototype) is ['__defineGetter__', '__defi
 PASS getSortedOwnPropertyNames(Function) is ['length', 'name', 'prototype']
 PASS getSortedOwnPropertyNames(Function.prototype) is ['apply', 'bind', 'call', 'constructor', 'length', 'name', 'toString']
 PASS getSortedOwnPropertyNames(Array) is ['isArray', 'length', 'name', 'prototype']
-PASS getSortedOwnPropertyNames(Array.prototype) is ['concat', 'constructor', 'entries', 'every', 'filter', 'forEach', 'indexOf', 'join', 'keys', 'lastIndexOf', 'length', 'map', 'pop', 'push', 'reduce', 'reduceRight', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'toLocaleString', 'toString', 'unshift']
+PASS getSortedOwnPropertyNames(Array.prototype) is ['concat', 'constructor', 'entries', 'every', 'fill', 'filter', 'forEach', 'indexOf', 'join', 'keys', 'lastIndexOf', 'length', 'map', 'pop', 'push', 'reduce', 'reduceRight', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'toLocaleString', 'toString', 'unshift']
 PASS getSortedOwnPropertyNames(String) is ['fromCharCode', 'length', 'name', 'prototype']
 PASS getSortedOwnPropertyNames(String.prototype) is ['anchor', 'big', 'blink', 'bold', 'charAt', 'charCodeAt', 'concat', 'constructor', 'fixed', 'fontcolor', 'fontsize', 'indexOf', 'italics', 'lastIndexOf', 'length', 'link', 'localeCompare', 'match', 'replace', 'search', 'slice', 'small', 'split', 'strike', 'sub', 'substr', 'substring', 'sup', 'toLocaleLowerCase', 'toLocaleUpperCase', 'toLowerCase', 'toString', 'toUpperCase', 'trim', 'trimLeft', 'trimRight', 'valueOf']
 PASS getSortedOwnPropertyNames(Boolean) is ['length', 'name', 'prototype']
