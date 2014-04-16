@@ -113,7 +113,7 @@ void LayerTreeHostGtk::initialize()
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
     m_nonCompositedContentLayer->setNeedsDisplay();
 
-    m_layerTreeContext.windowHandle = m_webPage->nativeWindowHandle();
+    m_layerTreeContext.contextID = m_webPage->nativeWindowHandle();
 
     GLContext* context = glContext();
     if (!context)

@@ -69,7 +69,7 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
     m_coordinator = std::make_unique<CompositingCoordinator>(webPage->corePage(), this);
 
     m_coordinator->createRootLayer(webPage->size());
-    m_layerTreeContext.coordinatedLayerID = toCoordinatedGraphicsLayer(m_coordinator->rootLayer())->id();
+    m_layerTreeContext.contextID = toCoordinatedGraphicsLayer(m_coordinator->rootLayer())->id();
 
     CoordinatedSurface::setFactory(createCoordinatedSurface);
 

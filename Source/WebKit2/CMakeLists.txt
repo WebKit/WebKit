@@ -195,6 +195,7 @@ set(WebKit2_SOURCES
     Shared/EditorState.cpp
     Shared/FontInfo.cpp
     Shared/ImmutableDictionary.cpp
+    Shared/LayerTreeContext.cpp
     Shared/MutableDictionary.cpp
     Shared/NavigationActionData.cpp
     Shared/OriginAndDatabases.cpp

@@ -34,7 +34,6 @@ list(APPEND WebKit2_SOURCES
 
     Shared/cairo/ShareableBitmapCairo.cpp
 
-    Shared/efl/LayerTreeContextEfl.cpp
     Shared/efl/NativeWebKeyboardEventEfl.cpp
     Shared/efl/NativeWebTouchEventEfl.cpp
     Shared/efl/NativeWebWheelEventEfl.cpp

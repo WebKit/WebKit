@@ -1,5 +1,34 @@
 2014-04-16  Tim Horton  <timothy_horton@apple.com>
 
+        Deduplicate LayerTreeContext
+        https://bugs.webkit.org/show_bug.cgi?id=131773
+
+        Reviewed by Simon Fraser.
+
+        There are three identical implementations, one for each platform, for no reason.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/LayerTreeContext.cpp: Renamed from Source/WebKit2/Shared/mac/LayerTreeContextMac.mm.
+        (WebKit::LayerTreeContext::LayerTreeContext):
+        (WebKit::LayerTreeContext::~LayerTreeContext):
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        (WebKit::LayerTreeContext::isEmpty):
+        (WebKit::operator==):
+        * Shared/LayerTreeContext.h:
+        (WebKit::operator!=): Deleted.
+        * Shared/efl/LayerTreeContextEfl.cpp: Removed.
+        * Shared/gtk/LayerTreeContextGtk.cpp: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize):
+
+2014-04-16  Tim Horton  <timothy_horton@apple.com>
+
         Don't build LayerTreeHost on Mac (and clean it up)
         https://bugs.webkit.org/show_bug.cgi?id=131769
 
