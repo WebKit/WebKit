@@ -146,7 +146,7 @@ bool CurlCacheEntry::loadResponseHeaders()
     if (!loadFileToBuffer(m_headerFilename, buffer))
         return false;
 
-    String headerContent = String(buffer.data());
+    String headerContent = String(buffer.data(), buffer.size());
     Vector<String> headerFields;
     headerContent.split("\n", headerFields);
 

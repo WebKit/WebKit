@@ -1,3 +1,19 @@
+2014-04-16  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        [WinCairo][cURL] Build fix for WinCairo build with USE(CURL).
+        https://bugs.webkit.org/show_bug.cgi?id=131614
+
+        Reviewed by Brent Fulgham.
+
+        Build fix, no new tests needed.
+
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::loadResponseHeaders):
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::loadIndex):
+        * platform/network/soup/ResourceError.h:
+        * platform/network/soup/SocketStreamHandle.h:
+
 2014-04-16  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
 
         ASSERTION FAILED: x2 >= x1 in WebCore::RenderObject::drawLineForBoxSide

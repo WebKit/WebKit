@@ -34,6 +34,9 @@
 #define SocketStreamHandle_h
 
 #include "SocketStreamHandleBase.h"
+
+#if USE(SOUP)
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -80,5 +83,7 @@ namespace WebCore {
     };
 
 }  // namespace WebCore
+
+#endif
 
 #endif  // SocketStreamHandle_h

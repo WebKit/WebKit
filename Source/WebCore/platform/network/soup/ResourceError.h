@@ -27,6 +27,9 @@
 #define ResourceError_h
 
 #include "ResourceErrorBase.h"
+
+#if USE(SOUP)
+
 #include <wtf/gobject/GRefPtr.h>
 
 typedef struct _GTlsCertificate GTlsCertificate;
@@ -70,5 +73,7 @@ private:
 };
 
 }
+
+#endif
 
 #endif // ResourceError_h_
