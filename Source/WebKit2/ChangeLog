@@ -1,3 +1,37 @@
+2014-04-15  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        Make page overlay functionality working on coordinated graphics.
+        https://bugs.webkit.org/show_bug.cgi?id=131425
+
+        Reviewed by Darin Adler.
+
+        Page overlay functionality did not work on coordinated graphics since r166975.
+        This patch removes deprecated code related to the PageOverlay GraphicsLayer management.
+        and makes CoordinatedLayerTreeHost use PageOverlayController.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::mainFrameContentSizeChanged):
+        (WebKit::CoordinatedDrawingArea::didInstallPageOverlay): Deleted.
+        (WebKit::CoordinatedDrawingArea::didUninstallPageOverlay): Deleted.
+        (WebKit::CoordinatedDrawingArea::setPageOverlayNeedsDisplay): Deleted.
+        (WebKit::CoordinatedDrawingArea::setPageOverlayOpacity): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::setRootCompositingLayer):
+        (WebKit::CoordinatedLayerTreeHost::didFlushRootLayer):
+        (WebKit::CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        (WebKit::CoordinatedLayerTreeHost::didInstallPageOverlay): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::didUninstallPageOverlay): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::setPageOverlayNeedsDisplay): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::setPageOverlayOpacity): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::createPageOverlayLayer): Deleted.
+        (WebKit::CoordinatedLayerTreeHost::destroyPageOverlayLayer): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::didInstallPageOverlay):
+        (WebKit::LayerTreeHost::didUninstallPageOverlay):
+        (WebKit::LayerTreeHost::setPageOverlayNeedsDisplay):
+
 2014-04-15  Dan Bernstein  <mitz@apple.com>
 
         Introduce API::FormClient

@@ -74,9 +74,9 @@ public:
     virtual void deviceOrPageScaleFactorChanged() = 0;
     virtual void pageBackgroundTransparencyChanged() = 0;
 
-    virtual void didInstallPageOverlay(PageOverlay*) = 0;
-    virtual void didUninstallPageOverlay(PageOverlay*) = 0;
-    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) = 0;
+    virtual void didInstallPageOverlay(PageOverlay*) { }
+    virtual void didUninstallPageOverlay(PageOverlay*) { }
+    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) { }
     virtual void setPageOverlayOpacity(PageOverlay*, float) { }
 
     virtual void pauseRendering() { }

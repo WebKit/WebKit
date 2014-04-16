@@ -55,7 +55,7 @@ class CompositingCoordinator : public GraphicsLayerClient
 public:
     class Client {
     public:
-        virtual void didFlushRootLayer() = 0;
+        virtual void didFlushRootLayer(const FloatRect& visibleContentRect) = 0;
         virtual void notifyFlushRequired() = 0;
         virtual void commitSceneState(const CoordinatedGraphicsState&) = 0;
         virtual void paintLayerContents(const GraphicsLayer*, GraphicsContext&, const IntRect& clipRect) = 0;
@@ -64,7 +64,7 @@ public:
     CompositingCoordinator(Page*, CompositingCoordinator::Client*);
     virtual ~CompositingCoordinator();
 
-    void setRootCompositingLayer(GraphicsLayer*);
+    void setRootCompositingLayer(GraphicsLayer* compositingLayer, GraphicsLayer* overlayLayer);
     void sizeDidChange(const IntSize& newSize);
     void deviceOrPageScaleFactorChanged();
 

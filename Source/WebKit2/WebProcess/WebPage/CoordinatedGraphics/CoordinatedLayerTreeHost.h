@@ -57,11 +57,6 @@ public:
     virtual bool forceRepaintAsync(uint64_t callbackID);
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
 
-    virtual void didInstallPageOverlay(PageOverlay*);
-    virtual void didUninstallPageOverlay(PageOverlay*);
-    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&);
-    virtual void setPageOverlayOpacity(PageOverlay*, float);
-
     virtual void pauseRendering() { m_isSuspended = true; }
     virtual void resumeRendering() { m_isSuspended = false; scheduleLayerFlush(); }
     virtual void deviceOrPageScaleFactorChanged() override;
@@ -83,8 +78,6 @@ protected:
 
 private:
     // CoordinatedLayerTreeHost
-    void createPageOverlayLayer();
-    void destroyPageOverlayLayer();
     void cancelPendingLayerFlush();
     void performScheduledLayerFlush();
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
@@ -95,16 +88,12 @@ private:
     void layerFlushTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
 
     // CompositingCoordinator::Client
-    virtual void didFlushRootLayer() override;
+    virtual void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) override;
     virtual void notifyFlushRequired() override { scheduleLayerFlush(); };
     virtual void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
     virtual void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) override;
 
     std::unique_ptr<WebCore::CompositingCoordinator> m_coordinator;
-
-    // The page overlay layer. Will be null if there's no page overlay.
-    std::unique_ptr<WebCore::GraphicsLayer> m_pageOverlayLayer;
-    RefPtr<PageOverlay> m_pageOverlay;
 
     bool m_notifyAfterScheduledLayerFlush;
     bool m_isValid;

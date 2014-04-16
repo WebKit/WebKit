@@ -72,14 +72,17 @@ CompositingCoordinator::CompositingCoordinator(Page* page, CompositingCoordinato
     CoordinatedGraphicsLayer::setShouldSupportContentsTiling(true);
 }
 
-void CompositingCoordinator::setRootCompositingLayer(GraphicsLayer* layer)
+void CompositingCoordinator::setRootCompositingLayer(GraphicsLayer* compositingLayer, GraphicsLayer* overlayLayer)
 {
     if (m_rootCompositingLayer)
         m_rootCompositingLayer->removeFromParent();
 
-    m_rootCompositingLayer = layer;
+    m_rootCompositingLayer = compositingLayer;
     if (m_rootCompositingLayer)
         m_rootLayer->addChildAtIndex(m_rootCompositingLayer, 0);
+
+    if (overlayLayer)
+        m_rootLayer->addChild(overlayLayer);
 }
 
 void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
@@ -95,7 +98,7 @@ bool CompositingCoordinator::flushPendingLayerChanges()
     initializeRootCompositingLayerIfNeeded();
 
     m_rootLayer->flushCompositingStateForThisLayerOnly();
-    m_client->didFlushRootLayer();
+    m_client->didFlushRootLayer(m_visibleContentsRect);
 
     bool didSync = m_page->mainFrame().view()->flushCompositingStateIncludingSubframes();
 

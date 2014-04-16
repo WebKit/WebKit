@@ -55,13 +55,9 @@ private:
     virtual void forceRepaint();
     virtual bool forceRepaintAsync(uint64_t callbackID);
 
-    virtual void didInstallPageOverlay(PageOverlay*);
-    virtual void didUninstallPageOverlay(PageOverlay*);
-    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&);
-    virtual void setPageOverlayOpacity(PageOverlay*, float);
-
     virtual void setPaintingEnabled(bool);
     virtual void updatePreferences(const WebPreferencesStore&) override;
+    virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;

@@ -31,6 +31,7 @@
 
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeContext.h"
+#include "PageOverlayController.h"
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 #include "WebPage.h"
@@ -213,36 +214,6 @@ bool CoordinatedDrawingArea::forceRepaintAsync(uint64_t callbackID)
     return m_layerTreeHost && m_layerTreeHost->forceRepaintAsync(callbackID);
 }
 
-void CoordinatedDrawingArea::didInstallPageOverlay(PageOverlay* pageOverlay)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->didInstallPageOverlay(pageOverlay);
-}
-
-void CoordinatedDrawingArea::didUninstallPageOverlay(PageOverlay* pageOverlay)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->didUninstallPageOverlay(pageOverlay);
-
-    setNeedsDisplay();
-}
-
-void CoordinatedDrawingArea::setPageOverlayNeedsDisplay(PageOverlay* pageOverlay, const IntRect& rect)
-{
-    if (m_layerTreeHost) {
-        m_layerTreeHost->setPageOverlayNeedsDisplay(pageOverlay, rect);
-        return;
-    }
-
-    setNeedsDisplayInRect(rect);
-}
-
-void CoordinatedDrawingArea::setPageOverlayOpacity(PageOverlay* pageOverlay, float value)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->setPageOverlayOpacity(pageOverlay, value);
-}
-
 void CoordinatedDrawingArea::setPaintingEnabled(bool paintingEnabled)
 {
     m_isPaintingEnabled = paintingEnabled;
@@ -251,6 +222,11 @@ void CoordinatedDrawingArea::setPaintingEnabled(bool paintingEnabled)
 void CoordinatedDrawingArea::updatePreferences(const WebPreferencesStore& store)
 {
     m_webPage->corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()) && LayerTreeHost::supportsAcceleratedCompositing());
+}
+
+void CoordinatedDrawingArea::mainFrameContentSizeChanged(const WebCore::IntSize&)
+{
+    m_webPage->pageOverlayController().didChangeDocumentSize();
 }
 
 void CoordinatedDrawingArea::layerHostDidFlushLayers()
