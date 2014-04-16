@@ -30,6 +30,7 @@
 
 #import "AssistedNodeInformation.h"
 #import "DataReference.h"
+#import "DrawingArea.h"
 #import "EditingRange.h"
 #import "EditorState.h"
 #import "GestureTypes.h"

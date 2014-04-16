@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FindController.h"
 
+#include "DrawingArea.h"
 #include "PluginView.h"
 #include "ShareableBitmap.h"
 #include "WKPage.h"

@@ -34,6 +34,7 @@
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include "WebUndoStep.h"
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/FocusController.h>

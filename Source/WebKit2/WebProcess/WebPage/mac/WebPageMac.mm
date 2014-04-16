@@ -30,6 +30,7 @@
 
 #import "AttributedString.h"
 #import "DataReference.h"
+#import "DictionaryPopupInfo.h"
 #import "EditingRange.h"
 #import "EditorState.h"
 #import "PDFKitImports.h"

@@ -29,7 +29,6 @@
 #include "APIInjectedBundleFormClient.h"
 #include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
-#include "DrawingArea.h"
 #include "FindController.h"
 #include "GeolocationPermissionRequestManager.h"
 #include "ImageOptions.h"
@@ -39,15 +38,13 @@
 #include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePagePolicyClient.h"
 #include "InjectedBundlePageResourceLoadClient.h"
+#include "LayerTreeHost.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "PageOverlayController.h"
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
-#include "TapHighlightController.h"
-#include "WebUndoStep.h"
-#include <WebCore/ContextMenuItem.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
@@ -55,7 +52,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageVisibilityState.h>
-#include <WebCore/PlatformScreen.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextChecking.h>
 #include <WebCore/UserActivity.h>
@@ -95,8 +91,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "DictionaryPopupInfo.h"
-#include "LayerHostingContext.h"
 #include "ViewGestureGeometryCollector.h"
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
@@ -112,29 +106,29 @@ class Array;
 }
 
 namespace IPC {
-    class ArgumentDecoder;
-    class Connection;
+class ArgumentDecoder;
+class Connection;
 }
 
 namespace WebCore {
-    class DocumentLoader;
-    class GraphicsContext;
-    class Frame;
-    class FrameView;
-    class HTMLPlugInElement;
-    class IntPoint;
-    class KeyboardEvent;
-    class Page;
-    class PrintContext;
-    class Range;
-    class ResourceResponse;
-    class ResourceRequest;
-    class SharedBuffer;
-    class SubstituteData;
-    class TextCheckingRequest;
-    class VisibleSelection;
-    struct KeypressCommand;
-    struct TextCheckingResult;
+class DocumentLoader;
+class GraphicsContext;
+class Frame;
+class FrameView;
+class HTMLPlugInElement;
+class IntPoint;
+class KeyboardEvent;
+class Page;
+class PrintContext;
+class Range;
+class ResourceResponse;
+class ResourceRequest;
+class SharedBuffer;
+class SubstituteData;
+class TextCheckingRequest;
+class VisibleSelection;
+struct KeypressCommand;
+struct TextCheckingResult;
 }
 
 namespace WebKit {
@@ -162,6 +156,7 @@ class WebNotificationClient;
 class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPopupMenu;
+class WebUndoStep;
 class WebVideoFullscreenManager;
 class WebWheelEvent;
 struct AssistedNodeInformation;

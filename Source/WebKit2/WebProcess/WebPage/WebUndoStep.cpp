@@ -39,4 +39,8 @@ PassRefPtr<WebUndoStep> WebUndoStep::create(PassRefPtr<WebCore::UndoStep> step)
     return adoptRef(new WebUndoStep(step, generateUndoStep()));
 }
 
+WebUndoStep::~WebUndoStep()
+{
+}
+
 } // namespace WebKit
