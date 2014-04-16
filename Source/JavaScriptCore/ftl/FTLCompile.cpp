@@ -79,11 +79,14 @@ static uint8_t* mmAllocateDataSection(
     UNUSED_PARAM(sectionID);
     UNUSED_PARAM(isReadOnly);
 
+    // Allocate the GOT in the code section to make it reachable for all code.
+    if (!strcmp(sectionName, "__got"))
+        return mmAllocateCodeSection(opaqueState, size, alignment, sectionID, sectionName);
+
     State& state = *static_cast<State*>(opaqueState);
-    
-    RefPtr<DataSection> section = adoptRef(new DataSection(
-        state.graph.m_vm, state.graph.m_codeBlock, size, alignment));
-    
+
+    RefPtr<DataSection> section = adoptRef(new DataSection(size, alignment));
+
     if (!strcmp(sectionName, "__llvm_stackmaps"))
         state.stackmapsSection = section;
     else {
@@ -94,7 +97,7 @@ static uint8_t* mmAllocateDataSection(
             state.compactUnwindSize = size;
         }
     }
-    
+
     return bitwise_cast<uint8_t*>(section->base());
 }
 

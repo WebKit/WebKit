@@ -36,7 +36,7 @@ namespace JSC { namespace FTL {
 
 class DataSection : public RefCounted<DataSection> {
 public:
-    DataSection(VM&, CodeBlock*, size_t, unsigned alignment);
+    DataSection(size_t, unsigned alignment);
     ~DataSection();
     
     void* base() { return m_base; }

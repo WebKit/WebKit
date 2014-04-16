@@ -1,3 +1,17 @@
+2014-04-16  Juergen Ributzka  <juergen@apple.com>
+
+        Allocate the data section on the heap again for FTL on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=130156
+
+        Reviewed by Geoffrey Garen and Filip Pizlo.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLDataSection.cpp:
+        (JSC::FTL::DataSection::DataSection):
+        (JSC::FTL::DataSection::~DataSection):
+        * ftl/FTLDataSection.h:
+
 2014-04-16  Mark Lam  <mark.lam@apple.com>
 
         Crash in CodeBlock::setOptimizationThresholdBasedOnCompilationResult() when the debugger activates.
