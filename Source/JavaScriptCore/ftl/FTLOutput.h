@@ -126,13 +126,7 @@ public:
     LValue doubleSub(LValue left, LValue right) { return buildFSub(m_builder, left, right); }
     LValue doubleMul(LValue left, LValue right) { return buildFMul(m_builder, left, right); }
     LValue doubleDiv(LValue left, LValue right) { return buildFDiv(m_builder, left, right); }
-    LValue doubleRem(LValue left, LValue right)
-    {
-        // FIXME: LLVM may soften float operations by expanding them to libcalls.
-        // We cannot allow that on all platforms yet.
-        // <rdar://16196412> MachO large code model support.
-        return isX86() ? buildFRem(m_builder, left, right) : call(operation(fmod), left, right);
-    }
+    LValue doubleRem(LValue left, LValue right) { return buildFRem(m_builder, left, right); }
     LValue doubleNeg(LValue value) { return buildFNeg(m_builder, value); }
 
     LValue bitAnd(LValue left, LValue right) { return buildAnd(m_builder, left, right); }
@@ -176,12 +170,11 @@ public:
 
     LValue doubleSin(LValue value)
     {
-        return call(isX86() ? doubleSinIntrinsic() : operation(sin), value);
-        
+        return call(doubleSinIntrinsic(), value);
     }
     LValue doubleCos(LValue value)
     {
-        return call(isX86() ? doubleCosIntrinsic() : operation(cos), value);
+        return call(doubleCosIntrinsic(), value);
     }
 
     LValue doubleSqrt(LValue value)
