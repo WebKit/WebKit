@@ -391,7 +391,7 @@ public:
     // the replaced RenderObject to quickly determine what line it is contained on and to easily
     // iterate over structures on the line.
     InlineElementBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
-    void setInlineBoxWrapper(InlineElementBox* boxWrapper) { m_inlineBoxWrapper = boxWrapper; }
+    void setInlineBoxWrapper(InlineElementBox*);
     void deleteLineBoxWrapper();
 
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
@@ -753,6 +753,21 @@ inline RenderBox* RenderBox::firstChildBox() const
 inline RenderBox* RenderBox::lastChildBox() const
 {
     return toRenderBox(lastChild());
+}
+
+inline void RenderBox::setInlineBoxWrapper(InlineElementBox* boxWrapper)
+{
+    if (boxWrapper) {
+        ASSERT(!m_inlineBoxWrapper);
+        // m_inlineBoxWrapper should already be 0. Deleting it is a safeguard against security issues.
+        // Otherwise, there will two line box wrappers keeping the reference to this renderer, and
+        // only one will be notified when the renderer is getting destroyed. The second line box wrapper
+        // will keep a stale reference.
+        if (UNLIKELY(m_inlineBoxWrapper != 0))
+            deleteLineBoxWrapper();
+    }
+
+    m_inlineBoxWrapper = boxWrapper;
 }
 
 } // namespace WebCore

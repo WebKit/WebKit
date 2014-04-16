@@ -1,3 +1,18 @@
+2014-04-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Improve security mitigation added in webkit r94001.
+        We missed the case where attachLine was called when we already had an inline box wrapper.
+        https://bugs.webkit.org/show_bug.cgi?id=127285
+
+        Reviewed by Brent Fulgham.
+
+        Merged from Blink: https://src.chromium.org/viewvc/blink?revision=150697&view=revision
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionLineBox):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::setInlineBoxWrapper):
+
 2014-04-16  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Fix CodeGenerator.pm to only write files if the generated content has changed
