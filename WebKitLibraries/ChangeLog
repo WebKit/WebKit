@@ -1,5 +1,14 @@
 2014-04-15  Filip Pizlo  <fpizlo@apple.com>
 
+        Update LLVM binary drops for Mountain Lion to LLVM r206312.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * LLVMIncludesMountainLion.tar.bz2:
+        * LLVMLibrariesMountainLion.tar.bz2:
+
+2014-04-15  Filip Pizlo  <fpizlo@apple.com>
+
         Add LLVM binary drops for Mavericks using LLVM r206312.
 
         Rubber stamped by Geoffrey Garen.
