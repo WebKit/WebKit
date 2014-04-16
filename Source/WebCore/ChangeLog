@@ -1,3 +1,12 @@
+2014-04-16  Andreas Kling  <akling@apple.com>
+
+        Revert direct caching of tagName and nodeName from r167383.
+
+        Ryosuke tells me this is not entirely safe, will need to rethink.
+
+        * dom/Element.idl:
+        * dom/Node.idl:
+
 2014-04-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Improve security mitigation added in webkit r94001.
