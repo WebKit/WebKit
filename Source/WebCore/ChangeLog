@@ -1,3 +1,13 @@
+2014-04-16  Brendan Long  <b.long@cablelabs.com>
+
+        [GTK] Fix unused parameter warnings
+        https://bugs.webkit.org/show_bug.cgi?id=131721
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/JSMediaStreamCapabilitiesCustom.cpp:
+        (WebCore::toJS): Remove unused 'exec' parameter.
+
 2014-04-16  Simon Fraser  <simon.fraser@apple.com>
 
         Convert the boolean param of Image::startAnimation() to an enum

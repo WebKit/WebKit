@@ -37,7 +37,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, MediaStreamCapabilities* object)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, MediaStreamCapabilities* object)
 {
     if (!object)
         return jsNull();

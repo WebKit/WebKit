@@ -609,6 +609,7 @@ def generate_message_handler(file):
         else:
             if not receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
                 result.append('    UNUSED_PARAM(connection);\n')
+            result.append('    UNUSED_PARAM(decoder);\n')
             result.append('    ASSERT_NOT_REACHED();\n')
         result.append('}\n')
 
@@ -622,6 +623,8 @@ def generate_message_handler(file):
         result += [sync_message_statement(receiver, message) for message in sync_messages]
         if not receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
             result.append('    UNUSED_PARAM(connection);\n')
+        result.append('    UNUSED_PARAM(decoder);\n')
+        result.append('    UNUSED_PARAM(replyEncoder);\n')
         result.append('    ASSERT_NOT_REACHED();\n')
         result.append('}\n')
 

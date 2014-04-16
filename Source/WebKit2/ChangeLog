@@ -1,3 +1,21 @@
+2014-04-16  Brendan Long  <b.long@cablelabs.com>
+
+        [GTK] Fix unused parameter warnings
+        https://bugs.webkit.org/show_bug.cgi?id=131721
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkit2/messages.py:
+        (generate_message_handler): Add UNUSED_PARAM() for a couple parameters which aren't always used.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<LinearTimingFunction>::decode): Remove unused parameters.
+        * WebProcess/InjectedBundle/APIInjectedBundleFormClient.h:
+        (API::InjectedBundle::FormClient::textDidChangeInTextField): Same.
+        (API::InjectedBundle::FormClient::willSubmitForm): Same.
+        (API::InjectedBundle::FormClient::willSendSubmitEvent): Same.
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveSyncMessage): Same.
+
 2014-04-16  Tim Horton  <timothy_horton@apple.com>
 
         Accidentally included some style-checker-testing changes in the last commit.

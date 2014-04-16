@@ -54,7 +54,7 @@ public:
     virtual void didFocusTextField(WebKit::WebPage*, WebCore::HTMLInputElement*, WebKit::WebFrame*) { }
     virtual void textFieldDidBeginEditing(WebKit::WebPage*, WebCore::HTMLInputElement*, WebKit::WebFrame*) { }
     virtual void textFieldDidEndEditing(WebKit::WebPage*, WebCore::HTMLInputElement*, WebKit::WebFrame*) { }
-    virtual void textDidChangeInTextField(WebKit::WebPage*, WebCore::HTMLInputElement*, WebKit::WebFrame*, bool initiatedByUserTyping) { }
+    virtual void textDidChangeInTextField(WebKit::WebPage*, WebCore::HTMLInputElement*, WebKit::WebFrame*, bool) { }
     virtual void textDidChangeInTextArea(WebKit::WebPage*, WebCore::HTMLTextAreaElement*, WebKit::WebFrame*) { }
 
     enum class InputFieldAction {
@@ -68,8 +68,8 @@ public:
     };
 
     virtual bool shouldPerformActionInTextField(WebKit::WebPage*, WebCore::HTMLInputElement*, InputFieldAction, WebKit::WebFrame*) { return false; }
-    virtual void willSubmitForm(WebKit::WebPage*, WebCore::HTMLFormElement*, WebKit::WebFrame*, WebKit::WebFrame* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>&, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
-    virtual void willSendSubmitEvent(WebKit::WebPage*, WebCore::HTMLFormElement*, WebKit::WebFrame*, WebKit::WebFrame* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>&) { }
+    virtual void willSubmitForm(WebKit::WebPage*, WebCore::HTMLFormElement*, WebKit::WebFrame*, WebKit::WebFrame*, const Vector<std::pair<WTF::String, WTF::String>>&, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
+    virtual void willSendSubmitEvent(WebKit::WebPage*, WebCore::HTMLFormElement*, WebKit::WebFrame*, WebKit::WebFrame*, const Vector<std::pair<WTF::String, WTF::String>>&) { }
     virtual void didAssociateFormControls(WebKit::WebPage*, const Vector<RefPtr<WebCore::Element>>&) { }
     virtual bool shouldNotifyOnFormChanges(WebKit::WebPage*) { return false; }
     virtual void willBeginInputSession(WebKit::WebPage*, WebCore::Element*, WebKit::WebFrame*, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }

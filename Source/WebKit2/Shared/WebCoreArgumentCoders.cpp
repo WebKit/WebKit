@@ -105,7 +105,7 @@ void ArgumentCoder<LinearTimingFunction>::encode(ArgumentEncoder& encoder, const
     encoder.encodeEnum(timingFunction.type());
 }
 
-bool ArgumentCoder<LinearTimingFunction>::decode(ArgumentDecoder& decoder, LinearTimingFunction& timingFunction)
+bool ArgumentCoder<LinearTimingFunction>::decode(ArgumentDecoder&, LinearTimingFunction&)
 {
     // Type is decoded by the caller. Nothing else to decode.
     return true;
