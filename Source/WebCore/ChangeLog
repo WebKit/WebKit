@@ -1,3 +1,39 @@
+2014-04-16  Alexey Proskuryakov  <ap@apple.com>
+
+        DataTransfer should cache its FileList
+        https://bugs.webkit.org/show_bug.cgi?id=131694
+
+        Reviewed by Darin Adler.
+
+        Test: fast/events/data-transfer-files-attribute-identity.html
+
+        * bindings/js/SerializedScriptValue.cpp: (WebCore::CloneDeserializer::readTerminal):
+        Switched to a new FileList constructor, CloneDeserializer doesn't really need to modify
+        the FileList with append().
+
+        * dom/DataTransfer.h:
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::types): Added a FIXME.
+        (WebCore::DataTransfer::files): Changed to reuse a cached FileList. It's currently
+        easy, because we don't support DataTransferItemList. Once we do, making any changes
+        through it will also require updating the FileList in a way that doesn't replace
+        File objects for unchanged files.
+
+        * fileapi/FileList.h:
+        (WebCore::FileList::create):
+        (WebCore::FileList::isEmpty):
+        (WebCore::FileList::FileList):
+        (WebCore::FileList::append):
+        (WebCore::FileList::clear):
+        Made non-const functions private, because neither DataTransfer nor FileInputType
+        expect the list to be modified without their knowledge. Added a new Vector based
+        constructor so that a FileList could be created without the use of append().
+
+        * html/FileInputType.cpp: (WebCore::FileInputType::createFileList): Simplified
+        the code a little bit. FileInputType still needs to modify the list for clear(),
+        but doesn't need to add to it dynamically - unlike with DataTransfer, it's expected
+        to create a new FileList when it's modified.
+
 2014-04-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Eliminate use of deleteAllValues in Windows Files

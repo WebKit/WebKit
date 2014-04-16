@@ -256,6 +256,7 @@ bool FileInputType::getTypeSpecificValue(String& value)
 
 void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
 {
+    // FIXME: Should we clear the file list, or replace it with a new empty one here? This is observable from JavaScript through custom properties.
     m_fileList->clear();
     m_icon.clear();
     element().setNeedsStyleRecalc();
@@ -263,12 +264,11 @@ void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
 
 PassRefPtr<FileList> FileInputType::createFileList(const Vector<FileChooserFileInfo>& files) const
 {
-    RefPtr<FileList> fileList(FileList::create());
-    size_t size = files.size();
+    Vector<RefPtr<File>> fileObjects;
+    for (const FileChooserFileInfo& info : files)
+        fileObjects.append(File::createWithName(info.path, info.displayName, File::AllContentTypes));
 
-    for (size_t i = 0; i < size; i++)
-        fileList->append(File::createWithName(files[i].path, files[i].displayName, File::AllContentTypes));
-    return fileList;
+    return FileList::create(std::move(fileObjects));
 }
 
 bool FileInputType::isFileUpload() const

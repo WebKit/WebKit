@@ -1,0 +1,12 @@
+
+Test that the same object is returned for dataTransfer.files each time, as well as for File objects in the FileList.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.dataTransfer.files is event.dataTransfer.files
+PASS event.dataTransfer.files.item(0) is event.dataTransfer.files.item(0)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

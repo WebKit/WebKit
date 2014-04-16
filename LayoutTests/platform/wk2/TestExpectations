@@ -645,6 +645,7 @@ platform/mac/fast/events/objc-event-api.html
 editing/pasteboard/file-drag-to-editable.html
 editing/pasteboard/file-input-files-access.html
 fast/dom/Window/window-postmessage-clone-frames.html
+fast/events/data-transfer-files-attribute-identity.html
 fast/events/drag-file-crash.html
 fast/events/drag-to-navigate.html
 fast/events/drop-handler-should-not-stop-navigate.html

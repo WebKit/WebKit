@@ -42,16 +42,26 @@ public:
         return adoptRef(new FileList);
     }
 
+    static PassRefPtr<FileList> create(Vector<RefPtr<File>>&& files)
+    {
+        return adoptRef(new FileList(std::move(files)));
+    }
+
     unsigned length() const { return m_files.size(); }
     File* item(unsigned index) const;
 
     bool isEmpty() const { return m_files.isEmpty(); }
-    void clear() { m_files.clear(); }
-    void append(PassRefPtr<File> file) { m_files.append(file); }
     Vector<String> paths() const;
 
 private:
     FileList();
+    FileList(Vector<RefPtr<File>>&& files) : m_files(files) { }
+
+    // FileLists can only be changed by their owners.
+    friend class DataTransfer;
+    friend class FileInputType;
+    void append(PassRefPtr<File> file) { m_files.append(file); }
+    void clear() { m_files.clear(); }
 
     Vector<RefPtr<File>> m_files;
 };

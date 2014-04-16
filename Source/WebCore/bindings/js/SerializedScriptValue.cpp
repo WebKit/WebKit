@@ -2184,17 +2184,17 @@ private:
             unsigned length = 0;
             if (!read(length))
                 return JSValue();
-            RefPtr<FileList> result = FileList::create();
+            Vector<RefPtr<File>> files;
             for (unsigned i = 0; i < length; i++) {
                 RefPtr<File> file;
                 if (!readFile(file))
                     return JSValue();
                 if (m_isDOMGlobalObject)
-                    result->append(file.get());
+                    files.append(std::move(file));
             }
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return getJSValue(result.get());
+            return getJSValue(FileList::create(std::move(files)).get());
         }
         case ImageDataTag: {
             int32_t width;

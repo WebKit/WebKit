@@ -56,7 +56,7 @@ namespace WebCore {
 
         Vector<String> types() const;
 
-        PassRefPtr<FileList> files() const;
+        FileList* files() const;
 
         void clearData(const String& type);
         void clearData();
@@ -104,6 +104,8 @@ namespace WebCore {
 
         DataTransferAccessPolicy m_policy;
         OwnPtr<Pasteboard> m_pasteboard;
+
+        mutable RefPtr<FileList> m_fileList;
 
 #if ENABLE(DRAG_SUPPORT)
         bool m_forDrag;

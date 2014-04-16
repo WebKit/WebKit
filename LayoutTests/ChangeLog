@@ -1,3 +1,16 @@
+2014-04-16  Alexey Proskuryakov  <ap@apple.com>
+
+        DataTransfer should cache its FileList
+        https://bugs.webkit.org/show_bug.cgi?id=131694
+
+        Reviewed by Darin Adler.
+
+        * fast/events/data-transfer-files-attribute-identity-expected.txt: Added.
+        * fast/events/data-transfer-files-attribute-identity.html: Added.
+
+        * platform/wk2/TestExpectations: Skipped the test, because WKTR doesn't support
+        file dragging yet.
+
 2014-04-16  Zoltan Horvath  <zoltan@webkit.org>
 
         Remove fast/parser/parser-yield-timing.html from skipped list

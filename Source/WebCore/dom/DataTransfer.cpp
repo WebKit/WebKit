@@ -151,31 +151,37 @@ bool DataTransfer::setData(const String& type, const String& data)
 
 Vector<String> DataTransfer::types() const
 {
+    // FIXME: Per HTML5, types should be a live array, and the DOM attribute should always return the same object.
+
     if (!canReadTypes())
         return Vector<String>();
 
     return m_pasteboard->types();
 }
 
-PassRefPtr<FileList> DataTransfer::files() const
+FileList* DataTransfer::files() const
 {
-    // FIXME: We could cache the computed file list if it was necessary and helpful.
-    // Currently, each access gets a new copy, and thus setData() modifications to the
-    // dataTransfer are not reflected in any FileList objects the page has accessed and stored.
+    bool newlyCreatedFileList = !m_fileList;
+    if (!m_fileList)
+        m_fileList = FileList::create();
 
-    if (!canReadData())
-        return FileList::create();
+    if (!canReadData()) {
+        m_fileList->clear();
+        return m_fileList.get();
+    }
 
 #if ENABLE(DRAG_SUPPORT)
-    if (m_forDrag && !m_forFileDrag)
-        return FileList::create();
+    if (m_forDrag && !m_forFileDrag) {
+        ASSERT(m_fileList->isEmpty());
+        return m_fileList.get();
+    }
 #endif
 
-    Vector<String> filenames = m_pasteboard->readFilenames();
-    RefPtr<FileList> fileList = FileList::create();
-    for (size_t i = 0; i < filenames.size(); ++i)
-        fileList->append(File::create(filenames[i], File::AllContentTypes));
-    return fileList.release();
+    if (newlyCreatedFileList) {
+        for (const String& filename : m_pasteboard->readFilenames())
+            m_fileList->append(File::create(filename, File::AllContentTypes));
+    }
+    return m_fileList.get();
 }
 
 #if !ENABLE(DRAG_SUPPORT)
