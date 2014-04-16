@@ -122,6 +122,16 @@ webkit.org/b/116587 http/tests/websocket/tests/hybi/zero-length-text.html [ Skip
 
 webkit.org/b/128906 fast/events/touch/basic-single-touch-events.html [ Crash ]
 
+webkit.org/b/131044 media [ Skip ]
+
+# A lot of crash happen since buildbot bagan to use Ubuntu 13.10.
+webkit.org/b/131729 batterystatus [ Skip ]
+webkit.org/b/131729 compositing [ Skip ]
+webkit.org/b/131729 fast/canvas/webgl [ Skip ]
+webkit.org/b/131729 fast/events/touch [ Skip ]
+webkit.org/b/131729 http/tests [ Skip ]
+webkit.org/b/131729 webgl [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

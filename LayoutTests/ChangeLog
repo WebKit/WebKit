@@ -1,3 +1,10 @@
+2014-04-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. Some test modules come to crash since buildbot uses
+        Ubuntu 13.10. Skip those crash modules for now. 
+
+        * platform/efl-wk2/TestExpectations:
+
 2014-04-14  Roger Fong  <roger_fong@apple.com>
 
         Snapshotted plugins may need to be restarted if style properties are changed after initial load of plugin.
