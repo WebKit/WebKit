@@ -29,4 +29,4 @@ layer at (8,44) size 218x21
     RenderText {#text} at (211,0) size 62x19
       text run at (211,0) width 62 RTL override: "duis aute "
 layer at (210,44) size 177x19
-  RenderBlock (positioned) {DIV} at (20,1) size 177x19
+  RenderBlock (positioned) {DIV} at (20,1) size 178x19

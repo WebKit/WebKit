@@ -1,13 +1,4 @@
-Test constructor for TouchList. <rdar://problem/6481690>
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS TouchList.prototype.toString.call(new TouchList) is '[object TouchList]'
-PASS TouchList.prototype.toString.call(new TouchList(touch1)) is '[object TouchList]'
-PASS TouchList.prototype.toString.call(new TouchList(touch1, touch2)) is '[object TouchList]'
-PASS TouchList.prototype.toString.call(new TouchList(touch1, touch2, touch3)) is '[object TouchList]'
-PASS successfullyParsed is true
-
-TEST COMPLETE
+CONSOLE MESSAGE: line 1: TypeError: HTMLParagraphElement is not a function (evaluating 'description(
+'Test constructor for TouchList.  &lt;<a href="rdar://problem/6481690">rdar://problem/6481690</a>&gt;'
+)')
 

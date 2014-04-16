@@ -6,23 +6,23 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 363x19
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x30
-        RenderText {#text} at (0,0) size 539x30
+      RenderBlock {PRE} at (0,36) size 784x28
+        RenderText {#text} at (0,0) size 539x28
           text run at (0,0) width 539: ".one {margin-right: 25px; text-align: right; background-color: aqua;}"
           text run at (538,0) width 1: " "
-          text run at (0,15) width 398: ".two {margin-right: -10px; background-color: aqua;}"
-          text run at (397,15) width 1: " "
-      RenderBlock {HR} at (0,79) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,97) size 784x40 [bgcolor=#808080]
+          text run at (0,14) width 398: ".two {margin-right: -10px; background-color: aqua;}"
+          text run at (397,14) width 1: " "
+      RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,95) size 784x40 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 553x19
           text run at (0,0) width 397: "This element is unstyled save for a background color of gray. "
           text run at (396,0) width 157: "However, it contains an "
         RenderInline {SPAN} at (0,0) size 172x19 [bgcolor=#00FFFF]
           RenderText {#text} at (552,0) size 148x19
             text run at (552,0) width 148: "inline element of class "
-          RenderInline {TT} at (0,0) size 25x15
-            RenderText {#text} at (699,4) size 25x15
-              text run at (699,4) width 25: "one"
+          RenderInline {TT} at (0,0) size 25x14
+            RenderText {#text} at (699,5) size 25x14
+              text run at (699,5) width 25: "one"
         RenderText {#text} at (748,0) size 753x39
           text run at (748,0) width 5: ","
           text run at (0,20) width 360: "which should result in 25-pixel right margin only in the "
@@ -31,16 +31,16 @@ layer at (0,0) size 800x600
             text run at (359,20) width 25: "last"
         RenderText {#text} at (383,20) size 237x19
           text run at (383,20) width 237: " line in which the inline box appears."
-      RenderBlock {P} at (0,153) size 784x40 [bgcolor=#808080]
+      RenderBlock {P} at (0,151) size 784x40 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 553x19
           text run at (0,0) width 397: "This element is unstyled save for a background color of gray. "
           text run at (396,0) width 157: "However, it contains an "
         RenderInline {SPAN} at (0,0) size 172x19 [bgcolor=#00FFFF]
           RenderText {#text} at (552,0) size 148x19
             text run at (552,0) width 148: "inline element of class "
-          RenderInline {TT} at (0,0) size 25x15
-            RenderText {#text} at (699,4) size 25x15
-              text run at (699,4) width 25: "two"
+          RenderInline {TT} at (0,0) size 25x14
+            RenderText {#text} at (699,5) size 25x14
+              text run at (699,5) width 25: "two"
         RenderText {#text} at (713,0) size 761x39
           text run at (713,0) width 48: ", which"
           text run at (0,20) width 300: "should result in -10px right margin only in the "
@@ -49,7 +49,7 @@ layer at (0,0) size 800x600
             text run at (299,20) width 25: "last"
         RenderText {#text} at (323,20) size 238x19
           text run at (323,20) width 238: " line in which the inline box appears."
-      RenderTable {TABLE} at (0,209) size 784x134 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,207) size 784x134 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x132
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -68,9 +68,9 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 172x19 [bgcolor=#00FFFF]
                   RenderText {#text} at (552,0) size 148x19
                     text run at (552,0) width 148: "inline element of class "
-                  RenderInline {TT} at (0,0) size 25x15
-                    RenderText {#text} at (699,4) size 25x15
-                      text run at (699,4) width 25: "one"
+                  RenderInline {TT} at (0,0) size 25x14
+                    RenderText {#text} at (699,5) size 25x14
+                      text run at (699,5) width 25: "one"
                 RenderText {#text} at (748,0) size 753x39
                   text run at (748,0) width 5: ","
                   text run at (0,20) width 360: "which should result in 25-pixel right margin only in the "
@@ -86,9 +86,9 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 172x19 [bgcolor=#00FFFF]
                   RenderText {#text} at (552,0) size 148x19
                     text run at (552,0) width 148: "inline element of class "
-                  RenderInline {TT} at (0,0) size 25x15
-                    RenderText {#text} at (699,4) size 25x15
-                      text run at (699,4) width 25: "two"
+                  RenderInline {TT} at (0,0) size 25x14
+                    RenderText {#text} at (699,5) size 25x14
+                      text run at (699,5) width 25: "two"
                 RenderText {#text} at (713,0) size 761x39
                   text run at (713,0) width 48: ", which"
                   text run at (0,20) width 300: "should result in -10px right margin only in the "

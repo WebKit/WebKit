@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
     RenderSVGRect {rect} at (99,0) size 102x101 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=RADIAL-GRADIENT] [id="gradient2"]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGRect {rect} at (0,99) size 101x102 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=RADIAL-GRADIENT] [id="gradient3"]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]
     RenderSVGPath {line} at (224,0) size 2x200 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=0.00] [x2=225.00] [y2=200.00]
-    RenderSVGText {text} at (75,235) size 299x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 299x19
+    RenderSVGText {text} at (75,235) size 300x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 299x18
         chunk 1 (middle anchor) text run 1 at (75.69,250.00) startOffset 0 endOffset 48 width 298.62: "Both sides of the red line should look identical"
     RenderSVGContainer {g} at (249,0) size 202x201 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,0.00)}]
       RenderSVGRect {rect} at (249,0) size 102x101 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=RADIAL-GRADIENT] [id="gradient0"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

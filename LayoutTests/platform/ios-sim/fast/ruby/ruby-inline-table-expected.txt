@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
           text run at (0,20) width 65: "the same. "
         RenderBR {BR} at (64,35) size 1x0
         RenderBR {BR} at (0,40) size 0x19
-      RenderBlock {DIV} at (3,63) size 778x51 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
+      RenderBlock {DIV} at (3,63) size 778x52 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
         RenderText {#text} at (9,22) size 227x19
           text run at (9,22) width 227: "This is some XHTML1.1 text with "
-        RenderTable {SPAN} at (235,9) size 40x33
+        RenderTable {SPAN} at (235,9) size 41x33
           RenderTableSection {SPAN} at (0,13) size 40x20
             RenderTableRow (anonymous) at (0,0) size 40x20
               RenderTableCell (anonymous) at (0,0) size 40x20 [r=0 c=0 rs=1 cs=1]
@@ -25,12 +25,12 @@ layer at (0,0) size 800x600
                   text run at (0,0) width 40: "guide text"
         RenderText {#text} at (275,22) size 58x19
           text run at (275,22) width 58: " markup."
-      RenderBlock (anonymous) at (0,117) size 784x20
+      RenderBlock (anonymous) at (0,117) size 784x21
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {DIV} at (3,140) size 778x51 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
+      RenderBlock {DIV} at (3,140) size 778x52 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
         RenderText {#text} at (9,22) size 227x19
           text run at (9,22) width 227: "This is some XHTML1.1 text with "
-        RenderTable {RUBY} at (235,9) size 40x33
+        RenderTable {RUBY} at (235,9) size 41x33
           RenderTableSection {RB} at (0,13) size 40x20
             RenderTableRow (anonymous) at (0,0) size 40x20
               RenderTableCell (anonymous) at (0,0) size 40x20 [r=0 c=0 rs=1 cs=1]

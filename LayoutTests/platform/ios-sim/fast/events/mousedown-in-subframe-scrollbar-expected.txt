@@ -1,4 +1,3 @@
 This tests that clicking on a scrollbar in a frame does not clear selections in the frame.
 
-
 Selection:

@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (1,1) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (21,36) size 77x19
                 text run at (21,36) width 77: "loremipsum"
-              RenderImage {IMG} at (97,1) size 20x50 [bgcolor=#ADD8E6]
+              RenderImage {IMG} at (97,1) size 21x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,99) size 784x20
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 99x57 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,36) size 77x19
                 text run at (1,36) width 77: "loremipsum"
-              RenderImage {IMG} at (77,1) size 20x50 [bgcolor=#ADD8E6]
+              RenderImage {IMG} at (77,1) size 21x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,188) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,198) size 784x20
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 77x74
                 text run at (1,1) width 8: "a"
                 text run at (1,56) width 77: "loremipsum"
-              RenderImage {IMG} at (77,21) size 20x50 [bgcolor=#ADD8E6]
+              RenderImage {IMG} at (77,21) size 21x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,307) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,317) size 784x20
@@ -53,7 +53,7 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (1,21) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (21,56) size 77x19
                 text run at (21,56) width 77: "loremipsum"
-              RenderImage {IMG} at (97,21) size 20x50 [bgcolor=#ADD8E6]
+              RenderImage {IMG} at (97,21) size 21x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,426) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,436) size 784x20
@@ -68,5 +68,5 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (1,21) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (21,56) size 77x19
                 text run at (21,56) width 77: "loremipsum"
-              RenderImage {IMG} at (97,21) size 20x50 [bgcolor=#ADD8E6]
+              RenderImage {IMG} at (97,21) size 21x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0

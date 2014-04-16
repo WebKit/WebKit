@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x248
-  RenderBlock {HTML} at (0,0) size 800x248
-    RenderBody {BODY} at (8,21) size 784x219
+layer at (0,0) size 800x249
+  RenderBlock {HTML} at (0,0) size 800x249
+    RenderBody {BODY} at (8,21) size 784x220
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 353x36
           text run at (0,1) width 353: "insertRow() bugs, 0 based"
-      RenderTable {TABLE} at (0,59) size 151x160 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,59) size 151x161 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 149x158
           RenderTableRow {TR} at (0,2) size 149x24
             RenderTableCell {TD} at (2,2) size 145x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

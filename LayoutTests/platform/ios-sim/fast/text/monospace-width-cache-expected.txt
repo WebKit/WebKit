@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 376x19
           text run at (0,0) width 376: "The blue line and the black line should be the same length."
-      RenderBlock {P} at (0,92) size 784x21
-        RenderInline {SPAN} at (0,0) size 192x20 [border: none (1px solid #0000FF) none]
-          RenderText {#text} at (0,2) size 192x19
-            text run at (0,2) width 192: "\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}"
+      RenderBlock {P} at (0,92) size 784x20
+        RenderInline {SPAN} at (0,0) size 192x18 [border: none (1px solid #0000FF) none]
+          RenderText {#text} at (0,3) size 192x17
+            text run at (0,3) width 192: "\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}"

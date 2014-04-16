@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x451
-  RenderBlock {HTML} at (0,0) size 800x451
-    RenderBody {BODY} at (8,8) size 784x435
+layer at (0,0) size 800x447
+  RenderBlock {HTML} at (0,0) size 800x447
+    RenderBody {BODY} at (8,8) size 784x431
       RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {H3} at (0,20) size 784x23
+      RenderBlock {H3} at (0,20) size 784x24
         RenderText {#text} at (0,0) size 61x22
           text run at (0,0) width 61: "Table 1"
-      RenderBlock {PRE} at (0,61) size 784x60
-        RenderText {#text} at (0,0) size 219x60
+      RenderBlock {PRE} at (0,62) size 784x57
+        RenderText {#text} at (0,0) size 219x56
           text run at (0,0) width 219: "<TABLE width=\"500\" border=1>"
           text run at (218,0) width 1: " "
-          text run at (0,15) width 164: "<COLGROUP width=\"1*\">"
-          text run at (163,15) width 1: " "
-          text run at (0,30) width 164: "<COLGROUP width=\"1*\">"
-          text run at (163,30) width 1: " "
-          text run at (0,45) width 164: "<COLGROUP width=\"3*\">"
-          text run at (163,45) width 1: " "
-      RenderTable {TABLE} at (0,134) size 500x82 [border: (1px outset #808080)]
+          text run at (0,14) width 164: "<COLGROUP width=\"1*\">"
+          text run at (163,14) width 1: " "
+          text run at (0,28) width 164: "<COLGROUP width=\"1*\">"
+          text run at (163,28) width 1: " "
+          text run at (0,42) width 164: "<COLGROUP width=\"3*\">"
+          text run at (163,42) width 1: " "
+      RenderTable {TABLE} at (0,131) size 500x83 [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
         RenderTableCol {COLGROUP} at (0,0) size 0x0
         RenderTableCol {COLGROUP} at (0,0) size 0x0
@@ -52,19 +52,19 @@ layer at (0,0) size 800x451
             RenderTableCell {TD} at (334,54) size 162x24 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 36x19
                 text run at (2,2) width 36: "Cell I"
-      RenderBlock {HR} at (0,224) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {H3} at (0,244) size 784x23
+      RenderBlock {HR} at (0,221) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {H3} at (0,242) size 784x24
         RenderText {#text} at (0,0) size 61x22
           text run at (0,0) width 61: "Table 2"
-      RenderBlock {PRE} at (0,285) size 784x45
-        RenderText {#text} at (0,0) size 219x45
+      RenderBlock {PRE} at (0,283) size 784x43
+        RenderText {#text} at (0,0) size 219x42
           text run at (0,0) width 219: "<TABLE width=\"500\" border=1>"
           text run at (218,0) width 1: " "
-          text run at (0,15) width 219: "<COLGROUP span=2 width=\"1*\">"
-          text run at (218,15) width 1: " "
-          text run at (0,30) width 164: "<COLGROUP width=\"3*\">"
-          text run at (163,30) width 1: " "
-      RenderTable {TABLE} at (0,343) size 500x82 [border: (1px outset #808080)]
+          text run at (0,14) width 219: "<COLGROUP span=2 width=\"1*\">"
+          text run at (218,14) width 1: " "
+          text run at (0,28) width 164: "<COLGROUP width=\"3*\">"
+          text run at (163,28) width 1: " "
+      RenderTable {TABLE} at (0,338) size 500x83 [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
         RenderTableCol {COLGROUP} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 498x80
@@ -98,4 +98,4 @@ layer at (0,0) size 800x451
             RenderTableCell {TD} at (334,54) size 162x24 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 36x19
                 text run at (2,2) width 36: "Cell I"
-      RenderBlock {HR} at (0,433) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,428) size 784x3 [border: (1px inset #000000)]

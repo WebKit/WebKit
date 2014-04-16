@@ -2,17 +2,17 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (14,32) size 402x206
-      RenderSVGContainer {g} at (14,32) size 402x206 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,-270.00)}]
-        RenderSVGText {text} at (96,168) size 55x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 55x14
-            chunk 1 text run 1 at (96.00,180.00) startOffset 0 endOffset 14 width 55.00: "m, l, l, l, z,"
-        RenderSVGText {text} at (100,182) size 44x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x14
-            chunk 1 text run 1 at (100.00,194.00) startOffset 0 endOffset 7 width 43.49: "subpath"
-        RenderSVGText {text} at (97,196) size 52x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 52x14
-            chunk 1 text run 1 at (97.00,208.00) startOffset 0 endOffset 13 width 51.60: "m, l, l, l, z"
+    RenderSVGContainer {g} at (14,34) size 402x204
+      RenderSVGContainer {g} at (14,34) size 402x204 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,-270.00)}]
+        RenderSVGText {text} at (96,169) size 54x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 54x14
+            chunk 1 text run 1 at (96.00,180.00) startOffset 0 endOffset 14 width 53.75: "m, l, l, l, z,"
+        RenderSVGText {text} at (100,183) size 43x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 43x14
+            chunk 1 text run 1 at (100.00,194.00) startOffset 0 endOffset 7 width 42.51: "subpath"
+        RenderSVGText {text} at (97,197) size 51x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 51x14
+            chunk 1 text run 1 at (97.00,208.00) startOffset 0 endOffset 13 width 50.43: "m, l, l, l, z"
         RenderSVGPath {path} at (16,70) size 191x165 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 190 L 113.962 280 L 10.0385 280 L 62 190 Z M 62 205 L 100.971 272.5 L 23.0589 272.5 L 62.03 205 Z"]
         RenderSVGRect {rect} at (108,68) size 8x8 [fill={[type=SOLID] [color=#FF0000]}] [x=60.00] [y=188.00] [width=4.00] [height=4.00]
         RenderSVGRect {rect} at (201,230) size 8x8 [fill={[type=SOLID] [color=#FF0000]}] [x=111.96] [y=278.00] [width=4.00] [height=4.00]

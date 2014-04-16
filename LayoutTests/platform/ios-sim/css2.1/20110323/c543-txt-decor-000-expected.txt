@@ -33,7 +33,7 @@ layer at (0,0) size 800x454
       RenderBlock {P} at (0,252) size 784x20 [color=#000080]
         RenderText {#text} at (0,0) size 291x19
           text run at (0,0) width 291: "There should be no red at the end of this line."
-        RenderImage {IMG} at (290,0) size 15x15 [color=#FF0000]
+        RenderImage {IMG} at (290,0) size 16x15 [color=#FF0000]
         RenderText {#text} at (305,0) size 5x19
           text run at (305,0) width 5: " "
       RenderBlock {P} at (0,288) size 784x42 [color=#000080]
@@ -49,10 +49,10 @@ layer at (0,0) size 800x454
             text run at (222,2) width 5: " "
         RenderText {#text} at (226,2) size 315x19
           text run at (226,2) width 315: "spaces (including the space between the images) "
-        RenderImage {IMG} at (541,0) size 17x17 [color=#FF0000]
+        RenderImage {IMG} at (540,0) size 18x17 [color=#FF0000]
         RenderText {#text} at (557,2) size 5x19
           text run at (557,2) width 5: " "
-        RenderImage {IMG} at (562,0) size 17x17 [color=#FF0000]
+        RenderImage {IMG} at (561,0) size 18x17 [color=#FF0000]
         RenderText {#text} at (578,2) size 769x39
           text run at (578,2) width 5: " "
           text run at (582,2) width 187: "should be underlined, but the"

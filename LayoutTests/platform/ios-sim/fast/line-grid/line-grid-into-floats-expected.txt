@@ -12,17 +12,17 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (116,72) size 1x0
         RenderText {#text} at (2,104) size 250x14
           text run at (2,104) width 250: "There should be lots of spacing between these lines."
-      RenderBlock (floating) {DIV} at (279,15) size 196x80 [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (278,15) size 197x80 [border: (2px solid #000000)]
         RenderText {#text} at (2,11) size 171x23
           text run at (2,11) width 171: "This text should snap"
         RenderBR {BR} at (172,29) size 1x0
         RenderText {#text} at (2,54) size 192x23
           text run at (2,54) width 192: "to a 36px font-size grid."
         RenderBR {BR} at (193,72) size 1x0
-      RenderText {#text} at (480,11) size 758x256
-        text run at (480,11) width 288: "Here we can see the"
-        text run at (480,54) width 255: "actual lines of the"
-        text run at (480,97) width 263: "grid outside of the"
+      RenderText {#text} at (479,11) size 757x256
+        text run at (479,11) width 288: "Here we can see the"
+        text run at (479,54) width 255: "actual lines of the"
+        text run at (479,97) width 263: "grid outside of the"
         text run at (274,140) width 401: "floating objects. Everything"
         text run at (10,183) width 717: "should be aligned to these lines, including what is"
         text run at (10,226) width 300: "inside the two floats."

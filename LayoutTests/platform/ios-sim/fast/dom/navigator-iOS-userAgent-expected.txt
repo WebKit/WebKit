@@ -1,11 +1,8 @@
-Verify the user-agent string does not have the 'Simulator' device name.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS User agent platform should be "iPhone" or "iPad".
-PASS User agent does not contain "Simulator".
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
+CONSOLE MESSAGE: line 10: TypeError: HTMLParagraphElement is not a function (evaluating 'description("Verify the user-agent string does not have the 'Simulator' device name.")')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0

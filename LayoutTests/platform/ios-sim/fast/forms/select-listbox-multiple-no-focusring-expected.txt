@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x40
   RenderBlock {HTML} at (0,0) size 800x40
     RenderBody {BODY} at (8,8) size 784x24
-      RenderMenuList {SELECT} at (2,2) size 333x20 [bgcolor=#FFFFFF02] [border: (1px solid #112E87)]
-        RenderBlock (anonymous) at (6,3) size 321x14
+      RenderMenuList {SELECT} at (2,2) size 334x20 [bgcolor=#FFFFFF02] [border: (1px solid #112E87)]
+        RenderBlock (anonymous) at (6,3) size 322x14
           RenderText at (0,0) size 37x14
             text run at (0,0) width 37: "0 Items"
       RenderText {#text} at (0,0) size 0x0

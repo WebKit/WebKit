@@ -66,7 +66,7 @@ layer at (8,28) size 300x100 clip at (8,28) size 285x100 scrollHeight 360
     RenderText {#text} at (0,340) size 52x19
       text run at (0,340) width 52: "Y scroll"
     RenderBR {BR} at (51,355) size 1x0
-layer at (8,128) size 300x100 clip at (8,128) size 300x85 scrollWidth 1209
+layer at (8,128) size 300x100 clip at (8,128) size 300x85 scrollWidth 1208
   RenderBlock {DIV} at (0,120) size 300x100
     RenderText {#text} at (0,0) size 1209x19
       text run at (0,0) width 496: "X scroll X scroll X scroll X scroll X scroll X scroll X scroll X scroll X scroll "

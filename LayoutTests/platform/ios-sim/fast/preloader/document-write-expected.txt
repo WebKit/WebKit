@@ -1,4 +1,3 @@
-document-write-plaintext.js has MIME type text/javascript
 script1.js has MIME type text/javascript
 
 This test requires DumpRenderTree to see the log of what resources are loaded. 

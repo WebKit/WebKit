@@ -1,0 +1,17 @@
+ (GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 18.00 203.00)
+          (bounds 210.00 210.00)
+          (contentsOpaque 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
+        )
+      )
+    )
+  )
+)
+

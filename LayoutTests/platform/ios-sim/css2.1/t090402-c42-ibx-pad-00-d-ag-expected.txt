@@ -11,16 +11,16 @@ layer at (0,0) size 800x188
           RenderTableRow {TR} at (0,2) size 434x124
             RenderTableCell {TD} at (2,2) size 214x124 [border: (2px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (12,2) size 200x120
-                RenderText {#text} at (0,7) size 191x34
-                  text run at (0,7) width 191: "1 2 3 4 5 6 7 8 9 0"
-                  text run at (0,31) width 61: "1 2 3 "
-                RenderInline {SPAN} at (0,0) size 191x82 [border: (10px solid #0000FF)]
-                  RenderText {#text} at (120,31) size 191x58
-                    text run at (120,31) width 71: "7 8 9 0"
-                    text run at (0,55) width 191: "1 2 3 4 5 6 7 8 9 0"
-                    text run at (0,79) width 81: "1 2 3 4 "
-                RenderText {#text} at (140,79) size 191x34
+                RenderText {#text} at (0,7) size 190x34
+                  text run at (0,7) width 190: "1 2 3 4 5 6 7 8 9 0"
+                  text run at (0,31) width 60: "1 2 3 "
+                RenderInline {SPAN} at (0,0) size 190x82 [border: (10px solid #0000FF)]
+                  RenderText {#text} at (120,31) size 190x58
+                    text run at (120,31) width 70: "7 8 9 0"
+                    text run at (0,55) width 190: "1 2 3 4 5 6 7 8 9 0"
+                    text run at (0,79) width 80: "1 2 3 4 "
+                RenderText {#text} at (140,79) size 190x34
                   text run at (140,79) width 50: "8 9 0"
-                  text run at (0,103) width 191: "1 2 3 4 5 6 7 8 9 0"
+                  text run at (0,103) width 190: "1 2 3 4 5 6 7 8 9 0"
             RenderTableCell {TD} at (218,2) size 214x124 [color=#FFFF00] [bgcolor=#FF0000] [border: (2px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 210x120

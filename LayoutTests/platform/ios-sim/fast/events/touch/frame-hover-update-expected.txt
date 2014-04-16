@@ -1,0 +1,21 @@
+PASS [object HTMLDocument] is non-null.
+PASS [object HTMLDocument] is non-null.
+PASS hoveredTop.length is 1
+PASS hoveredIframe1.length is 1
+PASS hoveredIframe2.length is 0
+PASS hoveredTop.length is 1
+PASS hoveredIframe1.length is 0
+PASS hoveredIframe2.length is 1
+FAIL hoveredTop.length should be 0. Was 1.
+PASS hoveredIframe1.length is 0
+PASS hoveredIframe2.length is 0
+PASS hoveredTop.length is 1
+PASS hoveredIframe1.length is 0
+FAIL hoveredIframe2.length should be 0. Was 1.
+PASS hoveredTop.length is 1
+PASS hoveredIframe1.length is 0
+PASS hoveredIframe2.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

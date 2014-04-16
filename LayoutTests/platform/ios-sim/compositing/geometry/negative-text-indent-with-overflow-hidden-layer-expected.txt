@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: line 38: ReferenceError: Can't find variable: runRepaintTest
+Hidden Text
+Hidden Text
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 2
+        (GraphicsLayer
+          (position 568.00 10.00)
+          (bounds 200.00 50.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 568.00 220.00)
+          (bounds 200.00 200.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

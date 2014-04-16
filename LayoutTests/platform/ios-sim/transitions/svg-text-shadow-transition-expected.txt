@@ -4,7 +4,7 @@ layer at (0,0) size 800x161
   RenderBlock {HTML} at (0,0) size 800x161
     RenderBody {BODY} at (8,8) size 784x145
       RenderBlock (anonymous) at (0,0) size 784x105
-        RenderSVGRoot {svg} at (8,12) size 308x75
+        RenderSVGRoot {svg} at (8,8) size 314x85
           RenderSVGText {text} at (10,14) size 278x45 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 278x45
               chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 15 width 277.83: "Shadow on texts"

@@ -1,8 +1,8 @@
-layer at (0,0) size 800x718
+layer at (0,0) size 800x720
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x718
-  RenderBlock {HTML} at (0,0) size 800x718
-    RenderBody {BODY} at (8,16) size 784x694
+layer at (0,0) size 800x720
+  RenderBlock {HTML} at (0,0) size 800x721
+    RenderBody {BODY} at (8,16) size 784x697
       RenderBlock {P} at (0,0) size 784x40
         RenderText {#text} at (0,0) size 764x39
           text run at (0,0) width 764: "There should be a SPAN in the middle of all four paragraphs that has padding, a green border, and a margin on the left,"
@@ -10,7 +10,7 @@ layer at (0,0) size 800x718
       RenderBlock {H1} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 91x19
           text run at (0,0) width 91: "Left-to-Right"
-      RenderBlock {DIV} at (0,86) size 784x284 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,86) size 784x285 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 772x32
           RenderText {#text} at (0,6) size 128x19
             text run at (0,6) width 128: "Lorem ipsum dolor "
@@ -26,10 +26,10 @@ layer at (0,0) size 800x718
             text run at (0,134) width 523: "consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore "
             text run at (522,134) width 211: "magna aliqua. Ut enim ad minim"
             text run at (0,166) width 413: "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip."
-      RenderBlock {H1} at (0,380) size 784x20
+      RenderBlock {H1} at (0,381) size 784x21
         RenderText {#text} at (0,0) size 91x19
           text run at (0,0) width 91: "Right-to-Left"
-      RenderBlock {DIV} at (0,410) size 784x284 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,412) size 784x285 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 772x32
           RenderText {#text} at (644,6) size 128x19
             text run at (644,6) width 128 RTL override: "Lorem ipsum dolor "
@@ -45,11 +45,11 @@ layer at (0,0) size 800x718
             text run at (39,134) width 211 RTL override: "magna aliqua. Ut enim ad minim"
             text run at (249,134) width 523 RTL override: "consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore "
             text run at (359,166) width 413 RTL override: "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip."
-layer at (14,124) size 191x21
+layer at (14,125) size 191x21
   RenderInline (relative positioned) {SPAN} at (0,0) size 191x21 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
     RenderText {#text} at (172,6) size 136x19
       text run at (172,6) width 136: "sit amet, consectetur "
-layer at (14,172) size 767x85
+layer at (14,173) size 767x85
   RenderInline (relative positioned) {SPAN} at (0,0) size 767x85 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
     RenderText {#text} at (485,38) size 767x83
       text run at (485,38) width 242: "laboris nisi ut aliquip ex ea commodo"
@@ -57,11 +57,11 @@ layer at (14,172) size 767x85
       text run at (331,70) width 436: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
       text run at (0,102) width 149: "sint occaecat cupidatat "
       text run at (148,102) width 483: "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. "
-layer at (14,448) size 191x21
+layer at (14,450) size 191x21
   RenderInline (relative positioned) {SPAN} at (0,0) size 191x21 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
     RenderText {#text} at (464,6) size 136x19
       text run at (464,6) width 136 RTL override: "sit amet, consectetur "
-layer at (14,496) size 767x85
+layer at (14,498) size 767x85
   RenderInline (relative positioned) {SPAN} at (0,0) size 767x85 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
     RenderText {#text} at (45,38) size 767x83
       text run at (45,38) width 242 RTL override: "laboris nisi ut aliquip ex ea commodo"

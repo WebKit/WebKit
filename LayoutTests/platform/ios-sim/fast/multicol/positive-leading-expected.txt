@@ -66,4 +66,4 @@ layer at (8,8) size 506x505
       text run at (3,1390) width 158: "quis rutrum metus. Nunc eu"
       text run at (3,1414) width 158: "ipsum sit amet ligula mattis"
       text run at (3,1438) width 158: "porttitor sit amet id felis. Integer"
-      text run at (3,1462) width 158: "volutpat aliquam odio et feugiat."
+      text run at (3,1462) width 157: "volutpat aliquam odio et feugiat."

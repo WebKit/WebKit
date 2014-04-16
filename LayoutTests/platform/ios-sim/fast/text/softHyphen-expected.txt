@@ -148,18 +148,18 @@ layer at (0,0) size 800x1050
         RenderBlock {SPAN} at (15,0) size 14x22 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,1) size 12x19
             text run at (1,1) width 12: "X"
-        RenderText {#text} at (29,1) size 12x19
-          text run at (29,1) width 12: "Y"
+        RenderText {#text} at (28,1) size 13x19
+          text run at (28,1) width 13: "Y"
       RenderBlock {P} at (0,996) size 784x22
         RenderText {#text} at (0,1) size 16x19
           text run at (0,1) width 16: "W"
         RenderBlock {SPAN} at (15,0) size 14x22 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,1) size 12x19
             text run at (1,1) width 12: "X"
-        RenderText {#text} at (29,1) size 12x19
-          text run at (29,1) width 12: "Y"
-layer at (28,124) size 14x22
-  RenderBlock (relative positioned) {SPAN} at (20,0) size 14x22 [border: (1px solid #FF0000)]
+        RenderText {#text} at (28,1) size 13x19
+          text run at (28,1) width 13: "Y"
+layer at (28,124) size 13x22
+  RenderBlock (relative positioned) {SPAN} at (19,0) size 15x22 [border: (1px solid #FF0000)]
     RenderText {#text} at (1,1) size 12x19
       text run at (1,1) width 12: "X"
 layer at (786,162) size 14x22

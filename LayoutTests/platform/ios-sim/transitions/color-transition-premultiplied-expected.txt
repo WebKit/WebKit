@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 240: Failed to pause 'background-color' transition on element 'one'
+CONSOLE MESSAGE: line 240: Failed to pause 'background-color' transition on element 'two'
+PASS - "background-color" property for "one" element at 0.5s saw something close to: 0,127,0
+PASS - "background-color" property for "two" element at 0.5s saw something close to: 0,0,255
+

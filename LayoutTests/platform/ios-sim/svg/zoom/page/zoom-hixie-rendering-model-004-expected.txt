@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x401
-  RenderBlock {html} at (0,0) size 800x401
-    RenderBody {body} at (11,23) size 778x367
-      RenderBlock {p} at (0,0) size 778x27 [color=#000080]
+layer at (0,0) size 800x402
+  RenderBlock {html} at (0,0) size 800x402
+    RenderBody {body} at (11,23) size 778x368
+      RenderBlock {p} at (0,0) size 777x27 [color=#000080]
         RenderText {#text} at (0,0) size 709x26
           text run at (0,0) width 709: "Zoom in and out. The following two squares should always be the same size."
-      RenderBlock {div} at (0,50) size 144x144 [bgcolor=#000080]
-      RenderBlock (anonymous) at (0,217) size 778x150
-        RenderSVGRoot {svg} at (11,240) size 144x144
-          RenderSVGRect {rect} at (11,240) size 144x144 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderBlock {div} at (0,50) size 144x145 [bgcolor=#000080]
+      RenderBlock (anonymous) at (0,217) size 777x151
+        RenderSVGRoot {svg} at (11,240) size 145x145
+          RenderSVGRect {rect} at (11,240) size 145x145 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

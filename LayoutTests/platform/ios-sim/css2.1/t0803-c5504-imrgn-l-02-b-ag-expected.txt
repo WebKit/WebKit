@@ -1,19 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x127
-  RenderBlock {HTML} at (0,0) size 800x127
-    RenderBody {BODY} at (8,16) size 784x96
+layer at (0,0) size 800x112
+  RenderBlock {HTML} at (0,0) size 800x112
+    RenderBody {BODY} at (8,16) size 784x81
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 320x19
           text run at (0,0) width 320: "There should be a small light green square below:"
-      RenderBlock {DIV} at (15,36) size 754x60
-        RenderBlock {P} at (0,0) size 75x60 [color=#FFFFFF]
-          RenderText {#text} at (0,0) size 31x30
-            text run at (0,0) width 31: "xx"
-            text run at (0,15) width 31: "xx"
+      RenderBlock {DIV} at (15,36) size 754x45
+        RenderBlock {P} at (0,0) size 75x45 [color=#FFFFFF]
+          RenderText {#text} at (0,0) size 30x30
+            text run at (0,0) width 30: "xx"
+            text run at (0,15) width 30: "xx"
           RenderInline {SPAN} at (0,0) size 15x15 [color=#00FF00] [bgcolor=#FF0000]
             RenderText {#text} at (90,15) size 15x15
               text run at (90,15) width 15: "x"
-          RenderText {#text} at (0,30) size 31x30
-            text run at (0,30) width 31: "xx"
-            text run at (0,45) width 31: "xx"
+          RenderText {#text} at (0,30) size 75x15
+            text run at (0,30) width 75: "xx xx"

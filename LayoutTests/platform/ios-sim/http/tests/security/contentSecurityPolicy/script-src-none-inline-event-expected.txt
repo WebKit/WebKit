@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 3: Refused to execute inline event handler because it violates the following Content Security Policy directive: "script-src 'none'".
+
+ 
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+PASS

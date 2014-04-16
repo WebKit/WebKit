@@ -14,7 +14,7 @@ layer at (0,0) size 800x112
           RenderBlock (anonymous) at (12,3) size 18x14
             RenderText {#text} at (0,0) size 18x14
               text run at (0,0) width 18: "test"
-        RenderButton {BUTTON} at (48,2) size 48x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {BUTTON} at (47,2) size 49x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 24x14
             RenderText {#text} at (0,0) size 24x14
               text run at (0,0) width 24: "test2"

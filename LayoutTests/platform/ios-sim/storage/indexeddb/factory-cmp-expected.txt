@@ -1,0 +1,609 @@
+Test IndexedDB key comparison using IDBFactory.cmp().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+FAIL typeof indexedDB.cmp should be function. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+
+compare valid keys
+FAIL indexedDB.cmp(-Infinity,-Number.MAX_VALUE) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-Number.MAX_VALUE,-Infinity) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-Infinity,-Infinity) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-Number.MAX_VALUE,-Number.MAX_VALUE) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-Number.MAX_VALUE,-1) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-1,-Number.MAX_VALUE) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-Number.MAX_VALUE,-Number.MAX_VALUE) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-1,-1) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-1,-Number.MIN_VALUE) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-Number.MIN_VALUE,-1) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-1,-1) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-Number.MIN_VALUE,-Number.MIN_VALUE) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-Number.MIN_VALUE,0) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(0,-Number.MIN_VALUE) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(-Number.MIN_VALUE,-Number.MIN_VALUE) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(0,0) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(0,Number.MIN_VALUE) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Number.MIN_VALUE,0) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(0,0) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Number.MIN_VALUE,Number.MIN_VALUE) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Number.MIN_VALUE,1) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(1,Number.MIN_VALUE) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Number.MIN_VALUE,Number.MIN_VALUE) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(1,1) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(1,Number.MAX_VALUE) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Number.MAX_VALUE,1) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(1,1) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Number.MAX_VALUE,Number.MAX_VALUE) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Number.MAX_VALUE,Infinity) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Infinity,Number.MAX_VALUE) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Number.MAX_VALUE,Number.MAX_VALUE) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Infinity,Infinity) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Infinity,new Date(0)) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(0),Infinity) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(Infinity,Infinity) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(0),new Date(0)) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(0),new Date(1000)) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(1000),new Date(0)) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(0),new Date(0)) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(1000),new Date(1000)) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(1000),new Date(1317399931023)) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(1317399931023),new Date(1000)) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(1000),new Date(1000)) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(1317399931023),new Date(1317399931023)) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(1317399931023),'') should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('',new Date(1317399931023)) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Date(1317399931023),new Date(1317399931023)) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('','') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('','\0') should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('\0','') should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('','') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('\0','\0') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('\0','a') should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('a','\0') should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('\0','\0') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('a','a') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('a','aa') should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('aa','a') should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('a','a') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('aa','aa') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('aa','b') should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('b','aa') should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('aa','aa') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('b','b') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('b','ba') should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('ba','b') should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('b','b') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('ba','ba') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('ba','¢') should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('¢','ba') should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('ba','ba') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('¢','¢') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('¢','水') should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('水','¢') should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('¢','¢') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('水','水') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('水','𝄞') should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('𝄞','水') should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('水','水') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('𝄞','𝄞') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('𝄞','�') should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('�','𝄞') should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('𝄞','𝄞') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('�','�') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('�',new Uint8Array()) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array(),'�') should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp('�','�') should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array(),new Uint8Array()) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array(),new Uint8Array([0])) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0]),new Uint8Array()) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array(),new Uint8Array()) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0]),new Uint8Array([0])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0]),new Uint8Array([0, 0])) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0, 0]),new Uint8Array([0])) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0]),new Uint8Array([0])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0, 0]),new Uint8Array([0, 0])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0, 0]),new Uint8Array([0, 1])) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0, 1]),new Uint8Array([0, 0])) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0, 0]),new Uint8Array([0, 0])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0, 1]),new Uint8Array([0, 1])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0, 1]),new Uint8Array([1])) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1]),new Uint8Array([0, 1])) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([0, 1]),new Uint8Array([0, 1])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1]),new Uint8Array([1])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1]),new Uint8Array([1, 0])) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1, 0]),new Uint8Array([1])) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1]),new Uint8Array([1])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1, 0]),new Uint8Array([1, 0])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1, 0]),new Uint8Array([1, 1])) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1, 1]),new Uint8Array([1, 0])) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1, 0]),new Uint8Array([1, 0])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1, 1]),new Uint8Array([1, 1])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1, 1]),new Uint8Array([255])) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([255]),new Uint8Array([1, 1])) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([1, 1]),new Uint8Array([1, 1])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([255]),new Uint8Array([255])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([255]),[]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([],new Uint8Array([255])) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(new Uint8Array([255]),new Uint8Array([255])) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([],[]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([],[-Infinity]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Infinity],[]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([],[]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Infinity],[-Infinity]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Infinity],[-Number.MAX_VALUE]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Number.MAX_VALUE],[-Infinity]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Infinity],[-Infinity]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Number.MAX_VALUE],[-Number.MAX_VALUE]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Number.MAX_VALUE],[-1]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-1],[-Number.MAX_VALUE]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Number.MAX_VALUE],[-Number.MAX_VALUE]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-1],[-1]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-1],[-Number.MIN_VALUE]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Number.MIN_VALUE],[-1]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-1],[-1]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Number.MIN_VALUE],[-Number.MIN_VALUE]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Number.MIN_VALUE],[0]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([0],[-Number.MIN_VALUE]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([-Number.MIN_VALUE],[-Number.MIN_VALUE]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([0],[0]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([0],[Number.MIN_VALUE]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Number.MIN_VALUE],[0]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([0],[0]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Number.MIN_VALUE],[Number.MIN_VALUE]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Number.MIN_VALUE],[1]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([1],[Number.MIN_VALUE]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Number.MIN_VALUE],[Number.MIN_VALUE]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([1],[1]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([1],[Number.MAX_VALUE]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Number.MAX_VALUE],[1]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([1],[1]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Number.MAX_VALUE],[Number.MAX_VALUE]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Number.MAX_VALUE],[Infinity]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Infinity],[Number.MAX_VALUE]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Number.MAX_VALUE],[Number.MAX_VALUE]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Infinity],[Infinity]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Infinity],[new Date(0)]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(0)],[Infinity]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([Infinity],[Infinity]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(0)],[new Date(0)]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(0)],[new Date(1000)]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(1000)],[new Date(0)]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(0)],[new Date(0)]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(1000)],[new Date(1000)]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(1000)],[new Date(1317399931023)]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(1317399931023)],[new Date(1000)]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(1000)],[new Date(1000)]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(1317399931023)],[new Date(1317399931023)]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(1317399931023)],['']) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([''],[new Date(1317399931023)]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Date(1317399931023)],[new Date(1317399931023)]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([''],['']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([''],['\0']) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['\0'],['']) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([''],['']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['\0'],['\0']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['\0'],['a']) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['a'],['\0']) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['\0'],['\0']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['a'],['a']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['a'],['aa']) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['aa'],['a']) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['a'],['a']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['aa'],['aa']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['aa'],['b']) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['b'],['aa']) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['aa'],['aa']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['b'],['b']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['b'],['ba']) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['ba'],['b']) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['b'],['b']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['ba'],['ba']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['ba'],['¢']) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['¢'],['ba']) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['ba'],['ba']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['¢'],['¢']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['¢'],['水']) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['水'],['¢']) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['¢'],['¢']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['水'],['水']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['水'],['𝄞']) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['𝄞'],['水']) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['水'],['水']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['𝄞'],['𝄞']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['𝄞'],['�']) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['�'],['𝄞']) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['𝄞'],['𝄞']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['�'],['�']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['�'],[new Uint8Array()]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array()],['�']) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp(['�'],['�']) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array()],[new Uint8Array()]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array()],[new Uint8Array([0])]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0])],[new Uint8Array()]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array()],[new Uint8Array()]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0])],[new Uint8Array([0])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0])],[new Uint8Array([0, 0])]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0, 0])],[new Uint8Array([0])]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0])],[new Uint8Array([0])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0, 0])],[new Uint8Array([0, 0])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0, 0])],[new Uint8Array([0, 1])]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0, 1])],[new Uint8Array([0, 0])]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0, 0])],[new Uint8Array([0, 0])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0, 1])],[new Uint8Array([0, 1])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0, 1])],[new Uint8Array([1])]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1])],[new Uint8Array([0, 1])]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([0, 1])],[new Uint8Array([0, 1])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1])],[new Uint8Array([1])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1])],[new Uint8Array([1, 0])]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1, 0])],[new Uint8Array([1])]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1])],[new Uint8Array([1])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1, 0])],[new Uint8Array([1, 0])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1, 0])],[new Uint8Array([1, 1])]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1, 1])],[new Uint8Array([1, 0])]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1, 0])],[new Uint8Array([1, 0])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1, 1])],[new Uint8Array([1, 1])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1, 1])],[new Uint8Array([255])]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([255])],[new Uint8Array([1, 1])]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([1, 1])],[new Uint8Array([1, 1])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([255])],[new Uint8Array([255])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([255])],[[]]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[]],[new Uint8Array([255])]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([new Uint8Array([255])],[new Uint8Array([255])]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[]],[[]]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[]],[[], []]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[], []],[[]]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[]],[[]]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[], []],[[], []]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[], []],[[], [], []]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[], [], []],[[], []]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[], []],[[], []]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[], [], []],[[], [], []]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[], [], []],[[[]]]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[[]]],[[], [], []]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[], [], []],[[], [], []]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[[]]],[[[]]]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[[]]],[[[[]]]]) should be -1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[[[]]]],[[[]]]) should be 1. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[[]]],[[[]]]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL indexedDB.cmp([[[[]]]],[[[[]]]]) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+
+compare invalid keys
+Expecting exception from indexedDB.cmp(void 0, true)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(true, void 0)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(void 0, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', void 0)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(true, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', true)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(true, false)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(false, true)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(true, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', true)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(false, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', false)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(false, NaN)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(NaN, false)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(false, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', false)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(NaN, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', NaN)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(NaN, new Date(NaN))
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(new Date(NaN), NaN)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(NaN, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', NaN)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(new Date(NaN), 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', new Date(NaN))
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(new Date(NaN), null)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(null, new Date(NaN))
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(new Date(NaN), 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', new Date(NaN))
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(null, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', null)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(null, {})
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp({}, null)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(null, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', null)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp({}, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', {})
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp({}, function () {})
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(function () {}, {})
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp({}, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', {})
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(function () {}, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', function () {})
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(function () {}, /regex/)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(/regex/, function () {})
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(function () {}, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', function () {})
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(/regex/, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', /regex/)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(/regex/, self)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(self, /regex/)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(/regex/, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', /regex/)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(self, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', self)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(self, self.document)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(self.document, self)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(self, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', self)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(self.document, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', self.document)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(self.document, self.document.body)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(self.document.body, self.document)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(self.document, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', self.document)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp(self.document.body, 'valid')
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+Expecting exception from indexedDB.cmp('valid', self.document.body)
+PASS Exception was thrown.
+FAIL code should be 0 (of type number). Was undefined (of type undefined).
+FAIL ename should be DataError. Was TypeError.
+Exception message: null is not an object (evaluating 'indexedDB.cmp')
+
+compare identical keys
+FAIL indexedDB.cmp(0, -0) should be 0. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

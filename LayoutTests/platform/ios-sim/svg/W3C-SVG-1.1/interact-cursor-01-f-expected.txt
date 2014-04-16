@@ -16,42 +16,42 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (148,70) size 80x32
           RenderSVGRect {rect} at (148,70) size 80x32 [fill={[type=SOLID] [color=#666666]}] [x=148.00] [y=70.00] [width=80.00] [height=32.00]
           RenderSVGText {text} at (154,75) size 73x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 73x19
+            RenderSVGInlineText {#text} at (0,0) size 73x18
               chunk 1 text run 1 at (154.00,90.00) startOffset 0 endOffset 9 width 72.04: "crosshair"
         RenderSVGContainer {g} at (148,118) size 80x32
           RenderSVGRect {rect} at (148,118) size 80x32 [fill={[type=SOLID] [color=#666666]}] [x=148.00] [y=118.00] [width=80.00] [height=32.00]
           RenderSVGText {text} at (154,123) size 53x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 53x19
+            RenderSVGInlineText {#text} at (0,0) size 53x18
               chunk 1 text run 1 at (154.00,138.00) startOffset 0 endOffset 7 width 52.45: "default"
         RenderSVGContainer {g} at (148,166) size 80x32
           RenderSVGRect {rect} at (148,166) size 80x32 [fill={[type=SOLID] [color=#666666]}] [x=148.00] [y=166.00] [width=80.00] [height=32.00]
           RenderSVGText {text} at (154,171) size 55x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 55x19
+            RenderSVGInlineText {#text} at (0,0) size 55x18
               chunk 1 text run 1 at (154.00,186.00) startOffset 0 endOffset 7 width 54.22: "pointer"
         RenderSVGContainer {g} at (148,214) size 80x32
           RenderSVGRect {rect} at (148,214) size 80x32 [fill={[type=SOLID] [color=#666666]}] [x=148.00] [y=214.00] [width=80.00] [height=32.00]
           RenderSVGText {text} at (154,220) size 42x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 42x19
+            RenderSVGInlineText {#text} at (0,0) size 42x18
               chunk 1 text run 1 at (154.00,235.00) startOffset 0 endOffset 4 width 41.80: "move"
         RenderSVGContainer {g} at (252,70) size 80x32
           RenderSVGRect {rect} at (252,70) size 80x32 [fill={[type=SOLID] [color=#666666]}] [x=252.00] [y=70.00] [width=80.00] [height=32.00]
           RenderSVGText {text} at (258,75) size 29x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 29x19
+            RenderSVGInlineText {#text} at (0,0) size 29x18
               chunk 1 text run 1 at (258.00,90.00) startOffset 0 endOffset 4 width 28.45: "text"
         RenderSVGContainer {g} at (252,118) size 80x32
           RenderSVGRect {rect} at (252,118) size 80x32 [fill={[type=SOLID] [color=#666666]}] [x=252.00] [y=118.00] [width=80.00] [height=32.00]
           RenderSVGText {text} at (258,123) size 32x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 32x19
+            RenderSVGInlineText {#text} at (0,0) size 32x18
               chunk 1 text run 1 at (258.00,138.00) startOffset 0 endOffset 4 width 31.12: "wait"
         RenderSVGContainer {g} at (252,166) size 80x32
           RenderSVGRect {rect} at (252,166) size 80x32 [fill={[type=SOLID] [color=#666666]}] [x=252.00] [y=166.00] [width=80.00] [height=32.00]
           RenderSVGText {text} at (258,171) size 33x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 33x19
+            RenderSVGInlineText {#text} at (0,0) size 33x18
               chunk 1 text run 1 at (258.00,186.00) startOffset 0 endOffset 4 width 32.89: "help"
         RenderSVGContainer {g} at (252,214) size 80x32
           RenderSVGRect {rect} at (252,214) size 80x32 [fill={[type=SOLID] [color=#666666]}] [x=252.00] [y=214.00] [width=80.00] [height=32.00]
           RenderSVGText {text} at (258,220) size 40x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 40x19
+            RenderSVGInlineText {#text} at (0,0) size 40x18
               chunk 1 text run 1 at (258.00,235.00) startOffset 0 endOffset 5 width 39.13: "<url>"
       RenderSVGContainer {g} at (115,35) size 250x246
         RenderSVGPath {polygon} at (115,35) size 35x35 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#990000]}] [points="116 36 116 68 148 36"]

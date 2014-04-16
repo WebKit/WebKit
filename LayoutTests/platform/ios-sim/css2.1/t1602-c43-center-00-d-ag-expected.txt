@@ -7,9 +7,9 @@ layer at (0,0) size 800x105
         RenderText {#text} at (0,0) size 421x19
           text run at (0,0) width 421: "There should be a single small column of blue below with no red:"
       RenderBlock {DIV} at (0,36) size 784x15
-        RenderImage {IMG} at (384,0) size 15x15
+        RenderImage {IMG} at (384,0) size 16x15
       RenderBlock {DIV} at (0,51) size 784x15
-        RenderImage {IMG} at (385,0) size 15x15
+        RenderImage {IMG} at (384,0) size 16x15
       RenderBlock {DIV} at (0,66) size 784x15 [color=#0000FF]
         RenderText {#text} at (384,0) size 16x15
           text run at (384,0) width 16: "X"

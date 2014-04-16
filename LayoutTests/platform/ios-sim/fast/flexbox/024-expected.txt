@@ -10,9 +10,9 @@ layer at (0,0) size 800x600
           text run at (272,20) width 275: "If you see any red, then the test has failed. "
           text run at (546,20) width 218: "This test is checking to make sure"
           text run at (0,40) width 327: "replaced elements inside boxes get stretched when "
-        RenderInline {CODE} at (0,0) size 141x15
-          RenderText {#text} at (326,44) size 141x15
-            text run at (326,44) width 141: "box-align: stretch"
+        RenderInline {CODE} at (0,0) size 141x14
+          RenderText {#text} at (326,45) size 141x14
+            text run at (326,45) width 141: "box-align: stretch"
         RenderText {#text} at (466,40) size 82x19
           text run at (466,40) width 82: " is specified."
       RenderDeprecatedFlexibleBox {DIV} at (0,76) size 100x100 [bgcolor=#FF0000]

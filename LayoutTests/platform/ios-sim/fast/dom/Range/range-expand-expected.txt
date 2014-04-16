@@ -30,6 +30,14 @@ i: 1; actual: e; expected: e
 i: 2; actual: r; expected: r
 i: 3; actual: e; expected: e
 ==================================
+FAILED test Chinese word1
+actual: 甲型
+expected: 甲
+length !=; actual.length: 2; expected.length: 1
+escaped actual: %u7532%u578B
+escaped expected: %u7532
+i: 0; actual: 甲; expected: 甲
+==================================
 FAILED test Hebrew sentence
 actual: בלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"
 expected: בלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"

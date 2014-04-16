@@ -10,24 +10,24 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 374x40
           chunk 1 text run 1 at (35.00,60.00) startOffset 0 endOffset 22 width 373.25: "& whitespace handling."
       RenderSVGText {text} at (15,68) size 516x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 516x46
+        RenderSVGInlineText {#text} at (0,0) size 516x45
           chunk 1 text run 1 at (15.00,105.00) startOffset 0 endOffset 32 width 515.78: " WS   with  indented lines.     "
       RenderSVGText {text} at (15,103) size 461x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 461x46
+        RenderSVGInlineText {#text} at (0,0) size 461x45
           chunk 1 text run 1 at (15.00,140.00) startOffset 0 endOffset 27 width 460.21: " WS   with  indented lines."
       RenderSVGRect {rect} at (24,144) size 382x38 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=145.00] [width=380.00] [height=36.00]
       RenderSVGText {text} at (28,138) size 375x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 375x46
+        RenderSVGInlineText {#text} at (0,0) size 375x45
           chunk 1 text run 1 at (28.00,175.00) startOffset 0 endOffset 20 width 374.32: "xml:space='preserve'"
       RenderSVGText {text} at (15,188) size 492x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 492x46
+        RenderSVGInlineText {#text} at (0,0) size 492x45
           chunk 1 text run 1 at (15.00,225.00) startOffset 0 endOffset 29 width 491.37: "WS non-indented lines.       "
       RenderSVGText {text} at (15,223) size 414x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 414x46
+        RenderSVGInlineText {#text} at (0,0) size 414x45
           chunk 1 text run 1 at (15.00,260.00) startOffset 0 endOffset 22 width 413.57: "WS non-indented lines."
       RenderSVGRect {rect} at (24,264) size 382x38 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=265.00] [width=380.00] [height=36.00]
       RenderSVGText {text} at (28,258) size 375x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 375x46
+        RenderSVGInlineText {#text} at (0,0) size 375x45
           chunk 1 text run 1 at (28.00,295.00) startOffset 0 endOffset 20 width 374.32: "xml:space='preserve'"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45

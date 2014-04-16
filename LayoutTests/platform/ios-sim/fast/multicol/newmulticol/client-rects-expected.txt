@@ -1,0 +1,369 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x30
+        RenderText {#text} at (0,10) size 431x19
+          text run at (0,10) width 431: "The blue borders should coincide with light blue squares, like this: "
+        RenderBlock {SPAN} at (430,0) size 26x25 [bgcolor=#ADD8E6] [border: (3px solid #0000FF7F)]
+        RenderText {#text} at (455,10) size 200x19
+          text run at (455,10) width 9: ". "
+          text run at (463,10) width 192: "There should be none of this: "
+        RenderBlock {SPAN} at (654,0) size 26x25 [bgcolor=#ADD8E6]
+        RenderText {#text} at (679,10) size 54x19
+          text run at (679,10) width 5: " "
+          text run at (683,10) width 50: "or this: "
+        RenderBlock {SPAN} at (732,0) size 26x25 [border: (3px solid #0000FF7F)]
+        RenderText {#text} at (757,10) size 5x19
+          text run at (757,10) width 5: "."
+      RenderBlock (anonymous) at (0,46) size 784x333
+        RenderText {#text} at (116,71) size 4x19
+          text run at (116,71) width 4: " "
+        RenderText {#text} at (236,71) size 4x19
+          text run at (236,71) width 4: " "
+        RenderText {#text} at (356,71) size 4x19
+          text run at (356,71) width 4: " "
+        RenderText {#text} at (476,71) size 4x19
+          text run at (476,71) width 4: " "
+        RenderText {#text} at (596,71) size 4x19
+          text run at (596,71) width 4: " "
+        RenderText {#text} at (716,71) size 4x19
+          text run at (716,71) width 4: " "
+        RenderText {#text} at (116,192) size 4x19
+          text run at (116,192) width 4: " "
+        RenderText {#text} at (206,192) size 4x19
+          text run at (206,192) width 4: " "
+        RenderText {#text} at (296,192) size 4x19
+          text run at (296,192) width 4: " "
+        RenderText {#text} at (386,192) size 4x19
+          text run at (386,192) width 4: " "
+        RenderText {#text} at (476,192) size 4x19
+          text run at (476,192) width 4: " "
+        RenderText {#text} at (566,192) size 4x19
+          text run at (566,192) width 4: " "
+        RenderText {#text} at (656,192) size 4x19
+          text run at (656,192) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (86,313) size 4x19
+          text run at (86,313) width 4: " "
+        RenderText {#text} at (176,313) size 4x19
+          text run at (176,313) width 4: " "
+        RenderText {#text} at (266,313) size 4x19
+          text run at (266,313) width 4: " "
+        RenderText {#text} at (356,313) size 4x19
+          text run at (356,313) width 4: " "
+        RenderText {#text} at (446,313) size 4x19
+          text run at (446,313) width 4: " "
+        RenderText {#text} at (536,313) size 4x19
+          text run at (536,313) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,64) size 116x66
+  RenderBlock {DIV} at (0,10) size 116x66 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 100x50
+layer at (128,64) size 116x66
+  RenderBlock {DIV} at (120,10) size 116x66 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 100x50
+layer at (248,64) size 116x66
+  RenderBlock {DIV} at (240,10) size 116x66 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 100x50
+layer at (368,64) size 116x66
+  RenderBlock {DIV} at (360,10) size 116x66 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 100x50
+layer at (488,64) size 116x66
+  RenderBlock {DIV} at (480,10) size 116x66 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 100x50
+layer at (608,64) size 116x66
+  RenderBlock {DIV} at (600,10) size 116x66 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 100x50
+layer at (8,185) size 116x66
+  RenderBlock {DIV} at (0,131) size 116x66 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 100x50
+layer at (138,145) size 66x116
+  RenderBlock {DIV} at (130,91) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (228,145) size 66x116
+  RenderBlock {DIV} at (220,91) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (318,145) size 66x116
+  RenderBlock {DIV} at (310,91) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (408,145) size 66x116
+  RenderBlock {DIV} at (400,91) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (498,145) size 66x116
+  RenderBlock {DIV} at (490,91) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (588,145) size 66x116
+  RenderBlock {DIV} at (580,91) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (678,145) size 66x116
+  RenderBlock {DIV} at (670,91) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (18,266) size 66x116
+  RenderBlock {DIV} at (10,212) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (108,266) size 66x116
+  RenderBlock {DIV} at (100,212) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (198,266) size 66x116
+  RenderBlock {DIV} at (190,212) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (288,266) size 66x116
+  RenderBlock {DIV} at (280,212) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (378,266) size 66x116
+  RenderBlock {DIV} at (370,212) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (468,266) size 66x116
+  RenderBlock {DIV} at (460,212) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (558,266) size 66x116
+  RenderBlock {DIV} at (550,212) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
+    RenderMultiColumnSet at (8,8) size 50x100
+layer at (16,72) size 48x100
+  RenderMultiColumnFlowThread at (8,8) size 48x100
+    RenderBR {BR} at (0,0) size 0x25
+    RenderText {#text} at (0,25) size 25x75
+      text run at (0,25) width 25: "x"
+      text run at (0,50) width 25: "y"
+      text run at (0,75) width 25: "z"
+layer at (136,72) size 48x100
+  RenderMultiColumnFlowThread at (8,8) size 48x100
+    RenderBR {BR} at (0,0) size 0x25
+    RenderInline {SPAN} at (0,0) size 25x75
+      RenderText {#text} at (0,25) size 25x75
+        text run at (0,25) width 25: "x"
+        text run at (0,50) width 25: "y"
+        text run at (0,75) width 25: "z"
+    RenderText {#text} at (0,0) size 0x0
+layer at (256,72) size 48x100
+  RenderMultiColumnFlowThread at (8,8) size 48x100
+    RenderBlock (anonymous) at (0,0) size 48x25
+      RenderBR {BR} at (0,0) size 0x25
+    RenderBlock {DIV} at (0,25) size 48x75
+      RenderText {#text} at (0,0) size 25x75
+        text run at (0,0) width 25: "x"
+        text run at (0,25) width 25: "y"
+        text run at (0,50) width 25: "z"
+layer at (376,72) size 48x100
+  RenderMultiColumnFlowThread at (8,8) size 48x100
+    RenderBlock (anonymous) at (0,0) size 48x25
+      RenderBR {BR} at (0,0) size 0x25
+    RenderBlock {DIV} at (0,25) size 48x75
+      RenderBR {BR} at (0,0) size 0x25
+      RenderText {#text} at (0,25) size 25x50
+        text run at (0,25) width 25: "y"
+        text run at (0,50) width 25: "z"
+layer at (496,72) size 48x79
+  RenderMultiColumnFlowThread at (8,8) size 48x79
+    RenderBlock (anonymous) at (0,0) size 48x25
+      RenderBR {BR} at (0,0) size 0x25
+    RenderBlock {DIV} at (0,25) size 48x54
+      RenderBR {BR} at (0,0) size 0x25
+      RenderSlider {INPUT} at (2,27) size 25x25 [color=#909090] [bgcolor=#ADD8E6]
+        RenderFlexibleBox {DIV} at (0,0) size 25x25
+          RenderBlock {DIV} at (0,11) size 25x3
+            RenderBlock {DIV} at (0,0) size 25x2 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+layer at (616,72) size 48x75
+  RenderMultiColumnFlowThread at (8,8) size 48x75
+    RenderBlock (anonymous) at (0,0) size 48x25
+      RenderBR {BR} at (0,0) size 0x25
+    RenderBlock {DIV} at (0,25) size 48x50
+      RenderBR {BR} at (0,0) size 0x25
+      RenderImage {IMG} at (0,25) size 25x25 [bgcolor=#ADD8E6]
+layer at (16,193) size 48x65
+  RenderMultiColumnFlowThread at (8,8) size 48x65
+    RenderBlock {DIV} at (0,40) size 25x25 [bgcolor=#ADD8E6]
+layer at (146,153) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
+    RenderBR {BR} at (0,0) size 25x0
+    RenderText {#text} at (25,0) size 75x25
+      text run at (25,0) width 25: "x"
+      text run at (50,0) width 25: "y"
+      text run at (75,0) width 25: "z"
+layer at (236,153) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
+    RenderBR {BR} at (0,0) size 25x0
+    RenderInline {SPAN} at (0,0) size 75x25
+      RenderText {#text} at (25,0) size 75x25
+        text run at (25,0) width 25: "x"
+        text run at (50,0) width 25: "y"
+        text run at (75,0) width 25: "z"
+    RenderText {#text} at (0,0) size 0x0
+layer at (326,153) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
+    RenderBlock (anonymous) at (0,0) size 25x48
+      RenderBR {BR} at (0,0) size 25x0
+    RenderBlock {DIV} at (25,0) size 75x48
+      RenderText {#text} at (0,0) size 75x25
+        text run at (0,0) width 25: "x"
+        text run at (25,0) width 25: "y"
+        text run at (50,0) width 25: "z"
+layer at (416,153) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
+    RenderBlock (anonymous) at (0,0) size 25x48
+      RenderBR {BR} at (0,0) size 25x0
+    RenderBlock {DIV} at (25,0) size 75x48
+      RenderBR {BR} at (0,0) size 25x0
+      RenderText {#text} at (25,0) size 50x25
+        text run at (25,0) width 25: "y"
+        text run at (50,0) width 25: "z"
+layer at (506,153) size 79x48
+  RenderMultiColumnFlowThread at (8,8) size 79x48
+    RenderBlock (anonymous) at (0,0) size 25x48
+      RenderBR {BR} at (0,0) size 25x0
+    RenderBlock {DIV} at (25,0) size 54x48
+      RenderBR {BR} at (0,0) size 25x0
+      RenderSlider {INPUT} at (27,2) size 25x25 [color=#909090] [bgcolor=#ADD8E6]
+        RenderFlexibleBox {DIV} at (0,0) size 25x25
+          RenderBlock {DIV} at (0,11) size 25x3
+            RenderBlock {DIV} at (0,0) size 25x2 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+layer at (596,153) size 75x48
+  RenderMultiColumnFlowThread at (8,8) size 75x48
+    RenderBlock (anonymous) at (0,0) size 25x48
+      RenderBR {BR} at (0,0) size 25x0
+    RenderBlock {DIV} at (25,0) size 50x48
+      RenderBR {BR} at (0,0) size 25x0
+      RenderImage {IMG} at (25,0) size 25x25 [bgcolor=#ADD8E6]
+layer at (686,153) size 65x48
+  RenderMultiColumnFlowThread at (8,8) size 65x48
+    RenderBlock {DIV} at (40,0) size 25x25 [bgcolor=#ADD8E6]
+layer at (-24,274) size 100x48 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+  RenderMultiColumnFlowThread at (8,8) size 100x48
+    RenderBR {BR} at (0,0) size 25x0
+    RenderText {#text} at (25,0) size 75x25
+      text run at (25,0) width 25: "x"
+      text run at (50,0) width 25: "y"
+      text run at (75,0) width 25: "z"
+layer at (66,274) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
+    RenderBR {BR} at (0,0) size 25x0
+    RenderInline {SPAN} at (0,0) size 75x25
+      RenderText {#text} at (25,0) size 75x25
+        text run at (25,0) width 25: "x"
+        text run at (50,0) width 25: "y"
+        text run at (75,0) width 25: "z"
+    RenderText {#text} at (0,0) size 0x0
+layer at (156,274) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
+    RenderBlock (anonymous) at (0,0) size 25x48
+      RenderBR {BR} at (0,0) size 25x0
+    RenderBlock {DIV} at (25,0) size 75x48
+      RenderText {#text} at (0,0) size 75x25
+        text run at (0,0) width 25: "x"
+        text run at (25,0) width 25: "y"
+        text run at (50,0) width 25: "z"
+layer at (246,274) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
+    RenderBlock (anonymous) at (0,0) size 25x48
+      RenderBR {BR} at (0,0) size 25x0
+    RenderBlock {DIV} at (25,0) size 75x48
+      RenderBR {BR} at (0,0) size 25x0
+      RenderText {#text} at (25,0) size 50x25
+        text run at (25,0) width 25: "y"
+        text run at (50,0) width 25: "z"
+layer at (357,274) size 79x48
+  RenderMultiColumnFlowThread at (8,8) size 79x48
+    RenderBlock (anonymous) at (0,0) size 25x48
+      RenderBR {BR} at (0,0) size 25x0
+    RenderBlock {DIV} at (25,0) size 54x48
+      RenderBR {BR} at (0,0) size 25x0
+      RenderSlider {INPUT} at (27,2) size 25x25 [color=#909090] [bgcolor=#ADD8E6]
+        RenderFlexibleBox {DIV} at (0,0) size 25x25
+          RenderBlock {DIV} at (0,11) size 25x3
+            RenderBlock {DIV} at (0,0) size 25x2 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+layer at (451,274) size 75x48
+  RenderMultiColumnFlowThread at (8,8) size 75x48
+    RenderBlock (anonymous) at (0,0) size 25x48
+      RenderBR {BR} at (0,0) size 25x0
+    RenderBlock {DIV} at (25,0) size 50x48
+      RenderBR {BR} at (0,0) size 25x0
+      RenderImage {IMG} at (25,0) size 25x25 [bgcolor=#ADD8E6]
+layer at (551,274) size 65x48
+  RenderMultiColumnFlowThread at (8,8) size 65x48
+    RenderBlock {DIV} at (40,0) size 25x25 [bgcolor=#ADD8E6]
+layer at (16,97) size 25x25
+  RenderBlock (positioned) {DIV} at (16,97) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (68,72) size 26x25
+  RenderBlock (positioned) {DIV} at (68,72) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (68,97) size 26x25
+  RenderBlock (positioned) {DIV} at (68,97) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (136,97) size 25x25
+  RenderBlock (positioned) {DIV} at (136,97) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (188,72) size 26x25
+  RenderBlock (positioned) {DIV} at (188,72) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (188,97) size 26x25
+  RenderBlock (positioned) {DIV} at (188,97) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (256,97) size 25x25
+  RenderBlock (positioned) {DIV} at (256,97) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (308,72) size 26x25
+  RenderBlock (positioned) {DIV} at (308,72) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (308,97) size 26x25
+  RenderBlock (positioned) {DIV} at (308,97) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (428,72) size 26x25
+  RenderBlock (positioned) {DIV} at (428,72) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (428,97) size 26x25
+  RenderBlock (positioned) {DIV} at (428,97) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (550,74) size 26x25
+  RenderBlock (positioned) {DIV} at (550,74) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (668,72) size 26x25
+  RenderBlock (positioned) {DIV} at (668,72) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (68,183) size 26x25
+  RenderBlock (positioned) {DIV} at (68,183) size 26x25 [border: (3px solid #0000FF7F)]
+layer at (171,153) size 25x25
+  RenderBlock (positioned) {DIV} at (171,153) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (146,205) size 25x26
+  RenderBlock (positioned) {DIV} at (146,205) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (171,205) size 25x26
+  RenderBlock (positioned) {DIV} at (171,205) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (261,153) size 25x25
+  RenderBlock (positioned) {DIV} at (261,153) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (236,205) size 25x26
+  RenderBlock (positioned) {DIV} at (236,205) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (261,205) size 25x26
+  RenderBlock (positioned) {DIV} at (261,205) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (351,153) size 25x25
+  RenderBlock (positioned) {DIV} at (351,153) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (326,205) size 25x26
+  RenderBlock (positioned) {DIV} at (326,205) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (351,205) size 25x26
+  RenderBlock (positioned) {DIV} at (351,205) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (416,205) size 25x26
+  RenderBlock (positioned) {DIV} at (416,205) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (441,205) size 25x26
+  RenderBlock (positioned) {DIV} at (441,205) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (508,207) size 25x26
+  RenderBlock (positioned) {DIV} at (508,207) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (596,205) size 25x26
+  RenderBlock (positioned) {DIV} at (596,205) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (676,205) size 25x26
+  RenderBlock (positioned) {DIV} at (676,205) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (26,274) size 25x25
+  RenderBlock (positioned) {DIV} at (26,274) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (51,326) size 25x26
+  RenderBlock (positioned) {DIV} at (51,326) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (26,326) size 25x26
+  RenderBlock (positioned) {DIV} at (26,326) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (115,274) size 25x25
+  RenderBlock (positioned) {DIV} at (115,274) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (140,326) size 25x26
+  RenderBlock (positioned) {DIV} at (140,326) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (115,326) size 25x26
+  RenderBlock (positioned) {DIV} at (115,326) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (206,274) size 25x25
+  RenderBlock (positioned) {DIV} at (206,274) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (231,326) size 25x26
+  RenderBlock (positioned) {DIV} at (231,326) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (206,326) size 25x26
+  RenderBlock (positioned) {DIV} at (206,326) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (321,326) size 25x26
+  RenderBlock (positioned) {DIV} at (321,326) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (296,326) size 25x26
+  RenderBlock (positioned) {DIV} at (296,326) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (409,328) size 25x26
+  RenderBlock (positioned) {DIV} at (409,328) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (501,326) size 25x26
+  RenderBlock (positioned) {DIV} at (501,326) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (601,326) size 25x26
+  RenderBlock (positioned) {DIV} at (601,326) size 25x26 [border: (3px solid #0000FF7F)]

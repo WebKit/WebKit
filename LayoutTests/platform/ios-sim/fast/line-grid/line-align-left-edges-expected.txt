@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x256
-  RenderBlock {HTML} at (0,0) size 800x256
-    RenderBody {BODY} at (8,8) size 784x200
-layer at (8,8) size 784x200
-  RenderBlock (relative positioned) {DIV} at (0,0) size 784x200 [color=#008000]
+layer at (0,0) size 800x257
+  RenderBlock {HTML} at (0,0) size 800x257
+    RenderBody {BODY} at (8,8) size 784x201
+layer at (8,8) size 784x201
+  RenderBlock (relative positioned) {DIV} at (0,0) size 784x201 [color=#008000]
     RenderBlock (anonymous) at (0,0) size 784x30
       RenderText {#text} at (0,2) size 312x25
         text run at (0,2) width 312: "X X X X X X X"
-    RenderBlock {DIV} at (37,67) size 710x36 [border: (3px solid #000000)]
+    RenderBlock {DIV} at (37,67) size 710x37 [border: (3px solid #000000)]
       RenderText {#text} at (24,5) size 264x25
         text run at (24,5) width 264: "X X X X X X"
-    RenderBlock (floating) {DIV} at (0,140) size 78x78 [bgcolor=#FFFF00]
-    RenderBlock (anonymous) at (0,140) size 784x60
+    RenderBlock (floating) {DIV} at (0,141) size 78x78 [bgcolor=#FFFF00]
+    RenderBlock (anonymous) at (0,141) size 784x60
       RenderText {#text} at (96,2) size 216x25
         text run at (96,2) width 216: "X X X X X"
       RenderBR {BR} at (312,2) size 0x25
       RenderBlock (floating) {DIV} at (96,30) size 78x78 [bgcolor=#800080]
       RenderText {#text} at (192,32) size 216x25
         text run at (192,32) width 216: "X X X X X"
-layer at (180,308) size 300x30
-  RenderBlock (positioned) {DIV} at (172,300) size 300x30 [bgcolor=#DDDDDD]
+layer at (181,308) size 300x30
+  RenderBlock (positioned) {DIV} at (172,300) size 301x30 [bgcolor=#DDDDDD]
     RenderText {#text} at (20,2) size 120x25
       text run at (20,2) width 120: "X X X"

@@ -6,17 +6,17 @@ layer at (0,0) size 800x600
       RenderBlock {H2} at (0,0) size 784x30 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,1) size 59x28
           text run at (0,1) width 59: "PASS"
-layer at (8,57) size 760x212
-  RenderBlock {DIV} at (0,49) size 760x212 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,13) size 750x68
-      RenderBlock {H2} at (0,19) size 750x30 [bgcolor=#EEEEEE]
+layer at (8,58) size 760x214
+  RenderBlock {DIV} at (0,49) size 760x215 [border: (5px solid #800000)]
+    RenderBlock (anonymous multi-column span) at (5,13) size 750x70
+      RenderBlock {H2} at (0,19) size 750x31 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,1) size 59x28
           text run at (0,1) width 59: "PASS"
-layer at (13,62) size 750x8
+layer at (13,63) size 750x8
   RenderBlock (anonymous multi-column) at (5,5) size 750x8
     RenderBlock {SPAN} at (0,8) size 367x0
-layer at (13,138) size 750x126
-  RenderBlock (anonymous multi-column) at (5,81) size 750x126
+layer at (13,141) size 750x126
+  RenderBlock (anonymous multi-column) at (5,82) size 750x127
     RenderBlock {SPAN} at (0,16) size 367x220
       RenderBlock (anonymous) at (0,0) size 367x230
         RenderText {#text} at (0,0) size 367x229

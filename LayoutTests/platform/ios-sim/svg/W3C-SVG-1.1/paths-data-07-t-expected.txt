@@ -2,17 +2,17 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (68,32) size 368x206
-      RenderSVGContainer {g} at (68,32) size 368x206 [transform={m=((1.80,0.00)(0.00,1.80)) t=(-360.00,-270.00)}]
-        RenderSVGText {text} at (288,168) size 51x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 51x14
-            chunk 1 text run 1 at (288.00,180.00) startOffset 0 endOffset 10 width 50.26: "m, h, v, h"
-        RenderSVGText {text} at (288,182) size 47x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 47x14
-            chunk 1 text run 1 at (288.00,194.00) startOffset 0 endOffset 10 width 46.19: "v, h, v, h"
-        RenderSVGText {text} at (304,196) size 20x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 20x14
-            chunk 1 text run 1 at (304.00,208.00) startOffset 0 endOffset 4 width 19.01: "v, z"
+    RenderSVGContainer {g} at (68,34) size 368x204
+      RenderSVGContainer {g} at (68,34) size 368x204 [transform={m=((1.80,0.00)(0.00,1.80)) t=(-360.00,-270.00)}]
+        RenderSVGText {text} at (288,169) size 50x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 50x14
+            chunk 1 text run 1 at (288.00,180.00) startOffset 0 endOffset 10 width 49.12: "m, h, v, h"
+        RenderSVGText {text} at (288,183) size 46x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 46x14
+            chunk 1 text run 1 at (288.00,194.00) startOffset 0 endOffset 10 width 45.14: "v, h, v, h"
+        RenderSVGText {text} at (304,197) size 19x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 19x14
+            chunk 1 text run 1 at (304.00,208.00) startOffset 0 endOffset 4 width 18.58: "v, z"
         RenderSVGPath {path} at (71,71) size 164x164 [stroke={[type=SOLID] [color=#000000]}] [data="M 240 190 L 270 190 L 270 220 L 300 220 L 300 250 L 330 250 L 330 280 L 240 280 L 240 190 Z"]
         RenderSVGRect {rect} at (68,68) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=238.00] [y=188.00] [width=4.00] [height=4.00]
         RenderSVGRect {rect} at (122,68) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=268.00] [y=188.00] [width=4.00] [height=4.00]

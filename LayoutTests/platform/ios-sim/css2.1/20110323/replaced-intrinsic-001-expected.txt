@@ -21,6 +21,6 @@ layer at (8,8) size 150x255 layerType: foreground only
         RenderEmbeddedObject {OBJECT} at (0,0) size 150x150
           layer at (0,0) size 150x150
             RenderView at (0,0) size 150x150
-          layer at (0,0) size 150x150
-            RenderSVGRoot {svg} at (0,0) size 150x150
-              RenderSVGRect {rect} at (0,0) size 150x150 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=300.00] [height=200.00]
+          layer at (0,0) size 150x0
+            RenderSVGRoot {svg} at (0,0) size 0x0
+              RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=300.00] [height=200.00]

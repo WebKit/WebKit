@@ -18,18 +18,18 @@ layer at (0,0) size 800x2676
       RenderBlock {DIV} at (5,2460) size 774x200 [bgcolor=#C0C0C0]
 layer at (10,10) size 772x54
   RenderBlock (positioned) {DIV} at (10,10) size 772x54 [bgcolor=#008000CC] [border: (2px solid #000000)]
-    RenderText {#text} at (2,2) size 119x19
-      text run at (2,2) width 119: "This is the top bar."
+    RenderText {#text} at (2,2) size 120x19
+      text run at (2,2) width 120: "This is the top bar."
 layer at (20,210) size 154x304
   RenderBlock (positioned) {DIV} at (20,210) size 154x304 [bgcolor=#008000CC] [border: (2px solid #000000)]
-    RenderText {#text} at (2,2) size 120x19
-      text run at (2,2) width 120: "This is the left bar."
+    RenderText {#text} at (2,2) size 121x19
+      text run at (2,2) width 121: "This is the left bar."
 layer at (626,210) size 154x304
   RenderBlock (positioned) {DIV} at (626,210) size 154x304 [bgcolor=#008000CC] [border: (2px solid #000000)]
-    RenderText {#text} at (2,2) size 129x19
-      text run at (2,2) width 129: "This is the right bar."
+    RenderText {#text} at (2,2) size 130x19
+      text run at (2,2) width 130: "This is the right bar."
 layer at (10,526) size 772x54
   RenderBlock (positioned) {DIV} at (10,526) size 772x54 [bgcolor=#008000CC] [border: (2px solid #000000)]
-    RenderText {#text} at (2,2) size 144x19
-      text run at (2,2) width 144: "This is the bottom bar."
+    RenderText {#text} at (2,2) size 145x19
+      text run at (2,2) width 145: "This is the bottom bar."
 scrolled to 0,200

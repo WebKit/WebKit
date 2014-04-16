@@ -1,4 +1,4 @@
-<unknown> - didFinishLoading
+file-protocol-fragment.html - didFinishLoading
 resources/stylesheet.css - willSendRequest <NSURLRequest URL resources/stylesheet.css, main document URL file-protocol-fragment.html, http method GET> redirectResponse (null)
 resources/stylesheet.css - didReceiveResponse <NSURLResponse resources/stylesheet.css, http status code 0>
 resources/stylesheet.css - didFinishLoading

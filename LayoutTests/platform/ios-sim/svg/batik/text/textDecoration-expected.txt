@@ -10,11 +10,11 @@ layer at (0,0) size 450x500
         RenderSVGContainer {g} at (0,0) size 10x10
           RenderSVGRect {rect} at (0,5) size 5x5 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=5.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (5,0) size 5x5 [fill={[type=SOLID] [color=#000000]}] [x=5.00] [y=0.00] [width=5.00] [height=5.00]
-    RenderSVGContainer {g} at (49,25) size 328x440
-      RenderSVGText {text} at (154,25) size 141x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 141x19
+    RenderSVGContainer {g} at (49,25) size 327x440
+      RenderSVGText {text} at (154,25) size 142x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 141x18
           chunk 1 (middle anchor) text run 1 at (154.74,40.00) startOffset 0 endOffset 20 width 140.52: "Text decoration test"
-      RenderSVGContainer {g} at (49,82) size 328x383
+      RenderSVGContainer {g} at (49,82) size 327x383
         RenderSVGContainer {g} at (50,82) size 326x23
           RenderSVGText {text} at (50,82) size 80x23 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 80x23
@@ -25,7 +25,7 @@ layer at (0,0) size 450x500
           RenderSVGText {text} at (270,82) size 106x23 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 106x23
               chunk 1 text run 1 at (270.00,100.00) startOffset 0 endOffset 12 width 105.53: "Line-through"
-        RenderSVGContainer {g} at (49,121) size 328x25
+        RenderSVGContainer {g} at (49,121) size 327x24
           RenderSVGText {text} at (50,122) size 80x23 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 80x23
               chunk 1 text run 1 at (50.00,140.00) startOffset 0 endOffset 9 width 79.97: "Underline"

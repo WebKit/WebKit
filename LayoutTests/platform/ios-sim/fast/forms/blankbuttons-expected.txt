@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (12,3) size 35x14
           RenderText at (0,0) size 35x14
             text run at (0,0) width 35: "Submit"
-      RenderBR {BR} at (63,16) size 0x0
+      RenderBR {BR} at (62,16) size 1x0
       RenderButton {INPUT} at (2,26) size 53x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderBlock (anonymous) at (12,3) size 29x14
           RenderText at (0,0) size 29x14
             text run at (0,0) width 29: "Reset"
-      RenderBR {BR} at (57,40) size 0x0
+      RenderBR {BR} at (56,40) size 1x0

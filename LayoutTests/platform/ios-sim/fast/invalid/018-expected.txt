@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 6x2
             RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
           RenderTableRow {TR} at (0,6) size 6x0
-      RenderTable {TABLE} at (0,8) size 0x4
-        RenderTableSection {TBODY} at (0,0) size 0x4
-          RenderTableRow {TR} at (0,2) size 0x0
+      RenderTable {TABLE} at (0,8) size 4x4
+        RenderTableSection {TBODY} at (0,0) size 4x4
+          RenderTableRow {TR} at (0,2) size 4x0
       RenderBlock (anonymous) at (0,12) size 784x0
         RenderInline {FONT} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0

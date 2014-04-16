@@ -1,0 +1,10 @@
+FAIL: Timed out waiting for notifyDone to be called
+Checks size limit of the webgl compressed textures
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+num levels: 13, levels used in positive test: 13
+
+PASS No WEBGL_compressed_texture_s3tc extension support -- this is legal
+

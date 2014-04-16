@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x463
-  RenderBlock {HTML} at (0,0) size 800x463
-    RenderBody {BODY} at (8,16) size 784x431
+layer at (0,0) size 800x464
+  RenderBlock {HTML} at (0,0) size 800x464
+    RenderBody {BODY} at (8,16) size 784x432
       RenderBlock {P} at (0,0) size 784x20 [color=#000080]
         RenderText {#text} at (0,0) size 207x19
           text run at (0,0) width 207: "This sentence should be normal."
@@ -12,33 +12,33 @@ layer at (0,0) size 800x463
       RenderBlock {P} at (0,72) size 784x20 [color=#000080]
         RenderText {#text} at (0,0) size 200x19
           text run at (0,0) width 200: "This sentence should be bold."
-      RenderBlock {H4} at (0,113) size 784x20 [color=#000080]
+      RenderBlock {H4} at (0,113) size 784x21 [color=#000080]
         RenderText {#text} at (0,0) size 206x19
           text run at (0,0) width 206: "Whatever this line looks like..."
-      RenderBlock {H4} at (0,154) size 784x20 [color=#000080]
+      RenderBlock {H4} at (0,154) size 784x21 [color=#000080]
         RenderText {#text} at (0,0) size 295x19
           text run at (0,0) width 295: "...this line should look bolder (or the same)."
-      RenderBlock {P} at (0,195) size 784x20 [color=#000080]
+      RenderBlock {P} at (0,195) size 784x21 [color=#000080]
         RenderInline {B} at (0,0) size 207x19
           RenderText {#text} at (0,0) size 207x19
             text run at (0,0) width 207: "This sentence should be normal."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,231) size 784x20 [color=#000080]
+      RenderBlock {P} at (0,231) size 784x21 [color=#000080]
         RenderText {#text} at (0,0) size 224x19
           text run at (0,0) width 224: "This sentence should be very light."
-      RenderBlock {P} at (0,267) size 784x20 [color=#000080]
+      RenderBlock {P} at (0,267) size 784x21 [color=#000080]
         RenderText {#text} at (0,0) size 343x19
           text run at (0,0) width 343: "This sentence should be slightly bolder (or the same)."
-      RenderBlock {P} at (0,303) size 784x20 [color=#000080]
+      RenderBlock {P} at (0,303) size 784x21 [color=#000080]
         RenderText {#text} at (0,0) size 382x19
           text run at (0,0) width 382: "This sentence should be slightly bolder again (or the same)."
-      RenderBlock {P} at (0,339) size 784x20 [color=#000080]
+      RenderBlock {P} at (0,339) size 784x21 [color=#000080]
         RenderText {#text} at (0,0) size 425x19
           text run at (0,0) width 425: "This sentence should be slightly bolder still (but not the same)."
-      RenderBlock {P} at (0,375) size 784x20 [color=#000080]
+      RenderBlock {P} at (0,375) size 784x21 [color=#000080]
         RenderText {#text} at (0,0) size 516x19
           text run at (0,0) width 516: "This sentence should be the most bold (and maybe the same as the last one)."
-      RenderBlock {P} at (0,411) size 784x20 [color=#000080]
+      RenderBlock {P} at (0,411) size 784x21 [color=#000080]
         RenderText {#text} at (0,0) size 204x19
           text run at (0,0) width 204: "This sentence should be bold. "
         RenderInline {SPAN} at (0,0) size 208x19

@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (169,2) size 31x19
                 text run at (169,2) width 31: "City"
             RenderTableCell {TH} at (563,28) size 71x44 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (18,2) size 67x39
+              RenderText {#text} at (18,2) size 68x39
                 text run at (18,2) width 35: "ABC"
                 text run at (2,22) width 67: "Company"
             RenderTableCell {TH} at (636,28) size 71x44 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
                 text run at (19,2) width 33: "EFG"
                 text run at (2,22) width 67: "Company"
             RenderTableCell {TH} at (709,28) size 71x44 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-              RenderText {#text} at (18,2) size 67x39
+              RenderText {#text} at (18,2) size 68x39
                 text run at (18,2) width 35: "XYZ"
                 text run at (2,22) width 67: "Company"
           RenderTableRow {TR} at (0,74) size 782x24

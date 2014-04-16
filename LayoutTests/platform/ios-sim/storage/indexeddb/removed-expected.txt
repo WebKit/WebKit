@@ -1,0 +1,18 @@
+Ensure that some obsolete IndexedDB features are gone.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "removed.html"
+PASS self.webkitIDBDatabaseError is undefined.
+PASS 'IDBDatabaseException' in self is false
+FAIL 'errorCode' in indexedDB.open(dbname) should be false. Threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+PASS 'setVersion' in IDBDatabase.prototype is false
+PASS document.createEvent('IDBUpgradeNeededEvent') threw exception Error: NotSupportedError: DOM Exception 9.
+PASS 'version' in document.createEvent('IDBVersionChangeEvent') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -2,10 +2,10 @@ This layer should not be composited.
 This layer should not be composited.
 This layer should be composited.
 (GraphicsLayer
-  (bounds 800.00 617.00)
+  (bounds 800.00 616.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 617.00)
+      (bounds 800.00 616.00)
       (children 1
         (GraphicsLayer
           (position 18.00 394.00)
@@ -16,7 +16,7 @@ This layer should be composited.
             (GraphicsLayer
               (position 31.00 51.00)
               (bounds 100.00 100.00)
-              (drawsContent 1)
+              (contentsOpaque 1)
               (transform [0.98 0.00 -0.17 0.00] [0.00 1.00 0.00 0.00] [0.17 0.00 0.98 0.00] [0.00 0.00 0.00 1.00])
             )
           )

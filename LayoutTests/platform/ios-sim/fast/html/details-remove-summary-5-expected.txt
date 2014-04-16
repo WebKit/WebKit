@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x20
         RenderBlock {SUMMARY} at (0,0) size 784x20
-          RenderDetailsMarker {DIV} at (0,5) size 10x10: down
-          RenderText {#text} at (16,0) size 72x19
-            text run at (16,0) width 72: "summary 2"
+          RenderDetailsMarker {DIV} at (0,5) size 11x11: down
+          RenderText {#text} at (16,0) size 73x19
+            text run at (16,0) width 73: "summary 2"

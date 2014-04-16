@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x168
-  RenderBlock {html} at (0,0) size 800x168
-    RenderBody {body} at (8,16) size 784x136
-      RenderBlock {parsererror} at (16,0) size 752x136 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
-        RenderBlock {h3} at (18,20) size 716x23
+layer at (0,0) size 800x170
+  RenderBlock {html} at (0,0) size 800x170
+    RenderBody {body} at (8,16) size 784x138
+      RenderBlock {parsererror} at (16,0) size 752x138 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20) size 716x24
           RenderText {#text} at (0,0) size 323x22
             text run at (0,0) width 323: "This page contains the following errors:"
-        RenderBlock {div} at (18,61) size 716x14
-          RenderText {#text} at (0,0) size 497x14
+        RenderBlock {div} at (18,62) size 716x14
+          RenderText {#text} at (0,0) size 497x13
             text run at (0,0) width 497: "error on line 1 at column 1: Extra content at the end of the document"
             text run at (496,0) width 1: " "
-        RenderBlock {h3} at (18,93) size 716x23
+        RenderBlock {h3} at (18,94) size 716x24
           RenderText {#text} at (0,0) size 428x22
             text run at (0,0) width 428: "Below is a rendering of the page up to the first error."

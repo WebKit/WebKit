@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Check that setting a cookie with a single-quoted value works.
-FAIL cookie was 'singleQuoted="value; test2=foobar; test=foobar'. Expected 'singleQuoted="value'.
+PASS cookie is 'singleQuoted="value'.
 PASS successfullyParsed is true
 
 TEST COMPLETE

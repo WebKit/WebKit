@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 492x19
           text run at (0,0) width 492: "This tests that the value becomes visible when the text field becomes visible."
       RenderBlock {P} at (0,36) size 784x25
-        RenderTextControl {INPUT} at (2,2) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderTextControl {INPUT} at (2,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,77) size 784x0
       RenderBlock {P} at (0,77) size 784x0
-layer at (16,49) size 123x14
-  RenderBlock {DIV} at (6,3) size 123x14
+layer at (17,49) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 62x14
       text run at (0,0) width 62: "Test Passed"

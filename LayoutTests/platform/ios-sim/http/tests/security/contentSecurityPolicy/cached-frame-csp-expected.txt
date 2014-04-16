@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'none'".
+
+CONSOLE MESSAGE: line 5: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'none'".
+
+Check that a CSP header added by a 304 response does not override one from the original request.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check that the nonce is the same, meaning that the document was only generated once:
+PASS frame1.contentDocument.querySelector("input").value == frame2.contentDocument.querySelector("input").value is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -20,5 +20,5 @@ layer at (0,0) size 800x152
           RenderText {#text} at (48,0) size 10x10
             text run at (48,0) width 10: "x"
         RenderBlock {P} at (0,80) size 106x10 [bgcolor=#000080]
-          RenderText {#text} at (48,0) size 10x10
-            text run at (48,0) width 10: "x"
+          RenderText {#text} at (47,0) size 11x10
+            text run at (47,0) width 11: "x"

@@ -45,9 +45,9 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (64,55) size 1x0
           RenderText {#text} at (0,60) size 65x19
             text run at (0,60) width 65: "same line."
-      RenderText {#text} at (141,162) size 4x19
-        text run at (141,162) width 4: " "
-      RenderTable {TABLE} at (145,155) size 68x84 [border: (2px solid #FF0000)]
+      RenderText {#text} at (140,162) size 5x19
+        text run at (140,162) width 5: " "
+      RenderTable {TABLE} at (144,155) size 69x84 [border: (2px solid #FF0000)]
         RenderTableSection {TBODY} at (2,2) size 64x80
           RenderTableRow {TR} at (0,0) size 64x20
             RenderTableCell {TD} at (0,0) size 64x20 [r=0 c=0 rs=1 cs=1]
@@ -65,9 +65,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,60) size 64x20 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 64x19
                 text run at (0,0) width 64: "All on the"
-      RenderText {#text} at (213,162) size 4x19
-        text run at (213,162) width 4: " "
-      RenderTable {TABLE} at (217,155) size 73x84 [border: (2px solid #FF0000)]
+      RenderText {#text} at (212,162) size 5x19
+        text run at (212,162) width 5: " "
+      RenderTable {TABLE} at (216,155) size 74x84 [border: (2px solid #FF0000)]
         RenderTableSection {TBODY} at (2,2) size 69x80
           RenderTableRow {TR} at (0,0) size 69x20
             RenderTableCell {TD} at (0,0) size 69x20 [r=0 c=0 rs=1 cs=1]

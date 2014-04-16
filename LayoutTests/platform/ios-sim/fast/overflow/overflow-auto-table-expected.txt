@@ -1,21 +1,21 @@
 layer at (0,0) size 7430x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x166
-  RenderBlock {HTML} at (0,0) size 800x166
-    RenderBody {BODY} at (8,16) size 784x142
+layer at (0,0) size 800x164
+  RenderBlock {HTML} at (0,0) size 800x164
+    RenderBody {BODY} at (8,16) size 784x140
       RenderBlock {P} at (0,0) size 784x60
         RenderText {#text} at (0,0) size 763x59
           text run at (0,0) width 756: "This tests the interaction of overflow on some very wide text with auto table layout. The CSS 2.1 spec does not define"
           text run at (0,20) width 763: "how overflow interacts with intrinsic width, so we copy the IE behavior. Therefore the lines should come out very very"
           text run at (0,40) width 244: "wide and scroll along with the border."
-      RenderTable {TABLE} at (0,76) size 7422x66 [border: (1px solid #FF0000)]
-        RenderTableSection {TBODY} at (1,1) size 7420x64
-          RenderTableRow {TR} at (0,2) size 7420x60
-            RenderTableCell {TD} at (2,2) size 7416x60 [r=0 c=0 rs=1 cs=1]
-layer at (12,109) size 7414x32 clip at (13,110) size 7412x30
-  RenderBlock {PRE} at (1,14) size 7414x32 [border: (1px solid #0000FF)]
-    RenderText {#text} at (1,1) size 7412x30
+      RenderTable {TABLE} at (0,76) size 7422x64 [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 7420x62
+          RenderTableRow {TR} at (0,2) size 7420x58
+            RenderTableCell {TD} at (2,2) size 7416x58 [r=0 c=0 rs=1 cs=1]
+layer at (12,109) size 7414x30 clip at (13,110) size 7412x28
+  RenderBlock {PRE} at (1,14) size 7414x30 [border: (1px solid #0000FF)]
+    RenderText {#text} at (1,1) size 7412x28
       text run at (1,1) width 3121: "this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line "
       text run at (3121,1) width 1: " "
-      text run at (1,16) width 7412: "this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line "
-      text run at (7412,16) width 1: " "
+      text run at (1,15) width 7412: "this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line "
+      text run at (7412,15) width 1: " "

@@ -1,4 +1,4 @@
-layer at (0,0) size 841x600
+layer at (0,0) size 840x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 195x36
           text run at (0,1) width 195: "Cloning nodes"
-      RenderBlock {DIV} at (0,59) size 784x40 [bgcolor=#FFFF00] [border: (2px ridge #000000)]
+      RenderBlock {DIV} at (0,59) size 784x41 [bgcolor=#FFFF00] [border: (2px ridge #000000)]
         RenderInline {SPAN} at (0,0) size 831x34
           RenderText {#text} at (2,3) size 61x34
             text run at (2,3) width 61: "Bold"
@@ -21,15 +21,15 @@ layer at (0,0) size 800x600
           RenderText {#text} at (772,3) size 61x34
             text run at (772,3) width 61: "Bold"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,99) size 784x20
+      RenderBlock (anonymous) at (0,99) size 784x21
         RenderText {#text} at (0,0) size 191x19
           text run at (0,0) width 191: "Cloned Node with deep=false"
-      RenderBlock {DIV} at (0,119) size 784x40 [bgcolor=#FFFF00] [border: (2px ridge #000000)]
+      RenderBlock {DIV} at (0,119) size 784x41 [bgcolor=#FFFF00] [border: (2px ridge #000000)]
         RenderBR {BR} at (2,3) size 0x34
-      RenderBlock (anonymous) at (0,159) size 784x20
+      RenderBlock (anonymous) at (0,159) size 784x21
         RenderText {#text} at (0,0) size 186x19
           text run at (0,0) width 186: "Cloned Node with deep=true"
-      RenderBlock {DIV} at (0,179) size 784x40 [bgcolor=#FFFF00] [border: (2px ridge #000000)]
+      RenderBlock {DIV} at (0,179) size 784x41 [bgcolor=#FFFF00] [border: (2px ridge #000000)]
         RenderInline {SPAN} at (0,0) size 831x34
           RenderText {#text} at (2,3) size 61x34
             text run at (2,3) width 61: "Bold"

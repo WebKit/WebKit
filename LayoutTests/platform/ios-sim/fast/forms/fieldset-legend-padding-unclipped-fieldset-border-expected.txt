@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x149
-  RenderBlock {HTML} at (0,0) size 800x149
-    RenderBody {BODY} at (8,16) size 784x125
+layer at (0,0) size 800x150
+  RenderBlock {HTML} at (0,0) size 800x150
+    RenderBody {BODY} at (8,16) size 784x126
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 31x19
           text run at (0,0) width 31: "Bug "
@@ -14,6 +14,6 @@ layer at (0,0) size 800x149
       RenderBlock {P} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 735x19
           text run at (0,0) width 735: "For this test to pass, you should see a full border with out any clipping, especially under blue box(legend element)."
-      RenderBlock {FORM} at (0,72) size 784x53
-        RenderFieldSet {FIELDSET} at (2,0) size 780x53 [border: (2px groove #C0C0C0)]
+      RenderBlock {FORM} at (0,72) size 784x54
+        RenderFieldSet {FIELDSET} at (2,0) size 780x54 [border: (2px groove #C0C0C0)]
           RenderBlock {LEGEND} at (14,0) size 36x36 [border: (1px solid #0000FF)]

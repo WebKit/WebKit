@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (202,17) size 578x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 81x19
                 text run at (2,2) width 81: "Information "
-              RenderImage {IMG} at (82,10) size 4x7
+              RenderImage {IMG} at (82,10) size 5x7
               RenderText {#text} at (86,2) size 84x19
                 text run at (86,2) width 5: " "
                 text run at (90,2) width 80: "Student Life"

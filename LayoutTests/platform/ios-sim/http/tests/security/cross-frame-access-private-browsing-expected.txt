@@ -1,0 +1,9 @@
+This test checks cross-frame access security checks don't log when private browsing is enabled (rdar://problem/5394877).
+
+ Attempting to violate the same-origin policy with private browsing enabled.  If this succeeds the console should not log the violation.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Inner iframe.

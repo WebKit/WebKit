@@ -15,6 +15,7 @@
           (position 10.00 260.00)
           (anchor -0.20 -0.20)
           (bounds 50.00 50.00)
+          (contentsOpaque 1)
           (drawsContent 1)
         )
       )

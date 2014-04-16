@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {FORM} at (0,0) size 784x29
-        RenderTable {TABLE} at (0,0) size 631x29 [bgcolor=#FFE030] [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 629x27
-            RenderTableRow {TR} at (0,0) size 629x27
-              RenderTableCell {TD} at (0,0) size 629x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {NOBR} at (0,0) size 627x19
-                  RenderTextControl {INPUT} at (3,3) size 196x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderTable {TABLE} at (0,0) size 633x29 [bgcolor=#FFE030] [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 631x27
+            RenderTableRow {TR} at (0,0) size 631x27
+              RenderTableCell {TD} at (0,0) size 631x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {NOBR} at (0,0) size 629x19
+                  RenderTextControl {INPUT} at (3,3) size 197x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
                   RenderText {#text} at (201,2) size 14x19
                     text run at (201,2) width 14: " - "
-                  RenderTextControl {INPUT} at (216,3) size 196x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-                  RenderText {#text} at (414,2) size 14x19
-                    text run at (414,2) width 14: " - "
-                  RenderTextControl {INPUT} at (430,3) size 196x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderTextControl {INPUT} at (216,3) size 198x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (415,2) size 14x19
+                    text run at (415,2) width 14: " - "
+                  RenderTextControl {INPUT} at (430,3) size 198x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
                 RenderText {#text} at (0,0) size 0x0
-            RenderTableRow {TR} at (0,27) size 629x0
-layer at (18,15) size 184x14
-  RenderBlock {DIV} at (6,3) size 184x14
-layer at (231,15) size 184x14
-  RenderBlock {DIV} at (6,3) size 184x14
-layer at (445,15) size 184x14
-  RenderBlock {DIV} at (6,3) size 184x14
+            RenderTableRow {TR} at (0,27) size 631x0
+layer at (19,15) size 183x14
+  RenderBlock {DIV} at (6,3) size 185x15
+layer at (232,15) size 183x14
+  RenderBlock {DIV} at (6,3) size 185x15
+layer at (446,15) size 183x14
+  RenderBlock {DIV} at (6,3) size 185x15

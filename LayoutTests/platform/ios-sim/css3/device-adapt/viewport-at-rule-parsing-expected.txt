@@ -1,0 +1,38 @@
+
+FAIL Empty at-rule parsing assert_equals: expected "@-webkit-viewport { }" but got "@media all { \n}"(stack: assert@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:2168:73
+assert_equals@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:705:15
+file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:62:26
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:61:13)
+FAIL at-rule with extra spaces null is not an object (evaluating 'rules.item(1).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:66:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:65:13)
+FAIL Rule with attributes null is not an object (evaluating 'rules.item(2).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:70:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:69:13)
+FAIL Rule with malformed attributes null is not an object (evaluating 'rules.item(3).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:74:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:73:13)
+FAIL Should be accepted inside media queries null is not an object (evaluating 'rules.item(4).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:78:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:77:13)
+FAIL Nested viewport rule null is not an object (evaluating 'rules.item(5).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:82:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:81:13)
+FAIL Rules inside a viewport rule null is not an object (evaluating 'rules.item(6).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:86:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:85:13)
+FAIL Should ignore unprefixed at-rule assert_equals: expected 7 but got 1(stack: assert@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:2168:73
+assert_equals@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:705:15
+file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:92:26
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-at-rule-parsing.html:91:13)
+

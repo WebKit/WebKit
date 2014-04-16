@@ -1,34 +1,34 @@
-layer at (0,0) size 800x6115
+layer at (0,0) size 800x6108
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x6115
-  RenderBlock {HTML} at (0,0) size 800x6115
-    RenderBody {BODY} at (8,21) size 784x6078
+layer at (0,0) size 800x6108
+  RenderBlock {HTML} at (0,0) size 800x6108
+    RenderBody {BODY} at (8,21) size 784x6071
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 484x36
           text run at (0,1) width 484: "Vertical alignment and table height"
-      RenderBlock {P} at (0,59) size 784x60
+      RenderBlock {P} at (0,59) size 784x61
         RenderText {#text} at (0,0) size 275x19
           text run at (0,0) width 275: "The following three tables have heights of "
-        RenderInline {CODE} at (0,0) size 32x15
-          RenderText {#text} at (274,4) size 32x15
-            text run at (274,4) width 32: "auto"
+        RenderInline {CODE} at (0,0) size 32x14
+          RenderText {#text} at (274,5) size 32x14
+            text run at (274,5) width 32: "auto"
         RenderText {#text} at (305,0) size 9x19
           text run at (305,0) width 9: ", "
-        RenderInline {CODE} at (0,0) size 32x15
-          RenderText {#text} at (313,4) size 32x15
-            text run at (313,4) width 32: "30px"
+        RenderInline {CODE} at (0,0) size 32x14
+          RenderText {#text} at (313,5) size 32x14
+            text run at (313,5) width 32: "30px"
         RenderText {#text} at (344,0) size 36x19
           text run at (344,0) width 36: ", and "
-        RenderInline {CODE} at (0,0) size 40x15
-          RenderText {#text} at (379,4) size 40x15
-            text run at (379,4) width 40: "500px"
+        RenderInline {CODE} at (0,0) size 40x14
+          RenderText {#text} at (379,5) size 40x14
+            text run at (379,5) width 40: "500px"
         RenderText {#text} at (418,0) size 779x59
           text run at (418,0) width 9: ". "
           text run at (426,0) width 339: "The first one should have the height of the sum of its"
           text run at (0,20) width 40: "rows. "
           text run at (39,20) width 740: "The second and third can be handled however the browser wants, but there just here to make sure it does something"
           text run at (0,40) width 73: "reasonable."
-      RenderTable {TABLE} at (0,135) size 113x158
+      RenderTable {TABLE} at (0,135) size 113x159
         RenderTableSection {TBODY} at (0,0) size 113x158
           RenderTableRow {TR} at (0,2) size 113x24
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -90,7 +90,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,132) size 35x24 [border: (1px solid #000000)] [r=5 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderTable {TABLE} at (0,293) size 113x158
+      RenderTable {TABLE} at (0,293) size 113x159
         RenderTableSection {TBODY} at (0,0) size 113x158
           RenderTableRow {TR} at (0,2) size 113x24
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -152,7 +152,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,132) size 35x24 [border: (1px solid #000000)] [r=5 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderTable {TABLE} at (0,451) size 113x500
+      RenderTable {TABLE} at (0,451) size 113x501
         RenderTableSection {TBODY} at (0,0) size 113x500
           RenderTableRow {TR} at (0,2) size 113x81
             RenderTableCell {TD} at (2,30) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -214,12 +214,12 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,445) size 35x24 [border: (1px solid #000000)] [r=5 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderBlock {P} at (0,967) size 784x40
+      RenderBlock {P} at (0,967) size 784x41
         RenderText {#text} at (0,0) size 771x39
           text run at (0,0) width 238: "These tables test percentage heights. "
           text run at (237,0) width 534: "The first should be its natural height; the second should be 50% of the height of the"
           text run at (0,20) width 185: "div (600px), which is 300px."
-      RenderTable {TABLE} at (0,1023) size 113x158
+      RenderTable {TABLE} at (0,1023) size 113x159
         RenderTableSection {TBODY} at (0,0) size 113x158
           RenderTableRow {TR} at (0,2) size 113x24
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -281,7 +281,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,132) size 35x24 [border: (1px solid #000000)] [r=5 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderBlock {DIV} at (0,1181) size 784x606 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,1181) size 784x607 [border: (3px solid #800080)]
         RenderTable {TABLE} at (3,3) size 113x300
           RenderTableSection {TBODY} at (0,0) size 113x300
             RenderTableRow {TR} at (0,2) size 113x47
@@ -344,23 +344,23 @@ layer at (0,0) size 800x6115
               RenderTableCell {TD} at (76,262) size 35x24 [border: (1px solid #000000)] [r=5 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 31x19
                   text run at (2,2) width 31: "Data"
-      RenderBlock {P} at (0,1803) size 784x60
+      RenderBlock {P} at (0,1803) size 784x61
         RenderText {#text} at (0,0) size 154x19
           text run at (0,0) width 154: "The following tests test "
-        RenderInline {CODE} at (0,0) size 48x15
-          RenderText {#text} at (153,4) size 48x15
-            text run at (153,4) width 48: "height"
+        RenderInline {CODE} at (0,0) size 48x14
+          RenderText {#text} at (153,5) size 48x14
+            text run at (153,5) width 48: "height"
         RenderText {#text} at (200,0) size 171x19
           text run at (200,0) width 171: " on table rows. A value of "
-        RenderInline {CODE} at (0,0) size 32x15
-          RenderText {#text} at (370,4) size 32x15
-            text run at (370,4) width 32: "auto"
+        RenderInline {CODE} at (0,0) size 32x14
+          RenderText {#text} at (370,5) size 32x14
+            text run at (370,5) width 32: "auto"
         RenderText {#text} at (401,0) size 784x59
           text run at (401,0) width 324: " requires the minimum height needed by the cells. "
           text run at (724,0) width 26: "In a"
           text run at (0,20) width 784: "simple case, this is just the height of the tallest cell (excluding the increased padding, of course, since with the padding the"
           text run at (0,40) width 178: "cells have the same height):"
-      RenderTable {TABLE} at (0,1879) size 113x48
+      RenderTable {TABLE} at (0,1879) size 113x49
         RenderTableSection {TBODY} at (0,0) size 113x48
           RenderTableRow {TR} at (0,2) size 113x44
             RenderTableCell {TD} at (2,12) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -375,16 +375,16 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,12) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderBlock {P} at (0,1943) size 784x40
+      RenderBlock {P} at (0,1943) size 784x41
         RenderText {#text} at (0,0) size 219x19
           text run at (0,0) width 219: "However, vertical-align values of "
-        RenderInline {CODE} at (0,0) size 63x15
-          RenderText {#text} at (218,4) size 63x15
-            text run at (218,4) width 63: "baseline"
+        RenderInline {CODE} at (0,0) size 63x14
+          RenderText {#text} at (218,5) size 63x14
+            text run at (218,5) width 63: "baseline"
         RenderText {#text} at (280,0) size 760x39
           text run at (280,0) width 480: " (the default, but could be overridden in a UA stylesheet) can make it taller"
           text run at (0,20) width 60: "than that:"
-      RenderTable {TABLE} at (0,1999) size 293x147
+      RenderTable {TABLE} at (0,1999) size 293x148
         RenderTableSection {TBODY} at (0,0) size 293x147
           RenderTableRow {TR} at (0,2) size 293x143
             RenderTableCell {TD} at (2,46) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -404,10 +404,10 @@ layer at (0,0) size 800x6115
               RenderInline {SPAN} at (0,0) size 121x72
                 RenderText {#text} at (2,23) size 121x72
                   text run at (2,23) width 121: "Data"
-      RenderBlock {P} at (0,2162) size 784x20
+      RenderBlock {P} at (0,2162) size 784x21
         RenderText {#text} at (0,0) size 537x19
           text run at (0,0) width 537: "The exact same thing should happen when the given height for the row is too small:"
-      RenderTable {TABLE} at (0,2198) size 293x147
+      RenderTable {TABLE} at (0,2198) size 293x148
         RenderTableSection {TBODY} at (0,0) size 293x147
           RenderTableRow {TR} at (0,2) size 293x143
             RenderTableCell {TD} at (2,46) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -427,11 +427,11 @@ layer at (0,0) size 800x6115
               RenderInline {SPAN} at (0,0) size 121x72
                 RenderText {#text} at (2,23) size 121x72
                   text run at (2,23) width 121: "Data"
-      RenderBlock {P} at (0,2361) size 784x40
+      RenderBlock {P} at (0,2361) size 784x41
         RenderText {#text} at (0,0) size 757x39
           text run at (0,0) width 757: "Padding should also be able to increase the height (here the first cell has 20px padding-top and the second has 20px of"
           text run at (0,20) width 112: "padding-bottom):"
-      RenderTable {TABLE} at (0,2417) size 113x47
+      RenderTable {TABLE} at (0,2417) size 113x48
         RenderTableSection {TBODY} at (0,0) size 113x47
           RenderTableRow {TR} at (0,2) size 113x43
             RenderTableCell {TD} at (2,2) size 35x43 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -443,7 +443,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,11) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderTable {TABLE} at (0,2464) size 113x47
+      RenderTable {TABLE} at (0,2464) size 113x48
         RenderTableSection {TBODY} at (0,0) size 113x47
           RenderTableRow {TR} at (0,2) size 113x43
             RenderTableCell {TD} at (2,2) size 35x43 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -455,12 +455,12 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,11) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderBlock {P} at (0,2527) size 784x40
+      RenderBlock {P} at (0,2527) size 784x41
         RenderText {#text} at (0,0) size 765x39
           text run at (0,0) width 489: "These two tables should be 200px tall, because of a height on the table row. "
           text run at (488,0) width 277: "The second one should have its second and"
           text run at (0,20) width 452: "third cell's contents offset from the middle by 10px (bottom, then top):"
-      RenderTable {TABLE} at (0,2583) size 293x204
+      RenderTable {TABLE} at (0,2583) size 293x205
         RenderTableSection {TBODY} at (0,0) size 293x204
           RenderTableRow {TR} at (0,2) size 293x200
             RenderTableCell {TD} at (2,46) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -480,7 +480,7 @@ layer at (0,0) size 800x6115
               RenderInline {SPAN} at (0,0) size 121x72
                 RenderText {#text} at (2,23) size 121x72
                   text run at (2,23) width 121: "Data"
-      RenderTable {TABLE} at (0,2787) size 113x204
+      RenderTable {TABLE} at (0,2787) size 113x205
         RenderTableSection {TBODY} at (0,0) size 113x204
           RenderTableRow {TR} at (0,2) size 113x200
             RenderTableCell {TD} at (2,80) size 35x43 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -492,12 +492,12 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,90) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderBlock {P} at (0,3007) size 784x40
+      RenderBlock {P} at (0,3007) size 784x41
         RenderText {#text} at (0,0) size 734x39
           text run at (0,0) width 527: "The behavior of percentage heights on table-row or table-row-group is undefined. "
           text run at (526,0) width 208: "However, I think they should be"
           text run at (0,20) width 283: "ignored, so these tables should look normal:"
-      RenderTable {TABLE} at (0,3063) size 113x80
+      RenderTable {TABLE} at (0,3063) size 113x81
         RenderTableSection {TBODY} at (0,0) size 113x80
           RenderTableRow {TR} at (0,2) size 113x24
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -529,7 +529,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,54) size 35x24 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderTable {TABLE} at (0,3143) size 113x80
+      RenderTable {TABLE} at (0,3143) size 113x81
         RenderTableSection {TBODY} at (0,0) size 113x80
           RenderTableRow {TR} at (0,2) size 113x24
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -561,7 +561,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,54) size 35x24 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderTable {TABLE} at (0,3223) size 113x188
+      RenderTable {TABLE} at (0,3223) size 113x185
         RenderTableSection {THEAD} at (0,0) size 113x54
           RenderTableRow {TR} at (0,2) size 113x24
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -583,59 +583,59 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,28) size 35x24 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-        RenderTableSection {TFOOT} at (0,134) size 113x54
-          RenderTableRow {TR} at (0,2) size 113x24
-            RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TFOOT} at (0,132) size 113x52
+          RenderTableRow {TR} at (0,0) size 113x24
+            RenderTableCell {TD} at (2,0) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (39,2) size 35x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (39,0) size 35x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (76,2) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,0) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-          RenderTableRow {TR} at (0,28) size 113x24
-            RenderTableCell {TD} at (2,28) size 35x24 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 113x24
+            RenderTableCell {TD} at (2,26) size 35x24 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (39,28) size 35x24 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (39,26) size 35x24 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (76,28) size 35x24 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,26) size 35x24 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-        RenderTableSection {TBODY} at (0,54) size 113x80
-          RenderTableRow {TR} at (0,2) size 113x24
-            RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (0,54) size 113x78
+          RenderTableRow {TR} at (0,0) size 113x24
+            RenderTableCell {TD} at (2,0) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (39,2) size 35x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (39,0) size 35x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (76,2) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,0) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-          RenderTableRow {TR} at (0,28) size 113x24
-            RenderTableCell {TD} at (2,28) size 35x24 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 113x24
+            RenderTableCell {TD} at (2,26) size 35x24 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (39,28) size 35x24 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (39,26) size 35x24 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (76,28) size 35x24 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,26) size 35x24 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-          RenderTableRow {TR} at (0,54) size 113x24
-            RenderTableCell {TD} at (2,54) size 35x24 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,52) size 113x24
+            RenderTableCell {TD} at (2,52) size 35x24 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (39,54) size 35x24 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (39,52) size 35x24 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (76,54) size 35x24 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,52) size 35x24 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderTable {TABLE} at (0,3411) size 113x188
+      RenderTable {TABLE} at (0,3407) size 113x185
         RenderTableSection {THEAD} at (0,0) size 113x54
           RenderTableRow {TR} at (0,2) size 113x24
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -657,62 +657,62 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,28) size 35x24 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-        RenderTableSection {TFOOT} at (0,134) size 113x54
-          RenderTableRow {TR} at (0,2) size 113x24
-            RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TFOOT} at (0,132) size 113x52
+          RenderTableRow {TR} at (0,0) size 113x24
+            RenderTableCell {TD} at (2,0) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (39,2) size 35x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (39,0) size 35x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (76,2) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,0) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-          RenderTableRow {TR} at (0,28) size 113x24
-            RenderTableCell {TD} at (2,28) size 35x24 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 113x24
+            RenderTableCell {TD} at (2,26) size 35x24 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (39,28) size 35x24 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (39,26) size 35x24 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (76,28) size 35x24 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,26) size 35x24 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-        RenderTableSection {TBODY} at (0,54) size 113x80
-          RenderTableRow {TR} at (0,2) size 113x24
-            RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (0,54) size 113x78
+          RenderTableRow {TR} at (0,0) size 113x24
+            RenderTableCell {TD} at (2,0) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (39,2) size 35x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (39,0) size 35x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (76,2) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,0) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-          RenderTableRow {TR} at (0,28) size 113x24
-            RenderTableCell {TD} at (2,28) size 35x24 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 113x24
+            RenderTableCell {TD} at (2,26) size 35x24 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (39,28) size 35x24 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (39,26) size 35x24 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (76,28) size 35x24 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,26) size 35x24 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-          RenderTableRow {TR} at (0,54) size 113x24
-            RenderTableCell {TD} at (2,54) size 35x24 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,52) size 113x24
+            RenderTableCell {TD} at (2,52) size 35x24 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (39,54) size 35x24 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (39,52) size 35x24 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-            RenderTableCell {TD} at (76,54) size 35x24 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,52) size 35x24 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderBlock {P} at (0,3615) size 784x20
+      RenderBlock {P} at (0,3607) size 784x21
         RenderText {#text} at (0,0) size 498x19
           text run at (0,0) width 498: "The following table should look normal, since very small heights get ignored:"
-      RenderTable {TABLE} at (0,3651) size 113x28
+      RenderTable {TABLE} at (0,3643) size 113x29
         RenderTableSection {TBODY} at (0,0) size 113x28
           RenderTableRow {TR} at (0,2) size 113x24
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -724,10 +724,10 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,2) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderBlock {P} at (0,3695) size 784x20
+      RenderBlock {P} at (0,3687) size 784x21
         RenderText {#text} at (0,0) size 258x19
           text run at (0,0) width 258: "So should this one, for auto cell heights:"
-      RenderTable {TABLE} at (0,3731) size 113x28
+      RenderTable {TABLE} at (0,3723) size 113x29
         RenderTableSection {TBODY} at (0,0) size 113x28
           RenderTableRow {TR} at (0,2) size 113x24
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -739,10 +739,10 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,2) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderBlock {P} at (0,3775) size 784x20
+      RenderBlock {P} at (0,3767) size 784x21
         RenderText {#text} at (0,0) size 643x19
           text run at (0,0) width 643: "These tables should look the same - all cells should be 100px tall with the text at the top of the cells:"
-      RenderTable {TABLE} at (0,3811) size 113x108
+      RenderTable {TABLE} at (0,3803) size 113x109
         RenderTableSection {TBODY} at (0,0) size 113x108
           RenderTableRow {TR} at (0,2) size 113x104
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -754,7 +754,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,2) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderTable {TABLE} at (0,3919) size 113x108
+      RenderTable {TABLE} at (0,3911) size 113x109
         RenderTableSection {TBODY} at (0,0) size 113x108
           RenderTableRow {TR} at (0,2) size 113x104
             RenderTableCell {TD} at (2,42) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -766,7 +766,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,42) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderTable {TABLE} at (0,4027) size 113x108
+      RenderTable {TABLE} at (0,4019) size 113x109
         RenderTableSection {TBODY} at (0,0) size 113x108
           RenderTableRow {TR} at (0,2) size 113x104
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -778,7 +778,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,2) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderTable {TABLE} at (0,4135) size 113x108
+      RenderTable {TABLE} at (0,4127) size 113x109
         RenderTableSection {TBODY} at (0,0) size 113x108
           RenderTableRow {TR} at (0,2) size 113x104
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -790,10 +790,10 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,2) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderBlock {P} at (0,4259) size 784x20
+      RenderBlock {P} at (0,4251) size 784x21
         RenderText {#text} at (0,0) size 730x19
           text run at (0,0) width 730: "In these four tables, the text should be 20px lower each cell, but should otherwise look like the above three tables:"
-      RenderTable {TABLE} at (0,4295) size 109x108
+      RenderTable {TABLE} at (0,4287) size 109x109
         RenderTableSection {TBODY} at (0,0) size 109x108
           RenderTableRow {TR} at (0,2) size 109x104
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -805,7 +805,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (74,2) size 33x102 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,41) size 31x19
                 text run at (1,41) width 31: "Data"
-      RenderTable {TABLE} at (0,4403) size 109x108
+      RenderTable {TABLE} at (0,4395) size 109x109
         RenderTableSection {TBODY} at (0,0) size 109x108
           RenderTableRow {TR} at (0,2) size 109x104
             RenderTableCell {TD} at (2,2) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -817,7 +817,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (74,2) size 33x62 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,41) size 31x19
                 text run at (1,41) width 31: "Data"
-      RenderTable {TABLE} at (0,4511) size 109x108
+      RenderTable {TABLE} at (0,4503) size 109x109
         RenderTableSection {TBODY} at (0,0) size 109x108
           RenderTableRow {TR} at (0,2) size 109x104
             RenderTableCell {TD} at (2,42) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -829,7 +829,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (74,3) size 33x102 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,41) size 31x19
                 text run at (1,41) width 31: "Data"
-      RenderTable {TABLE} at (0,4619) size 113x108
+      RenderTable {TABLE} at (0,4611) size 113x109
         RenderTableSection {TBODY} at (0,0) size 113x108
           RenderTableRow {TR} at (0,2) size 113x104
             RenderTableCell {TD} at (2,42) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -841,10 +841,10 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (76,42) size 35x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "Data"
-      RenderBlock {P} at (0,4743) size 784x20
+      RenderBlock {P} at (0,4735) size 784x21
         RenderText {#text} at (0,0) size 378x19
           text run at (0,0) width 378: "These should have the text 40px from the top in every cell:"
-      RenderTable {TABLE} at (0,4779) size 109x107
+      RenderTable {TABLE} at (0,4771) size 109x108
         RenderTableSection {TBODY} at (0,0) size 109x107
           RenderTableRow {TR} at (0,2) size 109x103
             RenderTableCell {TD} at (2,41) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -856,7 +856,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (74,2) size 33x102 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,41) size 31x19
                 text run at (1,41) width 31: "Data"
-      RenderTable {TABLE} at (0,4886) size 109x106
+      RenderTable {TABLE} at (0,4878) size 109x107
         RenderTableSection {TBODY} at (0,0) size 109x106
           RenderTableRow {TR} at (0,2) size 109x102
             RenderTableCell {TD} at (2,41) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -868,7 +868,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (74,2) size 33x62 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,41) size 31x19
                 text run at (1,41) width 31: "Data"
-      RenderTable {TABLE} at (0,4992) size 109x106
+      RenderTable {TABLE} at (0,4984) size 109x107
         RenderTableSection {TBODY} at (0,0) size 109x106
           RenderTableRow {TR} at (0,2) size 109x102
             RenderTableCell {TD} at (2,41) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -880,7 +880,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (74,2) size 33x102 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,41) size 31x19
                 text run at (1,41) width 31: "Data"
-      RenderTable {TABLE} at (0,5098) size 109x106
+      RenderTable {TABLE} at (0,5090) size 109x107
         RenderTableSection {TBODY} at (0,0) size 109x106
           RenderTableRow {TR} at (0,2) size 109x102
             RenderTableCell {TD} at (2,80) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -892,7 +892,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (74,2) size 33x102 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,41) size 31x19
                 text run at (1,41) width 31: "Data"
-      RenderTable {TABLE} at (0,5204) size 109x68
+      RenderTable {TABLE} at (0,5196) size 109x69
         RenderTableSection {TBODY} at (0,0) size 109x68
           RenderTableRow {TR} at (0,2) size 109x64
             RenderTableCell {TD} at (2,42) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -904,11 +904,11 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (74,4) size 33x62 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 31x19
                 text run at (1,1) width 31: "Data"
-      RenderBlock {P} at (0,5288) size 784x40
+      RenderBlock {P} at (0,5280) size 784x41
         RenderText {#text} at (0,0) size 767x39
           text run at (0,0) width 767: "In each of the following tables, three of the cells should have the same baseline of the first line, and the three so marked"
           text run at (0,20) width 275: "should be aligned top, middle, and bottom:"
-      RenderTable {TABLE} at (0,5344) size 464x120
+      RenderTable {TABLE} at (0,5336) size 464x121
         RenderTableSection {TBODY} at (0,0) size 464x120
           RenderTableRow {TR} at (0,2) size 464x116
             RenderTableCell {TD} at (2,75) size 35x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -929,7 +929,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (409,94) size 53x24 [border: (1px solid #000000)] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 49x19
                 text run at (2,2) width 49: "Bottom"
-      RenderTable {TABLE} at (0,5464) size 464x120
+      RenderTable {TABLE} at (0,5456) size 464x121
         RenderTableSection {TBODY} at (0,0) size 464x120
           RenderTableRow {TR} at (0,2) size 464x116
             RenderTableCell {TD} at (2,2) size 30x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -950,7 +950,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (367,46) size 95x61 [border: (1px solid #000000)] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (2,3) size 91x54
                 text run at (2,3) width 91: "Data"
-      RenderTable {TABLE} at (0,5584) size 464x120
+      RenderTable {TABLE} at (0,5576) size 464x121
         RenderTableSection {TBODY} at (0,0) size 464x120
           RenderTableRow {TR} at (0,2) size 464x116
             RenderTableCell {TD} at (2,2) size 186x116 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -971,7 +971,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (367,46) size 95x61 [border: (1px solid #000000)] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (2,3) size 91x54
                 text run at (2,3) width 91: "Data"
-      RenderTable {TABLE} at (0,5704) size 464x120
+      RenderTable {TABLE} at (0,5696) size 464x121
         RenderTableSection {TBODY} at (0,0) size 464x120
           RenderTableRow {TR} at (0,2) size 464x116
             RenderTableCell {TD} at (2,2) size 30x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -992,7 +992,7 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (276,2) size 186x116 [border: (1px solid #000000)] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (2,4) size 182x107
                 text run at (2,4) width 182: "Data"
-      RenderTable {TABLE} at (0,5824) size 464x120
+      RenderTable {TABLE} at (0,5816) size 464x121
         RenderTableSection {TBODY} at (0,0) size 464x120
           RenderTableRow {TR} at (0,2) size 464x116
             RenderTableCell {TD} at (2,2) size 30x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -1013,11 +1013,11 @@ layer at (0,0) size 800x6115
             RenderTableCell {TD} at (411,48) size 51x24 [border: (1px solid #000000)] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 47x19
                 text run at (2,2) width 47: "Middle"
-      RenderBlock {HR} at (0,5952) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,5970) size 784x36
+      RenderBlock {HR} at (0,5944) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,5962) size 784x37
         RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
           RenderImage {IMG} at (0,0) size 88x31
-      RenderBlock {P} at (0,6022) size 784x20
+      RenderBlock {P} at (0,6014) size 784x21
         RenderText {#text} at (0,0) size 59x19
           text run at (0,0) width 59: "(Back to "
         RenderInline {A} at (0,0) size 162x19 [color=#0000EE]
@@ -1030,7 +1030,7 @@ layer at (0,0) size 800x6115
             text run at (227,0) width 83: "David Baron"
         RenderText {#text} at (309,0) size 7x19
           text run at (309,0) width 7: ")"
-      RenderBlock {P} at (0,6058) size 784x20
+      RenderBlock {P} at (0,6050) size 784x21
         RenderInline {A} at (0,0) size 32x19 [color=#0000EE]
           RenderText {#text} at (0,0) size 32x19
             text run at (0,0) width 32: "LDB"

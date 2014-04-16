@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x595
-  RenderBlock {HTML} at (0,0) size 800x595
-    RenderBody {BODY} at (8,21) size 784x383
+layer at (0,0) size 800x599
+  RenderBlock {HTML} at (0,0) size 800x599
+    RenderBody {BODY} at (8,21) size 784x386
       RenderBlock {H1} at (0,0) size 784x38 [color=#990000]
         RenderText {#text} at (0,1) size 699x36
           text run at (0,1) width 699: "Webkit background image positioning on RTL text"
-      RenderBlock {H2} at (0,59) size 784x30
+      RenderBlock {H2} at (0,59) size 784x31
         RenderText {#text} at (0,1) size 263x28
           text run at (0,1) width 263: "Behaviour within <p> tag"
-      RenderBlock (floating) {DIV} at (0,108) size 318x224 [bgcolor=#DDDDDD]
+      RenderBlock (floating) {DIV} at (0,109) size 318x225 [bgcolor=#DDDDDD]
         RenderBlock {P} at (6,22) size 306x180
           RenderText {#text} at (40,0) size 266x179
             text run at (40,0) width 259: "Lorem ipsum dolor sit amet, consectetur"
@@ -26,7 +26,7 @@ layer at (0,0) size 800x595
             text run at (40,140) width 235: "malesuada quam vel augue hendrerit"
             text run at (40,160) width 41: "porta. "
             text run at (80,160) width 199: "Nulla vitae elementum mauris."
-      RenderBlock (floating) {DIV} at (332,108) size 318x184 [bgcolor=#DDDDDD]
+      RenderBlock (floating) {DIV} at (332,109) size 318x185 [bgcolor=#DDDDDD]
         RenderBlock {P} at (6,22) size 306x140
           RenderText {#text} at (11,0) size 260x139
             text run at (11,0) width 255 RTL: "\x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA} \x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD}"
@@ -36,11 +36,11 @@ layer at (0,0) size 800x595
             text run at (24,80) width 242 RTL: "\x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA} \x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0}"
             text run at (20,100) width 246 RTL: "\x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA} \x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA}"
             text run at (156,120) width 110 RTL: "\x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA}"
-      RenderBlock {HR} at (0,332) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,353) size 784x30
+      RenderBlock {HR} at (0,333) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,355) size 784x31
         RenderText {#text} at (0,1) size 262x28
           text run at (0,1) width 262: "Behaviour within <a> tag"
-      RenderBlock (floating) {DIV} at (0,402) size 318x172 [bgcolor=#DDDDDD]
+      RenderBlock (floating) {DIV} at (0,405) size 318x173 [bgcolor=#DDDDDD]
         RenderInline {A} at (0,0) size 300x159 [color=#0000EE]
           RenderText {#text} at (46,6) size 300x159
             text run at (46,6) width 259: "Lorem ipsum dolor sit amet, consectetur"
@@ -56,7 +56,7 @@ layer at (0,0) size 800x595
             text run at (6,146) width 41: "porta. "
             text run at (46,146) width 199: "Nulla vitae elementum mauris."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (floating) {DIV} at (332,402) size 318x132 [bgcolor=#DDDDDD]
+      RenderBlock (floating) {DIV} at (332,405) size 318x133 [bgcolor=#DDDDDD]
         RenderInline {A} at (0,0) size 295x119 [color=#0000EE]
           RenderText {#text} at (17,6) size 295x119
             text run at (17,6) width 255 RTL: "\x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA} \x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD}"

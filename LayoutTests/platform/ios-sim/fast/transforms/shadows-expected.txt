@@ -12,16 +12,16 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (20,260) size 40x40 [bgcolor=#FFFFE0]
       RenderBlock {DIV} at (0,320) size 800x0
       RenderBlock (floating) {DIV} at (20,340) size 40x40 [bgcolor=#FFFFE0]
-        RenderText {#text} at (5,5) size 21x20
-          text run at (5,5) width 21: "X"
+        RenderText {#text} at (5,5) size 20x20
+          text run at (5,5) width 20: "X"
       RenderBlock {DIV} at (0,400) size 800x0
       RenderBlock (floating) {DIV} at (20,420) size 40x40 [bgcolor=#FFFFE0]
-        RenderText {#text} at (5,5) size 21x20
-          text run at (5,5) width 21: "X"
+        RenderText {#text} at (5,5) size 20x20
+          text run at (5,5) width 20: "X"
       RenderBlock {DIV} at (0,480) size 800x0
       RenderBlock (floating) {DIV} at (20,500) size 40x40 [bgcolor=#FFFFE0]
-        RenderText {#text} at (5,5) size 21x20
-          text run at (5,5) width 21: "X"
+        RenderText {#text} at (5,5) size 20x20
+          text run at (5,5) width 20: "X"
 layer at (100,20) size 40x40
   RenderBlock (floating) {DIV} at (100,20) size 40x40 [bgcolor=#FFFFE0]
 layer at (180,20) size 40x40
@@ -56,49 +56,49 @@ layer at (340,260) size 40x40
   RenderBlock (floating) {DIV} at (340,260) size 40x40 [bgcolor=#FFFFE0]
 layer at (100,340) size 40x40
   RenderBlock (floating) {DIV} at (100,340) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (180,340) size 40x40
   RenderBlock (floating) {DIV} at (180,340) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (260,340) size 40x40
   RenderBlock (floating) {DIV} at (260,340) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (340,340) size 40x40
   RenderBlock (floating) {DIV} at (340,340) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (100,420) size 40x40
   RenderBlock (floating) {DIV} at (100,420) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (180,420) size 40x40
   RenderBlock (floating) {DIV} at (180,420) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (260,420) size 40x40
   RenderBlock (floating) {DIV} at (260,420) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (340,420) size 40x40
   RenderBlock (floating) {DIV} at (340,420) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (100,500) size 40x40
   RenderBlock (floating) {DIV} at (100,500) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (180,500) size 40x40
   RenderBlock (floating) {DIV} at (180,500) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (260,500) size 40x40
   RenderBlock (floating) {DIV} at (260,500) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"
 layer at (340,500) size 40x40
   RenderBlock (floating) {DIV} at (340,500) size 40x40 [bgcolor=#FFFFE0]
-    RenderText {#text} at (5,5) size 21x20
-      text run at (5,5) width 21: "X"
+    RenderText {#text} at (5,5) size 20x20
+      text run at (5,5) width 20: "X"

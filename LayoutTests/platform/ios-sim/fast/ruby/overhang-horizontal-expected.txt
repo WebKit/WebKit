@@ -4,148 +4,147 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 206x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderText {#text} at (3,13) size 61x20
-          text run at (3,13) width 61: "abc"
-        RenderRuby (inline) {RUBY} at (0,0) size 42x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (63,13) size 41x20
-            RenderRubyText {RT} at (0,-10) size 41x10 [color=#C0C0C0]
+        RenderText {#text} at (3,13) size 60x20
+          text run at (3,13) width 60: "abc"
+        RenderRuby (inline) {RUBY} at (0,0) size 40x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (63,13) size 40x20
+            RenderRubyText {RT} at (0,-10) size 40x10 [color=#C0C0C0]
               RenderText {#text} at (2,0) size 36x10
                 text run at (2,0) width 36: "y y"
-            RenderRubyBase (anonymous) at (0,0) size 41x20
-              RenderText {#text} at (0,0) size 41x20
-                text run at (0,0) width 41: "xx"
-        RenderText {#text} at (104,13) size 61x20
-          text run at (104,13) width 61: "def"
+            RenderRubyBase (anonymous) at (0,0) size 40x20
+              RenderText {#text} at (0,0) size 40x20
+                text run at (0,0) width 40: "xx"
+        RenderText {#text} at (103,13) size 60x20
+          text run at (103,13) width 60: "def"
       RenderBlock {DIV} at (0,44) size 206x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderText {#text} at (3,13) size 61x20
-          text run at (3,13) width 61: "abc"
-        RenderRuby (inline) {RUBY} at (0,0) size 42x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (58,13) size 51x20
-            RenderRubyText {RT} at (0,-10) size 51x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 51x10
-                text run at (0,0) width 51: "yy yy"
-            RenderRubyBase (anonymous) at (0,0) size 51x20
-              RenderText {#text} at (5,0) size 41x20
-                text run at (5,0) width 41: "xx"
-        RenderText {#text} at (104,13) size 61x20
-          text run at (104,13) width 61: "def"
+        RenderText {#text} at (3,13) size 60x20
+          text run at (3,13) width 60: "abc"
+        RenderRuby (inline) {RUBY} at (0,0) size 40x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (58,13) size 50x20
+            RenderRubyText {RT} at (0,-10) size 50x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 50x10
+                text run at (0,0) width 50: "yy yy"
+            RenderRubyBase (anonymous) at (0,0) size 50x20
+              RenderText {#text} at (5,0) size 40x20
+                text run at (5,0) width 40: "xx"
+        RenderText {#text} at (103,13) size 60x20
+          text run at (103,13) width 60: "def"
       RenderBlock {DIV} at (0,88) size 206x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderText {#text} at (3,13) size 61x20
-          text run at (3,13) width 61: "abc"
-        RenderRuby (inline) {RUBY} at (0,0) size 52x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (58,13) size 61x20
-            RenderRubyText {RT} at (0,-10) size 61x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 61x10
-                text run at (0,0) width 61: "yyyyyy"
-            RenderRubyBase (anonymous) at (0,0) size 61x20
-              RenderText {#text} at (10,0) size 41x20
-                text run at (10,0) width 41: "xx"
-        RenderText {#text} at (114,13) size 61x20
-          text run at (114,13) width 61: "def"
+        RenderText {#text} at (3,13) size 60x20
+          text run at (3,13) width 60: "abc"
+        RenderRuby (inline) {RUBY} at (0,0) size 50x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (58,13) size 60x20
+            RenderRubyText {RT} at (0,-10) size 60x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 60x10
+                text run at (0,0) width 60: "yyyyyy"
+            RenderRubyBase (anonymous) at (0,0) size 60x20
+              RenderText {#text} at (10,0) size 40x20
+                text run at (10,0) width 40: "xx"
+        RenderText {#text} at (113,13) size 60x20
+          text run at (113,13) width 60: "def"
       RenderBlock {DIV} at (0,132) size 206x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderText {#text} at (3,13) size 61x20
-          text run at (3,13) width 61: "abc"
+        RenderText {#text} at (3,13) size 60x20
+          text run at (3,13) width 60: "abc"
         RenderRuby (inline) {RUBY} at (0,0) size 66x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (61,13) size 71x20
-            RenderRubyText {RT} at (0,-10) size 71x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 71x10
-                text run at (0,0) width 71: "yyy yyy"
-            RenderRubyBase (anonymous) at (0,0) size 71x20
+          RenderRubyRun (anonymous) at (61,13) size 70x20
+            RenderRubyText {RT} at (0,-10) size 70x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 70x10
+                text run at (0,0) width 70: "yyy yyy"
+            RenderRubyBase (anonymous) at (0,0) size 70x20
               RenderText {#text} at (2,0) size 66x20
                 text run at (2,0) width 66: "x x"
         RenderText {#text} at (129,13) size 60x20
           text run at (129,13) width 60: "def"
       RenderBlock {DIV} at (0,176) size 206x56 [color=#4B0082] [border: (3px solid #000000)]
-        RenderRuby (inline) {RUBY} at (0,0) size 46x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (3,13) size 51x20
-            RenderRubyText {RT} at (0,-10) size 51x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 51x10
-                text run at (0,0) width 51: "yy yy"
-            RenderRubyBase (anonymous) at (0,0) size 51x20
-              RenderText {#text} at (5,0) size 41x20
-                text run at (5,0) width 41: "xx"
-        RenderText {#text} at (49,13) size 147x40
-          text run at (49,13) width 101: "def g"
-          text run at (3,33) width 41: "hi"
-      RenderBlock {DIV} at (0,240) size 206x56 [color=#4B0082] [border: (3px solid #000000)]
-        RenderText {#text} at (3,13) size 21x20
-          text run at (3,13) width 21: "a"
-        RenderRuby (inline) {RUBY} at (0,0) size 41x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (18,13) size 51x20
-            RenderRubyText {RT} at (0,-10) size 51x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 51x10
-                text run at (0,0) width 51: "yy yy"
-            RenderRubyBase (anonymous) at (0,0) size 51x20
-              RenderText {#text} at (5,0) size 41x20
-                text run at (5,0) width 41: "xx"
-        RenderText {#text} at (64,13) size 162x40
-          text run at (64,13) width 101: "def g"
-          text run at (3,33) width 21: "h"
-      RenderBlock {DIV} at (0,304) size 206x56 [color=#4B0082] [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 161x20
-          text run at (3,3) width 161: "a b bc b"
-        RenderRuby (inline) {RUBY} at (0,0) size 51x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (3,33) size 51x20
-            RenderRubyText {RT} at (0,-10) size 51x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 51x10
-                text run at (0,0) width 51: "yy yy"
-            RenderRubyBase (anonymous) at (0,0) size 51x20
-              RenderText {#text} at (5,0) size 41x20
-                text run at (5,0) width 41: "xx"
+        RenderRuby (inline) {RUBY} at (0,0) size 45x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (3,13) size 50x20
+            RenderRubyText {RT} at (0,-10) size 50x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 50x10
+                text run at (0,0) width 50: "yy yy"
+            RenderRubyBase (anonymous) at (0,0) size 50x20
+              RenderText {#text} at (5,0) size 40x20
+                text run at (5,0) width 40: "xx"
+        RenderText {#text} at (48,13) size 145x40
+          text run at (48,13) width 100: "def g"
+          text run at (3,33) width 40: "hi"
+      RenderBlock {DIV} at (0,240) size 206x36 [color=#4B0082] [border: (3px solid #000000)]
+        RenderText {#text} at (3,13) size 20x20
+          text run at (3,13) width 20: "a"
+        RenderRuby (inline) {RUBY} at (0,0) size 40x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (18,13) size 50x20
+            RenderRubyText {RT} at (0,-10) size 50x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 50x10
+                text run at (0,0) width 50: "yy yy"
+            RenderRubyBase (anonymous) at (0,0) size 50x20
+              RenderText {#text} at (5,0) size 40x20
+                text run at (5,0) width 40: "xx"
+        RenderText {#text} at (63,13) size 140x20
+          text run at (63,13) width 140: "def g h"
+      RenderBlock {DIV} at (0,284) size 206x56 [color=#4B0082] [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 160x20
+          text run at (3,3) width 160: "a b bc b"
+        RenderRuby (inline) {RUBY} at (0,0) size 50x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (3,33) size 50x20
+            RenderRubyText {RT} at (0,-10) size 50x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 50x10
+                text run at (0,0) width 50: "yy yy"
+            RenderRubyBase (anonymous) at (0,0) size 50x20
+              RenderText {#text} at (5,0) size 40x20
+                text run at (5,0) width 40: "xx"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,368) size 206x46 [color=#4B0082] [border: (3px solid #000000)]
-        RenderText {#text} at (3,13) size 141x20
-          text run at (3,13) width 141: "a b b b"
-        RenderRuby (inline) {RUBY} at (0,0) size 47x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (138,13) size 51x20
-            RenderRubyText {RT} at (0,-10) size 51x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 51x10
-                text run at (0,0) width 51: "yy yy"
-            RenderRubyBase (anonymous) at (0,0) size 51x20
-              RenderText {#text} at (5,0) size 41x20
-                text run at (5,0) width 41: "xx"
-        RenderInline {SPAN} at (0,0) size 21x10
-          RenderText {#text} at (3,33) size 21x10
-            text run at (3,33) width 21: "de"
-      RenderBlock {DIV} at (0,422) size 206x38 [color=#4B0082] [border: (3px solid #000000)]
-        RenderText {#text} at (3,13) size 121x20
-          text run at (3,13) width 121: "a b b "
-        RenderRuby (inline) {RUBY} at (0,0) size 47x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (118,13) size 51x20
-            RenderRubyText {RT} at (0,-10) size 51x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 51x10
-                text run at (0,0) width 51: "yy yy"
-            RenderRubyBase (anonymous) at (0,0) size 51x20
-              RenderText {#text} at (5,0) size 41x20
-                text run at (5,0) width 41: "xx"
-        RenderInline {SPAN} at (0,0) size 31x30
-          RenderText {#text} at (169,5) size 31x30
-            text run at (169,5) width 31: "d"
-      RenderBlock {DIV} at (0,468) size 206x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 21x10
-          RenderText {#text} at (3,21) size 21x10
-            text run at (3,21) width 21: "cb"
-        RenderRuby (inline) {RUBY} at (0,0) size 41x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (18,13) size 51x20
-            RenderRubyText {RT} at (0,-10) size 51x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 51x10
-                text run at (0,0) width 51: "yy yy"
-            RenderRubyBase (anonymous) at (0,0) size 51x20
-              RenderText {#text} at (5,0) size 41x20
-                text run at (5,0) width 41: "xx"
-        RenderText {#text} at (64,13) size 40x20
-          text run at (64,13) width 40: "ij"
-      RenderBlock {DIV} at (0,512) size 206x38 [color=#4B0082] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (0,348) size 206x36 [color=#4B0082] [border: (3px solid #000000)]
+        RenderText {#text} at (3,13) size 140x20
+          text run at (3,13) width 140: "a b b b"
+        RenderRuby (inline) {RUBY} at (0,0) size 40x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (138,13) size 50x20
+            RenderRubyText {RT} at (0,-10) size 50x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 50x10
+                text run at (0,0) width 50: "yy yy"
+            RenderRubyBase (anonymous) at (0,0) size 50x20
+              RenderText {#text} at (5,0) size 40x20
+                text run at (5,0) width 40: "xx"
+        RenderInline {SPAN} at (0,0) size 20x10
+          RenderText {#text} at (183,21) size 20x10
+            text run at (183,21) width 20: "de"
+      RenderBlock {DIV} at (0,392) size 206x38 [color=#4B0082] [border: (3px solid #000000)]
+        RenderText {#text} at (3,13) size 120x20
+          text run at (3,13) width 120: "a b b "
+        RenderRuby (inline) {RUBY} at (0,0) size 45x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (118,13) size 50x20
+            RenderRubyText {RT} at (0,-10) size 50x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 50x10
+                text run at (0,0) width 50: "yy yy"
+            RenderRubyBase (anonymous) at (0,0) size 50x20
+              RenderText {#text} at (5,0) size 40x20
+                text run at (5,0) width 40: "xx"
+        RenderInline {SPAN} at (0,0) size 30x30
+          RenderText {#text} at (168,5) size 30x30
+            text run at (168,5) width 30: "d"
+      RenderBlock {DIV} at (0,438) size 206x36 [color=#4B0082] [border: (3px solid #000000)]
+        RenderInline {SPAN} at (0,0) size 20x10
+          RenderText {#text} at (3,21) size 20x10
+            text run at (3,21) width 20: "cb"
+        RenderRuby (inline) {RUBY} at (0,0) size 40x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (18,13) size 50x20
+            RenderRubyText {RT} at (0,-10) size 50x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 50x10
+                text run at (0,0) width 50: "yy yy"
+            RenderRubyBase (anonymous) at (0,0) size 50x20
+              RenderText {#text} at (5,0) size 40x20
+                text run at (5,0) width 40: "xx"
+        RenderText {#text} at (63,13) size 40x20
+          text run at (63,13) width 40: "ij"
+      RenderBlock {DIV} at (0,482) size 206x38 [color=#4B0082] [border: (3px solid #000000)]
         RenderInline {SPAN} at (0,0) size 30x30
           RenderText {#text} at (3,5) size 30x30
             text run at (3,5) width 30: "c"
-        RenderRuby (inline) {RUBY} at (0,0) size 46x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (33,13) size 51x20
-            RenderRubyText {RT} at (0,-10) size 51x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 51x10
-                text run at (0,0) width 51: "yy yy"
-            RenderRubyBase (anonymous) at (0,0) size 51x20
-              RenderText {#text} at (5,0) size 41x20
-                text run at (5,0) width 41: "xx"
-        RenderText {#text} at (79,13) size 40x20
-          text run at (79,13) width 40: "ij"
+        RenderRuby (inline) {RUBY} at (0,0) size 45x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (33,13) size 50x20
+            RenderRubyText {RT} at (0,-10) size 50x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 50x10
+                text run at (0,0) width 50: "yy yy"
+            RenderRubyBase (anonymous) at (0,0) size 50x20
+              RenderText {#text} at (5,0) size 40x20
+                text run at (5,0) width 40: "xx"
+        RenderText {#text} at (78,13) size 40x20
+          text run at (78,13) width 40: "ij"

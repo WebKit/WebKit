@@ -1,4 +1,3 @@
-
 This test verifies that sandboxing 'about:blank' does not make the containing frame sandboxed.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

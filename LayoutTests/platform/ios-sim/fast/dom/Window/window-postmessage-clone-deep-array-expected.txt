@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 42: RangeError: Maximum call stack size exceeded.
+Tests that we support cloning deep(ish) arrays.
+
+PASS: eventData is done of type string
+

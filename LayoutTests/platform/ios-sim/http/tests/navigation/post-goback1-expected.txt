@@ -1,8 +1,9 @@
-This page was requested with the HTTP method GET.
+This page was requested with the HTTP method POST.
 
 Parameters:
 
-
+the-input = input value goes here
+submitwithpost = Submit with POST
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/resources/page-that-posts.html  **nav target**

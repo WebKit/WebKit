@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 200x200 clip at (8,8) size 183x200 scrollWidth 324 scrollHeight 880
+layer at (8,8) size 200x200 clip at (8,8) size 183x200 scrollWidth 323 scrollHeight 880
   RenderBlock {DIV} at (0,0) size 200x200
     RenderText {#text} at (0,0) size 36x19
       text run at (0,0) width 36: "Hello"

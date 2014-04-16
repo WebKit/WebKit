@@ -11,6 +11,6 @@ layer at (0,0) size 800x80
           text run at (0,0) width 32: "Test:"
       RenderBlock {DIV} at (160,56) size 624x0 [color=#FF0000] [bgcolor=#00FF00]
         RenderInline {SPAN} at (0,0) size 303x19 [color=#000000]
-          RenderText {#text} at (0,-9) size 303x19
-            text run at (0,-9) width 303: "This sentence should have a green background."
+          RenderText {#text} at (0,-10) size 303x19
+            text run at (0,-10) width 303: "This sentence should have a green background."
         RenderText {#text} at (0,0) size 0x0

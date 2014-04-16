@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 425x93
+  RenderSVGRoot {svg} at (0,4) size 425x89
     RenderSVGContainer {g} at (0,4) size 425x89
-      RenderSVGPath {svg:line} at (47,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=0.80] [x2=10.00] [y2=12.40]
-      RenderSVGPath {svg:line} at (419,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=84.46] [y1=0.80] [x2=84.46] [y2=12.40]
-      RenderSVGRect {svg:rect} at (50,4) size 373x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.80] [width=74.46] [height=11.40]
+      RenderSVGPath {svg:line} at (47,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=0.90] [x2=10.00] [y2=12.30]
+      RenderSVGPath {svg:line} at (419,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=84.46] [y1=0.90] [x2=84.46] [y2=12.30]
+      RenderSVGRect {svg:rect} at (50,4) size 373x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.90] [width=74.46] [height=11.30]
       RenderSVGText {svg:text} at (0,27) size 142x10 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 142x10
+        RenderSVGInlineText {#text} at (0,0) size 142x9
           chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 49 width 141.73: "Expected 'This is a test' to be selected, got: ''"
-    RenderSVGText {text} at (10,0) size 75x12 contains 1 chunk(s)
+    RenderSVGText {text} at (10,0) size 75x13 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 75x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.11: "T"
         chunk 1 text run 1 at (20.00,10.00) startOffset 0 endOffset 1 width 5.56: "h"

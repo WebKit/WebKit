@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 240: Failed to pause 'background-position' transition on element 'box'
+CONSOLE MESSAGE: line 240: Failed to pause '-webkit-background-size' transition on element 'box2'
+FAIL - "background-position" property for "box" element at 0.5s expected: 10,10 but saw: 20,20
+FAIL - "-webkit-background-size" property for "box2" element at 0.5s expected: 20,20 but saw: 30,30
+

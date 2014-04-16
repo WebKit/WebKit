@@ -1,8 +1,8 @@
-layer at (0,0) size 800x2156
+layer at (0,0) size 800x2158
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x2156
-  RenderBlock {HTML} at (0,0) size 800x2156
-    RenderBody {BODY} at (8,16) size 784x2124
+layer at (0,0) size 800x2158
+  RenderBlock {HTML} at (0,0) size 800x2158
+    RenderBody {BODY} at (8,16) size 784x2126
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 625x19
           text run at (0,0) width 625: "Scrolling should occur even when the frame's overflow is hidden (i.e. it has no visible scrollbars)."
@@ -11,10 +11,10 @@ layer at (0,0) size 800x2156
           RenderText {#text} at (0,0) size 67x19
             text run at (0,0) width 67: "Click here"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H2} at (0,2055) size 784x30
+      RenderBlock {H2} at (0,2055) size 784x31
         RenderText {#text} at (0,1) size 120x28
           text run at (0,1) width 120: "Test Passed"
-      RenderBlock {P} at (0,2104) size 784x20
+      RenderBlock {P} at (0,2105) size 784x21
         RenderText {#text} at (0,0) size 510x19
           text run at (0,0) width 510: "The test should have automatically scrolled down to show \"Test Passed\" above."
-scrolled to 0,515
+scrolled to 0,514

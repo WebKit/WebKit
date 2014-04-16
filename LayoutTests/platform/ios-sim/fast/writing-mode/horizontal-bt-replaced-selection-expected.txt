@@ -9,7 +9,7 @@ layer at (0,432) size 800x168
       RenderImage {IMG} at (0,51) size 20x50 [bgcolor=#008000]
       RenderText {#text} at (20,43) size 379x41
         text run at (20,43) width 379: " This is the second line of "
-      RenderImage {IMG} at (399,51) size 20x100 [bgcolor=#800080]
+      RenderImage {IMG} at (398,51) size 21x100 [bgcolor=#800080]
       RenderText {#text} at (418,43) size 73x41
         text run at (418,43) width 73: " text."
 caret: position 1 of child 0 {#text} of body

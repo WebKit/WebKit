@@ -9,9 +9,9 @@ layer at (0,0) size 800x160
       RenderBlock {P} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 299x19
           text run at (0,0) width 299: "This sentence should be underlined, including "
-        RenderInline {CODE} at (0,0) size 71x15
-          RenderText {#text} at (298,4) size 71x15
-            text run at (298,4) width 71: "this part"
+        RenderInline {CODE} at (0,0) size 71x14
+          RenderText {#text} at (298,5) size 71x14
+            text run at (298,5) width 71: "this part"
         RenderText {#text} at (368,0) size 9x19
           text run at (368,0) width 9: ", "
         RenderInline {CITE} at (0,0) size 55x19

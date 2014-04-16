@@ -1,4 +1,4 @@
-original scroll x for RTL page : Failure, actual: -3210; expected: 0
+original scroll x for RTL page : Success
 horizontal scroll: : Success
 continuously call window.scrollX : Success
 zoom in and out preserve scroll position: Failure, actual: -2541; expected: -1000

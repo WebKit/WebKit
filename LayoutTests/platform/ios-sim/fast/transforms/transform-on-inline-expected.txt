@@ -27,6 +27,6 @@ layer at (8,44) size 142x19
     RenderText {#text} at (28,0) size 142x19
       text run at (28,0) width 142: "span in this paragraph"
 layer at (37,100) size 141x20
-  RenderBlock {SPAN} at (29,0) size 141x20
+  RenderBlock {SPAN} at (28,0) size 142x20
     RenderText {#text} at (0,0) size 141x19
       text run at (0,0) width 141: "span in this paragraph"

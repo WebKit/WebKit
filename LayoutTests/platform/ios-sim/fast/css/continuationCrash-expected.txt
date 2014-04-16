@@ -10,10 +10,10 @@ layer at (0,0) size 800x600
       RenderBlock {H4} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 83x19
           text run at (0,0) width 83: "Instructions"
-      RenderBlock {P} at (0,41) size 784x20
+      RenderBlock {P} at (0,41) size 784x21
         RenderText {#text} at (0,0) size 180x19
           text run at (0,0) width 180: "Click the following buttons."
-      RenderBlock {OL} at (0,77) size 784x184
+      RenderBlock {OL} at (0,77) size 784x185
         RenderListItem {LI} at (40,0) size 744x20
           RenderListMarker at (-21,0) size 16x19: "1"
           RenderText {#text} at (0,0) size 199x19
@@ -51,15 +51,15 @@ layer at (0,0) size 800x600
             RenderBlock (anonymous) at (12,3) size 108x14
               RenderText at (0,0) size 108x14
                 text run at (0,0) width 108: "1. Set outline property"
-          RenderText {#text} at (136,1) size 4x19
-            text run at (136,1) width 4: " "
-          RenderButton {INPUT} at (142,2) size 134x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (135,1) size 5x19
+            text run at (135,1) width 5: " "
+          RenderButton {INPUT} at (141,2) size 135x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
             RenderBlock (anonymous) at (12,3) size 110x14
               RenderText at (0,0) size 110x14
                 text run at (0,0) width 110: "2. Set display property"
-          RenderText {#text} at (278,1) size 4x19
-            text run at (278,1) width 4: " "
-          RenderButton {INPUT} at (284,2) size 147x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (277,1) size 5x19
+            text run at (277,1) width 5: " "
+          RenderButton {INPUT} at (283,2) size 147x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
             RenderBlock (anonymous) at (12,3) size 123x14
               RenderText at (0,0) size 123x14
                 text run at (0,0) width 123: "3. Replace span-element"

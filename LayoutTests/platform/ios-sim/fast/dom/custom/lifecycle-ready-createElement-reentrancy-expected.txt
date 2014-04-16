@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 23: TypeError: undefined is not a function (evaluating 'document.register("x-foo", { prototype: Object.create(HTMLElement.prototype, { readyCallback: { value: fooCreatedFunction } }) })')
+This test ensures that the lifecycle callback of a parser-made element is visible in following script block.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL window.callbacksCalled should be X-FOO,X-BAR. Was .
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

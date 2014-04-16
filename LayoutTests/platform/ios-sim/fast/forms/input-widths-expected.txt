@@ -1,9 +1,9 @@
 Text field types should have the same default widths.
 
-PASS document.getElementById("email").offsetWidth is baseWidth
+FAIL document.getElementById("email").offsetWidth should be 135. Was 136.
 PASS document.getElementById("number").offsetWidth is baseWidth
 PASS document.getElementById("password").offsetWidth is baseWidth
-PASS document.getElementById("tel").offsetWidth is baseWidth
+FAIL document.getElementById("tel").offsetWidth should be 135. Was 136.
 PASS document.getElementById("url").offsetWidth is baseWidth
 PASS successfullyParsed is true
 

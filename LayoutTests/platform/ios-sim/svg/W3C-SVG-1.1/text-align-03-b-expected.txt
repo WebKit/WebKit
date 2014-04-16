@@ -4,18 +4,18 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (0,3) size 469x222
       RenderSVGText {text} at (5,3) size 349x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 349x46
+        RenderSVGInlineText {#text} at (0,0) size 349x45
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 348.75: "Test of 'text-anchor'"
       RenderSVGPath {line} at (224,75) size 2x150 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=75.00] [x2=225.00] [y2=225.00]
       RenderSVGContainer {g} at (0,82) size 469x135
-        RenderSVGText {text} at (-2,82) size 470x135 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 227x35
+        RenderSVGText {text} at (-2,82) size 471x135 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 227x34
             chunk 1 (end anchor) text run 1 at (-1.44,110.00) startOffset 0 endOffset 17 width 226.44: "Begin with \"end\","
-          RenderSVGTSpan {tspan} at (0,0) size 399x35
-            RenderSVGInlineText {#text} at (27,50) size 399x35
+          RenderSVGTSpan {tspan} at (0,0) size 399x34
+            RenderSVGInlineText {#text} at (27,50) size 399x34
               chunk 1 (middle anchor) text run 1 at (25.93,160.00) startOffset 0 endOffset 32 width 398.14: " switch to \"middle\" in a tspan, "
-          RenderSVGTSpan {tspan} at (0,0) size 244x35
-            RenderSVGInlineText {#text} at (226,100) size 244x35
+          RenderSVGTSpan {tspan} at (0,0) size 244x34
+            RenderSVGInlineText {#text} at (226,100) size 244x34
               chunk 1 text run 1 at (225.00,210.00) startOffset 0 endOffset 20 width 243.09: "and \"start\" ends it."
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45

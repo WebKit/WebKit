@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (1,1) size 61x62
                 RenderImage {IMG} at (1,63) size 181x62
             RenderTableCell {TD} at (187,33) size 453x64 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (134,1) size 186x62
+              RenderImage {IMG} at (133,1) size 187x62
             RenderTableCell {TD} at (642,33) size 138x64 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderInline {A} at (0,0) size 0x0 [color=#551A8B]
                 RenderImage {IMG} at (4,1) size 133x62

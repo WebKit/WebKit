@@ -10,5 +10,5 @@ layer at (0,0) size 800x258
         RenderText {#text} at (0,0) size 0x0
 layer at (8,52) size 96x97
   RenderInline (relative positioned) {SPAN} at (0,0) size 96x97 [color=#0000FF]
-    RenderText {#text} at (3,3) size 96x97
-      text run at (3,3) width 96: "X"
+    RenderText {#text} at (3,2) size 96x97
+      text run at (3,2) width 96: "X"

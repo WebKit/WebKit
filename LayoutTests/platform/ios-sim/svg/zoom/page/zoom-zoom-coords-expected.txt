@@ -53,11 +53,11 @@ PASS image1.height.toFixed(2) is "25.00"
 PASS image1.right.toFixed(2) is "150.00"
 PASS image1.bottom.toFixed(2) is "275.00"
 PASS text1.left.toFixed(2) is "100.00"
-FAIL text1.top.toFixed(2) should be 282.50. Was 282.00.
-PASS text1.width.toFixed(2) is "50.00"
-FAIL text1.height.toFixed(2) should be 6.50. Was 7.00.
-PASS text1.right.toFixed(2) is "150.00"
-PASS text1.bottom.toFixed(2) is "289.00"
+PASS text1.top.toFixed(2) is "282.66"
+FAIL text1.width.toFixed(2) should be 49.20. Was 47.44.
+PASS text1.height.toFixed(2) is "6.16"
+FAIL text1.right.toFixed(2) should be 149.20. Was 147.44.
+PASS text1.bottom.toFixed(2) is "288.82"
 
 PASS svg2.left.toFixed(2) is "75.00"
 PASS svg2.top.toFixed(2) is "100.00"
@@ -78,11 +78,11 @@ PASS image2.height.toFixed(2) is "25.00"
 PASS image2.right.toFixed(2) is "225.00"
 PASS image2.bottom.toFixed(2) is "125.00"
 PASS text2.left.toFixed(2) is "175.00"
-PASS text2.top.toFixed(2) is "132.50"
-PASS text2.width.toFixed(2) is "48.00"
-PASS text2.height.toFixed(2) is "6.50"
-PASS text2.right.toFixed(2) is "223.00"
-PASS text2.bottom.toFixed(2) is "139.00"
+PASS text2.top.toFixed(2) is "132.66"
+FAIL text2.width.toFixed(2) should be 47.44. Was 48.33.
+FAIL text2.height.toFixed(2) should be 5.94. Was 6.05.
+FAIL text2.right.toFixed(2) should be 222.44. Was 223.33.
+FAIL text2.bottom.toFixed(2) should be 138.60. Was 138.71.
 
 PASS svg3.left.toFixed(2) is "900.00"
 PASS svg3.top.toFixed(2) is "500.00"
@@ -103,11 +103,11 @@ PASS image3.height.toFixed(2) is "50.00"
 PASS image3.right.toFixed(2) is "1200.00"
 PASS image3.bottom.toFixed(2) is "550.00"
 PASS text3.left.toFixed(2) is "1100.00"
-FAIL text3.top.toFixed(2) should be 565.00. Was 564.00.
-PASS text3.width.toFixed(2) is "100.00"
-FAIL text3.height.toFixed(2) should be 13.00. Was 14.00.
-PASS text3.right.toFixed(2) is "1200.00"
-PASS text3.bottom.toFixed(2) is "578.00"
+PASS text3.top.toFixed(2) is "565.33"
+FAIL text3.width.toFixed(2) should be 98.41. Was 94.87.
+PASS text3.height.toFixed(2) is "12.31"
+FAIL text3.right.toFixed(2) should be 1198.41. Was 1194.88.
+PASS text3.bottom.toFixed(2) is "577.64"
 
 PASS successfullyParsed is true
 

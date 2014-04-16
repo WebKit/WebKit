@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 36x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x19
                 text run at (2,2) width 32: "table"
-layer at (8,28) size 21x20
+layer at (8,28) size 20x20
   RenderBlock (positioned) {DIV} at (8,28) size 21x20
     RenderText {#text} at (0,0) size 21x19
       text run at (0,0) width 21: "div"

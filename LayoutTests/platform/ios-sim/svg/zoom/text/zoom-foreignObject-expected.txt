@@ -16,18 +16,18 @@ layer at (0,0) size 800x600
           text run at (0,0) width 56: "[HTML]"
     RenderSVGRect {rect} at (0,0) size 251x201 [stroke={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=250.00] [height=200.00]
     RenderSVGForeignObject {foreignObject} at (260,0) size 250x200
-      RenderSVGRoot {svg} at (260,3) size 250x200
-        RenderSVGContainer {g} at (260,3) size 250x200 [transform={m=((3.00,0.26)(0.26,3.02)) t=(0.00,0.00)}]
-          RenderSVGText {text} at (0,1) size 82x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 82x18
-              chunk 1 text run 1 at (0.00,16.00) startOffset 0 endOffset 14 width 81.59: "This is a text"
-          RenderSVGContainer {a} at (265,60) size 207x76
-            RenderSVGText {text} at (0,20) size 67x18 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 67x18
-                chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 11 width 66.59: "and a link."
-          RenderSVGText {text} at (0,41) size 43x18 contains 1 chunk(s)
+      RenderSVGRoot {svg} at (260,4) size 250x198
+        RenderSVGContainer {g} at (260,4) size 250x198 [transform={m=((3.00,0.26)(0.26,3.02)) t=(0.00,0.00)}]
+          RenderSVGText {text} at (0,1) size 83x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 83x18
+              chunk 1 text run 1 at (0.00,16.00) startOffset 0 endOffset 14 width 82.44: "This is a text"
+          RenderSVGContainer {a} at (265,62) size 207x72
+            RenderSVGText {text} at (0,20) size 68x19 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 68x18
+                chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 11 width 67.28: "and a link."
+          RenderSVGText {text} at (0,41) size 43x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 43x18
-              chunk 1 text run 1 at (0.00,56.00) startOffset 0 endOffset 5 width 42.34: "[SVG]"
+              chunk 1 text run 1 at (0.00,56.00) startOffset 0 endOffset 5 width 42.78: "[SVG]"
       RenderText {#text} at (0,0) size 0x0
     RenderSVGRect {rect} at (259,0) size 252x201 [stroke={[type=SOLID] [color=#008000]}] [x=260.00] [y=0.00] [width=250.00] [height=200.00]
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0

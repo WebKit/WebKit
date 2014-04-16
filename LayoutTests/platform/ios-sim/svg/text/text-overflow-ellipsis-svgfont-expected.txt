@@ -12,7 +12,7 @@ layer at (0,0) size 800x128
           text run at (0,40) width 530: "Pass if some text is shown followed by an ellipsis (NOT just the ellipsis by itself). "
         RenderBR {BR} at (529,40) size 1x19
         RenderBR {BR} at (0,60) size 0x19
-layer at (8,88) size 182x20 clip at (9,89) size 180x18 scrollWidth 334
+layer at (8,88) size 182x20 clip at (9,89) size 180x18 scrollWidth 333
   RenderBlock {DIV} at (0,80) size 182x20 [border: (1px solid #000000)]
     RenderText {#text} at (1,2) size 334x16
       text run at (1,2) width 334: "abc abc abc abc abc abc abc abc abc abc"

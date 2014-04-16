@@ -6,31 +6,31 @@ layer at (0,0) size 800x600
       RenderBlock {H2} at (0,0) size 784x30
         RenderText {#text} at (0,1) size 599x28
           text run at (0,1) width 599: "HTML 4.0 Table Column Proportional Width Constraints"
-      RenderBlock {P} at (0,49) size 784x20
+      RenderBlock {P} at (0,49) size 784x21
         RenderText {#text} at (0,0) size 682x19
           text run at (0,0) width 682: "The table below is 350 pixels wide. The columns are assigned proportional widths using COLs as follows:"
-      RenderBlock (anonymous) at (0,85) size 784x60
-        RenderInline {TT} at (0,0) size 110x60
-          RenderText {#text} at (0,0) size 110x15
+      RenderBlock (anonymous) at (0,85) size 784x57
+        RenderInline {TT} at (0,0) size 110x56
+          RenderText {#text} at (0,0) size 110x14
             text run at (0,0) width 110: "<col width=50>"
-          RenderBR {BR} at (109,11) size 1x0
-          RenderText {#text} at (0,15) size 110x15
-            text run at (0,15) width 110: "<col width=2*>"
-          RenderBR {BR} at (109,26) size 1x0
-          RenderText {#text} at (0,30) size 110x15
-            text run at (0,30) width 110: "<col width=1*>"
-          RenderBR {BR} at (109,41) size 1x0
-          RenderText {#text} at (0,45) size 110x15
-            text run at (0,45) width 110: "<col width=3*>"
+          RenderBR {BR} at (109,10) size 1x0
+          RenderText {#text} at (0,14) size 110x14
+            text run at (0,14) width 110: "<col width=2*>"
+          RenderBR {BR} at (109,24) size 1x0
+          RenderText {#text} at (0,28) size 110x14
+            text run at (0,28) width 110: "<col width=1*>"
+          RenderBR {BR} at (109,38) size 1x0
+          RenderText {#text} at (0,42) size 110x14
+            text run at (0,42) width 110: "<col width=3*>"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,161) size 784x80
+      RenderBlock {P} at (0,157) size 784x81
         RenderText {#text} at (0,0) size 782x79
           text run at (0,0) width 778: "This means the first column should be 50 pixels wide. The remaining width should be divided among the three remaining"
           text run at (0,20) width 782: "columns according to the proportional width statements into six (2+1+3) parts. Since the Table is 350 pixels wide, and the"
           text run at (0,40) width 760: "remaining width is 300 pixels (350-50), the remaining columns should be 100 (2*50), 50 (1*50) and 150 (3*50) pixels"
           text run at (0,60) width 40: "wide, "
           text run at (39,60) width 82: "respectively."
-      RenderTable {TABLE} at (0,257) size 350x56 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,253) size 350x57 [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0

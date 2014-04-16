@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           text run at (0,60) width 295: "Quisqueeunullanonnisimolestieaccumsan.Etia"
           text run at (0,80) width 209: "mtellusurna,laoreetac,laoreetnon"
           text run at (0,100) width 298: "suscipitsed,sapien.Phasellusvehicula,sematpos"
-          text run at (0,120) width 235: "uerevehicula,auguenibhmolestienisl\x{AD}" + hyphen string "-"
+          text run at (0,120) width 236: "uerevehicula,auguenibhmolestienisl\x{AD}" + hyphen string "-"
           text run at (0,140) width 297: "necullamcorperlacusantevulputatepede.Nascet"
           text run at (0,160) width 100: "urridiculusmus."
       RenderBlock (floating) {DIV} at (312,152) size 300x260 [bgcolor=#FFFFE0]

@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,8) size 642x278
+  RenderSVGRoot {svg} at (0,9) size 629x277
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceMarker {marker} [id="mark"] [markerUnits=strokeWidth] [ref at (4,4)] [angle=0.00]
         RenderSVGEllipse {circle} at (0,0) size 5x5 [stroke={[type=SOLID] [color=#FF0000]}] [cx=4.00] [cy=4.00] [r=3.00]
-    RenderSVGContainer {g} at (0,8) size 642x278 [start marker=mark] [middle marker=mark] [end marker=mark]
-      RenderSVGText {text} at (0,5) size 385x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 385x19
-          chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 58 width 384.19: "The first row of shapes should have no marker decorations,"
-      RenderSVGText {text} at (0,25) size 221x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 221x19
-          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 32 width 220.45: "the second row should have them."
+    RenderSVGContainer {g} at (0,9) size 629x277 [start marker=mark] [middle marker=mark] [end marker=mark]
+      RenderSVGText {text} at (0,5) size 378x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 378x18
+          chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 58 width 377.07: "The first row of shapes should have no marker decorations,"
+      RenderSVGText {text} at (0,25) size 217x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 217x18
+          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 32 width 216.37: "the second row should have them."
       RenderSVGRect {rect} at (0,82) size 85x86 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [x=0.00] [y=50.00] [width=50.00] [height=50.00]
       RenderSVGEllipse {circle} at (90,84) size 86x86 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [cx=80.00] [cy=76.00] [r=25.00]
       RenderSVGEllipse {ellipse} at (182,84) size 103x86 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [cx=140.00] [cy=76.00] [rx=30.00] [ry=25.00]

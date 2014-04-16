@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderFieldSet {FIELDSET} at (2,0) size 116x77 [border: (2px groove #C0C0C0)]
+      RenderFieldSet {FIELDSET} at (2,0) size 116x78 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (14,0) size 88x20
           RenderText {#text} at (2,0) size 84x19
             text run at (2,0) width 84: "Number One"
-        RenderBlock (anonymous) at (14,25) size 88x40
+        RenderBlock (anonymous) at (14,25) size 88x41
           RenderText {#text} at (0,0) size 81x19
             text run at (0,0) width 81: "Hello world."
           RenderBR {BR} at (80,15) size 1x0
           RenderText {#text} at (0,20) size 81x19
             text run at (0,20) width 81: "Hello world."
-      RenderText {#text} at (120,45) size 4x19
-        text run at (120,45) width 4: " "
-      RenderFieldSet {FIELDSET} at (126,20) size 118x57 [border: (2px groove #C0C0C0)]
+      RenderText {#text} at (119,45) size 5x19
+        text run at (119,45) width 5: " "
+      RenderFieldSet {FIELDSET} at (125,20) size 118x58 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (14,0) size 90x20
           RenderText {#text} at (2,0) size 86x19
             text run at (2,0) width 86: "Number Two"
-        RenderBlock (anonymous) at (14,25) size 90x20
+        RenderBlock (anonymous) at (14,25) size 90x21
           RenderText {#text} at (0,0) size 81x19
             text run at (0,0) width 81: "Hello world."
       RenderText {#text} at (0,0) size 0x0

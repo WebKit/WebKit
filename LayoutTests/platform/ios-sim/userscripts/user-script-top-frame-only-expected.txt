@@ -1,0 +1,12 @@
+Two thingers should appear on this page. Otherwise the test has failed. 
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+thinger
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+--------
+thinger

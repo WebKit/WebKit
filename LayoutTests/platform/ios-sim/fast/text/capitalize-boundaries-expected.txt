@@ -89,8 +89,8 @@ layer at (0,0) size 800x1325
               RenderText {#text} at (2,5) size 211x19
                 text run at (2,5) width 211: "quelqu'un l\x{2019}amour t'appelles\x{2011}tu 3"
               RenderInline {SUP} at (0,0) size 23x15
-                RenderText {#text} at (212,2) size 23x15
-                  text run at (212,2) width 23: "eme"
+                RenderText {#text} at (212,8) size 23x15
+                  text run at (212,8) width 23: "eme"
           RenderTableRow {TR} at (0,250) size 784x27
             RenderTableCell {TH} at (2,251) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
               RenderText {#text} at (18,2) size 18x19
@@ -136,8 +136,8 @@ layer at (0,0) size 800x1325
               RenderText {#text} at (2,2) size 50x19
                 text run at (2,2) width 50: "generic"
             RenderTableCell {TD} at (58,2) size 724x64 [border: (1px solid #EEEEEE)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 694x59
-                text run at (2,2) width 694: "Lip\x{AD}smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
+              RenderText {#text} at (2,2) size 695x59
+                text run at (2,2) width 695: "Lip\x{AD}smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
                 text run at (2,22) width 672: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
                 text run at (2,42) width 650: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin"
           RenderTableRow {TR} at (0,68) size 784x24
@@ -182,8 +182,8 @@ layer at (0,0) size 800x1325
               RenderText {#text} at (2,5) size 229x19
                 text run at (2,5) width 229: "Quelqu'un l\x{2019}Amour t'Appelles\x{2011}Tu 3"
               RenderInline {SUP} at (0,0) size 23x15
-                RenderText {#text} at (230,2) size 23x15
-                  text run at (230,2) width 23: "eme"
+                RenderText {#text} at (230,8) size 23x15
+                  text run at (230,8) width 23: "eme"
           RenderTableRow {TR} at (0,250) size 784x27
             RenderTableCell {TH} at (2,251) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
               RenderText {#text} at (18,2) size 18x19
@@ -229,8 +229,8 @@ layer at (0,0) size 800x1325
               RenderText {#text} at (2,2) size 50x19
                 text run at (2,2) width 50: "generic"
             RenderTableCell {TD} at (58,2) size 724x64 [border: (1px solid #EEEEEE)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 694x59
-                text run at (2,2) width 694: "Lip\x{AD}smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
+              RenderText {#text} at (2,2) size 695x59
+                text run at (2,2) width 695: "Lip\x{AD}smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
                 text run at (2,22) width 672: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
                 text run at (2,42) width 650: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin"
           RenderTableRow {TR} at (0,68) size 784x24
@@ -291,8 +291,8 @@ layer at (0,0) size 800x1325
               RenderText {#text} at (2,5) size 231x19
                 text run at (2,5) width 231: "Quelqu'un L\x{2019}amour T'appelles\x{2011}Tu 3"
               RenderInline {SUP} at (0,0) size 22x15
-                RenderText {#text} at (232,2) size 22x15
-                  text run at (232,2) width 22: "eme"
+                RenderText {#text} at (232,8) size 22x15
+                  text run at (232,8) width 22: "eme"
           RenderTableRow {TR} at (0,250) size 784x27
             RenderTableCell {TH} at (2,251) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
               RenderText {#text} at (18,2) size 18x19

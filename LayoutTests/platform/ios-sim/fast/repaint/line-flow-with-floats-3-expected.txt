@@ -46,25 +46,25 @@ layer at (0,0) size 800x600
                   text run at (6,286) width 18: "of "
                   text run at (23,286) width 389: "the ground, Alice soon came to the conclusion that it was a"
                   text run at (57,306) width 33: "very "
-                RenderBlock (floating) {SPAN} at (6,309) size 48x64 [bgcolor=#ADD8E6]
+                RenderBlock (floating) {SPAN} at (6,309) size 48x65 [bgcolor=#ADD8E6]
                 RenderText {#text} at (89,306) size 146x19
                   text run at (89,306) width 146: "difficult game indeed. "
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {#text} at (57,326) size 336x19
                   text run at (57,326) width 336: "The players all played at once without waiting "
-                RenderBlock (floating) {SPAN} at (348,349) size 64x80 [bgcolor=#90EE90]
+                RenderBlock (floating) {SPAN} at (348,349) size 64x81 [bgcolor=#90EE90]
                 RenderText {#text} at (392,326) size 355x59
                   text run at (392,326) width 20: "for"
                   text run at (57,346) width 41: "turns, "
-                  text run at (98,346) width 247: "quarrelling all the while, and fighting"
-                  text run at (57,366) width 175: "for the hedgehogs; and in "
-                  text run at (231,366) width 114: "a very short time"
+                  text run at (98,346) width 246: "quarrelling all the while, and fighting"
+                  text run at (57,366) width 174: "for the hedgehogs; and in "
+                  text run at (230,366) width 114: "a very short time"
                 RenderInline {SPAN} at (0,0) size 72x19
                   RenderText {#text} at (6,386) size 72x19
                     text run at (6,386) width 72: "the Queen"
-                RenderText {#text} at (77,386) size 339x59
-                  text run at (77,386) width 268: " was in a furious passion, and went"
-                  text run at (6,406) width 339: "stamping about, and shouting \x{2018}Off with his head!\x{2019} or"
+                RenderText {#text} at (77,386) size 338x59
+                  text run at (77,386) width 267: " was in a furious passion, and went"
+                  text run at (6,406) width 338: "stamping about, and shouting \x{2018}Off with his head!\x{2019} or"
                   text run at (6,426) width 64: "\x{2018}Off with "
                   text run at (69,426) width 225: "her head!\x{2019} about once in a minute. "
                 RenderBR {BR} at (0,0) size 0x0

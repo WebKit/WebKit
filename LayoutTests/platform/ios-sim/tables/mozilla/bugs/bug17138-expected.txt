@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 170x19 [color=#0000EE]
           RenderText {#text} at (157,0) size 170x19
             text run at (157,0) width 170: "http://www.weather.com"
-      RenderTable {TABLE} at (0,41) size 450x214
+      RenderTable {TABLE} at (0,41) size 450x215
         RenderTableSection {TBODY} at (0,0) size 450x214
           RenderTableRow {TR} at (0,0) size 450x17
             RenderTableCell {TD} at (0,0) size 325x17 [r=0 c=0 rs=1 cs=3]

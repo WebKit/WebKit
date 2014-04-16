@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (8,8) size 740x56
   RenderBlock (relative positioned) {DIV} at (0,0) size 740x56
-    RenderBlock {DIV} at (36,0) size 704x56 [border: (10px solid #00000000) (18px solid #00000000)]
-      RenderBlock {DIV} at (18,5) size 676x45
+    RenderBlock {DIV} at (36,0) size 693x56 [border: (10px solid #00000000) (18px solid #00000000)]
+      RenderBlock {DIV} at (18,5) size 665x45
         RenderText {#text} at (0,0) size 665x45
           text run at (0,0) width 657: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec ac odio. Fusce facilisis. Praesent eleifend dapibus mi. Proin"
           text run at (0,15) width 665: "nulla nulla, hendrerit vitae, condimentum non, iaculis sed, sem. Aliquam a turpis nec ante elementum dignissim. Suspendisse"

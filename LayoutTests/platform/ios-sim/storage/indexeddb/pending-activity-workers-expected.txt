@@ -1,0 +1,24 @@
+[Worker] Checks that garbage collection doesn't reclaim objects with pending activity
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/pending-activity.js
+[Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+[Worker] 
+[Worker] dbname = "pending-activity.js"
+[Worker] indexedDB.deleteDatabase(dbname)
+FAIL [Worker] indexedDB.deleteDatabase(dbname) threw exception TypeError: null is not an object (evaluating 'indexedDB.deleteDatabase')
+FAIL [Worker] Unexpected error: TypeError: undefined is not an object (evaluating 'deleteRequest.onerror = unexpectedErrorCallback')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Got error from worker: TypeError: undefined is not an object (evaluating 'deleteRequest.onerror = unexpectedErrorCallback')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FAIL Unexpected error: TypeError: undefined is not an object (evaluating 'deleteRequest.onerror = unexpectedErrorCallback')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

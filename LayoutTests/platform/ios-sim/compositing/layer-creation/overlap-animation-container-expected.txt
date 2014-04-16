@@ -11,12 +11,12 @@ Before:
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 -110.00 0.00 1.00])
         )
         (GraphicsLayer
-          (position 46.00 229.00)
-          (bounds 146.00 454.00)
+          (position 46.50 229.00)
+          (bounds 145.00 454.00)
           (drawsContent 1)
           (children 1
             (GraphicsLayer
-              (position 22.00 11.00)
+              (position 21.13 11.00)
               (bounds 102.00 102.00)
               (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 -1.00 1.00])
             )

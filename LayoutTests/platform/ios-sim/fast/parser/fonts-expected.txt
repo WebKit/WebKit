@@ -23,28 +23,28 @@ layer at (0,0) size 800x537
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (16,138) size 96x16 [color=#008000]
         RenderInline {SPAN} at (0,0) size 96x17 [color=#FFFFFF] [bgcolor=#FF0000]
-          RenderText {#text} at (0,0) size 96x17
-            text run at (0,0) width 96: "FAIL-c"
+          RenderText {#text} at (0,-1) size 96x17
+            text run at (0,-1) width 96: "FAIL-c"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (16,170) size 96x16 [color=#008000]
         RenderInline {SPAN} at (0,0) size 96x17 [color=#FFFFFF] [bgcolor=#FF0000]
-          RenderText {#text} at (0,0) size 96x17
-            text run at (0,0) width 96: "FAIL-d"
+          RenderText {#text} at (0,-1) size 96x17
+            text run at (0,-1) width 96: "FAIL-d"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (16,202) size 96x16 [color=#008000]
         RenderInline {SPAN} at (0,0) size 96x17 [color=#FFFFFF] [bgcolor=#FF0000]
-          RenderText {#text} at (0,0) size 96x17
-            text run at (0,0) width 96: "FAIL-e"
+          RenderText {#text} at (0,-1) size 96x17
+            text run at (0,-1) width 96: "FAIL-e"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (16,234) size 96x16 [color=#008000]
         RenderInline {SPAN} at (0,0) size 96x17 [color=#FFFFFF] [bgcolor=#FF0000]
-          RenderText {#text} at (0,0) size 96x17
-            text run at (0,0) width 96: "FAIL-f"
+          RenderText {#text} at (0,-1) size 96x17
+            text run at (0,-1) width 96: "FAIL-f"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (16,266) size 96x16 [color=#008000]
         RenderInline {SPAN} at (0,0) size 96x17 [color=#FFFFFF] [bgcolor=#FF0000]
-          RenderText {#text} at (0,0) size 96x17
-            text run at (0,0) width 96: "FAIL-g"
+          RenderText {#text} at (0,-1) size 96x17
+            text run at (0,-1) width 96: "FAIL-g"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (16,298) size 96x17 [color=#008000]
         RenderInline {SPAN} at (0,0) size 96x17 [color=#FFFFFF] [bgcolor=#FF0000]

@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Blocked form submission to 'javascript:window.top.disallowedFormSubmitted();' because the form's frame is sandboxed and the 'allow-forms' permission is not set.
+  
+PASS

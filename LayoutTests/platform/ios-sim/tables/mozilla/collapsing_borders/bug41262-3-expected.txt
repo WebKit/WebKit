@@ -1,8 +1,8 @@
-layer at (0,0) size 800x696
+layer at (0,0) size 800x699
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x696
-  RenderBlock {HTML} at (0,0) size 800x696
-    RenderBody {BODY} at (8,16) size 784x664
+layer at (0,0) size 800x699
+  RenderBlock {HTML} at (0,0) size 800x699
+    RenderBody {BODY} at (8,16) size 784x667
       RenderBlock {P} at (0,0) size 784x60
         RenderText {#text} at (0,0) size 766x59
           text run at (0,0) width 471: "Following table should have 6px solid blue border around cell 3, red 5px "
@@ -89,7 +89,7 @@ layer at (0,0) size 800x696
             RenderTableCell {TD} at (102,222) size 51x55 [border: (1px solid #FF0000)] [r=4 c=2 rs=1 cs=1]
               RenderText {#text} at (17,17) size 16x19
                 text run at (17,17) width 16: "15"
-      RenderBlock {P} at (0,460) size 784x60
+      RenderBlock {P} at (0,460) size 784x63
         RenderText {#text} at (0,0) size 366x19
           text run at (0,0) width 366: "This is an example rendering for the previous table from "
         RenderInline {A} at (0,0) size 713x39 [color=#0000EE]
@@ -99,19 +99,19 @@ layer at (0,0) size 800x696
         RenderText {#text} at (70,20) size 10x19
           text run at (70,20) width 10: ": "
         RenderBR {BR} at (0,0) size 0x0
-        RenderImage {IMG} at (0,40) size 216x20
+        RenderImage {IMG} at (0,40) size 221x23
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,536) size 784x40
+      RenderBlock {P} at (0,539) size 784x40
         RenderText {#text} at (0,0) size 768x39
           text run at (0,0) width 500: "Following table should have 2px solid black line between rows. There should "
           text run at (499,0) width 269: "be a total of two lines. There will be three"
           text run at (0,20) width 218: "lines if user agent doesn't support "
-        RenderInline {CODE} at (0,0) size 111x15
-          RenderText {#text} at (217,24) size 111x15
-            text run at (217,24) width 111: "tr:first-child"
+        RenderInline {CODE} at (0,0) size 111x14
+          RenderText {#text} at (217,25) size 111x14
+            text run at (217,25) width 111: "tr:first-child"
         RenderText {#text} at (327,20) size 5x19
           text run at (327,20) width 5: "."
-      RenderTable {TABLE} at (0,592) size 150x72 [border: (1px none #808080)]
+      RenderTable {TABLE} at (0,595) size 150x72 [border: (1px none #808080)]
         RenderTableSection {TBODY} at (0,1) size 150x71
           RenderTableRow {TR} at (0,0) size 150x24 [border: (2px solid #000000) none]
             RenderTableCell {TD} at (0,0) size 50x24 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]

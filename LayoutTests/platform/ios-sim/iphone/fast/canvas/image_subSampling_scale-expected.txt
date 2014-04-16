@@ -1,2 +1,10 @@
- PASS getPixel(62,62) is [0,0,0,255]
-
+CONSOLE MESSAGE: line 26: ReferenceError: Can't find variable: shouldBe
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x128
+        RenderHTMLCanvas {CANVAS} at (0,0) size 256x128
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,128) size 784x0

@@ -2,38 +2,38 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (5,3) size 469x322
+    RenderSVGContainer {g} at (5,3) size 469x318
       RenderSVGText {text} at (5,3) size 469x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 469x46
+        RenderSVGInlineText {#text} at (0,0) size 469x45
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 29 width 468.73: "Test 'text-anchor' (vertical)"
-      RenderSVGContainer {g} at (151,45) size 118x280
-        RenderSVGContainer {g} at (151,45) size 118x280 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,150.00)}]
-          RenderSVGContainer {g} at (151,147) size 18x178
+      RenderSVGContainer {g} at (151,48) size 118x273
+        RenderSVGContainer {g} at (151,48) size 118x273 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,150.00)}]
+          RenderSVGContainer {g} at (151,147) size 18x174
             RenderSVGEllipse {circle} at (157,147) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-            RenderSVGText {text} at (-9,0) size 17x175 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 17x175
-                chunk 1 (vertical) text run 1 at (-10.50,0.00) startOffset 0 endOffset 1 height 35.00: "s"
-                chunk 1 (vertical) text run 2 at (-10.50,35.00) startOffset 1 endOffset 2 height 35.00: "t"
-                chunk 1 (vertical) text run 3 at (-10.50,70.00) startOffset 2 endOffset 3 height 35.00: "a"
-                chunk 1 (vertical) text run 4 at (-10.50,105.00) startOffset 3 endOffset 4 height 35.00: "r"
-                chunk 1 (vertical) text run 5 at (-10.50,140.00) startOffset 4 endOffset 5 height 35.00: "t"
-          RenderSVGContainer {g} at (197,45) size 26x210 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
+            RenderSVGText {text} at (-9,0) size 18x171 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 17x170
+                chunk 1 (vertical) text run 1 at (-10.50,0.00) startOffset 0 endOffset 1 height 34.00: "s"
+                chunk 1 (vertical) text run 2 at (-10.50,34.00) startOffset 1 endOffset 2 height 34.00: "t"
+                chunk 1 (vertical) text run 3 at (-10.50,68.00) startOffset 2 endOffset 3 height 34.00: "a"
+                chunk 1 (vertical) text run 4 at (-10.50,102.00) startOffset 3 endOffset 4 height 34.00: "r"
+                chunk 1 (vertical) text run 5 at (-10.50,136.00) startOffset 4 endOffset 5 height 34.00: "t"
+          RenderSVGContainer {g} at (197,48) size 26x205 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
             RenderSVGEllipse {circle} at (207,147) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-            RenderSVGText {text} at (-13,-105) size 25x210 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 25x210
-                chunk 1 (middle anchor, vertical) text run 1 at (-10.50,-105.00) startOffset 0 endOffset 1 height 35.00: "m"
-                chunk 1 (middle anchor, vertical) text run 2 at (-10.50,-70.00) startOffset 1 endOffset 2 height 35.00: "i"
-                chunk 1 (middle anchor, vertical) text run 3 at (-10.50,-35.00) startOffset 2 endOffset 3 height 35.00: "d"
-                chunk 1 (middle anchor, vertical) text run 4 at (-10.50,0.00) startOffset 3 endOffset 4 height 35.00: "d"
-                chunk 1 (middle anchor, vertical) text run 5 at (-10.50,35.00) startOffset 4 endOffset 5 height 35.00: "l"
-                chunk 1 (middle anchor, vertical) text run 6 at (-10.50,70.00) startOffset 5 endOffset 6 height 35.00: "e"
-          RenderSVGContainer {g} at (251,45) size 18x108 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+            RenderSVGText {text} at (-13,-102) size 26x205 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 25x204
+                chunk 1 (middle anchor, vertical) text run 1 at (-10.50,-102.00) startOffset 0 endOffset 1 height 34.00: "m"
+                chunk 1 (middle anchor, vertical) text run 2 at (-10.50,-68.00) startOffset 1 endOffset 2 height 34.00: "i"
+                chunk 1 (middle anchor, vertical) text run 3 at (-10.50,-34.00) startOffset 2 endOffset 3 height 34.00: "d"
+                chunk 1 (middle anchor, vertical) text run 4 at (-10.50,0.00) startOffset 3 endOffset 4 height 34.00: "d"
+                chunk 1 (middle anchor, vertical) text run 5 at (-10.50,34.00) startOffset 4 endOffset 5 height 34.00: "l"
+                chunk 1 (middle anchor, vertical) text run 6 at (-10.50,68.00) startOffset 5 endOffset 6 height 34.00: "e"
+          RenderSVGContainer {g} at (251,48) size 18x105 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
             RenderSVGEllipse {circle} at (257,147) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-            RenderSVGText {text} at (-9,-105) size 17x105 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 17x105
-                chunk 1 (end anchor, vertical) text run 1 at (-10.50,-105.00) startOffset 0 endOffset 1 height 35.00: "e"
-                chunk 1 (end anchor, vertical) text run 2 at (-10.50,-70.00) startOffset 1 endOffset 2 height 35.00: "n"
-                chunk 1 (end anchor, vertical) text run 3 at (-10.50,-35.00) startOffset 2 endOffset 3 height 35.00: "d"
+            RenderSVGText {text} at (-9,-102) size 18x103 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 17x102
+                chunk 1 (end anchor, vertical) text run 1 at (-10.50,-102.00) startOffset 0 endOffset 1 height 34.00: "e"
+                chunk 1 (end anchor, vertical) text run 2 at (-10.50,-68.00) startOffset 1 endOffset 2 height 34.00: "n"
+                chunk 1 (end anchor, vertical) text run 3 at (-10.50,-34.00) startOffset 2 endOffset 3 height 34.00: "d"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"

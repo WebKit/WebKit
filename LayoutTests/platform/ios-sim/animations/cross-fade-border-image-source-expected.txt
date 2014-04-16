@@ -3,17 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x80
-        RenderText {#text} at (0,0) size 595x19
-          text run at (0,0) width 595: "PASS - \"borderImageSource\" property for \"box\" element at 2.5s saw something close to: 0.5"
-        RenderBR {BR} at (594,15) size 1x0
-        RenderText {#text} at (0,20) size 723x19
-          text run at (0,20) width 723: "PASS - \"borderImageSource\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
-        RenderBR {BR} at (722,35) size 1x0
-        RenderText {#text} at (0,40) size 751x39
-          text run at (0,40) width 751: "PASS - \"borderImageSource\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each"
-          text run at (0,60) width 33: "other"
-        RenderBR {BR} at (32,75) size 1x0
+      RenderBlock {DIV} at (0,0) size 784x100
+        RenderText {#text} at (0,0) size 770x39
+          text run at (0,0) width 770: "PASS - \"borderImageSource\" property for \"box\" element at 2.5s saw something close to: -webkit-cross-fade(url(stripes-"
+          text run at (0,20) width 220: "100.png), url(green-100.png), 0.5)"
+        RenderBR {BR} at (219,35) size 1x0
+        RenderText {#text} at (0,40) size 723x19
+          text run at (0,40) width 723: "PASS - \"borderImageSource\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (722,55) size 1x0
+        RenderText {#text} at (0,60) size 751x39
+          text run at (0,60) width 751: "PASS - \"borderImageSource\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each"
+          text run at (0,80) width 33: "other"
+        RenderBR {BR} at (32,95) size 1x0
 layer at (100,100) size 106x106
   RenderBlock (positioned) {DIV} at (100,100) size 106x106 [bgcolor=#008000] [border: (3px none #000000)]
 layer at (100,250) size 106x106

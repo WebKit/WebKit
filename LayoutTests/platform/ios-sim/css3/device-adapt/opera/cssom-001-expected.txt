@@ -1,0 +1,7 @@
+
+FAIL CSS Test: @viewport CSSOM - CSSRule.WEBKIT_VIEWPORT_RULE assert_equals: expected (number) 15 but got (undefined) undefined(stack: assert@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:2168:73
+assert_equals@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:700:19
+file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/opera/cssom-001.xhtml:69:22
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+onload@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/opera/cssom-001.xhtml:68:14)
+

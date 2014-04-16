@@ -1,1 +1,12 @@
-If you got here without crashing, the test passed.
+CONSOLE MESSAGE: line 22: TypeError: HTMLParagraphElement is not a function (evaluating 'description('Tests that fixed elements don\'t cause crashes after going back to a page in the page cache.')')
+layer at (0,0) size 800x2024
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2024
+  RenderBlock {HTML} at (0,0) size 800x2024
+    RenderBody {BODY} at (8,16) size 784x2000
+      RenderBlock {P} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+layer at (8,16) size 36x20
+  RenderBlock (positioned) {DIV} at (8,16) size 37x20
+    RenderText {#text} at (0,0) size 37x19
+      text run at (0,0) width 37: "Fixed"

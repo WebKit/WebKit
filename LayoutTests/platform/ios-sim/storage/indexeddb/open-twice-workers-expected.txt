@@ -1,0 +1,23 @@
+[Worker] Test opening twice
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/open-twice.js
+[Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+[Worker] 
+[Worker] indexedDB.open('open-twice1')
+FAIL [Worker] indexedDB.open('open-twice1') threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+FAIL [Worker] Unexpected error: TypeError: undefined is not an object (evaluating 'request.onerror = unexpectedErrorCallback')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Got error from worker: TypeError: undefined is not an object (evaluating 'request.onerror = unexpectedErrorCallback')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FAIL Unexpected error: TypeError: undefined is not an object (evaluating 'request.onerror = unexpectedErrorCallback')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

@@ -1,0 +1,162 @@
+This test fuzzes the transform parser with semi-random attribute values and dumps the results of any values that parse successfully.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Loaded: resources/viewspec-target.svg#
+Parsed: [initial view] from: [initial view]
+
+Loaded: resources/viewspec-target.svg#svgView(transform( 78)28
+Parsed: [initial view] from: svgView(transform( 78)2	8	
+
+Loaded: resources/viewspec-target.svg#svgView(transform(e.
+Parsed: [initial view] from: svgView(transform(e.
+
+Loaded: resources/viewspec-target.svg#svgView(transform(7
+Parsed: [initial view] from: svgView(transform(7
+
+Loaded: resources/viewspec-target.svg#svgView(transform((
+Parsed: [initial view] from: svgView(transform(	(
+
+Loaded: resources/viewspec-target.svg#svgView(transform(
+Parsed: [initial view] from: svgView(transform(
+
+Loaded: resources/viewspec-target.svg#svgView(transform(.)29e0 7950,- e
+Parsed: [initial view] from: svgView(transform(.)2	9e0 795	0,- e
+
+Loaded: resources/viewspec-target.svg#svgView(transform(e,4(7- )+e(e8.
+Parsed: [initial view] from: svgView(transform(e,4(7- )+e(e8.
+
+Loaded: resources/viewspec-target.svg#svgView(transform(74- 9.(+ e.0e635
+Parsed: [initial view] from: svgView(transform(74- 9.(+ e.0e635
+
+Loaded: resources/viewspec-target.svg#svgView(transform(-9,).8e7e4e9ee
+Parsed: [initial view] from: svgView(transform(-9,).8e7e4e9ee 
+
+Loaded: resources/viewspec-target.svg#svgView(transform(49-,,4)30378.052
+Parsed: [initial view] from: svgView(transform(49-,,4)30378.052
+
+Loaded: resources/viewspec-target.svg#svgView(transform(e7863e
+Parsed: [initial view] from: svgView(transform(e7863e
+
+Loaded: resources/viewspec-target.svg#svgView(transform(0
+Parsed: [initial view] from: svgView(transform(	0
+
+Loaded: resources/viewspec-target.svg#svgView(transform(e72(e,49.7.
+Parsed: [initial view] from: svgView(transform(e72(	e	,49.7.
+
+Loaded: resources/viewspec-target.svg#svgView(transform(e55,
+Parsed: [initial view] from: svgView(transform(e55, 
+
+Loaded: resources/viewspec-target.svg#svgView(transform(263,ee1)74-
+Parsed: [initial view] from: svgView(transform(263,ee1)74-	
+
+Loaded: resources/viewspec-target.svg#svgView(transform(.64110,.+1.
+Parsed: [initial view] from: svgView(transform(.64110,.+1.
+
+Loaded: resources/viewspec-target.svg#svgView(transform(.59e3...725-
+Parsed: [initial view] from: svgView(transform(.59e3...725-
+
+Loaded: resources/viewspec-target.svg#svgView(transform(6-)2).180
+Parsed: [initial view] from: svgView(transform(6	-)2).180
+
+Loaded: resources/viewspec-target.svg#svgView(transform(,e 579++.
+Parsed: [initial view] from: svgView(transform(,e 579	++.
+
+Loaded: resources/viewspec-target.svg#svgView(transform(-+
+Parsed: [initial view] from: svgView(transform(-+
+
+Loaded: resources/viewspec-target.svg#svgView(transform(74e-6-)297
+Parsed: [initial view] from: svgView(transform(74e	-	6	-)29	7
+
+Loaded: resources/viewspec-target.svg#svgView(transform(221e..++77
+Parsed: [initial view] from: svgView(transform(221e..+	+77
+
+Loaded: resources/viewspec-target.svg#svgView(transform())4e1e).-e8378.
+Parsed: [initial view] from: svgView(transform())4e	1e).-e8378.
+
+Loaded: resources/viewspec-target.svg#svgView(transform(4+01 e
+Parsed: [initial view] from: svgView(transform(	4+01 	e
+
+Loaded: resources/viewspec-target.svg#svgView(transform(
+Parsed: [initial view] from: svgView(transform(
+
+Loaded: resources/viewspec-target.svg#svgView(transform(-6++9++ 9.3)6438
+Parsed: [initial view] from: svgView(transform(-6++9++ 9.3)6438
+
+Loaded: resources/viewspec-target.svg#svgView(transform(-,15e)(-+,- 6
+Parsed: [initial view] from: svgView(transform(-,15e)(-+,- 6
+
+Loaded: resources/viewspec-target.svg#svgView(transform(3e+)085932
+Parsed: [initial view] from: svgView(transform(3e+)085932
+
+Loaded: resources/viewspec-target.svg#svgView(transform(+
+Parsed: [initial view] from: svgView(transform(+
+
+Loaded: resources/viewspec-target.svg#svgView(transform(-
+Parsed: [initial view] from: svgView(transform(-
+
+Loaded: resources/viewspec-target.svg#svgView(transform(0944.6-
+Parsed: [initial view] from: svgView(transform(	0944.6-
+
+Loaded: resources/viewspec-target.svg#svgView(transform(.
+Parsed: [initial view] from: svgView(transform(.
+
+Loaded: resources/viewspec-target.svg#svgView(transform(5
+Parsed: [initial view] from: svgView(transform(	5
+
+Loaded: resources/viewspec-target.svg#svgView(transform(3e(-2e3e
+Parsed: [initial view] from: svgView(transform(3e(-2e3e
+
+Loaded: resources/viewspec-target.svg#svgView(transform(
+Parsed: [initial view] from: svgView(transform(
+
+Loaded: resources/viewspec-target.svg#svgView(transform(65e 3e(.1 6916
+Parsed: [initial view] from: svgView(transform(6	5e 3e	(.	1 69	16
+
+Loaded: resources/viewspec-target.svg#svgView(transform(1ee5 56,(8.5e,3
+Parsed: [initial view] from: svgView(transform(1ee5 56,(8.5	e,3
+
+Loaded: resources/viewspec-target.svg#svgView(transform(e- e-
+Parsed: [initial view] from: svgView(transform(e-		 e-
+
+Loaded: resources/viewspec-target.svg#svgView(transform()e0e)
+Parsed: [initial view] from: svgView(transform()e0e)
+
+Loaded: resources/viewspec-target.svg#svgView(transform(231293.16e
+Parsed: [initial view] from: svgView(transform(231293.16e
+
+Loaded: resources/viewspec-target.svg#svgView(transform(()2(37-888580(9e+
+Parsed: [initial view] from: svgView(transform(()2(37-888580(9e+
+
+Loaded: resources/viewspec-target.svg#svgView(transform(18e805
+Parsed: [initial view] from: svgView(transform(18e805
+
+Loaded: resources/viewspec-target.svg#svgView(transform(0
+Parsed: [initial view] from: svgView(transform(0
+
+Loaded: resources/viewspec-target.svg#svgView(transform(63) 693(
+Parsed: [initial view] from: svgView(transform(63) 693(
+
+Loaded: resources/viewspec-target.svg#svgView(transform(80,2)+ 4ee,
+Parsed: [initial view] from: svgView(transform(80,2)+ 4ee,
+
+Loaded: resources/viewspec-target.svg#svgView(transform(5e+59e2e5
+Parsed: [initial view] from: svgView(transform(5e+59e2e5
+
+Loaded: resources/viewspec-target.svg#svgView(transform(53e,9
+Parsed: [initial view] from: svgView(transform(5	3e,9
+
+Loaded: resources/viewspec-target.svg#svgView(transform(e7)((59
+Parsed: [initial view] from: svgView(transform(e7	)((59	
+
+Loaded: resources/viewspec-target.svg#svgView(transform(963.+8-e73-e+)
+Parsed: [initial view] from: svgView(transform(963.+8-e73-e		+)
+
+Loaded: resources/viewspec-target.svg#svgView(transform(71(1(+-3382.3
+Parsed: [initial view] from: svgView(transform(71(1(+-3382.3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,12 +1,12 @@
-layer at (0,0) size 803x602
+layer at (0,0) size 804x602
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x602
   RenderBlock {HTML} at (0,0) size 800x602
     RenderBody {BODY} at (0,0) size 800x602
       RenderDeprecatedFlexibleBox {DIV} at (0,0) size 802x602 [border: (1px solid #000000)]
         RenderDeprecatedFlexibleBox {DIV} at (1,1) size 800x389 [border: (1px solid #000000)]
-          RenderDeprecatedFlexibleBox {DIV} at (1,1) size 520x387 [border: (1px solid #000000)]
-          RenderDeprecatedFlexibleBox {DIV} at (521,1) size 281x387 [border: (1px solid #000000)]
-        RenderDeprecatedFlexibleBox {DIV} at (1,390) size 800x211 [border: (1px solid #000000)]
-          RenderDeprecatedFlexibleBox {DIV} at (1,1) size 520x209 [border: (1px solid #000000)]
-          RenderDeprecatedFlexibleBox {DIV} at (521,1) size 281x209 [border: (1px solid #000000)]
+          RenderDeprecatedFlexibleBox {DIV} at (1,1) size 521x387 [border: (1px solid #000000)]
+          RenderDeprecatedFlexibleBox {DIV} at (521,1) size 282x387 [border: (1px solid #000000)]
+        RenderDeprecatedFlexibleBox {DIV} at (1,389) size 800x212 [border: (1px solid #000000)]
+          RenderDeprecatedFlexibleBox {DIV} at (1,1) size 521x210 [border: (1px solid #000000)]
+          RenderDeprecatedFlexibleBox {DIV} at (521,1) size 282x210 [border: (1px solid #000000)]

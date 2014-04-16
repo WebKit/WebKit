@@ -1,0 +1,70 @@
+This tests if changing the clipping behaviour on the parent compositing layer makes the child layer disappear.
+
+Text in both of the green boxes should stay visible.
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+(GraphicsLayer
+  (bounds 807.00 600.00)
+  (visible rect 0.00, 0.00 807.00 x 600.00)
+  (contentsScale 2.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 807.00 600.00)
+      (visible rect 0.00, 0.00 807.00 x 600.00)
+      (contentsScale 2.00)
+      (children 6
+        (GraphicsLayer
+          (position 8.00 102.00)
+          (bounds 22.00 22.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 22.00 x 22.00)
+          (contentsScale 2.00)
+        )
+        (GraphicsLayer
+          (position 8.00 146.00)
+          (bounds 22.00 22.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 22.00 x 22.00)
+          (contentsScale 2.00)
+        )
+        (GraphicsLayer
+          (position 8.00 90.00)
+          (bounds 102.00 22.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 102.00 x 22.00)
+          (contentsScale 2.00)
+        )
+        (GraphicsLayer
+          (position 9.00 91.00)
+          (bounds 100.00 20.00)
+          (visible rect 0.00, 0.00 100.00 x 20.00)
+          (contentsScale 2.00)
+          (children 1
+            (GraphicsLayer
+              (bounds 100.00 20.00)
+              (drawsContent 1)
+              (visible rect 0.00, 0.00 100.00 x 20.00)
+              (contentsScale 2.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 134.00)
+          (bounds 102.00 22.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 102.00 x 22.00)
+          (contentsScale 2.00)
+        )
+        (GraphicsLayer
+          (position 0.00 135.00)
+          (bounds 807.00 20.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 807.00 x 20.00)
+          (contentsScale 2.00)
+        )
+      )
+    )
+  )
+)
+

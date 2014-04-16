@@ -1,4 +1,4 @@
-layer at (0,0) size 824x724
+layer at (0,0) size 824x723
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600

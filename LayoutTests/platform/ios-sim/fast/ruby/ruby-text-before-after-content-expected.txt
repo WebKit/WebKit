@@ -17,7 +17,7 @@ layer at (0,0) size 800x88
           RenderRubyBase (anonymous) at (0,0) size 187x38
             RenderText {#text} at (81,1) size 24x36
               text run at (81,1) width 24: "A"
-        RenderRubyRun (anonymous) at (187,18) size 22x38
+        RenderRubyRun (anonymous) at (186,18) size 23x38
           RenderRubyBase (anonymous) at (0,0) size 22x38
             RenderText {#text} at (0,1) size 22x36
               text run at (0,1) width 22: "B"

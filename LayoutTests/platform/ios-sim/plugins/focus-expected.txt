@@ -1,0 +1,26 @@
+Test for Embed and Object for bug 32292: Unable to focus on embedded plugins such as Flash via javascript focus().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS "embedElem"; document.activeElement === pluginElement is true
+PASS "objectElem"; document.activeElement === pluginElement is true
+PASS "embedElemWithFallbackContents"; document.activeElement === pluginElement is true
+FAIL "objectElemWithFallbackContents"; document.activeElement === pluginElement should be true. Was false.
+FAIL "noPluginEmbedElem"; document.activeElement === pluginElement should be false. Was true.
+FAIL "noPluginObjectElem"; document.activeElement === pluginElement should be false. Was true.
+FAIL "noPluginEmbedElemWithFallbackContents"; document.activeElement === pluginElement should be false. Was true.
+PASS "noPluginObjectElemWithFallbackContents"; document.activeElement === pluginElement is false
+PASS "noPluginEmbedElemWithTabindex"; document.activeElement === pluginElement is true
+PASS "noPluginObjectElemWithTabindex"; document.activeElement === pluginElement is true
+PASS "noPluginEmbedElemWithContenteditable"; document.activeElement === pluginElement is true
+PASS "noPluginObjectElemWithContenteditable"; document.activeElement === pluginElement is true
+fast/events/tabindex-focus-blur-all.html
+Test for bug 32292: "Unable to focus on embedded plugins such as Flash via javascript focus()"
+
+This tests focusing Embeds and Objects. See LayoutTests/java for Applet elements.
+
+  Fallback contents. Fallback contents.  Fallback contents. Fallback contents.    

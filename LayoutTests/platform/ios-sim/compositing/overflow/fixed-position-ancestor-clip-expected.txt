@@ -3,7 +3,7 @@ layer at (0,0) size 1008x1016
 layer at (0,0) size 800x1016
   RenderBlock {HTML} at (0,0) size 800x1016
     RenderBody {BODY} at (8,8) size 1000x1000
-layer at (50,166) size 323x20
+layer at (50,166) size 322x20
   RenderBlock (positioned) {P} at (50,166) size 323x20
     RenderText {#text} at (0,0) size 323x19
       text run at (0,0) width 323: "You should see a single green square, with no red."

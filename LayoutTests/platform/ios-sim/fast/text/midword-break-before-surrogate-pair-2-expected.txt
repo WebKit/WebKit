@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 186x49 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,4) size 176x41
-          text run at (3,4) width 176: "\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}"
+        RenderText {#text} at (3,4) size 168x41
+          text run at (3,4) width 168: "\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}\x{D83C}\x{DDEF}\x{D83C}\x{DDF5}"

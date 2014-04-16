@@ -3,7 +3,7 @@ layer at (0,0) size 800x1650
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 203x1642
+layer at (8,8) size 202x1642
   RenderBlock (positioned) {DIV} at (8,8) size 203x1642
     RenderBlock {P} at (0,72) size 203x85
       RenderInline {A} at (0,0) size 167x81 [color=#0000EE]

@@ -1,0 +1,99 @@
+CONSOLE MESSAGE: line 6: TypeError: undefined is not a function (evaluating 'testRunner.setBlockAllPlugins(true)')
+layer at (0,0) size 800x10135
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x10135
+  RenderBlock {HTML} at (0,0) size 800x10135
+    RenderBody {BODY} at (8,8) size 784x10119
+      RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+      RenderEmbeddedObject {EMBED} at (0,500) size 10x10
+      RenderEmbeddedObject {EMBED} at (0,510) size 0x0
+      RenderBlock {DIV} at (0,3010) size 20x500
+        RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+      RenderEmbeddedObject {EMBED} at (0,3510) size 500x500
+      RenderBlock {DIV} at (0,4010) size 784x500
+        RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+      RenderEmbeddedObject {EMBED} at (0,4510) size 500x500
+      RenderBlock {DIV} at (0,5010) size 784x500
+        RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+      RenderBlock (anonymous) at (0,9610) size 784x509
+        RenderPartObject {IFRAME} at (0,400) size 104x104 [border: (2px inset #000000)]
+          layer at (0,0) size 208x221
+            RenderView at (0,0) size 100x100
+          layer at (0,0) size 100x221
+            RenderBlock {HTML} at (0,0) size 100x221
+              RenderBody {BODY} at (8,8) size 84x205
+                RenderEmbeddedObject {EMBED} at (0,0) size 200x200
+                RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (104,489) size 4x19
+          text run at (104,489) width 4: " "
+        RenderPartObject {IFRAME} at (108,0) size 504x504 [border: (2px inset #000000)]
+          layer at (0,0) size 500x500
+            RenderView at (0,0) size 500x500
+          layer at (0,0) size 500x221
+            RenderBlock {HTML} at (0,0) size 500x221
+              RenderBody {BODY} at (8,8) size 484x205
+                RenderEmbeddedObject {EMBED} at (0,0) size 200x200
+                RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,10119) size 784x0
+layer at (8,2518) size 20x500 scrollWidth 500
+  RenderBlock {DIV} at (0,2510) size 20x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,9518) size 100x100 clip at (8,9518) size 85x85 scrollWidth 500 scrollHeight 500
+  RenderBlock {DIV} at (0,9510) size 100x100
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,518) size 500x500
+  RenderEmbeddedObject {EMBED} at (0,510) size 500x500
+layer at (8,1018) size 784x500
+  RenderBlock {DIV} at (0,1010) size 784x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,1518) size 784x500
+  RenderBlock {DIV} at (0,1510) size 784x500
+layer at (8,1518) size 784x500
+  RenderBlock {DIV} at (0,0) size 784x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,2018) size 784x500
+  RenderBlock {DIV} at (0,2010) size 784x500
+layer at (8,2018) size 784x500
+  RenderBlock {DIV} at (0,0) size 784x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,5518) size 500x500
+  RenderBlock (relative positioned) {DIV} at (0,5510) size 500x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,5518) size 500x500
+  RenderBlock (positioned) {DIV} at (0,0) size 500x500 [bgcolor=#008000]
+layer at (8,6018) size 500x500
+  RenderBlock (relative positioned) {DIV} at (0,6010) size 500x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,6018) size 250x500
+  RenderBlock (positioned) {DIV} at (0,0) size 250x500 [bgcolor=#008000]
+layer at (8,6518) size 500x500
+  RenderBlock (relative positioned) {DIV} at (0,6510) size 500x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (258,6518) size 250x500
+  RenderBlock (positioned) {DIV} at (250,0) size 250x500 [bgcolor=#008000]
+layer at (8,7018) size 500x500
+  RenderBlock (relative positioned) {DIV} at (0,7010) size 500x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,7018) size 500x250
+  RenderBlock (positioned) {DIV} at (0,0) size 500x250 [bgcolor=#008000]
+layer at (8,7518) size 500x500
+  RenderBlock (relative positioned) {DIV} at (0,7510) size 500x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,7768) size 500x250
+  RenderBlock (positioned) {DIV} at (0,250) size 500x250 [bgcolor=#008000]
+layer at (8,8018) size 500x500
+  RenderBlock (relative positioned) {DIV} at (0,8010) size 500x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,8018) size 500x125
+  RenderBlock (positioned) {DIV} at (0,0) size 500x125 [bgcolor=#008000]
+layer at (8,8518) size 500x500
+  RenderBlock (relative positioned) {DIV} at (0,8510) size 500x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (8,8893) size 500x125
+  RenderBlock (positioned) {DIV} at (0,375) size 500x125 [bgcolor=#008000]
+layer at (8,9018) size 500x500
+  RenderBlock (relative positioned) {DIV} at (0,9010) size 500x500
+    RenderEmbeddedObject {EMBED} at (0,0) size 500x500
+layer at (208,9218) size 100x100
+  RenderBlock (positioned) {DIV} at (200,200) size 100x100 [bgcolor=#008000]

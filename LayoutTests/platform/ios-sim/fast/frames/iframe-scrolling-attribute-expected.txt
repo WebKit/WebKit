@@ -6,14 +6,14 @@ layer at (0,0) size 800x699
       RenderBlock {P} at (0,0) size 784x40
         RenderText {#text} at (0,0) size 224x19
           text run at (0,0) width 224: "This page tests the behavior of the "
-        RenderInline {TT} at (0,0) size 71x15
-          RenderText {#text} at (223,4) size 71x15
-            text run at (223,4) width 71: "scrolling"
+        RenderInline {TT} at (0,0) size 71x14
+          RenderText {#text} at (223,5) size 71x14
+            text run at (223,5) width 71: "scrolling"
         RenderText {#text} at (293,0) size 83x19
           text run at (293,0) width 83: " attribute on "
-        RenderInline {TT} at (0,0) size 63x15
-          RenderText {#text} at (375,4) size 63x15
-            text run at (375,4) width 63: "<iframe>"
+        RenderInline {TT} at (0,0) size 63x14
+          RenderText {#text} at (375,5) size 63x14
+            text run at (375,5) width 63: "<iframe>"
         RenderText {#text} at (437,0) size 776x39
           text run at (437,0) width 339: " elements which contain a page large enough to need"
           text run at (0,20) width 91: "to be scrolled."

@@ -17,7 +17,7 @@ layer at (0,0) size 800x363
         text run at (202,327) width 4: " "
       RenderSVGRoot {svg} at (214,48) size 202x287
         RenderSVGText {text} at (5,265) size 83x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 83x19
+          RenderSVGInlineText {#text} at (0,0) size 83x18
             chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 11 width 82.78: "+Transforms"
         RenderSVGContainer {g} at (215,149) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
           RenderSVGRect {rect} at (215,149) size 100x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
@@ -35,7 +35,7 @@ layer at (0,0) size 800x363
 layer at (420,48) size 202x302
   RenderSVGRoot {svg} at (420,48) size 202x287
     RenderSVGText {text} at (5,265) size 173x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 173x19
+      RenderSVGInlineText {#text} at (0,0) size 173x18
         chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 24 width 172.09: "+Accelerated Compositing"
     RenderSVGContainer {g} at (421,49) size 200x200
       RenderSVGRect {rect} at (421,149) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]

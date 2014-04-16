@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 344x20
           RenderText {#text} at (0,0) size 208x19
             text run at (0,0) width 208: "The initial value (should be like "
-          RenderInline {TT} at (0,0) size 33x15
-            RenderText {#text} at (207,4) size 33x15
-              text run at (207,4) width 33: "auto"
+          RenderInline {TT} at (0,0) size 33x14
+            RenderText {#text} at (207,5) size 33x14
+              text run at (207,5) width 33: "auto"
           RenderText {#text} at (239,0) size 6x19
             text run at (239,0) width 6: ")"
         RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
@@ -18,8 +18,8 @@ layer at (0,0) size 800x600
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
             text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "-"
-            text run at (7,73) width 209: "ting its body tucked away, "
-            text run at (215,73) width 37: "com" + hyphen string "-"
+            text run at (7,73) width 208: "ting its body tucked away, "
+            text run at (214,73) width 38: "com" + hyphen string "-"
             text run at (7,95) width 245: "fortably enough, under her arm,"
             text run at (7,117) width 226: "with its legs hanging down, "
             text run at (232,117) width 105: "but generally,"
@@ -33,9 +33,9 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 344x20
           RenderText {#text} at (0,0) size 83x19
             text run at (0,0) width 83: "The default ("
-          RenderInline {TT} at (0,0) size 196x15
-            RenderText {#text} at (82,4) size 196x15
-              text run at (82,4) width 196: "hyphenate-character: auto"
+          RenderInline {TT} at (0,0) size 196x14
+            RenderText {#text} at (82,5) size 196x14
+              text run at (82,5) width 196: "hyphenate-character: auto"
           RenderText {#text} at (277,0) size 6x19
             text run at (277,0) width 6: ")"
         RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
@@ -44,8 +44,8 @@ layer at (0,0) size 800x600
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
             text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "-"
-            text run at (7,73) width 209: "ting its body tucked away, "
-            text run at (215,73) width 37: "com" + hyphen string "-"
+            text run at (7,73) width 208: "ting its body tucked away, "
+            text run at (214,73) width 38: "com" + hyphen string "-"
             text run at (7,95) width 245: "fortably enough, under her arm,"
             text run at (7,117) width 226: "with its legs hanging down, "
             text run at (232,117) width 105: "but generally,"
@@ -59,9 +59,9 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 344x20
           RenderText {#text} at (0,0) size 49x19
             text run at (0,0) width 49: "Bullet ("
-          RenderInline {TT} at (0,0) size 219x15
-            RenderText {#text} at (48,4) size 219x15
-              text run at (48,4) width 219: "hyphenate-character: \"\\2022\""
+          RenderInline {TT} at (0,0) size 219x14
+            RenderText {#text} at (48,5) size 219x14
+              text run at (48,5) width 219: "hyphenate-character: \"\\2022\""
           RenderText {#text} at (266,0) size 7x19
             text run at (266,0) width 7: ")"
         RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
@@ -70,8 +70,8 @@ layer at (0,0) size 800x600
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
             text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "\x{2022}"
-            text run at (7,73) width 208: "ting its body tucked away, "
-            text run at (214,73) width 38: "com" + hyphen string "\x{2022}"
+            text run at (7,73) width 207: "ting its body tucked away, "
+            text run at (213,73) width 39: "com" + hyphen string "\x{2022}"
             text run at (7,95) width 245: "fortably enough, under her arm,"
             text run at (7,117) width 226: "with its legs hanging down, "
             text run at (232,117) width 105: "but generally,"
@@ -85,9 +85,9 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 356x20
           RenderText {#text} at (0,0) size 140x19
             text run at (0,0) width 140: "Middle dot and tilde ("
-          RenderInline {TT} at (0,0) size 212x15
-            RenderText {#text} at (139,4) size 212x15
-              text run at (139,4) width 212: "hyphenate-character: \"\\B7~\""
+          RenderInline {TT} at (0,0) size 212x14
+            RenderText {#text} at (139,5) size 212x14
+              text run at (139,5) width 212: "hyphenate-character: \"\\B7~\""
           RenderText {#text} at (350,0) size 6x19
             text run at (350,0) width 6: ")"
         RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
@@ -96,8 +96,8 @@ layer at (0,0) size 800x600
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
             text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "\x{B7}~"
-            text run at (7,73) width 199: "ting its body tucked away, "
-            text run at (205,73) width 47: "com" + hyphen string "\x{B7}~"
+            text run at (7,73) width 198: "ting its body tucked away, "
+            text run at (204,73) width 48: "com" + hyphen string "\x{B7}~"
             text run at (7,95) width 245: "fortably enough, under her arm,"
             text run at (7,117) width 226: "with its legs hanging down, "
             text run at (232,117) width 105: "but generally,"

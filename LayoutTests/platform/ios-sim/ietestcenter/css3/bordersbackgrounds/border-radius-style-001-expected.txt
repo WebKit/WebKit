@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x310
-  RenderBlock {HTML} at (0,0) size 800x310
-    RenderBody {BODY} at (8,16) size 784x286
+  RenderBlock {HTML} at (0,0) size 800x311
+    RenderBody {BODY} at (8,16) size 784x287
       RenderBlock {P} at (0,0) size 784x40
         RenderText {#text} at (0,0) size 767x39
           text run at (0,0) width 767: "Test passes if there is a rounded border with purple dots on the top, green on the right side, blue on the bottom side, and"
           text run at (0,20) width 132: "grey on the left side."
-      RenderBlock {DIV} at (0,56) size 230x230 [border: (19px dotted #800080) (19px dotted #008000) (19px dotted #0000FF) (19px dotted #808080)]
+      RenderBlock {DIV} at (0,56) size 231x231 [border: (19.19px dotted #800080) (19.19px dotted #008000) (19.19px dotted #0000FF) (19.19px dotted #808080)]

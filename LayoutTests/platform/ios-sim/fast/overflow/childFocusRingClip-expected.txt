@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 250x45 clip at (8,8) size 250x30 scrollWidth 332
+layer at (8,8) size 250x45 clip at (8,8) size 250x30 scrollWidth 331
   RenderBlock {DIV} at (0,0) size 250x45
     RenderBlock {DIV} at (0,0) size 250x30
       RenderInline {A} at (0,0) size 327x19

@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x202
-  RenderBlock {HTML} at (0,0) size 800x202
-    RenderBody {BODY} at (8,16) size 784x178
+layer at (0,0) size 800x203
+  RenderBlock {HTML} at (0,0) size 800x203
+    RenderBody {BODY} at (8,16) size 784x179
       RenderBlock {P} at (0,0) size 784x40
         RenderText {#text} at (0,0) size 108x19
           text run at (0,0) width 108: "There should be "
@@ -21,18 +21,18 @@ layer at (0,0) size 800x202
             text run at (0,20) width 59: "identical"
         RenderText {#text} at (58,20) size 456x19
           text run at (58,20) width 456: " to each other. This should still remain true even after a window resize."
-      RenderBlock {DIV} at (0,56) size 784x122
-        RenderImage {OBJECT} at (0,0) size 117x117
-        RenderText {#text} at (117,102) size 4x19
-          text run at (117,102) width 4: " "
-        RenderImage {OBJECT} at (121,0) size 117x117
-        RenderText {#text} at (238,102) size 4x19
-          text run at (238,102) width 4: " "
-        RenderImage {OBJECT} at (242,0) size 117x117
-        RenderText {#text} at (359,102) size 4x19
-          text run at (359,102) width 4: " "
-        RenderImage {OBJECT} at (363,0) size 117x117
-        RenderText {#text} at (480,102) size 4x19
-          text run at (480,102) width 4: " "
-        RenderImage {OBJECT} at (484,0) size 117x117
+      RenderBlock {DIV} at (0,56) size 784x123
+        RenderImage {OBJECT} at (0,0) size 118x118
+        RenderText {#text} at (117,103) size 5x19
+          text run at (117,103) width 5: " "
+        RenderImage {OBJECT} at (121,0) size 119x118
+        RenderText {#text} at (239,103) size 5x19
+          text run at (239,103) width 5: " "
+        RenderImage {OBJECT} at (243,0) size 118x118
+        RenderText {#text} at (360,103) size 5x19
+          text run at (360,103) width 5: " "
+        RenderImage {OBJECT} at (364,0) size 119x118
+        RenderText {#text} at (482,103) size 5x19
+          text run at (482,103) width 5: " "
+        RenderImage {OBJECT} at (486,0) size 118x118
         RenderText {#text} at (0,0) size 0x0

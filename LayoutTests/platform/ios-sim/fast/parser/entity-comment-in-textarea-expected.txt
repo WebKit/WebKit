@@ -8,6 +8,5 @@ layer at (0,0) size 800x600
 layer at (10,10) size 150x34 clip at (11,11) size 148x32
   RenderTextControl {TEXTAREA} at (2,2) size 150x34 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
     RenderBlock {DIV} at (3,3) size 144x14
-      RenderText {#text} at (3,0) size 20x14
+      RenderText {#text} at (3,0) size 17x14
         text run at (3,0) width 17: "<!--"
-        text run at (19,0) width 4: " "

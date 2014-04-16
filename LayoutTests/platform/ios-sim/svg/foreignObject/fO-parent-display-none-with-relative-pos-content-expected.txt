@@ -3,10 +3,4 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 100x90
     RenderSVGHiddenContainer {g} at (0,0) size 0x0
-      RenderSVGForeignObject {foreignObject} at (0,0) size 0x0
-        RenderBlock {html} at (0,0) size 0x100
-          RenderBody {body} at (0,0) size 100x100 [color=#FF0000]
-            RenderText {#text} at (0,0) size 76x39
-              text run at (0,0) width 76: "FAILED IF"
-              text run at (0,20) width 62: "VISIBLE"
     RenderSVGRect {rect} at (0,0) size 100x90 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=90.00]

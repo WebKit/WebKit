@@ -6,26 +6,26 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 363x19
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x60
-        RenderText {#text} at (0,0) size 383x60
+      RenderBlock {PRE} at (0,36) size 784x56
+        RenderText {#text} at (0,0) size 383x56
           text run at (0,0) width 375: ".zero {background-color: silver; margin-top: 0;}"
           text run at (374,0) width 1: " "
-          text run at (0,15) width 375: ".one {margin-top: 25px; background-color: aqua;}"
-          text run at (374,15) width 1: " "
-          text run at (0,30) width 383: ".two {margin-top: -10px; background-color: aqua;}"
-          text run at (382,30) width 1: " "
-          text run at (0,45) width 0: " "
-      RenderBlock {HR} at (0,109) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,127) size 784x60 [bgcolor=#808080]
+          text run at (0,14) width 375: ".one {margin-top: 25px; background-color: aqua;}"
+          text run at (374,14) width 1: " "
+          text run at (0,28) width 383: ".two {margin-top: -10px; background-color: aqua;}"
+          text run at (382,28) width 1: " "
+          text run at (0,42) width 0: " "
+      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,123) size 784x60 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 487x19
           text run at (0,0) width 397: "This element is unstyled save for a background color of gray. "
           text run at (396,0) width 91: "It contains an "
         RenderInline {SPAN} at (0,0) size 773x39 [bgcolor=#00FFFF]
           RenderText {#text} at (486,0) size 149x19
             text run at (486,0) width 149: "inline element of class "
-          RenderInline {TT} at (0,0) size 24x15
-            RenderText {#text} at (634,4) size 24x15
-              text run at (634,4) width 24: "one"
+          RenderInline {TT} at (0,0) size 24x14
+            RenderText {#text} at (634,5) size 24x14
+              text run at (634,5) width 24: "one"
           RenderText {#text} at (657,0) size 773x39
             text run at (657,0) width 116: ", giving it an aqua"
             text run at (0,20) width 224: "background and a 25px top margin"
@@ -33,16 +33,16 @@ layer at (0,0) size 800x600
           text run at (223,20) width 9: ". "
           text run at (231,20) width 534: "Margins on inline elements do not affect line-height calculations, so all lines in this"
           text run at (0,40) width 270: "element should have the same line-height."
-      RenderBlock {P} at (0,203) size 784x60 [bgcolor=#808080]
+      RenderBlock {P} at (0,199) size 784x60 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 487x19
           text run at (0,0) width 397: "This element is unstyled save for a background color of gray. "
           text run at (396,0) width 91: "It contains an "
         RenderInline {SPAN} at (0,0) size 771x39 [bgcolor=#00FFFF]
           RenderText {#text} at (486,0) size 149x19
             text run at (486,0) width 149: "inline element of class "
-          RenderInline {TT} at (0,0) size 24x15
-            RenderText {#text} at (634,4) size 24x15
-              text run at (634,4) width 24: "two"
+          RenderInline {TT} at (0,0) size 24x14
+            RenderText {#text} at (634,5) size 24x14
+              text run at (634,5) width 24: "two"
           RenderText {#text} at (657,0) size 771x39
             text run at (657,0) width 114: ", giving the inline"
             text run at (0,20) width 337: "element an aqua background and a -10px top margin"
@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
           text run at (336,20) width 9: ". "
           text run at (344,20) width 437: "Margins on inline elements do not affect line-height calculations, so"
           text run at (0,40) width 368: "all lines in this element should have the same line-height."
-      RenderTable {TABLE} at (0,279) size 784x174 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,275) size 784x174 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x172
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -69,9 +69,9 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 739x39 [bgcolor=#00FFFF]
                   RenderText {#text} at (486,0) size 149x19
                     text run at (486,0) width 149: "inline element of class "
-                  RenderInline {TT} at (0,0) size 24x15
-                    RenderText {#text} at (634,4) size 24x15
-                      text run at (634,4) width 24: "one"
+                  RenderInline {TT} at (0,0) size 24x14
+                    RenderText {#text} at (634,5) size 24x14
+                      text run at (634,5) width 24: "one"
                   RenderText {#text} at (657,0) size 739x39
                     text run at (657,0) width 82: ", giving it an"
                     text run at (0,20) width 258: "aqua background and a 25px top margin"
@@ -86,9 +86,9 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 730x39 [bgcolor=#00FFFF]
                   RenderText {#text} at (486,0) size 149x19
                     text run at (486,0) width 149: "inline element of class "
-                  RenderInline {TT} at (0,0) size 24x15
-                    RenderText {#text} at (634,4) size 24x15
-                      text run at (634,4) width 24: "two"
+                  RenderInline {TT} at (0,0) size 24x14
+                    RenderText {#text} at (634,5) size 24x14
+                      text run at (634,5) width 24: "two"
                   RenderText {#text} at (657,0) size 730x39
                     text run at (657,0) width 73: ", giving the"
                     text run at (0,20) width 378: "inline element an aqua background and a -10px top margin"

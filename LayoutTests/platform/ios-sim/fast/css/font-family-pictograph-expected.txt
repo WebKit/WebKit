@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x0
-        RenderText {#text} at (0,-24) size 22x48
-          text run at (0,-24) width 22: "\x{2665}"
+        RenderText {#text} at (0,-24) size 21x48
+          text run at (0,-24) width 21: "\x{2665}"

@@ -3,99 +3,99 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-1000.00] [y=-1000.00] [width=3000.00] [height=3000.00]
-    RenderSVGContainer {g} at (39,36) size 475x468
+    RenderSVGContainer {g} at (39,37) size 468x467
       RenderSVGText {text} at (500,47) size 106x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 106x17
+        RenderSVGInlineText {#text} at (0,0) size 106x16
           chunk 1 text run 1 at (500.00,60.00) startOffset 0 endOffset 13 width 105.96: "Combobox Demo"
-      RenderSVGContainer {a} at (390,53) size 124x12
-        RenderSVGText {text} at (500,68) size 157x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 157x15
-            chunk 1 text run 1 at (500.00,80.00) startOffset 0 endOffset 28 width 156.86: "Link to Documentation (HTML)"
-      RenderSVGText {text} at (240,50) size 221x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 29x15
-          chunk 1 text run 1 at (240.00,62.00) startOffset 0 endOffset 6 width 28.80: "Fruits"
-        RenderSVGTSpan {tspan} at (0,0) size 221x16
-          RenderSVGInlineText {#text} at (0,19) size 221x15
-            chunk 1 text run 1 at (240.00,82.00) startOffset 0 endOffset 42 width 220.90: "This comboBox allows only single selection"
-      RenderSVGText {text} at (240,300) size 33x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 33x15
-          chunk 1 text run 1 at (240.00,312.00) startOffset 0 endOffset 5 width 32.65: "Roses"
-      RenderSVGText {text} at (240,321) size 110x45 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 110x15
-          chunk 1 text run 1 at (240.00,333.00) startOffset 0 endOffset 19 width 109.49: "This comboBox gives"
-        RenderSVGTSpan {tspan} at (0,0) size 110x15
-          RenderSVGInlineText {#text} at (0,15) size 110x15
-            chunk 1 text run 1 at (240.00,348.00) startOffset 0 endOffset 19 width 109.52: "feedback on changes"
-        RenderSVGTSpan {tspan} at (0,0) size 77x15
-          RenderSVGInlineText {#text} at (0,30) size 77x15
-            chunk 1 text run 1 at (240.00,363.00) startOffset 0 endOffset 16 width 76.85: "in the selection"
-      RenderSVGText {text} at (50,388) size 177x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 177x15
-          chunk 1 text run 1 at (50.00,400.00) startOffset 0 endOffset 33 width 176.73: "The Following Roses are selected:"
-        RenderSVGTSpan {tspan} at (0,0) size 0x0
+      RenderSVGContainer {a} at (390,54) size 117x11
+        RenderSVGText {text} at (500,69) size 149x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 149x13
+            chunk 1 text run 1 at (500.00,80.00) startOffset 0 endOffset 28 width 148.14: "Link to Documentation (HTML)"
+      RenderSVGText {text} at (240,51) size 209x34 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 28x13
+          chunk 1 text run 1 at (240.00,62.00) startOffset 0 endOffset 6 width 27.20: "Fruits"
+        RenderSVGTSpan {tspan} at (0,0) size 209x13
+          RenderSVGInlineText {#text} at (0,20) size 209x13
+            chunk 1 text run 1 at (240.00,82.00) startOffset 0 endOffset 42 width 208.63: "This comboBox allows only single selection"
+      RenderSVGText {text} at (240,301) size 31x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 31x13
+          chunk 1 text run 1 at (240.00,312.00) startOffset 0 endOffset 5 width 30.84: "Roses"
+      RenderSVGText {text} at (240,322) size 104x44 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 104x13
+          chunk 1 text run 1 at (240.00,333.00) startOffset 0 endOffset 19 width 103.40: "This comboBox gives"
+        RenderSVGTSpan {tspan} at (0,0) size 104x13
+          RenderSVGInlineText {#text} at (0,15) size 104x13
+            chunk 1 text run 1 at (240.00,348.00) startOffset 0 endOffset 19 width 103.44: "feedback on changes"
+        RenderSVGTSpan {tspan} at (0,0) size 73x13
+          RenderSVGInlineText {#text} at (0,30) size 73x13
+            chunk 1 text run 1 at (240.00,363.00) startOffset 0 endOffset 16 width 72.58: "in the selection"
+      RenderSVGText {text} at (50,389) size 167x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 167x13
+          chunk 1 text run 1 at (50.00,400.00) startOffset 0 endOffset 33 width 166.91: "The Following Roses are selected:"
+        RenderSVGTSpan {tspan} at (0,0) size 0x1
           RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGText {text} at (240,550) size 41x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 41x15
-          chunk 1 text run 1 at (240.00,562.00) startOffset 0 endOffset 7 width 40.33: "Flowers"
-      RenderSVGText {text} at (240,570) size 208x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 208x15
-          chunk 1 text run 1 at (240.00,582.00) startOffset 0 endOffset 43 width 207.46: "Click on this text to deselect all elements"
-      RenderSVGText {text} at (240,585) size 195x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 195x15
-          chunk 1 text run 1 at (240.00,597.00) startOffset 0 endOffset 41 width 194.64: "Click on this text to select all elements"
-      RenderSVGText {text} at (240,600) size 177x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 177x15
-          chunk 1 text run 1 at (240.00,612.00) startOffset 0 endOffset 38 width 176.71: "Click on this text to invert selection"
-      RenderSVGText {text} at (240,615) size 255x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 255x15
-          chunk 1 text run 1 at (240.00,627.00) startOffset 0 endOffset 48 width 254.19: "Click on this text to randomly move the combobox"
-      RenderSVGText {text} at (240,630) size 257x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 257x15
-          chunk 1 text run 1 at (240.00,642.00) startOffset 0 endOffset 50 width 256.75: "Click on this text to randomly resize the combobox"
-    RenderSVGContainer {g} at (283,169) size 419x315 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(500.00,20.00)}]
+      RenderSVGText {text} at (240,551) size 39x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 39x13
+          chunk 1 text run 1 at (240.00,562.00) startOffset 0 endOffset 7 width 38.09: "Flowers"
+      RenderSVGText {text} at (240,571) size 196x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 196x13
+          chunk 1 text run 1 at (240.00,582.00) startOffset 0 endOffset 43 width 195.93: "Click on this text to deselect all elements"
+      RenderSVGText {text} at (240,586) size 184x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 184x13
+          chunk 1 text run 1 at (240.00,597.00) startOffset 0 endOffset 41 width 183.83: "Click on this text to select all elements"
+      RenderSVGText {text} at (240,601) size 167x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 167x13
+          chunk 1 text run 1 at (240.00,612.00) startOffset 0 endOffset 38 width 166.90: "Click on this text to invert selection"
+      RenderSVGText {text} at (240,616) size 241x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 241x13
+          chunk 1 text run 1 at (240.00,627.00) startOffset 0 endOffset 48 width 240.07: "Click on this text to randomly move the combobox"
+      RenderSVGText {text} at (240,631) size 243x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 243x13
+          chunk 1 text run 1 at (240.00,642.00) startOffset 0 endOffset 50 width 242.49: "Click on this text to randomly resize the combobox"
+    RenderSVGContainer {g} at (283,169) size 405x307 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(500.00,20.00)}]
       RenderSVGContainer {g} at (283,169) size 166x169
         RenderSVGRect {rect} at (283,170) size 154x162 [fill={[type=SOLID] [color=#FFFFFF]}] [x=50.00] [y=200.00] [width=134.00] [height=160.00]
         RenderSVGContainer {g} at (284,171) size 152x160
           RenderSVGRect {rect} at (341,171) size 95x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=200.00] [width=131.00] [height=16.00]
-          RenderSVGText {text} at (53,200) size 34x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 34x15
-              chunk 1 text run 1 at (53.00,212.50) startOffset 0 endOffset 6 width 33.29: "Boswil"
+          RenderSVGText {text} at (53,202) size 32x14 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 32x13
+              chunk 1 text run 1 at (53.00,212.50) startOffset 0 endOffset 6 width 31.44: "Boswil"
           RenderSVGRect {rect} at (334,181) size 96x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=216.00] [width=131.00] [height=16.00]
-          RenderSVGText {text} at (53,216) size 47x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 47x15
-              chunk 1 text run 1 at (53.00,228.50) startOffset 0 endOffset 9 width 46.74: "Bottenwil"
+          RenderSVGText {text} at (53,218) size 45x14 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 45x13
+              chunk 1 text run 1 at (53.00,228.50) startOffset 0 endOffset 9 width 44.15: "Bottenwil"
           RenderSVGRect {rect} at (328,192) size 96x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=232.00] [width=131.00] [height=16.00]
-          RenderSVGText {text} at (53,232) size 88x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 88x15
-              chunk 1 text run 1 at (53.00,244.50) startOffset 0 endOffset 15 width 87.71: "Bremgarten (AG)"
+          RenderSVGText {text} at (53,234) size 83x14 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 83x13
+              chunk 1 text run 1 at (53.00,244.50) startOffset 0 endOffset 15 width 82.83: "Bremgarten (AG)"
           RenderSVGRect {rect} at (322,203) size 96x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=248.00] [width=131.00] [height=16.00]
-          RenderSVGText {text} at (53,248) size 40x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 40x15
-              chunk 1 text run 1 at (53.00,260.50) startOffset 0 endOffset 8 width 39.70: "Brittnau"
+          RenderSVGText {text} at (53,250) size 38x14 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 38x13
+              chunk 1 text run 1 at (53.00,260.50) startOffset 0 endOffset 8 width 37.50: "Brittnau"
           RenderSVGRect {rect} at (316,214) size 95x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=264.00] [width=131.00] [height=16.00]
-          RenderSVGText {text} at (53,264) size 31x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 31x15
-              chunk 1 text run 1 at (53.00,276.50) startOffset 0 endOffset 5 width 30.74: "Brugg"
+          RenderSVGText {text} at (53,266) size 30x14 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 30x13
+              chunk 1 text run 1 at (53.00,276.50) startOffset 0 endOffset 5 width 29.03: "Brugg"
           RenderSVGRect {rect} at (309,225) size 96x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=280.00] [width=131.00] [height=16.00]
-          RenderSVGText {text} at (53,280) size 44x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 44x15
-              chunk 1 text run 1 at (53.00,292.50) startOffset 0 endOffset 7 width 43.55: "Brunegg"
+          RenderSVGText {text} at (53,282) size 42x14 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 42x13
+              chunk 1 text run 1 at (53.00,292.50) startOffset 0 endOffset 7 width 41.13: "Brunegg"
           RenderSVGRect {rect} at (303,236) size 96x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=296.00] [width=131.00] [height=16.00]
-          RenderSVGText {text} at (53,296) size 60x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 60x15
-              chunk 1 text run 1 at (53.00,308.50) startOffset 0 endOffset 10 width 59.54: "Buchs (AG)"
+          RenderSVGText {text} at (53,298) size 57x14 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 57x13
+              chunk 1 text run 1 at (53.00,308.50) startOffset 0 endOffset 10 width 56.23: "Buchs (AG)"
           RenderSVGRect {rect} at (297,246) size 96x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=312.00] [width=131.00] [height=16.00]
-          RenderSVGText {text} at (53,312) size 52x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 52x15
-              chunk 1 text run 1 at (53.00,324.50) startOffset 0 endOffset 9 width 51.85: "Burg (AG)"
+          RenderSVGText {text} at (53,314) size 49x14 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 49x13
+              chunk 1 text run 1 at (53.00,324.50) startOffset 0 endOffset 9 width 48.97: "Burg (AG)"
           RenderSVGRect {rect} at (291,257) size 95x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=328.00] [width=131.00] [height=16.00]
-          RenderSVGText {text} at (53,328) size 34x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 34x15
-              chunk 1 text run 1 at (53.00,340.50) startOffset 0 endOffset 7 width 33.93: "Buttwil"
+          RenderSVGText {text} at (53,330) size 33x14 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 33x13
+              chunk 1 text run 1 at (53.00,340.50) startOffset 0 endOffset 7 width 32.04: "Buttwil"
           RenderSVGRect {rect} at (284,268) size 96x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=344.00] [width=131.00] [height=16.00]
-          RenderSVGText {text} at (53,344) size 42x15 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 42x15
-              chunk 1 text run 1 at (53.00,356.50) startOffset 0 endOffset 7 width 41.63: "B\x{F6}bikon"
+          RenderSVGText {text} at (53,346) size 40x14 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 40x13
+              chunk 1 text run 1 at (53.00,356.50) startOffset 0 endOffset 7 width 39.32: "B\x{F6}bikon"
         RenderSVGRect {rect} at (283,169) size 155x163 [stroke={[type=SOLID] [color=#696969]}] [x=50.00] [y=200.00] [width=134.00] [height=160.00]
         RenderSVGRect {rect} at (380,233) size 63x95 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=184.00] [y=216.00] [width=16.00] [height=128.00]
         RenderSVGRect {rect} at (430,222) size 19x19 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=184.00] [y=200.00] [width=16.00] [height=16.00]
@@ -103,47 +103,47 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (373,319) size 20x19 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=184.00] [y=344.00] [width=16.00] [height=16.00]
         RenderSVGPath {path} at (378,324) size 10x10 [fill={[type=SOLID] [color=#696969]}] [data="M 188 348 L 196 348 L 192 356 Z"]
         RenderSVGRect {rect} at (421,242) size 16x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=184.00] [y=229.51] [width=16.00] [height=8.00]
-      RenderSVGText {text} at (220,200) size 354x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 209x15
-          chunk 1 text run 1 at (220.00,212.00) startOffset 0 endOffset 39 width 208.08: "Communities of Kt. Aargau (Switzerland)"
-        RenderSVGTSpan {tspan} at (0,0) size 354x15
-          RenderSVGInlineText {#text} at (0,20) size 354x15
-            chunk 1 text run 1 at (220.00,232.00) startOffset 0 endOffset 67 width 353.50: "Note that one can also transform the group containing the combo box"
+      RenderSVGText {text} at (220,201) size 334x34 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 197x13
+          chunk 1 text run 1 at (220.00,212.00) startOffset 0 endOffset 39 width 196.52: "Communities of Kt. Aargau (Switzerland)"
+        RenderSVGTSpan {tspan} at (0,0) size 334x13
+          RenderSVGInlineText {#text} at (0,20) size 334x13
+            chunk 1 text run 1 at (220.00,232.00) startOffset 0 endOffset 67 width 333.86: "Note that one can also transform the group containing the combo box"
     RenderSVGContainer {g} at (38,429) size 135x102
       RenderSVGRect {rect} at (39,429) size 121x101 [fill={[type=SOLID] [color=#FFFFFF]}] [x=50.00] [y=550.00] [width=154.00] [height=128.00]
       RenderSVGContainer {g} at (40,429) size 119x101
         RenderSVGRect {rect} at (40,429) size 119x14 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=550.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,550) size 50x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 50x15
-            chunk 1 text run 1 at (53.00,562.50) startOffset 0 endOffset 8 width 49.94: "Amaranth"
+        RenderSVGText {text} at (53,552) size 48x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 48x13
+            chunk 1 text run 1 at (53.00,562.50) startOffset 0 endOffset 8 width 47.17: "Amaranth"
         RenderSVGRect {rect} at (40,442) size 119x13 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=566.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,566) size 59x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 59x15
-            chunk 1 text run 1 at (53.00,578.50) startOffset 0 endOffset 10 width 58.26: "Anthericum"
+        RenderSVGText {text} at (53,568) size 56x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 56x13
+            chunk 1 text run 1 at (53.00,578.50) startOffset 0 endOffset 10 width 55.03: "Anthericum"
         RenderSVGRect {rect} at (40,454) size 119x14 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=582.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,582) size 28x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 28x15
-            chunk 1 text run 1 at (53.00,594.50) startOffset 0 endOffset 4 width 27.52: "Arum"
+        RenderSVGText {text} at (53,584) size 26x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 26x13
+            chunk 1 text run 1 at (53.00,594.50) startOffset 0 endOffset 4 width 25.99: "Arum"
         RenderSVGRect {rect} at (40,467) size 119x13 [fill={[type=SOLID] [color=#696969] [opacity=0.30]}] [x=51.50] [y=598.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,598) size 20x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 20x15
-            chunk 1 text run 1 at (53.00,610.50) startOffset 0 endOffset 3 width 19.85: "Ash"
+        RenderSVGText {text} at (53,600) size 19x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 19x13
+            chunk 1 text run 1 at (53.00,610.50) startOffset 0 endOffset 3 width 18.75: "Ash"
         RenderSVGRect {rect} at (40,479) size 119x14 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=614.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,614) size 33x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 33x15
-            chunk 1 text run 1 at (53.00,626.50) startOffset 0 endOffset 5 width 32.66: "Aspen"
+        RenderSVGText {text} at (53,616) size 31x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 31x13
+            chunk 1 text run 1 at (53.00,626.50) startOffset 0 endOffset 5 width 30.85: "Aspen"
         RenderSVGRect {rect} at (40,492) size 119x13 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=630.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,630) size 27x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 27x15
-            chunk 1 text run 1 at (53.00,642.50) startOffset 0 endOffset 5 width 26.89: "Aster"
+        RenderSVGText {text} at (53,632) size 26x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 26x13
+            chunk 1 text run 1 at (53.00,642.50) startOffset 0 endOffset 5 width 25.39: "Aster"
         RenderSVGRect {rect} at (40,504) size 119x14 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=646.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,646) size 27x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 27x15
-            chunk 1 text run 1 at (53.00,658.50) startOffset 0 endOffset 4 width 26.25: "Balm"
+        RenderSVGText {text} at (53,648) size 25x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x13
+            chunk 1 text run 1 at (53.00,658.50) startOffset 0 endOffset 4 width 24.79: "Balm"
         RenderSVGRect {rect} at (40,517) size 119x13 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=662.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,662) size 41x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 41x15
-            chunk 1 text run 1 at (53.00,674.50) startOffset 0 endOffset 7 width 40.34: "Barbery"
+        RenderSVGText {text} at (53,664) size 39x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 39x13
+            chunk 1 text run 1 at (53.00,674.50) startOffset 0 endOffset 7 width 38.10: "Barbery"
       RenderSVGRect {rect} at (38,429) size 122x102 [stroke={[type=SOLID] [color=#696969]}] [x=50.00] [y=550.00] [width=154.00] [height=128.00]
       RenderSVGRect {rect} at (158,441) size 15x77 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=204.00] [y=566.00] [width=16.00] [height=96.00]
       RenderSVGRect {rect} at (158,429) size 15x14 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=204.00] [y=550.00] [width=16.00] [height=16.00]
@@ -155,25 +155,25 @@ layer at (0,0) size 800x600
       RenderSVGRect {rect} at (39,234) size 121x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=50.00] [y=300.00] [width=154.00] [height=80.00]
       RenderSVGContainer {g} at (40,234) size 119x63
         RenderSVGRect {rect} at (40,234) size 119x13 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=300.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,300) size 56x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 56x15
-            chunk 1 text run 1 at (53.00,312.50) startOffset 0 endOffset 9 width 55.06: "Sexy Rexy"
+        RenderSVGText {text} at (53,302) size 52x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 52x13
+            chunk 1 text run 1 at (53.00,312.50) startOffset 0 endOffset 9 width 52.00: "Sexy Rexy"
         RenderSVGRect {rect} at (40,246) size 119x14 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=316.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,316) size 136x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 136x15
-            chunk 1 text run 1 at (53.00,328.50) startOffset 0 endOffset 26 width 135.11: "Souvenir de Pierre Notting"
+        RenderSVGText {text} at (53,318) size 128x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 128x13
+            chunk 1 text run 1 at (53.00,328.50) startOffset 0 endOffset 26 width 127.61: "Souvenir de Pierre Notting"
         RenderSVGRect {rect} at (40,259) size 119x13 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=332.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,332) size 43x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 43x15
-            chunk 1 text run 1 at (53.00,344.50) startOffset 0 endOffset 8 width 42.91: "Sunflare"
+        RenderSVGText {text} at (53,334) size 41x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 41x13
+            chunk 1 text run 1 at (53.00,344.50) startOffset 0 endOffset 8 width 40.52: "Sunflare"
         RenderSVGRect {rect} at (40,271) size 119x14 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=348.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,348) size 63x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 63x15
-            chunk 1 text run 1 at (53.00,360.50) startOffset 0 endOffset 10 width 62.08: "Whisky Mac"
+        RenderSVGText {text} at (53,350) size 59x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 59x13
+            chunk 1 text run 1 at (53.00,360.50) startOffset 0 endOffset 10 width 58.63: "Whisky Mac"
         RenderSVGRect {rect} at (40,284) size 119x13 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=364.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,364) size 100x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 100x15
-            chunk 1 text run 1 at (53.00,376.50) startOffset 0 endOffset 18 width 99.88: "Whisper Floribunda"
+        RenderSVGText {text} at (53,366) size 95x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 95x13
+            chunk 1 text run 1 at (53.00,376.50) startOffset 0 endOffset 18 width 94.33: "Whisper Floribunda"
       RenderSVGRect {rect} at (38,233) size 122x65 [stroke={[type=SOLID] [color=#696969]}] [x=50.00] [y=300.00] [width=154.00] [height=80.00]
       RenderSVGRect {rect} at (158,246) size 15x39 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=204.00] [y=316.00] [width=16.00] [height=48.00]
       RenderSVGRect {rect} at (158,233) size 15x15 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=204.00] [y=300.00] [width=16.00] [height=16.00]
@@ -185,19 +185,19 @@ layer at (0,0) size 800x600
       RenderSVGRect {rect} at (39,39) size 121x51 [fill={[type=SOLID] [color=#FFFFFF]}] [x=50.00] [y=50.00] [width=154.00] [height=64.00]
       RenderSVGContainer {g} at (40,39) size 119x51
         RenderSVGRect {rect} at (40,39) size 119x13 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=50.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,50) size 45x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 45x15
-            chunk 1 text run 1 at (53.00,62.50) startOffset 0 endOffset 7 width 44.83: "Orangen"
+        RenderSVGText {text} at (53,52) size 43x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 43x13
+            chunk 1 text run 1 at (53.00,62.50) startOffset 0 endOffset 7 width 42.34: "Orangen"
         RenderSVGRect {rect} at (40,51) size 119x14 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=66.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,66) size 27x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 27x15
-            chunk 1 text run 1 at (53.00,78.50) startOffset 0 endOffset 5 width 26.26: "\x{C4}pfel"
+        RenderSVGText {text} at (53,68) size 25x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x13
+            chunk 1 text run 1 at (53.00,78.50) startOffset 0 endOffset 5 width 24.80: "\x{C4}pfel"
         RenderSVGRect {rect} at (40,64) size 119x13 [fill={[type=SOLID] [color=#696969] [opacity=0.30]}] [x=51.50] [y=82.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,82) size 47x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 47x15
-            chunk 1 text run 1 at (53.00,94.50) startOffset 0 endOffset 7 width 46.13: "Bananen"
+        RenderSVGText {text} at (53,84) size 44x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x13
+            chunk 1 text run 1 at (53.00,94.50) startOffset 0 endOffset 7 width 43.56: "Bananen"
         RenderSVGRect {rect} at (40,76) size 119x14 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=98.00] [width=151.00] [height=16.00]
-        RenderSVGText {text} at (53,98) size 34x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 34x15
-            chunk 1 text run 1 at (53.00,110.50) startOffset 0 endOffset 6 width 33.30: "Birnen"
+        RenderSVGText {text} at (53,100) size 32x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 32x13
+            chunk 1 text run 1 at (53.00,110.50) startOffset 0 endOffset 6 width 31.45: "Birnen"
       RenderSVGRect {rect} at (38,38) size 122x52 [stroke={[type=SOLID] [color=#696969]}] [x=50.00] [y=50.00] [width=154.00] [height=64.00]

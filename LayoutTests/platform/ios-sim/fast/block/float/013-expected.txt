@@ -5,13 +5,13 @@ layer at (0,0) size 800x8
     RenderBody {BODY} at (8,8) size 784x0
 layer at (8,64) size 800x108
   RenderBlock (positioned) {DIV} at (8,64) size 800x108 [bgcolor=#0000FF]
-    RenderBlock {DIV} at (38,8) size 723x57 [bgcolor=#008000] [border: none (2px solid #888878) none]
+    RenderBlock {DIV} at (38,8) size 724x57 [bgcolor=#008000] [border: none (2px solid #888878) none]
       RenderText {#text} at (0,0) size 187x19
         text run at (0,0) width 187: "some other macromedia logo"
     RenderBlock (floating) {DIV} at (0,65) size 132x52 [bgcolor=#FFFF00]
       RenderText {#text} at (54,16) size 24x19
         text run at (54,16) width 24: "Feh"
-layer at (575,122) size 168x169
+layer at (575,122) size 167x169
   RenderBlock (positioned) {DIV} at (567,58) size 168x169 [bgcolor=#FF0000]
     RenderText {#text} at (0,8) size 168x19
       text run at (0,8) width 168: "this is the pseudorNav div"

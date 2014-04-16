@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (60,10) size 376x350
       RenderSVGContainer {g} at (60,10) size 376x350
-        RenderSVGText {text} at (60,10) size 19x337 contains 1 chunk(s)
+        RenderSVGText {text} at (60,10) size 20x337 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 19x337
             chunk 1 (vertical) text run 1 at (64.42,10.00) startOffset 0 endOffset 1 height 18.76: "T"
             chunk 1 (vertical) text run 2 at (64.42,18.55) startOffset 1 endOffset 2 height 18.76: "e"
@@ -111,7 +111,7 @@ layer at (0,0) size 480x360
             chunk 1 (vertical) text run 33 at (366.01,441.75) startOffset 32 endOffset 33 height 13.40: "\x{305B}"
             chunk 1 (vertical) text run 34 at (366.01,455.15) startOffset 33 endOffset 34 height 13.40: "\x{3093}"
             chunk 1 (vertical) text run 35 at (366.01,468.55) startOffset 34 endOffset 35 height 13.40: "\x{3002}"
-        RenderSVGText {text} at (98,80) size 43x174 contains 1 chunk(s)
+        RenderSVGText {text} at (98,80) size 44x174 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 43x174
             chunk 1 (vertical) text run 1 at (107.23,80.00) startOffset 0 endOffset 1 height 42.88: "x"
             chunk 1 (vertical) text run 2 at (107.23,96.00) startOffset 1 endOffset 2 height 42.88: "t"
@@ -120,7 +120,7 @@ layer at (0,0) size 480x360
             chunk 1 (vertical) text run 5 at (107.23,125.14) startOffset 4 endOffset 5 height 42.88: "\x{6211}"
             chunk 1 (vertical) text run 6 at (107.23,168.02) startOffset 5 endOffset 6 height 42.88: "\x{80FD}"
             chunk 1 (vertical) text run 7 at (107.23,210.89) startOffset 6 endOffset 7 height 42.88: "\x{541E}"
-        RenderSVGText {text} at (255,80) size 49x155 contains 1 chunk(s)
+        RenderSVGText {text} at (255,80) size 50x155 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 49x155
             chunk 1 (vertical) text run 1 at (265.64,80.00) startOffset 0 endOffset 1 height 48.23: "s"
             chunk 1 (vertical) text run 2 at (265.64,98.00) startOffset 1 endOffset 2 height 48.23: "e"

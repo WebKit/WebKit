@@ -1,11 +1,11 @@
-Tests navigating away from a page with accelerated overflow scrolling does not assert.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-pageshow 0
-pageshow 1
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
+CONSOLE MESSAGE: line 31: TypeError: HTMLParagraphElement is not a function (evaluating 'description('Tests navigating away from a page with accelerated overflow scrolling does not assert.')')
+layer at (0,0) size 800x2016
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2016
+  RenderBlock {HTML} at (0,0) size 800x2016
+    RenderBody {BODY} at (8,8) size 784x2000
+      RenderBlock {P} at (0,116) size 784x0
+      RenderBlock {DIV} at (0,116) size 784x0
+layer at (8,8) size 100x100 scrollWidth 200 scrollHeight 200
+  RenderBlock {DIV} at (0,0) size 100x100
+    RenderBlock {DIV} at (0,0) size 200x200

@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (10,40) size 679x229
+  RenderSVGRoot {svg} at (10,47) size 679x222
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGText {text} at (10,40) size 679x100 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 679x100
+    RenderSVGText {text} at (10,47) size 679x88 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 679x88
         chunk 1 text run 1 at (10.00,113.39) startOffset 0 endOffset 13 width 678.71: "CSS font-face"
-    RenderSVGText {text} at (10,153) size 679x100 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 679x100
+    RenderSVGText {text} at (10,160) size 679x89 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 679x88
         chunk 1 text run 1 at (10.00,226.77) startOffset 0 endOffset 13 width 678.71: "SVG font-face"
-    RenderSVGText {text} at (40,249) size 262x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 262x19
+    RenderSVGText {text} at (40,250) size 262x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 262x18
         chunk 1 text run 1 at (40.00,264.57) startOffset 0 endOffset 40 width 261.27: "The fonts used above should be identical"

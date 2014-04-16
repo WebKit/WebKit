@@ -150,11 +150,11 @@ layer at (0,0) size 800x1222
           text run at (0,0) width 63: "start=\"-2\""
       RenderBlock {OL} at (0,1148) size 784x40
         RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-26,0) size 21x19: "-2"
+          RenderListMarker at (-27,0) size 22x19: "-2"
           RenderText {#text} at (0,0) size 82x19
             text run at (0,0) width 82: "Should be -2"
         RenderListItem {LI} at (40,20) size 744x20
-          RenderListMarker at (-26,0) size 21x19: "-1"
+          RenderListMarker at (-27,0) size 22x19: "-1"
           RenderText {#text} at (0,0) size 82x19
             text run at (0,0) width 82: "Should be -1"
       RenderBlock {HR} at (0,1204) size 784x2 [border: (1px inset #000000)]

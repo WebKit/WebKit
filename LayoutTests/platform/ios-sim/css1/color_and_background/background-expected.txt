@@ -1,52 +1,52 @@
-layer at (0,0) size 800x773
+layer at (0,0) size 800x769
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x773
-  RenderBlock {HTML} at (0,0) size 800x773
-    RenderBody {BODY} at (8,8) size 784x757 [bgcolor=#008000]
+layer at (0,0) size 800x769
+  RenderBlock {HTML} at (0,0) size 800x769
+    RenderBody {BODY} at (8,8) size 784x753 [bgcolor=#008000]
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 363x19
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x60
-        RenderText {#text} at (0,0) size 632x60
+      RenderBlock {PRE} at (0,36) size 784x56
+        RenderText {#text} at (0,0) size 632x56
           text run at (0,0) width 632: "BODY {background: green url(../resources/oransqr.gif) repeat-x center top fixed;}"
           text run at (631,0) width 1: " "
-          text run at (0,15) width 554: ".one {background: lime url(../resources/oransqr.gif) repeat-y 100% 0%;}"
-          text run at (553,15) width 1: " "
-          text run at (0,30) width 578: ".two {background: lime url(../resources/oransqr.gif) repeat-y center top;}"
-          text run at (577,30) width 1: " "
-          text run at (0,45) width 578: ".three {background: lime url(../resources/oransqr.gif) repeat-x left top;}"
-          text run at (577,45) width 1: " "
-      RenderBlock {HR} at (0,109) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,127) size 784x60
+          text run at (0,14) width 554: ".one {background: lime url(../resources/oransqr.gif) repeat-y 100% 0%;}"
+          text run at (553,14) width 1: " "
+          text run at (0,28) width 578: ".two {background: lime url(../resources/oransqr.gif) repeat-y center top;}"
+          text run at (577,28) width 1: " "
+          text run at (0,42) width 578: ".three {background: lime url(../resources/oransqr.gif) repeat-x left top;}"
+          text run at (577,42) width 1: " "
+      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,123) size 784x60
         RenderText {#text} at (0,0) size 741x19
           text run at (0,0) width 741: "This document should have a green background with an orange strip running across the entire top of the page, since"
-        RenderInline {CODE} at (0,0) size 63x15
-          RenderText {#text} at (0,24) size 63x15
-            text run at (0,24) width 63: "repeat-x"
+        RenderInline {CODE} at (0,0) size 63x14
+          RenderText {#text} at (0,25) size 63x14
+            text run at (0,25) width 63: "repeat-x"
         RenderText {#text} at (62,20) size 769x39
           text run at (62,20) width 308: " indicates tiling in both directions of the x-axis. "
           text run at (369,20) width 305: "Furthermore, the strip should be fixed in place. "
           text run at (673,20) width 96: "I'll have to add"
           text run at (0,40) width 503: "extra text at the end of this page to make it long enough to scroll conveniently."
-      RenderBlock {P} at (0,203) size 784x60 [bgcolor=#00FF00]
+      RenderBlock {P} at (0,199) size 784x60 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 778x59
           text run at (0,0) width 758: "This paragraph should have a lime background and an orange strip which starts at the top right and runs to the bottom."
           text run at (0,20) width 778: "Therefore, extra text would be in order, so that we can intelligently evaluate the performance of your browser in handling"
           text run at (0,40) width 123: "these declarations. "
           text run at (122,40) width 313: "Hey, I didn't say the page would be pretty, did I?"
-      RenderBlock {P} at (0,279) size 784x60 [bgcolor=#00FF00]
+      RenderBlock {P} at (0,275) size 784x60 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 778x59
           text run at (0,0) width 767: "This paragraph should have a lime background and an orange strip which starts at the center top and runs to the bottom."
           text run at (0,20) width 778: "Therefore, extra text would be in order, so that we can intelligently evaluate the performance of your browser in handling"
           text run at (0,40) width 123: "these declarations. "
           text run at (122,40) width 313: "Hey, I didn't say the page would be pretty, did I?"
-      RenderBlock {P} at (0,355) size 784x60 [bgcolor=#00FF00]
+      RenderBlock {P} at (0,351) size 784x60 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 778x59
           text run at (0,0) width 758: "This paragraph should have a lime background and an orange strip which starts at the top left and runs to the top right."
           text run at (0,20) width 778: "Therefore, extra text would be in order, so that we can intelligently evaluate the performance of your browser in handling"
           text run at (0,40) width 123: "these declarations. "
           text run at (122,40) width 313: "Hey, I didn't say the page would be pretty, did I?"
-      RenderTable {TABLE} at (0,431) size 784x326 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,427) size 784x326 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x324
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -61,9 +61,9 @@ layer at (0,0) size 800x773
               RenderBlock {P} at (4,4) size 762x60
                 RenderText {#text} at (0,0) size 741x19
                   text run at (0,0) width 741: "This document should have a green background with an orange strip running across the entire top of the page, since"
-                RenderInline {CODE} at (0,0) size 63x15
-                  RenderText {#text} at (0,24) size 63x15
-                    text run at (0,24) width 63: "repeat-x"
+                RenderInline {CODE} at (0,0) size 63x14
+                  RenderText {#text} at (0,25) size 63x14
+                    text run at (0,25) width 63: "repeat-x"
                 RenderText {#text} at (62,20) size 742x39
                   text run at (62,20) width 308: " indicates tiling in both directions of the x-axis. "
                   text run at (369,20) width 305: "Furthermore, the strip should be fixed in place. "

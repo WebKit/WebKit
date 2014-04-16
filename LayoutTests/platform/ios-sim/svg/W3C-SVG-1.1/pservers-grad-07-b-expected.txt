@@ -2,18 +2,18 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (10,15) size 430x249 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+    RenderSVGContainer {g} at (10,15) size 430x248 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
       RenderSVGResourceLinearGradient {linearGradient} [id="Gradient"] [gradientUnits=userSpaceOnUse] [start=(10,10)] [end=(440,10)]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
       RenderSVGRect {rect} at (10,15) size 430x90 [fill={[type=LINEAR-GRADIENT] [id="Gradient"]}] [x=10.00] [y=10.00] [width=430.00] [height=60.00]
-      RenderSVGText {text} at (10,67) size 326x29 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 326x29
-          chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 32 width 325.80: "Linear gradient filled rectangle"
+      RenderSVGText {text} at (10,68) size 321x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 321x28
+          chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 32 width 320.55: "Linear gradient filled rectangle"
       RenderSVGRect {rect} at (15,150) size 420x75 [stroke={[type=LINEAR-GRADIENT] [id="Gradient"] [stroke width=20.00]}] [x=25.00] [y=110.00] [width=400.00] [height=30.00]
-      RenderSVGText {text} at (10,147) size 403x29 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 403x29
-          chunk 1 text run 1 at (10.00,170.00) startOffset 0 endOffset 38 width 402.86: "Linear gradient on stroke of rectangle"
+      RenderSVGText {text} at (10,148) size 397x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 397x28
+          chunk 1 text run 1 at (10.00,170.00) startOffset 0 endOffset 38 width 396.36: "Linear gradient on stroke of rectangle"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"

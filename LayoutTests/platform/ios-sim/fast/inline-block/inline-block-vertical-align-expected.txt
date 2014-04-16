@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 27: "One"
         RenderBR {BR} at (26,15) size 1x0
         RenderImage {IMG} at (0,36) size 11x11 [border: (1px dotted #FF0000)]
-        RenderText {#text} at (11,29) size 4x19
-          text run at (11,29) width 4: " "
+        RenderText {#text} at (11,30) size 4x19
+          text run at (11,30) width 4: " "
         RenderBlock {DIV} at (15,20) size 102x42 [border: (1px dotted #FF0000)]
           RenderImage {IMG} at (1,1) size 1000x0
           RenderText {#text} at (17,1) size 68x39

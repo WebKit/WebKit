@@ -10,22 +10,22 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (114,0) size 252x41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(115.00,-20.00)}]
           RenderSVGRect {rect} at (114,0) size 252x41 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
           RenderSVGText {text} at (15,1) size 217x55 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 217x55
+            RenderSVGInlineText {#text} at (0,0) size 217x54
               chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 216.07: "Outer Clip"
         RenderSVGContainer {g} at (0,149) size 76x62 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-175.00,150.00)}]
           RenderSVGRect {rect} at (0,149) size 76x62 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
           RenderSVGText {text} at (15,1) size 217x55 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 217x55
+            RenderSVGInlineText {#text} at (0,0) size 217x54
               chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 216.07: "Outer Clip"
         RenderSVGContainer {g} at (404,149) size 76x62 [transform={m=((1.00,0.00)(0.00,1.00)) t=(405.00,150.00)}]
           RenderSVGRect {rect} at (404,149) size 76x62 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
           RenderSVGText {text} at (15,1) size 217x55 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 217x55
+            RenderSVGInlineText {#text} at (0,0) size 217x54
               chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 216.07: "Outer Clip"
         RenderSVGContainer {g} at (114,329) size 252x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(115.00,330.00)}]
           RenderSVGRect {rect} at (114,329) size 252x31 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
           RenderSVGText {text} at (15,1) size 217x55 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 217x55
+            RenderSVGInlineText {#text} at (0,0) size 217x54
               chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 216.07: "Outer Clip"
       RenderSVGRect {rect} at (112,97) size 256x166 [stroke={[type=SOLID] [color=#006600] [stroke width=5.00]}] [x=115.00] [y=100.00] [width=250.00] [height=160.00]
       RenderSVGViewportContainer {svg} at (64,82) size 352x194

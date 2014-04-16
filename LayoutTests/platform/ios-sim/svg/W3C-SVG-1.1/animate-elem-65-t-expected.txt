@@ -12,39 +12,39 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (77,62) size 280x217 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
       RenderSVGContainer {g} at (77,82) size 143x197 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
         RenderSVGText {text} at (-85,-13) size 85x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 85x17
+          RenderSVGInlineText {#text} at (0,0) size 85x16
             chunk 1 (end anchor) text run 1 at (-84.38,0.00) startOffset 0 endOffset 14 width 84.38: "no min / media"
         RenderSVGText {text} at (-65,12) size 65x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 65x17
+          RenderSVGInlineText {#text} at (0,0) size 65x16
             chunk 1 (end anchor) text run 1 at (-64.16,25.00) startOffset 0 endOffset 11 width 64.16: "invalid min"
         RenderSVGText {text} at (-93,37) size 93x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 93x17
+          RenderSVGInlineText {#text} at (0,0) size 93x16
             chunk 1 (end anchor) text run 1 at (-92.26,50.00) startOffset 0 endOffset 16 width 92.26: "min < active dur"
         RenderSVGText {text} at (-93,62) size 93x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 93x17
+          RenderSVGInlineText {#text} at (0,0) size 93x16
             chunk 1 (end anchor) text run 1 at (-92.26,75.00) startOffset 0 endOffset 16 width 92.26: "min > active dur"
         RenderSVGText {text} at (-94,87) size 94x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 94x17
+          RenderSVGInlineText {#text} at (0,0) size 94x16
             chunk 1 (end anchor) text run 1 at (-93.03,100.00) startOffset 0 endOffset 16 width 93.03: "min < repeat dur"
         RenderSVGText {text} at (-143,112) size 143x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 143x17
+          RenderSVGInlineText {#text} at (0,0) size 143x16
             chunk 1 (end anchor) text run 1 at (-142.01,125.00) startOffset 0 endOffset 24 width 142.01: "min > repeat dur, remove"
         RenderSVGText {text} at (-135,167) size 135x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 135x17
+          RenderSVGInlineText {#text} at (0,0) size 135x16
             chunk 1 (end anchor) text run 1 at (-134.21,180.00) startOffset 0 endOffset 24 width 134.21: "min > repeat dur, freeze"
       RenderSVGContainer {g} at (234,62) size 111x197 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,25.00)}]
         RenderSVGText {text} at (-12,-13) size 24x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 24x17
+          RenderSVGInlineText {#text} at (0,0) size 24x16
             chunk 1 (middle anchor) text run 1 at (-11.92,0.00) startOffset 0 endOffset 4 width 23.84: "> 5s"
         RenderSVGText {text} at (65,-13) size 30x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 30x17
+          RenderSVGInlineText {#text} at (0,0) size 30x16
             chunk 1 (middle anchor) text run 1 at (65.22,0.00) startOffset 0 endOffset 5 width 29.56: "0s-5s"
         RenderSVGContainer {g} at (234,242) size 108x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
           RenderSVGText {text} at (-16,-13) size 32x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 32x17
+            RenderSVGInlineText {#text} at (0,0) size 32x16
               chunk 1 (middle anchor) text run 1 at (-15.54,0.00) startOffset 0 endOffset 5 width 31.09: "never"
           RenderSVGText {text} at (68,-13) size 24x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 24x17
+            RenderSVGInlineText {#text} at (0,0) size 24x16
               chunk 1 (middle anchor) text run 1 at (68.08,0.00) startOffset 0 endOffset 4 width 23.84: "> 0s"
       RenderSVGContainer {g} at (243,83) size 114x194 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,40.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0

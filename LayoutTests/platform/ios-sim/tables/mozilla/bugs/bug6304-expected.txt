@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,0) size 784x20
           RenderText {#text} at (224,0) size 336x19
             text run at (224,0) width 336: "Tables I, II, III, IV (cellpadding=0 cellspacing=5)"
-        RenderTable {TABLE} at (199,36) size 385x180 [bgcolor=#FFCC00] [border: (1px outset #808080)]
+        RenderTable {TABLE} at (199,36) size 386x180 [bgcolor=#FFCC00] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 383x178
             RenderTableRow {TR} at (0,2) size 383x174
               RenderTableCell {TD} at (2,2) size 100x174 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

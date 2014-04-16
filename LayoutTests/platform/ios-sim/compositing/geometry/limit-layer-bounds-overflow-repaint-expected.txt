@@ -5,22 +5,7 @@ layer at (0,0) size 800x243
     RenderBody {BODY} at (8,8) size 784x227
       RenderText {#text} at (0,0) size 0x0
 layer at (20,20) size 100x100
-  RenderEmbeddedObject {VIDEO} at (20,20) size 100x100
-layer at (20,20) size 100x100
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 100x100
-layer at (20,104) size 100x16
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,84) size 100x16
-    RenderButton {INPUT} at (0,0) size 22x16
-    RenderDeprecatedFlexibleBox {DIV} at (22,0) size 12x16
-      RenderSlider {INPUT} at (0,0) size 12x16
-        RenderFlexibleBox {DIV} at (2,0) size 8x16
-          RenderBlock {DIV} at (0,0) size 0x16
-            RenderBlock {DIV} at (0,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
-          RenderBlock {DIV} at (0,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
-    RenderButton {INPUT} at (34,0) size 22x16
-    RenderButton {INPUT} at (56,0) size 22x16
-    RenderButton {INPUT} at (78,0) size 22x16
-    RenderBlock {DIV} at (100,8) size 0x0
+  RenderBlock (positioned) {DIV} at (20,20) size 100x100
 layer at (18,18) size 202x202 clip at (19,19) size 200x200 scrollY 500 scrollHeight 1000
   RenderBlock (relative positioned) {DIV} at (10,10) size 202x202 [border: (1px solid #000000)]
 layer at (19,-481) size 200x1000 backgroundClip at (19,19) size 200x200 clip at (19,19) size 200x200 outlineClip at (19,19) size 200x200

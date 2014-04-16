@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x196
-  RenderBlock {HTML} at (0,0) size 800x196
-    RenderBody {BODY} at (8,8) size 784x180
+layer at (0,0) size 800x197
+  RenderBlock {HTML} at (0,0) size 800x197
+    RenderBody {BODY} at (8,8) size 784x181
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 110x19
           text run at (0,0) width 110: "Testcase for bug "
@@ -11,10 +11,10 @@ layer at (0,0) size 800x196
             text run at (109,0) width 33: "4874"
         RenderText {#text} at (141,0) size 429x19
           text run at (141,0) width 429: " - Table with absolute bottom positioning is positioned incorrectly."
-      RenderBlock {H1} at (0,41) size 784x38
+      RenderBlock {H1} at (0,41) size 784x39
         RenderText {#text} at (0,1) size 170x36
           text run at (0,1) width 170: "Look Down!"
-      RenderBlock {P} at (0,100) size 784x80
+      RenderBlock {P} at (0,100) size 784x81
         RenderText {#text} at (0,0) size 783x79
           text run at (0,0) width 512: "At the bottom of the window you should see the word \"Paragraph\" followed by "
           text run at (511,0) width 272: "three boxes containing text. The entire red"

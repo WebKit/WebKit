@@ -8,14 +8,14 @@ layer at (0,0) size 480x360
       RenderSVGRect {rect} at (117,50) size 259x40 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=430.00] [height=80.00]
         [clipPath="clip1"] RenderSVGResourceClipper {clipPath} at (117.50,50) size 258x80
       RenderSVGText {text} at (20,102) size 452x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 452x35
+        RenderSVGInlineText {#text} at (0,0) size 452x34
           chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 31 width 451.13: "clipPathUnits=objectBoundingBox"
       RenderSVGResourceClipper {clipPath} [id="clip2"] [clipPathUnits=userSpaceOnUse]
         RenderSVGRect {rect} at (60,60) size 80x80 [fill={[type=SOLID] [color=#000000]}] [x=60.00] [y=60.00] [width=80.00] [height=80.00]
       RenderSVGRect {rect} at (184,157) size 86x86 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(100.00,200.00)}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
         [clipPath="clip2"] RenderSVGResourceClipper {clipPath} at (60,60) size 80x80
       RenderSVGText {text} at (20,252) size 430x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 430x35
+        RenderSVGInlineText {#text} at (0,0) size 430x34
           chunk 1 text run 1 at (20.00,280.00) startOffset 0 endOffset 28 width 429.39: "clipPathUnits=userSpaceOnUse"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45

@@ -6,19 +6,19 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 373x19
           text run at (0,0) width 373: "300xp height value set on THEAD, TBODY, and TFOOT"
-      RenderTable {TABLE} at (0,36) size 250x86 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,36) size 250x82 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 248x28
           RenderTableRow {TR} at (0,2) size 248x24
             RenderTableCell {TH} at (2,2) size 244x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 240x19
                 text run at (2,2) width 240: "This THEAD should be 300px high"
-        RenderTableSection {TFOOT} at (1,57) size 248x28
-          RenderTableRow {TR} at (0,2) size 248x24
-            RenderTableCell {TD} at (2,2) size 244x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TFOOT} at (1,55) size 248x26
+          RenderTableRow {TR} at (0,0) size 248x24
+            RenderTableCell {TD} at (2,0) size 244x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 227x19
                 text run at (2,2) width 227: "This TFOOT should be 300px high"
-        RenderTableSection {TBODY} at (1,29) size 248x28
-          RenderTableRow {TR} at (0,2) size 248x24
-            RenderTableCell {TD} at (2,2) size 244x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (1,29) size 248x26
+          RenderTableRow {TR} at (0,0) size 248x24
+            RenderTableCell {TD} at (2,0) size 244x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 235x19
                 text run at (2,2) width 235: "This TBODY should be 300px hight"

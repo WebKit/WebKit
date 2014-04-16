@@ -37,9 +37,9 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (12,3) size 37x14
             RenderText at (0,0) size 37x14
               text run at (0,0) width 37: "expand"
-        RenderText {#text} at (65,1) size 4x19
-          text run at (65,1) width 4: " "
-        RenderButton {INPUT} at (71,2) size 50x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (64,1) size 5x19
+          text run at (64,1) width 5: " "
+        RenderButton {INPUT} at (70,2) size 50x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 26x14
             RenderText at (0,0) size 26x14
               text run at (0,0) width 26: "sizes"

@@ -48,9 +48,8 @@ PASS element.labels is not null
 Labelable: output [object HTMLOutputElement]
 PASS element.labels.length is 1
 
-Unsupported: progress [object HTMLUnknownElement]
-PASS element.labels is undefined.
-PASS element.labels is not null
+Labelable: progress [object HTMLProgressElement]
+PASS element.labels.length is 1
 
 Labelable: select [object HTMLSelectElement]
 PASS element.labels.length is 1

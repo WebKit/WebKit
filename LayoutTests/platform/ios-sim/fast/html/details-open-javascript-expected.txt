@@ -5,16 +5,16 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x45
         RenderBlock {SUMMARY} at (0,0) size 784x20
-          RenderDetailsMarker {DIV} at (0,5) size 10x10: down
-          RenderText {#text} at (16,0) size 50x19
-            text run at (16,0) width 50: "details1"
+          RenderDetailsMarker {DIV} at (0,5) size 11x11: down
+          RenderText {#text} at (16,0) size 51x19
+            text run at (16,0) width 51: "details1"
         RenderBlock (anonymous) at (0,20) size 784x25
-          RenderTextControl {INPUT} at (2,2) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderTextControl {INPUT} at (2,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DETAILS} at (0,45) size 784x20
         RenderBlock {SUMMARY} at (0,0) size 784x20
-          RenderDetailsMarker {DIV} at (0,5) size 10x10: right
-          RenderText {#text} at (16,0) size 50x19
-            text run at (16,0) width 50: "details2"
-layer at (16,33) size 123x14
-  RenderBlock {DIV} at (6,3) size 123x14
+          RenderDetailsMarker {DIV} at (0,5) size 11x11: right
+          RenderText {#text} at (16,0) size 51x19
+            text run at (16,0) width 51: "details2"
+layer at (17,33) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15

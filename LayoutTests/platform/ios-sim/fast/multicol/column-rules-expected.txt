@@ -5,7 +5,7 @@ layer at (0,0) size 800x627
     RenderBody {BODY} at (8,8) size 784x611
 layer at (8,8) size 784x611
   RenderBlock {DIV} at (0,0) size 784x611 [border: (5px solid #000000)]
-    RenderText {#text} at (15,5) size 240x1761
+    RenderText {#text} at (15,5) size 241x1761
       text run at (15,5) width 182: "Lorem ipsum dolor sit amet,"
       text run at (15,25) width 218: "consectetuer adipiscing elit. Nulla"
       text run at (15,45) width 184: "varius enim ac mi. Curabitur"
@@ -40,8 +40,8 @@ layer at (8,8) size 784x611
       text run at (15,626) width 199: "quam. Nulla a purus. Phasellus"
       text run at (15,646) width 182: "semper semper lectus. Nulla"
       text run at (15,666) width 218: "porttitor, dolor dictum scelerisque"
-      text run at (15,686) width 223: "luctus, velit ipsum lobortis mauris,"
-      text run at (15,706) width 240: "ac pretium enim nunc vel risus. Proin"
+      text run at (15,686) width 241: "luctus, velit ipsum lobortis mauris, ac"
+      text run at (15,706) width 222: "pretium enim nunc vel risus. Proin"
       text run at (15,726) width 208: "gravida mi ut sem cursus mattis."
       text run at (15,746) width 189: "Fusce laoreet, nisi quis luctus"
       text run at (15,766) width 224: "volutpat, arcu pede tincidunt enim,"

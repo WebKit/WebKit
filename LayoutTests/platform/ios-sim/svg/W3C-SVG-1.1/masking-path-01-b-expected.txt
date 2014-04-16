@@ -12,17 +12,17 @@ layer at (0,0) size 480x360
       RenderSVGRect {rect} at (200,17) size 60x66 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=20.00] [y=20.00] [width=440.00] [height=60.00]
         [clipPath="clip1"] RenderSVGResourceClipper {clipPath} at (200,10) size 60x100
       RenderSVGText {text} at (20,102) size 321x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 321x35
+        RenderSVGInlineText {#text} at (0,0) size 321x34
           chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 23 width 320.23: "Rectangle being clipped"
       RenderSVGContainer {g} at (112,152) size 208x98
         [clipPath="clip2"] RenderSVGResourceClipper {clipPath} at (90,150) size 230x100
         RenderSVGRect {rect} at (112,187) size 231x46 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [x=115.00] [y=190.00] [width=225.00] [height=40.00]
         RenderSVGRect {rect} at (112,237) size 231x46 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=115.00] [y=240.00] [width=225.00] [height=40.00]
         RenderSVGText {text} at (115,152) size 326x35 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 326x35
+          RenderSVGInlineText {#text} at (0,0) size 326x34
             chunk 1 text run 1 at (115.00,180.00) startOffset 0 endOffset 26 width 325.22: "Line of text to be clipped"
       RenderSVGText {text} at (20,252) size 269x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 269x35
+        RenderSVGInlineText {#text} at (0,0) size 269x34
           chunk 1 text run 1 at (20.00,280.00) startOffset 0 endOffset 19 width 268.52: "Group being clipped"
       RenderSVGContainer {g} at (89,149) size 232x102
         RenderSVGRect {rect} at (89,149) size 177x102 [stroke={[type=SOLID] [color=#999999] [stroke width=2.00]}] [x=90.00] [y=150.00] [width=175.00] [height=100.00]

@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x556
-  RenderBlock {HTML} at (0,0) size 800x556
-    RenderBody {BODY} at (8,21) size 784x119
+layer at (0,0) size 800x557
+  RenderBlock {HTML} at (0,0) size 800x557
+    RenderBody {BODY} at (8,21) size 784x120
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 389x36
           text run at (0,1) width 389: "Image optimisation in layers"
-      RenderBlock {P} at (0,59) size 784x60
+      RenderBlock {P} at (0,59) size 784x61
         RenderText {#text} at (0,0) size 754x59
           text run at (0,0) width 610: "This test exercises direct compositing of images with hardware acceleration. The visual results "
           text run at (609,0) width 36: "using"
@@ -17,53 +17,53 @@ layer at (0,0) size 800x556
           RenderText {#text} at (450,40) size 311x19
             text run at (450,40) width 311: "https://bugs.webkit.org/show_bug.cgi?id=23361"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (floating) {DIV} at (0,135) size 260x200
+      RenderBlock (floating) {DIV} at (0,135) size 260x201
         RenderText {#text} at (150,0) size 108x79
           text run at (150,0) width 108: "Basic image - no"
           text run at (150,20) width 85: "style - can be"
           text run at (150,40) width 49: "directly"
           text run at (150,60) width 74: "composited"
-      RenderBlock (floating) {DIV} at (260,135) size 260x200
+      RenderBlock (floating) {DIV} at (260,135) size 260x201
         RenderText {#text} at (160,0) size 78x99
           text run at (160,0) width 56: "5px blue"
           text run at (160,20) width 78: "border - can"
           text run at (160,40) width 52: "NOT be"
           text run at (160,60) width 49: "directly"
           text run at (160,80) width 74: "composited"
-      RenderBlock (floating) {DIV} at (520,135) size 260x200
+      RenderBlock (floating) {DIV} at (520,135) size 260x201
         RenderText {#text} at (160,0) size 81x79
           text run at (160,0) width 81: "margin - can"
           text run at (160,20) width 52: "NOT be"
           text run at (160,40) width 49: "directly"
           text run at (160,60) width 74: "composited"
-      RenderBlock (floating) {DIV} at (0,335) size 260x200
+      RenderBlock (floating) {DIV} at (0,335) size 260x201
         RenderText {#text} at (150,0) size 95x79
           text run at (150,0) width 32: "solid"
           text run at (150,20) width 85: "background -"
           text run at (150,40) width 95: "can be directly"
           text run at (150,60) width 74: "composited"
-      RenderBlock (floating) {DIV} at (260,335) size 260x200
+      RenderBlock (floating) {DIV} at (260,335) size 260x201
         RenderText {#text} at (150,0) size 105x79
           text run at (150,0) width 76: "background"
           text run at (150,20) width 75: "image - can"
           text run at (150,40) width 105: "NOT be directly"
           text run at (150,60) width 74: "composited"
-      RenderBlock (floating) {DIV} at (520,335) size 260x200
+      RenderBlock (floating) {DIV} at (520,335) size 260x201
         RenderText {#text} at (150,0) size 85x99
           text run at (150,0) width 69: "rotated but"
           text run at (150,20) width 83: "otherwise no"
           text run at (150,40) width 85: "style - can be"
           text run at (150,60) width 49: "directly"
           text run at (150,80) width 74: "composited"
-layer at (8,156) size 150x150
+layer at (8,157) size 150x150
   RenderImage {IMG} at (0,0) size 150x150
-layer at (268,156) size 160x160
+layer at (268,157) size 160x160
   RenderImage {IMG} at (0,0) size 160x160 [border: (5px solid #0000FF)]
-layer at (533,161) size 150x150
+layer at (533,162) size 150x150
   RenderImage {IMG} at (5,5) size 150x150
-layer at (8,356) size 150x150
+layer at (8,357) size 150x150
   RenderImage {IMG} at (0,0) size 150x150 [bgcolor=#808080]
-layer at (268,356) size 150x150
+layer at (268,357) size 150x150
   RenderImage {IMG} at (0,0) size 150x150 [bgcolor=#FFA500]
-layer at (528,356) size 150x150
+layer at (528,357) size 150x150
   RenderImage {IMG} at (0,0) size 150x150

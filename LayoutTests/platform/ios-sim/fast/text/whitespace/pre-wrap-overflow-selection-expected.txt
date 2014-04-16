@@ -19,31 +19,31 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 707x19
           text run at (0,0) width 707: "Both boxes should not have scroll bars. The selection should not spill out of the blue box to the right of \x{201C}text\x{201D}."
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {HR} at (0,203) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {PRE} at (0,218) size 108x83 [border: (4px solid #0000FF)]
-        RenderText {#text} at (4,4) size 100x75
+      RenderBlock {HR} at (0,198) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {PRE} at (0,213) size 108x78 [border: (4px solid #0000FF)]
+        RenderText {#text} at (4,4) size 100x70
           text run at (4,4) width 86: "This   text"
           text run at (89,4) width 15: "     "
-          text run at (4,19) width 71: "will wrap"
-          text run at (74,19) width 1: " "
-          text run at (4,34) width 71: "and   fit"
-          text run at (74,34) width 24: "   "
-          text run at (4,49) width 79: "within the"
-          text run at (82,49) width 1: " "
-          text run at (4,64) width 32: "box."
-          text run at (35,64) width 1: " "
-layer at (8,115) size 108x83 clip at (12,119) size 100x75
-  RenderBlock {PRE} at (0,107) size 108x83 [border: (4px solid #A52A2A)]
-    RenderText {#text} at (4,4) size 100x75
+          text run at (4,18) width 71: "will wrap"
+          text run at (74,18) width 1: " "
+          text run at (4,32) width 71: "and   fit"
+          text run at (74,32) width 24: "   "
+          text run at (4,46) width 79: "within the"
+          text run at (82,46) width 1: " "
+          text run at (4,60) width 32: "box."
+          text run at (35,60) width 1: " "
+layer at (8,115) size 108x78 clip at (12,119) size 100x70
+  RenderBlock {PRE} at (0,107) size 108x78 [border: (4px solid #A52A2A)]
+    RenderText {#text} at (4,4) size 100x70
       text run at (4,4) width 86: "This   text"
       text run at (89,4) width 15: "     "
-      text run at (4,19) width 71: "will wrap"
-      text run at (74,19) width 1: " "
-      text run at (4,34) width 71: "and   fit"
-      text run at (74,34) width 24: "   "
-      text run at (4,49) width 79: "within the"
-      text run at (82,49) width 1: " "
-      text run at (4,64) width 32: "box."
-      text run at (35,64) width 1: " "
+      text run at (4,18) width 71: "will wrap"
+      text run at (74,18) width 1: " "
+      text run at (4,32) width 71: "and   fit"
+      text run at (74,32) width 24: "   "
+      text run at (4,46) width 79: "within the"
+      text run at (82,46) width 1: " "
+      text run at (4,60) width 32: "box."
+      text run at (35,60) width 1: " "
 selection start: position 7 of child 0 {#text} of child 7 {PRE} of body
 selection end:   position 15 of child 0 {#text} of child 11 {PRE} of body

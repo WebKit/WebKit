@@ -1,0 +1,7 @@
+
+FAIL CSS Test: @viewport cascading - !important declaration wins assert_equals: expected 300 but got 800(stack: assert@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:2168:73
+assert_equals@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:705:15
+file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/opera/cascading-002.xhtml:69:22
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+onload@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/opera/cascading-002.xhtml:68:14)
+

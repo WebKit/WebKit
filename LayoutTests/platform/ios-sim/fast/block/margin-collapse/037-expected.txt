@@ -4,8 +4,8 @@ layer at (0,0) size 800x176
   RenderBlock {HTML} at (0,0) size 800x176
     RenderBody {BODY} at (8,80) size 784x88
       RenderBlock {DIV} at (0,0) size 784x16 [color=#FF0000]
-        RenderText {#text} at (0,0) size 80x17
-          text run at (0,0) width 80: "XXXXX"
+        RenderText {#text} at (0,-1) size 80x17
+          text run at (0,-1) width 80: "XXXXX"
       RenderBlock {P} at (0,32) size 784x20
         RenderText {#text} at (0,0) size 194x19
           text run at (0,0) width 194: "There should be no red above."
@@ -16,5 +16,5 @@ layer at (0,0) size 800x176
         RenderText {#text} at (0,0) size 0x0
 layer at (8,80) size 80x16
   RenderBlock (positioned) {DIV} at (0,0) size 80x16 [color=#008000]
-    RenderText {#text} at (0,0) size 80x17
-      text run at (0,0) width 80: "XXXXX"
+    RenderText {#text} at (0,-1) size 80x17
+      text run at (0,-1) width 80: "XXXXX"

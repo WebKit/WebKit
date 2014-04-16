@@ -13,17 +13,17 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 365x19
           text run at (0,0) width 365: "Buttons should appear next to each other in a single row:"
-      RenderTable {TABLE} at (0,76) size 204x30
-        RenderTableSection {TBODY} at (0,0) size 204x30
-          RenderTableRow {TR} at (0,2) size 204x26
-            RenderTableCell {TD} at (2,2) size 200x26 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,76) size 203x30
+        RenderTableSection {TBODY} at (0,0) size 203x30
+          RenderTableRow {TR} at (0,2) size 203x26
+            RenderTableCell {TD} at (2,2) size 199x26 [r=0 c=0 rs=1 cs=1]
               RenderButton {BUTTON} at (3,3) size 83x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (12,3) size 59x14
                   RenderText {#text} at (0,0) size 59x14
                     text run at (0,0) width 59: "Search Mail"
-              RenderText {#text} at (88,2) size 4x19
-                text run at (88,2) width 4: " "
-              RenderButton {BUTTON} at (94,3) size 103x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderText {#text} at (87,2) size 5x19
+                text run at (87,2) width 5: " "
+              RenderButton {BUTTON} at (93,3) size 103x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (12,3) size 79x14
                   RenderText {#text} at (0,0) size 79x14
                     text run at (0,0) width 79: "Search the Web"
@@ -40,8 +40,8 @@ layer at (0,0) size 800x600
         RenderButton {BUTTON} at (2,2) size 76x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 52x14
             RenderText {#text} at (0,0) size 52x14
-              text run at (0,0) width 22: "test "
-              text run at (21,0) width 31: "button"
+              text run at (0,0) width 21: "test "
+              text run at (20,0) width 32: "button"
       RenderBlock {DIV} at (0,174) size 784x20
         RenderText {#text} at (0,0) size 353x19
           text run at (0,0) width 353: "Buttons should look identical (ignore vertical spacing):"

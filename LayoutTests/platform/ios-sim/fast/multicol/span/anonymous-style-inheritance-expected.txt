@@ -1,16 +1,16 @@
-layer at (0,0) size 843x600
+layer at (0,0) size 844x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x514
-  RenderBlock {HTML} at (0,0) size 800x514
-    RenderBody {BODY} at (8,17) size 784x480
-layer at (8,17) size 835x480
-  RenderBlock {DIV} at (0,0) size 835x480 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,5) size 825x74
-      RenderBlock {H2} at (0,21) size 825x32 [bgcolor=#EEEEEE]
+layer at (0,0) size 800x518
+  RenderBlock {HTML} at (0,0) size 800x518
+    RenderBody {BODY} at (8,17) size 784x484
+layer at (8,18) size 836x483
+  RenderBlock {DIV} at (0,0) size 836x483 [border: (5.50px solid #800000)]
+    RenderBlock (anonymous multi-column span) at (5,5) size 826x77
+      RenderBlock {H2} at (0,21) size 825x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,1) size 721x30
           text run at (0,1) width 721: "This is a spanning element at the beginning of the columns block."
-layer at (13,96) size 825x396
-  RenderBlock (anonymous multi-column) at (5,79) size 825x396
+layer at (14,99) size 825x396
+  RenderBlock (anonymous multi-column) at (5,81) size 826x397
     RenderText {#text} at (0,0) size 403x791
       text run at (0,0) width 378: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
       text run at (0,22) width 369: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"

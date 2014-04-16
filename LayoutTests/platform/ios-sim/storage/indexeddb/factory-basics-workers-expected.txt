@@ -1,0 +1,29 @@
+[Worker] Test the basics of IndexedDB's IDBFactory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/factory-basics.js
+[Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+[Worker] 
+FAIL [Worker] typeof indexedDB.open should be function. Threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+FAIL [Worker] typeof indexedDB.cmp should be function. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL [Worker] typeof indexedDB.deleteDatabase should be function. Threw exception TypeError: null is not an object (evaluating 'indexedDB.deleteDatabase')
+FAIL [Worker] typeof indexedDB.webkitGetDatabaseNames should be function. Threw exception TypeError: null is not an object (evaluating 'indexedDB.webkitGetDatabaseNames')
+FAIL [Worker] typeof indexedDB.getDatabaseNames should be undefined. Threw exception TypeError: null is not an object (evaluating 'indexedDB.getDatabaseNames')
+[Worker] request = indexedDB.webkitGetDatabaseNames()
+FAIL [Worker] request = indexedDB.webkitGetDatabaseNames() threw exception TypeError: null is not an object (evaluating 'indexedDB.webkitGetDatabaseNames')
+FAIL [Worker] request.source should be null. Threw exception ReferenceError: Can't find variable: request
+FAIL [Worker] Unexpected error: ReferenceError: Can't find variable: request
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Got error from worker: ReferenceError: Can't find variable: request
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FAIL Unexpected error: ReferenceError: Can't find variable: request
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

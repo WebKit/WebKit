@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (325,58) size 1x0
         RenderTable {TABLE} at (0,66) size 0x0
 layer at (98,52) size 233x20
-  RenderFileUploadControl {INPUT} at (90,44) size 233x20 "no file selected"
+  RenderFileUploadControl {INPUT} at (90,44) size 234x20 "no file selected"
 layer at (98,52) size 83x20
   RenderButton {INPUT} at (0,0) size 83x20 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
     RenderBlock (anonymous) at (12,3) size 59x14

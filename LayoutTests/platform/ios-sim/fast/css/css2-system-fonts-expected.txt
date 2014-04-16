@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 265x36
           text run at (0,1) width 265: "CSS2 System Fonts"
-      RenderBlock {P} at (0,59) size 784x40
+      RenderBlock {P} at (0,59) size 784x41
         RenderText {#text} at (0,0) size 395x19
           text run at (0,0) width 395: "The following should appear with the fonts specified, per the "
         RenderInline {A} at (0,0) size 76x19 [color=#0000EE]
@@ -15,33 +15,32 @@ layer at (0,0) size 800x600
         RenderText {#text} at (469,0) size 779x39
           text run at (469,0) width 310: ". If they appear in a monospace font, the test has"
           text run at (0,20) width 41: "failed."
-      RenderBlock {UL} at (0,115) size 784x105
-        RenderListItem {LI} at (40,0) size 744x15
-          RenderListMarker at (-15,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 398x15
-            text run at (0,0) width 398: "Caption (on Mac will be Lucida Grande 13.0 Regular)"
-        RenderListItem {LI} at (40,15) size 744x30
-          RenderListMarker at (-15,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 710x30
-            text run at (0,0) width 710: "Icon (on Mac will be Lucida Grande 13.0 Regular for now, not sure how to get this info from"
-            text run at (0,15) width 55: "Finder)"
-        RenderListItem {LI} at (40,45) size 744x15
-          RenderListMarker at (-15,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 375x15
-            text run at (0,0) width 375: "Menu (on Mac will be Lucida Grande 13.0 Regular)"
-        RenderListItem {LI} at (40,60) size 744x15
-          RenderListMarker at (-15,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 430x15
-            text run at (0,0) width 430: "Message-Box (on Mac will be Lucida Grande 13.0 Regular)"
-        RenderListItem {LI} at (40,75) size 744x15
-          RenderListMarker at (-15,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 445x15
-            text run at (0,0) width 445: "Small-Caption (on Mac will be Lucida Grande 11.0 Regular)"
-        RenderListItem {LI} at (40,90) size 744x15
-          RenderListMarker at (-15,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 422x15
-            text run at (0,0) width 422: "Status-Bar (on Mac will be Lucida Grande 10.0 Regular)"
-      RenderBlock {P} at (0,236) size 784x20
+      RenderBlock {UL} at (0,115) size 784x97
+        RenderListItem {LI} at (40,0) size 744x16
+          RenderListMarker at (-16,0) size 6x15: bullet
+          RenderText {#text} at (0,0) size 283x15
+            text run at (0,0) width 283: "Caption (on Mac will be Lucida Grande 13.0 Regular)"
+        RenderListItem {LI} at (40,16) size 744x16
+          RenderListMarker at (-16,0) size 6x15: bullet
+          RenderText {#text} at (0,0) size 527x15
+            text run at (0,0) width 527: "Icon (on Mac will be Lucida Grande 13.0 Regular for now, not sure how to get this info from Finder)"
+        RenderListItem {LI} at (40,32) size 744x16
+          RenderListMarker at (-16,0) size 6x15: bullet
+          RenderText {#text} at (0,0) size 272x15
+            text run at (0,0) width 272: "Menu (on Mac will be Lucida Grande 13.0 Regular)"
+        RenderListItem {LI} at (40,48) size 744x16
+          RenderListMarker at (-16,0) size 6x15: bullet
+          RenderText {#text} at (0,0) size 313x15
+            text run at (0,0) width 313: "Message-Box (on Mac will be Lucida Grande 13.0 Regular)"
+        RenderListItem {LI} at (40,64) size 744x16
+          RenderListMarker at (-16,0) size 6x15: bullet
+          RenderText {#text} at (0,0) size 318x15
+            text run at (0,0) width 318: "Small-Caption (on Mac will be Lucida Grande 11.0 Regular)"
+        RenderListItem {LI} at (40,80) size 744x16
+          RenderListMarker at (-16,0) size 6x15: bullet
+          RenderText {#text} at (0,0) size 297x15
+            text run at (0,0) width 297: "Status-Bar (on Mac will be Lucida Grande 10.0 Regular)"
+      RenderBlock {P} at (0,227) size 784x21
         RenderInline {A} at (0,0) size 186x19 [color=#0000EE]
           RenderText {#text} at (0,0) size 186x19
             text run at (0,0) width 186: "\x{AB} Return to Safari Bugs page"

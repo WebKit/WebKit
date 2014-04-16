@@ -1,15 +1,15 @@
-layer at (0,0) size 4485x600
+layer at (0,0) size 4486x600
   RenderView at (0,0) size 800x600
-layer at (-3685,0) size 4485x600 backgroundClip at (0,0) size 4485x600 clip at (0,0) size 4485x600 outlineClip at (0,0) size 4485x600
-  RenderBlock {HTML} at (0,0) size 4485x600
-    RenderBody {BODY} at (60,48) size 4365x504
+layer at (-3686,0) size 4486x600 backgroundClip at (0,0) size 4486x600 clip at (0,0) size 4486x600 outlineClip at (0,0) size 4486x600
+  RenderBlock {HTML} at (0,0) size 4487x600
+    RenderBody {BODY} at (60,48) size 4367x504
       RenderBlock {H1} at (0,0) size 48x504
         RenderText {#text} at (6,0) size 36x64
           text run at (6,0) width 64: "\x{8349}\x{6795}"
-      RenderBlock {H2} at (69,0) size 36x504
+      RenderBlock {H2} at (69,0) size 37x504
         RenderText {#text} at (4,0) size 28x96
           text run at (4,0) width 96: "\x{590F}\x{76EE}\x{6F31}\x{77F3}"
-      RenderBlock {DIV} at (124,0) size 4241x504
+      RenderBlock {DIV} at (125,0) size 4242x504
         RenderBlock (anonymous) at (0,0) size 2400x504
           RenderBR {BR} at (0,0) size 19x0
           RenderBR {BR} at (20,0) size 19x0
@@ -2904,4 +2904,4 @@ layer at (-3685,0) size 4485x600 backgroundClip at (0,0) size 4485x600 clip at (
           RenderText {#text} at (1721,32) size 19x416
             text run at (1721,32) width 416: "\x{306B}\x{3001}\x{3059}\x{3079}\x{3066}\x{3092}\x{5FD8}\x{5374}\x{3057}\x{3066}\x{3050}\x{3063}\x{3059}\x{308A}\x{5BDD}\x{8FBC}\x{3080}\x{3088}\x{3046}\x{306A}\x{529F}\x{5FB3}\x{3067}\x{3042}\x{308B}\x{3002}"
           RenderBR {BR} at (1721,448) size 19x0
-scrolled to -3685,0
+scrolled to -3686,0

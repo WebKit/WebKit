@@ -1,8 +1,8 @@
-layer at (0,0) size 800x662
+layer at (0,0) size 800x665
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x662
-  RenderBlock {HTML} at (0,0) size 800x662
-    RenderBody {BODY} at (8,21) size 784x623
+layer at (0,0) size 800x665
+  RenderBlock {HTML} at (0,0) size 800x666
+    RenderBody {BODY} at (8,21) size 784x626
       RenderBlock {H1} at (0,0) size 784x76
         RenderText {#text} at (0,1) size 542x36
           text run at (0,1) width 542: "Margins and block formating contexts ("
@@ -12,7 +12,7 @@ layer at (0,0) size 800x662
             text run at (0,39) width 255: "from Alan Gresley"
         RenderText {#text} at (254,39) size 11x36
           text run at (254,39) width 11: ")"
-      RenderBlock {H3} at (0,97) size 784x69
+      RenderBlock {H3} at (0,97) size 784x70
         RenderText {#text} at (0,0) size 697x22
           text run at (0,0) width 697: "The orange stripe has 'overflow: auto', 'margin-left: 100px' and 'margin-right: 100px'"
         RenderBR {BR} at (696,0) size 1x22
@@ -21,39 +21,39 @@ layer at (0,0) size 800x662
         RenderBR {BR} at (658,23) size 1x22
         RenderText {#text} at (0,46) size 401x22
           text run at (0,46) width 401: "The wrapping container has a solid silver border."
-      RenderBlock {DIV} at (16,184) size 650x30 [border: (5px solid #C0C0C0)]
+      RenderBlock {DIV} at (16,185) size 650x31 [border: (5px solid #C0C0C0)]
         RenderBlock (floating) {DIV} at (5,5) size 0x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "floatL"
-      RenderBlock {DIV} at (16,230) size 650x30 [border: (5px solid #C0C0C0)]
+      RenderBlock {DIV} at (16,231) size 650x31 [border: (5px solid #C0C0C0)]
         RenderBlock (floating) {DIV} at (5,5) size 50x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "floatL"
-      RenderBlock {DIV} at (16,276) size 650x30 [border: (5px solid #C0C0C0)]
+      RenderBlock {DIV} at (16,277) size 650x31 [border: (5px solid #C0C0C0)]
         RenderBlock (floating) {DIV} at (5,5) size 100x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "floatL"
-      RenderBlock {DIV} at (16,322) size 650x30 [border: (5px solid #C0C0C0)]
+      RenderBlock {DIV} at (16,323) size 650x31 [border: (5px solid #C0C0C0)]
         RenderBlock (floating) {DIV} at (5,5) size 150x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 84x19
             text run at (0,0) width 84: "floatL 150px"
-      RenderBlock {DIV} at (16,368) size 650x30 [border: (5px solid #C0C0C0)]
+      RenderBlock {DIV} at (16,369) size 650x31 [border: (5px solid #C0C0C0)]
         RenderBlock (floating) {DIV} at (645,5) size 0x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "floatR"
-      RenderBlock {DIV} at (16,414) size 650x30 [border: (5px solid #C0C0C0)]
+      RenderBlock {DIV} at (16,415) size 650x31 [border: (5px solid #C0C0C0)]
         RenderBlock (floating) {DIV} at (595,5) size 50x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "floatR"
-      RenderBlock {DIV} at (16,460) size 650x30 [border: (5px solid #C0C0C0)]
+      RenderBlock {DIV} at (16,461) size 650x31 [border: (5px solid #C0C0C0)]
         RenderBlock (floating) {DIV} at (545,5) size 100x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "floatR"
-      RenderBlock {DIV} at (16,506) size 650x30 [border: (5px solid #C0C0C0)]
+      RenderBlock {DIV} at (16,507) size 650x31 [border: (5px solid #C0C0C0)]
         RenderBlock (floating) {DIV} at (495,5) size 150x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 84x19
             text run at (0,0) width 84: "floatR 150px"
-      RenderBlock {H3} at (0,554) size 784x69
+      RenderBlock {H3} at (0,555) size 784x70
         RenderText {#text} at (0,0) size 671x22
           text run at (0,0) width 671: "The orange stripe has 'overflow: auto', 'margin-left: auto' and 'margin-right: auto'"
         RenderBR {BR} at (670,0) size 1x22
@@ -62,35 +62,35 @@ layer at (0,0) size 800x662
         RenderBR {BR} at (658,23) size 1x22
         RenderText {#text} at (0,46) size 401x22
           text run at (0,46) width 401: "The wrapping container has a solid silver border."
-layer at (129,210) size 440x20
+layer at (129,212) size 440x20
   RenderBlock {DIV} at (105,5) size 440x20 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 175x19
       text run at (0,0) width 175: "<div> with 'overflow: auto'"
-layer at (129,256) size 440x20
+layer at (129,258) size 440x20
   RenderBlock {DIV} at (105,5) size 440x20 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 175x19
       text run at (0,0) width 175: "<div> with 'overflow: auto'"
-layer at (129,302) size 440x20
+layer at (129,304) size 440x20
   RenderBlock {DIV} at (105,5) size 440x20 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 175x19
       text run at (0,0) width 175: "<div> with 'overflow: auto'"
-layer at (179,348) size 390x20
+layer at (179,350) size 390x20
   RenderBlock {DIV} at (155,5) size 390x20 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 175x19
       text run at (0,0) width 175: "<div> with 'overflow: auto'"
-layer at (129,394) size 440x20
+layer at (129,396) size 440x20
   RenderBlock {DIV} at (105,5) size 440x20 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 175x19
       text run at (0,0) width 175: "<div> with 'overflow: auto'"
-layer at (129,440) size 440x20
+layer at (129,442) size 440x20
   RenderBlock {DIV} at (105,5) size 440x20 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 175x19
       text run at (0,0) width 175: "<div> with 'overflow: auto'"
-layer at (129,486) size 440x20
+layer at (129,488) size 440x20
   RenderBlock {DIV} at (105,5) size 440x20 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 175x19
       text run at (0,0) width 175: "<div> with 'overflow: auto'"
-layer at (129,532) size 390x20
+layer at (129,534) size 390x20
   RenderBlock {DIV} at (105,5) size 390x20 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 175x19
       text run at (0,0) width 175: "<div> with 'overflow: auto'"

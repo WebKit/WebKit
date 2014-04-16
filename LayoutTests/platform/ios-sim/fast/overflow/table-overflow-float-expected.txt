@@ -29,102 +29,102 @@ layer at (11,11) size 100x100 clip at (11,11) size 85x100 scrollHeight 340
     RenderBlock (floating) {SPAN} at (0,0) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,0) size 30x20
+    RenderBlock (floating) {SPAN} at (29,0) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,20) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,20) size 30x20
+    RenderBlock (floating) {SPAN} at (29,20) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,40) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,40) size 30x20
+    RenderBlock (floating) {SPAN} at (29,40) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,60) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,60) size 30x20
+    RenderBlock (floating) {SPAN} at (29,60) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,80) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,80) size 30x20
+    RenderBlock (floating) {SPAN} at (29,80) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,100) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,100) size 30x20
+    RenderBlock (floating) {SPAN} at (29,100) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,120) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,120) size 30x20
+    RenderBlock (floating) {SPAN} at (29,120) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,140) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,140) size 30x20
+    RenderBlock (floating) {SPAN} at (29,140) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,160) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,160) size 30x20
+    RenderBlock (floating) {SPAN} at (29,160) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,180) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,180) size 30x20
+    RenderBlock (floating) {SPAN} at (29,180) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,200) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,200) size 30x20
+    RenderBlock (floating) {SPAN} at (29,200) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,220) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,220) size 30x20
+    RenderBlock (floating) {SPAN} at (29,220) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,240) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,240) size 30x20
+    RenderBlock (floating) {SPAN} at (29,240) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,260) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,260) size 30x20
+    RenderBlock (floating) {SPAN} at (29,260) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,280) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,280) size 30x20
+    RenderBlock (floating) {SPAN} at (29,280) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,300) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,300) size 30x20
+    RenderBlock (floating) {SPAN} at (29,300) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
     RenderBlock (floating) {SPAN} at (0,320) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"
-    RenderBlock (floating) {SPAN} at (30,320) size 30x20
+    RenderBlock (floating) {SPAN} at (29,320) size 30x20
       RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "stuff"

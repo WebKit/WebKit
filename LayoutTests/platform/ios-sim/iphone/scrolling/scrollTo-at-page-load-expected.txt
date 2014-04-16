@@ -1,12 +1,8 @@
-Tests that programmatic scrolling works at page load time.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-Received scroll event 1
-PASS scrollEventCount is 1
-PASS window.scrollY is 10
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
+CONSOLE MESSAGE: line 17: TypeError: HTMLParagraphElement is not a function (evaluating 'description('Tests that programmatic scrolling works at page load time.')')
+layer at (0,0) size 800x2024
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2024
+  RenderBlock {HTML} at (0,0) size 800x2024
+    RenderBody {BODY} at (8,16) size 784x2000
+      RenderBlock {P} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0

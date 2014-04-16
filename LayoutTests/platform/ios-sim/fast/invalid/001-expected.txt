@@ -5,7 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {B} at (0,0) size 0x0
-        RenderInline {B} at (0,0) size 0x0
       RenderBlock {P} at (0,0) size 784x20
         RenderInline {B} at (0,0) size 37x19
           RenderText {#text} at (0,0) size 37x19

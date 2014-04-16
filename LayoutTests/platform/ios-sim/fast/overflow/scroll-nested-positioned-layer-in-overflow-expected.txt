@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (0,42) size 800x558 clip at (0,42) size 785x558 scrollY 286 scrollHeight 844
   RenderBlock (positioned) {DIV} at (0,42) size 800x558
-layer at (0,-244) size 573x844 backgroundClip at (0,42) size 785x558 clip at (0,42) size 785x558 outlineClip at (0,42) size 785x558
+layer at (0,-244) size 572x844 backgroundClip at (0,42) size 785x558 clip at (0,42) size 785x558 outlineClip at (0,42) size 785x558
   RenderBlock (positioned) {DIV} at (0,0) size 573x844
     RenderBlock (anonymous) at (0,0) size 573x20
       RenderText {#text} at (0,0) size 573x19

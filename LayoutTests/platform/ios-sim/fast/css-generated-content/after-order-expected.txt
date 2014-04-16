@@ -13,17 +13,17 @@ layer at (0,0) size 800x600
         RenderInline (generated) at (0,0) size 491x19
           RenderText at (56,21) size 239x19
             text run at (56,21) width 239: "This should be before the green box. "
-          RenderImage at (295,11) size 25x25
+          RenderImage at (294,11) size 26x25
           RenderText at (319,21) size 228x19
             text run at (319,21) width 228: " This should be after the green box."
       RenderBlock {DIV} at (10,98) size 764x92 [border: (1px solid #000000)]
         RenderText {#text} at (11,61) size 87x19
           text run at (11,61) width 87: "Inline-block: "
-        RenderBlock (generated) at (98,11) size 200x70
+        RenderBlock (generated) at (97,11) size 201x70
           RenderText at (0,0) size 163x49
             text run at (0,0) width 163: "This should be before the"
             text run at (0,30) width 72: "green box. "
-          RenderImage at (72,20) size 25x25
+          RenderImage at (71,20) size 26x25
           RenderText at (96,30) size 195x39
             text run at (96,30) width 99: " This should be"
             text run at (0,50) width 125: "after the green box."
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
           RenderText at (0,0) size 163x49
             text run at (0,0) width 163: "This should be before the"
             text run at (0,30) width 72: "green box. "
-          RenderImage at (72,20) size 25x25
+          RenderImage at (71,20) size 26x25
           RenderText at (96,30) size 195x39
             text run at (96,30) width 99: " This should be"
             text run at (0,50) width 125: "after the green box."

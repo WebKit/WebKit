@@ -1,0 +1,91 @@
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (paintingPhases
+    GraphicsLayerPaintBackground
+    GraphicsLayerPaintForeground
+    GraphicsLayerPaintMask
+  )
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (paintingPhases
+        GraphicsLayerPaintBackground
+        GraphicsLayerPaintForeground
+        GraphicsLayerPaintMask
+      )
+      (children 1
+        (GraphicsLayer
+          (position 28.00 20.00)
+          (bounds 202.00 202.00)
+          (drawsContent 1)
+          (paintingPhases
+            GraphicsLayerPaintBackground
+            GraphicsLayerPaintMask
+          )
+          (children 4
+            (GraphicsLayer
+              (position 1.00 1.00)
+              (bounds 185.00 185.00)
+              (paintingPhases
+                GraphicsLayerPaintBackground
+                GraphicsLayerPaintForeground
+                GraphicsLayerPaintMask
+              )
+              (children 2
+                (GraphicsLayer
+                  (position 0.00 10.00)
+                  (bounds 80.00 10.00)
+                  (contentsOpaque 1)
+                  (paintingPhases
+                    GraphicsLayerPaintBackground
+                    GraphicsLayerPaintForeground
+                    GraphicsLayerPaintMask
+                  )
+                )
+                (GraphicsLayer
+                  (bounds 185.00 185.00)
+                  (drawsContent 1)
+                  (paintingPhases
+                    GraphicsLayerPaintForeground
+                  )
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 1.00 186.00)
+              (bounds 185.00 15.00)
+              (drawsContent 1)
+              (paintingPhases
+                GraphicsLayerPaintBackground
+                GraphicsLayerPaintForeground
+                GraphicsLayerPaintMask
+              )
+            )
+            (GraphicsLayer
+              (position 186.00 1.00)
+              (bounds 15.00 185.00)
+              (drawsContent 1)
+              (paintingPhases
+                GraphicsLayerPaintBackground
+                GraphicsLayerPaintForeground
+                GraphicsLayerPaintMask
+              )
+            )
+            (GraphicsLayer
+              (position 186.00 186.00)
+              (bounds 15.00 15.00)
+              (drawsContent 1)
+              (paintingPhases
+                GraphicsLayerPaintBackground
+                GraphicsLayerPaintForeground
+                GraphicsLayerPaintMask
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+

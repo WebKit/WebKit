@@ -1,0 +1,9 @@
+This is a test of a mouseleave events in an inner-document. The test is success if we get matching mouseleave events for every mouseenter event, and if the logged nodeNames of event targets does not include '#document'.
+
+mouseenter on DIV
+mouseenter on BODY
+mouseenter on HTML
+mouseleave on DIV
+mouseleave on BODY
+mouseleave on HTML
+

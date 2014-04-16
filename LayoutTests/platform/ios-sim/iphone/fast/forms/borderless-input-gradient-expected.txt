@@ -14,31 +14,31 @@ layer at (0,0) size 800x600
       RenderTextControl {INPUT} at (2,97) size 136x22 [bgcolor=#008000] [border: (1px solid #00000000) (1px solid #4C4C4C)]
       RenderBR {BR} at (139,111) size 1x0
       RenderTextControl {INPUT} at (2,122) size 136x22 [bgcolor=#008000] [border: (1px solid #4C4C4C)]
-        RenderDeprecatedFlexibleBox {DIV} at (6,3) size 123x15
+        RenderFlexibleBox {DIV} at (6,3) size 123x15
           RenderBlock {DIV} at (0,7) size 0x0
           RenderBlock {DIV} at (0,0) size 123x14
           RenderBlock {DIV} at (122,7) size 1x0
       RenderBR {BR} at (139,136) size 1x0
       RenderTextControl {INPUT} at (2,147) size 134x20 [bgcolor=#008000]
-        RenderDeprecatedFlexibleBox {DIV} at (5,2) size 123x15
+        RenderFlexibleBox {DIV} at (5,2) size 123x15
           RenderBlock {DIV} at (0,7) size 0x0
           RenderBlock {DIV} at (0,0) size 123x14
           RenderBlock {DIV} at (122,7) size 1x0
       RenderBR {BR} at (137,160) size 1x0
       RenderTextControl {INPUT} at (2,170) size 134x20 [bgcolor=#008000]
-        RenderDeprecatedFlexibleBox {DIV} at (5,2) size 123x15
+        RenderFlexibleBox {DIV} at (5,2) size 123x15
           RenderBlock {DIV} at (0,7) size 0x0
           RenderBlock {DIV} at (0,0) size 123x14
           RenderBlock {DIV} at (122,7) size 1x0
       RenderBR {BR} at (137,183) size 1x0
       RenderTextControl {INPUT} at (2,193) size 136x21 [bgcolor=#008000] [border: none (1px solid #4C4C4C)]
-        RenderDeprecatedFlexibleBox {DIV} at (6,2) size 123x15
+        RenderFlexibleBox {DIV} at (6,2) size 123x15
           RenderBlock {DIV} at (0,7) size 0x0
           RenderBlock {DIV} at (0,0) size 123x14
           RenderBlock {DIV} at (122,7) size 1x0
       RenderBR {BR} at (139,206) size 1x0
       RenderTextControl {INPUT} at (2,217) size 136x22 [bgcolor=#008000] [border: (1px solid #00000000) (1px solid #4C4C4C)]
-        RenderDeprecatedFlexibleBox {DIV} at (6,3) size 123x15
+        RenderFlexibleBox {DIV} at (6,3) size 123x15
           RenderBlock {DIV} at (0,7) size 0x0
           RenderBlock {DIV} at (0,0) size 123x14
           RenderBlock {DIV} at (122,7) size 1x0

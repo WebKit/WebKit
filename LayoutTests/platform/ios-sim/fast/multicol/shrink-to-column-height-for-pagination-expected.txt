@@ -1,9 +1,8 @@
 layer at (0,0) size 800x600
-  RenderView at (0,0) size 400x600
-layer at (-400,0) size 800x600 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (384,0) size 416x600
+  RenderBlock {HTML} at (0,0) size 416x600
     RenderBody {BODY} at (8,8) size 400x600
       RenderBlock {DIV} at (0,0) size 400x600
         RenderImage {IMG} at (392,0) size 400x600
         RenderText {#text} at (0,0) size 0x0
-scrolled to -400,0

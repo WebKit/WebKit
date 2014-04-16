@@ -1,0 +1,120 @@
+This test fuzzes the transform parser with semi-random attribute values and dumps the results of any values that parse successfully.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Loaded: resources/viewspec-target.svg#
+Parsed: [initial view] from: [initial view]
+
+Loaded: resources/viewspec-target.svg#svgView(viewBox(0,0,200,200)))
+Parsed: svgView(viewBox(0 0 200 200)) from: svgView(viewBox(0,0,200,200)))
+
+Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(xMaxYMin slice))
+Parsed: svgView(preserveAspectRatio(xMaxYMin slice)) from: svgView(preserveAspectRatio(xMaxYMin slice))
+
+Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(xMaxYMin))
+Parsed: svgView(preserveAspectRatio(xMaxYMin meet)) from: svgView(preserveAspectRatio(xMaxYMin))
+
+Loaded: resources/viewspec-target.svg#svgView(viewBox(1,2,3,4);preserveAspectRatio(xMaxYMin))
+Parsed: svgView(viewBox(1 2 3 4);preserveAspectRatio(xMaxYMin meet)) from: svgView(viewBox(1,2,3,4);preserveAspectRatio(xMaxYMin))
+
+Loaded: resources/viewspec-target.svg#svgView(zoomAndPan(disable))
+Parsed: svgView(zoomAndPan(disable)) from: svgView(zoomAndPan(disable))
+
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(#myElementId))
+Parsed: svgView(viewTarget(#myElementId)) from: svgView(viewTarget(#myElementId))
+
+Loaded: resources/viewspec-target.svg#svgView
+Parsed: [initial view] from: svgView
+
+Loaded: resources/viewspec-target.svg#svgView(
+Parsed: [initial view] from: svgView(
+
+Loaded: resources/viewspec-target.svg#svgView()
+Parsed: [initial view] from: svgView()
+
+Loaded: resources/viewspec-target.svg#svgView(
+Parsed: [initial view] from: svgView(
+
+Loaded: resources/viewspec-target.svg#svgView(transform(scale(2));;)
+Parsed: [initial view] from: svgView(transform(scale(2));;)
+
+Loaded: resources/viewspec-target.svg#svgView(transform(scale(2));x
+Parsed: [initial view] from: svgView(transform(scale(2));x
+
+Loaded: resources/viewspec-target.svg#svgView(transform(scale(.5)))
+Parsed: svgView(transform(scale(0.5 0.5))) from: svgView(transform(scale(.5)))
+
+Loaded: resources/viewspec-target.svg#svgView(;transform(scale(.5)))
+Parsed: [initial view] from: svgView(;transform(scale(.5)))
+
+Loaded: resources/viewspec-target.svg#svgView(;;transform(scale(.5)))
+Parsed: [initial view] from: svgView(;;transform(scale(.5)))
+
+Loaded: resources/viewspec-target.svg#svgView(transform(scale(.5));transform(scale(2));transform(scale(2)))
+Parsed: svgView(transform(scale(0.5 0.5) scale(2 2) scale(2 2))) from: svgView(transform(scale(.5));transform(scale(2));transform(scale(2)))
+
+Loaded: resources/viewspec-target.svg#svgView(viewBoxx(0, 0)
+Parsed: [initial view] from: svgView(viewBoxx(0, 0)
+
+Loaded: resources/viewspec-target.svg#svgView(viewBo(0, 0)
+Parsed: [initial view] from: svgView(viewBo(0, 0)
+
+Loaded: resources/viewspec-target.svg#svgView(viewBox
+Parsed: [initial view] from: svgView(viewBox
+
+Loaded: resources/viewspec-target.svg#svgView(viewBox
+Parsed: [initial view] from: svgView(viewBox
+
+Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatioo(0, 0)
+Parsed: [initial view] from: svgView(preserveAspectRatioo(0, 0)
+
+Loaded: resources/viewspec-target.svg#svgView(preserveAspectRati(0, 0)
+Parsed: [initial view] from: svgView(preserveAspectRati(0, 0)
+
+Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio
+Parsed: [initial view] from: svgView(preserveAspectRatio
+
+Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio
+Parsed: [initial view] from: svgView(preserveAspectRatio
+
+Loaded: resources/viewspec-target.svg#svgView(transformm(0, 0)
+Parsed: [initial view] from: svgView(transformm(0, 0)
+
+Loaded: resources/viewspec-target.svg#svgView(transfor(0, 0)
+Parsed: [initial view] from: svgView(transfor(0, 0)
+
+Loaded: resources/viewspec-target.svg#svgView(transform
+Parsed: [initial view] from: svgView(transform
+
+Loaded: resources/viewspec-target.svg#svgView(transform
+Parsed: [initial view] from: svgView(transform
+
+Loaded: resources/viewspec-target.svg#svgView(zoomAndPann(0, 0)
+Parsed: [initial view] from: svgView(zoomAndPann(0, 0)
+
+Loaded: resources/viewspec-target.svg#svgView(zoomAndPa(0, 0)
+Parsed: [initial view] from: svgView(zoomAndPa(0, 0)
+
+Loaded: resources/viewspec-target.svg#svgView(zoomAndPan
+Parsed: [initial view] from: svgView(zoomAndPan
+
+Loaded: resources/viewspec-target.svg#svgView(zoomAndPan
+Parsed: [initial view] from: svgView(zoomAndPan
+
+Loaded: resources/viewspec-target.svg#svgView(viewTargett(0, 0)
+Parsed: [initial view] from: svgView(viewTargett(0, 0)
+
+Loaded: resources/viewspec-target.svg#svgView(viewTarge(0, 0)
+Parsed: [initial view] from: svgView(viewTarge(0, 0)
+
+Loaded: resources/viewspec-target.svg#svgView(viewTarget
+Parsed: [initial view] from: svgView(viewTarget
+
+Loaded: resources/viewspec-target.svg#svgView(viewTarget
+Parsed: [initial view] from: svgView(viewTarget
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

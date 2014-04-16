@@ -35,8 +35,8 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,116) size 784x20
         RenderBlock {DIV} at (0,0) size 784x0
         RenderBlock (anonymous) at (0,0) size 784x20
-          RenderText {#text} at (99,0) size 82x19
-            text run at (99,0) width 82: "a single line."
+          RenderText {#text} at (98,0) size 82x19
+            text run at (98,0) width 82: "a single line."
           RenderBlock (floating) {SPAN} at (0,0) size 99x20
             RenderText {#text} at (0,0) size 99x19
               text run at (0,0) width 99: "This should be "

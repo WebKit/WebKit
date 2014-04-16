@@ -9,15 +9,15 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 173x19
           text run at (0,0) width 173: "Text just before the listing."
-      RenderBlock {LISTING} at (0,69) size 784x45
-        RenderText {#text} at (0,0) size 773x45
+      RenderBlock {LISTING} at (0,69) size 784x42
+        RenderText {#text} at (0,0) size 773x42
           text run at (0,0) width 266: "This text is inside a listing tag."
           text run at (265,0) width 1: " "
-          text run at (0,15) width 749: "It acts exactly like the pre tag, so the text should be monospaced and not have any line breaks."
-          text run at (748,15) width 1: " "
-          text run at (0,30) width 773: "Also, it eats the very first newline inside the listing, so there should not be a blank line above."
-          text run at (772,30) width 1: " "
-      RenderBlock {P} at (0,130) size 784x20
+          text run at (0,14) width 749: "It acts exactly like the pre tag, so the text should be monospaced and not have any line breaks."
+          text run at (748,14) width 1: " "
+          text run at (0,28) width 773: "Also, it eats the very first newline inside the listing, so there should not be a blank line above."
+          text run at (772,28) width 1: " "
+      RenderBlock {P} at (0,127) size 784x20
         RenderText {#text} at (0,0) size 601x19
           text run at (0,0) width 601: "The listing tag has a width in it. To test the JavaScript binding, this page gets the width, here: "
         RenderInline {A} at (0,0) size 25x19

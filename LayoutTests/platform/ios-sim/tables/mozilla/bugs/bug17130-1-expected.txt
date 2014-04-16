@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 510x19 [color=#0000EE]
           RenderText {#text} at (157,0) size 510x19
             text run at (157,0) width 510: "http://www.download.com/pc/list/0,339,0-b-0-0-a-1,00.html?st.dl.fd.ag.new"
-      RenderBlock {H4} at (0,41) size 784x20
+      RenderBlock {H4} at (0,41) size 784x21
         RenderText {#text} at (0,0) size 517x19
           text run at (0,0) width 517: "Resize the width of the window and watch the Buy and Pick columns below."
-      RenderTable {TABLE} at (0,82) size 784x70
+      RenderTable {TABLE} at (0,82) size 784x71
         RenderTableSection {TBODY} at (0,0) size 784x70
           RenderTableRow {TR} at (0,2) size 784x22 [bgcolor=#CCCCCC]
             RenderTableCell {TD} at (2,2) size 704x22 [r=0 c=0 rs=1 cs=1]
@@ -44,12 +44,12 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (743,36) size 39x22 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "
-      RenderBlock (anonymous) at (0,152) size 784x20
+      RenderBlock (anonymous) at (0,152) size 784x21
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {H4} at (0,193) size 784x20
+      RenderBlock {H4} at (0,193) size 784x21
         RenderText {#text} at (0,0) size 487x19
           text run at (0,0) width 487: "This is the same table as above but with all <SPAN> elements removed."
-      RenderTable {TABLE} at (0,234) size 784x70
+      RenderTable {TABLE} at (0,235) size 784x71
         RenderTableSection {TBODY} at (0,0) size 784x70
           RenderTableRow {TR} at (0,2) size 784x22 [bgcolor=#CCCCCC]
             RenderTableCell {TD} at (2,2) size 704x22 [r=0 c=0 rs=1 cs=1]

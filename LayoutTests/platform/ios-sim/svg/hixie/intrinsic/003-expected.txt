@@ -8,7 +8,7 @@ layer at (0,0) size 800x271
           RenderEmbeddedObject {OBJECT} at (0,0) size 200x200
             layer at (0,0) size 100x200
               RenderView at (0,0) size 100x200
-            layer at (0,0) size 100x200
+            layer at (0,0) size 100x0
               RenderSVGRoot {svg} at (0,0) size 0x0
       RenderBlock {P} at (0,216) size 784x23
         RenderText {#text} at (0,3) size 429x19

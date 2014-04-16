@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGRoot {svg} at (0,5) size 34x19
         RenderSVGContainer {g} at (0,5) size 34x19
           RenderSVGText {text} at (0,5) size 34x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 34x19
+            RenderSVGInlineText {#text} at (0,0) size 34x18
               chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 5 width 33.76: "crash"
       RenderText {#text} at (0,0) size 0x0
     RenderSVGForeignObject {foreignObject} at (0,50) size 300x100

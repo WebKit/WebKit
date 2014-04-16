@@ -38,10 +38,10 @@ FAIL pointToString(svgText.getEndPositionOfChar(2)) should be (179.2,20.0). Was 
 PASS pointToString(svgText.getEndPositionOfChar(3)) is "(210.0,20.0)"
 
 Test getExtentOfChar() API
-FAIL rectToString(svgText.getExtentOfChar(0)) should be (10.0,1.9)-(61.5x22.3). Was (10.0,1.0)-(62.8x24.0).
-FAIL rectToString(svgText.getExtentOfChar(1)) should be (71.5,1.9)-(56.4x22.3). Was (72.8,1.0)-(57.2x24.0).
-FAIL rectToString(svgText.getExtentOfChar(2)) should be (127.9,1.9)-(51.3x22.3). Was (130.0,1.0)-(51.4x24.0).
-FAIL rectToString(svgText.getExtentOfChar(3)) should be (179.2,1.9)-(30.8x22.3). Was (181.4,1.0)-(28.6x24.0).
+FAIL rectToString(svgText.getExtentOfChar(0)) should be (10.0,1.9)-(61.5x22.3). Was (10.0,1.5)-(62.8x23.0).
+FAIL rectToString(svgText.getExtentOfChar(1)) should be (71.5,1.9)-(56.4x22.3). Was (72.8,1.5)-(57.2x23.0).
+FAIL rectToString(svgText.getExtentOfChar(2)) should be (127.9,1.9)-(51.3x22.3). Was (130.0,1.5)-(51.4x23.0).
+FAIL rectToString(svgText.getExtentOfChar(3)) should be (179.2,1.9)-(30.8x22.3). Was (181.4,1.5)-(28.6x23.0).
 
 Test getRotationOfChar() API
 PASS svgText.getRotationOfChar(0).toFixed(1) is "0.0"

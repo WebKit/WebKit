@@ -10,7 +10,7 @@ layer at (0,0) size 800x255
         RenderEmbeddedObject {OBJECT} at (0,0) size 100x190 [bgcolor=#008000] [border: (20px solid #FF0000)]
           layer at (0,0) size 60x150
             RenderView at (0,0) size 60x150
-          layer at (0,0) size 60x150
+          layer at (0,0) size 60x0
             RenderSVGRoot {svg} at (0,0) size 0x0
 layer at (8,52) size 100x190
   RenderBlock (positioned) {DIV} at (8,52) size 100x190 [border: (20px solid #008000)]

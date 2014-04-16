@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 252x157 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 250x155
-          RenderTableRow {TR} at (0,2) size 250x53
-            RenderTableCell {TD} at (2,2) size 246x53 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,0) size 252x158 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 250x156
+          RenderTableRow {TR} at (0,2) size 250x54
+            RenderTableCell {TD} at (2,2) size 246x54 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderBlock {H2} at (2,2) size 242x30
                 RenderText {#text} at (0,1) size 174x28
                   text run at (0,1) width 174: "Personal Friends"
-          RenderTableRow {TR} at (0,57) size 250x96
-            RenderTableCell {TD} at (2,57) size 187x96 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,58) size 250x96
+            RenderTableCell {TD} at (2,58) size 187x96 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderBlock (anonymous) at (2,2) size 183x0
                 RenderInline {FONT} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (2,74) size 183x20
                 RenderText {#text} at (0,0) size 37x19
                   text run at (0,0) width 37: "Asale"
-            RenderTableCell {TD} at (191,57) size 57x96 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (191,58) size 57x96 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (2,2) size 53x20
                 RenderText {#text} at (0,0) size 35x19
                   text run at (0,0) width 35: "Ernie"

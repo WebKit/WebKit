@@ -1,8 +1,10 @@
 Tests to check behaviors of dirty flag and defaultValue change.
 
 FAIL document.execCommand("InsertText", false, "user-updated"); textarea.value should be user-updated. Was default
+
 user-updated.
 FAIL textarea.defaultValue = "default 2"; textarea.value should be user-updated. Was default
+
 user-updated.
 PASS form.reset(); textarea.value is "default 2"
 PASS textarea.defaultValue = "default 3"; textarea.value is "default 3"

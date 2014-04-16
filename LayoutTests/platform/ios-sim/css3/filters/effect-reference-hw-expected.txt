@@ -5,12 +5,82 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderSVGRoot {svg} at (8,118) size 0x0
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-          RenderSVGResourceFilter {filter} [id="MyFilter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          RenderSVGResourceFilter {filter} [id="colormatrix"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
             [feColorMatrix type="HUEROTATE" values="180.00"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="morphology"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feMorphology operator="DILATE" radius="10.00, 10.00"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="componenttransfer"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feComponentTransfer 
+                {red: type="LINEAR" slope="0.50" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {green: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
+                {blue: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
+                {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="blurY"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feGaussianBlur stdDeviation="0.00, 5.00"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="blend"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feBlend mode="SCREEN"]
+              [feGaussianBlur stdDeviation="5.00, 5.00"]
+                [SourceGraphic]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="lighting"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feBlend mode="MULTIPLY"]
+              [feColorMatrix type="MATRIX" values="0.00 0.00 0.00 1.00 0.00 0.00 0.00 0.00 1.00 0.00 0.00 0.00 0.00 1.00 0.00 0.00 0.00 0.00 0.00 1.00"]
+                [feSpecularLighting surfaceScale="1.00" specualConstant="1.00" specularExponent="1.00"]
+                  [SourceGraphic]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="offset"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feOffset dx="10.00" dy="10.00"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="convolvematrix"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feConvolveMatrix order="width=3 height=3" kernelMatrix="[1.00, 1.00, 1.00, 1.00, -7.00, 1.00, 1.00, 1.00, 1.00]" divisor="1.00" bias="0.30" target="(1,1)" edgeMode="DUPLICATE" kernelUnitLength="(1,1)" preserveAlpha="0"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="displacement"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feDisplacementMap scale="10.00" xChannelSelector="RED" yChannelSelector="GREEN"]
+              [SourceGraphic]
               [SourceGraphic]
       RenderText {#text} at (0,95) size 4x19
         text run at (0,95) width 4: " "
       RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (184,95) size 4x19
+        text run at (184,95) width 4: " "
+      RenderText {#text} at (368,95) size 4x19
+        text run at (368,95) width 4: " "
+      RenderText {#text} at (552,95) size 4x19
+        text run at (552,95) width 4: " "
+      RenderText {#text} at (736,95) size 4x19
+        text run at (736,95) width 4: " "
+      RenderText {#text} at (180,210) size 4x19
+        text run at (180,210) width 4: " "
+      RenderText {#text} at (364,210) size 4x19
+        text run at (364,210) width 4: " "
+      RenderText {#text} at (548,210) size 4x19
+        text run at (548,210) width 4: " "
+      RenderText {#text} at (732,210) size 4x19
+        text run at (732,210) width 4: " "
+      RenderText {#text} at (180,325) size 4x19
+        text run at (180,325) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (22,18) size 160x90
   RenderImage {IMG} at (14,10) size 160x90
+layer at (206,18) size 160x90
+  RenderImage {IMG} at (198,10) size 160x90
+layer at (390,18) size 160x90
+  RenderImage {IMG} at (382,10) size 160x90
+layer at (574,18) size 160x90
+  RenderImage {IMG} at (566,10) size 160x90
+layer at (18,133) size 160x90
+  RenderImage {IMG} at (10,125) size 160x90
+layer at (202,133) size 160x90
+  RenderImage {IMG} at (194,125) size 160x90
+layer at (386,133) size 160x90
+  RenderImage {IMG} at (378,125) size 160x90
+layer at (570,133) size 160x90
+  RenderImage {IMG} at (562,125) size 160x90
+layer at (18,248) size 160x90
+  RenderImage {IMG} at (10,240) size 160x90
+layer at (202,248) size 160x90
+  RenderImage {IMG} at (194,240) size 160x90

@@ -6,18 +6,18 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 363x19
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x45
-        RenderText {#text} at (0,0) size 250x45
+      RenderBlock {PRE} at (0,36) size 784x42
+        RenderText {#text} at (0,0) size 250x42
           text run at (0,0) width 250: ".one {font-variant: small-caps;}"
           text run at (249,0) width 1: " "
-          text run at (0,15) width 219: ".two {font-variant: normal;}"
-          text run at (218,15) width 1: " "
-          text run at (0,30) width 0: " "
-      RenderBlock {HR} at (0,94) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,112) size 784x20
+          text run at (0,14) width 219: ".two {font-variant: normal;}"
+          text run at (218,14) width 1: " "
+          text run at (0,28) width 0: " "
+      RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,109) size 784x20
         RenderText {#text} at (0,0) size 270x19
           text run at (0,0) width 270: "This Paragraph should be in Small Caps."
-      RenderBlock {P} at (0,148) size 784x20
+      RenderBlock {P} at (0,145) size 784x20
         RenderText {#text} at (0,0) size 577x19
           text run at (0,0) width 577: "This Paragraph should be in Small Caps, but the Last Word in the Sentence should be "
         RenderInline {SPAN} at (0,0) size 50x19
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
             text run at (576,0) width 50: "Normal"
         RenderText {#text} at (625,0) size 5x19
           text run at (625,0) width 5: "."
-      RenderTable {TABLE} at (0,184) size 652x94 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,181) size 652x94 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 650x92
           RenderTableRow {TR} at (0,0) size 650x28
             RenderTableCell {TD} at (0,0) size 650x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]

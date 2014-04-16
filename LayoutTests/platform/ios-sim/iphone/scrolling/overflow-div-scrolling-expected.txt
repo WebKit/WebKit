@@ -1,14 +1,11 @@
-Tests that touch events cause an overflow:scroll div to scroll.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS targetDiv.scrollLeft is 0
-PASS targetDiv.scrollTop is 0
-PASS targetDiv.scrollLeft is 0
-PASS targetDiv.scrollTop is 100
-PASS targetDiv.scrollLeft is 0
-PASS targetDiv.scrollTop is 50
-PASS targetDiv.scrollLeft is 100
-PASS targetDiv.scrollTop is 150
-
+CONSOLE MESSAGE: line 12: TypeError: HTMLParagraphElement is not a function (evaluating 'description("Tests that touch events cause an overflow:scroll div to scroll.")')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+layer at (10,100) size 400x400 clip at (10,100) size 385x385 scrollWidth 800 scrollHeight 800
+  RenderBlock (positioned) {DIV} at (10,100) size 400x400
+    RenderBlock {DIV} at (0,0) size 800x800

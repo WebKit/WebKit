@@ -11,6 +11,6 @@ layer at (0,0) size 450x450
     RenderSVGRect {rect} at (10,10) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=10.00] [y=10.00] [width=430.00] [height=80.00]
     RenderSVGRect {rect} at (10,110) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="linkedGradient1"]}] [x=10.00] [y=110.00] [width=430.00] [height=80.00]
     RenderSVGRect {rect} at (10,210) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="linkedGradient2"]}] [x=10.00] [y=210.00] [width=430.00] [height=80.00]
-    RenderSVGText {text} at (108,305) size 223x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 223x19
+    RenderSVGText {text} at (108,305) size 224x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 223x18
         chunk 1 (middle anchor) text run 1 at (108.68,320.00) startOffset 0 endOffset 34 width 222.63: "All gradients should look the same"

@@ -1,0 +1,15 @@
+Test IndexedDB's event interfaces.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+PASS 'IDBVersionChangeEvent' in self is true
+PASS 'oldVersion' in document.createEvent('IDBVersionChangeEvent') is true
+PASS 'newVersion' in document.createEvent('IDBVersionChangeEvent') is true
+FAIL 'dataLoss' in document.createEvent('IDBVersionChangeEvent') should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

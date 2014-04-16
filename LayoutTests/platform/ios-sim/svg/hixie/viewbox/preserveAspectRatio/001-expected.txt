@@ -5,12 +5,12 @@ layer at (0,0) size 800x600
     RenderSVGRect {rect} at (100,0) size 600x600 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGPath {line} at (97,0) size 606x600 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=100.00] [y2=100.00]
     RenderSVGPath {line} at (97,0) size 606x600 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=100.00] [y1=0.00] [x2=0.00] [y2=100.00]
-    RenderSVGText {text} at (11,23) size 78x8 contains 1 chunk(s)
+    RenderSVGText {text} at (11,23) size 78x9 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 78x8
         chunk 1 (middle anchor) text run 1 at (11.21,30.00) startOffset 0 endOffset 24 width 77.58: "This should be a SQUARE."
-    RenderSVGText {text} at (15,35) size 70x6 contains 1 chunk(s)
+    RenderSVGText {text} at (15,35) size 70x7 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 70x6
         chunk 1 (middle anchor) text run 1 at (15.49,40.00) startOffset 0 endOffset 36 width 69.02: "It should stretch to fit the window."
-    RenderSVGText {text} at (32,45) size 35x4 contains 1 chunk(s)
+    RenderSVGText {text} at (32,45) size 36x4 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 35x4
         chunk 1 (middle anchor) text run 1 at (32.67,48.00) startOffset 0 endOffset 27 width 34.65: "(Whatever the window size.)"

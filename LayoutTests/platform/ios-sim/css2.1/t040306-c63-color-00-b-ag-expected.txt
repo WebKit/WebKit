@@ -15,7 +15,7 @@ layer at (0,0) size 800x120
         RenderInline {SPAN} at (0,0) size 16x15
           RenderText {#text} at (53,5) size 16x15
             text run at (53,5) width 16: "X"
-        RenderImage {IMG} at (69,5) size 15x15 [color=#FF0000]
+        RenderImage {IMG} at (68,5) size 16x15 [color=#FF0000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 56x19
@@ -32,7 +32,7 @@ layer at (0,0) size 800x120
         RenderInline {SPAN} at (0,0) size 16x15 [color=#FFA500]
           RenderText {#text} at (100,5) size 16x15
             text run at (100,5) width 16: "X"
-        RenderImage {IMG} at (116,5) size 15x15 [color=#FF0000]
+        RenderImage {IMG} at (115,5) size 16x15 [color=#FF0000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,76) size 784x20
         RenderText {#text} at (0,0) size 43x19
@@ -73,5 +73,5 @@ layer at (0,0) size 800x120
         RenderInline {SPAN} at (0,0) size 16x15 [color=#00FF00]
           RenderText {#text} at (207,5) size 16x15
             text run at (207,5) width 16: "X"
-        RenderImage {IMG} at (222,5) size 15x15 [color=#FF0000]
+        RenderImage {IMG} at (222,5) size 16x15 [color=#FF0000]
         RenderText {#text} at (0,0) size 0x0

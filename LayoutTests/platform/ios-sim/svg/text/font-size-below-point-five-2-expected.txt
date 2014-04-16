@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (10,0) size 256x240
+  RenderSVGRoot {svg} at (10,0) size 256x233
     RenderSVGText {text} at (10,15) size 256x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 256x19
+      RenderSVGInlineText {#text} at (0,0) size 256x18
         chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 38 width 255.50: "The two words should be the same size:"
-    RenderSVGText {text} at (10,-3) size 7x18 contains 1 chunk(s)
+    RenderSVGText {text} at (10,-3) size 7x19 contains 1 chunk(s)
       RenderSVGTSpan {tspan} at (0,0) size 2x2
         RenderSVGInlineText {#text} at (0,13) size 2x1
-          chunk 1 text run 1 at (10.00,12.00) startOffset 0 endOffset 4 width 1.27: "TINY"
+          chunk 1 text run 1 at (10.00,12.00) startOffset 0 endOffset 4 width 1.19: "TINY"
       RenderSVGInlineText {#text} at (1,0) size 4x18
-        chunk 1 text run 1 at (11.27,12.00) startOffset 0 endOffset 1 width 4.00: " "
+        chunk 1 text run 1 at (11.19,12.00) startOffset 0 endOffset 1 width 4.00: " "
       RenderSVGTSpan {tspan} at (0,0) size 2x2
         RenderSVGInlineText {#text} at (5,13) size 2x1
-          chunk 1 text run 1 at (15.27,12.00) startOffset 0 endOffset 4 width 1.11: "TINY"
+          chunk 1 text run 1 at (15.19,12.00) startOffset 0 endOffset 4 width 1.19: "TINY"
       RenderSVGInlineText {#text} at (0,0) size 0x0

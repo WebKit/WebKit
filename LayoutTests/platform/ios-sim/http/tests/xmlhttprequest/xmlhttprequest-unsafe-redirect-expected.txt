@@ -1,0 +1,8 @@
+This tests that unsafe redirects won't be allowed when making an XMLHttpRequest.
+Sync XHR started.
+readyState change 1
+readyState change 4
+Async XHR started.
+readyState change 1
+readyState change 4
+SUCCESS: Error handler was called with readyState 4

@@ -15,7 +15,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 1 at (55.00,130.00) startOffset 0 endOffset 9 width 369.43: "Clip Test"
       RenderSVGContainer {g} at (45,180) size 370x112
         RenderSVGImage {image} at (45,180) size 370x112
-          [clipPath="sample"] RenderSVGResourceClipper {clipPath} at (45,180) size 370x112
+          [clipPath="sample"] RenderSVGResourceClipper {clipPath} at (45,180.50) size 369.44x111.50
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"

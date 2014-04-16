@@ -7,21 +7,21 @@ layer at (0,0) size 800x241
         RenderText {#text} at (0,0) size 296x19
           text run at (0,0) width 296: "The three diagrams below should be identical:"
       RenderBlock {P} at (0,36) size 160x48 [color=#FFA500] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 112x17
-          text run at (0,0) width 112: "xxx xxx"
+        RenderText {#text} at (0,-1) size 112x17
+          text run at (0,-1) width 112: "xxx xxx"
         RenderInline {SPAN} at (0,0) size 112x17 [bgcolor=#00FF00]
-          RenderText {#text} at (0,16) size 112x17
-            text run at (0,16) width 112: "xxx xxx"
-        RenderText {#text} at (0,32) size 112x17
-          text run at (0,32) width 112: "xxx xxx"
+          RenderText {#text} at (0,15) size 112x17
+            text run at (0,15) width 112: "xxx xxx"
+        RenderText {#text} at (0,31) size 112x17
+          text run at (0,31) width 112: "xxx xxx"
       RenderBlock {P} at (0,100) size 160x48 [color=#FFA500] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 112x17
-          text run at (0,0) width 112: "xxx xxx"
+        RenderText {#text} at (0,-1) size 112x17
+          text run at (0,-1) width 112: "xxx xxx"
         RenderInline {SPAN} at (0,0) size 112x17 [bgcolor=#00FF00]
-          RenderText {#text} at (0,16) size 112x17
-            text run at (0,16) width 112: "xxx xxx"
-        RenderText {#text} at (0,32) size 112x17
-          text run at (0,32) width 112: "xxx xxx"
+          RenderText {#text} at (0,15) size 112x17
+            text run at (0,15) width 112: "xxx xxx"
+        RenderText {#text} at (0,31) size 112x17
+          text run at (0,31) width 112: "xxx xxx"
       RenderBlock {DIV} at (0,164) size 784x53
         RenderImage {IMG} at (0,0) size 48x48
         RenderImage {IMG} at (48,0) size 16x48 [border: (16px solid #FFFF00) none (16px solid #FFFF00) none]

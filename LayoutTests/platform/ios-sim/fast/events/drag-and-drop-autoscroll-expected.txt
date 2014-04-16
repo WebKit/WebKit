@@ -1,0 +1,8 @@
+For manual testing, drag and drop "Drop Me" to "Scrollable" area.
+Check autoscroll by drag-and-drop
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL No autoscroll
+

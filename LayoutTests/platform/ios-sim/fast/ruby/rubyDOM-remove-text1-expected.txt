@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,128) size 784x31
         RenderText {#text} at (0,11) size 159x19
           text run at (0,11) width 159: "<ruby> is defined in the "
-        RenderRuby (inline) {RUBY} at (0,0) size 113x19
+        RenderRuby (inline) {RUBY} at (0,0) size 112x19
           RenderRubyRun (anonymous) at (154,11) size 108x20
             RenderRubyText {RT} at (0,-11) size 108x12
               RenderText {#text} at (0,0) size 108x11
@@ -24,16 +24,16 @@ layer at (0,0) size 800x600
               RenderInline {SPAN} at (0,0) size 46x19
                 RenderText {#text} at (31,0) size 46x19
                   text run at (31,0) width 46: "HTML"
-          RenderRubyRun (anonymous) at (262,11) size 8x20
+          RenderRubyRun (anonymous) at (261,11) size 9x20
             RenderRubyBase (anonymous) at (0,0) size 8x20
               RenderText {#text} at (0,0) size 8x19
                 text run at (0,0) width 8: "5"
-        RenderText {#text} at (270,11) size 37x19
-          text run at (270,11) width 37: " spec."
+        RenderText {#text} at (269,11) size 37x19
+          text run at (269,11) width 37: " spec."
       RenderBlock {P} at (0,175) size 784x31
         RenderText {#text} at (0,11) size 159x19
           text run at (0,11) width 159: "<ruby> is defined in the "
-        RenderRuby (inline) {RUBY} at (0,0) size 113x19
+        RenderRuby (inline) {RUBY} at (0,0) size 112x19
           RenderRubyRun (anonymous) at (154,11) size 108x20
             RenderRubyText {RT} at (0,-11) size 108x12
               RenderText {#text} at (0,0) size 108x11
@@ -42,9 +42,9 @@ layer at (0,0) size 800x600
               RenderInline {SPAN} at (0,0) size 46x19
                 RenderText {#text} at (31,0) size 46x19
                   text run at (31,0) width 46: "HTML"
-          RenderRubyRun (anonymous) at (262,11) size 8x20
+          RenderRubyRun (anonymous) at (261,11) size 9x20
             RenderRubyBase (anonymous) at (0,0) size 8x20
               RenderText {#text} at (0,0) size 8x19
                 text run at (0,0) width 8: "5"
-        RenderText {#text} at (270,11) size 37x19
-          text run at (270,11) width 37: " spec."
+        RenderText {#text} at (269,11) size 37x19
+          text run at (269,11) width 37: " spec."

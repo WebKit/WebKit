@@ -10,7 +10,7 @@ Creating 'data' which contains 64K of data
 PASS data.length is 65536
 Putting 'data' into 39 sessionStorage buckets.
 Putting 'data' into another bucket.h
-FAIL Exception: Error: QUOTA_EXCEEDED_ERR: DOM Exception 22
+FAIL Exception: Error: QuotaExceededError: DOM Exception 22
 
 
 Testing localStorage

@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 385x93
-    RenderSVGContainer {g} at (0,4) size 385x89
-      RenderSVGPath {svg:line} at (47,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=0.80] [x2=10.00] [y2=12.40]
-      RenderSVGPath {svg:line} at (305,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=61.52] [y1=0.80] [x2=61.52] [y2=12.40]
-      RenderSVGRect {svg:rect} at (50,4) size 258x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.80] [width=51.52] [height=11.40]
+  RenderSVGRoot {svg} at (0,4) size 383x89
+    RenderSVGContainer {g} at (0,4) size 383x89
+      RenderSVGPath {svg:line} at (47,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=0.90] [x2=10.00] [y2=12.30]
+      RenderSVGPath {svg:line} at (305,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=61.52] [y1=0.90] [x2=61.52] [y2=12.30]
+      RenderSVGRect {svg:rect} at (50,4) size 258x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.90] [width=51.52] [height=11.30]
       RenderSVGText {svg:text} at (0,27) size 154x10 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 154x10
+        RenderSVGInlineText {#text} at (0,0) size 154x9
           chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 50 width 153.04: "Expected 'Text to Squeeze' to be selected, got: ''"
-    RenderSVGText {text} at (10,0) size 52x12 contains 1 chunk(s)
+    RenderSVGText {text} at (10,0) size 52x13 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 52x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.11: "T"
         chunk 1 text run 2 at (14.59,10.00) startOffset 1 endOffset 2 width 5.56: "e"

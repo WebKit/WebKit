@@ -6,16 +6,16 @@ layer at (0,0) size 800x600
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 353x36
           text run at (0,1) width 353: "Radial Gradient Example"
-      RenderBlock {DIV} at (0,59) size 784x174
+      RenderBlock {DIV} at (0,59) size 784x175
         RenderBlock (generated) at (0,0) size 154x154 [border: (2px solid #000000)]
           RenderImage at (2,2) size 150x150
         RenderBlock (anonymous) at (0,154) size 784x20
           RenderText {#text} at (0,0) size 272x19
             text run at (0,0) width 272: "There's some generated content above me."
-      RenderBlock {H1} at (0,254) size 784x38
+      RenderBlock {H1} at (0,254) size 784x39
         RenderText {#text} at (0,1) size 354x36
           text run at (0,1) width 354: "Linear Gradient Example"
-      RenderBlock {DIV} at (0,313) size 784x154
+      RenderBlock {DIV} at (0,314) size 784x155
         RenderBlock (anonymous) at (0,0) size 784x20
           RenderText {#text} at (0,0) size 273x19
             text run at (0,0) width 273: "There's some generated content below me."

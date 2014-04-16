@@ -1,0 +1,28 @@
+--- Test begins ---
+* "about:blank"
+document.URL = about:blank
+document.baseURI = about:blank
+document.cookie = cookie=resources; cookie=parent
+* ""
+document.URL = about:blank
+document.baseURI = about:blank
+document.cookie = cookie=resources; cookie=parent
+--- After document.open() ---
+* "about:blank"
+document.URL = http://127.0.0.1:8000/security/aboutBlank/security-context-grandchildren.html
+document.baseURI = http://127.0.0.1:8000/security/aboutBlank/security-context-grandchildren.html
+document.cookie = cookie=parent
+* ""
+document.URL = http://127.0.0.1:8000/security/aboutBlank/security-context-grandchildren.html
+document.baseURI = http://127.0.0.1:8000/security/aboutBlank/security-context-grandchildren.html
+document.cookie = cookie=parent
+--- After document.close() ---
+* "about:blank"
+document.URL = http://127.0.0.1:8000/security/aboutBlank/security-context-grandchildren.html
+document.baseURI = http://127.0.0.1:8000/security/aboutBlank/security-context-grandchildren.html
+document.cookie = cookie=parent
+* ""
+document.URL = http://127.0.0.1:8000/security/aboutBlank/security-context-grandchildren.html
+document.baseURI = http://127.0.0.1:8000/security/aboutBlank/security-context-grandchildren.html
+document.cookie = cookie=parent
+--- Test ends ---

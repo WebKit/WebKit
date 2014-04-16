@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x584
-  RenderBlock {HTML} at (0,0) size 800x584
-    RenderBody {BODY} at (8,19) size 784x557
+layer at (0,0) size 800x586
+  RenderBlock {HTML} at (0,0) size 800x586
+    RenderBody {BODY} at (8,19) size 784x559
       RenderBlock {H2} at (0,0) size 784x30
         RenderText {#text} at (0,1) size 304x28
           text run at (0,1) width 304: "A regular two level nested list"
-      RenderBlock {P} at (0,49) size 784x20
+      RenderBlock {P} at (0,49) size 784x21
         RenderText {#text} at (0,0) size 566x19
           text run at (0,0) width 566: "The outer list is numbered using decimal numerals, the inner lists with lower case letters"
-      RenderBlock {DIV} at (24,85) size 760x472 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (24,85) size 760x473 [border: (1px solid #000000)]
         RenderListItem {DIV} at (33,1) size 726x22 [border: (1px solid #000000)]
           RenderListMarker at (-21,1) size 16x19: "1"
           RenderText {#text} at (33,1) size 42x19
@@ -20,7 +20,7 @@ layer at (0,0) size 800x584
             RenderText {#text} at (0,0) size 42x19
               text run at (0,0) width 42: "Item 2"
           RenderListItem {DIV} at (33,21) size 692x42 [border: (1px solid #000000)]
-            RenderListMarker at (-20,1) size 15x19: "a"
+            RenderListMarker at (-21,1) size 16x19: "a"
             RenderText {#text} at (33,1) size 41x19
               text run at (33,1) width 41: "Item a"
             RenderBR {BR} at (73,1) size 1x19
@@ -31,7 +31,7 @@ layer at (0,0) size 800x584
             RenderText {#text} at (33,1) size 42x19
               text run at (33,1) width 42: "Item b"
           RenderListItem {DIV} at (33,85) size 692x22 [border: (1px solid #000000)]
-            RenderListMarker at (-20,1) size 15x19: "c"
+            RenderListMarker at (-21,1) size 16x19: "c"
             RenderText {#text} at (33,1) size 41x19
               text run at (33,1) width 41: "Item c"
           RenderBlock {DIV} at (33,107) size 692x22 [border: (1px solid #000000)]
@@ -50,7 +50,7 @@ layer at (0,0) size 800x584
             RenderText {#text} at (0,0) size 92x19
               text run at (0,0) width 92: "Not a list item"
           RenderListItem {DIV} at (33,21) size 692x42 [border: (1px solid #000000)]
-            RenderListMarker at (-20,1) size 15x19: "a"
+            RenderListMarker at (-21,1) size 16x19: "a"
             RenderText {#text} at (33,1) size 41x19
               text run at (33,1) width 41: "Item a"
             RenderBR {BR} at (73,1) size 1x19
@@ -74,7 +74,7 @@ layer at (0,0) size 800x584
               text run at (0,0) width 42: "Item 5"
           RenderListItem {TABLE} at (33,21) size 692x50 [border: (1px dashed #000000)]
             RenderBlock (anonymous) at (1,1) size 690x20
-              RenderListMarker at (-21,0) size 15x19: "a"
+              RenderListMarker at (-22,0) size 16x19: "a"
             RenderTable at (1,21) size 195x28
               RenderTableSection {TBODY} at (0,0) size 195x28
                 RenderTableRow {TR} at (0,2) size 195x24

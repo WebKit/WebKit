@@ -6,8 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
   
 PASS fired event is (firstInput, focus).
 FAIL fired event is (firstInput, blur). Should be (firstInput, change).
-FAIL fired event is (secondInput, focus). Should be (firstInput, blur).
-FAIL fired event is (secondInput, click). Should be (secondInput, focus).
+FAIL should have fired event (firstInput, blur). But did not.
+FAIL should have fired event (secondInput, focus). But did not.
 FAIL should have fired event (secondInput, click). But did not.
 
 TEST COMPLETE

@@ -1,0 +1,10 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+CONSOLE MESSAGE: line 5: TypeError: undefined is not a function (evaluating 'testRunner.dumpResourceRequestPriorities()')
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

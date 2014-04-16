@@ -35,21 +35,21 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (10,350) size 450x52 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,2) size 8x19
           text run at (1,2) width 8: "a"
-        RenderTextControl {INPUT} at (10,3) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderTextControl {INPUT} at (10,3) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (147,2) size 29x19
           text run at (147,2) width 29: "text "
         RenderText {#text} at (314,2) size 20x19
           text run at (314,2) width 13: "b "
           text run at (326,2) width 8: "a"
-        RenderTextControl {INPUT} at (3,28) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-        RenderText {#text} at (140,26) size 65x19
-          text run at (140,26) width 65: "password "
-        RenderText {#text} at (343,26) size 9x19
-          text run at (343,26) width 9: "b"
+        RenderTextControl {INPUT} at (3,28) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (140,27) size 65x19
+          text run at (140,27) width 65: "password "
+        RenderText {#text} at (344,27) size 9x19
+          text run at (344,27) width 9: "b"
       RenderBlock {DIV} at (10,412) size 450x24 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,3) size 8x19
           text run at (1,3) width 8: "a"
-        RenderBlock {INPUT} at (10,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (10,4) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (28,3) size 66x19
           text run at (28,3) width 66: "checkbox "
         RenderText {#text} at (113,3) size 9x19
@@ -57,32 +57,32 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (10,446) size 450x24 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,3) size 8x19
           text run at (1,3) width 8: "a"
-        RenderBlock {INPUT} at (10,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (10,4) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (28,3) size 37x19
           text run at (28,3) width 37: "radio "
         RenderText {#text} at (84,3) size 9x19
           text run at (84,3) width 9: "b"
-layer at (34,364) size 123x14 scrollWidth 148
-  RenderBlock {DIV} at (6,3) size 123x14
+layer at (35,364) size 122x14 scrollWidth 148
+  RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 147x14
       text run at (0,0) width 147: "foobarbazfoobarbazfoobarbaz"
-layer at (27,388) size 123x15
-  RenderBlock {DIV} at (6,2) size 123x15
-    RenderText {#text} at (0,0) size 21x14
-      text run at (0,0) width 21: "\x{25CF}\x{25CF}\x{25CF}"
-layer at (195,361) size 135x21
-  RenderTextControl {INPUT} at (177,3) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-layer at (201,364) size 123x14
-  RenderBlock {DIV} at (6,3) size 123x14 [color=#545454]
+layer at (28,389) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+    RenderText {#text} at (0,0) size 20x14
+      text run at (0,0) width 20: "\x{25CF}\x{25CF}\x{25CF}"
+layer at (195,361) size 136x21
+  RenderTextControl {INPUT} at (177,3) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+layer at (202,364) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15 [color=#545454]
     RenderText {#text} at (0,0) size 16x14
       text run at (0,0) width 16: "foo"
-layer at (224,386) size 135x21
-  RenderTextControl {INPUT} at (206,28) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-layer at (230,388) size 123x15
-  RenderBlock {DIV} at (6,2) size 123x15 [color=#545454]
-    RenderText {#text} at (0,0) size 21x14
-      text run at (0,0) width 21: "\x{25CF}\x{25CF}\x{25CF}"
+layer at (225,386) size 135x21
+  RenderTextControl {INPUT} at (206,28) size 137x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+layer at (231,389) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15 [color=#545454]
+    RenderText {#text} at (0,0) size 20x14
+      text run at (0,0) width 20: "\x{25CF}\x{25CF}\x{25CF}"
 layer at (113,424) size 16x16
-  RenderBlock {INPUT} at (95,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+  RenderBlock {INPUT} at (95,4) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
 layer at (85,458) size 16x16
-  RenderBlock {INPUT} at (67,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+  RenderBlock {INPUT} at (66,4) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]

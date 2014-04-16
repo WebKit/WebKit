@@ -2,8 +2,8 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 448x498
-    RenderSVGText {text} at (143,5) size 163x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 163x19
+    RenderSVGText {text} at (143,5) size 164x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 163x18
         chunk 1 (middle anchor) text run 1 at (143.62,20.00) startOffset 0 endOffset 22 width 162.77: "textLength with Anchor"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (200,3) size 50x24
@@ -30,7 +30,7 @@ layer at (0,0) size 450x500
               RenderSVGContainer {g} at (200,33) size 50x24
                 RenderSVGRect {rect} at (200,35) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [x=200.00] [y=5.00] [width=50.00] [height=20.00]
                 RenderSVGPath {line} at (224,33) size 2x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=3.00] [x2=225.00] [y2=27.00]
-        RenderSVGText {text} at (201,8) size 47x14 contains 1 chunk(s)
+        RenderSVGText {text} at (201,8) size 48x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 47x14
             chunk 1 (middle anchor) text run 1 at (201.67,19.00) startOffset 0 endOffset 9 width 46.66: "xml-batik"
         RenderSVGText {text} at (190,29) size 70x14 contains 1 chunk(s)
@@ -47,7 +47,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (200,8) size 50x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 50x14
             chunk 1 (middle anchor) text run 1 at (221.00,19.00) startOffset 0 endOffset 1 width 8.00: "B"
-        RenderSVGText {text} at (97,29) size 255x14 contains 1 chunk(s)
+        RenderSVGText {text} at (97,29) size 256x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 255x14
             chunk 1 (middle anchor) text run 1 at (97.95,40.00) startOffset 0 endOffset 47 width 254.10: "textLength=\"50\" lengthAdjust=\"spacingAndGlyphs\""
       RenderSVGContainer {g} at (49,119) size 352x47 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
@@ -61,7 +61,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (220,8) size 9x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 9x14
             chunk 1 (middle anchor) text run 1 at (221.00,19.00) startOffset 0 endOffset 1 width 8.00: "B"
-        RenderSVGText {text} at (125,29) size 199x14 contains 1 chunk(s)
+        RenderSVGText {text} at (125,29) size 200x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 199x14
             chunk 1 (middle anchor) text run 1 at (125.62,40.00) startOffset 0 endOffset 38 width 198.77: "textLength=\"50\" lengthAdjust=\"spacing\""
       RenderSVGContainer {g} at (49,164) size 352x47 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,165.00)}]
@@ -75,7 +75,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (200,8) size 50x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 50x14
             chunk 1 (middle anchor) text run 1 at (212.00,19.00) startOffset 0 endOffset 5 width 26.00: "Batik"
-        RenderSVGText {text} at (97,29) size 255x14 contains 1 chunk(s)
+        RenderSVGText {text} at (97,29) size 256x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 255x14
             chunk 1 (middle anchor) text run 1 at (97.95,40.00) startOffset 0 endOffset 47 width 254.10: "textLength=\"50\" lengthAdjust=\"spacingAndGlyphs\""
       RenderSVGContainer {g} at (49,209) size 352x47 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
@@ -93,7 +93,7 @@ layer at (0,0) size 450x500
             chunk 1 (middle anchor) text run 3 at (225.33,19.00) startOffset 2 endOffset 3 width 3.33: "t"
             chunk 1 (middle anchor) text run 4 at (233.47,19.00) startOffset 3 endOffset 4 width 3.33: "i"
             chunk 1 (middle anchor) text run 5 at (241.60,19.00) startOffset 4 endOffset 5 width 6.00: "k"
-        RenderSVGText {text} at (125,29) size 199x14 contains 1 chunk(s)
+        RenderSVGText {text} at (125,29) size 200x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 199x14
             chunk 1 (middle anchor) text run 1 at (125.62,40.00) startOffset 0 endOffset 38 width 198.77: "textLength=\"50\" lengthAdjust=\"spacing\""
       RenderSVGContainer {g} at (49,254) size 352x47 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,255.00)}]
@@ -107,7 +107,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (200,8) size 50x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 50x14
             chunk 1 (middle anchor) text run 1 at (192.18,19.00) startOffset 0 endOffset 12 width 65.64: "Apache Batik"
-        RenderSVGText {text} at (69,29) size 311x14 contains 1 chunk(s)
+        RenderSVGText {text} at (69,29) size 312x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 311x14
             chunk 1 (middle anchor) text run 1 at (69.79,40.00) startOffset 0 endOffset 59 width 310.43: "textLength=\"50\" lengthAdjust=\"spacingAndGlyphs\" (shrinking)"
       RenderSVGContainer {g} at (49,299) size 352x47 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
@@ -121,7 +121,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (200,8) size 50x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 50x14
             chunk 1 text run 1 at (200.00,19.00) startOffset 0 endOffset 12 width 65.64: "Apache Batik"
-        RenderSVGText {text} at (68,29) size 313x14 contains 1 chunk(s)
+        RenderSVGText {text} at (68,29) size 314x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 313x14
             chunk 1 (middle anchor) text run 1 at (68.63,40.00) startOffset 0 endOffset 59 width 312.74: "textLength=\"50\" lengthAdjust=\"spacingAndGlyphs\" (no anchor)"
       RenderSVGContainer {g} at (49,344) size 352x47 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,345.00)}]
@@ -140,14 +140,14 @@ layer at (0,0) size 450x500
               chunk 1 (middle anchor) text run 1 at (227.83,19.00) startOffset 0 endOffset 5 width 26.00: "Batik"
           RenderSVGInlineText {#text} at (44,0) size 6x14
             chunk 1 (middle anchor) text run 1 at (253.83,19.00) startOffset 0 endOffset 2 width 7.99: "!!"
-        RenderSVGText {text} at (79,29) size 291x14 contains 1 chunk(s)
+        RenderSVGText {text} at (79,29) size 292x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 291x14
             chunk 1 (middle anchor) text run 1 at (79.79,40.00) startOffset 0 endOffset 55 width 290.43: "textLength=\"50\" lengthAdjust=\"spacingAndGlyphs\" (tspan)"
       RenderSVGContainer {g} at (49,379) size 352x112 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,390.00)}]
         RenderSVGRect {rect} at (49,389) size 352x97 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=50.00] [y=0.00] [width=350.00] [height=95.00]
         RenderSVGRect {rect} at (112,395) size 26x80 [fill={[type=SOLID] [color=#DDE8FF]}] [x=112.50] [y=5.00] [width=25.00] [height=80.00]
         RenderSVGPath {line} at (124,393) size 2x84 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=125.00] [y1=3.00] [x2=125.00] [y2=87.00]
-        RenderSVGText {text} at (112,-11) size 25x112 contains 1 chunk(s)
+        RenderSVGText {text} at (112,-11) size 26x112 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 25x112
             chunk 1 (middle anchor) text run 1 at (-33.33,79.00) startOffset 0 endOffset 9 width 316.65: "B a t i k"
         RenderSVGText {text} at (160,29) size 174x43 contains 1 chunk(s)

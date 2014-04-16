@@ -4,10 +4,10 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (3,8) size 458x280
       RenderSVGText {text} at (3,8) size 321x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 321x46
+        RenderSVGInlineText {#text} at (0,0) size 321x45
           chunk 1 text run 1 at (3.00,45.00) startOffset 0 endOffset 17 width 320.78: "calcMode=\"linear\""
       RenderSVGText {text} at (3,63) size 390x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 390x46
+        RenderSVGInlineText {#text} at (0,0) size 390x45
           chunk 1 text run 1 at (3.00,100.00) startOffset 0 endOffset 21 width 389.69: "keyTimes=\"0;.5;.75;1\""
       RenderSVGContainer {g} at (10,138) size 451x150
         RenderSVGContainer {g} at (10,138) size 451x150 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,140.00)}]

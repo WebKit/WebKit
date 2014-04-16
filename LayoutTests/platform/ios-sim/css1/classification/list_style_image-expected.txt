@@ -6,15 +6,15 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 363x19
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x45
-        RenderText {#text} at (0,0) size 430x45
+      RenderBlock {PRE} at (0,36) size 784x42
+        RenderText {#text} at (0,0) size 430x42
           text run at (0,0) width 430: ".one {list-style-image: url(../resources/oransqr.gif);}"
           text run at (429,0) width 1: " "
-          text run at (0,15) width 235: ".two {list-style-image: none;}"
-          text run at (234,15) width 1: " "
-          text run at (0,30) width 0: " "
-      RenderBlock {HR} at (0,94) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {UL} at (0,112) size 784x60
+          text run at (0,14) width 235: ".two {list-style-image: none;}"
+          text run at (234,14) width 1: " "
+          text run at (0,28) width 0: " "
+      RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {UL} at (0,109) size 784x60
         RenderListItem {LI} at (40,0) size 744x20
           RenderListMarker at (-22,0) size 15x15
           RenderText {#text} at (0,0) size 65x19
@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-22,0) size 15x15
           RenderText {#text} at (0,0) size 150x19
             text run at (0,0) width 150: "...images for each item."
-      RenderBlock {UL} at (0,188) size 784x60
+      RenderBlock {UL} at (0,185) size 784x60
         RenderListItem {LI} at (40,0) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 65x19
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 238x19
             text run at (0,0) width 238: "...standard list markers for each item."
-      RenderTable {TABLE} at (0,264) size 300x190 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,261) size 300x190 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 298x188
           RenderTableRow {TR} at (0,0) size 298x28
             RenderTableCell {TD} at (0,0) size 298x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]

@@ -1,0 +1,3 @@
+Test the behavior of a sync XMLHttpRequest that encounters an infinite redirection loop.
+
+Status: 404

@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 563x19
         text run at (0,0) width 563: "This tests that a negative outline-offset won't get in the way of a cursor in a text control."
       RenderBR {BR} at (562,15) size 1x0
-      RenderTextControl {INPUT} at (2,22) size 245x36 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+      RenderTextControl {INPUT} at (2,22) size 245x37 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
-layer at (21,35) size 223x24 scrollX 292 scrollWidth 512
-  RenderBlock {DIV} at (11,5) size 223x24
-    RenderText {#text} at (0,0) size 511x24
+layer at (21,35) size 222x25 scrollX 292 scrollWidth 512
+  RenderBlock {DIV} at (11,5) size 223x25
+    RenderText {#text} at (0,0) size 511x25
       text run at (0,0) width 511: "This tests that typing doesn't cut holes in the focus outline"
-caret: position 61 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of body
+caret: position 61 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body

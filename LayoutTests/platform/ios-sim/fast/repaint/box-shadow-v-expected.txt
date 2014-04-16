@@ -23,7 +23,7 @@ layer at (0,0) size 800x521
           RenderBR {BR} at (85,0) size 1x19
           RenderText {#text} at (0,20) size 88x19
             text run at (0,20) width 88: "dolor sit amet"
-      RenderBlock (floating) {DIV} at (134,0) size 124x457
+      RenderBlock (floating) {DIV} at (133,0) size 125x457
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
         RenderBlock (anonymous) at (0,340) size 124x65
@@ -37,7 +37,7 @@ layer at (0,0) size 800x521
               text run at (46,0) width 40: "ipsum"
           RenderText {#text} at (85,0) size 39x19
             text run at (85,0) width 39: " dolor"
-      RenderBlock (floating) {DIV} at (268,0) size 124x457
+      RenderBlock (floating) {DIV} at (267,0) size 124x457
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
         RenderBlock (anonymous) at (0,340) size 124x65
@@ -51,7 +51,7 @@ layer at (0,0) size 800x521
               text run at (46,0) width 40: "ipsum"
           RenderText {#text} at (85,0) size 39x19
             text run at (85,0) width 39: " dolor"
-      RenderBlock (floating) {DIV} at (402,0) size 124x457
+      RenderBlock (floating) {DIV} at (400,0) size 125x457
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
         RenderBlock (anonymous) at (0,340) size 124x65
@@ -65,7 +65,7 @@ layer at (0,0) size 800x521
               text run at (46,0) width 40: "ipsum"
           RenderText {#text} at (85,0) size 39x19
             text run at (85,0) width 39: " dolor"
-      RenderBlock (floating) {DIV} at (536,0) size 124x457
+      RenderBlock (floating) {DIV} at (534,0) size 124x457
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
         RenderBlock (anonymous) at (0,340) size 124x65
@@ -83,11 +83,11 @@ layer at (18,248) size 40x40
   RenderBlock {DIV} at (10,240) size 40x40 [bgcolor=#FFFF77]
 layer at (152,248) size 40x40
   RenderBlock {DIV} at (10,240) size 40x40 [bgcolor=#FFFF77]
-layer at (286,248) size 40x40
+layer at (285,248) size 40x40
   RenderBlock {DIV} at (10,240) size 40x40 [bgcolor=#FFFF77]
-layer at (420,248) size 40x40
+layer at (419,248) size 40x40
   RenderBlock {DIV} at (10,240) size 40x40 [bgcolor=#FFFF77]
-layer at (554,248) size 40x40
+layer at (552,248) size 40x40
   RenderBlock {DIV} at (10,240) size 40x40 [bgcolor=#FFFF77]
 layer at (8,68) size 60x60
   RenderBlock (relative positioned) {DIV} at (0,60) size 60x60
@@ -109,31 +109,31 @@ layer at (152,138) size 40x40 backgroundClip at (147,178) size 5x5 clip at (147,
   RenderBlock (positioned) {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
 layer at (152,198) size 40x40
   RenderBlock {DIV} at (10,190) size 40x40 [bgcolor=#FFFF77]
-layer at (276,68) size 60x60
+layer at (275,68) size 60x60
   RenderBlock (relative positioned) {DIV} at (0,60) size 60x60
-layer at (286,78) size 40x40
+layer at (285,78) size 40x40
   RenderBlock (positioned) {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
-layer at (276,128) size 60x60
+layer at (275,128) size 60x60
   RenderBlock (relative positioned) {DIV} at (0,120) size 60x60
-layer at (286,138) size 40x40 backgroundClip at (326,178) size 5x5 clip at (326,178) size 5x5 outlineClip at (326,178) size 5x5
+layer at (285,138) size 40x40 backgroundClip at (325,178) size 5x5 clip at (325,178) size 5x5 outlineClip at (325,178) size 5x5
   RenderBlock (positioned) {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
-layer at (286,198) size 40x40
+layer at (285,198) size 40x40
   RenderBlock {DIV} at (10,190) size 40x40 [bgcolor=#FFFF77]
-layer at (410,68) size 60x60
+layer at (409,68) size 60x60
   RenderBlock (relative positioned) {DIV} at (0,60) size 60x60
-layer at (420,78) size 40x40
+layer at (419,78) size 40x40
   RenderBlock (positioned) {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
-layer at (410,128) size 60x60
+layer at (409,128) size 60x60
   RenderBlock (relative positioned) {DIV} at (0,120) size 60x60
-layer at (420,138) size 40x40 backgroundClip at (460,133) size 5x5 clip at (460,133) size 5x5 outlineClip at (460,133) size 5x5
+layer at (419,138) size 40x40 backgroundClip at (459,133) size 5x5 clip at (459,133) size 5x5 outlineClip at (459,133) size 5x5
   RenderBlock (positioned) {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
-layer at (420,198) size 40x40
+layer at (419,198) size 40x40
   RenderBlock {DIV} at (10,190) size 40x40 [bgcolor=#FFFF77]
-layer at (544,68) size 60x60
+layer at (542,68) size 60x60
   RenderBlock (relative positioned) {DIV} at (0,60) size 60x60
-layer at (554,78) size 40x40
+layer at (552,78) size 40x40
   RenderBlock (positioned) {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
-layer at (544,128) size 60x60
+layer at (542,128) size 60x60
   RenderBlock (relative positioned) {DIV} at (0,120) size 60x60
-layer at (554,198) size 40x40
+layer at (552,198) size 40x40
   RenderBlock {DIV} at (10,190) size 40x40 [bgcolor=#FFFF77]

@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (146,18) size 554x582
+  RenderSVGRoot {svg} at (146,23) size 554x577
     RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
       RenderSVGRect {rect} at (5,5) size 59x59 [fill={[type=SOLID] [color=#0000FF]}] [x=5.00] [y=5.00] [width=59.00] [height=59.00]
       RenderSVGText {text} at (17,2) size 44x67 contains 1 chunk(s)
@@ -12,9 +12,9 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (17,2) size 41x67 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 41x67
           chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 40.02: "B"
-    RenderSVGContainer {use} at (146,18) size 554x582
-      RenderSVGViewportContainer {svg} at (146,18) size 554x582
+    RenderSVGContainer {use} at (146,23) size 554x577
+      RenderSVGViewportContainer {svg} at (146,23) size 554x577
         RenderSVGRect {rect} at (146,46) size 554x554 [fill={[type=SOLID] [color=#0000FF]}] [x=5.00] [y=5.00] [width=59.00] [height=59.00]
-        RenderSVGText {text} at (17,2) size 44x67 contains 1 chunk(s)
+        RenderSVGText {text} at (17,2) size 44x68 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 44x67
-            chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 43.37: "A"
+            chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 43.33: "A"

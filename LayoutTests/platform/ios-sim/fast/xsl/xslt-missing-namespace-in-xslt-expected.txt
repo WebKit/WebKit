@@ -2,14 +2,29 @@ CONSOLE MESSAGE: line 8: Namespace prefix foo on bar is not defined
 
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x88
-  RenderBlock {html} at (0,0) size 800x88
-    RenderBody {body} at (8,16) size 784x56
+layer at (0,0) size 800x298
+  RenderBlock {html} at (0,0) size 800x298
+    RenderBlock {parsererror} at (16,16) size 768x194 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x24
+        RenderText {#text} at (0,0) size 323x22
+          text run at (0,0) width 323: "This page contains the following errors:"
+      RenderBlock {div} at (18,62) size 732x14
+        RenderText {#text} at (0,0) size 519x13
+          text run at (0,0) width 519: "error on line 1 at column 76: Namespace prefix foo on bar is not defined"
+          text run at (518,0) width 1: " "
+      RenderBlock {h3} at (18,94) size 732x24
+        RenderText {#text} at (0,0) size 428x22
+          text run at (0,0) width 428: "Below is a rendering of the page up to the first error."
+      RenderBlock {p} at (18,135) size 732x41
+        RenderText {#text} at (0,0) size 722x39
+          text run at (0,0) width 722: "This document was created as the result of an XSL transformation. The line and column numbers given are from"
+          text run at (0,20) width 145: "the transformed result."
+    RenderBody {body} at (8,225) size 784x57
       RenderBlock {p} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 232x19
           text run at (0,0) width 232: "You should see error text above this"
       RenderBlock (anonymous) at (0,36) size 784x0
-        RenderInline {bar} at (0,0) size 0x0
+        RenderInline {foo:bar} at (0,0) size 0x0
       RenderBlock {p} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 354x19
           text run at (0,0) width 354: "ERROR? this, and nothing below it should be rendered"

@@ -1,32 +1,31 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x351
-  RenderBlock {HTML} at (0,0) size 800x351
-    RenderBody {BODY} at (8,16) size 784x327
+layer at (0,0) size 800x336
+  RenderBlock {HTML} at (0,0) size 800x336
+    RenderBody {BODY} at (8,16) size 784x312
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 229x19
           text run at (0,0) width 229: "There should be a green box below."
-      RenderBlock {DIV} at (0,36) size 186x291 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (0,36) size 186x276 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderBlock {DIV} at (48,18) size 90x75
           RenderBlock {P} at (0,0) size 90x75
-            RenderText {#text} at (0,0) size 76x75
-              text run at (0,0) width 76: "x x x"
-              text run at (0,15) width 76: "x x x"
-              text run at (0,30) width 76: "x x x"
-              text run at (0,45) width 76: "x x x"
-              text run at (0,60) width 76: "x x x"
+            RenderText {#text} at (0,0) size 75x75
+              text run at (0,0) width 75: "x x x"
+              text run at (0,15) width 75: "x x x"
+              text run at (0,30) width 75: "x x x"
+              text run at (0,45) width 75: "x x x"
+              text run at (0,60) width 75: "x x x"
         RenderBlock {DIV} at (93,108) size 90x75
           RenderBlock {P} at (0,0) size 90x75
-            RenderText {#text} at (0,0) size 76x75
-              text run at (0,0) width 76: "x x x"
-              text run at (0,15) width 76: "x x x"
-              text run at (0,30) width 76: "x x x"
-              text run at (0,45) width 76: "x x x"
-              text run at (0,60) width 76: "x x x"
-        RenderBlock {P} at (48,198) size 135x75
-          RenderText {#text} at (0,0) size 106x75
-            text run at (0,0) width 106: "x x x x"
-            text run at (0,15) width 106: "x x x x"
-            text run at (0,30) width 106: "x x x x"
-            text run at (0,45) width 106: "x x x x"
-            text run at (0,60) width 106: "x x x x"
+            RenderText {#text} at (0,0) size 75x75
+              text run at (0,0) width 75: "x x x"
+              text run at (0,15) width 75: "x x x"
+              text run at (0,30) width 75: "x x x"
+              text run at (0,45) width 75: "x x x"
+              text run at (0,60) width 75: "x x x"
+        RenderBlock {P} at (48,198) size 135x60
+          RenderText {#text} at (0,0) size 135x60
+            text run at (0,0) width 135: "x x x x x"
+            text run at (0,15) width 135: "x x x x x"
+            text run at (0,30) width 135: "x x x x x"
+            text run at (0,45) width 135: "x x x x x"

@@ -3,7 +3,7 @@ layer at (0,0) size 1650x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (-850,8) size 1642x203 backgroundClip at (0,0) size 1650x600 clip at (0,0) size 1650x600 outlineClip at (0,0) size 1650x600
+layer at (-850,8) size 1642x202 backgroundClip at (0,0) size 1650x600 clip at (0,0) size 1650x600 outlineClip at (0,0) size 1650x600
   RenderBlock (positioned) {DIV} at (8,8) size 1642x203
     RenderBlock {P} at (72,0) size 85x203
       RenderInline {A} at (0,0) size 81x167 [color=#0000EE]

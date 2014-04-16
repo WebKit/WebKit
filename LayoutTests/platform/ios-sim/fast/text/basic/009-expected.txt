@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderInline {SPAN} at (0,0) size 334x28
         RenderText {#text} at (0,1) size 176x28
           text run at (0,1) width 176: "This is some text. "
-        RenderInline {TT} at (0,0) size 159x28
-          RenderText {#text} at (175,3) size 159x28
-            text run at (175,3) width 159: "As is this."
+        RenderInline {TT} at (0,0) size 159x25
+          RenderText {#text} at (175,4) size 159x25
+            text run at (175,4) width 159: "As is this."
       RenderText {#text} at (333,1) size 342x28
         text run at (333,1) width 342: " All of this text should be 24px tall."

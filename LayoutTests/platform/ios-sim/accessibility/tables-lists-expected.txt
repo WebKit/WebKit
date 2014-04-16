@@ -9,10 +9,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS listItem.iphoneTraits != initialItem.iphoneTraits is true
 PASS listItem.iphoneTraits != tableItem.iphoneTraits is true
-PASS listItem.iphoneTraits != landmarkItem.iphoneTraits is true
+FAIL listItem.iphoneTraits != landmarkItem.iphoneTraits should be true. Threw exception TypeError: undefined is not an object (evaluating 'landmarkItem.iphoneTraits')
 PASS tableItem.iphoneTraits != initialItem.iphoneTraits is true
-PASS tableItem.iphoneTraits != landmarkItem.iphoneTraits is true
-PASS landmarkItem.iphoneTraits != initialItem.iphoneTraits is true
+FAIL tableItem.iphoneTraits != landmarkItem.iphoneTraits should be true. Threw exception TypeError: undefined is not an object (evaluating 'landmarkItem.iphoneTraits')
+FAIL landmarkItem.iphoneTraits != initialItem.iphoneTraits should be true. Threw exception TypeError: undefined is not an object (evaluating 'landmarkItem.iphoneTraits')
 PASS successfullyParsed is true
 
 TEST COMPLETE

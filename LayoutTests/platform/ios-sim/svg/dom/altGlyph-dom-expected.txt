@@ -7,8 +7,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS altGlyph.tagName is "altGlyph"
 PASS altGlyph.namespaceURI is "http://www.w3.org/2000/svg"
 PASS altGlyph.format is "image/svg+xml"
-PASS altGlyph.format = 'x' threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-FAIL altGlyph.getStartPositionOfChar(0).x should be 0. Was 72.00000762939453.
+PASS altGlyph.format = 'x' threw exception Error: NoModificationAllowedError: DOM Exception 7.
+FAIL altGlyph.getStartPositionOfChar(0).x should be 0. Was 72.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 448x498
     RenderSVGText {text} at (104,35) size 242x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 242x19
+      RenderSVGInlineText {#text} at (0,0) size 242x18
         chunk 1 (middle anchor) text run 1 at (104.05,50.00) startOffset 0 endOffset 34 width 241.91: "patternUnits / patternContentUnits"
     RenderSVGText {text} at (168,60) size 114x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 114x19
+      RenderSVGInlineText {#text} at (0,0) size 114x18
         chunk 1 (middle anchor) text run 1 at (168.08,75.00) startOffset 0 endOffset 15 width 113.84: "pattern viewBox"
     RenderSVGContainer {g} at (14,109) size 412x292
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0

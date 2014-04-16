@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
       RenderSVGRect {rect} at (50,160) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=160.00] [width=50.00] [height=50.00]
       RenderSVGRect {rect} at (40,150) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=40.00] [y=150.00] [width=50.00] [height=50.00]
       RenderSVGText {text} at (50,85) size 274x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 274x19
+        RenderSVGInlineText {#text} at (0,0) size 274x18
           chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 44 width 273.51: "This document's root identifier is: svg-root"
     RenderSVGText {text} at (10,313) size 198x34 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 198x34

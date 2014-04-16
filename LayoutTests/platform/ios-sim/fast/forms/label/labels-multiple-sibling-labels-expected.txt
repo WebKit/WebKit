@@ -11,6 +11,8 @@ Check keygen
 PASS element.labels.length is 2
 Check output
 PASS element.labels.length is 2
+Check progress
+PASS element.labels.length is 2
 Check select
 PASS element.labels.length is 2
 Check textarea

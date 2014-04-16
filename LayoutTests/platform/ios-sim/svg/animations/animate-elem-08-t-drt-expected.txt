@@ -1,0 +1,59 @@
+SVG 1.1 dynamic animation tests
+
+A copy of the corresponding W3C-SVG-1.1 test, which dumps the animation at certain times
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rootSVGElement.getTransformToElement(path1).a is 0
+PASS rootSVGElement.getTransformToElement(path1).b is 1
+PASS rootSVGElement.getTransformToElement(path1).c is -1
+PASS rootSVGElement.getTransformToElement(path1).d is 0
+PASS rootSVGElement.getTransformToElement(path1).e is 224.9
+PASS rootSVGElement.getTransformToElement(path1).f is -25.9
+PASS rootSVGElement.getTransformToElement(path2).a is 0
+PASS rootSVGElement.getTransformToElement(path2).b is -1
+PASS rootSVGElement.getTransformToElement(path2).c is 1
+PASS rootSVGElement.getTransformToElement(path2).d is 0
+PASS rootSVGElement.getTransformToElement(path2).e is -223.9
+PASS rootSVGElement.getTransformToElement(path2).f is 275.9
+PASS rootSVGElement.getTransformToElement(path1).a is 1
+PASS rootSVGElement.getTransformToElement(path1).b is 0.1
+PASS rootSVGElement.getTransformToElement(path1).c is -0.1
+PASS rootSVGElement.getTransformToElement(path1).d is 1
+PASS rootSVGElement.getTransformToElement(path1).e is -70.3
+PASS rootSVGElement.getTransformToElement(path1).f is -182.8
+PASS rootSVGElement.getTransformToElement(path2).a is -1
+PASS rootSVGElement.getTransformToElement(path2).b is -0.1
+PASS rootSVGElement.getTransformToElement(path2).c is 0.1
+PASS rootSVGElement.getTransformToElement(path2).d is -1
+PASS rootSVGElement.getTransformToElement(path2).e is 318.6
+PASS rootSVGElement.getTransformToElement(path2).f is 211.6
+PASS rootSVGElement.getTransformToElement(path1).a is 0.7
+PASS rootSVGElement.getTransformToElement(path1).b is -0.7
+PASS rootSVGElement.getTransformToElement(path1).c is 0.7
+PASS rootSVGElement.getTransformToElement(path1).d is 0.7
+PASS rootSVGElement.getTransformToElement(path1).e is -265.1
+PASS rootSVGElement.getTransformToElement(path1).f is -18.9
+PASS rootSVGElement.getTransformToElement(path2).a is -0.7
+PASS rootSVGElement.getTransformToElement(path2).b is 0.7
+PASS rootSVGElement.getTransformToElement(path2).c is -0.7
+PASS rootSVGElement.getTransformToElement(path2).d is -0.7
+PASS rootSVGElement.getTransformToElement(path2).e is 442.7
+PASS rootSVGElement.getTransformToElement(path2).f is -156.9
+PASS rootSVGElement.getTransformToElement(path1).a is 0.7
+PASS rootSVGElement.getTransformToElement(path1).b is -0.7
+PASS rootSVGElement.getTransformToElement(path1).c is 0.7
+PASS rootSVGElement.getTransformToElement(path1).d is 0.7
+PASS rootSVGElement.getTransformToElement(path1).e is -265.1
+PASS rootSVGElement.getTransformToElement(path1).f is -18.9
+PASS rootSVGElement.getTransformToElement(path2).a is -0.7
+PASS rootSVGElement.getTransformToElement(path2).b is 0.7
+PASS rootSVGElement.getTransformToElement(path2).c is -0.7
+PASS rootSVGElement.getTransformToElement(path2).d is -0.7
+PASS rootSVGElement.getTransformToElement(path2).e is 442.7
+PASS rootSVGElement.getTransformToElement(path2).f is -156.9
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

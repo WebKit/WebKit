@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
         RenderSVGPath {line} at (0,0) size 2x8 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
     RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-2000.00] [y=-2000.00] [width=6000.00] [height=6000.00]
-    RenderSVGText {text} at (254,20) size 516x25 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 516x25
-        chunk 1 (middle anchor) text run 1 at (254.25,40.00) startOffset 0 endOffset 52 width 515.49: "Demonstration of the carto.net SVG GUI slider object"
+    RenderSVGText {text} at (262,21) size 500x24 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 500x24
+        chunk 1 (middle anchor) text run 1 at (262.31,40.00) startOffset 0 endOffset 52 width 499.38: "Demonstration of the carto.net SVG GUI slider object"
     RenderSVGContainer {g} at (546,44) size 17x91
       RenderSVGPath {line} at (548,44) size 13x91 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [x1=710.00] [y1=65.00] [x2=710.00] [y2=165.00]
       RenderSVGPath {line} at (553,50) size 3x79 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=710.00] [y1=65.00] [x2=710.00] [y2=165.00]
@@ -33,9 +33,9 @@ layer at (0,0) size 800x600
       RenderSVGContainer {use} at (363,307) size 15x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(380.00,300.00)}]
         RenderSVGViewportContainer {svg} at (363,307) size 15x14
           RenderSVGPath {line} at (363,307) size 15x14 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-    RenderSVGText {text} at (20,684) size 67x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 67x20
-        chunk 1 text run 1 at (20.00,700.00) startOffset 0 endOffset 10 width 66.55: "Statusbar:"
-    RenderSVGText {text} at (500,584) size 324x20 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 324x20
-        chunk 1 text run 1 at (500.00,600.00) startOffset 0 endOffset 50 width 323.52: "Click on this text to randomly reposition slider 4"
+    RenderSVGText {text} at (20,685) size 64x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 64x19
+        chunk 1 text run 1 at (20.00,700.00) startOffset 0 endOffset 10 width 63.99: "Statusbar:"
+    RenderSVGText {text} at (500,585) size 312x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 312x19
+        chunk 1 text run 1 at (500.00,600.00) startOffset 0 endOffset 50 width 311.08: "Click on this text to randomly reposition slider 4"

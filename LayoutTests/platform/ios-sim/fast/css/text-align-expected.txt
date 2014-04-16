@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x550
-  RenderBlock {HTML} at (0,0) size 800x550
-    RenderBody {BODY} at (8,10) size 784x524
+layer at (0,0) size 800x551
+  RenderBlock {HTML} at (0,0) size 800x551
+    RenderBody {BODY} at (8,10) size 784x525
       RenderBlock {H1} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 80x19
           text run at (0,0) width 80: "Simple case"

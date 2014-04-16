@@ -1,0 +1,28 @@
+This should be visibleThis should be visible
+(GraphicsLayer
+  (bounds 800.00 1021.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 1021.00)
+      (children 2
+        (GraphicsLayer
+          (position -200.00 0.00)
+          (anchor 1.00 0.00)
+          (bounds 200.00 50.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (transform [0.00 -1.00 0.00 0.00] [1.00 0.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+        )
+        (GraphicsLayer
+          (position -250.00 210.00)
+          (anchor 1.00 0.00)
+          (bounds 200.00 200.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (transform [0.71 -0.71 0.00 0.00] [0.71 0.71 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+        )
+      )
+    )
+  )
+)
+

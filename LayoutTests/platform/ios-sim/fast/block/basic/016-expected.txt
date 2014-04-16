@@ -28,7 +28,7 @@ layer at (0,0) size 800x8116
               RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 88x19
                   text run at (1,1) width 88: "Normal table."
-        RenderTable {TABLE} at (320,176) size 143x30 [border: (2px solid #0000FF)]
+        RenderTable {TABLE} at (320,176) size 144x30 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 139x26
             RenderTableRow {TR} at (0,2) size 139x22
               RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -96,7 +96,7 @@ layer at (0,0) size 800x8116
               RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 88x19
                   text run at (1,1) width 88: "Normal table."
-        RenderTable {TABLE} at (320,176) size 143x30 [border: (2px solid #0000FF)]
+        RenderTable {TABLE} at (320,176) size 144x30 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 139x26
             RenderTableRow {TR} at (0,2) size 139x22
               RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -164,13 +164,13 @@ layer at (0,0) size 800x8116
               RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 88x19
                   text run at (1,1) width 88: "Normal table."
-        RenderTable {TABLE} at (320,176) size 143x30 [border: (2px solid #0000FF)]
+        RenderTable {TABLE} at (320,176) size 144x30 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 139x26
             RenderTableRow {TR} at (0,2) size 139x22
               RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 133x19
                   text run at (1,1) width 133: "Center aligned table."
-        RenderTable {TABLE} at (294,206) size 195x30 [border: (2px solid #0000FF)]
+        RenderTable {TABLE} at (294,206) size 196x30 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 191x26
             RenderTableRow {TR} at (0,2) size 191x22
               RenderTableCell {TD} at (2,2) size 187x22 [r=0 c=0 rs=1 cs=1]
@@ -240,7 +240,7 @@ layer at (0,0) size 800x8116
               RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 88x19
                   text run at (1,1) width 88: "Normal table."
-        RenderTable {TABLE} at (320,176) size 143x30 [border: (2px solid #0000FF)]
+        RenderTable {TABLE} at (320,176) size 144x30 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 139x26
             RenderTableRow {TR} at (0,2) size 139x22
               RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -314,7 +314,7 @@ layer at (0,0) size 800x8116
                     RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 88x19
                         text run at (1,1) width 88: "Normal table."
-              RenderTable {TABLE} at (316,175) size 143x30 [border: (2px solid #0000FF)]
+              RenderTable {TABLE} at (316,175) size 144x30 [border: (2px solid #0000FF)]
                 RenderTableSection {TBODY} at (2,2) size 139x26
                   RenderTableRow {TR} at (0,2) size 139x22
                     RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -388,7 +388,7 @@ layer at (0,0) size 800x8116
                     RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 88x19
                         text run at (1,1) width 88: "Normal table."
-              RenderTable {TABLE} at (316,175) size 143x30 [border: (2px solid #0000FF)]
+              RenderTable {TABLE} at (316,175) size 144x30 [border: (2px solid #0000FF)]
                 RenderTableSection {TBODY} at (2,2) size 139x26
                   RenderTableRow {TR} at (0,2) size 139x22
                     RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -462,13 +462,13 @@ layer at (0,0) size 800x8116
                     RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 88x19
                         text run at (1,1) width 88: "Normal table."
-              RenderTable {TABLE} at (316,175) size 143x30 [border: (2px solid #0000FF)]
+              RenderTable {TABLE} at (316,175) size 144x30 [border: (2px solid #0000FF)]
                 RenderTableSection {TBODY} at (2,2) size 139x26
                   RenderTableRow {TR} at (0,2) size 139x22
                     RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 133x19
                         text run at (1,1) width 133: "Center aligned table."
-              RenderTable {TABLE} at (290,205) size 195x30 [border: (2px solid #0000FF)]
+              RenderTable {TABLE} at (290,205) size 196x30 [border: (2px solid #0000FF)]
                 RenderTableSection {TBODY} at (2,2) size 191x26
                   RenderTableRow {TR} at (0,2) size 191x22
                     RenderTableCell {TD} at (2,2) size 187x22 [r=0 c=0 rs=1 cs=1]
@@ -536,7 +536,7 @@ layer at (0,0) size 800x8116
                     RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 88x19
                         text run at (1,1) width 88: "Normal table."
-              RenderTable {TABLE} at (316,175) size 143x30 [border: (2px solid #0000FF)]
+              RenderTable {TABLE} at (316,175) size 144x30 [border: (2px solid #0000FF)]
                 RenderTableSection {TBODY} at (2,2) size 139x26
                   RenderTableRow {TR} at (0,2) size 139x22
                     RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -613,7 +613,7 @@ layer at (0,0) size 800x8116
                   RenderText {#text} at (1,1) size 88x19
                     text run at (1,1) width 5 RTL: "."
                     text run at (5,1) width 84: "Normal table"
-          RenderTable {TABLE} at (319,176) size 143x30 [border: (2px solid #0000FF)]
+          RenderTable {TABLE} at (318,176) size 144x30 [border: (2px solid #0000FF)]
             RenderTableSection {TBODY} at (2,2) size 139x26
               RenderTableRow {TR} at (0,2) size 139x22
                 RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -687,7 +687,7 @@ layer at (0,0) size 800x8116
                   RenderText {#text} at (1,1) size 88x19
                     text run at (1,1) width 5 RTL: "."
                     text run at (5,1) width 84: "Normal table"
-          RenderTable {TABLE} at (319,176) size 143x30 [border: (2px solid #0000FF)]
+          RenderTable {TABLE} at (318,176) size 144x30 [border: (2px solid #0000FF)]
             RenderTableSection {TBODY} at (2,2) size 139x26
               RenderTableRow {TR} at (0,2) size 139x22
                 RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -761,14 +761,14 @@ layer at (0,0) size 800x8116
                   RenderText {#text} at (1,1) size 88x19
                     text run at (1,1) width 5 RTL: "."
                     text run at (5,1) width 84: "Normal table"
-          RenderTable {TABLE} at (319,176) size 143x30 [border: (2px solid #0000FF)]
+          RenderTable {TABLE} at (318,176) size 144x30 [border: (2px solid #0000FF)]
             RenderTableSection {TBODY} at (2,2) size 139x26
               RenderTableRow {TR} at (0,2) size 139x22
                 RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 133x19
                     text run at (1,1) width 5 RTL: "."
                     text run at (5,1) width 129: "Center aligned table"
-          RenderTable {TABLE} at (293,206) size 195x30 [border: (2px solid #0000FF)]
+          RenderTable {TABLE} at (292,206) size 196x30 [border: (2px solid #0000FF)]
             RenderTableSection {TBODY} at (2,2) size 191x26
               RenderTableRow {TR} at (0,2) size 191x22
                 RenderTableCell {TD} at (2,2) size 187x22 [r=0 c=0 rs=1 cs=1]
@@ -835,7 +835,7 @@ layer at (0,0) size 800x8116
                   RenderText {#text} at (1,1) size 88x19
                     text run at (1,1) width 5 RTL: "."
                     text run at (5,1) width 84: "Normal table"
-          RenderTable {TABLE} at (319,176) size 143x30 [border: (2px solid #0000FF)]
+          RenderTable {TABLE} at (318,176) size 144x30 [border: (2px solid #0000FF)]
             RenderTableSection {TBODY} at (2,2) size 139x26
               RenderTableRow {TR} at (0,2) size 139x22
                 RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -916,7 +916,7 @@ layer at (0,0) size 800x8116
                         RenderText {#text} at (1,1) size 88x19
                           text run at (1,1) width 5 RTL: "."
                           text run at (5,1) width 84: "Normal table"
-                RenderTable {TABLE} at (315,175) size 143x30 [border: (2px solid #0000FF)]
+                RenderTable {TABLE} at (314,175) size 144x30 [border: (2px solid #0000FF)]
                   RenderTableSection {TBODY} at (2,2) size 139x26
                     RenderTableRow {TR} at (0,2) size 139x22
                       RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -996,7 +996,7 @@ layer at (0,0) size 800x8116
                         RenderText {#text} at (1,1) size 88x19
                           text run at (1,1) width 5 RTL: "."
                           text run at (5,1) width 84: "Normal table"
-                RenderTable {TABLE} at (315,175) size 143x30 [border: (2px solid #0000FF)]
+                RenderTable {TABLE} at (314,175) size 144x30 [border: (2px solid #0000FF)]
                   RenderTableSection {TBODY} at (2,2) size 139x26
                     RenderTableRow {TR} at (0,2) size 139x22
                       RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
@@ -1076,14 +1076,14 @@ layer at (0,0) size 800x8116
                         RenderText {#text} at (1,1) size 88x19
                           text run at (1,1) width 5 RTL: "."
                           text run at (5,1) width 84: "Normal table"
-                RenderTable {TABLE} at (315,175) size 143x30 [border: (2px solid #0000FF)]
+                RenderTable {TABLE} at (314,175) size 144x30 [border: (2px solid #0000FF)]
                   RenderTableSection {TBODY} at (2,2) size 139x26
                     RenderTableRow {TR} at (0,2) size 139x22
                       RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 133x19
                           text run at (1,1) width 5 RTL: "."
                           text run at (5,1) width 129: "Center aligned table"
-                RenderTable {TABLE} at (289,205) size 195x30 [border: (2px solid #0000FF)]
+                RenderTable {TABLE} at (288,205) size 196x30 [border: (2px solid #0000FF)]
                   RenderTableSection {TBODY} at (2,2) size 191x26
                     RenderTableRow {TR} at (0,2) size 191x22
                       RenderTableCell {TD} at (2,2) size 187x22 [r=0 c=0 rs=1 cs=1]
@@ -1156,7 +1156,7 @@ layer at (0,0) size 800x8116
                         RenderText {#text} at (1,1) size 88x19
                           text run at (1,1) width 5 RTL: "."
                           text run at (5,1) width 84: "Normal table"
-                RenderTable {TABLE} at (315,175) size 143x30 [border: (2px solid #0000FF)]
+                RenderTable {TABLE} at (314,175) size 144x30 [border: (2px solid #0000FF)]
                   RenderTableSection {TBODY} at (2,2) size 139x26
                     RenderTableRow {TR} at (0,2) size 139x22
                       RenderTableCell {TD} at (2,2) size 135x22 [r=0 c=0 rs=1 cs=1]

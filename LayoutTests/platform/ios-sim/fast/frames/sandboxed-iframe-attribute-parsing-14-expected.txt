@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 4: Blocked script execution in 'sandboxed-iframe-attribute-parsing-disallowed.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
+Full sandbox.
+
+PASS

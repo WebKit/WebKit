@@ -1,0 +1,45 @@
+This test checks that the value of -webkit-text-justify is properly inherited to the child.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Value of ancestor is 'auto':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value of ancestor is 'none':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText should be none. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText should be none. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value of ancestor is 'inter-word':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText should be inter-word. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText should be inter-word. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value of ancestor is 'inter-ideograph':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText should be inter-ideograph. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText should be inter-ideograph. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value of ancestor is 'inter-cluster':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText should be inter-cluster. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText should be inter-cluster. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value of ancestor is 'distribute':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText should be distribute. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText should be distribute. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value of ancestor is 'kashida':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText should be kashida. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText should be kashida. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value of ancestor is 'inter-word, while child is 'inter-cluster':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText should be inter-word. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText should be inter-cluster. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value of ancestor is 'inter-ideograph, while child is 'distribute':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText should be inter-ideograph. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText should be distribute. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText')
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello world

@@ -57,9 +57,9 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (12,3) size 26x14
             RenderText {#text} at (0,0) size 26x14
               text run at (0,0) width 26: "show"
-        RenderText {#text} at (54,1) size 4x19
-          text run at (54,1) width 4: " "
-        RenderButton {BUTTON} at (60,2) size 45x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (53,1) size 5x19
+          text run at (53,1) width 5: " "
+        RenderButton {BUTTON} at (59,2) size 46x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 21x14
             RenderText {#text} at (0,0) size 21x14
               text run at (0,0) width 21: "hide"

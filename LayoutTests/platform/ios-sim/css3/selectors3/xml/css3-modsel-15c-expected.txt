@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 9: TypeError: 'undefined' is not a function (evaluating 'document.getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'div')[0].setIdAttribute('title', true)')
+CONSOLE MESSAGE: line 9: TypeError: undefined is not a function (evaluating 'document.getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'div')[0].setIdAttribute('title', true)')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x196

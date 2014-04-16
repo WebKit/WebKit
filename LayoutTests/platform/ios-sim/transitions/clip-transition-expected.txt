@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 240: Failed to pause 'clip' transition on element 'box'
+FAIL - "clip" property for "box" element at 0.5s expected: 20,80,80,20 but saw: 30.047245025634766,70,69.92125701904297,30
+

@@ -1,0 +1,28 @@
+Tests for .valueAsDate with <input type=datetime>.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS valueAsDateFor("") is null
+FAIL valueAsDateFor("1969-12-31T12:34:56.789Z").getTime() should be -41103211. Threw exception TypeError: null is not an object (evaluating 'valueAsDateFor("1969-12-31T12:34:56.789Z").getTime')
+FAIL valueAsDateFor("1970-01-01T00:00:00.000Z").getTime() should be 0. Threw exception TypeError: null is not an object (evaluating 'valueAsDateFor("1970-01-01T00:00:00.000Z").getTime')
+FAIL valueAsDateFor("2009-12-22T11:32:11Z").getTime() should be 1261481531000. Threw exception TypeError: null is not an object (evaluating 'valueAsDateFor("2009-12-22T11:32:11Z").getTime')
+FAIL setValueAsDateAndGetValue(1969, 11, 1, 0, 0, 0, 0) should be 1969-12-01T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsDateAndGetValue(1970, 0, 1, 10, 1, 0, 100) should be 1970-01-01T10:01:00.100Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsDateAndGetValue(2009, 11, 31, 23, 59, 59, 999) should be 2009-12-31T23:59:59.999Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsDateAndGetValue(10000, 0, 1, 12, 0, 1, 0) should be 10000-01-01T12:00:01Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsDateAndGetValue(-1, 9, 22, 0, 0, 0, 0) should be . Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsDateAndGetValue(0, 11, 31, 23, 59, 59, 999) should be . Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsDateAndGetValue(1, 0, 1, 0, 0, 0, 0) should be 0001-01-01T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsDateAndGetValue(275760, 8, 13, 0, 0, 0, 0) should be 275760-09-13T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsDateAndGetValue(275760, 8, 13, 0, 0, 0, 1) should be . Threw exception Error: InvalidStateError: DOM Exception 11
+Invalid objects:
+FAIL input.value = "2010-01-01T00:00Z"; input.valueAsDate = document; input.value should be . Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL input.value = "2010-01-01T00:00Z"; input.valueAsDate = null; input.value should be . Threw exception Error: InvalidStateError: DOM Exception 11
+Step attribute value and string representation:
+FAIL input.step = "1"; setValueAsDateAndGetValue(2010, 0, 21, 0, 0, 0, 0) should be 2010-01-21T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL input.step = "0.001"; setValueAsDateAndGetValue(2010, 0, 21, 0, 0, 0, 0) should be 2010-01-21T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -213,7 +213,7 @@ layer at (0,0) size 800x716
                 RenderBR {BR} at (76,634) size 1x0
               RenderBR {BR} at (4,637) size 0x19
             RenderTableCell {TD} at (148,0) size 486x24 [bgcolor=#660000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=3]
-              RenderImage {IMG} at (11,4) size 465x16
+              RenderImage {IMG} at (10,4) size 466x16
           RenderTableRow {TR} at (0,24) size 634x69
             RenderTableCell {TD} at (148,24) size 128x69 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderInline {A} at (0,0) size 120x19
@@ -300,7 +300,7 @@ layer at (0,0) size 800x716
                   RenderText {#text} at (4,104) size 47x19
                     text run at (4,104) width 47: "More..."
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,221) size 634x331
+          RenderTableRow {TR} at (0,221) size 634x440
             RenderTableCell {TD} at (148,221) size 303x331 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
               RenderImage {IMG} at (4,4) size 290x35
               RenderBR {BR} at (294,39) size 0x0

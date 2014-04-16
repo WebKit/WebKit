@@ -1,0 +1,44 @@
+
+FAIL Rule with no attributes assert_equals: expected "@-webkit-viewport { }" but got ".foo { }"(stack: assert@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:2168:73
+assert_equals@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:705:15
+file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:112:26
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:111:13)
+FAIL Shorthands with double value null is not an object (evaluating 'rules.item(1).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:116:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:115:13)
+FAIL Shorthands with single value null is not an object (evaluating 'rules.item(2).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:125:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:124:13)
+FAIL Shorthands should override properties if defined later null is not an object (evaluating 'rules.item(3).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:134:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:133:13)
+FAIL All valid properties with valid intial values null is not an object (evaluating 'rules.item(4).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:143:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:142:13)
+FAIL All valid properties with valid values null is not an object (evaluating 'rules.item(5).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:157:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:156:13)
+FAIL All valid properties with invalid intial values null is not an object (evaluating 'rules.item(6).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:171:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:170:13)
+FAIL Negative numbers should be dropped on zoom attribute null is not an object (evaluating 'rules.item(7).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:175:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:174:13)
+FAIL Viewport attributes inside selectors should be dropped null is not an object (evaluating 'rules.item(8).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:179:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:178:13)
+FAIL Invalid attributes among valid should be dropped null is not an object (evaluating 'rules.item(9).cssText')(stack: file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:183:40
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+test@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:429:22
+global code@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/viewport-properties-validation.html:182:13)
+

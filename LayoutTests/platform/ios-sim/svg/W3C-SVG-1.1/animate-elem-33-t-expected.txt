@@ -2,14 +2,14 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (7,14) size 206x49 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,50.00)}]
-      RenderSVGText {text} at (-160,-59) size 15x35 contains 1 chunk(s)
+    RenderSVGContainer {g} at (7,15) size 206x48 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,50.00)}]
+      RenderSVGText {text} at (-160,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (-160.00,-30.00) startOffset 0 endOffset 1 width 15.00: "0"
-      RenderSVGText {text} at (-50,-59) size 85x35 contains 1 chunk(s)
+      RenderSVGText {text} at (-50,-58) size 85x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 85x35
           chunk 1 text run 1 at (-50.00,-30.00) startOffset 0 endOffset 7 width 84.99: "0.8-3.2"
-      RenderSVGText {text} at (140,-59) size 15x35 contains 1 chunk(s)
+      RenderSVGText {text} at (140,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (140.00,-30.00) startOffset 0 endOffset 1 width 15.00: "4"
       RenderSVGContainer {g} at (19,49) size 180x2
@@ -19,17 +19,17 @@ layer at (0,0) size 480x360
         RenderSVGEllipse {circle} at (97,37) size 26x26 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=20.00]
         RenderSVGEllipse {circle} at (187,37) size 26x26 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=150.00] [cy=0.00] [r=20.00]
       RenderSVGEllipse {circle} at (7,37) size 26x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
-    RenderSVGContainer {g} at (267,14) size 206x49 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,50.00)}]
-      RenderSVGText {text} at (-160,-59) size 15x35 contains 1 chunk(s)
+    RenderSVGContainer {g} at (267,15) size 206x48 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,50.00)}]
+      RenderSVGText {text} at (-160,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (-160.00,-30.00) startOffset 0 endOffset 1 width 15.00: "0"
-      RenderSVGText {text} at (-100,-59) size 15x35 contains 1 chunk(s)
+      RenderSVGText {text} at (-100,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (-100.00,-30.00) startOffset 0 endOffset 1 width 15.00: "2"
-      RenderSVGText {text} at (80,-59) size 15x35 contains 1 chunk(s)
+      RenderSVGText {text} at (80,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (80.00,-30.00) startOffset 0 endOffset 1 width 15.00: "2"
-      RenderSVGText {text} at (140,-59) size 15x35 contains 1 chunk(s)
+      RenderSVGText {text} at (140,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (140.00,-30.00) startOffset 0 endOffset 1 width 15.00: "4"
       RenderSVGContainer {g} at (280,49) size 179x2
@@ -41,23 +41,23 @@ layer at (0,0) size 480x360
         RenderSVGEllipse {circle} at (411,37) size 26x26 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=90.00] [cy=0.00] [r=20.00]
         RenderSVGEllipse {circle} at (447,37) size 26x26 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=150.00] [cy=0.00] [r=20.00]
       RenderSVGEllipse {circle} at (267,37) size 26x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
-    RenderSVGContainer {g} at (34,126) size 152x71 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,180.00)}]
-      RenderSVGText {text} at (-115,-59) size 15x35 contains 1 chunk(s)
+    RenderSVGContainer {g} at (34,127) size 152x70 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,180.00)}]
+      RenderSVGText {text} at (-115,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (-115.00,-30.00) startOffset 0 endOffset 1 width 15.00: "3"
-      RenderSVGText {text} at (-85,-89) size 38x35 contains 1 chunk(s)
+      RenderSVGText {text} at (-85,-88) size 38x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 38x35
           chunk 1 text run 1 at (-85.00,-60.00) startOffset 0 endOffset 3 width 37.50: "2.6"
-      RenderSVGText {text} at (60,-89) size 15x35 contains 1 chunk(s)
+      RenderSVGText {text} at (60,-88) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (60.00,-60.00) startOffset 0 endOffset 1 width 15.00: "0"
-      RenderSVGText {text} at (95,-59) size 15x35 contains 1 chunk(s)
+      RenderSVGText {text} at (95,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (95.00,-30.00) startOffset 0 endOffset 1 width 15.00: "1"
-      RenderSVGText {text} at (-75,-9) size 15x35 contains 1 chunk(s)
+      RenderSVGText {text} at (-75,-8) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (-75.00,20.00) startOffset 0 endOffset 1 width 15.00: "4"
-      RenderSVGText {text} at (40,-9) size 38x35 contains 1 chunk(s)
+      RenderSVGText {text} at (40,-8) size 38x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 38x35
           chunk 1 text run 1 at (40.00,20.00) startOffset 0 endOffset 3 width 37.50: "1.4"
       RenderSVGContainer {g} at (46,143) size 128x38
@@ -68,23 +68,23 @@ layer at (0,0) size 480x360
         RenderSVGEllipse {circle} at (136,149) size 26x26 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=65.00] [cy=-30.00] [r=20.00]
         RenderSVGEllipse {circle} at (160,167) size 26x26 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=105.00] [cy=0.00] [r=20.00]
       RenderSVGEllipse {circle} at (136,149) size 26x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(65.00,-30.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
-    RenderSVGContainer {g} at (282,124) size 176x71 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,160.00)}]
-      RenderSVGText {text} at (-135,-59) size 15x35 contains 1 chunk(s)
+    RenderSVGContainer {g} at (282,125) size 176x70 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,160.00)}]
+      RenderSVGText {text} at (-135,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (-135.00,-30.00) startOffset 0 endOffset 1 width 15.00: "3"
-      RenderSVGText {text} at (-95,-59) size 38x35 contains 1 chunk(s)
+      RenderSVGText {text} at (-95,-58) size 38x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 38x35
           chunk 1 text run 1 at (-95.00,-30.00) startOffset 0 endOffset 3 width 37.50: "2.6"
-      RenderSVGText {text} at (65,-59) size 15x35 contains 1 chunk(s)
+      RenderSVGText {text} at (65,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (65.00,-30.00) startOffset 0 endOffset 1 width 15.00: "0"
-      RenderSVGText {text} at (115,-59) size 15x35 contains 1 chunk(s)
+      RenderSVGText {text} at (115,-58) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (115.00,-30.00) startOffset 0 endOffset 1 width 15.00: "1"
-      RenderSVGText {text} at (-85,21) size 15x35 contains 1 chunk(s)
+      RenderSVGText {text} at (-85,22) size 15x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 15x35
           chunk 1 text run 1 at (-85.00,50.00) startOffset 0 endOffset 1 width 15.00: "4"
-      RenderSVGText {text} at (50,21) size 38x35 contains 1 chunk(s)
+      RenderSVGText {text} at (50,22) size 38x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 38x35
           chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 3 width 37.50: "1.4"
       RenderSVGContainer {g} at (295,159) size 150x2

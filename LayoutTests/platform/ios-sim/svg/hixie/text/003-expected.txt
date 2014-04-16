@@ -10,17 +10,17 @@ layer at (0,0) size 800x418
         RenderEmbeddedObject {OBJECT} at (0,0) size 784x162 [border: (3px inset #000080)]
           layer at (0,0) size 778x156
             RenderView at (0,0) size 778x156
-          layer at (0,0) size 778x156
-            RenderSVGRoot {svg} at (0,0) size 467x156
-              RenderSVGText {text} at (0,-1) size 3x2 contains 1 chunk(s)
+          layer at (0,0) size 778x0
+            RenderSVGRoot {svg} at (0,0) size 0x0
+              RenderSVGText {text} at (0,-1) size 3x3 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 3x2
-                  chunk 1 text run 1 at (0.00,0.80) startOffset 0 endOffset 4 width 2.40: "PASS"
+                  chunk 1 text run 1 at (0.00,0.80) startOffset 0 endOffset 4 width 2.39: "PASS"
       RenderBlock {P} at (0,219) size 784x167
         RenderEmbeddedObject {OBJECT} at (0,0) size 784x162 [border: (3px inset #000080)]
           layer at (0,0) size 778x156
             RenderView at (0,0) size 778x156
-          layer at (0,0) size 778x156
-            RenderSVGRoot {svg} at (0,0) size 373x156
-              RenderSVGText {text} at (0,-100) size 2397x1119 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 2397x1119
-                  chunk 1 text run 1 at (0.00,800.00) startOffset 0 endOffset 4 width 2396.77: "PASS"
+          layer at (0,0) size 778x0
+            RenderSVGRoot {svg} at (0,0) size 0x0
+              RenderSVGText {text} at (0,-92) size 2391x1109 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 2391x1109
+                  chunk 1 text run 1 at (0.00,800.00) startOffset 0 endOffset 4 width 2390.63: "PASS"

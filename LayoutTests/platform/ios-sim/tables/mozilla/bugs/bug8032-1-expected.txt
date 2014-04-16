@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x96
-  RenderBlock {HTML} at (0,0) size 800x96
-    RenderBody {BODY} at (8,19) size 784x69
+layer at (0,0) size 800x98
+  RenderBlock {HTML} at (0,0) size 800x98
+    RenderBody {BODY} at (8,19) size 784x71
       RenderBlock {H2} at (0,0) size 784x30
         RenderText {#text} at (0,1) size 204x28
           text run at (0,1) width 204: "table-column-group"
-      RenderTable {DIV} at (0,49) size 72x20
+      RenderTable {DIV} at (0,49) size 72x21
         RenderTableCol {DIV} at (0,0) size 0x0
           RenderTableCol {DIV} at (0,0) size 0x0
           RenderTableCol {DIV} at (0,0) size 0x0

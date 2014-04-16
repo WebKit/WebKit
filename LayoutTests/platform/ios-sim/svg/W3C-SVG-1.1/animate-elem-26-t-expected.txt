@@ -9,7 +9,7 @@ layer at (0,0) size 480x360
         RenderSVGEllipse {circle} at (49,69) size 142x142 [stroke={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=140.00] [r=70.00]
         RenderSVGEllipse {circle} at (19,39) size 202x202 [stroke={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=140.00] [r=100.00]
         RenderSVGText {text} at (70,252) size 99x35 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 99x35
+          RenderSVGInlineText {#text} at (0,0) size 99x34
             chunk 1 text run 1 at (70.00,280.00) startOffset 0 endOffset 7 width 98.38: "anim. 1"
       RenderSVGContainer {g} at (259,39) size 202x248
         RenderSVGEllipse {circle} at (289,69) size 142x142 [stroke={[type=SOLID] [color=#EE33AA]}] [cx=360.00] [cy=140.00] [r=70.00]
@@ -17,7 +17,7 @@ layer at (0,0) size 480x360
         RenderSVGEllipse {circle} at (289,69) size 142x142 [stroke={[type=SOLID] [color=#000000]}] [cx=360.00] [cy=140.00] [r=70.00]
         RenderSVGEllipse {circle} at (259,39) size 202x202 [stroke={[type=SOLID] [color=#000000]}] [cx=360.00] [cy=140.00] [r=100.00]
         RenderSVGText {text} at (310,252) size 99x35 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 99x35
+          RenderSVGInlineText {#text} at (0,0) size 99x34
             chunk 1 text run 1 at (310.00,280.00) startOffset 0 endOffset 7 width 98.38: "anim. 2"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45

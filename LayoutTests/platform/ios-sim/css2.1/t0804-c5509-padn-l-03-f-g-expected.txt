@@ -10,6 +10,6 @@ layer at (0,0) size 800x124
         RenderText {#text} at (32,0) size 39x19
           text run at (32,0) width 39: "TEST"
       RenderBlock {DIV} at (16,72) size 192x20 [color=#FFFF00] [bgcolor=#000080]
-        RenderImage {IMG} at (0,14) size 32x1
+        RenderImage {IMG} at (0,14) size 32x2
         RenderText {#text} at (32,0) size 39x19
           text run at (32,0) width 39: "TEST"

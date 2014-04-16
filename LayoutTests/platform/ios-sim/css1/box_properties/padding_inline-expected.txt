@@ -1,34 +1,34 @@
-layer at (0,0) size 800x805
+layer at (0,0) size 800x801
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x805
-  RenderBlock {HTML} at (0,0) size 800x805
-    RenderBody {BODY} at (8,8) size 784x789 [bgcolor=#CCCCCC]
+layer at (0,0) size 800x801
+  RenderBlock {HTML} at (0,0) size 800x801
+    RenderBody {BODY} at (8,8) size 784x785 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 363x19
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x60
-        RenderText {#text} at (0,0) size 359x60
+      RenderBlock {PRE} at (0,36) size 784x56
+        RenderText {#text} at (0,0) size 359x56
           text run at (0,0) width 352: ".zero {background-color: silver; padding: 0;}"
           text run at (351,0) width 1: " "
-          text run at (0,15) width 352: ".one {padding: 25px; background-color: aqua;}"
-          text run at (351,15) width 1: " "
-          text run at (0,30) width 359: ".two {padding: -10px; background-color: aqua;}"
-          text run at (358,30) width 1: " "
-          text run at (0,45) width 0: " "
-      RenderBlock {HR} at (0,109) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,127) size 784x20 [bgcolor=#C0C0C0]
+          text run at (0,14) width 352: ".one {padding: 25px; background-color: aqua;}"
+          text run at (351,14) width 1: " "
+          text run at (0,28) width 359: ".two {padding: -10px; background-color: aqua;}"
+          text run at (358,28) width 1: " "
+          text run at (0,42) width 0: " "
+      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,123) size 784x20 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 208x19
           text run at (0,0) width 208: "This element has a class of zero."
-      RenderBlock {P} at (0,163) size 784x120 [bgcolor=#808080]
+      RenderBlock {P} at (0,159) size 784x120 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 487x19
           text run at (0,0) width 397: "This element is unstyled save for a background color of gray. "
           text run at (396,0) width 91: "It contains an "
         RenderInline {SPAN} at (0,0) size 764x89 [bgcolor=#00FFFF]
           RenderText {#text} at (511,0) size 149x19
             text run at (511,0) width 149: "inline element of class "
-          RenderInline {TT} at (0,0) size 24x15
-            RenderText {#text} at (659,4) size 24x15
-              text run at (659,4) width 24: "one"
+          RenderInline {TT} at (0,0) size 24x14
+            RenderText {#text} at (659,5) size 24x14
+              text run at (659,5) width 24: "one"
           RenderText {#text} at (682,0) size 764x39
             text run at (682,0) width 82: ", giving it an"
             text run at (0,20) width 240: "aqua background and a 25px padding"
@@ -41,19 +41,19 @@ layer at (0,0) size 800x805
           text run at (438,60) width 339: "However, there should be at least 25px of padding to"
           text run at (0,80) width 772: "the left side of the inline box in the first line it appears, and 25px of padding to the right side of the inline element box in"
           text run at (0,100) width 187: "the last line where it appears."
-      RenderBlock {P} at (0,299) size 784x20 [bgcolor=#C0C0C0]
+      RenderBlock {P} at (0,295) size 784x20 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 208x19
           text run at (0,0) width 208: "This element has a class of zero."
-      RenderBlock {P} at (0,335) size 784x60 [bgcolor=#808080]
+      RenderBlock {P} at (0,331) size 784x60 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 487x19
           text run at (0,0) width 397: "This element is unstyled save for a background color of gray. "
           text run at (396,0) width 91: "It contains an "
         RenderInline {SPAN} at (0,0) size 773x39 [bgcolor=#00FFFF]
           RenderText {#text} at (486,0) size 149x19
             text run at (486,0) width 149: "inline element of class "
-          RenderInline {TT} at (0,0) size 24x15
-            RenderText {#text} at (634,4) size 24x15
-              text run at (634,4) width 24: "two"
+          RenderInline {TT} at (0,0) size 24x14
+            RenderText {#text} at (634,5) size 24x14
+              text run at (634,5) width 24: "two"
           RenderText {#text} at (657,0) size 773x39
             text run at (657,0) width 116: ", giving it an aqua"
             text run at (0,20) width 481: "background and no padding, since negative padding values are not allowed"
@@ -61,10 +61,10 @@ layer at (0,0) size 800x805
           text run at (480,20) width 9: ". "
           text run at (488,20) width 273: "Padding on inline elements does not affect"
           text run at (0,40) width 543: "line-height calculations, so all lines in this element should have the same line-height."
-      RenderBlock {P} at (0,411) size 784x20 [bgcolor=#C0C0C0]
+      RenderBlock {P} at (0,407) size 784x20 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 208x19
           text run at (0,0) width 208: "This element has a class of zero."
-      RenderTable {TABLE} at (0,447) size 784x342 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,443) size 784x342 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x340
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -86,9 +86,9 @@ layer at (0,0) size 800x805
                 RenderInline {SPAN} at (0,0) size 745x89 [bgcolor=#00FFFF]
                   RenderText {#text} at (511,0) size 149x19
                     text run at (511,0) width 149: "inline element of class "
-                  RenderInline {TT} at (0,0) size 24x15
-                    RenderText {#text} at (659,4) size 24x15
-                      text run at (659,4) width 24: "one"
+                  RenderInline {TT} at (0,0) size 24x14
+                    RenderText {#text} at (659,5) size 24x14
+                      text run at (659,5) width 24: "one"
                   RenderText {#text} at (682,0) size 745x39
                     text run at (682,0) width 63: ", giving it"
                     text run at (0,20) width 259: "an aqua background and a 25px padding"
@@ -111,9 +111,9 @@ layer at (0,0) size 800x805
                 RenderInline {SPAN} at (0,0) size 739x39 [bgcolor=#00FFFF]
                   RenderText {#text} at (486,0) size 149x19
                     text run at (486,0) width 149: "inline element of class "
-                  RenderInline {TT} at (0,0) size 24x15
-                    RenderText {#text} at (634,4) size 24x15
-                      text run at (634,4) width 24: "two"
+                  RenderInline {TT} at (0,0) size 24x14
+                    RenderText {#text} at (634,5) size 24x14
+                      text run at (634,5) width 24: "two"
                   RenderText {#text} at (657,0) size 739x39
                     text run at (657,0) width 82: ", giving it an"
                     text run at (0,20) width 515: "aqua background and no padding, since negative padding values are not allowed"

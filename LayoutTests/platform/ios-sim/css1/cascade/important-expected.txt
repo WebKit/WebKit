@@ -6,36 +6,36 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20 [color=#008000]
         RenderText {#text} at (0,0) size 363x19
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x60
-        RenderText {#text} at (0,0) size 227x60
+      RenderBlock {PRE} at (0,36) size 784x56
+        RenderText {#text} at (0,0) size 227x56
           text run at (0,0) width 227: "P {color: green ! important;}"
           text run at (226,0) width 1: " "
-          text run at (0,15) width 118: "P {color: red;}"
-          text run at (117,15) width 1: " "
-          text run at (0,30) width 172: "P#id1 {color: purple;}"
-          text run at (171,30) width 1: " "
-          text run at (0,45) width 0: " "
-      RenderBlock {HR} at (0,109) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,127) size 784x40 [color=#008000]
+          text run at (0,14) width 118: "P {color: red;}"
+          text run at (117,14) width 1: " "
+          text run at (0,28) width 172: "P#id1 {color: purple;}"
+          text run at (171,28) width 1: " "
+          text run at (0,42) width 0: " "
+      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,123) size 784x40 [color=#008000]
         RenderText {#text} at (0,0) size 784x39
           text run at (0,0) width 784: "This sentence should be green, because the declaration marked important should override any other normal declaration for"
           text run at (0,20) width 366: "the same element, even if it occurs later in the stylesheet."
-      RenderBlock {P} at (0,183) size 784x40 [color=#008000]
+      RenderBlock {P} at (0,179) size 784x40 [color=#008000]
         RenderText {#text} at (0,0) size 409x19
           text run at (0,0) width 409: "This sentence should also be green, even though it has an ID of "
-        RenderInline {TT} at (0,0) size 25x15
-          RenderText {#text} at (408,4) size 25x15
-            text run at (408,4) width 25: "id1"
+        RenderInline {TT} at (0,0) size 25x14
+          RenderText {#text} at (408,5) size 25x14
+            text run at (408,5) width 25: "id1"
         RenderText {#text} at (432,0) size 738x39
           text run at (432,0) width 263: ", which would ordinarily make it purple. "
           text run at (694,0) width 44: "This is"
           text run at (0,20) width 714: "because declarations marked important have more weight than normal declarations given in a STYLE attribute."
-      RenderBlock {P} at (0,239) size 784x40 [color=#008000]
+      RenderBlock {P} at (0,235) size 784x40 [color=#008000]
         RenderText {#text} at (0,0) size 712x39
           text run at (0,0) width 615: "This sentence should also be green, even though it has a STYLE attribute declaring it to be red. "
           text run at (614,0) width 98: "This is because"
           text run at (0,20) width 659: "declarations marked important have more weight than normal declarations given in a STYLE attribute."
-      RenderTable {TABLE} at (0,295) size 784x190 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,291) size 784x190 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x188
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -54,9 +54,9 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,60) size 762x40 [color=#008000]
                 RenderText {#text} at (0,0) size 409x19
                   text run at (0,0) width 409: "This sentence should also be green, even though it has an ID of "
-                RenderInline {TT} at (0,0) size 25x15
-                  RenderText {#text} at (408,4) size 25x15
-                    text run at (408,4) width 25: "id1"
+                RenderInline {TT} at (0,0) size 25x14
+                  RenderText {#text} at (408,5) size 25x14
+                    text run at (408,5) width 25: "id1"
                 RenderText {#text} at (432,0) size 738x39
                   text run at (432,0) width 263: ", which would ordinarily make it purple. "
                   text run at (694,0) width 44: "This is"

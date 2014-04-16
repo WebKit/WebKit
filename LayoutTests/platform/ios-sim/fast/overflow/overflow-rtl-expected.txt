@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x452
-  RenderBlock {HTML} at (0,0) size 800x452
-    RenderBody {BODY} at (8,16) size 784x428
+layer at (0,0) size 800x457
+  RenderBlock {HTML} at (0,0) size 800x457
+    RenderBody {BODY} at (8,16) size 784x433
       RenderBlock {P} at (0,0) size 784x40
         RenderText {#text} at (0,0) size 139x19
           text run at (0,0) width 139: "This is a test case for "
@@ -32,60 +32,60 @@ layer at (0,0) size 800x452
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 591x19
             text run at (0,0) width 591: "the position of the blue and olive boxes, initially and when you scroll (in the bottom 2 rows)"
-      RenderTable {TABLE} at (0,188) size 256x240
-        RenderTableSection {TBODY} at (0,0) size 256x240
-          RenderTableRow {TR} at (0,2) size 256x236
-            RenderTableCell {TD} at (2,2) size 125x236 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (129,2) size 125x236 [r=0 c=1 rs=1 cs=1]
-layer at (15,211) size 115x42 clip at (25,211) size 100x27 scrollWidth 192
-  RenderBlock {DIV} at (5,5) size 115x42 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
+      RenderTable {TABLE} at (0,188) size 256x245
+        RenderTableSection {TBODY} at (0,0) size 256x245
+          RenderTableRow {TR} at (0,2) size 256x241
+            RenderTableCell {TD} at (2,2) size 125x241 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (129,2) size 125x241 [r=0 c=1 rs=1 cs=1]
+layer at (15,211) size 115x43 clip at (25,211) size 100x28 scrollWidth 191
+  RenderBlock {DIV} at (5,5) size 115x43 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
     RenderText {#text} at (10,0) size 192x19
       text run at (10,0) width 192: "abcdefghijklmnopqrstuvwxyz"
-layer at (15,257) size 115x42 clip at (25,257) size 100x42
-  RenderBlock {DIV} at (5,51) size 115x42 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
+layer at (15,258) size 115x43 clip at (25,258) size 100x43
+  RenderBlock {DIV} at (5,51) size 115x44 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
     RenderBlock {DIV} at (10,0) size 100x20 [bgcolor=#D3D3D3]
       RenderText {#text} at (-91,0) size 192x19
         text run at (-91,0) width 191: "abcdefghijklmnopqrstuvwxyz"
-layer at (15,303) size 115x42 clip at (25,303) size 100x27 scrollWidth 192
-  RenderBlock {DIV} at (5,97) size 115x42 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
+layer at (15,305) size 115x43 clip at (25,305) size 100x28 scrollWidth 191
+  RenderBlock {DIV} at (5,98) size 115x44 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
     RenderBlock {DIV} at (10,0) size 100x20 [bgcolor=#D3D3D3]
       RenderText {#text} at (0,0) size 192x19
         text run at (0,0) width 192: "abcdefghijklmnopqrstuvwxyz"
-layer at (142,211) size 115x42 clip at (147,211) size 100x27 scrollX 92 scrollWidth 192
-  RenderBlock {DIV} at (5,5) size 115x42 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
+layer at (142,211) size 115x43 clip at (147,211) size 100x28 scrollX 91 scrollWidth 191
+  RenderBlock {DIV} at (5,5) size 115x43 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
     RenderText {#text} at (-86,0) size 192x19
       text run at (-86,0) width 191: "zyxwvutsrqponmlkjihgfedcba"
-layer at (142,257) size 115x42 clip at (147,257) size 100x42
-  RenderBlock {DIV} at (5,51) size 115x42 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
+layer at (142,258) size 115x43 clip at (147,258) size 100x43
+  RenderBlock {DIV} at (5,51) size 115x44 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
     RenderBlock {DIV} at (5,0) size 100x20 [bgcolor=#D3D3D3]
       RenderText {#text} at (0,0) size 192x19
         text run at (0,0) width 192: "zyxwvutsrqponmlkjihgfedcba"
-layer at (142,303) size 115x42 clip at (147,303) size 100x27 scrollX 92 scrollWidth 192
-  RenderBlock {DIV} at (5,97) size 115x42 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
+layer at (142,305) size 115x43 clip at (147,305) size 100x28 scrollX 91 scrollWidth 191
+  RenderBlock {DIV} at (5,98) size 115x44 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
     RenderBlock {DIV} at (5,0) size 100x20 [bgcolor=#D3D3D3]
       RenderText {#text} at (-91,0) size 192x19
         text run at (-91,0) width 191: "zyxwvutsrqponmlkjihgfedcba"
-layer at (15,349) size 115x42 clip at (25,349) size 100x42
-  RenderBlock (relative positioned) {DIV} at (5,143) size 115x42 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
-layer at (71,369) size 8x4
+layer at (15,352) size 115x43 clip at (25,352) size 100x43
+  RenderBlock (relative positioned) {DIV} at (5,145) size 115x44 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
+layer at (71,372) size 8x4
   RenderBlock (positioned) {DIV} at (56,20) size 8x4 [bgcolor=#0000FF]
-layer at (-25,349) size 70x20 backgroundClip at (25,349) size 100x42 clip at (25,349) size 100x42 outlineClip at (25,349) size 100x42
+layer at (-25,352) size 70x20 backgroundClip at (25,352) size 100x43 clip at (25,352) size 100x43 outlineClip at (25,352) size 100x43
   RenderBlock (positioned) {DIV} at (-40,0) size 70x20 [bgcolor=#808000]
-layer at (15,395) size 115x42 clip at (25,395) size 100x27 scrollWidth 150
-  RenderBlock (relative positioned) {DIV} at (5,189) size 115x42 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
-layer at (71,415) size 8x4
+layer at (15,399) size 115x43 clip at (25,399) size 100x28 scrollWidth 150
+  RenderBlock (relative positioned) {DIV} at (5,192) size 115x44 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
+layer at (71,419) size 8x4
   RenderBlock (positioned) {DIV} at (56,20) size 8x4 [bgcolor=#0000FF]
-layer at (105,395) size 70x20 backgroundClip at (25,395) size 100x27 clip at (25,395) size 100x27 outlineClip at (25,395) size 100x27
+layer at (105,399) size 70x20 backgroundClip at (25,399) size 100x28 clip at (25,399) size 100x28 outlineClip at (25,399) size 100x28
   RenderBlock (positioned) {DIV} at (90,0) size 70x20 [bgcolor=#808000]
-layer at (142,349) size 115x42 clip at (147,349) size 100x42
-  RenderBlock (relative positioned) {DIV} at (5,143) size 115x42 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
-layer at (193,369) size 8x4
+layer at (142,352) size 115x43 clip at (147,352) size 100x43
+  RenderBlock (relative positioned) {DIV} at (5,145) size 115x44 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
+layer at (193,372) size 8x4
   RenderBlock (positioned) {DIV} at (51,20) size 8x4 [bgcolor=#0000FF]
-layer at (227,349) size 70x20 backgroundClip at (147,349) size 100x42 clip at (147,349) size 100x42 outlineClip at (147,349) size 100x42
+layer at (227,352) size 70x20 backgroundClip at (147,352) size 100x43 clip at (147,352) size 100x43 outlineClip at (147,352) size 100x43
   RenderBlock (positioned) {DIV} at (85,0) size 70x20 [bgcolor=#808000]
-layer at (142,395) size 115x42 clip at (147,395) size 100x27 scrollX 50 scrollWidth 150
-  RenderBlock (relative positioned) {DIV} at (5,189) size 115x42 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
-layer at (193,415) size 8x4
+layer at (142,399) size 115x43 clip at (147,399) size 100x28 scrollX 50 scrollWidth 150
+  RenderBlock (relative positioned) {DIV} at (5,192) size 115x44 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
+layer at (193,419) size 8x4
   RenderBlock (positioned) {DIV} at (51,20) size 8x4 [bgcolor=#0000FF]
-layer at (97,395) size 70x20 backgroundClip at (147,395) size 100x27 clip at (147,395) size 100x27 outlineClip at (147,395) size 100x27
+layer at (97,399) size 70x20 backgroundClip at (147,399) size 100x28 clip at (147,399) size 100x28 outlineClip at (147,399) size 100x28
   RenderBlock (positioned) {DIV} at (-45,0) size 70x20 [bgcolor=#808000]

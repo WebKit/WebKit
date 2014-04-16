@@ -5,7 +5,7 @@ This test thats aria-pressed changes the traits returned by buttons
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS btn1.iphoneTraits != btn2.iphoneTraits is true
+FAIL btn1.iphoneTraits != btn2.iphoneTraits should be true. Was false.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -62,7 +62,7 @@ max-width: none
 min-height: 0px
 min-width: 0px
 opacity: 1
-orphans: 2
+orphans: auto
 outline-color: rgb(0, 0, 0)
 outline-style: none
 outline-width: 0px
@@ -94,7 +94,7 @@ unicode-bidi: normal
 vertical-align: baseline
 visibility: visible
 white-space: normal
-widows: 2
+widows: auto
 width: 50%
 word-break: normal
 word-spacing: 0px
@@ -108,7 +108,7 @@ zoom: 1
 -webkit-animation-iteration-count: 1
 -webkit-animation-name: none
 -webkit-animation-play-state: running
--webkit-animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1)
+-webkit-animation-timing-function: ease
 -webkit-appearance: none
 -webkit-backface-visibility: visible
 -webkit-background-clip: border-box
@@ -140,7 +140,7 @@ zoom: 1
 -webkit-column-rule-color: rgb(0, 0, 0)
 -webkit-column-rule-style: none
 -webkit-column-rule-width: 0px
--webkit-column-span: 1
+-webkit-column-span: none
 -webkit-column-width: auto
 -webkit-align-content: stretch
 -webkit-align-items: stretch
@@ -151,9 +151,15 @@ zoom: 1
 -webkit-font-kerning: auto
 -webkit-font-smoothing: auto
 -webkit-font-variant-ligatures: normal
--webkit-grid-column: auto
--webkit-grid-row: auto
--webkit-highlight: none
+-webkit-grid-auto-columns: auto
+-webkit-grid-auto-flow: none
+-webkit-grid-auto-rows: auto
+-webkit-grid-column-end: auto
+-webkit-grid-column-start: auto
+-webkit-grid-template-columns: none
+-webkit-grid-template-rows: none
+-webkit-grid-row-end: auto
+-webkit-grid-row-start: auto
 -webkit-hyphenate-character: auto
 -webkit-hyphenate-limit-after: auto
 -webkit-hyphenate-limit-before: auto
@@ -161,7 +167,7 @@ zoom: 1
 -webkit-hyphens: manual
 -webkit-line-align: none
 -webkit-line-box-contain: block inline replaced
--webkit-line-break: normal
+-webkit-line-break: auto
 -webkit-line-clamp: none
 -webkit-line-grid: none
 -webkit-line-snap: none
@@ -172,7 +178,6 @@ zoom: 1
 -webkit-marquee-increment: 6px
 -webkit-marquee-repetition: infinite
 -webkit-marquee-style: scroll
--webkit-mask-attachment: scroll
 -webkit-mask-box-image: none
 -webkit-mask-box-image-outset: 0px
 -webkit-mask-box-image-repeat: stretch
@@ -195,7 +200,7 @@ zoom: 1
 -webkit-text-combine: none
 -webkit-text-decorations-in-effect: none
 -webkit-text-emphasis-color: rgb(0, 0, 0)
--webkit-text-emphasis-position: over
+-webkit-text-emphasis-position: over right
 -webkit-text-emphasis-style: none
 -webkit-text-fill-color: rgb(0, 0, 0)
 -webkit-text-orientation: vertical-right
@@ -208,7 +213,7 @@ zoom: 1
 -webkit-transition-delay: 0s
 -webkit-transition-duration: 0s
 -webkit-transition-property: all
--webkit-transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1)
+-webkit-transition-timing-function: ease
 -webkit-user-drag: auto
 -webkit-user-modify: read-only
 -webkit-user-select: text
@@ -256,7 +261,6 @@ border-spacing: 0px 0px
 overflow: visible
 -webkit-mask-position-x: 0%
 -webkit-mask-position-y: 0%
--webkit-text-size-adjust: auto
 
 After changing grandparent's 'color' and the parent's 'font-size' inherited properties:
 border-top-width: 18px

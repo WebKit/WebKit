@@ -13,16 +13,16 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,11) size 83x19
           text run at (0,11) width 83: "<ruby> uses "
         RenderRuby (inline) {RUBY} at (0,0) size 43x19
-          RenderRubyRun (anonymous) at (83,11) size 28x20
+          RenderRubyRun (anonymous) at (82,11) size 29x20
             RenderRubyText {RT} at (0,-11) size 28x12
               RenderText {#text} at (5,0) size 17x11
                 text run at (5,0) width 17: "ruby"
             RenderRubyBase (anonymous) at (0,0) size 28x20
               RenderText {#text} at (0,0) size 28x19
                 text run at (0,0) width 28: "<rt>"
-          RenderRubyRun (anonymous) at (111,28) size 14x0
+          RenderRubyRun (anonymous) at (110,28) size 15x0
             RenderRubyText {RT} at (0,-11) size 14x12
               RenderText {#text} at (0,0) size 14x11
                 text run at (0,0) width 14: "text"
-        RenderText {#text} at (124,11) size 168x19
-          text run at (124,11) width 168: " to contain the annotation."
+        RenderText {#text} at (124,11) size 167x19
+          text run at (124,11) width 167: " to contain the annotation."

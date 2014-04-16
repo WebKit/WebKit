@@ -20,6 +20,6 @@ layer at (8,8) size 204x204
   RenderBlock {DIV} at (0,0) size 204x204 [border: (2px solid #000000)]
 layer at (20,30) size 304x304
   RenderBlock (positioned) {DIV} at (12,22) size 304x304 [bgcolor=#008000CC] [border: (2px solid #000000)]
-    RenderText {#text} at (2,2) size 94x19
-      text run at (2,2) width 94: "Take a survey!"
+    RenderText {#text} at (2,2) size 96x19
+      text run at (2,2) width 96: "Take a survey!"
 scrolled to 0,200

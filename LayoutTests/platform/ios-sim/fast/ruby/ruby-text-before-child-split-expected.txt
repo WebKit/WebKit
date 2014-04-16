@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x26
   RenderBlock {HTML} at (0,0) size 800x26 [color=#FFFFFF]
     RenderBody {BODY} at (8,8) size 784x10
-      RenderRuby (inline) {RUBY} at (0,0) size 22x10
-        RenderRubyRun (anonymous) at (0,0) size 11x10
-          RenderRubyText {RT} at (0,0) size 11x0
-          RenderRubyBase (anonymous) at (0,0) size 11x10
-            RenderBlock (anonymous) at (0,0) size 11x10
-              RenderText {#text} at (0,0) size 11x10
-                text run at (0,0) width 11: "A"
-              RenderInline {I} at (0,0) size 1x10
-            RenderBlock (anonymous) at (0,10) size 11x0
-              RenderBlock {DIV} at (0,0) size 11x0
-            RenderBlock (anonymous) at (0,10) size 11x0
+      RenderRuby (inline) {RUBY} at (0,0) size 20x10
+        RenderRubyRun (anonymous) at (0,0) size 10x10
+          RenderRubyText {RT} at (0,0) size 10x0
+          RenderRubyBase (anonymous) at (0,0) size 10x10
+            RenderBlock (anonymous) at (0,0) size 10x10
+              RenderText {#text} at (0,0) size 10x10
+                text run at (0,0) width 10: "A"
+              RenderInline {I} at (0,0) size 0x10
+            RenderBlock (anonymous) at (0,10) size 10x0
+              RenderBlock {DIV} at (0,0) size 10x0
+            RenderBlock (anonymous) at (0,10) size 10x0
               RenderInline {I} at (0,0) size 0x0
-        RenderRubyRun (anonymous) at (11,0) size 11x10
-          RenderRubyBase (anonymous) at (0,0) size 11x10
-            RenderBlock (anonymous) at (0,0) size 11x10
-              RenderText {#text} at (0,0) size 11x10
-                text run at (0,0) width 11: "B"
+        RenderRubyRun (anonymous) at (10,0) size 10x10
+          RenderRubyBase (anonymous) at (0,0) size 10x10
+            RenderBlock (anonymous) at (0,0) size 10x10
+              RenderText {#text} at (0,0) size 10x10
+                text run at (0,0) width 10: "B"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

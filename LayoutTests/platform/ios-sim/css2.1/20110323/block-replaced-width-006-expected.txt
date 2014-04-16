@@ -10,5 +10,5 @@ layer at (0,0) size 800x374
       RenderBlock {DIV} at (0,56) size 198x294 [border: (3px solid #000000)]
         RenderImage {IMG} at (51,3) size 96x96
         RenderBlock {DIV} at (3,99) size 192x96 [color=#FFA500]
-          RenderText {#text} at (48,0) size 96x97
-            text run at (48,0) width 96: "X"
+          RenderText {#text} at (48,-1) size 96x97
+            text run at (48,-1) width 96: "X"

@@ -1,0 +1,9 @@
+This test can be used to verify that a mousemove event is fired when moving the mouse cursor over an element in a subframe.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+ PASS received mousemove event.
+
+TEST COMPLETE
+

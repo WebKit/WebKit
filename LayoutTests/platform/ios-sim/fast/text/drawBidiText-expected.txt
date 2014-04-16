@@ -8,8 +8,9 @@ layer at (0,0) size 800x600
           text run at (0,0) width 286: "This tests GraphicsContext::drawBidiText()."
       RenderMenuList {SELECT} at (2,36) size 342x32 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderBlock (anonymous) at (10,5) size 322x22
-          RenderBR at (0,0) size 0x22 [bgcolor=#FFFFFF02]
+          RenderText at (0,0) size 0x22
+            text run at (0,0) width 0: " "
       RenderMenuList {SELECT} at (2,70) size 377x18 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-        RenderBlock (anonymous) at (7,1) size 363x15
+        RenderBlock (anonymous) at (7,1) size 363x16
           RenderText at (0,0) size 40x15
             text run at (0,0) width 40: "0 Items"

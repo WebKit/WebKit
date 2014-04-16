@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 265x54 [border: (3px outset #808080)]
-        RenderTableSection {TBODY} at (3,3) size 259x48
-          RenderTableRow {TR} at (0,2) size 259x44
-            RenderTableCell {TD} at (2,2) size 255x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 222x54 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 216x48
+          RenderTableRow {TR} at (0,2) size 216x44
+            RenderTableCell {TD} at (2,2) size 212x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 40x40
               RenderText {#text} at (45,2) size 208x19
                 text run at (45,2) width 208: "NOWRAP cell, no width on cell"
       RenderBlock (anonymous) at (0,54) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,74) size 265x54 [border: (3px outset #808080)]
-        RenderTableSection {TBODY} at (3,3) size 259x48
-          RenderTableRow {TR} at (0,2) size 259x44
-            RenderTableCell {TD} at (2,2) size 255x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,74) size 222x54 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 216x48
+          RenderTableRow {TR} at (0,2) size 216x44
+            RenderTableCell {TD} at (2,2) size 212x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 40x40
               RenderText {#text} at (45,2) size 208x19
                 text run at (45,2) width 208: "NOWRAP cell, no width on cell"

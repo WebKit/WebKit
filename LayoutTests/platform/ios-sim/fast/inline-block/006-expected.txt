@@ -15,9 +15,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (12,32) size 236x19
           text run at (12,32) width 84: "number one. "
           text run at (95,32) width 153: "This line is the last one."
-      RenderText {#text} at (260,102) size 4x19
-        text run at (260,102) width 4: " "
-      RenderBlock {DIV} at (264,40) size 196x134 [border: (2px solid #FF0000)]
+      RenderText {#text} at (259,102) size 5x19
+        text run at (259,102) width 5: " "
+      RenderBlock {DIV} at (263,40) size 197x134 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (12,12) size 172x40
           RenderText {#text} at (0,0) size 44x19
             text run at (0,0) width 44: "This is"
@@ -27,8 +27,8 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (12,52) size 172x40
           RenderText {#text} at (10,10) size 152x19
             text run at (10,10) width 152: "This line is the last one."
-      RenderText {#text} at (460,102) size 143x19
-        text run at (460,102) width 143: " More text on the line."
+      RenderText {#text} at (459,102) size 144x19
+        text run at (459,102) width 144: " More text on the line."
       RenderBR {BR} at (602,117) size 1x0
       RenderText {#text} at (0,174) size 89x19
         text run at (0,174) width 89: "The next line."

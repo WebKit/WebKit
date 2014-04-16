@@ -51,8 +51,8 @@ layer at (0,0) size 800x600
     RenderSVGRect {rect} at (100,200) size 100x100 [fill={[type=PATTERN] [id="pattern8"]}] [x=100.00] [y=200.00] [width=100.00] [height=100.00]
     RenderSVGRect {rect} at (200,200) size 100x100 [fill={[type=PATTERN] [id="pattern9"]}] [x=200.00] [y=200.00] [width=100.00] [height=100.00]
     RenderSVGPath {line} at (324,0) size 2x300 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=325.00] [y1=0.00] [x2=325.00] [y2=300.00]
-    RenderSVGText {text} at (175,335) size 299x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 299x19
+    RenderSVGText {text} at (175,335) size 300x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 299x18
         chunk 1 (middle anchor) text run 1 at (175.69,350.00) startOffset 0 endOffset 48 width 298.62: "Both sides of the red line should look identical"
     RenderSVGContainer {g} at (350,0) size 300x300 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,0.00)}]
       RenderSVGRect {rect} at (350,0) size 100x100 [fill={[type=PATTERN] [id="pattern0"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

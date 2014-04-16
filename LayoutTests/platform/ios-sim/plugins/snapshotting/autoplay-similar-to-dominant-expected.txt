@@ -1,20 +1,20 @@
-layer at (0,0) size 800x1055
+layer at (0,0) size 800x1058
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1055
-  RenderBlock {HTML} at (0,0) size 800x1055
-    RenderBody {BODY} at (8,8) size 784x1031
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,-1) size 768x19
-          text run at (0,-1) width 768: "The dominant plugin should play automatically, and trigger all the others to play as well, since they are the same origin."
-      RenderBlock {P} at (0,33) size 784x600
+layer at (0,0) size 800x1058
+  RenderBlock {HTML} at (0,0) size 800x1058
+    RenderBody {BODY} at (8,8) size 784x1034
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 768x19
+          text run at (0,0) width 768: "The dominant plugin should play automatically, and trigger all the others to play as well, since they are the same origin."
+      RenderBlock {P} at (0,36) size 784x600
         RenderEmbeddedObject {EMBED} at (0,0) size 600x600
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,649) size 784x200
+      RenderBlock {P} at (0,652) size 784x200
         RenderEmbeddedObject {EMBED} at (0,0) size 200x200
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,865) size 784x100
+      RenderBlock {P} at (0,868) size 784x100
         RenderEmbeddedObject {EMBED} at (0,0) size 100x100
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,981) size 784x50
+      RenderBlock {P} at (0,984) size 784x50
         RenderEmbeddedObject {EMBED} at (0,0) size 50x50
         RenderText {#text} at (0,0) size 0x0

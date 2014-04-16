@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x27
-        RenderText {#text} at (0,0) size 600x26
-          text run at (0,0) width 600: "Reflection should not be cropped by being in a composited layer."
-      RenderBlock {P} at (0,299) size 784x27
-        RenderText {#text} at (0,0) size 352x26
-          text run at (0,0) width 352: "This is the next paragraph in the page."
-layer at (208,85) size 342x172
-  RenderBlock {DIV} at (200,77) size 342x172 [border: (1px solid #000000)]
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 418x19
+          text run at (0,0) width 418: "Reflection should not be cropped by being in a composited layer."
+      RenderBlock {P} at (0,292) size 784x20
+        RenderText {#text} at (0,0) size 245x19
+          text run at (0,0) width 245: "This is the next paragraph in the page."
+layer at (208,78) size 342x172
+  RenderBlock {DIV} at (200,70) size 342x172 [border: (1px solid #000000)]
     RenderBlock {P} at (21,27) size 300x20
       RenderText {#text} at (0,0) size 234x19
         text run at (0,0) width 234: "This element has a composited layer"
-layer at (349,126) size 260x72
+layer at (349,119) size 260x72
   RenderBlock (positioned) {DIV} at (141,41) size 260x72 [bgcolor=#DDDDDD]
     RenderBlock {P} at (10,26) size 240x20
       RenderText {#text} at (0,0) size 229x19

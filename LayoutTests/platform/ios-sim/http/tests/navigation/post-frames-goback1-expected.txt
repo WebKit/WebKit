@@ -6,10 +6,6 @@ Tests that a POST targetted to a frame is handled correctly when navigating away
 --------
 Frame: 'target-frame'
 --------
-This page was requested with the HTTP method GET.
-
-Parameters:
-
 
 
 ============== Back Forward List ==============

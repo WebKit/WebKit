@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x420
-  RenderBlock {HTML} at (0,0) size 800x420
-    RenderBody {BODY} at (8,16) size 784x394 [color=#000080]
+layer at (0,0) size 800x392
+  RenderBlock {HTML} at (0,0) size 800x392
+    RenderBody {BODY} at (8,16) size 784x366 [color=#000080]
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 289x19
           text run at (0,0) width 289: "The five diagrams below should be identical."
-      RenderBlock {DIV} at (0,36) size 138x358 [color=#FFA500]
+      RenderBlock {DIV} at (0,36) size 138x330 [color=#FFA500]
         RenderBlock {P} at (0,0) size 138x58 [bgcolor=#FF0000] [border: (24px solid #FFFF00)]
           RenderImage {IMG} at (24,24) size 10x10
           RenderImage {IMG} at (34,24) size 10x10
@@ -18,18 +18,15 @@ layer at (0,0) size 800x420
           RenderImage {IMG} at (94,24) size 10x10
           RenderImage {IMG} at (104,24) size 10x10
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (0,68) size 138x68 [bgcolor=#FFFF00]
-          RenderText {#text} at (24,24) size 71x20
-            text run at (24,24) width 71: "x x x x"
-            text run at (24,34) width 10: "x"
-        RenderBlock {P} at (0,146) size 138x68 [bgcolor=#FFFF00]
-          RenderText {#text} at (24,24) size 71x20
-            text run at (24,24) width 71: "x x x x"
-            text run at (24,34) width 10: "x"
-        RenderBlock {P} at (0,224) size 138x68 [bgcolor=#FFFF00]
-          RenderText {#text} at (24,24) size 71x20
-            text run at (24,24) width 71: "x x x x"
-            text run at (24,34) width 10: "x"
-        RenderBlock {P} at (0,302) size 138x56 [bgcolor=#FFFF00]
-          RenderText {#text} at (23,23) size 91x10
-            text run at (23,23) width 91: "x x x x x"
+        RenderBlock {P} at (0,68) size 138x58 [bgcolor=#FFFF00]
+          RenderText {#text} at (24,24) size 90x10
+            text run at (24,24) width 90: "x x x x x"
+        RenderBlock {P} at (0,136) size 138x58 [bgcolor=#FFFF00]
+          RenderText {#text} at (24,24) size 90x10
+            text run at (24,24) width 90: "x x x x x"
+        RenderBlock {P} at (0,204) size 138x58 [bgcolor=#FFFF00]
+          RenderText {#text} at (24,24) size 90x10
+            text run at (24,24) width 90: "x x x x x"
+        RenderBlock {P} at (0,272) size 138x58 [bgcolor=#FFFF00]
+          RenderText {#text} at (23,24) size 91x10
+            text run at (23,24) width 91: "x x x x x"

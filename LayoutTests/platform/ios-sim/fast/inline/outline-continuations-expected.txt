@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
           RenderInline {PARSERERROR} at (0,0) size 49x22
             RenderText {#text} at (0,0) size 49x22
               text run at (0,0) width 49: "TEXT"
-      RenderBlock (anonymous) at (0,42) size 784x0
+      RenderBlock (anonymous) at (0,42) size 784x1
         RenderBlock {P} at (0,0) size 784x0
-      RenderBlock (anonymous) at (0,42) size 784x0
+      RenderBlock (anonymous) at (0,42) size 784x1
         RenderInline {BIG} at (0,0) size 0x0
           RenderInline {PARSERERROR} at (0,0) size 0x0

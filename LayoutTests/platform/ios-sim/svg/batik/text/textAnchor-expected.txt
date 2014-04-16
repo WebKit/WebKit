@@ -2,8 +2,8 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 448x498
-    RenderSVGText {text} at (142,25) size 165x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 165x19
+    RenderSVGText {text} at (142,25) size 166x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 165x18
         chunk 1 (middle anchor) text run 1 at (142.72,40.00) startOffset 0 endOffset 22 width 164.55: "text-anchor on <tspan>"
     RenderSVGContainer {g} at (45,82) size 350x376 [transform={m=((0.75,0.00)(0.00,0.75)) t=(56.25,82.50)}]
       RenderSVGContainer {g} at (55,82) size 340x376
@@ -13,8 +13,8 @@ layer at (0,0) size 450x500
         RenderSVGPath {line} at (168,82) size 2x376 [stroke={[type=SOLID] [color=#FF0000]}] [x1=150.00] [y1=0.00] [x2=150.00] [y2=500.00]
         RenderSVGPath {line} at (295,82) size 2x376 [stroke={[type=SOLID] [color=#FF0000]}] [x1=320.00] [y1=0.00] [x2=320.00] [y2=500.00]
         RenderSVGRect {rect} at (55,82) size 340x376 [stroke={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=450.00] [height=500.00]
-      RenderSVGContainer {g} at (45,93) size 342x90
-        RenderSVGContainer {g} at (168,93) size 219x30
+      RenderSVGContainer {g} at (45,93) size 341x90
+        RenderSVGContainer {g} at (168,93) size 218x30
           RenderSVGText {text} at (150,15) size 290x39 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (0,0) size 53x19
               RenderSVGInlineText {#text} at (0,20) size 53x19
@@ -30,8 +30,8 @@ layer at (0,0) size 450x500
               RenderSVGInlineText {#text} at (170,0) size 120x19
                 chunk 1 text run 1 at (320.00,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
             RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGContainer {g} at (106,123) size 281x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-          RenderSVGText {text} at (67,15) size 372x39 contains 1 chunk(s)
+        RenderSVGContainer {g} at (107,123) size 279x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
+          RenderSVGText {text} at (67,15) size 373x39 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (0,0) size 53x19
               RenderSVGInlineText {#text} at (0,20) size 53x19
                 chunk 1 (middle anchor) text run 1 at (67.80,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
@@ -46,8 +46,8 @@ layer at (0,0) size 450x500
               RenderSVGInlineText {#text} at (252,0) size 120x19
                 chunk 1 text run 1 at (320.00,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
             RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGContainer {g} at (45,153) size 342x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-          RenderSVGText {text} at (-15,15) size 454x39 contains 1 chunk(s)
+        RenderSVGContainer {g} at (45,153) size 341x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
+          RenderSVGText {text} at (-15,15) size 455x39 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (0,0) size 53x19
               RenderSVGInlineText {#text} at (0,20) size 53x19
                 chunk 1 (end anchor) text run 1 at (-14.39,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
@@ -62,8 +62,8 @@ layer at (0,0) size 450x500
               RenderSVGInlineText {#text} at (334,0) size 120x19
                 chunk 1 text run 1 at (320.00,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
             RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGContainer {g} at (45,221) size 297x90 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
-        RenderSVGContainer {g} at (168,221) size 174x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
+      RenderSVGContainer {g} at (45,221) size 296x90 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+        RenderSVGContainer {g} at (168,221) size 173x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
           RenderSVGText {text} at (150,15) size 230x39 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (0,0) size 53x19
               RenderSVGInlineText {#text} at (0,20) size 53x19
@@ -79,8 +79,8 @@ layer at (0,0) size 450x500
               RenderSVGInlineText {#text} at (110,0) size 120x19
                 chunk 1 (middle anchor) text run 1 at (260.46,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
             RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGContainer {g} at (106,251) size 236x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
-          RenderSVGText {text} at (67,15) size 312x39 contains 1 chunk(s)
+        RenderSVGContainer {g} at (107,251) size 234x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
+          RenderSVGText {text} at (67,15) size 313x39 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (0,0) size 53x19
               RenderSVGInlineText {#text} at (0,20) size 53x19
                 chunk 1 (middle anchor) text run 1 at (67.80,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
@@ -95,8 +95,8 @@ layer at (0,0) size 450x500
               RenderSVGInlineText {#text} at (192,0) size 120x19
                 chunk 1 (middle anchor) text run 1 at (260.46,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
             RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGContainer {g} at (45,281) size 297x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
-          RenderSVGText {text} at (-15,15) size 394x39 contains 1 chunk(s)
+        RenderSVGContainer {g} at (45,281) size 296x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
+          RenderSVGText {text} at (-15,15) size 395x39 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (0,0) size 53x19
               RenderSVGInlineText {#text} at (0,20) size 53x19
                 chunk 1 (end anchor) text run 1 at (-14.39,50.00) startOffset 0 endOffset 8 width 52.42: "I am the"
@@ -128,7 +128,7 @@ layer at (0,0) size 450x500
               RenderSVGInlineText {#text} at (50,0) size 120x19
                 chunk 1 (end anchor) text run 1 at (200.93,30.00) startOffset 0 endOffset 18 width 119.07: "another text chunk"
             RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGContainer {g} at (106,378) size 191x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
+        RenderSVGContainer {g} at (107,378) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
           RenderSVGText {text} at (67,15) size 253x39 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (0,0) size 53x19
               RenderSVGInlineText {#text} at (0,20) size 53x19

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x498
     RenderSVGText {text} at (108,35) size 234x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 234x19
+      RenderSVGInlineText {#text} at (0,0) size 234x18
         chunk 1 (middle anchor) text run 1 at (108.49,50.00) startOffset 0 endOffset 34 width 233.02: "patternRegion, x, y, width, height"
     RenderSVGContainer {g} at (24,70) size 426x391
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -135,7 +135,7 @@ layer at (0,0) size 450x500
                 RenderSVGRect {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
       RenderSVGContainer {g} at (30,70) size 199x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,90.00)}]
         RenderSVGText {text} at (0,-20) size 199x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 199x19
+          RenderSVGInlineText {#text} at (0,0) size 199x18
             chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 29 width 198.30: "Pattern (4 times actual size)"
         RenderSVGContainer {use} at (30,90) size 80x80 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}]
           RenderSVGContainer {g} at (30,90) size 80x80
@@ -155,44 +155,44 @@ layer at (0,0) size 450x500
       RenderSVGContainer {g} at (24,180) size 248x281 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,200.00)}]
         RenderSVGContainer {g} at (29,180) size 186x71
           RenderSVGText {text} at (0,-20) size 185x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 185x19
+            RenderSVGInlineText {#text} at (0,0) size 185x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 26 width 184.09: "Exact Fit in patternRegion"
           RenderSVGRect {rect} at (29,199) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternExactFit"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
           RenderSVGRect {rect} at (29,199) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
         RenderSVGContainer {g} at (24,250) size 221x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,70.00)}]
           RenderSVGText {text} at (0,-20) size 215x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 215x19
+            RenderSVGInlineText {#text} at (0,0) size 215x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 32 width 214.36: "patternRegion offset to the left"
           RenderSVGRect {rect} at (29,269) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternTranslateRegionX"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
           RenderSVGRect {rect} at (24,269) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=-5.00] [y=0.00] [width=20.00] [height=20.00]
         RenderSVGContainer {g} at (29,320) size 217x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
           RenderSVGText {text} at (0,-20) size 216x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 216x19
+            RenderSVGInlineText {#text} at (0,0) size 216x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 31 width 215.26: "patternRegion offset to the top"
           RenderSVGRect {rect} at (29,339) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternTranslateRegionY"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
           RenderSVGRect {rect} at (29,334) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=-5.00] [width=20.00] [height=20.00]
         RenderSVGContainer {g} at (29,390) size 243x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
           RenderSVGText {text} at (0,-20) size 242x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 242x19
+            RenderSVGInlineText {#text} at (0,0) size 242x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 36 width 241.05: "patternRegion offset to the top/left"
           RenderSVGRect {rect} at (29,409) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternTranslateRegionXY"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
           RenderSVGRect {rect} at (39,419) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=10.00] [y=10.00] [width=20.00] [height=20.00]
       RenderSVGContainer {g} at (254,180) size 196x211 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,200.00)}]
         RenderSVGContainer {g} at (254,180) size 196x71
           RenderSVGText {text} at (0,-20) size 236x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 236x19
+            RenderSVGInlineText {#text} at (0,0) size 236x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 32 width 235.71: "patternRegion wider than content"
           RenderSVGRect {rect} at (254,199) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternWiderRegion"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
           RenderSVGRect {rect} at (254,199) size 42x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=40.00] [height=20.00]
         RenderSVGContainer {g} at (254,250) size 196x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,70.00)}]
           RenderSVGText {text} at (0,-20) size 242x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 242x19
+            RenderSVGInlineText {#text} at (0,0) size 242x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 33 width 241.95: "patternRegion higher than content"
           RenderSVGRect {rect} at (254,269) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternHigherRegion"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
           RenderSVGRect {rect} at (254,269) size 22x42 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=20.00] [height=40.00]
         RenderSVGContainer {g} at (254,320) size 196x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
           RenderSVGText {text} at (0,-20) size 242x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 242x19
+            RenderSVGInlineText {#text} at (0,0) size 242x18
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 33 width 241.95: "patternRegion higher than content"
           RenderSVGRect {rect} at (254,339) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternWiderHigherRegion"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
           RenderSVGRect {rect} at (254,339) size 42x42 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=40.00] [height=40.00]

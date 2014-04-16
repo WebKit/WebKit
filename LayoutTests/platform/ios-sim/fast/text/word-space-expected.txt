@@ -38,23 +38,23 @@ layer at (0,0) size 800x600
         RenderText {#text} at (64,3) size 16x19
           text run at (64,3) width 16: " B"
       RenderBlock (floating) {DIV} at (0,196) size 83x26 [border: (3px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 13x19
-          RenderText {#text} at (3,3) size 13x19
-            text run at (3,3) width 13: "A"
-        RenderText {#text} at (65,3) size 15x19
-          text run at (65,3) width 15: " B"
+        RenderInline {SPAN} at (0,0) size 12x19
+          RenderText {#text} at (3,3) size 12x19
+            text run at (3,3) width 12: "A"
+        RenderText {#text} at (64,3) size 16x19
+          text run at (64,3) width 16: " B"
       RenderBlock (floating) {DIV} at (0,222) size 83x26 [border: (3px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 13x19
-          RenderText {#text} at (3,3) size 13x19
-            text run at (3,3) width 13: "A"
-        RenderText {#text} at (65,3) size 5x19
-          text run at (65,3) width 5: " "
-        RenderInline {SPAN} at (0,0) size 11x19
-          RenderText {#text} at (69,3) size 11x19
-            text run at (69,3) width 11: "B"
+        RenderInline {SPAN} at (0,0) size 12x19
+          RenderText {#text} at (3,3) size 12x19
+            text run at (3,3) width 12: "A"
+        RenderText {#text} at (64,3) size 5x19
+          text run at (64,3) width 5: " "
+        RenderInline {SPAN} at (0,0) size 12x19
+          RenderText {#text} at (68,3) size 12x19
+            text run at (68,3) width 12: "B"
       RenderBlock (floating) {DIV} at (0,248) size 83x26 [border: (3px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 13x19
-          RenderText {#text} at (3,3) size 13x19
-            text run at (3,3) width 13: "A"
-        RenderText {#text} at (65,3) size 15x19
-          text run at (65,3) width 15: " B"
+        RenderInline {SPAN} at (0,0) size 12x19
+          RenderText {#text} at (3,3) size 12x19
+            text run at (3,3) width 12: "A"
+        RenderText {#text} at (64,3) size 16x19
+          text run at (64,3) width 16: " B"

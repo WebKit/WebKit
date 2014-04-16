@@ -11,10 +11,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 468x19
           text run at (0,0) width 468: "The vowel (two vertical dots) should be centered beneath the main letter."
       RenderBlock {DIV} at (0,90) size 784x94
-        RenderText {#text} at (41,2) size 52x90
-          text run at (41,2) width 52 RTL: "\x{5E1}\x{5B0} "
-        RenderText {#text} at (0,2) size 42x90
-          text run at (0,2) width 42 RTL: "\x{5E9}\x{5B0}"
+        RenderText {#text} at (48,2) size 53x90
+          text run at (48,2) width 53 RTL: "\x{5E1}\x{5B0} "
+        RenderText {#text} at (0,2) size 49x90
+          text run at (0,2) width 49 RTL: "\x{5E9}\x{5B0}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,192) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,210) size 784x20

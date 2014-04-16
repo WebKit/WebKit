@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 32x494 [border: (1px solid #FF0000)]
-        RenderTextControl {INPUT} at (3,3) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-        RenderTextControl {INPUT} at (3,28) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderTextControl {INPUT} at (3,3) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderTextControl {INPUT} at (3,28) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (0,0) size 0x0
         RenderImage {IMG} at (1,51) size 27x27 [border: (1px solid #000000)]
         RenderImage {IMG} at (1,78) size 27x27 [border: (1px solid #000000)]
@@ -39,10 +39,12 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
         RenderMenuList {SELECT} at (3,251) size 61x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 49x14
-            RenderBR at (0,0) size 0x14 [bgcolor=#FFFFFF02]
+            RenderText at (0,0) size 0x14
+              text run at (0,0) width 0: " "
         RenderMenuList {SELECT} at (3,275) size 61x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 49x14
-            RenderBR at (0,0) size 0x14 [bgcolor=#FFFFFF02]
+            RenderText at (0,0) size 0x14
+              text run at (0,0) width 0: " "
         RenderText {#text} at (0,0) size 0x0
         RenderBlock {INPUT} at (3,300) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderBlock {INPUT} at (3,322) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
@@ -66,7 +68,7 @@ layer at (0,0) size 800x600
         RenderEmbeddedObject {EMBED} at (1,439) size 27x27 [border: (1px solid #000000)]
         RenderEmbeddedObject {EMBED} at (1,466) size 27x27 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
-layer at (17,14) size 123x14
-  RenderBlock {DIV} at (6,3) size 123x14
-layer at (17,39) size 123x14
-  RenderBlock {DIV} at (6,3) size 123x14
+layer at (18,14) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (18,39) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15

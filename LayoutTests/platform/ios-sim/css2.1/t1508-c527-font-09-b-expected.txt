@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x118
-  RenderBlock {HTML} at (0,0) size 800x118
-    RenderBody {BODY} at (8,9) size 784x100 [color=#000080]
+layer at (0,0) size 800x119
+  RenderBlock {HTML} at (0,0) size 800x120
+    RenderBody {BODY} at (8,9) size 784x101 [color=#000080]
       RenderBlock {P} at (0,0) size 784x100
         RenderText {#text} at (0,6) size 448x13
           text run at (0,6) width 448: "This test should be about 10px, sans-serif, and light. There should be about 15px between each line. "

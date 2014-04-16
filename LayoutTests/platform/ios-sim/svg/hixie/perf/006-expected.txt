@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 400x400
   RenderSVGRoot {svg} at (0,0) size 400x400
-    RenderSVGText {text} at (10,10) size 50x6 contains 1 chunk(s)
+    RenderSVGText {text} at (10,10) size 50x7 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 50x6
         chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 21 width 49.29: "SVG Performance test."
     RenderSVGRect {rect} at (296,78) size 104x175 [transform={m=((-0.92,0.39)(-0.39,-0.92)) t=(115.56,76.49)}] [fill={[type=RADIAL-GRADIENT] [id="gradient"]}] [x=-0.90] [y=22.50] [width=19.80] [height=39.00]
@@ -105,7 +105,7 @@ layer at (0,0) size 400x400
     RenderSVGRect {rect} at (35,87) size 104x107 [transform={m=((-0.74,0.67)(-0.67,-0.74)) t=(120.61,53.70)}] [fill={[type=RADIAL-GRADIENT] [id="gradient"]}] [x=54.81] [y=67.81] [width=12.38] [height=24.38]
     RenderSVGRect {rect} at (47,372) size 126x28 [transform={m=((-0.53,-0.85)(0.85,-0.53)) t=(34.09,118.90)}] [fill={[type=RADIAL-GRADIENT] [id="gradient"]}] [x=6.93] [y=-12.93] [width=14.14] [height=27.86]
     RenderSVGRect {rect} at (0,0) size 209x177 [transform={m=((0.36,0.93)(-0.93,0.36)) t=(78.76,-14.60)}] [fill={[type=RADIAL-GRADIENT] [id="gradient"]}] [x=-9.50] [y=37.50] [width=33.00] [height=65.00]
-    RenderSVGText {text} at (10,90) size 33x6 contains 1 chunk(s)
+    RenderSVGText {text} at (10,90) size 33x7 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 33x6
         chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 14 width 32.35: "Test completed"
     RenderSVGRect {rect} at (0,0) size 400x400 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

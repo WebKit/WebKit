@@ -53,9 +53,9 @@ layer at (0,0) size 800x788
         RenderText {#text} at (0,0) size 379x39
           text run at (0,0) width 379: "Since auto is an invalid value for padding, the right-margin"
           text run at (0,20) width 229: "of this paragraph should be reset to "
-        RenderInline {CODE} at (0,0) size 33x15
-          RenderText {#text} at (228,24) size 33x15
-            text run at (228,24) width 33: "auto"
+        RenderInline {CODE} at (0,0) size 33x14
+          RenderText {#text} at (228,25) size 33x14
+            text run at (228,25) width 33: "auto"
         RenderText {#text} at (260,20) size 376x59
           text run at (260,20) width 77: " and thus be"
           text run at (0,40) width 376: "expanded to 50% and it should only occupy the left half of"

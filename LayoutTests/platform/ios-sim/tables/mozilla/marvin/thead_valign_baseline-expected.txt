@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderText {#text} at (0,0) size 206x19
           text run at (0,0) width 206: "THEAD VALIGN=BASELINE"
-      RenderTable {TABLE} at (0,20) size 784x278 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,20) size 784x272 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 782x218
           RenderTableRow {TR} at (0,2) size 782x214
             RenderTableCell {TD} at (2,2) size 304x189 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -15,20 +15,20 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 461x39
                 text run at (2,2) width 461: "This text is within the THEAD element and should be vertically aligned"
                 text run at (2,22) width 93: "to the baseline"
-        RenderTableSection {TFOOT} at (1,249) size 782x28
-          RenderTableRow {TR} at (0,2) size 782x24
-            RenderTableCell {TD} at (2,2) size 304x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TFOOT} at (1,245) size 782x26
+          RenderTableRow {TR} at (0,0) size 782x24
+            RenderTableCell {TD} at (2,0) size 304x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 52x19
                 text run at (2,2) width 52: "TFOOT"
-            RenderTableCell {TD} at (308,2) size 472x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (308,0) size 472x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 52x19
                 text run at (2,2) width 52: "TFOOT"
-        RenderTableSection {TBODY} at (1,219) size 782x28
-          RenderTableRow {TR} at (0,2) size 782x24
-            RenderTableCell {TD} at (2,2) size 304x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (1,219) size 782x26
+          RenderTableRow {TR} at (0,0) size 782x24
+            RenderTableCell {TD} at (2,0) size 304x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x19
                 text run at (2,2) width 56: "TBODY"
-            RenderTableCell {TD} at (308,2) size 472x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (308,0) size 472x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x19
                 text run at (2,2) width 56: "TBODY"
-        RenderTableSection {TBODY} at (1,247) size 782x2
+        RenderTableSection {TBODY} at (1,245) size 782x0

@@ -24,5 +24,5 @@ layer at (544,0) size 256x600
           RenderInline {SPAN} at (0,0) size 54x369
             RenderText {#text} at (8,102) size 54x339
               text run at (8,102) width 339: "PARAGRAPH 2 "
-            RenderImage {IMG} at (0,441) size 70x30 [bgcolor=#008000]
+            RenderImage {IMG} at (0,440) size 70x31 [bgcolor=#008000]
             RenderText {#text} at (0,0) size 0x0

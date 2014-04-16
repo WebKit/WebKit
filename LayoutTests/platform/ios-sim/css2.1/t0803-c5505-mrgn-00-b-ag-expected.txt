@@ -20,17 +20,17 @@ layer at (0,0) size 800x240
           RenderImage {IMG} at (176,0) size 24x10
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {P} at (24,34) size 152x10 [bgcolor=#A52A2A]
-          RenderText {#text} at (0,0) size 11x10
-            text run at (0,0) width 11: "x"
+          RenderText {#text} at (0,0) size 10x10
+            text run at (0,0) width 10: "x"
         RenderBlock {P} at (24,68) size 152x10 [bgcolor=#A52A2A]
-          RenderText {#text} at (0,0) size 11x10
-            text run at (0,0) width 11: "x"
+          RenderText {#text} at (0,0) size 10x10
+            text run at (0,0) width 10: "x"
         RenderBlock {P} at (24,102) size 152x10 [bgcolor=#A52A2A]
-          RenderText {#text} at (0,0) size 11x10
-            text run at (0,0) width 11: "x"
+          RenderText {#text} at (0,0) size 10x10
+            text run at (0,0) width 10: "x"
         RenderBlock {P} at (24,136) size 152x10 [bgcolor=#A52A2A]
-          RenderText {#text} at (0,0) size 11x10
-            text run at (0,0) width 11: "x"
+          RenderText {#text} at (0,0) size 10x10
+            text run at (0,0) width 10: "x"
         RenderBlock {P} at (0,170) size 200x10 [bgcolor=#A52A2A]
           RenderImage {IMG} at (0,0) size 24x10
           RenderText {#text} at (24,0) size 10x10

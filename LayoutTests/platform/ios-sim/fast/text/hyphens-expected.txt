@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (4,0) size 344x286
         RenderBlock {P} at (0,16) size 344x20
-          RenderInline {TT} at (0,0) size 118x15
-            RenderText {#text} at (0,4) size 118x15
-              text run at (0,4) width 118: "hyphens: manual"
+          RenderInline {TT} at (0,0) size 118x14
+            RenderText {#text} at (0,5) size 118x14
+              text run at (0,5) width 118: "hyphens: manual"
           RenderText {#text} at (117,0) size 139x19
             text run at (117,0) width 139: " without soft hyphens"
         RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
@@ -28,9 +28,9 @@ layer at (0,0) size 800x600
             text run at (7,205) width 271: "itself round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (356,0) size 344x286
         RenderBlock {P} at (0,16) size 344x20
-          RenderInline {TT} at (0,0) size 102x15
-            RenderText {#text} at (0,4) size 102x15
-              text run at (0,4) width 102: "hyphens: none"
+          RenderInline {TT} at (0,0) size 102x14
+            RenderText {#text} at (0,5) size 102x14
+              text run at (0,5) width 102: "hyphens: none"
           RenderText {#text} at (101,0) size 119x19
             text run at (101,0) width 119: " with soft hyphens"
         RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
@@ -51,9 +51,9 @@ layer at (0,0) size 800x600
             text run at (7,205) width 271: "itself round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (4,286) size 344x286
         RenderBlock {P} at (0,16) size 344x20
-          RenderInline {TT} at (0,0) size 118x15
-            RenderText {#text} at (0,4) size 118x15
-              text run at (0,4) width 118: "hyphens: manual"
+          RenderInline {TT} at (0,0) size 118x14
+            RenderText {#text} at (0,5) size 118x14
+              text run at (0,5) width 118: "hyphens: manual"
           RenderText {#text} at (117,0) size 118x19
             text run at (117,0) width 118: " with soft hyphens"
         RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
@@ -62,8 +62,8 @@ layer at (0,0) size 800x600
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
             text run at (7,51) width 245: "flamingo: she succeeded in get\x{AD}" + hyphen string "-"
-            text run at (7,73) width 209: "ting its body tucked away, "
-            text run at (215,73) width 37: "com\x{AD}" + hyphen string "-"
+            text run at (7,73) width 208: "ting its body tucked away, "
+            text run at (214,73) width 38: "com\x{AD}" + hyphen string "-"
             text run at (7,95) width 245: "fortably enough, under her arm,"
             text run at (7,117) width 226: "with its legs hanging down, "
             text run at (232,117) width 105: "but generally,"
@@ -75,9 +75,9 @@ layer at (0,0) size 800x600
             text run at (7,205) width 230: "round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (356,286) size 344x286
         RenderBlock {P} at (0,16) size 344x20
-          RenderInline {TT} at (0,0) size 102x15
-            RenderText {#text} at (0,4) size 102x15
-              text run at (0,4) width 102: "hyphens: auto"
+          RenderInline {TT} at (0,0) size 102x14
+            RenderText {#text} at (0,5) size 102x14
+              text run at (0,5) width 102: "hyphens: auto"
           RenderText {#text} at (101,0) size 139x19
             text run at (101,0) width 139: " without soft hyphens"
         RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
@@ -86,8 +86,8 @@ layer at (0,0) size 800x600
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
             text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "-"
-            text run at (7,73) width 209: "ting its body tucked away, "
-            text run at (215,73) width 37: "com" + hyphen string "-"
+            text run at (7,73) width 208: "ting its body tucked away, "
+            text run at (214,73) width 38: "com" + hyphen string "-"
             text run at (7,95) width 245: "fortably enough, under her arm,"
             text run at (7,117) width 226: "with its legs hanging down, "
             text run at (232,117) width 105: "but generally,"

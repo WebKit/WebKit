@@ -12,7 +12,7 @@ layer at (0,0) size 800x105
     RenderText {#text} at (0,0) size 0x0
     RenderInline {body} at (0,0) size 601x19
       RenderText {#text} at (0,0) size 0x0
-      RenderSVGRoot {svg} at (90,10) size 100x60
-        RenderSVGImage {image} at (90,10) size 100x60
+      RenderSVGRoot {svg} at (89,10) size 101x60
+        RenderSVGImage {image} at (89,10) size 101x60
       RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0

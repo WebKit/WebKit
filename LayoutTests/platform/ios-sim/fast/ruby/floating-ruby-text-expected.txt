@@ -6,8 +6,8 @@ layer at (0,0) size 800x41
       RenderRuby (inline) {RUBY} at (0,0) size 784x10
         RenderRubyRun (anonymous) at (0,5) size 784x20
           RenderRubyText {RT} at (0,-5) size 784x5
-            RenderText {#text} at (371,0) size 41x5
-              text run at (371,0) width 41: "rubytext"
+            RenderText {#text} at (372,0) size 40x5
+              text run at (372,0) width 40: "rubytext"
           RenderRubyBase (anonymous) at (0,0) size 784x20
             RenderText {#text} at (0,0) size 784x20
               text run at (0,0) width 784: "Attempt to create a floating ruby text element. Float is not supported for"

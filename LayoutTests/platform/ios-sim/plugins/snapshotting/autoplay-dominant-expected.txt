@@ -1,11 +1,11 @@
-layer at (0,0) size 800x649
+layer at (0,0) size 800x652
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x649
-  RenderBlock {HTML} at (0,0) size 800x649
-    RenderBody {BODY} at (8,8) size 784x633
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,-1) size 343x19
-          text run at (0,-1) width 343: "This test's dominant plugin should play automatically"
-      RenderBlock (anonymous) at (0,33) size 784x600
+layer at (0,0) size 800x652
+  RenderBlock {HTML} at (0,0) size 800x652
+    RenderBody {BODY} at (8,8) size 784x636
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 343x19
+          text run at (0,0) width 343: "This test's dominant plugin should play automatically"
+      RenderBlock (anonymous) at (0,36) size 784x600
         RenderEmbeddedObject {EMBED} at (0,0) size 600x600
         RenderText {#text} at (0,0) size 0x0

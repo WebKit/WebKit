@@ -14,13 +14,13 @@ layer at (0,0) size 800x600
           RenderInline (generated) at (0,0) size 53x19
             RenderText at (28,11) size 53x19
               text run at (28,11) width 53: "[before]"
-          RenderRubyRun (anonymous) at (76,11) size 32x20
+          RenderRubyRun (anonymous) at (76,11) size 33x20
             RenderRubyText {RT} at (0,-11) size 32x12
               RenderText {#text} at (0,0) size 32x11
                 text run at (0,0) width 32: "long text"
             RenderRubyBase (anonymous) at (0,0) size 32x20
-              RenderText {#text} at (12,0) size 8x19
-                text run at (12,0) width 8: "b"
+              RenderText {#text} at (11,0) size 9x19
+                text run at (11,0) width 9: "b"
         RenderText {#text} at (104,11) size 28x19
           text run at (104,11) width 28: " Bar"
         RenderBR {BR} at (131,26) size 1x0
@@ -30,13 +30,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,11) size 29x19
           text run at (0,11) width 29: "Foo "
         RenderRuby (inline) {RUBY} at (0,0) size 65x19
-          RenderRubyRun (anonymous) at (25,11) size 32x20
+          RenderRubyRun (anonymous) at (24,11) size 33x20
             RenderRubyText {RT} at (0,-11) size 32x12
               RenderText {#text} at (0,0) size 32x11
                 text run at (0,0) width 32: "long text"
             RenderRubyBase (anonymous) at (0,0) size 32x20
-              RenderText {#text} at (12,0) size 8x19
-                text run at (12,0) width 8: "b"
+              RenderText {#text} at (11,0) size 9x19
+                text run at (11,0) width 9: "b"
           RenderInline (generated) at (0,0) size 41x19
             RenderText at (52,11) size 41x19
               text run at (52,11) width 41: "[after]"
@@ -52,13 +52,13 @@ layer at (0,0) size 800x600
           RenderInline (generated) at (0,0) size 53x19
             RenderText at (28,11) size 53x19
               text run at (28,11) width 53: "[before]"
-          RenderRubyRun (anonymous) at (76,11) size 32x20
+          RenderRubyRun (anonymous) at (76,11) size 33x20
             RenderRubyText {RT} at (0,-11) size 32x12
               RenderText {#text} at (0,0) size 32x11
                 text run at (0,0) width 32: "long text"
             RenderRubyBase (anonymous) at (0,0) size 32x20
-              RenderText {#text} at (12,0) size 8x19
-                text run at (12,0) width 8: "b"
+              RenderText {#text} at (11,0) size 9x19
+                text run at (11,0) width 9: "b"
           RenderInline (generated) at (0,0) size 41x19
             RenderText at (104,11) size 41x19
               text run at (104,11) width 41: "[after]"

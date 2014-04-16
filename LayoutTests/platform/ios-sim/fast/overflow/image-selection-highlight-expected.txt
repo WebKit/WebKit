@@ -31,7 +31,7 @@ layer at (8,130) size 100x200 clip at (8,130) size 85x200 scrollY 40 scrollHeigh
       text run at (0,60) width 80: "consectetuer"
       text run at (0,80) width 66: "adipiscing"
       text run at (0,100) width 29: "elit. "
-    RenderImage {IMG} at (28,105) size 10x10
+    RenderImage {IMG} at (28,105) size 11x10
     RenderText {#text} at (38,100) size 85x219
       text run at (38,100) width 5: " "
       text run at (42,100) width 39: "Etiam"

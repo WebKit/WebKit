@@ -2,60 +2,60 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGText {text} at (136,10) size 207x23 contains 1 chunk(s)
+    RenderSVGText {text} at (136,10) size 208x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 207x23
         chunk 1 (middle anchor) text run 1 at (136.80,28.00) startOffset 0 endOffset 25 width 206.41: "<svg> 'viewBox' attribute"
-    RenderSVGContainer {g} at (16,59) size 451x245
+    RenderSVGContainer {g} at (19,59) size 446x244
       RenderSVGViewportContainer {svg} at (44,59) size 82x82
         RenderSVGPath {path} at (44,59) size 82x82 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M 20 20 C 126.667 20 180 73.3333 180 180 C 73.3333 180 20 126.667 20 20 Z M 20 180 C 20 73.3333 73.3333 20 180 20 C 180 126.667 126.667 180 20 180 Z M 100 40 L 160 100 L 100 160 L 40 100 Z"]
-      RenderSVGText {text} at (16,142) size 137x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 137x17
-          chunk 1 (middle anchor) text run 1 at (16.81,155.00) startOffset 0 endOffset 21 width 136.38: "viewBox=\"0 0 200 200\""
-      RenderSVGText {text} at (31,157) size 108x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 108x17
-          chunk 1 (middle anchor) text run 1 at (31.40,170.00) startOffset 0 endOffset 18 width 107.19: "overflow=\"visible\""
+      RenderSVGText {text} at (19,142) size 132x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 132x16
+          chunk 1 (middle anchor) text run 1 at (19.25,155.00) startOffset 0 endOffset 21 width 131.51: "viewBox=\"0 0 200 200\""
+      RenderSVGText {text} at (33,157) size 104x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 104x16
+          chunk 1 (middle anchor) text run 1 at (33.32,170.00) startOffset 0 endOffset 18 width 103.37: "overflow=\"visible\""
       RenderSVGViewportContainer {svg} at (44,189) size 82x82
         RenderSVGPath {path} at (44,189) size 82x82 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M 20 20 C 126.667 20 180 73.3333 180 180 C 73.3333 180 20 126.667 20 20 Z M 20 180 C 20 73.3333 73.3333 20 180 20 C 180 126.667 126.667 180 20 180 Z M 100 40 L 160 100 L 100 160 L 40 100 Z"]
-      RenderSVGText {text} at (16,272) size 137x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 137x17
-          chunk 1 (middle anchor) text run 1 at (16.81,285.00) startOffset 0 endOffset 21 width 136.38: "viewBox=\"0 0 200 200\""
-      RenderSVGText {text} at (31,287) size 108x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 108x17
-          chunk 1 (middle anchor) text run 1 at (31.02,300.00) startOffset 0 endOffset 17 width 107.97: "overflow=\"hidden\""
+      RenderSVGText {text} at (19,272) size 132x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 132x16
+          chunk 1 (middle anchor) text run 1 at (19.25,285.00) startOffset 0 endOffset 21 width 131.51: "viewBox=\"0 0 200 200\""
+      RenderSVGText {text} at (32,287) size 106x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 105x16
+          chunk 1 (middle anchor) text run 1 at (32.94,300.00) startOffset 0 endOffset 17 width 104.11: "overflow=\"hidden\""
       RenderSVGViewportContainer {svg} at (199,59) size 82x82
         RenderSVGPath {path} at (199,59) size 82x82 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M 20 20 C 126.667 20 180 73.3333 180 180 C 73.3333 180 20 126.667 20 20 Z M 20 180 C 20 73.3333 73.3333 20 180 20 C 180 126.667 126.667 180 20 180 Z M 100 40 L 160 100 L 100 160 L 40 100 Z"]
-      RenderSVGText {text} at (171,142) size 137x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 137x17
-          chunk 1 (middle anchor) text run 1 at (171.81,155.00) startOffset 0 endOffset 21 width 136.38: "viewBox=\"0,0,200,200\""
-      RenderSVGText {text} at (186,157) size 108x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 108x17
-          chunk 1 (middle anchor) text run 1 at (186.40,170.00) startOffset 0 endOffset 18 width 107.19: "overflow=\"visible\""
+      RenderSVGText {text} at (174,142) size 132x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 132x16
+          chunk 1 (middle anchor) text run 1 at (174.25,155.00) startOffset 0 endOffset 21 width 131.51: "viewBox=\"0,0,200,200\""
+      RenderSVGText {text} at (188,157) size 104x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 104x16
+          chunk 1 (middle anchor) text run 1 at (188.32,170.00) startOffset 0 endOffset 18 width 103.37: "overflow=\"visible\""
       RenderSVGViewportContainer {svg} at (199,189) size 82x82
         RenderSVGPath {path} at (199,189) size 82x82 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M 20 20 C 126.667 20 180 73.3333 180 180 C 73.3333 180 20 126.667 20 20 Z M 20 180 C 20 73.3333 73.3333 20 180 20 C 180 126.667 126.667 180 20 180 Z M 100 40 L 160 100 L 100 160 L 40 100 Z"]
-      RenderSVGText {text} at (171,272) size 137x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 137x17
-          chunk 1 (middle anchor) text run 1 at (171.81,285.00) startOffset 0 endOffset 21 width 136.38: "viewBox=\"0,0,200,200\""
-      RenderSVGText {text} at (186,287) size 108x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 108x17
-          chunk 1 (middle anchor) text run 1 at (186.02,300.00) startOffset 0 endOffset 17 width 107.97: "overflow=\"hidden\""
+      RenderSVGText {text} at (174,272) size 132x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 132x16
+          chunk 1 (middle anchor) text run 1 at (174.25,285.00) startOffset 0 endOffset 21 width 131.51: "viewBox=\"0,0,200,200\""
+      RenderSVGText {text} at (187,287) size 106x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 105x16
+          chunk 1 (middle anchor) text run 1 at (187.94,300.00) startOffset 0 endOffset 17 width 104.11: "overflow=\"hidden\""
       RenderSVGViewportContainer {svg} at (354,59) size 82x82
         RenderSVGPath {path} at (354,59) size 82x82 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M 20 20 C 126.667 20 180 73.3333 180 180 C 73.3333 180 20 126.667 20 20 Z M 20 180 C 20 73.3333 73.3333 20 180 20 C 180 126.667 126.667 180 20 180 Z M 100 40 L 160 100 L 100 160 L 40 100 Z"]
-      RenderSVGText {text} at (323,142) size 144x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 144x17
-          chunk 1 (middle anchor) text run 1 at (323.31,155.00) startOffset 0 endOffset 14 width 88.66: "viewBox=\"0,0, "
-          chunk 1 (middle anchor) text run 1 at (411.97,155.00) startOffset 0 endOffset 9 width 54.71: "200, 200\""
-      RenderSVGText {text} at (341,157) size 108x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 108x17
-          chunk 1 (middle anchor) text run 1 at (341.40,170.00) startOffset 0 endOffset 18 width 107.19: "overflow=\"visible\""
+      RenderSVGText {text} at (325,142) size 140x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 139x16
+          chunk 1 (middle anchor) text run 1 at (325.87,155.00) startOffset 0 endOffset 14 width 85.50: "viewBox=\"0,0, "
+          chunk 1 (middle anchor) text run 1 at (411.37,155.00) startOffset 0 endOffset 9 width 52.76: "200, 200\""
+      RenderSVGText {text} at (343,157) size 104x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 104x16
+          chunk 1 (middle anchor) text run 1 at (343.32,170.00) startOffset 0 endOffset 18 width 103.37: "overflow=\"visible\""
       RenderSVGViewportContainer {svg} at (354,189) size 82x82
         RenderSVGPath {path} at (354,189) size 82x82 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M 20 20 C 126.667 20 180 73.3333 180 180 C 73.3333 180 20 126.667 20 20 Z M 20 180 C 20 73.3333 73.3333 20 180 20 C 180 126.667 126.667 180 20 180 Z M 100 40 L 160 100 L 100 160 L 40 100 Z"]
-      RenderSVGText {text} at (323,272) size 144x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 144x17
-          chunk 1 (middle anchor) text run 1 at (323.31,285.00) startOffset 0 endOffset 14 width 88.66: "viewBox=\"0,0, "
-          chunk 1 (middle anchor) text run 1 at (411.97,285.00) startOffset 0 endOffset 9 width 54.71: "200, 200\""
-      RenderSVGText {text} at (341,287) size 108x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 108x17
-          chunk 1 (middle anchor) text run 1 at (341.02,300.00) startOffset 0 endOffset 17 width 107.97: "overflow=\"hidden\""
+      RenderSVGText {text} at (325,272) size 140x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 139x16
+          chunk 1 (middle anchor) text run 1 at (325.87,285.00) startOffset 0 endOffset 14 width 85.50: "viewBox=\"0,0, "
+          chunk 1 (middle anchor) text run 1 at (411.37,285.00) startOffset 0 endOffset 9 width 52.76: "200, 200\""
+      RenderSVGText {text} at (342,287) size 106x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 105x16
+          chunk 1 (middle anchor) text run 1 at (342.94,300.00) startOffset 0 endOffset 17 width 104.11: "overflow=\"hidden\""
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"

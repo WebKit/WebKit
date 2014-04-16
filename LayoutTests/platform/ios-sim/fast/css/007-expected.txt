@@ -10,6 +10,6 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 100x19
                 text run at (0,0) width 100: "This is link one"
           RenderListItem {LI} at (40,0) size 744x0
-            RenderBlock (floating) {A} at (109,0) size 310x20
+            RenderBlock (floating) {A} at (108,0) size 311x20
               RenderText {#text} at (0,0) size 310x19
                 text run at (0,0) width 310: "This is link two and it shouldn't overlap link one"

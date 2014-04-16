@@ -1,4 +1,3 @@
-
 FAIL frame.contentDocument.body.scrollTop should be 100. Was 0.
 PASS frame.contentDocument.body.scrollLeft is 100
 PASS frame.contentWindow.scrollX is 100

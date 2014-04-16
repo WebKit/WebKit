@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 306x334
+  RenderSVGRoot {svg} at (0,0) size 306x333
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourcePattern {pattern} [id="squares"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGRect {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=2.00] [height=2.00]
@@ -11,19 +11,19 @@ layer at (0,0) size 800x600
     RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
     RenderSVGContainer {g} at (37,20) size 134x133 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,20.00)}]
       RenderSVGRect {rect} at (37,20) size 134x133 [transform={m=((0.91,0.42)(-0.42,0.91)) t=(0.00,0.00)}] [fill={[type=PATTERN] [id="squares"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-    RenderSVGContainer {g} at (10,290) size 296x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,300.00)}]
-      RenderSVGText {text} at (0,-10) size 296x44 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 289x14
-          RenderSVGInlineText {#text} at (0,0) size 289x14
+    RenderSVGContainer {g} at (10,290) size 296x43 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,300.00)}]
+      RenderSVGText {text} at (0,-10) size 296x43 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 289x13
+          RenderSVGInlineText {#text} at (0,0) size 289x13
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 288.05: "For this test case to be successful, the"
-        RenderSVGInlineText {#text} at (288,0) size 8x14
+        RenderSVGInlineText {#text} at (288,0) size 8x13
           chunk 1 text run 1 at (288.05,0.00) startOffset 0 endOffset 1 width 7.20: " "
-        RenderSVGTSpan {tspan} at (0,0) size 260x14
-          RenderSVGInlineText {#text} at (0,15) size 260x14
+        RenderSVGTSpan {tspan} at (0,0) size 260x13
+          RenderSVGInlineText {#text} at (0,15) size 260x13
             chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 36 width 259.24: "rotated square inside the black area"
-        RenderSVGInlineText {#text} at (259,15) size 8x14
+        RenderSVGInlineText {#text} at (259,15) size 8x13
           chunk 1 text run 1 at (259.24,15.00) startOffset 0 endOffset 1 width 7.20: " "
-        RenderSVGTSpan {tspan} at (0,0) size 152x14
-          RenderSVGInlineText {#text} at (0,30) size 152x14
+        RenderSVGTSpan {tspan} at (0,0) size 152x13
+          RenderSVGInlineText {#text} at (0,30) size 152x13
             chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 21 width 151.22: "should be pure white."
         RenderSVGInlineText {#text} at (0,0) size 0x0

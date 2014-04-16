@@ -1,22 +1,22 @@
-layer at (0,0) size 800x781
+layer at (0,0) size 800x783
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x781
-  RenderBlock {html} at (0,0) size 800x781
-    RenderBody {body} at (8,16) size 784x757
-      RenderBlock {parsererror} at (16,0) size 752x136 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
-        RenderBlock {h3} at (18,20) size 716x23
+layer at (0,0) size 800x783
+  RenderBlock {html} at (0,0) size 800x783
+    RenderBody {body} at (8,16) size 784x759
+      RenderBlock {parsererror} at (16,0) size 752x138 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20) size 716x24
           RenderText {#text} at (0,0) size 323x22
             text run at (0,0) width 323: "This page contains the following errors:"
-        RenderBlock {div} at (18,61) size 716x14
-          RenderText {#text} at (0,0) size 512x14
+        RenderBlock {div} at (18,62) size 716x14
+          RenderText {#text} at (0,0) size 512x13
             text run at (0,0) width 512: "error on line 1 at column 132: Extra content at the end of the document"
             text run at (511,0) width 1: " "
-        RenderBlock {h3} at (18,93) size 716x23
+        RenderBlock {h3} at (18,94) size 716x24
           RenderText {#text} at (0,0) size 428x22
             text run at (0,0) width 428: "Below is a rendering of the page up to the first error."
-      RenderBlock (anonymous) at (0,152) size 784x605
-        RenderSVGRoot {svg} at (8,173) size 342x19
+      RenderBlock (anonymous) at (0,153) size 784x606
+        RenderSVGRoot {svg} at (8,174) size 342x20
           RenderSVGText {text} at (0,5) size 342x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 342x19
+            RenderSVGInlineText {#text} at (0,0) size 342x18
               chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 53 width 341.27: "This should not crash, but display an error document."
-          RenderSVGContainer {use} at (8,168) size 0x0
+          RenderSVGContainer {use} at (8,169) size 0x1

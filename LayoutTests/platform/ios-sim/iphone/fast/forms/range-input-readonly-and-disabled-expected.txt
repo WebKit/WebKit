@@ -1,91 +1,14 @@
-
-This tests touch events on readonly and disabled sliders.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-
--------------------
-Test Configuration: Normal - (<input type="range">)
--------------------
-
-- Reset slider to non-readonly and non-disabled to make sure it works.
-PASS slider.value is "50"
-- Test drag sequence where readonly / disabled state may change during drag.
-PASS slider.value is "100"
-PASS changeEventCount is >= lastChangeEventCount + 1
-PASS slider.value is "0"
-PASS changeEventCount is >= lastChangeEventCount + 1
-(toggled state to configuration)
-PASS slider.value is "100"
-PASS changeEventCount is >= lastChangeEventCount + 1
-- Reset value to middle for second sequence.
-PASS slider.value is "50"
-- Test drag sequence where readonly / disabled state is already set.
-PASS slider.value is "100"
-PASS changeEventCount is >= lastChangeEventCount + 1
-
--------------------
-Test Configuration: Readonly - (<input type="range" readonly>)
--------------------
-
-- Reset slider to non-readonly and non-disabled to make sure it works.
-PASS slider.value is "50"
-- Test drag sequence where readonly / disabled state may change during drag.
-PASS slider.value is "100"
-PASS changeEventCount is >= lastChangeEventCount + 1
-PASS slider.value is "0"
-PASS changeEventCount is >= lastChangeEventCount + 1
-(toggled state to configuration)
-PASS slider.value is "0"
-PASS lastChangeEventCount is changeEventCount
-- Reset value to middle for second sequence.
-PASS slider.value is "50"
-- Test drag sequence where readonly / disabled state is already set.
-PASS slider.value is "50"
-PASS lastChangeEventCount is changeEventCount
-
--------------------
-Test Configuration: Disabled - (<input type="range" disabled>)
--------------------
-
-- Reset slider to non-readonly and non-disabled to make sure it works.
-PASS slider.value is "50"
-- Test drag sequence where readonly / disabled state may change during drag.
-PASS slider.value is "100"
-PASS changeEventCount is >= lastChangeEventCount + 1
-PASS slider.value is "0"
-PASS changeEventCount is >= lastChangeEventCount + 1
-(toggled state to configuration)
-PASS slider.value is "0"
-PASS lastChangeEventCount is changeEventCount
-- Reset value to middle for second sequence.
-PASS slider.value is "50"
-- Test drag sequence where readonly / disabled state is already set.
-PASS slider.value is "50"
-PASS lastChangeEventCount is changeEventCount
-
--------------------
-Test Configuration: Readonly and Disabled - (<input type="range" readonly disabled>)
--------------------
-
-- Reset slider to non-readonly and non-disabled to make sure it works.
-PASS slider.value is "50"
-- Test drag sequence where readonly / disabled state may change during drag.
-PASS slider.value is "100"
-PASS changeEventCount is >= lastChangeEventCount + 1
-PASS slider.value is "0"
-PASS changeEventCount is >= lastChangeEventCount + 1
-(toggled state to configuration)
-PASS slider.value is "0"
-PASS lastChangeEventCount is changeEventCount
-- Reset value to middle for second sequence.
-PASS slider.value is "50"
-- Test drag sequence where readonly / disabled state is already set.
-PASS slider.value is "50"
-PASS lastChangeEventCount is changeEventCount
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
+CONSOLE MESSAGE: line 62: TypeError: HTMLParagraphElement is not a function (evaluating 'description("This tests touch events on readonly and disabled sliders.")')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x149
+  RenderBlock {HTML} at (0,0) size 800x149
+    RenderBody {BODY} at (8,8) size 784x125
+      RenderBlock (anonymous) at (0,0) size 784x125
+        RenderSlider {INPUT} at (2,100) size 500x20 [color=#909090] [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,0) size 500x20
+            RenderBlock {DIV} at (0,-90) size 500x200
+              RenderBlock {DIV} at (150,0) size 200x200 [bgcolor=#0000FF] [border: (1px solid #424242)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,141) size 784x0
+      RenderBlock {DIV} at (0,141) size 784x0

@@ -3,13 +3,13 @@ main frame - didCommitLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
 resources/cache-expired-subresource.webarchive - willSendRequest <NSURLRequest URL resources/cache-expired-subresource.webarchive, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame
-<unknown> - didFinishLoading
+cache-expired-subresource.html - didFinishLoading
 resources/cache-expired-subresource.webarchive - didReceiveResponse <NSURLResponse resources/cache-expired-subresource.webarchive, http status code 0>
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
 http://localhost/pink-bullet.png - willSendRequest <NSURLRequest URL http://localhost/pink-bullet.png, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)
 frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
 resources/cache-expired-subresource.webarchive - didFinishLoading
-http://localhost/pink-bullet.png - didReceiveResponse <NSURLResponse http://localhost/test.php, http status code 200>
+http://localhost/pink-bullet.png - didReceiveResponse <NSURLResponse http://localhost/pink-bullet.png, http status code 0>
 http://localhost/pink-bullet.png - didFinishLoading
 frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame

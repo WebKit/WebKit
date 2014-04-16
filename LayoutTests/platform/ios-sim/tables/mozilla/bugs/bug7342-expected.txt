@@ -52,9 +52,9 @@ layer at (0,0) size 800x600
                     RenderTableSection {TBODY} at (1,1) size 456x77
                       RenderTableRow {TR} at (0,4) size 456x35
                         RenderTableCell {TD} at (4,4) size 340x35 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
-                          RenderInline {FONT} at (0,0) size 267x16
+                          RenderInline {FONT} at (0,0) size 268x16
                             RenderText {#text} at (0,0) size 0x0
-                            RenderTextControl {INPUT} at (7,7) size 263x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                            RenderTextControl {INPUT} at (7,7) size 264x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
                             RenderText {#text} at (0,0) size 0x0
                           RenderText {#text} at (0,0) size 0x0
                         RenderTableCell {TD} at (348,4) size 104x34 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
@@ -76,5 +76,5 @@ layer at (0,0) size 800x600
                         RenderTableCell {TD} at (348,43) size 104x30 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 27x19
                             text run at (5,5) width 27: "asdf"
-layer at (252,127) size 251x14
-  RenderBlock {DIV} at (6,3) size 251x14
+layer at (253,127) size 250x14
+  RenderBlock {DIV} at (6,3) size 252x15

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,36) size 784x31
         RenderText {#text} at (0,11) size 159x19
           text run at (0,11) width 159: "<ruby> is defined in the "
-        RenderRuby (inline) {RUBY} at (0,0) size 122x19
+        RenderRuby (inline) {RUBY} at (0,0) size 121x19
           RenderRubyRun (anonymous) at (154,11) size 39x20
             RenderRubyText {RT} at (0,-11) size 39x12
               RenderText {#text} at (0,0) size 39x11
@@ -24,13 +24,13 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 90: "Markup Language Lvl. 5"
             RenderRubyBase (anonymous) at (0,0) size 90x20
               RenderInline {SPAN} at (0,0) size 15x19
-                RenderText {#text} at (29,0) size 15x19
-                  text run at (29,0) width 15: "M"
-              RenderInline {SPAN} at (0,0) size 10x19
-                RenderText {#text} at (43,0) size 10x19
-                  text run at (43,0) width 10: "L"
-              RenderInline {SPAN} at (0,0) size 8x19
-                RenderText {#text} at (53,0) size 8x19
-                  text run at (53,0) width 8: "5"
-        RenderText {#text} at (279,11) size 37x19
-          text run at (279,11) width 37: " spec."
+                RenderText {#text} at (28,0) size 15x19
+                  text run at (28,0) width 15: "M"
+              RenderInline {SPAN} at (0,0) size 11x19
+                RenderText {#text} at (42,0) size 11x19
+                  text run at (42,0) width 11: "L"
+              RenderInline {SPAN} at (0,0) size 9x19
+                RenderText {#text} at (52,0) size 9x19
+                  text run at (52,0) width 9: "5"
+        RenderText {#text} at (278,11) size 38x19
+          text run at (278,11) width 38: " spec."

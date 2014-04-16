@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 320x19
           text run at (0,0) width 320: "This tests that the background of a table cell with "
-        RenderInline {TT} at (0,0) size 133x15
-          RenderText {#text} at (319,4) size 133x15
-            text run at (319,4) width 133: "visibility:hidden"
+        RenderInline {TT} at (0,0) size 133x14
+          RenderText {#text} at (319,5) size 133x14
+            text run at (319,5) width 133: "visibility:hidden"
         RenderText {#text} at (451,0) size 110x19
           text run at (451,0) width 110: " is never painted."
       RenderBlock {P} at (0,36) size 784x20

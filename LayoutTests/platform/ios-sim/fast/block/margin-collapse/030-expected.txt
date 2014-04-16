@@ -13,6 +13,6 @@ layer at (0,0) size 800x126
           text run at (0,0) width 195: "There should be no red below."
       RenderBlock {DIV} at (0,72) size 86x38 [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderBlock {P} at (3,3) size 80x0 [color=#00FF00]
-          RenderText {#text} at (0,0) size 80x17
-            text run at (0,0) width 80: "XXXXX"
+          RenderText {#text} at (0,-1) size 80x17
+            text run at (0,-1) width 80: "XXXXX"
         RenderBlock {P} at (3,19) size 80x16 [bgcolor=#00FF00]

@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x290
-  RenderBlock {HTML} at (0,0) size 800x290
-    RenderBody {BODY} at (8,16) size 784x266
+  RenderBlock {HTML} at (0,0) size 800x291
+    RenderBody {BODY} at (8,16) size 784x267
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 522x19
           text run at (0,0) width 522: "Test passes if the box has rounded corners and there is no red visible on the page."
-      RenderBlock {DIV} at (0,36) size 230x230 [border: (19px solid #FF0000)]
-      RenderBlock {DIV} at (0,36) size 230x230 [border: (19px solid #008000)]
+      RenderBlock {DIV} at (0,36) size 231x231 [border: (19.19px solid #FF0000)]
+      RenderBlock {DIV} at (0,35) size 231x232 [border: (19.19px solid #008000)]

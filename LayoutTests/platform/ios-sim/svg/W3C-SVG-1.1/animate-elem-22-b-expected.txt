@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 132x16
             chunk 1 text run 1 at (200.00,131.00) startOffset 0 endOffset 22 width 131.00: "Yellow rect at time 0s"
         RenderSVGRect {rect} at (199,134) size 52x52 [stroke={[type=SOLID] [color=#000000]}] [x=200.00] [y=135.00] [width=50.00] [height=50.00]
-        RenderSVGText {text} at (141,89) size 132x16 contains 1 chunk(s)
+        RenderSVGText {text} at (141,90) size 132x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 132x16
             chunk 1 text run 1 at (141.67,102.67) startOffset 0 endOffset 22 width 131.00: "Yellow rect at time 3s"
         RenderSVGRect {rect} at (141,106) size 168x113 [stroke={[type=SOLID] [color=#0000FF]}] [x=141.67] [y=106.67] [width=166.67] [height=111.67]

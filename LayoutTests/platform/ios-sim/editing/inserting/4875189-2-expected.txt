@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
           text run at (450,0) width 297: "Just its contents should be removed during the"
           text run at (0,20) width 51: "replace."
       RenderBlock {DIV} at (0,56) size 784x20
-        RenderText {#text} at (299,0) size 239x19
-          text run at (299,0) width 239: "This shouldn't be in the bordered div."
+        RenderText {#text} at (298,0) size 239x19
+          text run at (298,0) width 239: "This shouldn't be in the bordered div."
         RenderBlock (floating) {DIV} at (0,0) size 299x22 [border: (1px solid #0000FF)]
           RenderText {#text} at (1,1) size 297x19
             text run at (1,1) width 297: "This should be in a floating blue bordered div."

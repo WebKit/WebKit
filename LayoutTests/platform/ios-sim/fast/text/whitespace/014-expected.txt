@@ -13,17 +13,17 @@ layer at (0,0) size 800x154
           RenderTableRow {TR} at (0,2) size 342x114
             RenderTableCell {TD} at (2,2) size 338x114 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 336x112 [color=#00FF00] [bgcolor=#008000]
-                RenderText {#text} at (0,0) size 336x113
-                  text run at (0,0) width 336: "                     "
-                  text run at (336,0) width 0: " "
-                  text run at (0,16) width 336: " xxxx xxxx xxxx xxxx "
-                  text run at (336,16) width 0: " "
-                  text run at (0,32) width 336: " x  x x  x x    x    "
-                  text run at (336,32) width 0: " "
-                  text run at (0,48) width 320: " xxxx xxxx xxxx xxxx"
-                  text run at (320,48) width 0: " "
-                  text run at (0,64) width 336: " x    x  x    x    x "
-                  text run at (336,64) width 0: " "
-                  text run at (0,80) width 336: " x    x  x xxxx xxxx "
-                  text run at (336,80) width 0: " "
-                  text run at (0,96) width 336: "                     "
+                RenderText {#text} at (0,-1) size 336x113
+                  text run at (0,-1) width 336: "                     "
+                  text run at (336,-1) width 0: " "
+                  text run at (0,15) width 336: " xxxx xxxx xxxx xxxx "
+                  text run at (336,15) width 0: " "
+                  text run at (0,31) width 336: " x  x x  x x    x    "
+                  text run at (336,31) width 0: " "
+                  text run at (0,47) width 320: " xxxx xxxx xxxx xxxx"
+                  text run at (320,47) width 0: " "
+                  text run at (0,63) width 336: " x    x  x    x    x "
+                  text run at (336,63) width 0: " "
+                  text run at (0,79) width 336: " x    x  x xxxx xxxx "
+                  text run at (336,79) width 0: " "
+                  text run at (0,95) width 336: "                     "

@@ -32,7 +32,7 @@ layer at (0,0) size 480x360
         RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
         RenderSVGRect {rect} at (10,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=0.00] [width=10.00] [height=10.00]
       RenderSVGText {text} at (25,238) size 305x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 305x46
+        RenderSVGInlineText {#text} at (0,0) size 305x45
           chunk 1 text run 1 at (25.00,275.00) startOffset 0 endOffset 17 width 304.61: "Pattern on stroke"
       RenderSVGText {text} at (25,279) size 217x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 217x14

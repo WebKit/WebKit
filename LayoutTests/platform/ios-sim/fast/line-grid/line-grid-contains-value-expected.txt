@@ -4,26 +4,26 @@ layer at (0,0) size 800x600 layerType: background only
 layer at (10,10) size 620x320
   RenderBlock (positioned) zI: -1 {DIV} at (10,10) size 620x320
     RenderBlock {DIV} at (10,10) size 600x300 [color=#00FF00]
-      RenderText {#text} at (0,5) size 613x37
-        text run at (0,5) width 613: "xxxxxxxxxxxxxxxxx"
+      RenderText {#text} at (0,5) size 612x37
+        text run at (0,5) width 612: "xxxxxxxxxxxxxxxxx"
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,48) size 613x37
-        text run at (0,48) width 613: "xxxxxxxxxxxxxxxxx"
+      RenderText {#text} at (0,48) size 612x37
+        text run at (0,48) width 612: "xxxxxxxxxxxxxxxxx"
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,91) size 613x37
-        text run at (0,91) width 613: "xxxxxxxxxxxxxxxxx"
+      RenderText {#text} at (0,91) size 612x37
+        text run at (0,91) width 612: "xxxxxxxxxxxxxxxxx"
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,134) size 613x37
-        text run at (0,134) width 613: "xxxxxxxxxxxxxxxxx"
+      RenderText {#text} at (0,134) size 612x37
+        text run at (0,134) width 612: "xxxxxxxxxxxxxxxxx"
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,177) size 613x37
-        text run at (0,177) width 613: "xxxxxxxxxxxxxxxxx"
+      RenderText {#text} at (0,177) size 612x37
+        text run at (0,177) width 612: "xxxxxxxxxxxxxxxxx"
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,220) size 613x37
-        text run at (0,220) width 613: "xxxxxxxxxxxxxxxxx"
+      RenderText {#text} at (0,220) size 612x37
+        text run at (0,220) width 612: "xxxxxxxxxxxxxxxxx"
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,263) size 613x37
-        text run at (0,263) width 613: "xxxxxxxxxxxxxxxxx"
+      RenderText {#text} at (0,263) size 612x37
+        text run at (0,263) width 612: "xxxxxxxxxxxxxxxxx"
       RenderBR {BR} at (0,0) size 0x0
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600

@@ -1,0 +1,5 @@
+Bug 111000: Selection gaps don't repaint correctly with transforms
+This tests that absolute elements that get transformed are invalidated correctly. The box will be completely green if the selected area was invalidated correctly.
+
+
+

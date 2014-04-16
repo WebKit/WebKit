@@ -9,6 +9,6 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 158x19
           RenderText {#text} at (0,0) size 158x19
             text run at (0,0) width 158: "You should see this text."
-      RenderTable {TABLE} at (0,36) size 0x4
-        RenderTableSection {TBODY} at (0,0) size 0x4
-          RenderTableRow {TR} at (0,2) size 0x0
+      RenderTable {TABLE} at (0,36) size 4x4
+        RenderTableSection {TBODY} at (0,0) size 4x4
+          RenderTableRow {TR} at (0,2) size 4x0

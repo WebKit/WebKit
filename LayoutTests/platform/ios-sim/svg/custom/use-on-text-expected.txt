@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (20,0) size 490x128
+  RenderSVGRoot {svg} at (20,0) size 489x127
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGText {text} at (0,-26) size 69x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 69x45
@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (0,-26) size 69x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 69x45
           chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 4 width 68.87: "Test"
-    RenderSVGText {text} at (10,45) size 245x18 contains 1 chunk(s)
+    RenderSVGText {text} at (10,45) size 245x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 245x18
         chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 38 width 244.40: "The two objects should look identical."
     RenderSVGContainer {use} at (46,0) size 146x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]

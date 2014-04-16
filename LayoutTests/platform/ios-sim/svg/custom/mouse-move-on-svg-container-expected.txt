@@ -6,8 +6,8 @@ layer at (0,0) size 800x411
       RenderSVGRoot {svg} at (41,32) size 365x374
         RenderSVGContainer {g} at (303,303) size 100x100
           RenderSVGEllipse {circle} at (303,303) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=350.00] [cy=350.00] [r=50.00]
-        RenderSVGText {text} at (44,35) size 311x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 311x19
+        RenderSVGText {text} at (44,35) size 312x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 311x18
             chunk 1 (middle anchor) text run 1 at (44.71,50.00) startOffset 0 endOffset 49 width 310.58: "The circle should stay in the bottom-right corner"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

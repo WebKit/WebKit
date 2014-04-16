@@ -13,8 +13,8 @@ layer at (0,0) size 800x152
           text run at (0,0) width 352: "There should be a single green rectangle square below."
       RenderBlock {DIV} at (0,72) size 64x64 [color=#008000] [bgcolor=#FF0000]
         RenderBlock {DIV} at (0,0) size 64x32
-          RenderText {#text} at (0,0) size 32x33
-            text run at (0,0) width 32: "X"
+          RenderText {#text} at (0,-1) size 32x33
+            text run at (0,-1) width 32: "X"
         RenderBlock {DIV} at (32,32) size 32x32
-          RenderText {#text} at (0,0) size 32x33
-            text run at (0,0) width 32: "X"
+          RenderText {#text} at (0,-1) size 32x33
+            text run at (0,-1) width 32: "X"

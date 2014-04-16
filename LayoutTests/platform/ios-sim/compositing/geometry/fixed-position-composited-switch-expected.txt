@@ -8,7 +8,7 @@ Before (should be empty):
         (GraphicsLayer
           (position 495.00 30.00)
           (bounds 300.00 100.00)
-          (drawsContent 1)
+          (contentsOpaque 1)
         )
       )
     )
@@ -25,7 +25,7 @@ After (should not be empty):
         (GraphicsLayer
           (position 495.00 30.00)
           (bounds 300.00 100.00)
-          (drawsContent 1)
+          (contentsOpaque 1)
         )
       )
     )
@@ -33,10 +33,10 @@ After (should not be empty):
 )
 After (should be empty): 
 (GraphicsLayer
-  (bounds 800.00 624.00)
+  (bounds 800.00 600.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 624.00)
+      (bounds 800.00 600.00)
     )
   )
 )

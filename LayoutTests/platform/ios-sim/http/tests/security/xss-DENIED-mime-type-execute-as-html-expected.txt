@@ -1,0 +1,1 @@
+Test non-image and javascript mime types are not rendered as HTML.

@@ -1,36 +1,36 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x310
-  RenderBlock {html} at (0,0) size 800x310
-    RenderBody {body} at (8,21) size 784x281
+layer at (0,0) size 800x311
+  RenderBlock {html} at (0,0) size 800x311
+    RenderBody {body} at (8,21) size 784x282
       RenderBlock {h1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 750x36
           text run at (0,1) width 750: "Test case for x/y attributes on root-most <svg> element"
-      RenderBlock {p} at (0,59) size 784x60
+      RenderBlock {p} at (0,59) size 784x61
         RenderText {#text} at (0,0) size 29x19
           text run at (0,0) width 29: "The "
-        RenderInline {code} at (0,0) size 9x15
-          RenderText {#text} at (28,4) size 9x15
-            text run at (28,4) width 9: "x"
+        RenderInline {code} at (0,0) size 9x14
+          RenderText {#text} at (28,5) size 9x14
+            text run at (28,5) width 9: "x"
         RenderText {#text} at (36,0) size 32x19
           text run at (36,0) width 32: " and "
-        RenderInline {code} at (0,0) size 9x15
-          RenderText {#text} at (67,4) size 9x15
-            text run at (67,4) width 9: "y"
+        RenderInline {code} at (0,0) size 9x14
+          RenderText {#text} at (67,5) size 9x14
+            text run at (67,5) width 9: "y"
         RenderText {#text} at (75,0) size 166x19
           text run at (75,0) width 166: " attributes on a root-most "
-        RenderInline {code} at (0,0) size 40x15
-          RenderText {#text} at (240,4) size 40x15
-            text run at (240,4) width 40: "<svg>"
+        RenderInline {code} at (0,0) size 40x14
+          RenderText {#text} at (240,5) size 40x14
+            text run at (240,5) width 40: "<svg>"
         RenderText {#text} at (279,0) size 440x19
           text run at (279,0) width 440: " element should be ignored, as specified by SVG 1.1. The root-most "
-        RenderInline {code} at (0,0) size 40x15
-          RenderText {#text} at (718,4) size 40x15
-            text run at (718,4) width 40: "<svg>"
+        RenderInline {code} at (0,0) size 40x14
+          RenderText {#text} at (718,5) size 40x14
+            text run at (718,5) width 40: "<svg>"
         RenderText {#text} at (0,20) size 756x39
           text run at (0,20) width 756: "element is the element at the root of an SVG fragment. For the following test to pass, the green SVG square should be"
           text run at (0,40) width 636: "rendered aligned to the top-left of the red CSS-rendered square, which is 10 pixels wider and taller."
-      RenderBlock {p} at (0,135) size 784x20
+      RenderBlock {p} at (0,135) size 784x21
         RenderText {#text} at (0,0) size 28x19
           text run at (0,0) width 28: "See "
         RenderInline {a} at (0,0) size 71x19 [color=#0000EE]
@@ -38,7 +38,7 @@ layer at (0,0) size 800x310
             text run at (27,0) width 71: "Bug 13828"
         RenderText {#text} at (97,0) size 5x19
           text run at (97,0) width 5: "."
-      RenderBlock {div} at (0,171) size 110x110 [bgcolor=#FF0000]
-        RenderSVGRoot {svg} at (8,192) size 100x100
-          RenderSVGRect {rect} at (8,192) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderBlock {div} at (0,171) size 110x111 [bgcolor=#FF0000]
+        RenderSVGRoot {svg} at (8,192) size 100x101
+          RenderSVGRect {rect} at (8,192) size 100x101 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
         RenderText {#text} at (0,0) size 0x0

@@ -14,7 +14,7 @@ PASS button2.iphoneLabel is 'AXLabel: 1'
 Text 1 should rely on the stringValue() in the label field.
 PASS text1.iphoneLabel is 'AXLabel: text1'
 Link1 should combine the title field and the aria-label field.
-PASS link1.iphoneLabel is 'AXLabel: link1, link1-title'
+FAIL link1.iphoneLabel should be AXLabel: link1, link1-title. Was AXLabel: link1.
 PASS successfullyParsed is true
 
 TEST COMPLETE

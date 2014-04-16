@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,35) size 734x382
-    RenderSVGContainer {g} at (0,35) size 734x382
-      RenderSVGContainer {g} at (0,35) size 734x382
-        RenderSVGText {text} at (0,21) size 440x11 contains 1 chunk(s)
+  RenderSVGRoot {svg} at (0,36) size 733x381
+    RenderSVGContainer {g} at (0,36) size 733x381
+      RenderSVGContainer {g} at (0,36) size 733x381
+        RenderSVGText {text} at (0,21) size 440x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 440x11
             chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 120 width 439.40: "All svgs below should look the same, since all have preserveAspectRatio with syntax errors and default should be chosen."
         RenderSVGContainer {g} at (0,100) size 50x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
               RenderSVGEllipse {circle} at (434,125) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
               RenderSVGEllipse {circle} at (442,125) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
               RenderSVGPath {path} at (432,138) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
-        RenderSVGText {text} at (0,181) size 265x11 contains 1 chunk(s)
+        RenderSVGText {text} at (0,181) size 265x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 265x11
             chunk 1 text run 1 at (0.00,190.00) startOffset 0 endOffset 72 width 264.94: "All svgs below should look the same, all have valid preserveAspectRatio."
         RenderSVGContainer {g} at (0,350) size 50x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]

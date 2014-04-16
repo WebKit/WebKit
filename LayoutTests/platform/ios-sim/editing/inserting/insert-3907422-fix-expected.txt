@@ -28,17 +28,13 @@ Buggy code before fix would insert blockquote after body element in second paste
 |     "
 "
 |     <div>
-|       <div>
-|         "foo"
-|       <div>
+|       "foo"
+|       <blockquote>
 |         "bar"
-|       <div>
-|         "bazfoo"
-|       <div>
-|         "bar"
-|       <div>
-|         "baz<#selection-caret>"
-|     "
+|       "bazfoo"
+|     <blockquote>
+|       "bar"
+|     "baz<#selection-caret>
 
 "
 |     <script>

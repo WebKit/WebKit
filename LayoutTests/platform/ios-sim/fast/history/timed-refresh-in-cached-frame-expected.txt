@@ -1,2 +1,2 @@
-ALERT: pagehide false
+ALERT: pagehide true
 PASSED if didn't crash in two seconds.

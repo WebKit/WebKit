@@ -1,0 +1,25 @@
+Test that a fixed positioned element with a transformed parent is positioned relative to the transformed parent and is not composited.
+
+On success you should not see red below.
+
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 100.00 100.00)
+              (bounds 150.00 150.00)
+              (drawsContent 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

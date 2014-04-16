@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x84
-        RenderTableSection {TBODY} at (0,0) size 784x84
-          RenderTableRow {TR} at (0,2) size 784x0
-            RenderTableCell {TD} at (2,1) size 780x82 [r=0 c=0 rs=8190 cs=1]
+      RenderTable {TABLE} at (0,0) size 784x86
+        RenderTableSection {TBODY} at (0,0) size 784x86
+          RenderTableRow {TR} at (0,2) size 784x82
+            RenderTableCell {TD} at (2,2) size 780x82 [r=0 c=0 rs=8190 cs=1]
               RenderText {#text} at (1,1) size 772x79
                 text run at (1,1) width 688: "This test succeeds if it does not crash. We implemented a heuristic a while back to prevent giant rowspans. "
                 text run at (688,1) width 85: "The heuristic"

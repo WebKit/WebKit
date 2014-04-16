@@ -4,5 +4,5 @@ This test ensures the correctness of two scrollbar behaviour:
 
 This tests that after setting 'overflow' on the document element to 'hidden' and back to 'visible', scrollbars appear as necessary.
 After explicitly setting a scrollbar policy different than 'auto', WebCore honors that until it is unset.
-FAIL: Scrollbar did not appear after resetting 'overflow'
 PASS
+FAIL: Scrollbar did appear after turning it off

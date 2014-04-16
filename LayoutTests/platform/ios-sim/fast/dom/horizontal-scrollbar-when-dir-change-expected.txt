@@ -1,4 +1,4 @@
-original scroll x for RTL page : Failure, actual: -3210; expected: 0
+original scroll x for RTL page : Success
 horizontal scroll x for RTL page : Success
 original scroll x for LTR page : Failure, actual: 3110; expected: 0
 horizontal scroll x for LTR page : Failure, actual: 0; expected: 100

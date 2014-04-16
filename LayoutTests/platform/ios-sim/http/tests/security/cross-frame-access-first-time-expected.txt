@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+This test checks cross-frame access security for first-time access to the document (rdar://problem/5251309).
+
+ canGet(frames[0], 'document'): false
+canGet(frames[0].document, 'cookie'): false
+canGet(frames[0].document, 'body'): false
+canGet(frames[0].document, 'location'): false
+

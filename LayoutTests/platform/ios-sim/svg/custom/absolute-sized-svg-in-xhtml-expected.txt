@@ -9,11 +9,11 @@ layer at (0,0) size 800x105
           text run at (0,85) width 56: "Test 123"
       RenderText {#text} at (55,85) size 5x19
         text run at (55,85) width 5: " "
-      RenderSVGRoot {svg} at (60,0) size 100x100
+      RenderSVGRoot {svg} at (59,0) size 101x100
         RenderSVGText {text} at (0,-15) size 196x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 196x19
+          RenderSVGInlineText {#text} at (0,0) size 196x18
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 29 width 195.05: "You should see an error above"
-        RenderSVGRect {rect} at (60,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (59,0) size 101x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
       RenderText {#text} at (159,85) size 5x19
         text run at (159,85) width 5: " "
       RenderInline {h1} at (0,0) size 65x19

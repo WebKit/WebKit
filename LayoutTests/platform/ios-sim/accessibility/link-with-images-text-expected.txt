@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS obj.iphoneIsElement is true
-PASS obj.iphoneLabel is 'AXLabel:  iPhoneFrom $99'
+FAIL obj.iphoneLabel should be AXLabel:  iPhoneFrom $99. Was AXLabel: iPhone From $99.
 PASS successfullyParsed is true
 
 TEST COMPLETE

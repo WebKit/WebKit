@@ -11,6 +11,6 @@ layer at (0,0) size 800x409
         RenderPartObject {iframe} at (0,0) size 160x160 [bgcolor=#FF0000]
           layer at (0,0) size 160x160
             RenderView at (0,0) size 160x160
-          layer at (0,0) size 160x160
-            RenderSVGRoot {svg} at (0,0) size 160x160
-              RenderSVGRect {rect} at (0,0) size 160x160 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=160.00] [height=160.00]
+          layer at (0,0) size 160x0
+            RenderSVGRoot {svg} at (0,0) size 0x0
+              RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=160.00] [height=0.00]

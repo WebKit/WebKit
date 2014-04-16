@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 190: TypeError: undefined is not an object (evaluating 'deleteRequest.onerror = unexpectedErrorCallback')
+Test that data inserted into IndexedDB does not get corrupted on disk.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "data-corruption.html"
+indexedDB.deleteDatabase(dbname)
+FAIL indexedDB.deleteDatabase(dbname) threw exception TypeError: null is not an object (evaluating 'indexedDB.deleteDatabase')
+FAIL Unexpected error: TypeError: undefined is not an object (evaluating 'deleteRequest.onerror = unexpectedErrorCallback')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

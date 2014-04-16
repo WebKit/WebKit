@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (1,359) size 798x20
         RenderText {#text} at (0,0) size 615x19
           text run at (0,0) width 615: "The green overlay is translated in Z by 100px, so should hit test in front relative to the blue box."
-layer at (30,400) size 352x80
+layer at (30,400) size 351x80
   RenderBlock (positioned) {DIV} at (30,400) size 352x80
     RenderInline {SPAN} at (0,0) size 328x19 [color=#008000]
       RenderText {#text} at (0,0) size 328x19

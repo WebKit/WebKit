@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 200x19
           RenderText {#text} at (0,0) size 100x19
             text run at (0,0) width 100: "Here comes an "
-          RenderBlock {SPAN} at (99,0) size 100x20 [bgcolor=#C0C0C0]
+          RenderBlock {SPAN} at (99,0) size 101x20 [bgcolor=#C0C0C0]
             RenderText {#text} at (0,0) size 95x39
               text run at (0,0) width 76: "inline block"
               text run at (0,20) width 95: "with overflow."

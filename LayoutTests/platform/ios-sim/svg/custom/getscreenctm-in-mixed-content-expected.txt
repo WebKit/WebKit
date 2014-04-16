@@ -5,9 +5,9 @@ layer at (0,0) size 800x56
     RenderBody {body} at (8,8) size 784x40
       RenderText {#text} at (0,0) size 174x19
         text run at (0,0) width 174: "This tests the behaviour of "
-      RenderInline {code} at (0,0) size 220x15
-        RenderText {#text} at (173,4) size 220x15
-          text run at (173,4) width 220: "SVGLocatable::getScreenCTM()"
+      RenderInline {code} at (0,0) size 220x14
+        RenderText {#text} at (173,5) size 220x14
+          text run at (173,5) width 220: "SVGLocatable::getScreenCTM()"
       RenderText {#text} at (392,0) size 116x19
         text run at (392,0) width 116: " in mixed content "
       RenderBR {br} at (507,0) size 1x19

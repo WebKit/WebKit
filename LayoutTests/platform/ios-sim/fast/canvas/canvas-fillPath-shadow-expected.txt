@@ -10,7 +10,7 @@ PASS data[0] is 255
 PASS data[1] is 20
 PASS data[2] is 0
 PASS data[0] is 255
-FAIL data[1] should be 20. Was 17.
+PASS data[1] is 20
 PASS data[2] is 0
 PASS data[0] is 255
 PASS data[1] is 20

@@ -1,21 +1,21 @@
-layer at (0,0) size 800x4067
+layer at (0,0) size 800x4066
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x4067
-  RenderBlock {HTML} at (0,0) size 800x4067 [color=#FF0000] [bgcolor=#FFFFFF]
-    RenderBody {BODY} at (0,84) size 800x2783
+layer at (0,0) size 800x4066
+  RenderBlock {HTML} at (0,0) size 800x4066 [color=#FF0000] [bgcolor=#FFFFFF]
+    RenderBody {BODY} at (0,84) size 800x2782
       RenderBlock {H2} at (72,2484) size 656x72 [color=#000080]
-        RenderText {#text} at (12,46) size 131x29
-          text run at (12,46) width 131: "Hello World!"
-layer at (36,2640) size 764x227
-  RenderBlock (relative positioned) {DIV} at (36,2556) size 764x227 [border: (12px solid #00000000)]
+        RenderText {#text} at (12,45) size 131x29
+          text run at (12,45) width 131: "Hello World!"
+layer at (36,2640) size 764x226
+  RenderBlock (relative positioned) {DIV} at (36,2556) size 764x226 [border: (12px solid #00000000)]
     RenderTable {TABLE} at (12,12) size 1x0
       RenderTableSection {TBODY} at (0,0) size 1x0
         RenderTableRow {TR} at (0,0) size 1x0
           RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (60,60) size 120x12 [bgcolor=#FF0000] [border: none (12px solid #000000) none (12px solid #000000)]
       RenderBlock {DIV} at (12,0) size 144x12
-        RenderText {#text} at (0,-1) size 101x15
-          text run at (0,-1) width 101: "                              "
+        RenderText {#text} at (0,-2) size 101x15
+          text run at (0,-2) width 101: "                              "
     RenderBlock (floating) {DIV} at (36,96) size 168x48 [border: none (12px solid #000000)]
       RenderBlock {DIV} at (12,0) size 144x48 [bgcolor=#FFFF00]
         RenderBlock {DIV} at (60,12) size 24x24 [bgcolor=#FF0000]
@@ -26,13 +26,13 @@ layer at (36,2640) size 764x227
     RenderBlock {DIV} at (87,75) size 590x0
       RenderBlock {DIV} at (48,0) size 518x0
     RenderBlock {DIV} at (48,132) size 668x24
-    RenderBlock {DIV} at (60,168) size 120x13 [bgcolor=#FFFF00] [border: none (12px solid #000000) none (12px solid #000000)]
+    RenderBlock {DIV} at (60,168) size 120x12 [bgcolor=#FFFF00] [border: none (12px solid #000000) none (12px solid #000000)]
       RenderInline {DIV} at (0,0) size 1x3
-        RenderText {#text} at (12,9) size 1x3
-          text run at (12,9) width 1: " "
-    RenderBlock {DIV} at (12,181) size 740x12
+        RenderText {#text} at (12,8) size 1x3
+          text run at (12,8) width 1: " "
+    RenderBlock {DIV} at (12,180) size 740x12
       RenderBlock {DIV} at (60,0) size 96x12 [color=#FFA500] [bgcolor=#FFFF00] [border: none (24px solid #000000) none (24px solid #000000)]
-    RenderTable {UL} at (96,193) size 48x12 [bgcolor=#FF0000]
+    RenderTable {UL} at (96,192) size 48x12 [bgcolor=#FF0000]
       RenderTableSection (anonymous) at (0,0) size 48x12
         RenderTableRow (anonymous) at (0,0) size 48x12
           RenderTableCell {LI} at (0,0) size 12x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
@@ -41,8 +41,8 @@ layer at (36,2640) size 764x227
           RenderTableCell {LI} at (24,0) size 12x0 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
           RenderTableCell (anonymous) at (36,0) size 12x12 [r=0 c=3 rs=1 cs=1]
             RenderListItem {LI} at (0,0) size 12x12 [bgcolor=#000000]
-layer at (48,2845) size 740x10 scrollHeight 277
-  RenderBlock {DIV} at (12,205) size 740x10
+layer at (48,2844) size 740x10 scrollHeight 277
+  RenderBlock {DIV} at (12,204) size 740x10
     RenderTable {TABLE} at (0,0) size 64x277
       RenderTableSection {TBODY} at (0,0) size 64x277
         RenderTableRow {TR} at (0,0) size 64x277

@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
         text run at (80,0) width 104: "of this sentence."
       RenderText {#text} at (0,0) size 0x0
 layer at (88,112) size 340x240
-  RenderBlock (positioned) {SPAN} at (88,112) size 340x240 [border: (20px solid #000000)]
+  RenderBlock (positioned) {SPAN} at (88,111) size 340x241 [border: (20px solid #000000)]
 layer at (208,232) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
 layer at (108,232) size 100x100

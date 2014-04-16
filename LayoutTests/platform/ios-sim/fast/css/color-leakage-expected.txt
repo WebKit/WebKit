@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 650x40 [border: (5px solid #0000FF) none (5px solid #000000E6) none]
-        RenderText {#text} at (0,5) size 631x30
-          text run at (0,5) width 631: "This should be black."
+        RenderText {#text} at (0,5) size 630x30
+          text run at (0,5) width 630: "This should be black."

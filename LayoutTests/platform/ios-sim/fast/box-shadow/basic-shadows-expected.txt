@@ -81,8 +81,8 @@ layer at (0,0) size 800x687
         RenderBlock (floating) at (0,0) size 40x67 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
           RenderText {#text} at (5,6) size 30x54
             text run at (5,6) width 30: "T"
-        RenderText {#text} at (44,0) size 499x19
-          text run at (44,0) width 499: "he first letter of this paragraph should have a border and a nice shadow effect."
-        RenderBR {BR} at (542,15) size 1x0
-        RenderText {#text} at (44,20) size 166x19
-          text run at (44,20) width 166: "It should look pretty cool."
+        RenderText {#text} at (43,0) size 499x19
+          text run at (43,0) width 499: "he first letter of this paragraph should have a border and a nice shadow effect."
+        RenderBR {BR} at (541,15) size 1x0
+        RenderText {#text} at (43,20) size 166x19
+          text run at (43,20) width 166: "It should look pretty cool."

@@ -1,16 +1,4 @@
-Test constructor for Touch. <rdar://problem/6481690>
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS Touch.prototype.toString.call(new Touch) is '[object Touch]'
-PASS Touch.prototype.toString.call(new Touch(document)) is '[object Touch]'
-PASS Touch.prototype.toString.call(new Touch(document, element)) is '[object Touch]'
-PASS Touch.prototype.toString.call(new Touch(document, element, 1)) is '[object Touch]'
-PASS Touch.prototype.toString.call(new Touch(document, element, 1, 2)) is '[object Touch]'
-PASS Touch.prototype.toString.call(new Touch(document, element, 1, 2, 3)) is '[object Touch]'
-PASS Touch.prototype.toString.call(new Touch(document, element, 1, 2, 3, 4, 5)) is '[object Touch]'
-PASS successfullyParsed is true
-
-TEST COMPLETE
+CONSOLE MESSAGE: line 1: TypeError: HTMLParagraphElement is not a function (evaluating 'description(
+'Test constructor for Touch.  &lt;<a href="rdar://problem/6481690">rdar://problem/6481690</a>&gt;'
+)')
 

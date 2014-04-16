@@ -1,17 +1,16 @@
-
-(GraphicsLayer
+ (GraphicsLayer
   (bounds 800.00 600.00)
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
       (children 1
         (GraphicsLayer
-          (position -12.00 -12.00)
-          (bounds 370.00 220.00)
+          (position -20.00 -20.00)
+          (bounds 386.00 236.00)
           (drawsContent 1)
           (children 1
             (GraphicsLayer
-              (position 35.00 35.00)
+              (position 43.00 43.00)
               (children 1
                 (GraphicsLayer
                   (bounds 300.00 150.00)
@@ -28,7 +27,7 @@
                                 (GraphicsLayer
                                   (position 18.00 10.00)
                                   (bounds 210.00 210.00)
-                                  (drawsContent 1)
+                                  (contentsOpaque 1)
                                 )
                               )
                             )

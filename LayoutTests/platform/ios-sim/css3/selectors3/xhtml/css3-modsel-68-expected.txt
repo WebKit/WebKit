@@ -8,13 +8,13 @@ layer at (0,0) size 800x78
           RenderBlock (anonymous) at (12,1) size 207x14
             RenderText {#text} at (0,0) size 207x14
               text run at (0,0) width 207: "A button (disabled) with green background"
-        RenderText {#text} at (235,0) size 4x19
-          text run at (235,0) width 4: " "
+        RenderText {#text} at (234,0) size 5x19
+          text run at (234,0) width 5: " "
         RenderBR {br} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 layer at (10,39) size 233x21
-  RenderTextControl {input} at (2,23) size 233x21 [bgcolor=#00FF00] [border: (1px solid #4C4C4C)]
-layer at (16,42) size 221x14
-  RenderBlock {div} at (6,3) size 221x14 [color=#545454]
+  RenderTextControl {input} at (2,23) size 234x22 [bgcolor=#00FF00] [border: (1px solid #4C4C4C)]
+layer at (17,42) size 220x14
+  RenderBlock {div} at (6,3) size 221x15 [color=#545454]
     RenderText {#text} at (0,0) size 218x14
       text run at (0,0) width 218: "a text area (disabled) with green background"

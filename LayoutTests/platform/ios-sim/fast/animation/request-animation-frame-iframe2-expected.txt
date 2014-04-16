@@ -1,0 +1,11 @@
+Tests requestAnimationFrame in both an iframe and main frame
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL callbackInvoked should be true. Was false.
+FAIL mainFrameCallbackInvoked should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

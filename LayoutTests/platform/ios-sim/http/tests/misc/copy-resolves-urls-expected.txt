@@ -2,4 +2,4 @@ This tests to make sure that copying/pasting HTML results in URLs being full pat
 
 link
 link
-link
+<a href="http://127.0.0.1:8000/relative/path/foo.html" style="-webkit-text-size-adjust: auto;">link</a><img src="http://127.0.0.1:8000/misc/resources/compass.jpg" style="-webkit-text-size-adjust: auto;">

@@ -1,12 +1,8 @@
-Tests that scroll event listeners still work after going back to a page in the page cache.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-pageshow 0
-pageshow 1
-PASS scrollEventCount is 1
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
+CONSOLE MESSAGE: line 17: TypeError: HTMLParagraphElement is not a function (evaluating 'description('Tests that scroll event listeners still work after going back to a page in the page cache.')')
+layer at (0,0) size 800x2024
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2024
+  RenderBlock {HTML} at (0,0) size 800x2024
+    RenderBody {BODY} at (8,16) size 784x2000
+      RenderBlock {P} at (0,0) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0

@@ -6,70 +6,70 @@ layer at (0,0) size 800x376
       RenderEmbeddedObject {object} at (0,0) size 175x175
         layer at (0,0) size 175x175
           RenderView at (0,0) size 175x175
-        layer at (0,0) size 175x175
-          RenderSVGRoot {svg} at (0,0) size 175x175
-            RenderSVGRect {rect} at (0,0) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
-            RenderSVGEllipse {circle} at (70,70) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+        layer at (0,0) size 175x0
+          RenderSVGRoot {svg} at (0,0) size 0x0
+            RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (175,160) size 4x19
         text run at (175,160) width 4: " "
       RenderEmbeddedObject {object} at (179,0) size 175x175
         layer at (0,0) size 175x175
           RenderView at (0,0) size 175x175
-        layer at (0,0) size 175x175
-          RenderSVGRoot {svg} at (0,0) size 175x175
-            RenderSVGRect {rect} at (0,0) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
-            RenderSVGEllipse {circle} at (70,70) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+        layer at (0,0) size 175x0
+          RenderSVGRoot {svg} at (0,0) size 0x0
+            RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (354,160) size 4x19
         text run at (354,160) width 4: " "
       RenderEmbeddedObject {object} at (358,0) size 175x175
         layer at (0,0) size 175x175
           RenderView at (0,0) size 175x175
-        layer at (0,0) size 175x175
-          RenderSVGRoot {svg} at (0,0) size 175x175
-            RenderSVGRect {rect} at (0,0) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
-            RenderSVGEllipse {circle} at (70,70) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+        layer at (0,0) size 175x0
+          RenderSVGRoot {svg} at (0,0) size 0x0
+            RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (533,160) size 4x19
         text run at (533,160) width 4: " "
       RenderEmbeddedObject {object} at (537,0) size 175x175
         layer at (0,0) size 175x175
           RenderView at (0,0) size 175x175
-        layer at (0,0) size 175x175
-          RenderSVGRoot {svg} at (0,0) size 175x175
-            RenderSVGRect {rect} at (0,0) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
-            RenderSVGEllipse {circle} at (70,70) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+        layer at (0,0) size 175x0
+          RenderSVGRoot {svg} at (0,0) size 0x0
+            RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (0,0) size 0x0
       RenderEmbeddedObject {object} at (0,180) size 175x175
         layer at (0,0) size 175x175
           RenderView at (0,0) size 175x175
-        layer at (0,0) size 175x175
-          RenderSVGRoot {svg} at (0,0) size 175x175
-            RenderSVGRect {rect} at (0,0) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
-            RenderSVGEllipse {circle} at (70,70) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+        layer at (0,0) size 175x0
+          RenderSVGRoot {svg} at (0,0) size 0x0
+            RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (175,340) size 4x19
         text run at (175,340) width 4: " "
       RenderEmbeddedObject {object} at (179,180) size 175x175
         layer at (0,0) size 175x175
           RenderView at (0,0) size 175x175
-        layer at (0,0) size 175x175
-          RenderSVGRoot {svg} at (0,0) size 175x175
-            RenderSVGRect {rect} at (0,0) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
-            RenderSVGEllipse {circle} at (70,70) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+        layer at (0,0) size 175x0
+          RenderSVGRoot {svg} at (0,0) size 0x0
+            RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (354,340) size 4x19
         text run at (354,340) width 4: " "
       RenderEmbeddedObject {object} at (358,180) size 175x175
         layer at (0,0) size 175x175
           RenderView at (0,0) size 175x175
-        layer at (0,0) size 175x175
-          RenderSVGRoot {svg} at (0,0) size 175x175
-            RenderSVGRect {rect} at (0,0) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
-            RenderSVGEllipse {circle} at (70,70) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+        layer at (0,0) size 175x0
+          RenderSVGRoot {svg} at (0,0) size 0x0
+            RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (533,340) size 4x19
         text run at (533,340) width 4: " "
       RenderEmbeddedObject {object} at (537,180) size 175x175
         layer at (0,0) size 175x175
           RenderView at (0,0) size 175x175
-        layer at (0,0) size 175x175
-          RenderSVGRoot {svg} at (0,0) size 175x175
-            RenderSVGRect {rect} at (0,0) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
-            RenderSVGEllipse {circle} at (70,70) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+        layer at (0,0) size 175x0
+          RenderSVGRoot {svg} at (0,0) size 0x0
+            RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (0,0) size 0x0

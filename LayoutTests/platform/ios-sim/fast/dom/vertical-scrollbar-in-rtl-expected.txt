@@ -1,4 +1,4 @@
-original scroll y for RTL page : Failure, actual: -3410; expected: 0
+original scroll y for RTL page : Success
 vertical scroll: : Success
 continuously call window.scrollY : Success
 zoom in and out preserve scroll position: Failure, actual: -2708; expected: -1000

@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
+----- tests for putting window.history's properties -----
+
+PASS: window.history.back should be 'function back() {    [native code]}' and is.
+PASS: window.history.forward should be 'function forward() {    [native code]}' and is.
+PASS: window.history.go should be 'function go() {    [native code]}' and is.
+PASS: window.history.toString should be 'function toString() {    [native code]}' and is.
+PASS: window.history.length matched the expected value.
+PASS: window.history.customAttribute should be 'customAttribute' and is.
+

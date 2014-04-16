@@ -7,9 +7,9 @@ This tests that aria-selected behaves as expected (by returning the right traits
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS button1.isSelected is true
+FAIL button1.isSelected should be true. Was false.
 PASS button2.isSelected is false
-PASS tab1.isSelected is true
+FAIL tab1.isSelected should be true. Was false.
 PASS tab2.isSelected is false
 PASS successfullyParsed is true
 

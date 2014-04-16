@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+ 
+----- tests for getting window.history and its properties -----
+
+PASS: canGet('targetWindow.history.length') should be 'false' and is.
+PASS: canGet('targetWindow.history.back') should be 'true' and is.
+PASS: canGet('targetWindow.history.forward') should be 'true' and is.
+PASS: canGet('targetWindow.history.go') should be 'true' and is.
+PASS: canGet('targetWindow.history.toString') should be 'true' and is.
+PASS: toString('targetWindow.history') should be '[object History]' and is.
+PASS: canGet('targetWindow.__proto__') should be 'false' and is.
+PASS: canGet('targetWindow.constructor') should be 'false' and is.
+PASS: canGet('targetWindow.history.existingCustomProperty') should be 'false' and is.
+PASS: canGet('targetWindow.history.__proto__.prototypeCustomProperty') should be 'false' and is.
+PASS: canCall('targetWindow.history.existingCustomFunction') should be 'false' and is.
+PASS: canCall('targetWindow.history.prototypeCustomFunction') should be 'false' and is.
+

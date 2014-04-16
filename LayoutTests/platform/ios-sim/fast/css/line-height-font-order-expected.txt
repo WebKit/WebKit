@@ -14,8 +14,8 @@ layer at (0,0) size 800x196
       RenderBlock {P} at (0,90) size 784x76
         RenderText {#text} at (0,28) size 130x18
           text run at (0,28) width 130: "This text should be "
-        RenderInline {CODE} at (0,0) size 190x18
-          RenderText {#text} at (129,29) size 190x18
-            text run at (129,29) width 190: "font:15px/5em Georgia"
+        RenderInline {CODE} at (0,0) size 190x16
+          RenderText {#text} at (129,30) size 190x16
+            text run at (129,30) width 190: "font:15px/5em Georgia"
         RenderText {#text} at (318,28) size 5x18
           text run at (318,28) width 5: "."

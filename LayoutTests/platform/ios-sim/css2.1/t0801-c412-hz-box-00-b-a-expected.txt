@@ -1,16 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x209
-  RenderBlock {HTML} at (0,0) size 800x209
-    RenderBody {BODY} at (8,16) size 784x177
+layer at (0,0) size 800x169
+  RenderBlock {HTML} at (0,0) size 800x169
+    RenderBody {BODY} at (8,16) size 784x137
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 288x19
           text run at (0,0) width 288: "The two diagrams below should be identical."
-      RenderBlock {DIV} at (0,36) size 784x141
-        RenderBlock {P} at (40,0) size 520x80 [color=#0000FF] [bgcolor=#00FFFF] [border: none (40px solid #FF00FF) none (40px solid #FF00FF)]
-          RenderText {#text} at (80,0) size 281x80
-            text run at (80,0) width 281: "X X X X"
-            text run at (80,40) width 40: "X"
-        RenderBlock {P} at (0,96) size 784x45
+      RenderBlock {DIV} at (0,36) size 784x101
+        RenderBlock {P} at (40,0) size 520x40 [color=#0000FF] [bgcolor=#00FFFF] [border: none (40px solid #FF00FF) none (40px solid #FF00FF)]
+          RenderText {#text} at (80,0) size 360x40
+            text run at (80,0) width 360: "X X X X X"
+        RenderBlock {P} at (0,56) size 784x45
           RenderImage {OBJECT} at (0,0) size 600x40
           RenderText {#text} at (0,0) size 0x0

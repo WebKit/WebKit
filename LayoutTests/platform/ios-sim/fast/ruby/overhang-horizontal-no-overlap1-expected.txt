@@ -4,208 +4,208 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 506x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderRuby (inline) {RUBY} at (0,0) size 81x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (3,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "xxxxxxxx"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "xx"
-        RenderRuby (inline) {RUBY} at (0,0) size 81x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (84,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "yyyyyyyy"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "yy"
-        RenderRuby (inline) {RUBY} at (0,0) size 81x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (165,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "zzzzzzzz"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "zz"
+        RenderRuby (inline) {RUBY} at (0,0) size 80x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (3,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "xxxxxxxx"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "xx"
+        RenderRuby (inline) {RUBY} at (0,0) size 80x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (83,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "yyyyyyyy"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "yy"
+        RenderRuby (inline) {RUBY} at (0,0) size 80x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (163,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "zzzzzzzz"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "zz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,44) size 506x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderRuby (inline) {RUBY} at (0,0) size 81x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (3,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "xxxxxxxx"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "xx"
-        RenderText {#text} at (84,13) size 20x20
-          text run at (84,13) width 20: " "
-        RenderRuby (inline) {RUBY} at (0,0) size 81x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (104,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "yyyyyyyy"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "yy"
-        RenderText {#text} at (185,13) size 20x20
-          text run at (185,13) width 20: " "
-        RenderRuby (inline) {RUBY} at (0,0) size 81x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (205,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "zzzzzzzz"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "zz"
+        RenderRuby (inline) {RUBY} at (0,0) size 80x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (3,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "xxxxxxxx"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "xx"
+        RenderText {#text} at (83,13) size 20x20
+          text run at (83,13) width 20: " "
+        RenderRuby (inline) {RUBY} at (0,0) size 80x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (103,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "yyyyyyyy"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "yy"
+        RenderText {#text} at (183,13) size 20x20
+          text run at (183,13) width 20: " "
+        RenderRuby (inline) {RUBY} at (0,0) size 80x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (203,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "zzzzzzzz"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "zz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,88) size 506x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderRuby (inline) {RUBY} at (0,0) size 81x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (3,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "xxxxxxxx"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "xx"
-        RenderText {#text} at (84,13) size 20x20
-          text run at (84,13) width 20: " "
-        RenderRuby (inline) {RUBY} at (0,0) size 81x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (104,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "yyyyyyyy"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "yy"
-        RenderText {#text} at (185,13) size 20x20
-          text run at (185,13) width 20: " "
-        RenderRuby (inline) {RUBY} at (0,0) size 81x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (205,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "zzzzzzzz"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "zz"
+        RenderRuby (inline) {RUBY} at (0,0) size 80x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (3,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "xxxxxxxx"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "xx"
+        RenderText {#text} at (83,13) size 20x20
+          text run at (83,13) width 20: " "
+        RenderRuby (inline) {RUBY} at (0,0) size 80x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (103,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "yyyyyyyy"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "yy"
+        RenderText {#text} at (183,13) size 20x20
+          text run at (183,13) width 20: " "
+        RenderRuby (inline) {RUBY} at (0,0) size 80x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (203,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "zzzzzzzz"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "zz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,132) size 506x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderRuby (inline) {RUBY} at (0,0) size 76x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (3,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "xxxxxxxx"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "xx"
-        RenderText {#text} at (79,13) size 20x20
-          text run at (79,13) width 20: "l"
-        RenderRuby (inline) {RUBY} at (0,0) size 71x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (94,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "yyyyyyyy"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "yy"
-        RenderText {#text} at (170,13) size 20x20
-          text run at (170,13) width 20: "l"
-        RenderRuby (inline) {RUBY} at (0,0) size 76x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (185,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "zzzzzzzz"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "zz"
+        RenderRuby (inline) {RUBY} at (0,0) size 75x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (3,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "xxxxxxxx"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "xx"
+        RenderText {#text} at (78,13) size 20x20
+          text run at (78,13) width 20: "l"
+        RenderRuby (inline) {RUBY} at (0,0) size 70x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (93,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "yyyyyyyy"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "yy"
+        RenderText {#text} at (168,13) size 20x20
+          text run at (168,13) width 20: "l"
+        RenderRuby (inline) {RUBY} at (0,0) size 75x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (183,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "zzzzzzzz"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "zz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,176) size 506x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderRuby (inline) {RUBY} at (0,0) size 76x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (3,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "xxxxxxxx"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "xx"
-        RenderText {#text} at (79,13) size 40x20
-          text run at (79,13) width 40: "ll"
-        RenderRuby (inline) {RUBY} at (0,0) size 71x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (114,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "yyyyyyyy"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "yy"
-        RenderText {#text} at (190,13) size 40x20
-          text run at (190,13) width 40: "ll"
-        RenderRuby (inline) {RUBY} at (0,0) size 76x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (225,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "zzzzzzzz"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "zz"
+        RenderRuby (inline) {RUBY} at (0,0) size 75x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (3,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "xxxxxxxx"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "xx"
+        RenderText {#text} at (78,13) size 40x20
+          text run at (78,13) width 40: "ll"
+        RenderRuby (inline) {RUBY} at (0,0) size 70x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (113,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "yyyyyyyy"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "yy"
+        RenderText {#text} at (188,13) size 40x20
+          text run at (188,13) width 40: "ll"
+        RenderRuby (inline) {RUBY} at (0,0) size 75x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (223,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "zzzzzzzz"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "zz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,220) size 506x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderRuby (inline) {RUBY} at (0,0) size 76x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (3,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "xxxxxxxx"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "xx"
-        RenderText {#text} at (79,13) size 60x20
-          text run at (79,13) width 60: "lll"
-        RenderRuby (inline) {RUBY} at (0,0) size 71x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (134,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "yyyyyyyy"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "yy"
-        RenderText {#text} at (210,13) size 60x20
-          text run at (210,13) width 60: "lll"
-        RenderRuby (inline) {RUBY} at (0,0) size 76x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (265,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "zzzzzzzz"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "zz"
+        RenderRuby (inline) {RUBY} at (0,0) size 75x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (3,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "xxxxxxxx"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "xx"
+        RenderText {#text} at (78,13) size 60x20
+          text run at (78,13) width 60: "lll"
+        RenderRuby (inline) {RUBY} at (0,0) size 70x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (133,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "yyyyyyyy"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "yy"
+        RenderText {#text} at (208,13) size 60x20
+          text run at (208,13) width 60: "lll"
+        RenderRuby (inline) {RUBY} at (0,0) size 75x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (263,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "zzzzzzzz"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "zz"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,264) size 506x36 [color=#4B0082] [border: (3px solid #000000)]
-        RenderRuby (inline) {RUBY} at (0,0) size 76x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (3,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "xxxxxxxx"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "xx"
-        RenderText {#text} at (79,13) size 80x20
-          text run at (79,13) width 80: "llll"
-        RenderRuby (inline) {RUBY} at (0,0) size 71x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (154,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "yyyyyyyy"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "yy"
-        RenderText {#text} at (230,13) size 80x20
-          text run at (230,13) width 80: "llll"
-        RenderRuby (inline) {RUBY} at (0,0) size 76x20 [color=#0000FF]
-          RenderRubyRun (anonymous) at (305,13) size 81x20
-            RenderRubyText {RT} at (0,-10) size 81x10 [color=#C0C0C0]
-              RenderText {#text} at (0,0) size 81x10
-                text run at (0,0) width 81: "zzzzzzzz"
-            RenderRubyBase (anonymous) at (0,0) size 81x20
-              RenderText {#text} at (20,0) size 41x20
-                text run at (20,0) width 41: "zz"
+        RenderRuby (inline) {RUBY} at (0,0) size 75x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (3,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "xxxxxxxx"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "xx"
+        RenderText {#text} at (78,13) size 80x20
+          text run at (78,13) width 80: "llll"
+        RenderRuby (inline) {RUBY} at (0,0) size 70x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (153,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "yyyyyyyy"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "yy"
+        RenderText {#text} at (228,13) size 80x20
+          text run at (228,13) width 80: "llll"
+        RenderRuby (inline) {RUBY} at (0,0) size 75x20 [color=#0000FF]
+          RenderRubyRun (anonymous) at (303,13) size 80x20
+            RenderRubyText {RT} at (0,-10) size 80x10 [color=#C0C0C0]
+              RenderText {#text} at (0,0) size 80x10
+                text run at (0,0) width 80: "zzzzzzzz"
+            RenderRubyBase (anonymous) at (0,0) size 80x20
+              RenderText {#text} at (20,0) size 40x20
+                text run at (20,0) width 40: "zz"
         RenderText {#text} at (0,0) size 0x0

@@ -9,14 +9,14 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 116x22 [color=#0000EE]
           RenderText {#text} at (305,0) size 116x22
             text run at (305,0) width 116: "www.fool.com"
-      RenderTable {TABLE} at (0,41) size 600x89
+      RenderTable {TABLE} at (0,41) size 600x90
         RenderTableSection {TBODY} at (0,0) size 600x89
           RenderTableRow {TR} at (0,0) size 600x89
             RenderTableCell {TD} at (0,0) size 128x89 [bgcolor=#336699] [r=0 c=0 rs=1 cs=1]
               RenderInline {A} at (0,0) size 128x19 [color=#0000EE]
                 RenderImage {IMG} at (0,0) size 128x89
             RenderTableCell {TD} at (128,44) size 472x0 [r=0 c=1 rs=1 cs=1]
-      RenderTable {TABLE} at (0,130) size 600x18
+      RenderTable {TABLE} at (0,130) size 600x19
         RenderTableSection {TBODY} at (0,0) size 600x18
           RenderTableRow {TR} at (0,0) size 600x18
             RenderTableCell {TD} at (0,0) size 600x18 [r=0 c=0 rs=1 cs=1]
@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
               RenderInline {MAP} at (0,0) size 0x19
               RenderImage {IMG} at (348,0) size 88x18
               RenderImage {IMG} at (436,0) size 55x18
-      RenderBlock {P} at (0,164) size 784x167
+      RenderBlock {P} at (0,164) size 784x168
         RenderBlock (anonymous) at (0,0) size 784x60
           RenderText {#text} at (0,0) size 476x19
             text run at (0,0) width 476: "When removing <A HREF=\"...\"> surrounding logo image in first row and"

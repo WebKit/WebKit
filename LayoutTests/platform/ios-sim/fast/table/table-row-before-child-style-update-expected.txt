@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           RenderTableSection (anonymous) at (0,0) size 512x128
             RenderTableRow (anonymous) at (0,0) size 512x128 [color=#0000FF]
               RenderTableCell (anonymous) at (0,0) size 512x128 [r=0 c=0 rs=1 cs=1]
-                RenderText at (0,0) size 512x129
-                  text run at (0,0) width 512: "ABCD"
+                RenderText at (0,-1) size 512x129
+                  text run at (0,-1) width 512: "ABCD"
         RenderBlock (anonymous) at (0,128) size 784x128
-          RenderText {#text} at (0,0) size 384x129
-            text run at (0,0) width 384: "ABC"
+          RenderText {#text} at (0,-1) size 384x129
+            text run at (0,-1) width 384: "ABC"

@@ -1,0 +1,6 @@
+Test that a fixed positioned empty region is painted properly when scrolled.
+
+On success you should see PASS and green below.
+
+FAIL
+

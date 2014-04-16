@@ -5,34 +5,41 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderMenuList {SELECT} at (20,20) size 125x100 [color=#DCDCDC] [bgcolor=#718D93] [border: (1px solid #D3D3D3)]
         RenderBlock (anonymous) at (7,42) size 111x16
-          RenderBR at (0,0) size 0x16 [bgcolor=#718D93]
+          RenderText at (0,0) size 0x16
+            text run at (0,0) width 0: " "
       RenderText {#text} at (165,0) size 4x19
         text run at (165,0) width 4: " "
       RenderMenuList {SELECT} at (189,20) size 125x100 [color=#DCDCDC] [bgcolor=#718D93] [border: (1px solid #D3D3D3)]
         RenderBlock (anonymous) at (7,42) size 111x16
-          RenderBR at (0,0) size 0x16 [bgcolor=#718D93]
+          RenderText at (0,0) size 0x16
+            text run at (0,0) width 0: " "
       RenderText {#text} at (334,0) size 4x19
         text run at (334,0) width 4: " "
       RenderMenuList {SELECT} at (358,20) size 125x100 [color=#DCDCDC] [bgcolor=#718D93] [border: (1px solid #D3D3D3)]
         RenderBlock (anonymous) at (7,42) size 111x16
-          RenderBR at (0,0) size 0x16 [bgcolor=#718D93]
+          RenderText at (0,0) size 0x16
+            text run at (0,0) width 0: " "
       RenderText {#text} at (503,0) size 4x19
         text run at (503,0) width 4: " "
       RenderMenuList {SELECT} at (527,20) size 125x100 [color=#DCDCDC] [bgcolor=#718D93] [border: (1px solid #D3D3D3)]
         RenderBlock (anonymous) at (7,42) size 111x16
-          RenderBR at (0,0) size 0x16 [bgcolor=#718D93]
+          RenderText at (0,0) size 0x16
+            text run at (0,0) width 0: " "
       RenderText {#text} at (0,0) size 0x0
       RenderMenuList {SELECT} at (20,160) size 125x100 [color=#DCDCDC] [bgcolor=#718D93] [border: (1px solid #D3D3D3)]
         RenderBlock (anonymous) at (7,42) size 111x16
-          RenderBR at (0,0) size 0x16 [bgcolor=#718D93]
+          RenderText at (0,0) size 0x16
+            text run at (0,0) width 0: " "
       RenderText {#text} at (165,140) size 4x19
         text run at (165,140) width 4: " "
       RenderMenuList {SELECT} at (189,160) size 125x100 [color=#DCDCDC] [bgcolor=#718D93] [border: (1px solid #D3D3D3)]
         RenderBlock (anonymous) at (7,42) size 111x16
-          RenderBR at (0,0) size 0x16 [bgcolor=#718D93]
+          RenderText at (0,0) size 0x16
+            text run at (0,0) width 0: " "
       RenderText {#text} at (334,140) size 4x19
         text run at (334,140) width 4: " "
       RenderMenuList {SELECT} at (358,160) size 125x100 [color=#DCDCDC] [bgcolor=#718D93] [border: (1px solid #D3D3D3)]
         RenderBlock (anonymous) at (7,42) size 111x16
-          RenderBR at (0,0) size 0x16 [bgcolor=#718D93]
+          RenderText at (0,0) size 0x16
+            text run at (0,0) width 0: " "
       RenderText {#text} at (0,0) size 0x0

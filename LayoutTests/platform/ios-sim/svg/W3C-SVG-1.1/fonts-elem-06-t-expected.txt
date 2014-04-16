@@ -13,7 +13,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (20,90) size 420x114 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,120.00)}]
         RenderSVGContainer {g} at (20,90) size 300x34
           RenderSVGText {text} at (0,-13) size 102x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 102x17
+            RenderSVGInlineText {#text} at (0,0) size 102x16
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 16 width 101.20: "horiz-adv-x=1000"
           RenderSVGContainer {use} at (256,100) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
             RenderSVGContainer {g} at (256,100) size 8x24
@@ -28,7 +28,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 1 at (240.00,0.00) startOffset 0 endOffset 2 width 60.00: "12"
         RenderSVGContainer {g} at (20,130) size 360x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
           RenderSVGText {text} at (0,-13) size 102x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 102x17
+            RenderSVGInlineText {#text} at (0,0) size 102x16
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 16 width 101.20: "horiz-adv-x=2000"
           RenderSVGContainer {use} at (256,140) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
             RenderSVGContainer {g} at (256,140) size 8x24
@@ -43,7 +43,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 1 at (240.00,0.00) startOffset 0 endOffset 2 width 120.00: "12"
         RenderSVGContainer {g} at (20,170) size 420x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
           RenderSVGText {text} at (0,-13) size 169x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 169x17
+            RenderSVGInlineText {#text} at (0,0) size 169x16
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 28 width 168.85: "horiz-adv-x=1000 but ignored"
           RenderSVGContainer {use} at (256,180) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
             RenderSVGContainer {g} at (256,180) size 8x24

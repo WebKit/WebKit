@@ -1,0 +1,47 @@
+    
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 3
+        (GraphicsLayer
+          (position 28.00 28.00)
+          (bounds 200.00 120.00)
+          (replica layer)
+            (GraphicsLayer
+              (bounds 200.00 120.00)
+              (transform [1.00 0.00 0.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 140.00 0.00 1.00])
+              (replicated layer)
+            )
+          (contents clipping layer 0.00, 0.00 200.00 x 120.00)
+          (contents layer -20.00, 0.00 240.00 x 120.00)
+        )
+        (GraphicsLayer
+          (position 272.00 28.00)
+          (bounds 200.00 120.00)
+          (replica layer)
+            (GraphicsLayer
+              (bounds 200.00 120.00)
+              (transform [1.00 0.00 0.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 140.00 0.00 1.00])
+              (replicated layer)
+            )
+          (contents layer 0.00, 10.00 200.00 x 100.00)
+        )
+        (GraphicsLayer
+          (position 516.00 28.00)
+          (bounds 200.00 120.00)
+          (replica layer)
+            (GraphicsLayer
+              (bounds 200.00 120.00)
+              (transform [1.00 0.00 0.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 140.00 0.00 1.00])
+              (replicated layer)
+            )
+          (contents clipping layer 0.00, 0.00 200.00 x 120.00)
+          (contents layer -44.00, -12.00 288.00 x 144.00)
+        )
+      )
+    )
+  )
+)
+

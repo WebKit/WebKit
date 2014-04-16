@@ -1,47 +1,124 @@
-
-Check that a short slider does not crash MobileSafari.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS No crash.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+CONSOLE MESSAGE: line 38: TypeError: HTMLParagraphElement is not a function (evaluating 'description("Check that a short slider does not crash MobileSafari.")')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x24
+        RenderFileUploadControl {INPUT} at (2,2) size 233x20 "no file selected"
+          RenderButton {INPUT} at (0,0) size 83x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (12,3) size 59x14
+              RenderText at (0,0) size 59x14
+                text run at (0,0) width 59: "Choose File"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,40) size 784x0
+      RenderBlock {DIV} at (0,40) size 784x0
+      RenderBlock (anonymous) at (0,40) size 784x475
+        RenderSlider {INPUT} at (2,2) size 3x0 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 3x0
+            RenderBlock {DIV} at (0,-8) size 3x16
+              RenderBlock {DIV} at (-7,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (7,2) size 0x0
+        RenderBR {BR} at (0,4) size 0x19
+        RenderSlider {INPUT} at (2,26) size 3x1 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 3x1
+            RenderBlock {DIV} at (0,-8) size 3x17
+              RenderBlock {DIV} at (-7,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (7,27) size 0x0
+        RenderBR {BR} at (0,29) size 0x19
+        RenderSlider {INPUT} at (2,51) size 3x2 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 3x2
+            RenderBlock {DIV} at (0,-7) size 3x16
+              RenderBlock {DIV} at (-7,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (7,53) size 0x0
+        RenderBR {BR} at (0,55) size 0x19
+        RenderSlider {INPUT} at (2,77) size 3x3 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 3x3
+            RenderBlock {DIV} at (0,-7) size 3x17
+              RenderBlock {DIV} at (-7,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (7,80) size 0x0
+        RenderBR {BR} at (0,82) size 0x19
+        RenderSlider {INPUT} at (2,104) size 3x4 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 3x4
+            RenderBlock {DIV} at (0,-6) size 3x16
+              RenderBlock {DIV} at (-7,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (7,108) size 0x0
+        RenderBR {BR} at (0,110) size 0x19
+        RenderSlider {INPUT} at (2,132) size 3x5 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 3x5
+            RenderBlock {DIV} at (0,-6) size 3x17
+              RenderBlock {DIV} at (-7,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (7,137) size 0x0
+        RenderBR {BR} at (0,139) size 0x19
+        RenderSlider {INPUT} at (2,161) size 0x3 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 0x3
+            RenderBlock {DIV} at (0,-7) size 0x17
+              RenderBlock {DIV} at (-8,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (4,164) size 0x0
+        RenderBR {BR} at (0,166) size 0x19
+        RenderSlider {INPUT} at (2,188) size 1x3 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 1x3
+            RenderBlock {DIV} at (0,-7) size 1x17
+              RenderBlock {DIV} at (-8,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (5,191) size 0x0
+        RenderBR {BR} at (0,193) size 0x19
+        RenderSlider {INPUT} at (2,215) size 2x3 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 2x3
+            RenderBlock {DIV} at (0,-7) size 2x17
+              RenderBlock {DIV} at (-7,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (6,218) size 0x0
+        RenderBR {BR} at (0,220) size 0x19
+        RenderSlider {INPUT} at (2,242) size 3x3 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 3x3
+            RenderBlock {DIV} at (0,-7) size 3x17
+              RenderBlock {DIV} at (-7,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (7,245) size 0x0
+        RenderBR {BR} at (0,247) size 0x19
+        RenderSlider {INPUT} at (2,269) size 4x3 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 4x3
+            RenderBlock {DIV} at (0,-7) size 4x17
+              RenderBlock {DIV} at (-6,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (8,272) size 0x0
+        RenderBR {BR} at (0,274) size 0x19
+        RenderSlider {INPUT} at (2,296) size 5x3 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 5x3
+            RenderBlock {DIV} at (0,-7) size 5x17
+              RenderBlock {DIV} at (-6,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (9,299) size 0x0
+        RenderBR {BR} at (0,301) size 0x19
+        RenderSlider {INPUT} at (2,323) size 0x0 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 0x0
+            RenderBlock {DIV} at (0,-8) size 0x16
+              RenderBlock {DIV} at (-8,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (4,323) size 0x0
+        RenderBR {BR} at (0,325) size 0x19
+        RenderSlider {INPUT} at (2,347) size 100x0 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 100x0
+            RenderBlock {DIV} at (0,-8) size 100x16
+              RenderBlock {DIV} at (42,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (104,347) size 0x0
+        RenderBR {BR} at (0,349) size 0x19
+        RenderSlider {INPUT} at (2,371) size 100x1 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 100x1
+            RenderBlock {DIV} at (0,-8) size 100x17
+              RenderBlock {DIV} at (42,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (104,372) size 0x0
+        RenderBR {BR} at (0,374) size 0x19
+        RenderSlider {INPUT} at (2,396) size 100x2 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 100x2
+            RenderBlock {DIV} at (0,-7) size 100x16
+              RenderBlock {DIV} at (42,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (104,398) size 0x0
+        RenderBR {BR} at (0,400) size 0x19
+        RenderSlider {INPUT} at (2,422) size 100x3 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 100x3
+            RenderBlock {DIV} at (0,-7) size 100x17
+              RenderBlock {DIV} at (42,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (104,425) size 0x0
+        RenderBR {BR} at (0,427) size 0x19
+        RenderSlider {INPUT} at (2,449) size 100x4 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 100x4
+            RenderBlock {DIV} at (0,-6) size 100x16
+              RenderBlock {DIV} at (42,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderBR {BR} at (104,453) size 0x0
+        RenderBR {BR} at (0,455) size 0x19

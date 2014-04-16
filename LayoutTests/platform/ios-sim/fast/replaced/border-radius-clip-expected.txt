@@ -30,13 +30,4 @@ layer at (0,0) size 800x934
       RenderEmbeddedObject {EMBED} at (0,544) size 556x406 [bgcolor=#00FF00] [border: (3px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
 layer at (8,397) size 300x150
-  RenderEmbeddedObject {VIDEO} at (0,389) size 300x150
-layer at (8,397) size 300x150
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x150
-layer at (8,531) size 300x16
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,134) size 300x16
-    RenderButton {INPUT} at (0,0) size 22x16
-    RenderButton {INPUT} at (22,0) size 22x16
-    RenderButton {INPUT} at (44,0) size 22x16
-    RenderButton {INPUT} at (66,0) size 22x16
-    RenderBlock {DIV} at (88,8) size 0x0
+  RenderVideo {VIDEO} at (0,389) size 300x150

@@ -4,7 +4,7 @@ layer at (0,0) size 800x8
   RenderBlock {HTML} at (0,0) size 800x8
     RenderBody {BODY} at (8,8) size 784x0
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (10,60) size 320x380
+  RenderSVGRoot {svg} at (10,62) size 317x375
     RenderSVGText {text} at (0,1) size 32x38 contains 1 chunk(s)
       RenderSVGTSpan {tspan} at (0,0) size 29x14
         RenderSVGInlineText {#text} at (0,0) size 29x14

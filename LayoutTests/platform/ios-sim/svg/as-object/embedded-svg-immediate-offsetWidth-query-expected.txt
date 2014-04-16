@@ -1,0 +1,15 @@
+Tests that querying offsetWidth twice leads to the same result - no red background should be visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS newObject.offsetWidth is 0
+PASS newObject.offsetWidth is 0
+PASS newObject.offsetWidth is 302
+PASS newObject.offsetWidth is 302
+FAIL newObject.offsetWidth should be 502. Was 302.
+FAIL newObject.offsetWidth should be 502. Was 302.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

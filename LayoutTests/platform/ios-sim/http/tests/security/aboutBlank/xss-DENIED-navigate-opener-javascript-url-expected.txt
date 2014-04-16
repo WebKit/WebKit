@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim-with-notify.html from frame with URL http://127.0.0.1:8000/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html. Domains, protocols and ports must match.
-
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 This page opens a window to "", injects malicious code, and then navigates its opener to the victim. The opened window then tries to scripts its opener after reloading itself as a javascript URL.
 Code injected into window:
 <script>window.location = 'javascript:\'<script>function write(target, message) { target.document.body.innerHTML = message; }setTimeout(function() {write(window.opener, \\\'FAIL: XSS was allowed.\\\');}, 100);setTimeout(function() {write(window.opener.top.frames[1], \\\'SUCCESS: Window remained in original SecurityOrigin.\\\');}, 200);setTimeout(function() { if (window.testRunner) testRunner.globalFlag = true; }, 300);<\\\/script>\''</script>

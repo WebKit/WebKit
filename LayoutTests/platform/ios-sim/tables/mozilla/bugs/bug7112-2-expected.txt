@@ -6,9 +6,9 @@ layer at (0,0) size 800x1062
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 137x19
           text run at (0,0) width 137: "This is a table with a "
-        RenderInline {CODE} at (0,0) size 118x15
-          RenderText {#text} at (136,4) size 118x15
-            text run at (136,4) width 118: "td align=center"
+        RenderInline {CODE} at (0,0) size 118x14
+          RenderText {#text} at (136,5) size 118x14
+            text run at (136,5) width 118: "td align=center"
         RenderText {#text} at (253,0) size 186x19
           text run at (253,0) width 186: " that has a p, a table, and a p."
       RenderTable {TABLE} at (0,36) size 235x144 [border: (1px outset #808080)]
@@ -18,7 +18,7 @@ layer at (0,0) size 800x1062
               RenderBlock {P} at (2,18) size 225x20
                 RenderText {#text} at (100,0) size 25x19
                   text run at (100,0) width 25: "text"
-              RenderTable {TABLE} at (24,54) size 180x30 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (24,54) size 181x30 [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 178x28
                   RenderTableRow {TR} at (0,2) size 178x24
                     RenderTableCell {TD} at (2,2) size 174x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -30,9 +30,9 @@ layer at (0,0) size 800x1062
       RenderBlock {P} at (0,196) size 784x80
         RenderText {#text} at (0,0) size 186x19
           text run at (0,0) width 186: "This time the inner table has "
-        RenderInline {CODE} at (0,0) size 95x15
-          RenderText {#text} at (185,4) size 95x15
-            text run at (185,4) width 95: "width=\"100%\""
+        RenderInline {CODE} at (0,0) size 95x14
+          RenderText {#text} at (185,5) size 95x14
+            text run at (185,5) width 95: "width=\"100%\""
         RenderText {#text} at (279,0) size 767x79
           text run at (279,0) width 393: ", so you can see that the CSS spec isn't quite being followed. "
           text run at (671,0) width 90: "The CSS spec"
@@ -99,7 +99,7 @@ layer at (0,0) size 800x1062
               RenderBlock (anonymous) at (1,1) size 778x20
                 RenderText {#text} at (331,0) size 116x19
                   text run at (331,0) width 116: "Text, followed by"
-              RenderTable {TABLE} at (361,21) size 57x26
+              RenderTable {TABLE} at (361,21) size 58x26
                 RenderTableSection {TBODY} at (0,0) size 57x26
                   RenderTableRow {TR} at (0,2) size 57x22
                     RenderTableCell {TD} at (2,2) size 53x22 [r=0 c=0 rs=1 cs=1]

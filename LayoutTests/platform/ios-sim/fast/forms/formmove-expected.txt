@@ -7,20 +7,20 @@ layer at (0,0) size 800x600
         RenderBlock {INPUT} at (2,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (20,2) size 34x19
           text run at (20,2) width 34: "Two "
-        RenderBlock {INPUT} at (55,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (55,3) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (73,2) size 38x19
           text run at (73,2) width 38: "Three"
       RenderBlock {FORM} at (0,38) size 784x22
         RenderBlock {INPUT} at (2,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (20,2) size 31x19
           text run at (20,2) width 31: "One "
-        RenderBlock {INPUT} at (53,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (52,3) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (70,2) size 34x19
           text run at (70,2) width 34: "Two "
-        RenderBlock {INPUT} at (106,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (105,3) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (123,2) size 43x19
           text run at (123,2) width 43: "Three "
-        RenderBlock {INPUT} at (167,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (167,3) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (185,2) size 27x19
           text run at (185,2) width 27: "One"
       RenderBlock (anonymous) at (0,76) size 784x40

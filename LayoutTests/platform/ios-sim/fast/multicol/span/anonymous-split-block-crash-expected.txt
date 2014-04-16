@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
-layer at (8,16) size 784x164
-  RenderBlock {DIV} at (0,0) size 784x164 [border: (5px solid #800000)]
+layer at (8,16) size 784x166
+  RenderBlock {DIV} at (0,0) size 784x166 [border: (5px solid #800000)]
     RenderBlock (anonymous) at (5,5) size 379x0
       RenderInline {JUNK} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-    RenderBlock (anonymous) at (5,24) size 379x30
+    RenderBlock (anonymous) at (5,24) size 379x31
       RenderBlock {H2} at (0,0) size 379x30 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,1) size 59x28
           text run at (0,1) width 59: "PASS"
-    RenderBlock (anonymous) at (5,73) size 379x226
+    RenderBlock (anonymous) at (5,74) size 379x227
       RenderInline {JUNK} at (0,0) size 378x225
         RenderText {#text} at (0,0) size 378x225
           text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."

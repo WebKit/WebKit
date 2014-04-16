@@ -9,6 +9,6 @@ layer at (0,0) size 800x600
       RenderSVGViewportContainer {svg} at (29,39) size 142x22
         RenderSVGRect {rect} at (29,39) size 142x22 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
     RenderSVGText {text} at (90,115) size 44x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 44x19
+      RenderSVGInlineText {#text} at (0,0) size 44x18
         chunk 1 text run 1 at (90.00,130.00) startOffset 0 endOffset 6 width 43.55: "Passed"
 caret: position 0 of child 9 {text} of child 1 {svg} of document

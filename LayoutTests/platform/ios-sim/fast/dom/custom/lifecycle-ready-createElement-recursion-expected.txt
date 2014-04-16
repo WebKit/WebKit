@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 9: TypeError: undefined is not a function (evaluating 'document.register')
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

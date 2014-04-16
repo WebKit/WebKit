@@ -1,0 +1,26 @@
+Box
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (visible rect 0.00, 0.00 800.00 x 600.00)
+  (contentsScale 2.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (visible rect 0.00, 0.00 800.00 x 600.00)
+      (contentsScale 2.00)
+      (children 1
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (anchor 0.00 0.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (transform [2.00 0.00 0.00 0.00] [0.00 2.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+          (visible rect 0.00, 0.00 100.00 x 100.00)
+          (contentsScale 4.00)
+        )
+      )
+    )
+  )
+)
+

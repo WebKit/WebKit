@@ -8,7 +8,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS tab.iphoneLabel is 'AXLabel: tab1'
 PASS button.iphoneTraits != tab.iphoneTraits is true
 PASS tab.iphoneTraits != 0 is true
-PASS tab.isSelected is true
+FAIL tab.isSelected should be true. Was false.
 PASS successfullyParsed is true
 
 TEST COMPLETE

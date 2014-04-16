@@ -1,184 +1,169 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x242
-  RenderBlock {HTML} at (0,0) size 800x242
-    RenderBody {BODY} at (8,8) size 784x226
+layer at (0,0) size 800x192
+  RenderBlock {HTML} at (0,0) size 800x192
+    RenderBody {BODY} at (8,8) size 784x176
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 229x19
           text run at (0,0) width 229: "There should be a green box below."
-      RenderBlock {DIV} at (0,20) size 326x206 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
-        RenderBlock {P} at (3,3) size 320x40
-          RenderText {#text} at (0,0) size 231x10
-            text run at (0,0) width 231: "Xx xx x. (x.x. XX) x x "
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (230,0) size 21x10
-              text run at (230,0) width 21: "Xx"
-          RenderText {#text} at (250,0) size 31x10
-            text run at (250,0) width 31: "xxx"
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (0,10) size 31x10
-              text run at (0,10) width 31: "xxx"
-          RenderText {#text} at (30,10) size 231x10
-            text run at (30,10) width 11: " "
-            text run at (40,10) width 221: "Pp pp p. (p.p. PP) p p"
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (0,20) size 21x10
-              text run at (0,20) width 21: "Pp"
-          RenderText {#text} at (20,20) size 41x10
-            text run at (20,20) width 41: "ppp "
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (60,20) size 31x10
-              text run at (60,20) width 31: "ppp"
-          RenderText {#text} at (90,20) size 281x20
-            text run at (90,20) width 11: " "
-            text run at (100,20) width 181: "\x{C9}\x{E9} \x{E9}\x{E9} \x{E9}. (\x{E9}.\x{E9}. \x{C9}\x{C9})"
-            text run at (0,30) width 41: "\x{E9} \x{E9} "
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (40,30) size 21x10
-              text run at (40,30) width 21: "\x{C9}\x{E9}"
-          RenderText {#text} at (60,30) size 41x10
-            text run at (60,30) width 41: "\x{E9}\x{E9}\x{E9} "
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (100,30) size 31x10
-              text run at (100,30) width 31: "\x{E9}\x{E9}\x{E9}"
+      RenderBlock {DIV} at (0,20) size 326x156 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderBlock {P} at (3,3) size 320x30
+          RenderText {#text} at (0,0) size 230x10
+            text run at (0,0) width 230: "Xx xx x. (x.x. XX) x x "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,0) size 20x10
+              text run at (230,0) width 20: "Xx"
+          RenderText {#text} at (250,0) size 40x10
+            text run at (250,0) width 40: "xxx "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,0) size 30x10
+              text run at (290,0) width 30: "xxx"
+          RenderText {#text} at (0,10) size 230x10
+            text run at (0,10) width 230: "Pp pp p. (p.p. PP) p p "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,10) size 20x10
+              text run at (230,10) width 20: "Pp"
+          RenderText {#text} at (250,10) size 40x10
+            text run at (250,10) width 40: "ppp "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,10) size 30x10
+              text run at (290,10) width 30: "ppp"
+          RenderText {#text} at (0,20) size 230x10
+            text run at (0,20) width 230: "\x{C9}\x{E9} \x{E9}\x{E9} \x{E9}. (\x{E9}.\x{E9}. \x{C9}\x{C9}) \x{E9} \x{E9} "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,20) size 20x10
+              text run at (230,20) width 20: "\x{C9}\x{E9}"
+          RenderText {#text} at (250,20) size 40x10
+            text run at (250,20) width 40: "\x{E9}\x{E9}\x{E9} "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,20) size 30x10
+              text run at (290,20) width 30: "\x{E9}\x{E9}\x{E9}"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (3,43) size 320x40
-          RenderText {#text} at (0,0) size 231x10
-            text run at (0,0) width 231: "Xx xx x. (x.x. XX) x x "
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (230,0) size 21x10
-              text run at (230,0) width 21: "Xx"
-          RenderText {#text} at (250,0) size 31x10
-            text run at (250,0) width 31: "xxx"
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (0,10) size 31x10
-              text run at (0,10) width 31: "xxx"
-          RenderText {#text} at (30,10) size 231x10
-            text run at (30,10) width 11: " "
-            text run at (40,10) width 221: "Pp pp p. (p.p. PP) p p"
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (0,20) size 21x10
-              text run at (0,20) width 21: "Pp"
-          RenderText {#text} at (20,20) size 41x10
-            text run at (20,20) width 41: "ppp "
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (60,20) size 31x10
-              text run at (60,20) width 31: "ppp"
-          RenderText {#text} at (90,20) size 281x20
-            text run at (90,20) width 11: " "
-            text run at (100,20) width 181: "\x{C9}\x{E9} \x{E9}\x{E9} \x{E9}. (\x{E9}.\x{E9}. \x{C9}\x{C9})"
-            text run at (0,30) width 41: "\x{E9} \x{E9} "
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (40,30) size 21x10
-              text run at (40,30) width 21: "\x{C9}\x{E9}"
-          RenderText {#text} at (60,30) size 41x10
-            text run at (60,30) width 41: "\x{E9}\x{E9}\x{E9} "
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (100,30) size 31x10
-              text run at (100,30) width 31: "\x{E9}\x{E9}\x{E9}"
+        RenderBlock {P} at (3,33) size 320x30
+          RenderText {#text} at (0,0) size 230x10
+            text run at (0,0) width 230: "Xx xx x. (x.x. XX) x x "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,0) size 20x10
+              text run at (230,0) width 20: "Xx"
+          RenderText {#text} at (250,0) size 40x10
+            text run at (250,0) width 40: "xxx "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,0) size 30x10
+              text run at (290,0) width 30: "xxx"
+          RenderText {#text} at (0,10) size 230x10
+            text run at (0,10) width 230: "Pp pp p. (p.p. PP) p p "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,10) size 20x10
+              text run at (230,10) width 20: "Pp"
+          RenderText {#text} at (250,10) size 40x10
+            text run at (250,10) width 40: "ppp "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,10) size 30x10
+              text run at (290,10) width 30: "ppp"
+          RenderText {#text} at (0,20) size 230x10
+            text run at (0,20) width 230: "\x{C9}\x{E9} \x{E9}\x{E9} \x{E9}. (\x{E9}.\x{E9}. \x{C9}\x{C9}) \x{E9} \x{E9} "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,20) size 20x10
+              text run at (230,20) width 20: "\x{C9}\x{E9}"
+          RenderText {#text} at (250,20) size 40x10
+            text run at (250,20) width 40: "\x{E9}\x{E9}\x{E9} "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,20) size 30x10
+              text run at (290,20) width 30: "\x{E9}\x{E9}\x{E9}"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (3,83) size 320x40
-          RenderText {#text} at (0,0) size 231x10
-            text run at (0,0) width 231: "Xx Xx X. (X.x. XX) X X "
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (230,0) size 21x10
-              text run at (230,0) width 21: "Xx"
-          RenderText {#text} at (250,0) size 31x10
-            text run at (250,0) width 31: "xxx"
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (0,10) size 31x10
-              text run at (0,10) width 31: "xxx"
-          RenderText {#text} at (30,10) size 231x10
-            text run at (30,10) width 11: " "
-            text run at (40,10) width 221: "Pp Pp P. (P.p. PP) P P"
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (0,20) size 21x10
-              text run at (0,20) width 21: "Pp"
-          RenderText {#text} at (20,20) size 41x10
-            text run at (20,20) width 41: "ppp "
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (60,20) size 31x10
-              text run at (60,20) width 31: "ppp"
-          RenderText {#text} at (90,20) size 281x20
-            text run at (90,20) width 11: " "
-            text run at (100,20) width 181: "\x{C9}\x{E9} \x{C9}\x{E9} \x{C9}. (\x{C9}.\x{E9}. \x{C9}\x{C9})"
-            text run at (0,30) width 41: "\x{C9} \x{C9} "
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (40,30) size 21x10
-              text run at (40,30) width 21: "\x{C9}\x{E9}"
-          RenderText {#text} at (60,30) size 41x10
-            text run at (60,30) width 41: "\x{E9}\x{E9}\x{E9} "
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (100,30) size 31x10
-              text run at (100,30) width 31: "\x{E9}\x{E9}\x{E9}"
+        RenderBlock {P} at (3,63) size 320x30
+          RenderText {#text} at (0,0) size 230x10
+            text run at (0,0) width 230: "Xx Xx X. (X.x. XX) X X "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,0) size 20x10
+              text run at (230,0) width 20: "Xx"
+          RenderText {#text} at (250,0) size 40x10
+            text run at (250,0) width 40: "xxx "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,0) size 30x10
+              text run at (290,0) width 30: "xxx"
+          RenderText {#text} at (0,10) size 230x10
+            text run at (0,10) width 230: "Pp Pp P. (P.p. PP) P P "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,10) size 20x10
+              text run at (230,10) width 20: "Pp"
+          RenderText {#text} at (250,10) size 40x10
+            text run at (250,10) width 40: "ppp "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,10) size 30x10
+              text run at (290,10) width 30: "ppp"
+          RenderText {#text} at (0,20) size 230x10
+            text run at (0,20) width 230: "\x{C9}\x{E9} \x{C9}\x{E9} \x{C9}. (\x{C9}.\x{E9}. \x{C9}\x{C9}) \x{C9} \x{C9} "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,20) size 20x10
+              text run at (230,20) width 20: "\x{C9}\x{E9}"
+          RenderText {#text} at (250,20) size 40x10
+            text run at (250,20) width 40: "\x{E9}\x{E9}\x{E9} "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,20) size 30x10
+              text run at (290,20) width 30: "\x{E9}\x{E9}\x{E9}"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (3,123) size 320x40
-          RenderText {#text} at (0,0) size 231x10
-            text run at (0,0) width 231: "XX XX X. (X.X. XX) X X "
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (230,0) size 21x10
-              text run at (230,0) width 21: "Xx"
-          RenderText {#text} at (250,0) size 31x10
-            text run at (250,0) width 31: "XXX"
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (0,10) size 31x10
-              text run at (0,10) width 31: "xxx"
-          RenderText {#text} at (30,10) size 231x10
-            text run at (30,10) width 11: " "
-            text run at (40,10) width 221: "PP PP P. (P.P. PP) P P"
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (0,20) size 21x10
-              text run at (0,20) width 21: "Pp"
-          RenderText {#text} at (20,20) size 41x10
-            text run at (20,20) width 41: "PPP "
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (60,20) size 31x10
-              text run at (60,20) width 31: "ppp"
-          RenderText {#text} at (90,20) size 281x20
-            text run at (90,20) width 11: " "
-            text run at (100,20) width 181: "\x{C9}\x{C9} \x{C9}\x{C9} \x{C9}. (\x{C9}.\x{C9}. \x{C9}\x{C9})"
-            text run at (0,30) width 41: "\x{C9} \x{C9} "
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (40,30) size 21x10
-              text run at (40,30) width 21: "\x{C9}\x{E9}"
-          RenderText {#text} at (60,30) size 41x10
-            text run at (60,30) width 41: "\x{C9}\x{C9}\x{C9} "
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (100,30) size 31x10
-              text run at (100,30) width 31: "\x{E9}\x{E9}\x{E9}"
+        RenderBlock {P} at (3,93) size 320x30
+          RenderText {#text} at (0,0) size 230x10
+            text run at (0,0) width 230: "XX XX X. (X.X. XX) X X "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,0) size 20x10
+              text run at (230,0) width 20: "Xx"
+          RenderText {#text} at (250,0) size 40x10
+            text run at (250,0) width 40: "XXX "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,0) size 30x10
+              text run at (290,0) width 30: "xxx"
+          RenderText {#text} at (0,10) size 230x10
+            text run at (0,10) width 230: "PP PP P. (P.P. PP) P P "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,10) size 20x10
+              text run at (230,10) width 20: "Pp"
+          RenderText {#text} at (250,10) size 40x10
+            text run at (250,10) width 40: "PPP "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,10) size 30x10
+              text run at (290,10) width 30: "ppp"
+          RenderText {#text} at (0,20) size 230x10
+            text run at (0,20) width 230: "\x{C9}\x{C9} \x{C9}\x{C9} \x{C9}. (\x{C9}.\x{C9}. \x{C9}\x{C9}) \x{C9} \x{C9} "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,20) size 20x10
+              text run at (230,20) width 20: "\x{C9}\x{E9}"
+          RenderText {#text} at (250,20) size 40x10
+            text run at (250,20) width 40: "\x{C9}\x{C9}\x{C9} "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,20) size 30x10
+              text run at (290,20) width 30: "\x{E9}\x{E9}\x{E9}"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (3,163) size 320x40
-          RenderText {#text} at (0,0) size 231x10
-            text run at (0,0) width 231: "xx xx x. (x.x. xx) x x "
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (230,0) size 21x10
-              text run at (230,0) width 21: "Xx"
-          RenderText {#text} at (250,0) size 31x10
-            text run at (250,0) width 31: "xxx"
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (0,10) size 31x10
-              text run at (0,10) width 31: "xxx"
-          RenderText {#text} at (30,10) size 231x10
-            text run at (30,10) width 11: " "
-            text run at (40,10) width 221: "pp pp p. (p.p. pp) p p"
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (0,20) size 21x10
-              text run at (0,20) width 21: "Pp"
-          RenderText {#text} at (20,20) size 41x10
-            text run at (20,20) width 41: "ppp "
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (60,20) size 31x10
-              text run at (60,20) width 31: "ppp"
-          RenderText {#text} at (90,20) size 281x20
-            text run at (90,20) width 11: " "
-            text run at (100,20) width 181: "\x{E9}\x{E9} \x{E9}\x{E9} \x{E9}. (\x{E9}.\x{E9}. \x{E9}\x{E9})"
-            text run at (0,30) width 41: "\x{E9} \x{E9} "
-          RenderInline {SPAN} at (0,0) size 21x10
-            RenderText {#text} at (40,30) size 21x10
-              text run at (40,30) width 21: "\x{C9}\x{E9}"
-          RenderText {#text} at (60,30) size 41x10
-            text run at (60,30) width 41: "\x{E9}\x{E9}\x{E9} "
-          RenderInline {SPAN} at (0,0) size 31x10
-            RenderText {#text} at (100,30) size 31x10
-              text run at (100,30) width 31: "\x{E9}\x{E9}\x{E9}"
+        RenderBlock {P} at (3,123) size 320x30
+          RenderText {#text} at (0,0) size 230x10
+            text run at (0,0) width 230: "xx xx x. (x.x. xx) x x "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,0) size 20x10
+              text run at (230,0) width 20: "Xx"
+          RenderText {#text} at (250,0) size 40x10
+            text run at (250,0) width 40: "xxx "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,0) size 30x10
+              text run at (290,0) width 30: "xxx"
+          RenderText {#text} at (0,10) size 230x10
+            text run at (0,10) width 230: "pp pp p. (p.p. pp) p p "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,10) size 20x10
+              text run at (230,10) width 20: "Pp"
+          RenderText {#text} at (250,10) size 40x10
+            text run at (250,10) width 40: "ppp "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,10) size 30x10
+              text run at (290,10) width 30: "ppp"
+          RenderText {#text} at (0,20) size 230x10
+            text run at (0,20) width 230: "\x{E9}\x{E9} \x{E9}\x{E9} \x{E9}. (\x{E9}.\x{E9}. \x{E9}\x{E9}) \x{E9} \x{E9} "
+          RenderInline {SPAN} at (0,0) size 20x10
+            RenderText {#text} at (230,20) size 20x10
+              text run at (230,20) width 20: "\x{C9}\x{E9}"
+          RenderText {#text} at (250,20) size 40x10
+            text run at (250,20) width 40: "\x{E9}\x{E9}\x{E9} "
+          RenderInline {SPAN} at (0,0) size 30x10
+            RenderText {#text} at (290,20) size 30x10
+              text run at (290,20) width 30: "\x{E9}\x{E9}\x{E9}"
           RenderText {#text} at (0,0) size 0x0

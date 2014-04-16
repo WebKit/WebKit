@@ -220,7 +220,7 @@ layer at (0,0) size 800x1574
               RenderText {#text} at (754,5) size 30x19
                 text run at (754,5) width 30: "Test"
               RenderInline {SPAN} at (0,0) size 21x19
-                RenderImage {IMG} at (674,0) size 20x20
+                RenderImage {IMG} at (673,0) size 21x20
         RenderBlock {DIV} at (0,79) size 784x20 [bgcolor=#FF0000]
           RenderText {#text} at (693,0) size 62x19
             text run at (693,0) width 62: "This is a "
@@ -248,7 +248,7 @@ layer at (0,0) size 800x1574
               RenderText {#text} at (756,5) size 28x19
                 text run at (756,5) width 28: "Test"
               RenderInline {SPAN} at (0,0) size 21x19
-                RenderImage {IMG} at (676,0) size 20x20
+                RenderImage {IMG} at (675,0) size 21x20
         RenderBlock {DIV} at (0,144) size 784x20
           RenderText {#text} at (652,0) size 62x19
             text run at (652,0) width 62: "This is a "

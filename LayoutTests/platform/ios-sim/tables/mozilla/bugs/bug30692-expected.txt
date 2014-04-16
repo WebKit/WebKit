@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,274) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
-              RenderTableCell {TD} at (2,11) size 780x77 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
-                RenderBlock {P} at (1,1) size 622x75 [bgcolor=#FFFFE0]
+              RenderTableCell {TD} at (2,11) size 780x78 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {P} at (1,1) size 623x76 [bgcolor=#FFFFE0]
                   RenderText {#text} at (0,0) size 232x19
                     text run at (0,0) width 232: "BUG: the height of the P is not 80%"
         RenderBlock {HR} at (0,382) size 784x2 [border: (1px inset #000000)]
@@ -41,16 +41,16 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
               RenderTableCell {TD} at (2,9) size 780x82 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
-                RenderBlock {P} at (1,1) size 622x80 [bgcolor=#FFFFE0]
+                RenderBlock {P} at (1,1) size 623x80 [bgcolor=#FFFFE0]
                   RenderText {#text} at (0,0) size 226x19
                     text run at (0,0) width 226: "OK: the height of the P is 80 pixels"
 layer at (11,101) size 622x69 clip at (12,102) size 620x67
-  RenderTextControl {TEXTAREA} at (1,1) size 622x69 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-    RenderBlock {DIV} at (3,3) size 616x14
+  RenderTextControl {TEXTAREA} at (1,1) size 623x70 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 617x14
       RenderText {#text} at (3,0) size 207x14
         text run at (3,0) width 207: "BUG: the height of the textarea is not 80%"
 layer at (11,214) size 622x80 clip at (12,215) size 620x78
-  RenderTextControl {TEXTAREA} at (1,1) size 622x80 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-    RenderBlock {DIV} at (3,3) size 616x14
+  RenderTextControl {TEXTAREA} at (1,1) size 623x80 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 617x14
       RenderText {#text} at (3,0) size 202x14
         text run at (3,0) width 202: "OK: the height of the textarea is 80 pixels"

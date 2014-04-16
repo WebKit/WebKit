@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x100
         RenderBlock {CENTER} at (0,0) size 784x100
-          RenderTable {TABLE} at (78,0) size 627x40 [bgcolor=#000000]
+          RenderTable {TABLE} at (78,0) size 628x40 [bgcolor=#000000]
             RenderTableSection {TBODY} at (0,0) size 627x40
               RenderTableRow {TR} at (0,5) size 627x30
                 RenderTableCell {TD} at (5,5) size 40x30 [bgcolor=#FFCC33] [r=0 c=0 rs=1 cs=1]

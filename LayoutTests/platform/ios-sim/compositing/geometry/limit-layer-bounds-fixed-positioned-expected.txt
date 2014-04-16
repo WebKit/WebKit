@@ -4,7 +4,7 @@ Text here
   (children 1
     (GraphicsLayer
       (bounds 800.00 1021.00)
-      (children 5
+      (children 3
         (GraphicsLayer
           (position 29.00 134.00)
           (bounds 100.00 100.00)
@@ -12,16 +12,7 @@ Text here
         (GraphicsLayer
           (position 29.00 134.00)
           (bounds 100.00 100.00)
-        )
-        (GraphicsLayer
-          (position 29.00 218.00)
-          (bounds 100.00 16.00)
-          (drawsContent 1)
-        )
-        (GraphicsLayer
-          (position 29.00 134.00)
-          (bounds 100.00 100.00)
-          (drawsContent 1)
+          (contentsOpaque 1)
         )
         (GraphicsLayer
           (position 0.00 13.00)

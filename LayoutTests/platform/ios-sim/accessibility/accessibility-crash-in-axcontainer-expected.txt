@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS link.iphoneLabel is 'AXLabel: yellow'
-PASS link.parentElement().iphoneLabel is 'AXLabel: '
+FAIL link.parentElement().iphoneLabel should be AXLabel: . Threw exception TypeError: undefined is not an object (evaluating 'link.parentElement().iphoneLabel')
 PASS successfullyParsed is true
 
 TEST COMPLETE

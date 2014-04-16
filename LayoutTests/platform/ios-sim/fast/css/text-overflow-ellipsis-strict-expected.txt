@@ -48,33 +48,33 @@ layer at (8,108) size 182x22 clip at (9,109) size 180x20 scrollX 115 scrollWidth
   RenderBlock {DIV} at (0,100) size 182x22 [border: (1px solid #000000)]
     RenderText {#text} at (-113,1) size 295x19
       text run at (-113,1) width 294 RTL: "\x{5DB}\x{5E9}\x{5D4}\x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5E8}\x{5D5}\x{5DA} \x{5DE}\x{5D3}\x{5D9} \x{5E0}\x{5E8}\x{5E6}\x{5D4} \x{5DC}\x{5D4}\x{5D5}\x{5E1}\x{5D9}\x{5E3} \x{5D0}\x{5DC}\x{5D9}\x{5E4}\x{5E1}\x{5D5}\x{5EA} \x{5D1}\x{5E1}\x{5D5}\x{5E3} \x{5E9}\x{5D5}\x{5E8}\x{5D4}"
-layer at (8,170) size 182x22 clip at (9,171) size 180x20 scrollX 149 scrollWidth 329
+layer at (8,170) size 182x22 clip at (9,171) size 180x20 scrollX 148 scrollWidth 328
   RenderBlock {DIV} at (0,162) size 182x22 [border: (1px solid #000000)]
     RenderText {#text} at (-147,1) size 329x19
       text run at (-147,1) width 328 RTL override: "Lorem ipsum dolor sit amet, consectetur adipiscing"
-layer at (8,232) size 182x22 clip at (9,233) size 180x20 scrollX 149 scrollWidth 329
+layer at (8,232) size 182x22 clip at (9,233) size 180x20 scrollX 148 scrollWidth 328
   RenderBlock {DIV} at (0,224) size 182x22 [border: (1px solid #000000)]
     RenderInline {A} at (0,0) size 329x19 [color=#0000EE]
       RenderText {#text} at (-147,1) size 329x19
         text run at (-147,1) width 328 RTL override: "Lorem ipsum dolor sit amet, consectetur adipiscing"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,294) size 182x22 clip at (9,295) size 180x20 scrollX 149 scrollWidth 329
+layer at (8,294) size 182x22 clip at (9,295) size 180x20 scrollX 148 scrollWidth 328
   RenderBlock {DIV} at (0,286) size 182x22 [border: (1px solid #000000)]
     RenderText {#text} at (-147,1) size 329x19
       text run at (-147,1) width 328: "Lorem ipsum dolor sit amet, consectetur adipiscing"
-layer at (8,356) size 182x22 clip at (9,357) size 180x20 scrollX 149 scrollWidth 329
+layer at (8,356) size 182x22 clip at (9,357) size 180x20 scrollX 148 scrollWidth 328
   RenderBlock {DIV} at (0,348) size 182x22 [border: (1px solid #000000)]
     RenderInline {A} at (0,0) size 329x19 [color=#0000EE]
       RenderText {#text} at (-147,1) size 329x19
         text run at (-147,1) width 328: "Lorem ipsum dolor sit amet, consectetur adipiscing"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,418) size 182x22 clip at (9,419) size 180x20 scrollWidth 329
+layer at (8,418) size 182x22 clip at (9,419) size 180x20 scrollWidth 328
   RenderBlock {DIV} at (0,410) size 182x22 [border: (1px solid #000000)]
     RenderInline {A} at (0,0) size 329x19 [color=#0000EE]
       RenderText {#text} at (1,1) size 329x19
         text run at (1,1) width 329: "Lorem ipsum dolor sit amet, consectetur adipiscing"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,480) size 182x22 clip at (9,481) size 180x20 scrollWidth 329
+layer at (8,480) size 182x22 clip at (9,481) size 180x20 scrollWidth 328
   RenderBlock {DIV} at (0,472) size 182x22 [border: (1px solid #000000)]
     RenderText {#text} at (1,1) size 329x19
       text run at (1,1) width 329: "Lorem ipsum dolor sit amet, consectetur adipiscing"
@@ -82,7 +82,7 @@ layer at (8,542) size 182x22 clip at (9,543) size 180x20 scrollWidth 295
   RenderBlock {DIV} at (0,534) size 182x22 [border: (1px solid #000000)]
     RenderText {#text} at (1,1) size 295x19
       text run at (1,1) width 295 RTL: "\x{5DB}\x{5E9}\x{5D4}\x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5E8}\x{5D5}\x{5DA} \x{5DE}\x{5D3}\x{5D9} \x{5E0}\x{5E8}\x{5E6}\x{5D4} \x{5DC}\x{5D4}\x{5D5}\x{5E1}\x{5D9}\x{5E3} \x{5D0}\x{5DC}\x{5D9}\x{5E4}\x{5E1}\x{5D5}\x{5EA} \x{5D1}\x{5E1}\x{5D5}\x{5E3} \x{5E9}\x{5D5}\x{5E8}\x{5D4}"
-layer at (8,604) size 182x22 clip at (9,605) size 180x20 scrollWidth 329
+layer at (8,604) size 182x22 clip at (9,605) size 180x20 scrollWidth 328
   RenderBlock {DIV} at (0,596) size 182x22 [border: (1px solid #000000)]
     RenderInline {SPAN} at (0,0) size 329x19
       RenderText {#text} at (1,1) size 329x19
@@ -94,7 +94,7 @@ layer at (8,666) size 182x22 clip at (9,667) size 180x20 scrollWidth 295
       RenderText {#text} at (1,1) size 295x19
         text run at (1,1) width 295 RTL: "\x{5DB}\x{5E9}\x{5D4}\x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5E8}\x{5D5}\x{5DA} \x{5DE}\x{5D3}\x{5D9} \x{5E0}\x{5E8}\x{5E6}\x{5D4} \x{5DC}\x{5D4}\x{5D5}\x{5E1}\x{5D9}\x{5E3} \x{5D0}\x{5DC}\x{5D9}\x{5E4}\x{5E1}\x{5D5}\x{5EA} \x{5D1}\x{5E1}\x{5D5}\x{5E3} \x{5E9}\x{5D5}\x{5E8}\x{5D4}"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,728) size 182x22 clip at (9,729) size 180x20 scrollWidth 329
+layer at (8,728) size 182x22 clip at (9,729) size 180x20 scrollWidth 328
   RenderBlock {DIV} at (0,720) size 182x22 [border: (1px solid #000000)]
     RenderInline {A} at (0,0) size 329x19 [color=#0000EE]
       RenderText {#text} at (0,0) size 0x0

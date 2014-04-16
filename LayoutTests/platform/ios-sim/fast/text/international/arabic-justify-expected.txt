@@ -21,4 +21,4 @@ layer at (0,0) size 800x292
       RenderBlock {DIV} at (0,220) size 250x48
         RenderText {#text} at (0,1) size 250x43
           text run at (0,1) width 250 RTL: "\x{627}\x{644}\x{62E}\x{645}\x{64A}\x{633}. \x{648}\x{642}\x{627}\x{644} \x{627}\x{644}\x{645}\x{62A}\x{62D}\x{62F}\x{62B} \x{627}\x{62D}\x{645}\x{62F} \x{641}\x{648}\x{632}\x{64A} \"\x{645}\x{627} \x{646}\x{62A}\x{648}\x{642}\x{639}\x{647}"
-          text run at (189,25) width 61 RTL: "\x{641}\x{64A} \x{627}\x{644}\x{639}\x{627}\x{634}\x{631}"
+          text run at (191,25) width 59 RTL: "\x{641}\x{64A} \x{627}\x{644}\x{639}\x{627}\x{634}\x{631}"

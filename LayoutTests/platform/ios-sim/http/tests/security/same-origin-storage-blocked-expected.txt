@@ -1,0 +1,15 @@
+This iframe should return a security error:
+
+This iframe should return a security error:
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+SecurityError
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+SecurityError

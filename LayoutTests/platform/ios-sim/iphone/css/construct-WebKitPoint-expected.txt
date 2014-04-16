@@ -1,13 +1,4 @@
-Test constructor for WebKitPoint. <rdar://problem/6481690>
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS WebKitPoint.prototype.toString.call(new WebKitPoint) is '[object WebKitPoint]'
-PASS WebKitPoint.prototype.toString.call(new WebKitPoint(0)) is '[object WebKitPoint]'
-PASS WebKitPoint.prototype.toString.call(new WebKitPoint(1, 1)) is '[object WebKitPoint]'
-PASS WebKitPoint.prototype.toString.call(new WebKitPoint(1, 2, 3)) is '[object WebKitPoint]'
-PASS successfullyParsed is true
-
-TEST COMPLETE
+CONSOLE MESSAGE: line 1: TypeError: HTMLParagraphElement is not a function (evaluating 'description(
+'Test constructor for WebKitPoint.  &lt;<a href="rdar://problem/6481690">rdar://problem/6481690</a>&gt;'
+)')
 

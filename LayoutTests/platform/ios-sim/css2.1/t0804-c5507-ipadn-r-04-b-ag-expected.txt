@@ -7,11 +7,11 @@ layer at (0,0) size 800x119
         RenderText {#text} at (0,0) size 295x19
           text run at (0,0) width 295: "The following two blocks should be identical:"
       RenderBlock {DIV} at (15,36) size 135x15 [color=#FFFF00] [bgcolor=#FFA500]
-        RenderText {#text} at (0,0) size 16x15
-          text run at (0,0) width 16: "x"
+        RenderText {#text} at (0,0) size 15x15
+          text run at (0,0) width 15: "x"
         RenderInline {SPAN} at (0,0) size 60x15
-          RenderText {#text} at (15,0) size 16x15
-            text run at (15,0) width 16: "x"
+          RenderText {#text} at (15,0) size 15x15
+            text run at (15,0) width 15: "x"
         RenderText {#text} at (75,0) size 15x15
           text run at (75,0) width 15: "x"
       RenderBlock {P} at (0,67) size 784x20 [color=#000080]

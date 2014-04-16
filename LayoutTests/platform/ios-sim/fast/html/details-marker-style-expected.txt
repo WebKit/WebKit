@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x456
+layer at (0,0) size 800x455
   RenderBlock {HTML} at (0,0) size 800x456
     RenderBody {BODY} at (8,8) size 784x440
       RenderBlock {DIV} at (0,0) size 784x86
         RenderBlock {DETAILS} at (0,0) size 784x86
           RenderBlock {SUMMARY} at (0,0) size 784x86
-            RenderDetailsMarker {DIV} at (0,0) size 111x79 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: right
-            RenderText {#text} at (120,57) size 94x28
-              text run at (120,57) width 94: "Summary"
-      RenderBlock {DIV} at (0,86) size 127x173
-        RenderBlock {DETAILS} at (0,0) size 127x173
-          RenderBlock {SUMMARY} at (0,0) size 127x173
-            RenderDetailsMarker {DIV} at (9,0) size 111x79 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: down
-            RenderText {#text} at (98,79) size 28x94
-              text run at (98,79) width 94: "Summary"
-      RenderBlock {DIV} at (0,259) size 784x47
+            RenderDetailsMarker {DIV} at (0,0) size 112x80 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: right
+            RenderText {#text} at (121,57) size 94x28
+              text run at (121,57) width 94: "Summary"
+      RenderBlock {DIV} at (0,86) size 128x174
+        RenderBlock {DETAILS} at (0,0) size 128x174
+          RenderBlock {SUMMARY} at (0,0) size 128x174
+            RenderDetailsMarker {DIV} at (9,0) size 113x80 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: down
+            RenderText {#text} at (99,79) size 28x95
+              text run at (99,79) width 94: "Summary"
+      RenderBlock {DIV} at (0,259) size 784x48
         RenderBlock {DETAILS} at (0,0) size 784x47
           RenderBlock {SUMMARY} at (0,0) size 784x47
             RenderDetailsMarker {DIV} at (0,0) size 64x40 [border: (8px solid #00FF00)]: right
@@ -24,6 +24,6 @@ layer at (0,0) size 800x456
       RenderBlock {DIV} at (0,306) size 80x134
         RenderBlock {DETAILS} at (0,0) size 80x134
           RenderBlock {SUMMARY} at (0,0) size 80x134
-            RenderDetailsMarker {DIV} at (9,0) size 64x40 [border: (8px solid #00FF00)]: down
+            RenderDetailsMarker {DIV} at (9,0) size 65x40 [border: (8px solid #00FF00)]: down
             RenderText {#text} at (51,40) size 28x94
               text run at (51,40) width 94: "Summary"

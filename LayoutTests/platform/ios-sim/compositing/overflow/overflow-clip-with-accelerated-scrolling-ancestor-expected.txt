@@ -7,3 +7,4 @@ layer at (8,8) size 100x200
   RenderBlock {DIV} at (0,0) size 100x200
 layer at (8,8) size 100x100 scrollHeight 200
   RenderBlock (relative positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+    RenderBlock {DIV} at (0,100) size 100x100 [bgcolor=#FF0000]

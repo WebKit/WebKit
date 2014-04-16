@@ -1,0 +1,54 @@
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 2
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 204.00 204.00)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 200.00 200.00)
+              (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 -0.00] [0.00 0.00 0.00 1.00])
+              (children 1
+                (GraphicsLayer
+                  (bounds 202.00 202.00)
+                  (contentsOpaque 1)
+                  (preserves3D 1)
+                  (drawsContent 1)
+                  (backfaceVisibility hidden)
+                  (transform [-1.00 0.00 -0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 0.00 0.00 1.00])
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 18.00 224.00)
+          (bounds 204.00 204.00)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 200.00 200.00)
+              (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 -0.00] [0.00 0.00 0.00 1.00])
+              (children 1
+                (GraphicsLayer
+                  (bounds 202.00 2502.00)
+                  (usingTiledLayer 1)
+                  (contentsOpaque 1)
+                  (preserves3D 1)
+                  (drawsContent 1)
+                  (backfaceVisibility hidden)
+                  (transform [-1.00 0.00 -0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 0.00 0.00 1.00])
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

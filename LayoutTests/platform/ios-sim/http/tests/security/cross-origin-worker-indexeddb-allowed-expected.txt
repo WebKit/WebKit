@@ -1,0 +1,19 @@
+Both of these frames should successfully open the database:
+
+ 
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+self.webkitIndexedDB.deleteDatabase() threw an exception: TypeError
+self.webkitIndexedDB.open() threw an exception: TypeError
+self.webkitIndexedDB.webkitGetDatabaseNames() threw an exception: TypeError
+
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+self.webkitIndexedDB.deleteDatabase() threw an exception: TypeError
+self.webkitIndexedDB.open() threw an exception: TypeError
+self.webkitIndexedDB.webkitGetDatabaseNames() threw an exception: TypeError
+

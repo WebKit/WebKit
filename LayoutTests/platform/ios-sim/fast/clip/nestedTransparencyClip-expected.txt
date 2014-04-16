@@ -19,7 +19,7 @@ layer at (8,88) size 34x20
     RenderText {#text} at (0,0) size 34x19
       text run at (0,0) width 34: "Plum"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,108) size 29x20
+layer at (8,108) size 28x20
   RenderBlock (positioned) {DIV} at (0,20) size 29x20
     RenderText {#text} at (0,0) size 29x19
       text run at (0,0) width 29: "Pear"

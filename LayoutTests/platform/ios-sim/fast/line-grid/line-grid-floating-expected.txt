@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (114,77) size 1x0
           RenderText {#text} at (0,109) size 250x14
             text run at (0,109) width 250: "There should be lots of spacing between these lines."
-      RenderBlock (floating) {DIV} at (289,5) size 369x110 [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (288,5) size 370x110 [border: (2px solid #000000)]
         RenderText {#text} at (12,13) size 307x41
           text run at (12,13) width 307: "This text should snap"
         RenderBR {BR} at (318,46) size 1x0

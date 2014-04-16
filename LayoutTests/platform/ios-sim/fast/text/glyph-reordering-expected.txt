@@ -2,4 +2,4 @@ This tests text selection in complex scripts where glyph reordering occurs.
 
 [हिन्दी]
 [न्दी]
-FAIL: width was 36 instead of 35.013336181640625
+FAIL: width was 76 instead of 74.671875

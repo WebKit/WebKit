@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x290
-  RenderBlock {HTML} at (0,0) size 800x290
-    RenderBody {BODY} at (8,16) size 784x266
+  RenderBlock {HTML} at (0,0) size 800x291
+    RenderBody {BODY} at (8,16) size 784x267
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 485x19
           text run at (0,0) width 485: "Test passes if there is a box below with dashed border and rounded corners."
-      RenderBlock {DIV} at (0,36) size 230x230 [border: (19px dashed #000000)]
+      RenderBlock {DIV} at (0,36) size 231x231 [border: (19.19px dashed #000000)]

@@ -19,7 +19,7 @@ layer at (0,0) size 480x360
             RenderSVGRect {rect} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
           RenderSVGImage {image} at (0,0) size 20x20
           RenderSVGText {text} at (0,-15) size 30x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 30x19
+            RenderSVGInlineText {#text} at (0,0) size 30x18
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 29.32: "Text"
       RenderSVGContainer {g} at (41,22) size 269x263
         RenderSVGContainer {g} at (41,22) size 89x263 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,40.00)}]
@@ -76,7 +76,7 @@ layer at (0,0) size 480x360
           RenderSVGImage {image} at (150,235) size 20x20
         RenderSVGContainer {use} at (150,262) size 46x29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,260.00)}]
           RenderSVGText {text} at (0,-23) size 46x29 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 46x29
+            RenderSVGInlineText {#text} at (0,0) size 46x28
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 45.81: "Text"
         RenderSVGContainer {use} at (330,25) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,0.00)}]
           RenderSVGContainer {g} at (330,25) size 20x20

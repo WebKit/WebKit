@@ -1,8 +1,8 @@
-layer at (0,0) size 800x2962
+layer at (0,0) size 800x2924
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x2962
-  RenderBlock {HTML} at (0,0) size 800x2962
-    RenderBody {BODY} at (8,16) size 784x2898 [bgcolor=#FFFFFF]
+layer at (0,0) size 800x2924
+  RenderBlock {HTML} at (0,0) size 800x2924
+    RenderBody {BODY} at (8,16) size 784x2860 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 168x19
           text run at (0,0) width 168: "This page is part of the "
@@ -22,208 +22,208 @@ layer at (0,0) size 800x2962
         RenderText {#text} at (620,0) size 6x19
           text run at (620,0) width 6: "."
       RenderBlock {DIV} at (0,36) size 784x0 [bgcolor=#009900]
-      RenderBlock {OL} at (0,36) size 784x2862
-        RenderListItem {LI} at (40,0) size 627x218 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 595x24 [bgcolor=#990000]
-            RenderBlock {DIV} at (0,0) size 595x24 [bgcolor=#009900]
-          RenderBlock {PRE} at (16,53) size 595x77 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 16x19: "1"
-            RenderText {#text} at (6,10) size 274x61
-              text run at (6,10) width 149: "div:first-of-type {"
-              text run at (154,10) width 1: " "
-              text run at (6,26) width 8: "}"
-              text run at (13,26) width 1: " "
-              text run at (6,41) width 0: " "
-              text run at (6,56) width 274: "<div>Does this element match?</div>"
-          RenderBlock {P} at (16,146) size 595x40
+      RenderBlock {OL} at (0,36) size 784x2824
+        RenderListItem {LI} at (40,0) size 628x216 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
+          RenderBlock {PRE} at (16,53) size 596x75 [bgcolor=#FFFFFF]
+            RenderListMarker at (-39,6) size 18x20: "1"
+            RenderText {#text} at (7,11) size 274x58
+              text run at (7,11) width 149: "div:first-of-type {"
+              text run at (155,11) width 1: " "
+              text run at (7,27) width 8: "}"
+              text run at (14,27) width 1: " "
+              text run at (7,41) width 0: " "
+              text run at (7,55) width 274: "<div>Does this element match?</div>"
+          RenderBlock {P} at (16,144) size 596x40
             RenderText {#text} at (0,0) size 555x39
               text run at (0,0) width 555: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,20) width 139: "element of this type"
-        RenderListItem {LI} at (40,266) size 627x233 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 595x24 [bgcolor=#990000]
-            RenderBlock {DIV} at (0,0) size 595x24 [bgcolor=#009900]
-            RenderBlock {DIV} at (0,24) size 595x0
-          RenderBlock {PRE} at (16,53) size 595x92 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 16x19: "2"
-            RenderText {#text} at (6,10) size 274x76
-              text run at (6,10) width 149: "div:first-of-type {"
-              text run at (154,10) width 1: " "
-              text run at (6,26) width 8: "}"
-              text run at (13,26) width 1: " "
-              text run at (6,41) width 0: " "
-              text run at (6,56) width 274: "<div>Does this element match?</div>"
-              text run at (279,56) width 1: " "
-              text run at (6,71) width 86: "<div></div>"
-          RenderBlock {P} at (16,161) size 595x40
+        RenderListItem {LI} at (40,264) size 628x230 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
+            RenderBlock {DIV} at (0,24) size 596x0
+          RenderBlock {PRE} at (16,53) size 596x89 [bgcolor=#FFFFFF]
+            RenderListMarker at (-39,6) size 18x20: "2"
+            RenderText {#text} at (7,11) size 274x72
+              text run at (7,11) width 149: "div:first-of-type {"
+              text run at (155,11) width 1: " "
+              text run at (7,27) width 8: "}"
+              text run at (14,27) width 1: " "
+              text run at (7,41) width 0: " "
+              text run at (7,55) width 274: "<div>Does this element match?</div>"
+              text run at (280,55) width 1: " "
+              text run at (7,69) width 86: "<div></div>"
+          RenderBlock {P} at (16,158) size 596x40
             RenderText {#text} at (0,0) size 551x39
               text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the first"
               text run at (0,20) width 139: "element of this type"
-        RenderListItem {LI} at (40,547) size 627x233 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 595x24 [bgcolor=#990000]
-            RenderBlock {BLOCKQUOTE} at (0,0) size 595x0 [bgcolor=#009900]
-            RenderBlock {DIV} at (0,0) size 595x24 [bgcolor=#009900]
-          RenderBlock {PRE} at (16,53) size 595x92 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 16x19: "3"
-            RenderText {#text} at (6,10) size 274x76
-              text run at (6,10) width 149: "div:first-of-type {"
-              text run at (154,10) width 1: " "
-              text run at (6,26) width 8: "}"
-              text run at (13,26) width 1: " "
-              text run at (6,41) width 0: " "
-              text run at (6,56) width 196: "<blockquote></blockquote>"
-              text run at (201,56) width 1: " "
-              text run at (6,71) width 274: "<div>Does this element match?</div>"
-          RenderBlock {P} at (16,161) size 595x40
+        RenderListItem {LI} at (40,542) size 628x230 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
+            RenderBlock {BLOCKQUOTE} at (0,0) size 596x0 [bgcolor=#009900]
+            RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
+          RenderBlock {PRE} at (16,53) size 596x89 [bgcolor=#FFFFFF]
+            RenderListMarker at (-39,6) size 18x20: "3"
+            RenderText {#text} at (7,11) size 274x72
+              text run at (7,11) width 149: "div:first-of-type {"
+              text run at (155,11) width 1: " "
+              text run at (7,27) width 8: "}"
+              text run at (14,27) width 1: " "
+              text run at (7,41) width 0: " "
+              text run at (7,55) width 196: "<blockquote></blockquote>"
+              text run at (202,55) width 1: " "
+              text run at (7,69) width 274: "<div>Does this element match?</div>"
+          RenderBlock {P} at (16,158) size 596x40
             RenderText {#text} at (0,0) size 551x39
               text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the first"
               text run at (0,20) width 139: "element of this type"
-        RenderListItem {LI} at (40,828) size 627x263 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 595x24 [bgcolor=#990000]
-            RenderBlock {DIV} at (0,0) size 595x0 [bgcolor=#009900]
-            RenderBlock {BLOCKQUOTE} at (0,0) size 595x24 [bgcolor=#009900]
-              RenderBlock {DIV} at (0,0) size 595x24
-          RenderBlock {PRE} at (16,53) size 595x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 16x19: "4"
-            RenderText {#text} at (6,10) size 297x106
-              text run at (6,10) width 149: "div:first-of-type {"
-              text run at (154,10) width 1: " "
-              text run at (6,26) width 8: "}"
-              text run at (13,26) width 1: " "
-              text run at (6,41) width 0: " "
-              text run at (6,56) width 86: "<div></div>"
-              text run at (91,56) width 1: " "
-              text run at (6,71) width 94: "<blockquote>"
-              text run at (99,71) width 1: " "
-              text run at (6,86) width 297: "   <div>Does this element match?</div>"
-              text run at (302,86) width 1: " "
-              text run at (6,101) width 102: "</blockquote>"
-          RenderBlock {P} at (16,191) size 595x40
+        RenderListItem {LI} at (40,820) size 628x258 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 596x0 [bgcolor=#009900]
+            RenderBlock {BLOCKQUOTE} at (0,0) size 596x24 [bgcolor=#009900]
+              RenderBlock {DIV} at (0,0) size 596x24
+          RenderBlock {PRE} at (16,53) size 596x117 [bgcolor=#FFFFFF]
+            RenderListMarker at (-39,6) size 18x20: "4"
+            RenderText {#text} at (7,11) size 297x100
+              text run at (7,11) width 149: "div:first-of-type {"
+              text run at (155,11) width 1: " "
+              text run at (7,27) width 8: "}"
+              text run at (14,27) width 1: " "
+              text run at (7,41) width 0: " "
+              text run at (7,55) width 86: "<div></div>"
+              text run at (92,55) width 1: " "
+              text run at (7,69) width 94: "<blockquote>"
+              text run at (100,69) width 1: " "
+              text run at (7,83) width 297: "   <div>Does this element match?</div>"
+              text run at (303,83) width 1: " "
+              text run at (7,97) width 102: "</blockquote>"
+          RenderBlock {P} at (16,186) size 596x40
             RenderText {#text} at (0,0) size 551x39
               text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the first"
               text run at (0,20) width 233: "element of this type in this scope"
-        RenderListItem {LI} at (40,1139) size 627x248 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 595x24 [bgcolor=#990000]
-            RenderBlock {DIV} at (0,0) size 595x24 [bgcolor=#009900]
-              RenderBlock {DIV} at (0,0) size 595x24
-          RenderBlock {PRE} at (16,53) size 595x107 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 16x19: "5"
-            RenderText {#text} at (6,10) size 297x91
-              text run at (6,10) width 149: "div:first-of-type {"
-              text run at (154,10) width 1: " "
-              text run at (6,26) width 8: "}"
-              text run at (13,26) width 1: " "
-              text run at (6,41) width 0: " "
-              text run at (6,56) width 40: "<div>"
-              text run at (45,56) width 1: " "
-              text run at (6,71) width 297: "   <div>Does this element match?</div>"
-              text run at (302,71) width 1: " "
-              text run at (6,86) width 47: "</div>"
-          RenderBlock {P} at (16,176) size 595x40
+        RenderListItem {LI} at (40,1126) size 628x244 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
+              RenderBlock {DIV} at (0,0) size 596x24
+          RenderBlock {PRE} at (16,53) size 596x103 [bgcolor=#FFFFFF]
+            RenderListMarker at (-39,6) size 18x20: "5"
+            RenderText {#text} at (7,11) size 297x86
+              text run at (7,11) width 149: "div:first-of-type {"
+              text run at (155,11) width 1: " "
+              text run at (7,27) width 8: "}"
+              text run at (14,27) width 1: " "
+              text run at (7,41) width 0: " "
+              text run at (7,55) width 40: "<div>"
+              text run at (46,55) width 1: " "
+              text run at (7,69) width 297: "   <div>Does this element match?</div>"
+              text run at (303,69) width 1: " "
+              text run at (7,83) width 47: "</div>"
+          RenderBlock {P} at (16,172) size 596x40
             RenderText {#text} at (0,0) size 551x39
               text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the first"
               text run at (0,20) width 284: "element of this type in the current scope"
-        RenderListItem {LI} at (40,1435) size 627x263 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 595x24 [bgcolor=#990000]
-            RenderBlock {BLOCKQUOTE} at (0,0) size 595x0 [bgcolor=#009900]
-              RenderBlock {DIV} at (0,0) size 595x0
-            RenderBlock {DIV} at (0,0) size 595x24 [bgcolor=#009900]
-          RenderBlock {PRE} at (16,53) size 595x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 16x19: "6"
-            RenderText {#text} at (6,10) size 274x106
-              text run at (6,10) width 149: "div:first-of-type {"
-              text run at (154,10) width 1: " "
-              text run at (6,26) width 8: "}"
-              text run at (13,26) width 1: " "
-              text run at (6,41) width 0: " "
-              text run at (6,56) width 94: "<blockquote>"
-              text run at (99,56) width 1: " "
-              text run at (6,71) width 110: "   <div></div>"
-              text run at (115,71) width 1: " "
-              text run at (6,86) width 102: "</blockquote>"
-              text run at (107,86) width 1: " "
-              text run at (6,101) width 274: "<div>Does this element match?</div>"
-          RenderBlock {P} at (16,191) size 595x40
+        RenderListItem {LI} at (40,1418) size 628x258 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
+            RenderBlock {BLOCKQUOTE} at (0,0) size 596x0 [bgcolor=#009900]
+              RenderBlock {DIV} at (0,0) size 596x0
+            RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
+          RenderBlock {PRE} at (16,53) size 596x117 [bgcolor=#FFFFFF]
+            RenderListMarker at (-39,6) size 18x20: "6"
+            RenderText {#text} at (7,11) size 274x100
+              text run at (7,11) width 149: "div:first-of-type {"
+              text run at (155,11) width 1: " "
+              text run at (7,27) width 8: "}"
+              text run at (14,27) width 1: " "
+              text run at (7,41) width 0: " "
+              text run at (7,55) width 94: "<blockquote>"
+              text run at (100,55) width 1: " "
+              text run at (7,69) width 110: "   <div></div>"
+              text run at (116,69) width 1: " "
+              text run at (7,83) width 102: "</blockquote>"
+              text run at (108,83) width 1: " "
+              text run at (7,97) width 274: "<div>Does this element match?</div>"
+          RenderBlock {P} at (16,186) size 596x40
             RenderText {#text} at (0,0) size 551x39
               text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the first"
               text run at (0,20) width 284: "element of this type in the current scope"
-        RenderListItem {LI} at (40,1746) size 627x233 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 595x24 [bgcolor=#009900]
-            RenderBlock {DIV} at (0,0) size 595x0 [bgcolor=#990000]
-            RenderBlock {DIV} at (0,0) size 595x24
-          RenderBlock {PRE} at (16,53) size 595x92 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 16x19: "7"
-            RenderText {#text} at (6,10) size 274x76
-              text run at (6,10) width 149: "div:first-of-type {"
-              text run at (154,10) width 1: " "
-              text run at (6,26) width 8: "}"
-              text run at (13,26) width 1: " "
-              text run at (6,41) width 0: " "
-              text run at (6,56) width 86: "<div></div>"
-              text run at (91,56) width 1: " "
-              text run at (6,71) width 274: "<div>Does this element match?</div>"
-          RenderBlock {P} at (16,161) size 595x40
+        RenderListItem {LI} at (40,1724) size 628x230 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#009900]
+            RenderBlock {DIV} at (0,0) size 596x0 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 596x24
+          RenderBlock {PRE} at (16,53) size 596x89 [bgcolor=#FFFFFF]
+            RenderListMarker at (-39,6) size 18x20: "7"
+            RenderText {#text} at (7,11) size 274x72
+              text run at (7,11) width 149: "div:first-of-type {"
+              text run at (155,11) width 1: " "
+              text run at (7,27) width 8: "}"
+              text run at (14,27) width 1: " "
+              text run at (7,41) width 0: " "
+              text run at (7,55) width 86: "<div></div>"
+              text run at (92,55) width 1: " "
+              text run at (7,69) width 274: "<div>Does this element match?</div>"
+          RenderBlock {P} at (16,158) size 596x40
             RenderText {#text} at (0,0) size 547x39
               text run at (0,0) width 547: "The CSS selector should not match the marked div element, because it is the"
               text run at (0,20) width 195: "second element of this type"
-        RenderListItem {LI} at (40,2027) size 627x233 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 595x24 [bgcolor=#009900]
-            RenderBlock {DIV} at (0,0) size 595x0 [bgcolor=#990000]
-            RenderBlock {DIV} at (0,0) size 595x24
-          RenderBlock {PRE} at (16,53) size 595x92 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 16x19: "8"
-            RenderText {#text} at (6,10) size 274x76
-              text run at (6,10) width 149: "div:first-of-type {"
-              text run at (154,10) width 1: " "
-              text run at (6,26) width 8: "}"
-              text run at (13,26) width 1: " "
-              text run at (6,41) width 0: " "
-              text run at (6,56) width 86: "<DIV></DIV>"
-              text run at (91,56) width 1: " "
-              text run at (6,71) width 274: "<div>Does this element match?</div>"
-          RenderBlock {P} at (16,161) size 595x40
+        RenderListItem {LI} at (40,2002) size 628x230 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#009900]
+            RenderBlock {DIV} at (0,0) size 596x0 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 596x24
+          RenderBlock {PRE} at (16,53) size 596x89 [bgcolor=#FFFFFF]
+            RenderListMarker at (-39,6) size 18x20: "8"
+            RenderText {#text} at (7,11) size 274x72
+              text run at (7,11) width 149: "div:first-of-type {"
+              text run at (155,11) width 1: " "
+              text run at (7,27) width 8: "}"
+              text run at (14,27) width 1: " "
+              text run at (7,41) width 0: " "
+              text run at (7,55) width 86: "<DIV></DIV>"
+              text run at (92,55) width 1: " "
+              text run at (7,69) width 274: "<div>Does this element match?</div>"
+          RenderBlock {P} at (16,158) size 596x40
             RenderText {#text} at (0,0) size 547x39
               text run at (0,0) width 547: "The CSS selector should not match the marked div element, because it is the"
               text run at (0,20) width 195: "second element of this type"
-        RenderListItem {LI} at (40,2308) size 627x263 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 595x24 [bgcolor=#990000]
-            RenderBlock {DIV} at (0,0) size 595x24 [bgcolor=#009900]
-            RenderBlock {DIV} at (0,24) size 595x0
-          RenderBlock {PRE} at (16,53) size 595x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-37,6) size 16x19: "9"
-            RenderText {#text} at (6,10) size 508x106
-              text run at (6,10) width 149: "div:first-of-type {"
-              text run at (154,10) width 1: " "
-              text run at (6,26) width 8: "}"
-              text run at (13,26) width 1: " "
-              text run at (6,41) width 0: " "
-              text run at (6,56) width 227: "<div id='insertBefore'></div>"
-              text run at (232,56) width 1: " "
-              text run at (6,71) width 0: " "
-              text run at (6,86) width 383: "var ib = document.getElementById('insertBefore');"
-              text run at (388,86) width 1: " "
-              text run at (6,101) width 508: "ib.parentElement.insertBefore(document.createElement(\"div\"), ib);"
-          RenderBlock {P} at (16,191) size 595x40
+        RenderListItem {LI} at (40,2280) size 628x258 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
+            RenderBlock {DIV} at (0,24) size 596x0
+          RenderBlock {PRE} at (16,53) size 596x117 [bgcolor=#FFFFFF]
+            RenderListMarker at (-39,6) size 18x20: "9"
+            RenderText {#text} at (7,11) size 508x100
+              text run at (7,11) width 149: "div:first-of-type {"
+              text run at (155,11) width 1: " "
+              text run at (7,27) width 8: "}"
+              text run at (14,27) width 1: " "
+              text run at (7,41) width 0: " "
+              text run at (7,55) width 227: "<div id='insertBefore'></div>"
+              text run at (233,55) width 1: " "
+              text run at (7,69) width 0: " "
+              text run at (7,83) width 383: "var ib = document.getElementById('insertBefore');"
+              text run at (389,83) width 1: " "
+              text run at (7,97) width 508: "ib.parentElement.insertBefore(document.createElement(\"div\"), ib);"
+          RenderBlock {P} at (16,186) size 596x40
             RenderText {#text} at (0,0) size 571x39
               text run at (0,0) width 571: "The CSS selector should match the div element that is inserted by the Javascript"
               text run at (0,20) width 40: "code."
-        RenderListItem {LI} at (40,2619) size 627x243 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 595x24 [bgcolor=#009900]
-            RenderBlock {DIV} at (0,0) size 595x0 [bgcolor=#990000]
-            RenderBlock {DIV} at (0,0) size 595x24
-          RenderBlock {PRE} at (16,53) size 595x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-46,6) size 25x19: "10"
-            RenderText {#text} at (6,10) size 508x106
-              text run at (6,10) width 149: "div:first-of-type {"
-              text run at (154,10) width 1: " "
-              text run at (6,26) width 8: "}"
-              text run at (13,26) width 1: " "
-              text run at (6,41) width 0: " "
-              text run at (6,56) width 227: "<div id='insertBefore'></div>"
-              text run at (232,56) width 1: " "
-              text run at (6,71) width 0: " "
-              text run at (6,86) width 383: "var ib = document.getElementById('insertBefore');"
-              text run at (388,86) width 1: " "
-              text run at (6,101) width 508: "ib.parentElement.insertBefore(document.createElement(\"div\"), ib);"
-          RenderBlock {P} at (16,191) size 595x20
+        RenderListItem {LI} at (40,2586) size 628x238 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#009900]
+            RenderBlock {DIV} at (0,0) size 596x0 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 596x24
+          RenderBlock {PRE} at (16,53) size 596x117 [bgcolor=#FFFFFF]
+            RenderListMarker at (-48,6) size 27x20: "10"
+            RenderText {#text} at (7,11) size 508x100
+              text run at (7,11) width 149: "div:first-of-type {"
+              text run at (155,11) width 1: " "
+              text run at (7,27) width 8: "}"
+              text run at (14,27) width 1: " "
+              text run at (7,41) width 0: " "
+              text run at (7,55) width 227: "<div id='insertBefore'></div>"
+              text run at (233,55) width 1: " "
+              text run at (7,69) width 0: " "
+              text run at (7,83) width 383: "var ib = document.getElementById('insertBefore');"
+              text run at (389,83) width 1: " "
+              text run at (7,97) width 508: "ib.parentElement.insertBefore(document.createElement(\"div\"), ib);"
+          RenderBlock {P} at (16,186) size 596x20
             RenderText {#text} at (0,0) size 536x19
               text run at (0,0) width 536: "The original div element should not be a match for the :first-of-type selector."

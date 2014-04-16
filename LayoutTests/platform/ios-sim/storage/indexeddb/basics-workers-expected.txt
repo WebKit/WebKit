@@ -1,0 +1,45 @@
+[Worker] Test IndexedDB's basics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/basics.js
+[Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+[Worker] 
+[Worker] indexedDB.open('basics')
+FAIL [Worker] indexedDB.open('basics') threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+FAIL [Worker] 'result' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''result' in request')
+[Worker] Expecting exception from request.result
+PASS [Worker] Exception was thrown.
+FAIL [Worker] code should be 11 (of type number). Was undefined (of type undefined).
+FAIL [Worker] ename should be InvalidStateError. Was TypeError.
+[Worker] Exception message: undefined is not an object (evaluating 'request.result')
+FAIL [Worker] 'error' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''error' in request')
+[Worker] Expecting exception from request.error
+PASS [Worker] Exception was thrown.
+FAIL [Worker] code should be 11 (of type number). Was undefined (of type undefined).
+FAIL [Worker] ename should be InvalidStateError. Was TypeError.
+[Worker] Exception message: undefined is not an object (evaluating 'request.error')
+FAIL [Worker] 'source' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''source' in request')
+FAIL [Worker] request.source should be null. Threw exception TypeError: undefined is not an object (evaluating 'request.source')
+FAIL [Worker] 'transaction' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''transaction' in request')
+FAIL [Worker] request.transaction should be null. Threw exception TypeError: undefined is not an object (evaluating 'request.transaction')
+FAIL [Worker] 'readyState' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''readyState' in request')
+FAIL [Worker] request.readyState should be pending. Threw exception TypeError: undefined is not an object (evaluating 'request.readyState')
+FAIL [Worker] 'onsuccess' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''onsuccess' in request')
+FAIL [Worker] request.onsuccess should be null. Threw exception TypeError: undefined is not an object (evaluating 'request.onsuccess')
+FAIL [Worker] 'onerror' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''onerror' in request')
+FAIL [Worker] request.onerror should be null. Threw exception TypeError: undefined is not an object (evaluating 'request.onerror')
+FAIL [Worker] Unexpected error: TypeError: undefined is not an object (evaluating 'request.onsuccess = openCallback')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Got error from worker: TypeError: undefined is not an object (evaluating 'request.onsuccess = openCallback')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FAIL Unexpected error: TypeError: undefined is not an object (evaluating 'request.onsuccess = openCallback')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

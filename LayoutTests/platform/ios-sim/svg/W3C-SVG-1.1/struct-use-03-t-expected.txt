@@ -5,11 +5,11 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (35,45) size 410x210
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGRect {rect} at (0,0) size 110x110 [stroke={[type=SOLID] [color=#C82828] [stroke width=20.00]}] [fill={[type=SOLID] [color=#FADC00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-      RenderSVGText {text} at (87,45) size 65x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 65x19
+      RenderSVGText {text} at (87,45) size 66x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 65x18
           chunk 1 (middle anchor) text run 1 at (87.58,60.00) startOffset 0 endOffset 9 width 64.84: "Reference"
       RenderSVGText {text} at (340,45) size 40x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 40x19
+        RenderSVGInlineText {#text} at (0,0) size 40x18
           chunk 1 (middle anchor) text run 1 at (340.31,60.00) startOffset 0 endOffset 5 width 39.38: "<use>"
       RenderSVGContainer {g} at (35,85) size 170x170 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(120.00,99.29)}]
         RenderSVGRect {rect} at (35,85) size 170x170 [stroke={[type=SOLID] [color=#C82828] [stroke width=20.00]}] [fill={[type=SOLID] [color=#FADC00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

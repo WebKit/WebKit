@@ -1,57 +1,57 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x509
-  RenderBlock {HTML} at (0,0) size 800x509
-    RenderBody {BODY} at (8,8) size 784x493
-      RenderBlock {DIV} at (0,0) size 784x493 [border: (1px solid #FF0000)]
+layer at (0,0) size 800x508
+  RenderBlock {HTML} at (0,0) size 800x508
+    RenderBody {BODY} at (8,8) size 784x492
+      RenderBlock {DIV} at (0,0) size 784x492 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,2) size 169x19
           text run at (1,2) width 169: "Whitespace in option text:"
-        RenderMenuList {SELECT} at (171,3) size 54x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (171,3) size 55x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 42x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "f o o"
         RenderText {#text} at (227,2) size 8x19
           text run at (227,2) width 8: "a"
-        RenderMenuList {SELECT} at (237,3) size 54x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (236,3) size 55x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 42x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "f o o"
         RenderText {#text} at (292,2) size 9x19
           text run at (292,2) width 9: "b"
         RenderBR {BR} at (300,2) size 1x19
-        RenderBR {BR} at (1,24) size 0x19
+        RenderBR {BR} at (1,23) size 0x19
         RenderText {#text} at (1,42) size 140x19
           text run at (1,42) width 140: "Simple select control:"
-        RenderMenuList {SELECT} at (143,43) size 48x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (142,43) size 49x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 36x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (192,42) size 8x19
           text run at (192,42) width 8: "a"
-        RenderMenuList {SELECT} at (202,43) size 48x20 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (201,43) size 49x20 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 36x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (251,42) size 9x19
           text run at (251,42) width 9: "b"
         RenderBR {BR} at (259,42) size 1x19
-        RenderBR {BR} at (1,64) size 0x19
+        RenderBR {BR} at (1,63) size 0x19
         RenderText {#text} at (1,82) size 198x19
           text run at (1,82) width 198: "Line-height should be ignored:"
-        RenderMenuList {SELECT} at (201,83) size 48x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (200,83) size 49x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 36x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (250,82) size 8x19
           text run at (250,82) width 8: "a"
-        RenderMenuList {SELECT} at (260,83) size 48x20 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (259,83) size 49x20 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 36x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "bar"
         RenderText {#text} at (309,82) size 9x19
           text run at (309,82) width 9: "b"
         RenderBR {BR} at (317,82) size 1x19
-        RenderBR {BR} at (1,104) size 0x19
+        RenderBR {BR} at (1,103) size 0x19
         RenderText {#text} at (1,122) size 441x19
           text run at (1,122) width 441: "Padding should be respected, the arrow button shouldn't change size:"
         RenderMenuList {SELECT} at (444,123) size 48x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
@@ -60,115 +60,115 @@ layer at (0,0) size 800x509
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (494,122) size 8x19
           text run at (494,122) width 8: "a"
-        RenderMenuList {SELECT} at (503,123) size 48x20 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (503,123) size 49x20 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 36x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (553,122) size 9x19
           text run at (553,122) width 9: "b"
         RenderBR {BR} at (561,122) size 1x19
-        RenderBR {BR} at (1,144) size 0x19
+        RenderBR {BR} at (1,143) size 0x19
         RenderText {#text} at (1,167) size 180x19
           text run at (1,167) width 180: "Border should be respected:"
-        RenderMenuList {SELECT} at (182,163) size 69x30 [bgcolor=#FFFFFF02] [border: (8px solid #33CCFF)]
+        RenderMenuList {SELECT} at (182,163) size 70x30 [bgcolor=#FFFFFF02] [border: (8px solid #33CCFF)]
           RenderBlock (anonymous) at (13,8) size 43x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (253,167) size 8x19
           text run at (253,167) width 8: "a"
-        RenderMenuList {SELECT} at (262,163) size 69x30 [color=#808080] [bgcolor=#FFFFFF02] [border: (8px solid #33CCFF)]
+        RenderMenuList {SELECT} at (262,163) size 70x30 [color=#808080] [bgcolor=#FFFFFF02] [border: (8px solid #33CCFF)]
           RenderBlock (anonymous) at (13,8) size 43x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (333,167) size 9x19
           text run at (333,167) width 9: "b"
         RenderBR {BR} at (341,167) size 1x19
-        RenderBR {BR} at (1,194) size 0x19
+        RenderBR {BR} at (1,193) size 0x19
         RenderText {#text} at (1,213) size 118x19
           text run at (1,213) width 118: "Border + padding:"
-        RenderMenuList {SELECT} at (120,213) size 57x22 [bgcolor=#FFFFFF02] [border: (4px solid #33CCFF)]
+        RenderMenuList {SELECT} at (120,213) size 58x22 [bgcolor=#FFFFFF02] [border: (4px solid #33CCFF)]
           RenderBlock (anonymous) at (9,4) size 39x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (179,213) size 8x19
           text run at (179,213) width 8: "a"
-        RenderMenuList {SELECT} at (189,213) size 57x22 [color=#808080] [bgcolor=#FFFFFF02] [border: (4px solid #33CCFF)]
+        RenderMenuList {SELECT} at (188,213) size 58x22 [color=#808080] [bgcolor=#FFFFFF02] [border: (4px solid #33CCFF)]
           RenderBlock (anonymous) at (9,4) size 39x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (247,213) size 9x19
           text run at (247,213) width 9: "b"
         RenderBR {BR} at (255,213) size 1x19
-        RenderBR {BR} at (1,236) size 0x19
+        RenderBR {BR} at (1,235) size 0x19
         RenderText {#text} at (1,257) size 492x19
           text run at (1,257) width 492: "Height larger than font-size, button should grow, text baseline should center:"
-        RenderMenuList {SELECT} at (494,253) size 48x30 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (494,253) size 49x30 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,8) size 36x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (544,257) size 8x19
           text run at (544,257) width 8: "a"
-        RenderMenuList {SELECT} at (554,253) size 48x30 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (553,253) size 49x30 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,8) size 36x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
         RenderText {#text} at (603,257) size 9x19
           text run at (603,257) width 9: "b"
         RenderBR {BR} at (611,257) size 1x19
-        RenderBR {BR} at (1,282) size 0x19
-        RenderText {#text} at (1,298) size 515x19
-          text run at (1,298) width 515: "Heigh smaller than font-size, whole select shrinks and is baselined with the text:"
-        RenderMenuList {SELECT} at (517,301) size 48x15 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (1,281) size 0x19
+        RenderText {#text} at (1,297) size 515x19
+          text run at (1,297) width 515: "Heigh smaller than font-size, whole select shrinks and is baselined with the text:"
+        RenderMenuList {SELECT} at (517,300) size 49x15 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,1) size 36x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "foo"
-        RenderText {#text} at (567,298) size 8x19
-          text run at (567,298) width 8: "a"
-        RenderMenuList {SELECT} at (576,301) size 48x15 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (567,297) size 8x19
+          text run at (567,297) width 8: "a"
+        RenderMenuList {SELECT} at (576,300) size 49x15 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,1) size 36x14
             RenderText at (0,0) size 16x14
               text run at (0,0) width 16: "bar"
-        RenderText {#text} at (626,298) size 9x19
-          text run at (626,298) width 9: "b"
-        RenderBR {BR} at (634,298) size 1x19
-        RenderBR {BR} at (1,315) size 0x19
-        RenderText {#text} at (1,331) size 173x19
-          text run at (1,331) width 173: "select control with size=0: "
-        RenderBR {BR} at (173,331) size 1x19
-        RenderMenuList {SELECT} at (3,350) size 185x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (626,297) size 9x19
+          text run at (626,297) width 9: "b"
+        RenderBR {BR} at (634,297) size 1x19
+        RenderBR {BR} at (1,313) size 0x19
+        RenderText {#text} at (1,329) size 173x19
+          text run at (1,329) width 173: "select control with size=0: "
+        RenderBR {BR} at (173,329) size 1x19
+        RenderMenuList {SELECT} at (3,349) size 185x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 173x14
             RenderText at (0,0) size 67x14
               text run at (0,0) width 67: "Future Series"
-        RenderText {#text} at (190,349) size 4x19
-          text run at (190,349) width 4: " "
+        RenderText {#text} at (190,348) size 4x19
+          text run at (190,348) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {#text} at (1,371) size 173x19
-          text run at (1,371) width 173: "select control with size=1: "
-        RenderBR {BR} at (173,371) size 1x19
-        RenderMenuList {SELECT} at (3,390) size 185x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (1,369) size 173x19
+          text run at (1,369) width 173: "select control with size=1: "
+        RenderBR {BR} at (173,369) size 1x19
+        RenderMenuList {SELECT} at (3,389) size 185x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 173x14
             RenderText at (0,0) size 67x14
               text run at (0,0) width 67: "Future Series"
-        RenderText {#text} at (190,389) size 4x19
-          text run at (190,389) width 4: " "
+        RenderText {#text} at (190,388) size 4x19
+          text run at (190,388) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {#text} at (1,411) size 170x19
-          text run at (1,411) width 170: "Non-styled select control: "
-        RenderBR {BR} at (170,411) size 1x19
-        RenderMenuList {SELECT} at (3,430) size 185x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (1,409) size 170x19
+          text run at (1,409) width 170: "Non-styled select control: "
+        RenderBR {BR} at (170,409) size 1x19
+        RenderMenuList {SELECT} at (3,429) size 185x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 173x14
             RenderText at (0,0) size 67x14
               text run at (0,0) width 67: "Future Series"
-        RenderText {#text} at (190,429) size 4x19
-          text run at (190,429) width 4: " "
+        RenderText {#text} at (190,428) size 4x19
+          text run at (190,428) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {#text} at (1,451) size 298x19
-          text run at (1,451) width 298: "Styled select control with large border-radius: "
-        RenderBR {BR} at (298,451) size 1x19
-        RenderMenuList {SELECT} at (3,470) size 185x20 [bgcolor=#33CCFF] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (1,449) size 298x19
+          text run at (1,449) width 298: "Styled select control with large border-radius: "
+        RenderBR {BR} at (298,449) size 1x19
+        RenderMenuList {SELECT} at (3,469) size 185x20 [bgcolor=#33CCFF] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 173x14
             RenderText at (0,0) size 67x14
               text run at (0,0) width 67: "Future Series"
-        RenderText {#text} at (190,469) size 4x19
-          text run at (190,469) width 4: " "
+        RenderText {#text} at (190,468) size 4x19
+          text run at (190,468) width 4: " "
         RenderBR {BR} at (0,0) size 0x0

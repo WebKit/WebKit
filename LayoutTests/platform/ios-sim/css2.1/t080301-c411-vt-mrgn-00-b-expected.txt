@@ -1,113 +1,113 @@
-layer at (0,0) size 800x889
+layer at (0,0) size 800x897
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x889
-  RenderBlock {HTML} at (0,0) size 800x889
-    RenderBody {BODY} at (8,16) size 784x865
+layer at (0,0) size 800x897
+  RenderBlock {HTML} at (0,0) size 800x897
+    RenderBody {BODY} at (8,16) size 784x873
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 284x19
           text run at (0,0) width 284: "The two columns below should be identical."
-      RenderTable {TABLE} at (0,36) size 178x829
-        RenderTableSection {TBODY} at (0,0) size 178x829
-          RenderTableRow {TR} at (0,2) size 178x825
-            RenderTableCell {TD} at (2,2) size 86x825 [bgcolor=#008080] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,36) size 178x837
+        RenderTableSection {TBODY} at (0,0) size 178x837
+          RenderTableRow {TR} at (0,2) size 178x833
+            RenderTableCell {TD} at (2,2) size 86x833 [bgcolor=#008080] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {P} at (3,3) size 80x20 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {P} at (3,98) size 80x20 [bgcolor=#FF00FF]
+              RenderBlock {P} at (3,98) size 80x21 [bgcolor=#FF00FF]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {P} at (3,118) size 80x20 [bgcolor=#FFFF00]
+              RenderBlock {P} at (3,118) size 80x21 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {P} at (3,213) size 80x20 [bgcolor=#00FF00]
+              RenderBlock {P} at (3,214) size 80x21 [bgcolor=#00FF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {P} at (3,233) size 80x20 [bgcolor=#FFFF00]
+              RenderBlock {P} at (3,234) size 80x21 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {P} at (3,291) size 80x20 [bgcolor=#FFFFFF]
+              RenderBlock {P} at (3,291) size 80x21 [bgcolor=#FFFFFF]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,348) size 80x94 [bgcolor=#00FFFF]
-                RenderBlock {P} at (0,74) size 80x20 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,349) size 80x97 [bgcolor=#00FFFF]
+                RenderBlock {P} at (0,75) size 80x21 [bgcolor=#FFA500]
                   RenderText {#text} at (0,0) size 6x19
                     text run at (0,0) width 6: "-"
-              RenderBlock {P} at (3,479) size 80x20 [bgcolor=#FFFF00]
+              RenderBlock {P} at (3,483) size 80x21 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {P} at (3,499) size 80x95 [bgcolor=#FF00FF]
+              RenderBlock {P} at (3,503) size 80x96 [bgcolor=#FF00FF]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {P} at (3,557) size 80x57 [bgcolor=#00FF00]
-                RenderText {#text} at (0,37) size 6x19
-                  text run at (0,37) width 6: "-"
-              RenderBlock (floating) {P} at (3,688) size 40x20 [bgcolor=#FFFFFF]
+              RenderBlock {P} at (3,560) size 80x59 [bgcolor=#00FF00]
+                RenderText {#text} at (0,38) size 6x19
+                  text run at (0,38) width 6: "-"
+              RenderBlock (floating) {P} at (3,694) size 40x21 [bgcolor=#FFFFFF]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {P} at (3,651) size 80x20 [bgcolor=#00FFFF]
+              RenderBlock {P} at (3,656) size 80x21 [bgcolor=#00FFFF]
                 RenderText {#text} at (40,0) size 6x19
                   text run at (40,0) width 6: "-"
-              RenderBlock {P} at (3,708) size 80x57 [bgcolor=#FFA500]
+              RenderBlock {P} at (3,714) size 80x58 [bgcolor=#FFA500]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {P} at (3,765) size 80x57 [bgcolor=#FFFF00]
-                RenderText {#text} at (0,37) size 6x19
-                  text run at (0,37) width 6: "-"
-            RenderTableCell {TD} at (90,2) size 86x824 [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {P} at (3,772) size 80x58 [bgcolor=#FFFF00]
+                RenderText {#text} at (0,38) size 6x19
+                  text run at (0,38) width 6: "-"
+            RenderTableCell {TD} at (90,2) size 86x833 [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (3,3) size 80x20 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,23) size 80x75 [bgcolor=#008080]
-              RenderBlock {DIV} at (3,98) size 80x20 [bgcolor=#FF00FF]
+              RenderBlock {DIV} at (3,23) size 80x76 [bgcolor=#008080]
+              RenderBlock {DIV} at (3,98) size 80x21 [bgcolor=#FF00FF]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,118) size 80x20 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (3,118) size 80x21 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,138) size 80x75 [bgcolor=#008080]
-              RenderBlock {DIV} at (3,213) size 80x20 [bgcolor=#00FF00]
+              RenderBlock {DIV} at (3,138) size 80x77 [bgcolor=#008080]
+              RenderBlock {DIV} at (3,214) size 80x21 [bgcolor=#00FF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,233) size 80x20 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (3,234) size 80x21 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,253) size 80x37 [bgcolor=#008080]
-              RenderBlock {DIV} at (3,290) size 80x20 [bgcolor=#FFFFFF]
+              RenderBlock {DIV} at (3,254) size 80x38 [bgcolor=#008080]
+              RenderBlock {DIV} at (3,291) size 80x21 [bgcolor=#FFFFFF]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,310) size 80x37 [bgcolor=#008080]
-              RenderBlock {DIV} at (3,347) size 80x75 [bgcolor=#00FFFF]
-              RenderBlock {DIV} at (3,422) size 80x20 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,311) size 80x39 [bgcolor=#008080]
+              RenderBlock {DIV} at (3,349) size 80x77 [bgcolor=#00FFFF]
+              RenderBlock {DIV} at (3,425) size 80x21 [bgcolor=#FFA500]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,442) size 80x37 [bgcolor=#008080]
-              RenderBlock {DIV} at (3,479) size 80x20 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (3,445) size 80x39 [bgcolor=#008080]
+              RenderBlock {DIV} at (3,483) size 80x21 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,499) size 80x20 [bgcolor=#FF00FF]
+              RenderBlock {DIV} at (3,503) size 80x21 [bgcolor=#FF00FF]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,519) size 80x37 [bgcolor=#FF00FF]
-              RenderBlock {DIV} at (3,556) size 80x37 [bgcolor=#00FF00]
-              RenderBlock {DIV} at (3,593) size 80x20 [bgcolor=#00FF00]
+              RenderBlock {DIV} at (3,523) size 80x38 [bgcolor=#FF00FF]
+              RenderBlock {DIV} at (3,560) size 80x39 [bgcolor=#00FF00]
+              RenderBlock {DIV} at (3,598) size 80x21 [bgcolor=#00FF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,613) size 80x37 [bgcolor=#008080]
-              RenderBlock {DIV} at (3,650) size 80x20 [bgcolor=#00FFFF]
+              RenderBlock {DIV} at (3,618) size 80x39 [bgcolor=#008080]
+              RenderBlock {DIV} at (3,656) size 80x21 [bgcolor=#00FFFF]
                 RenderBlock {DIV} at (40,0) size 40x20
                   RenderText {#text} at (0,0) size 6x19
                     text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,707) size 80x20 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,714) size 80x21 [bgcolor=#FFA500]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,727) size 80x37 [bgcolor=#FFA500]
-              RenderBlock {DIV} at (3,764) size 80x37 [bgcolor=#FFFF00]
-              RenderBlock {DIV} at (3,801) size 80x20 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (3,734) size 80x38 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,771) size 80x39 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (3,809) size 80x21 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-layer at (101,724) size 80x37
-  RenderBlock (relative positioned) {DIV} at (3,670) size 80x37 [bgcolor=#008080]
-layer at (101,741) size 40x20
-  RenderBlock (positioned) {DIV} at (0,17) size 40x20 [bgcolor=#FFFFFF]
+layer at (101,730) size 80x38
+  RenderBlock (relative positioned) {DIV} at (3,676) size 80x39 [bgcolor=#008080]
+layer at (101,748) size 40x20
+  RenderBlock (positioned) {DIV} at (0,17) size 40x21 [bgcolor=#FFFFFF]
     RenderText {#text} at (0,0) size 6x19
       text run at (0,0) width 6: "-"

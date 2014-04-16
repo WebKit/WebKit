@@ -4,7 +4,7 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 448x498
     RenderSVGContainer {g} at (20,25) size 410x450
       RenderSVGText {text} at (96,25) size 258x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 258x19
+        RenderSVGInlineText {#text} at (0,0) size 258x18
           chunk 1 (middle anchor) text run 1 at (96.03,40.00) startOffset 0 endOffset 38 width 257.95: "Long text on a path test for selection"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGPath {path} at (25,149) size 400x282 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 25 150 L 425 150 M 25 170 L 425 170 M 25 190 L 425 190 M 25 210 L 425 210 M 25 230 L 425 230 M 25 250 L 425 250 M 25 270 L 425 270 M 25 290 L 425 290 M 25 310 L 425 310 M 25 330 L 425 330 M 25 350 L 425 350 M 25 370 L 425 370 M 25 390 L 425 390 M 25 410 L 425 410 M 25 430 L 425 430 M 25 450"]

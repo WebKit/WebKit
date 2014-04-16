@@ -1,6 +1,6 @@
 This page tests tabbing between subframes. To test, click on this text to focus the main window. Then press Tab 7 times, then Shift-Tab 7 times, which should move focus forward and backward through all inputs and frames. Then press Option-Tab 11 times and Shift-Option-Tab 11 times, which should move focus forward and backward through all inputs, frames, and links.
 
-           [tabindex of one] [tabindex of three] [tabindex of two] [tabindex of three]
+        [tabindex of one] [tabindex of three] [tabindex of two] [tabindex of three]
 Tabbing forward...
 
 main window: INPUT #2 (tabindex=2) focused

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 181x86 clip at (18,18) size 161x66
+layer at (8,8) size 180x86 clip at (18,18) size 160x66
   RenderBlock (floating) {DIV} at (0,0) size 181x86 [border: (10px solid #FF0000)]
     RenderImage {IMG} at (10,10) size 86x66
     RenderBlock {DIV} at (10,10) size 161x15

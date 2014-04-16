@@ -1,0 +1,7 @@
+FAIL: Timed out waiting for notifyDone to be called
+Tests time unit of requestAnimationFrame callback
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

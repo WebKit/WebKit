@@ -7,10 +7,10 @@ layer at (0,0) size 800x243
         RenderText {#text} at (0,3) size 408x19
           text run at (0,3) width 252: "In the following test, the purple square "
           text run at (251,3) width 157: "should be on the left (\x{21E6}"
-        RenderImage {IMG} at (407,3) size 19x19
+        RenderImage {IMG} at (407,3) size 20x20
         RenderText {#text} at (426,3) size 221x19
           text run at (426,3) width 221: "), and the teal square on the right ("
-        RenderImage {IMG} at (646,3) size 19x19
+        RenderImage {IMG} at (646,3) size 20x20
         RenderText {#text} at (665,3) size 760x39
           text run at (665,3) width 95: "\x{21E8}) of the blue"
           text run at (0,23) width 63: "rectangle."

@@ -82,14 +82,14 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (560,15) size 1x0
         RenderText {#text} at (0,20) size 66x19
           text run at (0,20) width 66: "When the "
-        RenderInline {CODE} at (0,0) size 56x15
-          RenderText {#text} at (65,24) size 56x15
-            text run at (65,24) width 56: "a:hover"
+        RenderInline {CODE} at (0,0) size 56x14
+          RenderText {#text} at (65,25) size 56x14
+            text run at (65,25) width 56: "a:hover"
         RenderText {#text} at (120,20) size 119x19
           text run at (120,20) width 119: " for 'Holiday' gets "
-        RenderInline {CODE} at (0,0) size 102x15
-          RenderText {#text} at (238,24) size 102x15
-            text run at (238,24) width 102: "'onMouseOver'"
+        RenderInline {CODE} at (0,0) size 102x14
+          RenderText {#text} at (238,25) size 102x14
+            text run at (238,25) width 102: "'onMouseOver'"
         RenderText {#text} at (339,20) size 217x19
           text run at (339,20) width 217: ", the outer table reflows to 300px,"
         RenderBR {BR} at (555,35) size 1x0

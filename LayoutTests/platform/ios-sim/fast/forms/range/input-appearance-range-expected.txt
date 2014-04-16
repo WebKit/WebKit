@@ -6,31 +6,26 @@ layer at (0,0) size 800x269
       RenderBlock {DIV} at (0,0) size 784x37
         RenderSlider {INPUT} at (2,2) size 129x30 [color=#909090] [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (0,0) size 129x30
-            RenderBlock {DIV} at (0,7) size 113x16
-              RenderBlock {DIV} at (56,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
-            RenderBlock {DIV} at (113,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+            RenderBlock {DIV} at (0,7) size 129x16
+              RenderBlock {DIV} at (56,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
       RenderBlock {DIV} at (0,37) size 784x23
         RenderSlider {INPUT} at (2,2) size 129x16 [color=#909090] [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (0,0) size 129x16
-            RenderBlock {DIV} at (0,0) size 113x16
+            RenderBlock {DIV} at (0,0) size 129x16
               RenderBlock {DIV} at (0,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
-            RenderBlock {DIV} at (113,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
       RenderBlock {DIV} at (0,60) size 784x23
         RenderSlider {INPUT} at (2,2) size 129x16 [color=#909090] [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (0,0) size 129x16
-            RenderBlock {DIV} at (0,0) size 113x16
+            RenderBlock {DIV} at (0,0) size 129x16
               RenderBlock {DIV} at (113,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
-            RenderBlock {DIV} at (113,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
       RenderBlock {DIV} at (0,83) size 784x147
         RenderSlider {INPUT} at (64,2) size 129x140 [color=#909090] [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (0,0) size 129x140
-            RenderBlock {DIV} at (56,0) size 16x124
+            RenderBlock {DIV} at (56,0) size 17x140
               RenderBlock {DIV} at (0,62) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
-            RenderBlock {DIV} at (0,124) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
       RenderBlock {DIV} at (0,230) size 784x23
 layer at (10,240) size 129x16
   RenderSlider {INPUT} at (2,2) size 129x16 [color=#909090] [bgcolor=#FFFFFF]
     RenderFlexibleBox {DIV} at (0,0) size 129x16
-      RenderBlock {DIV} at (0,0) size 113x16
-        RenderBlock {DIV} at (84,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
-      RenderBlock {DIV} at (113,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+      RenderBlock {DIV} at (0,0) size 129x16
+        RenderBlock {DIV} at (84,0) size 17x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]

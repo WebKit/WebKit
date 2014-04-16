@@ -14,9 +14,6 @@
                 (GraphicsLayer
                   (bounds 200.00 1200.00)
                   (drawsContent 1)
-                  (repaint rects
-                    (rect 0.00 0.00 200.00 200.00)
-                  )
                 )
               )
             )

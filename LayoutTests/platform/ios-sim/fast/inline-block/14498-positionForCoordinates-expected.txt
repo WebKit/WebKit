@@ -15,14 +15,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 411x19
           text run at (0,0) width 411: "Click inside the right border. The caret should move after \x{201C}bar\x{201D}."
       RenderBlock (anonymous) at (0,72) size 784x20
-        RenderInline {SPAN} at (0,0) size 67x39 [border: (10px solid #0000FF)]
+        RenderInline {SPAN} at (0,0) size 66x39 [border: (10px solid #0000FF)]
           RenderText {#text} at (0,0) size 0x0
           RenderBlock {DIV} at (10,0) size 22x20
             RenderText {#text} at (0,0) size 22x19
               text run at (0,0) width 22: "foo"
-          RenderText {#text} at (32,0) size 4x19
-            text run at (32,0) width 4: " "
-          RenderBlock {DIV} at (36,0) size 21x20
+          RenderText {#text} at (31,0) size 5x19
+            text run at (31,0) width 5: " "
+          RenderBlock {DIV} at (35,0) size 21x20
             RenderText {#text} at (0,0) size 21x19
               text run at (0,0) width 21: "bar"
           RenderText {#text} at (0,0) size 0x0

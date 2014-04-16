@@ -11,6 +11,6 @@ layer at (0,0) size 800x600
           RenderSVGRoot {svg} at (0,36) size 274x54
             RenderSVGRect {rect} at (0,36) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
             RenderSVGText {text} at (0,35) size 274x19 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 274x19
+              RenderSVGInlineText {#text} at (0,0) size 274x18
                 chunk 1 text run 1 at (0.00,50.00) startOffset 0 endOffset 38 width 273.73: "Test from SVG in HTML in foreignObject"
           RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,15 @@
+Tests for writing and reading .type property of HTMLInputElement.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL input.type for "datetime" is incorrectly "text", should be "datetime".
+FAIL input.type for "DATETIME" is incorrectly "text", should be "datetime".
+FAIL input.type for "DateTime" is incorrectly "text", should be "datetime".
+FAIL input.type for "dateTime" is incorrectly "text", should be "datetime".
+PASS input.type for " datetime " is correctly "text".
+PASS input.type for "date-time" is correctly "text".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

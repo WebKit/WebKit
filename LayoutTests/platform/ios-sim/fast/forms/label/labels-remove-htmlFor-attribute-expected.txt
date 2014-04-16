@@ -15,6 +15,9 @@ PASS element.labels.length is 0
 Check output
 PASS element.labels.length is 1
 PASS element.labels.length is 0
+Check progress
+PASS element.labels.length is 1
+PASS element.labels.length is 0
 Check select
 PASS element.labels.length is 1
 PASS element.labels.length is 0

@@ -37,17 +37,17 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (12,3) size 35x14
             RenderText at (0,0) size 35x14
               text run at (0,0) width 35: "Reload"
-        RenderText {#text} at (63,21) size 8x19
-          text run at (63,21) width 8: "  "
-        RenderButton {INPUT} at (73,22) size 88x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (62,21) size 9x19
+          text run at (62,21) width 9: "  "
+        RenderButton {INPUT} at (72,22) size 89x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 64x14
             RenderText at (0,0) size 64x14
               text run at (0,0) width 64: "Change Font"
-        RenderText {#text} at (163,21) size 8x19
-          text run at (163,21) width 8: "  "
-        RenderTextControl {INPUT} at (173,22) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (162,21) size 9x19
+          text run at (162,21) width 9: "  "
+        RenderTextControl {INPUT} at (172,22) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (0,0) size 0x0
-layer at (187,151) size 123x14
-  RenderBlock {DIV} at (6,3) size 123x14
+layer at (187,151) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 7x14
       text run at (0,0) width 7: "6"

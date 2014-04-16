@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 27: TypeError: undefined is not a function (evaluating 'document.register("x-foo", createRegisterParamters())')
+Testing document.register() basic behaviors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL document.register('foo', createRegisterParamters()) should throw Error: InvalidCharacterError: DOM Exception 5. Threw exception TypeError: undefined is not a function (evaluating 'document.register('foo', createRegisterParamters())').
+FAIL document.register('xfoo', createRegisterParamters()) should throw Error: InvalidCharacterError: DOM Exception 5. Threw exception TypeError: undefined is not a function (evaluating 'document.register('xfoo', createRegisterParamters())').
+FAIL document.register('missing-glyph', createRegisterParamters()) should throw Error: InvalidCharacterError: DOM Exception 5. Threw exception TypeError: undefined is not a function (evaluating 'document.register('missing-glyph', createRegisterParamters())').
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

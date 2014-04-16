@@ -1,0 +1,85 @@
+This test checks that -webkit-text-align-last parses properly the properties from CSS 3 Text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test the initial value:
+FAIL computedStyle.webkitTextAlignLast should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value 'start':
+PASS e.style.webkitTextAlignLast is 'start'
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be start. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be start (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be start. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value 'end':
+PASS e.style.webkitTextAlignLast is 'end'
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be end. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be end (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be end. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value 'left':
+PASS e.style.webkitTextAlignLast is 'left'
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be left. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be left (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be left. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value 'right':
+PASS e.style.webkitTextAlignLast is 'right'
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be right. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be right (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be right. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value 'center':
+PASS e.style.webkitTextAlignLast is 'center'
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be center. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be center (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be center. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value 'justify':
+PASS e.style.webkitTextAlignLast is 'justify'
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be justify. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be justify (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be justify. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value 'auto':
+PASS e.style.webkitTextAlignLast is 'auto'
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Invalid value test - '-webkit-left':
+FAIL e.style.webkitTextAlignLast should be auto. Was -webkit-left.
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Invalid value test - '-webkit-right':
+FAIL e.style.webkitTextAlignLast should be auto. Was -webkit-right.
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Invalid value test - '-webkit-center':
+FAIL e.style.webkitTextAlignLast should be auto. Was -webkit-center.
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Invalid value test - '-webkit-match-parent':
+FAIL e.style.webkitTextAlignLast should be auto. Was -webkit-match-parent.
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Invalid value test - '-webkit-auto':
+FAIL e.style.webkitTextAlignLast should be auto. Was -webkit-auto.
+FAIL e.style.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL computedStyle.webkitTextAlignLast should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello world

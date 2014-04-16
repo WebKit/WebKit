@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 226x342 [border: (3px solid #000000)]
-        RenderText {#text} at (3,5) size 175x331
-          text run at (3,5) width 165: "dec" + hyphen string "-"
-          text run at (3,117) width 175: "lina" + hyphen string "-"
+        RenderText {#text} at (3,5) size 176x331
+          text run at (3,5) width 166: "dec" + hyphen string "-"
+          text run at (3,117) width 176: "lina" + hyphen string "-"
           text run at (3,229) width 150: "tion"

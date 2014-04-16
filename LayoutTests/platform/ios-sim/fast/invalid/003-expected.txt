@@ -8,8 +8,6 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 91x19
             RenderText {#text} at (0,0) size 91x19
               text run at (0,0) width 91: "Italic and Red"
-        RenderInline {FONT} at (0,0) size 1x19 [color=#FF0000]
-          RenderInline {I} at (0,0) size 1x19
         RenderInline {I} at (0,0) size 1x19
       RenderBlock (anonymous) at (0,36) size 784x20
         RenderBlock {P} at (0,0) size 784x20
@@ -37,8 +35,6 @@ layer at (0,0) size 800x600
         RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
           RenderInline {I} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
-        RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
-          RenderInline {I} at (0,0) size 0x0
       RenderBlock {P} at (0,144) size 784x20
         RenderInline {FONT} at (0,0) size 125x19 [color=#FF0000]
           RenderInline {I} at (0,0) size 96x19
@@ -49,7 +45,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (124,0) size 129x19
           text run at (124,0) width 129: " I should not be red."
       RenderBlock (anonymous) at (0,180) size 784x20
-        RenderText {#text} at (0,0) size 0x0
         RenderInline {B} at (0,0) size 133x19
           RenderText {#text} at (0,0) size 37x19
             text run at (0,0) width 37: "Bold "

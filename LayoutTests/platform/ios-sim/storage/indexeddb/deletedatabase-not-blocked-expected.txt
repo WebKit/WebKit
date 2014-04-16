@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: line 15: TypeError: undefined is not an object (evaluating 'request.onblocked = unexpectedBlockedCallback')
+Test that deleteDatabase is not blocked when connections close in on versionchange callback
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "deletedatabase-not-blocked.html"
+blockedEventFired = false
+indexedDB.open(dbname)
+FAIL indexedDB.open(dbname) threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+FAIL Unexpected error: TypeError: undefined is not an object (evaluating 'request.onblocked = unexpectedBlockedCallback')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

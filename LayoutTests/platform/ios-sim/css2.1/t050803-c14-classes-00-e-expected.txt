@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x227
-  RenderBlock {HTML} at (0,0) size 800x227
-    RenderBody {BODY} at (8,16) size 784x195 [color=#FF0000]
+layer at (0,0) size 800x226
+  RenderBlock {HTML} at (0,0) size 800x226
+    RenderBody {BODY} at (8,16) size 784x194 [color=#FF0000]
       RenderBlock {P} at (0,0) size 784x20 [color=#008000]
         RenderText {#text} at (0,0) size 197x19
           text run at (0,0) width 197: "This sentence should be green."
@@ -16,11 +16,11 @@ layer at (0,0) size 800x227
       RenderBlock {P} at (0,108) size 784x20 [color=#008000]
         RenderText {#text} at (0,0) size 197x19
           text run at (0,0) width 197: "This sentence should be green."
-      RenderBlock {DIV} at (0,144) size 784x15 [color=#008000]
-        RenderBlock {PRE} at (0,0) size 784x15
-          RenderText {#text} at (0,0) size 235x15
+      RenderBlock {DIV} at (0,144) size 784x14 [color=#008000]
+        RenderBlock {PRE} at (0,0) size 784x14
+          RenderText {#text} at (0,0) size 235x14
             text run at (0,0) width 235: "This sentence should be green."
-      RenderBlock {DIV} at (0,175) size 784x20 [color=#008000]
+      RenderBlock {DIV} at (0,174) size 784x20 [color=#008000]
         RenderBlock {UL} at (0,0) size 784x20
           RenderListItem {LI} at (40,0) size 744x20
             RenderListMarker at (-18,0) size 7x19: bullet

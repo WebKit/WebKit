@@ -18,7 +18,7 @@ layer at (104,8) size 40x584
       text run at (20,314) width 270: "should begin after the end of this sentence"
     RenderText {#text} at (0,0) size 0x0
 layer at (124,78) size 340x240
-  RenderBlock (positioned) {SPAN} at (20,70) size 340x240 [border: (20px solid #000000)]
+  RenderBlock (positioned) {SPAN} at (20,70) size 340x241 [border: (20px solid #000000)]
 layer at (244,198) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
 layer at (144,198) size 100x100

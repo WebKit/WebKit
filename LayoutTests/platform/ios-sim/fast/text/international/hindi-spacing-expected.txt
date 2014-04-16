@@ -8,20 +8,20 @@ layer at (0,0) size 800x600
         text run at (0,20) width 761: "left for it. Neither the Hindi on the button below nor the same text on two lines below that should be truncated at either"
         text run at (0,40) width 28: "end."
       RenderBR {BR} at (27,55) size 1x0
-      RenderButton {INPUT} at (2,62) size 107x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-        RenderBlock (anonymous) at (12,1) size 83x18
-          RenderText at (0,1) size 83x14
-            text run at (0,1) width 83: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
-      RenderBR {BR} at (111,75) size 0x0
-      RenderInline {SPAN} at (0,0) size 118x19
-        RenderText {#text} at (0,85) size 118x19
-          text run at (0,85) width 118: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
-      RenderText {#text} at (117,85) size 26x19
-        text run at (117,85) width 26: "Foo"
-      RenderBR {BR} at (142,100) size 1x0
-      RenderInline {SPAN} at (0,0) size 118x19
-        RenderText {#text} at (0,110) size 118x19
-          text run at (0,110) width 118: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
-      RenderText {#text} at (117,110) size 26x19
-        text run at (117,110) width 26: "Foo"
-      RenderBR {BR} at (142,125) size 1x0
+      RenderButton {INPUT} at (2,62) size 125x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (12,1) size 101x18
+          RenderText at (0,1) size 101x14
+            text run at (0,1) width 101: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
+      RenderBR {BR} at (128,75) size 1x0
+      RenderInline {SPAN} at (0,0) size 170x19
+        RenderText {#text} at (0,85) size 170x19
+          text run at (0,85) width 170: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
+      RenderText {#text} at (169,85) size 26x19
+        text run at (169,85) width 26: "Foo"
+      RenderBR {BR} at (194,100) size 1x0
+      RenderInline {SPAN} at (0,0) size 170x19
+        RenderText {#text} at (0,110) size 170x19
+          text run at (0,110) width 170: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
+      RenderText {#text} at (169,110) size 26x19
+        text run at (169,110) width 26: "Foo"
+      RenderBR {BR} at (194,125) size 1x0

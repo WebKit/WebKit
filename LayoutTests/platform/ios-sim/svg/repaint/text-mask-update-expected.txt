@@ -10,6 +10,6 @@ layer at (0,0) size 800x600
       RenderSVGResourceMasker {mask} [id="mask2"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
         RenderSVGText {text}
     RenderSVGRect {rect} at (10,2) size 48x23 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
-      [masker="mask1"] RenderSVGResourceMasker {mask} at (10,2) size 48x23
+      [masker="mask1"] RenderSVGResourceMasker {mask} at (10,2) size 47.81x22.50
     RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
       [masker="mask2"] RenderSVGResourceMasker {mask} at (0,0) size 0x0

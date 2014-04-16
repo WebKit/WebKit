@@ -1,1 +1,3 @@
+CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
 >>>

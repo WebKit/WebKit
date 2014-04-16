@@ -1,0 +1,34 @@
+SVG 1.1 dynamic animation tests
+
+ABCD
+Test 'to' animation of SVGLengthList with different count of items.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text.x.animVal.numberOfItems is 1
+PASS text.x.animVal.getItem(0).value is 50
+PASS text.x.baseVal.numberOfItems is 1
+PASS text.x.baseVal.getItem(0).value is 50
+FAIL text.x.animVal.numberOfItems should be 4. Was 1.
+FAIL text.x.animVal.getItem(0).value should be close to 70. Was 50.
+FAIL text.x.animVal.getItem(1).value should be 80. Threw exception Error: IndexSizeError: DOM Exception 1
+FAIL text.x.animVal.getItem(2).value should be 90. Threw exception Error: IndexSizeError: DOM Exception 1
+FAIL text.x.animVal.getItem(3).value should be 110. Threw exception Error: IndexSizeError: DOM Exception 1
+PASS text.x.baseVal.numberOfItems is 1
+PASS text.x.baseVal.getItem(0).value is 50
+PASS text.x.animVal.numberOfItems is 4
+PASS text.x.animVal.getItem(0).value is 70
+PASS text.x.animVal.getItem(1).value is 80
+PASS text.x.animVal.getItem(2).value is 90
+PASS text.x.animVal.getItem(3).value is 110
+PASS text.x.baseVal.numberOfItems is 1
+PASS text.x.baseVal.getItem(0).value is 50
+PASS text.x.animVal.numberOfItems is 1
+PASS text.x.animVal.getItem(0).value is 50
+PASS text.x.baseVal.numberOfItems is 1
+PASS text.x.baseVal.getItem(0).value is 50
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

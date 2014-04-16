@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 665x19
         text run at (0,0) width 665: "This tests that when a list box's options get updated, the list box will recalculate its width, and relayout. "
       RenderBR {BR} at (0,0) size 0x0
-      RenderMenuList {SELECT} at (2,22) size 188x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-        RenderBlock (anonymous) at (6,3) size 176x14
+      RenderMenuList {SELECT} at (2,22) size 189x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 177x14
           RenderText at (0,0) size 37x14
             text run at (0,0) width 37: "0 Items"
       RenderText {#text} at (0,0) size 0x0

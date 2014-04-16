@@ -1,0 +1,11 @@
+Bug 105650: Test correct rendering of quadratic and bezier curves with coincident endpoints
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS blue_value is 255
+FAIL blue_value should be 0. Was 255.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

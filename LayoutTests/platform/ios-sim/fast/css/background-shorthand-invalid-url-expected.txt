@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x187
-  RenderBlock {HTML} at (0,0) size 800x187
-    RenderBody {BODY} at (8,21) size 784x150
+layer at (0,0) size 800x188
+  RenderBlock {HTML} at (0,0) size 800x188
+    RenderBody {BODY} at (8,21) size 784x151
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 571x36
           text run at (0,1) width 571: "The background image should not repeat."
-      RenderBlock {DIV} at (0,59) size 784x91
+      RenderBlock {DIV} at (0,59) size 784x92
         RenderBlock {UL} at (0,0) size 784x91
           RenderListItem {LI} at (40,0) size 744x91 [border: (1px solid #FF0000)]
             RenderBlock {SPAN} at (1,1) size 304x89 [border: (2px solid #008000)]

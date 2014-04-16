@@ -9,10 +9,10 @@ layer at (0,0) size 480x360
       RenderSVGPath {path} at (30,75) size 160x160 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 110 75 L 160 235 L 30 135 L 190 135 L 60 235 Z"]
       RenderSVGPath {path} at (285,75) size 160x160 [fill={[type=SOLID] [color=#FF0000]}] [data="M 365 75 L 415 235 L 285 135 L 445 135 L 315 235 Z"]
       RenderSVGText {text} at (10,254) size 243x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 243x35
+        RenderSVGInlineText {#text} at (0,0) size 243x34
           chunk 1 text run 1 at (10.00,282.00) startOffset 0 endOffset 19 width 242.27: "fill-rule=\"evenodd\""
       RenderSVGText {text} at (260,254) size 236x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 236x35
+        RenderSVGInlineText {#text} at (0,0) size 236x34
           chunk 1 text run 1 at (260.00,282.00) startOffset 0 endOffset 19 width 235.58: "fill-rule=\"nonzero\""
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45

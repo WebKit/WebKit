@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (20,90) size 284x38
+  RenderSVGRoot {svg} at (20,91) size 283x36
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 125x25
         RenderSVGRect {rect} at (0,0) size 125x25 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
         RenderSVGContainer {use} at (0,0) size 0x0
-    RenderSVGText {text} at (10,45) size 142x18 contains 1 chunk(s)
+    RenderSVGText {text} at (10,45) size 142x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 142x18
         chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 22 width 141.32: "This should not crash."
     RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]

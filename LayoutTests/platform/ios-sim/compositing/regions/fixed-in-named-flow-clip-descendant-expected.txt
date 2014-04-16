@@ -1,0 +1,32 @@
+Test a fixed positioned element collected in a named flow correctly clips its ancestor.
+
+On success, you should see a green rectangle with an orange rectangle in the bottom right corner.
+
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 150.00 150.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 100.00 100.00)
+              (children 1
+                (GraphicsLayer
+                  (position 50.00 50.00)
+                  (bounds 100.00 100.00)
+                  (contentsOpaque 1)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

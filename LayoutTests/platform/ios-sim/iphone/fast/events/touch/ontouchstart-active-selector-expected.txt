@@ -1,12 +1,7 @@
-This tests the :active selector on touchable elements
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS getComputedStyle(touchMe).backgroundColor is 'rgb(0, 0, 255)'
-PASS getComputedStyle(touchMe).backgroundColor is 'rgb(255, 0, 0)'
-PASS getComputedStyle(touchMe).backgroundColor is 'rgb(0, 0, 255)'
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
+CONSOLE MESSAGE: line 23: ReferenceError: Can't find variable: description
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x216
+  RenderBlock {HTML} at (0,0) size 800x216
+    RenderBody {BODY} at (8,8) size 784x200
+      RenderBlock {DIV} at (0,0) size 200x200 [bgcolor=#0000FF]

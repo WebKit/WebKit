@@ -42,7 +42,7 @@ Test 3
 PASS rects.length is 4
 FAIL rects[0].left should be 80. Was 81.
 FAIL rects[0].top should be 411. Was 418.
-FAIL rects[0].width should be 324. Was 313.
+FAIL rects[0].width should be 324. Was 314.
 FAIL rects[0].height should be 18. Was 19.
 PASS rects[1].left is 8
 FAIL rects[1].top should be 451. Was 458.
@@ -90,7 +90,7 @@ Test 5
 PASS rects.length is 5
 FAIL rects[0].left should be 80. Was 81.
 FAIL rects[0].top should be 921. Was 936.
-FAIL rects[0].width should be 324. Was 313.
+FAIL rects[0].width should be 324. Was 314.
 FAIL rects[0].height should be 18. Was 19.
 PASS rects[1].left is 8
 FAIL rects[1].top should be 1039. Was 1054.
@@ -98,7 +98,7 @@ FAIL rects[1].width should be 242. Was 269.
 FAIL rects[1].height should be 18. Was 19.
 FAIL rects[2].left should be 250. Was 276.
 FAIL rects[2].top should be 950. Was 966.
-PASS rects[2].width is 76
+FAIL rects[2].width should be 76. Was 77.
 PASS rects[2].height is 103
 FAIL rects[3].left should be 326. Was 352.
 FAIL rects[3].top should be 1039. Was 1054.
@@ -188,10 +188,10 @@ FAIL rects[3].width should be 212. Was 252.
 FAIL rects[3].height should be 247. Was 296.
 Test 9
 FAIL rects.length should be 1. Was 0.
-FAIL rects[0].left should be 8. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].left')
-FAIL rects[0].top should be 1903. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].top')
-FAIL rects[0].width should be 0. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].width')
-FAIL rects[0].height should be 18. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].height')
+FAIL rects[0].left should be 8. Threw exception TypeError: undefined is not an object (evaluating 'rects[0].left')
+FAIL rects[0].top should be 1903. Threw exception TypeError: undefined is not an object (evaluating 'rects[0].top')
+FAIL rects[0].width should be 0. Threw exception TypeError: undefined is not an object (evaluating 'rects[0].width')
+FAIL rects[0].height should be 18. Threw exception TypeError: undefined is not an object (evaluating 'rects[0].height')
 Test 9b
 PASS rects.length is 1
 PASS rects[0].left is 8
@@ -217,6 +217,40 @@ FAIL rects[3].top should be 2088. Was 2204.
 FAIL rects[3].width should be 18. Was 19.
 FAIL rects[3].height should be 360. Was 376.
 Test 11
+PASS rects.length is 2
+PASS rects[0].left is 8
+FAIL rects[0].top should be 2524. Was 2644.
+PASS rects[0].width is 400
+PASS rects[0].height is 40
+PASS rects[1].left is 8
+FAIL rects[1].top should be 2535. Was 2654.
+FAIL rects[1].width should be 177. Was 182.
+FAIL rects[1].height should be 18. Was 19.
+Test 12
+PASS rects.length is 1
+PASS rects[0].left is 8
+FAIL rects[0].top should be 2760. Was 2884.
+PASS rects[0].width is 400
+PASS rects[0].height is 160
+Test 13
+PASS rects.length is 4
+PASS rects[0].left is 8
+FAIL rects[0].top should be 2967. Was 3094.
+FAIL rects[0].width should be 396. Was 387.
+FAIL rects[0].height should be 18. Was 19.
+PASS rects[1].left is 8
+FAIL rects[1].top should be 3007. Was 3134.
+FAIL rects[1].width should be 398. Was 360.
+FAIL rects[1].height should be 18. Was 19.
+PASS rects[2].left is 8
+FAIL rects[2].top should be 3047. Was 3174.
+FAIL rects[2].width should be 360. Was 382.
+FAIL rects[2].height should be 18. Was 19.
+PASS rects[3].left is 8
+FAIL rects[3].top should be 3087. Was 3214.
+FAIL rects[3].width should be 306. Was 369.
+FAIL rects[3].height should be 18. Was 19.
+Test 14
 PASS rects.length is 0
 PASS successfullyParsed is true
 

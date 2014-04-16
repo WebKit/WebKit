@@ -7,8 +7,10 @@ CONSOLE MESSAGE: line 20: Main frame window.onload
 CONSOLE MESSAGE: line 20: Main frame window.onpageshow, target = [object HTMLDocument], persisted = false
 CONSOLE MESSAGE: line 20: ***Navigating top-level frame to a page that will immediately navigate back to this one***
 CONSOLE MESSAGE: line 20: Main frame window.onpagehide, target = [object HTMLDocument], persisted = true
-CONSOLE MESSAGE: line 20: Subframe window.onpagehide, target = [object HTMLDocument], persisted = false
-CONSOLE MESSAGE: line 20: Subsubframe window.onpagehide, target = [object HTMLDocument], persisted = false
+CONSOLE MESSAGE: line 20: Subframe window.onpagehide, target = [object HTMLDocument], persisted = true
+CONSOLE MESSAGE: line 20: Subsubframe window.onpagehide, target = [object HTMLDocument], persisted = true
+CONSOLE MESSAGE: line 20: Subsubframe window.onpageshow, target = [object HTMLDocument], persisted = true
+CONSOLE MESSAGE: line 20: Subframe window.onpageshow, target = [object HTMLDocument], persisted = true
 CONSOLE MESSAGE: line 20: Main frame window.onpageshow, target = [object HTMLDocument], persisted = true
 Test pageshow/pagehide event behavior when navigating away from a page with frames, putting the page in the page cache, then back to it.
 

@@ -1,31 +1,31 @@
-layer at (0,0) size 800x783
+layer at (0,0) size 800x776
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x783
-  RenderBlock {HTML} at (0,0) size 800x783
-    RenderBody {BODY} at (8,8) size 784x767 [bgcolor=#CCCCCC]
+layer at (0,0) size 800x776
+  RenderBlock {HTML} at (0,0) size 800x777
+    RenderBody {BODY} at (8,8) size 784x761 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 363x19
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,36) size 784x105
-        RenderText {#text} at (0,0) size 547x105
+      RenderBlock {PRE} at (0,36) size 784x98
+        RenderText {#text} at (0,0) size 547x98
           text run at (0,0) width 203: "P.one {line-height: 200%;}"
           text run at (202,0) width 1: " "
-          text run at (0,15) width 539: "SPAN.two {border-style: solid; border-width: 10px; border-color: red;"
-          text run at (538,15) width 1: " "
-          text run at (0,30) width 297: "          padding: 2pt; margin: 30pt;}"
-          text run at (296,30) width 1: " "
-          text run at (0,45) width 352: "P.three {font-size: 10pt; line-height: 12pt;}"
-          text run at (351,45) width 1: " "
-          text run at (0,60) width 547: "SPAN.four {border-style: solid; border-width: 12px; border-color: red;"
-          text run at (546,60) width 1: " "
-          text run at (0,75) width 188: "          padding: 2pt;}"
-          text run at (187,75) width 1: " "
-          text run at (0,90) width 0: " "
-      RenderBlock {HR} at (0,154) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,172) size 784x192
+          text run at (0,14) width 539: "SPAN.two {border-style: solid; border-width: 10px; border-color: red;"
+          text run at (538,14) width 1: " "
+          text run at (0,28) width 297: "          padding: 2pt; margin: 30pt;}"
+          text run at (296,28) width 1: " "
+          text run at (0,42) width 352: "P.three {font-size: 10pt; line-height: 12pt;}"
+          text run at (351,42) width 1: " "
+          text run at (0,56) width 547: "SPAN.four {border-style: solid; border-width: 12px; border-color: red;"
+          text run at (546,56) width 1: " "
+          text run at (0,70) width 188: "          padding: 2pt;}"
+          text run at (187,70) width 1: " "
+          text run at (0,84) width 0: " "
+      RenderBlock {HR} at (0,147) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,165) size 784x192
         RenderText {#text} at (0,6) size 191x19
           text run at (0,6) width 191: "This is a paragraph that has a "
-        RenderInline {SPAN} at (0,0) size 774x171 [border: (10px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 774x173 [border: (10px solid #FF0000)]
           RenderText {#text} at (242,6) size 774x147
             text run at (242,6) width 532: "very long span in it, and the span has a 10px red border separated from the span by"
             text run at (0,38) width 170: "2pt, and a margin of 30pt. "
@@ -39,10 +39,10 @@ layer at (0,0) size 800x783
           text run at (648,134) width 5: " "
           text run at (652,134) width 123: "The line spacing in"
           text run at (0,166) width 342: "the whole paragraph should be 200% of the font size."
-      RenderBlock {P} at (0,380) size 784x64
+      RenderBlock {P} at (0,373) size 784x64
         RenderText {#text} at (0,0) size 155x15
           text run at (0,0) width 155: "This is a paragraph that has a "
-        RenderInline {SPAN} at (0,0) size 777x75 [border: (12px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 777x77 [border: (12px solid #FF0000)]
           RenderText {#text} at (168,0) size 777x47
             text run at (168,0) width 591: "very long span in it, and the span has a 12px red border separated from the span by 2pt of padding (the difference"
             text run at (0,16) width 777: "between the line-height and the font-size), which should overlap with the lines of text above and below the span, since the padding and border should"
@@ -52,7 +52,7 @@ layer at (0,0) size 800x783
           text run at (720,32) width 4: " "
           text run at (723,32) width 44: "The line"
           text run at (0,48) width 351: "spacing in the whole paragraph should be 12pt, with font-size 10pt."
-      RenderTable {TABLE} at (0,457) size 784x310 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,450) size 784x311 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x308
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -67,7 +67,7 @@ layer at (0,0) size 800x783
               RenderBlock {P} at (4,4) size 762x192
                 RenderText {#text} at (0,6) size 191x19
                   text run at (0,6) width 191: "This is a paragraph that has a "
-                RenderInline {SPAN} at (0,0) size 761x171 [border: (10px solid #FF0000)]
+                RenderInline {SPAN} at (0,0) size 761x173 [border: (10px solid #FF0000)]
                   RenderText {#text} at (242,6) size 761x147
                     text run at (242,6) width 512: "very long span in it, and the span has a 10px red border separated from the span"
                     text run at (0,38) width 190: "by 2pt, and a margin of 30pt. "
@@ -84,7 +84,7 @@ layer at (0,0) size 800x783
               RenderBlock {P} at (4,212) size 762x64
                 RenderText {#text} at (0,0) size 155x15
                   text run at (0,0) width 155: "This is a paragraph that has a "
-                RenderInline {SPAN} at (0,0) size 759x75 [border: (12px solid #FF0000)]
+                RenderInline {SPAN} at (0,0) size 759x77 [border: (12px solid #FF0000)]
                   RenderText {#text} at (168,0) size 759x47
                     text run at (168,0) width 591: "very long span in it, and the span has a 12px red border separated from the span by 2pt of padding (the difference"
                     text run at (0,16) width 739: "between the line-height and the font-size), which should overlap with the lines of text above and below the span, since the padding and border"

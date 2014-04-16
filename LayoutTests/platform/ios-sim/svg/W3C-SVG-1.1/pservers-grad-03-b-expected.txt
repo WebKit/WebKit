@@ -11,11 +11,11 @@ layer at (0,0) size 480x360
       RenderSVGResourcePattern {pattern} [id="Pat3b"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
       RenderSVGRect {rect} at (20,20) size 440x80 [fill={[type=PATTERN] [id="Pat3a"]}] [x=20.00] [y=20.00] [width=440.00] [height=80.00]
       RenderSVGText {text} at (20,102) size 142x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 142x35
+        RenderSVGInlineText {#text} at (0,0) size 142x34
           chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 13 width 141.72: "Pattern fill."
       RenderSVGRect {rect} at (20,150) size 440x80 [fill={[type=PATTERN] [id="Pat3b"]}] [x=20.00] [y=150.00] [width=440.00] [height=80.00]
       RenderSVGText {text} at (20,232) size 396x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 396x35
+        RenderSVGInlineText {#text} at (0,0) size 396x34
           chunk 1 text run 1 at (20.00,260.00) startOffset 0 endOffset 31 width 395.21: "Referencing pattern fill below."
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45

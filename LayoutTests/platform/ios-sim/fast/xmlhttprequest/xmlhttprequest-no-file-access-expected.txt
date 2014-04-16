@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load xmlhttprequest-no-file-access-expected.txt. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: Blocked a frame with origin "null" from accessing a frame with origin "". Protocols, domains, and ports must match.
+The child iframe cannot paste its textual results into this iframe because it is considered a different domain - that's the point of this test! Therefore, success is denoted by the child iframe calling notifyDone. The test will hang if something goes amiss with the access control checks.

@@ -1,0 +1,4 @@
+base-image2.png has MIME type image/png
+PASS internals.isPreloaded("resources/image1.png") is false
+This test passes if the fallback image (defined in the src attribute) is not preloaded, but the 1x version (defined in srcset) is.
+

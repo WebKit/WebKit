@@ -19,26 +19,26 @@ layer at (0,0) size 800x2041
           text run at (0,20) width 25: "red "
           text run at (24,20) width 183: "below, just a block of green."
       RenderBlock {DIV} at (30,164) size 165x75 [color=#008000] [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 166x75
-          text run at (0,0) width 166: "          X"
-          text run at (0,15) width 166: "          X"
-          text run at (0,30) width 166: "          X"
-          text run at (0,45) width 166: "          X"
-          text run at (0,60) width 166: "          X"
+        RenderText {#text} at (0,0) size 165x75
+          text run at (0,0) width 165: "          X"
+          text run at (0,15) width 165: "          X"
+          text run at (0,30) width 165: "          X"
+          text run at (0,45) width 165: "          X"
+          text run at (0,60) width 165: "          X"
       RenderBlock {DIV} at (30,239) size 165x75 [color=#008000] [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 166x75
-          text run at (0,0) width 166: "     X     "
-          text run at (0,15) width 166: "     X     "
-          text run at (0,30) width 166: "     X     "
-          text run at (0,45) width 166: "     X     "
-          text run at (0,60) width 166: "     X     "
+        RenderText {#text} at (0,0) size 165x75
+          text run at (0,0) width 165: "     X     "
+          text run at (0,15) width 165: "     X     "
+          text run at (0,30) width 165: "     X     "
+          text run at (0,45) width 165: "     X     "
+          text run at (0,60) width 165: "     X     "
       RenderBlock {DIV} at (30,314) size 165x75 [color=#008000] [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 166x75
-          text run at (0,0) width 166: "XXXXXXXXXXX"
-          text run at (0,15) width 166: "           "
-          text run at (0,30) width 166: "           "
-          text run at (0,45) width 166: "           "
-          text run at (0,60) width 166: "           "
+        RenderText {#text} at (0,0) size 165x75
+          text run at (0,0) width 165: "XXXXXXXXXXX"
+          text run at (0,15) width 165: "           "
+          text run at (0,30) width 165: "           "
+          text run at (0,45) width 165: "           "
+          text run at (0,60) width 165: "           "
       RenderBlock {P} at (0,405) size 784x20 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 85x19
           text run at (0,0) width 85: "Dummy text."

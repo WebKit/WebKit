@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 600x500
   RenderSVGRoot {svg} at (200,185) size 256x19
     RenderSVGText {text} at (200,185) size 256x19 contains 1 chunk(s)
-      RenderSVGTSpan {tspan} at (0,0) size 256x19
-        RenderSVGInlineText {#text} at (0,0) size 256x19
+      RenderSVGTSpan {tspan} at (0,0) size 256x18
+        RenderSVGInlineText {#text} at (0,0) size 256x18
           chunk 1 text run 1 at (200.00,200.00) startOffset 0 endOffset 41 width 255.97: "This text should be at visible at 200,200"

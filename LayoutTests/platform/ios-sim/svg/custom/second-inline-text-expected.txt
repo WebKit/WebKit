@@ -10,13 +10,13 @@ layer at (0,0) size 800x165
         RenderSVGRoot {svg} at (18,65) size 63x68
           RenderSVGPath {path} at (36,65) size 45x68 [fill={[type=SOLID] [color=#337711]}] [data="M 38 38 C 38 26 62 23 61 36 C 61 45 45 49 45 59 L 45 66 L 56 66 L 56 62 C 56 53 73 50 73 35 C 71 13 28 13 28 38 Z M 45 70 L 56 70 L 56 81 L 45 81 Z"]
           RenderSVGText {text} at (10,35) size 39x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 39x19
+            RenderSVGInlineText {#text} at (0,0) size 39x18
               chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 4 width 38.25: "PASS"
         RenderText {#text} at (100,85) size 4x19
           text run at (100,85) width 4: " "
         RenderSVGRoot {svg} at (122,65) size 63x68
           RenderSVGPath {path} at (140,65) size 45x68 [fill={[type=SOLID] [color=#337711]}] [data="M 38 38 C 38 26 62 23 61 36 C 61 45 45 49 45 59 L 45 66 L 56 66 L 56 62 C 56 53 73 50 73 35 C 71 13 28 13 28 38 Z M 45 70 L 56 70 L 56 81 L 45 81 Z"]
           RenderSVGText {text} at (10,35) size 39x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 39x19
+            RenderSVGInlineText {#text} at (0,0) size 39x18
               chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 4 width 38.25: "PASS"
         RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,12 @@
+FAIL: Timed out waiting for notifyDone to be called
+Selecting listbox options should fire input event
+
+
+Pressing down arrow key
+Pressing down arrow key
+Pressing up arrow key
+Pressing page down key
+Pressing page up key
+Pressing end key
+Pressing home key
+

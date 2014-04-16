@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderFieldSet {FIELDSET} at (2,0) size 780x39 [border: (2px groove #C0C0C0)]
-        RenderText {#text} at (14,7) size 385x19
-          text run at (14,7) width 385: "If you can see this fieldset without crashing, then all is well."
+      RenderFieldSet {FIELDSET} at (2,0) size 780x40 [border: (2px groove #C0C0C0)]
+        RenderText {#text} at (14,8) size 385x19
+          text run at (14,8) width 385: "If you can see this fieldset without crashing, then all is well."

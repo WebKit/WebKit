@@ -305,15 +305,15 @@ layer at (0,0) size 800x3002
               RenderBlock (anonymous) at (4,940) size 762x266
                 RenderBR {BR} at (0,0) size 0x19
               RenderBlock {HR} at (4,1214) size 762x2 [border: (1px inset #000000)]
-              RenderBlock (floating) {DIV} at (4,1224) size 190x80 [bgcolor=#66CCFF]
-                RenderBlock {P} at (0,0) size 190x80
+              RenderBlock (floating) {DIV} at (4,1224) size 191x80 [bgcolor=#66CCFF]
+                RenderBlock {P} at (0,0) size 191x80
                   RenderText {#text} at (0,0) size 190x79
                     text run at (0,0) width 190: "This paragraph is inside a"
                     text run at (0,20) width 190: "DIV which is floated left. Its"
                     text run at (0,40) width 190: "background is blue and the"
                     text run at (0,60) width 89: "width is 25%."
-              RenderBlock (floating) {DIV} at (576,1224) size 190x80 [bgcolor=#FFFF00]
-                RenderBlock {P} at (0,0) size 190x80
+              RenderBlock (floating) {DIV} at (575,1224) size 191x80 [bgcolor=#FFFF00]
+                RenderBlock {P} at (0,0) size 191x80
                   RenderText {#text} at (0,0) size 190x79
                     text run at (0,0) width 190: "This paragraph is inside a"
                     text run at (0,20) width 190: "DIV which is floated right."
@@ -321,23 +321,23 @@ layer at (0,0) size 800x3002
                     text run at (21,40) width 169: "background is yellow and"
                     text run at (0,60) width 112: "the width is 25%."
               RenderBlock {P} at (4,1224) size 762x40
-                RenderText {#text} at (190,0) size 382x39
-                  text run at (190,0) width 382: "This paragraph should appear between a blue box (on the"
-                  text run at (190,20) width 31: "left) "
-                  text run at (220,20) width 203: "and a yellow box (on the right)."
+                RenderText {#text} at (191,0) size 380x39
+                  text run at (191,0) width 380: "This paragraph should appear between a blue box (on the"
+                  text run at (191,20) width 31: "left) "
+                  text run at (221,20) width 203: "and a yellow box (on the right)."
               RenderBlock (anonymous) at (4,1264) size 762x40
-                RenderBR {BR} at (190,0) size 0x19
+                RenderBR {BR} at (191,0) size 0x19
               RenderBlock {HR} at (4,1312) size 762x2 [border: (1px inset #000000)]
-              RenderBlock (floating) {DIV} at (4,1322) size 571x140 [bgcolor=#66CCFF]
-                RenderBlock (floating) {DIV} at (419,0) size 142x40 [bgcolor=#FFFF00]
-                  RenderBlock {P} at (0,0) size 142x40
+              RenderBlock (floating) {DIV} at (4,1322) size 572x140 [bgcolor=#66CCFF]
+                RenderBlock (floating) {DIV} at (418,0) size 144x40 [bgcolor=#FFFF00]
+                  RenderBlock {P} at (0,0) size 143x40
                     RenderText {#text} at (0,0) size 142x39
                       text run at (0,0) width 142: "See description in the"
                       text run at (0,20) width 127: "box on the left side."
-                RenderBlock {P} at (0,0) size 571x140
+                RenderBlock {P} at (0,0) size 572x140
                   RenderText {#text} at (0,0) size 571x139
-                    text run at (0,0) width 419: "This paragraph is inside a DIV which is floated left. The"
-                    text run at (0,20) width 419: "background of the DIV element is blue and its width is 75%."
+                    text run at (0,0) width 418: "This paragraph is inside a DIV which is floated left. The"
+                    text run at (0,20) width 418: "background of the DIV element is blue and its width is 75%."
                     text run at (0,40) width 33: "This "
                     text run at (32,40) width 376: "text should all be inside the blue rectangle. The blue DIV "
                     text run at (408,40) width 163: "element has another DIV"
@@ -351,5 +351,5 @@ layer at (0,0) size 800x3002
                     text run at (0,120) width 113: "have a 10px blue "
                     text run at (112,120) width 144: "stripe on its right side."
               RenderBlock (anonymous) at (4,1322) size 762x140
-                RenderBR {BR} at (571,0) size 0x19
+                RenderBR {BR} at (572,0) size 0x19
               RenderBlock {HR} at (4,1470) size 762x2 [border: (1px inset #000000)]

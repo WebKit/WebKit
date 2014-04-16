@@ -124,7 +124,7 @@ rect: style.getPropertyValue(min-width) : 0px
 rect: style.getPropertyCSSValue(min-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(opacity) : 1
 rect: style.getPropertyCSSValue(opacity) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(orphans) : 2
+rect: style.getPropertyValue(orphans) : auto
 rect: style.getPropertyCSSValue(orphans) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(outline-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(outline-color) : [object CSSPrimitiveValue]
@@ -188,7 +188,7 @@ rect: style.getPropertyValue(visibility) : visible
 rect: style.getPropertyCSSValue(visibility) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(white-space) : normal
 rect: style.getPropertyCSSValue(white-space) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(widows) : 2
+rect: style.getPropertyValue(widows) : auto
 rect: style.getPropertyCSSValue(widows) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(width) : auto
 rect: style.getPropertyCSSValue(width) : [object CSSPrimitiveValue]
@@ -216,7 +216,7 @@ rect: style.getPropertyValue(-webkit-animation-name) : none
 rect: style.getPropertyCSSValue(-webkit-animation-name) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-animation-play-state) : running
 rect: style.getPropertyCSSValue(-webkit-animation-play-state) : [object CSSValueList]
-rect: style.getPropertyValue(-webkit-animation-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+rect: style.getPropertyValue(-webkit-animation-timing-function) : ease
 rect: style.getPropertyCSSValue(-webkit-animation-timing-function) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-appearance) : none
 rect: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
@@ -280,7 +280,7 @@ rect: style.getPropertyValue(-webkit-column-rule-style) : none
 rect: style.getPropertyCSSValue(-webkit-column-rule-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-rule-width) : 0px
 rect: style.getPropertyCSSValue(-webkit-column-rule-width) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-column-span) : 1
+rect: style.getPropertyValue(-webkit-column-span) : none
 rect: style.getPropertyCSSValue(-webkit-column-span) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-width) : auto
 rect: style.getPropertyCSSValue(-webkit-column-width) : [object CSSPrimitiveValue]
@@ -302,12 +302,24 @@ rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
 rect: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-grid-column) : auto
-rect: style.getPropertyCSSValue(-webkit-grid-column) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-grid-row) : auto
-rect: style.getPropertyCSSValue(-webkit-grid-row) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-highlight) : none
-rect: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-auto-columns) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-auto-columns) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-auto-flow) : none
+rect: style.getPropertyCSSValue(-webkit-grid-auto-flow) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-auto-rows) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-auto-rows) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-column-end) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-column-end) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-column-start) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-column-start) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-template-columns) : none
+rect: style.getPropertyCSSValue(-webkit-grid-template-columns) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-template-rows) : none
+rect: style.getPropertyCSSValue(-webkit-grid-template-rows) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-row-end) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-row-end) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-row-start) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-row-start) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-character) : auto
 rect: style.getPropertyCSSValue(-webkit-hyphenate-character) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
@@ -322,7 +334,7 @@ rect: style.getPropertyValue(-webkit-line-align) : none
 rect: style.getPropertyCSSValue(-webkit-line-align) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-box-contain) : block inline replaced
 rect: style.getPropertyCSSValue(-webkit-line-box-contain) : [object CSSValue]
-rect: style.getPropertyValue(-webkit-line-break) : normal
+rect: style.getPropertyValue(-webkit-line-break) : auto
 rect: style.getPropertyCSSValue(-webkit-line-break) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-clamp) : none
 rect: style.getPropertyCSSValue(-webkit-line-clamp) : [object CSSPrimitiveValue]
@@ -344,8 +356,6 @@ rect: style.getPropertyValue(-webkit-marquee-repetition) : infinite
 rect: style.getPropertyCSSValue(-webkit-marquee-repetition) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-marquee-style) : scroll
 rect: style.getPropertyCSSValue(-webkit-marquee-style) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-attachment) : scroll
-rect: style.getPropertyCSSValue(-webkit-mask-attachment) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-box-image) : none
 rect: style.getPropertyCSSValue(-webkit-mask-box-image) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-box-image-outset) : 0px
@@ -390,8 +400,8 @@ rect: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
 rect: style.getPropertyCSSValue(-webkit-text-decorations-in-effect) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-emphasis-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-text-emphasis-color) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-text-emphasis-position) : over
-rect: style.getPropertyCSSValue(-webkit-text-emphasis-position) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-text-emphasis-position) : over right
+rect: style.getPropertyCSSValue(-webkit-text-emphasis-position) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-text-emphasis-style) : none
 rect: style.getPropertyCSSValue(-webkit-text-emphasis-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
@@ -416,7 +426,7 @@ rect: style.getPropertyValue(-webkit-transition-duration) : 0s
 rect: style.getPropertyCSSValue(-webkit-transition-duration) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-transition-property) : all
 rect: style.getPropertyCSSValue(-webkit-transition-property) : [object CSSValueList]
-rect: style.getPropertyValue(-webkit-transition-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+rect: style.getPropertyValue(-webkit-transition-timing-function) : ease
 rect: style.getPropertyCSSValue(-webkit-transition-timing-function) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-user-drag) : auto
 rect: style.getPropertyCSSValue(-webkit-user-drag) : [object CSSPrimitiveValue]
@@ -626,7 +636,7 @@ g: style.getPropertyValue(min-width) : 0px
 g: style.getPropertyCSSValue(min-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(opacity) : 1
 g: style.getPropertyCSSValue(opacity) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(orphans) : 2
+g: style.getPropertyValue(orphans) : auto
 g: style.getPropertyCSSValue(orphans) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(outline-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(outline-color) : [object CSSPrimitiveValue]
@@ -690,7 +700,7 @@ g: style.getPropertyValue(visibility) : visible
 g: style.getPropertyCSSValue(visibility) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(white-space) : normal
 g: style.getPropertyCSSValue(white-space) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(widows) : 2
+g: style.getPropertyValue(widows) : auto
 g: style.getPropertyCSSValue(widows) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(width) : auto
 g: style.getPropertyCSSValue(width) : [object CSSPrimitiveValue]
@@ -718,7 +728,7 @@ g: style.getPropertyValue(-webkit-animation-name) : none
 g: style.getPropertyCSSValue(-webkit-animation-name) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-animation-play-state) : running
 g: style.getPropertyCSSValue(-webkit-animation-play-state) : [object CSSValueList]
-g: style.getPropertyValue(-webkit-animation-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+g: style.getPropertyValue(-webkit-animation-timing-function) : ease
 g: style.getPropertyCSSValue(-webkit-animation-timing-function) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-appearance) : none
 g: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
@@ -782,7 +792,7 @@ g: style.getPropertyValue(-webkit-column-rule-style) : none
 g: style.getPropertyCSSValue(-webkit-column-rule-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-rule-width) : 0px
 g: style.getPropertyCSSValue(-webkit-column-rule-width) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-column-span) : 1
+g: style.getPropertyValue(-webkit-column-span) : none
 g: style.getPropertyCSSValue(-webkit-column-span) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-width) : auto
 g: style.getPropertyCSSValue(-webkit-column-width) : [object CSSPrimitiveValue]
@@ -804,12 +814,24 @@ g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
 g: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-grid-column) : auto
-g: style.getPropertyCSSValue(-webkit-grid-column) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-grid-row) : auto
-g: style.getPropertyCSSValue(-webkit-grid-row) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-highlight) : none
-g: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-auto-columns) : auto
+g: style.getPropertyCSSValue(-webkit-grid-auto-columns) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-auto-flow) : none
+g: style.getPropertyCSSValue(-webkit-grid-auto-flow) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-auto-rows) : auto
+g: style.getPropertyCSSValue(-webkit-grid-auto-rows) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-column-end) : auto
+g: style.getPropertyCSSValue(-webkit-grid-column-end) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-column-start) : auto
+g: style.getPropertyCSSValue(-webkit-grid-column-start) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-template-columns) : none
+g: style.getPropertyCSSValue(-webkit-grid-template-columns) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-template-rows) : none
+g: style.getPropertyCSSValue(-webkit-grid-template-rows) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-row-end) : auto
+g: style.getPropertyCSSValue(-webkit-grid-row-end) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-row-start) : auto
+g: style.getPropertyCSSValue(-webkit-grid-row-start) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-character) : auto
 g: style.getPropertyCSSValue(-webkit-hyphenate-character) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
@@ -824,7 +846,7 @@ g: style.getPropertyValue(-webkit-line-align) : none
 g: style.getPropertyCSSValue(-webkit-line-align) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-box-contain) : block inline replaced
 g: style.getPropertyCSSValue(-webkit-line-box-contain) : [object CSSValue]
-g: style.getPropertyValue(-webkit-line-break) : normal
+g: style.getPropertyValue(-webkit-line-break) : auto
 g: style.getPropertyCSSValue(-webkit-line-break) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-clamp) : none
 g: style.getPropertyCSSValue(-webkit-line-clamp) : [object CSSPrimitiveValue]
@@ -846,8 +868,6 @@ g: style.getPropertyValue(-webkit-marquee-repetition) : infinite
 g: style.getPropertyCSSValue(-webkit-marquee-repetition) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-marquee-style) : scroll
 g: style.getPropertyCSSValue(-webkit-marquee-style) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-attachment) : scroll
-g: style.getPropertyCSSValue(-webkit-mask-attachment) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-box-image) : none
 g: style.getPropertyCSSValue(-webkit-mask-box-image) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-box-image-outset) : 0px
@@ -892,8 +912,8 @@ g: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
 g: style.getPropertyCSSValue(-webkit-text-decorations-in-effect) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-emphasis-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-text-emphasis-color) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-text-emphasis-position) : over
-g: style.getPropertyCSSValue(-webkit-text-emphasis-position) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-text-emphasis-position) : over right
+g: style.getPropertyCSSValue(-webkit-text-emphasis-position) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-text-emphasis-style) : none
 g: style.getPropertyCSSValue(-webkit-text-emphasis-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
@@ -918,7 +938,7 @@ g: style.getPropertyValue(-webkit-transition-duration) : 0s
 g: style.getPropertyCSSValue(-webkit-transition-duration) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-transition-property) : all
 g: style.getPropertyCSSValue(-webkit-transition-property) : [object CSSValueList]
-g: style.getPropertyValue(-webkit-transition-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+g: style.getPropertyValue(-webkit-transition-timing-function) : ease
 g: style.getPropertyCSSValue(-webkit-transition-timing-function) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-user-drag) : auto
 g: style.getPropertyCSSValue(-webkit-user-drag) : [object CSSPrimitiveValue]

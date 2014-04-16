@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourcePattern {pattern} [id="dot"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
         RenderSVGEllipse {circle} at (10,40) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=20.00] [cy=50.00] [r=10.00]
-    RenderSVGText {text} at (23,85) size 353x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 353x19
+    RenderSVGText {text} at (23,85) size 354x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 353x18
         chunk 1 (middle anchor) text run 1 at (23.83,100.00) startOffset 0 endOffset 56 width 352.34: "There should be a black dot in the middle of the ellipse"
     RenderSVGEllipse {ellipse} at (179,149) size 42x102 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=PATTERN] [id="dot"]}] [cx=200.00] [cy=200.00] [rx=20.00] [ry=50.00]

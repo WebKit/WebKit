@@ -2,34 +2,34 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (0,19) size 403x257
-      RenderSVGText {text} at (60,19) size 316x20 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 316x20
-          chunk 1 text run 1 at (60.00,35.00) startOffset 0 endOffset 45 width 315.37: "CSS pixel coordinate to user space conversion"
+    RenderSVGContainer {g} at (0,19) size 411x257
+      RenderSVGText {text} at (60,19) size 325x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 325x20
+          chunk 1 text run 1 at (60.00,35.00) startOffset 0 endOffset 45 width 324.65: "CSS pixel coordinate to user space conversion"
       RenderSVGContainer {g} at (25,20) size 20x20 [transform={m=((4.00,0.00)(0.00,4.00)) t=(5.00,0.00)}]
         RenderSVGEllipse {circle} at (25,20) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
         RenderSVGEllipse {circle} at (29,24) size 12x12 [fill={[type=SOLID] [color=#FF0000]}] [cx=7.50] [cy=7.50] [r=1.50]
-      RenderSVGText {text} at (60,69) size 329x20 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 329x20
-          chunk 1 text run 1 at (60.00,85.00) startOffset 0 endOffset 47 width 328.06: "Percentage coordinates to user space conversion"
+      RenderSVGText {text} at (60,69) size 338x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 338x20
+          chunk 1 text run 1 at (60.00,85.00) startOffset 0 endOffset 47 width 337.71: "Percentage coordinates to user space conversion"
       RenderSVGContainer {g} at (25,70) size 20x20 [transform={m=((4.00,0.00)(0.00,4.00)) t=(5.00,50.00)}]
         RenderSVGEllipse {circle} at (25,70) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
         RenderSVGEllipse {circle} at (29,73) size 13x13 [fill={[type=SOLID] [color=#FF0000]}] [cx=7.50] [cy=7.50] [r=1.50]
-      RenderSVGText {text} at (60,124) size 292x20 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 292x20
-          chunk 1 text run 1 at (60.00,140.00) startOffset 0 endOffset 41 width 291.32: "CSS width/height to user space conversion"
+      RenderSVGText {text} at (60,124) size 300x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 300x20
+          chunk 1 text run 1 at (60.00,140.00) startOffset 0 endOffset 41 width 299.89: "CSS width/height to user space conversion"
       RenderSVGContainer {g} at (10,115) size 40x40 [transform={m=((4.00,0.00)(0.00,4.00)) t=(30.00,115.00)}]
         RenderSVGRect {rect} at (10,115) size 40x20 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
         RenderSVGRect {rect} at (10,135) size 40x20 [fill={[type=SOLID] [color=#FF0000]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
-      RenderSVGText {text} at (60,184) size 336x20 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 336x20
-          chunk 1 text run 1 at (60.00,200.00) startOffset 0 endOffset 48 width 335.64: "Percentage width/height to user space conversion"
+      RenderSVGText {text} at (60,184) size 346x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 346x20
+          chunk 1 text run 1 at (60.00,200.00) startOffset 0 endOffset 48 width 345.51: "Percentage width/height to user space conversion"
       RenderSVGContainer {g} at (10,175) size 40x41 [transform={m=((4.00,0.00)(0.00,4.00)) t=(30.00,175.00)}]
         RenderSVGRect {rect} at (10,175) size 40x20 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
         RenderSVGRect {rect} at (10,195) size 40x21 [fill={[type=SOLID] [color=#FF0000]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
-      RenderSVGText {text} at (140,249) size 263x20 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 263x20
-          chunk 1 text run 1 at (140.00,265.00) startOffset 0 endOffset 36 width 262.49: "CSS and percentage length conversion"
+      RenderSVGText {text} at (140,249) size 271x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 271x20
+          chunk 1 text run 1 at (140.00,265.00) startOffset 0 endOffset 36 width 270.21: "CSS and percentage length conversion"
       RenderSVGContainer {g} at (0,244) size 146x32 [transform={m=((4.00,0.00)(4.00,4.00)) t=(30.00,260.00)}]
         RenderSVGEllipse {circle} at (1,245) size 58x30 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.54]
         RenderSVGEllipse {circle} at (41,245) size 58x30 [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=0.00] [r=3.54]

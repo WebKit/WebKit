@@ -12,13 +12,13 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 459: "There should be a gap between this float and the green rectangle above."
       RenderBlock {DIV} at (0,221) size 800x56 [bgcolor=#DDDDDD] [border: (2px solid #000000)]
         RenderBlock (floating) {DIV} at (2,2) size 32x32 [bgcolor=#FFFFFF]
-        RenderBlock {DIV} at (2,18) size 796x0
+        RenderBlock {DIV} at (2,34) size 796x0
         RenderBlock (anonymous) at (2,34) size 796x20
           RenderText {#text} at (0,0) size 492x19
             text run at (0,0) width 492: "This text should be inside a black rectangle and below the 2em white square."
       RenderBlock {DIV} at (0,293) size 800x72 [bgcolor=#DDDDDD] [border: (2px solid #000000)]
         RenderBlock (floating) {DIV} at (2,2) size 32x32 [bgcolor=#FFFFFF]
-        RenderBlock {DIV} at (2,50) size 796x0
+        RenderBlock {DIV} at (2,34) size 796x0
         RenderBlock (anonymous) at (2,50) size 796x20
           RenderText {#text} at (0,0) size 522x19
             text run at (0,0) width 522: "This text should also be inside a black rectangle and below the 2em white square."

@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 14: TypeError: undefined is not an object (evaluating 'request.onerror = unexpectedErrorCallback')
+Ensure cursor calls behave as expected after cursor has run to the end.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "cursor-finished.html"
+
+prepareDatabase():
+indexedDB.deleteDatabase(dbname)
+FAIL indexedDB.deleteDatabase(dbname) threw exception TypeError: null is not an object (evaluating 'indexedDB.deleteDatabase')
+FAIL Unexpected error: TypeError: undefined is not an object (evaluating 'request.onerror = unexpectedErrorCallback')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

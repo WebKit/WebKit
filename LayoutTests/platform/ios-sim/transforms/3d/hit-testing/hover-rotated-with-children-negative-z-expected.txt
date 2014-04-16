@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 15: TypeError: null is not an object (evaluating 'hit.id')
+transformed
+child 1
+non transformed child
+child 2
+Test passes if the hover state of a transformed div is activated even if there's a non transformed element behind it.
+
+Element at 70, 70 has id "transformed": PASS
+

@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 12: "X"
           RenderTableRow {TR} at (0,48) size 156x44
             RenderTableCell {TH} at (2,48) size 50x44 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (17,2) size 42x39
+              RenderText {#text} at (17,2) size 43x39
                 text run at (17,2) width 16: "El"
                 text run at (4,22) width 42: "Cajon"
             RenderTableCell {TD} at (54,58) size 100x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]

@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x26
   RenderBlock {HTML} at (0,0) size 800x26
     RenderBody {BODY} at (8,8) size 784x10
-layer at (8,8) size 691x10
-  RenderTable {DIV} at (0,0) size 691x10
-    RenderTableSection (anonymous) at (0,0) size 691x10
-      RenderTableRow (anonymous) at (0,0) size 691x10
-        RenderTableCell (anonymous) at (0,0) size 691x10 [r=0 c=0 rs=1 cs=1]
-          RenderInline {A} at (0,0) size 691x10 [color=#00FF00] [bgcolor=#00FF00]
-            RenderText {#text} at (0,0) size 691x10
-              text run at (0,0) width 691: "When hovered, the background should have the same color as this text."
+layer at (8,8) size 690x10
+  RenderTable {DIV} at (0,0) size 690x10
+    RenderTableSection (anonymous) at (0,0) size 690x10
+      RenderTableRow (anonymous) at (0,0) size 690x10
+        RenderTableCell (anonymous) at (0,0) size 690x10 [r=0 c=0 rs=1 cs=1]
+          RenderInline {A} at (0,0) size 690x10 [color=#00FF00] [bgcolor=#00FF00]
+            RenderText {#text} at (0,0) size 690x10
+              text run at (0,0) width 690: "When hovered, the background should have the same color as this text."

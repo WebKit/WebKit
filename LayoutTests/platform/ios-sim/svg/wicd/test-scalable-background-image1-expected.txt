@@ -1,25 +1,25 @@
 layer at (0,0) size 820x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x318
-  RenderBlock {html} at (0,0) size 800x318
-    RenderBody {body} at (48,8) size 772x302
-      RenderBlock {h1} at (10,40) size 691x31
+layer at (0,0) size 800x322
+  RenderBlock {html} at (0,0) size 800x322
+    RenderBody {body} at (48,8) size 772x306
+      RenderBlock {h1} at (10,40) size 692x32
         RenderText {#text} at (0,0) size 320x30
           text run at (0,0) width 320: "scalable CSS background"
-      RenderBlock {h4} at (10,71) size 752x17
+      RenderBlock {h4} at (10,71) size 752x18
         RenderText {#text} at (0,0) size 124x16
           text run at (0,0) width 124: "WICD Core 1.0 #11"
-      RenderBlock {p} at (10,107) size 711x37
+      RenderBlock {p} at (10,107) size 712x38
         RenderText {#text} at (10,10) size 499x17
           text run at (10,10) width 499: "This text paragraph, as well as all following, must have a SVG background image."
-      RenderBlock {p} at (10,149) size 711x37
+      RenderBlock {p} at (10,150) size 712x38
         RenderText {#text} at (10,10) size 673x17
           text run at (10,10) width 673: "This background image (grey color-gradient and rounded corners) must always exactly fit the text paragraph."
-      RenderBlock {p} at (10,191) size 711x54
+      RenderBlock {p} at (10,193) size 712x55
         RenderText {#text} at (10,10) size 679x34
           text run at (10,10) width 679: "This test has failed, if you don't see any graphics on the background. (your user agent does not support SVG as"
           text run at (10,27) width 124: "background image)."
-      RenderBlock {p} at (10,250) size 711x37
+      RenderBlock {p} at (10,253) size 712x38
         RenderInline {a} at (0,0) size 31x17 [color=#000066]
           RenderText {#text} at (10,10) size 31x17
             text run at (10,10) width 31: "Back"

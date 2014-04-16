@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 36: TypeError: 'null' is not an object (evaluating 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling.style')
-CONSOLE MESSAGE: line 40: TypeError: 'null' is not an object (evaluating 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling.style')
-CONSOLE MESSAGE: line 36: TypeError: 'null' is not an object (evaluating 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling.style')
-CONSOLE MESSAGE: line 40: TypeError: 'null' is not an object (evaluating 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling.style')
+CONSOLE MESSAGE: line 36: TypeError: null is not an object (evaluating 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling.style')
+CONSOLE MESSAGE: line 40: TypeError: null is not an object (evaluating 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling.style')
+CONSOLE MESSAGE: line 36: TypeError: null is not an object (evaluating 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling.style')
+CONSOLE MESSAGE: line 40: TypeError: null is not an object (evaluating 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling.style')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

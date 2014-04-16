@@ -1,0 +1,11 @@
+ALERT: FAIL: Secure event input is not enabled after focusing a password input
+Verify that secure input state is disabled when navigating away from a page with a focused password field.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testRunner.secureEventInputIsEnabled is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

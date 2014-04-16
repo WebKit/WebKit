@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTextControl {INPUT} at (2,0) size 135x10 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+      RenderTextControl {INPUT} at (2,0) size 136x10 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (16,11) size 123x3 scrollHeight 14
+layer at (17,11) size 122x2 scrollHeight 14
   RenderBlock {DIV} at (6,3) size 123x3
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of body

@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 27: PASS
+

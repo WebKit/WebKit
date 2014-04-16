@@ -1,3 +1,4 @@
+
 36 to 45
 This tests that asking for the path from a SVG element that does not have one will not crash.
 

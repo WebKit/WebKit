@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (140,221) size 487x88
-    RenderSVGContainer {g} at (140,221) size 487x88
+  RenderSVGRoot {svg} at (140,222) size 486x85
+    RenderSVGContainer {g} at (140,222) size 486x85
       RenderSVGText {text} at (84,133) size 292x21 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 292x21
           chunk 1 (middle anchor) text run 1 at (84.43,150.00) startOffset 0 endOffset 10 width 61.00 RTL: ", \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}\"!"

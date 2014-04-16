@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 18: TypeError: undefined is not a constructor (evaluating 'new MediaSource()')
+FAIL: Timed out waiting for notifyDone to be called
+This tests the SourceBuffer.remove() API. The test will remove samples from the given startTime (0) up to but not including the presentation start time of the sync sample (4) after endTime (2).
+

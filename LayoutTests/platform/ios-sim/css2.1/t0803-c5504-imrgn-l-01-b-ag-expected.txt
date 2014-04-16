@@ -8,11 +8,11 @@ layer at (0,0) size 800x112
           text run at (0,0) width 295: "There should be a green horizontal bar below:"
       RenderBlock {DIV} at (15,36) size 195x45 [bgcolor=#008000]
         RenderBlock {P} at (0,0) size 195x30 [color=#FFFFFF] [bgcolor=#FFFFFF]
-          RenderText {#text} at (0,0) size 31x15
-            text run at (0,0) width 31: "x "
+          RenderText {#text} at (0,0) size 30x15
+            text run at (0,0) width 30: "x "
           RenderInline {SPAN} at (0,0) size 165x30
             RenderText {#text} at (90,0) size 165x30
               text run at (90,0) width 75: "xxxxx"
-              text run at (0,15) width 76: "xxxxx"
-          RenderText {#text} at (75,15) size 31x15
-            text run at (75,15) width 31: " x"
+              text run at (0,15) width 75: "xxxxx"
+          RenderText {#text} at (75,15) size 30x15
+            text run at (75,15) width 30: " x"

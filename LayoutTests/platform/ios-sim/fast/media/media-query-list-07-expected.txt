@@ -2,4 +2,9 @@ Test the MediaQueryList interface: http://dev.w3.org/csswg/cssom-view/#the-media
 
 Invalid listeners. Two callbacks are expected.
 
+query.addListener(5) threw exception as expected
+query.addListener('cinco') threw exception as expected
+query.addListener([1,2]) threw exception as expected
+[1] - query screen changed to false
+[2] - query screen changed to false
 

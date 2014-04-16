@@ -10,7 +10,7 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (155,10) size 170x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 170x23
         chunk 1 (middle anchor) text run 1 at (155.32,28.00) startOffset 0 endOffset 22 width 169.37: "'marker' property test"
-    RenderSVGText {text} at (171,52) size 137x23 contains 1 chunk(s)
+    RenderSVGText {text} at (171,52) size 138x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 137x23
         chunk 1 (middle anchor) text run 1 at (171.70,70.00) startOffset 0 endOffset 17 width 136.59: "'marker' property"
     RenderSVGContainer {g} at (57,77) size 366x86 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,20.00)}] [start marker=marker1] [middle marker=marker1] [end marker=marker1]

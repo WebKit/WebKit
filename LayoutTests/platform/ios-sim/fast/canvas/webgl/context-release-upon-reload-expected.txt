@@ -1,0 +1,9 @@
+This test ensures that WebGL contexts are released properly upon page reload
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS All drawing buffers were allocated at the correct size
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

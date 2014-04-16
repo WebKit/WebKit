@@ -1,5 +1,14 @@
 2014-04-16  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/129171> Rebaseline LayoutTests for iOS
+
+        3206 files changed, 65535 insertions(+), 39972 deletions(-)
+
+        * platform/ios-sim/Skipped: Clean up old items.  Skip tests that
+        time out due to notifyDone() not being called.
+
+2014-04-16  David Kilzer  <ddkilzer@apple.com>
+
         Upstream iOS layout test results
 
         7354 files changed, 367781 insertions(+)

@@ -27,10 +27,10 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (6,6) size 40x20 [bgcolor=#0000FF]
         RenderText {#text} at (6,31) size 16x19
           text run at (6,31) width 16: "A "
-        RenderBlock {DIV} at (22,26) size 35x20 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (21,26) size 36x20 [bgcolor=#FF0000]
         RenderText {#text} at (6,56) size 15x19
           text run at (6,56) width 15: "B "
-        RenderBlock {DIV} at (21,51) size 20x20 [bgcolor=#008000]
+        RenderBlock {DIV} at (20,51) size 21x20 [bgcolor=#008000]
         RenderText {#text} at (40,56) size 16x19
           text run at (40,56) width 16: " C"
       RenderBlock (anonymous) at (0,212) size 784x40
@@ -41,9 +41,9 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (6,6) size 40x20 [bgcolor=#0000FF]
         RenderText {#text} at (6,31) size 16x19
           text run at (6,31) width 16: "A "
-        RenderBlock {DIV} at (22,26) size 35x20 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (21,26) size 36x20 [bgcolor=#FF0000]
         RenderText {#text} at (6,56) size 15x19
           text run at (6,56) width 15: "B "
-        RenderBlock {DIV} at (21,51) size 20x20 [bgcolor=#008000]
+        RenderBlock {DIV} at (20,51) size 21x20 [bgcolor=#008000]
         RenderText {#text} at (40,56) size 16x19
           text run at (40,56) width 16: " C"
