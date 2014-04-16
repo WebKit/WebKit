@@ -1,3 +1,13 @@
+2014-04-16  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Seeks into buffered ranges will never complete.
+        https://bugs.webkit.org/show_bug.cgi?id=131717
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-seek-complete-expected.txt: Added.
+        * media/media-source/media-source-seek-complete.html: Added.
+
 2014-04-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening. Some test modules come to crash since buildbot uses

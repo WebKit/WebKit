@@ -338,6 +338,8 @@ void SourceBuffer::sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const Med
 
         provideMediaData(trackBuffer, trackID);
     }
+
+    m_source->monitorSourceBuffers();
 }
 
 MediaTime SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
