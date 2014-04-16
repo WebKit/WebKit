@@ -1,3 +1,10 @@
+2014-04-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, ARMv7 build fix after r167336.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchAdd32):
+
 2014-04-16  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Unreviewed, ARM64 buildfix after r167336.
