@@ -129,8 +129,6 @@
 		1A15841A189044F50017616C /* WKProcessPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A158418189044F50017616C /* WKProcessPool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A17977F137EE82C00F97D45 /* PluginCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */; };
 		1A179780137EE82C00F97D45 /* PluginCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A17977E137EE82C00F97D45 /* PluginCreationParameters.h */; };
-		1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A186EE812EF7618008E5F37 /* LayerTreeHost.h */; };
-		1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A186EE912EF7618008E5F37 /* LayerTreeHost.cpp */; };
 		1A1B0EB518A424950038481A /* WKNavigationResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1B0EB318A424950038481A /* WKNavigationResponse.mm */; };
 		1A1B0EB618A424950038481A /* WKNavigationResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1B0EB418A424950038481A /* WKNavigationResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A1B0EB818A424CD0038481A /* WKNavigationResponseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1B0EB718A424CD0038481A /* WKNavigationResponseInternal.h */; };
@@ -1898,8 +1896,6 @@
 		1A17635516B1D5D000D88FD6 /* StorageNamespaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceImpl.h; sourceTree = "<group>"; };
 		1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginCreationParameters.cpp; sourceTree = "<group>"; };
 		1A17977E137EE82C00F97D45 /* PluginCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginCreationParameters.h; sourceTree = "<group>"; };
-		1A186EE812EF7618008E5F37 /* LayerTreeHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeHost.h; sourceTree = "<group>"; };
-		1A186EE912EF7618008E5F37 /* LayerTreeHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayerTreeHost.cpp; sourceTree = "<group>"; };
 		1A1B0EB318A424950038481A /* WKNavigationResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNavigationResponse.mm; sourceTree = "<group>"; };
 		1A1B0EB418A424950038481A /* WKNavigationResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationResponse.h; sourceTree = "<group>"; };
 		1A1B0EB718A424CD0038481A /* WKNavigationResponseInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationResponseInternal.h; sourceTree = "<group>"; };
@@ -5347,8 +5343,6 @@
 				1AA575FD1496B6F300A4EE06 /* EventDispatcher.messages.in */,
 				1A90C1F31264FD71003E44D4 /* FindController.cpp */,
 				1A90C1F21264FD71003E44D4 /* FindController.h */,
-				1A186EE912EF7618008E5F37 /* LayerTreeHost.cpp */,
-				1A186EE812EF7618008E5F37 /* LayerTreeHost.h */,
 				7C387433172F5615001BD88A /* PageBanner.cpp */,
 				7CF47FF917275C57008ACB91 /* PageBanner.h */,
 				1A90C23612650717003E44D4 /* PageOverlay.cpp */,
@@ -6803,7 +6797,6 @@
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 				C59C4A5918B81174007BDCB6 /* AssistedNodeInformation.h in Headers */,
-				1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */,
 				1A1D8BA21731A36300141DA4 /* LocalStorageDatabase.h in Headers */,
 				1A8C728D1738477C000A6554 /* LocalStorageDatabaseTracker.h in Headers */,
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
@@ -8243,7 +8236,6 @@
 				1AE4987911FF7FAA0048B464 /* JSNPObject.cpp in Sources */,
 				BCE0937714FB128C001138D9 /* LayerHostingContext.mm in Sources */,
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */,
-				1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */,
 				1A1D8BA11731A36300141DA4 /* LocalStorageDatabase.cpp in Sources */,
 				1A8C728C1738477C000A6554 /* LocalStorageDatabaseTracker.cpp in Sources */,
 				51A7F2F5125BF8D4008AEB1D /* Logging.cpp in Sources */,

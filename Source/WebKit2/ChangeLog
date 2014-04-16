@@ -1,3 +1,29 @@
+2014-04-16  Tim Horton  <timothy_horton@apple.com>
+
+        Don't build LayerTreeHost on Mac (and clean it up)
+        https://bugs.webkit.org/show_bug.cgi?id=131769
+
+        Reviewed by Simon Fraser.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Don't include it in the project.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::updatePreferences):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updatePreferences):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::setLayerHostingMode): Deleted.
+        (WebKit::LayerTreeHost::supportsAcceleratedCompositing): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        Get rid of LayerTreeHost::supportsAcceleratedCompositing, which always returns true everywhere.
+        Remove some LayerTreeHost.h includes.
+        Remove LayerTreeHost::setLayerHostingMode, which is PLATFORM(COCOA) and not needed.
+
 2014-04-16  Simon Fraser  <simon.fraser@apple.com>
 
         Failing to decode a layer tree commit message resulted in silent and mysterious failure

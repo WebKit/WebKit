@@ -36,7 +36,6 @@
 #import "GestureTypes.h"
 #import "InjectedBundleUserMessageCoders.h"
 #import "InteractionInformationAtPosition.h"
-#import "LayerTreeHost.h"
 #import "PluginView.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"

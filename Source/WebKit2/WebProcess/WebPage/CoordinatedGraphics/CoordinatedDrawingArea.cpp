@@ -221,7 +221,7 @@ void CoordinatedDrawingArea::setPaintingEnabled(bool paintingEnabled)
 
 void CoordinatedDrawingArea::updatePreferences(const WebPreferencesStore& store)
 {
-    m_webPage->corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()) && LayerTreeHost::supportsAcceleratedCompositing());
+    m_webPage->corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()));
 }
 
 void CoordinatedDrawingArea::mainFrameContentSizeChanged(const WebCore::IntSize&)

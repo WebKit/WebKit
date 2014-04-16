@@ -30,7 +30,6 @@
 #include "Arguments.h"
 #include "InjectedBundleScriptWorld.h"
 #include "InjectedBundleUserMessageCoders.h"
-#include "LayerTreeHost.h"
 #include "NotificationPermissionRequestManager.h"
 #include "SessionTracker.h"
 #include "WKAPICast.h"
@@ -218,9 +217,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     macro(WebKitEnableCaretBrowsing, CaretBrowsingEnabled, caretBrowsingEnabled) \
     macro(WebKitDisplayImagesKey, LoadsImagesAutomatically, loadsImagesAutomatically) \
     macro(WebKitMediaStreamEnabled, MediaStreamEnabled, mediaStreamEnabled)
-
-    if (preference == "WebKitAcceleratedCompositingEnabled")
-        enabled = enabled && LayerTreeHost::supportsAcceleratedCompositing();
 
 #define OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(TestRunnerName, SettingsName, WebPreferencesName) \
     if (preference == #TestRunnerName) { \
