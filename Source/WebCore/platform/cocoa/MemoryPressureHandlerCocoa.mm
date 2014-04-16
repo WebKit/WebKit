@@ -38,6 +38,7 @@
 #if PLATFORM(IOS)
 #import "SystemMemory.h"
 #import "WebCoreThread.h"
+#import <dispatch/private.h>
 #endif
 
 namespace WebCore {
@@ -51,8 +52,6 @@ void MemoryPressureHandler::platformReleaseMemory(bool)
     IOSurfacePool::sharedPool().discardAllSurfaces();
 #endif
 }
-
-#if PLATFORM(MAC)
 
 static dispatch_source_t _cache_event_source = 0;
 static dispatch_source_t _timer_event_source = 0;
@@ -73,14 +72,18 @@ void MemoryPressureHandler::install()
         return;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
+        _cache_event_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYSTATUS, 0, DISPATCH_MEMORYSTATUS_PRESSURE_WARN, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+#elif PLATFORM(MAC) && MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         _cache_event_source = wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue();
 #else
         _cache_event_source = wkCreateVMPressureDispatchOnMainQueue();
 #endif
         if (_cache_event_source) {
             dispatch_set_context(_cache_event_source, this);
-            dispatch_source_set_event_handler(_cache_event_source, ^{ memoryPressureHandler().respondToMemoryPressure();});
+            dispatch_source_set_event_handler(_cache_event_source, ^{
+                memoryPressureHandler().respondToMemoryPressure();
+            });
             dispatch_resume(_cache_event_source);
         }
     });
@@ -156,8 +159,7 @@ void MemoryPressureHandler::respondToMemoryPressure()
     holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
 }
 
-#else // !PLATFORM(MAC)
-
+#if PLATFORM(IOS)
 static void respondToMemoryPressureCallback(CFRunLoopObserverRef observer, CFRunLoopActivity /*activity*/, void* /*info*/)
 {
     memoryPressureHandler().respondToMemoryPressureIfNeeded();

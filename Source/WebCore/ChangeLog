@@ -1,3 +1,23 @@
+2014-04-15  Andreas Kling  <akling@apple.com>
+
+        [iOS WebKit2] Listen for system memory pressure notifications.
+        <https://webkit.org/b/131653>
+        <rdar://problem/16208123>
+
+        Reviewed by Antti Koivisto.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+
+            Use the right invocation to summon the memory pressure handler.
+
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::uninstall):
+        (WebCore::MemoryPressureHandler::holdOff):
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+
+            Make stubbed out functions !PLATFORM(COCOA)
+
 2014-04-14  Morten Stenshorne  <mstensho@opera.com>
 
         [New Multicolumn] Add support for column-span:all

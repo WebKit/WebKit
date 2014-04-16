@@ -95,14 +95,11 @@ void MemoryPressureHandler::releaseMemory(bool critical)
     WTF::releaseFastMallocFreeMemory();
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }
 void MemoryPressureHandler::respondToMemoryPressure() { }
-#endif
-
-#if !PLATFORM(COCOA)
 void MemoryPressureHandler::platformReleaseMemory(bool) { }
 #endif
 
