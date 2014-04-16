@@ -30,14 +30,9 @@
 #ifndef Shape_h
 #define Shape_h
 
-#include "BasicShapes.h"
 #include "LayoutRect.h"
 #include "Path.h"
-#include "RoundedRect.h"
-#include "StyleImage.h"
 #include "WritingMode.h"
-#include <memory>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -51,6 +46,10 @@ struct LineSegment {
     float logicalLeft;
     float logicalRight;
 };
+
+class BasicShape;
+class Image;
+class RoundedRect;
 
 typedef Vector<LineSegment> SegmentList;
 

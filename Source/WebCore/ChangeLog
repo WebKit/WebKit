@@ -1,3 +1,17 @@
+2014-04-16  Zoltan Horvath  <zoltan@webkit.org>
+
+        Vanish unnecessary includes from Shapes.{h|cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=131762
+
+        Reviewed by Andreas Kling.
+
+        No new tests, no behavior change.
+
+        * rendering/shapes/BoxShape.h:
+        * rendering/shapes/Shape.cpp:
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2014-04-16  Andreas Kling  <akling@apple.com>
 
         Revert direct caching of tagName and nodeName from r167383.

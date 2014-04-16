@@ -31,9 +31,12 @@
 #define BoxShape_h
 
 #include "FloatRoundedRect.h"
+#include "RenderStyleConstants.h"
 #include "Shape.h"
 
 namespace WebCore {
+
+class RenderBox;
 
 RoundedRect computeRoundedRectForBoxShape(CSSBoxType, const RenderBox&);
 

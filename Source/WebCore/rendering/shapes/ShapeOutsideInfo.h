@@ -34,6 +34,7 @@
 
 #include "LayoutSize.h"
 #include "Shape.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 

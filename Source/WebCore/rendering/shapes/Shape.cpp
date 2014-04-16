@@ -32,15 +32,12 @@
 
 #include "BasicShapeFunctions.h"
 #include "BoxShape.h"
-#include "CachedImage.h"
-#include "FloatSize.h"
 #include "ImageBuffer.h"
 #include "LengthFunctions.h"
 #include "PolygonShape.h"
 #include "RasterShape.h"
 #include "RectangleShape.h"
 #include "WindRule.h"
-#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
