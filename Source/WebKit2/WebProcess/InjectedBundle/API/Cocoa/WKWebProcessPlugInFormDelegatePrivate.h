@@ -40,6 +40,10 @@
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willSubmitForm:(WKWebProcessPlugInNodeHandle *)form toFrame:(WKWebProcessPlugInFrame *)frame fromFrame:(WKWebProcessPlugInFrame *)sourceFrame withValues:(NSDictionary *)values;
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller textDidChangeInTextField:(WKWebProcessPlugInNodeHandle *)textField inFrame:(WKWebProcessPlugInFrame *)frame initiatedByUserTyping:(BOOL)initiatedByUserTyping;
 
+// FIXME: Once no one implements the above willSubmitForm:, remove "new" from the name.
+// The return value is exposed in the UI process via the userObject parameter to [id <_WKFormDelegate> _webView:willSubmitFormValues:userObject:submissionHandler:].
+- (NSObject <NSSecureCoding> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller newWillSubmitForm:(WKWebProcessPlugInNodeHandle *)form toFrame:(WKWebProcessPlugInFrame *)frame fromFrame:(WKWebProcessPlugInFrame *)sourceFrame withValues:(NSDictionary *)values;
+
 // The return value is exposed in the UI process via the userObject property of the _WKFormInputSession object.
 - (NSObject <NSSecureCoding> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willBeginInputSessionForElement:(WKWebProcessPlugInNodeHandle *)node inFrame:(WKWebProcessPlugInFrame *)frame;
 

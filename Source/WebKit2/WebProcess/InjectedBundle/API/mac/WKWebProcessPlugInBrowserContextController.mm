@@ -407,11 +407,37 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             }
         }
 
+        static void encodeUserObject(NSObject <NSSecureCoding> *userObject, RefPtr<API::Object>& userData)
+        {
+            if (!userObject)
+                return;
+
+            auto data = adoptNS([[NSMutableData alloc] init]);
+            auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+            [archiver setRequiresSecureCoding:YES];
+            @try {
+                [archiver encodeObject:userObject forKey:@"userObject"];
+            } @catch (NSException *exception) {
+                LOG_ERROR("Failed to encode user object: %@", exception);
+                return;
+            }
+            [archiver finishEncoding];
+
+            userData = API::Data::createWithoutCopying((const unsigned char*)[data bytes], [data length], releaseNSData, data.leakRef()).leakRef();
+        }
+
         virtual void willSubmitForm(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& values, RefPtr<API::Object>& userData) override
         {
             auto formDelegate = m_controller->_formDelegate.get();
 
-            if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willSubmitForm:toFrame:fromFrame:withValues:)]) {
+            if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:newWillSubmitForm:toFrame:fromFrame:withValues:)]) {
+                auto valueMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:values.size()]);
+                for (const auto& pair : values)
+                    [valueMap setObject:pair.second forKey:pair.first];
+
+                NSObject <NSSecureCoding> *userObject = [formDelegate _webProcessPlugInBrowserContextController:m_controller newWillSubmitForm:wrapper(*InjectedBundleNodeHandle::getOrCreate(formElement).get()) toFrame:wrapper(*frame) fromFrame:wrapper(*sourceFrame) withValues:valueMap.get()];
+                encodeUserObject(userObject, userData);
+            } else if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willSubmitForm:toFrame:fromFrame:withValues:)]) {
                 auto valueMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:values.size()]);
                 for (const auto& pair : values)
                     [valueMap setObject:pair.second forKey:pair.first];
@@ -441,21 +467,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
                 return;
 
             NSObject <NSSecureCoding> *userObject = [formDelegate _webProcessPlugInBrowserContextController:m_controller willBeginInputSessionForElement:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(element)) inFrame:wrapper(*frame)];
-            if (!userObject)
-                return;
-
-            auto data = adoptNS([[NSMutableData alloc] init]);
-            auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-            [archiver setRequiresSecureCoding:YES];
-            @try {
-                [archiver encodeObject:userObject forKey:@"userObject"];
-            } @catch (NSException *exception) {
-                LOG_ERROR("Failed to encode user object: %@", exception);
-                return;
-            }
-            [archiver finishEncoding];
-
-            userData = API::Data::createWithoutCopying((const unsigned char*)[data bytes], [data length], releaseNSData, data.leakRef()).leakRef();
+            encodeUserObject(userObject, userData);
         }
 
     private:

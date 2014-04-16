@@ -1,3 +1,25 @@
+2014-04-15  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add a form delegate method corresponding to willSubmitForm
+        https://bugs.webkit.org/show_bug.cgi?id=131718
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setFormDelegate:]): Changed to define and create a FormClient (which derives
+        from API::FormClient and messages a delegate), and set it as the form client.
+
+        * UIProcess/API/Cocoa/_WKFormDelegate.h: Declared new delegate method.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h: Added a
+        variant of willSubmitForm that returs a user object to pass to the delegate in the UI
+        process, giving it a temporary name with “new”.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]): Changed willSubmitForm()
+        to check for the new bundle delegate method first and encode the user object as user data.
+        Moved the encoding of an NSObject <NSSecureCoding> as user data into a helper function.
+
 2014-04-15  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Make page overlay functionality working on coordinated graphics.

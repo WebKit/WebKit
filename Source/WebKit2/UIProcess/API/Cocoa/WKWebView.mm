@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "APIFormClient.h"
 #import "FindClient.h"
 #import "NavigationState.h"
 #import "RemoteLayerTreeTransaction.h"
@@ -52,10 +53,12 @@
 #import "WebBackForwardList.h"
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
+#import "WebFormSubmissionListenerProxy.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKFindDelegate.h"
+#import "_WKFormDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
 #import <wtf/RetainPtr.h>
@@ -1185,6 +1188,59 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_setFormDelegate:(id <_WKFormDelegate>)formDelegate
 {
     _formDelegate = formDelegate;
+
+    class FormClient : public API::FormClient {
+    public:
+        explicit FormClient(WKWebView *webView)
+            : m_webView(webView)
+        {
+        }
+
+        virtual ~FormClient() { }
+
+        virtual bool willSubmitForm(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebFrameProxy* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& textFieldValues, API::Object* userData, WebKit::WebFormSubmissionListenerProxy* listener) override
+        {
+            if (userData && userData->type() != API::Object::Type::Data) {
+                ASSERT(!userData || userData->type() == API::Object::Type::Data);
+                m_webView->_page->process().connection()->markCurrentlyDispatchedMessageAsInvalid();
+                return false;
+            }
+
+            auto formDelegate = m_webView->_formDelegate.get();
+
+            if (![formDelegate respondsToSelector:@selector(_webView:willSubmitFormValues:userObject:submissionHandler:)])
+                return false;
+
+            auto valueMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:textFieldValues.size()]);
+            for (const auto& pair : textFieldValues)
+                [valueMap setObject:pair.second forKey:pair.first];
+
+            NSObject <NSSecureCoding> *userObject = nil;
+            if (API::Data* data = static_cast<API::Data*>(userData)) {
+                auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(data->bytes())) length:data->size() freeWhenDone:NO]);
+                auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:nsData.get()]);
+                [unarchiver setRequiresSecureCoding:YES];
+                @try {
+                    userObject = [unarchiver decodeObjectOfClass:[NSObject class] forKey:@"userObject"];
+                } @catch (NSException *exception) {
+                    LOG_ERROR("Failed to decode user data: %@", exception);
+                }
+            }
+
+            [formDelegate _webView:m_webView willSubmitFormValues:valueMap.get() userObject:userObject submissionHandler:^{
+                listener->continueSubmission();
+            }];
+            return true;
+        }
+
+    private:
+        WKWebView *m_webView;
+    };
+
+    if (formDelegate)
+        _page->setFormClient(std::make_unique<FormClient>(self));
+    else
+        _page->setFormClient(nullptr);
 }
 
 #pragma mark iOS-specific methods
