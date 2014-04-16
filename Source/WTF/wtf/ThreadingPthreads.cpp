@@ -237,7 +237,7 @@ void changeThreadPriority(ThreadIdentifier threadID, int delta)
 void setCurrentThreadQOSUtility()
 {
 #if OS(MAC_OS_X) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    pthread_set_qos_class_np(pthread_self(), QOS_CLASS_UTILITY, 0);
+    pthread_set_qos_class_self_np(QOS_CLASS_UTILITY, 0);
 #endif
 }
 
