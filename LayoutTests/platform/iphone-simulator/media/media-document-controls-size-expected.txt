@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 145: Localized string "Start Playback" not found.
+CONSOLE MESSAGE: line 145: Localized string "Choose Wireless Display" not found.
+Test that media documents have accurately sized media.
+
+
+EXPECTED (width == '200px') OK
+EXPECTED (height == '180px') OK
+

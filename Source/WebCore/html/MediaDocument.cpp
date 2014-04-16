@@ -91,7 +91,13 @@ void MediaDocumentParser::createDocumentStructure()
     m_mediaElement->setAttribute(autoplayAttr, "");
 
     m_mediaElement->setAttribute(nameAttr, "media");
-    m_mediaElement->setAttribute(styleAttr, "max-width: 100%; max-height: 100%;");
+
+    StringBuilder elementStyle;
+    elementStyle.appendLiteral("max-width: 100%; max-height: 100%;");
+#if PLATFORM(IOS)
+    elementStyle.appendLiteral("width: 100%; height: 100%;");
+#endif
+    m_mediaElement->setAttribute(styleAttr, elementStyle.toString());
 
     RefPtr<Element> sourceElement = document()->createElement(sourceTag, false);
     HTMLSourceElement& source = toHTMLSourceElement(*sourceElement);

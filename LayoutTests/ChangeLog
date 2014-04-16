@@ -1,3 +1,13 @@
+2014-04-16  Dean Jackson  <dino@apple.com>
+
+        MediaDocument on iOS should be full page
+        https://bugs.webkit.org/show_bug.cgi?id=131774
+
+        Reviewed by Jer Noble.
+
+        * platform/iphone-simulator/media/media-document-controls-size-expected.txt: Added.
+        * platform/iphone-simulator/media/media-document-controls-size.html: Added.
+
 2014-04-16  Roger Fong  <roger_fong@apple.com>
 
         Add a way for layout tests to determine whether or not a plugin is snapshotted.
