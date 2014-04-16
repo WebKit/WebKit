@@ -1,3 +1,16 @@
+2014-04-16  Zoltan Horvath  <zoltan@webkit.org>
+
+        Cleanup header includes in ShapeOutsideInfo.h
+        https://bugs.webkit.org/show_bug.cgi?id=131750
+
+        Reviewed by Antti Koivisto.
+
+        Make the build faster by removing unnecessary header includes.
+
+        No new tests, no behavior change.
+
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2014-04-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS build.
