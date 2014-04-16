@@ -1,3 +1,20 @@
+2014-04-16  David Hyatt  <hyatt@apple.com>
+
+        Make sure to skip the RenderMultiColumnFlowThread when resolving percentage heights inside columns against
+        containing blocks. The flow thread's auto height should not interfere if a fixed height is specified on
+        an ancestor.
+
+        https://bugs.webkit.org/show_bug.cgi?id=131741
+
+        Reviewed by Simon Fraser.
+
+        Added fast/multicol/percent-height.html.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::skipContainingBlockForPercentHeightCalculation):
+        Add an isInFlowRenderFlowThread check so that we skip those blocks and don't consider them at all
+        when resolving percentage heights.
+
 2014-04-16  Daewoong Jang  <daewoong.jang@navercorp.com>
 
         [WinCairo][cURL] Build fix for WinCairo build with USE(CURL).
