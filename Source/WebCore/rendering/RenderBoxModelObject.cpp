@@ -1719,6 +1719,9 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     RoundedRect outerBorder = style.getRoundedBorderFor(rect, &view(), includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect innerBorder = style.getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(*graphicsContext, rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
 
+    if (outerBorder.rect().isEmpty())
+        return;
+
     bool haveAlphaColor = false;
     bool haveAllSolidEdges = true;
     bool haveAllDoubleEdges = true;

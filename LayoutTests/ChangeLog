@@ -1,3 +1,19 @@
+2014-04-16  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        ASSERTION FAILED: x2 >= x1 in WebCore::RenderObject::drawLineForBoxSide
+        https://bugs.webkit.org/show_bug.cgi?id=127835
+
+        Added test demonstrates four cases:
+        Test #1: Negative upper margin + positive upper padding
+        Test #2: Negative right margin + positive right padding (used to fail)
+        Test #3: Negative bottom margin + positive bottom padding
+        Test #4: Negative left margin + positive left padding (used to fail)
+
+        Reviewed by Darin Adler.
+
+        * fast/css/padding-margin-negative-border-expected.html: Added.
+        * fast/css/padding-margin-negative-border.html: Added.
+
 2014-04-16  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Seeks into buffered ranges will never complete.

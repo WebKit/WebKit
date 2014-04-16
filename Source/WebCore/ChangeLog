@@ -1,3 +1,21 @@
+2014-04-16  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        ASSERTION FAILED: x2 >= x1 in WebCore::RenderObject::drawLineForBoxSide
+        https://bugs.webkit.org/show_bug.cgi?id=127835
+
+        In some cases when a negative margin and a positive padding are applied
+        together to the right and/or left side of the box, the logical width of
+        the borders can be set to a negative value, making the assertion fire.
+        The fix checks if the width or height of the box is negative, and if so,
+        it will not display the borders and shadows of the box.
+
+        Reviewed by Darin Adler.
+
+        Test: fast/css/padding-margin-negative-border.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBorder):
+
 2014-04-16  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Seeks into buffered ranges will never complete.
