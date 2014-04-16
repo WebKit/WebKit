@@ -112,8 +112,11 @@ template<typename T, typename C, typename MF>
 void handleMessage(MessageDecoder& decoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
-    if (!decoder.decode(arguments))
+    if (!decoder.decode(arguments)) {
+        ASSERT(decoder.isInvalid());
         return;
+    }
+
     callMemberFunction(std::move(arguments), object, function);
 }
 
@@ -121,8 +124,10 @@ template<typename T, typename C, typename MF>
 void handleMessage(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
-    if (!decoder.decode(arguments))
+    if (!decoder.decode(arguments)) {
+        ASSERT(decoder.isInvalid());
         return;
+    }
 
     typename T::Reply::ValueType replyArguments;
     callMemberFunction(std::move(arguments), replyArguments, object, function);
@@ -133,8 +138,10 @@ template<typename T, typename C, typename MF>
 void handleMessage(Connection* connection, MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
-    if (!decoder.decode(arguments))
+    if (!decoder.decode(arguments)) {
+        ASSERT(decoder.isInvalid());
         return;
+    }
 
     typename T::Reply::ValueType replyArguments;
     callMemberFunction(connection, std::move(arguments), replyArguments, object, function);
@@ -145,8 +152,10 @@ template<typename T, typename C, typename MF>
 void handleMessage(Connection* connection, MessageDecoder& decoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
-    if (!decoder.decode(arguments))
+    if (!decoder.decode(arguments)) {
+        ASSERT(decoder.isInvalid());
         return;
+    }
     callMemberFunction(connection, std::move(arguments), object, function);
 }
 
@@ -154,8 +163,10 @@ template<typename T, typename C, typename MF>
 void handleMessageVariadic(MessageDecoder& decoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
-    if (!decoder.decode(arguments))
+    if (!decoder.decode(arguments)) {
+        ASSERT(decoder.isInvalid());
         return;
+    }
     callMemberFunction(std::move(arguments), decoder, object, function);
 }
 
@@ -163,8 +174,10 @@ template<typename T, typename C, typename MF>
 void handleMessageVariadic(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
-    if (!decoder.decode(arguments))
+    if (!decoder.decode(arguments)) {
+        ASSERT(decoder.isInvalid());
         return;
+    }
 
     typename T::Reply::ValueType replyArguments;
     callMemberFunction(std::move(arguments), decoder, replyArguments, object, function);
@@ -175,8 +188,10 @@ template<typename T, typename C, typename MF>
 void handleMessageDelayed(Connection* connection, MessageDecoder& decoder, std::unique_ptr<MessageEncoder>& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
-    if (!decoder.decode(arguments))
+    if (!decoder.decode(arguments)) {
+        ASSERT(decoder.isInvalid());
         return;
+    }
 
     RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(connection, std::move(replyEncoder)));
     callMemberFunction(std::move(arguments), delayedReply.release(), object, function);
