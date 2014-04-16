@@ -60,7 +60,7 @@ public:
     virtual bool hasRelativeWidth() const override;
     virtual bool hasRelativeHeight() const override;
 
-    virtual void startAnimation(bool /*catchUpIfNecessary*/ = true) override;
+    virtual void startAnimation(CatchUpAnimation = CatchUp) override;
     virtual void stopAnimation() override;
     virtual void resetAnimation() override;
 

@@ -185,7 +185,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
     drawPattern(ctxt, tileRect, patternTransform, oneTileRect.location(), styleColorSpace, op, destRect, blendMode);
 
 #if PLATFORM(IOS)
-    startAnimation(false);
+    startAnimation(DoNotCatchUp);
 #else
     startAnimation();
 #endif
@@ -223,7 +223,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
     drawPattern(ctxt, srcRect, patternTransform, patternPhase, styleColorSpace, op, dstRect);
 
 #if PLATFORM(IOS)
-    startAnimation(false);
+    startAnimation(DoNotCatchUp);
 #else
     startAnimation();
 #endif

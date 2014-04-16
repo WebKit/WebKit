@@ -1,3 +1,23 @@
+2014-04-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert the boolean param of Image::startAnimation() to an enum
+        https://bugs.webkit.org/show_bug.cgi?id=131742
+
+        Reviewed by Tim Horton.
+
+        Use an enum to make the code more readable.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::startAnimation):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        (WebCore::Image::startAnimation):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::startAnimation):
+        * svg/graphics/SVGImage.h:
+
 2014-04-16  David Hyatt  <hyatt@apple.com>
 
         Make sure to skip the RenderMultiColumnFlowThread when resolving percentage heights inside columns against

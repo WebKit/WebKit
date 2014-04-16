@@ -272,7 +272,7 @@ protected:
     // Animation.
     int repetitionCount(bool imageKnownToBeComplete);  // |imageKnownToBeComplete| should be set if the caller knows the entire image has been decoded.
     bool shouldAnimate();
-    virtual void startAnimation(bool catchUpIfNecessary = true) override;
+    virtual void startAnimation(CatchUpAnimation = CatchUp) override;
     void advanceAnimation(Timer<BitmapImage>&);
 
     // Function that does the real work of advancing the animation.  When

@@ -316,7 +316,7 @@ void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrin
 }
 
 // FIXME: support catchUpIfNecessary.
-void SVGImage::startAnimation(bool /* catchUpIfNecessary */)
+void SVGImage::startAnimation(CatchUpAnimation)
 {
     if (!m_page)
         return;
