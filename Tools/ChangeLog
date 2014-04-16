@@ -1,3 +1,12 @@
+2014-04-16  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] run-javascriptcore-tests fails to run.
+        https://bugs.webkit.org/show_bug.cgi?id=131761
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/build-jsc: For now, don't try to build bmalloc on Windows.
+
 2014-04-16  Andres Gomez  <agomez@igalia.com>
 
         [Win] Pass default parameters to cygwin setup wizard

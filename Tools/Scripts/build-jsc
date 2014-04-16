@@ -127,7 +127,9 @@ sub buildMyProject
     chdirWebKit();
 }
 
-buildMyProject("Source/bmalloc", "bmalloc");
+if (!isAppleWinWebKit() && !isWinCairo()) {
+    buildMyProject("Source/bmalloc", "bmalloc");
+}
 buildMyProject("Source/WTF", "WTF");
 buildMyProject("Source/JavaScriptCore", "JavaScriptCore");
 if (isAppleMacWebKit() && $cli) {
