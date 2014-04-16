@@ -1,23 +1,5 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 306x18
-          text run at (0,0) width 306: "This test forces a plugin to snapshot immediately"
-      RenderBlock (anonymous) at (0,34) size 784x150
-        RenderSnapshottedPlugIn {EMBED} at (0,0) size 300x150
-        RenderText {#text} at (0,0) size 0x0
-layer at (8,42) size 300x150
-  RenderBlock (relative positioned) {DIV} at (0,0) size 300x150
-layer at (8,42) size 300x150
-  RenderBlock (positioned) {DIV} at (0,0) size 300x150
-layer at (24,58) size 203x44
-  RenderBlock (positioned) {DIV} at (16,16) size 203x44 [bgcolor=#FFFFFF]
-    RenderBlock {DIV} at (32,4) size 139x18
-      RenderText {#text} at (0,0) size 139x18
-        text run at (0,0) width 139: "Snapshotted Plug-In"
-    RenderBlock {DIV} at (32,22) size 139x18 [color=#444444]
-      RenderText {#text} at (22,0) size 95x18
-        text run at (22,0) width 95: "Click to restart"
+This test forces a plugin to snapshot immediately
+
+FAIL
+
+

@@ -1,3 +1,16 @@
+2014-04-16  Roger Fong  <roger_fong@apple.com>
+
+        Add a way for layout tests to determine whether or not a plugin is snapshotted.
+        https://bugs.webkit.org/show_bug.cgi?id=131650.
+        <rdar://problem/16615528>
+
+        Reviewed by Dean Jackson.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::isPluginSnapshotted):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-04-16  Zoltan Horvath  <zoltan@webkit.org>
 
         Vanish unnecessary includes from Shapes.{h|cpp}
@@ -15461,7 +15474,6 @@
         * platform/ios/WebSafeGCActivityCallbackIOS.h: Update WebSafeGCActivityCallback
         appropriately for the introduction of another type of GCActivityCallback.
 
-<<<<<<< .mine
 2014-03-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GC timer should intelligently choose between EdenCollections and FullCollections
@@ -16572,7 +16584,6 @@
         (WebCore::RTCPeerConnection::hasLocalStreamWithTrackId):
         * Modules/mediastream/RTCPeerConnection.h:
 
->>>>>>> .r165925
 2014-03-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165815.

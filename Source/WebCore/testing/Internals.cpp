@@ -52,6 +52,7 @@
 #include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLPlugInElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HistoryController.h"
@@ -2214,7 +2215,17 @@ bool Internals::isPluginUnavailabilityIndicatorObscured(Element* element, Except
     RenderEmbeddedObject* embed = toRenderEmbeddedObject(renderer);
     return embed->isReplacementObscured();
 }
-
+    
+bool Internals::isPluginSnapshotted(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+    HTMLPlugInElement* pluginElement = toHTMLPlugInElement(element);
+    return pluginElement->displayState() <= HTMLPlugInElement::DisplayingSnapshot;
+}
+    
 #if ENABLE(MEDIA_SOURCE)
 void Internals::initializeMockMediaSource()
 {

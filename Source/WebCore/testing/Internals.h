@@ -322,6 +322,7 @@ public:
 #endif
 
     bool isPluginUnavailabilityIndicatorObscured(Element*, ExceptionCode&);
+    bool isPluginSnapshotted(Element*, ExceptionCode&);
 
 #if ENABLE(MEDIA_SOURCE)
     void initializeMockMediaSource();

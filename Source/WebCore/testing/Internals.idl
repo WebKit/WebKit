@@ -271,6 +271,7 @@
 #endif
 
     [RaisesException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
+    [RaisesException] boolean isPluginSnapshotted(Element element);
 
     [RaisesException] ClientRect selectionBounds();
     

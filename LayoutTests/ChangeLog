@@ -1,3 +1,15 @@
+2014-04-16  Roger Fong  <roger_fong@apple.com>
+
+        Add a way for layout tests to determine whether or not a plugin is snapshotted.
+        https://bugs.webkit.org/show_bug.cgi?id=131650.
+        <rdar://problem/16615528>
+
+        Reviewed by Dean Jackson.
+
+        Adjust simple.html accordingly, more snapshotting test changes to come.
+        * platform/mac-wk2/plugins/snapshotting/simple-expected.txt:
+        * plugins/snapshotting/simple.html: 
+
 2014-04-16  Oliver Hunt  <oliver@apple.com>
 
         Simple ES6 feature:Array.prototype.fill
