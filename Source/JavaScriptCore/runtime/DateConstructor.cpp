@@ -154,7 +154,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
             || (numArgs >= 5 && (!std::isfinite(doubleArguments[4]) || (doubleArguments[4] > INT_MAX) || (doubleArguments[4] < INT_MIN)))
             || (numArgs >= 6 && (!std::isfinite(doubleArguments[5]) || (doubleArguments[5] > INT_MAX) || (doubleArguments[5] < INT_MIN)))
             || (numArgs >= 7 && (!std::isfinite(doubleArguments[6]) || (doubleArguments[6] > INT_MAX) || (doubleArguments[6] < INT_MIN))))
-            value = QNaN;
+            value = PNaN;
         else {
             GregorianDateTime t;
             int year = JSC::toInt32(doubleArguments[0]);

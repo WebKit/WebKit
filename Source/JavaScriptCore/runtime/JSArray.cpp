@@ -422,7 +422,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
         }
         if (indexingType() == ArrayWithDouble) {
             for (unsigned i = m_butterfly->publicLength(); i-- > newLength;)
-                m_butterfly->contiguousDouble()[i] = QNaN;
+                m_butterfly->contiguousDouble()[i] = PNaN;
         } else {
             for (unsigned i = m_butterfly->publicLength(); i-- > newLength;)
                 m_butterfly->contiguous()[i].clear();
@@ -478,7 +478,7 @@ JSValue JSArray::pop(ExecState* exec)
         RELEASE_ASSERT(length < m_butterfly->vectorLength());
         double value = m_butterfly->contiguousDouble()[length];
         if (value == value) {
-            m_butterfly->contiguousDouble()[length] = QNaN;
+            m_butterfly->contiguousDouble()[length] = PNaN;
             m_butterfly->setPublicLength(length);
             return JSValue(JSValue::EncodeAsDouble, value);
         }
@@ -822,7 +822,7 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned startIndex
             m_butterfly->contiguousDouble()[i] = v;
         }
         for (unsigned i = end; i < oldLength; ++i)
-            m_butterfly->contiguousDouble()[i] = QNaN;
+            m_butterfly->contiguousDouble()[i] = PNaN;
         
         m_butterfly->setPublicLength(oldLength - count);
         return true;
@@ -1440,7 +1440,7 @@ void JSArray::sortVector(ExecState* exec, JSValue compareFunction, CallType call
     for (unsigned i = undefinedElementsThreshold; i < clearElementsThreshold; ++i) {
         ASSERT(i < butterfly()->vectorLength());
         if (indexingType() == ArrayWithDouble)
-            butterfly()->contiguousDouble()[i] = QNaN;
+            butterfly()->contiguousDouble()[i] = PNaN;
         else
             currentIndexingData()[i].clear();
     }
@@ -1684,7 +1684,7 @@ void JSArray::compactForSorting(unsigned& numDefined, unsigned& newRelevantLengt
     for (unsigned i = newRelevantLength; i < myRelevantLength; ++i) {
         ASSERT(i < m_butterfly->vectorLength());
         if (arrayIndexingType == ArrayWithDouble)
-            m_butterfly->contiguousDouble()[i] = QNaN;
+            m_butterfly->contiguousDouble()[i] = PNaN;
         else
             indexingData<arrayIndexingType>()[i].clear();
     }

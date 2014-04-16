@@ -1486,7 +1486,7 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     
 
     // Need to create a new basic block for the continuation at the caller.
-    RefPtr<BasicBlock> block = adoptRef(new BasicBlock(nextOffset, m_numArguments, m_numLocals, QNaN));
+    RefPtr<BasicBlock> block = adoptRef(new BasicBlock(nextOffset, m_numArguments, m_numLocals, PNaN));
 
     // Link the early returns to the basic block we're about to create.
     for (size_t i = 0; i < inlineStackEntry.m_unlinkedBlocks.size(); ++i) {
@@ -3578,7 +3578,7 @@ void ByteCodeParser::parseCodeBlock()
                     m_currentBlock = m_graph.lastBlock();
                     m_currentBlock->bytecodeBegin = m_currentIndex;
                 } else {
-                    RefPtr<BasicBlock> block = adoptRef(new BasicBlock(m_currentIndex, m_numArguments, m_numLocals, QNaN));
+                    RefPtr<BasicBlock> block = adoptRef(new BasicBlock(m_currentIndex, m_numArguments, m_numLocals, PNaN));
                     m_currentBlock = block.get();
                     // This assertion checks two things:
                     // 1) If the bytecodeBegin is greater than currentIndex, then something has gone

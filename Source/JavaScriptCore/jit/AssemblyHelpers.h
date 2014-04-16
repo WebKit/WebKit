@@ -418,7 +418,7 @@ public:
     void jitAssertArgumentCountSane() { }
 #endif
     
-    void sanitizeDouble(FPRReg);
+    void purifyNaN(FPRReg);
 
     // These methods convert between doubles, and doubles boxed and JSValues.
 #if USE(JSVALUE64)

@@ -255,7 +255,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsNumber(value));
                 break;
             }
-            forNode(node).setType(SpecDouble);
+            forNode(node).setType(SpecInt52AsDouble);
             break;
         }
         if (child && child.isInt32()) {
@@ -390,11 +390,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsDoubleNumber(left.asNumber() + right.asNumber()));
                 break;
             }
-            if (isFullRealNumberSpeculation(forNode(node->child1()).m_type)
-                && isFullRealNumberSpeculation(forNode(node->child2()).m_type))
-                forNode(node).setType(SpecDoubleReal);
-            else
-                forNode(node).setType(SpecDouble);
+            forNode(node).setType(
+                typeOfDoubleSum(
+                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -447,7 +445,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsDoubleNumber(left.asNumber() - right.asNumber()));
                 break;
             }
-            forNode(node).setType(SpecDouble);
+            forNode(node).setType(
+                typeOfDoubleDifference(
+                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -504,7 +504,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsDoubleNumber(-child.asNumber()));
                 break;
             }
-            forNode(node).setType(SpecDouble);
+            forNode(node).setType(
+                typeOfDoubleNegation(
+                    forNode(node->child1()).m_type));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -555,11 +557,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsDoubleNumber(left.asNumber() * right.asNumber()));
                 break;
             }
-            if (isFullRealNumberSpeculation(forNode(node->child1()).m_type)
-                || isFullRealNumberSpeculation(forNode(node->child2()).m_type))
-                forNode(node).setType(SpecDoubleReal);
-            else
-                forNode(node).setType(SpecDouble);
+            forNode(node).setType(
+                typeOfDoubleProduct(
+                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -593,7 +593,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsDoubleNumber(left.asNumber() / right.asNumber()));
                 break;
             }
-            forNode(node).setType(SpecDouble);
+            forNode(node).setType(
+                typeOfDoubleQuotient(
+                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -627,7 +629,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsDoubleNumber(fmod(left.asNumber(), right.asNumber())));
                 break;
             }
-            forNode(node).setType(SpecDouble);
+            forNode(node).setType(
+                typeOfDoubleBinaryOp(
+                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -655,7 +659,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsDoubleNumber(a < b ? a : (b <= a ? b : a + b)));
                 break;
             }
-            forNode(node).setType(SpecDouble);
+            forNode(node).setType(
+                typeOfDoubleMinMax(
+                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -683,7 +689,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsDoubleNumber(a > b ? a : (b >= a ? b : a + b)));
                 break;
             }
-            forNode(node).setType(SpecDouble);
+            forNode(node).setType(
+                typeOfDoubleMinMax(
+                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -711,7 +719,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsDoubleNumber(child.asNumber()));
                 break;
             }
-            forNode(node).setType(SpecDouble);
+            forNode(node).setType(typeOfDoubleAbs(forNode(node->child1()).m_type));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -726,7 +734,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(sqrt(child.asNumber())));
             break;
         }
-        forNode(node).setType(SpecDouble);
+        forNode(node).setType(typeOfDoubleUnaryOp(forNode(node->child1()).m_type));
         break;
     }
         
@@ -736,7 +744,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(static_cast<float>(child.asNumber())));
             break;
         }
-        forNode(node).setType(SpecDouble);
+        forNode(node).setType(typeOfDoubleFRound(forNode(node->child1()).m_type));
         break;
     }
         
@@ -746,7 +754,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(sin(child.asNumber())));
             break;
         }
-        forNode(node).setType(SpecDouble);
+        forNode(node).setType(typeOfDoubleUnaryOp(forNode(node->child1()).m_type));
         break;
     }
     
@@ -756,7 +764,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(cos(child.asNumber())));
             break;
         }
-        forNode(node).setType(SpecDouble);
+        forNode(node).setType(typeOfDoubleUnaryOp(forNode(node->child1()).m_type));
         break;
     }
             
@@ -1046,7 +1054,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 clobberWorld(node->origin.semantic, clobberLimit);
                 forNode(node).makeHeapTop();
             } else if (node->arrayMode().isSaneChain())
-                forNode(node).setType(SpecDouble);
+                forNode(node).setType(SpecBytecodeDouble);
             else
                 forNode(node).setType(SpecDoubleReal);
             break;
@@ -1081,13 +1089,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             else if (enableInt52() && node->shouldSpeculateMachineInt())
                 forNode(node).setType(SpecInt52);
             else
-                forNode(node).setType(SpecDouble);
+                forNode(node).setType(SpecInt52AsDouble);
             break;
         case Array::Float32Array:
-            forNode(node).setType(SpecDouble);
+            forNode(node).setType(SpecBytecodeDouble);
             break;
         case Array::Float64Array:
-            forNode(node).setType(SpecDouble);
+            forNode(node).setType(SpecBytecodeDouble);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

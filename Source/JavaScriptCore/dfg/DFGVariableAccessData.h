@@ -314,7 +314,12 @@ public:
         if (m_doubleFormatState != UsingDoubleFormat)
             return false;
         
-        return mergeSpeculation(m_prediction, SpecDouble);
+        SpeculatedType type = m_prediction;
+        if (type & ~SpecBytecodeNumber)
+            type |= SpecDoublePureNaN;
+        if (type & SpecMachineInt)
+            type |= SpecInt52AsDouble;
+        return checkAndSet(m_prediction, type);
     }
     
     NodeFlags flags() const { return m_flags; }

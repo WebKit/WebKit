@@ -40,7 +40,7 @@ namespace JSC { namespace DFG {
 BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, BasicBlock* block)
 {
     // Don't bother to preserve execution frequencies for now.
-    BasicBlock* preHeader = insertionSet.insertBefore(block, QNaN);
+    BasicBlock* preHeader = insertionSet.insertBefore(block, PNaN);
     preHeader->appendNode(
         graph, SpecNone, Jump, block->at(0)->origin, OpInfo(block));
     

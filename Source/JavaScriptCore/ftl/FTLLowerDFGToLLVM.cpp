@@ -2128,7 +2128,7 @@ private:
                 }
                 
                 result = m_out.select(
-                    m_out.doubleEqual(result, result), result, m_out.constDouble(QNaN));
+                    m_out.doubleEqual(result, result), result, m_out.constDouble(PNaN));
                 setDouble(result);
                 return;
             }
@@ -2215,7 +2215,7 @@ private:
                 LValue value = lowDouble(child3);
                 
                 FTL_TYPE_CHECK(
-                    doubleValue(value), child3, SpecFullRealNumber,
+                    doubleValue(value), child3, SpecDoubleReal,
                     m_out.doubleNotEqualOrUnordered(value, value));
                 
                 TypedPointer elementPointer = m_out.baseIndex(
@@ -2414,7 +2414,7 @@ private:
             } else {
                 value = lowDouble(m_node->child2());
                 FTL_TYPE_CHECK(
-                    doubleValue(value), m_node->child2(), SpecFullRealNumber,
+                    doubleValue(value), m_node->child2(), SpecDoubleReal,
                     m_out.doubleNotEqualOrUnordered(value, value));
                 refType = m_out.refDouble;
             }
@@ -2499,7 +2499,7 @@ private:
                     m_out.notZero64(result), usually(continuation), rarely(slowCase));
             } else {
                 LValue result = m_out.loadDouble(pointer);
-                m_out.store64(m_out.constInt64(bitwise_cast<int64_t>(QNaN)), pointer);
+                m_out.store64(m_out.constInt64(bitwise_cast<int64_t>(PNaN)), pointer);
                 results.append(m_out.anchor(boxDouble(result)));
                 m_out.branch(
                     m_out.doubleEqual(result, result),
@@ -2730,7 +2730,7 @@ private:
                 LValue pointer = m_out.phi(m_out.intPtr, originalPointer);
                 
                 m_out.store64(
-                    m_out.constInt64(bitwise_cast<int64_t>(QNaN)),
+                    m_out.constInt64(bitwise_cast<int64_t>(PNaN)),
                     TypedPointer(m_heaps.indexedDoubleProperties.atAnyIndex(), pointer));
                 
                 LValue nextIndex = m_out.sub(index, m_out.int32One);
@@ -3982,7 +3982,7 @@ private:
         
         if (edge.useKind() == NumberUse) {
             m_out.appendTo(notIntCase, continuation);
-            FTL_TYPE_CHECK(jsValueValue(value), edge, SpecFullNumber, isCellOrMisc(value));
+            FTL_TYPE_CHECK(jsValueValue(value), edge, SpecBytecodeNumber, isCellOrMisc(value));
             results.append(m_out.anchor(doubleToInt32(unboxDouble(value))));
             m_out.jump(continuation);
         } else {
@@ -4386,7 +4386,7 @@ private:
         if (hasDouble(structure->indexingType())) {
             for (unsigned i = numElements; i < vectorLength; ++i) {
                 m_out.store64(
-                    m_out.constInt64(bitwise_cast<int64_t>(QNaN)),
+                    m_out.constInt64(bitwise_cast<int64_t>(PNaN)),
                     butterfly, m_heaps.indexedDoubleProperties[i]);
             }
         }

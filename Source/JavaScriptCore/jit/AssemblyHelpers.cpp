@@ -54,10 +54,10 @@ Vector<BytecodeAndMachineOffset>& AssemblyHelpers::decodedCodeMapFor(CodeBlock* 
     return result.iterator->value;
 }
 
-void AssemblyHelpers::sanitizeDouble(FPRReg fpr)
+void AssemblyHelpers::purifyNaN(FPRReg fpr)
 {
     MacroAssembler::Jump notNaN = branchDouble(DoubleEqual, fpr, fpr);
-    static const double NaN = QNaN;
+    static const double NaN = PNaN;
     loadDouble(&NaN, fpr);
     notNaN.link(this);
 }

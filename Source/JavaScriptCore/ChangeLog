@@ -1,3 +1,139 @@
+2014-04-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Discern between NaNs that would be safe to tag and NaNs that need some purification before tagging
+        https://bugs.webkit.org/show_bug.cgi?id=131420
+
+        Reviewed by Oliver Hunt.
+        
+        Rationalizes our handling of NaNs. We now have the notion of pureNaN(), or PNaN, which
+        replaces QNaN and represents a "safe" NaN for our tagging purposes. NaN purification now
+        goes through the purifyNaN() API.
+        
+        SpeculatedType and its clients can now distinguish between a PureNaN and an ImpureNaN.
+        
+        Prediction propagator is made slightly more cautious when dealing with NaNs. It doesn't
+        have to be too cautious since most prediction-based logic only cares about whether or not
+        a value could be an integer.
+        
+        AI is made much more cautious when dealing with NaNs. We don't yet introduce ImpureNaN
+        anywhere in the compiler, but when we do, we ought to be able to trust AI to propagate it
+        soundly and precisely.
+        
+        No performance change because this just unblocks
+        https://bugs.webkit.org/show_bug.cgi?id=131419.
+
+        * API/JSValueRef.cpp:
+        (JSValueMakeNumber):
+        (JSValueToNumber):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationFromValue):
+        (JSC::typeOfDoubleSum):
+        (JSC::typeOfDoubleDifference):
+        (JSC::typeOfDoubleProduct):
+        (JSC::polluteDouble):
+        (JSC::typeOfDoubleQuotient):
+        (JSC::typeOfDoubleMinMax):
+        (JSC::typeOfDoubleNegation):
+        (JSC::typeOfDoubleAbs):
+        (JSC::typeOfDoubleFRound):
+        (JSC::typeOfDoubleBinaryOp):
+        (JSC::typeOfDoubleUnaryOp):
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp:
+        (JSC::DFG::CriticalEdgeBreakingPhase::breakCriticalEdge):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::mergeStateAtTail):
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::createPreHeader):
+        * dfg/DFGNode.h:
+        (JSC::DFG::BranchTarget::BranchTarget):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::speculatedDoubleTypeForPrediction):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSArray):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::makePredictionForDoubleFormat):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayPush):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayPop):
+        (JSC::FTL::LowerDFGToLLVM::compileNewArrayWithSize):
+        (JSC::FTL::LowerDFGToLLVM::numberOrNotCellToInt32):
+        (JSC::FTL::LowerDFGToLLVM::allocateJSArray):
+        * ftl/FTLValueFormat.cpp:
+        (JSC::FTL::reboxAccordingToFormat):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::purifyNaN):
+        (JSC::AssemblyHelpers::sanitizeDouble): Deleted.
+        * jit/AssemblyHelpers.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/DateInstanceCache.h:
+        (JSC::DateInstanceData::DateInstanceData):
+        (JSC::DateInstanceCache::reset):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::TerminatedExecutionError::defaultValue):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::sortVector):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSArray.h:
+        (JSC::JSArray::create):
+        (JSC::JSArray::tryCreateUninitialized):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toNumberSlowCase):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::jsNaN):
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::getPrimitiveNumber):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::parseInt):
+        (JSC::jsStrDecimalLiteral):
+        (JSC::toDouble):
+        (JSC::jsToNumber):
+        (JSC::parseFloat):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::ensureLengthSlow):
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncMax):
+        (JSC::mathProtoFuncMin):
+        * runtime/PureNaN.h: Added.
+        (JSC::pureNaN):
+        (JSC::isImpureNaN):
+        (JSC::purifyNaN):
+        * runtime/TypedArrayAdaptors.h:
+        (JSC::FloatTypedArrayAdaptor::toJSValue):
+
 2014-04-16  Juergen Ributzka  <juergen@apple.com>
 
         Enable system library calls in FTL for ARM64

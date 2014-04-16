@@ -61,7 +61,7 @@ double JSValue::toNumberSlowCase(ExecState* exec) const
         return asCell()->toNumber(exec);
     if (isTrue())
         return 1.0;
-    return isUndefined() ? QNaN : 0; // null and false both convert to 0.
+    return isUndefined() ? PNaN : 0; // null and false both convert to 0.
 }
 
 JSObject* JSValue::toObjectSlowCase(ExecState* exec, JSGlobalObject* globalObject) const

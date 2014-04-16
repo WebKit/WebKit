@@ -68,18 +68,21 @@ static const SpeculatedType SpecInt52AsDouble      = 0x00800000; // It's definit
 static const SpeculatedType SpecInteger            = 0x00e00000; // It's definitely some kind of integer.
 static const SpeculatedType SpecNonIntAsDouble     = 0x01000000; // It's definitely not an Int52 but it's a real number and it's a double.
 static const SpeculatedType SpecDoubleReal         = 0x01800000; // It's definitely a non-NaN double.
-static const SpeculatedType SpecDoubleNaN          = 0x02000000; // It's definitely a NaN.
-static const SpeculatedType SpecDouble             = 0x03800000; // It's either a non-NaN or a NaN double.
+static const SpeculatedType SpecDoublePureNaN      = 0x02000000; // It's definitely a NaN that is sae to tag (i.e. pure).
+static const SpeculatedType SpecDoubleImpureNaN    = 0x04000000; // It's definitely a NaN that is unsafe to tag (i.e. impure).
+static const SpeculatedType SpecDoubleNaN          = 0x06000000; // It's definitely some kind of NaN.
+static const SpeculatedType SpecBytecodeDouble     = 0x03800000; // It's either a non-NaN or a NaN double, but it's definitely not impure NaN.
+static const SpeculatedType SpecDouble             = 0x07800000; // It's either a non-NaN or a NaN double.
 static const SpeculatedType SpecBytecodeRealNumber = 0x01a00000; // It's either an Int32 or a DoubleReal.
 static const SpeculatedType SpecFullRealNumber     = 0x01e00000; // It's either an Int32 or a DoubleReal, or a Int52.
-static const SpeculatedType SpecBytecodeNumber     = 0x03a00000; // It's either an Int32 or a Double.
-static const SpeculatedType SpecFullNumber         = 0x03e00000; // It's either an Int32, Int52, or a Double.
+static const SpeculatedType SpecBytecodeNumber     = 0x03a00000; // It's either an Int32 or a Double, and the Double cannot be an impure NaN.
+static const SpeculatedType SpecFullNumber         = 0x07e00000; // It's either an Int32, Int52, or a Double, and the Double can be impure NaN.
 static const SpeculatedType SpecBoolean            = 0x10000000; // It's definitely a Boolean.
 static const SpeculatedType SpecOther              = 0x20000000; // It's definitely either Null or Undefined.
 static const SpeculatedType SpecMisc               = 0x30000000; // It's definitely either a boolean, Null, or Undefined.
-static const SpeculatedType SpecHeapTop            = 0x3fbfffff; // It can be any of the above, except for SpecInt52.
+static const SpeculatedType SpecHeapTop            = 0x3bbfffff; // It can be any of the above, except for SpecInt52.
 static const SpeculatedType SpecEmpty              = 0x40000000; // It's definitely an empty value marker.
-static const SpeculatedType SpecBytecodeTop        = 0x7fbfffff; // It can be any of the above, except for SpecInt52.
+static const SpeculatedType SpecBytecodeTop        = 0x7bbfffff; // It can be any of the above, except for SpecInt52.
 static const SpeculatedType SpecFullTop            = 0x7fffffff; // It can be any of the above plus anything the DFG chooses.
 
 typedef bool (*SpeculatedTypeChecker)(SpeculatedType);
@@ -396,6 +399,22 @@ TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType);
 SpeculatedType leastUpperBoundOfStrictlyEquivalentSpeculations(SpeculatedType);
 
 bool valuesCouldBeEqual(SpeculatedType, SpeculatedType);
+
+// Precise computation of the type of the result of a double computation after we
+// already know that the inputs are doubles and that the result must be a double. Use
+// the closest one of these that applies.
+SpeculatedType typeOfDoubleSum(SpeculatedType, SpeculatedType);
+SpeculatedType typeOfDoubleDifference(SpeculatedType, SpeculatedType);
+SpeculatedType typeOfDoubleProduct(SpeculatedType, SpeculatedType);
+SpeculatedType typeOfDoubleQuotient(SpeculatedType, SpeculatedType);
+SpeculatedType typeOfDoubleMinMax(SpeculatedType, SpeculatedType);
+SpeculatedType typeOfDoubleNegation(SpeculatedType);
+SpeculatedType typeOfDoubleAbs(SpeculatedType);
+SpeculatedType typeOfDoubleFRound(SpeculatedType);
+
+// This conservatively models the behavior of arbitrary double operations.
+SpeculatedType typeOfDoubleBinaryOp(SpeculatedType, SpeculatedType);
+SpeculatedType typeOfDoubleUnaryOp(SpeculatedType);
 
 } // namespace JSC
 

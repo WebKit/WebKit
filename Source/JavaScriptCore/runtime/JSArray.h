@@ -219,7 +219,7 @@ inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLe
         ASSERT(initialLength < MIN_SPARSE_ARRAY_INDEX);
         if (hasDouble(structure->indexingType())) {
             for (unsigned i = 0; i < vectorLength; ++i)
-                butterfly->contiguousDouble()[i] = QNaN;
+                butterfly->contiguousDouble()[i] = PNaN;
         }
     } else {
         ASSERT(
@@ -254,7 +254,7 @@ inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, un
         butterfly->setPublicLength(initialLength);
         if (hasDouble(structure->indexingType())) {
             for (unsigned i = initialLength; i < vectorLength; ++i)
-                butterfly->contiguousDouble()[i] = QNaN;
+                butterfly->contiguousDouble()[i] = PNaN;
         }
     } else {
         void* temp;

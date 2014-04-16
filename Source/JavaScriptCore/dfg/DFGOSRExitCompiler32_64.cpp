@@ -288,7 +288,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         case DoubleDisplacedInJSStack:
             m_jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT0);
             m_jit.loadDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
-            m_jit.sanitizeDouble(FPRInfo::fpRegT0);
+            m_jit.purifyNaN(FPRInfo::fpRegT0);
             m_jit.storeDouble(FPRInfo::fpRegT0, AssemblyHelpers::addressFor(operand));
             break;
 

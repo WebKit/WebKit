@@ -2868,7 +2868,7 @@ void SpeculativeJIT::compile(Node* node)
             FPRReg valueFPR = value.fpr();
 
             DFG_TYPE_CHECK(
-                JSValueRegs(), node->child2(), SpecFullRealNumber,
+                JSValueRegs(), node->child2(), SpecDoubleReal,
                 m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, valueFPR, valueFPR));
             
             m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
@@ -2955,7 +2955,7 @@ void SpeculativeJIT::compile(Node* node)
                 // FIXME: This would not have to be here if changing the publicLength also zeroed the values between the old
                 // length and the new length.
                 m_jit.store64(
-                    MacroAssembler::TrustedImm64(bitwise_cast<int64_t>(QNaN)), MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight));
+                    MacroAssembler::TrustedImm64(bitwise_cast<int64_t>(PNaN)), MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight));
                 slowCase = m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, tempFPR, tempFPR);
                 boxDouble(tempFPR, valueGPR);
             } else {
@@ -3160,7 +3160,7 @@ void SpeculativeJIT::compile(Node* node)
                     SpeculateDoubleOperand operand(this, use);
                     FPRReg opFPR = operand.fpr();
                     DFG_TYPE_CHECK(
-                        JSValueRegs(), use, SpecFullRealNumber,
+                        JSValueRegs(), use, SpecDoubleReal,
                         m_jit.branchDouble(
                             MacroAssembler::DoubleNotEqualOrUnordered, opFPR, opFPR));
                     m_jit.storeDouble(opFPR, MacroAssembler::Address(storageGPR, sizeof(double) * operandIdx));
@@ -3225,7 +3225,7 @@ void SpeculativeJIT::compile(Node* node)
                 FPRReg opFPR = operand.fpr();
                 GPRReg scratchGPR = scratch.gpr();
                 DFG_TYPE_CHECK(
-                    JSValueRegs(), use, SpecFullRealNumber,
+                    JSValueRegs(), use, SpecDoubleReal,
                     m_jit.branchDouble(
                         MacroAssembler::DoubleNotEqualOrUnordered, opFPR, opFPR));
                 m_jit.boxDouble(opFPR, scratchGPR);
@@ -3326,7 +3326,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
             
             if (hasDouble(node->indexingType())) {
-                m_jit.move(TrustedImm64(bitwise_cast<int64_t>(QNaN)), scratchGPR);
+                m_jit.move(TrustedImm64(bitwise_cast<int64_t>(PNaN)), scratchGPR);
                 m_jit.move(sizeGPR, scratch2GPR);
                 MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, scratch2GPR);
                 MacroAssembler::Label loop = m_jit.label();

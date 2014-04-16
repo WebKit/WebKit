@@ -50,7 +50,7 @@ JSValue TerminatedExecutionError::defaultValue(const JSObject*, ExecState* exec,
 {
     if (hint == PreferString)
         return jsNontrivialString(exec, String(ASCIILiteral("JavaScript execution terminated.")));
-    return JSValue(QNaN);
+    return JSValue(PNaN);
 }
 
 JSObject* createTerminatedExecutionException(VM* vm)

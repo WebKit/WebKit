@@ -161,8 +161,8 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
     if (value & SpecInt52)
         myOut.print("Int52");
         
-    if ((value & SpecDouble) == SpecDouble)
-        myOut.print("Double");
+    if ((value & SpecBytecodeDouble) == SpecBytecodeDouble)
+        myOut.print("Bytecodedouble");
     else {
         if (value & SpecInt52AsDouble)
             myOut.print("Int52asdouble");
@@ -174,11 +174,14 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
         else
             isTop = false;
         
-        if (value & SpecDoubleNaN)
-            myOut.print("Doublenan");
+        if (value & SpecDoublePureNaN)
+            myOut.print("Doublepurenan");
         else
             isTop = false;
     }
+    
+    if (value & SpecDoubleImpureNaN)
+        out.print("Doubleimpurenan");
     
     if (value & SpecBoolean)
         myOut.print("Bool");
@@ -348,7 +351,7 @@ SpeculatedType speculationFromValue(JSValue value)
     if (value.isDouble()) {
         double number = value.asNumber();
         if (number != number)
-            return SpecDoubleNaN;
+            return SpecDoublePureNaN;
         if (value.isMachineInt())
             return SpecInt52AsDouble;
         return SpecNonIntAsDouble;
@@ -426,6 +429,93 @@ bool valuesCouldBeEqual(SpeculatedType a, SpeculatedType b)
     
     // Neither side is an object or string, so the world is relatively sane.
     return !!(a & b);
+}
+
+SpeculatedType typeOfDoubleSum(SpeculatedType a, SpeculatedType b)
+{
+    SpeculatedType result = a | b;
+    // Impure NaN could become pure NaN during addition because addition may clear bits.
+    if (result & SpecDoubleImpureNaN)
+        result |= SpecDoublePureNaN;
+    // Values could overflow, or fractions could become integers.
+    if (result & SpecDoubleReal)
+        result |= SpecDoubleReal;
+    return result;
+}
+
+SpeculatedType typeOfDoubleDifference(SpeculatedType a, SpeculatedType b)
+{
+    return typeOfDoubleSum(a, b);
+}
+
+SpeculatedType typeOfDoubleProduct(SpeculatedType a, SpeculatedType b)
+{
+    return typeOfDoubleSum(a, b);
+}
+
+static SpeculatedType polluteDouble(SpeculatedType value)
+{
+    // Impure NaN could become pure NaN because the operation could clear some bits.
+    if (value & SpecDoubleImpureNaN)
+        value |= SpecDoubleNaN;
+    // Values could overflow, fractions could become integers, or an error could produce
+    // PureNaN.
+    if (value & SpecDoubleReal)
+        value |= SpecDoubleReal | SpecDoublePureNaN;
+    return value;
+}
+
+SpeculatedType typeOfDoubleQuotient(SpeculatedType a, SpeculatedType b)
+{
+    return polluteDouble(a | b);
+}
+
+SpeculatedType typeOfDoubleMinMax(SpeculatedType a, SpeculatedType b)
+{
+    SpeculatedType result = a | b;
+    // Impure NaN could become pure NaN during addition because addition may clear bits.
+    if (result & SpecDoubleImpureNaN)
+        result |= SpecDoublePureNaN;
+    return result;
+}
+
+SpeculatedType typeOfDoubleNegation(SpeculatedType value)
+{
+    // Impure NaN could become pure NaN because bits might get cleared.
+    if (value & SpecDoubleImpureNaN)
+        value |= SpecDoublePureNaN;
+    // We could get negative zero, which mixes SpecInt52AsDouble and SpecNotIntAsDouble.
+    // We could also overflow a large negative int into something that is no longer
+    // representable as an int.
+    if (value & SpecDoubleReal)
+        value |= SpecDoubleReal;
+    return value;
+}
+
+SpeculatedType typeOfDoubleAbs(SpeculatedType value)
+{
+    return typeOfDoubleNegation(value);
+}
+
+SpeculatedType typeOfDoubleFRound(SpeculatedType value)
+{
+    // We might lose bits, which leads to a NaN being purified.
+    if (value & SpecDoubleImpureNaN)
+        value |= SpecDoublePureNaN;
+    // We might lose bits, which leads to a value becoming integer-representable.
+    if (value & SpecNonIntAsDouble)
+        value |= SpecInt52AsDouble;
+    return value;
+}
+
+SpeculatedType typeOfDoubleBinaryOp(SpeculatedType a, SpeculatedType b)
+{
+    return polluteDouble(a | b);
+}
+
+SpeculatedType typeOfDoubleUnaryOp(SpeculatedType value)
+{
+    return polluteDouble(value);
 }
 
 } // namespace JSC

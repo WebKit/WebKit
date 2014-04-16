@@ -75,7 +75,7 @@ private:
     {
         // Note that we pass NaN for the count of the critical edge block, because we honestly
         // don't know its execution frequency.
-        BasicBlock* pad = m_insertionSet.insertBefore(*successor, QNaN);
+        BasicBlock* pad = m_insertionSet.insertBefore(*successor, PNaN);
         pad->appendNode(
             m_graph, SpecNone, Jump, (*successor)->at(0)->origin, OpInfo(*successor));
         pad->predecessors.append(predecessor);

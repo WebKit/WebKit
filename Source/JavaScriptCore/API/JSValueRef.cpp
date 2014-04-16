@@ -303,13 +303,7 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    // Our JSValue representation relies on a standard bit pattern for NaN. NaNs
-    // generated internally to JavaScriptCore naturally have that representation,
-    // but an external NaN might not.
-    if (std::isnan(value))
-        value = QNaN;
-
-    return toRef(exec, jsNumber(value));
+    return toRef(exec, jsNumber(purifyNaN(value)));
 }
 
 JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
@@ -384,7 +378,7 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return QNaN;
+        return PNaN;
     }
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
@@ -400,7 +394,7 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
 #if ENABLE(REMOTE_INSPECTOR)
         exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exceptionValue);
 #endif
-        number = QNaN;
+        number = PNaN;
     }
     return number;
 }

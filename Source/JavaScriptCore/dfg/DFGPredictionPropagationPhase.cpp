@@ -113,11 +113,14 @@ private:
     
     SpeculatedType speculatedDoubleTypeForPrediction(SpeculatedType value)
     {
+        SpeculatedType result = SpecDoubleReal;
+        if (value & SpecDoubleImpureNaN)
+            result |= SpecDoubleImpureNaN;
+        if (value & SpecDoublePureNaN)
+            result |= SpecDoublePureNaN;
         if (!isFullNumberSpeculation(value))
-            return SpecDouble;
-        if (value & SpecDoubleNaN)
-            return SpecDouble;
-        return SpecDoubleReal;
+            result |= SpecDoublePureNaN;
+        return result;
     }
 
     SpeculatedType speculatedDoubleTypeForPredictions(SpeculatedType left, SpeculatedType right)
@@ -216,7 +219,7 @@ private:
                     // left or right is definitely something other than a number.
                     changed |= mergePrediction(SpecString);
                 } else
-                    changed |= mergePrediction(SpecString | SpecInt32 | SpecDouble);
+                    changed |= mergePrediction(SpecString | SpecInt32 | SpecBytecodeDouble);
             }
             break;
         }
@@ -301,7 +304,7 @@ private:
                     && nodeCanSpeculateInt32(node->arithNodeFlags()))
                     changed |= mergePrediction(SpecInt32);
                 else
-                    changed |= mergePrediction(SpecDouble);
+                    changed |= mergePrediction(SpecBytecodeDouble);
             }
             break;
         }
@@ -315,7 +318,7 @@ private:
                     && nodeCanSpeculateInt32(node->arithNodeFlags()))
                     changed |= mergePrediction(SpecInt32);
                 else
-                    changed |= mergePrediction(SpecDouble);
+                    changed |= mergePrediction(SpecBytecodeDouble);
             }
             break;
         }
@@ -324,7 +327,7 @@ private:
         case ArithFRound:
         case ArithSin:
         case ArithCos: {
-            changed |= setPrediction(SpecDouble);
+            changed |= setPrediction(SpecBytecodeDouble);
             break;
         }
             

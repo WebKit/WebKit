@@ -636,7 +636,7 @@ ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
     DeferGC deferGC(vm.heap);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length, sizeof(double));
     for (unsigned i = newButterfly->vectorLength(); i--;)
-        newButterfly->contiguousDouble()[i] = QNaN;
+        newButterfly->contiguousDouble()[i] = PNaN;
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), AllocateDouble);
     setStructureAndButterfly(vm, newStructure, newButterfly);
     return newButterfly->contiguousDouble();
@@ -690,7 +690,7 @@ ContiguousDoubles JSObject::convertUndecidedToDouble(VM& vm)
     ASSERT(hasUndecided(indexingType()));
     
     for (unsigned i = m_butterfly->vectorLength(); i--;)
-        m_butterfly->contiguousDouble()[i] = QNaN;
+        m_butterfly->contiguousDouble()[i] = PNaN;
     
     setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), AllocateDouble));
     return m_butterfly->contiguousDouble();
@@ -760,7 +760,7 @@ ContiguousDoubles JSObject::convertInt32ToDouble(VM& vm)
         double* currentAsDouble = bitwise_cast<double*>(current);
         JSValue v = current->get();
         if (!v) {
-            *currentAsDouble = QNaN;
+            *currentAsDouble = PNaN;
             continue;
         }
         ASSERT(v.isInt32());
@@ -1320,7 +1320,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
         Butterfly* butterfly = thisObject->butterfly();
         if (i >= butterfly->vectorLength())
             return true;
-        butterfly->contiguousDouble()[i] = QNaN;
+        butterfly->contiguousDouble()[i] = PNaN;
         return true;
     }
         
@@ -2433,7 +2433,7 @@ void JSObject::ensureLengthSlow(VM& vm, unsigned length)
 
     if (hasDouble(indexingType())) {
         for (unsigned i = oldVectorLength; i < newVectorLength; ++i)
-            m_butterfly->contiguousDouble().data()[i] = QNaN;
+            m_butterfly->contiguousDouble().data()[i] = PNaN;
     }
 }
 

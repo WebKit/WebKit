@@ -2718,7 +2718,7 @@ void SpeculativeJIT::compile(Node* node)
             FPRReg valueFPR = value.fpr();
 
             DFG_TYPE_CHECK(
-                JSValueRegs(), node->child2(), SpecFullRealNumber,
+                JSValueRegs(), node->child2(), SpecDoubleReal,
                 m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, valueFPR, valueFPR));
             
             m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
@@ -2834,7 +2834,7 @@ void SpeculativeJIT::compile(Node* node)
                 MacroAssembler::BaseIndex(storageGPR, valuePayloadGPR, MacroAssembler::TimesEight),
                 tempFPR);
             MacroAssembler::Jump slowCase = m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, tempFPR, tempFPR);
-            JSValue nan = JSValue(JSValue::EncodeAsDouble, QNaN);
+            JSValue nan = JSValue(JSValue::EncodeAsDouble, PNaN);
             m_jit.store32(
                 MacroAssembler::TrustedImm32(nan.u.asBits.tag),
                 MacroAssembler::BaseIndex(storageGPR, valuePayloadGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
@@ -3064,7 +3064,7 @@ void SpeculativeJIT::compile(Node* node)
                     SpeculateDoubleOperand operand(this, use);
                     FPRReg opFPR = operand.fpr();
                     DFG_TYPE_CHECK(
-                        JSValueRegs(), use, SpecFullRealNumber,
+                        JSValueRegs(), use, SpecDoubleReal,
                         m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, opFPR, opFPR));
         
                     m_jit.storeDouble(opFPR, MacroAssembler::Address(storageGPR, sizeof(double) * operandIdx));
@@ -3227,7 +3227,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
             
             if (hasDouble(node->indexingType())) {
-                JSValue nan = JSValue(JSValue::EncodeAsDouble, QNaN);
+                JSValue nan = JSValue(JSValue::EncodeAsDouble, PNaN);
                 
                 m_jit.move(sizeGPR, scratchGPR);
                 MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, scratchGPR);

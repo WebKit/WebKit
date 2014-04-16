@@ -24,6 +24,7 @@
 #define JSCJSValue_h
 
 #include <math.h>
+#include "PureNaN.h"
 #include <stddef.h> // for size_t
 #include <stdint.h>
 #include <wtf/Assertions.h>
@@ -35,10 +36,6 @@
 #include <wtf/TriState.h>
 
 namespace JSC {
-
-// This is used a lot throughout JavaScriptCore for everything from value boxing to marking
-// values as being missing, so it is useful to have it abbreviated.
-#define QNaN (std::numeric_limits<double>::quiet_NaN())
 
 class AssemblyHelpers;
 class ExecState;

@@ -84,12 +84,12 @@ void SpeculativeJIT::emitAllocateJSArray(GPRReg resultGPR, Structure* structure,
     
     if (hasDouble(structure->indexingType()) && numElements < vectorLength) {
 #if USE(JSVALUE64)
-        m_jit.move(TrustedImm64(bitwise_cast<int64_t>(QNaN)), scratchGPR);
+        m_jit.move(TrustedImm64(bitwise_cast<int64_t>(PNaN)), scratchGPR);
         for (unsigned i = numElements; i < vectorLength; ++i)
             m_jit.store64(scratchGPR, MacroAssembler::Address(storageGPR, sizeof(double) * i));
 #else
         EncodedValueDescriptor value;
-        value.asInt64 = JSValue::encode(JSValue(JSValue::EncodeAsDouble, QNaN));
+        value.asInt64 = JSValue::encode(JSValue(JSValue::EncodeAsDouble, PNaN));
         for (unsigned i = numElements; i < vectorLength; ++i) {
             m_jit.store32(TrustedImm32(value.asBits.tag), MacroAssembler::Address(storageGPR, sizeof(double) * i + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
             m_jit.store32(TrustedImm32(value.asBits.payload), MacroAssembler::Address(storageGPR, sizeof(double) * i + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
@@ -1891,7 +1891,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 
             if (node->child1().useKind() == NumberUse) {
                 DFG_TYPE_CHECK(
-                    JSValueRegs(gpr), node->child1(), SpecFullNumber,
+                    JSValueRegs(gpr), node->child1(), SpecBytecodeNumber,
                     m_jit.branchTest64(
                         MacroAssembler::Zero, gpr, GPRInfo::tagTypeNumberRegister));
             } else {
@@ -1945,7 +1945,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 
                 if (node->child1().useKind() == NumberUse) {
                     DFG_TYPE_CHECK(
-                        op1.jsValueRegs(), node->child1(), SpecFullNumber,
+                        op1.jsValueRegs(), node->child1(), SpecBytecodeNumber,
                         m_jit.branch32(
                             MacroAssembler::AboveOrEqual, tagGPR,
                             TrustedImm32(JSValue::LowestTag)));
@@ -2507,7 +2507,7 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    m_jit.sanitizeDouble(resultReg);
+    m_jit.purifyNaN(resultReg);
     
     doubleResult(resultReg, node);
 }

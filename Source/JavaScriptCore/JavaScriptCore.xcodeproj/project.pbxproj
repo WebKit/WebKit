@@ -288,6 +288,7 @@
 		0F56A1D315000F35002992B1 /* ExecutionCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56A1D115000F31002992B1 /* ExecutionCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F56A1D515001CF4002992B1 /* ExecutionCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */; };
 		0F572D4F16879FDD00E57FBD /* ThunkGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F572D4D16879FDB00E57FBD /* ThunkGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F5780A218FE1E98001E72D9 /* PureNaN.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5780A118FE1E98001E72D9 /* PureNaN.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5A52D017ADD717008ECB2D /* CopyToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5A52CF17ADD717008ECB2D /* CopyToken.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5A6283188C98D40072C9DF /* FTLValueRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5A6281188C98D40072C9DF /* FTLValueRange.cpp */; };
 		0F5A6284188C98D40072C9DF /* FTLValueRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5A6282188C98D40072C9DF /* FTLValueRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2085,6 +2086,7 @@
 		0F56A1D115000F31002992B1 /* ExecutionCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionCounter.h; sourceTree = "<group>"; };
 		0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionCounter.cpp; sourceTree = "<group>"; };
 		0F572D4D16879FDB00E57FBD /* ThunkGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThunkGenerator.h; sourceTree = "<group>"; };
+		0F5780A118FE1E98001E72D9 /* PureNaN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PureNaN.h; sourceTree = "<group>"; };
 		0F5A52CF17ADD717008ECB2D /* CopyToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyToken.h; sourceTree = "<group>"; };
 		0F5A6281188C98D40072C9DF /* FTLValueRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLValueRange.cpp; path = ftl/FTLValueRange.cpp; sourceTree = "<group>"; };
 		0F5A6282188C98D40072C9DF /* FTLValueRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLValueRange.h; path = ftl/FTLValueRange.h; sourceTree = "<group>"; };
@@ -4143,8 +4145,6 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
-				2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */,
-				2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -4198,8 +4198,8 @@
 				969A09220ED1E09C00F1F681 /* Completion.cpp */,
 				F5BB2BC5030F772101FCFE1D /* Completion.h */,
 				0FDB2CE9174896C7007B3C1B /* ConcurrentJITLock.h */,
-				A53CE08918BC21C300BEDF76 /* ConsoleClient.h */,
 				A5B6A74C18C6DBA600F11E91 /* ConsoleClient.cpp */,
+				A53CE08918BC21C300BEDF76 /* ConsoleClient.h */,
 				A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */,
 				A53CE08218BC1A5600BEDF76 /* ConsolePrototype.h */,
 				A5FD0071189B038C00633231 /* ConsoleTypes.h */,
@@ -4284,12 +4284,12 @@
 				BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */,
 				BC1167D80E19BCC9008066DD /* JSCell.h */,
 				0F97496F1687ADE200A4FF6A /* JSCellInlines.h */,
-				A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */,
-				A53CE08418BC1A5600BEDF76 /* JSConsole.h */,
 				0F1DD84918A945BE0026F3FA /* JSCInlines.h */,
 				F692A8870255597D01FF60F7 /* JSCJSValue.cpp */,
 				14ABB36E099C076400E2A24F /* JSCJSValue.h */,
 				865A30F0135007E100CDB49E /* JSCJSValueInlines.h */,
+				A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */,
+				A53CE08418BC1A5600BEDF76 /* JSConsole.h */,
 				0F2B66BD17B6B5AB00A7AE3F /* JSDataView.cpp */,
 				0F2B66BE17B6B5AB00A7AE3F /* JSDataView.h */,
 				0F2B66BF17B6B5AB00A7AE3F /* JSDataViewPrototype.cpp */,
@@ -4443,6 +4443,7 @@
 				65C02FBB0637462A003E7EE6 /* Protect.h */,
 				14D844A216AA2C7000A65AF0 /* PrototypeMap.cpp */,
 				14D844A316AA2C7000A65AF0 /* PrototypeMap.h */,
+				0F5780A118FE1E98001E72D9 /* PureNaN.h */,
 				0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */,
 				147B84620E6DE6B1004775A4 /* PutPropertySlot.h */,
 				F692A87D0255597D01FF60F7 /* RegExp.cpp */,
@@ -4493,6 +4494,9 @@
 				BCDE3AB10E6C82CF001453A7 /* Structure.h */,
 				7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */,
 				7E4EE7080EBB7963005934AA /* StructureChain.h */,
+				2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */,
+				2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */,
+				2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */,
 				0FD2C92316D01EE900C7803F /* StructureInlines.h */,
 				C2F0F2D016BAEEE900187C19 /* StructureRareData.cpp */,
 				C2FE18A316BAEC4000AF3061 /* StructureRareData.h */,
@@ -4534,7 +4538,6 @@
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
 				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
-				2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -6068,6 +6071,7 @@
 				BC18C43F0E16F5CD00B34460 /* Nodes.h in Headers */,
 				99E45A2818A1B2590026D88F /* NondeterministicInput.h in Headers */,
 				BC18C4410E16F5CD00B34460 /* NumberConstructor.h in Headers */,
+				0F5780A218FE1E98001E72D9 /* PureNaN.h in Headers */,
 				BC18C4420E16F5CD00B34460 /* NumberConstructor.lut.h in Headers */,
 				BC18C4430E16F5CD00B34460 /* NumberObject.h in Headers */,
 				BC18C4440E16F5CD00B34460 /* NumberPrototype.h in Headers */,

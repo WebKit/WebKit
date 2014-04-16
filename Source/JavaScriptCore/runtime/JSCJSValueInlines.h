@@ -66,7 +66,7 @@ inline double JSValue::asNumber() const
 
 inline JSValue jsNaN()
 {
-    return JSValue(QNaN);
+    return JSValue(PNaN);
 }
 
 inline JSValue::JSValue(char i)
@@ -302,6 +302,7 @@ ALWAYS_INLINE JSCell* JSValue::asCell() const
 
 ALWAYS_INLINE JSValue::JSValue(EncodeAsDoubleTag, double d)
 {
+    ASSERT(!isImpureNaN(d));
     u.asDouble = d;
 }
 
@@ -468,6 +469,7 @@ inline double reinterpretInt64ToDouble(int64_t value)
 
 ALWAYS_INLINE JSValue::JSValue(EncodeAsDoubleTag, double d)
 {
+    ASSERT(!isImpureNaN(d));
     u.asInt64 = reinterpretDoubleToInt64(d) + DoubleEncodeOffset;
 }
 
@@ -614,7 +616,7 @@ inline bool JSValue::getPrimitiveNumber(ExecState* exec, double& number, JSValue
         return true;
     }
     ASSERT(isUndefined());
-    number = QNaN;
+    number = PNaN;
     value = *this;
     return true;
 }

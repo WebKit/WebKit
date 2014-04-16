@@ -219,7 +219,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncMax(ExecState* exec)
     for (unsigned k = 0; k < argsCount; ++k) {
         double val = exec->uncheckedArgument(k).toNumber(exec);
         if (std::isnan(val)) {
-            result = QNaN;
+            result = PNaN;
         } else if (val > result || (!val && !result && !std::signbit(val)))
             result = val;
     }
@@ -233,7 +233,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncMin(ExecState* exec)
     for (unsigned k = 0; k < argsCount; ++k) {
         double val = exec->uncheckedArgument(k).toNumber(exec);
         if (std::isnan(val)) {
-            result = QNaN;
+            result = PNaN;
         } else if (val < result || (!val && !result && std::signbit(val)))
             result = val;
     }

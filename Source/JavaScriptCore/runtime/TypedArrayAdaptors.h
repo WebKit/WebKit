@@ -89,9 +89,7 @@ struct FloatTypedArrayAdaptor {
     
     static JSValue toJSValue(Type value)
     {
-        if (value != value)
-            return jsDoubleNumber(QNaN);
-        return jsDoubleNumber(value);
+        return jsDoubleNumber(purifyNaN(value));
     }
     
     static double toDouble(Type value)

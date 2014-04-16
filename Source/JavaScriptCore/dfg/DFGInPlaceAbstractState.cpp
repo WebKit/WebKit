@@ -286,14 +286,8 @@ bool InPlaceAbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             // The block sets the variable, and potentially refines it, both
             // before and after setting it.
             source = forNode(node->child1());
-            if (node->variableAccessData()->flushFormat() == FlushedDouble) {
-                ASSERT(!(source.m_type & ~SpecFullNumber));
-                ASSERT(!!(source.m_type & ~SpecDouble) == !!(source.m_type & SpecMachineInt));
-                if (!(source.m_type & ~SpecDouble)) {
-                    source.merge(SpecInt52AsDouble);
-                    source.filter(SpecDouble);
-                }
-            }
+            if (node->variableAccessData()->flushFormat() == FlushedDouble)
+                RELEASE_ASSERT(!(source.m_type & ~SpecDouble));
             break;
         
         default:

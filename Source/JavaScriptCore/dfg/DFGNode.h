@@ -89,13 +89,13 @@ struct NewArrayBufferData {
 struct BranchTarget {
     BranchTarget()
         : block(0)
-        , count(QNaN)
+        , count(PNaN)
     {
     }
     
     explicit BranchTarget(BasicBlock* block)
         : block(block)
-        , count(QNaN)
+        , count(PNaN)
     {
     }
     
