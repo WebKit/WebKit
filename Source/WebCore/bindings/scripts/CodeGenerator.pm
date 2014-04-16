@@ -166,9 +166,16 @@ sub UpdateFile
     my $fileName = shift;
     my $contents = shift;
 
-    open FH, "> $fileName" or die "Couldn't open $fileName: $!\n";
-    print FH $contents;
-    close FH;
+    if (-e $fileName) {
+        open my $fh, "<", $fileName or die "Couldn't open $fileName: $!\n";
+        my $oldcontents = join '', <$fh>;
+        close $fh or die "Couldn't close $fileName: $!\n";
+        return if $contents eq $oldcontents;
+    }
+
+    open my $fh, ">", $fileName or die "Couldn't open $fileName: $!\n";
+    print $fh $contents;
+    close $fh or die "Couldn't close $fileName: $!\n"
 }
 
 sub ForAllParents

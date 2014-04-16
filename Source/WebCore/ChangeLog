@@ -1,3 +1,16 @@
+2014-04-16  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Fix CodeGenerator.pm to only write files if the generated content has changed
+        https://bugs.webkit.org/show_bug.cgi?id=131756
+
+        Reviewed by Sam Weinig.
+
+        To improve build speed, don't touch generated files unless the newly
+        generated content is actually different.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (UpdateFile):
+
 2014-04-16  Andreas Kling  <akling@apple.com>
 
         Add a way to cache never-changing IDL attributes in the wrapper.
