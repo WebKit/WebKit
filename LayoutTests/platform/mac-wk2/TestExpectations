@@ -327,7 +327,6 @@ webkit.org/b/122235 css3/background/background-repeat-space-border.html [ ImageO
 webkit.org/b/122235 css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
 
 webkit.org/b/122237 [ Debug ] fast/table/crash-section-logical-height-changed-needsCellRecalc.html [ Crash ]
-webkit.org/b/122238 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure ]
 
 webkit.org/b/122456 css3/images/cross-fade-svg-with-opacity.html [ ImageOnlyFailure ]
 
