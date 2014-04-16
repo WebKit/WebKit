@@ -1,3 +1,16 @@
+2014-04-16  Zoltan Horvath  <zoltan@webkit.org>
+
+        Remove fast/parser/parser-yield-timing.html from skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=131749
+
+        Reviewed by Darin Adler.
+
+        The test was originally skipped in Bug 89812 due to flakiness on Chromium
+        debug bots. I run the tests with huge iterations and I don't see
+        flakiness on Mavericks release/debug. Let's remove from skipped for now.
+
+        * platform/mac/TestExpectations:
+
 2014-04-16  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Remove references to Leopard and Snow Leopard from Windows TestExpectations
