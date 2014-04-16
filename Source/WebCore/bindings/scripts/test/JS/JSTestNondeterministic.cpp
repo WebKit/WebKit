@@ -152,8 +152,9 @@ bool JSTestNondeterministic::getOwnPropertySlot(JSObject* object, ExecState* exe
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-EncodedJSValue jsTestNondeterministicNondeterministicReadonlyAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestNondeterministicNondeterministicReadonlyAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName propertyName)
 {
+    UNUSED_PARAM(propertyName);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestNondeterministicPrototype*>(slotBase))
@@ -186,8 +187,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicReadonlyAttr(ExecState* exe
 }
 
 
-EncodedJSValue jsTestNondeterministicNondeterministicWriteableAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestNondeterministicNondeterministicWriteableAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName propertyName)
 {
+    UNUSED_PARAM(propertyName);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestNondeterministicPrototype*>(slotBase))
@@ -220,8 +222,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicWriteableAttr(ExecState* ex
 }
 
 
-EncodedJSValue jsTestNondeterministicNondeterministicExceptionAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestNondeterministicNondeterministicExceptionAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName propertyName)
 {
+    UNUSED_PARAM(propertyName);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestNondeterministicPrototype*>(slotBase))
@@ -254,8 +257,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicExceptionAttr(ExecState* ex
 }
 
 
-EncodedJSValue jsTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName propertyName)
 {
+    UNUSED_PARAM(propertyName);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestNondeterministicPrototype*>(slotBase))
@@ -292,8 +296,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicGetterExceptionAttr(ExecSta
 }
 
 
-EncodedJSValue jsTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName propertyName)
 {
+    UNUSED_PARAM(propertyName);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestNondeterministicPrototype*>(slotBase))

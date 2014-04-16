@@ -25,7 +25,7 @@
 
     // DOM Level 1 Core
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString tagName;
+    [TreatReturnedNullStringAs=Null, ReturnsCacheableValue] readonly attribute DOMString tagName;
 
     [TreatReturnedNullStringAs=Null] DOMString getAttribute([Default=Undefined] optional DOMString name);
     [ObjCLegacyUnnamedParameters, RaisesException] void setAttribute([Default=Undefined] optional DOMString name,
@@ -38,7 +38,7 @@
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
     // For ObjC this is defined on Node for legacy support.
-    readonly attribute NamedNodeMap     attributes;
+    [ReturnsCacheableValue] readonly attribute NamedNodeMap     attributes;
     boolean            hasAttributes();
 #endif
 

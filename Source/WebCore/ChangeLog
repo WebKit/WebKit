@@ -1,3 +1,33 @@
+2014-04-16  Andreas Kling  <akling@apple.com>
+
+        Add a way to cache never-changing IDL attributes in the wrapper.
+        <https://webkit.org/b/131759>
+
+        Some IDL attributes will always return the same value when queried
+        on an object, so let's have a way to avoid calling into C++ code
+        every time they are queried.
+
+        This patch adds a custom IDL thingy called "ReturnsCacheableValue"
+        which causes the code generator to emit code to cache the returned
+        value directly in the JS wrapper object.
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
+            Add ReturnsCacheableValue custom attribute.
+
+        * dom/Element.idl:
+        * dom/Node.idl:
+
+            Annotate some attributes that return fully cacheable values.
+
+        * bindings/scripts/test/*:
+
+            Rebaseline.
+
 2014-04-16  Noel Gordon  <noel.gordon@gmail.com>
 
         Progressive JPEG outputScanlines() calls should handle failure

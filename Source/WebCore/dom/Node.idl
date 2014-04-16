@@ -46,12 +46,12 @@
     const unsigned short      DOCUMENT_FRAGMENT_NODE         = 11;
     const unsigned short      NOTATION_NODE                  = 12;
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        nodeName;
+    [TreatReturnedNullStringAs=Null, ReturnsCacheableValue] readonly attribute DOMString        nodeName;
 
     // FIXME: the spec says this can also raise on retrieval.
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString nodeValue;
 
-    readonly attribute unsigned short   nodeType;
+    [ReturnsCacheableValue] readonly attribute unsigned short   nodeType;
     readonly attribute Node             parentNode;
     readonly attribute NodeList         childNodes;
     readonly attribute Node             firstChild;
