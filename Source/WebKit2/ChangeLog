@@ -1,3 +1,14 @@
+2014-04-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Updating tests after bug 131721, [GTK] Fix unused parameter warnings.
+
+        * Scripts/webkit2/LegacyMessageReceiver-expected.cpp:
+        (WebKit::WebPage::didReceiveWebPageMessage):
+        (WebKit::WebPage::didReceiveSyncWebPageMessage):
+        * Scripts/webkit2/MessageReceiver-expected.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        (WebKit::WebPage::didReceiveSyncMessage):
+
 2014-04-16  Brendan Long  <b.long@cablelabs.com>
 
         [GTK] Fix unused parameter warnings

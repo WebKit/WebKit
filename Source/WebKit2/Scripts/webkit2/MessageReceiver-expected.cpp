@@ -185,6 +185,7 @@ void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder
     }
 #endif
     UNUSED_PARAM(connection);
+    UNUSED_PARAM(decoder);
     ASSERT_NOT_REACHED();
 }
 
@@ -217,6 +218,8 @@ void WebPage::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDec
     }
 #endif
     UNUSED_PARAM(connection);
+    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(replyEncoder);
     ASSERT_NOT_REACHED();
 }
 
