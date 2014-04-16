@@ -1,3 +1,31 @@
+2014-04-16  Tim Horton  <timothy_horton@apple.com>
+
+        check-webkit-style doesn't check code style in .mm or .m files
+        https://bugs.webkit.org/show_bug.cgi?id=131708
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherDispatchTest.test_cpp_paths):
+        (CheckerDispatcherDispatchTest.test_text_paths):
+        Check .mm and .m files as C++.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing):
+        Add an override for our ordinary "missing spaces around =" for @synthesize,
+        which should look like "@synthesize propertyName=_varName;"
+
+        Add an override for "missing space before {" for blocks' "^{".
+
+        Don't follow the "extra space before [" rule for Objective-C, because
+        it breaks this rule in a multitude of ways because of method calls.
+
+        (check_braces):
+        Don't complain about { not being on the end of the previous line if
+        the previous line starts with "- (" or "+ (", which would indicate a
+        Objective-C method definition.
+
 2014-04-16  Darin Adler  <darin@apple.com>
 
         Make Vector::takeLast work with move-only types (and optimize for types where move is faster)

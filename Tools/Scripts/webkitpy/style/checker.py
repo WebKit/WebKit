@@ -257,6 +257,8 @@ _CPP_FILE_EXTENSIONS = [
     'c',
     'cpp',
     'h',
+    'mm',
+    'm',
     ]
 
 _JS_FILE_EXTENSION = 'js'
@@ -277,7 +279,6 @@ _TEXT_FILE_EXTENSIONS = [
     'html',
     'idl',
     'in',
-    'mm',
     'php',
     'pl',
     'pm',
