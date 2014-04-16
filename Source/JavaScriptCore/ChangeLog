@@ -1,3 +1,10 @@
+2014-04-16  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Unreviewed, ARM64 buildfix after r167336.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchAdd32): Add missing function.
+
 2014-04-15  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, add the obvious thing that marks MakeRope as exiting since it can exit.
