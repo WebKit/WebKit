@@ -1,3 +1,18 @@
+2014-04-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Accessing a table cell with an invalid column header crashes
+        https://bugs.webkit.org/show_bug.cgi?id=131719
+
+        Reviewed by Darin Adler.
+
+        If no tableCell is available as a column/row header, then do not continue processing.
+
+        Test: accessibility/table-missing-column-header-crash.html
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::columnHeaders):
+        (WebCore::AccessibilityTableCell::rowHeaders):
+
 2014-04-16  Brendan Long  <b.long@cablelabs.com>
 
         [GTK] Fix unused parameter warnings
