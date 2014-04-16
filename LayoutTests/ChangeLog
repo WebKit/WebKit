@@ -1,5 +1,116 @@
 2014-04-16  David Kilzer  <ddkilzer@apple.com>
 
+        Remove test results that match top-level results
+
+        Found using this shell script:
+
+        $ for F in `find LayoutTests/platform/ios-sim -name \*-expected.txt`; do \
+        T=`echo $F | sed -e 's#platform/ios-sim/##'`; \
+        M=`echo $F | sed -e 's#platform/ios-sim/#platform/mac/#'`; \
+        ML=`echo $F | sed -e 's#platform/ios-sim/#platform/mac-mountainlion/#'`; \
+        if [ ! -f $M -a ! -f $ML -a -f $T -a -z "`diff -u $F $T 2> /dev/null`" ]; then echo $F; fi; \
+        done
+
+        * platform/ios-sim/compositing/layer-creation/no-compositing-for-sticky-expected.txt: Removed.
+        * platform/ios-sim/editing/inserting/insert-3786362-fix-expected.txt: Removed.
+        * platform/ios-sim/editing/inserting/insert-3907422-fix-expected.txt: Removed.
+        * platform/ios-sim/editing/unsupported-content/table-delete-001-expected.txt: Removed.
+        * platform/ios-sim/editing/unsupported-content/table-delete-003-expected.txt: Removed.
+        * platform/ios-sim/fast/block/positioning/move-with-auto-width-expected.txt: Removed.
+        * platform/ios-sim/fast/canvas/2d.backingStorePixelRatio-expected.txt: Removed.
+        * platform/ios-sim/fast/canvas/2d.imageDataHD-expected.txt: Removed.
+        * platform/ios-sim/fast/canvas/canvas-fillPath-shadow-expected.txt: Removed.
+        * platform/ios-sim/fast/canvas/webgl/texture-npot-expected.txt: Removed.
+        * platform/ios-sim/fast/css/MarqueeLayoutTest-expected.txt: Removed.
+        * platform/ios-sim/fast/css/color-leakage-expected.txt: Removed.
+        * platform/ios-sim/fast/css/font-face-multiple-remote-sources-expected.txt: Removed.
+        * platform/ios-sim/fast/css/font-face-remote-expected.txt: Removed.
+        * platform/ios-sim/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/ios-sim/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/ios-sim/fast/css/nested-layers-with-hover-expected.txt: Removed.
+        * platform/ios-sim/fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1-expected.txt: Removed.
+        * platform/ios-sim/fast/dom/Window/window-postmessage-arrays-expected.txt: Removed.
+        * platform/ios-sim/fast/dom/constructed-objects-prototypes-expected.txt: Removed.
+        * platform/ios-sim/fast/dom/gc-10-expected.txt: Removed.
+        * platform/ios-sim/fast/dom/tabindex-clamp-expected.txt: Removed.
+        * platform/ios-sim/fast/dynamic/dirty-float-in-clean-line-expected.txt: Removed.
+        * platform/ios-sim/fast/events/pageshow-pagehide-on-back-cached-with-frames-expected.txt: Removed.
+        * platform/ios-sim/fast/forms/mailto/advanced-get-expected.txt: Removed.
+        * platform/ios-sim/fast/forms/mailto/advanced-put-expected.txt: Removed.
+        * platform/ios-sim/fast/forms/radio/indeterminate-radio-expected.txt: Removed.
+        * platform/ios-sim/fast/forms/select-script-onchange-expected.txt: Removed.
+        * platform/ios-sim/fast/forms/suggested-value-expected.txt: Removed.
+        * platform/ios-sim/fast/history/timed-refresh-in-cached-frame-expected.txt: Removed.
+        * platform/ios-sim/fast/lists/inline-before-content-after-list-marker-expected.txt: Removed.
+        * platform/ios-sim/fast/media/media-query-list-07-expected.txt: Removed.
+        * platform/ios-sim/fast/media/print-restores-previous-mediatype-expected.txt: Removed.
+        * platform/ios-sim/fast/multicol/span/before-child-anonymous-column-block-expected.txt: Removed.
+        * platform/ios-sim/fast/overflow/horizontal-scroll-after-back-expected.txt: Removed.
+        * platform/ios-sim/fast/overflow/scrollbar-restored-expected.txt: Removed.
+        * platform/ios-sim/fast/repaint/table-hover-on-link-expected.txt: Removed.
+        * platform/ios-sim/fast/repaint/table-section-repaint-expected.txt: Removed.
+        * platform/ios-sim/fast/ruby/floating-ruby-text-expected.txt: Removed.
+        * platform/ios-sim/fast/ruby/overhang-horizontal-expected.txt: Removed.
+        * platform/ios-sim/fast/ruby/overhang-horizontal-no-overlap1-expected.txt: Removed.
+        * platform/ios-sim/fast/ruby/overhang-horizontal-no-overlap2-expected.txt: Removed.
+        * platform/ios-sim/fast/ruby/positioned-ruby-text-expected.txt: Removed.
+        * platform/ios-sim/fast/ruby/ruby-text-before-child-split-expected.txt: Removed.
+        * platform/ios-sim/fast/table/empty-row-crash-expected.txt: Removed.
+        * platform/ios-sim/fast/table/empty-section-crash-expected.txt: Removed.
+        * platform/ios-sim/fast/table/inline-form-assert-expected.txt: Removed.
+        * platform/ios-sim/fast/table/max-width-integer-overflow-expected.txt: Removed.
+        * platform/ios-sim/fast/table/table-row-split2-expected.txt: Removed.
+        * platform/ios-sim/fast/table/table-section-split2-expected.txt: Removed.
+        * platform/ios-sim/fast/table/table-split-expected.txt: Removed.
+        * platform/ios-sim/fast/table/table-split2-expected.txt: Removed.
+        * platform/ios-sim/fast/text/apply-start-width-after-skipped-text-expected.txt: Removed.
+        * platform/ios-sim/fast/text/justify-padding-distribution-expected.txt: Removed.
+        * platform/ios-sim/fast/text/selection-painted-separately-expected.txt: Removed.
+        * platform/ios-sim/fast/text/setData-dirty-lines-expected.txt: Removed.
+        * platform/ios-sim/fast/text/soft-hyphen-2-expected.txt: Removed.
+        * platform/ios-sim/fast/text/splitText-dirty-lines-expected.txt: Removed.
+        * platform/ios-sim/fast/transforms/shadows-expected.txt: Removed.
+        * platform/ios-sim/fast/workers/worker-close-more-expected.txt: Removed.
+        * platform/ios-sim/fast/writing-mode/table-percent-width-quirk-expected.txt: Removed.
+        * platform/ios-sim/fast/xmlhttprequest/xmlhttprequest-recursive-sync-event-expected.txt: Removed.
+        * platform/ios-sim/http/tests/appcache/abort-cache-onchecking-manifest-404-expected.txt: Removed.
+        * platform/ios-sim/http/tests/cookies/simple-cookies-expired-expected.txt: Removed.
+        * platform/ios-sim/http/tests/cookies/simple-cookies-max-age-expected.txt: Removed.
+        * platform/ios-sim/http/tests/cookies/single-quoted-value-expected.txt: Removed.
+        * platform/ios-sim/http/tests/misc/empty-urls-expected.txt: Removed.
+        * platform/ios-sim/http/tests/multipart/load-last-non-html-frame-expected.txt: Removed.
+        * platform/ios-sim/http/tests/navigation/post-goback1-expected.txt: Removed.
+        * platform/ios-sim/http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked-expected.txt: Removed.
+        * platform/ios-sim/http/tests/security/contentSecurityPolicy/media-src-blocked-expected.txt: Removed.
+        * platform/ios-sim/http/tests/security/local-video-poster-from-remote-expected.txt: Removed.
+        * platform/ios-sim/http/tests/security/sandboxed-iframe-modify-self-expected.txt: Removed.
+        * platform/ios-sim/http/tests/security/video-poster-cross-origin-crash-expected.txt: Removed.
+        * platform/ios-sim/http/tests/xmlhttprequest/chunked-progress-event-expectedLength-expected.txt: Removed.
+        * platform/ios-sim/http/tests/xmlhttprequest/request-encoding2-expected.txt: Removed.
+        * platform/ios-sim/http/tests/xmlhttprequest/upload-onloadend-event-after-load-expected.txt: Removed.
+        * platform/ios-sim/http/tests/xmlhttprequest/upload-onprogress-event-expected.txt: Removed.
+        * platform/ios-sim/http/tests/xmlhttprequest/upload-progress-events-expected.txt: Removed.
+        * platform/ios-sim/media/csp-blocks-video-expected.txt: Removed.
+        * platform/ios-sim/sputnik/Unicode/Unicode_510/S7.6_A3.1-expected.txt: Removed.
+        * platform/ios-sim/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt: Removed.
+        * platform/ios-sim/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt: Removed.
+        * platform/ios-sim/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt: Removed.
+        * platform/ios-sim/svg/as-image/image-respects-pageScaleFactor-change-expected.txt: Removed.
+        * platform/ios-sim/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/ios-sim/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * platform/ios-sim/svg/custom/dasharrayOrigin-expected.txt: Removed.
+        * platform/ios-sim/svg/custom/getSubStringLength-expected.txt: Removed.
+        * platform/ios-sim/svg/custom/pattern-scaling-expected.txt: Removed.
+        * platform/ios-sim/svg/custom/svg-features-expected.txt: Removed.
+        * platform/ios-sim/svg/dom/altGlyph-dom-expected.txt: Removed.
+        * platform/ios-sim/svg/foreignObject/fO-parent-display-none-expected.txt: Removed.
+        * platform/ios-sim/svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.txt: Removed.
+        * platform/ios-sim/svg/foreignObject/fO-parent-of-parent-display-none-expected.txt: Removed.
+        * platform/ios-sim/svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.txt: Removed.
+        * platform/ios-sim/svg/hittest/svg-ellipse-non-scale-stroke-expected.txt: Removed.
+
+2014-04-16  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/129171> Rebaseline LayoutTests for iOS
 
         3206 files changed, 65535 insertions(+), 39972 deletions(-)
