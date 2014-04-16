@@ -1,5 +1,32 @@
 2014-04-16  David Kilzer  <ddkilzer@apple.com>
 
+        Remove test results that match platform/mac results
+
+        Found using this shell script:
+
+        $ for F in `find LayoutTests/platform/ios-sim -name \*-expected.txt`; do \
+        T=`echo $F | sed -e 's#platform/ios-sim/##'`; \
+        M=`echo $F | sed -e 's#platform/ios-sim/#platform/mac/#'`; \
+        ML=`echo $F | sed -e 's#platform/ios-sim/#platform/mac-mountainlion/#'`; \
+        if [ -f $M -a ! -f $ML -a -z "`diff -u $F $M 2> /dev/null`" ]; then echo $F; fi; \
+        done
+
+        * platform/ios-sim/fast/block/positioning/016-expected.txt: Removed.
+        * platform/ios-sim/fast/block/positioning/025-expected.txt: Removed.
+        * platform/ios-sim/fast/dom/icon-url-property-expected.txt: Removed.
+        * platform/ios-sim/fast/hidpi/focus-rings-expected.txt: Removed.
+        * platform/ios-sim/fast/multicol/shrink-to-column-height-for-pagination-expected.txt: Removed.
+        * platform/ios-sim/fast/preloader/document-write-2-expected.txt: Removed.
+        * platform/ios-sim/fast/preloader/script-expected.txt: Removed.
+        * platform/ios-sim/fast/writing-mode/broken-ideograph-small-caps-expected.txt: Removed.
+        * platform/ios-sim/fast/xsl/sort-locale-expected.txt: Removed.
+        * platform/ios-sim/http/tests/security/mixedContent/insecure-audio-video-in-main-frame-expected.txt: Removed.
+        * platform/ios-sim/sputnik/Unicode/Unicode_320/S7.6_A2.2_T2-expected.txt: Removed.
+        * platform/ios-sim/sputnik/Unicode/Unicode_320/S7.6_A5.2_T8-expected.txt: Removed.
+        * platform/ios-sim/webarchive/loading/mainresource-null-mimetype-crash-expected.txt: Removed.
+
+2014-04-16  David Kilzer  <ddkilzer@apple.com>
+
         Remove test results that match top-level results
 
         Found using this shell script:
