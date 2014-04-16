@@ -232,18 +232,22 @@ private:
 
 void Debugger::setSteppingMode(SteppingMode mode)
 {
-    if (mode == m_steppingMode)
+    if (mode == m_steppingMode || !m_vm)
         return;
-    m_steppingMode = mode;
 
-    if (!m_vm)
-        return;
+    m_vm->waitForCompilationsToComplete();
+
+    m_steppingMode = mode;
     SetSteppingModeFunctor functor(this, mode);
-    forEachCodeBlock(functor);
+    m_vm->heap.forEachCodeBlock(functor);
 }
 
 void Debugger::registerCodeBlock(CodeBlock* codeBlock)
 {
+    // FIXME: We should never have to jettison a code block (due to pending breakpoints
+    // or stepping mode) that is being registered. operationOptimize() should have
+    // prevented the optimizing of such code blocks in the first place. Find a way to
+    // express this with greater clarity in the code. See <https://webkit.org/b131771>.
     applyBreakpoints(codeBlock);
     if (isStepping())
         codeBlock->setSteppingMode(CodeBlock::SteppingModeEnabled);

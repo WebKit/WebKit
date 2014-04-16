@@ -1,3 +1,26 @@
+2014-04-16  Mark Lam  <mark.lam@apple.com>
+
+        Crash in CodeBlock::setOptimizationThresholdBasedOnCompilationResult() when the debugger activates.
+        <https://webkit.org/b/131747>
+
+        Reviewed by Filip Pizlo.
+
+        When the debugger is about to activate (e.g. enter stepping mode), it first
+        waits for all DFG compilations to complete.  However, when the DFG completes,
+        if compilation is successful, it will install a new DFG codeBlock.  The
+        CodeBlock installation process is required to register codeBlocks with the
+        debugger.  Debugger::registerCodeBlock() will eventually call
+        CodeBlock::setSteppingMode() which may jettison the DFG codeBlock that we're
+        trying to install.  Thereafter, chaos ensues.
+
+        This jettison'ing only happens because the debugger currently set its
+        m_steppingMode flag before waiting for compilation to complete.  The fix is
+        simply to set that flag only after compilation is complete.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::setSteppingMode):
+        (JSC::Debugger::registerCodeBlock):
+
 2014-04-16  Filip Pizlo  <fpizlo@apple.com>
 
         Discern between NaNs that would be safe to tag and NaNs that need some purification before tagging
