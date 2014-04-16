@@ -180,16 +180,9 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     xpc_connection_set_event_handler(connection, ^(xpc_object_t event) { });
     xpc_connection_resume(connection);
 
-#if ENABLE(NETWORK_PROCESS) || OS(IOS)
-#if OS(IOS)
-    // Leak a boost onto any WebKit2 process.
-    bool shouldBoost = true;
-#else
+#if ENABLE(NETWORK_PROCESS)
     // Leak a boost onto the NetworkProcess.
-    bool shouldBoost = launchOptions.processType == ProcessLauncher::NetworkProcess;
-#endif
-
-    if (shouldBoost) {
+    if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
         xpc_object_t preBootstrapMessage = xpc_dictionary_create(0, 0, 0);
         xpc_dictionary_set_string(preBootstrapMessage, "message-name", "pre-bootstrap");
         xpc_connection_send_message(connection, preBootstrapMessage);
