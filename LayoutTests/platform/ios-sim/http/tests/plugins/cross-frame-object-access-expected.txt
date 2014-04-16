@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 29: TypeError: 'undefined' is not a function (evaluating 'document.plugin.testEvaluate('top.location')')
+
+
+--------
+Frame: 'childFrame'
+--------
+
+This tests that plug-ins can access objects in other frames as allowed by the security model enforced in WebCore.
+FAILURE

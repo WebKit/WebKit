@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x295
+  RenderBlock {HTML} at (0,0) size 800x295
+    RenderBody {BODY} at (8,16) size 784x263
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 251x19
+          text run at (0,0) width 251: "These <h1>s should all be left-aligned:"
+      RenderBlock {H1} at (0,41) size 784x44 [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,4) size 96x36
+          text run at (3,4) width 96: "sample"
+      RenderBlock {H1} at (0,106) size 326x44 [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,4) size 96x36
+          text run at (3,4) width 96: "sample"
+      RenderBlock {P} at (0,171) size 784x20
+        RenderText {#text} at (0,0) size 284x19
+          text run at (0,0) width 284: "These <p>s should be (and are) left-aligned:"
+      RenderBlock {P} at (0,207) size 784x20
+        RenderText {#text} at (0,0) size 46x19
+          text run at (0,0) width 46: "sample"
+      RenderBlock {P} at (0,243) size 160x20
+        RenderText {#text} at (0,0) size 46x19
+          text run at (0,0) width 46: "sample"

@@ -1,0 +1,15 @@
+FAIL: Timed out waiting for notifyDone to be called
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x0
+  RenderBlock {HTML} at (0,0) size 800x0
+    RenderBody {BODY} at (0,0) size 800x0 [bgcolor=#C0C0C0]
+layer at (0,62) size 254x254
+  RenderPartObject {IFRAME} at (0,62) size 254x254 [border: (2px inset #000000)]
+    layer at (0,0) size 2008x2016
+      RenderView at (0,0) size 250x250
+    layer at (0,0) size 250x2016
+      RenderBlock {HTML} at (0,0) size 250x2016
+        RenderBody {BODY} at (8,8) size 2000x2000 [bgcolor=#FFFFFF]
+          RenderText {#text} at (0,0) size 60x19
+            text run at (0,0) width 60: "scroll me"

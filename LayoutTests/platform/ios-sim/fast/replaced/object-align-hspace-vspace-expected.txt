@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 589x19
+          text run at (0,0) width 589: "vspace and hspace test (20 pixel white margin between blue border and yellow background)"
+      RenderBlock {DIV} at (0,36) size 784x223 [border: (4px solid #0000FF)]
+        RenderImage {OBJECT} at (24,24) size 233x175 [bgcolor=#FFFF00]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,275) size 784x20
+        RenderText {#text} at (0,0) size 227x19
+          text run at (0,0) width 227: "align test (aligned to the right) -->>"
+      RenderImage {OBJECT} at (551,311) size 233x175

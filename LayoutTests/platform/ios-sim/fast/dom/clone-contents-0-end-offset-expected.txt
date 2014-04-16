@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {BLOCKQUOTE} at (40,0) size 704x20
+        RenderInline {SPAN} at (0,0) size 169x19
+          RenderText {#text} at (0,0) size 169x19
+            text run at (0,0) width 169: "Heck, son, you're a failure"
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 379x19
+          text run at (0,0) width 379: "The result appears below here; should not include any text:"
+      RenderBlock {P} at (0,72) size 784x0
+        RenderInline {SPAN} at (0,0) size 0x0

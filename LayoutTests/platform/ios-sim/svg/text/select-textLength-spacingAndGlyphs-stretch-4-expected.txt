@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 753x93
+    RenderSVGContainer {g} at (0,4) size 753x89
+      RenderSVGPath {svg:line} at (47,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=0.80] [x2=10.00] [y2=12.40]
+      RenderSVGPath {svg:line} at (747,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=150.00] [y1=0.80] [x2=150.00] [y2=12.40]
+      RenderSVGRect {svg:rect} at (50,4) size 700x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.80] [width=140.00] [height=11.40]
+      RenderSVGText {svg:text} at (0,27) size 150x10 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 150x10
+          chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 50 width 149.05: "Expected 'Text to Stretch' to be selected, got: ''"
+    RenderSVGText {text} at (10,0) size 140x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 140x12
+        chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 15 width 65.02: "Text to Stretch"
+caret: position 0 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

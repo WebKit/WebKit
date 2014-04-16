@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderInline {SPAN} at (0,0) size 360x19 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 360x19
+          text run at (0,0) width 360: "This text should be nice and sharp. devicePixelRatio is: "
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {SPAN} at (0,0) size 9x19
+        RenderText {#text} at (359,0) size 9x19
+          text run at (359,0) width 9: "1"
+      RenderText {#text} at (0,0) size 0x0

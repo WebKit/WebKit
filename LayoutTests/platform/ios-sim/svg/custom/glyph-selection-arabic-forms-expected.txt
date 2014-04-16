@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x50
+  RenderSVGRoot {svg} at (10,7) size 346x18
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (10,7) size 346x18
+      RenderSVGText {text} at (10,7) size 346x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 346x18
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 56 width 338.15 RTL: "\x{62E}] [\x{62E}][\x{62E}][\x{62E}] | [\x{62E}] [\x{62E}\x{62E}][\x{62E}] | [\x{62E}] [\x{62E}\x{62E}\x{62E}] | [\x{62E} \x{62E}\x{62E}\x{62E}] | \x{62E} \x{62E}\x{62E}\x{62E}"
+          chunk 1 text run 1 at (348.15,20.00) startOffset 0 endOffset 1 width 6.88: "]"

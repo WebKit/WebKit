@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x340
+  RenderBlock {HTML} at (0,0) size 800x340
+    RenderBody {BODY} at (8,16) size 784x314
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 266x19
+          text run at (0,0) width 266: "Test passes if the two boxes are identical."
+      RenderBlock {DIV} at (10,36) size 134x134 [border: (19px solid #000000)]
+      RenderBlock {DIV} at (10,180) size 134x134 [border: (19px solid #000000)]

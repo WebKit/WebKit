@@ -1,0 +1,52 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {g} at (100,36) size 605x526
+      RenderSVGText {text} at (360,22) size 50x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 50x35
+          chunk 1 text run 1 at (360.00,50.00) startOffset 0 endOffset 3 width 49.72: "100"
+      RenderSVGText {text} at (360,57) size 54x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 54x35
+          chunk 1 text run 1 at (360.00,85.00) startOffset 0 endOffset 3 width 53.58: "200"
+      RenderSVGText {text} at (360,92) size 54x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 54x35
+          chunk 1 text run 1 at (360.00,120.00) startOffset 0 endOffset 3 width 53.38: "300"
+      RenderSVGText {text} at (360,127) size 54x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 54x35
+          chunk 1 text run 1 at (360.00,155.00) startOffset 0 endOffset 3 width 53.77: "400"
+      RenderSVGText {text} at (360,162) size 53x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 53x35
+          chunk 1 text run 1 at (360.00,190.00) startOffset 0 endOffset 3 width 52.68: "500"
+      RenderSVGText {text} at (360,197) size 62x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 62x35
+          chunk 1 text run 1 at (360.00,225.00) startOffset 0 endOffset 3 width 61.51: "600"
+      RenderSVGText {text} at (360,232) size 59x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 59x35
+          chunk 1 text run 1 at (360.00,260.00) startOffset 0 endOffset 3 width 58.70: "700"
+      RenderSVGText {text} at (360,267) size 63x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 63x35
+          chunk 1 text run 1 at (360.00,295.00) startOffset 0 endOffset 3 width 62.36: "800"
+      RenderSVGText {text} at (360,302) size 62x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 62x35
+          chunk 1 text run 1 at (360.00,330.00) startOffset 0 endOffset 3 width 61.51: "900"
+      RenderSVGText {text} at (60,52) size 177x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 177x35
+          chunk 1 text run 1 at (60.00,80.00) startOffset 0 endOffset 12 width 176.78: "This is bold"
+      RenderSVGText {text} at (60,102) size 191x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 191x35
+          chunk 1 text run 1 at (60.00,130.00) startOffset 0 endOffset 14 width 190.31: "This is normal"
+      RenderSVGContainer {g} at (100,253) size 357x59
+        RenderSVGText {text} at (60,152) size 214x35 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 214x35
+            chunk 1 text run 1 at (60.00,180.00) startOffset 0 endOffset 14 width 213.13: "Blue is bolder"
+      RenderSVGContainer {g} at (100,336) size 307x59
+        RenderSVGText {text} at (60,202) size 184x35 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 184x35
+            chunk 1 text run 1 at (60.00,230.00) startOffset 0 endOffset 15 width 183.44: "Blue is lighter"
+    RenderSVGText {text} at (10,304) size 265x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 265x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+selection start: position 0 of child 0 {#text} of child 1 {text} of child 13 {g} of child 17 {svg} of document
+selection end:   position 16 of child 0 {#text} of child 15 {text} of child 17 {svg} of document

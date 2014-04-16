@@ -1,0 +1,30 @@
+layer at (0,0) size 800x1016
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1016
+  RenderBlock {HTML} at (0,0) size 800x1016
+    RenderBody {BODY} at (8,8) size 784x1000
+      RenderBlock (anonymous) at (0,0) size 784x385
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,401) size 784x20
+        RenderText {#text} at (0,0) size 453x19
+          text run at (0,0) width 453: "The blue bar should be in front of the video, and at the top of the page."
+layer at (8,88) size 400x300
+  RenderEmbeddedObject {VIDEO} at (0,80) size 400x300
+layer at (8,88) size 400x300
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 400x300
+layer at (8,372) size 400x16
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,284) size 400x16
+    RenderButton {INPUT} at (0,0) size 22x16
+    RenderDeprecatedFlexibleBox {DIV} at (22,0) size 312x16
+      RenderSlider {INPUT} at (0,0) size 312x16
+        RenderFlexibleBox {DIV} at (2,0) size 308x16
+          RenderBlock {DIV} at (0,0) size 292x16
+            RenderBlock {DIV} at (0,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+          RenderBlock {DIV} at (292,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+    RenderButton {INPUT} at (334,0) size 22x16
+    RenderButton {INPUT} at (356,0) size 22x16
+    RenderButton {INPUT} at (378,0) size 22x16
+    RenderBlock {DIV} at (400,8) size 0x0
+layer at (0,0) size 500x60
+  RenderBlock (positioned) {DIV} at (0,0) size 500x60 [bgcolor=#0000FFCC]
+scrolled to 0,50

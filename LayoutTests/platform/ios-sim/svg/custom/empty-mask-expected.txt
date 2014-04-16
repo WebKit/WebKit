@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMasker {mask} [id="mask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+        RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-0.50] [y=-0.50] [width=0.10] [height=0.10]
+    RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [x=20.00] [y=20.00] [width=100.00] [height=100.00]
+      [masker="mask"] RenderSVGResourceMasker {mask} at (0,0) size 0x0
+    RenderSVGText {text} at (60,45) size 23x19 contains 1 chunk(s)
+      [masker="mask"] RenderSVGResourceMasker {mask} at (0,0) size 0x0
+      RenderSVGTSpan {tspan} at (0,0) size 23x19
+        RenderSVGInlineText {#text} at (0,0) size 23x19
+          chunk 1 text run 1 at (60.00,60.00) startOffset 0 endOffset 4 width 22.22: "test"

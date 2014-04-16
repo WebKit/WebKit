@@ -1,0 +1,389 @@
+layer at (0,0) size 800x1574
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1574
+  RenderBlock {HTML} at (0,0) size 800x1574
+    RenderBody {BODY} at (8,16) size 784x1542
+      RenderBlock {P} at (0,0) size 784x60
+        RenderText {#text} at (17,0) size 767x59
+          text run at (17,0) width 409: "Test rendering of 3 text runs -- TextRun1 TextRun2 TextRun3, "
+          text run at (425,0) width 359: "in which TextRun1 and TextRun2's bidi level are 2, and"
+          text run at (51,20) width 733: "TextRun3's bidi level is 1. TextRun2 and TextRun3 are siblings. But their ancestor (not their parent) is a sibling of"
+          text run at (100,40) width 73: "TextRun1. "
+          text run at (172,40) width 612: "The visual order should be TextRun3 TextRun1 TextRun2, not TextRun3 TextRun2 TextRun1."
+      RenderBlock {HR} at (0,76) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,94) size 784x20
+        RenderText {#text} at (318,0) size 466x19
+          text run at (318,0) width 348: "Pure text. The following 3 lines should all display as \""
+          text run at (665,0) width 23 RTL: "\x{5E9}\x{5E0}\x{5D1}"
+          text run at (687,0) width 97: " This is a Test\""
+      RenderBlock {DIV} at (0,130) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (698,0) size 59x19
+          text run at (698,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 112x19
+          RenderInline {SPAN} at (0,0) size 112x19
+            RenderText {#text} at (694,0) size 90x19
+              text run at (694,0) width 5 RTL: " "
+              text run at (756,0) width 28: "Test"
+            RenderInline {SPAN} at (0,0) size 23x19
+              RenderText {#text} at (672,0) size 23x19
+                text run at (672,0) width 23 RTL: "\x{5E9}\x{5E0}\x{5D1}"
+      RenderBlock {DIV} at (0,150) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (698,0) size 59x19
+          text run at (698,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 112x19
+          RenderInline {SPAN} at (0,0) size 112x19
+            RenderInline {SPAN} at (0,0) size 112x19
+              RenderText {#text} at (694,0) size 90x19
+                text run at (694,0) width 5 RTL: " "
+                text run at (756,0) width 28: "Test"
+              RenderInline {SPAN} at (0,0) size 23x19
+                RenderText {#text} at (672,0) size 23x19
+                  text run at (672,0) width 23 RTL: "\x{5E9}\x{5E0}\x{5D1}"
+      RenderBlock {DIV} at (0,170) size 784x20
+        RenderText {#text} at (698,0) size 59x19
+          text run at (698,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 112x19
+          RenderText {#text} at (694,0) size 90x19
+            text run at (694,0) width 5 RTL: " "
+            text run at (756,0) width 28: "Test"
+          RenderInline {SPAN} at (0,0) size 23x19
+            RenderText {#text} at (672,0) size 23x19
+              text run at (672,0) width 23 RTL: "\x{5E9}\x{5E0}\x{5D1}"
+      RenderBlock {HR} at (0,198) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,216) size 784x20
+        RenderText {#text} at (327,0) size 457x19
+          text run at (327,0) width 457: "Text in <em>. The English text should be displayed as \"This is a Test\"."
+      RenderBlock {DIV} at (0,252) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (699,0) size 59x19
+          text run at (699,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 85x19
+          RenderInline {EM} at (0,0) size 85x19
+            RenderInline {SPAN} at (0,0) size 1x19
+            RenderText {#text} at (757,0) size 27x19
+              text run at (757,0) width 27: "Test"
+            RenderInline {SPAN} at (0,0) size 1x19
+      RenderBlock {DIV} at (0,272) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (699,0) size 59x19
+          text run at (699,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 85x19
+          RenderInline {EM} at (0,0) size 85x19
+            RenderText {#text} at (757,0) size 27x19
+              text run at (757,0) width 27: "Test"
+            RenderInline {SPAN} at (0,0) size 1x19
+      RenderBlock {DIV} at (0,292) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (699,0) size 59x19
+          text run at (699,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 111x19
+          RenderInline {EM} at (0,0) size 111x19
+            RenderText {#text} at (695,0) size 89x19
+              text run at (695,0) width 5 RTL: " "
+              text run at (757,0) width 27: "Test"
+            RenderInline {SPAN} at (0,0) size 23x19
+              RenderText {#text} at (673,0) size 23x19
+                text run at (673,0) width 23 RTL: "\x{5D3}\x{5DE}\x{5D4}"
+      RenderBlock {DIV} at (0,312) size 784x20
+        RenderText {#text} at (699,0) size 59x19
+          text run at (699,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 27x19
+          RenderInline {EM} at (0,0) size 27x19
+            RenderInline {SPAN} at (0,0) size 1x19
+            RenderText {#text} at (757,0) size 27x19
+              text run at (757,0) width 27: "Test"
+      RenderBlock {DIV} at (0,332) size 784x20
+        RenderText {#text} at (699,0) size 59x19
+          text run at (699,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 27x19
+          RenderInline {EM} at (0,0) size 27x19
+            RenderText {#text} at (757,0) size 27x19
+              text run at (757,0) width 27: "Test"
+      RenderBlock {HR} at (0,360) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,378) size 784x20
+        RenderText {#text} at (301,0) size 483x19
+          text run at (301,0) width 483: "Text in <strong>. The following lines should all display as \"This is a Test\"."
+      RenderBlock {DIV} at (0,414) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (696,0) size 59x19
+          text run at (696,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 88x19
+          RenderInline {STRONG} at (0,0) size 88x19
+            RenderInline {SPAN} at (0,0) size 1x19
+            RenderText {#text} at (754,0) size 30x19
+              text run at (754,0) width 30: "Test"
+            RenderInline {SPAN} at (0,0) size 1x19
+      RenderBlock {DIV} at (0,434) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (696,0) size 59x19
+          text run at (696,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 88x19
+          RenderInline {STRONG} at (0,0) size 88x19
+            RenderText {#text} at (754,0) size 30x19
+              text run at (754,0) width 30: "Test"
+            RenderInline {SPAN} at (0,0) size 1x19
+      RenderBlock {DIV} at (0,454) size 784x20
+        RenderText {#text} at (696,0) size 59x19
+          text run at (696,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 30x19
+          RenderInline {STRONG} at (0,0) size 30x19
+            RenderInline {SPAN} at (0,0) size 1x19
+            RenderText {#text} at (754,0) size 30x19
+              text run at (754,0) width 30: "Test"
+      RenderBlock {DIV} at (0,474) size 784x20
+        RenderText {#text} at (696,0) size 59x19
+          text run at (696,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 30x19
+          RenderInline {STRONG} at (0,0) size 30x19
+            RenderText {#text} at (754,0) size 30x19
+              text run at (754,0) width 30: "Test"
+      RenderBlock {HR} at (0,502) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,520) size 784x20
+        RenderText {#text} at (337,0) size 447x19
+          text run at (337,0) width 447: "Text in <i>. The following lines should all display as \"This is a Test\"."
+      RenderBlock {DIV} at (0,556) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (699,0) size 59x19
+          text run at (699,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 85x19
+          RenderInline {I} at (0,0) size 85x19
+            RenderInline {SPAN} at (0,0) size 1x19
+            RenderText {#text} at (757,0) size 27x19
+              text run at (757,0) width 27: "Test"
+            RenderInline {SPAN} at (0,0) size 1x19
+      RenderBlock {DIV} at (0,576) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (699,0) size 59x19
+          text run at (699,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 85x19
+          RenderInline {I} at (0,0) size 85x19
+            RenderText {#text} at (757,0) size 27x19
+              text run at (757,0) width 27: "Test"
+            RenderInline {SPAN} at (0,0) size 1x19
+      RenderBlock {DIV} at (0,596) size 784x20
+        RenderText {#text} at (699,0) size 59x19
+          text run at (699,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 27x19
+          RenderInline {I} at (0,0) size 27x19
+            RenderInline {SPAN} at (0,0) size 1x19
+            RenderText {#text} at (757,0) size 27x19
+              text run at (757,0) width 27: "Test"
+      RenderBlock {DIV} at (0,616) size 784x20
+        RenderText {#text} at (699,0) size 59x19
+          text run at (699,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 27x19
+          RenderInline {I} at (0,0) size 27x19
+            RenderText {#text} at (757,0) size 27x19
+              text run at (757,0) width 27: "Test"
+      RenderBlock {HR} at (0,644) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,662) size 784x20
+        RenderText {#text} at (333,0) size 451x19
+          text run at (333,0) width 451: "Text in <b>. The following lines should all display as \"This is a Test\"."
+      RenderBlock {DIV} at (0,698) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (696,0) size 59x19
+          text run at (696,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 88x19
+          RenderInline {B} at (0,0) size 88x19
+            RenderInline {SPAN} at (0,0) size 1x19
+            RenderText {#text} at (754,0) size 30x19
+              text run at (754,0) width 30: "Test"
+            RenderInline {SPAN} at (0,0) size 1x19
+      RenderBlock {DIV} at (0,718) size 784x20 [bgcolor=#FF0000]
+        RenderText {#text} at (696,0) size 59x19
+          text run at (696,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 88x19
+          RenderInline {B} at (0,0) size 88x19
+            RenderText {#text} at (754,0) size 30x19
+              text run at (754,0) width 30: "Test"
+            RenderInline {SPAN} at (0,0) size 1x19
+      RenderBlock {DIV} at (0,738) size 784x20
+        RenderText {#text} at (696,0) size 59x19
+          text run at (696,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 30x19
+          RenderInline {B} at (0,0) size 30x19
+            RenderInline {SPAN} at (0,0) size 1x19
+            RenderText {#text} at (754,0) size 30x19
+              text run at (754,0) width 30: "Test"
+      RenderBlock {DIV} at (0,758) size 784x20
+        RenderText {#text} at (696,0) size 59x19
+          text run at (696,0) width 59: "This is a "
+        RenderInline {SPAN} at (0,0) size 30x19
+          RenderInline {B} at (0,0) size 30x19
+            RenderText {#text} at (754,0) size 30x19
+              text run at (754,0) width 30: "Test"
+      RenderBlock (anonymous) at (0,778) size 784x0
+        RenderInline {B} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,786) size 784x756
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (0,18) size 784x20
+          RenderText {#text} at (103,0) size 681x19
+            text run at (103,0) width 681: "Text in <img>, <href>, <em>, <tr>. The following English text should all display as \"This is a Test\"."
+        RenderBlock {DIV} at (0,54) size 784x25 [bgcolor=#FF0000]
+          RenderText {#text} at (693,5) size 62x19
+            text run at (693,5) width 62: "This is a "
+          RenderInline {SPAN} at (0,0) size 111x19
+            RenderInline {A} at (0,0) size 111x19 [color=#551A8B]
+              RenderText {#text} at (754,5) size 30x19
+                text run at (754,5) width 30: "Test"
+              RenderInline {SPAN} at (0,0) size 21x19
+                RenderImage {IMG} at (674,0) size 20x20
+        RenderBlock {DIV} at (0,79) size 784x20 [bgcolor=#FF0000]
+          RenderText {#text} at (693,0) size 62x19
+            text run at (693,0) width 62: "This is a "
+          RenderInline {SPAN} at (0,0) size 118x19
+            RenderInline {A} at (0,0) size 118x19 [color=#551A8B]
+              RenderText {#text} at (689,0) size 95x19
+                text run at (689,0) width 5 RTL: " "
+                text run at (754,0) width 30: "Test"
+              RenderInline {SPAN} at (0,0) size 24x19
+                RenderText {#text} at (666,0) size 24x19
+                  text run at (666,0) width 24 RTL: "\x{5E9}\x{5E0}\x{5D1}"
+        RenderBlock {DIV} at (0,99) size 784x20 [bgcolor=#FF0000]
+          RenderText {#text} at (695,0) size 62x19
+            text run at (695,0) width 62: "This is a "
+          RenderInline {SPAN} at (0,0) size 89x19
+            RenderInline {EM} at (0,0) size 89x19
+              RenderText {#text} at (756,0) size 28x19
+                text run at (756,0) width 28: "Test"
+              RenderInline {A} at (0,0) size 1x19 [color=#551A8B]
+        RenderBlock {DIV} at (0,119) size 784x25 [bgcolor=#FF0000]
+          RenderText {#text} at (695,5) size 62x19
+            text run at (695,5) width 62: "This is a "
+          RenderInline {SPAN} at (0,0) size 109x19
+            RenderInline {EM} at (0,0) size 109x19
+              RenderText {#text} at (756,5) size 28x19
+                text run at (756,5) width 28: "Test"
+              RenderInline {SPAN} at (0,0) size 21x19
+                RenderImage {IMG} at (676,0) size 20x20
+        RenderBlock {DIV} at (0,144) size 784x20
+          RenderText {#text} at (652,0) size 62x19
+            text run at (652,0) width 62: "This is a "
+          RenderInline {SPAN} at (0,0) size 71x19
+            RenderInline {A} at (0,0) size 71x19 [color=#551A8B]
+              RenderText {#text} at (713,0) size 34x19
+                text run at (713,0) width 34: "Test "
+              RenderInline {SPAN} at (0,0) size 38x19
+                RenderText {#text} at (746,0) size 38x19
+                  text run at (746,0) width 38: "again"
+        RenderBlock {DIV} at (0,164) size 784x46
+          RenderBlock (anonymous) at (0,0) size 784x20
+            RenderText {#text} at (695,0) size 62x19
+              text run at (695,0) width 62: "This is a "
+            RenderInline {SPAN} at (0,0) size 28x19
+              RenderInline {EM} at (0,0) size 28x19
+                RenderText {#text} at (756,0) size 28x19
+                  text run at (756,0) width 28: "Test"
+          RenderBlock (anonymous) at (0,20) size 784x26
+            RenderTable {TABLE} at (770,0) size 14x26
+              RenderTableSection {TBODY} at (0,0) size 14x26
+                RenderTableRow {TR} at (0,2) size 14x22
+                  RenderTableCell {TD} at (2,2) size 10x22 [r=0 c=0 rs=1 cs=1]
+                    RenderText {#text} at (1,1) size 8x19
+                      text run at (1,1) width 8: "a"
+          RenderBlock (anonymous) at (0,46) size 784x0
+            RenderInline {SPAN} at (0,0) size 0x0
+              RenderInline {EM} at (0,0) size 0x0
+        RenderBlock {HR} at (0,218) size 784x2 [border: (1px inset #000000)]
+        RenderBlock {UL} at (0,236) size 784x520
+          RenderListItem {LI} at (40,0) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 312x19
+              text run at (0,0) width 312: "Test 0: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,20) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 312x19
+              text run at (0,0) width 312: "Test 1: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,40) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 312x19
+              text run at (0,0) width 312: "Test 2: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,60) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 312x19
+              text run at (0,0) width 312: "Test 3: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,80) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 312x19
+              text run at (0,0) width 312: "Test 4: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,100) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 312x19
+              text run at (0,0) width 312: "Test 5: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,120) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 312x19
+              text run at (0,0) width 312: "Test 6: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,140) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 312x19
+              text run at (0,0) width 312: "Test 7: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,160) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 312x19
+              text run at (0,0) width 312: "Test 8: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,180) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 312x19
+              text run at (0,0) width 312: "Test 9: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,200) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 10: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,220) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 11: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,240) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 12: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,260) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 13: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,280) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 14: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,300) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 15: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,320) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 16: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,340) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 17: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,360) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 18: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,380) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 19: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,400) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 20: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,420) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 21: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,440) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 22: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,460) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 23: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,480) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 24: : Failure, actual: This ; expected: This"
+          RenderListItem {LI} at (40,500) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 320x19
+              text run at (0,0) width 320: "Test 25: : Failure, actual: This ; expected: This"
+      RenderBlock (anonymous) at (0,1558) size 784x0
+        RenderInline {B} at (0,0) size 0x0
+selection start: position 0 of child 0 {#text} of child 14 {DIV} of child 56 {B} of body
+selection end:   position 5 of child 0 {#text} of child 14 {DIV} of child 56 {B} of body

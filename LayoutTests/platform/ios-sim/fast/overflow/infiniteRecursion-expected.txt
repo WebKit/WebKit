@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 181x86 clip at (18,18) size 161x66
+  RenderBlock (floating) {DIV} at (0,0) size 181x86 [border: (10px solid #FF0000)]
+    RenderImage {IMG} at (10,10) size 86x66
+    RenderBlock {DIV} at (10,10) size 161x15
+      RenderText {#text} at (92,0) size 7x15
+        text run at (92,0) width 7: "x"
+    RenderBlock {DIV} at (10,25) size 161x45
+      RenderText {#text} at (92,0) size 67x45
+        text run at (92,0) width 67: "Ted and the"
+        text run at (92,15) width 53: "miniature"
+        text run at (92,30) width 34: "Teddy"

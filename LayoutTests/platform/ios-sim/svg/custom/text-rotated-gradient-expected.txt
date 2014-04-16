@@ -1,0 +1,49 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,12) size 703x291
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceLinearGradient {linearGradient} [id="g"] [gradientUnits=userSpaceOnUse] [start=(0,0)] [end=(0,600)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#00000080]
+    RenderSVGText {text} at (0,12) size 639x23 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 639x23
+        chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 81 width 638.14: "You should see red, black, red, black text all rotated 45deg, translated by 100px"
+    RenderSVGContainer {g} at (0,50) size 75x81 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
+      RenderSVGText {text} at (50,21) size 77x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 77x36
+          chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 4 width 76.44: "TEST"
+    RenderSVGContainer {g} at (95,50) size 80x81 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+      RenderSVGContainer {g} at (95,50) size 80x81 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
+        RenderSVGText {text} at (50,21) size 77x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 77x36
+            chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 4 width 76.44: "TEST"
+    RenderSVGContainer {g} at (195,50) size 80x81 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(200.00,0.00)}]
+      RenderSVGText {text} at (50,21) size 77x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 77x36
+          chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 4 width 76.44: "TEST"
+    RenderSVGContainer {g} at (295,50) size 80x81 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(300.00,0.00)}]
+      RenderSVGText {text} at (50,21) size 77x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 77x36
+          chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 4 width 76.44: "TEST"
+    RenderSVGText {text} at (0,152) size 703x23 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 703x23
+        chunk 1 text run 1 at (0.00,170.00) startOffset 0 endOffset 88 width 702.61: "You should see the same pattern again, just a bit scaled, by the viewBox of an inner svg"
+    RenderSVGViewportContainer {svg} at (91,181) size 572x122
+      RenderSVGContainer {g} at (91,181) size 122x122 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
+        RenderSVGText {text} at (100,71) size 77x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 77x36
+            chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 4 width 76.44: "TEST"
+      RenderSVGContainer {g} at (241,181) size 122x122 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+        RenderSVGContainer {g} at (241,181) size 122x122 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
+          RenderSVGText {text} at (100,71) size 77x36 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 77x36
+              chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 4 width 76.44: "TEST"
+      RenderSVGContainer {g} at (391,181) size 122x122 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(200.00,0.00)}]
+        RenderSVGText {text} at (100,71) size 77x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 77x36
+            chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 4 width 76.44: "TEST"
+      RenderSVGContainer {g} at (541,181) size 122x122 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(300.00,0.00)}]
+        RenderSVGText {text} at (100,71) size 77x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 77x36
+            chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 4 width 76.44: "TEST"

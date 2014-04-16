@@ -1,0 +1,38 @@
+Slider In Multi-Coulumn
+
+This is test cases for BUG 70898.
+No outer
+
+
+
+
+DIV outer
+
+
+
+
+SPAN outer
+
+ 
+
+
+TABLE outer
+
+
+
+
+Results
+
+FAILED c00 expected=20 got=50 34@183
+FAILED c01 expected=20 got=50 295@183
+FAILED c02 expected=20 got=50 556@183
+FAILED c10 expected=20 got=50 34@307
+FAILED c11 expected=20 got=50 295@307
+FAILED c12 expected=20 got=50 556@307
+FAILED c20 expected=20 got=50 34@431
+FAILED c21 expected=20 got=50 295@431
+FAILED c22 expected=20 got=50 556@431
+FAILED c30 expected=20 got=50 34@555
+FAILED c31 expected=20 got=50 295@555
+FAILED c32 expected=20 got=50 556@555
+

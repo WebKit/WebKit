@@ -1,0 +1,113 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 242x226 [border: none]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
+        RenderTableSection {TBODY} at (0,0) size 241x225 [border: (1px solid #808080) none (1px solid #808080) none]
+          RenderTableRow {TR} at (0,0) size 241x29
+            RenderTableCell {TH} at (0,0) size 84x29 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (10,5) size 65x19
+                text run at (10,5) width 65: "Weekday"
+            RenderTableCell {TH} at (84,0) size 46x29 [border: (1px none #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (7,5) size 33x19
+                text run at (7,5) width 33: "Date"
+            RenderTableCell {TH} at (130,0) size 71x29 [border: (1px none #000000)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,5) size 63x19
+                text run at (4,5) width 63: "Manager"
+            RenderTableCell {TH} at (201,0) size 40x29 [border: (1px none #000000)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (7,5) size 26x19
+                text run at (7,5) width 26: "Qty"
+          RenderTableRow {TR} at (0,29) size 241x28
+            RenderTableCell {TD} at (0,29) size 84x28 [border: none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 54x19
+                text run at (5,4) width 54: "Monday"
+            RenderTableCell {TD} at (84,29) size 46x28 [border: none] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 37x19
+                text run at (5,4) width 37: "09/11"
+            RenderTableCell {TD} at (130,29) size 71x28 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 45x19
+                text run at (4,4) width 45: "Kelsey"
+            RenderTableCell {TD} at (201,29) size 40x28 [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 24x19
+                text run at (4,4) width 24: "639"
+          RenderTableRow {TR} at (0,57) size 241x28
+            RenderTableCell {TD} at (0,57) size 84x28 [border: none] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 55x19
+                text run at (5,4) width 55: "Tuesday"
+            RenderTableCell {TD} at (84,57) size 46x28 [border: none] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 37x19
+                text run at (5,4) width 37: "09/12"
+            RenderTableCell {TD} at (130,57) size 71x28 [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 52x19
+                text run at (4,4) width 52: "Lindsey"
+            RenderTableCell {TD} at (201,57) size 40x28 [r=2 c=3 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 24x19
+                text run at (4,4) width 24: "596"
+          RenderTableRow {TR} at (0,85) size 241x28
+            RenderTableCell {TD} at (0,85) size 84x28 [border: none] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 75x19
+                text run at (5,4) width 75: "Wednesday"
+            RenderTableCell {TD} at (84,85) size 46x28 [border: none] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 37x19
+                text run at (5,4) width 37: "09/13"
+            RenderTableCell {TD} at (130,85) size 71x28 [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 42x19
+                text run at (4,4) width 42: "Randy"
+            RenderTableCell {TD} at (201,85) size 40x28 [r=3 c=3 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 32x19
+                text run at (4,4) width 32: "1135"
+          RenderTableRow {TR} at (0,113) size 241x28
+            RenderTableCell {TD} at (0,113) size 84x28 [border: none] [r=4 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 61x19
+                text run at (5,4) width 61: "Thursday"
+            RenderTableCell {TD} at (84,113) size 46x28 [border: none] [r=4 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 37x19
+                text run at (5,4) width 37: "09/14"
+            RenderTableCell {TD} at (130,113) size 71x28 [r=4 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 39x19
+                text run at (4,4) width 39: "Susan"
+            RenderTableCell {TD} at (201,113) size 40x28 [r=4 c=3 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 32x19
+                text run at (4,4) width 32: "1002"
+          RenderTableRow {TR} at (0,141) size 241x28
+            RenderTableCell {TD} at (0,141) size 84x28 [border: none] [r=5 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 42x19
+                text run at (5,4) width 42: "Friday"
+            RenderTableCell {TD} at (84,141) size 46x28 [border: none] [r=5 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 37x19
+                text run at (5,4) width 37: "09/15"
+            RenderTableCell {TD} at (130,141) size 71x28 [r=5 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 42x19
+                text run at (4,4) width 42: "Randy"
+            RenderTableCell {TD} at (201,141) size 40x28 [r=5 c=3 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 24x19
+                text run at (4,4) width 24: "908"
+          RenderTableRow {TR} at (0,169) size 241x28
+            RenderTableCell {TD} at (0,169) size 84x28 [border: none] [r=6 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 57x19
+                text run at (5,4) width 57: "Saturday"
+            RenderTableCell {TD} at (84,169) size 46x28 [border: none] [r=6 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 37x19
+                text run at (5,4) width 37: "09/16"
+            RenderTableCell {TD} at (130,169) size 71x28 [r=6 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 52x19
+                text run at (4,4) width 52: "Lindsey"
+            RenderTableCell {TD} at (201,169) size 40x28 [r=6 c=3 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 24x19
+                text run at (4,4) width 24: "371"
+          RenderTableRow {TR} at (0,197) size 241x28
+            RenderTableCell {TD} at (0,197) size 84x28 [border: none] [r=7 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 48x19
+                text run at (5,4) width 48: "Sunday"
+            RenderTableCell {TD} at (84,197) size 46x28 [border: none] [r=7 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,4) size 37x19
+                text run at (5,4) width 37: "09/17"
+            RenderTableCell {TD} at (130,197) size 71x28 [r=7 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 39x19
+                text run at (4,4) width 39: "Susan"
+            RenderTableCell {TD} at (201,197) size 40x28 [r=7 c=3 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 24x19
+                text run at (4,4) width 24: "272"

@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (20,0) size 490x145
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 121x71 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(5.25,22.68)}]
+        RenderSVGRect {rect} at (3,0) size 114x67 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+        RenderSVGEllipse {circle} at (31,0) size 58x39 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [cx=30.00] [cy=5.00] [r=10.00]
+    RenderSVGContainer {g} at (225,0) size 170x145 [transform={m=((1.00,0.00)(0.00,1.00)) t=(125.00,25.00)}]
+      RenderSVGContainer {g} at (225,0) size 170x145 [transform={m=((0.77,0.64)(-0.64,0.77)) t=(10.23,-18.11)}]
+        RenderSVGContainer {g} at (225,0) size 170x145 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(5.25,22.68)}]
+          RenderSVGRect {rect} at (230,0) size 160x140 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+          RenderSVGEllipse {circle} at (270,20) size 80x80 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [cx=30.00] [cy=5.00] [r=10.00]
+    RenderSVGText {text} at (10,45) size 245x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 245x18
+        chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 38 width 244.40: "The two objects should look identical."
+    RenderSVGContainer {g} at (25,0) size 170x145 [transform={m=((0.77,0.64)(-0.64,0.77)) t=(32.15,-28.33)}]
+      RenderSVGContainer {use} at (25,0) size 170x145 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
+        RenderSVGContainer {g} at (25,0) size 170x145 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(5.25,22.68)}]
+          RenderSVGRect {rect} at (30,0) size 160x140 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+          RenderSVGEllipse {circle} at (70,20) size 80x80 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [cx=30.00] [cy=5.00] [r=10.00]

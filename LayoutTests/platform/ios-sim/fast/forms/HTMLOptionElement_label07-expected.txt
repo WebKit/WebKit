@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 756x39
+        text run at (0,0) width 756: "The select item below has a label specified, and enclosed text that is whitespace. There should be no text shown in the"
+        text run at (0,20) width 69: "select box."
+      RenderBR {BR} at (68,35) size 1x0
+      RenderMenuList {SELECT} at (2,42) size 32x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 20x14
+          RenderBR at (0,0) size 0x14 [bgcolor=#FFFFFF02]
+      RenderText {#text} at (0,0) size 0x0

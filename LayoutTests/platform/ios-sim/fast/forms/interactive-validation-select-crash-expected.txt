@@ -1,0 +1,3 @@
+Test for a bug that RenderBlock crashed when a validation message bubble for a select element with float:left was closing.
+
+

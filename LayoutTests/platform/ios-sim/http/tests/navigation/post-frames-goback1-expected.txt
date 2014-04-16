@@ -1,0 +1,19 @@
+Tests that a POST targetted to a frame is handled correctly when navigating away and coming back to the page.
+
+
+
+
+--------
+Frame: 'target-frame'
+--------
+This page was requested with the HTTP method GET.
+
+Parameters:
+
+
+
+============== Back Forward List ==============
+curr->  http://127.0.0.1:8000/navigation/post-frames-goback1.html  **nav target**
+            http://127.0.0.1:8000/navigation/resources/form-target.pl (in frame "target-frame")
+        http://127.0.0.1:8000/navigation/resources/go-back.html  **nav target**
+===============================================

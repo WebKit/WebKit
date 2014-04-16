@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {H1} at (0,0) size 784x38
+        RenderText {#text} at (0,1) size 353x36
+          text run at (0,1) width 353: "Radial Gradient Example"
+      RenderBlock {DIV} at (0,59) size 154x154 [border: (2px solid #000000)]
+      RenderBlock {H1} at (0,234) size 784x38
+        RenderText {#text} at (0,1) size 354x36
+          text run at (0,1) width 354: "Linear Gradient Example"
+      RenderBlock {DIV} at (0,293) size 154x154 [border: (2px solid #000000)]

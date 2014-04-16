@@ -1,0 +1,58 @@
+The yellow box should be large enough to scroll off the bottom. At the start there should be no child. After 100ms a red box is added and after 100ms more it should be removed. This tests that we can support very large compositing layers with dynamically added and removed child compositing layers.
+
+First (no children):
+(GraphicsLayer
+  (bounds 800.00 5135.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 5135.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 92.00)
+          (bounds 502.00 5002.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+
+
+Second (child added):
+(GraphicsLayer
+  (bounds 800.00 5135.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 5135.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 92.00)
+          (bounds 502.00 5002.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+
+
+Third (child removed):
+(GraphicsLayer
+  (bounds 800.00 5135.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 5135.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 92.00)
+          (bounds 502.00 5002.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

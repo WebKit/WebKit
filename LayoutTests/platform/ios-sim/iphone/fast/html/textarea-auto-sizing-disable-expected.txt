@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 745x19
+        text run at (0,0) width 745: "This page should go back. If a test outputs the contents of this page, then the test page failed to enter the page cache."
+      RenderText {#text} at (0,0) size 0x0

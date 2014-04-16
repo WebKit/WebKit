@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 15: TypeError: 'null' is not an object (evaluating 'hit.id')
+Element at 35, 100 has id "topLayer": PASS
+

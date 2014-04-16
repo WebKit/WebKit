@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600 layerType: background only
+layer at (11,91) size 50x50
+  RenderBlock (positioned) zI: -1 {DIV} at (11,91) size 50x50 [bgcolor=#FF0000]
+layer at (0,0) size 800x600 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 226x171 [border: (3px solid #0000FF)]
+        RenderInline {SPAN} at (0,0) size 101x20
+          RenderText {#text} at (3,3) size 101x20
+            text run at (3,3) width 101: "lorem"
+        RenderText {#text} at (3,23) size 221x80
+          text run at (3,23) width 101: "ipsum"
+          text run at (3,43) width 181: "dolor sit"
+          text run at (3,63) width 101: "amet,"
+          text run at (3,83) width 221: "consectetur"
+        RenderBlock (floating) {DIV} at (3,103) size 50x25 [bgcolor=#008000]
+        RenderText {#text} at (3,128) size 201x40
+          text run at (3,128) width 201: "adipiscing"
+          text run at (3,148) width 101: "elit."

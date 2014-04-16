@@ -1,0 +1,19 @@
+test
+test             test
+test
+test
+test
+test
+
+
+
+
+test
+test
+FAIL document.activeElement.getAttribute("id") should be 4. Was start.
+FAIL document.activeElement.getAttribute("id") should be 6. Was start.
+FAIL document.activeElement.getAttribute("id") should be 8. Was start.
+FAIL document.activeElement.getAttribute("id") should be end. Was start.
+FAIL document.activeElement.getAttribute("id") should be 7. Was start.
+FAIL document.activeElement.getAttribute("id") should be 2. Was start.
+

@@ -1,0 +1,85 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTextControl {INPUT} at (2,2) size 136x22 [bgcolor=#008000] [border: (1px solid #4C4C4C)]
+      RenderBR {BR} at (139,16) size 1x0
+      RenderTextControl {INPUT} at (2,27) size 134x20 [bgcolor=#008000]
+      RenderBR {BR} at (137,40) size 1x0
+      RenderTextControl {INPUT} at (2,50) size 134x20 [bgcolor=#008000]
+      RenderBR {BR} at (137,63) size 1x0
+      RenderTextControl {INPUT} at (2,73) size 136x21 [bgcolor=#008000] [border: none (1px solid #4C4C4C)]
+      RenderBR {BR} at (139,86) size 1x0
+      RenderTextControl {INPUT} at (2,97) size 136x22 [bgcolor=#008000] [border: (1px solid #00000000) (1px solid #4C4C4C)]
+      RenderBR {BR} at (139,111) size 1x0
+      RenderTextControl {INPUT} at (2,122) size 136x22 [bgcolor=#008000] [border: (1px solid #4C4C4C)]
+        RenderDeprecatedFlexibleBox {DIV} at (6,3) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderBR {BR} at (139,136) size 1x0
+      RenderTextControl {INPUT} at (2,147) size 134x20 [bgcolor=#008000]
+        RenderDeprecatedFlexibleBox {DIV} at (5,2) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderBR {BR} at (137,160) size 1x0
+      RenderTextControl {INPUT} at (2,170) size 134x20 [bgcolor=#008000]
+        RenderDeprecatedFlexibleBox {DIV} at (5,2) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderBR {BR} at (137,183) size 1x0
+      RenderTextControl {INPUT} at (2,193) size 136x21 [bgcolor=#008000] [border: none (1px solid #4C4C4C)]
+        RenderDeprecatedFlexibleBox {DIV} at (6,2) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderBR {BR} at (139,206) size 1x0
+      RenderTextControl {INPUT} at (2,217) size 136x22 [bgcolor=#008000] [border: (1px solid #00000000) (1px solid #4C4C4C)]
+        RenderDeprecatedFlexibleBox {DIV} at (6,3) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderBR {BR} at (139,231) size 1x0
+      RenderBR {BR} at (154,278) size 0x0
+      RenderBR {BR} at (152,314) size 0x0
+      RenderBR {BR} at (152,350) size 0x0
+      RenderBR {BR} at (154,387) size 0x0
+      RenderBR {BR} at (154,425) size 0x0
+layer at (17,13) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (16,37) size 122x14
+  RenderBlock {DIV} at (5,2) size 123x15
+layer at (16,60) size 122x14
+  RenderBlock {DIV} at (5,2) size 123x15
+layer at (17,83) size 122x14
+  RenderBlock {DIV} at (6,2) size 123x15
+layer at (17,108) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (17,133) size 122x14
+  RenderBlock {DIV} at (0,0) size 123x14
+layer at (16,157) size 122x14
+  RenderBlock {DIV} at (0,0) size 123x14
+layer at (16,180) size 122x14
+  RenderBlock {DIV} at (0,0) size 123x14
+layer at (17,203) size 122x14
+  RenderBlock {DIV} at (0,0) size 123x14
+layer at (17,228) size 122x14
+  RenderBlock {DIV} at (0,0) size 123x14
+layer at (10,250) size 150x34 clip at (11,251) size 148x32
+  RenderTextControl {TEXTAREA} at (2,242) size 150x34 [bgcolor=#008000] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 144x14
+layer at (10,288) size 148x32
+  RenderTextControl {TEXTAREA} at (2,280) size 148x32 [bgcolor=#008000]
+    RenderBlock {DIV} at (2,2) size 144x14
+layer at (10,324) size 148x32
+  RenderTextControl {TEXTAREA} at (2,316) size 148x32 [bgcolor=#008000]
+    RenderBlock {DIV} at (2,2) size 144x14
+layer at (10,360) size 150x33 clip at (11,360) size 148x32
+  RenderTextControl {TEXTAREA} at (2,352) size 150x33 [bgcolor=#008000] [border: none (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,2) size 144x14
+layer at (10,397) size 150x34 clip at (11,398) size 148x32
+  RenderTextControl {TEXTAREA} at (2,389) size 150x34 [bgcolor=#008000] [border: (1px solid #00000000) (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 144x14

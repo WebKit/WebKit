@@ -1,0 +1,13 @@
+layer at (0,0) size 800x608
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 742x584
+      RenderBlock {DIV} at (0,0) size 144x600
+        RenderInline {SPAN} at (0,0) size 136x562 [bgcolor=#0000FF]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 136x562 [bgcolor=#FFFFE0] [border: (5px solid #008000)]
+            RenderText {#text} at (9,35) size 126x562
+              text run at (9,35) width 527: "This sentence is too long to"
+              text run at (81,0) width 359: "fit on a single line."
+        RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 239x19
+          text run at (0,0) width 239: "table - color, tbodies color, row color"
+      RenderTable {TABLE} at (0,20) size 188x354 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (41,41) size 106x168 [bgcolor=#FF0000]
+          RenderTableRow {TR} at (0,40) size 106x24 [bgcolor=#FFFF00]
+            RenderTableCell {TD} at (40,40) size 26x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "foo"
+          RenderTableRow {TR} at (0,104) size 106x24
+            RenderTableCell {TD} at (40,104) size 26x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "foo"
+        RenderTableSection {TBODY} at (41,209) size 106x104 [bgcolor=#008000]
+          RenderTableRow {TR} at (0,40) size 106x24
+            RenderTableCell {TD} at (40,40) size 26x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "foo"

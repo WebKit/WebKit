@@ -1,0 +1,28 @@
+(repaint rects
+  (rect 8 13 784 14)
+  (rect 8 413 784 27)
+  (rect 0 421 800 27)
+)
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 40.00)
+          (bounds 400.00 400.00)
+          (contentsOpaque 1)
+          (children 1
+            (GraphicsLayer
+              (position 50.00 50.00)
+              (bounds 75.00 75.00)
+              (contentsOpaque 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

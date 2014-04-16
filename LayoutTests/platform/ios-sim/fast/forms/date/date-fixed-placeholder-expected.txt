@@ -1,0 +1,13 @@
+Check placeholder behavior of type=date with ENABLE_CALENDAR_PICKER
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL visiblePlaceholder.indexOf("year") >= 0 should be true. Was false.
+FAIL visiblePlaceholder.indexOf("month") >= 0 should be true. Was false.
+FAIL visiblePlaceholder.indexOf("day") >= 0 should be true. Was false.
+PASS visiblePlaceholder is internals.visiblePlaceholder(document.getElementById("date-with-placeholder-attribute")).toLowerCase()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

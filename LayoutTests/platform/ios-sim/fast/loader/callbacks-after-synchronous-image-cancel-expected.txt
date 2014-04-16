@@ -1,0 +1,1 @@
+This tests <rdar://problem/12097409> - we should get a didFinishLoading callback when client cancels image loads from style resolution. The test times out on failure.

@@ -1,0 +1,38 @@
+layer at (0,0) size 320x617
+  RenderView at (0,0) size 320x240
+layer at (0,0) size 320x617
+  RenderBlock {HTML} at (0,0) size 320x617
+    RenderBody {BODY} at (8,8) size 304x601
+      RenderBlock {P} at (0,0) size 304x24
+        RenderText {#text} at (0,0) size 286x23
+          text run at (0,0) width 286: "\x{20E3}0\x{20E3}1\x{20E3}2\x{20E3}3\x{20E3}4\x{20E3}5\x{20E3}6\x{20E3}7\x{20E3}8\x{20E3}9\x{20E3}#\x{20E3}\x{20E3}"
+      RenderBlock {P} at (0,44) size 304x24
+        RenderText {#text} at (0,0) size 60x23
+          text run at (0,0) width 60: "abc\x{20E3}def"
+      RenderBlock {P} at (0,88) size 304x24
+        RenderText {#text} at (0,0) size 76x23
+          text run at (0,0) width 76: "ab#\x{20E3}def\x{20E3}"
+      RenderBlock {P} at (0,132) size 304x29
+        RenderText {#text} at (0,16) size 84x12
+          text run at (0,16) width 84: "ab#\x{20E3}def\x{20E3}"
+      RenderBlock {P} at (0,181) size 304x24
+        RenderText {#text} at (0,12) size 76x12
+          text run at (0,12) width 76: "ab#\x{20E3}def\x{20E3}"
+      RenderBlock {P} at (0,225) size 304x24
+        RenderText {#text} at (0,0) size 76x23
+          text run at (0,0) width 76: "ab#\x{20E3}def\x{20E3}"
+      RenderBlock {P} at (0,269) size 304x24
+        RenderText {#text} at (0,0) size 54x23
+          text run at (0,0) width 54: "\x{D83C}\x{DD97}b#\x{20E3}"
+      RenderBlock {P} at (0,313) size 304x24
+        RenderText {#text} at (0,0) size 56x23
+          text run at (0,0) width 56: "\x{D83C}\x{DD97}b#\x{20E3}"
+      RenderBlock {P} at (0,357) size 304x24
+        RenderText {#text} at (0,0) size 48x23
+          text run at (0,0) width 48: "\x{D83C}\x{DD97}b#\x{20E3}"
+      RenderBlock {P} at (20,401) size 24x100
+        RenderText {#text} at (0,0) size 23x52
+          text run at (0,0) width 52: "\x{D83C}\x{DD97}b#\x{20E3}"
+      RenderBlock {P} at (20,501) size 28x100
+        RenderText {#text} at (8,0) size 12x56
+          text run at (8,0) width 56: "\x{D83C}\x{DD97}b#\x{20E3}"

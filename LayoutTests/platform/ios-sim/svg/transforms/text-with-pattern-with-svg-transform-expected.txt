@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 346x460
+    RenderSVGContainer {g} at (0,0) size 346x460 [transform={m=((0.43,0.25)(-0.25,0.43)) t=(0.00,0.00)}]
+      RenderSVGResourcePattern {pattern} [id="pat1"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+        RenderSVGRect {rect} at (0,5) size 9x13 [fill={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=5.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (0,11) size 11x12 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
+      RenderSVGRect {rect} at (0,17) size 325x224 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pat1"]}] [x=25.00] [y=10.00] [width=430.00] [height=60.00]
+      RenderSVGText {text} at (25,73) size 387x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 387x16
+          chunk 1 text run 1 at (25.00,85.00) startOffset 0 endOffset 75 width 386.91: "Pattern created using red and green rectangles applied to fill of rectangle"
+      RenderSVGResourcePattern {pattern} [id="pat2"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+        RenderSVGRect {rect} at (0,0) size 8x12 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (3,4) size 12x12 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (0,7) size 4x12 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (0,11) size 11x12 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
+      RenderSVGRect {rect} at (0,82) size 287x224 [stroke={[type=PATTERN] [id="pat2"] [stroke width=20.00]}] [x=35.00] [y=110.00] [width=410.00] [height=40.00]
+      RenderSVGText {text} at (25,163) size 302x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 302x16
+          chunk 1 text run 1 at (25.00,175.00) startOffset 0 endOffset 59 width 301.52: "Pattern of 4 rectangles applied to a stroke of a rectangle."
+      RenderSVGResourcePattern {pattern} [id="pat3"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+        RenderSVGRect {rect} at (0,0) size 8x12 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (0,7) size 4x12 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
+      RenderSVGText {text} at (25,173) size 295x58 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 295x58
+          chunk 1 text run 1 at (25.00,220.00) startOffset 0 endOffset 15 width 294.16: "Pattern on fill"
+      RenderSVGText {text} at (25,223) size 206x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 206x16
+          chunk 1 text run 1 at (25.00,235.00) startOffset 0 endOffset 38 width 205.44: "Pattern consists of red and green rows"
+      RenderSVGResourcePattern {pattern} [id="pat4"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+        RenderSVGRect {rect} at (0,0) size 8x12 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (3,4) size 12x12 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=0.00] [width=10.00] [height=10.00]
+      RenderSVGText {text} at (25,239) size 302x45 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 302x45
+          chunk 1 text run 1 at (25.00,275.00) startOffset 0 endOffset 17 width 301.56: "Pattern on stroke"
+      RenderSVGText {text} at (25,278) size 217x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 217x16
+          chunk 1 text run 1 at (25.00,290.00) startOffset 0 endOffset 40 width 216.79: "Pattern consists of red and blue columns"
+      RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 261x46
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 260.71: "$Revision: 1.6 $"
+      RenderSVGRect {rect} at (0,0) size 346x460 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (100,85) size 102x19
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGText {text} at (100,85) size 102x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 70x19
+        chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 12 width 69.77: "Die ist ein "
+      RenderSVGTSpan {tspan} at (0,0) size 29x19
+        RenderSVGInlineText {#text} at (69,0) size 29x19
+          chunk 1 text run 1 at (169.77,100.00) startOffset 0 endOffset 4 width 27.55: "Test"
+      RenderSVGInlineText {#text} at (97,0) size 5x19
+        chunk 1 text run 1 at (197.31,100.00) startOffset 0 endOffset 1 width 4.00: "."

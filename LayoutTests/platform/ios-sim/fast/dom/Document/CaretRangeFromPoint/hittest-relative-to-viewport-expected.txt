@@ -1,0 +1,36 @@
+This checks for proper behavior of caretRangeFromPoint before and after scrolling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 0, expected 0)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+FAIL Range.startOffset check (got 6, expected 12)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 2, expected 2)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+FAIL Range.startOffset check (got 6, expected 14)
+ 
+FAIL Range.startContainer check (got [object Text], expected [object Text])
+FAIL Range.startOffset check (got 38, expected 0)
+FAIL Range.startContainer check (got [object Text], expected [object Text])
+FAIL Range.startOffset check (got 18, expected 12)
+FAIL Range.startContainer check (got [object Text], expected [object Text])
+FAIL Range.startOffset check (got 38, expected 2)
+FAIL Range.startContainer check (got [object Text], expected [object Text])
+FAIL Range.startOffset check (got 1, expected 14)
+ 
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 1, expected 1)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+FAIL Range.startOffset check (got 7, expected 13)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 4, expected 4)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+FAIL Range.startOffset check (got 7, expected 16)
+ 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

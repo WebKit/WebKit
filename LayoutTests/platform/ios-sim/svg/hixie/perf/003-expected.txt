@@ -1,0 +1,311 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x400
+  RenderSVGRoot {svg} at (0,0) size 400x400
+    RenderSVGText {text} at (10,10) size 50x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 50x6
+        chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 21 width 49.29: "SVG Performance test."
+    RenderSVGText {text} at (10,90) size 33x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 33x6
+        chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 14 width 32.35: "Test completed"
+    RenderSVGRect {rect} at (0,0) size 400x400 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGText {text} at (9,37) size 3x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x6
+        chunk 1 text run 1 at (9.00,42.00) startOffset 0 endOffset 1 width 2.50: "0"
+    RenderSVGText {text} at (65,77) size 2x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x4
+        chunk 1 text run 1 at (65.00,80.00) startOffset 0 endOffset 1 width 1.50: "1"
+    RenderSVGText {text} at (92,92) size 1x2 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 1x2
+        chunk 1 text run 1 at (92.00,93.00) startOffset 0 endOffset 1 width 0.50: "2"
+    RenderSVGText {text} at (30,27) size 2x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x4
+        chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 1 width 1.50: "3"
+    RenderSVGText {text} at (92,53) size 1x2 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 1x2
+        chunk 1 text run 1 at (92.00,54.00) startOffset 0 endOffset 1 width 0.50: "4"
+    RenderSVGText {text} at (40,25) size 4x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x9
+        chunk 1 text run 1 at (40.00,33.00) startOffset 0 endOffset 1 width 4.00: "5"
+    RenderSVGText {text} at (65,68) size 4x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x9
+        chunk 1 text run 1 at (65.00,76.00) startOffset 0 endOffset 1 width 4.00: "6"
+    RenderSVGText {text} at (47,49) size 4x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x8
+        chunk 1 text run 1 at (47.00,56.00) startOffset 0 endOffset 1 width 3.50: "7"
+    RenderSVGText {text} at (79,-6) size 4x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x9
+        chunk 1 text run 1 at (79.00,2.00) startOffset 0 endOffset 1 width 4.00: "8"
+    RenderSVGText {text} at (10,74) size 3x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x6
+        chunk 1 text run 1 at (10.00,79.00) startOffset 0 endOffset 1 width 2.50: "9"
+    RenderSVGText {text} at (77,36) size 1x2 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 1x2
+        chunk 1 text run 1 at (77.00,37.00) startOffset 0 endOffset 2 width 1.00: "10"
+    RenderSVGText {text} at (45,76) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (45.00,80.00) startOffset 0 endOffset 2 width 4.00: "11"
+    RenderSVGText {text} at (27,76) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (27.00,80.00) startOffset 0 endOffset 2 width 4.00: "12"
+    RenderSVGText {text} at (13,17) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (13.00,19.00) startOffset 0 endOffset 2 width 2.00: "13"
+    RenderSVGText {text} at (43,98) size 1x2 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 1x2
+        chunk 1 text run 1 at (43.00,99.00) startOffset 0 endOffset 2 width 1.00: "14"
+    RenderSVGText {text} at (52,29) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (52.00,31.00) startOffset 0 endOffset 2 width 2.00: "15"
+    RenderSVGText {text} at (55,87) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (55.00,89.00) startOffset 0 endOffset 2 width 2.00: "16"
+    RenderSVGText {text} at (46,16) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (46.00,22.00) startOffset 0 endOffset 2 width 6.00: "17"
+    RenderSVGText {text} at (1,19) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (1.00,23.00) startOffset 0 endOffset 2 width 4.00: "18"
+    RenderSVGText {text} at (24,39) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (24.00,42.00) startOffset 0 endOffset 2 width 3.00: "19"
+    RenderSVGText {text} at (42,26) size 1x2 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 1x2
+        chunk 1 text run 1 at (42.00,27.00) startOffset 0 endOffset 2 width 1.00: "20"
+    RenderSVGText {text} at (11,76) size 5x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 5x6
+        chunk 1 text run 1 at (11.00,81.00) startOffset 0 endOffset 2 width 5.00: "21"
+    RenderSVGText {text} at (15,25) size 1x2 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 1x2
+        chunk 1 text run 1 at (15.00,26.00) startOffset 0 endOffset 2 width 1.00: "22"
+    RenderSVGText {text} at (18,17) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (18.00,19.00) startOffset 0 endOffset 2 width 2.00: "23"
+    RenderSVGText {text} at (42,74) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (42.00,80.00) startOffset 0 endOffset 2 width 6.00: "24"
+    RenderSVGText {text} at (49,5) size 1x2 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 1x2
+        chunk 1 text run 1 at (49.00,6.00) startOffset 0 endOffset 2 width 1.00: "25"
+    RenderSVGText {text} at (50,57) size 5x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 5x6
+        chunk 1 text run 1 at (50.00,62.00) startOffset 0 endOffset 2 width 5.00: "26"
+    RenderSVGText {text} at (30,60) size 7x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 7x8
+        chunk 1 text run 1 at (30.00,67.00) startOffset 0 endOffset 2 width 7.00: "27"
+    RenderSVGText {text} at (69,70) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (69.00,73.00) startOffset 0 endOffset 2 width 3.00: "28"
+    RenderSVGText {text} at (95,12) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (95.00,18.00) startOffset 0 endOffset 2 width 6.00: "29"
+    RenderSVGText {text} at (36,63) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (36.00,69.00) startOffset 0 endOffset 2 width 6.00: "30"
+    RenderSVGText {text} at (49,6) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (49.00,10.00) startOffset 0 endOffset 2 width 4.00: "31"
+    RenderSVGText {text} at (46,35) size 7x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 7x8
+        chunk 1 text run 1 at (46.00,42.00) startOffset 0 endOffset 2 width 7.00: "32"
+    RenderSVGText {text} at (85,86) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (85.00,88.00) startOffset 0 endOffset 2 width 2.00: "33"
+    RenderSVGText {text} at (54,95) size 5x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 5x6
+        chunk 1 text run 1 at (54.00,100.00) startOffset 0 endOffset 2 width 5.00: "34"
+    RenderSVGText {text} at (26,96) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (26.00,99.00) startOffset 0 endOffset 2 width 3.00: "35"
+    RenderSVGText {text} at (15,42) size 5x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 5x6
+        chunk 1 text run 1 at (15.00,47.00) startOffset 0 endOffset 2 width 5.00: "36"
+    RenderSVGText {text} at (56,85) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (56.00,88.00) startOffset 0 endOffset 2 width 3.00: "37"
+    RenderSVGText {text} at (18,21) size 5x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 5x6
+        chunk 1 text run 1 at (18.00,26.00) startOffset 0 endOffset 2 width 5.00: "38"
+    RenderSVGText {text} at (92,44) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (92.00,46.00) startOffset 0 endOffset 2 width 2.00: "39"
+    RenderSVGText {text} at (40,41) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (40.00,49.00) startOffset 0 endOffset 2 width 8.00: "40"
+    RenderSVGText {text} at (41,59) size 1x2 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 1x2
+        chunk 1 text run 1 at (41.00,60.00) startOffset 0 endOffset 2 width 1.00: "41"
+    RenderSVGText {text} at (66,5) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (66.00,7.00) startOffset 0 endOffset 2 width 2.00: "42"
+    RenderSVGText {text} at (85,9) size 1x2 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 1x2
+        chunk 1 text run 1 at (85.00,10.00) startOffset 0 endOffset 2 width 1.00: "43"
+    RenderSVGText {text} at (7,42) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (7.00,48.00) startOffset 0 endOffset 2 width 6.00: "44"
+    RenderSVGText {text} at (47,25) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (47.00,29.00) startOffset 0 endOffset 2 width 4.00: "45"
+    RenderSVGText {text} at (66,22) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (66.00,25.00) startOffset 0 endOffset 2 width 3.00: "46"
+    RenderSVGText {text} at (13,24) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (13.00,26.00) startOffset 0 endOffset 2 width 2.00: "47"
+    RenderSVGText {text} at (72,29) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (72.00,33.00) startOffset 0 endOffset 2 width 4.00: "48"
+    RenderSVGText {text} at (29,65) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (29.00,73.00) startOffset 0 endOffset 2 width 8.00: "49"
+    RenderSVGText {text} at (48,81) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (48.00,84.00) startOffset 0 endOffset 2 width 3.00: "50"
+    RenderSVGText {text} at (57,19) size 5x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 5x6
+        chunk 1 text run 1 at (57.00,24.00) startOffset 0 endOffset 2 width 5.00: "51"
+    RenderSVGText {text} at (61,34) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (61.00,42.00) startOffset 0 endOffset 2 width 8.00: "52"
+    RenderSVGText {text} at (46,66) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (46.00,74.00) startOffset 0 endOffset 2 width 8.00: "53"
+    RenderSVGText {text} at (70,3) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (70.00,5.00) startOffset 0 endOffset 2 width 2.00: "54"
+    RenderSVGText {text} at (3,47) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (3.00,49.00) startOffset 0 endOffset 2 width 2.00: "55"
+    RenderSVGText {text} at (62,67) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (62.00,69.00) startOffset 0 endOffset 2 width 2.00: "56"
+    RenderSVGText {text} at (34,73) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (34.00,81.00) startOffset 0 endOffset 2 width 8.00: "57"
+    RenderSVGText {text} at (74,15) size 5x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 5x6
+        chunk 1 text run 1 at (74.00,19.50) startOffset 0 endOffset 2 width 5.00: "58"
+    RenderSVGText {text} at (13,61) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (13.00,67.00) startOffset 0 endOffset 2 width 6.00: "59"
+    RenderSVGText {text} at (32,6) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (32.00,10.00) startOffset 0 endOffset 2 width 4.00: "60"
+    RenderSVGText {text} at (20,45) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (20.00,53.00) startOffset 0 endOffset 2 width 8.00: "61"
+    RenderSVGText {text} at (8,74) size 5x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 5x6
+        chunk 1 text run 1 at (8.00,79.00) startOffset 0 endOffset 2 width 5.00: "62"
+    RenderSVGText {text} at (2,53) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (2.00,56.00) startOffset 0 endOffset 2 width 3.00: "63"
+    RenderSVGText {text} at (60,26) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (60.00,32.00) startOffset 0 endOffset 2 width 6.00: "64"
+    RenderSVGText {text} at (97,96) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (97.00,98.00) startOffset 0 endOffset 2 width 2.00: "65"
+    RenderSVGText {text} at (58,75) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (58.00,78.00) startOffset 0 endOffset 2 width 3.00: "66"
+    RenderSVGText {text} at (1,5) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (1.00,7.00) startOffset 0 endOffset 2 width 2.00: "67"
+    RenderSVGText {text} at (0,0) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (0.00,3.00) startOffset 0 endOffset 2 width 3.00: "68"
+    RenderSVGText {text} at (89,62) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (89.00,68.00) startOffset 0 endOffset 2 width 6.00: "69"
+    RenderSVGText {text} at (85,9) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (85.00,12.00) startOffset 0 endOffset 2 width 3.00: "70"
+    RenderSVGText {text} at (48,75) size 5x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 5x6
+        chunk 1 text run 1 at (48.00,80.00) startOffset 0 endOffset 2 width 5.00: "71"
+    RenderSVGText {text} at (52,34) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (52.00,42.00) startOffset 0 endOffset 2 width 8.00: "72"
+    RenderSVGText {text} at (98,17) size 7x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 7x8
+        chunk 1 text run 1 at (98.00,24.00) startOffset 0 endOffset 2 width 7.00: "73"
+    RenderSVGText {text} at (12,80) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (12.00,82.00) startOffset 0 endOffset 2 width 2.00: "74"
+    RenderSVGText {text} at (26,65) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (26.00,69.00) startOffset 0 endOffset 2 width 4.00: "75"
+    RenderSVGText {text} at (5,1) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (5.00,9.00) startOffset 0 endOffset 2 width 8.00: "76"
+    RenderSVGText {text} at (5,35) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (5.00,43.00) startOffset 0 endOffset 2 width 8.00: "77"
+    RenderSVGText {text} at (48,41) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (48.00,47.00) startOffset 0 endOffset 2 width 6.00: "78"
+    RenderSVGText {text} at (19,15) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (19.00,19.00) startOffset 0 endOffset 2 width 4.00: "79"
+    RenderSVGText {text} at (22,63) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (22.00,69.00) startOffset 0 endOffset 2 width 6.00: "80"
+    RenderSVGText {text} at (34,44) size 1x2 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 1x2
+        chunk 1 text run 1 at (34.00,45.00) startOffset 0 endOffset 2 width 1.00: "81"
+    RenderSVGText {text} at (83,33) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (83.00,41.00) startOffset 0 endOffset 2 width 8.00: "82"
+    RenderSVGText {text} at (13,58) size 6x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 6x7
+        chunk 1 text run 1 at (13.00,64.00) startOffset 0 endOffset 2 width 6.00: "83"
+    RenderSVGText {text} at (65,-6) size 7x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 7x8
+        chunk 1 text run 1 at (65.00,1.00) startOffset 0 endOffset 2 width 7.00: "84"
+    RenderSVGText {text} at (77,35) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (77.00,39.00) startOffset 0 endOffset 2 width 4.00: "85"
+    RenderSVGText {text} at (23,18) size 7x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 7x8
+        chunk 1 text run 1 at (23.00,25.00) startOffset 0 endOffset 2 width 7.00: "86"
+    RenderSVGText {text} at (40,76) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (40.00,84.00) startOffset 0 endOffset 2 width 8.00: "87"
+    RenderSVGText {text} at (56,32) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (56.00,35.00) startOffset 0 endOffset 2 width 3.00: "88"
+    RenderSVGText {text} at (65,70) size 7x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 7x8
+        chunk 1 text run 1 at (65.00,77.00) startOffset 0 endOffset 2 width 7.00: "89"
+    RenderSVGText {text} at (13,19) size 7x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 7x8
+        chunk 1 text run 1 at (13.00,26.00) startOffset 0 endOffset 2 width 7.00: "90"
+    RenderSVGText {text} at (54,35) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (54.00,43.00) startOffset 0 endOffset 2 width 8.00: "91"
+    RenderSVGText {text} at (81,28) size 4x5 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 4x5
+        chunk 1 text run 1 at (81.00,32.00) startOffset 0 endOffset 2 width 4.00: "92"
+    RenderSVGText {text} at (10,73) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (10.00,75.00) startOffset 0 endOffset 2 width 2.00: "93"
+    RenderSVGText {text} at (53,87) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (53.00,89.00) startOffset 0 endOffset 2 width 2.00: "94"
+    RenderSVGText {text} at (25,58) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (25.00,66.00) startOffset 0 endOffset 2 width 8.00: "95"
+    RenderSVGText {text} at (93,46) size 2x3 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x3
+        chunk 1 text run 1 at (93.00,48.00) startOffset 0 endOffset 2 width 2.00: "96"
+    RenderSVGText {text} at (61,72) size 8x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 8x9
+        chunk 1 text run 1 at (61.00,80.00) startOffset 0 endOffset 2 width 8.00: "97"
+    RenderSVGText {text} at (14,-6) size 7x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 7x8
+        chunk 1 text run 1 at (14.00,1.00) startOffset 0 endOffset 2 width 7.00: "98"
+    RenderSVGText {text} at (7,67) size 3x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 3x4
+        chunk 1 text run 1 at (7.00,70.00) startOffset 0 endOffset 2 width 3.00: "99"

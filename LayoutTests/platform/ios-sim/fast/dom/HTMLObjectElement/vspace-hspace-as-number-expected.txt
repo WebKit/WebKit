@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 777x39
+          text run at (0,0) width 777: "This test makes sure that HTMLObjectElement.vspace and HTMLObjectElement.hspace are exposed as numbers instead"
+          text run at (0,20) width 744: "of strings, per the DOM Level 2 HTML spec: http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-9893177"
+      RenderBlock (anonymous) at (0,56) size 784x170
+        RenderEmbeddedObject {OBJECT} at (20,10) size 300x150
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,226) size 784x20
+        RenderText {#text} at (0,0) size 75x19
+          text run at (0,0) width 75: "SUCCESS!"

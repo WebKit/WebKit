@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 100x100
+    RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0
+        RenderSVGResourceLinearGradient {linearGradient} [id="SVGID_15"] [gradientUnits=objectBoundingBox] [start=(1,1)] [end=(1,0)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="SVGID_15"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGContainer {g} at (0,0) size 100x100
+      RenderSVGContainer {use} at (0,0) size 100x100
+        RenderSVGViewportContainer {svg} at (0,0) size 100x100
+          RenderSVGContainer {g} at (0,0) size 0x0
+          RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="SVGID_15"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

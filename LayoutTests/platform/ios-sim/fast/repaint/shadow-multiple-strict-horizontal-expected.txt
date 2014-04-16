@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x440
+  RenderBlock {HTML} at (0,0) size 800x440
+    RenderBody {BODY} at (8,20) size 784x320
+      RenderBlock {DIV} at (20,0) size 744x120
+        RenderInline {SPAN} at (0,0) size 386x60
+          RenderText {#text} at (0,0) size 386x60
+            text run at (0,0) width 386: "      multiple    "
+        RenderText {#text} at (385,0) size 738x120
+          text run at (385,0) width 353: "     shadows  "
+          text run at (0,60) width 50: "   "
+      RenderBlock {DIV} at (100,220) size 100x100

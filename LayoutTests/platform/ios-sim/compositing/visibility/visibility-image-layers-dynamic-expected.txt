@@ -1,0 +1,139 @@
+
+
+
+Initial
+
+(GraphicsLayer
+  (bounds 800.00 649.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 649.00)
+      (children 3
+        (GraphicsLayer
+          (position 14.00 6.00)
+          (bounds 772.00 153.00)
+          (children 1
+            (GraphicsLayer
+              (position 20.00 20.00)
+              (bounds 108.00 108.00)
+              (contentsVisible 0)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 14.00 161.00)
+          (bounds 772.00 153.00)
+          (contentsVisible 0)
+          (children 1
+            (GraphicsLayer
+              (position 20.00 20.00)
+              (bounds 108.00 108.00)
+              (contentsVisible 0)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 14.00 316.00)
+          (bounds 772.00 153.00)
+          (contentsVisible 0)
+          (children 1
+            (GraphicsLayer
+              (position 20.00 20.00)
+              (bounds 108.00 108.00)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+After step 1
+
+(GraphicsLayer
+  (bounds 800.00 1284.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 1284.00)
+      (children 3
+        (GraphicsLayer
+          (position 14.00 6.00)
+          (bounds 772.00 153.00)
+          (children 1
+            (GraphicsLayer
+              (position 20.00 20.00)
+              (bounds 108.00 108.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 14.00 161.00)
+          (bounds 772.00 153.00)
+          (contentsVisible 0)
+          (children 1
+            (GraphicsLayer
+              (position 20.00 20.00)
+              (bounds 108.00 108.00)
+              (contentsVisible 0)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 14.00 316.00)
+          (bounds 772.00 153.00)
+          (contentsVisible 0)
+          (children 1
+            (GraphicsLayer
+              (position 20.00 20.00)
+              (bounds 108.00 108.00)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+After step 2
+
+(GraphicsLayer
+  (bounds 800.00 2688.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 2688.00)
+      (children 3
+        (GraphicsLayer
+          (position 14.00 6.00)
+          (bounds 772.00 153.00)
+          (children 1
+            (GraphicsLayer
+              (position 20.00 20.00)
+              (bounds 108.00 108.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 14.00 161.00)
+          (bounds 772.00 153.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 20.00 20.00)
+              (bounds 108.00 108.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 14.00 316.00)
+          (bounds 772.00 153.00)
+          (contentsVisible 0)
+          (children 1
+            (GraphicsLayer
+              (position 20.00 20.00)
+              (bounds 108.00 108.00)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x452
+  RenderBlock {HTML} at (0,0) size 800x452
+    RenderBody {BODY} at (8,8) size 784x344
+      RenderBlock {DIV} at (0,0) size 784x34
+        RenderText {#text} at (0,0) size 144x17
+          text run at (0,0) width 144: "Test for "
+        RenderInline {A} at (0,0) size 736x34 [color=#0000EE]
+          RenderText {#text} at (144,0) size 736x34
+            text run at (144,0) width 592: "https://bugs.webkit.org/show_bug.cgi?"
+            text run at (0,17) width 128: "id=79526"
+      RenderBlock {P} at (0,134) size 784x210
+        RenderText {#text} at (0,0) size 351x10
+          text run at (0,0) width 351: "A green 10px border on the left of "
+        RenderInline {SPAN} at (0,0) size 500x210 [border: none (100px solid #008000)]
+          RenderText {#text} at (360,0) size 51x10
+            text run at (360,0) width 51: "this,"
+          RenderBR {BR} at (410,0) size 1x10
+          RenderText {#text} at (0,10) size 500x200
+            text run at (0,10) width 400: "is a"
+            text run at (0,110) width 500: "pass."

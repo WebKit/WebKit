@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 771x39
+        text run at (0,0) width 322: "This is a baseline alignment test for inline blocks. "
+        text run at (321,0) width 450: "The last lines of the two red-bordered inline blocks should line up and"
+        text run at (0,20) width 124: "be on the baseline. "
+      RenderBR {BR} at (123,35) size 1x0
+      RenderBlock {DIV} at (0,70) size 260x64 [border: (2px solid #FF0000)]
+        RenderText {#text} at (12,12) size 83x19
+          text run at (12,12) width 83: "This is block"
+        RenderBR {BR} at (94,27) size 1x0
+        RenderText {#text} at (12,32) size 236x19
+          text run at (12,32) width 84: "number one. "
+          text run at (95,32) width 153: "This line is the last one."
+      RenderText {#text} at (260,102) size 4x19
+        text run at (260,102) width 4: " "
+      RenderBlock {DIV} at (264,40) size 196x134 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (12,12) size 172x40
+          RenderText {#text} at (0,0) size 44x19
+            text run at (0,0) width 44: "This is"
+          RenderBR {BR} at (43,15) size 1x0
+          RenderText {#text} at (0,20) size 81x19
+            text run at (0,20) width 81: "number two."
+        RenderBlock {DIV} at (12,52) size 172x40
+          RenderText {#text} at (10,10) size 152x19
+            text run at (10,10) width 152: "This line is the last one."
+      RenderText {#text} at (460,102) size 143x19
+        text run at (460,102) width 143: " More text on the line."
+      RenderBR {BR} at (602,117) size 1x0
+      RenderText {#text} at (0,174) size 89x19
+        text run at (0,174) width 89: "The next line."

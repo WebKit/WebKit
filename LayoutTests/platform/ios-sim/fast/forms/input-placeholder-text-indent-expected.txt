@@ -1,0 +1,103 @@
+layer at (0,0) size 800x700
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x700
+  RenderBlock {HTML} at (0,0) size 800x700
+    RenderBody {BODY} at (8,8) size 784x684
+      RenderBlock {DIV} at (0,0) size 784x342
+        RenderTextControl {INPUT} at (0,2) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (500,38) size 0x0
+        RenderTextControl {INPUT} at (0,59) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (500,95) size 0x0
+        RenderTextControl {INPUT} at (0,116) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (500,152) size 0x0
+        RenderTextControl {INPUT} at (0,173) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (500,209) size 0x0
+        RenderTextControl {INPUT} at (0,230) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (500,266) size 0x0
+        RenderTextControl {INPUT} at (0,287) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (500,323) size 0x0
+      RenderBlock {DIV} at (0,342) size 784x342
+        RenderTextControl {INPUT} at (284,2) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (284,38) size 0x0
+        RenderTextControl {INPUT} at (284,59) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (284,95) size 0x0
+        RenderTextControl {INPUT} at (284,116) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (284,152) size 0x0
+        RenderTextControl {INPUT} at (284,173) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (284,209) size 0x0
+        RenderTextControl {INPUT} at (284,230) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (284,266) size 0x0
+        RenderTextControl {INPUT} at (284,287) size 500x53 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (284,323) size 0x0
+layer at (24,17) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (24,74) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (24,131) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (24,188) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (24,245) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (24,302) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (308,359) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (308,416) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (308,473) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (308,530) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (308,587) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (308,644) size 468x36
+  RenderBlock {DIV} at (16,7) size 468x36
+layer at (24,17) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (3,0) size 156x36
+      text run at (3,0) width 156: "placeholder"
+layer at (24,74) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 156x36
+      text run at (1,0) width 156: "placeholder"
+layer at (24,131) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (11,0) size 156x36
+      text run at (11,0) width 156: "placeholder"
+layer at (24,188) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (201,0) size 156x36
+      text run at (201,0) width 156: "placeholder"
+layer at (24,245) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (-9,0) size 156x36
+      text run at (-9,0) width 156: "placeholder"
+layer at (24,302) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (235,0) size 156x36
+      text run at (235,0) width 156: "placeholder"
+layer at (308,359) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (309,0) size 156x36
+      text run at (309,0) width 156: "placeholder"
+layer at (308,416) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (311,0) size 156x36
+      text run at (311,0) width 156: "placeholder"
+layer at (308,473) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (301,0) size 156x36
+      text run at (301,0) width 156: "placeholder"
+layer at (308,530) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (111,0) size 156x36
+      text run at (111,0) width 156: "placeholder"
+layer at (308,587) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (321,0) size 156x36
+      text run at (321,0) width 156: "placeholder"
+layer at (308,644) size 468x36
+  RenderBlock (relative positioned) {DIV} at (16,7) size 468x36 [color=#A9A9A9]
+    RenderText {#text} at (77,0) size 156x36
+      text run at (77,0) width 156: "placeholder"

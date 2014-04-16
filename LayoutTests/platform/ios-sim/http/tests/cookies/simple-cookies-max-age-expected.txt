@@ -1,0 +1,13 @@
+This test checks that cookies are correctly set using Max-Age.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check that setting a simple cookie works.
+FAIL cookie was 'test2=foobar; test=foobar'. Expected 'test=foobar'.
+Check setting a cookie that timed out.
+FAIL cookie was 'test2=foobar; test=foobar'. Expected ''.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

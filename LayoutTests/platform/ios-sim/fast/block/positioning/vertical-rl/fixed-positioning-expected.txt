@@ -1,0 +1,14 @@
+layer at (0,0) size 2016x600
+  RenderView at (0,0) size 800x600
+layer at (-1216,0) size 2016x600 backgroundClip at (0,0) size 2016x600 clip at (0,0) size 2016x600 outlineClip at (0,0) size 2016x600
+  RenderBlock {HTML} at (0,0) size 2016x600
+    RenderBody {BODY} at (8,8) size 2000x584
+      RenderBlock {DIV} at (0,-1416) size 2000x2000 [bgcolor=#00FF00]
+layer at (0,0) size 100x100
+  RenderBlock (positioned) {DIV} at (700,0) size 100x100 [bgcolor=#FF00FF]
+    RenderText {#text} at (0,0) size 79x99
+      text run at (0,0) width 57: "This box"
+      text run at (20,0) width 99: "should be fixed"
+      text run at (40,0) width 88: "to the top-left"
+      text run at (60,0) width 97: "of the window."
+scrolled to -1216,-1408

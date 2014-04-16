@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x567
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 364x19
+          text run at (0,0) width 364: "Test passes if there are two green rectangles on the page."
+      RenderBlock {DIV} at (25,45) size 734x30 [color=#008000]
+        RenderText {#text} at (0,0) size 301x30
+          text run at (0,0) width 301: "FillerText"

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 781x53
+          text run at (0,0) width 781: "Check the pixel result to make sure that the gray square is half way through the scale"
+          text run at (0,27) width 98: "animation."
+      RenderBlock {DIV} at (0,70) size 202x202 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,272) size 784x54
+        RenderText {#text} at (0,0) size 753x53
+          text run at (0,0) width 753: "PASS - \"-webkit-transform.0\" property for \"inner\" element at 0.5s saw something"
+          text run at (0,27) width 112: "close to: 0.5"
+        RenderBR {BR} at (111,48) size 1x0
+layer at (9,79) size 200x200
+  RenderBlock {DIV} at (1,1) size 200x200 [bgcolor=#808080]

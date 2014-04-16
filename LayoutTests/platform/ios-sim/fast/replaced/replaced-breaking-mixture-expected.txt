@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 10x45
+        RenderText {#text} at (0,0) size 25x19
+          text run at (0,0) width 25: "Foo"
+        RenderImage {IMG} at (0,20) size 25x25
+      RenderBlock {DIV} at (0,45) size 10x44
+        RenderText {#text} at (0,0) size 25x19
+          text run at (0,0) width 25: "Foo"
+        RenderMenuList {SELECT} at (2,22) size 53x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,3) size 41x14
+            RenderText at (0,0) size 21x14
+              text run at (0,0) width 21: "One"
+      RenderBlock {DIV} at (0,89) size 10x45
+        RenderText {#text} at (0,0) size 25x19
+          text run at (0,0) width 25: "Foo"
+        RenderTextControl {INPUT} at (2,22) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+      RenderBlock {DIV} at (0,134) size 10x45
+        RenderImage {IMG} at (0,0) size 25x25
+        RenderText {#text} at (0,25) size 25x19
+          text run at (0,25) width 25: "Foo"
+      RenderBlock {DIV} at (0,179) size 10x44
+        RenderMenuList {SELECT} at (2,2) size 53x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,3) size 41x14
+            RenderText at (0,0) size 21x14
+              text run at (0,0) width 21: "One"
+        RenderText {#text} at (0,24) size 25x19
+          text run at (0,24) width 25: "Foo"
+      RenderBlock {DIV} at (0,223) size 10x45
+        RenderTextControl {INPUT} at (2,2) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (0,25) size 25x19
+          text run at (0,25) width 25: "Foo"
+layer at (16,122) size 123x14
+  RenderBlock {DIV} at (6,3) size 123x14
+layer at (16,236) size 123x14
+  RenderBlock {DIV} at (6,3) size 123x14

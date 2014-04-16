@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x524
+  RenderBlock {HTML} at (0,0) size 800x524
+    RenderBody {BODY} at (8,16) size 784x500
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 664x19
+          text run at (0,0) width 664: "Test passes if the top left corner of each of the boxes is curved and if there is no red visible on the page."
+      RenderTable {TABLE} at (0,36) size 310x464
+        RenderTableSection {TBODY} at (0,0) size 310x464
+          RenderTableRow {TR} at (0,2) size 310x152
+            RenderTableCell {TD} at (2,7) size 152x142 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #FF0000)]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #000000)]
+            RenderTableCell {TD} at (156,7) size 152x142 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #FF0000)]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #000000)]
+          RenderTableRow {TR} at (0,156) size 310x152
+            RenderTableCell {TD} at (2,161) size 152x142 [r=1 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #FF0000)]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #000000)]
+            RenderTableCell {TD} at (156,161) size 152x142 [r=1 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #FF0000)]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #000000)]
+          RenderTableRow {TR} at (0,310) size 310x152
+            RenderTableCell {TD} at (2,315) size 152x142 [r=2 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #FF0000)]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #000000)]
+            RenderTableCell {TD} at (156,315) size 152x142 [r=2 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #FF0000)]
+              RenderBlock {DIV} at (1,1) size 100x140 [border: (20px solid #000000)]

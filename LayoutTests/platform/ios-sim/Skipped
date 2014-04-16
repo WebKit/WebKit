@@ -1,0 +1,1417 @@
+# <rdar://problem/8376819> LayoutTests: compositing/video/video-background-color.html uses movie not supported on iOS
+compositing/video/video-background-color.html
+
+# Relies on canplaythrough event
+compositing/geometry/limit-layer-bounds-opacity-transition.html
+compositing/video-page-visibility.html
+
+# DRT/Compositing timing issue on iOS
+compositing/iframes/iframe-src-change.html 
+compositing/geometry/layer-due-to-layer-children-deep-switch.html
+compositing/geometry/layer-due-to-layer-children-switch.html
+
+# See LayoutTests/platform/iphone-simulator/fast/parser/block-nesting-cap-iphone.html
+fast/parser/block-nesting-cap.html
+
+# Skip because fix for https://bugs.webkit.org/show_bug.cgi?id=26770 was reverted
+compositing/animation/animated-composited-inside-hidden.html
+
+# FIXME: <rdar://problem/6447273> LayoutTests: Occasional failures in css2.1/t1204-increment-01-c-o.html and css2.1/t1204-increment-02-c-o.html
+# We seem to be catching some css2.1 pages at different times when they're "done" loading.
+
+# Cannot enable all AX tests because there is too much difference between what is available through the iPhone AX API and the desktop API.
+accessibility
+
+# FIXME: <rdar://problem/8925740> LayoutTests/animations/play-state.html fails
+animations/play-state.html
+
+# FIXME: <rdar://problem/7238295> LayoutTests/dom/xhtml/level2/html/HTMLFormElement10.xhtml fails due to final navigation
+dom/xhtml/level2/html/HTMLFormElement10.xhtml
+
+# FIXME: <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
+editing/deleting
+editing/execCommand
+editing/input
+
+# test failing due to lack of textInputController <rdar://problem/5106287>
+editing/inserting/insert-composition-whitespace.html
+
+# tests failing because they produce the wrong markup <rdar://problem/10127241> 
+editing/inserting/insert-before-link-1.html
+editing/inserting/insert-paragraph-03.html
+editing/inserting/insert-paragraph-04.html
+editing/inserting/multiple-lines-selected.html
+editing/inserting/paragraph-outside-nested-divs.html
+editing/inserting/paragraph-separator-03.html
+editing/inserting/return-key-in-hidden-field.html
+editing/inserting/typing-tab-designmode-forms.html
+editing/inserting/typing-tab-designmode.html
+
+editing/pasteboard
+editing/selection
+editing/spelling
+editing/style
+editing/text-iterator/first-letter-word-boundary.html
+editing/undo
+
+# FIXME: <rdar://problem/10365630> There is no UndoManager available during testing
+fast/forms/input-paste-undo.html
+
+# FIXME: <rdar://problem/5106287> DumpRenderTree: fix TextInputController to work with PEP and re-enable tests
+# NOTE: Most tests have moved under LayoutTests/platform/mac/*/*.html
+fast/events/ime-composition-events-001.html
+fast/forms/input-maxlength-ime-completed.html
+fast/forms/input-maxlength-ime-preedit.html
+fast/text/international/thai-cursor-position.html
+svg/text/caret-in-svg-text-expected.txt
+
+# Need to add functionality to DumpRenderTree to handle error pages (also skipped in platform/mac)
+fast/history/back-forward-reset-after-error-handling.html
+
+# FIXME: <rdar://problem/7293091> LayoutTests/http/tests/misc/image-error.html and object-image-error.html fail on buildbot but not locally
+http/tests/misc/image-error.html
+http/tests/misc/object-image-error.html
+
+# FIXME: <rdar://problem/10604363> Re-enable Web Inspector layout tests
+fast/inspector-support
+http/tests/inspector
+http/tests/inspector-enabled
+inspector
+# FIXME: iOS does not allow inspecting workers.
+inspector-protocol/debugger-pause-dedicated-worker.html
+inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html
+
+# No double click
+fast/events/click-count.html
+fast/events/dblclick-addEventListener.html
+fast/events/zoom-dblclick.html
+
+# Different selection
+fast/events/autoscroll-in-textfield.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=53655
+fast/repaint/bugzilla-6473.html
+
+# No drag/drop
+fast/css/user-drag-none.html
+fast/events/drag-to-navigate.html
+fast/events/prevent-drag-to-navigate.html
+fast/events/bogus-dropEffect-effectAllowed.html
+fast/events/content-changed-during-drop.html
+fast/events/crash-on-mutate-during-drop.html
+fast/events/drag-and-drop-dataTransfer-types-nocrash.html
+fast/events/drag-and-drop-fire-drag-dragover.html
+fast/events/drag-and-drop.html
+fast/events/drag-file-crash.html
+fast/events/drag-image-filename.html
+fast/events/drag-in-frames.html
+fast/events/drag-parent-node.html
+fast/events/dropzone-001.html
+fast/events/dropzone-002.html
+fast/events/dropzone-003.html
+fast/events/dropzone-004.html
+fast/events/mouse-drag-from-frame.html
+fast/events/mouse-drag-from-frame-to-other-frame.html
+fast/events/ondragenter.html
+fast/events/ondrop-text-html.html
+fast/events/standalone-image-drag-to-editable.html
+fast/events/5056619.html
+fast/events/selectstart-by-drag.html
+fast/events/autoscroll-should-not-stop-on-keypress.html
+fast/events/dom-character-data-modified-textarea-crash.html
+fast/events/drag-and-drop-set-drag-data-arguments.html
+fast/events/drag-and-drop-subframe-dataTransfer.html
+fast/events/drag-customData.html
+fast/events/drag-link.html
+fast/events/drag-selects-image.html
+fast/events/drop-handler-should-not-stop-navigate.html
+fast/events/drop-with-file-paths.html
+fast/events/dropzone-005.html
+fast/events/file-input-hidden-in-ondrop.html
+fast/events/frame-scroll-fake-mouse-move.html
+fast/events/input-element-display-none-in-dragleave-crash.html
+fast/events/media-focus-in-standalone-media-document.html
+fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
+fast/events/moving-text-should-fire-drop-and-dragend-events.html
+fast/events/remove-target-with-shadow-in-drag.html
+fast/forms/drag-into-textarea.html
+fast/forms/file/file-input-change-event.html
+fast/forms/range/range-drag.html
+fast/forms/textfield-drag-into-disabled.html
+fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html
+fast/forms/select-multiple-elements-with-mouse-drag.html
+fast/forms/file/recover-file-input-in-unposted-form.html
+fast/forms/range/range-drag-when-toggled-disabled.html
+fast/forms/select/listbox-drag-in-non-multiple.html
+fast/lists/drag-into-marker.html
+http/tests/local/blob/send-hybrid-blob.html
+http/tests/local/drag-over-remote-content.html
+http/tests/local/formdata/send-form-data.html
+http/tests/local/formdata/send-form-data-with-sliced-file.html
+http/tests/local/formdata/form-data-with-unknown-file-extension.html
+http/tests/local/formdata/send-form-data-constructed-from-form.html
+http/tests/misc/bubble-drag-events.html
+http/tests/security/clipboard/clipboard-file-access.html
+http/tests/security/drag-over-remote-content-iframe.html
+http/tests/security/drag-drop-same-unique-origin.html
+
+# DataTransferItems is not yet implemented.
+fast/events/clipboard-dataTransferItemList.html
+fast/events/drag-dataTransferItemList.html
+fast/events/drag-dataTransferItemList-file-handling.html
+
+# No arrow keys
+fast/events/arrow-keys-on-body.html
+fast/events/arrow-navigation.html
+
+# No tab key
+fast/events/js-keyboard-event-creation.html
+fast/events/keypress-insert-tab.html
+fast/forms/focus-control-to-page.html
+fast/forms/tabbing-input-iframe.html
+
+# Only one mouse button supported
+fast/events/mouse-click-events.html
+fast/events/mouseup-from-button2.html
+
+# FIXME: element.focus() not working properly
+fast/events/frame-click-focus.html
+fast/events/keydown-1.html
+fast/events/keydown-keypress-focus-change.html
+fast/events/keydown-keypress-preventDefault.html
+fast/events/keypress-focus-change.html
+fast/forms/input-text-scroll-left-on-blur.html
+fast/forms/onchange-enter-submit.html
+fast/forms/onselect-textarea.html
+fast/forms/onselect-textfield.html
+fast/forms/search-event-delay.html
+fast/forms/textarea-type-spaces.html
+fast/frames/iframe-window-focus.html
+fast/events/focus-change-crash2.html
+
+# FIXME: something is terribly wrong here with mouse events
+fast/events/popup-blocking-click-in-iframe.html
+fast/loader/early-load-cancel.html
+
+# No resize corners in iPhone webkit
+fast/css/resize-corner-tracking.html
+fast/overflow/hit-test-overflow-controls.html
+fast/hidpi/video-controls-in-hidpi.html
+
+# FIXME: window.scrollTo appears not to work
+fast/dom/Window/window-xy-properties.html
+
+# No access key support on the phone
+fast/forms/focus-selection-input.html
+fast/forms/focus-selection-textarea.html
+fast/forms/select-accesskey.html
+fast/events/access-key-self-destruct.html
+
+# No "option-delete" on the phone
+fast/forms/input-text-option-delete.html
+
+# iPhone webkit does not select words on double-click
+fast/forms/password-doubleclick-selection.html
+fast/forms/input-text-double-click.html
+
+# iPhone webkit does not select the entire field on focus
+fast/forms/input-select-on-click.html
+
+# iPhone webkit does not select words on drag
+fast/forms/input-text-drag-down.html
+fast/text/atsui-rtl-override-selection.html
+fast/text/reset-drag-on-mouse-down.html
+
+# iPhone listboxes / select controls do not have a keyboard and therefore do not support typeahead
+fast/forms/listbox-typeahead-scroll.html
+fast/forms/select-type-ahead-non-latin.html
+
+# FIXME: There should be a way to scroll disabled text fields
+fast/forms/input-readonly-autoscroll.html
+
+# Spacebar does not select controls on the phone
+fast/forms/radio/radio_checked_name.html
+
+# FIXME: <rdar://problem/10214063> Re-enable slider (<input type=range>) tests
+fast/forms/range/slider-mouse-events.html
+fast/forms/range/slider-padding.html
+fast/forms/range/slider-thumb-shared-style.html
+fast/forms/range/slider-thumb-stylability.html
+fast/forms/range/slider-hit-testing.html
+fast/forms/range/range-thumb-height-percentage.html
+fast/forms/range/slider-onchange-event.html
+fast/forms/range/slider-transformed.html
+fast/forms/range/slider-zoomed.html
+fast/forms/range/thumbslider-no-parent-slider.html
+
+# FIXME: <rdar://problem/10214064> Re-enable search (<input type=search>) tests
+fast/forms/search-abs-pos-cancel-button.html
+fast/forms/search-cancel-button-events.html
+fast/forms/search-cancel-button-mouseup.html
+fast/forms/search-rtl.html
+fast/forms/search-transformed.html
+
+# FIXME: fix profiler tests and re-enable
+fast/profiler
+
+# FIXME: <rdar://problem/6466515> LayoutTests: tests hang because notifyDone() is never called
+# This is a dumping ground for tests that don't call notifyDone().  The issue isn't that
+# notifyDone() is broken; it's that each of these tests have an as-yet-undetermined cause
+# for failure.
+fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html
+fast/dom/Window/window-postmessage-clone.html
+fast/dynamic/paused-event-dispatch.html
+fast/encoding/mailto-always-utf-8.html
+fast/events/constructors/track-event-constructor.html
+fast/events/message-channel-gc-2.html
+fast/events/message-channel-gc-3.html
+fast/events/message-channel-gc-4.html
+fast/events/message-channel-gc.html
+fast/events/message-port-clone.html
+fast/events/message-port-deleted-document.html
+fast/events/message-port-deleted-frame.html
+fast/events/message-port-inactive-document.html
+fast/events/message-port-multi.html
+fast/events/message-port-no-wrapper.html
+fast/events/message-port.html
+fast/events/recorded-keydown-event.html
+fast/events/tabindex-focus-blur-all.html
+fast/frames/focus-controller-crash-change-event.html
+http/tests/local/formdata/upload-events.html
+http/tests/misc/isindex-with-no-form-base-href.html
+http/tests/misc/window-dot-stop.html
+http/tests/multipart/invalid-image-data-standalone.html
+http/tests/multipart/multipart-wait-before-boundary.html
+http/tests/navigation/javascriptlink-frames.html
+http/tests/navigation/javascriptlink-subframeload.html
+http/tests/plugins/create-v8-script-objects.html
+http/tests/plugins/plugin-document-has-focus.html
+http/tests/plugins/post-url-file.html
+http/tests/plugins/third-party-cookie-accept-policy.html
+http/tests/security/dataTransfer-set-data-file-url.html
+http/tests/security/frameNavigation/opener.html
+http/tests/security/contentSecurityPolicy/media-src-allowed.html
+http/tests/misc/link-rel-prefetch-and-subresource.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html
+http/tests/local/link-stylesheet-load-order-preload.html
+http/tests/local/link-stylesheet-load-order.html
+http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html
+
+# FIXME: <rdar://problem/6893102> [SIM ONLY] LayoutTests/fast/events/resize-subframe.html fails after iframe fix in r95464
+fast/events/resize-subframe.html
+
+# FIXME: <rdar://problem/6305318> MobileSafari/WebKit should pass acid3 test
+http/tests/misc/acid3.html
+
+# FIXME: <rdar://problem/6766479> LayoutTests/http/tests/navigation/post-goback-repost-policy.html fails ('form resubmitted' instead of 'back/forward' navigation type)
+http/tests/navigation/post-goback-repost-policy.html
+
+# FIXME: iPhone WebKit does not support NPAPI (Netscape Plugin API) plugins
+http/tests/plugins/geturlnotify-from-npp-destroystream.html
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+plugins/npruntime
+userscripts/user-script-plugin-document.html
+fast/replaced/invalid-object-with-fallback.html
+plugins/destroy-during-npp-new-object-with-fallback-content.html
+plugins/embed-attributes-setting.html
+plugins/embed-prefers-plugins-for-images.html
+plugins/evaluate-js-after-removing-plugin-element.html
+plugins/form-value.html
+plugins/get-targeted-javascript-url.html
+plugins/get-url-notify-with-url-that-fails-to-load.html
+plugins/get-url-with-javascript-destroying-plugin.html
+plugins/get-url-with-javascript-url.html
+plugins/get-user-agent-with-null-npp-from-npp-new.html
+plugins/iframe-plugin-bgcolor.html
+plugins/mouse-click-plugin-clears-selection.html
+plugins/multiple-plugins.html
+plugins/nested-plugin-objects.html
+plugins/netscape-dom-access-and-reload.html
+plugins/no-mime-with-valid-extension.html
+plugins/npp-set-window-called-during-destruction.html
+plugins/object-embed-plugin-scripting.html
+plugins/pass-different-npp-struct.html
+plugins/plugin-document-back-forward.html
+plugins/refcount-leaks.html
+plugins/return-npobject.html
+plugins/script-object-invoke.html
+plugins/windowless_plugin_paint_test.html
+compositing/plugins/invalidate_rect.html
+
+# FIXME: <rdar://problem/6504579> LayoutTests: Enable file upload tests once file uploads are supported on iPhone OS
+fast/forms/file/get-file-upload.html
+fast/forms/file/input-file-re-render.html
+fast/forms/ValidityState-valueMissing-008.html
+
+# FIXME: <rdar://problem/6466492> LayoutTests: Re-enable media layout tests once <audio> and <video> tags are supported
+http/tests/media
+
+# Skipped because they use a feature not supported on the phone
+media/audio-controls-do-not-fade-out.html
+media/audio-data-url.html
+media/audio-mpeg-supported.html
+media/audio-delete-while-slider-thumb-clicked.html
+media/audio-delete-while-step-button-clicked.html
+media/controls-drag-timebar.html
+media/controls-right-click-on-timebar.html
+media/media-can-play-ogg.html
+media/media-captions.html
+media/media-controls-clone.html
+media/media-fullscreen-inline.html
+media/media-fullscreen-not-in-document.html
+media/nodesFromRect-shadowContent.html
+media/video-canvas-source.html
+media/video-click-dblckick-standalone.html
+media/video-controls-in-media-document.html
+media/video-controls-transformed.html
+media/video-controls-visible-audio-only.html
+media/video-controls-zoomed.html
+media/video-document-types.html
+media/video-muted.html
+media/video-no-audio.html
+media/video-reverse-play-duration.html
+media/video-size-intrinsic-scale.html
+media/video-timeupdate-reverse-play.html
+media/video-volume.html
+media/video-volume-slider.html
+media/video-zoom-controls.html
+
+# <rdar://problem/8926949> Get more media LayoutTests working
+# Tests that assume that you can load multiple videos.
+media/controls-styling.html 
+media/video-aspect-ratio.html
+media/video-controls-rendering.html
+media/video-layer-crash.html
+# Flakey
+media/audio-controls-rendering.html
+# Size is wrong
+media/audio-only-video-intrinsic-size.html
+# Missing/wrong order canplaythough event
+media/audio-play-event.html
+media/video-play-empty-events.html
+media/video-timeupdate-during-playback.html
+# Results are timing dependent, maybe rewrite?
+media/event-attributes.html
+# WebKit creates a plug-in document instead of a media document???
+media/media-document-audio-size.html
+# Media not loading automatically ??
+media/restore-from-page-cache.html
+# Bug in plug-in/CoreMedia not respecting aspect ratio
+media/video-display-aspect-ratio.html
+# 'buffered' is not empty
+media/video-error-does-not-exist.html
+# Results are timing dependent, maybe rewrite?
+media/video-loop.html
+# Pause can't happen immediately
+media/video-pause-immediately.html
+# Playback never starts
+media/video-played-collapse.html
+# 'play' event sent before 'loadedmetadata'
+media/video-preload.html
+# Events out of order because the test is timing secific
+media/video-played-ranges-1.html
+media/video-played-reset.html
+# 'timeupdate' not fired frequently enough for this test, rewrite test?
+media/video-seek-past-end-playing.html
+# Seeking to the wrong time ??
+media/video-seeking.html
+# Test assumes both movies will be loaded in 1500ms
+media/video-zoom.html
+# crashes
+media/video-duration-known-after-eos.html
+
+# FIXME: <rdar://problem/6512037> LayoutTests: Enable printing tests once printing is supported on iPhone OS
+printing
+
+# <rdar://problem/8926700> LayoutTests: svg/custom/clip-path-referencing-use.svg fails
+svg/custom/clip-path-referencing-use.svg
+svg/custom/clip-path-referencing-use2.svg
+
+# FIXME: Hang
+http/tests/plugins/interrupted-get-url.html
+# Hangs DRT
+http/tests/security/cross-frame-access-put.html
+# FIXME: Inconsistent Results
+fast/forms/plaintext-mode-2.html
+fast/css/font-face-unicode-range.html
+
+# FIXME: Tests time out calling notifyDone() or fail
+plugins/clicking-missing-plugin-fires-delegate.html
+plugins/destroy-during-npp-new.html
+plugins/destroy-plugin-from-callback.html
+plugins/destroy-stream-twice.html
+plugins/document-open.html
+plugins/embed-attributes-style.html
+plugins/embed-inside-object.html
+plugins/fullscreen-plugins-dont-reload.html
+plugins/get-empty-url.html
+plugins/get-file-url.html
+plugins/get-url-that-the-resource-load-delegate-will-disallow.html
+plugins/get-url-with-blank-target.html
+plugins/get-url-with-iframe-target.html
+plugins/geturl-replace-query.html
+plugins/geturlnotify-during-document-teardown.html
+plugins/iframe-shims.html
+plugins/inner-html-display-none.html
+plugins/instance-available-before-stylesheets-loaded-object.html
+plugins/instance-available-before-stylesheets-loaded.html
+plugins/keyboard-events.html
+plugins/mouse-events-fixedpos.html
+plugins/mouse-events.html
+plugins/netscape-destroy-plugin-script-objects.html
+plugins/netscape-dom-access.html
+plugins/netscape-plugin-map-data-to-src.html
+plugins/netscape-plugin-page-cache-works.html
+plugins/netscape-plugin-property-access-exception.html
+plugins/netscape-plugin-setwindow-size-2.html
+plugins/netscape-plugin-setwindow-size.html
+plugins/open-and-close-window-with-plugin.html
+plugins/override-node-method.html
+plugins/plugin-javascript-access.html
+plugins/plugin-remove-subframe.html
+plugins/private-browsing-mode-2.html
+plugins/private-browsing-mode.html
+plugins/reentrant-update-widget-positions.html
+plugins/reloadplugins-and-pages.html
+plugins/reloadplugins-no-pages.html
+plugins/resize-from-plugin.html
+plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
+plugins/set-status.html
+plugins/update-widgets-crash.html
+plugins/window-open.html
+
+# FIXME: Hang
+http/tests/loading/bad-scheme-subframe.html
+
+# FIXME: Inconsistent Results
+http/tests/security/cross-frame-access-child-explicit-domain.html
+http/tests/security/cross-frame-access-parent-explicit-domain.html
+http/tests/security/cross-frame-access-protocol-explicit-domain.html
+http/tests/security/cross-frame-access-protocol.html
+http/tests/xmlhttprequest/xmlhttprequest-post-crash.html
+
+# FIXME: <rdar://problem/8975104> Update iOS LayoutTest Skipped canvas tests after completed merge
+# Failing canvas test cases from http://philip.html5.org/tests/canvas/suite/tests/
+canvas/philip/tests/2d.drawImage.broken.html
+#NOTE: 2d.composite.operation.clear is failing because we support the "clear" composite op
+#without our vendor prefix since it was around in canvas before the spec was written.
+canvas/philip/tests/2d.composite.operation.highlight.html
+canvas/philip/tests/2d.composite.uncovered.fill.copy.html
+canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html
+canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html
+canvas/philip/tests/2d.composite.uncovered.fill.source-in.html
+canvas/philip/tests/2d.composite.uncovered.fill.source-out.html
+canvas/philip/tests/2d.composite.uncovered.image.copy.html
+canvas/philip/tests/2d.composite.uncovered.image.destination-atop.html
+canvas/philip/tests/2d.composite.uncovered.image.destination-in.html
+canvas/philip/tests/2d.composite.uncovered.image.source-in.html
+canvas/philip/tests/2d.composite.uncovered.image.source-out.html
+canvas/philip/tests/2d.composite.uncovered.pattern.copy.html
+canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop.html
+canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html
+canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html
+canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html
+canvas/philip/tests/2d.drawImage.broken.html
+canvas/philip/tests/2d.drawImage.incomplete.html
+canvas/philip/tests/2d.drawImage.null.html
+canvas/philip/tests/2d.fillStyle.parse.current.basic.html
+canvas/philip/tests/2d.fillStyle.parse.current.changed.html
+canvas/philip/tests/2d.fillStyle.parse.current.removed.html
+canvas/philip/tests/2d.fillStyle.parse.system.html
+canvas/philip/tests/2d.gradient.radial.cone.front.html
+canvas/philip/tests/2d.gradient.radial.cone.top.html
+canvas/philip/tests/2d.gradient.radial.inside2.html
+canvas/philip/tests/2d.gradient.radial.inside3.html
+canvas/philip/tests/2d.gradient.radial.negative.html
+canvas/philip/tests/2d.gradient.radial.outside1.html
+canvas/philip/tests/2d.imageData.create1.type.html
+canvas/philip/tests/2d.imageData.create2.type.html
+canvas/philip/tests/2d.imageData.get.source.negative.html
+canvas/philip/tests/2d.imageData.get.source.outside.html
+canvas/philip/tests/2d.imageData.get.type.html
+canvas/philip/tests/2d.line.cap.closed.html
+canvas/philip/tests/2d.line.join.parallel.html
+canvas/philip/tests/2d.line.miter.lineedge.html
+canvas/philip/tests/2d.missingargs.html
+canvas/philip/tests/2d.path.rect.winding.html
+canvas/philip/tests/2d.pattern.image.broken.html
+canvas/philip/tests/2d.pattern.image.incomplete.html
+canvas/philip/tests/2d.pattern.image.null.html
+canvas/philip/tests/2d.pattern.image.undefined.html
+canvas/philip/tests/2d.shadow.enable.blur.html
+canvas/philip/tests/2d.shadow.enable.x.html
+canvas/philip/tests/2d.shadow.enable.y.html
+canvas/philip/tests/2d.shadow.gradient.alpha.html
+canvas/philip/tests/2d.shadow.gradient.basic.html
+canvas/philip/tests/2d.shadow.gradient.transparent.2.html
+canvas/philip/tests/2d.strokeRect.zero.4.html
+canvas/philip/tests/2d.text.draw.baseline.bottom.html
+canvas/philip/tests/2d.text.draw.baseline.hanging.html
+canvas/philip/tests/2d.text.draw.baseline.ideographic.html
+canvas/philip/tests/2d.text.draw.baseline.middle.html
+canvas/philip/tests/2d.text.draw.baseline.top.html
+canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html
+canvas/philip/tests/2d.text.draw.space.collapse.end.html
+canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html
+canvas/philip/tests/2d.text.draw.space.collapse.other.html
+canvas/philip/tests/2d.text.draw.space.collapse.space.html
+canvas/philip/tests/2d.text.draw.space.collapse.start.html
+canvas/philip/tests/2d.text.font.parse.basic.html
+canvas/philip/tests/2d.text.font.parse.complex.html
+canvas/philip/tests/2d.text.font.parse.invalid.html
+canvas/philip/tests/2d.text.font.parse.size.percentage.html
+canvas/philip/tests/2d.text.font.parse.size.percentage.default.html
+canvas/philip/tests/2d.text.font.parse.system.html
+canvas/philip/tests/2d.text.measure.width.space.html
+canvas/philip/tests/toDataURL.jpeg.alpha.html
+canvas/philip/tests/type.prototype.html
+
+# FIXME: <rdar://problem/6592055> LayoutTests: http/tests/security/local-CSS-from-remote.html is crashing when run with other tests
+http/tests/security/local-CSS-from-remote.html
+# FIXME: The test after this one crashes with <rdar://problem/6624027> DRT crash in WebCore::ResourceHandle::client
+http/tests/security/frame-loading-via-document-write.html
+# FIXME: <rdar://problem/6511748> LayoutTests/fast/css: CrashTracer: [USER] 1 crash in DumpRenderTree at WebCore • WebCore::StringImpl::length
+fast/dom/cssTarget-crash.html
+
+# Need to implement WebGeolocationRequest::cancelPermissionRequest on mac.
+# https://bugs.webkit.org/show_bug.cgi?id=55944
+fast/dom/Geolocation/page-reload-cancel-permission-requests.html
+
+# FIXME: <rdar://problem/7903522> iPhone WebKit ENABLE(DATALIST) needs HI before it is enabled
+fast/forms/datalist
+
+# We don't support mouse wheel event in iPhone
+fast/events/remove-child-onscroll.html
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
+fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-x-in-scrolling-page.html
+fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
+fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
+fast/events/wheelevent-direction-inverted-from-device.html
+scrollbars/scroll-rtl-or-bt-layer.html
+
+# We don't support window resizing in iPhone
+fast/events/attempt-scroll-with-no-scrollbars.html
+
+# Java is not available on iOS
+java
+
+# Doesn't support WOFF yet.
+fast/css/font-face-woff.html
+
+# This port doesn't support Notifications.
+fast/notifications
+http/tests/notifications
+
+# Below canvas test cases from http://philip.html5.org/tests/canvas/suite/tests/
+# (2d.composite.operation.clear) is failing because we support the "clear" composite op
+# without our vendor prefix since it was around in canvas before the spec was written.
+canvas/philip/tests/2d.composite.operation.clear.html
+# (2d.composite.*) Most, if not all, of these are failing due to the webkit canvas
+# drawing model being different than the spec's current model. There is a current
+# effort out to change the spec to the webkit canvas model.
+canvas/philip/tests/2d.composite.operation.darker.html
+
+# This canvas test is skipped because it is out of date with respect to
+# the current spec, and the fix for https://bugs.webkit.org/show_bug.cgi?id=65709
+# which complies with the current spec, makes this test fail by no longer throwing
+# exceptions that were previously expected
+canvas/philip/tests/2d.drawImage.outsidesource.html
+
+# IndexedDB is not yet enabled.
+storage/indexeddb
+http/tests/inspector/indexeddb
+
+# This port doesn't support DeviceMotion or DeviceOrientation
+fast/dom/DeviceMotion
+fast/dom/DeviceOrientation
+fast/dom/Window/window-properties-device-orientation.html
+
+# Link prefetch is disabled by default
+fast/dom/HTMLLinkElement/link-and-subresource-test.html
+fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html
+fast/dom/HTMLLinkElement/prefetch.html
+fast/dom/HTMLLinkElement/prefetch-beforeload.html
+fast/dom/HTMLLinkElement/prefetch-detached.html
+fast/dom/HTMLLinkElement/prefetch-onerror.html
+fast/dom/HTMLLinkElement/prefetch-onload.html
+fast/dom/HTMLLinkElement/prefetch-too-many-clients.html
+fast/dom/HTMLLinkElement/subresource.html
+http/tests/misc/link-rel-prefetch-and-subresource.html
+http/tests/misc/prefetch-purpose.html
+
+# ENABLE_WEB_TIMING - Web Timing is not enabled.
+# https://bugs.webkit.org/show_bug.cgi?id=42434
+# <rdar://problem/8979402> iOS: Investigate supporting ENABLE_WEB_TIMING
+# <rdar://problem/8975050> DRT: WebTiming layout tests failing.
+perf
+fast/performance
+fast/dom/Window/window-properties-performance.html
+fast/dom/navigation-type-back-forward.html
+fast/dom/navigation-type-navigate.html
+fast/dom/navigation-type-reload.html
+fast/dom/webtiming.html
+fast/dom/webtiming-document-open.html
+fast/dom/webtiming-navigate-within-document.html
+http/tests/misc/webtiming-origins.html
+http/tests/misc/webtiming-one-redirect.php
+http/tests/misc/webtiming-slow-load.php
+http/tests/misc/webtiming-ssl.php
+http/tests/misc/webtiming-two-redirects.php
+http/tests/w3c/webperf
+
+# ENABLE_CSP_NEXT - Content Security Policy 1.1 is not enabled
+# https://bugs.webkit.org/show_bug.cgi?id=85558
+http/tests/security/contentSecurityPolicy/1.1
+
+# ENABLE_CSS3_CONDITIONAL_RULES - CSS3 Conditionals support is not yet enabled.
+css3/supports.html
+
+# ENABLE_CSS_IMAGE_ORIENTATION - CSS Image Orientation support is not yet enabled.
+fast/css/image-orientation
+
+# ENABLE_CSS_IMAGE_RESOLUTION - CSS Image Resolution support is not yet enabled.
+fast/css/image-resolution
+
+# ENABLE_CSS3_TEXT - CSS3 Text support is not yet enabled.
+fast/css3-text/css3-text-decoration
+
+# ENABLE_CSS_VARIABLES - CSS Variables support is not yet enabled.
+fast/css/variables
+
+# ENABLE_DIALOG_ELEMENT - Dialog element is not yet enabled.
+fast/dom/HTMLDialogElement
+
+# ENABLE_DRAGGABLE_REGION - Draggable regions support is not yet enabled.
+fast/css/draggable-region-parser.html
+
+# ENABLE_HIDDEN_PAGE_DOM_TIMER_THROTTLING - Hidden Page DOM Timer Throttling is not yet enabled on iOS.
+# <rdar://problem/12687705> Investigate enabling ENABLE_HIDDEN_PAGE_DOM_TIMER_THROTTLING on iOS
+fast/dom/timer-throttling-hidden-page.html
+
+# ENABLE_INPUT_TYPE_COLOR - Color input is not yet enabled.
+fast/forms/color
+
+# ENABLE_RESOLUTION_MEDIA_QUERY - Media Queries for resolution not yet enabled.
+fast/media/mq-resolution.html
+
+# ENABLE_SUBPIXEL_LAYOUT - Subpixel layout is not yet enabled.
+# <rdar://problem/12617224> Enable subpixel layout in Innsbruck
+fast/sub-pixel
+
+# ENABLE_VIBRATION - Vibration API is not yet enabled.
+fast/dom/navigator-vibration.html
+
+# The feature was disabled due to a compatibility issue.
+# https://bugs.webkit.org/show_bug.cgi?id=40520
+fast/forms/interactive-validation-prevented.html
+fast/forms/interactive-validation-attach-assertion.html
+
+# FIXME: <rdar://problem/8354353> Remove LayoutTest http/tests/xmlhttprequest/remember-bad-password.html from skipped list.
+http/tests/xmlhttprequest/remember-bad-password.html
+
+# FIXME: <rdar://problem/8972084> LayoutTest: DRT crash on fast/workers/worker-cloneport.html
+fast/workers/worker-cloneport.html
+
+# FIXME: <rdar://problem/8979715> DumpRenderTree: enable spatial navigation in iOS DRT and unskip spatial navigation tests.
+fast/spatial-navigation
+
+# FIXME: Hits an ASSERT in WebCore::DocumentLoader::commitData: https://bugs.webkit.org/show_bug.cgi?id=31387
+http/tests/multipart/policy-ignore-crash.php
+
+# beginDragWithFiles is not implemented, so many File/Blob tests cannot work.
+# <https://bugs.webkit.org/show_bug.cgi?id=82229>: Switch to a more direct way of creating File objects in these tests.
+fast/files/apply-blob-url-to-img.html
+fast/files/apply-blob-url-to-xhr.html
+fast/files/file-list-test.html
+fast/files/file-reader-abort.html
+fast/files/file-reader-directory-crash.html
+fast/files/file-reader-event-listener.html
+fast/files/null-origin-string.html
+fast/files/read-blob-async.html
+fast/files/read-file-async.html
+fast/files/workers/worker-apply-blob-url-to-xhr.html
+fast/files/workers/worker-read-blob-async.html
+fast/files/workers/worker-read-blob-sync.html
+fast/files/workers/worker-read-file-async.html
+fast/files/workers/worker-read-file-sync.html
+fast/forms/file/input-file-directory-upload.html
+fast/forms/file/input-file-entries.html
+fast/forms/file/input-file-write-files.html
+fast/forms/file/selected-files-from-history-state.html
+http/tests/local/fileapi/file-last-modified.html
+http/tests/local/fileapi/file-last-modified-after-delete.html
+http/tests/local/fileapi/send-dragged-file.html
+http/tests/local/fileapi/send-sliced-dragged-file.html
+
+# FIXME: <rdar://problem/8981440> DumpRenderTree: investigate if we want to support filesystem API in iOS.
+fast/filesystem
+http/tests/filesystem
+http/tests/websocket/tests/hybi/send-file-blob.html
+http/tests/websocket/tests/hybi/send-file-blob-fail.html
+http/tests/security/filesystem-iframe-from-remote.html
+
+# iOS doesn't support multiple select box inlined in the page.
+fast/forms/listbox-selection.html
+
+# FIXME: <rdar://problem/8987746> ASSERT in WebCore::SVGInlineTextBox::paintText
+svg/batik/text/textAnchor2.svg
+svg/batik/text/textAnchor3.svg
+svg/batik/text/smallFonts.svg
+
+# FIXME: <rdar://problem/8987731> iOS: Update/unskip SVG tests after turning on ENABLE_FILTERS
+# FIXME: This list should be improved to only skip the tests related to filters.
+svg/filters
+svg/dynamic-updates
+svg/batik/filters
+svg/W3C-SVG-1.1-SE/filters-felem-01-b.svg
+svg/W3C-SVG-1.1-SE/filters-image-03-f.svg
+svg/W3C-SVG-1.1-SE/filters-image-05-f.svg
+svg/W3C-SVG-1.1/filters-blend-01-b.svg
+svg/W3C-SVG-1.1/filters-color-01-b.svg
+svg/W3C-SVG-1.1/filters-composite-02-b.svg
+svg/W3C-SVG-1.1/filters-comptran-01-b.svg
+svg/W3C-SVG-1.1/filters-conv-01-f.svg
+svg/W3C-SVG-1.1/filters-diffuse-01-f.svg
+svg/W3C-SVG-1.1/filters-displace-01-f.svg
+svg/W3C-SVG-1.1/filters-example-01-b.svg
+svg/W3C-SVG-1.1/filters-felem-01-b.svg
+svg/W3C-SVG-1.1/filters-gauss-01-b.svg
+svg/W3C-SVG-1.1/filters-image-01-b.svg
+svg/W3C-SVG-1.1/filters-light-01-f.svg
+svg/W3C-SVG-1.1/filters-light-04-f.svg
+svg/W3C-SVG-1.1/filters-morph-01-f.svg
+svg/W3C-SVG-1.1/filters-offset-01-b.svg
+svg/W3C-SVG-1.1/filters-specular-01-f.svg
+svg/W3C-SVG-1.1/filters-tile-01-b.svg
+svg/W3C-SVG-1.1/filters-turb-01-f.svg
+svg/W3C-SVG-1.1/filters-turb-02-f.svg
+svg/custom/empty-merge.svg
+svg/custom/feComponentTransfer-Discrete.svg
+svg/custom/feComponentTransfer-Gamma.svg
+svg/custom/feComponentTransfer-Linear.svg
+svg/custom/feComponentTransfer-Table.svg
+svg/custom/feDisplacementMap-01.svg
+svg/custom/non-opaque-filters.svg
+svg/custom/recursive-filter.svg
+svg/dom/SVGAnimatedEnumeration-SVGComponentTransferFunctionElement.html
+svg/dom/SVGAnimatedEnumeration-SVGFEBlendElement.html
+svg/dom/SVGAnimatedEnumeration-SVGFEColorMatrixElement.html
+svg/dom/SVGAnimatedEnumeration-SVGFECompositeElement.html
+svg/dom/SVGAnimatedEnumeration-SVGFEConvolveMatrixElement.html
+svg/dom/SVGAnimatedEnumeration-SVGFEDisplacementMapElement.html
+svg/dom/SVGAnimatedEnumeration-SVGFEMorphologyElement.html
+svg/dom/SVGAnimatedEnumeration-SVGFETurbulenceElement.html
+svg/dom/SVGAnimatedEnumeration-SVGFilterElement.html
+svg/repaint/filter-repaint.svg
+svg/webarchive/svg-feimage-subresources.svg
+svg/custom/text-filter.svg
+svg/custom/visibility-override-filter.svg
+svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg
+svg/W3C-SVG-1.1-SE/types-dom-04-b.svg
+svg/W3C-SVG-1.1/struct-cond-03-t.svg
+svg/batik/text/textEffect3.svg
+svg/batik/text/textEffect.svg
+svg/batik/text/textFeatures.svg
+svg/batik/text/textProperties.svg
+svg/W3C-SVG-1.1/struct-image-02-b.svg
+svg/css/path-gradient-stroke-shadow.svg
+svg/css/rect-gradient-stroke-shadow.svg
+svg/custom/convolution-crash.svg
+svg/custom/image-with-transform-clip-filter.svg
+svg/custom/insertItemBefore-from-non-list-origin.svg
+svg/custom/invalid-css.svg
+svg/custom/resource-invalidate-on-target-update.svg
+svg/dom/SVGAnimatedInteger.html
+svg/dom/SVGAnimatedNumber.html
+svg/dom/operatorAttribute.html
+svg/foreignObject/filter.html
+svg/repaint/filter-child-repaint.svg
+
+# FIXME: <rdar://problem/9019294> iOS: Investigate supporting ENABLE_INPUT_SPEECH
+# Speech input is not yet enabled.
+fast/speech
+
+# Speech JavaScript API is not yet enabled.
+fast/events/constructors/speech-recognition-event-constructor.html
+
+# MediaStream API is not implemented on iOS.
+# <rdar://problem/9946803> Investigate implementing the video conferencing and peer-to-peer communication section of HTML5
+fast/mediastream
+
+# needs enhanced eventSender.contextMenu() return value
+# see also https://bugs.webkit.org/show_bug.cgi?id=45021
+media/context-menu-actions.html
+
+# FIXME: <rdar://problem/8991892> ASSERT in WebCore::RenderWidget::setWidgetGeometry attaching plugin layer
+media/video-controls-with-mutation-event-handler.html
+
+# FIXME: <rdar://problem/8992044> REGRESSION: bogus video does not reach NETWORK_NO_SOURCE on iOS
+media/video-load-networkState.html
+
+# FIXME: <rdar://problem/8992138> REGRESSION: page never completes loading when a <video> is removed while it is loading
+media/remove-from-document-no-load.html
+
+# FIXME: <rdar://problem/8992602> DRT: media tests time out on iOS
+media/progress-event-at-least-one.html
+media/video-delay-load-event.html
+media/video-does-not-loop.html
+media/video-src-plus-source.html
+media/video-src-remove.html
+media/audio-repaint.html
+media/media-document-audio-repaint.html
+# FIXME: Tests fail to call notifyDone()
+media/audio-concurrent-supported.html
+media/audio-garbage-collect.html
+media/audio-mpeg4-supported.html
+media/media-controller-playback.html
+media/media-controller-time-clamp.html
+media/media-element-play-after-eos.html
+media/media-ended.html
+media/video-currentTime-delay.html
+media/video-currentTime-set.html
+media/video-playbackrate.html
+media/video-seek-by-small-increment.html
+media/video-src-invalid-poster.html
+
+# FIXME: <rdar://problem/9002724> DRT: For fast/viewport implement layoutTestController.dumpConfigurationForViewport
+fast/viewport
+
+# Skip asynchronous plugin tests that will timeout because we don't implement <embed> plugins.
+plugins/get-javascript-url.html
+plugins/plugin-initiate-popup-window.html
+plugins/return-negative-one-from-write.html
+
+# FIXME: <rdar://problem/9112680> fast/text/large-text-composed-char-dos.html times out on the buildbots
+fast/text/large-text-composed-char-dos.html
+
+# FIXME: <rdar://problem/11437992> Some requestAnimationFrame tests don't work
+fast/animation/request-animation-frame-cancel2.html
+fast/animation/request-animation-frame-during-modal.html
+fast/animation/request-animation-frame-iframe.html
+fast/animation/request-animation-frame-timestamps-advance.html
+fast/animation/request-animation-frame-timestamps.html
+fast/animation/request-animation-frame-within-callback.html
+fast/animation/request-animation-frame.html
+
+# <rdar://problem/9437503> fast/events/touch/multi-touch-grouped-targets.html is flakey.
+fast/events/touch/multi-touch-grouped-targets.html
+
+# <rdar://problem/8081560> Programmatic Scrolls do not trigger scroll event (scrollTo and scrollBy)
+fast/events/fire-scroll-event.html
+fast/events/scroll-event-during-modal-dialog.html
+fast/events/scroll-event-phase.html
+
+# <rdar://problem/9489319> Proper handling of HTTP 204 (No Content) status code
+# HTTP 204 (No Content) should be ignored
+# https://bugs.webkit.org/show_bug.cgi?id=60206
+http/tests/navigation/response204.html
+
+# WebKit fullscreen API is not supported on iOS
+fullscreen
+http/tests/fullscreen
+
+# Quota API is not supported on iOS.
+# <rdar://problem/8368576> Convert To a Shared Per-Origin Storage Quota
+# <rdar://problem/12068965> Investigate ENABLE(QUOTA) storage quotas window.webkitStorageInfo
+storage/storageinfo-missing-arguments.html
+storage/storageinfo-no-callbacks.html
+storage/storageinfo-query-usage.html
+storage/storageinfo-request-quota.html
+
+# <rdar://problem/12069207> Unskip LayoutTests after merging in webkit.testRunner
+storage/domstorage/storage-close-database-on-idle.html
+fast/dom/title-directionality-removeChild.html
+fast/text/line-breaks-after-ideographic-comma-or-full-stop-2.html
+
+# Skip a test that times out due to <rdar://problem/9950507> Investigate a way
+# to correctly run tests in iOS DRT that programmatically set focus on form
+# controls.
+http/tests/misc/isindex-with-no-form.html
+
+# Automatic form validation is disabled on iOS. Re-enabling this feature is
+# tracked by <rdar://problem/8322496> Enable Interactive Form Validation.
+# <rdar://problem/10423287> DRT hangs on fast/forms/validation-message-clone.html. 
+fast/forms/validation-message-appearance.html
+fast/forms/validation-message-clone.html
+fast/forms/validation-message-on-checkbox.html
+fast/forms/validation-message-on-listbox.html
+fast/forms/validation-message-on-menulist.html
+fast/forms/validation-message-on-radio.html
+fast/forms/validation-message-on-range.html
+fast/forms/validation-message-on-textarea.html
+
+# By design, the onscroll event does not fire on nested frames in iOS. Skip a
+# test that times out due to this difference in behavior.
+scrollbars/scrollable-iframe-remove-crash.html
+
+# Skip a test that times out due to <rdar://problem/6893102> [SIM ONLY]
+# LayoutTests/fast/events/resize-subframe.html fails after iframe fix in
+# r95464.
+fast/replaced/frame-removed-during-resize-smaller.html
+
+# <rdar://problem/10064541> LayoutTests/fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html
+# fails on iOS Simulator (onerror not called twice for missing subresource)
+fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html
+
+# <rdar://problem/12122725> LayoutTests/perf/adding-radio-buttons.html fails on iOS Simulator
+perf/adding-radio-buttons.html
+# <rdar://problem/10276068> LayoutTests/perf/typing-at-end-of-line.html fails on iOS Simulator
+perf/typing-at-end-of-line.html
+
+# WebGL: <rdar://problem/10414254> The test fast/canvas/webgl/read-pixels-test.html always timeout
+fast/canvas/webgl/read-pixels-test.html
+
+# Flakey: <rdar://problem/10414295> The test fast/canvas/webgl/gl-pixelstorei.html and fast/canvas/webgl/premultiplyalpha-test.html are flaky on iOS
+fast/canvas/webgl/gl-pixelstorei.html
+fast/canvas/webgl/premultiplyalpha-test.html
+
+# Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
+fast/dom/HTMLAnchorElement/anchor-nodownload.html
+fast/dom/HTMLAnchorElement/anchor-download.html
+fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
+fast/dom/HTMLAnchorElement/anchor-download-unset.html
+
+# Tests that require ENABLE(GESTURE_RECOGNIZER)
+fast/events/touch/gesture
+fast/events/touch/page-scaled-touch-gesture-click.html
+fast/events/touch/touch-before-pressing-spin-button.html
+
+# New flexbox is not yet enabled. http://webkit.org/b/62048
+# FIXME: <rdar://problem/12129331> Enable CSS3 flexbox, CSS regions and other features for Innsbruck
+css3/flexbox/
+ietestcenter/css3/flexbox/
+transitions/flex-transitions.html
+fast/multicol/span/clone-flexbox.html
+
+# Regions are not yet enabled on iOS.
+# FIXME: <rdar://problem/12129331> Enable CSS3 flexbox, CSS regions and other features for Innsbruck
+fast/regions/
+fast/repaint/japanese-rl-selection-repaint-in-regions.html
+fast/repaint/line-flow-with-floats-in-regions.html
+fast/repaint/overflow-flipped-writing-mode-block-in-regions.html
+fast/repaint/region-painting-invalidation.html
+fast/repaint/region-painting-via-layout.html
+
+# CSS exclusions are not enabled on iOS.
+# FIXME: <rdar://problem/12129331> Enable CSS3 flexbox, CSS regions and other features for Innsbruck
+fast/exclusions/
+
+# JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
+http/tests/security/isolatedWorld/cross-origin-xhr.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=63282 layerTreeAsText doesn't work for iframes
+compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html
+compositing/rtl/rtl-iframe-absolute-overflow.html
+compositing/rtl/rtl-iframe-absolute.html
+compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html
+compositing/rtl/rtl-iframe-fixed-overflow.html
+compositing/rtl/rtl-iframe-fixed.html
+compositing/rtl/rtl-iframe-relative.html
+
+# For now, Web Audio API is disabled
+webaudio/
+
+# Tests for WebVTT parser for <track>.  Feature is not yet functional.
+# https://bugs.webkit.org/show_bug.cgi?id=43668
+media/track/
+http/tests/security/text-track-crossorigin.html
+
+# MutationObservers are net yet enabled. http://webkit.org/b/68729
+fast/dom/MutationObserver
+
+# Microdata DOM API is not yet enabled.
+fast/dom/MicroData
+
+# DRT doesn't support overridePreference("WebKit*FontMap"...)
+fast/text/international/locale-sensitive-fonts.html
+
+# Requires WebP support.
+fast/canvas/canvas-toDataURL-webp.html
+
+# Tests for MediaSource API. Feature is not yet functional.
+# https://bugs.webkit.org/show_bug.cgi?id=64731
+http/tests/media/media-source/
+
+# REGRESSION (r91547): scrollbars/scrollbar-drag-thumb-with-large-content.html failing on SnowLeopard Intel Release (Test
+# https://bugs.webkit.org/show_bug.cgi?id=65434
+scrollbars/scrollbar-drag-thumb-with-large-content.html
+
+# Font feature settings is not implemented.
+css3/font-feature-settings-rendering.html
+
+# This test verifies that a mismatch reftest will fail as intended if both results are same.
+fast/harness/sample-fail-mismatch-reftest.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=66783
+# Makes subsequent test crash
+fast/loader/document-destruction-within-unload.html
+
+# FIXME: <rdar://problem/10417453> Implement dumpProgressFinishedCallback() for iOS layoutTestController
+# Related to https://bugs.webkit.org/show_bug.cgi?id=66772
+http/tests/loading/progress-finished-callback.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=67716
+media/media-controls-invalid-url.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=68278
+http/tests/history/back-with-fragment-change.php
+
+# Some WebGL tests are crashing only on the bots:
+# <rdar://problem/10417531> Some WebGL tests crash on the Snow Leopard bot
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
+http/tests/canvas/webgl/origin-clean-conformance.html
+
+# <rdar://problem/10499625> DumpRenderTree: DRT should always use the UIScrollView for scrolling
+# <rdar://problem/10499387> Rounding UIScrollView offset causes problem when querying back the position
+http/tests/navigation/scrollstate-after-location-reload.html
+http/tests/navigation/scrollstate-after-http-equiv-refresh.html
+http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.html
+http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2.html
+
+# <rdar://problem/10948559> Enable CSS shaders on iOS
+css3/filters/custom
+
+# <rdar://problem/11162826> CrashTracer: [USER] 3 crashes in DumpRenderTree at WebCore: WebCore::willCacheResponse + 93
+http/tests/appcache/online-fallback-layering.html
+
+# <rdar://problem/11408925> CrashTracer: [USER] 3 crashes in backboardd at QuartzCore: CA:: + 79
+css3/filters/huge-region-composited.html
+
+# <rdar://problem/11409272> CrashTracer: [USER] 2 crashes in DumpRenderTree at JavaScriptCore: JSC::Interpreter::privateExecute + 11209
+fast/js/integer-division-neg2tothe32-by-neg1.html
+
+# <rdar://problem/11468808> CrashTracer: [USER] 1 crash in DumpRenderTree at WebCore: RunWebThread + 608 :: iPhone Simulator 342, iPhone OS 6.0 (iPhone/10A306)
+http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
+
+# <rdar://problem/11468808> LayoutTests/http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html should not rely on LayoutTestController::showWebInspector()
+http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
+
+# <rdar://problem/12068045> LayoutTests/fast/loader/javascript-url-iframe-remove-on-navigate.html causes next test to fail
+fast/loader/javascript-url-iframe-remove-on-navigate.html
+
+# <rdar://problem/12068794> Many editing/inserting tests have editing delegate callbacks out of order from baseline
+editing/inserting/4278698.html
+editing/inserting/before-after-input-element.html
+editing/inserting/editable-html-element.html
+editing/inserting/editing-empty-divs.html
+editing/inserting/insert-3654864-fix.html
+editing/inserting/insert-3775316-fix.html
+editing/inserting/insert-3778059-fix.html
+editing/inserting/insert-3851164-fix.html
+editing/inserting/insert-after-delete-001.html
+editing/inserting/insert-at-end-01.html
+editing/inserting/insert-at-end-02.html
+editing/inserting/insert-br-001.html
+editing/inserting/insert-br-002.html
+editing/inserting/insert-br-003.html
+editing/inserting/insert-br-004.html
+editing/inserting/insert-br-005.html
+editing/inserting/insert-br-006.html
+editing/inserting/insert-br-008.html
+editing/inserting/insert-br-at-tabspan-001.html
+editing/inserting/insert-br-at-tabspan-002.html
+editing/inserting/insert-br-at-tabspan-003.html
+editing/inserting/insert-br-quoted-001.html
+editing/inserting/insert-br-quoted-002.html
+editing/inserting/insert-br-quoted-003.html
+editing/inserting/insert-br-quoted-004.html
+editing/inserting/insert-br-quoted-005.html
+editing/inserting/insert-br-quoted-006.html
+editing/inserting/insert-div-001.html
+editing/inserting/insert-div-002.html
+editing/inserting/insert-div-003.html
+editing/inserting/insert-div-004.html
+editing/inserting/insert-div-005.html
+editing/inserting/insert-div-006.html
+editing/inserting/insert-div-007.html
+editing/inserting/insert-div-008.html
+editing/inserting/insert-div-009.html
+editing/inserting/insert-div-012.html
+editing/inserting/insert-div-014.html
+editing/inserting/insert-div-016.html
+editing/inserting/insert-div-017.html
+editing/inserting/insert-div-018.html
+editing/inserting/insert-div-020.html
+editing/inserting/insert-div-021.html
+editing/inserting/insert-div-022.html
+editing/inserting/insert-div-023.html
+editing/inserting/insert-div-024.html
+editing/inserting/insert-div-025.html
+editing/inserting/insert-div-026.html
+editing/inserting/insert-div-027.html
+editing/inserting/insert-paragraph-02.html
+editing/inserting/insert-paragraph-at-end-of-line.html
+editing/inserting/insert-space-in-empty-doc.html
+editing/inserting/insert-tab-002.html
+editing/inserting/insert-tab-003.html
+editing/inserting/insert-tab-004.html
+editing/inserting/insert-text-at-tabspan-001.html
+editing/inserting/insert-text-at-tabspan-002.html
+editing/inserting/insert-text-at-tabspan-003.html
+editing/inserting/insert-text-with-newlines.html
+editing/inserting/insert-thai-characters-001.html
+editing/inserting/return-key-with-selection-003.html
+editing/inserting/typing-001.html
+editing/inserting/typing-002.html
+editing/inserting/typing-003.html
+editing/inserting/typing-around-br-001.html
+editing/inserting/typing-around-image-001.html
+editing/inserting/typing-at-end-of-line.html     
+editing/unsupported-content/list-type-after.html   
+editing/unsupported-content/list-type-before.html  
+editing/unsupported-content/table-type-after.html  
+editing/unsupported-content/table-type-before.html 
+
+# We don't have video controls on iOS
+fast/hidpi/video-controls-in-hidpi.html
+
+# This test requires flac codec
+media/media-can-play-flac-audio.html
+
+# These tests require ogg support
+media/W3C/video/canPlayType/canPlayType_codecs_order_2.html
+media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_3.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_4.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html
+media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
+
+# This test requires webm support
+media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
+
+# Encrypted media is not supported on iOS
+media/encrypted-media/
+
+# batterystatus not supported on iOS
+batterystatus/
+
+# networkinformation not supported on iOS
+networkinformation/
+
+# gamepad not supported on iOS
+gamepad/
+
+# Proximity Events not supported on iOS
+proximity
+fast/events/constructors/device-proximity-event-constructor.html
+
+# We suspend JavaScript the windows that are not the frontmost.
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
+
+# <rdar://problem/12071306> LayoutTests/fast/frames/sandboxed-iframe-close-top-noclose.html fails
+fast/frames/sandboxed-iframe-close-top-noclose.html
+
+# Needs layoutTestController.enableAutoResizeMode()
+fast/autoresize
+
+# <style scoped> is not yet enabled. http://webkit.org/b/49142
+fast/css/style-scoped
+
+# meter tag is not supported by iOS
+fast/dom/HTMLMeterElement
+
+# ENABLE(SHADOW_DOM) is disabled.
+fast/dom/shadow
+editing/shadow
+media/media-volume-slider-rendered-normal.html
+media/video-controls-no-scripting.html
+media/video-controls-toggling.html
+
+# Video muting is disabled on iOS
+media/video-defaultmuted.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82665
+http/tests/webarchive/test-css-url-encoding-shift-jis.html
+http/tests/webarchive/test-css-url-encoding-utf-8.html
+http/tests/webarchive/test-css-url-encoding.html
+webarchive/test-css-url-resources-in-stylesheets.html
+webarchive/test-css-url-resources-inline-styles.html
+
+# Touch adjustment not supported on iOS
+touchadjustment
+
+# Pointer Lock is not implemented in iOS.
+pointer-lock/
+http/tests/pointer-lock/
+
+# <rdar://problem/12073352> PEP Web Tools: emulator touch tests cause DRT to timeout.
+fast/events/touch/emulate-touch-events.html
+fast/events/touch/emulated-touch-iframe.html
+
+# Encrypted Media Extensions are not enabled.
+media/encrypted-media/
+fast/events/constructors/media-key-event-constructor.html
+
+# IFrame Seamless is disabled on iOS
+# See also: <rdar://problem/11401642>
+fast/frames/seamless
+
+# <rdar://problem/12078392> fast/ruby tests are timing out on DRT, but not on Mac.
+fast/ruby/before-block-doesnt-crash.html
+fast/ruby/before-doesnt-crash.html
+fast/ruby/before-table-doesnt-crash.html
+fast/ruby/generated-before-counter-doesnt-crash.html
+
+# iOS doesn't have stepup/stepdown button or spin button for input
+fast/forms/date/date-stepup-stepdown-from-renderer.html
+fast/forms/input-step-as-double.html
+fast/forms/number/number-appearance-spinbutton-disabled-readonly.html
+fast/forms/number/number-appearance-spinbutton-layer.html
+fast/forms/number/number-appearance-spinbutton-visibility-expected.html
+fast/forms/number/number-appearance-spinbutton-visibility.html
+fast/forms/number/number-large-padding.html
+fast/forms/number/number-size.html
+fast/forms/number/number-spinbutton-capturing.html
+fast/forms/number/number-spinbutton-change-and-input-events.html
+fast/forms/number/number-spinbutton-change-and-input-events.html
+fast/forms/number/number-spinbutton-click-in-iframe.html
+fast/forms/number/number-spinbutton-crash.html
+fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html
+fast/forms/number/number-spinbutton-in-multi-column.html
+fast/forms/number/number-spinbutton-state.html
+fast/forms/number/number-stepup-stepdown-from-renderer.html
+fast/forms/number/number-wheel-event.html
+fast/forms/range/range-stepup-stepdown-from-renderer.html
+
+# Requires ENABLE(MEDIA_CAPTURE)
+fast/forms/file/file-input-capture.html
+
+# iOS doesn't know how to reftests since it still uses old-run-webkit-tests
+# <rdar://problem/12154793> Remove reftest files from Skipped list after switching to new-run-webkit-tests
+ietestcenter/css3/grid/display-grid-001-expected.htm
+ietestcenter/css3/grid/display-grid-002-expected.htm
+ietestcenter/css3/grid/grid-column-001-expected.htm
+ietestcenter/css3/grid/grid-column-002-expected.htm
+ietestcenter/css3/grid/grid-column-003-expected.htm
+ietestcenter/css3/grid/grid-columns-001-expected.htm
+ietestcenter/css3/grid/grid-items-001-expected.htm
+ietestcenter/css3/grid/grid-items-002-expected.htm
+ietestcenter/css3/grid/grid-items-003-expected.htm
+ietestcenter/css3/grid/grid-items-004-expected.htm
+ietestcenter/css3/grid/grid-items-005-expected.htm
+ietestcenter/css3/multicolumn/column-block-formatting-context-001-expected.htm
+ietestcenter/css3/multicolumn/column-containing-block-001-expected.htm
+ietestcenter/css3/multicolumn/column-containing-block-002-expected.htm
+ietestcenter/css3/multicolumn/column-containing-block-003-expected.htm
+ietestcenter/css3/multicolumn/column-filling-001-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-001-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-002-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-003-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-004-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-005-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-006-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-007-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-008-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-009-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-010-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-012-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-013-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-014-expected.htm
+ietestcenter/css3/multicolumn/column-width-applies-to-015-expected.htm
+ietestcenter/css3/multicolumn/column-width-negative-001-expected.htm
+ietestcenter/css3/multicolumn/column-width-percentage-001-expected.htm
+
+# https://bugs.webkit.org/show_bug.cgi?id=82672
+# <rdar://problem/11150946> Test failure: http/tests/xmlhttprequest/range-test.html fails on Mac platforms (82672)
+http/tests/xmlhttprequest/range-test.html
+
+# <rdar://problem/12674566> HANG: LayoutTests/fast/dom/Document/document-write-recursion.html
+fast/dom/Document/document-write-recursion.html
+
+# <rdar://problem/13415829> [WebGL] array-bounds-clamping should use less dramatic numbers (112298)
+fast/canvas/webgl/array-bounds-clamping.html
+
+# <rdar://problem/13415916> Transfer of ArrayBuffers is failing (99096)
+fast/canvas/webgl/arraybuffer-transfer-of-control.html
+
+# <rdar://problem/10849802> Can't draw WebGL canvas into another canvas
+fast/canvas/webgl/canvas-test.html
+
+# <rdar://problem/13417023> Can't create a non-alpha renderbuffer for the EAGLLayer
+fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
+
+# <rdar://problem/13417102> [Mac] framebuffer-object-attachment and object-deletion-behaviour failing (82805)
+fast/canvas/webgl/framebuffer-object-attachment.html
+
+# <rdar://problem/13417117> texImage2D is broken
+fast/canvas/webgl/gl-teximage.html
+
+# <rdar://problem/12099819> [WebGL] conformance/textures/tex-image-and-sub-image-2d-with-video.html failing on Apple Mountain Lion (94039)
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html
+
+# <http://webkit.org/b/89845> Implement textInputController.setComposition()
+fast/forms/input-set-composition-scroll.html
+
+# Disabling the following feature flags: CSS_COMPOSITING, CSS_EXCLUSIONS, CSS_SHADERS, IFRAME_SEAMLESS, CSS_TRANSFORMS_ANIMATIONS_UNPREFIXED, SHARED_WORKERS
+css3/compositing
+css3/filters/custom
+fast/exclusions
+fast/frames/seamless
+fast/regions/shape-inside
+fast/workers/shared-worker-constructor.html
+fast/workers/shared-worker-context-gc.html
+fast/workers/shared-worker-event-listener.html
+fast/workers/shared-worker-exception.html
+fast/workers/shared-worker-frame-lifecycle.html
+fast/workers/shared-worker-gc.html
+fast/workers/shared-worker-in-iframe.html
+fast/workers/shared-worker-lifecycle.html
+fast/workers/shared-worker-load-error.html
+fast/workers/shared-worker-location.html
+fast/workers/shared-worker-name.html
+fast/workers/shared-worker-navigator.html
+fast/workers/shared-worker-replace-global-constructor.html
+fast/workers/shared-worker-replace-self.html
+fast/workers/shared-worker-script-error.html
+fast/workers/shared-worker-shared.html
+fast/workers/shared-worker-simple.html
+http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html
+http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html
+http/tests/security/cross-origin-shared-worker-allowed.html
+http/tests/security/cross-origin-shared-worker.html
+http/tests/security/same-origin-shared-worker-blocked.html
+http/tests/security/storage-blocking-loosened-shared-worker.html
+http/tests/security/storage-blocking-strengthened-shared-worker.html
+http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html
+http/tests/websocket/tests/hybi/workers/shared-worker-simple.html
+http/tests/workers/shared-worker-importScripts.html
+http/tests/workers/shared-worker-invalid-url.html
+http/tests/workers/shared-worker-redirect.html
+http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html
+http/tests/xmlhttprequest/workers/shared-worker-close.html
+http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
+http/tests/security/cross-origin-shared-worker.html
+http/tests/xmlhttprequest/workers/shared-worker-methods.html
+http/tests/xmlhttprequest/workers/shared-worker-referer.html
+http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html
+transitions/blendmode-transitions.html
+
+# <rdar://problem/14590711> CrashTracer: [USER] DumpRenderTree at WebCore: WebCore::Element::detach + 17
+svg/as-image/svg-nested.html
+
+# <rdar://problem/14590746> CrashTracer: [USER] DumpRenderTree at OpenGLES: +[EAGLContext setCurrentContext:] + 75
+webgl/conformance/extensions/oes-texture-float-with-video.html
+
+# <rdar://problem/14590771> CrashTracer: [USER] DumpRenderTree at WebCore: WebCore::WebGLRenderingContext::platformLayer const + 8
+webgl/conformance/textures/origin-clean-conformance.html
+
+# <rdar://problem/14637393> Make iOS DRT use fixed viewport rect when hit testing
+animations/animation-hit-test-transform.html
+animations/animation-hit-test.html
+platform/iphone-simulator/iphone/fast/coordinates/document-elementFromPoint.html
+transforms/3d/point-mapping/3d-point-mapping-2.html
+transforms/3d/point-mapping/3d-point-mapping-deep.html
+transforms/3d/point-mapping/3d-point-mapping-origins.html
+transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html
+transforms/3d/point-mapping/3d-point-mapping.html
+transitions/transition-hit-test-transform.html
+transitions/transition-hit-test.html

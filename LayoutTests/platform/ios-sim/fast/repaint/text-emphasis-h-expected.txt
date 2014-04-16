@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+layer at (8,8) size 784x584
+  RenderBody {BODY} at (8,8) size 784x584
+    RenderBlock {DIV} at (0,0) size 784x127 [color=#FF0000]
+      RenderText {#text} at (0,8) size 192x17
+        text run at (0,8) width 192: "222222222222"
+      RenderBR {BR} at (192,21) size 0x0
+      RenderBR {BR} at (0,25) size 0x17
+      RenderText {#text} at (0,42) size 192x17
+        text run at (0,42) width 192: "222222222222"
+      RenderBR {BR} at (192,55) size 0x0
+      RenderBR {BR} at (0,59) size 0x17
+      RenderText {#text} at (0,76) size 192x17
+        text run at (0,76) width 192: "222222222222"
+      RenderBR {BR} at (192,89) size 0x0
+      RenderBR {BR} at (0,93) size 0x17
+      RenderText {#text} at (0,110) size 192x17
+        text run at (0,110) width 192: "222222222222"
+layer at (8,8) size 200x128
+  RenderBlock (positioned) {DIV} at (0,0) size 200x128 [color=#008000]
+    RenderBlock {DIV} at (0,0) size 50x128
+      RenderText {#text} at (0,0) size 33x128
+        text run at (0,0) width 128: "1111"
+    RenderBlock {DIV} at (50,0) size 50x128
+      RenderText {#text} at (17,0) size 33x128
+        text run at (17,0) width 128: "1111"
+    RenderBlock {DIV} at (100,0) size 50x128
+      RenderText {#text} at (17,0) size 33x128
+        text run at (17,0) width 128: "1111"
+    RenderBlock {DIV} at (150,0) size 50x128
+      RenderText {#text} at (0,0) size 33x128
+        text run at (0,0) width 128: "1111"

@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x353
+  RenderBlock {html} at (0,0) size 800x353
+    RenderBody {body} at (5,11) size 790x331
+      RenderBlock {p} at (0,0) size 790x14
+        RenderText {#text} at (0,0) size 85x13
+          text run at (0,0) width 85: "Text above the rect"
+      RenderBlock (anonymous) at (0,25) size 790x281
+        RenderEmbeddedObject {object} at (0,0) size 277x277
+          layer at (0,0) size 277x277
+            RenderView at (0,0) size 277x277
+          layer at (0,0) size 277x277
+            RenderSVGRoot {svg} at (0,0) size 277x277
+              RenderSVGRect {rect} at (0,0) size 277x277 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,317) size 790x14
+        RenderText {#text} at (0,0) size 86x13
+          text run at (0,0) width 86: "Text below the rect"

@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x582
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 54x19
+          text run at (0,0) width 54: "Test for "
+        RenderInline {I} at (0,0) size 772x39
+          RenderInline {A} at (0,0) size 312x19 [color=#0000EE]
+            RenderText {#text} at (53,0) size 312x19
+              text run at (53,0) width 312: "https://bugs.webkit.org/show_bug.cgi?id=32794"
+          RenderText {#text} at (364,0) size 772x39
+            text run at (364,0) width 5: " "
+            text run at (368,0) width 404: "With text-rendering: optimizelegibility, sometimes lines run too"
+            text run at (0,20) width 29: "long"
+        RenderText {#text} at (28,20) size 5x19
+          text run at (28,20) width 5: "."
+      RenderBlock {P} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 581x19
+          text run at (0,0) width 429: "Text should not overflow any of these boxes. The terminal of the f "
+          text run at (428,0) width 153: "may overlap the border."
+      RenderBlock {DIV} at (0,92) size 247x44 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 241x38
+          text run at (3,3) width 241: "maintenance of the balance of"
+          text run at (3,22) width 57: "power in"
+      RenderBlock {DIV} at (0,146) size 247x44 [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,3) size 241x38
+          text run at (3,3) width 241: "maintenance of the balance of"
+          text run at (3,22) width 57: "power in"
+      RenderBlock {DIV} at (0,200) size 247x44 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 196x38
+          text run at (3,3) width 196: "maintenance of the balance of"
+          text run at (3,22) width 57: "power in"
+      RenderBlock {DIV} at (0,254) size 247x44 [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,3) size 196x38
+          text run at (3,3) width 196: "maintenance of the balance of"
+          text run at (3,22) width 57: "power in"
+      RenderBlock {DIV} at (0,308) size 247x44 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 239x38
+          text run at (3,3) width 239: "f f f f f f f f f f f f f f f f f f f f f f f"
+          text run at (3,22) width 79: "f f f f f f f f"
+      RenderBlock {DIV} at (0,362) size 247x44 [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,3) size 239x38
+          text run at (3,3) width 239: "f f f f f f f f f f f f f f f f f f f f f f f"
+          text run at (3,22) width 79: "f f f f f f f f"

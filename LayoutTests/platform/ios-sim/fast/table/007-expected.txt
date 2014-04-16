@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 524x94 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 522x92
+          RenderTableRow {TR} at (0,0) size 522x48
+            RenderTableCell {TD} at (0,0) size 27x3 [border: (1px inset #808080)] [r=0 c=0 rs=3 cs=1]
+              RenderImage {IMG} at (1,1) size 25x1
+            RenderTableCell {TD} at (27,0) size 495x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x19
+                text run at (1,1) width 22: "foo"
+          RenderTableRow {TR} at (0,48) size 522x22
+            RenderTableCell {TD} at (27,48) size 495x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 493x20
+                RenderText {#text} at (12,0) size 442x19
+                  text run at (12,0) width 442: "Affordable, high-quality business services with unparalleled support."
+          RenderTableRow {TR} at (0,70) size 522x0
+            RenderTableCell {TD} at (27,70) size 495x22 [border: (1px inset #808080)] [r=2 c=1 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 422x19
+                text run at (1,1) width 422: "Wireless Services\x{2014}Take the Net with you when you\x{2019}re on the go"
+          RenderTableRow {TR} at (0,70) size 522x22
+            RenderTableCell {TD} at (0,70) size 522x22 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 24x19
+                text run at (1,1) width 24: "goo"

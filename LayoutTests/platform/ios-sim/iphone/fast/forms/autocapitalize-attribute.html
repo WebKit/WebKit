@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" href="../../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div style="display:none">
+    <input id="i1">
+    <input id="i2" autocapitalize="">
+    <input id="i3" autocapitalize="on">
+    <input id="i4" autocapitalize="off">
+    <input id="i5" autocapitalize="none">
+    <input id="i6" autocapitalize="words">
+    <input id="i7" autocapitalize="sentences">
+    <input id="i8" autocapitalize="characters">
+    <input id="i9" autocapitalize="unknown">
+    <input id="i10" autocapitalize="wOrDs">
+
+    <textarea id="text_i1"></textarea>
+    <textarea id="text_i2" autocapitalize=""></textarea>
+    <textarea id="text_i3" autocapitalize="on"></textarea>
+    <textarea id="text_i4" autocapitalize="off"></textarea>
+    <textarea id="text_i5" autocapitalize="none"></textarea>
+    <textarea id="text_i6" autocapitalize="words"></textarea>
+    <textarea id="text_i7" autocapitalize="sentences"></textarea>
+    <textarea id="text_i8" autocapitalize="characters"></textarea>
+    <textarea id="text_i9" autocapitalize="unknown"></textarea>
+    <textarea id="text_i10" autocapitalize="wOrDs"></textarea>
+
+    <form id="form1">
+        <input id="x1">
+        <input id="x2" autocapitalize="">
+        <textarea id="text_x1"></textarea>
+        <textarea id="text_x2" autocapitalize=""></textarea>
+    </form>
+    <form id="form2" autocapitalize=""></form>
+    <form id="form3" autocapitalize="on"></form>
+    <form id="form4" autocapitalize="wOrDs"></form>
+    <form id="form5" autocapitalize="characters">
+        <input id="j1">
+        <input id="j2" autocapitalize="">
+        <input id="j3" autocapitalize="on">
+        <input id="j4" autocapitalize="off">
+        <input id="j5" autocapitalize="none">
+        <input id="j6" autocapitalize="words">
+        <input id="j7" autocapitalize="sentences">
+        <input id="j8" autocapitalize="characters">
+        <input id="j9" autocapitalize="unknown">
+        <input id="j10" autocapitalize="wOrDs">
+        <textarea id="text_j1"></textarea>
+        <textarea id="text_j2" autocapitalize=""></textarea>
+        <textarea id="text_j3" autocapitalize="on"></textarea>
+        <textarea id="text_j4" autocapitalize="off"></textarea>
+        <textarea id="text_j5" autocapitalize="none"></textarea>
+        <textarea id="text_j6" autocapitalize="words"></textarea>
+        <textarea id="text_j7" autocapitalize="sentences"></textarea>
+        <textarea id="text_j8" autocapitalize="characters"></textarea>
+        <textarea id="text_j9" autocapitalize="unknown"></textarea>
+        <textarea id="text_j10" autocapitalize="wOrDs"></textarea>
+    </form>
+</div>
+<script>
+description('Test the "autocapitalize" attribute values and fallback values.');
+
+debug('Testing inputs outside of a form.');
+shouldBe("i1.autocapitalize", '""');
+shouldBe("i1.getAttribute('autocapitalize')", 'null');
+shouldBe("i2.autocapitalize", '""');
+shouldBe("i2.getAttribute('autocapitalize')", '""');
+shouldBe("i3.autocapitalize", '"sentences"'); // on => "sentences".
+shouldBe("i3.getAttribute('autocapitalize')", '"on"');
+shouldBe("i4.autocapitalize", '"none"'); // off => "none".
+shouldBe("i4.getAttribute('autocapitalize')", '"off"');
+shouldBe("i5.autocapitalize", '"none"');
+shouldBe("i5.getAttribute('autocapitalize')", '"none"');
+shouldBe("i6.autocapitalize", '"words"');
+shouldBe("i6.getAttribute('autocapitalize')", '"words"');
+shouldBe("i7.autocapitalize", '"sentences"');
+shouldBe("i7.getAttribute('autocapitalize')", '"sentences"');
+shouldBe("i8.autocapitalize", '"characters"');
+shouldBe("i8.getAttribute('autocapitalize')", '"characters"');
+shouldBe("i9.autocapitalize", '"sentences"'); // Unknown value falls back to sentences.
+shouldBe("i9.getAttribute('autocapitalize')", '"unknown"');
+shouldBe("i10.autocapitalize", '"words"');
+shouldBe("i10.getAttribute('autocapitalize')", '"wOrDs"');
+
+debug('');
+debug('Testing forms.');
+shouldBe("form1.autocapitalize", '""');
+shouldBe("form1.getAttribute('autocapitalize')", 'null');
+shouldBe("form2.autocapitalize", '""');
+shouldBe("form2.getAttribute('autocapitalize')", '""');
+shouldBe("form3.autocapitalize", '"sentences"'); // on => "sentences".
+shouldBe("form3.getAttribute('autocapitalize')", '"on"');
+shouldBe("form4.autocapitalize", '"words"');
+shouldBe("form4.getAttribute('autocapitalize')", '"wOrDs"');
+shouldBe("form5.autocapitalize", '"characters"');
+shouldBe("form5.getAttribute('autocapitalize')", '"characters"');
+
+debug('');
+debug('Testing inputs inside of a form with a default of "characters".');
+shouldBe("j1.autocapitalize", '"characters"'); // Fallback to form, which is "characters".
+shouldBe("j1.getAttribute('autocapitalize')", 'null');
+shouldBe("j2.autocapitalize", '"characters"'); // Fallback to form, which is "characters".
+shouldBe("j2.getAttribute('autocapitalize')", '""');
+shouldBe("j3.autocapitalize", '"sentences"'); // on => "sentences".
+shouldBe("j3.getAttribute('autocapitalize')", '"on"');
+shouldBe("j4.autocapitalize", '"none"'); // off => "none".
+shouldBe("j4.getAttribute('autocapitalize')", '"off"');
+shouldBe("j5.autocapitalize", '"none"');
+shouldBe("j5.getAttribute('autocapitalize')", '"none"');
+shouldBe("j6.autocapitalize", '"words"');
+shouldBe("j6.getAttribute('autocapitalize')", '"words"');
+shouldBe("j7.autocapitalize", '"sentences"');
+shouldBe("j7.getAttribute('autocapitalize')", '"sentences"');
+shouldBe("j8.autocapitalize", '"characters"');
+shouldBe("j8.getAttribute('autocapitalize')", '"characters"');
+shouldBe("j9.autocapitalize", '"sentences"'); // Unknown value falls back to sentences.
+shouldBe("j9.getAttribute('autocapitalize')", '"unknown"');
+shouldBe("j10.autocapitalize", '"words"');
+shouldBe("j10.getAttribute('autocapitalize')", '"wOrDs"');
+
+debug('');
+debug('Testing inputs inside of a form with no default.');
+shouldBe("x1.autocapitalize", '""'); // Fallback to form, which is default.
+shouldBe("x1.getAttribute('autocapitalize')", 'null');
+shouldBe("x2.autocapitalize", '""'); // Fallback to form, which is default.
+shouldBe("x2.getAttribute('autocapitalize')", '""');
+
+debug('');
+debug('Testing textareas outside of a form.');
+shouldBe("text_i1.autocapitalize", '""');
+shouldBe("text_i1.getAttribute('autocapitalize')", 'null');
+shouldBe("text_i2.autocapitalize", '""');
+shouldBe("text_i2.getAttribute('autocapitalize')", '""');
+shouldBe("text_i3.autocapitalize", '"sentences"'); // on => "sentences".
+shouldBe("text_i3.getAttribute('autocapitalize')", '"on"');
+shouldBe("text_i4.autocapitalize", '"none"'); // off => "none".
+shouldBe("text_i4.getAttribute('autocapitalize')", '"off"');
+shouldBe("text_i5.autocapitalize", '"none"');
+shouldBe("text_i5.getAttribute('autocapitalize')", '"none"');
+shouldBe("text_i6.autocapitalize", '"words"');
+shouldBe("text_i6.getAttribute('autocapitalize')", '"words"');
+shouldBe("text_i7.autocapitalize", '"sentences"');
+shouldBe("text_i7.getAttribute('autocapitalize')", '"sentences"');
+shouldBe("text_i8.autocapitalize", '"characters"');
+shouldBe("text_i8.getAttribute('autocapitalize')", '"characters"');
+shouldBe("text_i9.autocapitalize", '"sentences"'); // Unknown value falls back to sentences.
+shouldBe("text_i9.getAttribute('autocapitalize')", '"unknown"');
+shouldBe("text_i10.autocapitalize", '"words"');
+shouldBe("text_i10.getAttribute('autocapitalize')", '"wOrDs"');
+
+debug('');
+debug('Testing textareas inside of a form with a default of "characters".');
+shouldBe("text_j1.autocapitalize", '"characters"'); // Fallback to form, which is "characters".
+shouldBe("text_j1.getAttribute('autocapitalize')", 'null');
+shouldBe("text_j2.autocapitalize", '"characters"'); // Fallback to form, which is "characters".
+shouldBe("text_j2.getAttribute('autocapitalize')", '""');
+shouldBe("text_j3.autocapitalize", '"sentences"'); // on => "sentences".
+shouldBe("text_j3.getAttribute('autocapitalize')", '"on"');
+shouldBe("text_j4.autocapitalize", '"none"'); // off => "none".
+shouldBe("text_j4.getAttribute('autocapitalize')", '"off"');
+shouldBe("text_j5.autocapitalize", '"none"');
+shouldBe("text_j5.getAttribute('autocapitalize')", '"none"');
+shouldBe("text_j6.autocapitalize", '"words"');
+shouldBe("text_j6.getAttribute('autocapitalize')", '"words"');
+shouldBe("text_j7.autocapitalize", '"sentences"');
+shouldBe("text_j7.getAttribute('autocapitalize')", '"sentences"');
+shouldBe("text_j8.autocapitalize", '"characters"');
+shouldBe("text_j8.getAttribute('autocapitalize')", '"characters"');
+shouldBe("text_j9.autocapitalize", '"sentences"'); // Unknown value falls back to sentences.
+shouldBe("text_j9.getAttribute('autocapitalize')", '"unknown"');
+shouldBe("text_j10.autocapitalize", '"words"');
+shouldBe("text_j10.getAttribute('autocapitalize')", '"wOrDs"');
+
+debug('');
+debug('Testing textareas inside of a form with no default.');
+shouldBe("text_x1.autocapitalize", '""'); // Fallback to form, which is default.
+shouldBe("text_x1.getAttribute('autocapitalize')", 'null');
+shouldBe("text_x2.autocapitalize", '""'); // Fallback to form, which is default.
+shouldBe("text_x2.getAttribute('autocapitalize')", '""');
+
+var successfullyParsed = true;
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

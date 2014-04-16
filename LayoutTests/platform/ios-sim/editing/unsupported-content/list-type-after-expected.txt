@@ -1,0 +1,78 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 10 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 10 of #text > LI > UL > DIV > DIV > BODY > HTML > #document toDOMRange:range from 11 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 11 of #text > LI > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 11 of #text > LI > UL > DIV > DIV > BODY > HTML > #document toDOMRange:range from 12 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 12 of #text > LI > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 12 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 12 of #text > LI > UL > DIV > DIV > BODY > HTML > #document toDOMRange:range from 13 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 13 of #text > LI > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x232 [border: (4px solid #0000FF)]
+        RenderBlock {DIV} at (20,20) size 744x74
+          RenderText {#text} at (0,1) size 68x28
+            text run at (0,1) width 68: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,30) size 656x21
+            text run at (0,30) width 656: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well. "
+          RenderBR {BR} at (655,47) size 1x0
+          RenderInline {I} at (0,0) size 98x21
+            RenderText {#text} at (0,52) size 98x21
+              text run at (0,52) width 98: "For this test: "
+          RenderText {#text} at (97,52) size 220x21
+            text run at (97,52) width 220: "Test typing at the end of a list."
+        RenderBlock (anonymous) at (20,94) size 744x22
+          RenderBR {BR} at (0,0) size 0x21
+        RenderBlock {DIV} at (20,116) size 744x96
+          RenderText {#text} at (0,1) size 190x28
+            text run at (0,1) width 190: "Expected Results: "
+          RenderBR {BR} at (189,23) size 1x0
+          RenderText {#text} at (0,30) size 700x43
+            text run at (0,30) width 700: "The content in the red box must exactly match the content in the green box (except for the border"
+            text run at (0,52) width 52: "color). "
+          RenderBR {BR} at (51,69) size 1x0
+          RenderInline {I} at (0,0) size 98x21
+            RenderText {#text} at (0,74) size 98x21
+              text run at (0,74) width 98: "For this test: "
+          RenderText {#text} at (97,74) size 419x21
+            text run at (97,74) width 419: "Typed text should appear after (on the line below) the list."
+      RenderBlock {DIV} at (0,242) size 784x142 [border: (2px solid #008000)]
+        RenderBlock {UL} at (2,26) size 780x90
+          RenderListItem {LI} at (40,0) size 740x30
+            RenderListMarker at (-22,1) size 9x28: bullet
+            RenderText {#text} at (0,1) size 77x28
+              text run at (0,1) width 77: "line one"
+          RenderListItem {LI} at (40,30) size 740x30
+            RenderListMarker at (-22,1) size 9x28: bullet
+            RenderText {#text} at (0,1) size 78x28
+              text run at (0,1) width 78: "line two"
+          RenderListItem {LI} at (40,60) size 740x30
+            RenderListMarker at (-22,1) size 9x28: bullet
+            RenderText {#text} at (0,1) size 126x28
+              text run at (0,1) width 126: "line threexxx"
+      RenderBlock {DIV} at (0,394) size 784x142
+        RenderBlock {DIV} at (0,0) size 784x142 [border: (2px solid #FF0000)]
+          RenderBlock {UL} at (2,26) size 780x90
+            RenderListItem {LI} at (40,0) size 740x30
+              RenderListMarker at (-22,1) size 9x28: bullet
+              RenderText {#text} at (0,1) size 77x28
+                text run at (0,1) width 77: "line one"
+            RenderListItem {LI} at (40,30) size 740x30
+              RenderListMarker at (-22,1) size 9x28: bullet
+              RenderText {#text} at (0,1) size 78x28
+                text run at (0,1) width 78: "line two"
+            RenderListItem {LI} at (40,60) size 740x30
+              RenderListMarker at (-22,1) size 9x28: bullet
+              RenderText {#text} at (0,1) size 126x28
+                text run at (0,1) width 126: "line threexxx"
+caret: position 13 of child 0 {#text} of child 5 {LI} of child 1 {UL} of child 1 {DIV} of child 5 {DIV} of body

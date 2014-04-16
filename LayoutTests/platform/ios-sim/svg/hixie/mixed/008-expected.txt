@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x465
+  RenderBlock {html} at (0,0) size 800x465
+    RenderBody {body} at (8,16) size 784x441
+      RenderBlock {p} at (0,0) size 784x20 [color=#000080]
+        RenderText {#text} at (0,0) size 410x19
+          text run at (0,0) width 410: "There should be a blue circle with the word \"TEST\" in it below."
+      RenderBlock (anonymous) at (0,36) size 784x405
+        RenderSVGRoot {svg} at (8,52) size 400x400
+          RenderSVGRect {rect} at (8,52) size 400x400 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]
+          RenderSVGEllipse {circle} at (8,52) size 400x400 [fill={[type=SOLID] [color=#000080]}] [cx=200.00] [cy=200.00] [r=200.00]
+          RenderSVGForeignObject {foreignObject} at (0,175) size 400x50 [color=#FFFFFF]
+            RenderBlock {div} at (0,0) size 400x59
+              RenderText {#text} at (140,1) size 120x56
+                text run at (140,1) width 120: "TEST"
+        RenderText {#text} at (0,0) size 0x0

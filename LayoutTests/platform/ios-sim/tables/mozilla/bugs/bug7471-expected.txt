@@ -1,0 +1,159 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 126x19
+          text run at (0,0) width 126: "No col or colgroup:"
+      RenderTable {TABLE} at (0,36) size 705x82 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 703x80
+          RenderTableRow {TR} at (0,2) size 703x24
+            RenderTableCell {TD} at (2,2) size 231x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,2) size 232x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,2) size 232x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+          RenderTableRow {TR} at (0,28) size 703x24
+            RenderTableCell {TD} at (2,28) size 231x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,28) size 232x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,28) size 232x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+          RenderTableRow {TR} at (0,54) size 703x24
+            RenderTableCell {TD} at (2,54) size 231x24 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,54) size 232x24 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,54) size 232x24 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+      RenderBlock {P} at (0,134) size 784x20
+        RenderText {#text} at (0,0) size 294x19
+          text run at (0,0) width 294: "col elements with align=center on second col:"
+      RenderTable {TABLE} at (0,170) size 705x82 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 703x80
+          RenderTableRow {TR} at (0,2) size 703x24
+            RenderTableCell {TD} at (2,2) size 231x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,2) size 232x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,2) size 232x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+          RenderTableRow {TR} at (0,28) size 703x24
+            RenderTableCell {TD} at (2,28) size 231x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,28) size 232x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,28) size 232x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+          RenderTableRow {TR} at (0,54) size 703x24
+            RenderTableCell {TD} at (2,54) size 231x24 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,54) size 232x24 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,54) size 232x24 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+      RenderBlock {P} at (0,268) size 784x20
+        RenderText {#text} at (0,0) size 542x19
+          text run at (0,0) width 542: "colgroup and col elements, with align on colgroup so 2nd and 3rd columns centered:"
+      RenderTable {TABLE} at (0,304) size 705x82 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 703x80
+          RenderTableRow {TR} at (0,2) size 703x24
+            RenderTableCell {TD} at (2,2) size 231x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,2) size 232x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,2) size 232x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+          RenderTableRow {TR} at (0,28) size 703x24
+            RenderTableCell {TD} at (2,28) size 231x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,28) size 232x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,28) size 232x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+          RenderTableRow {TR} at (0,54) size 703x24
+            RenderTableCell {TD} at (2,54) size 231x24 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,54) size 232x24 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,54) size 232x24 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+      RenderBlock {P} at (0,402) size 784x20
+        RenderText {#text} at (0,0) size 446x19
+          text run at (0,0) width 446: "colgroup and col elements, with align on col so 2nd column centered:"
+      RenderTable {TABLE} at (0,438) size 705x82 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 703x80
+          RenderTableRow {TR} at (0,2) size 703x24
+            RenderTableCell {TD} at (2,2) size 231x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,2) size 232x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,2) size 232x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+          RenderTableRow {TR} at (0,28) size 703x24
+            RenderTableCell {TD} at (2,28) size 231x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,28) size 232x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,28) size 232x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+          RenderTableRow {TR} at (0,54) size 703x24
+            RenderTableCell {TD} at (2,54) size 231x24 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (235,54) size 232x24 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"
+            RenderTableCell {TD} at (469,54) size 232x24 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "Data"

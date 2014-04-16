@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 13: ReferenceError: Can't find variable: noInline
+Tests that DFG respects neutered typed arrays.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS array.length is 100
+PASS array[0] is 42
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

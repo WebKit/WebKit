@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 35x19
+          text run at (0,0) width 35: "LTR:"
+      RenderBlock (anonymous) at (0,126) size 784x20
+        RenderText {#text} at (0,0) size 35x19
+          text run at (0,0) width 35: "RTL:"
+layer at (8,28) size 106x106 clip at (11,31) size 85x85 scrollWidth 222 scrollHeight 270
+  RenderBlock (relative positioned) {DIV} at (0,20) size 106x106 [border: (3px solid #000000)]
+layer at (8,154) size 106x106 clip at (11,157) size 85x85 scrollX 137 scrollWidth 222 scrollHeight 270
+  RenderBlock (relative positioned) {DIV} at (0,146) size 106x106 [border: (3px solid #000000)]

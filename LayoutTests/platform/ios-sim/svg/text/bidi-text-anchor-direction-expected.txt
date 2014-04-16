@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,63) size 800x309
+    RenderSVGContainer {g} at (0,63) size 800x309
+      RenderSVGText {text} at (240,38) size 249x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 249x15
+          chunk 1 text run 1 at (240.00,50.00) startOffset 0 endOffset 56 width 248.86 LTR override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
+      RenderSVGText {text} at (115,68) size 249x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 249x15
+          chunk 1 (middle anchor) text run 1 at (115.57,80.00) startOffset 0 endOffset 56 width 248.86 LTR override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
+      RenderSVGText {text} at (-9,98) size 249x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 249x15
+          chunk 1 (end anchor) text run 1 at (-8.86,110.00) startOffset 0 endOffset 56 width 248.86 LTR override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
+      RenderSVGText {text} at (-9,138) size 249x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 249x15
+          chunk 1 text run 1 at (-8.86,150.00) startOffset 0 endOffset 56 width 248.86 RTL override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
+      RenderSVGText {text} at (115,168) size 249x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 249x15
+          chunk 1 (middle anchor) text run 1 at (115.57,180.00) startOffset 0 endOffset 56 width 248.86 RTL override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
+      RenderSVGText {text} at (240,208) size 249x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 249x15
+          chunk 1 (end anchor) text run 1 at (240.00,220.00) startOffset 0 endOffset 56 width 248.86 RTL override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"

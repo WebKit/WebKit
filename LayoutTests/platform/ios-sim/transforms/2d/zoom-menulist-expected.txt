@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {H1} at (0,0) size 784x38
+        RenderText {#text} at (0,1) size 273x36
+          text run at (0,1) width 273: "Zooming Menu List"
+      RenderBlock (anonymous) at (0,59) size 784x72
+        RenderMenuList {SELECT} at (6,6) size 147x60 [bgcolor=#FFFFFF02] [border: (3px solid #4C4C4C)]
+          RenderBlock (anonymous) at (19,10) size 109x39
+            RenderText at (0,0) size 63x39
+              text run at (0,0) width 63: "One"
+        RenderText {#text} at (0,0) size 0x0

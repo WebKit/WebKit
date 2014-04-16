@@ -1,0 +1,36 @@
+layer at (0,0) size 1114x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (9,9) size 782x576
+      RenderBlock (anonymous) at (0,0) size 782x162
+        RenderMenuList {SELECT} at (2,0) size 139x162 [bgcolor=#FFFFFF02] [border: (12px solid #000000)]
+          RenderBlock (anonymous) at (24,73) size 91x16
+            RenderText at (0,0) size 43x16
+              text run at (0,0) width 43: "0 Items"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,162) size 782x213
+        RenderBlock (anonymous) at (0,0) size 782x46
+          RenderText {#text} at (0,0) size 62x22
+            text run at (0,0) width 62: "Results:"
+          RenderBR {BR} at (61,17) size 1x0
+          RenderText {#text} at (0,23) size 100x22
+            text run at (0,23) width 100: "Test 1 Failed"
+          RenderBR {BR} at (99,40) size 1x0
+        RenderBlock {PRE} at (0,61) size 782x38
+          RenderText {#text} at (0,0) size 1105x19
+            text run at (0,0) width 1105: "     Expected: false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false"
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,19) size 1095x19
+            text run at (0,19) width 1095: "     Actual: false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false"
+        RenderBlock (anonymous) at (0,114) size 782x46
+          RenderBR {BR} at (0,0) size 0x22
+          RenderText {#text} at (0,23) size 100x22
+            text run at (0,23) width 100: "Test 2 Failed"
+          RenderBR {BR} at (99,40) size 1x0
+        RenderBlock {PRE} at (0,175) size 782x38
+          RenderText {#text} at (0,0) size 1105x19
+            text run at (0,0) width 1105: "     Expected: false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false"
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,19) size 1095x19
+            text run at (0,19) width 1095: "     Actual: false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false"

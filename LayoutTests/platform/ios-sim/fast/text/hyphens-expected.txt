@@ -1,0 +1,99 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (floating) {DIV} at (4,0) size 344x286
+        RenderBlock {P} at (0,16) size 344x20
+          RenderInline {TT} at (0,0) size 118x15
+            RenderText {#text} at (0,4) size 118x15
+              text run at (0,4) width 118: "hyphens: manual"
+          RenderText {#text} at (117,0) size 139x19
+            text run at (117,0) width 139: " without soft hyphens"
+        RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
+          RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
+          RenderText {#text} at (7,7) size 330x219
+            text run at (7,7) width 245: "The chief difficulty Alice found"
+            text run at (7,29) width 245: "at first was in managing her"
+            text run at (7,51) width 245: "flamingo: she succeeded in"
+            text run at (7,73) width 245: "getting its body tucked away,"
+            text run at (7,95) width 245: "comfortably enough, under her"
+            text run at (7,117) width 307: "arm, with its legs hanging down, "
+            text run at (313,117) width 24: "but"
+            text run at (7,139) width 330: "generally, just as she had got its neck nicely"
+            text run at (7,161) width 96: "straightened "
+            text run at (102,161) width 235: "out, and was going to give the"
+            text run at (7,183) width 245: "hedgehog a blow with its head, it "
+            text run at (251,183) width 86: "would twist"
+            text run at (7,205) width 271: "itself round and look up in her face\x{2026}"
+      RenderBlock (floating) {DIV} at (356,0) size 344x286
+        RenderBlock {P} at (0,16) size 344x20
+          RenderInline {TT} at (0,0) size 102x15
+            RenderText {#text} at (0,4) size 102x15
+              text run at (0,4) width 102: "hyphens: none"
+          RenderText {#text} at (101,0) size 119x19
+            text run at (101,0) width 119: " with soft hyphens"
+        RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
+          RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
+          RenderText {#text} at (7,7) size 330x219
+            text run at (7,7) width 245: "The chief difficulty Alice found"
+            text run at (7,29) width 245: "at first was in managing her"
+            text run at (7,51) width 245: "flamingo: she succeeded in"
+            text run at (7,73) width 245: "get\x{AD}ting its body tucked away,"
+            text run at (7,95) width 245: "com\x{AD}fortably enough, under her"
+            text run at (7,117) width 307: "arm, with its legs hanging down, "
+            text run at (313,117) width 24: "but"
+            text run at (7,139) width 330: "generally, just as she had got its neck nicely"
+            text run at (7,161) width 96: "straight\x{AD}ened "
+            text run at (102,161) width 235: "out, and was going to give the"
+            text run at (7,183) width 245: "hedge\x{AD}hog a blow with its head, it "
+            text run at (251,183) width 86: "would twist"
+            text run at (7,205) width 271: "itself round and look up in her face\x{2026}"
+      RenderBlock (floating) {DIV} at (4,286) size 344x286
+        RenderBlock {P} at (0,16) size 344x20
+          RenderInline {TT} at (0,0) size 118x15
+            RenderText {#text} at (0,4) size 118x15
+              text run at (0,4) width 118: "hyphens: manual"
+          RenderText {#text} at (117,0) size 118x19
+            text run at (117,0) width 118: " with soft hyphens"
+        RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
+          RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
+          RenderText {#text} at (7,7) size 330x219
+            text run at (7,7) width 245: "The chief difficulty Alice found"
+            text run at (7,29) width 245: "at first was in managing her"
+            text run at (7,51) width 245: "flamingo: she succeeded in get\x{AD}" + hyphen string "-"
+            text run at (7,73) width 209: "ting its body tucked away, "
+            text run at (215,73) width 37: "com\x{AD}" + hyphen string "-"
+            text run at (7,95) width 245: "fortably enough, under her arm,"
+            text run at (7,117) width 226: "with its legs hanging down, "
+            text run at (232,117) width 105: "but generally,"
+            text run at (7,139) width 330: "just as she had got its neck nicely straight\x{AD}" + hyphen string "-"
+            text run at (7,161) width 39: "ened "
+            text run at (45,161) width 292: "out, and was going to give the hedge\x{AD}hog"
+            text run at (7,183) width 196: "a blow with its head, it "
+            text run at (202,183) width 135: "would twist itself"
+            text run at (7,205) width 230: "round and look up in her face\x{2026}"
+      RenderBlock (floating) {DIV} at (356,286) size 344x286
+        RenderBlock {P} at (0,16) size 344x20
+          RenderInline {TT} at (0,0) size 102x15
+            RenderText {#text} at (0,4) size 102x15
+              text run at (0,4) width 102: "hyphens: auto"
+          RenderText {#text} at (101,0) size 139x19
+            text run at (101,0) width 139: " without soft hyphens"
+        RenderBlock {DIV} at (0,52) size 344x234 [border: (3px solid #000000)]
+          RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
+          RenderText {#text} at (7,7) size 330x219
+            text run at (7,7) width 245: "The chief difficulty Alice found"
+            text run at (7,29) width 245: "at first was in managing her"
+            text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "-"
+            text run at (7,73) width 209: "ting its body tucked away, "
+            text run at (215,73) width 37: "com" + hyphen string "-"
+            text run at (7,95) width 245: "fortably enough, under her arm,"
+            text run at (7,117) width 226: "with its legs hanging down, "
+            text run at (232,117) width 105: "but generally,"
+            text run at (7,139) width 330: "just as she had got its neck nicely straight" + hyphen string "-"
+            text run at (7,161) width 39: "ened "
+            text run at (45,161) width 292: "out, and was going to give the hedgehog"
+            text run at (7,183) width 196: "a blow with its head, it "
+            text run at (202,183) width 135: "would twist itself"
+            text run at (7,205) width 230: "round and look up in her face\x{2026}"

@@ -1,0 +1,37 @@
+This test performs a check that :valid/:invalid CSS psudo selectors are lively applied.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Chheck the initial state:
+PASS backgroundOf(el) is invalidColor
+Change name:
+PASS backgroundOf(el) is invalidColor
+PASS backgroundOf(el) is invalidColor
+Change disabled:
+PASS backgroundOf(el) is disabledColor
+PASS backgroundOf(el) is invalidColor
+Change readOnly:
+PASS backgroundOf(el) is readOnlyColor
+PASS backgroundOf(el) is invalidColor
+Inside/outside of a form:
+PASS backgroundOf(el) is invalidColor
+PASS backgroundOf(el) is invalidColor
+Change the value by DOM attribute:
+PASS backgroundOf(el) is validColor
+PASS backgroundOf(el) is invalidColor
+Change the value by key input:
+FAIL backgroundOf(el) should be rgb(0, 0, 255). Was rgb(255, 0, 0).
+PASS backgroundOf(el) is invalidColor
+Change required:
+PASS backgroundOf(el) is validColor
+PASS backgroundOf(el) is invalidColor
+Change maxlength:
+PASS backgroundOf(el) is validColor
+PASS backgroundOf(el) is invalidColor
+PASS backgroundOf(el) is validColor
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

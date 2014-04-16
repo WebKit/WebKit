@@ -1,0 +1,44 @@
+layer at (0,0) size 800x778
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (472,8) size 320x770
+  RenderBlock {DIV} at (0,0) size 320x770 [border: (5px solid #000000)]
+    RenderBlock {DIV} at (10,10) size 250x367
+    RenderBlock (anonymous) at (310,10) size 224x367
+      RenderBlock {DIV} at (0,0) size 224x308 [border: (2px solid #008000)]
+        RenderText {#text} at (2,2) size 19x304
+          text run at (2,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (17,305) size 0x1
+        RenderText {#text} at (22,2) size 19x304
+          text run at (22,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (37,305) size 0x1
+        RenderText {#text} at (42,2) size 19x304
+          text run at (42,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (57,305) size 0x1
+        RenderText {#text} at (62,2) size 19x304
+          text run at (62,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (77,305) size 0x1
+        RenderText {#text} at (82,2) size 19x304
+          text run at (82,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (97,305) size 0x1
+        RenderText {#text} at (102,2) size 19x304
+          text run at (102,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (117,305) size 0x1
+        RenderText {#text} at (122,2) size 19x304
+          text run at (122,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (137,305) size 0x1
+        RenderText {#text} at (142,2) size 19x304
+          text run at (142,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (157,305) size 0x1
+        RenderText {#text} at (162,2) size 19x304
+          text run at (162,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (177,305) size 0x1
+        RenderText {#text} at (182,2) size 19x304
+          text run at (182,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (197,305) size 0x1
+        RenderText {#text} at (202,2) size 19x304
+          text run at (202,2) width 304: "All of this text should be in the second column."
+        RenderBR {BR} at (217,305) size 0x1
+      RenderText {#text} at (0,0) size 0x0

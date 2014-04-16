@@ -1,0 +1,34 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMarker {marker} [id="marker1"] [markerUnits=strokeWidth] [ref at (50,50)] [angle=0.00]
+        RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#4169E1]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGResourceMarker {marker} [id="marker2"] [markerUnits=strokeWidth] [ref at (100,100)] [angle=0.00]
+        RenderSVGRect {rect} at (0,0) size 15x15 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+    RenderSVGText {text} at (155,10) size 170x23 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 170x23
+        chunk 1 (middle anchor) text run 1 at (155.32,28.00) startOffset 0 endOffset 22 width 169.37: "'marker' property test"
+    RenderSVGText {text} at (171,52) size 137x23 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 137x23
+        chunk 1 (middle anchor) text run 1 at (171.70,70.00) startOffset 0 endOffset 17 width 136.59: "'marker' property"
+    RenderSVGContainer {g} at (57,77) size 366x86 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,20.00)}] [start marker=marker1] [middle marker=marker1] [end marker=marker1]
+      RenderSVGPath {path} at (57,77) size 86x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [data="M 10 60 C 63.3333 60 90 86.6667 90 140 C 36.6667 140 10 113.333 10 60 Z M 10 140 C 10 86.6667 36.6667 60 90 60 C 90 113.333 63.3333 140 10 140 Z M 50 70 L 80 100 L 50 130 L 20 100 Z"]
+      RenderSVGPath {polygon} at (147,77) size 86x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [points="100 60 120 140 140 60 160 140 180 60 180 100 100 100"]
+      RenderSVGPath {polyline} at (237,77) size 86x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [points="190 60 210 140 230 60 250 140 270 60 270 100 190 100"]
+      RenderSVGPath {line} at (327,77) size 96x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [x1=280.00] [y1=60.00] [x2=370.00] [y2=140.00]
+      RenderSVGPath {line} at (327,77) size 96x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [x1=370.00] [y1=60.00] [x2=280.00] [y2=140.00]
+    RenderSVGText {text} at (33,182) size 414x23 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 414x23
+        chunk 1 (middle anchor) text run 1 at (33.44,200.00) startOffset 0 endOffset 53 width 413.12: "'marker-start', 'marker-mid' & 'marker-end' attribute"
+    RenderSVGContainer {g} at (57,207) size 366x86 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,150.00)}] [start marker=marker1] [middle marker=marker1] [end marker=marker1]
+      RenderSVGPath {path} at (57,207) size 86x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [data="M 10 60 C 63.3333 60 90 86.6667 90 140 C 36.6667 140 10 113.333 10 60 Z M 10 140 C 10 86.6667 36.6667 60 90 60 C 90 113.333 63.3333 140 10 140 Z M 50 70 L 80 100 L 50 130 L 20 100 Z"]
+      RenderSVGPath {polygon} at (147,207) size 86x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [points="100 60 120 140 140 60 160 140 180 60 180 100 100 100"]
+      RenderSVGPath {polyline} at (237,207) size 86x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [points="190 60 210 140 230 60 250 140 270 60 270 100 190 100"]
+      RenderSVGPath {line} at (327,207) size 96x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [x1=280.00] [y1=60.00] [x2=370.00] [y2=140.00]
+      RenderSVGPath {line} at (327,207) size 96x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [x1=370.00] [y1=60.00] [x2=280.00] [y2=140.00]
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.9 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

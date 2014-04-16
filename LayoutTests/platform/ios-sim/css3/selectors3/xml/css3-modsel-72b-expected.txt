@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {test} at (0,0) size 800x52
+    RenderBlock {div} at (0,16) size 800x20
+      RenderBlock {p} at (0,0) size 800x20 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 551x19
+          text run at (0,0) width 551: "This paragraph should have a green background and there should be no red anywhere."

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<data>
+		PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5z
+		OnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICA8c2Ny
+		aXB0PgogICAgaWYgKHdpbmRvdy5sYXlvdXRUZXN0Q29udHJvbGxlcikKICAg
+		ICAgICBsYXlvdXRUZXN0Q29udHJvbGxlci5kdW1wRE9NQXNXZWJBcmNoaXZl
+		KCk7CiAgPC9zY3JpcHQ+CiAgPHJlY3QgaWQ9InJlY3QiIHdpZHRoPSIxMDAi
+		IGhlaWdodD0iMTAwIiBmaWxsPSJyZWQiIHN0eWxlPSJmaWxsOiAjMDA4MDAw
+		OyAiLz4KICA8c2NyaXB0IHhsaW5rOmhyZWY9InJlc291cmNlcy9zdmctc2Ny
+		aXB0LXN1YnJlc291cmNlcy5qcyIgdHlwZT0idGV4dC9lY21hc2NyaXB0Ii8+
+		Cjwvc3ZnPg==
+		</data>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>image/svg+xml</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/svg/webarchive/svg-script-subresouces.svg</string>
+	</dict>
+</dict>
+</plist>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style type="text/css">
+      .content {
+        background-color: silver;
+        height: 200px;
+        margin: 5px;
+      }
+
+      .fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        margin: 5px;
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+      
+      .fixed > .contents {
+        background-color: white;
+        width: 80%;
+        height: 500px;
+        margin: 100px auto;
+      }
+    </style>
+</head>
+<body>
+
+  <div class="content"></div>
+  <div class="content"></div>
+
+  <div class="fixed">
+    <div class="contents">
+      Contents
+    </div>
+  </div>
+
+  <div class="content"></div>
+  <div class="content"></div>
+
+</body>
+</html>

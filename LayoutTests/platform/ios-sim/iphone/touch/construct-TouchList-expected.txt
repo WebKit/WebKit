@@ -1,0 +1,13 @@
+Test constructor for TouchList. <rdar://problem/6481690>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS TouchList.prototype.toString.call(new TouchList) is '[object TouchList]'
+PASS TouchList.prototype.toString.call(new TouchList(touch1)) is '[object TouchList]'
+PASS TouchList.prototype.toString.call(new TouchList(touch1, touch2)) is '[object TouchList]'
+PASS TouchList.prototype.toString.call(new TouchList(touch1, touch2, touch3)) is '[object TouchList]'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

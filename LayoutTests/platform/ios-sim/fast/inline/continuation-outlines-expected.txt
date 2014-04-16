@@ -1,0 +1,52 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,16) size 784x566
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 165x19
+          text run at (0,0) width 165: "Outline ring painting test."
+      RenderBlock {DIV} at (0,36) size 784x99
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderInline {SPAN} at (0,0) size 100x19
+            RenderText {#text} at (0,0) size 100x19
+              text run at (0,0) width 100: "Content before."
+        RenderBlock (anonymous) at (0,38) size 784x23
+          RenderBlock {H3} at (0,0) size 784x23
+            RenderText {#text} at (0,0) size 148x22
+              text run at (0,0) width 148: "Bold with margin."
+        RenderBlock (anonymous) at (0,79) size 784x20
+          RenderInline {SPAN} at (0,0) size 84x19
+            RenderText {#text} at (0,0) size 84x19
+              text run at (0,0) width 84: "Content after"
+      RenderBlock {DIV} at (0,153) size 784x61
+        RenderBlock (anonymous) at (0,0) size 784x0
+          RenderInline {SPAN} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,0) size 784x23
+          RenderBlock {H3} at (0,0) size 784x23
+            RenderText {#text} at (0,0) size 150x22
+              text run at (0,0) width 150: "No content before."
+        RenderBlock (anonymous) at (0,41) size 784x20
+          RenderInline {SPAN} at (0,0) size 88x19
+            RenderText {#text} at (0,0) size 88x19
+              text run at (0,0) width 88: "Content after."
+      RenderBlock {DIV} at (0,230) size 784x61
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderInline {SPAN} at (0,0) size 96x19
+            RenderText {#text} at (0,0) size 96x19
+              text run at (0,0) width 96: "Content before"
+        RenderBlock (anonymous) at (0,38) size 784x23
+          RenderBlock {H3} at (0,0) size 784x23
+            RenderText {#text} at (0,0) size 176x22
+              text run at (0,0) width 176: "But No Content After"
+        RenderBlock (anonymous) at (0,79) size 784x0
+          RenderInline {SPAN} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,309) size 784x23
+        RenderBlock (anonymous) at (0,0) size 784x0
+          RenderInline {SPAN} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,0) size 784x23
+          RenderBlock {H3} at (0,0) size 784x23
+            RenderText {#text} at (0,0) size 216x22
+              text run at (0,0) width 216: "No content before or after."
+        RenderBlock (anonymous) at (0,41) size 784x0
+          RenderInline {SPAN} at (0,0) size 0x0

@@ -1,0 +1,53 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+This demonstrates a bug: copying an empty line that's implemented with a br doesn't put an interchange newline on the pasteboard.  There should be two blank lines after the 'a'.
+
+Before paste:
+| "
+"
+| <div>
+|   class="editing"
+|   "a"
+|   <br>
+|   <br>
+|   "b"
+| "
+"
+| <div>
+|   class="editing"
+|   <#selection-caret>
+| "
+"
+
+After paste:
+| "
+"
+| <div>
+|   class="editing"
+|   "a"
+|   <br>
+|   <br>
+|   "b"
+| "
+"
+| <div>
+|   class="editing"
+|   <div>
+|     class="editing"
+|     "a"
+|   <div>
+|     class="editing"
+|     <#selection-caret>
+|     <br>
+| "
+"

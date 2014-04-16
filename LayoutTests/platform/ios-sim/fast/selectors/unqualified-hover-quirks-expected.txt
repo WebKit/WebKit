@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {H3} at (0,0) size 784x23
+        RenderText {#text} at (0,0) size 466x22
+          text run at (0,0) width 466: "Test of unqualifed :hover selector in quirks parsing mode"
+      RenderBlock {P} at (0,41) size 784x20
+        RenderText {#text} at (0,0) size 626x19
+          text run at (0,0) width 626: "Moving the mouse anywhere over the document should result no change to the background color."

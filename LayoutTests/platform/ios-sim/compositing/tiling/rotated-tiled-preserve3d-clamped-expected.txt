@@ -1,0 +1,48 @@
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (visible rect 0.00, 0.00 320.00 x 460.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (visible rect 0.00, 0.00 320.00 x 460.00)
+      (children 1
+        (GraphicsLayer
+          (position 58.00 50.00)
+          (bounds 502.00 302.00)
+          (visible rect 0.00, 0.00 262.00 x 302.00)
+          (children 1
+            (GraphicsLayer
+              (position 1.00 1.00)
+              (bounds 500.00 300.00)
+              (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 -0.00] [0.00 0.00 0.00 1.00])
+              (visible rect 0.00, 0.00 261.00 x 300.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 500.00 0.00)
+                  (preserves3D 1)
+                  (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (children 1
+                    (GraphicsLayer
+                      (position -1250.00 0.00)
+                      (anchor 0.54 0.50)
+                      (bounds 2800.00 300.00)
+                      (usingTiledLayer 1)
+                      (contentsOpaque 1)
+                      (drawsContent 1)
+                      (transform [0.17 0.00 -0.98 0.00] [0.00 1.00 0.00 0.00] [0.98 0.00 0.17 0.00] [0.00 0.00 0.00 1.00])
+                      (visible rect 1071.91, 0.00 498.79 x 300.00)
+                      (tile cache coverage 1024, 0 1024 x 300)
+                      (tile size 512 x 512)
+                      (top left tile 2, 0 tiles grid 2 x 1)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 640x540
+    RenderSVGRect {rect} at (0,60) size 400x480 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=500.00] [height=600.00]
+    RenderSVGContainer {g} at (0,0) size 640x320 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,200.00)}]
+      RenderSVGPath {path} at (0,0) size 640x320 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#008000]}] [data="M -25 0 C 120 -40 -80 -60 20 25 Z M 20 10 C 13.3333 3.33333 14 0 22 0"]

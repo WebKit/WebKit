@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=userSpaceOnUse]
+        RenderSVGContainer {use} at (0,0) size 100x100
+          RenderSVGContainer {g} at (0,0) size 100x100
+            RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderSVGContainer {g} at (0,0) size 100x100
+      [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
+      RenderPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderSVGText {text} at (10,120) size 525x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-15) size 525x19
+        chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 76 width 502.00: "The graphic above uses a 100x100 clipPath referencing a rectangle using use."
+    RenderSVGText {text} at (10,140) size 627x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-15) size 627x19
+        chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 92 width 606.00: "It should clip the 200x200 red rectangle out and leave a 100x100 green rectangle. Bug 16557."

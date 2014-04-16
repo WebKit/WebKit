@@ -1,0 +1,4 @@
+This tests that the default Content-Type for XMLHttpRequest is application/x-www-form-urlencoded when running in the Dashboard compatibility mode.
+
+application/xml
+

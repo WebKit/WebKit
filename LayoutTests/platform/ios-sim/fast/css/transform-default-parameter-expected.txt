@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x116
+  RenderBlock {HTML} at (0,0) size 800x116
+    RenderBody {BODY} at (8,21) size 784x79
+      RenderBlock {H1} at (0,0) size 784x38
+        RenderText {#text} at (0,1) size 487x36
+          text run at (0,1) width 487: "Testing default translate parameter"
+      RenderBlock {P} at (0,59) size 784x20
+        RenderText {#text} at (0,0) size 588x19
+          text run at (0,0) width 588: "There should be blue and green boxes shown. If there is a red box visible, the test has failed"
+layer at (500,100) size 300x100
+  RenderBlock (positioned) {DIV} at (500,100) size 300x100 [bgcolor=#FF0000]
+    RenderText {#text} at (0,0) size 300x19
+      text run at (0,0) width 300: "If you can see this box, then the test has failed."
+layer at (100,100) size 300x100
+  RenderBlock (positioned) {DIV} at (100,100) size 300x100 [bgcolor=#0000FF]
+    RenderText {#text} at (0,0) size 278x19
+      text run at (0,0) width 278: "This box should be visible (it is translated)."
+layer at (500,500) size 300x100
+  RenderBlock (positioned) {DIV} at (500,500) size 300x100 [bgcolor=#008000]
+    RenderText {#text} at (0,0) size 173x19
+      text run at (0,0) width 173: "This box should be visible."

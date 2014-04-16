@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Testing that we do not hit a 10MB per-document resource limit. We attempt to load 200 71KB images (~14MB) and we check that each triggers an onload event.");
+
+var numberOfImages = 200;
+var numberLoadedSuccessfully = 0;
+
+for (var i = 0; i < numberOfImages; ++i) {
+    var img = document.createElement("img");
+    img.src = "resources/image.png?" + i;
+    document.body.appendChild(img);
+    img.addEventListener("load", function() {
+        ++numberLoadedSuccessfully;
+    }, false);
+}
+
+window.addEventListener("load", function() {
+    shouldBe("numberLoadedSuccessfully", "numberOfImages");
+}, false);
+
+var successfullyParsed = true;
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

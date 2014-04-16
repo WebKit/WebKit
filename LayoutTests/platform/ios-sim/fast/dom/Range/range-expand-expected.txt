@@ -1,0 +1,363 @@
+This is the begin of a block. A block is a collection of sentences. Each sentence begins with capital letter and ends with a punctuation.
+
+Now, a sentence is divided into multiple lines.
+
+Roll the mouse around the page. The coordinates of the mouse pointer are currently atop an element
+whose ID is:"".
+
+Cell A1	Cell B1
+Cell A2	Cell B2
+Section 1
+
+text.
+
+Section 2
+
+text.
+
+Here is a positioned element.
+在甲型H1N1流感可能出现大流行的警告声中，昨天召开的江苏省2009-2010年度流感防制研讨会注定与往年不同。每年都会召开的一次例会，今年足足提前了一个月；会上研讨的主题，已从以前的季节性流感，变成以甲型H1N1流感为重点。
+בלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"
+==================================
+FAILED test word13
+actual: Here
+expected: Here
+length !=; actual.length: 4; expected.length: 5
+escaped actual: Here
+escaped expected: Here%20
+i: 0; actual: H; expected: H
+i: 1; actual: e; expected: e
+i: 2; actual: r; expected: r
+i: 3; actual: e; expected: e
+==================================
+FAILED test Hebrew sentence
+actual: בלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"
+expected: בלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"
+length !=; actual.length: 160; expected.length: 159
+escaped actual: %u05D1%u05DC%u05E9%u05DB%u05EA%20%u05E9%u05E8%20%u05D4%u05D7%u05D5%u05E5%20%u05D4%u05D2%u05D9%u05D1%u05D5%20%u05DC%u05D4%u05EA%u05E7%u05E4%u05D5%u05EA%20%u05E2%u05DC%u05D9%u05D5%20%u05D1%u05E2%u05E7%u05D1%u05D5%u05EA%20%u05D4%u05E0%u05D7%u05D9%u05D9%u05EA%u05D5%20%u05DC%u05D3%u05E8%u05D5%u05E9%20%u05DE%u05D4%u05DE%u05D5%u05E2%u05DE%u05D3%u05D9%u05DD%20%u05DC%u05E7%u05D5%u05E8%u05E1%20%u05E6%u05D5%u05E2%u05E8%u05D9%u05DD%20%u05E9%u05D9%u05E8%u05D5%u05EA%20%u05E6%u05D1%u05D0%u05D9%20%u05D0%u05D5%20%u05DC%u05D0%u05D5%u05DE%u05D9%3A%20%22%u05D4%u05DE%u05EA%u05E7%u05D9%u05E4%u05D9%u05DD%20%u05E6%u05D1%u05D5%u05E2%u05D9%u05DD%2C%20%u05DE%u05D9%20%u05E9%u05E8%u05D5%u05E6%u05D4%20%u05DC%u05D9%u05D9%u05E6%u05D2%20%u05D0%u05EA%20%u05D4%u05DE%u05D3%u05D9%u05E0%u05D4%20%u05E8%u05D5%u05E6%u05D4%20%u05D2%u05DD%20%u05DC%u05E9%u05E8%u05EA%20%u05D0%u05D5%u05EA%u05D4%22%0A
+escaped expected: %u05D1%u05DC%u05E9%u05DB%u05EA%20%u05E9%u05E8%20%u05D4%u05D7%u05D5%u05E5%20%u05D4%u05D2%u05D9%u05D1%u05D5%20%u05DC%u05D4%u05EA%u05E7%u05E4%u05D5%u05EA%20%u05E2%u05DC%u05D9%u05D5%20%u05D1%u05E2%u05E7%u05D1%u05D5%u05EA%20%u05D4%u05E0%u05D7%u05D9%u05D9%u05EA%u05D5%20%u05DC%u05D3%u05E8%u05D5%u05E9%20%u05DE%u05D4%u05DE%u05D5%u05E2%u05DE%u05D3%u05D9%u05DD%20%u05DC%u05E7%u05D5%u05E8%u05E1%20%u05E6%u05D5%u05E2%u05E8%u05D9%u05DD%20%u05E9%u05D9%u05E8%u05D5%u05EA%20%u05E6%u05D1%u05D0%u05D9%20%u05D0%u05D5%20%u05DC%u05D0%u05D5%u05DE%u05D9%3A%20%22%u05D4%u05DE%u05EA%u05E7%u05D9%u05E4%u05D9%u05DD%20%u05E6%u05D1%u05D5%u05E2%u05D9%u05DD%2C%20%u05DE%u05D9%20%u05E9%u05E8%u05D5%u05E6%u05D4%20%u05DC%u05D9%u05D9%u05E6%u05D2%20%u05D0%u05EA%20%u05D4%u05DE%u05D3%u05D9%u05E0%u05D4%20%u05E8%u05D5%u05E6%u05D4%20%u05D2%u05DD%20%u05DC%u05E9%u05E8%u05EA%20%u05D0%u05D5%u05EA%u05D4%22
+i: 0; actual: ב; expected: ב
+i: 1; actual: ל; expected: ל
+i: 2; actual: ש; expected: ש
+i: 3; actual: כ; expected: כ
+i: 4; actual: ת; expected: ת
+i: 5; actual: ; expected:
+i: 6; actual: ש; expected: ש
+i: 7; actual: ר; expected: ר
+i: 8; actual: ; expected:
+i: 9; actual: ה; expected: ה
+i: 10; actual: ח; expected: ח
+i: 11; actual: ו; expected: ו
+i: 12; actual: ץ; expected: ץ
+i: 13; actual: ; expected:
+i: 14; actual: ה; expected: ה
+i: 15; actual: ג; expected: ג
+i: 16; actual: י; expected: י
+i: 17; actual: ב; expected: ב
+i: 18; actual: ו; expected: ו
+i: 19; actual: ; expected:
+i: 20; actual: ל; expected: ל
+i: 21; actual: ה; expected: ה
+i: 22; actual: ת; expected: ת
+i: 23; actual: ק; expected: ק
+i: 24; actual: פ; expected: פ
+i: 25; actual: ו; expected: ו
+i: 26; actual: ת; expected: ת
+i: 27; actual: ; expected:
+i: 28; actual: ע; expected: ע
+i: 29; actual: ל; expected: ל
+i: 30; actual: י; expected: י
+i: 31; actual: ו; expected: ו
+i: 32; actual: ; expected:
+i: 33; actual: ב; expected: ב
+i: 34; actual: ע; expected: ע
+i: 35; actual: ק; expected: ק
+i: 36; actual: ב; expected: ב
+i: 37; actual: ו; expected: ו
+i: 38; actual: ת; expected: ת
+i: 39; actual: ; expected:
+i: 40; actual: ה; expected: ה
+i: 41; actual: נ; expected: נ
+i: 42; actual: ח; expected: ח
+i: 43; actual: י; expected: י
+i: 44; actual: י; expected: י
+i: 45; actual: ת; expected: ת
+i: 46; actual: ו; expected: ו
+i: 47; actual: ; expected:
+i: 48; actual: ל; expected: ל
+i: 49; actual: ד; expected: ד
+i: 50; actual: ר; expected: ר
+i: 51; actual: ו; expected: ו
+i: 52; actual: ש; expected: ש
+i: 53; actual: ; expected:
+i: 54; actual: מ; expected: מ
+i: 55; actual: ה; expected: ה
+i: 56; actual: מ; expected: מ
+i: 57; actual: ו; expected: ו
+i: 58; actual: ע; expected: ע
+i: 59; actual: מ; expected: מ
+i: 60; actual: ד; expected: ד
+i: 61; actual: י; expected: י
+i: 62; actual: ם; expected: ם
+i: 63; actual: ; expected:
+i: 64; actual: ל; expected: ל
+i: 65; actual: ק; expected: ק
+i: 66; actual: ו; expected: ו
+i: 67; actual: ר; expected: ר
+i: 68; actual: ס; expected: ס
+i: 69; actual: ; expected:
+i: 70; actual: צ; expected: צ
+i: 71; actual: ו; expected: ו
+i: 72; actual: ע; expected: ע
+i: 73; actual: ר; expected: ר
+i: 74; actual: י; expected: י
+i: 75; actual: ם; expected: ם
+i: 76; actual: ; expected:
+i: 77; actual: ש; expected: ש
+i: 78; actual: י; expected: י
+i: 79; actual: ר; expected: ר
+i: 80; actual: ו; expected: ו
+i: 81; actual: ת; expected: ת
+i: 82; actual: ; expected:
+i: 83; actual: צ; expected: צ
+i: 84; actual: ב; expected: ב
+i: 85; actual: א; expected: א
+i: 86; actual: י; expected: י
+i: 87; actual: ; expected:
+i: 88; actual: א; expected: א
+i: 89; actual: ו; expected: ו
+i: 90; actual: ; expected:
+i: 91; actual: ל; expected: ל
+i: 92; actual: א; expected: א
+i: 93; actual: ו; expected: ו
+i: 94; actual: מ; expected: מ
+i: 95; actual: י; expected: י
+i: 96; actual: :; expected: :
+i: 97; actual: ; expected:
+i: 98; actual: "; expected: "
+i: 99; actual: ה; expected: ה
+i: 100; actual: מ; expected: מ
+i: 101; actual: ת; expected: ת
+i: 102; actual: ק; expected: ק
+i: 103; actual: י; expected: י
+i: 104; actual: פ; expected: פ
+i: 105; actual: י; expected: י
+i: 106; actual: ם; expected: ם
+i: 107; actual: ; expected:
+i: 108; actual: צ; expected: צ
+i: 109; actual: ב; expected: ב
+i: 110; actual: ו; expected: ו
+i: 111; actual: ע; expected: ע
+i: 112; actual: י; expected: י
+i: 113; actual: ם; expected: ם
+i: 114; actual: ,; expected: ,
+i: 115; actual: ; expected:
+i: 116; actual: מ; expected: מ
+i: 117; actual: י; expected: י
+i: 118; actual: ; expected:
+i: 119; actual: ש; expected: ש
+i: 120; actual: ר; expected: ר
+i: 121; actual: ו; expected: ו
+i: 122; actual: צ; expected: צ
+i: 123; actual: ה; expected: ה
+i: 124; actual: ; expected:
+i: 125; actual: ל; expected: ל
+i: 126; actual: י; expected: י
+i: 127; actual: י; expected: י
+i: 128; actual: צ; expected: צ
+i: 129; actual: ג; expected: ג
+i: 130; actual: ; expected:
+i: 131; actual: א; expected: א
+i: 132; actual: ת; expected: ת
+i: 133; actual: ; expected:
+i: 134; actual: ה; expected: ה
+i: 135; actual: מ; expected: מ
+i: 136; actual: ד; expected: ד
+i: 137; actual: י; expected: י
+i: 138; actual: נ; expected: נ
+i: 139; actual: ה; expected: ה
+i: 140; actual: ; expected:
+i: 141; actual: ר; expected: ר
+i: 142; actual: ו; expected: ו
+i: 143; actual: צ; expected: צ
+i: 144; actual: ה; expected: ה
+i: 145; actual: ; expected:
+i: 146; actual: ג; expected: ג
+i: 147; actual: ם; expected: ם
+i: 148; actual: ; expected:
+i: 149; actual: ל; expected: ל
+i: 150; actual: ש; expected: ש
+i: 151; actual: ר; expected: ר
+i: 152; actual: ת; expected: ת
+i: 153; actual: ; expected:
+i: 154; actual: א; expected: א
+i: 155; actual: ו; expected: ו
+i: 156; actual: ת; expected: ת
+i: 157; actual: ה; expected: ה
+i: 158; actual: "; expected: "
+==================================
+FAILED test Hebrew block
+actual: בלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"
+expected: בלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"
+length !=; actual.length: 160; expected.length: 159
+escaped actual: %u05D1%u05DC%u05E9%u05DB%u05EA%20%u05E9%u05E8%20%u05D4%u05D7%u05D5%u05E5%20%u05D4%u05D2%u05D9%u05D1%u05D5%20%u05DC%u05D4%u05EA%u05E7%u05E4%u05D5%u05EA%20%u05E2%u05DC%u05D9%u05D5%20%u05D1%u05E2%u05E7%u05D1%u05D5%u05EA%20%u05D4%u05E0%u05D7%u05D9%u05D9%u05EA%u05D5%20%u05DC%u05D3%u05E8%u05D5%u05E9%20%u05DE%u05D4%u05DE%u05D5%u05E2%u05DE%u05D3%u05D9%u05DD%20%u05DC%u05E7%u05D5%u05E8%u05E1%20%u05E6%u05D5%u05E2%u05E8%u05D9%u05DD%20%u05E9%u05D9%u05E8%u05D5%u05EA%20%u05E6%u05D1%u05D0%u05D9%20%u05D0%u05D5%20%u05DC%u05D0%u05D5%u05DE%u05D9%3A%20%22%u05D4%u05DE%u05EA%u05E7%u05D9%u05E4%u05D9%u05DD%20%u05E6%u05D1%u05D5%u05E2%u05D9%u05DD%2C%20%u05DE%u05D9%20%u05E9%u05E8%u05D5%u05E6%u05D4%20%u05DC%u05D9%u05D9%u05E6%u05D2%20%u05D0%u05EA%20%u05D4%u05DE%u05D3%u05D9%u05E0%u05D4%20%u05E8%u05D5%u05E6%u05D4%20%u05D2%u05DD%20%u05DC%u05E9%u05E8%u05EA%20%u05D0%u05D5%u05EA%u05D4%22%0A
+escaped expected: %u05D1%u05DC%u05E9%u05DB%u05EA%20%u05E9%u05E8%20%u05D4%u05D7%u05D5%u05E5%20%u05D4%u05D2%u05D9%u05D1%u05D5%20%u05DC%u05D4%u05EA%u05E7%u05E4%u05D5%u05EA%20%u05E2%u05DC%u05D9%u05D5%20%u05D1%u05E2%u05E7%u05D1%u05D5%u05EA%20%u05D4%u05E0%u05D7%u05D9%u05D9%u05EA%u05D5%20%u05DC%u05D3%u05E8%u05D5%u05E9%20%u05DE%u05D4%u05DE%u05D5%u05E2%u05DE%u05D3%u05D9%u05DD%20%u05DC%u05E7%u05D5%u05E8%u05E1%20%u05E6%u05D5%u05E2%u05E8%u05D9%u05DD%20%u05E9%u05D9%u05E8%u05D5%u05EA%20%u05E6%u05D1%u05D0%u05D9%20%u05D0%u05D5%20%u05DC%u05D0%u05D5%u05DE%u05D9%3A%20%22%u05D4%u05DE%u05EA%u05E7%u05D9%u05E4%u05D9%u05DD%20%u05E6%u05D1%u05D5%u05E2%u05D9%u05DD%2C%20%u05DE%u05D9%20%u05E9%u05E8%u05D5%u05E6%u05D4%20%u05DC%u05D9%u05D9%u05E6%u05D2%20%u05D0%u05EA%20%u05D4%u05DE%u05D3%u05D9%u05E0%u05D4%20%u05E8%u05D5%u05E6%u05D4%20%u05D2%u05DD%20%u05DC%u05E9%u05E8%u05EA%20%u05D0%u05D5%u05EA%u05D4%22
+i: 0; actual: ב; expected: ב
+i: 1; actual: ל; expected: ל
+i: 2; actual: ש; expected: ש
+i: 3; actual: כ; expected: כ
+i: 4; actual: ת; expected: ת
+i: 5; actual: ; expected:
+i: 6; actual: ש; expected: ש
+i: 7; actual: ר; expected: ר
+i: 8; actual: ; expected:
+i: 9; actual: ה; expected: ה
+i: 10; actual: ח; expected: ח
+i: 11; actual: ו; expected: ו
+i: 12; actual: ץ; expected: ץ
+i: 13; actual: ; expected:
+i: 14; actual: ה; expected: ה
+i: 15; actual: ג; expected: ג
+i: 16; actual: י; expected: י
+i: 17; actual: ב; expected: ב
+i: 18; actual: ו; expected: ו
+i: 19; actual: ; expected:
+i: 20; actual: ל; expected: ל
+i: 21; actual: ה; expected: ה
+i: 22; actual: ת; expected: ת
+i: 23; actual: ק; expected: ק
+i: 24; actual: פ; expected: פ
+i: 25; actual: ו; expected: ו
+i: 26; actual: ת; expected: ת
+i: 27; actual: ; expected:
+i: 28; actual: ע; expected: ע
+i: 29; actual: ל; expected: ל
+i: 30; actual: י; expected: י
+i: 31; actual: ו; expected: ו
+i: 32; actual: ; expected:
+i: 33; actual: ב; expected: ב
+i: 34; actual: ע; expected: ע
+i: 35; actual: ק; expected: ק
+i: 36; actual: ב; expected: ב
+i: 37; actual: ו; expected: ו
+i: 38; actual: ת; expected: ת
+i: 39; actual: ; expected:
+i: 40; actual: ה; expected: ה
+i: 41; actual: נ; expected: נ
+i: 42; actual: ח; expected: ח
+i: 43; actual: י; expected: י
+i: 44; actual: י; expected: י
+i: 45; actual: ת; expected: ת
+i: 46; actual: ו; expected: ו
+i: 47; actual: ; expected:
+i: 48; actual: ל; expected: ל
+i: 49; actual: ד; expected: ד
+i: 50; actual: ר; expected: ר
+i: 51; actual: ו; expected: ו
+i: 52; actual: ש; expected: ש
+i: 53; actual: ; expected:
+i: 54; actual: מ; expected: מ
+i: 55; actual: ה; expected: ה
+i: 56; actual: מ; expected: מ
+i: 57; actual: ו; expected: ו
+i: 58; actual: ע; expected: ע
+i: 59; actual: מ; expected: מ
+i: 60; actual: ד; expected: ד
+i: 61; actual: י; expected: י
+i: 62; actual: ם; expected: ם
+i: 63; actual: ; expected:
+i: 64; actual: ל; expected: ל
+i: 65; actual: ק; expected: ק
+i: 66; actual: ו; expected: ו
+i: 67; actual: ר; expected: ר
+i: 68; actual: ס; expected: ס
+i: 69; actual: ; expected:
+i: 70; actual: צ; expected: צ
+i: 71; actual: ו; expected: ו
+i: 72; actual: ע; expected: ע
+i: 73; actual: ר; expected: ר
+i: 74; actual: י; expected: י
+i: 75; actual: ם; expected: ם
+i: 76; actual: ; expected:
+i: 77; actual: ש; expected: ש
+i: 78; actual: י; expected: י
+i: 79; actual: ר; expected: ר
+i: 80; actual: ו; expected: ו
+i: 81; actual: ת; expected: ת
+i: 82; actual: ; expected:
+i: 83; actual: צ; expected: צ
+i: 84; actual: ב; expected: ב
+i: 85; actual: א; expected: א
+i: 86; actual: י; expected: י
+i: 87; actual: ; expected:
+i: 88; actual: א; expected: א
+i: 89; actual: ו; expected: ו
+i: 90; actual: ; expected:
+i: 91; actual: ל; expected: ל
+i: 92; actual: א; expected: א
+i: 93; actual: ו; expected: ו
+i: 94; actual: מ; expected: מ
+i: 95; actual: י; expected: י
+i: 96; actual: :; expected: :
+i: 97; actual: ; expected:
+i: 98; actual: "; expected: "
+i: 99; actual: ה; expected: ה
+i: 100; actual: מ; expected: מ
+i: 101; actual: ת; expected: ת
+i: 102; actual: ק; expected: ק
+i: 103; actual: י; expected: י
+i: 104; actual: פ; expected: פ
+i: 105; actual: י; expected: י
+i: 106; actual: ם; expected: ם
+i: 107; actual: ; expected:
+i: 108; actual: צ; expected: צ
+i: 109; actual: ב; expected: ב
+i: 110; actual: ו; expected: ו
+i: 111; actual: ע; expected: ע
+i: 112; actual: י; expected: י
+i: 113; actual: ם; expected: ם
+i: 114; actual: ,; expected: ,
+i: 115; actual: ; expected:
+i: 116; actual: מ; expected: מ
+i: 117; actual: י; expected: י
+i: 118; actual: ; expected:
+i: 119; actual: ש; expected: ש
+i: 120; actual: ר; expected: ר
+i: 121; actual: ו; expected: ו
+i: 122; actual: צ; expected: צ
+i: 123; actual: ה; expected: ה
+i: 124; actual: ; expected:
+i: 125; actual: ל; expected: ל
+i: 126; actual: י; expected: י
+i: 127; actual: י; expected: י
+i: 128; actual: צ; expected: צ
+i: 129; actual: ג; expected: ג
+i: 130; actual: ; expected:
+i: 131; actual: א; expected: א
+i: 132; actual: ת; expected: ת
+i: 133; actual: ; expected:
+i: 134; actual: ה; expected: ה
+i: 135; actual: מ; expected: מ
+i: 136; actual: ד; expected: ד
+i: 137; actual: י; expected: י
+i: 138; actual: נ; expected: נ
+i: 139; actual: ה; expected: ה
+i: 140; actual: ; expected:
+i: 141; actual: ר; expected: ר
+i: 142; actual: ו; expected: ו
+i: 143; actual: צ; expected: צ
+i: 144; actual: ה; expected: ה
+i: 145; actual: ; expected:
+i: 146; actual: ג; expected: ג
+i: 147; actual: ם; expected: ם
+i: 148; actual: ; expected:
+i: 149; actual: ל; expected: ל
+i: 150; actual: ש; expected: ש
+i: 151; actual: ר; expected: ר
+i: 152; actual: ת; expected: ת
+i: 153; actual: ; expected:
+i: 154; actual: א; expected: א
+i: 155; actual: ו; expected: ו
+i: 156; actual: ת; expected: ת
+i: 157; actual: ה; expected: ה
+i: 158; actual: "; expected: "

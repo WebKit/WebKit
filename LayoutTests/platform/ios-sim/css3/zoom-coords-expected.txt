@@ -1,0 +1,115 @@
+Test
+Test
+Test
+This test checks getBoundingClientRect() on zoomed HTML and SVG elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Gray rectangles: 100x50
+Green rectangles: 100x50, zoom=200%
+Blue rectangles: 200x100, zoom=50%
+
+Checking HTML elements:
+
+PASS div1.left is 0
+PASS div1.top is 0
+PASS div1.width is 100
+PASS div1.height is 50
+PASS div1.right is 100
+PASS div1.bottom is 50
+
+PASS div2.left is 0
+PASS div2.top is 25
+PASS div2.width is 100
+PASS div2.height is 50
+PASS div2.right is 100
+PASS div2.bottom is 75
+
+PASS div3.left is 0
+PASS div3.top is 300
+PASS div3.width is 200
+PASS div3.height is 100
+PASS div3.right is 200
+PASS div3.bottom is 400
+
+Checking SVG elements:
+
+PASS svg1.left is 0
+PASS svg1.top is 250
+PASS svg1.width is 150
+PASS svg1.height is 50
+PASS svg1.right is 150
+PASS svg1.bottom is 300
+PASS rect1.left is 0
+PASS rect1.top is 250
+PASS rect1.width is 100
+PASS rect1.height is 50
+PASS rect1.right is 100
+PASS rect1.bottom is 300
+PASS image1.left is 100
+PASS image1.top is 250
+PASS image1.width is 50
+PASS image1.height is 25
+PASS image1.right is 150
+PASS image1.bottom is 275
+PASS text1.left is 100
+FAIL text1.top should be 282.5. Was 282.
+PASS text1.width is 46
+FAIL text1.height should be 6.5. Was 7.
+PASS text1.right is 146
+PASS text1.bottom is 289
+
+PASS svg2.left is 75
+PASS svg2.top is 100
+PASS svg2.width is 150
+PASS svg2.height is 50
+PASS svg2.right is 225
+PASS svg2.bottom is 150
+PASS rect2.left is 75
+PASS rect2.top is 100
+PASS rect2.width is 100
+PASS rect2.height is 50
+PASS rect2.right is 175
+PASS rect2.bottom is 150
+PASS image2.left is 175
+PASS image2.top is 100
+PASS image2.width is 50
+PASS image2.height is 25
+PASS image2.right is 225
+PASS image2.bottom is 125
+PASS text2.left is 175
+FAIL text2.top should be 132.5. Was 132.
+PASS text2.width is 49
+FAIL text2.height should be 6.5. Was 7.
+PASS text2.right is 224
+PASS text2.bottom is 139
+
+PASS svg3.left is 900
+PASS svg3.top is 500
+PASS svg3.width is 300
+PASS svg3.height is 100
+PASS svg3.right is 1200
+PASS svg3.bottom is 600
+PASS rect3.left is 900
+PASS rect3.top is 500
+PASS rect3.width is 200
+PASS rect3.height is 100
+PASS rect3.right is 1100
+PASS rect3.bottom is 600
+PASS image3.left is 1100
+PASS image3.top is 500
+PASS image3.width is 100
+PASS image3.height is 50
+PASS image3.right is 1200
+PASS image3.bottom is 550
+PASS text3.left is 1100
+FAIL text3.top should be 565. Was 564.
+PASS text3.width is 92
+FAIL text3.height should be 13. Was 14.
+PASS text3.right is 1192
+PASS text3.bottom is 578
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

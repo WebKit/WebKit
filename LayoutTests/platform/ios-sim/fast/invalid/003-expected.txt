@@ -1,0 +1,63 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderInline {FONT} at (0,0) size 91x19 [color=#FF0000]
+          RenderInline {I} at (0,0) size 91x19
+            RenderText {#text} at (0,0) size 91x19
+              text run at (0,0) width 91: "Italic and Red"
+        RenderInline {FONT} at (0,0) size 1x19 [color=#FF0000]
+          RenderInline {I} at (0,0) size 1x19
+        RenderInline {I} at (0,0) size 1x19
+      RenderBlock (anonymous) at (0,36) size 784x20
+        RenderBlock {P} at (0,0) size 784x20
+          RenderInline {FONT} at (0,0) size 95x19 [color=#FF0000]
+            RenderText {#text} at (0,0) size 95x19
+              text run at (0,0) width 95: "Italic and Red "
+          RenderText {#text} at (94,0) size 68x19
+            text run at (94,0) width 68: "Just italic."
+      RenderBlock (anonymous) at (0,72) size 784x20
+        RenderInline {I} at (0,0) size 70x19
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "Italic only."
+        RenderText {#text} at (69,0) size 38x19
+          text run at (69,0) width 38: " Plain"
+      RenderBlock {P} at (0,108) size 784x20
+        RenderText {#text} at (0,0) size 128x19
+          text run at (0,0) width 128: "I should not be red. "
+        RenderInline {FONT} at (0,0) size 126x19 [color=#FF0000]
+          RenderText {#text} at (127,0) size 35x19
+            text run at (127,0) width 35: "Red. "
+          RenderInline {I} at (0,0) size 92x19
+            RenderText {#text} at (161,0) size 92x19
+              text run at (161,0) width 92: "Italic and red."
+      RenderBlock (anonymous) at (0,144) size 784x0
+        RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
+          RenderInline {I} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+        RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
+          RenderInline {I} at (0,0) size 0x0
+      RenderBlock {P} at (0,144) size 784x20
+        RenderInline {FONT} at (0,0) size 125x19 [color=#FF0000]
+          RenderInline {I} at (0,0) size 96x19
+            RenderText {#text} at (0,0) size 96x19
+              text run at (0,0) width 96: "Italic and red. "
+          RenderText {#text} at (95,0) size 30x19
+            text run at (95,0) width 30: "Red."
+        RenderText {#text} at (124,0) size 129x19
+          text run at (124,0) width 129: " I should not be red."
+      RenderBlock (anonymous) at (0,180) size 784x20
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {B} at (0,0) size 133x19
+          RenderText {#text} at (0,0) size 37x19
+            text run at (0,0) width 37: "Bold "
+          RenderInline {I} at (0,0) size 97x19
+            RenderText {#text} at (36,0) size 97x19
+              text run at (36,0) width 97: "Bold and italic"
+        RenderInline {I} at (0,0) size 78x19
+          RenderText {#text} at (132,0) size 78x19
+            text run at (132,0) width 78: " Only Italic "
+        RenderText {#text} at (209,0) size 34x19
+          text run at (209,0) width 34: "Plain"

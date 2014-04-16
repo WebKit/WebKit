@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderBR {BR} at (0,0) size 0x19
+      RenderTable {TABLE} at (0,20) size 388x32 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 386x30
+          RenderTableRow {TR} at (0,2) size 386x0
+            RenderTableCell {TD} at (2,3) size 217x24 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 213x19
+                text run at (2,2) width 213: "Canada climbs up FIFA rankings"
+          RenderTableRow {TR} at (0,4) size 386x24
+            RenderTableCell {TD} at (221,4) size 163x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 159x19
+                text run at (2,2) width 159: "drink more german beer."

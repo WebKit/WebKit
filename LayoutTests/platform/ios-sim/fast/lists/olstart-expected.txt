@@ -1,0 +1,138 @@
+layer at (0,0) size 800x830
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x830
+  RenderBlock {HTML} at (0,0) size 800x830
+    RenderBody {BODY} at (8,8) size 784x806
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 132x19
+          text run at (0,0) width 132: "1. Basic inheritance:"
+      RenderBlock {OL} at (0,36) size 784x40
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "3"
+          RenderText {#text} at (0,0) size 77x19
+            text run at (0,0) width 77: "Should be 3"
+        RenderListItem {LI} at (40,20) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "4"
+          RenderText {#text} at (0,0) size 77x19
+            text run at (0,0) width 77: "Should be 4"
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,102) size 784x20
+        RenderText {#text} at (0,0) size 298x19
+          text run at (0,0) width 298: "2. Test that the inner start value gets inherited:"
+      RenderBlock {OL} at (0,138) size 784x40
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "5"
+          RenderText {#text} at (0,0) size 77x19
+            text run at (0,0) width 77: "Should be 5"
+        RenderBlock {OL} at (40,20) size 744x20
+          RenderListItem {LI} at (40,0) size 704x20
+            RenderListMarker at (-21,0) size 16x19: "3"
+            RenderText {#text} at (0,0) size 77x19
+              text run at (0,0) width 77: "Should be 3"
+      RenderBlock {HR} at (0,194) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,204) size 784x20
+        RenderText {#text} at (0,0) size 393x19
+          text run at (0,0) width 393: "3. Test that extra tags before the li don't block the inheritance"
+      RenderBlock {OL} at (0,240) size 784x56
+        RenderBlock {P} at (40,0) size 744x20
+          RenderText {#text} at (0,0) size 30x19
+            text run at (0,0) width 30: "Text"
+        RenderListItem {LI} at (40,36) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "3"
+          RenderText {#text} at (0,0) size 77x19
+            text run at (0,0) width 77: "Should be 3"
+      RenderBlock {HR} at (0,312) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,322) size 784x20
+        RenderText {#text} at (0,0) size 276x19
+          text run at (0,0) width 276: "4. Test for inheritance through many levels"
+      RenderBlock {OL} at (0,358) size 784x20
+        RenderBlock (anonymous) at (40,0) size 744x0
+          RenderInline {B} at (0,0) size 0x0
+        RenderBlock (anonymous) at (40,0) size 744x20
+          RenderListItem {LI} at (0,0) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "3"
+            RenderText {#text} at (0,0) size 155x19
+              text run at (0,0) width 155: "Should be 3 (and bold)"
+        RenderBlock (anonymous) at (40,20) size 744x0
+          RenderInline {B} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,394) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,404) size 784x20
+        RenderText {#text} at (0,0) size 426x19
+          text run at (0,0) width 426: "5. Test for properly chaining from the previous li when it is nested"
+      RenderBlock {OL} at (0,440) size 784x60
+        RenderBlock (anonymous) at (40,0) size 744x0
+          RenderInline {B} at (0,0) size 0x0
+        RenderBlock (anonymous) at (40,0) size 744x20
+          RenderListItem {LI} at (0,0) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "3"
+            RenderText {#text} at (0,0) size 155x19
+              text run at (0,0) width 155: "Should be 3 (and bold)"
+        RenderBlock (anonymous) at (40,20) size 744x0
+          RenderInline {B} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderListItem {LI} at (40,20) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "4"
+          RenderText {#text} at (0,0) size 77x19
+            text run at (0,0) width 77: "Should be 4"
+        RenderListItem {LI} at (40,40) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "5"
+          RenderText {#text} at (0,0) size 77x19
+            text run at (0,0) width 77: "Should be 5"
+      RenderBlock {HR} at (0,516) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,526) size 784x20
+        RenderText {#text} at (0,0) size 462x19
+          text run at (0,0) width 462: "6. Test for properly chaining from the previous li when current is nested"
+      RenderBlock {OL} at (0,562) size 784x40
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderText {#text} at (0,0) size 77x19
+            text run at (0,0) width 77: "Should be 1"
+        RenderBlock (anonymous) at (40,20) size 744x0
+          RenderInline {B} at (0,0) size 0x0
+        RenderBlock (anonymous) at (40,20) size 744x20
+          RenderListItem {LI} at (0,0) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "2"
+            RenderText {#text} at (0,0) size 155x19
+              text run at (0,0) width 155: "Should be 2 (and bold)"
+        RenderBlock (anonymous) at (40,40) size 744x0
+          RenderInline {B} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,618) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,628) size 784x20
+        RenderText {#text} at (0,0) size 454x19
+          text run at (0,0) width 454: "7. Test for properly chaining from the previous li when both are nested"
+      RenderBlock {OL} at (0,664) size 784x40
+        RenderBlock (anonymous) at (40,0) size 744x0
+          RenderInline {I} at (0,0) size 0x0
+        RenderBlock (anonymous) at (40,0) size 744x20
+          RenderListItem {LI} at (0,0) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "2"
+            RenderText {#text} at (0,0) size 152x19
+              text run at (0,0) width 152: "Should be 2 (and italic)"
+        RenderBlock (anonymous) at (40,20) size 744x0
+          RenderInline {I} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {B} at (0,0) size 0x0
+        RenderBlock (anonymous) at (40,20) size 744x20
+          RenderListItem {LI} at (0,0) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "3"
+            RenderText {#text} at (0,0) size 155x19
+              text run at (0,0) width 155: "Should be 3 (and bold)"
+        RenderBlock (anonymous) at (40,40) size 744x0
+          RenderInline {B} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,720) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,730) size 784x20
+        RenderText {#text} at (0,0) size 362x19
+          text run at (0,0) width 362: "8. Test for not inheriting improperly from an another list"
+      RenderBlock {OL} at (0,766) size 784x40
+        RenderBlock {OL} at (40,0) size 744x20
+          RenderListItem {LI} at (40,0) size 704x20
+            RenderListMarker at (-21,0) size 16x19: "2"
+            RenderText {#text} at (0,0) size 77x19
+              text run at (0,0) width 77: "Should be 2"
+        RenderListItem {LI} at (40,20) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "5"
+          RenderText {#text} at (0,0) size 77x19
+            text run at (0,0) width 77: "Should be 5"

@@ -1,0 +1,151 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 450x500
+  RenderSVGRoot {svg} at (0,50) size 400x450
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderPath {path} at (0,0) size 150x50 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [data="M100.00,200.00 C200.00,100.00,300.00,0.00,400.00,100.00 C500.00,200.00,600.00,300.00,700.00,200.00 C800.00,100.00,900.00,100.00,900.00,100.00"]
+    RenderSVGContainer {g} at (0,50) size 400x450
+      RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+          chunk 1 (middle anchor) text run 1 at (4.50,1.00) startOffset 0 endOffset 41 width 0.00: "Small font size test (viewBox=\"0 0 9 10\")"
+      RenderSVGContainer {g} at (0,50) size 400x450
+        RenderSVGText {text} at (0,1) size 3x2 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-1) size 0x0
+            chunk 1 text run 1 at (0.90,2.00) startOffset 0 endOffset 16 width 0.00: "Text can change "
+          RenderSVGTSpan {tspan} at (0,0) size 3x2
+            RenderSVGInlineText {#text} at (0,0) size 3x2
+              chunk 1 text run 2 at (0.90,2.00) startOffset 0 endOffset 5 width 1.80: "size,"
+          RenderSVGInlineText {#text} at (0,-1) size 0x0
+            chunk 1 text run 3 at (2.70,2.00) startOffset 0 endOffset 1 width 0.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,-1) size 0x0
+              chunk 1 text run 4 at (2.70,2.00) startOffset 0 endOffset 9 width 0.00: "typeface,"
+          RenderSVGInlineText {#text} at (0,-1) size 0x0
+            chunk 1 text run 5 at (2.70,2.00) startOffset 0 endOffset 1 width 0.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,-1) size 0x0
+              chunk 1 text run 6 at (2.70,2.00) startOffset 0 endOffset 6 width 0.00: "color,"
+          RenderSVGInlineText {#text} at (0,-1) size 0x0
+            chunk 1 text run 7 at (2.70,2.00) startOffset 0 endOffset 1 width 0.00: " "
+            chunk 1 text run 8 at (2.70,2.00) startOffset 0 endOffset 3 width 0.00: "or "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,-1) size 0x0
+              chunk 1 text run 9 at (2.70,2.00) startOffset 0 endOffset 5 width 0.00: "style"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 1 at (0.90,2.40) startOffset 0 endOffset 29 width 0.00: "within a single text element."
+        RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 1 at (0.90,3.20) startOffset 0 endOffset 25 width 0.00: "Styling features include "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 2 at (0.90,3.20) startOffset 0 endOffset 7 width 0.00: "weight,"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 3 at (0.90,3.20) startOffset 0 endOffset 1 width 0.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 4 at (0.90,3.20) startOffset 0 endOffset 8 width 0.00: "posture,"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 5 at (0.90,3.20) startOffset 0 endOffset 5 width 0.00: " and "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 6 at (0.90,3.20) startOffset 0 endOffset 9 width 0.00: "typeface."
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderPath {rect} at (0,150) size 250x100 [fill={[type=SOLID] [color=#1E90FF]}] [data="M0.90,3.50 L4.95,3.50 L4.95,4.50 L0.90,4.50 Z"]
+        RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 1 at (0.90,4.00) startOffset 0 endOffset 28 width 0.00: "Graphics attributes such as "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 2 at (0.90,4.00) startOffset 0 endOffset 7 width 0.00: "opacity"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 3 at (0.90,4.00) startOffset 0 endOffset 16 width 0.00: " can be applied."
+        RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 1 at (0.90,5.00) startOffset 0 endOffset 30 width 0.00: "\"text decoration\" can include "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 2 at (0.90,5.00) startOffset 0 endOffset 10 width 0.00: "underline,"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 3 at (0.90,5.00) startOffset 0 endOffset 1 width 0.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 4 at (0.90,5.00) startOffset 0 endOffset 9 width 0.00: "overline,"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 5 at (0.90,5.00) startOffset 0 endOffset 4 width 0.00: " and"
+        RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 1 at (0.90,5.40) startOffset 0 endOffset 15 width 0.00: "strikethrough. "
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 2 at (1.00,5.40) startOffset 0 endOffset 5 width 0.00: "Super"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 3 at (1.00,5.40) startOffset 0 endOffset 5 width 0.00: " and "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 4 at (1.00,5.40) startOffset 0 endOffset 3 width 0.00: "sub"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 5 at (1.00,5.40) startOffset 0 endOffset 23 width 0.00: " scripts are available."
+        RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 1 at (0.90,6.20) startOffset 0 endOffset 8 width 0.00: "Various "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 2 at (0.90,6.20) startOffset 0 endOffset 8 width 0.00: "outline "
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 3 at (0.90,6.20) startOffset 0 endOffset 8 width 0.00: "styles, "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 4 at (0.90,6.20) startOffset 0 endOffset 12 width 0.00: "fill colors "
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 5 at (0.90,6.20) startOffset 0 endOffset 4 width 0.00: "and "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 6 at (0.90,6.20) startOffset 0 endOffset 12 width 0.00: "thicknesses "
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 7 at (0.90,6.20) startOffset 0 endOffset 6 width 0.00: "can be"
+        RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 1 at (0.90,6.60) startOffset 0 endOffset 36 width 0.00: "used, and the outline stroke can be "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 2 at (0.90,6.60) startOffset 0 endOffset 7 width 0.00: "rounded"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 3 at (0.90,6.60) startOffset 0 endOffset 1 width 0.00: " "
+            chunk 1 text run 4 at (0.90,6.60) startOffset 0 endOffset 3 width 0.00: "or "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 1 text run 5 at (0.90,6.60) startOffset 0 endOffset 8 width 0.00: "mitered."
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGText {text} at (0,0) size 0x0 contains 2 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+            chunk 1 text run 1 at (0.90,7.50) startOffset 0 endOffset 48 width 0.00: "Text elements also can be filtered, transformed "
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+              chunk 2 text run 1 at (0.90,7.90) startOffset 0 endOffset 21 width 0.00: "and placed on a path."
+        RenderSVGContainer {g} at (0,350) size 350x150 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.50,9.00)}]
+          RenderSVGText {text} at (0,-1) size 4x2 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 4x2
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 3.22: "Shadow"
+          RenderSVGText {text} at (0,-1) size 4x2 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 4x2
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 3.22: "Shadow"
+        RenderSVGContainer {g} at (250,400) size 150x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(5.00,8.00)}]
+          RenderSVGContainer {use} at (250,400) size 150x50
+            RenderSVGContainer {g} at (250,400) size 150x50
+              RenderPath {path} at (250,400) size 150x50 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [data="M100.00,200.00 C200.00,100.00,300.00,0.00,400.00,100.00 C500.00,200.00,600.00,300.00,700.00,200.00 C800.00,100.00,900.00,100.00,900.00,100.00"]
+          RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+            RenderSVGTextPath {textPath} at (0,0) size 0x0
+              RenderSVGInlineText {#text} at (0,0) size 0x0
+                chunk 1 text run 1 at (0.30,0.60) startOffset 0 endOffset 11 width 0.00: "Small text "
+              RenderSVGTSpan {tspan} at (0,0) size 0x0
+                RenderSVGInlineText {#text} at (0,0) size 0x0
+                  chunk 1 text run 2 at (0.30,0.60) startOffset 0 endOffset 2 width 0.00: "on"
+              RenderSVGTSpan {tspan} at (0,0) size 0x0
+                RenderSVGInlineText {#text} at (0,0) size 0x0
+                  chunk 1 text run 3 at (0.30,0.60) startOffset 0 endOffset 7 width 0.00: " a Path"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((0.02,0.00)(0.00,0.02)) t=(0.00,0.00)}]

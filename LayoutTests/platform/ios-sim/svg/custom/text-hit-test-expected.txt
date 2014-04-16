@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (20,110) size 248x158
+    RenderSVGContainer {g} at (20,110) size 248x158 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
+      RenderSVGText {text} at (70,55) size 59x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 59x18
+          chunk 1 text run 1 at (70.00,70.00) startOffset 0 endOffset 8 width 58.21: "Click me"
+      RenderSVGText {text} at (10,115) size 44x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 44x18
+          chunk 1 text run 1 at (10.00,130.00) startOffset 0 endOffset 7 width 43.56: "Status:"
+      RenderSVGText {text} at (90,115) size 44x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 44x19
+          chunk 1 text run 1 at (90.00,130.00) startOffset 0 endOffset 6 width 43.55: "Passed"
+caret: position 0 of child 0 {#text} of child 1 {text} of child 3 {g} of child 1 {svg} of document

@@ -1,0 +1,2 @@
+This tests that download process was aborted after checking event and before update failed.
+SUCCESS

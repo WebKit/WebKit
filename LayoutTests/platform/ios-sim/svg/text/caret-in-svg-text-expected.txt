@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 23: ReferenceError: Can't find variable: textInputController
+Sheriff Woody
+שדגש
+

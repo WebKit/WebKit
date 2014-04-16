@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 778x39
+          text run at (0,0) width 778: "This is currently broken, and this text will have to be updated once it is fixed. There should be two boxes below, but right"
+          text run at (0,20) width 147: "now, there is only one:"
+      RenderBlock (anonymous) at (0,40) size 784x20
+        RenderInline {A} at (0,0) size 0x0 [color=#0000EE] [border: (3px solid #0000EE)]
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {A} at (0,0) size 27x25 [color=#0000EE] [border: (3px solid #0000EE)]
+          RenderText {#text} at (8,0) size 12x19
+            text run at (8,0) width 12: "A"
+        RenderText {#text} at (0,0) size 0x0

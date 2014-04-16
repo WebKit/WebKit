@@ -1,0 +1,23 @@
+
+(GraphicsLayer
+  (bounds 1508.00 1516.00)
+  (visible rect 0.00, 0.00 298.00 x 148.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1508.00 1516.00)
+      (usingTiledLayer 1)
+      (drawsContent 1)
+      (visible rect 0.00, 0.00 298.00 x 148.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 100.00 300.00)
+          (drawsContent 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
+          (visible rect 0.00, 0.00 100.00 x 140.00)
+        )
+      )
+    )
+  )
+)
+

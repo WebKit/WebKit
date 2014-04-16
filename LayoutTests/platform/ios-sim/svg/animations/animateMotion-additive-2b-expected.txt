@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,20) size 800x560
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGPath {path} at (0,0) size 48x52 [fill={[type=SOLID] [color=#000000]}] [data="M -15 -20 L -20 20 L 20 20 C -10 -10 30 -20 -15 -20 Z"]
+      RenderSVGPath {path} at (0,0) size 32x52 [fill={[type=SOLID] [color=#000000]}] [data="M -20 -15 L -20 15 L 20 20 C 20 0 -10 -20 -20 -15 Z"]
+      RenderSVGPath {path} at (0,0) size 160x148 [fill={[type=SOLID] [color=#000000]}] [data="M -20 -20 C 100 80 40 -60 20 20 Z"]
+    RenderSVGRect {rect} at (0,20) size 800x560 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=500.00] [height=350.00]
+    RenderSVGContainer {g} at (168,132) size 600x248
+      RenderSVGContainer {g} at (168,300) size 88x80
+        RenderSVGContainer {use} at (168,300) size 88x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,200.00)}]
+          RenderSVGPath {path} at (168,300) size 88x80 [stroke={[type=SOLID] [color=#880000] [stroke width=10.00] [line join=BEVEL]}] [data="M -15 -20 L -20 20 L 20 20 C -10 -10 30 -20 -15 -20 Z"]
+        RenderSVGContainer {use} at (168,300) size 88x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,200.00)}]
+          RenderSVGPath {path} at (168,300) size 88x80 [stroke={[type=SOLID] [color=#FF0000] [stroke width=10.00] [line join=BEVEL]}] [data="M -15 -20 L -20 20 L 20 20 C -10 -10 30 -20 -15 -20 Z"]
+        RenderSVGContainer {use} at (168,300) size 88x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,200.00)}]
+          RenderSVGPath {path} at (168,300) size 88x80 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00] [line join=BEVEL]}] [data="M -15 -20 L -20 20 L 20 20 C -10 -10 30 -20 -15 -20 Z"]
+      RenderSVGContainer {g} at (360,303) size 80x77
+        RenderSVGContainer {use} at (360,303) size 80x77 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,200.00)}]
+          RenderSVGPath {path} at (360,303) size 80x77 [stroke={[type=SOLID] [color=#880000] [stroke width=10.00] [line join=BEVEL]}] [data="M -20 -15 L -20 15 L 20 20 C 20 0 -10 -20 -20 -15 Z"]
+        RenderSVGContainer {use} at (360,303) size 80x77 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,200.00)}]
+          RenderSVGPath {path} at (360,303) size 80x77 [stroke={[type=SOLID] [color=#FF0000] [stroke width=10.00] [line join=BEVEL]}] [data="M -20 -15 L -20 15 L 20 20 C 20 0 -10 -20 -20 -15 Z"]
+        RenderSVGContainer {use} at (360,303) size 80x77 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,200.00)}]
+          RenderSVGPath {path} at (360,303) size 80x77 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00] [line join=BEVEL]}] [data="M -20 -15 L -20 15 L 20 20 C 20 0 -10 -20 -20 -15 Z"]
+      RenderSVGContainer {g} at (570,132) size 198x224
+        RenderSVGContainer {use} at (570,132) size 198x224 [transform={m=((1.00,0.00)(0.00,1.00)) t=(380.00,130.00)}]
+          RenderSVGPath {path} at (570,132) size 198x224 [stroke={[type=SOLID] [color=#880000] [stroke width=10.00] [line join=BEVEL]}] [data="M -20 -20 C 100 80 40 -60 20 20 Z"]
+        RenderSVGContainer {use} at (570,132) size 198x224 [transform={m=((1.00,0.00)(0.00,1.00)) t=(380.00,130.00)}]
+          RenderSVGPath {path} at (570,132) size 198x224 [stroke={[type=SOLID] [color=#FF0000] [stroke width=10.00] [line join=BEVEL]}] [data="M -20 -20 C 100 80 40 -60 20 20 Z"]
+        RenderSVGContainer {use} at (570,132) size 198x224 [transform={m=((1.00,0.00)(0.00,1.00)) t=(380.00,130.00)}]
+          RenderSVGPath {path} at (570,132) size 198x224 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00] [line join=BEVEL]}] [data="M -20 -20 C 100 80 40 -60 20 20 Z"]

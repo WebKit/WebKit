@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 385x19
+          text run at (0,0) width 385: "Test passes if the \"Filler Text\" below is all on the same line."
+      RenderBlock {DIV} at (0,36) size 784x96
+        RenderInline {SPAN} at (0,0) size 68x19
+          RenderText {#text} at (0,0) size 68x19
+            text run at (0,0) width 68: "Filler Text"
+        RenderText {#text} at (67,0) size 5x19
+          text run at (67,0) width 5: " "
+        RenderTable {DIV} at (72,0) size 96x96 [bgcolor=#FFA500]
+          RenderTableSection (anonymous) at (0,0) size 96x96
+            RenderTableRow {DIV} at (0,0) size 96x96
+              RenderTableCell {DIV} at (0,0) size 96x20 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 68x19
+                  text run at (0,0) width 68: "Filler Text"
+        RenderText {#text} at (0,0) size 0x0

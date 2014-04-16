@@ -1,0 +1,4 @@
+<unknown> - didFinishLoading
+http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html, main document URL http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html, http status code 200>
+This test should not show a request for the favicon dont-load-this.ico, since the beforeload handler on the favicon link returns false. Therefore, if the resource request list below shows a request for dont-load-this.ico, then this test has failed.

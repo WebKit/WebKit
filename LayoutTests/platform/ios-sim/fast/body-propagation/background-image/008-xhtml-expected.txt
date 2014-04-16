@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x0
+  RenderBlock {html} at (0,0) size 800x0
+layer at (0,0) size 800x20
+  RenderBlock (positioned) {head} at (0,0) size 800x20
+layer at (0,0) size 800x20
+  RenderBody {body} at (0,0) size 800x20 [color=#000080]
+    RenderBlock {p} at (0,0) size 800x20
+      RenderText {#text} at (0,0) size 280x19
+        text run at (0,0) width 280: "This line should have a yellow background."

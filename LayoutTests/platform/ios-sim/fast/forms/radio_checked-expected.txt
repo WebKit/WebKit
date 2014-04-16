@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 512x19
+          text run at (0,0) width 512: "This test should make sure that only one button per group, per form, is checked."
+      RenderBlock (anonymous) at (0,36) size 784x22
+        RenderText {#text} at (0,2) size 327x19
+          text run at (0,2) width 327: "These buttons are in group1 but don't have a form. "
+        RenderBlock {INPUT} at (329,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (346,2) size 5x19
+          text run at (346,2) width 5: " "
+        RenderBlock {INPUT} at (353,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {FORM} at (0,58) size 784x64
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,22) size 296x19
+          text run at (0,22) width 296: "These buttons are in group1, in the first form. "
+        RenderBlock {INPUT} at (297,23) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (315,22) size 5x19
+          text run at (315,22) width 5: " "
+        RenderBlock {INPUT} at (321,23) size 16x16 [bgcolor=#000000CC] [border: (1px solid #FFFFFF00)]
+        RenderText {#text} at (339,22) size 5x19
+          text run at (339,22) width 5: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,44) size 296x19
+          text run at (0,44) width 296: "These buttons are in group2, in the first form. "
+        RenderBlock {INPUT} at (297,45) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (315,44) size 5x19
+          text run at (315,44) width 5: " "
+        RenderBlock {INPUT} at (321,45) size 16x16 [bgcolor=#000000CC] [border: (1px solid #FFFFFF00)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,138) size 784x22
+        RenderText {#text} at (0,2) size 327x19
+          text run at (0,2) width 327: "These buttons are in group1 but don't have a form. "
+        RenderBlock {INPUT} at (329,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (346,2) size 5x19
+          text run at (346,2) width 5: " "
+        RenderBlock {INPUT} at (353,3) size 16x16 [bgcolor=#000000CC] [border: (1px solid #FFFFFF00)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {FORM} at (0,160) size 784x42
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,22) size 315x19
+          text run at (0,22) width 315: "These buttons are in group2, in the second form. "
+        RenderBlock {INPUT} at (316,23) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (334,22) size 5x19
+          text run at (334,22) width 5: " "
+        RenderBlock {INPUT} at (340,23) size 16x16 [bgcolor=#000000CC] [border: (1px solid #FFFFFF00)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,218) size 784x20
+        RenderText {#text} at (0,0) size 106x19
+          text run at (0,0) width 106: "TEST PASSED."

@@ -1,0 +1,166 @@
+CONSOLE MESSAGE: line 20: Warning: Problem parsing viewBox="0"
+CONSOLE MESSAGE: line 23: Warning: Problem parsing viewBox="0 0"
+CONSOLE MESSAGE: line 26: Warning: Problem parsing viewBox="0 0 30"
+CONSOLE MESSAGE: line 29: Warning: Problem parsing viewBox="0 0 30 40 50"
+CONSOLE MESSAGE: line 32: Warning: Problem parsing viewBox="0 0 30 40,"
+CONSOLE MESSAGE: line 35: Warning: Problem parsing viewBox=",0 0 30 40"
+CONSOLE MESSAGE: line 38: Error: A negative value for ViewBox width is not allowed
+CONSOLE MESSAGE: line 41: Error: A negative value for ViewBox height is not allowed
+CONSOLE MESSAGE: line 44: Warning: Problem parsing viewBox="0 0 30, , 40"
+CONSOLE MESSAGE: line 47: Warning: Problem parsing viewBox="0 0 30% 40"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,35) size 800x401
+    RenderSVGContainer {g} at (0,35) size 800x401
+      RenderSVGContainer {g} at (0,35) size 800x401
+        RenderSVGText {text} at (0,21) size 397x11 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 397x11
+            chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 108 width 396.92: "All svgs below should look the same, since all have viewBox with syntax errors and default should be chosen."
+        RenderSVGContainer {g} at (0,83) size 50x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+          RenderSVGViewportContainer {svg} at (0,83) size 50x67
+            RenderSVGRect {rect} at (0,83) size 50x67 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (8,100) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (8,100) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (17,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (25,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (15,122) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (83,83) size 51x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
+          RenderSVGViewportContainer {svg} at (83,83) size 51x67
+            RenderSVGRect {rect} at (83,83) size 51x67 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (91,100) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (91,100) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (100,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (109,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (98,122) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (166,83) size 51x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
+          RenderSVGViewportContainer {svg} at (166,83) size 51x67
+            RenderSVGRect {rect} at (166,83) size 51x67 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (175,100) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (175,100) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (184,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (192,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (182,122) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (250,83) size 50x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,50.00)}]
+          RenderSVGViewportContainer {svg} at (250,83) size 50x67
+            RenderSVGRect {rect} at (250,83) size 50x67 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (258,100) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (258,100) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (267,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (275,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (265,122) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (333,83) size 51x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,50.00)}]
+          RenderSVGViewportContainer {svg} at (333,83) size 51x67
+            RenderSVGRect {rect} at (333,83) size 51x67 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (341,100) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (341,100) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (350,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (359,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (348,122) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (416,83) size 51x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,50.00)}]
+          RenderSVGViewportContainer {svg} at (416,83) size 51x67
+            RenderSVGRect {rect} at (416,83) size 51x67 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (425,100) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (425,100) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (434,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (442,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (432,122) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (500,83) size 50x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,50.00)}]
+          RenderSVGViewportContainer {svg} at (500,83) size 50x67
+            RenderSVGRect {rect} at (500,83) size 50x67 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (508,100) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (508,100) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (517,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (525,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (515,122) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (583,83) size 51x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,50.00)}]
+          RenderSVGViewportContainer {svg} at (583,83) size 51x67
+            RenderSVGRect {rect} at (583,83) size 51x67 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (591,100) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (591,100) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (600,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (609,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (598,122) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (666,83) size 51x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(400.00,50.00)}]
+          RenderSVGViewportContainer {svg} at (666,83) size 51x67
+            RenderSVGRect {rect} at (666,83) size 51x67 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (675,100) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (675,100) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (684,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (692,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (682,122) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (750,83) size 50x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(450.00,50.00)}]
+          RenderSVGViewportContainer {svg} at (750,83) size 50x67
+            RenderSVGRect {rect} at (750,83) size 50x67 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (758,100) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (758,100) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (767,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (775,109) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (765,122) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGText {text} at (0,181) size 230x11 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 230x11
+            chunk 1 text run 1 at (0.00,190.00) startOffset 0 endOffset 62 width 229.97: "All svgs below should look the same, all have valid viewBoxes."
+        RenderSVGContainer {g} at (0,333) size 50x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
+          RenderSVGViewportContainer {svg} at (0,333) size 50x101
+            RenderSVGRect {rect} at (0,333) size 50x101 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (8,358) size 34x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (8,358) size 34x51 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (17,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (25,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (15,391) size 20x16 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (83,333) size 51x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,200.00)}]
+          RenderSVGViewportContainer {svg} at (83,333) size 51x101
+            RenderSVGRect {rect} at (83,333) size 51x101 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (91,358) size 34x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (91,358) size 34x51 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (100,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (109,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (98,391) size 20x16 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (166,333) size 51x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,200.00)}]
+          RenderSVGViewportContainer {svg} at (166,333) size 51x101
+            RenderSVGRect {rect} at (166,333) size 51x101 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (175,358) size 34x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (175,358) size 34x51 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (184,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (192,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (182,391) size 20x16 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (250,333) size 50x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,200.00)}]
+          RenderSVGViewportContainer {svg} at (250,333) size 50x101
+            RenderSVGRect {rect} at (250,333) size 50x101 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (258,358) size 34x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (258,358) size 34x51 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (267,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (275,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (265,391) size 20x16 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (333,335) size 51x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,200.00)}]
+          RenderSVGViewportContainer {svg} at (333,335) size 51x101
+            RenderSVGRect {rect} at (333,335) size 51x101 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (341,360) size 34x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (341,360) size 34x51 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (350,374) size 6x9 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (359,374) size 6x9 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (348,393) size 20x17 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (416,333) size 51x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,200.00)}]
+          RenderSVGViewportContainer {svg} at (416,333) size 51x101
+            RenderSVGRect {rect} at (416,333) size 51x101 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (425,358) size 34x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (425,358) size 34x51 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (434,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (442,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (432,391) size 20x16 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (500,333) size 50x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,200.00)}]
+          RenderSVGViewportContainer {svg} at (500,333) size 50x101
+            RenderSVGRect {rect} at (500,333) size 50x101 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (508,358) size 34x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (508,358) size 34x51 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (517,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (525,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (515,391) size 20x16 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+        RenderSVGContainer {g} at (583,333) size 51x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,200.00)}]
+          RenderSVGViewportContainer {svg} at (583,333) size 51x101
+            RenderSVGRect {rect} at (583,333) size 51x101 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGContainer {g} at (591,358) size 34x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
+              RenderSVGEllipse {circle} at (591,358) size 34x51 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+              RenderSVGEllipse {circle} at (600,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+              RenderSVGEllipse {circle} at (609,372) size 6x8 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+              RenderSVGPath {path} at (598,391) size 20x16 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]

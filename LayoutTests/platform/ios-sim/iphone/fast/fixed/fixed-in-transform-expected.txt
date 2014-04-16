@@ -1,0 +1,25 @@
+layer at (0,0) size 800x2885
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2885
+  RenderBlock {HTML} at (0,0) size 800x2885
+    RenderBody {BODY} at (8,8) size 784x2869
+      RenderBlock {DIV} at (5,209) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,414) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,619) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,824) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,1029) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,1234) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,1439) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,1644) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,1849) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,2054) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,2259) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,2464) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,2669) size 774x200 [bgcolor=#C0C0C0]
+layer at (8,8) size 204x204
+  RenderBlock {DIV} at (0,0) size 204x204 [border: (2px solid #000000)]
+layer at (20,30) size 304x304
+  RenderBlock (positioned) {DIV} at (12,22) size 304x304 [bgcolor=#008000CC] [border: (2px solid #000000)]
+    RenderText {#text} at (2,2) size 94x19
+      text run at (2,2) width 94: "Take a survey!"
+scrolled to 0,200

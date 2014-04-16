@@ -1,0 +1,387 @@
+This test measures the width of textareas and text inputs for different fonts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Lucida Grande
+input
+size=1 clientWidth=17
+size=2 clientWidth=24
+size=3 clientWidth=31
+size=4 clientWidth=38
+size=5 clientWidth=45
+size=10 clientWidth=80
+size=20 clientWidth=150
+size=50 clientWidth=360
+size=100 clientWidth=710
+size=500 clientWidth=3507
+size=1000 clientWidth=7004
+
+textarea
+cols=1 clientWidth=32
+cols=2 clientWidth=39
+cols=3 clientWidth=46
+cols=4 clientWidth=53
+cols=5 clientWidth=60
+cols=10 clientWidth=95
+cols=20 clientWidth=165
+cols=50 clientWidth=375
+cols=100 clientWidth=725
+cols=500 clientWidth=3522
+cols=1000 clientWidth=7019
+
+Courier
+input
+size=1 clientWidth=17
+size=2 clientWidth=24
+size=3 clientWidth=30
+size=4 clientWidth=37
+size=5 clientWidth=44
+size=10 clientWidth=77
+size=20 clientWidth=143
+size=50 clientWidth=341
+size=100 clientWidth=671
+size=500 clientWidth=3311
+size=1000 clientWidth=6612
+
+textarea
+cols=1 clientWidth=32
+cols=2 clientWidth=39
+cols=3 clientWidth=45
+cols=4 clientWidth=52
+cols=5 clientWidth=59
+cols=10 clientWidth=92
+cols=20 clientWidth=158
+cols=50 clientWidth=356
+cols=100 clientWidth=686
+cols=500 clientWidth=3326
+cols=1000 clientWidth=6627
+
+Helvetica
+input
+size=1 clientWidth=17
+size=2 clientWidth=23
+size=3 clientWidth=29
+size=4 clientWidth=35
+size=5 clientWidth=41
+size=10 clientWidth=72
+size=20 clientWidth=133
+size=50 clientWidth=316
+size=100 clientWidth=622
+size=500 clientWidth=3069
+size=1000 clientWidth=6128
+
+textarea
+cols=1 clientWidth=32
+cols=2 clientWidth=38
+cols=3 clientWidth=44
+cols=4 clientWidth=50
+cols=5 clientWidth=56
+cols=10 clientWidth=87
+cols=20 clientWidth=148
+cols=50 clientWidth=331
+cols=100 clientWidth=637
+cols=500 clientWidth=3084
+cols=1000 clientWidth=6143
+
+Monaco
+input
+size=1 clientWidth=17
+size=2 clientWidth=24
+size=3 clientWidth=30
+size=4 clientWidth=37
+size=5 clientWidth=44
+size=10 clientWidth=77
+size=20 clientWidth=143
+size=50 clientWidth=341
+size=100 clientWidth=671
+size=500 clientWidth=3311
+size=1000 clientWidth=6612
+
+textarea
+cols=1 clientWidth=32
+cols=2 clientWidth=39
+cols=3 clientWidth=45
+cols=4 clientWidth=52
+cols=5 clientWidth=59
+cols=10 clientWidth=92
+cols=20 clientWidth=158
+cols=50 clientWidth=356
+cols=100 clientWidth=686
+cols=500 clientWidth=3326
+cols=1000 clientWidth=6627
+
+Times
+input
+size=1 clientWidth=16
+size=2 clientWidth=21
+size=3 clientWidth=27
+size=4 clientWidth=32
+size=5 clientWidth=38
+size=10 clientWidth=65
+size=20 clientWidth=120
+size=50 clientWidth=285
+size=100 clientWidth=560
+size=500 clientWidth=2760
+size=1000 clientWidth=5510
+
+textarea
+cols=1 clientWidth=31
+cols=2 clientWidth=36
+cols=3 clientWidth=42
+cols=4 clientWidth=47
+cols=5 clientWidth=53
+cols=10 clientWidth=80
+cols=20 clientWidth=135
+cols=50 clientWidth=300
+cols=100 clientWidth=575
+cols=500 clientWidth=2775
+cols=1000 clientWidth=5525
+
+Andale Mono
+input
+size=1 clientWidth=16
+size=2 clientWidth=22
+size=3 clientWidth=28
+size=4 clientWidth=34
+size=5 clientWidth=40
+size=10 clientWidth=70
+size=20 clientWidth=130
+size=50 clientWidth=310
+size=100 clientWidth=610
+size=500 clientWidth=3010
+size=1000 clientWidth=6010
+
+textarea
+cols=1 clientWidth=31
+cols=2 clientWidth=37
+cols=3 clientWidth=43
+cols=4 clientWidth=49
+cols=5 clientWidth=55
+cols=10 clientWidth=85
+cols=20 clientWidth=145
+cols=50 clientWidth=325
+cols=100 clientWidth=625
+cols=500 clientWidth=3025
+cols=1000 clientWidth=6025
+
+Arial
+input
+size=1 clientWidth=16
+size=2 clientWidth=22
+size=3 clientWidth=28
+size=4 clientWidth=34
+size=5 clientWidth=40
+size=10 clientWidth=70
+size=20 clientWidth=130
+size=50 clientWidth=310
+size=100 clientWidth=610
+size=500 clientWidth=3010
+size=1000 clientWidth=6010
+
+textarea
+cols=1 clientWidth=31
+cols=2 clientWidth=37
+cols=3 clientWidth=43
+cols=4 clientWidth=49
+cols=5 clientWidth=55
+cols=10 clientWidth=85
+cols=20 clientWidth=145
+cols=50 clientWidth=325
+cols=100 clientWidth=625
+cols=500 clientWidth=3025
+cols=1000 clientWidth=6025
+
+Comic Sans MS
+input
+size=1 clientWidth=16
+size=2 clientWidth=22
+size=3 clientWidth=28
+size=4 clientWidth=34
+size=5 clientWidth=40
+size=10 clientWidth=70
+size=20 clientWidth=130
+size=50 clientWidth=310
+size=100 clientWidth=610
+size=500 clientWidth=3010
+size=1000 clientWidth=6010
+
+textarea
+cols=1 clientWidth=31
+cols=2 clientWidth=37
+cols=3 clientWidth=43
+cols=4 clientWidth=49
+cols=5 clientWidth=55
+cols=10 clientWidth=85
+cols=20 clientWidth=145
+cols=50 clientWidth=325
+cols=100 clientWidth=625
+cols=500 clientWidth=3025
+cols=1000 clientWidth=6025
+
+Courier New
+input
+size=1 clientWidth=17
+size=2 clientWidth=24
+size=3 clientWidth=31
+size=4 clientWidth=38
+size=5 clientWidth=45
+size=10 clientWidth=80
+size=20 clientWidth=150
+size=50 clientWidth=360
+size=100 clientWidth=710
+size=500 clientWidth=3510
+size=1000 clientWidth=7010
+
+textarea
+cols=1 clientWidth=32
+cols=2 clientWidth=39
+cols=3 clientWidth=46
+cols=4 clientWidth=53
+cols=5 clientWidth=60
+cols=10 clientWidth=95
+cols=20 clientWidth=165
+cols=50 clientWidth=375
+cols=100 clientWidth=725
+cols=500 clientWidth=3525
+cols=1000 clientWidth=7025
+
+Georgia
+input
+size=1 clientWidth=17
+size=2 clientWidth=24
+size=3 clientWidth=31
+size=4 clientWidth=38
+size=5 clientWidth=45
+size=10 clientWidth=80
+size=20 clientWidth=150
+size=50 clientWidth=360
+size=100 clientWidth=710
+size=500 clientWidth=3510
+size=1000 clientWidth=7010
+
+textarea
+cols=1 clientWidth=32
+cols=2 clientWidth=39
+cols=3 clientWidth=46
+cols=4 clientWidth=53
+cols=5 clientWidth=60
+cols=10 clientWidth=95
+cols=20 clientWidth=165
+cols=50 clientWidth=375
+cols=100 clientWidth=725
+cols=500 clientWidth=3525
+cols=1000 clientWidth=7025
+
+Times New Roman
+input
+size=1 clientWidth=16
+size=2 clientWidth=22
+size=3 clientWidth=28
+size=4 clientWidth=34
+size=5 clientWidth=40
+size=10 clientWidth=70
+size=20 clientWidth=130
+size=50 clientWidth=310
+size=100 clientWidth=610
+size=500 clientWidth=3010
+size=1000 clientWidth=6010
+
+textarea
+cols=1 clientWidth=31
+cols=2 clientWidth=37
+cols=3 clientWidth=43
+cols=4 clientWidth=49
+cols=5 clientWidth=55
+cols=10 clientWidth=85
+cols=20 clientWidth=145
+cols=50 clientWidth=325
+cols=100 clientWidth=625
+cols=500 clientWidth=3025
+cols=1000 clientWidth=6025
+
+Trebuchet MS
+input
+size=1 clientWidth=16
+size=2 clientWidth=22
+size=3 clientWidth=28
+size=4 clientWidth=34
+size=5 clientWidth=40
+size=10 clientWidth=70
+size=20 clientWidth=130
+size=50 clientWidth=310
+size=100 clientWidth=610
+size=500 clientWidth=3010
+size=1000 clientWidth=6010
+
+textarea
+cols=1 clientWidth=31
+cols=2 clientWidth=37
+cols=3 clientWidth=43
+cols=4 clientWidth=49
+cols=5 clientWidth=55
+cols=10 clientWidth=85
+cols=20 clientWidth=145
+cols=50 clientWidth=325
+cols=100 clientWidth=625
+cols=500 clientWidth=3025
+cols=1000 clientWidth=6025
+
+Verdana
+input
+size=1 clientWidth=17
+size=2 clientWidth=24
+size=3 clientWidth=31
+size=4 clientWidth=38
+size=5 clientWidth=45
+size=10 clientWidth=80
+size=20 clientWidth=150
+size=50 clientWidth=360
+size=100 clientWidth=710
+size=500 clientWidth=3510
+size=1000 clientWidth=7010
+
+textarea
+cols=1 clientWidth=32
+cols=2 clientWidth=39
+cols=3 clientWidth=46
+cols=4 clientWidth=53
+cols=5 clientWidth=60
+cols=10 clientWidth=95
+cols=20 clientWidth=165
+cols=50 clientWidth=375
+cols=100 clientWidth=725
+cols=500 clientWidth=3525
+cols=1000 clientWidth=7025
+
+Webdings
+input
+size=1 clientWidth=16
+size=2 clientWidth=22
+size=3 clientWidth=28
+size=4 clientWidth=34
+size=5 clientWidth=40
+size=10 clientWidth=70
+size=20 clientWidth=130
+size=50 clientWidth=310
+size=100 clientWidth=610
+size=500 clientWidth=3010
+size=1000 clientWidth=6010
+
+textarea
+cols=1 clientWidth=31
+cols=2 clientWidth=37
+cols=3 clientWidth=43
+cols=4 clientWidth=49
+cols=5 clientWidth=55
+cols=10 clientWidth=85
+cols=20 clientWidth=145
+cols=50 clientWidth=325
+cols=100 clientWidth=625
+cols=500 clientWidth=3025
+cols=1000 clientWidth=6025
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

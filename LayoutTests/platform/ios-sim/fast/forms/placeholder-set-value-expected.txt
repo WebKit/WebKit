@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {A} at (0,0) size 311x19 [color=#0000EE]
+          RenderText {#text} at (54,0) size 311x19
+            text run at (54,0) width 311: "https://bugs.webkit.org/show_bug.cgi?id=24508"
+        RenderText {#text} at (364,0) size 711x39
+          text run at (364,0) width 347: ". Search field does not redraw if value set, when it has"
+          text run at (0,20) width 107: "placeholder text."
+      RenderBlock (anonymous) at (0,56) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 137x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderDeprecatedFlexibleBox {DIV} at (6,3) size 125x14
+            RenderBlock {DIV} at (0,7) size 0x0
+            RenderBlock {DIV} at (0,0) size 125x14
+            RenderBlock {DIV} at (125,7) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (16,69) size 125x14
+  RenderBlock {DIV} at (0,0) size 125x14
+    RenderText {#text} at (1,0) size 43x14
+      text run at (1,0) width 43: "New text"

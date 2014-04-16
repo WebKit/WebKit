@@ -1,0 +1,197 @@
+Test 1 - This is a H1 heading.
+
+Test 2 - This is a simple paragraph.
+
+Test 3 - This is a paragraph with a nested element.
+
+Test 4 - This is a paragraph with a nested element that has a border.
+
+Test 5 - This is a transformed paragraph with a nested element that has a border.
+
+Test 6 - This is a transformed paragraph with a nested element that has a border.
+And then a second line.
+
+Test 7 - This is a paragraph inside something that does not have a compositing layer.
+
+Test 8 - This is raw text inside something that does not have a compositing layer.
+Test 9 - This is raw text inside something that has a compositing layer.
+Test 10 - This is raw text inside something that does not have a compositing layer.
+Test 11 - This is a rotated and scaled paragraph
+
+Test 12 - This is a rotated and scaled paragraph with a nested element that has a border.
+
+Test 13 - This is a paragraph with a nested element that has a border.
+
+This test exercises the webkitConvertPointFromNodeToPage() function
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Test parameter passing - should not crash
+PASS Missing parameter test
+Test did not crash and therefore was successful
+
+PASS null parameter test a
+Test did not crash and therefore was successful
+
+PASS null parameter test b
+Test did not crash and therefore was successful
+
+Test 1
+PASS x is 8
+PASS y is 12
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 13
+PASS y is 52
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 2
+PASS x is 8
+FAIL y should be 50. Was 51.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 13
+FAIL y should be 90. Was 91.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 3
+PASS x is 8
+FAIL y should be 84. Was 87.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 13
+FAIL y should be 124. Was 127.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 4
+PASS x is 8
+FAIL y should be 118. Was 123.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 13
+FAIL y should be 158. Was 163.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 5
+PASS x is 28
+FAIL y should be 152. Was 159.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 33
+FAIL y should be 192. Was 199.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 6
+PASS x is 28
+FAIL y should be 186. Was 195.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 33
+FAIL y should be 226. Was 235.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 7
+PASS x is 8
+FAIL y should be 238. Was 251.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 13
+FAIL y should be 278. Was 291.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 8
+PASS x is 8
+FAIL y should be 272. Was 287.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 13
+FAIL y should be 312. Was 327.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 9
+PASS x is 28
+FAIL y should be 290. Was 307.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 33
+FAIL y should be 330. Was 347.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 10
+PASS x is 28
+FAIL y should be 308. Was 327.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 33
+FAIL y should be 348. Was 367.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 11
+PASS x is 158
+FAIL y should be 355. Was 376.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 174
+FAIL y should be 373. Was 394.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 12
+PASS x is 168
+FAIL y should be 428. Was 451.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 184
+FAIL y should be 446. Was 469.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+
+Test 13
+PASS x is 28
+FAIL y should be 486. Was 511.
+Round Trip of (0,0)
+PASS x is 0
+PASS y is 0
+PASS x is 33
+FAIL y should be 526. Was 551.
+Round Trip of (5,40)
+PASS x is 5
+PASS y is 40
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

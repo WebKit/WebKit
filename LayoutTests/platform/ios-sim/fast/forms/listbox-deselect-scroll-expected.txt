@@ -1,0 +1,11 @@
+This tests that deselecting an option won't cause unnecessary scrolling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sl.scrollTop is scrollBeforeClick
+FAIL selectionPattern(sl) should be 11111110111. Was 11111111111.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

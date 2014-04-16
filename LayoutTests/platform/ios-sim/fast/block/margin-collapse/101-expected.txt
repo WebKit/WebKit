@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 385x351
+        RenderBlock {P} at (0,0) size 385x44 [border: (2px solid #0000FF)]
+          RenderText {#text} at (2,2) size 371x39
+            text run at (2,2) width 371: "There should be only 2em between this paragraph and the"
+            text run at (2,22) width 87: "image below."
+        RenderImage {IMG} at (0,76) size 395x275

@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 761x39
+          text run at (0,0) width 761: "The COL element specifies attributes for a table column. In this test case, the COL element is used in conjunction with"
+          text run at (0,20) width 126: "the SPAN attribute."
+      RenderTable {TABLE} at (0,56) size 568x56 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 566x54
+          RenderTableRow {TR} at (0,2) size 566x24
+            RenderTableCell {TH} at (2,2) size 428x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 424x19
+                text run at (2,2) width 424: "This heading should span across the two columns in this table."
+          RenderTableRow {TR} at (0,28) size 566x24
+            RenderTableCell {TD} at (2,28) size 428x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 127x19
+                text run at (2,2) width 127: "This is column one."
+            RenderTableCell {TD} at (432,28) size 132x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 128x19
+                text run at (2,2) width 128: "This is column two."

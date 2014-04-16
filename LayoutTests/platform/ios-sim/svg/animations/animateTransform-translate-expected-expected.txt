@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (100,100) size 250x400
+    RenderSVGRect {rect} at (100,100) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}] [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (100,250) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}] [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=200.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (100,400) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}] [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=350.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (250,100) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}] [fill={[type=SOLID] [color=#008000]}] [x=200.00] [y=50.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (250,250) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}] [fill={[type=SOLID] [color=#008000]}] [x=200.00] [y=200.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (250,400) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}] [fill={[type=SOLID] [color=#008000]}] [x=200.00] [y=350.00] [width=100.00] [height=100.00]

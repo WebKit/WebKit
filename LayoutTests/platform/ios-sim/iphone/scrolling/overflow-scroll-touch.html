@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    html {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .overflow {
+      width: 200px;
+      height: 200px;
+      margin: 10px;
+      border: 1px solid black;
+      display: inline-block;
+    }
+    
+    .tall {
+      height: 400px;
+    }
+    
+    .short {
+      height: 100px;
+    }
+
+    .scroll {
+      overflow: scroll;
+    }
+
+    .auto {
+      overflow: auto;
+    }
+
+    .contents {
+      background-color: silver;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    function testScrollability(element)
+    {
+      // This will cause scrolled elements will have a 'bounds origin' of y=50 in their layer.
+      element.scrollTop = 50;
+    }
+    
+    function doTest()
+    {
+      var divs = document.querySelectorAll('body > div.overflow');
+      for (var i = 0; i < divs.length; ++i)
+        testScrollability(divs[i]);
+      
+      if (window.testRunner)
+        document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+
+  <div class="overflow scroll">
+    <div class="short contents"></div>
+  </div>
+
+  <div class="overflow scroll">
+    <div class="tall contents"></div>
+  </div>
+  <br>
+
+  <div class="overflow auto">
+    <div class="short contents"></div>
+  </div>
+
+  <div class="overflow auto">
+    <div class="tall contents"></div>
+  </div>
+  
+  <pre id="results">This test requires DRT.</pre>
+</body>
+</html>

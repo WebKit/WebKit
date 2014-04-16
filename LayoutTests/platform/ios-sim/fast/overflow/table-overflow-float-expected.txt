@@ -1,0 +1,130 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 106x106
+        RenderTableSection {TBODY} at (0,0) size 106x106
+          RenderTableRow {TR} at (0,2) size 106x102
+            RenderTableCell {TD} at (2,2) size 102x102 [bgcolor=#CCCCCC] [r=0 c=0 rs=1 cs=1]
+      RenderBlock (anonymous) at (0,106) size 784x140
+        RenderText {#text} at (0,0) size 782x39
+          text run at (0,0) width 782: "Here it is: a gray, one-cell, no-width-specified table, with a 100x100 scrolling (overflow:auto) div inside. In this div, there"
+          text run at (0,20) width 379: "are floating (float: left) span tags with content inside (text)."
+        RenderBR {BR} at (378,35) size 1x0
+        RenderBR {BR} at (0,40) size 0x19
+        RenderText {#text} at (0,60) size 760x39
+          text run at (0,60) width 760: "You would expect that the table would expand to fit the defined width of the div tag. But in Safari and Shiira, the table"
+          text run at (0,80) width 200: "expands to fit the height of the "
+        RenderInline {I} at (0,0) size 137x19
+          RenderText {#text} at (199,80) size 137x19
+            text run at (199,80) width 137: "content inside the div"
+        RenderText {#text} at (335,80) size 780x39
+          text run at (335,80) width 445: ", not the height of the div. This behavior does not occur if the content"
+          text run at (0,100) width 88: "is not floated."
+        RenderBR {BR} at (87,115) size 1x0
+        RenderBR {BR} at (0,120) size 0x19
+layer at (11,11) size 100x100 clip at (11,11) size 85x100 scrollHeight 340
+  RenderBlock {DIV} at (1,1) size 100x100
+    RenderBlock (floating) {SPAN} at (0,0) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,0) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,20) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,20) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,40) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,40) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,60) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,60) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,80) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,80) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,100) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,100) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,120) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,120) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,140) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,140) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,160) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,160) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,180) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,180) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,200) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,200) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,220) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,220) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,240) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,240) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,260) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,260) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,280) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,280) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,300) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,300) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (0,320) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"
+    RenderBlock (floating) {SPAN} at (30,320) size 30x20
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "stuff"

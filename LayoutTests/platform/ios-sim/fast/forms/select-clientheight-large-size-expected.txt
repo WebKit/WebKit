@@ -1,0 +1,15 @@
+Tests that select elements cap their size to the size attribute and to 4 when no size is specified.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS clientHeight('select2') is clientHeight('select1')
+PASS getElemById('select2').setAttribute('size', '4'); clientHeight('select2') == clientHeight('select1') is true
+FAIL getElemById('select2').setAttribute('size', '5'); clientHeight('select2') > clientHeight('select1') should be true. Was false.
+FAIL getElemById('select2').setAttribute('size', '8'); clientHeight('select2') == multipleOfElement('select1', 2) should be true. Was false.
+FAIL getElemById('select2').setAttribute('size', '12'); clientHeight('select2') == multipleOfElement('select1', 3) should be true. Was false.
+FAIL getElemById('select2').setAttribute('size', '16'); clientHeight('select2') == multipleOfElement('select1', 4) should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

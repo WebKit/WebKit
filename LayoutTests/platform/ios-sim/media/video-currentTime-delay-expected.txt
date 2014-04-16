@@ -1,0 +1,13 @@
+Test a delay in playing the movie results in a canPlay event.
+
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+RUN(video.currentTime = video.duration - 0.2)
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0'), OBSERVED '5.827200412750244' FAIL
+RUN(video.currentTime = video.duration - 0.2)
+EVENT(seeked)
+RUN(video.play())
+EVENT(ended)
+END OF TEST
+

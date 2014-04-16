@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x156
+  RenderBlock {HTML} at (0,0) size 800x156
+    RenderBody {BODY} at (8,16) size 784x132
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 283x19
+          text run at (0,0) width 283: "There should be a single green block below."
+      RenderBlock {DIV} at (0,36) size 231x96 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderBlock {P} at (3,3) size 225x45
+          RenderText {#text} at (0,0) size 166x45
+            text run at (0,0) width 121: "x  x   x"
+            text run at (120,0) width 1: " "
+            text run at (0,15) width 166: " x    x   x"
+            text run at (165,15) width 1: " "
+            text run at (0,30) width 136: "    x   x"
+        RenderBlock {P} at (3,48) size 225x15
+          RenderText {#text} at (0,0) size 226x15
+            text run at (0,0) width 31: "x "
+            text run at (30,0) width 31: "x "
+            text run at (60,0) width 31: "x "
+            text run at (90,0) width 31: "x "
+            text run at (120,0) width 31: "x "
+            text run at (150,0) width 31: "x "
+            text run at (180,0) width 31: "x "
+            text run at (210,0) width 16: "x"
+        RenderBlock {P} at (3,63) size 225x30
+          RenderText {#text} at (0,0) size 121x30
+            text run at (0,0) width 121: "x  x   x"
+            text run at (120,0) width 1: " "
+            text run at (0,15) width 91: " x    "
+          RenderInline {SPAN} at (0,0) size 106x15
+            RenderText {#text} at (90,15) size 106x15
+              text run at (90,15) width 31: "x "
+              text run at (120,15) width 31: "x "
+              text run at (150,15) width 31: "x "
+              text run at (180,15) width 16: "x"

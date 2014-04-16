@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {CENTER} at (0,0) size 784x0
+        RenderBlock {CENTER} at (0,0) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,0) size 6x8
+        RenderTableSection {TBODY} at (0,0) size 6x8
+          RenderTableRow {TR} at (0,2) size 6x2
+            RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,6) size 6x0
+      RenderTable {TABLE} at (0,8) size 0x4
+        RenderTableSection {TBODY} at (0,0) size 0x4
+          RenderTableRow {TR} at (0,2) size 0x0
+      RenderBlock (anonymous) at (0,12) size 784x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,28) size 784x0
+        RenderBlock {P} at (0,0) size 784x0
+      RenderBlock (anonymous) at (0,28) size 784x20
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {A} at (0,0) size 0x0
+        RenderInline {A} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x0
+        RenderInline {FONT} at (0,0) size 373x19
+          RenderText {#text} at (0,0) size 373x19
+            text run at (0,0) width 373: "This page contains an insanely badly-nested tag sequence."

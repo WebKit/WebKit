@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 768x197
+        RenderTableSection {TBODY} at (0,0) size 768x197
+          RenderTableRow {TR} at (0,2) size 768x143
+            RenderTableCell {TD} at (2,2) size 759x143 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 506x141
+                RenderTableSection {TBODY} at (0,0) size 506x141
+                  RenderTableRow {TR} at (0,2) size 506x137
+                    RenderTableCell {TD} at (2,2) size 502x137 [r=0 c=0 rs=1 cs=1]
+                      RenderImage {IMG} at (1,1) size 220x135
+                      RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (763,87) size 3x22 [r=0 c=1 rs=2 cs=1]
+              RenderBR {BR} at (1,1) size 0x19
+          RenderTableRow {TR} at (0,147) size 768x48
+            RenderTableCell {TD} at (2,147) size 764x48 [r=1 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 468x46
+                RenderTableSection {TBODY} at (0,0) size 468x46
+                  RenderTableRow {TR} at (0,2) size 468x42
+                    RenderTableCell {TD} at (2,22) size 84x2 [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (88,2) size 378x42 [r=0 c=1 rs=1 cs=1]
+                      RenderBlock {P} at (1,1) size 376x40
+                        RenderText {#text} at (0,0) size 4x19
+                          text run at (0,0) width 4: " "
+                        RenderInline {FONT} at (0,0) size 352x39
+                          RenderText {#text} at (4,0) size 352x39
+                            text run at (4,0) width 17: "to "
+                            text run at (20,0) width 332: "Receive 50% Off Home Delivery of The New York"
+                            text run at (0,20) width 120: "Times Newspaper."

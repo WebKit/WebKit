@@ -1,0 +1,15 @@
+A couple of tests to ensure that adding a stop with an invalid color to a gradient throws exceptions normally, but not in dashboard.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Ensure exceptions are thrown in normal pages
+PASS gradient.addColorStop(1, 'rgb(NaN%, NaN%, NaN%)') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS gradient.addColorStop(1, 'rgb(NaN%, NaN%, NaN%)') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+Switching to dashboard compatibility mode.  Invalid color strings should no longer cause an exception.
+FAIL gradient.addColorStop(1, 'rgb(NaN%, NaN%, NaN%)') should be undefined. Threw exception Error: SYNTAX_ERR: DOM Exception 12
+FAIL gradient.addColorStop(1, 'rgb(NaN%, NaN%, NaN%)') should be undefined. Threw exception Error: SYNTAX_ERR: DOM Exception 12
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

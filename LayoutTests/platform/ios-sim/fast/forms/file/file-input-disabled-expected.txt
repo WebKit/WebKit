@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {FORM} at (0,0) size 784x66
+        RenderBlock (anonymous) at (0,0) size 784x66
+          RenderBlock {INPUT} at (2,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderInline {B} at (0,0) size 76x19
+            RenderText {#text} at (20,2) size 76x19
+              text run at (20,2) width 76: "Attach File"
+          RenderBR {BR} at (95,17) size 1x0
+          RenderBR {BR} at (0,22) size 0x19
+          RenderText {#text} at (0,43) size 89x19
+            text run at (0,43) width 89: "  Select File:  "
+          RenderBR {BR} at (325,58) size 1x0
+        RenderTable {TABLE} at (0,66) size 0x0
+layer at (98,52) size 233x20
+  RenderFileUploadControl {INPUT} at (90,44) size 233x20 "no file selected"
+layer at (98,52) size 83x20
+  RenderButton {INPUT} at (0,0) size 83x20 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+    RenderBlock (anonymous) at (12,3) size 59x14
+      RenderText at (0,0) size 59x14
+        text run at (0,0) width 59: "Choose File"

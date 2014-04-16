@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 600x500
+  RenderSVGRoot {svg} at (10,5) size 498x220
+    RenderSVGPath {path} at (46,103) size 128x122 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 50 150 L 95 107 L 145 157 L 169 221 L 100 200 Z"]
+    RenderSVGText {text} at (10,5) size 349x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 349x19
+        chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 52 width 348.01: "Right after loading, a segment is added to the path."
+    RenderSVGText {text} at (10,25) size 498x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 498x19
+        chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 72 width 497.40: "The path and its attribute should be updated to include the new segment."
+    RenderSVGText {text} at (10,55) size 67x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 67x19
+        chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 12 width 66.84: "\"d\" initial:"
+    RenderSVGText {text} at (90,55) size 215x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 215x19
+        chunk 1 text run 1 at (90.00,70.00) startOffset 0 endOffset 32 width 214.65: "M50,150 l45,-43 l24,64 l-69,-21z"
+    RenderSVGText {text} at (10,75) size 59x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 59x19
+        chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 10 width 58.81: "\"d\" after:"
+    RenderSVGText {text} at (90,75) size 286x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 286x19
+        chunk 1 text run 1 at (90.00,90.00) startOffset 0 endOffset 45 width 285.77: "M 50 150 l 45 -43 l 50 50 l 24 64 l -69 -21 Z"

@@ -1,0 +1,32 @@
+This page tests whether a click event on a list box item propogates with the correct target and positioning values.
+Bug 3248: Mouse events on OPTION element seem to be ignored
+https://bugs.webkit.org/show_bug.cgi?id=3248
+
+
+
+
+
+PASS: event type should be mousedown and is
+FAIL: event target should be [object HTMLOptionElement] but instead is [object HTMLSelectElement]
+PASS: event.pageX should be 22 and is
+PASS: event.pageY should be 104 and is
+FAIL: event.offsetX should be 22 but instead is 12
+FAIL: event.offsetY should be 104 but instead is 18
+PASS: event.x should be 22 and is
+PASS: event.y should be 104 and is
+PASS: event type should be mouseup and is
+FAIL: event target should be [object HTMLOptionElement] but instead is [object HTMLSelectElement]
+PASS: event.pageX should be 22 and is
+PASS: event.pageY should be 184 and is
+FAIL: event.offsetX should be 22 but instead is 12
+FAIL: event.offsetY should be 184 but instead is 18
+PASS: event.x should be 22 and is
+PASS: event.y should be 184 and is
+PASS: event type should be click and is
+FAIL: event target should be [object HTMLOptionElement] but instead is [object HTMLSelectElement]
+PASS: event.pageX should be 22 and is
+PASS: event.pageY should be 262 and is
+FAIL: event.offsetX should be 22 but instead is 12
+FAIL: event.offsetY should be 262 but instead is 18
+PASS: event.x should be 22 and is
+PASS: event.y should be 262 and is

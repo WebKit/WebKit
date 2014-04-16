@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 777x39
+          text run at (0,0) width 595: "If the red outline at the bottom of the div extends all the way to the scrollbar, the test passes. "
+          text run at (594,0) width 183: "If it stops short, then the test"
+          text run at (0,20) width 325: "has failed, and an incomplete repaint has occurred."
+layer at (8,48) size 80x69 clip at (8,48) size 65x54 scrollY 91 scrollWidth 66 scrollHeight 220
+  RenderBlock {DIV} at (0,40) size 80x69
+    RenderBR {BR} at (0,0) size 0x19
+    RenderBR {BR} at (0,20) size 0x19
+    RenderBR {BR} at (0,40) size 0x19
+    RenderBR {BR} at (0,60) size 0x19
+    RenderBR {BR} at (0,80) size 0x19
+    RenderBR {BR} at (0,100) size 0x19
+    RenderBR {BR} at (0,120) size 0x19
+    RenderBR {BR} at (0,140) size 0x19
+    RenderBR {BR} at (0,160) size 0x19
+    RenderInline {SPAN} at (0,0) size 66x39
+      RenderText {#text} at (0,180) size 66x39
+        text run at (0,180) width 66: "Excellent!"
+        text run at (0,200) width 28: "Test"
+    RenderText {#text} at (0,0) size 0x0

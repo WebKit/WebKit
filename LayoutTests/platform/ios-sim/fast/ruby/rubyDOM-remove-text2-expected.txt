@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 746x19
+          text run at (0,0) width 746: "The following is a test for DOM manipulation within <ruby>: Removing a ruby base object, leaving the base empty."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 448x19
+          text run at (0,0) width 448: "Both lines should look identical (the first line is the one manipulated)."
+      RenderBlock (anonymous) at (0,72) size 784x40
+        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,20) size 0x19
+      RenderBlock {P} at (0,128) size 784x20
+        RenderText {#text} at (0,0) size 159x19
+          text run at (0,0) width 159: "<ruby> is defined in the "
+        RenderRuby (inline) {RUBY} at (0,0) size 117x19
+          RenderRubyRun (anonymous) at (158,17) size 108x0
+            RenderRubyText {RT} at (0,-11) size 108x12
+              RenderText {#text} at (0,0) size 108x11
+                text run at (0,0) width 108: "Hyper-text Markup Language"
+            RenderRubyBase (anonymous) at (0,0) size 108x0
+          RenderRubyRun (anonymous) at (266,0) size 8x20
+            RenderRubyBase (anonymous) at (0,0) size 8x20
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "5"
+        RenderText {#text} at (274,0) size 37x19
+          text run at (274,0) width 37: " spec."
+      RenderBlock {P} at (0,164) size 784x20
+        RenderText {#text} at (0,0) size 159x19
+          text run at (0,0) width 159: "<ruby> is defined in the "
+        RenderRuby (inline) {RUBY} at (0,0) size 117x19
+          RenderRubyRun (anonymous) at (158,17) size 108x0
+            RenderRubyText {RT} at (0,-11) size 108x12
+              RenderText {#text} at (0,0) size 108x11
+                text run at (0,0) width 108: "Hyper-text Markup Language"
+          RenderRubyRun (anonymous) at (266,0) size 8x20
+            RenderRubyBase (anonymous) at (0,0) size 8x20
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "5"
+        RenderText {#text} at (274,0) size 37x19
+          text run at (274,0) width 37: " spec."

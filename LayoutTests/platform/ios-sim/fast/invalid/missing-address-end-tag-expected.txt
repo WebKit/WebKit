@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {A} at (0,0) size 122x19 [color=#0000EE]
+          RenderText {#text} at (54,0) size 122x19
+            text run at (54,0) width 122: "Bugzilla Bug 7724"
+        RenderText {#text} at (175,0) size 486x19
+          text run at (175,0) width 486: " Minor refactoring to HTMLParser::handleError() to remove duplicate code"
+      RenderBlock {ADDRESS} at (0,20) size 784x20
+        RenderText {#text} at (0,0) size 61x19
+          text run at (0,0) width 61: "addresstr"

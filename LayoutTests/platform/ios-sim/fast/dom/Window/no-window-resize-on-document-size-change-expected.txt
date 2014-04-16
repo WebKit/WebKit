@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 8: ReferenceError: Can't find variable: description
+layer at (0,0) size 800x5016
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x5016
+  RenderBlock {HTML} at (0,0) size 800x5016
+    RenderBody {BODY} at (8,8) size 784x5000

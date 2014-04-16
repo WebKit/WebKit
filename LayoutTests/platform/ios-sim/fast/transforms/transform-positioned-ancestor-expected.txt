@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x382
+  RenderBlock {HTML} at (0,0) size 800x382
+    RenderBody {BODY} at (8,16) size 784x358
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 515x19
+          text run at (0,0) width 515: "You should see a green box inside a gray box. If you see red, the test has failed. "
+        RenderInline {A} at (0,0) size 763x39 [color=#0000EE]
+          RenderText {#text} at (514,0) size 763x39
+            text run at (514,0) width 249: "https://bugs.webkit.org/show_bug.cgi?"
+            text run at (0,20) width 62: "id=18885"
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,72) size 302x302
+  RenderBlock (relative positioned) {DIV} at (0,56) size 302x302 [border: (1px solid #000000)]
+layer at (59,123) size 200x200
+  RenderBlock {DIV} at (51,51) size 200x200 [bgcolor=#808080]
+layer at (109,173) size 100x100
+  RenderBlock (positioned) {DIV} at (50,50) size 100x100 [bgcolor=#FF0000]
+layer at (109,173) size 100x100
+  RenderBlock (positioned) {DIV} at (101,101) size 100x100 [bgcolor=#008000]

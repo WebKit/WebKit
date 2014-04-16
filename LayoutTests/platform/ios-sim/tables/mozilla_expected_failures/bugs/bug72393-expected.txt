@@ -1,0 +1,45 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x424 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 778x418
+          RenderTableRow {TR} at (0,0) size 778x231
+            RenderTableCell {TD} at (0,114) size 134x2 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (134,114) size 5x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (139,0) size 500x231 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 498x229 [bgcolor=#FFFF00]
+                RenderTableSection {TBODY} at (0,0) size 498x229
+                  RenderTableRow {TR} at (0,0) size 498x229
+                    RenderTableCell {TD} at (0,114) size 0x0 [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (0,66) size 498x97 [r=0 c=1 rs=1 cs=1]
+                      RenderBlock {H1} at (0,0) size 498x76
+                        RenderText {#text} at (0,1) size 480x74
+                          text run at (0,1) width 480: "Detonator Comparison In 3DMark"
+                          text run at (0,39) width 64: "2001"
+                    RenderTableCell {TD} at (498,114) size 0x0 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (639,114) size 5x2 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (644,57) size 134x117 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 132x115 [bgcolor=#FFA500] [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 130x113
+                  RenderTableRow {TR} at (0,0) size 130x113
+                    RenderTableCell {TD} at (0,0) size 130x113 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 128x111 [bgcolor=#FF0000]
+                        RenderTableSection {TBODY} at (0,0) size 128x111
+                          RenderTableRow {TR} at (0,0) size 128x111
+                            RenderTableCell {TD} at (0,0) size 128x111 [r=0 c=0 rs=1 cs=1]
+                              RenderInline {A} at (0,0) size 112x19 [color=#0000EE]
+                                RenderImage {IMG} at (0,0) size 112x111
+          RenderTableRow {TR} at (0,231) size 778x184
+            RenderTableCell {TD} at (0,322) size 134x2 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,415) size 778x3
+            RenderTableCell {TD} at (0,415) size 134x3 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 132x1
+            RenderTableCell {TD} at (134,415) size 5x3 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 3x1
+            RenderTableCell {TD} at (139,415) size 500x2 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (639,415) size 5x3 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 3x1
+            RenderTableCell {TD} at (644,415) size 134x3 [border: (1px inset #808080)] [r=2 c=4 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 132x1

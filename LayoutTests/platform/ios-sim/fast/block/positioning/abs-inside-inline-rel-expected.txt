@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 110x80
+  RenderBlock (positioned) {SPAN} at (0,0) size 110x80
+    RenderText {#text} at (0,0) size 110x79
+      text run at (0,0) width 110: "position:absolute"
+      text run at (0,20) width 72: "span inside"
+      text run at (0,40) width 104: "position:relative"
+      text run at (0,60) width 30: "span"

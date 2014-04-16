@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 9: TypeError: 'undefined' is not an object (evaluating 'oFEConvolveMatrix.width.baseVal')
+This test passed, if it doesn't crash in a debug build (fires assertion).

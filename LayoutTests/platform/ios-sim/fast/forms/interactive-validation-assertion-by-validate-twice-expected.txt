@@ -1,0 +1,4 @@
+Test a bug that an assertion fails by invoking interactive validation twice very quickly.
+
+
+

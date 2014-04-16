@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderSVGRoot {svg} at (8,118) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceFilter {filter} [id="MyFilter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feColorMatrix type="HUEROTATE" values="180.00"]
+              [SourceGraphic]
+      RenderText {#text} at (0,95) size 4x19
+        text run at (0,95) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (22,18) size 160x90
+  RenderImage {IMG} at (14,10) size 160x90

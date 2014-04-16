@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,16) size 784x20
+      RenderBlock {DL} at (0,0) size 784x20
+        RenderBlock {DD} at (40,0) size 744x20
+          RenderInline (run-in) {DT} at (0,0) size 40x19
+            RenderText {#text} at (0,0) size 35x19
+              text run at (0,0) width 35: "Term"
+            RenderInline (generated) at (0,0) size 6x19
+              RenderText at (34,0) size 6x19
+                text run at (34,0) width 6: ":"
+          RenderText {#text} at (39,0) size 66x19
+            text run at (39,0) width 66: "Definition"

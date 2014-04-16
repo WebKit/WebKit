@@ -1,0 +1,35 @@
+Text here
+(GraphicsLayer
+  (bounds 800.00 1021.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 1021.00)
+      (children 5
+        (GraphicsLayer
+          (position 29.00 134.00)
+          (bounds 100.00 100.00)
+        )
+        (GraphicsLayer
+          (position 29.00 134.00)
+          (bounds 100.00 100.00)
+        )
+        (GraphicsLayer
+          (position 29.00 218.00)
+          (bounds 100.00 16.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 29.00 134.00)
+          (bounds 100.00 100.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 0.00 13.00)
+          (bounds 150.00 142.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

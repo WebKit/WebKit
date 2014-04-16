@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 9: TypeError: 'null' is not an object (evaluating 'range.startContainer')
+123
+abc
+def
+ghi
+jkl
+mno

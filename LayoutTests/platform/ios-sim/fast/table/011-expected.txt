@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x94
+  RenderBlock {HTML} at (0,0) size 800x94
+    RenderBody {BODY} at (8,8) size 784x78
+      RenderTable {TABLE} at (0,0) size 69x78
+        RenderTableSection {THEAD} at (0,0) size 69x26
+          RenderTableRow {TR} at (0,2) size 69x22
+            RenderTableCell {TH} at (2,2) size 15x22 [color=#FF0000] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 13x19
+                text run at (1,1) width 13: "H"
+            RenderTableCell {TH} at (19,2) size 15x22 [color=#FF0000] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,1) size 11x19
+                text run at (2,1) width 11: "E"
+            RenderTableCell {TH} at (36,2) size 15x22 [color=#FF0000] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 13x19
+                text run at (1,1) width 13: "A"
+            RenderTableCell {TH} at (53,2) size 14x22 [color=#FF0000] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 12x19
+                text run at (1,1) width 12: "D"
+        RenderTableSection {TFOOT} at (0,52) size 69x26
+          RenderTableRow {TR} at (0,2) size 69x22
+            RenderTableCell {TH} at (2,2) size 15x22 [color=#0000FF] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,1) size 11x19
+                text run at (2,1) width 11: "F"
+            RenderTableCell {TH} at (19,2) size 15x22 [color=#0000FF] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 13x19
+                text run at (1,1) width 13: "O"
+            RenderTableCell {TH} at (36,2) size 15x22 [color=#0000FF] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 13x19
+                text run at (1,1) width 13: "O"
+            RenderTableCell {TH} at (53,2) size 14x22 [color=#0000FF] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 12x19
+                text run at (1,1) width 12: "T"
+        RenderTableSection {TBODY} at (0,26) size 69x26
+          RenderTableRow {TR} at (0,2) size 69x22
+            RenderTableCell {TD} at (2,2) size 15x22 [color=#008000] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 8x19
+                text run at (1,1) width 8: "b"
+            RenderTableCell {TD} at (19,2) size 15x22 [color=#008000] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 8x19
+                text run at (1,1) width 8: "o"
+            RenderTableCell {TD} at (36,2) size 15x22 [color=#008000] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 8x19
+                text run at (1,1) width 8: "d"
+            RenderTableCell {TD} at (53,2) size 14x22 [color=#008000] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 8x19
+                text run at (1,1) width 8: "y"

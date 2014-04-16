@@ -1,0 +1,4 @@
+Testing iOS-specific media query for inline video. When run inside MobileSafari on iPhone, the query should evaluate as false (and the test will indicate that it has failed). In all other places, including the test framework and DRT, the query should evaluate as true.
+
+PASS: "(-webkit-video-playable-inline)" evaluates to true
+

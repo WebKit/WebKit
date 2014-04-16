@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 612x19
+          text run at (0,0) width 289: "Random tests of some bizarre combinations. "
+          text run at (288,0) width 324: "H2 should allow a form inside it, but p should not."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {FORM} at (0,20) size 784x24
+        RenderMenuList {SELECT} at (2,2) size 40x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,3) size 28x14
+            RenderText at (0,0) size 8x14
+              text run at (0,0) width 8: "A"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,60) size 784x0
+layer at (470,47) size 48x52
+  RenderBlock (positioned) {H2} at (470,47) size 48x52 [border: (2px solid #008000)]
+    RenderBlock {FORM} at (2,2) size 44x24
+      RenderMenuList {SELECT} at (2,2) size 40x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 28x14
+          RenderText at (0,0) size 8x14
+            text run at (0,0) width 8: "A"
+      RenderText {#text} at (0,0) size 0x0
+layer at (470,44) size 4x4
+  RenderBlock (positioned) {P} at (470,44) size 4x4 [border: (2px solid #008000)]

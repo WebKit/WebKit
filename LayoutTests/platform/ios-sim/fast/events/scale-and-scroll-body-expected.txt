@@ -1,0 +1,7 @@
+PASS window.document.body.scrollTop is 30
+PASS window.document.body.scrollLeft is 30
+PASS window.document.body.scrollTop is 100
+FAIL window.document.body.scrollLeft should be 100. Was 0.
+FAIL window.scrollX should be 100. Was 0.
+PASS window.scrollY is 100
+

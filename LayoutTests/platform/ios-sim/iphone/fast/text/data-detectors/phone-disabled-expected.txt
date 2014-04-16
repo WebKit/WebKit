@@ -1,0 +1,43 @@
+<rdar://problem/8909578> Reintegrate iOS telephone parsing with new HTML5 parser
+
+disabled phone number detection:
+| "
+    "
+| <iframe>
+|   src="resources/phone-disabled.html"
+|   "
+    "
+| "
+
+
+"
+
+FRAME 0:
+| <head>
+|   "
+    "
+|   <title>
+|     "Phone Numbers in MobileSafari"
+|   "
+    "
+|   <meta>
+|     content="telephone=no"
+|     name="format-detection"
+|   "
+"
+| "
+"
+| <body>
+|   "
+"
+|   <p>
+|     "
+    This is a phone number, but it should NOT be linkified because the the meta tag format-detection forbids it:"
+|     <br>
+|     "
+1-866-MY-APPLE
+"
+|   "
+
+
+"

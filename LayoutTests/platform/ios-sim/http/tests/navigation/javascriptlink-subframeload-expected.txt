@@ -1,0 +1,40 @@
+FAIL: Timed out waiting for notifyDone to be called
+layer at (0,0) size 800x628
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x628
+  RenderBlock {HTML} at (0,0) size 800x628
+    RenderFrameSet {FRAMESET} at (0,0) size 800x628
+      RenderFrame {FRAME} at (0,0) size 800x534
+        layer at (0,0) size 800x534
+          RenderView at (0,0) size 800x534
+        layer at (0,0) size 800x534
+          RenderBlock {HTML} at (0,0) size 800x534
+            RenderBody {BODY} at (8,8) size 784x518
+              RenderInline {A} at (0,0) size 211x40 [color=#0000EE]
+                RenderText {#text} at (0,1) size 211x40
+                  text run at (0,1) width 211: "Click this link"
+              RenderText {#text} at (211,5) size 8x34
+                text run at (211,5) width 8: " "
+              RenderBR {BR} at (219,33) size 0x0
+              RenderText {#text} at (0,44) size 778x292
+                text run at (0,44) width 766: "Test failed - This page uses javascript to implement"
+                text run at (0,86) width 735: "the navigation to another page that happens when"
+                text run at (0,128) width 324: "the user clicks a link. "
+                text run at (324,128) width 421: "The key aspect of this test is"
+                text run at (0,170) width 778: "that this page should appear in the back/forward list,"
+                text run at (0,212) width 742: "since it is a (simulated) user action that causes the"
+                text run at (0,254) width 744: "navigation from this page to occur (vs a timer that"
+                text run at (0,296) width 723: "did the same thing, but not initiated by the user)."
+              RenderText {#text} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
+      RenderFrame {FRAME} at (0,540) size 800x88
+        layer at (0,0) size 800x88
+          RenderView at (0,0) size 800x88
+        layer at (0,0) size 800x88
+          RenderBlock {HTML} at (0,0) size 800x88
+            RenderBody {BODY} at (8,8) size 784x72
+              RenderText {#text} at (0,1) size 729x70
+                text run at (0,1) width 729: "This is just a minimal page that we navigate to as part of"
+                text run at (0,37) width 273: "testing back/forward."
+              RenderText {#text} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0

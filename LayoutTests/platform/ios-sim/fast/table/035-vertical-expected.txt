@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (676,0) size 124x600
+  RenderBlock {HTML} at (0,0) size 124x600
+    RenderBody {BODY} at (8,8) size 108x584
+      RenderBlock (anonymous) at (0,0) size 20x584
+        RenderText {#text} at (0,0) size 19x411
+          text run at (0,0) width 411: "This test should have two centered tables and two centered divs."
+      RenderTable {TABLE} at (20,197) size 24x190 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 22x188
+          RenderTableRow {TR} at (0,0) size 22x188
+            RenderTableCell {TD} at (0,0) size 22x188 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 19x186
+                text run at (1,1) width 186: "This table is aligned \"center\""
+      RenderTable {TABLE} at (44,185) size 24x213 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 22x211
+          RenderTableRow {TR} at (0,0) size 22x211
+            RenderTableCell {TD} at (0,0) size 22x211 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 19x209
+                text run at (1,1) width 209: "This table is aligned \"CENTER\""
+      RenderBlock {DIV} at (68,0) size 20x584
+        RenderText {#text} at (0,204) size 19x176
+          text run at (0,204) width 175: "This div is aligned \"center\""
+      RenderBlock {DIV} at (88,0) size 20x584
+        RenderText {#text} at (0,193) size 19x198
+          text run at (0,193) width 198: "This div is aligned \"CENTER\""

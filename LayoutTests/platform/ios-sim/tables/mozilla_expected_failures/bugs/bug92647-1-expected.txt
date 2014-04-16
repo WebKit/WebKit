@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {FORM} at (0,0) size 784x93
+        RenderTable {TABLE} at (0,0) size 289x93 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 287x91
+            RenderTableRow {TR} at (0,2) size 287x87
+              RenderTableCell {TD} at (2,2) size 283x87 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 279x83 [border: (2px outset #808080)]
+                  RenderTableSection {TBODY} at (2,2) size 275x79
+                    RenderTableRow {TR} at (0,2) size 275x44
+                      RenderTableCell {TD} at (2,2) size 79x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (2,2) size 57x39
+                          text run at (2,2) width 55: "Member"
+                          text run at (2,22) width 57: "Number:"
+                      RenderTableCell {TD} at (83,9) size 184x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                        RenderTextControl {INPUT} at (4,4) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                        RenderText {#text} at (0,0) size 0x0
+                    RenderTableRow {TR} at (0,48) size 275x29
+                      RenderTableCell {TD} at (2,50) size 79x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                        RenderText {#text} at (2,2) size 31x19
+                          text run at (2,2) width 31: "PIN:"
+                      RenderTableCell {TD} at (83,48) size 184x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                        RenderTextControl {INPUT} at (4,4) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                        RenderText {#text} at (0,0) size 0x0
+                      RenderTableCell {TD} at (269,60) size 4x4 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+layer at (108,31) size 123x14
+  RenderBlock {DIV} at (6,3) size 123x14
+layer at (108,70) size 123x14
+  RenderBlock {DIV} at (6,3) size 123x14

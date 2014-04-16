@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x195
+  RenderBlock {html} at (0,0) size 800x195
+    RenderBody {body} at (8,8) size 784x179
+      RenderBlock {div} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 437x19
+          text run at (0,0) width 437: "If no crash while painting, the test passed (requires pixel test mode)."
+      RenderBlock (anonymous) at (0,20) size 784x159
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderPartObject {iframe} at (0,0) size 304x154 [border: (2px inset #000000)]
+          layer at (0,0) size 300x150
+            RenderView at (0,0) size 300x150
+          layer at (0,0) size 300x150
+            RenderBlock {HTML} at (0,0) size 300x150
+              RenderBody {BODY} at (8,8) size 284x134

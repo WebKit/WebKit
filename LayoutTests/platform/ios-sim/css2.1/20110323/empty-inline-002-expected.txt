@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x428 layerType: background only
+layer at (8,132) size 528x144
+  RenderBlock (relative positioned) zI: -1 {DIV} at (0,144) size 528x144 [border: (24px solid #FF0000)]
+layer at (128,36) size 240x336
+  RenderBlock (relative positioned) {DIV} at (120,24) size 240x336 [bgcolor=#FF0000] [border: (24px solid #FF0000)]
+layer at (0,0) size 800x428 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 800x428
+    RenderBody {BODY} at (8,16) size 784x404
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 310x19
+          text run at (0,0) width 310: "Test passes if there is no red visible on the page."
+      RenderBlock {DIV} at (0,116) size 784x288
+        RenderBlock {DIV} at (0,0) size 528x144 [border: (24px solid #008000)]
+          RenderInline {SPAN} at (0,0) size 240x337 [bgcolor=#008000] [border: (24px solid #008000)]
+          RenderText {#text} at (0,0) size 0x0

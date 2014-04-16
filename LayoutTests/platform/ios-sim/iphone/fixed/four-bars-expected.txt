@@ -1,0 +1,30 @@
+(GraphicsLayer
+  (bounds 800.00 2221.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 2221.00)
+      (children 4
+        (GraphicsLayer
+          (bounds 792.00 74.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 10.00 200.00)
+          (bounds 174.00 324.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 616.00 200.00)
+          (bounds 174.00 324.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 0.00 516.00)
+          (bounds 792.00 74.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+This is the top bar. This is the left bar. This is the right bar. This is the bottom bar.

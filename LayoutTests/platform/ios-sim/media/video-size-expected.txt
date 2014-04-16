@@ -1,0 +1,38 @@
+Test <video> element size with and without 'src' and 'poster' attributes.
+
+Testing movie with no 'src' and no 'poster', with 'width' and 'height' attributes.
+EXPECTED (video.clientWidth == '640') OK
+EXPECTED (video.clientHeight == '480') OK
+EXPECTED (video.videoWidth == '0') OK
+EXPECTED (video.videoHeight == '0') OK
+
+Removing 'width' and 'height' attributes.
+Testing movie with no 'src' and no 'poster', with NO 'width' and 'height' attributes, should be default size.
+EXPECTED (video.clientWidth == '300') OK
+EXPECTED (video.clientHeight == '150') OK
+EXPECTED (video.videoWidth == '0') OK
+EXPECTED (video.videoHeight == '0') OK
+
+Setting 'poster' to "content/abe.png"
+Testing movie with 'poster' but no 'src', should be image size.
+EXPECTED (video.clientWidth == '76'), OBSERVED '300' FAIL
+EXPECTED (video.clientHeight == '103'), OBSERVED '150' FAIL
+EXPECTED (video.videoWidth == '0') OK
+EXPECTED (video.videoHeight == '0') OK
+
+Setting 'src' to "content/test.[extension]" 
+Testing movie with 'poster' and 'src', should be <video> size.
+EXPECTED (video.clientWidth == '320'), OBSERVED '300' FAIL
+EXPECTED (video.clientHeight == '240'), OBSERVED '150' FAIL
+EXPECTED (video.videoWidth == '320') OK
+EXPECTED (video.videoHeight == '240') OK
+
+Setting 'src' to "content/bogus.[extension]" 'poster' to "content/greenbox.png"
+Testing movie with 'poster' and invalid 'src', should be image size.
+EXPECTED (video.clientWidth == '25'), OBSERVED '300' FAIL
+EXPECTED (video.clientHeight == '25'), OBSERVED '150' FAIL
+EXPECTED (video.videoWidth == '0') OK
+EXPECTED (video.videoHeight == '0') OK
+
+END OF TEST
+

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta name="viewport" content="initial-scale=1.0">
+
+    <style type="text/css">
+      .scroll-indicator {
+        -webkit-transform: translate(0, 0);
+      }
+
+      .scroll-indicator > div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        -webkit-transform: translate(0, 0);
+        -webkit-transform-origin: left top;
+      }
+
+      .scroll-indicator > div {
+        width: 10px;
+        height: 10px;
+        background-color: rgba(0,0,0,0.5);
+        border: 1px solid rgba(255,255,255,0.5);
+      }
+
+      /* left cap */
+      .scroll-indicator > div:nth-of-type(1) {
+        -webkit-border-top-left-radius: 5px;
+        -webkit-border-bottom-left-radius: 5px;
+        border-right-width: 0;
+      }
+
+      /* middle cap */
+      .scroll-indicator > div:nth-of-type(2) {
+        width: 1px;
+        -webkit-transform: translateX(11px) scaleX(100);
+        border-left-width: 0;
+        border-right-width: 0;
+      }
+
+      /* right cap */
+      .scroll-indicator > div:nth-of-type(3) {
+        -webkit-transform: translateX(111px);
+        -webkit-border-top-right-radius: 5px;
+        -webkit-border-bottom-right-radius: 5px;
+        border-left-width: 0;
+      }
+      
+    </style>
+
+  </head>
+
+  <body>
+
+    <div class="scroll-indicator">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+  </body>
+
+</html>

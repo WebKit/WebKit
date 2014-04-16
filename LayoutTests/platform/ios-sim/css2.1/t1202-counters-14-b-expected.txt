@@ -1,0 +1,94 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 298x19
+          text run at (0,0) width 298: "The following two lines should look the same:"
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 28x19
+          RenderInline (generated) at (0,0) size 28x19
+            RenderCounter at (0,0) size 28x19
+              text run at (0,0) width 28: "A.A"
+        RenderText {#text} at (27,0) size 5x19
+          text run at (27,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 27x19
+          RenderInline (generated) at (0,0) size 27x19
+            RenderCounter at (31,0) size 27x19
+              text run at (31,0) width 27: "A.B"
+        RenderText {#text} at (57,0) size 5x19
+          text run at (57,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 27x19
+          RenderInline (generated) at (0,0) size 27x19
+            RenderCounter at (61,0) size 27x19
+              text run at (61,0) width 27: "A.C"
+        RenderText {#text} at (87,0) size 5x19
+          text run at (87,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 28x19
+          RenderInline (generated) at (0,0) size 28x19
+            RenderCounter at (91,0) size 28x19
+              text run at (91,0) width 28: "A.D"
+        RenderText {#text} at (118,0) size 5x19
+          text run at (118,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 26x19
+          RenderInline (generated) at (0,0) size 26x19
+            RenderCounter at (122,0) size 26x19
+              text run at (122,0) width 26: "A.E"
+        RenderText {#text} at (148,0) size 4x19
+          text run at (148,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 25x19
+          RenderInline (generated) at (0,0) size 25x19
+            RenderCounter at (152,0) size 25x19
+              text run at (152,0) width 25: "A.F"
+        RenderText {#text} at (176,0) size 5x19
+          text run at (176,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 28x19
+          RenderInline (generated) at (0,0) size 28x19
+            RenderCounter at (180,0) size 28x19
+              text run at (180,0) width 28: "A.G"
+        RenderText {#text} at (207,0) size 5x19
+          text run at (207,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 28x19
+          RenderInline (generated) at (0,0) size 28x19
+            RenderCounter at (211,0) size 28x19
+              text run at (211,0) width 28: "A.H"
+        RenderText {#text} at (238,0) size 5x19
+          text run at (238,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 22x19
+          RenderInline (generated) at (0,0) size 22x19
+            RenderCounter at (242,0) size 22x19
+              text run at (242,0) width 22: "A.I"
+        RenderText {#text} at (263,0) size 5x19
+          text run at (263,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 23x19
+          RenderInline (generated) at (0,0) size 23x19
+            RenderCounter at (267,0) size 23x19
+              text run at (267,0) width 23: "A.J"
+        RenderText {#text} at (289,0) size 5x19
+          text run at (289,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 28x19
+          RenderInline (generated) at (0,0) size 28x19
+            RenderCounter at (293,0) size 28x19
+              text run at (293,0) width 28: "A.K"
+        RenderText {#text} at (320,0) size 5x19
+          text run at (320,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 26x19
+          RenderInline (generated) at (0,0) size 26x19
+            RenderCounter at (324,0) size 26x19
+              text run at (324,0) width 26: "A.L"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 350x19
+          text run at (0,0) width 32: "A.A "
+          text run at (31,0) width 31: "A.B "
+          text run at (61,0) width 31: "A.C "
+          text run at (91,0) width 32: "A.D "
+          text run at (122,0) width 30: "A.E "
+          text run at (152,0) width 29: "A.F "
+          text run at (180,0) width 32: "A.G "
+          text run at (211,0) width 32: "A.H "
+          text run at (242,0) width 26: "A.I "
+          text run at (267,0) width 27: "A.J "
+          text run at (293,0) width 32: "A.K "
+          text run at (324,0) width 26: "A.L"

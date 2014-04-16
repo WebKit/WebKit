@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (16,16) size 768x20
+layer at (16,16) size 768x20
+  RenderBlock {DIV} at (0,0) size 768x20
+    RenderBlock (anonymous multi-column span) at (0,0) size 768x0
+      RenderBlock {DIV} at (0,0) size 768x0
+layer at (16,16) size 768x20
+  RenderBlock (anonymous multi-column) at (0,0) size 768x20
+    RenderBlock {DIV} at (0,0) size 374x20
+      RenderText {#text} at (0,0) size 21x20
+        text run at (0,0) width 21: "3"
+    RenderTable at (0,20) size 21x20
+      RenderTableSection {DIV} at (0,0) size 21x20
+        RenderTableRow (anonymous) at (0,0) size 21x20
+          RenderTableCell (anonymous) at (0,0) size 21x20 [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 21x20
+              text run at (0,0) width 21: "4"

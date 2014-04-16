@@ -1,0 +1,3 @@
+Tests ScrollView's behavior when only one of the scrollbars is made ScrollbarAlwaysOn dynamically. The correct behavior is not to remove this scrollbar, which is what this test checks for.
+
+TEST FAILED

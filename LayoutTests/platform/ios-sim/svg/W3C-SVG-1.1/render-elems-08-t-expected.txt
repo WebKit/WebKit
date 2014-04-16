@@ -1,0 +1,20 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (0,0) size 480x360
+      RenderSVGText {text} at (120,13) size 230x34 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x34
+          chunk 1 text run 1 at (120.00,40.00) startOffset 0 endOffset 20 width 229.10: "Text fill and stroke"
+      RenderSVGContainer {g} at (48,57) size 389x274
+        RenderSVGText {text} at (60,69) size 152x249 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 152x249
+            chunk 1 text run 1 at (60.00,280.00) startOffset 0 endOffset 1 width 151.50: "A"
+        RenderSVGText {text} at (260,69) size 165x249 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 165x249
+            chunk 1 text run 1 at (260.00,280.00) startOffset 0 endOffset 1 width 165.00: "B"
+      RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 264x45
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.4 $"
+      RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

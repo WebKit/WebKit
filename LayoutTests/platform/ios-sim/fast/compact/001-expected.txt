@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x80
+  RenderBlock {HTML} at (0,0) size 800x80
+    RenderBody {BODY} at (8,16) size 784x56
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 195x19
+          text run at (0,0) width 195: "There should be no red below."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 32x19
+          text run at (0,0) width 32: "Test:"
+      RenderBlock {DIV} at (160,56) size 624x0 [color=#FF0000] [bgcolor=#00FF00]
+        RenderInline {SPAN} at (0,0) size 303x19 [color=#000000]
+          RenderText {#text} at (0,-9) size 303x19
+            text run at (0,-9) width 303: "This sentence should have a green background."
+        RenderText {#text} at (0,0) size 0x0

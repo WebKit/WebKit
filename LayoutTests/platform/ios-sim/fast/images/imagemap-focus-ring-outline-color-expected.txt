@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 740x39
+          text run at (0,0) width 740: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that a focus ring is drawn for an"
+          text run at (0,20) width 705: "<area>. This test PASSED if a green-colored focus ring is drawn around the <area> in the imagemap (below)."
+      RenderBlock (anonymous) at (0,56) size 784x128
+        RenderInline {MAP} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderImage {IMG} at (0,0) size 128x128
+        RenderText {#text} at (0,0) size 0x0

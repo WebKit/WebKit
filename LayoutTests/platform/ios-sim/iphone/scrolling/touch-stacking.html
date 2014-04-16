@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        body {
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .box {
+            height: 100px;
+            width: 100px;
+            background-color: blue;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .stacking {
+            position: relative;
+            z-index: 0;
+        }
+        
+        #log {
+            margin-top: 120px;
+        }
+    </style>
+    <script>
+        function doTest()
+        {
+            var box = document.getElementById('test');
+            var computedZIndex = window.getComputedStyle(box).zIndex;
+            var result;
+            if (computedZIndex == 'auto')
+                result = 'PASS: computed zIndex was auto';
+            else
+                result = 'FAIL: computed zIndex was ' + computedZIndex;
+
+            document.getElementById('log').textContent = result;
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="box" style="background-color: orange; z-index: 0"></div>
+        <div id="test" class="box" style="background-color: green;">
+            <div class="box" style="background-color: red; z-index: -1"></div>
+        </div>
+    </div>
+
+    <div id="log"></div>
+</body>
+</html>

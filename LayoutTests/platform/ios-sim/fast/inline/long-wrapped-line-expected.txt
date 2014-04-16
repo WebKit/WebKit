@@ -1,0 +1,9 @@
+layer at (0,0) size 2009x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderInline {SPAN} at (0,0) size 2001x19
+        RenderText {#text} at (0,0) size 2001x19
+          text run at (0,0) width 2001: "Side note.  Both GR's have been cleaned by both myself and Miguet -  Please keep our GR's clean or there will be Fire and Brimstone.  The state of the GR2 today was Unacceptable with random parts that were suppose to be KGB that were not labeled,  RTW,  RFP and attached to a machine in awaiting parts. .  "
+      RenderText {#text} at (0,0) size 0x0

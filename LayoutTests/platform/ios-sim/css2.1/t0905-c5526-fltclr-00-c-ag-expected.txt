@@ -1,0 +1,57 @@
+layer at (0,0) size 800x711
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x711
+  RenderBlock {HTML} at (0,0) size 800x711
+    RenderBody {BODY} at (8,16) size 784x687
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 254x19
+          text run at (0,0) width 254: "There should be a big green box below."
+      RenderBlock {DIV} at (0,36) size 306x651 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderImage {IMG} at (3,3) size 50x50
+        RenderBlock {P} at (3,18) size 300x90
+          RenderText {#text} at (50,0) size 291x90
+            text run at (50,0) width 210: "xxxxx xxxx xxx"
+            text run at (50,15) width 241: "xx x xx xxx xxxx"
+            text run at (50,30) width 210: "xxxxx xxxx xxx"
+            text run at (0,45) width 241: "xx x xx xxx xxxx"
+            text run at (0,60) width 286: "xxxxx xxxx xxx xx x"
+            text run at (0,75) width 166: "xx xxx xxxx"
+        RenderImage {IMG} at (3,123) size 50x50
+        RenderBlock {P} at (3,173) size 300x60
+          RenderText {#text} at (0,0) size 286x60
+            text run at (0,0) width 286: "xxxxx xxxx xxx xx x"
+            text run at (0,15) width 181: "xx xxx xxxx "
+            text run at (180,15) width 76: "xxxxx"
+            text run at (0,30) width 241: "xxxx xxx xx x xx"
+            text run at (0,45) width 121: "xxx xxxx"
+        RenderImage {IMG} at (253,248) size 50x50
+        RenderBlock {P} at (3,298) size 300x60
+          RenderText {#text} at (0,0) size 286x60
+            text run at (0,0) width 286: "xxxxx xxxx xxx xx x"
+            text run at (0,15) width 181: "xx xxx xxxx "
+            text run at (180,15) width 76: "xxxxx"
+            text run at (0,30) width 241: "xxxx xxx xx x xx"
+            text run at (0,45) width 121: "xxx xxxx"
+        RenderImage {IMG} at (3,373) size 50x50
+        RenderImage {IMG} at (253,373) size 50x50
+        RenderBlock {P} at (3,423) size 300x60
+          RenderText {#text} at (0,0) size 286x60
+            text run at (0,0) width 286: "xxxxx xxxx xxx xx x"
+            text run at (0,15) width 181: "xx xxx xxxx "
+            text run at (180,15) width 76: "xxxxx"
+            text run at (0,30) width 241: "xxxx xxx xx x xx"
+            text run at (0,45) width 121: "xxx xxxx"
+        RenderImage {IMG} at (3,498) size 50x50
+        RenderImage {IMG} at (253,498) size 50x50
+        RenderBlock {P} at (3,498) size 300x135
+          RenderText {#text} at (50,0) size 286x135
+            text run at (50,0) width 151: "xxxxx xxxx"
+            text run at (50,15) width 166: "xxx xx x xx"
+            text run at (50,30) width 121: "xxx xxxx"
+            text run at (50,45) width 151: "xxxxx xxxx"
+            text run at (0,60) width 226: "xxx xx x xx xxx"
+            text run at (0,75) width 76: "xxxx "
+            text run at (75,75) width 211: "xxxxx xxxx xxx"
+            text run at (0,90) width 241: "xx x xx xxx xxxx"
+            text run at (0,105) width 286: "xxxxx xxxx xxx xx x"
+            text run at (0,120) width 166: "xx xxx xxxx"

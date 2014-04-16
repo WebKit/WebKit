@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 351x19
+          text run at (0,0) width 351: "This should be rendered without kerning and ligatures:"
+      RenderBlock {DIV} at (0,36) size 784x168
+        RenderText {#text} at (0,3) size 772x161
+          text run at (0,3) width 772: "Office\x{301} Today"
+      RenderBlock {P} at (0,220) size 784x20
+        RenderText {#text} at (0,0) size 331x19
+          text run at (0,0) width 331: "This should be rendered with kerning and ligatures:"
+      RenderBlock {DIV} at (0,256) size 784x168
+        RenderText {#text} at (0,3) size 759x161
+          text run at (0,3) width 759: "Office Today"

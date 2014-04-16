@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (160,0) size 472x531
+    RenderSVGContainer {g} at (160,0) size 281x77 [transform={m=((0.10,0.00)(0.00,0.10)) t=(10.00,10.00)}]
+      RenderSVGText {text} at (0,-110) size 468x137 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 468x137
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 9 width 467.05: "0,1,2,3,4"
+    RenderSVGContainer {g} at (160,84) size 282x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,25.00)}]
+      RenderSVGText {text} at (0,-11) size 47x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 47x14
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 9 width 46.71: "0,1,2,3,4"
+    RenderSVGContainer {g} at (160,168) size 288x144 [transform={m=((12.00,0.00)(0.00,12.00)) t=(10.00,40.00)}]
+      RenderSVGText {text} at (0,-1) size 4x2 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 4x2
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 9 width 3.89: "0,1,2,3,4"
+    RenderSVGContainer {g} at (160,186) size 288x288 [transform={m=((24.00,0.00)(0.00,24.00)) t=(10.00,55.00)}]
+      RenderSVGText {text} at (0,-1) size 2x1 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 2x1
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 9 width 1.95: "0,1,2,3,4"
+    RenderSVGContainer {g} at (160,375) size 472x156 [transform={m=((0.30,0.00)(0.00,0.30)) t=(10.00,65.00)}]
+      RenderSVGText {text} at (0,-8) size 262x86 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 214x11
+          RenderSVGInlineText {#text} at (0,0) size 214x11
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 213.37: "For this test case to be successful, all"
+        RenderSVGInlineText {#text} at (213,0) size 6x11
+          chunk 1 text run 1 at (213.37,0.00) startOffset 0 endOffset 1 width 5.33: " "
+        RenderSVGTSpan {tspan} at (0,0) size 235x11
+          RenderSVGInlineText {#text} at (0,15) size 235x11
+            chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 44 width 234.70: "lines of text must look the same. In Safari "
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGTSpan {tspan} at (0,0) size 251x11
+          RenderSVGInlineText {#text} at (0,30) size 251x11
+            chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 47 width 250.71: "Beta 3, a text with a font size of 1 or smaller"
+        RenderSVGInlineText {#text} at (250,30) size 6x11
+          chunk 1 text run 1 at (250.71,30.00) startOffset 0 endOffset 1 width 5.33: " "
+        RenderSVGTSpan {tspan} at (0,0) size 257x11
+          RenderSVGInlineText {#text} at (0,45) size 257x11
+            chunk 1 text run 1 at (0.00,45.00) startOffset 0 endOffset 48 width 256.04: "is not painted correctly, even if the coordinate"
+        RenderSVGInlineText {#text} at (256,45) size 6x11
+          chunk 1 text run 1 at (256.04,45.00) startOffset 0 endOffset 1 width 5.33: " "
+        RenderSVGTSpan {tspan} at (0,0) size 187x11
+          RenderSVGInlineText {#text} at (0,60) size 187x11
+            chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 35 width 186.70: "transformations make it equivalent."
+        RenderSVGInlineText {#text} at (186,60) size 6x11
+          chunk 1 text run 1 at (186.70,60.00) startOffset 0 endOffset 1 width 5.33: " "
+        RenderSVGTSpan {tspan} at (0,0) size 49x11
+          RenderSVGInlineText {#text} at (0,75) size 49x11
+            chunk 1 text run 1 at (0.00,75.00) startOffset 0 endOffset 9 width 48.01: "Bug 14242"
+        RenderSVGInlineText {#text} at (0,0) size 0x0

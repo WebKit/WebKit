@@ -1,0 +1,7 @@
+Scrolled element to rect
+FAIL rect.left should be 82. Was 610.
+FAIL rect.top should be 139. Was 710.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

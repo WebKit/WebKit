@@ -1,0 +1,96 @@
+Test that there is no phone number parsing via innerHTML
+
+no phone number detection in innerHTML fragments:
+| "
+    "
+| <iframe>
+|   id="iframe"
+|   src="resources/phone-dynamic.html"
+| "
+
+
+"
+
+FRAME 0:
+| <head>
+|   "
+"
+| "
+"
+| <body>
+|   "
+  "
+|   <div>
+|     id="container"
+|     <p>
+|       "Call me (308) 555 5555 please"
+|   "
+
+
+"
+
+no phone number detection in <pre> in innerHTML fragments:
+| "
+    "
+| <iframe>
+|   id="iframe"
+|   src="resources/phone-dynamic.html"
+| "
+
+
+"
+
+FRAME 0:
+| <head>
+|   "
+"
+| "
+"
+| <body>
+|   "
+  "
+|   <div>
+|     id="container"
+|     <pre>
+|       "Call me (308) 555 5555 please"
+|   "
+
+
+"
+
+no phone number detection in complex innerHTML fragments:
+| "
+    "
+| <iframe>
+|   id="iframe"
+|   src="resources/phone-dynamic.html"
+| "
+
+
+"
+
+FRAME 0:
+| <head>
+|   "
+"
+| "
+"
+| <body>
+|   "
+  "
+|   <div>
+|     id="container"
+|     <div>
+|       <script>
+|         type="text/javascript"
+|         "print("Hello!");"
+|       <p>
+|         "Call me "
+|         <!--  The phone number here should be detected  -->
+|         " (308) 555 5555 please."
+|     <p>
+|       <!--   This is a phone number too, but it's inside a comment: 06 12 34 56 78   -->
+|   "
+
+
+"

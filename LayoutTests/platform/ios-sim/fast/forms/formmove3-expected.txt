@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderInline {A} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderInline {A} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,0) size 784x30
+        RenderBlock (anonymous) at (0,0) size 784x0
+          RenderInline {A} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,0) size 784x30
+          RenderTable {TABLE} at (0,0) size 73x30
+            RenderTableSection {TBODY} at (0,0) size 73x30
+              RenderTableRow {TR} at (0,2) size 73x26
+                RenderTableCell {TD} at (2,14) size 2x2 [r=0 c=0 rs=1 cs=1]
+                RenderTableCell {TD} at (6,2) size 65x26 [r=0 c=1 rs=1 cs=1]
+                  RenderButton {INPUT} at (3,3) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                    RenderBlock (anonymous) at (12,3) size 35x14
+                      RenderText at (0,0) size 35x14
+                        text run at (0,0) width 35: "Search"
+        RenderBlock (anonymous) at (0,30) size 784x0
+          RenderInline {A} at (0,0) size 0x0
+          RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,30) size 784x20
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 107x19
+          text run at (0,0) width 107: "Form did submit"

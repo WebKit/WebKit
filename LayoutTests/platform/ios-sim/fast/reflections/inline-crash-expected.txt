@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 667x19
+          RenderInline {A} at (0,0) size 312x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 312x19
+              text run at (54,0) width 312: "https://bugs.webkit.org/show_bug.cgi?id=19525"
+          RenderText {#text} at (365,0) size 356x19
+            text run at (365,0) width 5: " "
+            text run at (369,0) width 352: "-webkit-box-reflect in hyperlink causes webkit to crash"
+        RenderText {#text} at (720,0) size 5x19
+          text run at (720,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 182x19
+          text run at (0,0) width 182: "Because it is an inline flow, "
+        RenderInline {SPAN} at (0,0) size 58x19
+          RenderText {#text} at (181,0) size 58x19
+            text run at (181,0) width 58: "this span"
+        RenderText {#text} at (238,0) size 451x19
+          text run at (238,0) width 451: " should not have a reflection, and selecting it should not cause a crash."
+selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 2 {P} of body
+selection end:   position 9 of child 0 {#text} of child 1 {SPAN} of child 2 {P} of body

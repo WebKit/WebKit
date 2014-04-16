@@ -1,0 +1,809 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (4,4) size 487x321
+    RenderSVGText {text} at (10,7) size 42x33 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 42x33
+        RenderSVGInlineText {#text} at (0,5) size 15x23
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 14.44: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 14x23
+          RenderSVGInlineText {#text} at (14,0) size 14x23
+            chunk 1 text run 1 at (24.44,25.00) startOffset 0 endOffset 1 width 13.34: "B"
+        RenderSVGTSpan {tspan} at (0,0) size 15x23
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (27,10) size 14x23
+              chunk 1 text run 1 at (37.78,35.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGText {text} at (10,37) size 42x33 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 42x33
+        RenderSVGInlineText {#text} at (0,5) size 15x23
+          chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 14.44: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 14x23
+          RenderSVGInlineText {#text} at (14,0) size 14x23
+            chunk 1 text run 1 at (24.44,55.00) startOffset 0 endOffset 1 width 13.34: "B"
+        RenderSVGTSpan {tspan} at (0,0) size 15x23
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (27,10) size 14x23
+              chunk 1 text run 1 at (37.78,65.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGText {text} at (10,67) size 42x33 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 42x33
+        RenderSVGInlineText {#text} at (0,5) size 15x23
+          chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 1 width 14.44: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 14x23
+          RenderSVGInlineText {#text} at (14,0) size 14x23
+            chunk 1 text run 1 at (24.44,85.00) startOffset 0 endOffset 1 width 13.34: "B"
+        RenderSVGTSpan {tspan} at (0,0) size 15x23
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (27,10) size 14x23
+              chunk 1 text run 1 at (37.78,95.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGText {text} at (10,97) size 42x33 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 42x33
+        RenderSVGInlineText {#text} at (0,5) size 15x23
+          chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 1 width 14.44: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 14x23
+          RenderSVGInlineText {#text} at (14,0) size 14x23
+            chunk 1 text run 1 at (24.44,115.00) startOffset 0 endOffset 1 width 13.34: "B"
+        RenderSVGTSpan {tspan} at (0,0) size 15x23
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (27,10) size 14x23
+              chunk 1 text run 1 at (37.78,125.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGText {text} at (10,127) size 42x33 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 42x33
+        RenderSVGInlineText {#text} at (0,5) size 15x23
+          chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 1 width 14.44: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 14x23
+          RenderSVGInlineText {#text} at (14,0) size 14x23
+            chunk 1 text run 1 at (24.44,145.00) startOffset 0 endOffset 1 width 13.34: "B"
+        RenderSVGTSpan {tspan} at (0,0) size 15x23
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (27,10) size 14x23
+              chunk 1 text run 1 at (37.78,155.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGText {text} at (10,157) size 42x33 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 42x33
+        RenderSVGInlineText {#text} at (0,5) size 15x23
+          chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 1 width 14.44: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 14x23
+          RenderSVGInlineText {#text} at (14,0) size 14x23
+            chunk 1 text run 1 at (24.44,175.00) startOffset 0 endOffset 1 width 13.34: "B"
+        RenderSVGTSpan {tspan} at (0,0) size 15x23
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (27,10) size 14x23
+              chunk 1 text run 1 at (37.78,185.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGText {text} at (10,187) size 42x33 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 42x33
+        RenderSVGInlineText {#text} at (0,5) size 15x23
+          chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 1 width 14.44: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 14x23
+          RenderSVGInlineText {#text} at (14,0) size 14x23
+            chunk 1 text run 1 at (24.44,205.00) startOffset 0 endOffset 1 width 13.34: "B"
+        RenderSVGTSpan {tspan} at (0,0) size 15x23
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (27,10) size 14x23
+              chunk 1 text run 1 at (37.78,215.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGText {text} at (10,217) size 42x33 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 42x33
+        RenderSVGInlineText {#text} at (0,5) size 15x23
+          chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 1 width 14.44: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 14x23
+          RenderSVGInlineText {#text} at (14,0) size 14x23
+            chunk 1 text run 1 at (24.44,235.00) startOffset 0 endOffset 1 width 13.34: "B"
+        RenderSVGTSpan {tspan} at (0,0) size 15x23
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (27,10) size 14x23
+              chunk 1 text run 1 at (37.78,245.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGText {text} at (10,247) size 42x33 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 42x33
+        RenderSVGInlineText {#text} at (0,5) size 15x23
+          chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 1 width 14.44: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 14x23
+          RenderSVGInlineText {#text} at (14,0) size 14x23
+            chunk 1 text run 1 at (24.44,265.00) startOffset 0 endOffset 1 width 13.34: "B"
+        RenderSVGTSpan {tspan} at (0,0) size 15x23
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (27,10) size 14x23
+              chunk 1 text run 1 at (37.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGContainer {g} at (80,7) size 47x273 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,0.00)}]
+      RenderSVGText {text} at (10,7) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,25.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,35.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,37) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,55.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,65.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,67) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,85.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,95.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,97) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,115.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,125.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,127) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,145.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,155.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,157) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,175.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,185.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,187) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,205.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,215.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,217) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,235.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,245.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,247) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,265.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGContainer {g} at (150,7) size 47x273 [transform={m=((1.00,0.00)(0.00,1.00)) t=(140.00,0.00)}]
+      RenderSVGText {text} at (10,7) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,25.00) startOffset 0 endOffset 1 width 5.00: " "
+              chunk 1 text run 1 at (29.44,25.00) startOffset 0 endOffset 1 width 13.34: "B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,35.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,37) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,55.00) startOffset 0 endOffset 1 width 5.00: " "
+              chunk 1 text run 1 at (29.44,55.00) startOffset 0 endOffset 1 width 13.34: "B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,65.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,67) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,85.00) startOffset 0 endOffset 1 width 5.00: " "
+              chunk 1 text run 1 at (29.44,85.00) startOffset 0 endOffset 1 width 13.34: "B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,95.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,97) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,115.00) startOffset 0 endOffset 1 width 5.00: " "
+              chunk 1 text run 1 at (29.44,115.00) startOffset 0 endOffset 1 width 13.34: "B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,125.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,127) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,145.00) startOffset 0 endOffset 1 width 5.00: " "
+              chunk 1 text run 1 at (29.44,145.00) startOffset 0 endOffset 1 width 13.34: "B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,155.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,157) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,175.00) startOffset 0 endOffset 1 width 5.00: " "
+              chunk 1 text run 1 at (29.44,175.00) startOffset 0 endOffset 1 width 13.34: "B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,185.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,187) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,205.00) startOffset 0 endOffset 1 width 5.00: " "
+              chunk 1 text run 1 at (29.44,205.00) startOffset 0 endOffset 1 width 13.34: "B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,215.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,217) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,235.00) startOffset 0 endOffset 1 width 5.00: " "
+              chunk 1 text run 1 at (29.44,235.00) startOffset 0 endOffset 1 width 13.34: "B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,245.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,247) size 47x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 47x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,265.00) startOffset 0 endOffset 1 width 5.00: " "
+              chunk 1 text run 1 at (29.44,265.00) startOffset 0 endOffset 1 width 13.34: "B"
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (32,10) size 14x23
+                chunk 1 text run 1 at (42.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGContainer {g} at (220,7) size 52x273 [transform={m=((1.00,0.00)(0.00,1.00)) t=(210.00,0.00)}]
+      RenderSVGText {text} at (10,7) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,25.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,25.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,35.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,37) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,55.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,55.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,65.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,67) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,85.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,85.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,95.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,97) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,115.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,115.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,125.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,127) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,145.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,145.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,155.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,157) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,175.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,175.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,185.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,187) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,205.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,205.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,215.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,217) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,235.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,235.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,245.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,247) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,265.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,265.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGContainer {g} at (290,7) size 52x273 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,0.00)}]
+      RenderSVGText {text} at (10,7) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,25.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,25.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,35.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,37) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,55.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,55.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,65.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,67) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,85.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,85.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,95.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,97) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,115.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,115.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,125.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,127) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,145.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,145.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,155.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,157) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,175.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,175.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,185.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,187) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,205.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,205.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,215.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,217) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,235.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,235.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,245.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,247) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,265.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,265.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGContainer {g} at (360,7) size 52x273 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,0.00)}]
+      RenderSVGText {text} at (10,7) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,25.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,25.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,35.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,37) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,55.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,55.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,65.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,67) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,85.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,85.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,95.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,97) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,115.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,115.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,125.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,127) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,145.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,145.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,155.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,157) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,175.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,175.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,185.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,187) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,205.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,205.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,215.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,217) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,235.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,235.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,245.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,247) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,265.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,265.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGContainer {g} at (430,7) size 52x273 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,0.00)}]
+      RenderSVGText {text} at (10,7) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,25.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,25.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,35.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,37) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,55.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,55.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,65.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,67) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,85.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,85.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,95.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,97) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,115.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,115.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,125.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,127) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,145.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,145.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,155.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,157) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,175.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,175.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,185.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,187) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,205.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,205.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,215.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,217) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,235.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,235.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,245.00) startOffset 0 endOffset 1 width 13.34: "C"
+      RenderSVGText {text} at (10,247) size 52x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 52x33
+          RenderSVGInlineText {#text} at (0,5) size 15x23
+            chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 1 width 14.44: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 19x23
+            RenderSVGInlineText {#text} at (14,0) size 19x23
+              chunk 1 text run 1 at (24.44,265.00) startOffset 0 endOffset 2 width 18.34: " B"
+          RenderSVGInlineText {#text} at (32,0) size 5x23
+            chunk 1 text run 1 at (42.78,265.00) startOffset 0 endOffset 1 width 5.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 15x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 15x23
+              RenderSVGInlineText {#text} at (37,10) size 14x23
+                chunk 1 text run 1 at (47.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
+    RenderSVGRect {rect} at (4,4) size 52x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=5.00] [width=50.00] [height=280.00]
+    RenderSVGRect {rect} at (74,4) size 127x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=75.00] [y=5.00] [width=125.00] [height=280.00]
+    RenderSVGRect {rect} at (74,4) size 127x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=75.00] [y=5.00] [width=125.00] [height=280.00]
+    RenderSVGRect {rect} at (209,4) size 282x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=210.00] [y=5.00] [width=280.00] [height=280.00]
+    RenderSVGText {text} at (24,302) size 451x23 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 451x23
+        chunk 1 (middle anchor) text run 1 at (24.52,320.00) startOffset 0 endOffset 57 width 450.97: "All text fragments in each red box need to look identical"

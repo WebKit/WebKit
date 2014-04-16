@@ -1,0 +1,23 @@
+layer at (0,0) size 800x1813
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1813
+  RenderBlock {HTML} at (0,0) size 800x1813
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 22x19
+        text run at (0,0) width 22: "foo"
+      RenderTable {TABLE} at (668,0) size 116x1805
+        RenderTableSection {TBODY} at (0,0) size 116x1805
+          RenderTableRow {TR} at (0,2) size 116x998
+            RenderTableCell {TD} at (2,2) size 112x82 [r=0 c=0 rs=1 cs=1]
+              RenderBR {BR} at (1,1) size 0x19
+              RenderText {#text} at (1,21) size 103x59
+                text run at (1,21) width 85: "Create a cool"
+                text run at (1,41) width 103: "home page with"
+                text run at (1,61) width 20: "the"
+          RenderTableRow {TR} at (0,1002) size 116x801
+            RenderTableCell {TD} at (2,1002) size 112x62 [r=1 c=0 rs=1 cs=1]
+              RenderBR {BR} at (1,1) size 0x19
+              RenderText {#text} at (1,21) size 96x39
+                text run at (1,21) width 91: "Get organized"
+                text run at (1,41) width 96: "online with the"
+      RenderText {#text} at (0,0) size 0x0

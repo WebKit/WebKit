@@ -1,0 +1,16 @@
+
+Video loaded
+
+EXPECTED (video.clientWidth == '320'), OBSERVED '300' FAIL
+EXPECTED (video.clientHeight == '240'), OBSERVED '150' FAIL
+EXPECTED (video.videoWidth == '320') OK
+EXPECTED (video.videoHeight == '240') OK
+
+Poster loaded
+
+EXPECTED (video.clientWidth == '320'), OBSERVED '300' FAIL
+EXPECTED (video.clientHeight == '240'), OBSERVED '150' FAIL
+EXPECTED (video.videoWidth == '320') OK
+EXPECTED (video.videoHeight == '240') OK
+END OF TEST
+

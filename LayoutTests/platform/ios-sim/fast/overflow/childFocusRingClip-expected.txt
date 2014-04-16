@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 250x45 clip at (8,8) size 250x30 scrollWidth 332
+  RenderBlock {DIV} at (0,0) size 250x45
+    RenderBlock {DIV} at (0,0) size 250x30
+      RenderInline {A} at (0,0) size 327x19
+        RenderText {#text} at (5,5) size 327x19
+          text run at (5,5) width 327: "focused overflow:auto text that doesn't fit in its div"
+      RenderText {#text} at (0,0) size 0x0

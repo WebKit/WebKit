@@ -1,0 +1,32 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 6 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 384x19
+          text run at (0,0) width 384: "This tests the visual position at the end of an editable block."
+      RenderBlock {P} at (0,36) size 784x40
+        RenderText {#text} at (0,0) size 729x39
+          text run at (0,0) width 601: "When the document ended with a <br>, there were visual positions at both [br, 0] and [br, 1]. "
+          text run at (600,0) width 129: "This would produce"
+          text run at (0,20) width 390: "inconsistent behavior when editing at the end of a document."
+      RenderBlock {DIV} at (0,92) size 784x72 [border: (2px solid #AAAAFF)]
+        RenderBlock {DIV} at (2,2) size 780x24 [border: (2px solid #FFAAAA)]
+          RenderText {#text} at (2,2) size 92x19
+            text run at (2,2) width 92: "paragraph one"
+        RenderBlock {DIV} at (2,26) size 780x24 [border: (2px solid #FFAAAA)]
+          RenderText {#text} at (2,2) size 92x19
+            text run at (2,2) width 92: "paragraph two"
+        RenderBlock (anonymous) at (2,50) size 780x20
+          RenderText {#text} at (0,0) size 8x19
+            text run at (0,0) width 8: "x"
+caret: position 1 of child 5 {#text} of child 5 {DIV} of body

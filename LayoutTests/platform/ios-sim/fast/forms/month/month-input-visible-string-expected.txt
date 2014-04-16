@@ -1,0 +1,7 @@
+The user-visible values of month input fields should be localized if the platform has a LocalizedDate implementation. Otherwise, they should be in the HTML5 formats.
+
+month: value='2011-04' visible='April 2011'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

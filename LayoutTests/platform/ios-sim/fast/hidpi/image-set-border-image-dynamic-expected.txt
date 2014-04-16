@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 779x59
+          text run at (0,0) width 775: "This test passes if the div below is a blue 100px square when the deviceScaleFactor is 1, and if it is a 100px green square"
+          text run at (0,20) width 779: "when the deviceScaleFactor is 2. When run in the test harness, this test is distinct from image-set-as-background, because"
+          text run at (0,40) width 515: "it ensures that the green image loads dynamically when the scale factor changes."
+      RenderBlock {DIV} at (0,60) size 106x106 [border: (3px none #000000)]
+        RenderText {#text} at (3,3) size 8x19
+          text run at (3,3) width 8: "1"

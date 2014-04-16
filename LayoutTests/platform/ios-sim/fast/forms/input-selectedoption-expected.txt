@@ -1,0 +1,17 @@
+Test for the selectedOption attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL input.selectedOption should be null (of type object). Was undefined (of type undefined).
+FAIL input.selectedOption should be null (of type object). Was undefined (of type undefined).
+FAIL input.selectedOption should be null (of type object). Was undefined (of type undefined).
+FAIL input.selectedOption should be null (of type object). Was undefined (of type undefined).
+FAIL input.selectedOption should be [object HTMLOptionElement] (of type object). Was undefined (of type undefined).
+FAIL input.selectedOption should be [object HTMLOptionElement] (of type object). Was undefined (of type undefined).
+FAIL input.selectedOption should be null (of type object). Was undefined (of type undefined).
+FAIL input.selectedOption should be null (of type object). Was undefined (of type undefined).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+           

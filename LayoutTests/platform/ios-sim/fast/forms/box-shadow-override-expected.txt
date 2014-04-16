@@ -1,0 +1,84 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 400x19
+          text run at (0,0) width 400: "Tests that box shadow is not applied to Aqua-themed controls."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 260x19
+          text run at (0,0) width 260: "You should not see any red on this page."
+      RenderBlock {DIV} at (0,72) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderDeprecatedFlexibleBox {DIV} at (6,3) size 123x14
+            RenderBlock {DIV} at (0,7) size 0x0
+            RenderBlock {DIV} at (0,0) size 123x14
+            RenderBlock {DIV} at (123,7) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,97) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderDeprecatedFlexibleBox {DIV} at (6,3) size 123x14
+            RenderBlock {DIV} at (0,7) size 0x0
+            RenderBlock {DIV} at (0,0) size 123x14
+            RenderBlock {DIV} at (123,7) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,122) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderDeprecatedFlexibleBox {DIV} at (6,3) size 123x14
+            RenderBlock {DIV} at (0,7) size 0x0
+            RenderBlock {DIV} at (0,0) size 123x14
+            RenderBlock {DIV} at (123,7) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,147) size 784x40
+        RenderBlock {INPUT} at (2,13) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (20,12) size 4x19
+          text run at (20,12) width 4: " "
+        RenderBlock {INPUT} at (26,13) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (44,12) size 4x19
+          text run at (44,12) width 4: " "
+        RenderSlider {INPUT} at (50,11) size 129x16 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 129x16
+            RenderBlock {DIV} at (0,0) size 113x16
+              RenderBlock {DIV} at (56,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+            RenderBlock {DIV} at (113,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+        RenderText {#text} at (181,12) size 4x19
+          text run at (181,12) width 4: " "
+        RenderFileUploadControl {INPUT} at (187,13) size 233x20 "no file selected"
+          RenderButton {INPUT} at (0,0) size 83x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (12,3) size 59x14
+              RenderText at (0,0) size 59x14
+                text run at (0,0) width 59: "Choose File"
+        RenderText {#text} at (422,12) size 4x19
+          text run at (422,12) width 4: " "
+        RenderButton {INPUT} at (428,2) size 100x36 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (21,6) size 58x24
+            RenderText at (0,0) size 58x24
+              text run at (0,0) width 58: "Button"
+        RenderText {#text} at (530,12) size 4x19
+          text run at (530,12) width 4: " "
+        RenderButton {INPUT} at (536,13) size 56x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (12,3) size 32x14
+            RenderText at (0,0) size 32x14
+              text run at (0,0) width 32: "Button"
+        RenderText {#text} at (594,12) size 4x19
+          text run at (594,12) width 4: " "
+        RenderButton {INPUT} at (598,21) size 27x9 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,1) size 15x7
+            RenderText at (0,0) size 15x7
+              text run at (0,0) width 15: "Button"
+        RenderText {#text} at (625,12) size 4x19
+          text run at (625,12) width 4: " "
+        RenderButton {BUTTON} at (631,2) size 100x36 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (21,6) size 58x24
+            RenderText {#text} at (0,0) size 58x24
+              text run at (0,0) width 58: "Button"
+        RenderText {#text} at (0,0) size 0x0
+layer at (16,85) size 123x14
+  RenderBlock {DIV} at (0,0) size 123x14
+    RenderText {#text} at (0,0) size 35x14
+      text run at (0,0) width 35: "Search"
+layer at (16,110) size 123x14
+  RenderBlock {DIV} at (0,0) size 123x14
+layer at (16,135) size 123x14
+  RenderBlock {DIV} at (0,0) size 123x14

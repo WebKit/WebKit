@@ -1,0 +1,55 @@
+<html>
+<head>
+    <title>TextArea auto-sizing test</title>
+    <script type="text/javascript">
+        
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+                
+        function doTest() 
+        {
+            if (!window.testRunner)
+                return;
+
+            if (!window.eventSender)
+                return;
+
+            // Enable autosizing
+            testRunner.setTextAutosizingEnabled(true);
+            
+            var obj = document.getElementById('test');
+            var oldHeight = obj.offsetHeight;
+            
+            eventSender.mouseMoveTo(obj.offsetLeft+10, obj.offsetTop+20);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        
+            eventSender.keyDown("\n")
+            eventSender.keyDown('A');
+            eventSender.keyDown('B');
+            eventSender.keyDown('\n');
+            
+            // Textarea heigth shouldn't change after we add new lines.
+            document.getElementById("result").innerHTML= obj.offsetHeight == oldHeight ? 'SUCCESS' : 'FAIL';
+            
+            testRunner.dumpAsText();
+            testRunner.notifyDone();
+        }
+    </script>
+</head>
+
+<body onload="doTest()">
+<textarea id="test" rows="12" style="width:100%">
+    a
+    b
+    c
+    d
+    e
+    f
+    g
+    h
+    i
+</textarea>
+<div id="result"></div>
+</body>
+</html>

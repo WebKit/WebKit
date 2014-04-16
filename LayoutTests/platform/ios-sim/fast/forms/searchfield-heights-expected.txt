@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 377x19
+        text run at (0,0) width 377: "This tests that aqua-style search fields do not honor height."
+      RenderBR {BR} at (376,15) size 1x0
+      RenderTextControl {INPUT} at (0,122) size 75x6 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderDeprecatedFlexibleBox {DIV} at (4,0) size 67x6
+          RenderBlock {DIV} at (0,3) size 0x0
+          RenderBlock {DIV} at (0,2) size 67x2
+          RenderBlock {DIV} at (67,3) size 0x0
+      RenderText {#text} at (75,113) size 4x19
+        text run at (75,113) width 4: " "
+      RenderTextControl {INPUT} at (81,103) size 183x40 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderDeprecatedFlexibleBox {DIV} at (8,4) size 167x31
+          RenderBlock {DIV} at (0,15) size 0x0
+          RenderBlock {DIV} at (0,6) size 167x19
+          RenderBlock {DIV} at (167,15) size 0x0
+      RenderText {#text} at (266,113) size 4x19
+        text run at (266,113) width 4: " "
+      RenderTextControl {INPUT} at (272,20) size 329x200 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderDeprecatedFlexibleBox {DIV} at (14,6) size 301x185
+          RenderBlock {DIV} at (0,92) size 0x0
+          RenderBlock {DIV} at (0,76) size 301x33
+          RenderBlock {DIV} at (301,92) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (12,132) size 67x2 scrollHeight 8
+  RenderBlock {DIV} at (0,0) size 67x2
+    RenderText {#text} at (0,0) size 12x8
+      text run at (0,0) width 12: "mini"
+layer at (97,121) size 167x19
+  RenderBlock {DIV} at (0,0) size 167x19
+    RenderText {#text} at (0,0) size 36x19
+      text run at (0,0) width 36: "small"
+layer at (294,110) size 301x33
+  RenderBlock {DIV} at (0,0) size 301x33
+    RenderText {#text} at (0,0) size 85x33
+      text run at (0,0) width 85: "regular"

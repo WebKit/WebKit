@@ -1,0 +1,188 @@
+layer at (0,0) size 820x825
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x825
+  RenderBlock {HTML} at (0,0) size 800x825
+    RenderBody {BODY} at (0,0) size 800x825
+      RenderBlock {DIV} at (0,0) size 820x275
+        RenderBlock {DIV} at (10,10) size 800x25
+          RenderText {#text} at (0,1) size 33x19
+            text run at (0,1) width 33: "Text:"
+          RenderTextControl {INPUT} at (34,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBlock {DIV} at (10,35) size 800x25
+          RenderText {#text} at (0,1) size 66x19
+            text run at (0,1) width 66: "Password:"
+          RenderTextControl {INPUT} at (67,2) size 137x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBlock {DIV} at (10,60) size 800x24
+          RenderButton {INPUT} at (2,2) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (12,3) size 35x14
+              RenderText at (0,0) size 35x14
+                text run at (0,0) width 35: "Submit"
+          RenderText {#text} at (62,1) size 5x19
+            text run at (62,1) width 5: " "
+          RenderButton {BUTTON} at (68,2) size 67x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (12,3) size 43x14
+              RenderText {#text} at (0,0) size 43x14
+                text run at (0,0) width 43: "Click Me"
+        RenderBlock {DIV} at (10,84) size 800x86
+          RenderText {#text} at (0,0) size 55x19
+            text run at (0,0) width 55: "Buttons:"
+          RenderBR {BR} at (54,0) size 1x19
+          RenderBlock {INPUT} at (2,23) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (21,22) size 66x19
+            text run at (21,22) width 66: "Check me"
+          RenderBR {BR} at (86,22) size 1x19
+          RenderBlock {INPUT} at (2,45) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (21,44) size 67x19
+            text run at (21,44) width 67: "Floor wax"
+          RenderBR {BR} at (87,44) size 1x19
+          RenderBlock {INPUT} at (2,67) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (21,66) size 102x19
+            text run at (21,66) width 102: "Dessert topping"
+        RenderBlock {DIV} at (10,170) size 800x24
+          RenderText {#text} at (0,1) size 40x19
+            text run at (0,1) width 40: "Lists: "
+          RenderMenuList {SELECT} at (41,2) size 87x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (6,3) size 74x14
+              RenderText at (0,0) size 54x14
+                text run at (0,0) width 54: "Strawberry"
+          RenderText {#text} at (129,1) size 5x19
+            text run at (129,1) width 5: " "
+          RenderMenuList {SELECT} at (135,2) size 87x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (6,3) size 74x14
+              RenderBR at (0,0) size 0x14 [bgcolor=#FFFFFF02]
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (10,194) size 800x71
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,275) size 820x275 [color=#FFFFFF] [bgcolor=#000000]
+        RenderBlock {DIV} at (10,10) size 800x25
+          RenderText {#text} at (0,1) size 33x19
+            text run at (0,1) width 33: "Text:"
+          RenderTextControl {INPUT} at (34,2) size 136x22 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBlock {DIV} at (10,35) size 800x25
+          RenderText {#text} at (0,1) size 66x19
+            text run at (0,1) width 66: "Password:"
+          RenderTextControl {INPUT} at (67,2) size 137x22 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBlock {DIV} at (10,60) size 800x24
+          RenderButton {INPUT} at (2,2) size 59x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (12,3) size 35x14
+              RenderText at (0,0) size 35x14
+                text run at (0,0) width 35: "Submit"
+          RenderText {#text} at (62,1) size 5x19
+            text run at (62,1) width 5: " "
+          RenderButton {BUTTON} at (68,2) size 67x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (12,3) size 43x14
+              RenderText {#text} at (0,0) size 43x14
+                text run at (0,0) width 43: "Click Me"
+        RenderBlock {DIV} at (10,84) size 800x86
+          RenderText {#text} at (0,0) size 55x19
+            text run at (0,0) width 55: "Buttons:"
+          RenderBR {BR} at (54,0) size 1x19
+          RenderBlock {INPUT} at (2,23) size 17x16 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (21,22) size 66x19
+            text run at (21,22) width 66: "Check me"
+          RenderBR {BR} at (86,22) size 1x19
+          RenderBlock {INPUT} at (2,45) size 17x16 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (21,44) size 67x19
+            text run at (21,44) width 67: "Floor wax"
+          RenderBR {BR} at (87,44) size 1x19
+          RenderBlock {INPUT} at (2,67) size 17x16 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (21,66) size 102x19
+            text run at (21,66) width 102: "Dessert topping"
+        RenderBlock {DIV} at (10,170) size 800x24
+          RenderText {#text} at (0,1) size 40x19
+            text run at (0,1) width 40: "Lists: "
+          RenderMenuList {SELECT} at (41,2) size 87x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (6,3) size 74x14
+              RenderText at (0,0) size 54x14
+                text run at (0,0) width 54: "Strawberry"
+          RenderText {#text} at (129,1) size 5x19
+            text run at (129,1) width 5: " "
+          RenderMenuList {SELECT} at (135,2) size 87x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (6,3) size 74x14
+              RenderBR at (0,0) size 0x14 [bgcolor=#FFFFFF02]
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (10,194) size 800x71
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,550) size 820x275 [bgcolor=#808080]
+        RenderBlock {DIV} at (10,10) size 800x25
+          RenderText {#text} at (0,1) size 33x19
+            text run at (0,1) width 33: "Text:"
+          RenderTextControl {INPUT} at (34,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBlock {DIV} at (10,35) size 800x25
+          RenderText {#text} at (0,1) size 66x19
+            text run at (0,1) width 66: "Password:"
+          RenderTextControl {INPUT} at (67,2) size 137x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBlock {DIV} at (10,60) size 800x24
+          RenderButton {INPUT} at (2,2) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (12,3) size 35x14
+              RenderText at (0,0) size 35x14
+                text run at (0,0) width 35: "Submit"
+          RenderText {#text} at (62,1) size 5x19
+            text run at (62,1) width 5: " "
+          RenderButton {BUTTON} at (68,2) size 67x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (12,3) size 43x14
+              RenderText {#text} at (0,0) size 43x14
+                text run at (0,0) width 43: "Click Me"
+        RenderBlock {DIV} at (10,84) size 800x86
+          RenderText {#text} at (0,0) size 55x19
+            text run at (0,0) width 55: "Buttons:"
+          RenderBR {BR} at (54,0) size 1x19
+          RenderBlock {INPUT} at (2,23) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (21,22) size 66x19
+            text run at (21,22) width 66: "Check me"
+          RenderBR {BR} at (86,22) size 1x19
+          RenderBlock {INPUT} at (2,45) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (21,44) size 67x19
+            text run at (21,44) width 67: "Floor wax"
+          RenderBR {BR} at (87,44) size 1x19
+          RenderBlock {INPUT} at (2,67) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderText {#text} at (21,66) size 102x19
+            text run at (21,66) width 102: "Dessert topping"
+        RenderBlock {DIV} at (10,170) size 800x24
+          RenderText {#text} at (0,1) size 40x19
+            text run at (0,1) width 40: "Lists: "
+          RenderMenuList {SELECT} at (41,2) size 87x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (6,3) size 74x14
+              RenderText at (0,0) size 54x14
+                text run at (0,0) width 54: "Strawberry"
+          RenderText {#text} at (129,1) size 5x19
+            text run at (129,1) width 5: " "
+          RenderMenuList {SELECT} at (135,2) size 87x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderBlock (anonymous) at (6,3) size 74x14
+              RenderBR at (0,0) size 0x14 [bgcolor=#FFFFFF02]
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (10,194) size 800x71
+          RenderText {#text} at (0,0) size 0x0
+layer at (51,15) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (84,40) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (12,196) size 272x62 clip at (13,197) size 270x60
+  RenderTextControl {TEXTAREA} at (2,2) size 272x62 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 266x28
+      RenderText {#text} at (3,0) size 43x28
+        text run at (3,0) width 43: "Textarea"
+        text run at (45,0) width 1: " "
+        text run at (3,14) width 19: "      "
+layer at (51,290) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (84,315) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (12,471) size 272x62 clip at (13,472) size 270x60
+  RenderTextControl {TEXTAREA} at (2,2) size 272x62 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 266x28
+      RenderText {#text} at (3,0) size 43x28
+        text run at (3,0) width 43: "Textarea"
+        text run at (45,0) width 1: " "
+        text run at (3,14) width 19: "      "
+layer at (51,565) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (84,590) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (12,746) size 272x62 clip at (13,747) size 270x60
+  RenderTextControl {TEXTAREA} at (2,2) size 272x62 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 266x28
+      RenderText {#text} at (3,0) size 43x28
+        text run at (3,0) width 43: "Textarea"
+        text run at (45,0) width 1: " "
+        text run at (3,14) width 19: "      "

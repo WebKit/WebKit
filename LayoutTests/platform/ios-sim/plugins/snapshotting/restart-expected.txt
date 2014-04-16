@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,-1) size 459x19
+          text run at (0,-1) width 459: "This test forces a plugin to snapshot immediately, then tries to restart it."
+      RenderBlock (anonymous) at (0,33) size 784x150
+        RenderEmbeddedObject {EMBED} at (0,0) size 300x150
+        RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,101 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 761x39
+          RenderInline {A} at (0,0) size 312x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 312x19
+              text run at (54,0) width 312: "https://bugs.webkit.org/show_bug.cgi?id=34147"
+          RenderText {#text} at (365,0) size 761x39
+            text run at (365,0) width 396: " If @font-face does not provide an explicit italic/bold variant,"
+            text run at (0,20) width 96: "regular is used"
+        RenderText {#text} at (96,20) size 4x19
+          text run at (96,20) width 4: "."
+      RenderBlock {P} at (0,56) size 784x40
+        RenderText {#text} at (0,0) size 336x19
+          text run at (0,0) width 336: "Checks if WebKit font matching algorithm matches "
+        RenderInline {A} at (0,0) size 169x19 [color=#0000EE]
+          RenderText {#text} at (335,0) size 169x19
+            text run at (335,0) width 169: "the latest CSS3 Fonts WD"
+        RenderText {#text} at (503,0) size 751x39
+          text run at (503,0) width 248: ". If the test passes, all 14 glyphs below"
+          text run at (0,20) width 157: "should be black squares:"
+      RenderBlock (anonymous) at (0,112) size 784x20
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (0,2) size 16x16
+            text run at (0,2) width 16: "A"
+        RenderText {#text} at (16,0) size 4x19
+          text run at (16,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (20,2) size 16x16
+            text run at (20,2) width 16: "A"
+        RenderText {#text} at (36,0) size 4x19
+          text run at (36,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (40,2) size 16x16
+            text run at (40,2) width 16: "A"
+        RenderText {#text} at (56,0) size 4x19
+          text run at (56,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (60,2) size 16x16
+            text run at (60,2) width 16: "A"
+        RenderText {#text} at (76,0) size 4x19
+          text run at (76,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (80,2) size 16x16
+            text run at (80,2) width 16: "A"
+        RenderText {#text} at (96,0) size 4x19
+          text run at (96,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (100,2) size 16x16
+            text run at (100,2) width 16: "A"
+        RenderText {#text} at (116,0) size 4x19
+          text run at (116,0) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (120,2) size 16x16
+            text run at (120,2) width 16: "A"
+        RenderText {#text} at (136,0) size 4x19
+          text run at (136,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (140,2) size 16x16
+            text run at (140,2) width 16: "A"
+        RenderText {#text} at (156,0) size 4x19
+          text run at (156,0) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (160,2) size 16x16
+            text run at (160,2) width 16: "A"
+        RenderText {#text} at (176,0) size 4x19
+          text run at (176,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 17x16
+          RenderText {#text} at (180,2) size 17x16
+            text run at (180,2) width 17: "A"
+        RenderText {#text} at (197,0) size 4x19
+          text run at (197,0) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (201,2) size 16x16
+            text run at (201,2) width 16: "A"
+        RenderText {#text} at (217,0) size 4x19
+          text run at (217,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (221,2) size 16x16
+            text run at (221,2) width 16: "A"
+        RenderText {#text} at (237,0) size 4x19
+          text run at (237,0) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (241,2) size 16x16
+            text run at (241,2) width 16: "A"
+        RenderText {#text} at (257,0) size 4x19
+          text run at (257,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (261,2) size 16x16
+            text run at (261,2) width 16: "A"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

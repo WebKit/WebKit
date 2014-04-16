@@ -1,0 +1,42 @@
+Test seeking by very small increments.
+
+EVENT(canplaythrough)
+
+** Seeking by 0.0004
+EVENT(canplaythrough)
+
+** Seeking by 0.0002
+EVENT(seeking)
+EVENT(seeking)
+EVENT(seeked)
+
+** Seeking by 0.0001
+EVENT(seeking)
+EVENT(seeked)
+
+** Seeking by 0.00005
+EVENT(seeking)
+EVENT(seeked)
+
+** Seeking by 0.000025
+EVENT(seeking)
+EVENT(seeked)
+
+** Seeking by 0.0000125
+EVENT(seeking)
+EVENT(seeked)
+
+** Seeking by 0.00000625
+EVENT(seeking)
+EVENT(seeked)
+
+** Seeking by 0.000003125
+EVENT(seeking)
+EVENT(seeked)
+
+** Seeking by 0.0000015625
+EVENT(seeking)
+EVENT(seeked)
+
+END OF TEST
+

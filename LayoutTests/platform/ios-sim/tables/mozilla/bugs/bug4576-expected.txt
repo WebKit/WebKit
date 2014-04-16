@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 600x446
+        RenderTableSection {TBODY} at (0,0) size 600x446
+          RenderTableRow {TR} at (0,2) size 600x442
+            RenderTableCell {TD} at (2,222) size 98x2 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (102,2) size 32x442 [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 30x440
+            RenderTableCell {TD} at (136,62) size 462x322 [r=0 c=2 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 460x230
+                RenderTableSection {TBODY} at (0,0) size 460x230
+                  RenderTableRow {TR} at (0,2) size 460x226
+                    RenderTableCell {TD} at (2,68) size 252x93 [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 250x91
+                        RenderTableSection {TBODY} at (0,0) size 250x91
+                          RenderTableRow {TR} at (0,2) size 250x87
+                            RenderTableCell {TD} at (2,2) size 246x87 [r=0 c=0 rs=1 cs=1]
+                              RenderImage {IMG} at (1,1) size 93x85
+                              RenderText {#text} at (97,1) size 126x59
+                                text run at (97,1) width 122: "Text text, text: text"
+                                text run at (97,21) width 126: "text text; text. Text,"
+                                text run at (97,41) width 68: "text text...."
+                    RenderTableCell {TD} at (256,2) size 202x226 [r=0 c=1 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 200x224 [border: (10px outset #808080)]
+                        RenderTableSection {TBODY} at (10,10) size 180x204
+                          RenderTableRow {TR} at (0,2) size 180x200
+                            RenderTableCell {TD} at (2,100) size 176x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,231) size 460x40
+                RenderBR {BR} at (0,0) size 0x19
+                RenderText {#text} at (0,20) size 108x19
+                  text run at (0,20) width 108: "This is bug 2904"
+              RenderTable {TABLE} at (1,271) size 62x50 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 60x48
+                  RenderTableRow {TR} at (0,2) size 60x44
+                    RenderTableCell {TD} at (2,7) size 22x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 18x30 [border: (1px outset #808080)]
+                        RenderTableSection {TBODY} at (1,1) size 16x28
+                          RenderTableRow {TR} at (0,2) size 16x24
+                            RenderTableCell {TD} at (2,2) size 12x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 8x19
+                                text run at (2,2) width 8: "x"
+                    RenderTableCell {TD} at (26,2) size 32x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderBlock {DIV} at (2,2) size 48x40 [border: (10px groove #008000)]
+                        RenderText {#text} at (10,10) size 8x19
+                          text run at (10,10) width 8: "x"

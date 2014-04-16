@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 722x19
+          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 306x19
+              text run at (54,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=13774"
+          RenderText {#text} at (359,0) size 417x19
+            text run at (359,0) width 5: " "
+            text run at (363,0) width 413: "REGRESSION: Crash emailing blog entry using Google Reader"
+        RenderText {#text} at (775,0) size 5x19
+          text run at (775,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "SUCCESS"
+      RenderBlock (anonymous) at (0,72) size 784x1
+        RenderImage {IMG} at (0,0) size 1x1
+        RenderText {#text} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,73) size 2x2
+        RenderTableSection {TBODY} at (0,0) size 2x2
+          RenderTableRow {TR} at (0,0) size 2x0
+          RenderTableRow {TR} at (0,0) size 2x2
+            RenderTableCell {TD} at (0,0) size 2x2 [r=1 c=0 rs=1 cs=1]

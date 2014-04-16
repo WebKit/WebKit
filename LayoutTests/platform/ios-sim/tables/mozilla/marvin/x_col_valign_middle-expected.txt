@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x275
+  RenderBlock {html} at (0,0) size 800x275
+    RenderBody {body} at (8,16) size 784x251
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 169x19
+          text run at (0,0) width 169: "COL VALIGN=MIDDLE"
+      RenderTable {table} at (0,36) size 720x215 [border: (1px outset #808080)]
+        RenderTableCol {colgroup} at (0,0) size 0x0
+          RenderTableCol {col} at (0,0) size 0x0
+          RenderTableCol {col} at (0,0) size 0x0
+        RenderTableSection (anonymous) at (1,1) size 718x213
+          RenderTableRow {tr} at (0,2) size 718x209
+            RenderTableCell {td} at (2,2) size 204x209 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {img} at (2,2) size 200x200
+            RenderTableCell {td} at (208,94) size 508x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 504x19
+                text run at (2,2) width 372: "The middle of this text should be vertically aligned to the "
+                text run at (373,2) width 133: "middle of the image."

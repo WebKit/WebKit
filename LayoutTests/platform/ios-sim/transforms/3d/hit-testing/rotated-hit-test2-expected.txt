@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 15: TypeError: 'null' is not an object (evaluating 'hit.id')
+Element at 170, 250 has id "left": PASS
+Element at 260, 170 has id "top": PASS
+

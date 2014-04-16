@@ -1,0 +1,35 @@
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<style>
+@-webkit-keyframes bounce {
+    from {
+        -webkit-transform: translate3d(0,0,0);
+    }
+    to {
+        -webkit-transform: translate3d(200px,0,0);
+    }
+}
+
+#animator {
+    position: relative;
+    top: 0px;
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    -webkit-animation-name: bounce;
+    -webkit-animation-duration: 80ms;
+    -webkit-animation-iteration-count: infinite;
+}
+</style>
+<script>
+function sawIterationInChild() {
+    // Tell our parent that we animated.
+    window.parent.sawIteration();
+}
+
+function startTest() {
+    var animator = document.getElementById("animator");
+    animator.addEventListener("webkitAnimationIteration", sawIterationInChild, false);
+}
+window.addEventListener("load", startTest, false);
+</script>
+<div id="animator"></div>

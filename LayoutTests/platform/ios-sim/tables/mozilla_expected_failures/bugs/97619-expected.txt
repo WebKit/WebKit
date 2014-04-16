@@ -1,0 +1,65 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x132 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x130
+          RenderTableRow {TR} at (0,2) size 782x126
+            RenderTableCell {TD} at (2,2) size 76x126 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 72x79
+                text run at (2,2) width 60: "check for"
+                text run at (2,22) width 56: "handling"
+                text run at (2,42) width 14: "of"
+                text run at (2,62) width 72: "whitespace"
+              RenderImage {IMG} at (2,82) size 20x17
+              RenderText {#text} at (22,84) size 69x39
+                text run at (22,84) width 49: " around"
+                text run at (2,104) width 63: "the image"
+            RenderTableCell {TD} at (80,53) size 700x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 12x19
+                text run at (2,2) width 12: "X"
+      RenderBlock {HR} at (0,140) size 77x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,150) size 784x167 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x165
+          RenderTableRow {TR} at (0,2) size 782x161
+            RenderTableCell {TD} at (2,2) size 24x161 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 16x79
+                text run at (2,2) width 15: "aa"
+                text run at (2,22) width 16: "bb"
+                text run at (2,42) width 15: "cc"
+                text run at (2,62) width 16: "dd"
+              RenderImage {IMG} at (2,82) size 20x17
+              RenderText {#text} at (2,99) size 16x59
+                text run at (2,99) width 15: "ee"
+                text run at (2,119) width 11: "ff"
+                text run at (2,139) width 16: "gg"
+            RenderTableCell {TD} at (28,70) size 752x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 12x19
+                text run at (2,2) width 12: "X"
+      RenderBlock {HR} at (0,325) size 77x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,335) size 784x52 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x50
+          RenderTableRow {TR} at (0,2) size 782x46
+            RenderTableCell {TD} at (2,2) size 217x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 213x19
+                text run at (2,2) width 213: "checkforhandlingofnowhitespace"
+              RenderImage {IMG} at (2,22) size 20x17
+              RenderText {#text} at (22,24) size 108x19
+                text run at (22,24) width 108: " aroundtheimage"
+            RenderTableCell {TD} at (221,13) size 559x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 12x19
+                text run at (2,2) width 12: "X"
+      RenderBlock {HR} at (0,395) size 77x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,405) size 784x32 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x30
+          RenderTableRow {TR} at (0,2) size 782x26
+            RenderTableCell {TD} at (2,2) size 340x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,4) size 213x19
+                text run at (2,4) width 213: "checkforhandlingofnowhitespace"
+              RenderImage {IMG} at (214,2) size 20x17
+              RenderText {#text} at (234,4) size 104x19
+                text run at (234,4) width 104: "aroundtheimage"
+            RenderTableCell {TD} at (344,3) size 436x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 12x19
+                text run at (2,2) width 12: "X"

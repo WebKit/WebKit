@@ -1,0 +1,6 @@
+Test that a remote video element can not use a local poster
+
+This test requires the run-webkit httpd server (run-webkit-httpd)
+
+SUCCESS: Local image failed to load from remote page.
+

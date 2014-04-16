@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 460x166
+        RenderTableSection {TBODY} at (0,0) size 460x166
+          RenderTableRow {TR} at (0,2) size 460x162
+            RenderTableCell {TD} at (2,2) size 102x162 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 29x19
+                text run at (1,1) width 29: "The "
+              RenderInline {A} at (0,0) size 99x159 [color=#0000EE]
+                RenderText {#text} at (29,1) size 99x159
+                  text run at (29,1) width 69: "text in this"
+                  text run at (1,21) width 99: "anchor element"
+                  text run at (1,41) width 88: "should spawn"
+                  text run at (1,61) width 92: "multiple lines."
+                  text run at (1,81) width 99: "This test shows"
+                  text run at (1,101) width 90: "how multiline"
+                  text run at (1,121) width 69: "link would"
+                  text run at (1,141) width 29: "look"
+              RenderText {#text} at (29,141) size 29x19
+                text run at (29,141) width 29: "like."
+            RenderTableCell {TD} at (106,62) size 352x42 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 348x39
+                text run at (1,1) width 348: "This is some filler text. This is some filler text. This is"
+                text run at (1,21) width 253: "some filler text. This is some filler text."

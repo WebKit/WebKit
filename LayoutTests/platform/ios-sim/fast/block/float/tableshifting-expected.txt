@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x327
+  RenderBlock {HTML} at (0,0) size 800x327
+    RenderBody {BODY} at (8,8) size 784x311
+      RenderBlock {DIV} at (0,0) size 385x311
+        RenderBlock {DIV} at (0,0) size 385x20
+          RenderText {#text} at (0,0) size 382x19
+            text run at (0,0) width 382: "The yellow block should be to the right of the green block."
+        RenderBlock (floating) {DIV} at (0,20) size 100x100 [bgcolor=#008000]
+        RenderImage {IMG} at (100,36) size 395x275 [bgcolor=#FFFF00]

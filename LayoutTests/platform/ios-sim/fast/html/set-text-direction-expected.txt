@@ -1,0 +1,13 @@
+Test that WebKit changes the dir attribute and sends an input event when we change the text direction.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL sentInputEvent should be true. Was false.
+FAIL sentInputEvent should be true. Was false.
+FAIL sentInputEvent should be true. Was false.
+FAIL sentInputEvent should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x20
+  RenderBlock {svg} at (0,0) size 800x20
+    RenderInline {desc} at (0,0) size 237x19
+      RenderText {#text} at (0,0) size 237x19
+        text run at (0,0) width 237: "There should be no red on this page."
+    RenderText {#text} at (0,0) size 0x0
+    RenderInline {rect} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,56 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [color=#444444]
+      RenderTable {TABLE} at (0,0) size 734x365
+        RenderTableSection {TBODY} at (0,0) size 734x365
+          RenderTableRow {TR} at (0,2) size 734x361
+            RenderTableCell {TD} at (2,2) size 242x361 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {H1} at (1,1) size 240x38
+                RenderText {#text} at (0,1) size 177x36
+                  text run at (0,1) width 177: "Blue-on-blue"
+              RenderBlock (anonymous) at (1,60) size 240x20
+                RenderText {#text} at (0,0) size 145x19
+                  text run at (0,0) width 145: "Background color first"
+              RenderBlock {DIV} at (17,96) size 98x98 [color=#0000FF] [bgcolor=#0000FF] [border: (1px solid #000000)]
+                RenderText {#text} at (19,1) size 60x60
+                  text run at (19,1) width 60: "Az"
+              RenderBlock (anonymous) at (1,210) size 240x20
+                RenderText {#text} at (0,0) size 96x19
+                  text run at (0,0) width 96: "Text color first"
+              RenderBlock {DIV} at (17,246) size 98x98 [color=#0000FF] [bgcolor=#0000FF] [border: (1px solid #000000)]
+                RenderText {#text} at (19,1) size 60x60
+                  text run at (19,1) width 60: "Az"
+            RenderTableCell {TD} at (246,2) size 242x361 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {H1} at (1,1) size 240x38
+                RenderText {#text} at (0,1) size 164x36
+                  text run at (0,1) width 164: "Blue-on-red"
+              RenderBlock (anonymous) at (1,60) size 240x20
+                RenderText {#text} at (0,0) size 145x19
+                  text run at (0,0) width 145: "Background color first"
+              RenderBlock {DIV} at (17,96) size 98x98 [color=#0000FF] [bgcolor=#FF0000] [border: (1px solid #000000)]
+                RenderText {#text} at (19,1) size 60x60
+                  text run at (19,1) width 60: "Az"
+              RenderBlock (anonymous) at (1,210) size 240x20
+                RenderText {#text} at (0,0) size 96x19
+                  text run at (0,0) width 96: "Text color first"
+              RenderBlock {DIV} at (17,246) size 98x98 [color=#0000FF] [bgcolor=#FF0000] [border: (1px solid #000000)]
+                RenderText {#text} at (19,1) size 60x60
+                  text run at (19,1) width 60: "Az"
+            RenderTableCell {TD} at (490,2) size 242x361 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {H1} at (1,1) size 240x38
+                RenderText {#text} at (0,1) size 177x36
+                  text run at (0,1) width 177: "Blue-on-blue"
+              RenderBlock (anonymous) at (1,60) size 240x20
+                RenderText {#text} at (0,0) size 145x19
+                  text run at (0,0) width 145: "Background color first"
+              RenderBlock {DIV} at (17,96) size 98x98 [color=#0000FF] [bgcolor=#0000FF] [border: (1px solid #000000)]
+                RenderText {#text} at (19,1) size 60x60
+                  text run at (19,1) width 60: "Az"
+              RenderBlock (anonymous) at (1,210) size 240x20
+                RenderText {#text} at (0,0) size 96x19
+                  text run at (0,0) width 96: "Text color first"
+              RenderBlock {DIV} at (17,246) size 98x98 [color=#0000FF] [bgcolor=#0000FF] [border: (1px solid #000000)]
+                RenderText {#text} at (19,1) size 60x60
+                  text run at (19,1) width 60: "Az"

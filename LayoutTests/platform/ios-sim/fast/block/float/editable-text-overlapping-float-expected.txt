@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 258x19
+          text run at (0,0) width 258: "Text should not overlap the blue square."
+      RenderBlock {DIV} at (0,36) size 406x210 [border: (3px solid #800000)]
+        RenderText {#text} at (5,5) size 394x99
+          text run at (5,5) width 367: "Fusce at ante. In hac habitasse platea dictumst. Maecenas"
+          text run at (371,5) width 5: " "
+          text run at (5,25) width 390: "iaculis nonummy magna. Vivamus a tortor vitae enim ornare"
+          text run at (394,25) width 5: " "
+          text run at (5,45) width 354: "consectetuer. Lorem ipsum dolor sit amet, consectetuer"
+          text run at (358,45) width 5: " "
+          text run at (5,65) width 370: "adipiscing elit. Etiam et ipsum. Nam consectetuer mi eget"
+          text run at (374,65) width 5: " "
+          text run at (5,85) width 37: "velit. "
+        RenderBlock (floating) {DIV} at (337,85) size 64x64 [bgcolor=#ADD8E6]
+        RenderText {#text} at (41,85) size 348x119
+          text run at (41,85) width 256: "Sed nec risus vitae felis auctor ultricies."
+          text run at (296,85) width 5: " "
+          text run at (5,105) width 332: "Pellentesque aliquet quam ac lorem. Duis interdum,"
+          text run at (336,105) width 1: " "
+          text run at (5,125) width 324: "elit in ultricies auctor, erat pede sollicitudin libero,"
+          text run at (328,125) width 5: " "
+          text run at (5,145) width 265: "non ultrices odio elit in augue. Ut egestas"
+          text run at (269,145) width 5: " "
+          text run at (5,165) width 344: "bibendum lectus. Class aptent taciti sociosqu ad litora"
+          text run at (348,165) width 5: " "
+          text run at (5,185) width 342: "torquent per conubia nostra, per inceptos hymenaeos."

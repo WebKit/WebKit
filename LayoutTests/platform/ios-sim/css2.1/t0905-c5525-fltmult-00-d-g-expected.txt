@@ -1,0 +1,74 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x234
+  RenderBlock {HTML} at (0,0) size 800x234
+    RenderBody {BODY} at (8,16) size 784x208
+      RenderBlock {P} at (0,0) size 784x20 [color=#000080]
+        RenderText {#text} at (0,0) size 660x19
+          text run at (0,0) width 393: "Below you should see four blocks side by side followed by a "
+          text run at (392,0) width 268: "matching cross section of the four blocks."
+      RenderBlock (floating) {DIV} at (0,46) size 140x132 [bgcolor=#FFFF00] [border: (20px solid #000000)]
+        RenderBlock {P} at (40,56) size 60x20
+          RenderText {#text} at (6,0) size 48x19
+            text run at (6,0) width 48: "Yellow"
+      RenderBlock (floating) {DIV} at (160,46) size 140x132 [color=#FFFFFF] [bgcolor=#0000FF] [border: (20px solid #000000)]
+        RenderBlock {P} at (40,56) size 60x20
+          RenderText {#text} at (14,0) size 32x19
+            text run at (14,0) width 32: "Blue"
+      RenderBlock (floating) {DIV} at (320,46) size 140x132 [bgcolor=#FF0000] [border: (20px solid #000000)]
+        RenderBlock {P} at (40,56) size 60x20
+          RenderText {#text} at (17,0) size 26x19
+            text run at (17,0) width 26: "Red"
+      RenderBlock (floating) {DIV} at (480,46) size 140x132 [color=#FFFFFF] [bgcolor=#008000] [border: (20px solid #000000)]
+        RenderBlock {P} at (40,56) size 60x20
+          RenderText {#text} at (10,0) size 40x19
+            text run at (10,0) width 40: "Green"
+      RenderBlock {DIV} at (0,188) size 784x20
+        RenderTable {TABLE} at (0,0) size 620x20
+          RenderTableSection {TBODY} at (0,0) size 620x20
+            RenderTableRow {TR} at (0,0) size 620x20
+              RenderTableCell {TD} at (0,0) size 20x20 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (20,0) size 100x20 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (120,0) size 20x20 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (140,0) size 20x20 [bgcolor=#FFFFFF] [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (160,0) size 20x20 [bgcolor=#000000] [r=0 c=4 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (180,0) size 100x20 [bgcolor=#0000FF] [r=0 c=5 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (280,0) size 20x20 [bgcolor=#000000] [r=0 c=6 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (300,0) size 20x20 [bgcolor=#FFFFFF] [r=0 c=7 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (320,0) size 20x20 [bgcolor=#000000] [r=0 c=8 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (340,0) size 100x20 [bgcolor=#FF0000] [r=0 c=9 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (440,0) size 20x20 [bgcolor=#000000] [r=0 c=10 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (460,0) size 20x20 [bgcolor=#FFFFFF] [r=0 c=11 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (480,0) size 20x20 [bgcolor=#000000] [r=0 c=12 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (500,0) size 100x20 [bgcolor=#008000] [r=0 c=13 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "
+              RenderTableCell {TD} at (600,0) size 20x20 [bgcolor=#000000] [r=0 c=14 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "

@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 740x56
+  RenderBlock (relative positioned) {DIV} at (0,0) size 740x56
+    RenderBlock {DIV} at (36,0) size 704x56 [border: (10px solid #00000000) (18px solid #00000000)]
+      RenderBlock {DIV} at (18,5) size 676x45
+        RenderText {#text} at (0,0) size 665x45
+          text run at (0,0) width 657: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec ac odio. Fusce facilisis. Praesent eleifend dapibus mi. Proin"
+          text run at (0,15) width 665: "nulla nulla, hendrerit vitae, condimentum non, iaculis sed, sem. Aliquam a turpis nec ante elementum dignissim. Suspendisse"
+          text run at (0,30) width 155: "potenti. Suspendisse potenti."
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,32) size 32x32
+  RenderImage {IMG} at (0,24) size 32x32
+layer at (52,68) size 740x32
+  RenderBlock (relative positioned) {DIV} at (44,60) size 740x32
+    RenderBlock {DIV} at (306,0) size 398x26 [border: (10px solid #00000000) (18px solid #00000000) (10px solid #00000000)]
+      RenderBlock {DIV} at (10,5) size 370x15
+        RenderText {#text} at (0,0) size 370x15
+          text run at (0,0) width 370: "Aliquam a turpis nec ante elementum dignissim. Suspendisse potenti."
+    RenderText {#text} at (0,0) size 0x0
+layer at (760,68) size 32x32
+  RenderImage {IMG} at (708,0) size 32x32
+layer at (8,104) size 740x32
+  RenderBlock (relative positioned) {DIV} at (0,96) size 740x32
+    RenderBlock {DIV} at (36,0) size 177x26 [border: (10px solid #00000000) (18px solid #00000000)]
+      RenderBlock {DIV} at (18,5) size 149x15
+        RenderText {#text} at (0,0) size 149x15
+          text run at (0,0) width 149: "Lorem ipsum dolor sit amet."
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,104) size 32x32
+  RenderImage {IMG} at (0,0) size 32x32
+layer at (52,140) size 740x156
+  RenderBlock (relative positioned) {DIV} at (44,132) size 740x156
+    RenderBlock {DIV} at (0,0) size 704x156 [border: (10px solid #00000000) (18px solid #00000000) (10px solid #00000000)]
+      RenderBlock {DIV} at (10,5) size 676x145
+        RenderBlock {DIV} at (0,0) size 676x100 [bgcolor=#EEEEEE]
+          RenderText {#text} at (511,0) size 165x15
+            text run at (511,0) width 165: "Look at me, I'm an attachment!"
+        RenderText {#text} at (19,100) size 665x45
+          text run at (19,100) width 657: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec ac odio. Fusce facilisis. Praesent eleifend dapibus mi. Proin"
+          text run at (11,115) width 665: "nulla nulla, hendrerit vitae, condimentum non, iaculis sed, sem. Aliquam a turpis nec ante elementum dignissim. Suspendisse"
+          text run at (521,130) width 155: "potenti. Suspendisse potenti."
+    RenderText {#text} at (0,0) size 0x0
+layer at (760,264) size 32x32
+  RenderImage {IMG} at (708,124) size 32x32

@@ -1,0 +1,12 @@
+Test constructor for WebKitCSSMatrix. <rdar://problem/6481690>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix) is 'matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)'
+PASS WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix(new WebKitCSSMatrix)) is 'matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)'
+PASS WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix('matrix3d(1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000)')) is 'matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

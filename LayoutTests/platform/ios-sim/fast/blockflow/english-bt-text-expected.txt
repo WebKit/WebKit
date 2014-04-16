@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x504 [border: (2px solid #000000)]
+      RenderBlock {DIV} at (2,18) size 780x204 [border: (2px solid #800000)]
+        RenderBlock (floating) {DIV} at (678,2) size 100x100 [bgcolor=#00FF00]
+        RenderText {#text} at (2,2) size 544x19
+          text run at (2,2) width 307: "Here is some text in a horizontal-bt block flow. "
+          text run at (308,2) width 238: "The block direction is bottom-to-top."
+        RenderBR {BR} at (545,6) size 1x0
+        RenderText {#text} at (2,22) size 225x19
+          text run at (2,22) width 225: "This line should also be horizontal."

@@ -1,0 +1,82 @@
+layer at (0,0) size 800x697
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x697
+  RenderBlock {HTML} at (0,0) size 800x697
+    RenderBody {BODY} at (8,8) size 784x681 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 363x19
+          text run at (0,0) width 363: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,36) size 784x60
+        RenderText {#text} at (0,0) size 352x60
+          text run at (0,0) width 219: "P:first-line {color: green;}"
+          text run at (218,0) width 1: " "
+          text run at (0,15) width 266: ".two:first-line {font-size: 200%;}"
+          text run at (265,15) width 1: " "
+          text run at (0,30) width 352: ".three:first-line {font-variant: small-caps;}"
+          text run at (351,30) width 1: " "
+          text run at (0,45) width 0: " "
+      RenderBlock {HR} at (0,109) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,127) size 784x60
+        RenderText {#text} at (0,0) size 779x59
+          text run at (0,0) width 431: "The first line of this paragraph, and only that one, should be green. "
+          text run at (430,0) width 329: "If this precise combination does not occur, then the"
+          text run at (0,20) width 193: "user agent has failed this test. "
+          text run at (192,20) width 587: "Remember that in order to ensure a complete test, the paragraph must be displayed on more"
+          text run at (0,40) width 87: "than one line."
+      RenderBlock {P} at (0,203) size 784x78
+        RenderText {#text} at (0,1) size 767x76
+          text run at (0,1) width 767: "The first line of this paragraph, and only that one, should be"
+          text run at (0,38) width 221: "a larger font size as well as green. "
+          text run at (220,38) width 521: "If this precise combination does not occur, then the user agent has failed this test."
+          text run at (0,58) width 678: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
+      RenderBlock {P} at (0,297) size 784x80
+        RenderText {#text} at (0,0) size 782x59
+          text run at (0,0) width 612: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
+          text run at (611,0) width 155: "Thus, if the first line is"
+          text run at (0,20) width 782: "not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this test (although"
+          text run at (0,40) width 170: "the problem might be that "
+        RenderInline {CODE} at (0,0) size 79x15
+          RenderText {#text} at (169,44) size 79x15
+            text run at (169,44) width 79: "small-caps"
+        RenderText {#text} at (247,40) size 767x39
+          text run at (247,40) width 229: " is not supported by your browser). "
+          text run at (475,40) width 292: "This is extra text included for the purposes of"
+          text run at (0,60) width 402: "making the paragraph long enough to have more than one line."
+      RenderTable {TABLE} at (0,393) size 784x288 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x286
+          RenderTableRow {TR} at (0,0) size 782x28
+            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 163x19
+                RenderText {#text} at (4,4) size 163x19
+                  text run at (4,4) width 163: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,28) size 782x258
+            RenderTableCell {TD} at (0,143) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,28) size 770x258 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x60
+                RenderText {#text} at (0,0) size 759x59
+                  text run at (0,0) width 431: "The first line of this paragraph, and only that one, should be green. "
+                  text run at (430,0) width 329: "If this precise combination does not occur, then the"
+                  text run at (0,20) width 193: "user agent has failed this test. "
+                  text run at (192,20) width 550: "Remember that in order to ensure a complete test, the paragraph must be displayed on"
+                  text run at (0,40) width 124: "more than one line."
+              RenderBlock {P} at (4,80) size 762x78
+                RenderText {#text} at (0,1) size 760x76
+                  text run at (0,1) width 729: "The first line of this paragraph, and only that one, should"
+                  text run at (0,38) width 240: "be a larger font size as well as green. "
+                  text run at (239,38) width 521: "If this precise combination does not occur, then the user agent has failed this test."
+                  text run at (0,58) width 678: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
+              RenderBlock {P} at (4,174) size 762x80
+                RenderText {#text} at (0,0) size 752x59
+                  text run at (0,0) width 612: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
+                  text run at (611,0) width 141: "Thus, if the first line"
+                  text run at (0,20) width 731: "is not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this test"
+                  text run at (0,40) width 235: "(although the problem might be that "
+                RenderInline {CODE} at (0,0) size 79x15
+                  RenderText {#text} at (234,44) size 79x15
+                    text run at (234,44) width 79: "small-caps"
+                RenderText {#text} at (312,40) size 754x39
+                  text run at (312,40) width 230: " is not supported by your browser). "
+                  text run at (541,40) width 213: "This is extra text included for the"
+                  text run at (0,60) width 480: "purposes of making the paragraph long enough to have more than one line."

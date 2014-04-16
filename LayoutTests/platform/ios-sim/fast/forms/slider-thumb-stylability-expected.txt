@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 241x19
+          text run at (0,0) width 241: "This tests styling of the slider thumb."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 264x19
+          text run at (0,0) width 264: "You should see a green 20\x{D7}20px square."
+      RenderBlock (anonymous) at (0,72) size 784x24
+        RenderSlider {INPUT} at (2,2) size 129x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (10,82) size 20x20
+  RenderBlock (relative positioned) {DIV} at (0,0) size 20x20 [bgcolor=#008000]

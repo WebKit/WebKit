@@ -1,0 +1,24 @@
+Test that video play(), pause() and webkitEnterFullScreen() should not work unless a user clicked on the play button.
+
+EVENT(canplaythrough)
+
+* No user gesture initiated
+RUN(video.play())
+TEST(video.webkitEnterFullScreen()) THROWS(DOMException.INVALID_STATE_ERR) OK
+EXPECTED (video.paused == 'true') OK
+
+* User gesture initiated
+EVENT(canplaythrough)
+
+* No user gesture initiated
+RUN(video.play())
+EXPECTED (video.paused == 'true'), OBSERVED 'false' FAIL
+
+* User gesture initiated
+EVENT(playing)
+RUN(video.pause())
+EVENT(pause)
+EXPECTED (video.paused == 'true') OK
+RUN(video.webkitEnterFullScreen())
+END OF TEST
+

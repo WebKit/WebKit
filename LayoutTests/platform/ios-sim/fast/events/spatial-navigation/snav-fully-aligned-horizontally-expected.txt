@@ -1,0 +1,46 @@
+test
+H                               ow Now Brown Cow
+Ho                                w Now Brown Cow
+How                                 Now Brown Cow
+How N                                ow Brown Cow
+How No                                w Brown Cow
+How Now                                 Brown Cow
+How Now B                                rown Cow
+How Now Br                                own Cow
+How Now Bro                                wn Cow
+How Now Brow                                n Cow
+How Now Brown                                 Cow
+How Now Brown C                                ow
+How Now Brown Co                                w
+How Now Brown Cow
+
+test
+FAIL document.activeElement.getAttribute("id") should be 1. Was start.
+FAIL document.activeElement.getAttribute("id") should be 2. Was start.
+FAIL document.activeElement.getAttribute("id") should be 4. Was start.
+FAIL document.activeElement.getAttribute("id") should be 3. Was start.
+FAIL document.activeElement.getAttribute("id") should be 5. Was start.
+FAIL document.activeElement.getAttribute("id") should be 6. Was start.
+FAIL document.activeElement.getAttribute("id") should be 8. Was start.
+FAIL document.activeElement.getAttribute("id") should be 7. Was start.
+FAIL document.activeElement.getAttribute("id") should be 9. Was start.
+FAIL document.activeElement.getAttribute("id") should be 10. Was start.
+FAIL document.activeElement.getAttribute("id") should be 12. Was start.
+FAIL document.activeElement.getAttribute("id") should be 11. Was start.
+FAIL document.activeElement.getAttribute("id") should be 13. Was start.
+FAIL document.activeElement.getAttribute("id") should be 14. Was start.
+FAIL document.activeElement.getAttribute("id") should be 16. Was start.
+FAIL document.activeElement.getAttribute("id") should be 15. Was start.
+FAIL document.activeElement.getAttribute("id") should be 17. Was start.
+FAIL document.activeElement.getAttribute("id") should be 18. Was start.
+FAIL document.activeElement.getAttribute("id") should be 20. Was start.
+FAIL document.activeElement.getAttribute("id") should be 19. Was start.
+FAIL document.activeElement.getAttribute("id") should be 21. Was start.
+FAIL document.activeElement.getAttribute("id") should be 22. Was start.
+FAIL document.activeElement.getAttribute("id") should be 24. Was start.
+FAIL document.activeElement.getAttribute("id") should be 23. Was start.
+FAIL document.activeElement.getAttribute("id") should be 25. Was start.
+FAIL document.activeElement.getAttribute("id") should be 26. Was start.
+FAIL document.activeElement.getAttribute("id") should be 27. Was start.
+FAIL document.activeElement.getAttribute("id") should be end. Was start.
+

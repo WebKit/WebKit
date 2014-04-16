@@ -1,0 +1,61 @@
+ 1) Select one item with mouse (no previous selection)
+ 2) Select one item with mouse (with previous selection)
+ 3) Select one item with the keyboard (no previous selection)
+ 4) Select one item with the keyboard (with previous selection)
+ 5) Attempt to select an item cmd-clicking
+ 6) Attempt to select a range shift-clicking
+ 7) Attempt to select a range with the keyboard
+ 8) Select one item with mouse (no previous selection)
+ 9) Select one item with mouse (with previous selection)
+ 10) Select one item with the keyboard (no previous selection)
+ 11) Select one item with the keyboard (with previous selection)
+ 12) Select an item cmd-clicking
+ 13) Select a range shift-clicking
+ 14) Select a range with the keyboard
+Results:
+Test 1 Failed
+     Expected: true,false,false,false,false
+     Actual: false,false,false,false,false
+
+Test 2 Failed
+     Expected: true,false,false,false,false
+     Actual: false,true,false,false,false
+
+Test 3 Failed
+     Expected: false,false,false,false,true
+     Actual: false,false,false,false,false
+
+Test 4 Passed
+Test 5 Failed
+     Expected: false,true,false,false,false
+     Actual: false,false,true,false,false
+
+Test 6 Failed
+     Expected: false,true,false,false,false
+     Actual: false,false,false,true,false
+
+Test 7 Passed
+Test 8 Failed
+     Expected: true,false,false,false,false
+     Actual: false,false,false,false,false
+
+Test 9 Failed
+     Expected: true,false,false,false,false
+     Actual: false,true,false,false,false
+
+Test 10 Failed
+     Expected: false,false,false,false,true
+     Actual: false,false,false,false,false
+
+Test 11 Passed
+Test 12 Failed
+     Expected: false,true,true,false,false
+     Actual: false,false,true,false,false
+
+Test 13 Failed
+     Expected: true,true,true,true,false
+     Actual: true,false,false,false,false
+
+Test 14 Failed
+     Expected: false,true,true,false,false
+     Actual: false,false,true,false,false

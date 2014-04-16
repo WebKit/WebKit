@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x206
+  RenderBlock {HTML} at (0,0) size 800x206
+    RenderBody {BODY} at (8,16) size 784x174
+      RenderTable {TABLE} at (16,0) size 64x88 [border: (3px solid #FF0000)]
+        RenderTableSection {TBODY} at (3,3) size 58x82
+          RenderTableRow {TR} at (0,2) size 54x82
+            RenderTableCell {TD} at (2,2) size 54x78 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 26x74 [color=#FFFFFF] [bgcolor=#800080]
+                RenderTableSection {TBODY} at (0,0) size 26x74
+                  RenderTableRow {TR} at (0,2) size 22x74
+                    RenderTableCell {TD} at (2,2) size 22x70 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 19x68
+                        text run at (1,1) width 68: "Table One"
+              RenderTable {TABLE} at (27,1) size 26x76 [color=#FFFFFF] [bgcolor=#800080]
+                RenderTableSection {TBODY} at (0,0) size 26x76
+                  RenderTableRow {TR} at (0,2) size 22x76
+                    RenderTableCell {TD} at (2,2) size 22x72 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 19x70
+                        text run at (1,1) width 70: "Table Two"
+      RenderTable {TABLE} at (16,104) size 52x70 [border: (3px solid #FF0000)]
+        RenderTableSection {TBODY} at (3,3) size 46x64
+          RenderTableRow {TR} at (0,2) size 42x64
+            RenderTableCell {TD} at (2,2) size 42x60 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 20x58 [color=#FFFFFF] [bgcolor=#800080]
+                RenderText {#text} at (0,0) size 19x55
+                  text run at (0,0) width 55: "Div One"
+              RenderBlock {DIV} at (21,1) size 20x58 [color=#FFFFFF] [bgcolor=#800080]
+                RenderText {#text} at (0,0) size 19x58
+                  text run at (0,0) width 58: "Div Two"

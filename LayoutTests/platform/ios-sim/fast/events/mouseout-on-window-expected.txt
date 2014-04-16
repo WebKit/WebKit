@@ -1,0 +1,2 @@
+This test ensures that mouse out events are sent to the window.
+FAIL: No mouseout was sent.

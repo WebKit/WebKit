@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 349x174
+    RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGText {text} at (150,11) size 21x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 21x12
+        chunk 1 text run 1 at (150.00,20.00) startOffset 0 endOffset 3 width 20.00: "SVG"
+    RenderSVGText {text} at (150,31) size 21x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 21x12
+        chunk 1 text run 1 at (150.00,40.00) startOffset 0 endOffset 3 width 20.00: "SVG"
+    RenderSVGContainer {g} at (10,130) size 339x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,140.00)}]
+      RenderSVGText {text} at (0,-10) size 339x44 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 289x14
+          RenderSVGInlineText {#text} at (0,0) size 289x14
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 288.05: "For this test case to be successful, the"
+        RenderSVGInlineText {#text} at (288,0) size 8x14
+          chunk 1 text run 1 at (288.05,0.00) startOffset 0 endOffset 1 width 7.20: " "
+        RenderSVGTSpan {tspan} at (0,0) size 339x14
+          RenderSVGInlineText {#text} at (0,15) size 339x14
+            chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 47 width 338.46: "rect should be green and the texts equal size. "
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGTSpan {tspan} at (0,0) size 65x14
+          RenderSVGInlineText {#text} at (0,30) size 65x14
+            chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 64.81: "Bug 14926"
+        RenderSVGInlineText {#text} at (0,0) size 0x0

@@ -1,0 +1,206 @@
+CONSOLE MESSAGE: unable to open database (7 sqlite_open returned null)
+CONSOLE MESSAGE: unable to open database (7 sqlite_open returned null)
+CONSOLE MESSAGE: unable to open database (7 sqlite_open returned null)
+CONSOLE MESSAGE: unable to open database (7 sqlite_open returned null)
+CONSOLE MESSAGE: unable to open database (7 sqlite_open returned null)
+CONSOLE MESSAGE: unable to open database (7 sqlite_open returned null)
+CONSOLE MESSAGE: unable to open database (7 sqlite_open returned null)
+CONSOLE MESSAGE: unable to open database, failed to start transaction (3850 disk I/O error)
+Test that terminating the worker while it is performing synchronous file or database operations will not cause any crashes, asserts, etc.
+
+Starting test run.
+Waiting for all workers to exit.
+Testing interrupting: openDatabaseSync
+Starting workers.
+Started worker count: 1
+Started worker count: 2
+Started worker count: 3
+Started worker count: 4
+Started worker count: 5
+Started worker count: 6
+Started worker count: 7
+Started worker count: 8
+Started worker count: 9
+Started worker count: 10
+Started worker count: 11
+Started worker count: 12
+Started worker count: 13
+Started worker count: 14
+Started worker count: 15
+Started worker count: 16
+Started worker count: 17
+Started worker count: 18
+Started worker count: 19
+Started worker count: 20
+Started worker count: 21
+Started worker count: 22
+Started worker count: 23
+Started worker count: 24
+Started worker count: 25
+Started worker count: 26
+Started worker count: 27
+Started worker count: 28
+Started worker count: 29
+Started worker count: 30
+Running operation.
+Closed worker count: 1
+Closed worker count: 2
+Closed worker count: 3
+Closed worker count: 4
+Closed worker count: 5
+Closed worker count: 6
+Closed worker count: 7
+Closed worker count: 8
+Closed worker count: 9
+Closed worker count: 10
+Closed worker count: 11
+Closed worker count: 12
+Closed worker count: 13
+Closed worker count: 14
+Closed worker count: 15
+Closed worker count: 16
+Closed worker count: 17
+Closed worker count: 18
+Closed worker count: 19
+Closed worker count: 20
+Closed worker count: 21
+Closed worker count: 22
+Closed worker count: 23
+Closed worker count: 24
+Closed worker count: 25
+Closed worker count: 26
+Closed worker count: 27
+Closed worker count: 28
+Closed worker count: 29
+Closed worker count: 30
+Waiting for all workers to exit.
+Testing interrupting: requestFileSystemSync
+Starting workers.
+Started worker count: 1
+Started worker count: 2
+Started worker count: 3
+Started worker count: 4
+Started worker count: 5
+Started worker count: 6
+Started worker count: 7
+Started worker count: 8
+Started worker count: 9
+Started worker count: 10
+Started worker count: 11
+Started worker count: 12
+Started worker count: 13
+Started worker count: 14
+Started worker count: 15
+Started worker count: 16
+Started worker count: 17
+Started worker count: 18
+Started worker count: 19
+Started worker count: 20
+Started worker count: 21
+Started worker count: 22
+Started worker count: 23
+Started worker count: 24
+Started worker count: 25
+Started worker count: 26
+Started worker count: 27
+Started worker count: 28
+Started worker count: 29
+Started worker count: 30
+Running operation.
+Closed worker count: 1
+Closed worker count: 2
+Closed worker count: 3
+Closed worker count: 4
+Closed worker count: 5
+Closed worker count: 6
+Closed worker count: 7
+Closed worker count: 8
+Closed worker count: 9
+Closed worker count: 10
+Closed worker count: 11
+Closed worker count: 12
+Closed worker count: 13
+Closed worker count: 14
+Closed worker count: 15
+Closed worker count: 16
+Closed worker count: 17
+Closed worker count: 18
+Closed worker count: 19
+Closed worker count: 20
+Closed worker count: 21
+Closed worker count: 22
+Closed worker count: 23
+Closed worker count: 24
+Closed worker count: 25
+Closed worker count: 26
+Closed worker count: 27
+Closed worker count: 28
+Closed worker count: 29
+Closed worker count: 30
+Waiting for all workers to exit.
+Testing interrupting: fileSyncOperations
+Starting workers.
+Started worker count: 1
+Started worker count: 2
+Started worker count: 3
+Started worker count: 4
+Started worker count: 5
+Started worker count: 6
+Started worker count: 7
+Started worker count: 8
+Started worker count: 9
+Started worker count: 10
+Started worker count: 11
+Started worker count: 12
+Started worker count: 13
+Started worker count: 14
+Started worker count: 15
+Started worker count: 16
+Started worker count: 17
+Started worker count: 18
+Started worker count: 19
+Started worker count: 20
+Started worker count: 21
+Started worker count: 22
+Started worker count: 23
+Started worker count: 24
+Started worker count: 25
+Started worker count: 26
+Started worker count: 27
+Started worker count: 28
+Started worker count: 29
+Started worker count: 30
+Running operation.
+Closed worker count: 1
+Closed worker count: 2
+Closed worker count: 3
+Closed worker count: 4
+Closed worker count: 5
+Closed worker count: 6
+Closed worker count: 7
+Closed worker count: 8
+Closed worker count: 9
+Closed worker count: 10
+Closed worker count: 11
+Closed worker count: 12
+Closed worker count: 13
+Closed worker count: 14
+Closed worker count: 15
+Closed worker count: 16
+Closed worker count: 17
+Closed worker count: 18
+Closed worker count: 19
+Closed worker count: 20
+Closed worker count: 21
+Closed worker count: 22
+Closed worker count: 23
+Closed worker count: 24
+Closed worker count: 25
+Closed worker count: 26
+Closed worker count: 27
+Closed worker count: 28
+Closed worker count: 29
+Closed worker count: 30
+Waiting for all workers to exit.
+DONE
+

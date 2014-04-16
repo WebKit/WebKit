@@ -1,0 +1,105 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 218x19
+          text run at (0,0) width 218: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 764x39
+          RenderInline {A} at (0,0) size 355x19 [color=#0000EE]
+            RenderText {#text} at (217,0) size 355x19
+              text run at (217,0) width 355: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6888"
+          RenderText {#text} at (571,0) size 764x39
+            text run at (571,0) width 193: " Collapsed borders appear on"
+            text run at (0,20) width 319: "the wrong side or on the wrong cell in RTL tables"
+        RenderText {#text} at (318,20) size 5x19
+          text run at (318,20) width 5: "."
+      RenderBlock {P} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 374x19
+          text run at (0,0) width 374: "The RTL table should be a mirror image of the LTR table."
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,102) size 133x80
+        RenderTableSection {TBODY} at (0,0) size 133x80
+          RenderTableRow {TR} at (0,0) size 133x28
+            RenderTableCell {TD} at (0,0) size 67x28 [border: none (1px solid #000000) none] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (17,4) size 32x19
+                text run at (17,4) width 32: "RTL"
+            RenderTableCell {TD} at (67,0) size 66x28 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (17,4) size 32x19
+                text run at (17,4) width 32: "LTR"
+          RenderTableRow {TR} at (0,28) size 133x52
+            RenderTableCell {TD} at (0,28) size 67x52 [border: none (1px solid #000000) none] [r=1 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (4,4) size 58x44 [border: none (1px solid #0000FF) none (1px solid #FF0000)]
+                RenderTableCol {COLGROUP} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: none (2px dotted #008000) none (1px solid #000000)]
+                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#C0C0C0]
+                RenderTableSection {TBODY} at (1,0) size 56x44
+                  RenderTableRow {TR} at (0,0) size 56x22
+                    RenderTableCell {TD} at (44,0) size 12x22 [border: none] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,1) size 8x19
+                        text run at (2,1) width 8 RTL: "  "
+                    RenderTableCell {TD} at (33,0) size 11x22 [border: none] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,1) size 8x19
+                        text run at (2,1) width 8 RTL: "  "
+                    RenderTableCell {TD} at (11,0) size 22x22 [border: none] [r=0 c=2 rs=1 cs=2]
+                      RenderText {#text} at (12,1) size 8x19
+                        text run at (12,1) width 8 RTL: "  "
+                    RenderTableCell {TD} at (0,0) size 11x22 [border: none] [r=0 c=4 rs=1 cs=1]
+                      RenderText {#text} at (2,1) size 8x19
+                        text run at (2,1) width 8 RTL: "  "
+                  RenderTableRow {TR} at (0,22) size 56x22
+                    RenderTableCell {TD} at (44,22) size 12x22 [border: none (2px solid #800000) none] [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 8x19
+                        text run at (1,1) width 8 RTL: "  "
+                    RenderTableCell {TD} at (33,22) size 11x22 [border: none] [r=1 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,1) size 8x19
+                        text run at (2,1) width 8 RTL: "  "
+                    RenderTableCell {TD} at (21,22) size 12x22 [border: none] [r=1 c=2 rs=1 cs=1]
+                      RenderText {#text} at (2,1) size 8x19
+                        text run at (2,1) width 8 RTL: "  "
+                    RenderTableCell {TD} at (11,22) size 10x22 [r=1 c=3 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 8x19
+                        text run at (1,1) width 8 RTL: "  "
+                    RenderTableCell {TD} at (0,22) size 11x22 [border: none] [r=1 c=4 rs=1 cs=1]
+                      RenderText {#text} at (2,1) size 8x19
+                        text run at (2,1) width 8 RTL: "  "
+            RenderTableCell {TD} at (67,28) size 66x52 [r=1 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (4,4) size 58x44 [border: none (1px solid #FF0000) none (1px solid #0000FF)]
+                RenderTableCol {COLGROUP} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0
+                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: none (1px solid #000000) none (2px dotted #008000)]
+                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#C0C0C0]
+                RenderTableSection {TBODY} at (1,0) size 56x44
+                  RenderTableRow {TR} at (0,0) size 56x22
+                    RenderTableCell {TD} at (0,0) size 12x22 [border: none] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,1) size 8x19
+                        text run at (2,1) width 8: "  "
+                    RenderTableCell {TD} at (12,0) size 11x22 [border: none] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 8x19
+                        text run at (1,1) width 8: "  "
+                    RenderTableCell {TD} at (23,0) size 22x22 [border: none] [r=0 c=2 rs=1 cs=2]
+                      RenderText {#text} at (2,1) size 8x19
+                        text run at (2,1) width 8: "  "
+                    RenderTableCell {TD} at (45,0) size 11x22 [border: none] [r=0 c=4 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 8x19
+                        text run at (1,1) width 8: "  "
+                  RenderTableRow {TR} at (0,22) size 56x22
+                    RenderTableCell {TD} at (0,22) size 12x22 [border: none (2px solid #800000)] [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (3,1) size 8x19
+                        text run at (3,1) width 8: "  "
+                    RenderTableCell {TD} at (12,22) size 11x22 [border: none] [r=1 c=1 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 8x19
+                        text run at (1,1) width 8: "  "
+                    RenderTableCell {TD} at (23,22) size 11x22 [border: none] [r=1 c=2 rs=1 cs=1]
+                      RenderText {#text} at (2,1) size 8x19
+                        text run at (2,1) width 8: "  "
+                    RenderTableCell {TD} at (34,22) size 11x22 [border: none] [r=1 c=3 rs=1 cs=1]
+                      RenderText {#text} at (2,1) size 8x19
+                        text run at (2,1) width 8: "  "
+                    RenderTableCell {TD} at (45,22) size 11x22 [border: none] [r=1 c=4 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 8x19
+                        text run at (1,1) width 8: "  "

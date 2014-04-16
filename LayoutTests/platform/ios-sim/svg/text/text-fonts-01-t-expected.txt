@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {g} at (33,46) size 522x448
+      RenderSVGContainer {g} at (33,46) size 522x448
+        RenderSVGText {text} at (20,57) size 196x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 196x28
+            chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 17 width 195.89: "A serifed face \x{753B}\x{50CF}"
+        RenderSVGText {text} at (20,137) size 234x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 234x28
+            chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 20 width 233.40: "A sans-serif face \x{753B}\x{50CF}"
+        RenderSVGText {text} at (20,219) size 293x29 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 293x29
+            chunk 1 text run 1 at (20.00,240.00) startOffset 0 endOffset 19 width 292.84: "A mono (iW) face \x{753B}\x{50CF}"
+        RenderSVGContainer {g} at (66,46) size 489x318
+          RenderSVGText {text} at (40,28) size 189x27 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 189x27
+              chunk 1 text run 1 at (40.00,50.00) startOffset 0 endOffset 17 width 188.58: "A serifed face \x{753B}\x{50CF}"
+          RenderSVGText {text} at (40,107) size 234x29 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 234x29
+              chunk 1 text run 1 at (40.00,130.00) startOffset 0 endOffset 20 width 233.40: "A sans-serif face \x{753B}\x{50CF}"
+          RenderSVGText {text} at (40,189) size 293x29 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 293x29
+              chunk 1 text run 1 at (40.00,210.00) startOffset 0 endOffset 19 width 292.84: "A mono (iW) face \x{753B}\x{50CF}"
+        RenderSVGText {text} at (40,268) size 222x27 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 222x27
+            chunk 1 text run 1 at (40.00,290.00) startOffset 0 endOffset 22 width 221.98: "This must be displayed"
+    RenderSVGText {text} at (10,304) size 265x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 265x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+selection start: position 0 of child 0 {#text} of child 1 {text} of child 1 {g} of child 13 {g} of child 34 {svg} of document
+selection end:   position 16 of child 0 {#text} of child 15 {text} of child 34 {svg} of document

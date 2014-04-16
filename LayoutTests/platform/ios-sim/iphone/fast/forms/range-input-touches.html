@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/js/resources/js-test-post-function.js"></script>
+<!--
+  Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
+  should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
+  This template will generate an asynchronous style test by using the js-test-post-function script.
+  You will need to invoke isSuccessfullyParsed() in your test script when the test completes.
+-->
+<style>
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 500px; height: 20px;
+  background: black;
+  margin-top: 100px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: blue;
+  width: 200px;
+  height: 200px;
+}
+</style>
+</head>
+<body>
+<input id="slider" type="range">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+var sliderMovesCount = 0;
+var EXPECTED_SLIDER_MOVES = 3;
+
+var slider = document.getElementById("slider");
+var lastSliderValue = slider.value;
+slider.addEventListener("input", inputEventCallback, false);
+function inputEventCallback() {
+    testPassed("slider thumb moved");
+    sliderMovesCount++
+
+    // Ensure the value actually changed. For good measure.
+    if (lastSliderValue === slider.value)
+        testFailed("input event triggered but the value didn't change.");
+    else {
+        testPassed("value changed");
+        lastSliderValue = slider.value;
+    }
+
+    if (window.testRunner && sliderMovesCount === EXPECTED_SLIDER_MOVES) {
+        // If we've got here, we can safely say we were successfully parsed :) We need to
+        // call the isSucccessfullyParsed function to output the correct TEST COMPLETE
+        // footer message.
+        successfullyParsed = true;
+        isSuccessfullyParsed();
+        testRunner.notifyDone();
+    }
+}
+
+const aGoodY = 120;
+const FIRST_FINGER = 1;
+const SECOND_FINGER = 2;
+
+function sendTouchSequence()
+{
+    // iOS <input type="range"> uses identifier 0 as the "NoIdentifier".
+    // So swallow touch point 0 and ignore it from now on. Currently
+    // a 0 identifier cannot happen on iOS.
+    eventSender.addTouchPoint(0, 0);
+
+    debug("First finger down on the slider's thumb.");
+    eventSender.addTouchPoint(250, aGoodY);
+    eventSender.touchStart();
+
+    debug("Move that finger to the slider's left edge.");
+    debug("EXPECT SLIDER THUMB MOVE AND VALUE UPDATE");
+    eventSender.updateTouchPoint(FIRST_FINGER, 10, aGoodY);
+    eventSender.touchMove();
+
+    debug("Add a second finger on the slider's thumb.");
+    eventSender.addTouchPoint(20, aGoodY);
+    eventSender.touchStart();
+
+    debug("Move that second finger. It should not do anything.");
+    eventSender.updateTouchPoint(SECOND_FINGER, 50, aGoodY + 5);
+    eventSender.touchMove();
+    eventSender.updateTouchPoint(SECOND_FINGER, 400, aGoodY);
+    eventSender.touchMove();
+    eventSender.updateTouchPoint(SECOND_FINGER, 50, aGoodY);
+    eventSender.touchMove();
+
+    debug("Move the first finger.");
+    debug("EXPECT SLIDER THUMB MOVE AND VALUE UPDATE");
+    eventSender.updateTouchPoint(FIRST_FINGER, 250, aGoodY);
+    eventSender.touchMove();
+
+    debug("Release that second finger on the slider's thumb. It should not do anything.");
+    eventSender.releaseTouchPoint(SECOND_FINGER);
+    eventSender.touchEnd();
+
+    debug("Move the first finger.");
+    debug("EXPECT SLIDER THUMB MOVE AND VALUE UPDATE");
+    eventSender.updateTouchPoint(FIRST_FINGER, 10, aGoodY);
+    eventSender.touchMove(); // The test will end with this move.
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+if (window.eventSender) {
+    description("This tests touch events on a slider.");
+
+    lastEvent = null;
+    sendTouchSequence();
+} else {
+    debug("This test requires DumpRenderTree to send touch events.")
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 674x19
+          text run at (0,0) width 674: "This test passes if the custom scrollbar paints in the corrext spot, which is at the bottom of the purple div."
+layer at (8,50) size 304x550 clip at (9,51) size 287x533 scrollWidth 302 scrollHeight 1311
+  RenderBlock (positioned) {DIV} at (8,50) size 304x550 [border: (1px solid #FF0000)]
+    RenderBlock {DIV} at (1,412) size 15x900 [bgcolor=#008000]
+layer at (9,51) size 302x411 backgroundClip at (9,51) size 287x411 clip at (10,52) size 286x400 outlineClip at (9,51) size 287x533 scrollWidth 500
+  RenderBlock {DIV} at (1,1) size 302x411 [border: (1px solid #0000FF)]
+    RenderBlock {DIV} at (1,1) size 500x400 [bgcolor=#800080]

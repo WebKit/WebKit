@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderInline {BASE} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {A} at (0,0) size 468x19 [color=#0000EE]
+        RenderText {#text} at (0,0) size 0x0
+        RenderImage {IMG} at (0,0) size 468x60
+      RenderText {#text} at (0,0) size 0x0

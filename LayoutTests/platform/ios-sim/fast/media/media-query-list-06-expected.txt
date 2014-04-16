@@ -1,0 +1,7 @@
+Test the MediaQueryList interface: http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface.
+
+Testing queries that have no registered listener.
+
+Query result before changing view-mode: true
+Query result after changing view-mode: true
+

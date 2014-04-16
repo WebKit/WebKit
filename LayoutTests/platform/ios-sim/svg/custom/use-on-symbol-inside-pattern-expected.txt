@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 225x425
+  RenderSVGRoot {svg} at (8,5) size 205x197
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGPath {path} at (0,0) size 1x15 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -15 L 0 15"]
+        RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -15 C 0 -12.6667 1.66667 -11.5 5 -11.5"]
+        RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -15 C 0 -12.6667 -1.66667 -11.5 -5 -11.5"]
+        RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -9 C 0 -5 2.66667 -3 8 -3"]
+        RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -9 C 0 -5 -2.66667 -3 -8 -3"]
+        RenderSVGPath {path} at (0,0) size 10x8 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 0 C 0 4.66667 3.33333 7 10 7"]
+        RenderSVGPath {path} at (0,0) size 1x8 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 0 C 0 4.66667 -3.33333 7 -10 7"]
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGPath {path} at (0,5) size 1x10 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 15 L 0 5"]
+        RenderSVGPath {path} at (0,0) size 13x9 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 5 C -1.93923 7.10121 -5.09176 7.54205 -7.53298 6.0534 C -9.97421 4.56475 -11.0258 1.56025 -10.0457 -1.12585 C -9.06566 -3.81196 -6.3263 -5.43327 -3.5 -5 C -5.61622 -6.51984 -6.50972 -9.23171 -5.71141 -11.7118 C -4.91309 -14.1919 -2.60543 -15.8734 7.15493e-8 -15.8734 C 2.60543 -15.8734 4.91309 -14.1919 5.71141 -11.7118 C 6.50972 -9.23171 5.61622 -6.51983 3.5 -5 C 6.3263 -5.43327 9.06566 -3.81196 10.0457 -1.12585 C 11.0258 1.56025 9.97421 4.56475 7.53298 6.0534 C 5.09176 7.54205 1.93923 7.10121 7.15256e-7 5 Z"]
+      RenderSVGResourcePattern {pattern} [id="pat00"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+        RenderSVGContainer {use} at (2,3) size 16x24 [transform={m=((0.75,0.00)(0.00,0.75)) t=(10.00,15.00)}]
+          RenderSVGViewportContainer {svg} at (2,3) size 16x24
+            RenderSVGPath {path} at (9,3) size 2x24 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -15 L 0 15"]
+            RenderSVGPath {path} at (9,3) size 5x5 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -15 C 0 -12.6667 1.66667 -11.5 5 -11.5"]
+            RenderSVGPath {path} at (6,3) size 5x5 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -15 C 0 -12.6667 -1.66667 -11.5 -5 -11.5"]
+            RenderSVGPath {path} at (9,8) size 7x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -9 C 0 -5 2.66667 -3 8 -3"]
+            RenderSVGPath {path} at (4,8) size 7x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -9 C 0 -5 -2.66667 -3 -8 -3"]
+            RenderSVGPath {path} at (9,15) size 9x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 0 C 0 4.66667 3.33333 7 10 7"]
+            RenderSVGPath {path} at (2,15) size 9x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 0 C 0 4.66667 -3.33333 7 -10 7"]
+      RenderSVGResourcePattern {pattern} [id="pat01"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+        RenderSVGContainer {use} at (8,11) size 14x17 [transform={m=((0.50,0.00)(0.00,0.50)) t=(15.00,20.00)}]
+          RenderSVGViewportContainer {svg} at (8,11) size 14x17
+            RenderSVGPath {path} at (14,22) size 2x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 15 L 0 5"]
+            RenderSVGPath {path} at (8,11) size 14x14 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 5 C -1.93923 7.10121 -5.09176 7.54205 -7.53298 6.0534 C -9.97421 4.56475 -11.0258 1.56025 -10.0457 -1.12585 C -9.06566 -3.81196 -6.3263 -5.43327 -3.5 -5 C -5.61622 -6.51984 -6.50972 -9.23171 -5.71141 -11.7118 C -4.91309 -14.1919 -2.60543 -15.8734 7.15493e-8 -15.8734 C 2.60543 -15.8734 4.91309 -14.1919 5.71141 -11.7118 C 6.50972 -9.23171 5.61622 -6.51983 3.5 -5 C 6.3263 -5.43327 9.06566 -3.81196 10.0457 -1.12585 C 11.0258 1.56025 9.97421 4.56475 7.53298 6.0534 C 5.09176 7.54205 1.93923 7.10121 7.15256e-7 5 Z"]
+      RenderSVGPath {path} at (0,0) size 203x92 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 50 L 100 0 L 200 20 L 150 70 L 50 90 Z"]
+    RenderSVGContainer {g} at (8,5) size 205x97 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+      RenderSVGText {text} at (0,-5) size 68x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 68x19
+          chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 10 width 67.53: "coniferous"
+      RenderSVGContainer {use} at (8,8) size 205x94
+        RenderSVGPath {path} at (8,8) size 205x94 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=PATTERN] [id="pat00"]}] [data="M 0 50 L 100 0 L 200 20 L 150 70 L 50 90 Z"]
+    RenderSVGContainer {g} at (8,105) size 205x97 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,110.00)}]
+      RenderSVGText {text} at (0,-5) size 76x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 76x19
+          chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 10 width 75.51: "broadLeave"
+      RenderSVGContainer {use} at (8,108) size 205x94
+        RenderSVGPath {path} at (8,108) size 205x94 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=PATTERN] [id="pat01"]}] [data="M 0 50 L 100 0 L 200 20 L 150 70 L 50 90 Z"]

@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x215
+  RenderBlock {HTML} at (0,0) size 800x215
+    RenderBody {BODY} at (8,16) size 784x191
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 501x19
+          text run at (0,0) width 501: "You should see a reflected video below, rather than the red video background."
+layer at (8,52) size 300x155
+  RenderBlock {DIV} at (0,36) size 300x155
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,52) size 300x150
+  RenderEmbeddedObject {VIDEO} at (0,0) size 300x150 [bgcolor=#FF0000]
+layer at (8,52) size 300x150
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x150
+layer at (8,186) size 300x16
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,134) size 300x16
+    RenderButton {INPUT} at (0,0) size 22x16
+    RenderDeprecatedFlexibleBox {DIV} at (22,0) size 212x16
+      RenderSlider {INPUT} at (0,0) size 212x16
+        RenderFlexibleBox {DIV} at (2,0) size 208x16
+          RenderBlock {DIV} at (0,0) size 192x16
+            RenderBlock {DIV} at (0,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+          RenderBlock {DIV} at (192,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+    RenderButton {INPUT} at (234,0) size 22x16
+    RenderButton {INPUT} at (256,0) size 22x16
+    RenderButton {INPUT} at (278,0) size 22x16
+    RenderBlock {DIV} at (300,8) size 0x0

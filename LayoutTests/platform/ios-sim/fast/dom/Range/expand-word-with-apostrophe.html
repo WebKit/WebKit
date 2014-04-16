@@ -1,0 +1,20 @@
+<p>
+    This tests that word selection does not consider a RIGHT SINGLE QUOTATION MARK (&rsquo;) in the middle
+    of a word as a word boundary.
+</p>
+<p id="result">FAIL: Test did not run</p>
+<div id="target">And here&#8217;s your problem</div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var target = document.getElementById("target").firstChild;
+    var range = document.createRange();
+
+    range.setStart(target, 6);
+    range.setEnd(target, 6);
+    range.expand("word");
+    var rangeString = range.toString();
+    document.getElementById("result").textContent = (rangeString === "here\u2019s") ? "PASS" : "FAIL: after expanding to word boundaries, the range was \"" + rangeString + "\"";
+    target.parentNode.style.display = "none";
+</script>

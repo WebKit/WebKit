@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,2) size 48x23
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMasker {mask} [id="mask1"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+        RenderSVGText {text} at (10,2) size 48x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 48x23
+            chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 4 width 47.81: "PASS"
+      RenderSVGResourceMasker {mask} [id="mask2"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+        RenderSVGText {text}
+    RenderSVGRect {rect} at (10,2) size 48x23 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+      [masker="mask1"] RenderSVGResourceMasker {mask} at (10,2) size 48x23
+    RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+      [masker="mask2"] RenderSVGResourceMasker {mask} at (0,0) size 0x0

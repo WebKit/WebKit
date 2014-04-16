@@ -1,0 +1,13 @@
+Test for bugs cr 87473, 64882.
+
+This test verifies that we get the correct button on mouseover events in .which when entering a document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+FAIL document.events['A-no-press'].which should be 0. Was 1.
+FAIL document.events['B-left'].which should be 1. Threw exception TypeError: 'null' is not an object (evaluating 'document.events['B-left'].which')
+FAIL document.events['C-no-press'].which should be 0. Threw exception TypeError: 'null' is not an object (evaluating 'document.events['C-no-press'].which')
+FAIL document.events['D-middle'].which should be 2. Threw exception TypeError: 'null' is not an object (evaluating 'document.events['D-middle'].which')
+

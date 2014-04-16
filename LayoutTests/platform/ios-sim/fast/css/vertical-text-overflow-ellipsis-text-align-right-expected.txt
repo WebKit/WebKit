@@ -1,0 +1,93 @@
+layer at (0,0) size 800x2976
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2976
+  RenderBlock {HTML} at (0,0) size 800x2976
+    RenderBody {BODY} at (8,8) size 784x2948
+      RenderBlock {H3} at (0,0) size 784x23
+        RenderText {#text} at (0,0) size 84x22
+          text run at (0,0) width 84: "Single line"
+      RenderBlock {H3} at (0,371) size 784x23
+        RenderText {#text} at (0,0) size 80x22
+          text run at (0,0) width 80: "Multi line"
+      RenderBlock {H3} at (0,742) size 784x23
+        RenderText {#text} at (0,0) size 231x22
+          text run at (0,0) width 231: "Containing replaced content"
+      RenderBlock {H3} at (0,1113) size 784x23
+        RenderText {#text} at (0,0) size 395x22
+          text run at (0,0) width 395: "Containing replaced content blocking the ellipsis"
+      RenderBlock {H3} at (0,1484) size 784x23
+        RenderText {#text} at (0,0) size 200x22
+          text run at (0,0) width 200: "Right-To-Left single line"
+      RenderBlock {H3} at (0,1855) size 784x23
+        RenderText {#text} at (0,0) size 199x22
+          text run at (0,0) width 199: "Right-To-Left Multi line"
+      RenderBlock {H3} at (0,2226) size 784x23
+        RenderText {#text} at (0,0) size 344x22
+          text run at (0,0) width 344: "Right-To-Left containing replaced content"
+      RenderBlock {H3} at (0,2597) size 784x23
+        RenderText {#text} at (0,0) size 508x22
+          text run at (0,0) width 508: "Right-To-Left containing replaced content blocking the ellipsis"
+layer at (8,49) size 22x310 clip at (9,50) size 20x308 scrollHeight 739
+  RenderBlock {DIV} at (0,41) size 22x310 [border: (1px solid #000000)]
+    RenderText {#text} at (1,2) size 19x738
+      text run at (1,2) width 738: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+layer at (8,420) size 82x310 clip at (9,421) size 80x308 scrollHeight 739
+  RenderBlock {DIV} at (0,412) size 82x310 [border: (1px solid #000000)]
+    RenderText {#text} at (1,2) size 19x738
+      text run at (1,2) width 738: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (21,2) size 19x728
+      text run at (21,2) width 728: "orem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (41,2) size 19x720
+      text run at (41,2) width 720: "rem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (61,2) size 19x715
+      text run at (61,2) width 715: "em ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (0,0) size 0x0
+layer at (8,791) size 32x310 clip at (9,792) size 30x308 scrollHeight 768
+  RenderBlock {DIV} at (0,783) size 32x310 [border: (1px solid #000000)]
+    RenderText {#text} at (11,2) size 19x186
+      text run at (11,2) width 186: "Lorem ipsum dolor sit amet, "
+    RenderImage {IMG} at (1,188) size 25x25
+    RenderText {#text} at (11,212) size 19x557
+      text run at (11,212) width 556: " consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+layer at (8,1162) size 32x310 clip at (9,1163) size 30x308 scrollHeight 764
+  RenderBlock {DIV} at (0,1154) size 32x310 [border: (1px solid #000000)]
+    RenderText {#text} at (11,2) size 19x278
+      text run at (11,2) width 278: "Lorem ipsum dolor sit amet, consectetur ad"
+    RenderImage {IMG} at (1,280) size 25x25
+    RenderText {#text} at (11,304) size 19x461
+      text run at (11,304) width 460: "ipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+layer at (8,1533) size 22x310 clip at (9,1534) size 20x308 scrollY 430 scrollHeight 738
+  RenderBlock {DIV} at (0,1525) size 22x310 [border: (1px solid #000000)]
+    RenderText {#text} at (1,-428) size 19x738
+      text run at (1,-428) width 738 RTL override: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+layer at (8,1904) size 82x310 clip at (9,1905) size 80x308 scrollY 430 scrollHeight 738
+  RenderBlock {DIV} at (0,1896) size 82x310 [border: (1px solid #000000)]
+    RenderText {#text} at (1,-428) size 19x738
+      text run at (1,-428) width 738 RTL override: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (21,-418) size 19x728
+      text run at (21,-418) width 728 RTL override: "orem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (41,-410) size 19x720
+      text run at (41,-410) width 720 RTL override: "rem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (61,-405) size 19x715
+      text run at (61,-405) width 715 RTL override: "em ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (0,0) size 0x0
+layer at (8,2275) size 32x310 clip at (9,2276) size 30x308 scrollY 459 scrollHeight 767
+  RenderBlock {DIV} at (0,2267) size 32x310 [border: (1px solid #000000)]
+    RenderText {#text} at (11,123) size 19x186
+      text run at (11,123) width 186 RTL override: "Lorem ipsum dolor sit amet, "
+    RenderImage {IMG} at (1,98) size 25x25
+    RenderText {#text} at (11,-457) size 19x557
+      text run at (11,-457) width 556 RTL override: " consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+layer at (8,2646) size 32x310 clip at (9,2647) size 30x308 scrollY 455 scrollHeight 763
+  RenderBlock {DIV} at (0,2638) size 32x310 [border: (1px solid #000000)]
+    RenderText {#text} at (11,31) size 19x278
+      text run at (11,31) width 278 RTL override: "Lorem ipsum dolor sit amet, consectetur ad"
+    RenderImage {IMG} at (1,6) size 25x25
+    RenderText {#text} at (11,-453) size 19x461
+      text run at (11,-453) width 460 RTL override: "ipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."

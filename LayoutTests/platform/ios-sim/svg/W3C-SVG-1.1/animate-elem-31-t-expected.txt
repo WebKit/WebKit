@@ -1,0 +1,40 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGRect {rect} at (3,6) size 379x78 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#C0C0C0]}] [x=5.00] [y=7.50] [width=375.00] [height=75.00]
+    RenderSVGRect {rect} at (3,111) size 379x78 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#C0C0C0]}] [x=5.00] [y=112.50] [width=375.00] [height=75.00]
+    RenderSVGContainer {g} at (11,11) size 368x173 [transform={m=((1.50,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+      RenderSVGEllipse {circle} at (11,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#800080]}] [cx=30.00] [cy=30.00] [r=20.00]
+      RenderSVGEllipse {circle} at (11,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#800080]}] [cx=30.00] [cy=100.00] [r=20.00]
+      RenderSVGHiddenContainer {g} at (0,0) size 0x0
+        RenderSVGEllipse {circle} at (86,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#008000]}] [cx=80.00] [cy=30.00] [r=20.00]
+      RenderSVGEllipse {circle} at (86,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#008000]}] [cx=80.00] [cy=100.00] [r=20.00]
+      RenderSVGEllipse {circle} at (161,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=100.00] [r=20.00]
+      RenderSVGHiddenContainer {g} at (0,0) size 0x0
+        RenderSVGHiddenContainer {g} at (0,0) size 0x0
+          RenderSVGEllipse {circle} at (236,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=180.00] [cy=30.00] [r=20.00]
+      RenderSVGEllipse {circle} at (236,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=180.00] [cy=100.00] [r=20.00]
+      RenderSVGHiddenContainer {g} at (0,0) size 0x0
+        RenderSVGHiddenContainer {g} at (0,0) size 0x0
+          RenderSVGEllipse {circle} at (236,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=30.00] [r=20.00]
+      RenderSVGEllipse {circle} at (236,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=100.00] [r=20.00]
+      RenderSVGContainer {g} at (0,0) size 0x0
+      RenderSVGContainer {g} at (311,116) size 68x68
+        RenderSVGEllipse {circle} at (311,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=100.00] [r=20.00]
+    RenderSVGText {text} at (385,25) size 47x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 47x19
+        chunk 1 text run 1 at (385.00,40.00) startOffset 0 endOffset 7 width 46.22: "display"
+    RenderSVGText {text} at (385,133) size 65x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 65x21
+        chunk 1 text run 1 at (385.00,150.00) startOffset 0 endOffset 10 width 64.01: "visibility"
+    RenderSVGText {text} at (5,210) size 393x32 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 393x32
+        chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 36 width 392.68: "Test of display attribute animation."
+    RenderSVGText {text} at (5,248) size 397x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 397x21
+        chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 55 width 396.91: "Circles with same color should be visible at same time."
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

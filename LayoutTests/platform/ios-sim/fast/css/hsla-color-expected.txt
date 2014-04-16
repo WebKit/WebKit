@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x571 [bgcolor=#FFFF00]
+      RenderBlock {H1} at (0,0) size 784x38 [color=#FF00007F]
+        RenderText {#text} at (0,1) size 394x36
+          text run at (0,1) width 394: "This should be red, alpha 0.5"
+      RenderBlock {H1} at (0,59) size 784x38 [color=#FF00007F]
+        RenderText {#text} at (0,1) size 456x36
+          text run at (0,1) width 456: "This should also be red, alpha 0.5"
+      RenderBlock {H1} at (0,118) size 784x38 [color=#00FF0000]
+        RenderText {#text} at (0,1) size 425x36
+          text run at (0,1) width 425: "This should be green, alpha 0.0"
+      RenderBlock {H1} at (0,177) size 784x38 [color=#00FF0000]
+        RenderText {#text} at (0,1) size 486x36
+          text run at (0,1) width 486: "This should also be green, alpha 0.0"
+      RenderBlock {H1} at (0,236) size 784x38 [color=#00FF00]
+        RenderText {#text} at (0,1) size 425x36
+          text run at (0,1) width 425: "This should be green, alpha 1.0"
+      RenderBlock {H1} at (0,295) size 784x38 [color=#00FF00]
+        RenderText {#text} at (0,1) size 486x36
+          text run at (0,1) width 486: "This should also be green, alpha 1.0"

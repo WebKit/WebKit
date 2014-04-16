@@ -1,0 +1,28 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Verify the user-agent string does not have the 'Simulator' device name.");
+
+var userAgent = navigator.userAgent;
+var isIPadUserAgent = userAgent.indexOf("Mozilla/5.0 (iPhone;") == 0;
+var isIPhoneUserAgent = userAgent.indexOf("Mozilla/5.0 (iPad;") == 0;
+
+function test(str, condition) {
+    var func = condition ? testPassed : testFailed;
+    func(str);
+}
+
+test('User agent platform should be "iPhone" or "iPad".', (isIPadUserAgent || isIPhoneUserAgent));
+test('User agent does not contain "Simulator".', userAgent.indexOf("Simulator") < 0);
+
+successfullyParsed = true;
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

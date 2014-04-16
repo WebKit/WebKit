@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x75 [border: (5px solid #000000)]
+        RenderFieldSet {FIELDSET} at (7,5) size 770x65 [border: (10px groove #FF0000)]
+          RenderBlock {LEGEND} at (42,0) size 126x20
+            RenderText {#text} at (2,0) size 122x19
+              text run at (2,0) width 122: "Test without forms"
+          RenderBlock {DIV} at (22,25) size 726x20
+            RenderText {#text} at (0,0) size 283x19
+              text run at (0,0) width 283: "A DIV inside a fieldset, not related to forms"

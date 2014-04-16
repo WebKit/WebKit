@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x577
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 32x20
+          text run at (0,0) width 32: "Test"
+layer at (250,50) size 248x64
+  RenderBlock (positioned) {DIV} at (250,50) size 248x64 [border: (2px solid #008000)]
+    RenderText {#text} at (22,22) size 204x19
+      text run at (22,22) width 204: "I should be absolute positioned."

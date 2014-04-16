@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x36
+  RenderBlock {HTML} at (0,0) size 800x36
+    RenderBody {BODY} at (8,8) size 784x20
+      RenderText {#text} at (0,0) size 452x19
+        text run at (0,0) width 452: "You should see the text 'after' in the inner box with no mangled pixels."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,28) size 302x302 clip at (9,29) size 300x300 scrollX 10 scrollY 10 scrollWidth 1000 scrollHeight 1000
+  RenderBlock (positioned) {DIV} at (8,28) size 302x302 [border: (1px solid #FF0000)]
+    RenderBlock {DIV} at (1,1) size 1000x1000
+layer at (99,119) size 102x102 clip at (100,120) size 100x100
+  RenderBlock (positioned) {DIV} at (101,101) size 102x102 [border: (1px solid #008000)]
+    RenderBlock {DIV} at (1,1) size 50x50
+      RenderText {#text} at (0,0) size 30x19
+        text run at (0,0) width 30: "after"

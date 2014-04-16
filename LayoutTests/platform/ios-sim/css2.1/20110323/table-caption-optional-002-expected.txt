@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x185
+  RenderBlock {HTML} at (0,0) size 800x185
+    RenderBody {BODY} at (8,16) size 784x161
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 679x19
+          text run at (0,0) width 679: "Test passes if the left square below has \"Filler Text\" directly above it and the square on the right does not."
+      RenderBlock {DIV} at (0,36) size 784x125
+        RenderTable {SPAN} at (0,0) size 100x120
+          RenderBlock {SPAN} at (0,0) size 100x20
+            RenderText {#text} at (0,0) size 68x19
+              text run at (0,0) width 68: "Filler Text"
+          RenderTableSection (anonymous) at (0,20) size 100x100
+            RenderTableRow {SPAN} at (0,0) size 100x50
+              RenderTableCell {SPAN} at (0,0) size 50x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (50,0) size 50x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+            RenderTableRow {SPAN} at (0,50) size 100x50
+              RenderTableCell {SPAN} at (0,50) size 50x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (50,50) size 50x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]
+        RenderText {#text} at (100,105) size 16x19
+          text run at (100,105) width 4: " "
+          text run at (104,105) width 12: "   "
+        RenderTable {SPAN} at (116,20) size 100x100
+          RenderTableSection (anonymous) at (0,0) size 100x100
+            RenderTableRow {SPAN} at (0,0) size 100x50
+              RenderTableCell {SPAN} at (0,0) size 50x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (50,0) size 50x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+            RenderTableRow {SPAN} at (0,50) size 100x50
+              RenderTableCell {SPAN} at (0,50) size 50x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (50,50) size 50x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]
+        RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,224 @@
+Test 1
+PASS rects.length is 5
+PASS rects[0].left is 8
+PASS rects[0].top is 8
+PASS rects[0].width is 400
+PASS rects[0].height is 160
+PASS rects[1].left is 8
+FAIL rects[1].top should be 19. Was 18.
+FAIL rects[1].width should be 396. Was 387.
+FAIL rects[1].height should be 18. Was 19.
+PASS rects[2].left is 8
+FAIL rects[2].top should be 59. Was 58.
+FAIL rects[2].width should be 398. Was 360.
+FAIL rects[2].height should be 18. Was 19.
+PASS rects[3].left is 8
+FAIL rects[3].top should be 99. Was 98.
+FAIL rects[3].width should be 360. Was 382.
+FAIL rects[3].height should be 18. Was 19.
+PASS rects[4].left is 8
+FAIL rects[4].top should be 139. Was 138.
+FAIL rects[4].width should be 306. Was 369.
+FAIL rects[4].height should be 18. Was 19.
+Test 2
+PASS rects.length is 4
+PASS rects[0].left is 8
+FAIL rects[0].top should be 215. Was 218.
+FAIL rects[0].width should be 396. Was 387.
+FAIL rects[0].height should be 18. Was 19.
+PASS rects[1].left is 8
+FAIL rects[1].top should be 255. Was 258.
+FAIL rects[1].width should be 398. Was 360.
+FAIL rects[1].height should be 18. Was 19.
+PASS rects[2].left is 8
+FAIL rects[2].top should be 295. Was 298.
+FAIL rects[2].width should be 360. Was 382.
+FAIL rects[2].height should be 18. Was 19.
+PASS rects[3].left is 8
+FAIL rects[3].top should be 335. Was 338.
+FAIL rects[3].width should be 306. Was 369.
+FAIL rects[3].height should be 18. Was 19.
+Test 3
+PASS rects.length is 4
+FAIL rects[0].left should be 80. Was 81.
+FAIL rects[0].top should be 411. Was 418.
+FAIL rects[0].width should be 324. Was 313.
+FAIL rects[0].height should be 18. Was 19.
+PASS rects[1].left is 8
+FAIL rects[1].top should be 451. Was 458.
+FAIL rects[1].width should be 398. Was 360.
+FAIL rects[1].height should be 18. Was 19.
+PASS rects[2].left is 8
+FAIL rects[2].top should be 491. Was 498.
+FAIL rects[2].width should be 360. Was 382.
+FAIL rects[2].height should be 18. Was 19.
+PASS rects[3].left is 8
+FAIL rects[3].top should be 531. Was 538.
+FAIL rects[3].width should be 88. Was 147.
+FAIL rects[3].height should be 18. Was 19.
+Test 4
+PASS rects.length is 7
+PASS rects[0].left is 8
+FAIL rects[0].top should be 596. Was 608.
+PASS rects[0].width is 400
+PASS rects[0].height is 278
+PASS rects[1].left is 8
+FAIL rects[1].top should be 607. Was 618.
+FAIL rects[1].width should be 396. Was 387.
+FAIL rects[1].height should be 18. Was 19.
+PASS rects[2].left is 8
+FAIL rects[2].top should be 725. Was 736.
+FAIL rects[2].width should be 242. Was 269.
+FAIL rects[2].height should be 18. Was 19.
+FAIL rects[3].left should be 326. Was 352.
+FAIL rects[3].top should be 725. Was 736.
+FAIL rects[3].width should be 44. Was 46.
+FAIL rects[3].height should be 18. Was 19.
+PASS rects[4].left is 8
+FAIL rects[4].top should be 765. Was 776.
+FAIL rects[4].width should be 341. Was 349.
+FAIL rects[4].height should be 18. Was 19.
+PASS rects[5].left is 8
+FAIL rects[5].top should be 805. Was 816.
+FAIL rects[5].width should be 366. Was 376.
+FAIL rects[5].height should be 18. Was 19.
+PASS rects[6].left is 8
+FAIL rects[6].top should be 845. Was 856.
+FAIL rects[6].width should be 67. Was 68.
+FAIL rects[6].height should be 18. Was 19.
+Test 5
+PASS rects.length is 5
+FAIL rects[0].left should be 80. Was 81.
+FAIL rects[0].top should be 921. Was 936.
+FAIL rects[0].width should be 324. Was 313.
+FAIL rects[0].height should be 18. Was 19.
+PASS rects[1].left is 8
+FAIL rects[1].top should be 1039. Was 1054.
+FAIL rects[1].width should be 242. Was 269.
+FAIL rects[1].height should be 18. Was 19.
+FAIL rects[2].left should be 250. Was 276.
+FAIL rects[2].top should be 950. Was 966.
+PASS rects[2].width is 76
+PASS rects[2].height is 103
+FAIL rects[3].left should be 326. Was 352.
+FAIL rects[3].top should be 1039. Was 1054.
+FAIL rects[3].width should be 44. Was 46.
+FAIL rects[3].height should be 18. Was 19.
+PASS rects[4].left is 8
+FAIL rects[4].top should be 1079. Was 1094.
+FAIL rects[4].width should be 284. Was 290.
+FAIL rects[4].height should be 18. Was 19.
+Test 6
+FAIL rects.length should be 7. Was 8.
+PASS rects[0].left is 8
+FAIL rects[0].top should be 1224. Was 1244.
+PASS rects[0].width is 400
+FAIL rects[0].height should be 200. Was 240.
+PASS rects[1].left is 8
+FAIL rects[1].top should be 1235. Was 1254.
+FAIL rects[1].width should be 396. Was 387.
+FAIL rects[1].height should be 18. Was 19.
+PASS rects[2].left is 8
+FAIL rects[2].top should be 1275. Was 1294.
+FAIL rects[2].width should be 57. Was 16.
+FAIL rects[2].height should be 18. Was 19.
+FAIL rects[3].left should be 105. Was 8.
+FAIL rects[3].top should be 1275. Was 1334.
+FAIL rects[3].width should be 44. Was 59.
+FAIL rects[3].height should be 18. Was 19.
+FAIL rects[4].left should be 8. Was 106.
+FAIL rects[4].top should be 1315. Was 1334.
+FAIL rects[4].width should be 387. Was 46.
+FAIL rects[4].height should be 18. Was 19.
+PASS rects[5].left is 8
+FAIL rects[5].top should be 1355. Was 1374.
+PASS rects[5].width is 397
+FAIL rects[5].height should be 18. Was 19.
+PASS rects[6].left is 8
+FAIL rects[6].top should be 1395. Was 1414.
+FAIL rects[6].width should be 171. Was 360.
+FAIL rects[6].height should be 18. Was 19.
+Test 7
+FAIL rects.length should be 7. Was 8.
+PASS rects[0].left is 8
+FAIL rects[0].top should be 1471. Was 1534.
+FAIL rects[0].width should be 396. Was 387.
+FAIL rects[0].height should be 18. Was 19.
+PASS rects[1].left is 8
+FAIL rects[1].top should be 1500. Was 1574.
+FAIL rects[1].width should be 400. Was 16.
+FAIL rects[1].height should be 40. Was 19.
+PASS rects[2].left is 8
+FAIL rects[2].top should be 1511. Was 1604.
+FAIL rects[2].width should be 57. Was 400.
+FAIL rects[2].height should be 18. Was 40.
+FAIL rects[3].left should be 105. Was 8.
+FAIL rects[3].top should be 1511. Was 1614.
+FAIL rects[3].width should be 44. Was 59.
+FAIL rects[3].height should be 18. Was 19.
+FAIL rects[4].left should be 8. Was 106.
+FAIL rects[4].top should be 1551. Was 1614.
+FAIL rects[4].width should be 387. Was 46.
+FAIL rects[4].height should be 18. Was 19.
+PASS rects[5].left is 8
+FAIL rects[5].top should be 1591. Was 1654.
+PASS rects[5].width is 397
+FAIL rects[5].height should be 18. Was 19.
+PASS rects[6].left is 8
+FAIL rects[6].top should be 1631. Was 1694.
+FAIL rects[6].width should be 171. Was 360.
+FAIL rects[6].height should be 18. Was 19.
+Test 8
+PASS rects.length is 4
+PASS rects[0].left is 168
+FAIL rects[0].top should be 1678. Was 1785.
+FAIL rects[0].width should be 269. Was 264.
+FAIL rects[0].height should be 316. Was 310.
+PASS rects[1].left is 137
+FAIL rects[1].top should be 1704. Was 1811.
+FAIL rects[1].width should be 271. Was 247.
+FAIL rects[1].height should be 317. Was 289.
+PASS rects[2].left is 107
+FAIL rects[2].top should be 1729. Was 1837.
+FAIL rects[2].width should be 246. Was 260.
+FAIL rects[2].height should be 289. Was 305.
+PASS rects[3].left is 76
+FAIL rects[3].top should be 1755. Was 1862.
+FAIL rects[3].width should be 212. Was 252.
+FAIL rects[3].height should be 247. Was 296.
+Test 9
+FAIL rects.length should be 1. Was 0.
+FAIL rects[0].left should be 8. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].left')
+FAIL rects[0].top should be 1903. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].top')
+FAIL rects[0].width should be 0. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].width')
+FAIL rects[0].height should be 18. Threw exception TypeError: 'undefined' is not an object (evaluating 'rects[0].height')
+Test 9b
+PASS rects.length is 1
+PASS rects[0].left is 8
+FAIL rects[0].top should be 1903. Was 2014.
+PASS rects[0].width is 0
+FAIL rects[0].height should be 18. Was 19.
+Test 10
+FAIL rects.length should be 4. Was 5.
+FAIL rects[0].left should be 19. Was 18.
+FAIL rects[0].top should be 2088. Was 2204.
+FAIL rects[0].width should be 18. Was 19.
+FAIL rects[0].height should be 393. Was 375.
+FAIL rects[1].left should be 59. Was 58.
+FAIL rects[1].top should be 2088. Was 2204.
+FAIL rects[1].width should be 18. Was 19.
+FAIL rects[1].height should be 377. Was 368.
+FAIL rects[2].left should be 99. Was 98.
+FAIL rects[2].top should be 2088. Was 2204.
+FAIL rects[2].width should be 18. Was 19.
+FAIL rects[2].height should be 372. Was 349.
+FAIL rects[3].left should be 139. Was 138.
+FAIL rects[3].top should be 2088. Was 2204.
+FAIL rects[3].width should be 18. Was 19.
+FAIL rects[3].height should be 360. Was 376.
+Test 11
+PASS rects.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

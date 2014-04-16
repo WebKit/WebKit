@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 372x19
+          text run at (0,0) width 372: "The select below has a size of 3, but a much larger height."
+      RenderBlock (anonymous) at (0,36) size 784x250
+        RenderMenuList {SELECT} at (2,0) size 69x250 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,118) size 57x14
+            RenderBR at (0,0) size 0x14 [bgcolor=#FFFFFF02]
+        RenderText {#text} at (0,0) size 0x0

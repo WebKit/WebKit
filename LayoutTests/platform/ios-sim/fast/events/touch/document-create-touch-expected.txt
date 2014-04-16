@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 25: TypeError: Not enough arguments
+This tests support for the document.createTouch API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "createTouch" in document is true
+PASS touch is non-null.
+PASS touch.target is box
+PASS touch.identifier is 1
+PASS touch.pageX is 100
+PASS touch.pageY is 101
+PASS touch.screenX is 102
+PASS touch.screenY is 103
+FAIL touch.webkitRadiusX should be 5 (of type number). Was undefined (of type undefined).
+FAIL touch.webkitRadiusY should be 3 (of type number). Was undefined (of type undefined).
+FAIL touch.webkitRotationAngle should be 10 (of type number). Was undefined (of type undefined).
+FAIL touch.webkitForce should be 10 (of type number). Was undefined (of type undefined).
+

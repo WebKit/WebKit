@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x141
+  RenderBlock {HTML} at (0,0) size 800x141
+    RenderBody {BODY} at (8,16) size 784x117
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 309x19
+          text run at (0,0) width 309: "This test checks that text input fields handle the "
+        RenderInline {CODE} at (0,0) size 165x15
+          RenderText {#text} at (308,4) size 165x15
+            text run at (308,4) width 165: "-webkit-border-radius"
+        RenderText {#text} at (472,0) size 301x19
+          text run at (472,0) width 301: " CSS property correctly, or degrade gracefully."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 631x19
+          text run at (0,0) width 631: "If the test passes, you will see a text entry field containing \"default text\" inside the grey div below."
+      RenderBlock {DIV} at (0,72) size 163x45 [bgcolor=#888888]
+        RenderTextControl {INPUT} at (11,9) size 133x21 [bgcolor=#00FF00] [border: (1px solid #4C4C4C)]
+          RenderDeprecatedFlexibleBox {DIV} at (6,3) size 121x14
+            RenderBlock {DIV} at (0,7) size 0x0
+            RenderBlock {DIV} at (0,0) size 121x14
+            RenderBlock {DIV} at (121,7) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (25,100) size 121x14
+  RenderBlock {DIV} at (0,0) size 121x14
+    RenderText {#text} at (0,0) size 54x14
+      text run at (0,0) width 54: "default text"

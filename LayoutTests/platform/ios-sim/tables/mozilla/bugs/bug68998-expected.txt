@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x84
+  RenderBlock {HTML} at (0,0) size 800x84
+    RenderBody {BODY} at (8,8) size 784x68
+      RenderTable {TABLE} at (0,0) size 375x68 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 373x66
+          RenderTableRow {TR} at (0,0) size 373x22
+            RenderTableCell {TD} at (0,22) size 6x22 [bgcolor=#CCCCCC] [border: (1px inset #808080)] [r=0 c=0 rs=3 cs=1]
+              RenderText {#text} at (1,1) size 4x19
+                text run at (1,1) width 4: " "
+            RenderTableCell {TD} at (6,0) size 361x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 359x19
+                text run at (1,1) width 359: "This row has two cells with rowspans and a middle cell."
+            RenderTableCell {TD} at (367,22) size 6x22 [bgcolor=#CCCCCC] [border: (1px inset #808080)] [r=0 c=2 rs=3 cs=1]
+              RenderText {#text} at (1,1) size 4x19
+                text run at (1,1) width 4: " "
+          RenderTableRow {TR} at (0,22) size 373x22
+            RenderTableCell {TD} at (6,22) size 361x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 166x19
+                text run at (1,1) width 166: "This cell is coloured blue."
+          RenderTableRow {TR} at (0,44) size 373x22 [bgcolor=#FF0000]
+            RenderTableCell {TD} at (6,44) size 361x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 161x19
+                text run at (1,1) width 161: "This row is coloured red."

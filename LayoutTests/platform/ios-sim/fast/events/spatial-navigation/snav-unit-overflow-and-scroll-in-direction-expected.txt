@@ -1,0 +1,6 @@
+Start
+End
+PASS document.activeElement.getAttribute("id") is "start"
+FAIL false should be true. Was false.
+FAIL document.activeElement.getAttribute("id") should be end. Was start.
+

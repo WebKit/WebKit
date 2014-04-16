@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DETAILS} at (0,0) size 784x144 [border: (8px solid #555599)]
+        RenderBlock {SUMMARY} at (8,8) size 768x108 [border: (8px solid #9999CC)]
+          RenderBlock (anonymous) at (8,8) size 752x20
+            RenderDetailsMarker {DIV} at (0,5) size 10x10: down
+            RenderText {#text} at (16,0) size 64x19
+              text run at (16,0) width 4: " "
+              text run at (20,0) width 60: "summary"
+          RenderBlock {DETAILS} at (8,28) size 752x72 [border: (8px solid #995555)]
+            RenderBlock {SUMMARY} at (8,8) size 736x36 [border: (8px solid #CC9999)]
+              RenderDetailsMarker {DIV} at (8,13) size 10x10: down
+              RenderText {#text} at (24,8) size 291x19
+                text run at (24,8) width 4: " "
+                text run at (28,8) width 287: "nested summary (summary-deails-summary)"
+            RenderBlock (anonymous) at (8,44) size 736x20
+              RenderText {#text} at (0,0) size 204x19
+                text run at (0,0) width 204: "nested details (summary-deails)"
+        RenderBlock (anonymous) at (8,116) size 768x20
+          RenderText {#text} at (0,0) size 42x19
+            text run at (0,0) width 42: "details"

@@ -1,0 +1,127 @@
+<rdar://problem/8909578> Reintegrate iOS telephone parsing with new HTML5 parser
+
+phone number detection:
+| "
+    "
+| <iframe>
+|   src="resources/phone.html"
+|   "
+    "
+| "
+
+
+"
+
+FRAME 0:
+| <head>
+|   "
+    "
+|   <title>
+|     "Phone Numbers in MobileSafari"
+|   "
+"
+| "
+"
+| <body>
+|   "
+"
+|   <p>
+|     "
+    These phone numbers should be linkified:"
+|     <br>
+|     "
+"
+|     <a>
+|       href="tel:1-866-MY-APPLE"
+|       "1-866-MY-APPLE"
+|     <br>
+|     "
+"
+|     <a>
+|       href="tel:(312) 961 - 0509"
+|       "(312) 961 - 0509"
+|     <br>
+|     "
+"
+|     <a>
+|       href="tel:01 42 84 90 00"
+|       "01 42 84 90 00"
+|     <br>
+|     "
+"
+|     <a>
+|       href="tel:+33 (0)1 42 84 90 00"
+|       "+33 (0)1 42 84 90 00"
+|     <br>
+|     "
+"
+|     <a>
+|       href="tel:(+33) 1 53 05 15 00"
+|       "(+33) 1 53 05 15 00"
+|     <br>
+|     "
+"
+|     <a>
+|       href="tel:(0)1 55 54 45 45"
+|       "(0)1 55 54 45 45"
+|     <br>
+|     "
+"
+|     <a>
+|       href="tel:010-1-800-MY-APPLE"
+|       "010-1-800-MY-APPLE"
+|     <br>
+|     "
+"
+|     <a>
+|       href="tel:604 736 7331"
+|       "604 736 7331"
+|     <br>
+|     "
+"
+|     <a>
+|       href="tel:０８０３５３８４９９０"
+|       "０８０３５３８４９９０"
+|     "に"
+|     <br>
+|     "
+"
+|     <a>
+|       href="tel:00447782326380"
+|       "00447782326380"
+|     "
+"
+|   "
+"
+|   <p>
+|     "This is a phone number, but it should not be linkified because it's inside a "
+|   <pre>
+|     "pre"
+|   " tag: "
+|   <br>
+|   "
+    "
+|   <pre>
+|     "1-866-MY-APPLE"
+|   "
+"
+|   <p>
+|   "
+"
+|   <p>
+|     "
+    These are not phone numbers, so they should not get linkified:"
+|     <br>
+|     "
+KSY-24339-985"
+|     <br>
+|     "
+in 1.158970 seconds "
+|     <br>
+|     "
+rdar://1234567
+"
+|   "
+
+
+"

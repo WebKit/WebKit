@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+      RenderBlock {P} at (0,0) size 800x20
+        RenderText {#text} at (0,0) size 227x19
+          text run at (0,0) width 227: "This is a test for regression against "
+        RenderInline {A} at (0,0) size 311x19 [color=#0000EE]
+          RenderText {#text} at (226,0) size 311x19
+            text run at (226,0) width 311: "https://bugs.webkit.org/show_bug.cgi?id=49790"
+      RenderBlock (anonymous) at (0,36) size 800x24
+        RenderMenuList {SELECT} at (2,2) size 40x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,3) size 28x14
+            RenderText at (0,0) size 37x14
+              text run at (0,0) width 37: "0 Items"
+        RenderText {#text} at (0,0) size 0x0

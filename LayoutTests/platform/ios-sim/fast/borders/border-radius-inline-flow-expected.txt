@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderInline {SPAN} at (0,0) size 783x81 [border: (5px solid #000000)]
+        RenderText {#text} at (7,14) size 783x67
+          text run at (7,14) width 420: "This is a span that crosses multiple lines and has a border-radius. "
+          text run at (426,14) width 357: "The border-radius should only apply at the endpoints of"
+          text run at (0,62) width 707: "the span, and the edges that are \"open\" should just be solid right up to the edge (with no rounding or clipping)."
+      RenderText {#text} at (0,0) size 0x0

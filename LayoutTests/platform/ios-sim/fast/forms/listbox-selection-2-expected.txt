@@ -1,0 +1,19 @@
+<select> selection test for scrolling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL selectionPattern("sl1") should be 10000000000000000. Was 00000000000000000.
+FAIL selectionPattern("sl1") should be 01000000000000000. Was 00000000000000000.
+FAIL selectionPattern("sl1") should be 00000010000000000. Was 00000000000000000.
+FAIL selectionPattern("sl1") should be 00000001000000000. Was 00000000000000000.
+FAIL selectionPattern("sl1") should be 00000001000000000. Was 00000000000000000.
+FAIL selectionPattern("sl1") should be 01000000000000000. Was 00000000000000000.
+FAIL selectionPattern("sl1") should be 00000000000000001. Was 00000000000000000.
+FAIL selectionPattern("sl2") should be 010. Was 000.
+FAIL selectionPattern("sl2") should be 010. Was 000.
+FAIL selectionPattern("sl2") should be 001. Was 000.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

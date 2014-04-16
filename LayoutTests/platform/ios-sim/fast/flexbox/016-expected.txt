@@ -1,0 +1,24 @@
+layer at (0,0) size 812x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600 [bgcolor=#FFFFFF]
+    RenderBody {BODY} at (0,0) size 800x600
+      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 800x600
+        RenderBlock {DIV} at (0,0) size 800x60
+          RenderText {#text} at (0,0) size 796x59
+            text run at (0,0) width 494: "This header should remain at the top of the browser window as you resize it. "
+            text run at (493,0) width 189: "It can wrap to multiple lines. "
+            text run at (681,0) width 115: "The center should"
+            text run at (0,20) width 279: "be filled with an olive-bordered green box. "
+            text run at (278,20) width 510: "It should start beneath the header, end above the footer, and fill the width of the"
+            text run at (0,40) width 112: "browser window."
+        RenderPartObject {IFRAME} at (0,60) size 812x520 [bgcolor=#008000] [border: (10px solid #808000)]
+          layer at (0,0) size 792x500
+            RenderView at (0,0) size 792x500
+          layer at (0,0) size 792x500
+            RenderBlock {HTML} at (0,0) size 792x500
+              RenderBody {BODY} at (8,8) size 776x484
+        RenderBlock {DIV} at (0,580) size 800x20
+          RenderText {#text} at (0,0) size 679x19
+            text run at (0,0) width 415: "This footer should remain at the bottom of the browser window. "
+            text run at (414,0) width 265: "It can wrap to multiple lines if necessary."

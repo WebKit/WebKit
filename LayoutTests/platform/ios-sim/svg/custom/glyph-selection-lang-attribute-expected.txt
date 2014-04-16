@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (83,16) size 47x551
+      RenderSVGText {text} at (50,10) size 25x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 25x50
+          chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 1 width 24.90: "a"
+      RenderSVGText {text} at (50,80) size 25x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 25x50
+          chunk 1 text run 1 at (50.00,120.00) startOffset 0 endOffset 1 width 24.90: "a"
+      RenderSVGText {text} at (50,150) size 28x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 28x50
+          chunk 1 text run 1 at (50.00,190.00) startOffset 0 endOffset 1 width 27.70: "a"
+      RenderSVGText {text} at (50,220) size 28x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 28x50
+          chunk 1 text run 1 at (50.00,260.00) startOffset 0 endOffset 1 width 27.70: "a"
+      RenderSVGText {text} at (50,290) size 28x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 28x50
+          chunk 1 text run 1 at (50.00,330.00) startOffset 0 endOffset 1 width 27.70: "a"
+    RenderSVGContainer {g} at (250,16) size 42x551 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+      RenderSVGText {text} at (50,10) size 25x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 25x50
+          chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 1 width 24.90: "a"
+      RenderSVGText {text} at (50,80) size 25x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 25x50
+          chunk 1 text run 1 at (50.00,120.00) startOffset 0 endOffset 1 width 24.90: "a"
+      RenderSVGText {text} at (50,150) size 25x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 25x50
+          chunk 1 text run 1 at (50.00,190.00) startOffset 0 endOffset 1 width 24.90: "a"
+      RenderSVGText {text} at (50,220) size 25x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 25x50
+          chunk 1 text run 1 at (50.00,260.00) startOffset 0 endOffset 1 width 24.90: "a"
+      RenderSVGText {text} at (50,290) size 25x50 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 25x50
+          chunk 1 text run 1 at (50.00,330.00) startOffset 0 endOffset 1 width 24.90: "a"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

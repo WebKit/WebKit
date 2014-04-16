@@ -1,0 +1,10 @@
+Test that the audio element supports M4A files.
+
+EVENT(canplaythrough)
+EXPECTED (mediaElement.currentTime == '0') OK
+EVENT(canplaythrough)
+EXPECTED (mediaElement.currentTime == '0') OK
+EVENT(play)
+EXPECTED (mediaElement.currentTime > '0') OK
+END OF TEST
+

@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 668x19
+          RenderInline {A} at (0,0) size 354x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 354x19
+              text run at (54,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7761"
+          RenderText {#text} at (407,0) size 315x19
+            text run at (407,0) width 315: " Tabs in class attribute not treated as whitespace"
+        RenderText {#text} at (721,0) size 5x19
+          text run at (721,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 238x19
+          text run at (0,0) width 238: "All of the following should be green:"
+      RenderBlock {DIV} at (0,72) size 784x20 [color=#008000]
+        RenderText {#text} at (0,0) size 59x19
+          text run at (0,0) width 59: "Tab after"
+      RenderBlock {DIV} at (0,92) size 784x20 [color=#008000]
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "Tab before"
+      RenderBlock {DIV} at (0,112) size 784x20 [color=#008000]
+        RenderText {#text} at (0,0) size 88x19
+          text run at (0,0) width 88: "Newline after"
+      RenderBlock {DIV} at (0,132) size 784x20 [color=#008000]
+        RenderText {#text} at (0,0) size 100x19
+          text run at (0,0) width 100: "Newline before"
+      RenderBlock {DIV} at (0,152) size 784x20 [color=#008000]
+        RenderText {#text} at (0,0) size 78x19
+          text run at (0,0) width 78: "Spaces after"
+      RenderBlock {DIV} at (0,172) size 784x20 [color=#008000]
+        RenderText {#text} at (0,0) size 90x19
+          text run at (0,0) width 90: "Spaces before"
+      RenderBlock {DIV} at (0,192) size 784x20 [color=#008000]
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "CR after"
+      RenderBlock {DIV} at (0,212) size 784x20 [color=#008000]
+        RenderText {#text} at (0,0) size 67x19
+          text run at (0,0) width 67: "CR before"

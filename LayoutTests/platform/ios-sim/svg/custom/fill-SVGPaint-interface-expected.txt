@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {a} at (0,0) size 0x0
+    RenderSVGForeignObject {foreignObject} at (0,0) size 800x600
+      RenderBlock {html} at (0,0) size 800x20
+        RenderBlock {div} at (0,0) size 800x20
+          RenderText {#text} at (0,0) size 569x19
+            text run at (0,0) width 569: "This test tests that the type of the fill css attribute is correctly reported as SVGPaint. See "
+          RenderInline {a} at (0,0) size 72x19 [color=#0000EE]
+            RenderText {#text} at (568,0) size 72x19
+              text run at (568,0) width 72: "Bug 14064"
+          RenderText {#text} at (639,0) size 5x19
+            text run at (639,0) width 5: "."
+    RenderSVGRect {rect} at (10,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=50.00] [width=100.00] [height=100.00]

@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 12: TypeError: 'null' is not an object (evaluating 'document.caretRangeFromPoint(115, 550).startContainer')
+FAIL: Test did not run (DumpRenderTree or WebKitTestRunner needed)

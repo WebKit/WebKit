@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 600x400
+  RenderSVGRoot {svg} at (0,0) size 600x400
+    RenderSVGRect {rect} at (0,0) size 600x400 [fill={[type=SOLID] [color=#FF0000]}] [x=-100.00] [y=-100.00] [width=1000.00] [height=1000.00]
+    RenderSVGRect {rect} at (0,0) size 600x400 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-26.00] [y=-1.00] [width=152.00] [height=102.00]
+    RenderSVGRect {rect} at (100,0) size 400x400 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGPath {line} at (98,0) size 404x400 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=100.00] [y2=100.00]
+    RenderSVGPath {line} at (98,0) size 404x400 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=100.00] [y1=0.00] [x2=0.00] [y2=100.00]
+    RenderSVGText {text} at (11,23) size 78x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 78x8
+        chunk 1 (middle anchor) text run 1 at (11.21,30.00) startOffset 0 endOffset 24 width 77.58: "This should be a SQUARE."
+    RenderSVGText {text} at (17,35) size 65x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 65x6
+        chunk 1 (middle anchor) text run 1 at (17.64,40.00) startOffset 0 endOffset 34 width 64.71: "It should be 400 pixels to a side."
+    RenderSVGText {text} at (13,43) size 73x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 73x6
+        chunk 1 (middle anchor) text run 1 at (13.62,48.00) startOffset 0 endOffset 36 width 72.76: "There should be no red on this page."
+    RenderSVGText {text} at (7,85) size 86x6 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 86x6
+        chunk 1 (middle anchor) text run 1 at (7.30,90.00) startOffset 0 endOffset 42 width 85.40: "The orange line should be 600 pixels long:"
+    RenderSVGPath {line} at (0,366) size 600x4 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [x1=-25.00] [y1=92.00] [x2=125.00] [y2=92.00]
+    RenderSVGText {text} at (-25,87) size 2x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2x4
+        chunk 1 text run 1 at (-25.00,90.00) startOffset 0 endOffset 1 width 1.50: "0"
+    RenderSVGPath {line} at (0,362) size 2x6 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [x1=-25.00] [y1=92.00] [x2=-25.00] [y2=90.50]
+    RenderSVGText {text} at (120,87) size 5x4 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 5x4
+        chunk 1 (end anchor) text run 1 at (120.50,90.00) startOffset 0 endOffset 3 width 4.50: "600"
+    RenderSVGPath {line} at (598,362) size 2x6 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [x1=125.00] [y1=92.00] [x2=125.00] [y2=90.50]

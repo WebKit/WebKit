@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x120
+  RenderBlock {HTML} at (0,0) size 800x120
+    RenderBody {BODY} at (8,16) size 784x96
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 363x19
+          text run at (0,0) width 363: "There should be no red below, only green lines and dots."
+      RenderBlock {DIV} at (0,36) size 200x60 [color=#008000]
+        RenderText {#text} at (0,1) size 41x10
+          text run at (0,1) width 41: "z z "
+        RenderInline {EM} at (0,0) size 191x22 [color=#FF0000]
+          RenderText {#text} at (40,1) size 191x22
+            text run at (40,1) width 151: "x x x x x x x x"
+            text run at (0,13) width 41: "x x "
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 191x58 [border: (10px solid #00FF00)]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {EM} at (0,0) size 191x22 [color=#FF0000]
+            RenderText {#text} at (60,13) size 191x22
+              text run at (60,13) width 131: "x x x x x x x"
+              text run at (0,25) width 61: "x x x "
+              text run at (60,25) width 61: "x x x "
+          RenderText {#text} at (120,25) size 191x22
+            text run at (120,25) width 71: "y y y y"
+            text run at (0,37) width 101: "y y y y y "
+        RenderText {#text} at (120,37) size 191x22
+          text run at (120,37) width 71: "y y y y"
+          text run at (0,49) width 191: "y y y y y y z z z z"

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (50,54) size 574x85
+    RenderSVGContainer {g} at (50,54) size 574x85
+      RenderSVGText {text} at (50,54) size 574x85 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 564x45
+          RenderSVGInlineText {#text} at (0,0) size 564x45
+            chunk 1 text run 1 at (50.00,90.00) startOffset 0 endOffset 36 width 563.26: "Two lines of text should be visible."
+        RenderSVGInlineText {#text} at (563,0) size 10x45
+          chunk 1 text run 1 at (613.26,90.00) startOffset 0 endOffset 1 width 10.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 564x45
+          RenderSVGInlineText {#text} at (0,40) size 564x45
+            chunk 1 text run 1 at (50.00,130.00) startOffset 0 endOffset 36 width 563.26: "Two lines of text should be visible."

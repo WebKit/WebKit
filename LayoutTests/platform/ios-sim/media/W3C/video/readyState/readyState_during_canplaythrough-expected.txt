@@ -1,0 +1,14 @@
+video.readyState should be HAVE_ENOUGH_DATA during canplaythrough event
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "4" is "4"
+
+TEST COMPLETE
+PASS "4" is "4"
+
+TEST COMPLETE
+spec reference
+
+

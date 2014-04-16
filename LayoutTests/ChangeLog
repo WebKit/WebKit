@@ -1,5 +1,13 @@
 2014-04-16  David Kilzer  <ddkilzer@apple.com>
 
+        Upstream iOS layout test results
+
+        7354 files changed, 367781 insertions(+)
+
+        * platform/ios-sim: Add.
+
+2014-04-16  David Kilzer  <ddkilzer@apple.com>
+
         Rename LayoutTests/platformm/iphone-simulator => ios-sim
 
         * platform/ios-sim: Renamed from LayoutTests/platform/iphone-simulator.

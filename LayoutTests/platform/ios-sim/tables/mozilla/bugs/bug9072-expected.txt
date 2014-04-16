@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 83x30
+        RenderTableSection {TBODY} at (0,0) size 83x30
+          RenderTableRow {TR} at (0,5) size 83x20
+            RenderTableCell {TD} at (5,5) size 31x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 31x19
+                text run at (0,0) width 31: "Blah"
+            RenderTableCell {TD} at (41,15) size 1x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+              RenderInline {SPACER} at (0,0) size 0x0
+            RenderTableCell {TD} at (47,5) size 31x20 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 31x19
+                text run at (0,0) width 31: "Blah"
+      RenderBlock (anonymous) at (0,30) size 784x20
+        RenderBR {BR} at (0,0) size 0x19

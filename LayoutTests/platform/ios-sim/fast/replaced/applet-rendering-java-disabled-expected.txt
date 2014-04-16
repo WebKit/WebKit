@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {A} at (0,0) size 350x19 [color=#0000EE]
+          RenderText {#text} at (54,0) size 350x19
+            text run at (54,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7281"
+      RenderBlock {P} at (0,36) size 784x40
+        RenderText {#text} at (0,0) size 777x39
+          text run at (0,0) width 777: "This tests rendering of an applet element with Java disabled. If Java is disabled and Safari shows the content in the applet"
+          text run at (0,20) width 156: "tag, then the test passed."
+      RenderBlock (anonymous) at (0,92) size 784x20
+        RenderInline {APPLET} at (0,0) size 70x19
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "SUCCESS"
+        RenderText {#text} at (0,0) size 0x0

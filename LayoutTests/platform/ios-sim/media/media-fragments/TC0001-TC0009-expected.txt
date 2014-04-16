@@ -1,0 +1,77 @@
+CONSOLE MESSAGE: line 107: INVALID_STATE_ERR: DOM Exception 11: An attempt was made to use an object that is not, or is no longer, usable.
+
+Title: TC0001
+Fragment: 't=,'
+Comment: Syntax error, not allowed according to the ABNF. The media fragment is ignored.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0002
+Fragment: 't=3,3'
+Comment: Invalid semantics: start must be smaller than end. The media fragment is ignored.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0003
+Fragment: 't=7,3'
+Comment: Invalid semantics: the requested interval's start is beyond its end. The media fragment is ignored.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0004
+Fragment: 't=0,9.97'
+Comment: The media is requested from 0 to e.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+RUN(video.play())
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0'), OBSERVED '9.329999923706055' FAIL
+EXPECTED (video.initialTime == '0') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0005
+Fragment: 't=3,7'
+Comment: The media is requested from a to b.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3'), OBSERVED '0' FAIL
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3'), OBSERVED '6.5' FAIL
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0006
+Fragment: 't=3,15'
+Comment: The media is requested from a to e.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3'), OBSERVED '0' FAIL
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3'), OBSERVED '9.329999923706055' FAIL
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0009
+Fragment: 't=15,20'
+Comment: The request lies beyond the end of the resource. If the UA knows the duration of the resource, it seeks to the end of the media resource. Otherwise, the UA will send an (out-of-range) HTTP request with an 'include-setup' in order to setup its decoding pipeline.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == 'duration'), OBSERVED '0' FAIL
+EXPECTED (video.initialTime == 'duration') OK
+
+END OF TEST
+

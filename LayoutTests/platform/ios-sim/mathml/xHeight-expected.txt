@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x54
+  RenderBlock {html} at (0,0) size 800x54
+    RenderBody {body} at (8,16) size 784x22
+      RenderBlock {p} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 307x19
+          text run at (0,0) width 307: "The green square should be vertically centered: "
+        RenderMathMLMath {math} at (307,2) size 31x20 [padding: 0 1 0 1]
+          RenderBlock {mi} at (1,5) size 9x9
+            RenderText {#text} at (0,-7) size 8x19
+              text run at (0,-7) width 8: "x"
+          RenderBlock {mtext} at (10,0) size 20x20
+            RenderBlock {div} at (0,0) size 20x20 [bgcolor=#00FF00]
+            RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

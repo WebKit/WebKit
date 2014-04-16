@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (150,25) size 502x452
+      RenderSVGContainer {g} at (150,25) size 502x77
+        RenderSVGEllipse {circle} at (150,25) size 34x34 [fill={[type=SOLID] [color=#FF7F00]}] [cx=100.00] [cy=25.00] [r=10.00]
+        RenderSVGContainer {use} at (615,65) size 37x37 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,25.00)}]
+          RenderSVGContainer {g} at (615,65) size 37x37
+            RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,25.00)}]
+            RenderSVGEllipse {circle} at (615,65) size 37x37 [stroke={[type=SOLID] [color=#808080] [stroke width=2.00] [line cap=ROUND] [dash array={4.00}]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=380.00] [cy=25.00] [r=10.00]
+      RenderSVGText {text} at (99,257) size 282x29 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 282x29
+          chunk 1 (middle anchor) text run 1 at (99.26,280.00) startOffset 0 endOffset 28 width 281.47: "This text should be visible."
+    RenderSVGContainer {g} at (16,516) size 383x64
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

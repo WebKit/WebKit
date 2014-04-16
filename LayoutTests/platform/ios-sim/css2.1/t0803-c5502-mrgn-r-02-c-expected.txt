@@ -1,0 +1,8 @@
+layer at (0,0) size 802x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x68
+  RenderBlock {HTML} at (0,0) size 800x68
+    RenderBody {BODY} at (8,24) size 784x20
+      RenderBlock {P} at (0,0) size 794x20 [color=#000080]
+        RenderText {#text} at (0,0) size 292x19
+          text run at (0,0) width 292: "This page should have a horizontal scroll bar."

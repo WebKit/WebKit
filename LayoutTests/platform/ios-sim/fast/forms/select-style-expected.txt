@@ -1,0 +1,73 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 566x19
+        text run at (0,0) width 256: "This tests that styled popups look right. "
+        text run at (255,0) width 311: "(Aqua for now- later, we will honor the styling)."
+      RenderBR {BR} at (565,15) size 1x0
+      RenderMenuList {SELECT} at (2,22) size 50x20 [bgcolor=#FF0000] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 38x14
+          RenderText at (0,0) size 18x14
+            text run at (0,0) width 18: "test"
+      RenderText {#text} at (54,21) size 4x19
+        text run at (54,21) width 4: " "
+      RenderBR {BR} at (58,36) size 0x0
+      RenderText {#text} at (0,44) size 541x19
+        text run at (0,44) width 541: "This tests that background color is white by default regardless of the parent element."
+      RenderBR {BR} at (540,59) size 1x0
+      RenderInline {SPAN} at (0,0) size 68x29 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 0x0
+        RenderMenuList {SELECT} at (7,66) size 50x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,3) size 38x14
+            RenderText at (0,0) size 18x14
+              text run at (0,0) width 18: "test"
+        RenderText {#text} at (59,65) size 4x19
+          text run at (59,65) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,88) size 642x19
+        text run at (0,88) width 642: "This tests that background color is inherited from the parent if background-color:inherit is specified."
+      RenderBR {BR} at (641,103) size 1x0
+      RenderInline {SPAN} at (0,0) size 68x29 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 0x0
+        RenderMenuList {SELECT} at (7,110) size 50x20 [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,3) size 38x14
+            RenderText at (0,0) size 18x14
+              text run at (0,0) width 18: "test"
+        RenderText {#text} at (59,109) size 4x19
+          text run at (59,109) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,132) size 653x19
+        text run at (0,132) width 653: "This tests that background color is the same as the parent if background-color:transparent is specified."
+      RenderBR {BR} at (652,147) size 1x0
+      RenderInline {SPAN} at (0,0) size 48x29 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 0x0
+        RenderMenuList {SELECT} at (7,155) size 30x16 [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,1) size 18x14
+            RenderText at (0,0) size 18x14
+              text run at (0,0) width 18: "test"
+        RenderText {#text} at (39,152) size 4x19
+          text run at (39,152) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,173) size 509x19
+        text run at (0,173) width 509: "This tests that background is white if only background-image:none is specified."
+      RenderBR {BR} at (508,188) size 1x0
+      RenderMenuList {SELECT} at (2,195) size 50x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 38x14
+          RenderText at (0,0) size 18x14
+            text run at (0,0) width 18: "test"
+      RenderText {#text} at (54,194) size 4x19
+        text run at (54,194) width 4: " "
+      RenderBR {BR} at (58,209) size 0x0
+      RenderText {#text} at (0,217) size 430x19
+        text run at (0,217) width 430: "This tests that the image specified for background-image is visible."
+      RenderBR {BR} at (429,232) size 1x0
+      RenderMenuList {SELECT} at (2,239) size 30x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,1) size 18x14
+          RenderText at (0,0) size 18x14
+            text run at (0,0) width 18: "test"
+      RenderText {#text} at (0,0) size 0x0

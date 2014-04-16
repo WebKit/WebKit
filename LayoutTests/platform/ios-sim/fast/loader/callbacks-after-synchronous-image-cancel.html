@@ -1,0 +1,15 @@
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setWillSendRequestReturnsNull(true);
+    } else {
+        document.write ('This test must be run through DumpRenderTree.')
+    }
+</script>
+<body>
+<div style="background-image: url(example.jpg);">
+This tests &lt;rdar://problem/12097409&gt; - we should get a didFinishLoading callback when client cancels image loads from style resolution. The test times out on failure.
+</div>
+</html>

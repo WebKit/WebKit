@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (299,199) size 202x202
+    RenderSVGViewportContainer {svg} at (299,199) size 202x202
+      RenderSVGRect {rect} at (315,215) size 170x170 [stroke={[type=SOLID] [color=#008000]}] [x=-50.00] [y=-50.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (311,211) size 178x178 [stroke={[type=SOLID] [color=#008000]}] [x=-52.50] [y=-52.50] [width=105.00] [height=105.00]
+      RenderSVGRect {rect} at (307,207) size 186x186 [stroke={[type=SOLID] [color=#008000]}] [x=-55.00] [y=-55.00] [width=110.00] [height=110.00]
+      RenderSVGRect {rect} at (303,203) size 194x194 [stroke={[type=SOLID] [color=#008000]}] [x=-57.50] [y=-57.50] [width=115.00] [height=115.00]
+      RenderSVGRect {rect} at (299,199) size 202x202 [stroke={[type=SOLID] [color=#008000]}] [x=-60.00] [y=-60.00] [width=120.00] [height=120.00]

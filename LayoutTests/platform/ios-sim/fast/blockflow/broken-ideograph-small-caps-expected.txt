@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x377
+  RenderBlock {HTML} at (0,0) size 800x377
+    RenderBody {BODY} at (50,50) size 700x277
+      RenderBlock {DIV} at (0,0) size 556x277 [bgcolor=#EEEEEE]
+        RenderBlock {DIV} at (1,1) size 277x127 [bgcolor=#FFEEEE]
+          RenderBlock {P} at (14,28) size 249x22 [bgcolor=#FFAAAA] [border: (20px solid #FF8888) none (20px solid #FF8888)]
+            RenderText {#text} at (21,-3) size 195x28
+              text run at (21,-3) width 195: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} Paragraph 1"
+          RenderBlock {P} at (14,77) size 249x22 [bgcolor=#FFAAAA] [border: (20px solid #FF8888) none (20px solid #FF8888)]
+            RenderText {#text} at (21,-3) size 195x28
+              text run at (21,-3) width 195: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} Paragraph 2"
+        RenderBlock {DIV} at (278,1) size 277x275 [bgcolor=#FFFFEE]
+          RenderBlock {P} at (14,28) size 82x219 [bgcolor=#FFAAAA] [border: (20px solid #FF8888) none (20px solid #FF8888)]
+            RenderText {#text} at (17,1) size 48x162
+              text run at (17,1) width 80: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D}"
+              text run at (37,1) width 162: "Paragraph 1"
+          RenderBlock {P} at (109,28) size 82x219 [bgcolor=#FFAAAA] [border: (20px solid #FF8888) none (20px solid #FF8888)]
+            RenderText {#text} at (17,1) size 48x162
+              text run at (17,1) width 80: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D}"
+              text run at (37,1) width 162: "Paragraph 2"

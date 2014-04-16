@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x260
+  RenderBlock {html} at (0,0) size 800x260
+    RenderBlock {parsererror} at (16,16) size 768x192 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 323x22
+          text run at (0,0) width 323: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 732x14
+        RenderText {#text} at (0,0) size 505x14
+          text run at (0,0) width 505: "error on line 1 at column 76: Extra content at the end of the document"
+          text run at (504,0) width 1: " "
+      RenderBlock {h3} at (18,93) size 732x23
+        RenderText {#text} at (0,0) size 428x22
+          text run at (0,0) width 428: "Below is a rendering of the page up to the first error."
+      RenderBlock {p} at (18,134) size 732x40
+        RenderText {#text} at (0,0) size 722x39
+          text run at (0,0) width 722: "This document was created as the result of an XSL transformation. The line and column numbers given are from"
+          text run at (0,20) width 145: "the transformed result."
+    RenderBody {body} at (8,224) size 784x20
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 232x19
+          text run at (0,0) width 232: "You should see error text above this"

@@ -1,0 +1,6 @@
+http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html, main document URL http://127.0.0.1:8000/misc/willCacheResponse-delegate-callback.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html, http status code 200>
+http://127.0.0.1:8000/misc/resources/willCacheResponse-success.html - willCacheResponse: called
+This tests for the willCacheResponse resource delegate callback as added for radar 5008925.
+The test is only meaningful if you are running it under DumpRenderTree
+

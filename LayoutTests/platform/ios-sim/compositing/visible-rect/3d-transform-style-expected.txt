@@ -1,0 +1,69 @@
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (visible rect 0.00, 0.00 320.00 x 460.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (visible rect 0.00, 0.00 320.00 x 460.00)
+      (children 2
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 204.00 204.00)
+          (visible rect 0.00, 0.00 204.00 x 204.00)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 200.00 200.00)
+              (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.07 0.07 1.00 -0.00] [0.00 0.00 0.00 1.00])
+              (visible rect 0.00, 0.00 200.00 x 200.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 200.00 0.00)
+                  (preserves3D 1)
+                  (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 300.00 300.00)
+                      (contentsOpaque 1)
+                      (transform [1.00 0.00 0.00 0.00] [0.00 0.91 0.42 0.00] [0.00 -0.42 0.91 0.00] [0.00 0.00 0.00 1.00])
+                      (visible rect 0.00, 0.00 213.67 x 200.68)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 18.00 224.00)
+          (bounds 204.00 204.00)
+          (visible rect 0.00, 0.00 204.00 x 204.00)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 200.00 200.00)
+              (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.07 0.07 1.00 -0.00] [0.00 0.00 0.00 1.00])
+              (visible rect 0.00, 0.00 200.00 x 200.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 200.00 0.00)
+                  (preserves3D 1)
+                  (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 300.00 300.00)
+                      (contentsOpaque 1)
+                      (transform [0.91 0.00 0.42 0.00] [0.00 1.00 0.00 0.00] [-0.42 0.00 0.91 0.00] [0.00 0.00 0.00 1.00])
+                      (visible rect 0.00, 0.00 200.68 x 213.67)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

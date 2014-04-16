@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {FORM} at (0,0) size 784x22
+        RenderBlock {INPUT} at (2,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (20,2) size 34x19
+          text run at (20,2) width 34: "Two "
+        RenderBlock {INPUT} at (55,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (73,2) size 38x19
+          text run at (73,2) width 38: "Three"
+      RenderBlock {FORM} at (0,38) size 784x22
+        RenderBlock {INPUT} at (2,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (20,2) size 31x19
+          text run at (20,2) width 31: "One "
+        RenderBlock {INPUT} at (53,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (70,2) size 34x19
+          text run at (70,2) width 34: "Two "
+        RenderBlock {INPUT} at (106,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (123,2) size 43x19
+          text run at (123,2) width 43: "Three "
+        RenderBlock {INPUT} at (167,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (185,2) size 27x19
+          text run at (185,2) width 27: "One"
+      RenderBlock (anonymous) at (0,76) size 784x40
+        RenderText {#text} at (0,0) size 779x39
+          text run at (0,0) width 514: "The count of the # of elements in form 1 should be 2 and in form 2 should be 4. "
+          text run at (513,0) width 266: "The count in form 1 is 2, and the count in"
+          text run at (0,20) width 70: "form 2 is 4"

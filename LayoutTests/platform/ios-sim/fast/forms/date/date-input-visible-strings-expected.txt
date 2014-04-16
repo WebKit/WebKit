@@ -1,0 +1,7 @@
+The user-visible values of date input fields should be localized if the platform has a LocalizedDate implementation. Otherwise, they should be in the HTML5 formats.
+
+date: value='2011-04-27' visible='Apr 27, 2011'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

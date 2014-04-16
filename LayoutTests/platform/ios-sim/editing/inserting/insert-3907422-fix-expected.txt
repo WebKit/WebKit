@@ -1,0 +1,56 @@
+Buggy code before fix would insert blockquote after body element in second paste
+| <html>
+|   <head>
+|     "
+
+"
+|     <style>
+|       "
+.editing { 
+    word-wrap: break-word; 
+    -khtml-nbsp-mode: space; 
+    -khtml-line-break: after-white-space;
+}
+"
+|     "
+
+"
+|     <title>
+|       "Editing Test"
+|     " 
+"
+|   " 
+"
+|   <body>
+|     class="editing"
+|     contenteditable=""
+|     id="test"
+|     "
+"
+|     <div>
+|       <div>
+|         "foo"
+|       <div>
+|         "bar"
+|       <div>
+|         "bazfoo"
+|       <div>
+|         "bar"
+|       <div>
+|         "baz<#selection-caret>"
+|     "
+
+"
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|     "
+"
+|     <script>
+|       "
+    document.execCommand("SelectAll");
+    document.execCommand("Cut");
+    document.execCommand("Paste");
+    document.execCommand("Paste");
+    Markup.description("Buggy code before fix would insert blockquote after body element in second paste");
+    Markup.dump();
+"

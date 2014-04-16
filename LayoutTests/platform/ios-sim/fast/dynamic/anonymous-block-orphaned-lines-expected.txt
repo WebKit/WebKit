@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 576x19
+          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 306x19
+              text run at (54,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=12782"
+          RenderText {#text} at (359,0) size 271x19
+            text run at (359,0) width 5: " "
+            text run at (363,0) width 267: "Reproducible crash in BidiContext::deref"
+        RenderText {#text} at (629,0) size 5x19
+          text run at (629,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 249x19
+          text run at (0,0) width 249: "No assertion failure means SUCCESS."
+      RenderBlock {DIV} at (0,72) size 784x20
+        RenderInline {SPAN} at (0,0) size 22x19
+          RenderText {#text} at (0,0) size 22x19
+            text run at (0,0) width 22: "foo"
+      RenderBlock {DIV} at (0,92) size 784x0

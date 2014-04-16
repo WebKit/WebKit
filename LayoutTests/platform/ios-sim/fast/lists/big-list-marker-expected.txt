@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 632x19
+          text run at (0,0) width 529: "This tests that the size of the list marker is not effected by the width of the border. "
+          text run at (528,0) width 104: "See bug #11957"
+      RenderBlock {UL} at (0,36) size 784x40 [border: (10px dashed #000000)]
+        RenderListItem {LI} at (50,10) size 724x20
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 271x19
+            text run at (0,0) width 271: "The list-marker should be the normal size."

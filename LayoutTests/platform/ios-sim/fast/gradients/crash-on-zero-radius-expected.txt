@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {H1} at (0,0) size 784x76
+        RenderText {#text} at (0,1) size 705x74
+          text run at (0,1) width 705: "Two gradients, one with zero radius that should not"
+          text run at (0,39) width 83: "crash."
+      RenderBlock {DIV} at (0,97) size 154x154 [border: (2px solid #000000)]

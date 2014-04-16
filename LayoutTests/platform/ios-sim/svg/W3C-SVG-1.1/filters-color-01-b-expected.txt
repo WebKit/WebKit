@@ -1,0 +1,38 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (8,5) size 464x293
+      RenderSVGViewportContainer {svg} at (8,5) size 464x293
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceLinearGradient {linearGradient} [id="MyGradient"] [gradientUnits=userSpaceOnUse] [start=(20,0)] [end=(760,0)]
+            RenderSVGGradientStop {stop} [offset=0.00] [color=#DD00DD]
+            RenderSVGGradientStop {stop} [offset=0.33] [color=#22CC22]
+            RenderSVGGradientStop {stop} [offset=0.67] [color=#400000]
+            RenderSVGGradientStop {stop} [offset=1.00] [color=#A0A0FF]
+        RenderSVGContainer {g} at (8,5) size 464x293
+          RenderSVGPath {rect} at (8,5) size 464x290 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=798.00] [height=498.00]
+          RenderSVGPath {rect} at (19,16) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=20.00] [width=760.00] [height=40.00]
+          RenderSVGText {text} at (20,53) size 195x51 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 195x51
+              chunk 1 text run 1 at (20.00,95.00) startOffset 0 endOffset 10 width 194.33: "Unfiltered"
+          RenderSVGPath {rect} at (19,74) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=120.00] [width=760.00] [height=40.00]
+          RenderSVGText {text} at (20,153) size 668x51 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 668x51
+              chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 32 width 667.30: "type=\"matrix\" (grayscale matrix)"
+          RenderSVGPath {rect} at (19,132) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=220.00] [width=760.00] [height=40.00]
+          RenderSVGText {text} at (20,253) size 572x51 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 572x51
+              chunk 1 text run 1 at (20.00,295.00) startOffset 0 endOffset 27 width 571.44: "type=\"saturate\" values=\".4\""
+          RenderSVGPath {rect} at (19,190) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=320.00] [width=760.00] [height=40.00]
+          RenderSVGText {text} at (20,353) size 622x51 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 622x51
+              chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 621.18: "type=\"hueRotate\" values=\"90\""
+          RenderSVGPath {rect} at (19,248) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=420.00] [width=760.00] [height=40.00]
+          RenderSVGText {text} at (20,453) size 521x51 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 521x51
+              chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 520.11: "type=\"luminanceToAlpha\""
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x118
+  RenderBlock {HTML} at (0,0) size 800x118
+    RenderBody {BODY} at (8,9) size 784x100 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x100
+        RenderText {#text} at (0,6) size 448x13
+          text run at (0,6) width 448: "This test should be about 10px, sans-serif, and light. There should be about 15px between each line. "
+        RenderInline {SPAN} at (0,0) size 772x88 [color=#C0C0C0]
+          RenderText {#text} at (447,6) size 772x88
+            text run at (447,6) width 309: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (755,6) width 17: "text"
+            text run at (0,31) width 308: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (307,31) width 328: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (634,31) width 126: "text dummy text dummy text"
+            text run at (0,56) width 199: "dummy text dummy text dummy text dummy "
+            text run at (198,56) width 328: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (525,56) width 235: "text dummy text dummy text dummy text dummy text"
+            text run at (0,81) width 91: "dummy text dummy "
+            text run at (90,81) width 327: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (416,81) width 290: "text dummy text dummy text dummy text dummy text dummy text"
+        RenderText {#text} at (0,0) size 0x0

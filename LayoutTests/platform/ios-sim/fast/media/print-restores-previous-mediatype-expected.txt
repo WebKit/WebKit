@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 10: TypeError: 'undefined' is not a function (evaluating 'testRunner.setMediaType("handheld")')
+Media type is set to 'handheld' to be different than the default 'screen'
+FAIL: window.styleMedia.type should be 'handheld' but instead is 'screen'.
+
+The page is printed, which changes the media type to 'print', and then back
+FAIL: window.styleMedia.type should be 'handheld' but instead is 'screen'.
+

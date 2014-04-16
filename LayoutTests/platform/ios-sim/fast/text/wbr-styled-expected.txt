@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 93x19
+          text run at (0,0) width 93: "This tests that "
+        RenderInline {TT} at (0,0) size 25x15
+          RenderText {#text} at (92,4) size 25x15
+            text run at (92,4) width 25: "WBR"
+        RenderText {#text} at (116,0) size 309x19
+          text run at (116,0) width 309: " elements cannot be styled and that setting their "
+        RenderInline {TT} at (0,0) size 63x15
+          RenderText {#text} at (424,4) size 63x15
+            text run at (424,4) width 63: "position"
+        RenderText {#text} at (486,0) size 22x19
+          text run at (486,0) width 22: " to "
+        RenderInline {TT} at (0,0) size 63x15
+          RenderText {#text} at (507,4) size 63x15
+            text run at (507,4) width 63: "absolute"
+        RenderText {#text} at (569,0) size 155x19
+          text run at (569,0) width 155: " does not crash WebKit."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 128x19
+          text run at (0,0) width 128: "There should be no "
+        RenderWordBreak {WBR} at (0,0) size 0x0
+        RenderText {#text} at (127,0) size 100x19
+          text run at (127,0) width 100: "red on this line."
+      RenderBlock {P} at (0,72) size 784x20
+        RenderText {#text} at (0,0) size 126x19
+          text run at (0,0) width 126: "No crashing, please"
+        RenderWordBreak {WBR} at (0,0) size 0x0
+        RenderText {#text} at (125,0) size 5x19
+          text run at (125,0) width 5: "."

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x364
+  RenderBlock {HTML} at (0,0) size 800x364
+    RenderBody {BODY} at (8,16) size 784x340
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 269x19
+          text run at (0,0) width 269: "Test passes if the four boxes are identical."
+      RenderTable {TABLE} at (0,36) size 318x304
+        RenderTableSection {TBODY} at (0,0) size 318x304
+          RenderTableRow {TR} at (0,2) size 318x300
+            RenderTableCell {TD} at (2,2) size 156x300 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (11,11) size 134x134 [border: (19px solid #000000)]
+              RenderBlock {DIV} at (11,155) size 134x134 [border: (19px solid #000000)]
+            RenderTableCell {TD} at (160,2) size 156x300 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (11,11) size 134x134 [border: (19px solid #000000)]
+              RenderBlock {DIV} at (11,155) size 134x134 [border: (19px solid #000000)]

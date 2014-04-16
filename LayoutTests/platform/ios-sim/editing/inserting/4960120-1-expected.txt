@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 518x19
+          text run at (0,0) width 518: "This tests for a bug where the first newline entered into a text area would be lost."
+      RenderBlock (anonymous) at (0,36) size 784x38
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (10,46) size 150x34 clip at (11,47) size 148x32
+  RenderTextControl {TEXTAREA} at (2,2) size 150x34 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 144x28
+      RenderText {#text} at (3,0) size 0x14
+        text run at (3,0) width 0: " "
+      RenderText {#text} at (3,14) size 0x14
+        text run at (3,14) width 0: " "
+caret: position 0 of child 1 {#text} of child 0 {DIV} of {#shadow-root} of child 2 {TEXTAREA} of body

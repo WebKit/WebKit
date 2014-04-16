@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x161
+  RenderBlock {HTML} at (0,0) size 800x161
+    RenderBody {BODY} at (8,8) size 784x145
+      RenderBlock (anonymous) at (0,0) size 784x105
+        RenderSVGRoot {svg} at (8,12) size 308x75
+          RenderSVGText {text} at (10,14) size 278x45 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 278x45
+              chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 15 width 277.83: "Shadow on texts"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,105) size 784x40
+        RenderText {#text} at (0,0) size 586x19
+          text run at (0,0) width 586: "PASS - \"text-shadow\" property for \"text\" element at 0s saw something close to: -25,-5,0,15"
+        RenderBR {BR} at (585,0) size 1x19
+        RenderText {#text} at (0,20) size 567x19
+          text run at (0,20) width 567: "PASS - \"text-shadow\" property for \"text\" element at 1s saw something close to: 5,5,0,15"
+        RenderBR {BR} at (566,20) size 1x19

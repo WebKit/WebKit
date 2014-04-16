@@ -1,0 +1,16 @@
+This iframe should not have private browsing enabled:
+
+
+This iframe should not have private browsing enabled:
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+undefined
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+undefined

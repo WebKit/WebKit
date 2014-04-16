@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 515x19
+          RenderInline {A} at (0,0) size 157x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 157x19
+              text run at (54,0) width 157: "rdar://problem/9528843"
+          RenderText {#text} at (210,0) size 359x19
+            text run at (210,0) width 5: " "
+            text run at (214,0) width 355: "STIX glyphs not rendered on this stackoverflow answer"
+        RenderText {#text} at (568,0) size 5x19
+          text run at (568,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x38
+        RenderText {#text} at (0,15) size 99x19
+          text run at (0,15) width 99: "A black circle: "
+        RenderInline {SPAN} at (0,0) size 23x36
+          RenderText {#text} at (98,1) size 23x36
+            text run at (98,1) width 23: "\x{26AB}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,90) size 784x38
+        RenderText {#text} at (0,15) size 140x19
+          text run at (0,15) width 140: "Another black circle: "
+        RenderInline {SPAN} at (0,0) size 23x36
+          RenderText {#text} at (139,1) size 23x36
+            text run at (139,1) width 23: "\x{26AB}"
+        RenderText {#text} at (0,0) size 0x0

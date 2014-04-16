@@ -1,0 +1,21 @@
+Test the MediaQueryList interface: http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface.
+
+Testing removeListener in different MediaQueryList objects and the callback call sequence
+
+adding windowed[1], minimized[1], windowed[2] and minimized[2]
+
+------------- minimized -------------
+------------- windowed -------------
+
+
+removing windowed[1] and minimized[2]
+
+------------- minimized -------------
+------------- windowed -------------
+
+
+adding windowed[1] and minimized[2]
+
+------------- minimized -------------
+------------- windowed -------------
+

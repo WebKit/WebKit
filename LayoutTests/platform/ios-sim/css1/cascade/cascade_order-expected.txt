@@ -1,0 +1,142 @@
+layer at (0,0) size 800x838
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x838
+  RenderBlock {HTML} at (0,0) size 800x838
+    RenderBody {BODY} at (8,8) size 784x822 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 363x19
+          text run at (0,0) width 363: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,36) size 784x165
+        RenderText {#text} at (0,0) size 562x165
+          text run at (0,0) width 562: "<LINK rel=\"stylesheet\" type=\"text/css\" HREF=\"../resources/linktest.css\">"
+          text run at (561,0) width 1: " "
+          text run at (0,15) width 149: "LI {color: purple;}"
+          text run at (148,15) width 1: " "
+          text run at (0,30) width 157: "UL LI {color: blue;}"
+          text run at (156,30) width 1: " "
+          text run at (0,45) width 180: "UL LI LI {color: gray;}"
+          text run at (179,45) width 1: " "
+          text run at (0,60) width 172: "LI.red {color: green;}"
+          text run at (171,60) width 1: " "
+          text run at (0,75) width 211: "UL LI.mar {color: #660000;}"
+          text run at (210,75) width 1: " "
+          text run at (0,90) width 196: "UL LI#gre {color: green;}"
+          text run at (195,90) width 1: " "
+          text run at (0,105) width 157: ".test {color: blue;}"
+          text run at (156,105) width 1: " "
+          text run at (0,120) width 172: ".test {color: purple;}"
+          text run at (171,120) width 1: " "
+          text run at (0,135) width 289: ".one {text-decoration: line-through;}"
+          text run at (288,135) width 1: " "
+          text run at (0,150) width 0: " "
+      RenderBlock {HR} at (0,214) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {UL} at (0,232) size 784x160
+        RenderListItem {LI} at (40,0) size 744x20 [color=#0000FF]
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 194x19
+            text run at (0,0) width 194: "This list item should be blue..."
+        RenderListItem {LI} at (40,20) size 744x80 [color=#0000FF]
+          RenderBlock (anonymous) at (0,0) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 295x19
+              text run at (0,0) width 295: "...and so should this; neither should be purple."
+          RenderBlock {UL} at (0,20) size 744x60
+            RenderListItem {LI} at (40,0) size 704x20 [color=#808080]
+              RenderListMarker at (-18,0) size 7x19: white bullet
+              RenderText {#text} at (0,0) size 195x19
+                text run at (0,0) width 195: "This list item should be gray..."
+            RenderListItem {LI} at (40,20) size 704x20 [color=#808080]
+              RenderListMarker at (-18,0) size 7x19: white bullet
+              RenderText {#text} at (0,0) size 116x19
+                text run at (0,0) width 116: "...as should this...."
+            RenderListItem {LI} at (40,40) size 704x20 [color=#008000]
+              RenderListMarker at (-18,0) size 7x19: white bullet
+              RenderText {#text} at (0,0) size 196x19
+                text run at (0,0) width 196: "...but this one should be green."
+        RenderListItem {LI} at (40,100) size 744x20 [color=#660000]
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 174x19
+            text run at (0,0) width 174: "This ought to be dark red..."
+        RenderListItem {LI} at (40,120) size 744x20 [color=#008000]
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 87x19
+            text run at (0,0) width 87: "...this green..."
+        RenderListItem {LI} at (40,140) size 744x20 [color=#0000FF]
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 98x19
+            text run at (0,0) width 98: "...and this blue."
+      RenderBlock {P} at (0,408) size 784x20 [color=#0000FF]
+        RenderText {#text} at (0,0) size 283x19
+          text run at (0,0) width 283: "This sentence should be blue (STYLE attr.)."
+      RenderBlock {P} at (0,444) size 784x20 [color=#800080]
+        RenderText {#text} at (0,0) size 208x19
+          text run at (0,0) width 208: "This sentence should be purple ["
+        RenderInline {CODE} at (0,0) size 95x15
+          RenderText {#text} at (207,4) size 95x15
+            text run at (207,4) width 95: "class=\"test\""
+        RenderText {#text} at (301,0) size 10x19
+          text run at (301,0) width 10: "]."
+      RenderBlock {P} at (0,480) size 784x20
+        RenderText {#text} at (0,0) size 697x19
+          text run at (0,0) width 697: "This text should be stricken (overriding the imported underline; only works if LINKed sheets are supported)."
+      RenderTable {TABLE} at (0,516) size 719x306 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 717x304
+          RenderTableRow {TR} at (0,0) size 717x28
+            RenderTableCell {TD} at (0,0) size 717x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 163x19
+                RenderText {#text} at (4,4) size 163x19
+                  text run at (4,4) width 163: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,28) size 717x276
+            RenderTableCell {TD} at (0,152) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,28) size 705x276 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {UL} at (4,4) size 697x160
+                RenderListItem {LI} at (40,0) size 657x20 [color=#0000FF]
+                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderText {#text} at (0,0) size 194x19
+                    text run at (0,0) width 194: "This list item should be blue..."
+                RenderListItem {LI} at (40,20) size 657x80 [color=#0000FF]
+                  RenderBlock (anonymous) at (0,0) size 657x20
+                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderText {#text} at (0,0) size 295x19
+                      text run at (0,0) width 295: "...and so should this; neither should be purple."
+                  RenderBlock {UL} at (0,20) size 657x60
+                    RenderListItem {LI} at (40,0) size 617x20 [color=#808080]
+                      RenderListMarker at (-18,0) size 7x19: white bullet
+                      RenderText {#text} at (0,0) size 195x19
+                        text run at (0,0) width 195: "This list item should be gray..."
+                    RenderListItem {LI} at (40,20) size 617x20 [color=#808080]
+                      RenderListMarker at (-18,0) size 7x19: white bullet
+                      RenderText {#text} at (0,0) size 116x19
+                        text run at (0,0) width 116: "...as should this...."
+                    RenderListItem {LI} at (40,40) size 617x20 [color=#008000]
+                      RenderListMarker at (-18,0) size 7x19: white bullet
+                      RenderText {#text} at (0,0) size 196x19
+                        text run at (0,0) width 196: "...but this one should be green."
+                RenderListItem {LI} at (40,100) size 657x20 [color=#660000]
+                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderText {#text} at (0,0) size 174x19
+                    text run at (0,0) width 174: "This ought to be dark red..."
+                RenderListItem {LI} at (40,120) size 657x20 [color=#008000]
+                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderText {#text} at (0,0) size 87x19
+                    text run at (0,0) width 87: "...this green..."
+                RenderListItem {LI} at (40,140) size 657x20 [color=#0000FF]
+                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderText {#text} at (0,0) size 98x19
+                    text run at (0,0) width 98: "...and this blue."
+              RenderBlock {P} at (4,180) size 697x20 [color=#0000FF]
+                RenderText {#text} at (0,0) size 283x19
+                  text run at (0,0) width 283: "This sentence should be blue (STYLE attr.)."
+              RenderBlock {P} at (4,216) size 697x20 [color=#800080]
+                RenderText {#text} at (0,0) size 208x19
+                  text run at (0,0) width 208: "This sentence should be purple ["
+                RenderInline {CODE} at (0,0) size 95x15
+                  RenderText {#text} at (207,4) size 95x15
+                    text run at (207,4) width 95: "class=\"test\""
+                RenderText {#text} at (301,0) size 10x19
+                  text run at (301,0) width 10: "]."
+              RenderBlock {P} at (4,252) size 697x20
+                RenderText {#text} at (0,0) size 697x19
+                  text run at (0,0) width 697: "This text should be stricken (overriding the imported underline; only works if LINKed sheets are supported)."

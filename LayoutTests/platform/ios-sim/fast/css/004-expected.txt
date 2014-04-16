@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x284
+  RenderBlock {HTML} at (0,0) size 800x284
+    RenderBody {BODY} at (8,21) size 784x247
+      RenderBlock {H1} at (0,0) size 784x38
+        RenderText {#text} at (0,1) size 421x36
+          text run at (0,1) width 421: "Shorthand border properties 2"
+      RenderBlock {P} at (0,59) size 784x20
+        RenderText {#text} at (0,0) size 511x19
+          text run at (0,0) width 412: "This test was written to test a point I mentioned to Tantek \x{C7}elik "
+          text run at (411,0) width 100: "on 2000-07-13."
+      RenderBlock {P} at (0,95) size 784x26 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 278x19
+          text run at (3,3) width 278: "This paragraph should have a green border."
+      RenderBlock {P} at (0,137) size 784x26 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 278x19
+          text run at (3,3) width 278: "This paragraph should have a green border."
+      RenderBlock {P} at (0,179) size 784x26 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 278x19
+          text run at (3,3) width 278: "This paragraph should have a green border."
+      RenderBlock {P} at (0,221) size 784x26 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 278x19
+          text run at (3,3) width 278: "This paragraph should have a green border."

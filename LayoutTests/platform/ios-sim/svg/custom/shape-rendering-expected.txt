@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,8) size 757x196
+    RenderSVGRect {rect} at (30,10) size 140x140 [transform={m=((0.82,0.57)(-0.57,0.82)) t=(87.72,10.36)}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (178,8) size 144x144 [transform={m=((0.82,0.57)(-0.57,0.82)) t=(237.72,10.36)}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGContainer {g} at (0,165) size 757x39
+      RenderSVGText {text} at (0,165) size 304x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 304x19
+          chunk 1 text run 1 at (0.00,180.00) startOffset 0 endOffset 49 width 303.88: "The rectangle on the left should be anti-aliased."
+      RenderSVGText {text} at (0,185) size 757x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 757x19
+          chunk 1 text run 1 at (0.00,200.00) startOffset 0 endOffset 118 width 756.55: "The rectangle on the right should not be anti-aliased, as it has the property shape-rendering=\"crispEdges\". Bug 16182."

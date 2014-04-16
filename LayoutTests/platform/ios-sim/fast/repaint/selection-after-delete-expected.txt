@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x562
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 765x39
+          text run at (0,0) width 490: "This tests to see if selection gaps are removed when the selection is deleted. "
+          text run at (489,0) width 226: "Nothing should be selected below. "
+          text run at (714,0) width 47: "A caret"
+          text run at (760,0) width 5: " "
+          text run at (0,20) width 181: "should be inside the red div."
+      RenderBlock {DIV} at (30,70) size 152x22 [border: (1px solid #FF0000)]
+        RenderBR {BR} at (1,1) size 0x19
+caret: position 0 of child 0 {BR} of child 3 {DIV} of body

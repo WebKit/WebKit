@@ -1,0 +1,103 @@
+ALERT: pageshow - not from cache
+ALERT: pagehide - entering cache
+ALERT: pageshow - from cache
+This tests that layers are rebuilt properly after the page is restored from the page cache.
+
+
+
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 4
+        (GraphicsLayer
+          (position 8.00 52.00)
+          (bounds 370.00 220.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 35.00 35.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 300.00 150.00)
+                  (children 1
+                    (GraphicsLayer
+                      (children 1
+                        (GraphicsLayer
+                          (bounds 352.00 352.00)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 352.00 352.00)
+                              (drawsContent 1)
+                              (children 1
+                                (GraphicsLayer
+                                  (position 8.00 8.00)
+                                  (bounds 202.00 202.00)
+                                  (drawsContent 1)
+                                  (transform [0.71 0.71 0.00 0.00] [-0.71 0.71 0.00 0.00] [0.00 0.00 1.00 0.00] [100.00 100.00 0.00 1.00])
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 13.00 57.00)
+          (bounds 50.00 50.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 8.00 277.00)
+          (bounds 370.00 220.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 35.00 35.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 300.00 150.00)
+                  (children 1
+                    (GraphicsLayer
+                      (children 1
+                        (GraphicsLayer
+                          (bounds 508.00 608.00)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 508.00 608.00)
+                              (drawsContent 1)
+                              (children 1
+                                (GraphicsLayer
+                                  (position 108.00 100.00)
+                                  (bounds 200.00 200.00)
+                                  (drawsContent 1)
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 13.00 282.00)
+          (bounds 50.00 50.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

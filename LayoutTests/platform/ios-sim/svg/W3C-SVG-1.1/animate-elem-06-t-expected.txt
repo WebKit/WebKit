@@ -1,0 +1,26 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (3,0) size 474x357
+    RenderSVGContainer {g} at (42,0) size 432x312
+      RenderSVGText {text} at (7,0) size 67x10 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 67x10
+          chunk 1 text run 1 at (7.00,8.00) startOffset 0 endOffset 18 width 66.26: "Test a motion path"
+      RenderSVGText {text} at (11,10) size 52x10 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 52x10
+          chunk 1 text run 1 at (11.00,18.00) startOffset 0 endOffset 17 width 51.98: "'path' attribute."
+      RenderSVGContainer {g} at (42,120) size 432x192
+        RenderSVGPath {path} at (87,120) size 305x141 [stroke={[type=SOLID] [color=#000000]}] [data="M 15 43 C 15 43 36 20 65 33"]
+        RenderSVGRect {rect} at (57,195) size 66x66 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=10.00] [y=33.00] [width=10.00] [height=10.00]
+        RenderSVGText {text} at (7,42) size 22x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 22x10
+            chunk 1 text run 1 at (7.00,50.00) startOffset 0 endOffset 6 width 21.34: "0 sec."
+        RenderSVGRect {rect} at (357,135) size 66x66 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=60.00] [y=23.00] [width=10.00] [height=10.00]
+        RenderSVGText {text} at (52,32) size 27x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 27x10
+            chunk 1 text run 1 at (52.00,40.00) startOffset 0 endOffset 7 width 26.02: "6+ sec."
+        RenderSVGPath {path} at (55,191) size 70x70 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,43.00)}] [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M -5 0 L 0 -10 L 5 0 Z"]
+    RenderSVGText {text} at (5,51) size 40x7 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 40x7
+        chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 39.50: "$Revision: 1.9 $"
+    RenderSVGRect {rect} at (3,3) size 474x354 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=78.00] [height=58.00]

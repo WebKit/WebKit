@@ -1,0 +1,41 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 10 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x30
+        RenderText {#text} at (0,1) size 685x28
+          text run at (0,1) width 685: "Test inserting paragraphs: should see two empty red boxes below \"foo\""
+      RenderBlock {DIV} at (0,30) size 784x12
+      RenderBlock {DIV} at (0,42) size 784x58 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,15) size 34x28
+          text run at (14,15) width 34: "baz"
+      RenderBlock (anonymous) at (0,100) size 784x30
+        RenderText {#text} at (0,1) size 31x28
+          text run at (0,1) width 31: "bar"
+      RenderBlock {DIV} at (0,130) size 784x58 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,15) size 32x28
+          text run at (14,15) width 32: "foo"
+      RenderBlock {DIV} at (0,188) size 784x58 [border: (2px solid #FF0000)]
+        RenderBR {BR} at (14,15) size 0x28
+      RenderBlock {DIV} at (0,246) size 784x58 [border: (2px solid #FF0000)]
+        RenderBR {BR} at (14,15) size 0x28
+caret: position 0 of child 0 {BR} of child 8 {DIV} of body

@@ -1,0 +1,5 @@
+This is the touch target.
+Should see a single touch at 20,20
+[TouchEvent X: 20 Y: 20]
+PASSED
+

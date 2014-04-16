@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 15: TypeError: Result of expression 'eventSender.beginDragWithFiles' [undefined] is not a function.
+FAIL: Timed out waiting for notifyDone to be called
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x84
+  RenderBlock {HTML} at (0,0) size 800x84
+    RenderBody {BODY} at (8,8) size 784x60
+      RenderBlock {FORM} at (0,0) size 784x24
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,40) size 784x20
+        RenderText {#text} at (0,0) size 457x19
+          text run at (0,0) width 457: "The file upload control above should have text '2 files,' not a filename."
+layer at (10,10) size 209x20
+  RenderFileUploadControl {INPUT} at (2,2) size 209x20 ""
+    RenderButton {INPUT} at (0,0) size 83x20 [color=#808080] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+      RenderBlock (anonymous) at (12,3) size 59x14
+        RenderText at (0,0) size 59x14
+          text run at (0,0) width 59: "Choose File"

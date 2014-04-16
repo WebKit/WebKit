@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 611x19
+          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 306x19
+              text run at (54,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=13178"
+          RenderText {#text} at (359,0) size 306x19
+            text run at (359,0) width 5: " "
+            text run at (363,0) width 302: "Helvetica zero-width space has non-zero width"
+        RenderText {#text} at (664,0) size 5x19
+          text run at (664,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 275x19
+          text run at (0,0) width 275: "The following lines should all be identical."
+      RenderBlock {DIV} at (0,72) size 784x43
+        RenderText {#text} at (0,0) size 387x43
+          text run at (0,0) width 387: "Lor\x{E9}m\x{200B}ipsum\x{200E}dolor\x{1F}sit"
+      RenderBlock {DIV} at (0,115) size 784x43
+        RenderText {#text} at (0,0) size 387x43
+          text run at (0,0) width 387: "Lore\x{301}m\x{200B}ipsum\x{200E}dolor\x{1F}sit"
+      RenderBlock {DIV} at (0,158) size 784x43
+        RenderText {#text} at (0,0) size 387x43
+          text run at (0,0) width 387: "Lor\x{E9}mipsumdolorsit"

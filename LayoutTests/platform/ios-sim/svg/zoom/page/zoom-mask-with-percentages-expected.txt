@@ -1,0 +1,68 @@
+layer at (0,0) size 933x1036
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 933x1036
+  RenderSVGRoot {svg} at (186,72) size 550x766
+    RenderSVGContainer {g} at (186,72) size 550x766
+      RenderSVGText {text} at (179,35) size 92x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 92x19
+          chunk 1 (middle anchor) text run 1 at (179.21,50.00) startOffset 0 endOffset 12 width 91.58: "Mask Regions"
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceLinearGradient {linearGradient} [id="maskedGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,1)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+        RenderSVGRect {rect} at (0,0) size 208x166 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+        RenderSVGResourceMasker {mask} [id="mask_1"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+          RenderSVGEllipse {circle} at (10,0) size 84x83 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
+          RenderSVGEllipse {circle} at (10,82) size 84x84 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
+          RenderSVGEllipse {circle} at (114,0) size 84x83 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
+          RenderSVGEllipse {circle} at (114,82) size 84x84 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
+        RenderSVGResourceMasker {mask} [id="mask_2"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+          RenderSVGEllipse {circle} at (10,0) size 84x83 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
+          RenderSVGEllipse {circle} at (10,82) size 84x84 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
+          RenderSVGEllipse {circle} at (114,0) size 84x83 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
+          RenderSVGEllipse {circle} at (114,82) size 84x84 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
+        RenderSVGResourceMasker {mask} [id="mask_3"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
+          RenderSVGEllipse {circle} at (10,0) size 84x83 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
+          RenderSVGEllipse {circle} at (10,82) size 84x84 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
+          RenderSVGEllipse {circle} at (114,0) size 84x83 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
+          RenderSVGEllipse {circle} at (114,82) size 84x84 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
+        RenderSVGResourceMasker {mask} [id="mask_4"] [maskUnits=objectBoundingBox] [maskContentUnits=objectBoundingBox]
+          RenderSVGEllipse {circle} at (0,0) size 2x1 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.25] [cy=0.20] [r=0.20]
+          RenderSVGEllipse {circle} at (0,0) size 2x2 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.25] [cy=0.60] [r=0.20]
+          RenderSVGEllipse {circle} at (1,0) size 2x1 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.75] [cy=0.20] [r=0.20]
+          RenderSVGEllipse {circle} at (1,0) size 2x2 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.75] [cy=0.60] [r=0.20]
+      RenderSVGContainer {g} at (362,169) size 209x204 [transform={m=((1.00,0.00)(0.00,1.00)) t=(175.00,100.00)}]
+        RenderSVGContainer {use} at (362,207) size 209x166
+          RenderSVGRect {rect} at (362,207) size 209x166 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+        RenderSVGText {text} at (24,-18) size 51x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 51x19
+            chunk 1 (middle anchor) text run 1 at (24.79,-3.00) startOffset 0 endOffset 6 width 50.42: "Masked"
+      RenderSVGContainer {g} at (186,418) size 188x204 [transform={m=((1.00,0.00)(0.00,1.00)) t=(85.00,220.00)}]
+        RenderSVGContainer {use} at (186,455) size 188x167
+          [masker="mask_1"] RenderSVGResourceMasker {mask} at (5,0) size 90x80
+          RenderSVGRect {rect} at (176,455) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+        RenderSVGText {text} at (26,-18) size 48x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 48x19
+            chunk 1 (middle anchor) text run 1 at (26.33,-3.00) startOffset 0 endOffset 6 width 47.34: "Mask 1"
+      RenderSVGContainer {g} at (228,667) size 104x162 [transform={m=((1.00,0.00)(0.00,1.00)) t=(85.00,340.00)}]
+        RenderSVGContainer {use} at (228,745) size 104x84
+          [masker="mask_2"] RenderSVGResourceMasker {mask} at (25,20) size 50x40
+          RenderSVGRect {rect} at (176,704) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+        RenderSVGText {text} at (26,-18) size 48x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 48x19
+            chunk 1 (middle anchor) text run 1 at (26.33,-3.00) startOffset 0 endOffset 6 width 47.34: "Mask 2"
+      RenderSVGContainer {g} at (590,418) size 105x163 [transform={m=((1.00,0.00)(0.00,1.00)) t=(260.00,220.00)}]
+        RenderSVGContainer {use} at (590,497) size 105x84
+          [masker="mask_3"] RenderSVGResourceMasker {mask} at (25,20) size 50x40
+          RenderSVGRect {rect} at (539,455) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+        RenderSVGText {text} at (26,-18) size 48x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 48x19
+            chunk 1 (middle anchor) text run 1 at (26.33,-3.00) startOffset 0 endOffset 6 width 47.34: "Mask 3"
+      RenderSVGContainer {g} at (549,667) size 187x171 [transform={m=((1.00,0.00)(0.00,1.00)) t=(260.00,340.00)}]
+        RenderSVGContainer {use} at (549,704) size 187x134
+          [masker="mask_4"] RenderSVGResourceMasker {mask} at (5.00,0) size 90.00x64.00
+          RenderSVGRect {rect} at (539,704) size 208x167 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+        RenderSVGText {text} at (26,-18) size 48x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 48x19
+            chunk 1 (middle anchor) text run 1 at (26.33,-3.00) startOffset 0 endOffset 6 width 47.34: "Mask 4"
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0

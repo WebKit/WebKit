@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x264
+  RenderBlock {HTML} at (0,0) size 800x264
+    RenderBody {BODY} at (8,16) size 784x232
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 522x19
+          text run at (0,0) width 522: "The following two blocks should be identical, including overflow. (Force bidi: \x{D7}\x{90})"
+      RenderBlock {DIV} at (0,36) size 784x196
+        RenderBlock {P} at (16,0) size 294x90 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
+          RenderInline {SPAN} at (0,0) size 118x37 [color=#000080] [border: (3px solid #000080) none (3px solid #000080)]
+            RenderText {#text} at (30,25) size 99x19
+              text run at (30,25) width 99: "AAABBBCCC"
+          RenderText {#text} at (128,25) size 92x19
+            text run at (128,25) width 92: "DDDEEEFFF"
+          RenderInline {SPAN} at (0,0) size 105x37 [color=#000080] [border: (3px solid #000080) none]
+            RenderText {#text} at (219,25) size 86x19
+              text run at (219,25) width 86: "GGGHHHIII"
+          RenderText {#text} at (11,59) size 195x19
+            text run at (11,59) width 195: "JJJKKKLLLMMMNNNOOO"
+        RenderBlock {P} at (16,106) size 294x90 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
+          RenderInline {SPAN} at (0,0) size 313x37 [color=#000080] [border: (3px solid #000080)]
+            RenderText {#text} at (30,25) size 275x19
+              text run at (30,25) width 99: "AAABBBCCC"
+              text run at (219,25) width 86 RTL override: "\x{202E}IIIHHHGGG"
+          RenderText {#text} at (128,25) size 209x53
+            text run at (128,25) width 92 RTL override: "FFFEEEDDD"
+            text run at (11,59) width 83 RTL override: "LLLKKKJJJ"
+            text run at (93,59) width 113: "\x{202C}MMMNNNOOO"

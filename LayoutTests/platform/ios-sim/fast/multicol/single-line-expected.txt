@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x300
+  RenderBlock {HTML} at (0,0) size 800x300
+    RenderBody {BODY} at (8,16) size 784x268
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 780x19
+          text run at (0,0) width 397: "This test checks if CSS3 multi-column layout properly works "
+          text run at (396,0) width 384: "when the multi-column block contains only one line of text."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 571x19
+          text run at (0,0) width 306: "Test successful if the following text is readable "
+          text run at (305,0) width 266: "(i.e. not split into two different columns)."
+      RenderBlock {DIV} at (0,248) size 784x20
+layer at (8,88) size 784x20
+  RenderBlock {P} at (0,72) size 784x20 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,0) size 67x19
+      text run at (0,0) width 67: "Short text."
+layer at (8,124) size 784x36
+  RenderBlock {P} at (0,108) size 784x36 [bgcolor=#EEEEEE]
+    RenderInline {SPAN} at (0,0) size 142x34
+      RenderText {#text} at (0,1) size 142x34
+        text run at (0,1) width 142: "Bigger text."
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,176) size 784x36
+  RenderBlock {P} at (0,160) size 784x36 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,13) size 59x19
+      text run at (0,13) width 59: "Partially "
+    RenderInline {SPAN} at (0,0) size 39x34
+      RenderText {#text} at (58,1) size 39x34
+        text run at (58,1) width 39: "big"
+    RenderText {#text} at (96,13) size 33x19
+      text run at (96,13) width 33: " text."
+layer at (8,228) size 784x20
+  RenderBlock {DIV} at (0,212) size 784x20 [bgcolor=#EEEEEE]
+    RenderBlock {P} at (0,16) size 184x24
+      RenderText {#text} at (0,4) size 88x19
+        text run at (0,4) width 88: "Nested block."
+layer at (8,264) size 784x20
+  RenderBlock {P} at (0,0) size 784x20 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,0) size 108x19
+      text run at (0,0) width 108: "Nested block #2."

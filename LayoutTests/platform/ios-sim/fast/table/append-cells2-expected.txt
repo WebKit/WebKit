@@ -1,0 +1,89 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 465x19
+          text run at (0,0) width 465: "Rows should have different number of columns, but those should match."
+      RenderTable {TABLE} at (0,36) size 725x100
+        RenderTableSection {THEAD} at (0,0) size 725x20
+          RenderTableRow {TR} at (0,0) size 725x20
+            RenderTableCell {TD} at (0,0) size 90x20 [bgcolor=#7CFC00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "1"
+            RenderTableCell {TD} at (90,0) size 90x20 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 18x19
+                text run at (0,0) width 18: "1+"
+            RenderTableCell {TD} at (180,0) size 90x20 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "2"
+            RenderTableCell {TD} at (270,0) size 91x20 [bgcolor=#008B8B] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 18x19
+                text run at (0,0) width 18: "2+"
+            RenderTableCell {TD} at (361,0) size 91x20 [bgcolor=#FFFF00] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "3"
+            RenderTableCell {TD} at (452,0) size 91x20 [bgcolor=#FFD700] [r=0 c=5 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 18x19
+                text run at (0,0) width 18: "3+"
+        RenderTableSection {TFOOT} at (0,80) size 725x20
+          RenderTableRow {TR} at (0,0) size 725x20
+            RenderTableCell {TD} at (0,0) size 90x20 [bgcolor=#7CFC00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "1"
+            RenderTableCell {TD} at (90,0) size 90x20 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 18x19
+                text run at (0,0) width 18: "1+"
+            RenderTableCell {TD} at (180,0) size 90x20 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "2"
+            RenderTableCell {TD} at (270,0) size 91x20 [bgcolor=#008B8B] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 18x19
+                text run at (0,0) width 18: "2+"
+            RenderTableCell {TD} at (361,0) size 91x20 [bgcolor=#FFFF00] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "3"
+            RenderTableCell {TD} at (452,0) size 91x20 [bgcolor=#FFD700] [r=0 c=5 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 18x19
+                text run at (0,0) width 18: "3+"
+            RenderTableCell {TD} at (543,0) size 91x20 [bgcolor=#FFA500] [r=0 c=6 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "4"
+            RenderTableCell {TD} at (634,0) size 91x20 [bgcolor=#FF8C00] [r=0 c=7 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 18x19
+                text run at (0,0) width 18: "4+"
+        RenderTableSection {TBODY} at (0,20) size 725x60
+          RenderTableRow {TR} at (0,0) size 725x20
+            RenderTableCell {TD} at (0,0) size 90x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x19
+                text run at (0,0) width 4: " "
+          RenderTableRow {TR} at (0,20) size 725x20
+            RenderTableCell {TD} at (0,20) size 90x20 [bgcolor=#7CFC00] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "1"
+            RenderTableCell {TD} at (90,20) size 90x20 [bgcolor=#008000] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 18x19
+                text run at (0,0) width 18: "1+"
+            RenderTableCell {TD} at (180,20) size 90x20 [bgcolor=#00FFFF] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "2"
+            RenderTableCell {TD} at (270,20) size 91x20 [bgcolor=#008B8B] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 18x19
+                text run at (0,0) width 18: "2+"
+          RenderTableRow {TR} at (0,40) size 725x20
+            RenderTableCell {TD} at (0,40) size 90x20 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x19
+                text run at (0,0) width 4: " "
+      RenderBlock (anonymous) at (0,136) size 784x24
+        RenderButton {BUTTON} at (2,2) size 50x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (12,3) size 26x14
+            RenderText {#text} at (0,0) size 26x14
+              text run at (0,0) width 26: "show"
+        RenderText {#text} at (54,1) size 4x19
+          text run at (54,1) width 4: " "
+        RenderButton {BUTTON} at (60,2) size 45x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (12,3) size 21x14
+            RenderText {#text} at (0,0) size 21x14
+              text run at (0,0) width 21: "hide"
+        RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,62 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x352
+  RenderBlock {HTML} at (0,0) size 800x352
+    RenderBody {BODY} at (8,8) size 784x336
+      RenderBlock {DIV} at (0,0) size 784x26
+        RenderTextControl {INPUT} at (2,2) size 97x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+      RenderBlock {DIV} at (0,26) size 784x26
+        RenderTextControl {INPUT} at (2,2) size 97x22 [bgcolor=#FFFFFF] [border: (1px solid #BCBCBC)]
+      RenderBlock {DIV} at (0,52) size 784x26
+      RenderBlock {DIV} at (0,78) size 784x26
+        RenderTextControl {INPUT} at (2,2) size 97x22 [color=#FFFFFF] [bgcolor=#000000] [border: (1px solid #4C4C4C)]
+      RenderBlock {DIV} at (0,104) size 784x26
+        RenderTextControl {INPUT} at (2,2) size 97x22 [color=#FFFFFF] [bgcolor=#000000] [border: (1px solid #BCBCBC)]
+      RenderBlock {DIV} at (0,130) size 784x26
+      RenderBlock {DIV} at (0,156) size 784x60
+        RenderTextControl {INPUT} at (2,2) size 232x56 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+      RenderBlock {DIV} at (0,216) size 784x60
+        RenderTextControl {INPUT} at (2,2) size 232x56 [bgcolor=#FFFFFF] [border: (1px solid #BCBCBC)]
+      RenderBlock {DIV} at (0,276) size 784x60
+layer at (16,14) size 85x14
+  RenderBlock {DIV} at (6,4) size 85x14
+    RenderText {#text} at (1,0) size 57x14
+      text run at (1,0) width 57: "Apr 2, 2012"
+layer at (16,40) size 85x14
+  RenderBlock {DIV} at (6,4) size 85x14
+    RenderText {#text} at (1,0) size 57x14
+      text run at (1,0) width 57: "Apr 2, 2012"
+layer at (16,92) size 85x14
+  RenderBlock {DIV} at (6,4) size 85x14
+    RenderText {#text} at (1,0) size 57x14
+      text run at (1,0) width 57: "Apr 2, 2012"
+layer at (16,118) size 85x14
+  RenderBlock {DIV} at (6,4) size 85x14
+    RenderText {#text} at (1,0) size 57x14
+      text run at (1,0) width 57: "Apr 2, 2012"
+layer at (26,176) size 200x36
+  RenderBlock {DIV} at (16,10) size 200x36
+    RenderText {#text} at (1,0) size 156x36
+      text run at (1,0) width 156: "Apr 2, 2012"
+layer at (26,236) size 200x36
+  RenderBlock {DIV} at (16,10) size 200x36
+    RenderText {#text} at (1,0) size 156x36
+      text run at (1,0) width 156: "Apr 2, 2012"
+layer at (10,62) size 97x22
+  RenderTextControl {INPUT} at (2,2) size 97x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+layer at (16,66) size 85x14
+  RenderBlock {DIV} at (6,4) size 85x14 [color=#545454]
+    RenderText {#text} at (1,0) size 57x14
+      text run at (1,0) width 57: "Apr 2, 2012"
+layer at (10,140) size 97x22
+  RenderTextControl {INPUT} at (2,2) size 97x22 [color=#FFFFFF] [bgcolor=#000000] [border: (1px solid #4C4C4C)]
+layer at (16,144) size 85x14
+  RenderBlock {DIV} at (6,4) size 85x14 [color=#ABABAB]
+    RenderText {#text} at (1,0) size 57x14
+      text run at (1,0) width 57: "Apr 2, 2012"
+layer at (10,286) size 232x56
+  RenderTextControl {INPUT} at (2,2) size 232x56 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+layer at (26,296) size 200x36
+  RenderBlock {DIV} at (16,10) size 200x36 [color=#545454]
+    RenderText {#text} at (1,0) size 156x36
+      text run at (1,0) width 156: "Apr 2, 2012"

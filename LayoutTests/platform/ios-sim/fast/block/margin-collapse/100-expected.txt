@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 385x513
+        RenderImage {IMG} at (0,0) size 395x275
+        RenderBlock {H2} at (0,315) size 385x30
+          RenderText {#text} at (0,1) size 317x28
+            text run at (0,1) width 317: "This text should be on line one."
+        RenderBlock (anonymous) at (0,364) size 385x40
+          RenderText {#text} at (0,0) size 347x39
+            text run at (0,0) width 275: "This text should be on the following lines. "
+            text run at (274,0) width 73: "These lines"
+            text run at (0,20) width 124: "should not overlap."
+        RenderBlock {H2} at (0,444) size 385x30
+          RenderText {#text} at (0,1) size 210x28
+            text run at (0,1) width 210: "Here's what's weird."
+        RenderBlock (anonymous) at (0,493) size 385x20
+          RenderText {#text} at (0,0) size 140x19
+            text run at (0,0) width 140: "The problem persists!"

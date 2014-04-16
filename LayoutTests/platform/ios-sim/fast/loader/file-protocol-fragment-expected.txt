@@ -1,0 +1,8 @@
+<unknown> - didFinishLoading
+resources/stylesheet.css - willSendRequest <NSURLRequest URL resources/stylesheet.css, main document URL file-protocol-fragment.html, http method GET> redirectResponse (null)
+resources/stylesheet.css - didReceiveResponse <NSURLResponse resources/stylesheet.css, http status code 0>
+resources/stylesheet.css - didFinishLoading
+resources/stylesheet.css - willSendRequest <NSURLRequest URL resources/stylesheet.css, main document URL file-protocol-fragment.html, http method GET> redirectResponse (null)
+resources/stylesheet.css - didReceiveResponse <NSURLResponse resources/stylesheet.css, http status code 0>
+resources/stylesheet.css - didFinishLoading
+This tests that file: URL are loaded separately even if they differ by the fragment only.

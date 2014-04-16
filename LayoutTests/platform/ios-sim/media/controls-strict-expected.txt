@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x215
+  RenderBlock {HTML} at (0,0) size 800x215
+    RenderBody {BODY} at (8,16) size 784x191
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 232x19
+          text run at (0,0) width 232: "Drawing the controls in strict mode."
+      RenderBlock (anonymous) at (0,36) size 784x155
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,52) size 300x150
+  RenderEmbeddedObject {VIDEO} at (0,0) size 300x150
+layer at (8,52) size 300x150
+  RenderFlexibleBox {DIV} at (0,0) size 300x150

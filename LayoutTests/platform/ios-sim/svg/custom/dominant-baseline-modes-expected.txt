@@ -1,0 +1,64 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x400
+  RenderSVGRoot {svg} at (10,0) size 101x368
+    RenderSVGContainer {g} at (10,0) size 101x20
+      RenderSVGText {text} at (10,-3) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,14) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,27) size 101x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
+      RenderSVGText {text} at (10,-3) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,44) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,57) size 101x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+      RenderSVGText {text} at (10,-3) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,74) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,87) size 101x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
+      RenderSVGText {text} at (10,-3) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,104) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,122) size 101x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
+      RenderSVGText {text} at (10,2) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,134) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,147) size 101x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
+      RenderSVGText {text} at (10,-3) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,164) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,191) size 101x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
+      RenderSVGText {text} at (10,11) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,29.40) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,194) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,216) size 101x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
+      RenderSVGText {text} at (10,6) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,24.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,224) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,243) size 101x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
+      RenderSVGText {text} at (10,3) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,21.50) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,254) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,271) size 101x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,270.00)}]
+      RenderSVGText {text} at (10,1) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,19.47) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,284) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,302) size 101x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
+      RenderSVGText {text} at (10,2) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,314) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
+    RenderSVGContainer {g} at (10,344) size 101x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,330.00)}]
+      RenderSVGText {text} at (10,15) size 101x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 101x23
+          chunk 1 text run 1 at (10.00,33.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+      RenderSVGPath {line} at (10,344) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]

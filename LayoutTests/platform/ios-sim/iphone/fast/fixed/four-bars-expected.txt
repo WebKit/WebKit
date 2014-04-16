@@ -1,0 +1,35 @@
+layer at (0,0) size 800x2676
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2676
+  RenderBlock {HTML} at (0,0) size 800x2676
+    RenderBody {BODY} at (8,8) size 784x2660
+      RenderBlock {DIV} at (5,0) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,205) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,410) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,615) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,820) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,1025) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,1230) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,1435) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,1640) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,1845) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,2050) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,2255) size 774x200 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (5,2460) size 774x200 [bgcolor=#C0C0C0]
+layer at (10,10) size 772x54
+  RenderBlock (positioned) {DIV} at (10,10) size 772x54 [bgcolor=#008000CC] [border: (2px solid #000000)]
+    RenderText {#text} at (2,2) size 119x19
+      text run at (2,2) width 119: "This is the top bar."
+layer at (20,210) size 154x304
+  RenderBlock (positioned) {DIV} at (20,210) size 154x304 [bgcolor=#008000CC] [border: (2px solid #000000)]
+    RenderText {#text} at (2,2) size 120x19
+      text run at (2,2) width 120: "This is the left bar."
+layer at (626,210) size 154x304
+  RenderBlock (positioned) {DIV} at (626,210) size 154x304 [bgcolor=#008000CC] [border: (2px solid #000000)]
+    RenderText {#text} at (2,2) size 129x19
+      text run at (2,2) width 129: "This is the right bar."
+layer at (10,526) size 772x54
+  RenderBlock (positioned) {DIV} at (10,526) size 772x54 [bgcolor=#008000CC] [border: (2px solid #000000)]
+    RenderText {#text} at (2,2) size 144x19
+      text run at (2,2) width 144: "This is the bottom bar."
+scrolled to 0,200

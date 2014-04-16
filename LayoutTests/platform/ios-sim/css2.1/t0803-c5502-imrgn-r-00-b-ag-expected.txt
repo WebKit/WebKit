@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x97
+  RenderBlock {HTML} at (0,0) size 800x97
+    RenderBody {BODY} at (8,16) size 784x66
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 278x19
+          text run at (0,0) width 278: "There should be a green vertical bar below:"
+      RenderBlock {DIV} at (15,36) size 120x30 [color=#FFFFFF] [bgcolor=#FF0000]
+        RenderBlock {P} at (0,0) size 105x30 [bgcolor=#FFFFFF]
+          RenderText {#text} at (0,0) size 16x15
+            text run at (0,0) width 16: "x"
+          RenderInline {SPAN} at (0,0) size 16x15
+            RenderText {#text} at (0,15) size 16x15
+              text run at (0,15) width 16: "x"
+          RenderText {#text} at (75,15) size 15x15
+            text run at (75,15) width 15: "x"

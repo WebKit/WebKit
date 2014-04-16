@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIR} at (0,0) size 784x112
+        RenderBlock (anonymous) at (40,0) size 744x20
+          RenderText {#text} at (0,0) size 27x19
+            text run at (0,0) width 27: "One"
+        RenderBlock {DIR} at (40,36) size 744x76
+          RenderBlock (anonymous) at (40,0) size 704x20
+            RenderText {#text} at (0,0) size 30x19
+              text run at (0,0) width 30: "Two"
+          RenderBlock {DIR} at (40,36) size 704x40
+            RenderBlock (anonymous) at (40,0) size 664x20
+              RenderText {#text} at (0,0) size 38x19
+                text run at (0,0) width 38: "Three"
+            RenderBlock {CENTER} at (40,20) size 664x20
+              RenderText {#text} at (316,0) size 32x19
+                text run at (316,0) width 32: "Four"
+      RenderBlock {PRE} at (0,128) size 784x334
+        RenderText {#text} at (0,0) size 63x15
+          text run at (0,0) width 63: "Pre text"
+          text run at (62,0) width 1: " "
+        RenderEmbeddedObject {OBJECT} at (0,15) size 300x300 [bgcolor=#008000]
+        RenderText {#text} at (300,304) size 300x30
+          text run at (300,304) width 0: " "
+          text run at (0,319) width 102: "Also pre text"
+          text run at (101,319) width 1: " "
+      RenderBlock (anonymous) at (0,475) size 784x20
+        RenderInline {NOBR} at (0,0) size 139x19 [bgcolor=#CCCCCC]
+          RenderText {#text} at (0,0) size 139x19
+            text run at (0,0) width 139: "This text won't break."
+      RenderBlock (anonymous) at (0,508) size 784x15
+        RenderBlock {PRE} at (0,0) size 784x15
+          RenderText {#text} at (0,0) size 203x15
+            text run at (0,0) width 203: "This will be preformatted."
+      RenderBlock (anonymous) at (0,536) size 784x20
+        RenderInline {NOBR} at (0,0) size 236x19 [bgcolor=#CCCCCC]
+          RenderText {#text} at (0,0) size 236x19
+            text run at (0,0) width 236: "Now we're back to nonbreaking text."
+        RenderText {#text} at (0,0) size 0x0

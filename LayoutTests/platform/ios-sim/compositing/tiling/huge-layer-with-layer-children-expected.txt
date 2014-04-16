@@ -1,0 +1,32 @@
+The yellow box should be large enough to scroll off the bottom. There should be a red box on the first page and a blue box near the bottom of the yellow box. This tests that we can support very large compositing layers with child compositing layers.
+
+This is some text
+(GraphicsLayer
+  (bounds 800.00 5135.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 5135.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 92.00)
+          (bounds 502.00 5002.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (children 2
+            (GraphicsLayer
+              (position 51.00 101.00)
+              (bounds 200.00 200.00)
+              (drawsContent 1)
+            )
+            (GraphicsLayer
+              (position 51.00 4701.00)
+              (bounds 200.00 200.00)
+              (drawsContent 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

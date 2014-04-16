@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 398x19
+          text run at (0,0) width 398: "Focus field with a placeholder, then type, then clear the value."
+      RenderBlock {DIV} at (0,36) size 784x38
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (10,46) size 150x34 clip at (11,47) size 148x32
+  RenderTextControl {TEXTAREA} at (2,2) size 150x34 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 144x14 [color=#A9A9A9]
+      RenderText {#text} at (2,0) size 59x14
+        text run at (2,0) width 59: "Placeholder"
+    RenderBlock {DIV} at (3,3) size 144x14
+caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {TEXTAREA} of child 3 {DIV} of body

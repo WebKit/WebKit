@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 782x79
+        text run at (0,0) width 519: "In this test, you should see three blocks that are aligned right within a black box. "
+        text run at (518,0) width 249: "They should be stacked vertically with"
+        text run at (0,20) width 275: "the green box in between two olive boxes. "
+        text run at (274,20) width 508: "The olive boxes and the green box should be 100x100, and there should be 100"
+        text run at (0,40) width 333: "pixels of padding on the right side of the box stack. "
+        text run at (332,40) width 437: "The black box's top should be aligned with the end of the last line in"
+        text run at (0,60) width 505: "this parargaph and its left side should begin right after the end of this sentence."
+      RenderText {#text} at (0,0) size 0x0
+layer at (512,68) size 240x340
+  RenderBlock (positioned) {SPAN} at (512,68) size 240x340 [border: (20px solid #000000)]
+layer at (632,188) size 100x100
+  RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
+layer at (632,88) size 100x100
+  RenderBlock (positioned) {DIV} at (120,20) size 100x100 [bgcolor=#808000]
+layer at (632,288) size 100x100
+  RenderBlock (positioned) {DIV} at (120,220) size 100x100 [bgcolor=#808000]

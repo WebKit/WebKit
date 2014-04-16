@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {A} at (0,0) size 69x19 [color=#0000EE]
+          RenderText {#text} at (54,0) size 69x19
+            text run at (54,0) width 69: "bug 25464"
+        RenderText {#text} at (122,0) size 727x39
+          text run at (122,0) width 605: ". Characters belonging to 'Common' script followed / preceeded by a space should be rendered"
+          text run at (0,20) width 648: "correctly. Two lines below have 4 Thai currency signs (U+0E3F) and all of them should be rendered."
+      RenderBlock {P} at (0,56) size 784x48
+        RenderText {#text} at (0,4) size 286x19
+          text run at (0,4) width 286: "abc \x{E25}\x{E07}\x{E17}\x{E38}\x{E19}4000\x{E3F} \x{E23}\x{E31}\x{E1A}\x{E1B}\x{E23}\x{E30}\x{E01}\x{E31}\x{E19}\x{E23}\x{E32}\x{E22}\x{E44}\x{E14}\x{E49} 50000\x{E3F}/M"
+        RenderBR {BR} at (285,19) size 1x0
+        RenderText {#text} at (0,28) size 286x19
+          text run at (0,28) width 286: "abc \x{E25}\x{E07}\x{E17}\x{E38}\x{E19}4000 \x{E3F}\x{E23}\x{E31}\x{E1A}\x{E1B}\x{E23}\x{E30}\x{E01}\x{E31}\x{E19}\x{E23}\x{E32}\x{E22}\x{E44}\x{E14}\x{E49} 50000\x{E3F}/M"

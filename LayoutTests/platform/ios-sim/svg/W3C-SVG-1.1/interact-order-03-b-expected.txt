@@ -1,0 +1,30 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (9,3) size 466x283
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGText {text} at (60,3) size 321x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 321x46
+          chunk 1 text run 1 at (60.00,40.00) startOffset 0 endOffset 18 width 320.20: "Event bubbling - c"
+      RenderSVGContainer {g} at (9,54) size 462x232
+        RenderSVGRect {rect} at (9,54) size 462x232 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=10.00] [y=55.00] [width=460.00] [height=230.00]
+      RenderSVGContainer {g} at (20,53) size 455x226
+        RenderSVGContainer {a} at (20,53) size 455x226
+          RenderSVGText {text} at (20,53) size 418x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 418x46
+              chunk 1 text run 1 at (20.00,90.00) startOffset 0 endOffset 25 width 417.95: "String turns red on click"
+          RenderSVGContainer {g} at (20,123) size 391x84
+            RenderSVGText {text} at (60,123) size 341x46 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 341x46
+                chunk 1 text run 1 at (60.00,160.00) startOffset 0 endOffset 20 width 340.16: "String hyperlinks to"
+            RenderSVGText {text} at (20,170) size 391x37 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 391x37
+                chunk 1 text run 1 at (20.00,200.00) startOffset 0 endOffset 27 width 390.67: "interact-order-03b-targ.svg"
+          RenderSVGText {text} at (30,233) size 445x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 445x46
+              chunk 1 text run 1 at (30.00,270.00) startOffset 0 endOffset 27 width 444.65: "All strings are selectable."
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.2 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

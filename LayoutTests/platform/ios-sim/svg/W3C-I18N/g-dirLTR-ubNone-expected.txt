@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {g} at (33,221) size 651x144
+      RenderSVGContainer {g} at (166,221) size 434x38
+        RenderSVGText {text} at (100,133) size 260x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 260x21
+            chunk 1 (middle anchor) text run 1 at (100.12,150.00) startOffset 0 endOffset 4 width 45.00: "W3C "
+            chunk 1 (middle anchor) text run 1 at (145.12,150.00) startOffset 0 endOffset 12 width 82.69 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}"
+            chunk 1 (middle anchor) text run 1 at (227.81,150.00) startOffset 0 endOffset 15 width 132.06: " dirLTR ubNone!"
+      RenderSVGText {text} at (20,170) size 87x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 87x12
+          chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 18 width 86.18: "Reference graphic:"
+      RenderSVGImage {image} at (100,300) size 584x65
+    RenderSVGContainer {g} at (16,556) size 74x14
+      RenderSVGText {text} at (10,334) size 44x8 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 44x8
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 43.03: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x40
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (206,0) size 68x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 68x23
+          chunk 1 (middle anchor) text run 1 at (206.46,18.00) startOffset 0 endOffset 5 width 67.09: "DRAFT"

@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 120x19
+          text run at (0,0) width 120: "Rendering test for "
+        RenderInline {I} at (0,0) size 757x39
+          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
+            RenderText {#text} at (119,0) size 306x19
+              text run at (119,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=17107"
+          RenderText {#text} at (424,0) size 757x39
+            text run at (424,0) width 5: " "
+            text run at (428,0) width 329: "REGRESSION(r29834): Article text on redhat.com"
+            text run at (0,20) width 274: "magazine site appears to be painting twice"
+        RenderText {#text} at (273,20) size 5x19
+          text run at (273,20) width 5: "."
+      RenderBlock {P} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 367x19
+          text run at (0,0) width 367: "These two lines of text should be the same shade of gray:"
+      RenderBlock {DIV} at (0,92) size 784x30 [color=#0000007F]
+        RenderText {#text} at (0,1) size 267x28
+          text run at (0,1) width 267: "Lorem ipsum dolor sit amet"
+      RenderBlock {DIV} at (0,122) size 784x0 [color=#0000007F]
+        RenderBlock (floating) {DIV} at (0,0) size 267x30
+          RenderText {#text} at (0,1) size 267x28
+            text run at (0,1) width 267: "Lorem ipsum dolor sit amet"
+      RenderBlock (anonymous) at (0,122) size 784x30
+        RenderBR {BR} at (267,0) size 0x19

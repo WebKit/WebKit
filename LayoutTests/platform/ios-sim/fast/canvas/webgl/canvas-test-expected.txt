@@ -1,0 +1,30 @@
+This test ensures WebGL implementations interact correctly with the canvas tag.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Canvas.getContext
+PASS context exists
+
+Checking canvas and WebGL interaction
+PASS canvas.width is 300
+PASS canvas.height is 150
+PASS pixels are 0,0,0,0
+PASS getViewport() is "0,0,300,150"
+
+change display size of canvas and see that viewport does not change
+PASS getViewport() is "0,0,300,150"
+PASS canvas.width is 300
+PASS canvas.height is 150
+
+change the actual size of the canvas and see that the viewport does not change
+FAIL pixels are 0,0,0,0 expected 64,128,192,255
+PASS gl.clearColor should not change after canvas resize
+PASS gl.colorMask should not change after canvas resize
+PASS getViewport() is "0,0,300,150"
+PASS pixels are 0,0,0,0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x40
+        RenderTableSection {TBODY} at (0,0) size 784x40
+          RenderTableRow {TR} at (0,0) size 784x40
+            RenderTableCell {TD} at (0,0) size 135x40 [bgcolor=#DDDDDD] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 135x40
+                RenderTableSection {TBODY} at (0,0) size 135x40
+                  RenderTableRow {TR} at (0,0) size 135x40
+                    RenderTableCell {TD} at (0,0) size 135x40 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (0,0) size 90x39
+                        text run at (0,0) width 90: "should be 135"
+                        text run at (0,20) width 44: "pixels-"
+            RenderTableCell {TD} at (135,0) size 649x40 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 631x39
+                text run at (0,0) width 480: "Spain stretched their unbeaten streak to six games as they beat Croatia 3-1 "
+                text run at (479,0) width 152: "in a friendly at Seville's"
+                text run at (0,20) width 317: "new Olympic stadium which was inaugurated on "
+                text run at (316,20) width 80: "Wednesday."

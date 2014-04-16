@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 236x79
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceClipper {clipPath} [id="clip0"] [clipPathUnits=userSpaceOnUse]
+        RenderSVGRect {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+          [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (0,0) size 1x1
+      RenderSVGResourceClipper {clipPath} [id="clip2"] [clipPathUnits=userSpaceOnUse]
+        RenderSVGRect {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          [clipPath="clip0"] RenderSVGResourceClipper {clipPath} at (0,0) size 1x1
+      RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=userSpaceOnUse]
+        RenderSVGRect {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+          [clipPath="clip2"] RenderSVGResourceClipper {clipPath} at (0,0) size 1x1
+      RenderSVGResourceMasker {mask} [id="mask1"] [maskUnits=objectBoundingBox] [maskContentUnits=objectBoundingBox]
+        RenderSVGRect {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+          [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (0,0) size 1x1
+    RenderSVGText {text} at (10,60) size 226x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 226x19
+        chunk 1 text run 1 at (10.00,75.00) startOffset 0 endOffset 38 width 225.74: "This test passes if it does not crash."
+    RenderSVGEllipse {circle} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=50.00]
+      [masker="mask1"] RenderSVGResourceMasker {mask} at (-50,-50) size 100x100

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 12: TypeError: 'undefined' is not a function (evaluating 'plg.getURL('tmp.html', '_self')')
+This tests that a plug-in in a remote document can't access local files using NPN_GetURL
+
+FAILURE

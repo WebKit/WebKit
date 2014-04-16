@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 615x19
+          RenderInline {A} at (0,0) size 354x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 354x19
+              text run at (54,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6795"
+          RenderText {#text} at (407,0) size 262x19
+            text run at (407,0) width 5: " "
+            text run at (411,0) width 258: "Slow image load causes render problem"
+        RenderText {#text} at (668,0) size 5x19
+          text run at (668,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "There should be only one blue square below:"
+      RenderBlock {DIV} at (0,72) size 784x140
+        RenderBlock (anonymous) at (0,0) size 784x120
+          RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#87CEEB]
+          RenderBlock {DIV} at (100,0) size 50x120
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (0,120) size 784x20

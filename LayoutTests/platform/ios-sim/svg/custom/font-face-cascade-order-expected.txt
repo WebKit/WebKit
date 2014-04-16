@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,5) size 790x113
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGText {text} at (10,5) size 958x88 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 958x88
+        chunk 1 text run 1 at (10.00,75.59) startOffset 0 endOffset 11 width 957.00: "ONLY BLOCKS"
+    RenderSVGText {text} at (30,98) size 301x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 301x19
+        chunk 1 text run 1 at (30.00,113.39) startOffset 0 endOffset 43 width 300.84: "The text above should only show Ahem blocks"

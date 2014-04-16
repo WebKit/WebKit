@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 551x19
+          text run at (0,0) width 551: "This tests that backgrounds for list box items draw correctly when a list box is a block"
+        RenderBR {BR} at (551,15) size 0x0
+      RenderMenuList {SELECT} at (2,22) size 60x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 48x14
+          RenderText at (0,0) size 28x14
+            text run at (0,0) width 28: "Item1"

@@ -1,0 +1,22 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (3,3) size 477x357
+    RenderSVGContainer {g} at (30,6) size 393x249
+      RenderSVGContainer {g} at (30,6) size 393x249
+        RenderSVGText {text} at (5,1) size 55x7 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 55x7
+            chunk 1 text run 1 at (5.00,7.00) startOffset 0 endOffset 21 width 54.03: "Test default value of"
+        RenderSVGText {text} at (5,8) size 62x7 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 62x7
+            chunk 1 text run 1 at (5.00,14.00) startOffset 0 endOffset 21 width 61.04: "zoomAndPan attribute."
+        RenderSVGContainer {g} at (57,129) size 366x126
+          RenderSVGEllipse {circle} at (57,129) size 126x126 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=20.00] [cy=32.00] [r=10.00]
+          RenderSVGEllipse {circle} at (117,129) size 126x126 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=30.00] [cy=32.00] [r=10.00]
+          RenderSVGEllipse {circle} at (297,129) size 126x126 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=60.00] [cy=32.00] [r=10.00]
+          RenderSVGEllipse {circle} at (237,129) size 126x126 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=50.00] [cy=32.00] [r=10.00]
+          RenderSVGEllipse {circle} at (177,129) size 126x126 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=40.00] [cy=32.00] [r=10.00]
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (3,3) size 477x357 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

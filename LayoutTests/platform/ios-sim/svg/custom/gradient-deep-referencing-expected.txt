@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,10) size 452x144
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceLinearGradient {linearGradient} [id="gradient1f"] [gradientUnits=userSpaceOnUse] [start=(0,100)] [end=(100,100)]
+      RenderSVGResourceLinearGradient {linearGradient} [id="gradient1e"] [gradientUnits=userSpaceOnUse] [start=(0,100)] [end=(100,0)]
+      RenderSVGResourceLinearGradient {linearGradient} [id="gradient1d"] [gradientUnits=userSpaceOnUse] [start=(0,100)] [end=(100,0)]
+      RenderSVGResourceRadialGradient {radialGradient} [id="gradient1c"] [gradientUnits=userSpaceOnUse] [center=(400,400)] [focal=(400,400)] [radius=400.00] [focalRadius=0.00]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+      RenderSVGResourceLinearGradient {linearGradient} [id="gradient1b"] [gradientUnits=userSpaceOnUse] [start=(0,0)] [end=(100,0)]
+      RenderSVGResourceLinearGradient {linearGradient} [id="gradient1a"] [gradientUnits=userSpaceOnUse] [start=(0,0)] [end=(800,0)]
+      RenderSVGResourceLinearGradient {linearGradient} [id="gradient1"] [gradientUnits=userSpaceOnUse] [start=(0,100)] [end=(100,100)]
+      RenderSVGResourceLinearGradient {linearGradient} [id="gradient2"] [gradientUnits=userSpaceOnUse] [start=(0,100)] [end=(100,100)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+    RenderSVGRect {rect} at (50,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,10.00)}] [fill={[type=LINEAR-GRADIENT] [id="gradient1"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (200,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,10.00)}] [fill={[type=LINEAR-GRADIENT] [id="gradient2"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGText {text} at (10,135) size 452x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 452x19
+        chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 69 width 451.42: "The above two squares should be blue-red gradients and look identical"

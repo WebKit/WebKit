@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+  <script src="../../../../fast/js/resources/js-test-pre.js"></script>
+  <style>
+    body {
+      height: 2000px;
+    }
+    
+    #sometimes-fixed {
+      position: fixed;
+    }
+  </style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div id="sometimes-fixed">Fixed</div>
+
+<script>
+description('Tests that fixed elements don\'t cause crashes after going back to a page in the page cache.');
+
+var pageShowCount = 0;
+function onPageShow()
+{
+  debug('pageshow ' + pageShowCount);
+  if (++pageShowCount == 2)
+      window.location.href = 'resources/fixpos-unload-final.html';
+}
+
+function onPageHide()
+{
+  document.getElementById('sometimes-fixed').style.position = 'absolute';
+}
+
+function onPageLoad()
+{
+    if (window.testRunner)
+      testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+    // Navigate in a timeout to make sure we create a history entry.
+    setTimeout(function() {
+      window.location.href = 'resources/jump-back.html';
+    }, 0);
+};
+
+window.addEventListener('load', onPageLoad, false);
+window.addEventListener('pageshow', onPageShow, false);
+window.addEventListener('pagehide', onPageHide, false);
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script> 
+
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

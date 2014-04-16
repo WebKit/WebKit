@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 120x19
+          text run at (0,0) width 120: "Rendering test for "
+        RenderInline {I} at (0,0) size 776x39
+          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
+            RenderText {#text} at (119,0) size 306x19
+              text run at (119,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=15156"
+          RenderText {#text} at (424,0) size 776x39
+            text run at (424,0) width 5: " "
+            text run at (428,0) width 348: "REGRESSION (r24594-r24668): The bottom of styled"
+            text run at (0,20) width 221: "<select> button text is clipped out"
+        RenderText {#text} at (220,20) size 5x19
+          text run at (220,20) width 5: "."
+      RenderBlock (anonymous) at (0,56) size 784x30
+        RenderMenuList {SELECT} at (2,0) size 67x30 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (10,4) size 47x22
+            RenderText at (0,0) size 47x22
+              text run at (0,0) width 47: "Apple"
+        RenderText {#text} at (0,0) size 0x0

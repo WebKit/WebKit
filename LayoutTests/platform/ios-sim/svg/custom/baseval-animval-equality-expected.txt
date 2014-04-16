@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 600x400
+  RenderSVGRoot {svg} at (0,0) size 600x400
+    RenderSVGForeignObject {foreignObject} at (0,0) size 600x400
+      RenderBlock {html} at (0,0) size 600x240
+        RenderBlock {div} at (0,0) size 600x240
+          RenderBlock (anonymous) at (0,0) size 600x20
+            RenderText {#text} at (0,0) size 572x19
+              text run at (0,0) width 572: "This tests to make sure that baseVal and animVal are tied when animation is not enabled:"
+          RenderBlock {div} at (0,20) size 600x20
+            RenderText {#text} at (0,0) size 154x19
+              text run at (0,0) width 154: "svg.x.baseVal.value = 0"
+          RenderBlock {div} at (0,40) size 600x20
+            RenderText {#text} at (0,0) size 157x19
+              text run at (0,0) width 157: "svg.x.animVal.value = 0"
+          RenderBlock {div} at (0,60) size 600x20
+            RenderText {#text} at (0,0) size 209x19
+              text run at (0,0) width 209: "setting svg.x.baseVal.value = 10"
+          RenderBlock {div} at (0,80) size 600x20
+            RenderText {#text} at (0,0) size 162x19
+              text run at (0,0) width 162: "svg.x.baseVal.value = 10"
+          RenderBlock {div} at (0,100) size 600x20
+            RenderText {#text} at (0,0) size 165x19
+              text run at (0,0) width 165: "svg.x.animVal.value = 10"
+          RenderBlock {div} at (0,120) size 600x20
+            RenderText {#text} at (0,0) size 122x19
+              text run at (0,0) width 122: "SUCCESS (1 of 2)"
+          RenderBlock {div} at (0,140) size 600x20
+            RenderText {#text} at (0,0) size 204x19
+              text run at (0,0) width 204: "setting svg.x.animVal.value = 5"
+          RenderBlock {div} at (0,160) size 600x20
+            RenderText {#text} at (0,0) size 519x19
+              text run at (0,0) width 519: "caught exception: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7"
+          RenderBlock {div} at (0,180) size 600x20
+            RenderText {#text} at (0,0) size 162x19
+              text run at (0,0) width 162: "svg.x.baseVal.value = 10"
+          RenderBlock {div} at (0,200) size 600x20
+            RenderText {#text} at (0,0) size 165x19
+              text run at (0,0) width 165: "svg.x.animVal.value = 10"
+          RenderBlock {div} at (0,220) size 600x20
+            RenderText {#text} at (0,0) size 122x19
+              text run at (0,0) width 122: "SUCCESS (2 of 2)"

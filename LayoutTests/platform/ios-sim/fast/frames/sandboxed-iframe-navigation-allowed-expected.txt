@@ -1,0 +1,12 @@
+This test verifies that a sandboxed iframe CAN navigate both itself and a child in the frame tree. It also verifies that the sandbox attribute remains intact after a frame has been navigated, and that sandbox attributes are propagated through the frame hierarchy.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (self.sandboxedFrame.frameWithPlugin.document.getElementById('plugin').destroyStream) == undefined is true
+FAIL (self.frameWithPlugin.document.getElementById('plugin').destroyStream) != undefined should be true. Was false.
+PASS document.getElementById('sandboxedFrameId').sandbox is 'allow-scripts allow-same-origin'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

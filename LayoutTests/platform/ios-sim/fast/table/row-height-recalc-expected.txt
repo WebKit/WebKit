@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x170
+  RenderBlock {HTML} at (0,0) size 800x170
+    RenderBody {BODY} at (8,16) size 784x146
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 676x19
+          RenderInline {A} at (0,0) size 354x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 354x19
+              text run at (54,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9012"
+          RenderText {#text} at (407,0) size 323x19
+            text run at (407,0) width 5: " "
+            text run at (411,0) width 319: "Row height not updated when cell heights change"
+        RenderText {#text} at (729,0) size 5x19
+          text run at (729,0) width 5: "."
+      RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,46) size 100x100
+        RenderTableSection {TBODY} at (0,0) size 100x100
+          RenderTableRow {TR} at (0,0) size 100x0 [bgcolor=#FF0000]
+            RenderTableCell {TD} at (0,0) size 50x0 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (50,0) size 50x0 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,0) size 100x100 [bgcolor=#008000]
+            RenderTableCell {TD} at (0,50) size 100x0 [r=1 c=0 rs=1 cs=2]

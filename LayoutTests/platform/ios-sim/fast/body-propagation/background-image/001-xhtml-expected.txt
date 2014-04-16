@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {html} at (0,0) size 800x52
+    RenderBody {body} at (8,16) size 784x20 [color=#000080]
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 231x19
+          text run at (0,0) width 231: "The entire canvas should be yellow."

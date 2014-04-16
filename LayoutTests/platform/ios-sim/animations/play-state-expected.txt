@@ -1,0 +1,9 @@
+This tests the operation of -webkit-animation-play-state. After 2 second the box should stop and after one more second it should start again. We test it both while in motion and when stopped.
+
+PASS - "webkitTransform" property for "box1" element at 0.5s saw something close to: 1,0,0,1,25,0
+PASS - "left" property for "box2" element at 0.5s saw something close to: 25
+PASS - "webkitTransform" property for "box1" element at 1.5s saw something close to: 1,0,0,1,50,0
+PASS - "left" property for "box2" element at 1.5s saw something close to: 50
+FAIL - "webkitTransform" property for "box1" element at 2.5s expected: 1,0,0,1,75,0 but saw: matrix(1, 0, 0, 1, 0, 0)
+FAIL - "left" property for "box2" element at 2.5s expected: 75 but saw: 0
+

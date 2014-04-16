@@ -1,0 +1,99 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x346
+  RenderBlock {HTML} at (0,0) size 800x346
+    RenderBody {BODY} at (8,8) size 784x330
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 419x19
+          text run at (0,0) width 419: "The two diagrams below should be identical, with no red present."
+      RenderTable {TABLE} at (0,20) size 218x310
+        RenderTableSection {TBODY} at (0,0) size 218x310
+          RenderTableRow {TR} at (0,2) size 218x306
+            RenderTableCell {TD} at (2,2) size 106x306 [color=#FFA500] [bgcolor=#FFFF00] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (3,3) size 100x10 [bgcolor=#008080]
+                RenderText {#text} at (0,0) size 71x10
+                  text run at (0,0) width 71: "xxxxxxx"
+              RenderBlock {P} at (3,13) size 100x10 [bgcolor=#008080]
+                RenderText {#text} at (0,0) size 41x10
+                  text run at (0,0) width 41: "xxxx"
+              RenderBlock {P} at (3,23) size 100x20 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 71x20
+                  text run at (0,0) width 71: "xxxxxxx"
+                  text run at (0,10) width 41: "xxxx"
+              RenderBlock {P} at (3,63) size 100x20 [bgcolor=#0000FF]
+                RenderText {#text} at (0,0) size 71x20
+                  text run at (0,0) width 71: "xxxxxxx"
+                  text run at (0,10) width 41: "xxxx"
+              RenderBlock {P} at (3,103) size 100x20 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 71x20
+                  text run at (0,0) width 71: "xxxxxxx"
+                  text run at (0,10) width 41: "xxxx"
+              RenderBlock {P} at (3,143) size 100x20 [bgcolor=#008080]
+                RenderText {#text} at (0,0) size 71x20
+                  text run at (0,0) width 71: "xxxxxxx"
+                  text run at (0,10) width 41: "xxxx"
+              RenderBlock {UL} at (3,183) size 100x60 [bgcolor=#0000FF]
+                RenderListItem {LI} at (0,0) size 100x10
+                  RenderText {#text} at (0,0) size 71x10
+                    text run at (0,0) width 71: "xxxxxxx"
+                RenderListItem {LI} at (0,10) size 100x10
+                  RenderText {#text} at (0,0) size 41x10
+                    text run at (0,0) width 41: "xxxx"
+                RenderListItem {LI} at (0,20) size 100x10
+                  RenderText {#text} at (0,0) size 71x10
+                    text run at (0,0) width 71: "xxxxxxx"
+                RenderListItem {LI} at (0,50) size 100x10
+                  RenderText {#text} at (0,0) size 41x10
+                    text run at (0,0) width 41: "xxxx"
+              RenderBlock {P} at (3,263) size 100x20 [bgcolor=#008080]
+                RenderText {#text} at (0,0) size 71x20
+                  text run at (0,0) width 71: "xxxxxxx"
+                  text run at (0,10) width 41: "xxxx"
+              RenderBlock {P} at (3,283) size 100x20 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 71x20
+                  text run at (0,0) width 71: "xxxxxxx"
+                  text run at (0,10) width 41: "xxxx"
+              RenderBlock {P} at (3,293) size 100x10 [bgcolor=#008080]
+                RenderText {#text} at (0,0) size 41x10
+                  text run at (0,0) width 41: "xxxx"
+            RenderTableCell {TD} at (110,2) size 106x306 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 100x20 [bgcolor=#008080]
+                RenderBlock {DIV} at (0,0) size 70x10 [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,10) size 40x10 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,23) size 100x20 [bgcolor=#00FFFF]
+                RenderBlock {DIV} at (0,0) size 70x10 [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,10) size 40x10 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,43) size 100x20 [bgcolor=#FFFF00]
+                RenderBlock {DIV} at (0,0) size 100x20
+              RenderBlock {DIV} at (3,63) size 100x20 [bgcolor=#0000FF]
+                RenderBlock {DIV} at (0,0) size 70x10 [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,10) size 40x10 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,83) size 100x20 [bgcolor=#FFFF00]
+                RenderBlock {DIV} at (0,0) size 100x20
+              RenderBlock {DIV} at (3,103) size 100x20 [bgcolor=#00FFFF]
+                RenderBlock {DIV} at (0,0) size 70x10 [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,10) size 40x10 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,123) size 100x20 [bgcolor=#FFFF00]
+                RenderBlock {DIV} at (0,0) size 100x20
+              RenderBlock {DIV} at (3,143) size 100x20 [bgcolor=#008080]
+                RenderBlock {DIV} at (0,0) size 70x10 [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,10) size 40x10 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,163) size 100x20 [bgcolor=#FFFF00]
+                RenderBlock {DIV} at (0,0) size 100x20
+              RenderBlock {DIV} at (3,183) size 100x30 [bgcolor=#0000FF]
+                RenderBlock {DIV} at (0,0) size 70x10 [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,10) size 40x10 [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,20) size 70x10 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,213) size 100x20 [bgcolor=#0000FF]
+                RenderBlock {DIV} at (0,0) size 100x20
+              RenderBlock {DIV} at (3,233) size 100x10 [bgcolor=#0000FF]
+                RenderBlock {DIV} at (0,0) size 40x10 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,243) size 100x20 [bgcolor=#FFFF00]
+                RenderBlock {DIV} at (0,0) size 100x20
+              RenderBlock {DIV} at (3,263) size 100x20 [bgcolor=#008080]
+                RenderBlock {DIV} at (0,0) size 70x10 [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,10) size 40x10 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,283) size 100x10 [bgcolor=#00FFFF]
+                RenderBlock {DIV} at (0,0) size 70x10 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,293) size 100x10 [bgcolor=#008080]
+                RenderBlock {DIV} at (0,0) size 40x10 [bgcolor=#FFA500]

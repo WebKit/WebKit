@@ -1,0 +1,206 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 450x500
+  RenderSVGRoot {svg} at (0,0) size 450x498
+    RenderSVGText {text} at (108,35) size 234x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 234x19
+        chunk 1 (middle anchor) text run 1 at (108.49,50.00) startOffset 0 endOffset 34 width 233.02: "patternRegion, x, y, width, height"
+    RenderSVGContainer {g} at (24,70) size 426x391
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 20x20
+          RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+          RenderSVGContainer {g} at (0,0) size 10x10
+            RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+            RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+          RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+            RenderSVGRect {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+            RenderSVGRect {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+          RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+            RenderSVGRect {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+            RenderSVGRect {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+          RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+            RenderSVGRect {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+            RenderSVGRect {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+        RenderSVGResourcePattern {pattern} [id="patternExactFit"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+          RenderSVGContainer {use} at (0,0) size 20x20
+            RenderSVGContainer {g} at (0,0) size 20x20
+              RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+              RenderSVGContainer {g} at (0,0) size 10x10
+                RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+                RenderSVGRect {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+                RenderSVGRect {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+                RenderSVGRect {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+        RenderSVGResourcePattern {pattern} [id="patternTranslateRegionX"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+          RenderSVGContainer {use} at (0,0) size 20x20
+            RenderSVGContainer {g} at (0,0) size 20x20
+              RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+              RenderSVGContainer {g} at (0,0) size 10x10
+                RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+                RenderSVGRect {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+                RenderSVGRect {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+                RenderSVGRect {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+        RenderSVGResourcePattern {pattern} [id="patternTranslateRegionY"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+          RenderSVGContainer {use} at (0,0) size 20x20
+            RenderSVGContainer {g} at (0,0) size 20x20
+              RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+              RenderSVGContainer {g} at (0,0) size 10x10
+                RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+                RenderSVGRect {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+                RenderSVGRect {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+                RenderSVGRect {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+        RenderSVGResourcePattern {pattern} [id="patternTranslateRegionXY"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+          RenderSVGContainer {use} at (0,0) size 20x20
+            RenderSVGContainer {g} at (0,0) size 20x20
+              RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+              RenderSVGContainer {g} at (0,0) size 10x10
+                RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+                RenderSVGRect {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+                RenderSVGRect {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+                RenderSVGRect {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+        RenderSVGResourcePattern {pattern} [id="patternWiderRegion"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+          RenderSVGContainer {use} at (0,0) size 20x20
+            RenderSVGContainer {g} at (0,0) size 20x20
+              RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+              RenderSVGContainer {g} at (0,0) size 10x10
+                RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+                RenderSVGRect {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+                RenderSVGRect {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+                RenderSVGRect {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+        RenderSVGResourcePattern {pattern} [id="patternHigherRegion"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+          RenderSVGContainer {use} at (0,0) size 20x20
+            RenderSVGContainer {g} at (0,0) size 20x20
+              RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+              RenderSVGContainer {g} at (0,0) size 10x10
+                RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+                RenderSVGRect {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+                RenderSVGRect {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+                RenderSVGRect {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+        RenderSVGResourcePattern {pattern} [id="patternWiderHigherRegion"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+          RenderSVGContainer {use} at (0,0) size 20x20
+            RenderSVGContainer {g} at (0,0) size 20x20
+              RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+              RenderSVGContainer {g} at (0,0) size 10x10
+                RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+                RenderSVGRect {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+                RenderSVGRect {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+              RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+                RenderSVGRect {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+                RenderSVGRect {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+      RenderSVGContainer {g} at (30,70) size 199x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,90.00)}]
+        RenderSVGText {text} at (0,-20) size 199x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 199x19
+            chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 29 width 198.30: "Pattern (4 times actual size)"
+        RenderSVGContainer {use} at (30,90) size 80x80 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}]
+          RenderSVGContainer {g} at (30,90) size 80x80
+            RenderSVGRect {rect} at (30,90) size 80x80 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+            RenderSVGContainer {g} at (30,90) size 40x40
+              RenderSVGRect {rect} at (30,90) size 20x20 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+              RenderSVGRect {rect} at (50,110) size 20x20 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+            RenderSVGContainer {g} at (70,90) size 40x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+              RenderSVGRect {rect} at (70,90) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+              RenderSVGRect {rect} at (90,110) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+            RenderSVGContainer {g} at (30,130) size 40x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+              RenderSVGRect {rect} at (30,130) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+              RenderSVGRect {rect} at (50,150) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+            RenderSVGContainer {g} at (70,130) size 40x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+              RenderSVGRect {rect} at (70,130) size 20x20 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+              RenderSVGRect {rect} at (90,150) size 20x20 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+      RenderSVGContainer {g} at (24,180) size 248x281 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,200.00)}]
+        RenderSVGContainer {g} at (29,180) size 186x71
+          RenderSVGText {text} at (0,-20) size 185x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 185x19
+              chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 26 width 184.09: "Exact Fit in patternRegion"
+          RenderSVGRect {rect} at (29,199) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternExactFit"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (29,199) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+        RenderSVGContainer {g} at (24,250) size 221x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,70.00)}]
+          RenderSVGText {text} at (0,-20) size 215x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 215x19
+              chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 32 width 214.36: "patternRegion offset to the left"
+          RenderSVGRect {rect} at (29,269) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternTranslateRegionX"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (24,269) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=-5.00] [y=0.00] [width=20.00] [height=20.00]
+        RenderSVGContainer {g} at (29,320) size 217x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
+          RenderSVGText {text} at (0,-20) size 216x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 216x19
+              chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 31 width 215.26: "patternRegion offset to the top"
+          RenderSVGRect {rect} at (29,339) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternTranslateRegionY"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (29,334) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=-5.00] [width=20.00] [height=20.00]
+        RenderSVGContainer {g} at (29,390) size 243x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
+          RenderSVGText {text} at (0,-20) size 242x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 242x19
+              chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 36 width 241.05: "patternRegion offset to the top/left"
+          RenderSVGRect {rect} at (29,409) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternTranslateRegionXY"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (39,419) size 22x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=10.00] [y=10.00] [width=20.00] [height=20.00]
+      RenderSVGContainer {g} at (254,180) size 196x211 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,200.00)}]
+        RenderSVGContainer {g} at (254,180) size 196x71
+          RenderSVGText {text} at (0,-20) size 236x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 236x19
+              chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 32 width 235.71: "patternRegion wider than content"
+          RenderSVGRect {rect} at (254,199) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternWiderRegion"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (254,199) size 42x22 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=40.00] [height=20.00]
+        RenderSVGContainer {g} at (254,250) size 196x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,70.00)}]
+          RenderSVGText {text} at (0,-20) size 242x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 242x19
+              chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 33 width 241.95: "patternRegion higher than content"
+          RenderSVGRect {rect} at (254,269) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternHigherRegion"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (254,269) size 22x42 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=20.00] [height=40.00]
+        RenderSVGContainer {g} at (254,320) size 196x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
+          RenderSVGText {text} at (0,-20) size 242x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 242x19
+              chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 33 width 241.95: "patternRegion higher than content"
+          RenderSVGRect {rect} at (254,339) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternWiderHigherRegion"]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+          RenderSVGRect {rect} at (254,339) size 42x42 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=40.00] [height=40.00]
+    RenderSVGContainer {use} at (0,0) size 448x498
+      RenderSVGContainer {g} at (0,0) size 448x498
+        RenderSVGRect {rect} at (0,0) size 448x498 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+        RenderSVGContainer {g} at (418,466) size 28x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(418.00,467.00)}]
+          RenderSVGViewportContainer {svg} at (418,466) size 28x30
+            RenderSVGPath {path} at (418,468) size 14x19 [fill={[type=SOLID] [color=#6666FF]}] [data="M 172 44 C 137 60 31 135 11 199 C 3 226 33 247 55 232 C 14 306 -1 332 0 356 C 0 370 13 398 44 383 C 52 379 79 358 96 342 C 110 341 120 331 138 314 C 155 328 174 324 190 307 C 212 309 272 229 234 199 C 231 175 204 162 181 181 C 175 179 168 180 163 182 C 185 147 206 100 212 77 C 219 47 188 36 172 44 Z"]
+            RenderSVGPath {path} at (432,466) size 14x17 [fill={[type=SOLID] [color=#FF0000]}] [data="M 400 0 C 382 3 351 31 351 31 C 322 54 308 89 323 126 C 310 140 294 170 294 193 C 294 221 314 245 344 222 C 351 230 365 238 381 227 C 376 256 384 275 407 276 C 408 286 420 307 443 293 C 459 283 501 254 522 237 C 547 214 547 143 504 148 C 537 89 501 52 477 64 C 467 68 431 89 425 94 C 424 87 420 82 414 80 C 436 45 436 -5 401 0 Z"]
+            RenderSVGPath {path} at (425,484) size 16x12 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

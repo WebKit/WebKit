@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (32,124) size 567x183
+    RenderSVGText {text} at (10,-5) size 29x19 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 5x12
+        RenderSVGInlineText {#text} at (0,5) size 5x12
+          chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 5.00: "1"
+      RenderSVGInlineText {#text} at (5,0) size 4x19
+        chunk 1 text run 1 at (15.00,10.00) startOffset 0 endOffset 1 width 3.98: " "
+      RenderSVGTSpan {tspan} at (0,0) size 4x7
+        RenderSVGInlineText {#text} at (8,9) size 3x7
+          chunk 1 text run 1 at (18.98,10.00) startOffset 0 endOffset 1 width 2.97: "2"
+      RenderSVGInlineText {#text} at (11,0) size 4x19
+        chunk 1 text run 1 at (21.95,10.00) startOffset 0 endOffset 1 width 3.98: " "
+      RenderSVGTSpan {tspan} at (0,0) size 2x2
+        RenderSVGInlineText {#text} at (15,13) size 1x2
+          chunk 1 text run 1 at (25.94,10.00) startOffset 0 endOffset 1 width 0.47: "3"
+      RenderSVGInlineText {#text} at (16,0) size 4x19
+        chunk 1 text run 1 at (26.41,10.00) startOffset 0 endOffset 1 width 3.98: " "
+      RenderSVGTSpan {tspan} at (0,0) size 1x2
+        RenderSVGInlineText {#text} at (20,13) size 1x1
+          chunk 1 text run 1 at (30.39,10.00) startOffset 0 endOffset 1 width 0.31: "4"
+      RenderSVGInlineText {#text} at (20,0) size 4x19
+        chunk 1 text run 1 at (30.70,10.00) startOffset 0 endOffset 1 width 3.98: " "
+      RenderSVGTSpan {tspan} at (0,0) size 1x2
+        RenderSVGInlineText {#text} at (24,13) size 1x1
+          chunk 1 text run 1 at (34.69,10.00) startOffset 0 endOffset 1 width 0.31: "5"
+      RenderSVGInlineText {#text} at (25,0) size 4x19
+        chunk 1 text run 1 at (35.00,10.00) startOffset 0 endOffset 1 width 3.98: " "
+      RenderSVGTSpan {tspan} at (0,0) size 0x1
+        RenderSVGInlineText {#text} at (-10,4) size 0x0
+      RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGText {text} at (63,42) size 123x10 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 123x10
+        chunk 1 (middle anchor) text run 1 at (63.96,50.00) startOffset 0 endOffset 36 width 122.07: "Font size should decrease monotonic."

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 200x200
+  RenderSVGRoot {svg} at (0,0) size 200x200
+    RenderSVGViewportContainer {svg} at (0,0) size 200x200
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGPath {polygon} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [points="0 0 0 20 20 10"]
+      RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (180,60) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-20.00,0.00)}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=200.00] [y=60.00] [width=20.00] [height=20.00]
+      RenderSVGText {text} at (89,85) size 111x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 111x19
+          chunk 1 (end anchor) text run 1 at (89.37,100.00) startOffset 0 endOffset 18 width 110.63: "right-aligned text"
+      RenderSVGContainer {use} at (180,120) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,120.00)}]
+        RenderSVGPath {polygon} at (180,120) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [points="0 0 0 20 20 10"]

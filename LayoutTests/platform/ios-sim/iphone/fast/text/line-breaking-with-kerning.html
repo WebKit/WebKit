@@ -1,0 +1,26 @@
+<style>
+    div {
+        font-family: baskerville;
+        width: 241px;
+        border: solid blue;
+        margin: 10px 0;
+    }
+    div.optimizelegibility {
+        text-rendering: optimizelegibility;
+        border-color: red;
+    }
+</style>
+<p>
+    Test for <i><a href="https://bugs.webkit.org/show_bug.cgi?id=32794">https://bugs.webkit.org/show_bug.cgi?id=32794</a>
+    With text-rendering: optimizelegibility, sometimes lines run too long</i>.
+</p>
+<p>
+    Text should not overflow any of these boxes. The terminal of the f
+    may overlap the border.
+</p>
+<div style="text-align: justify;">maintenance of the balance of power in</div>
+<div class="optimizelegibility" style="text-align: justify;">maintenance of the balance of power in</div>
+<div>maintenance of the balance of power in</div>
+<div class="optimizelegibility">maintenance of the balance of power in</div>
+<div>f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f</div>
+<div class="optimizelegibility">f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f</div>

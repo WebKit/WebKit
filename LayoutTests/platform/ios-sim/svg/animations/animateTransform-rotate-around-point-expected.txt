@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (29,29) size 292x442
+    RenderSVGRect {rect} at (29,29) size 142x142 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(100.00,-41.42)}] [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (29,179) size 142x142 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(206.07,2.51)}] [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=200.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (29,329) size 142x142 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(312.13,46.45)}] [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=350.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (179,29) size 142x142 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(143.93,-147.49)}] [fill={[type=SOLID] [color=#008000]}] [x=200.00] [y=50.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (179,179) size 142x142 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-103.55)}] [fill={[type=SOLID] [color=#008000]}] [x=200.00] [y=200.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (179,329) size 142x142 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(356.07,-59.62)}] [fill={[type=SOLID] [color=#008000]}] [x=200.00] [y=350.00] [width=100.00] [height=100.00]

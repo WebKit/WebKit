@@ -1,0 +1,6 @@
+S15.10.2.12_A2_T2
+
+FAIL SputnikError: #3: var arr = /\S/.exec("\u2028"); arr[0] === "\u2028". Actual.  
+
+TEST COMPLETE
+

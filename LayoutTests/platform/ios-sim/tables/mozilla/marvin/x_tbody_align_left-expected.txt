@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x146
+  RenderBlock {html} at (0,0) size 800x146
+    RenderBody {body} at (8,16) size 784x122
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 328x19
+          text run at (0,0) width 328: "In this test, the TBODY text should be left aligned."
+      RenderTable {table} at (0,36) size 180x86 [border: (1px outset #808080)]
+        RenderTableSection {thead} at (1,1) size 178x28
+          RenderTableRow {tr} at (0,2) size 178x24
+            RenderTableCell {td} at (2,2) size 174x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 170x19
+                text run at (2,2) width 170: "This text is in the THEAD"
+        RenderTableSection {tfoot} at (1,57) size 178x28
+          RenderTableRow {tr} at (0,2) size 178x24
+            RenderTableCell {td} at (2,2) size 174x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 167x19
+                text run at (2,2) width 167: "This text is in the TFOOT"
+        RenderTableSection {tbody} at (1,29) size 178x28
+          RenderTableRow {tr} at (0,2) size 178x24
+            RenderTableCell {td} at (2,2) size 174x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 56x19
+                text run at (2,2) width 56: "TBODY"

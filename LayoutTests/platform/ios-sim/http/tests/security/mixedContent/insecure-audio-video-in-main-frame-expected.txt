@@ -1,0 +1,1 @@
+This test opens a window that loads insecure HTML5 audio and video. We should trigger a mixed content callback because the main frame in the window is HTTPS but is displaying insecure content.

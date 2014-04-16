@@ -1,0 +1,70 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 406x19
+          text run at (0,0) width 406: "Tests list item numbering when there are anonymous list items."
+      RenderBlock {OL} at (0,36) size 784x20
+        RenderListItem at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderText at (0,0) size 33x19
+            text run at (0,0) width 33: "ONE"
+      RenderBlock {OL} at (0,72) size 784x40
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderText {#text} at (0,0) size 24x19
+            text run at (0,0) width 24: "one"
+        RenderListItem at (40,20) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "2"
+          RenderText at (0,0) size 37x19
+            text run at (0,0) width 37: "TWO"
+      RenderBlock {OL} at (0,128) size 784x20
+        RenderListItem at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderText at (0,0) size 33x19
+            text run at (0,0) width 33: "ONE"
+      RenderBlock {OL} at (0,164) size 784x40
+        RenderListItem at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderText at (0,0) size 33x19
+            text run at (0,0) width 33: "ONE"
+        RenderListItem {LI} at (40,20) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "2"
+          RenderText {#text} at (0,0) size 24x19
+            text run at (0,0) width 24: "two"
+      RenderBlock {OL} at (0,220) size 784x80
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderText {#text} at (0,0) size 24x19
+            text run at (0,0) width 24: "one"
+        RenderBlock {DIV} at (40,20) size 744x40
+          RenderBlock (anonymous) at (0,0) size 744x20
+            RenderText {#text} at (0,0) size 21x19
+              text run at (0,0) width 21: "div"
+          RenderListItem at (0,20) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "2"
+            RenderText at (0,0) size 37x19
+              text run at (0,0) width 37: "TWO"
+        RenderListItem {LI} at (40,60) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "3"
+          RenderText {#text} at (0,0) size 32x19
+            text run at (0,0) width 32: "three"
+      RenderBlock {OL} at (0,316) size 784x80
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderText {#text} at (0,0) size 24x19
+            text run at (0,0) width 24: "one"
+        RenderBlock {DIV} at (40,20) size 744x40
+          RenderListItem at (0,0) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "2"
+            RenderText at (0,0) size 37x19
+              text run at (0,0) width 37: "TWO"
+          RenderBlock (anonymous) at (0,20) size 744x20
+            RenderText {#text} at (0,0) size 21x19
+              text run at (0,0) width 21: "div"
+        RenderListItem {LI} at (40,60) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "3"
+          RenderText {#text} at (0,0) size 32x19
+            text run at (0,0) width 32: "three"

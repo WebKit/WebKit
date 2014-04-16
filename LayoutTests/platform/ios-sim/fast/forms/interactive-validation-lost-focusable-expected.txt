@@ -1,0 +1,9 @@
+Test a case that the first invalid focusable control becomes invisible by a scroll event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The form was not submitted
+FAIL document.activeElement should be [object HTMLInputElement]. Was [object HTMLInputElement].
+TEST COMPLETE
+    

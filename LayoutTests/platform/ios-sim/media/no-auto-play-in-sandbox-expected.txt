@@ -1,0 +1,13 @@
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Test that play event does not fire when "src" set with an autoplay attribute in a sandbox.
+
+EXPECTED (video.paused == 'true') OK
+EVENT(canplaythrough)
+EVENT(canplaythrough)
+EXPECTED (video.paused == 'true') OK
+END OF TEST
+

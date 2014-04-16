@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x571
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 767x39
+          text run at (0,0) width 767: "This tests handling of duplicated properties in inline style declarations. Using !important should have an effect. See bug"
+          text run at (0,20) width 44: "#4128."
+      RenderBlock {H1} at (0,61) size 784x38 [color=#FF0000]
+        RenderText {#text} at (0,1) size 254x36
+          text run at (0,1) width 254: "This should be red"
+      RenderBlock {H1} at (0,120) size 784x38 [color=#00FF00]
+        RenderText {#text} at (0,1) size 284x36
+          text run at (0,1) width 284: "This should be green"
+      RenderBlock {H1} at (0,179) size 784x38 [color=#FF0000]
+        RenderText {#text} at (0,1) size 254x36
+          text run at (0,1) width 254: "This should be red"
+      RenderBlock {H1} at (0,238) size 784x38 [color=#FF0000]
+        RenderText {#text} at (0,1) size 254x36
+          text run at (0,1) width 254: "This should be red"

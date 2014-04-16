@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (130,0) size 540x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceRadialGradient {radialGradient} [id="redToYellow"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
+      RenderSVGResourcePattern {pattern} [id="pattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=objectBoundingBox]
+        RenderSVGEllipse {circle} at (98,0) size 112x80 [stroke={[type=SOLID] [color=#640000] [stroke width=12.00]}] [fill={[type=RADIAL-GRADIENT] [id="redToYellow"]}] [cx=20.00] [cy=20.00] [r=40.00]
+    RenderSVGRect {rect} at (189,59) size 422x482 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern"]}] [x=50.00] [y=50.00] [width=350.00] [height=400.00]
+    RenderSVGRect {rect} at (130,0) size 540x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=448.00] [height=498.00]
+    RenderSVGContainer {g} at (288,12) size 224x34
+      RenderSVGText {text} at (132,10) size 186x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 186x12
+          chunk 1 (middle anchor) text run 1 at (132.18,20.00) startOffset 0 endOffset 47 width 185.64: "stroked circle shouldn't be clipped in any way."
+      RenderSVGText {text} at (161,25) size 128x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 128x12
+          chunk 1 (middle anchor) text run 1 at (161.26,35.00) startOffset 0 endOffset 32 width 127.48: "(stroke-width should be visible!"

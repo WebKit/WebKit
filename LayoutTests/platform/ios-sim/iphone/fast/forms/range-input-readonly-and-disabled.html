@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/js/resources/js-test-post-function.js"></script>
+<!--
+  Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
+  should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
+  This template will generate an asynchronous style test by using the js-test-post-function script.
+  You will need to invoke isSuccessfullyParsed() in your test script when the test completes.
+-->
+<style>
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 500px; height: 20px;
+  background: black;
+  margin-top: 100px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: blue;
+  width: 200px;
+  height: 200px;
+}
+</style>
+</head>
+<body>
+<input id="slider" type="range" min="0" max="100" value="50">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+// Globals used by test evals.
+var changeEventCount = 0;
+var lastChangeEventCount = 0;
+var slider = document.getElementById("slider");
+slider.addEventListener("input", function(event) {
+    changeEventCount++;
+}, false);
+
+
+// Slider coordinates used throughout.
+const centerY = slider.offsetTop + slider.offsetHeight / 2;
+const centerX = slider.offsetLeft + slider.offsetWidth / 2;
+const leftEdgeX = slider.offsetLeft + 1;
+const rightEdgeX = slider.offsetLeft + slider.offsetWidth - 1;
+
+
+// Test configurations.
+var currentConfiguration = -1;
+const testConfigurations = [
+    { readOnly: false, disabled: false, name: "Normal"   },
+    { readOnly: true,  disabled: false, name: "Readonly" },
+    { readOnly: false, disabled: true,  name: "Disabled" },
+    { readOnly: true,  disabled: true,  name: "Readonly and Disabled" },
+];
+
+
+// Run the test!
+if (window.eventSender) {
+    description("This tests touch events on readonly and disabled sliders.");
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    // iOS <input type="range"> uses identifier 0 as the "NoIdentifier".
+    // So swallow touch point 0 and ignore it from now on. Currently
+    // a 0 identifier cannot happen on iOS.
+    eventSender.addTouchPoint(0, 0);
+
+    runAllTestConfigurations();
+} else
+    debug("This test requires DumpRenderTree to send touch events.")
+
+
+// Test runners.
+
+function runAllTestConfigurations() {
+    for (var i=0, len=testConfigurations.length; i<len; ++i)
+        runTestConfiguration(testConfigurations[i]);
+
+    debug("");
+    successfullyParsed = true;
+    isSuccessfullyParsed();
+    testRunner.notifyDone();
+}
+
+function runTestConfiguration(configuration) {
+    var displayName = '(&lt;input type="range"';
+    if (configuration.readOnly)
+        displayName += ' readonly';
+    if (configuration.disabled)
+        displayName += ' disabled';
+    displayName += '&gt;)';
+
+    const touchIdentifier = 1;
+    function startDrag() { eventSender.addTouchPoint(centerX, centerY); eventSender.touchStart(); }
+    function stopDrag() { eventSender.releaseTouchPoint(touchIdentifier); eventSender.touchEnd(); }
+    function dragToLeftEdge()  { eventSender.updateTouchPoint(touchIdentifier, leftEdgeX, centerY); eventSender.touchMove(); }
+    function dragToRightEdge() { eventSender.updateTouchPoint(touchIdentifier, rightEdgeX, centerY); eventSender.touchMove(); }
+    function dragSequence(sequence) { startDrag(); sequence(); stopDrag(); }
+
+
+    debug("");
+    debug("-------------------");
+    debug("Test Configuration: " + configuration.name + " - " + displayName);
+    debug("-------------------");
+
+    debug("");
+    debug('- Reset slider to non-readonly and non-disabled to make sure it works.');
+    slider.readOnly = false;
+    slider.disabled = false;
+    slider.valueAsNumber = 50;
+    shouldBe('slider.value', '"50"');
+
+    debug("- Test drag sequence where readonly / disabled state may change during drag.");
+    dragSequence(function() {
+        // Drag from center, to right edge, to left edge.
+        lastChangeEventCount = changeEventCount;
+        dragToRightEdge();
+        shouldBe('slider.value', '"100"');
+        shouldBeGreaterThanOrEqual('changeEventCount', 'lastChangeEventCount + 1');
+        lastChangeEventCount = changeEventCount;
+        dragToLeftEdge();
+        shouldBe('slider.value', '"0"');
+        shouldBeGreaterThanOrEqual('changeEventCount', 'lastChangeEventCount + 1');
+
+        // While still dragging, toggle readonly / disabled.
+        debug("(toggled state to configuration)");
+        slider.readOnly = configuration.readOnly;
+        slider.disabled = configuration.disabled;
+
+        // Attempt to drag to right edge. Should not change for disabled / readonly fields.
+        lastChangeEventCount = changeEventCount;
+        dragToRightEdge();
+        if (slider.readOnly || slider.disabled) {
+            shouldBe('slider.value', '"0"');
+            shouldBe('lastChangeEventCount', 'changeEventCount');
+        } else {
+            shouldBe('slider.value', '"100"');
+            shouldBeGreaterThanOrEqual('changeEventCount', 'lastChangeEventCount + 1');
+        }
+    });
+
+    debug("- Reset value to middle for second sequence.");
+    slider.valueAsNumber = 50;
+    shouldBe('slider.value', '"50"');
+
+    debug("- Test drag sequence where readonly / disabled state is already set.");
+    dragSequence(function() {
+        // Drag from center, to right edge.
+        lastChangeEventCount = changeEventCount;
+        dragToRightEdge();
+        if (slider.readOnly || slider.disabled) {
+            shouldBe('slider.value', '"50"');
+            shouldBe('lastChangeEventCount', 'changeEventCount');
+        } else {
+            shouldBe('slider.value', '"100"');
+            shouldBeGreaterThanOrEqual('changeEventCount', 'lastChangeEventCount + 1');
+        }
+    });
+}
+</script>
+</body>
+</html>

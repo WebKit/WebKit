@@ -1,0 +1,14 @@
+UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{file, , 0} database:QuotaManagementDatabase2
+This test checks to make sure that quotas are enforced per-origin instead of per-database, as they were prior to http://trac.webkit.org/projects/webkit/changeset/29983.
+The test clears all databases, sets the quota for the origin to 40k, then tries to insert 17k of data into two databases. If things go as planned, the second insert should fail, the UI Delegate should be informed of the exceeded quota and should increase the quota for this origin. Inserting 17k of data the third time should succeed again.
+Adding a table
+Inserting some data
+Done adding data
+Adding a table
+Expected quota exception - there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space
+Done adding data
+Adding a table
+Inserting some data
+Done adding data
+Test Complete
+

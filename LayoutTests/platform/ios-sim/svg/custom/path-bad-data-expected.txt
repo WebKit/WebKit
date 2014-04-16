@@ -1,0 +1,19 @@
+layer at (0,0) size 808x781
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x781
+  RenderBlock {html} at (0,0) size 800x781
+    RenderBody {body} at (8,16) size 784x757
+      RenderBlock {parsererror} at (16,0) size 752x136 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20) size 716x23
+          RenderText {#text} at (0,0) size 323x22
+            text run at (0,0) width 323: "This page contains the following errors:"
+        RenderBlock {div} at (18,61) size 716x14
+          RenderText {#text} at (0,0) size 476x14
+            text run at (0,0) width 476: "error on line 9 at column 66: invalid character in attribute value"
+            text run at (475,0) width 1: " "
+        RenderBlock {h3} at (18,93) size 716x23
+          RenderText {#text} at (0,0) size 428x22
+            text run at (0,0) width 428: "Below is a rendering of the page up to the first error."
+      RenderBlock (anonymous) at (0,152) size 784x605
+        RenderSVGRoot {svg} at (8,168) size 200x200
+          RenderSVGPath {path} at (8,168) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M 0 0 L 200 0 L 200 200 L 0 200"]

@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DETAILS} at (0,0) size 784x40
+        RenderBlock {SUMMARY} at (0,0) size 784x20
+          RenderDetailsMarker {DIV} at (0,5) size 10x10: down
+          RenderText {#text} at (16,0) size 63x19
+            text run at (16,0) width 63: "Summary"
+        RenderBlock (anonymous) at (0,20) size 784x20
+          RenderBlock {SPAN} at (0,4) size 63x15
+            RenderText {#text} at (0,0) size 63x15
+              text run at (0,0) width 63: "Details1"
+          RenderText {#text} at (63,0) size 4x19
+            text run at (63,0) width 4: " "
+          RenderText {#text} at (0,0) size 0x0
+          RenderBlock {SPAN} at (67,4) size 63x15
+            RenderText {#text} at (0,0) size 63x15
+              text run at (0,0) width 63: "Details2"
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,40) size 784x24
+        RenderButton {INPUT} at (2,2) size 46x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (12,3) size 22x14
+            RenderText at (0,0) size 22x14
+              text run at (0,0) width 22: "click"
+        RenderText {#text} at (0,0) size 0x0

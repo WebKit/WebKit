@@ -1,0 +1,32 @@
+ PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS getError was expected value: INVALID_VALUE : gl.texImage2D with NPOT texture with level > 0 should return INVALID_VALUE
+PASS getError was expected value: NO_ERROR : gl.texImage2D with NPOT texture at level 0 should succeed
+PASS getError was expected value: INVALID_OPERATION : gl.generateMipmap with NPOT texture should return INVALID_OPERATION
+PASS NPOT texture with TEXTURE_WRAP set to REPEAT should draw with 0,0,0,255
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS NPOT texture with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw with 0,0,0,255
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS NPOT texture with TEXTURE_MIN_FILTER set to LINEAR should draw.
+PASS getError was expected value: INVALID_VALUE : copyTexImage2D with NPOT texture with level > 0 should return INVALID_VALUE.
+PASS getError was expected value: NO_ERROR : gl.texImage2D and gl.generateMipmap with POT texture at level 0 should succeed
+PASS POT texture with TEXTURE_MIN_FILTER set to LINEAR_MIPMAP_LINEAR should draw.
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+
+check using cubemap
+PASS getError was expected value: INVALID_VALUE : gl.texImage2D with NPOT texture with level > 0 should return INVALID_VALUE
+PASS getError was expected value: NO_ERROR : gl.texImage2D with NPOT texture at level 0 should succeed
+PASS getError was expected value: INVALID_OPERATION : gl.generateMipmap with NPOT texture should return INVALID_OPERATION
+FAIL NPOT cubemap with TEXTURE_WRAP set to REPEAT should draw with 0,0,0,255
+at (0, 0) expected: 0,0,0,255 was 0,192,128,255
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS NPOT cubemap with TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw with 0,0,0,255
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS NPOT cubemap with TEXTURE_MIN_FILTER set to LINEAR should draw.
+PASS getError was expected value: NO_ERROR : gl.texImage2D with POT texture at level 0 should succeed
+PASS POT cubemap with TEXTURE_MIN_FILTER set to LINEAR_MIPMAP_LINEAR but no mips draw with 0,0,0,255
+PASS getError was expected value: NO_ERROR : gl.generateMipmap with POT texture should return succeed
+PASS POT cubemap with TEXTURE_MIN_FILTER set to LINEAR_MIPMAP_LINEAR should draw.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

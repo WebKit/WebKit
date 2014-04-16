@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 631x19
+          text run at (0,0) width 631: "PASS - \"webkitMaskBoxImage\" property for \"box\" element at 2.25s saw something close to: 0.25"
+        RenderBR {BR} at (630,15) size 1x0
+        RenderText {#text} at (0,20) size 750x19
+          text run at (0,20) width 750: "PASS - \"webkitMaskBoxImage\" property for \"box\" and \"boxStatic\" elements at 2.25s are close enough to each other"
+        RenderBR {BR} at (749,35) size 1x0
+layer at (100,100) size 200x200
+  RenderImage {IMG} at (100,100) size 200x200 [bgcolor=#FF0000]
+layer at (100,300) size 200x200
+  RenderImage {IMG} at (100,300) size 200x200 [bgcolor=#FF0000]

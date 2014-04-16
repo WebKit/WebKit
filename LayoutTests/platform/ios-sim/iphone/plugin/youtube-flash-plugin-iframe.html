@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+description(
+    'Test transforming youtube flash plugin to youtube iFrame based player. &lt;<a href="rdar://problem/11201356"> rdar://problem/11201356</a>&gt;'
+);
+
+function Test()
+{
+    setTimeout(function() {
+        normalEmbed = document.getElementById('normal-embed');
+        elinkEmbed = document.getElementById('elink-embed');
+        objectEmbed = document.getElementById('object-embed');
+        objectNoEmbed = document.getElementById('object-no-embed');
+
+        // Test we don't change any embe/object tag to iframe.
+        shouldBe('normalEmbed.tagName', '"EMBED"');
+        shouldBe('elinkEmbed.tagName', '"EMBED"');
+        shouldBe('objectEmbed.tagName', '"EMBED"');
+        shouldBe('objectNoEmbed.tagName', '"OBJECT"');
+
+        // Test we don't see those shadow iframes in DOM.
+        shouldBe('document.querySelectorAll("iframe").length', '1');
+
+        // Test we have the shadow root and the iframe player.
+        normalEmbedShadowRoot = internals.shadowRoot(normalEmbed);
+        shouldBe('internals.shadowPseudoId(normalEmbedShadowRoot.firstChild)', '"-apple-youtube-shadow-iframe"');
+        shouldBe('normalEmbedShadowRoot.firstChild.firstChild.tagName', '"IFRAME"');
+
+        objectEmbedShadowRoot = internals.shadowRoot(objectEmbed);
+        shouldBe('internals.shadowPseudoId(objectEmbedShadowRoot.firstChild)', '"-apple-youtube-shadow-iframe"');
+        shouldBe('objectEmbedShadowRoot.firstChild.firstChild.tagName', '"IFRAME"');
+
+        objectNoEmbedShadowRoot = internals.shadowRoot(objectNoEmbed);
+        shouldBe('internals.shadowPseudoId(objectNoEmbedShadowRoot.firstChild)', '"-apple-youtube-shadow-iframe"');
+        shouldBe('objectNoEmbedShadowRoot.firstChild.firstChild.tagName', '"IFRAME"');
+
+        var successfullyParsed = true;
+        testRunner.notifyDone();
+    }, 100);
+}
+</script>
+</head>
+<body onLoad="Test()">
+<p id="description"></p>
+<div id="console"></div>
+
+<p>Normal Embed:<br><embed id='normal-embed' src="http://www.youtube.com/v/N0gb9v4LI4o" type="application/x-shockwave-flash" width="425" height="350"></p>
+<p>E-link Embed:<br><embed id='elink-embed' src="http://www.youtube.com/e/N0gb9v4LI4o" type="application/x-shockwave-flash" width="425" height="350"></p>
+<p>Object with embed:<br><object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/N0gb9v4LI4o?version=3&amp;hl=en_US"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed id='object-embed' src="http://www.youtube.com/v/N0gb9v4LI4o?version=3&amp;hl=en_US" type="application/x-shockwave-flash" width="425" height="350" allowscriptaccess="always" allowfullscreen="true"></embed></object></p>
+<p>Object without embed:<br><object id='object-no-embed' width="425" height="350" type="application/x-shockwave-flash" data="http://www.youtube.com/v/N0gb9v4LI4o?version=3&amp;hl=en_US"></object>
+<p>Embed inside iframe:<br>
+<iframe width="300" height="200"id='container-iframe'  src='data:text/html,<body><p>Normal Embed:<br><embed id="normal-embed" src="http://www.youtube.com/v/N0gb9v4LI4o" type="application/x-shockwave-flash" width="425" height="350"></p></body>' >
+</iframe>
+
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

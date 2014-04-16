@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This tests initializing GestureEvents");
+
+// To use GestureEvents use createEvent and initGestureEvent.
+// NOTE: iOS Does not expose GestureEvent.
+shouldBeTrue("!('GestureEvent' in window)");
+
+// Global properties for events.
+var type; // Assigned before checking.
+var canBubble = false;
+var cancelable = true;
+var view = window;
+var detail = 1;
+var screenX = 2;
+var screenY = 3;
+var clientX = 4;
+var clientY = 5;
+var ctrlKey = false;
+var altKey = true;
+var shiftKey = false;
+var metaKey = true;
+var target = document.body;
+var scale = 1.5;
+var rotation = 10.5;
+
+function createGestureEvent(type) {
+    var event = document.createEvent("GestureEvent");
+    event.initGestureEvent(type,
+        canBubble, cancelable, view, detail,
+        screenX, screenY, clientX, clientY,
+        ctrlKey, altKey, shiftKey, metaKey,
+        target, scale, rotation);
+    return event;
+}
+
+function validateGestureEvent(t, event) {
+    debug("");
+    debug("EVENT: " + t);
+    type = t;
+
+    // Check exposed properties against values that were set.
+    shouldBe("event.type", "type");
+    shouldBe("event.bubbles", "canBubble");
+    shouldBe("event.cancelable", "cancelable");
+    shouldBe("event.view", "view");
+    shouldBe("event.detail", "detail");
+    shouldBe("event.ctrlKey", "ctrlKey");
+    shouldBe("event.altKey", "altKey");
+    shouldBe("event.shiftKey", "shiftKey");
+    shouldBe("event.metaKey", "metaKey");
+    shouldBe("event.target", "target");
+    shouldBe("event.scale", "scale");
+    shouldBe("event.rotation", "rotation");
+
+    // Properties that aren't exposed but were in init.
+    shouldBe("event.screenX", "undefined");
+    shouldBe("event.screenY", "undefined");
+    shouldBe("event.clientX", "undefined");
+    shouldBe("event.clientY", "undefined");
+}
+
+target.addEventListener("gesturestart", function(event) { validateGestureEvent("gesturestart", event); }, false);
+target.addEventListener("gesturechange", function(event) { validateGestureEvent("gesturechange", event); }, false);
+target.addEventListener("gestureend", function(event) { validateGestureEvent("gestureend", event); }, false);
+
+try {
+    var e;
+    e = createGestureEvent("gesturestart");
+    target.dispatchEvent(e);
+    e = createGestureEvent("gesturechange");
+    target.dispatchEvent(e);    
+    e = createGestureEvent("gestureend");
+    target.dispatchEvent(e);
+} catch (e) {
+    testFailed("An exception was thrown: " + e.message);
+}
+
+</script>    
+<script src="../../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

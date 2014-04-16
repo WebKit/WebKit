@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+      RenderBlock {DETAILS} at (0,0) size 800x20
+        RenderBlock {SUMMARY} at (0,0) size 800x20
+          RenderDetailsMarker {DIV} at (0,5) size 10x10: right
+          RenderText {#text} at (16,0) size 72x19
+            text run at (16,0) width 72: "summary 1"
+caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {SUMMARY} of child 1 {DETAILS} of body

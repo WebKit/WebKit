@@ -1,0 +1,2 @@
+ALERT: pagehide false
+PASSED if didn't crash in two seconds.

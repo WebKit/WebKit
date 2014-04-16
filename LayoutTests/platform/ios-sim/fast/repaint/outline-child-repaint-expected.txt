@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 156x19
+          text run at (0,0) width 156: "This is a repaint test for "
+        RenderInline {I} at (0,0) size 590x19
+          RenderInline {A} at (0,0) size 313x19 [color=#0000EE]
+            RenderText {#text} at (155,0) size 313x19
+              text run at (155,0) width 313: "https://bugs.webkit.org/show_bug.cgi?id=22159"
+          RenderText {#text} at (467,0) size 278x19
+            text run at (467,0) width 5: " "
+            text run at (471,0) width 274: "Repaint issue with outlines in child objects"
+        RenderText {#text} at (744,0) size 5x19
+          text run at (744,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 328x19
+          text run at (0,0) width 328: "If the test passes, you should not see any red below"
+      RenderBlock {HR} at (0,72) size 784x2 [border: (1px inset #000000)]
+layer at (0,240) size 220x50
+  RenderBlock (positioned) {DIV} at (0,240) size 220x50 [border: (10px solid #FF0000)]
+layer at (10,250) size 200x50
+  RenderBlock (positioned) {DIV} at (10,250) size 200x50
+    RenderBlock {DIV} at (0,0) size 200x30 [bgcolor=#DDDDDD]

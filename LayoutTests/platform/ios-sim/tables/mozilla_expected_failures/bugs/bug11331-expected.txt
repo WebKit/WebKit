@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x168
+        RenderBlock (anonymous) at (0,0) size 784x80
+          RenderText {#text} at (0,0) size 344x19
+            text run at (0,0) width 344: "In the yellow table the \"W\" is clipped on its left edge."
+          RenderBR {BR} at (343,15) size 1x0
+          RenderText {#text} at (0,20) size 174x19
+            text run at (0,20) width 174: "The only difference is that:"
+          RenderBR {BR} at (173,35) size 1x0
+          RenderText {#text} at (0,40) size 251x19
+            text run at (0,40) width 251: "yellow table has CELLPADDING=\"0\""
+          RenderBR {BR} at (250,55) size 1x0
+          RenderText {#text} at (0,60) size 239x19
+            text run at (0,60) width 239: "grey table has CELLPADDING=\"1\"."
+        RenderTable {TABLE} at (0,80) size 40x43 [bgcolor=#FFFF00]
+          RenderTableSection {TBODY} at (0,0) size 40x43
+            RenderTableRow {TR} at (0,2) size 40x39
+              RenderTableCell {TD} at (2,2) size 36x39 [r=0 c=0 rs=1 cs=1]
+                RenderInline {FONT} at (0,0) size 29x39
+                  RenderText {#text} at (0,0) size 29x39
+                    text run at (0,0) width 29: "Online"
+                    text run at (0,13) width 24: "Web-"
+                    text run at (0,26) width 24: "Store"
+        RenderTable {TABLE} at (0,123) size 40x45 [bgcolor=#EEEEEE]
+          RenderTableSection {TBODY} at (0,0) size 40x45
+            RenderTableRow {TR} at (0,2) size 40x41
+              RenderTableCell {TD} at (2,2) size 36x41 [r=0 c=0 rs=1 cs=1]
+                RenderInline {FONT} at (0,0) size 29x39
+                  RenderText {#text} at (1,1) size 29x39
+                    text run at (1,1) width 29: "Online"
+                    text run at (1,14) width 24: "Web-"
+                    text run at (1,27) width 24: "Store"

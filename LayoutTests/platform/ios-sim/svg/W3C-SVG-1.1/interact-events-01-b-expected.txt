@@ -1,0 +1,47 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (30,3) size 412x304
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGText {text} at (30,3) size 412x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 412x46
+          chunk 1 text run 1 at (30.00,40.00) startOffset 0 endOffset 25 width 411.11: "'onload' event attribute."
+      RenderSVGContainer {g} at (47,45) size 365x262
+        RenderSVGContainer {g} at (47,45) size 111x129 [transform={m=((1.00,0.00)(0.00,1.00)) t=(77.50,45.00)}]
+          RenderSVGRect {rect} at (77,45) size 81x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 96x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 96x46
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 5 width 95.61: "1: No"
+        RenderSVGContainer {g} at (172,45) size 115x129 [transform={m=((1.00,0.00)(0.00,1.00)) t=(202.50,45.00)}]
+          RenderSVGRect {rect} at (202,45) size 81x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 114x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 114x46
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.40: "2: Yes"
+        RenderSVGContainer {g} at (297,45) size 115x129 [transform={m=((1.00,0.00)(0.00,1.00)) t=(327.50,45.00)}]
+          RenderSVGContainer {g} at (327,45) size 81x80
+            RenderSVGRect {rect} at (327,45) size 81x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 114x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 114x46
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.40: "3: Yes"
+        RenderSVGContainer {g} at (47,178) size 115x129 [transform={m=((1.00,0.00)(0.00,1.00)) t=(77.50,178.00)}]
+          RenderSVGViewportContainer {svg} at (77,178) size 81x80
+            RenderSVGRect {rect} at (77,178) size 81x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 114x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 114x46
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.40: "4: Yes"
+        RenderSVGContainer {g} at (172,178) size 111x129 [transform={m=((1.00,0.00)(0.00,1.00)) t=(202.50,178.00)}]
+          RenderSVGContainer {g} at (202,178) size 81x80
+            RenderSVGRect {rect} at (202,178) size 81x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 96x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 96x46
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 5 width 95.61: "5: No"
+        RenderSVGContainer {g} at (297,178) size 115x129 [transform={m=((1.00,0.00)(0.00,1.00)) t=(327.50,178.00)}]
+          RenderSVGRect {rect} at (327,178) size 81x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 114x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 114x46
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.40: "6: Yes"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.2 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 375x19
+          text run at (0,0) width 375: "The teal boxes in the reflection should be placed correctly."
+layer at (8,44) size 100x100
+  RenderBlock {DIV} at (0,36) size 100x100 [bgcolor=#0000FF]
+    RenderBlock {DIV} at (0,0) size 100x50 [bgcolor=#C0C0C0]
+layer at (8,44) size 50x50
+  RenderBlock (positioned) {DIV} at (8,44) size 50x50 [bgcolor=#008080]

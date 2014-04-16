@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 136x36 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 134x34
+          RenderTableRow {TR} at (0,2) size 134x30
+            RenderTableCell {TD} at (2,2) size 130x30 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 126x26 [bgcolor=#FFCC99]
+                RenderTableSection {TBODY} at (0,0) size 126x26
+                  RenderTableRow {TR} at (0,2) size 126x22
+                    RenderTableCell {TD} at (2,2) size 32x22 [bgcolor=#FF6600] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 30x19
+                        text run at (1,1) width 30: "Find"
+                    RenderTableCell {TD} at (36,2) size 88x22 [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 86x19
+                        text run at (1,1) width 86: "rick was here"

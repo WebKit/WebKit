@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 613x19
+          text run at (0,0) width 613: "This tests that border radius will choose the foreground color when no border color is specified."
+      RenderBlock {DIV} at (0,20) size 56x26 [color=#FF0000] [bgcolor=#ADD8E6] [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,3) size 23x19
+          text run at (3,3) width 23: "test"

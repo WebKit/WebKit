@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576 [bgcolor=#999999]
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 471x19
+          text run at (0,0) width 428: "Problem: Tables inside a DIV get border=1 after moving the DIV. "
+          text run at (427,0) width 44: "If you "
+        RenderInline {A} at (0,0) size 128x19 [color=#0000EE]
+          RenderInline {B} at (0,0) size 128x19
+            RenderText {#text} at (470,0) size 128x19
+              text run at (470,0) width 128: "remove the border"
+        RenderText {#text} at (597,0) size 783x39
+          text run at (597,0) width 186: " attribute from the tables, the"
+          text run at (0,20) width 153: "border doesn't show up."
+layer at (70,70) size 173x60
+  RenderBlock (positioned) {DIV} at (70,70) size 173x60
+    RenderTable {TABLE} at (0,0) size 173x20 [bgcolor=#CC6600]
+      RenderTableSection {TBODY} at (0,0) size 173x20
+        RenderTableRow {TR} at (0,0) size 173x20
+          RenderTableCell {TD} at (0,0) size 173x20 [r=0 c=0 rs=1 cs=1]
+            RenderBlock {P} at (0,0) size 173x20
+              RenderInline {B} at (0,0) size 51x19
+                RenderText {#text} at (61,0) size 51x19
+                  text run at (61,0) width 51: "Testing"
+    RenderTable {TABLE} at (0,20) size 173x20
+      RenderTableSection {TBODY} at (0,0) size 173x20
+        RenderTableRow {TR} at (0,0) size 173x20
+          RenderTableCell {TD} at (0,0) size 11x20 [bgcolor=#666666] [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 4x19
+              text run at (0,0) width 4: " "
+          RenderTableCell {TD} at (11,0) size 150x20 [bgcolor=#FF9900] [r=0 c=1 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 124x19
+              text run at (0,0) width 124: "Test, test and test..."
+          RenderTableCell {TD} at (161,0) size 12x20 [bgcolor=#666666] [r=0 c=2 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 4x19
+              text run at (0,0) width 4: " "
+    RenderTable {TABLE} at (0,40) size 173x20 [bgcolor=#CC6600]
+      RenderTableSection {TBODY} at (0,0) size 173x20
+        RenderTableRow {TR} at (0,0) size 173x20
+          RenderTableCell {TD} at (0,0) size 57x20 [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 4x19
+              text run at (0,0) width 4: " "
+          RenderTableCell {TD} at (57,0) size 58x20 [r=0 c=1 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 4x19
+              text run at (0,0) width 4: " "
+          RenderTableCell {TD} at (115,0) size 58x20 [r=0 c=2 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 4x19
+              text run at (0,0) width 4: " "

@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (80,60) size 239x112
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGPath {path} at (70,40) size 200x170 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,40.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M 100 0 L 160 170 L 0 60 L 200 60 L 30 170 Z"]
+      RenderSVGResourceClipper {clipPath} [id="clipClip"] [clipPathUnits=userSpaceOnUse]
+        RenderSVGContainer {use} at (70,40) size 200x170
+          RenderSVGPath {path} at (70,40) size 200x170 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,40.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M 100 0 L 160 170 L 0 60 L 200 60 L 30 170 Z"]
+      RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=userSpaceOnUse]
+        RenderSVGText {text} at (80,60) size 239x112 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 239x112
+            chunk 1 text run 1 at (80.00,150.00) startOffset 0 endOffset 4 width 238.92: "CLIP"
+    RenderSVGRect {rect} at (80,60) size 239x112 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=40.00] [width=300.00] [height=300.00]
+      [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (80,60) size 239x112

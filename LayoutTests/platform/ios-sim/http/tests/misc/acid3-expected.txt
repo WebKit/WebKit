@@ -1,0 +1,110 @@
+ALERT: Test 26 passed, but took 384ms (less than 30fps)
+Test 40 passed, but took 41ms (less than 30fps)
+Test 46 failed: expected 'none' but got 'uppercase' - case y2 failed (index 26)
+Test 65 passed, but took 70ms (less than 30fps)
+Test 77 failed: expected '4776' but got '5552' - getComputedTextLength failed.
+Test 78 failed: expected '90' but got '0' - getRotationOfChar(0) failed.
+Total elapsed time: 1.17s
+layer at (0,0) size 1111x600
+  RenderView at (0,0) size 800x600
+layer at (20,20) size 1091x457
+  RenderBlock {HTML} at (20,20) size 644x457 [bgcolor=#C0C0C0] [border: none (4px solid #808080) none]
+    RenderBody {BODY} at (-4,-4) size 644x457 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+      RenderBlock {H1} at (41,41) size 562x120
+        RenderText {#text} at (0,3) size 273x113
+          text run at (0,3) width 273: "Acid3"
+      RenderBlock {DIV} at (41,121) size 562x312
+        RenderBlock {P} at (7,80) size 54x42 [bgcolor=#FF0000] [border: (1px solid #000000)]
+        RenderBlock {P} at (70,64) size 64x50 [bgcolor=#FFA500] [border: (1px solid #000000)]
+        RenderBlock {P} at (145,48) size 74x58 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+        RenderBlock {P} at (231,32) size 86x66 [bgcolor=#00FF00] [border: (1px solid #000000)]
+        RenderBlock {P} at (330,16) size 96x74 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+        RenderBlock {P} at (441,0) size 106x82 [bgcolor=#800080] [border: (1px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (41,214) size 568x120
+        RenderInline {SPAN} at (0,0) size 112x113
+          RenderText {#text} at (261,3) size 112x113
+            text run at (261,3) width 112: "97"
+        RenderInline {SPAN} at (0,0) size 28x113
+          RenderText {#text} at (373,3) size 28x113
+            text run at (373,3) width 28: "/"
+        RenderInline {SPAN} at (0,0) size 167x113
+          RenderText {#text} at (401,3) size 167x113
+            text run at (401,3) width 167: "100"
+      RenderBlock (anonymous) at (41,334) size 562x0
+        RenderInline {MAP} at (0,0) size 0x0
+          RenderPartObject {IFRAME} at (0,0) size 1x1
+            layer at (0,0) size 1x1
+              RenderView at (0,0) size 1x1
+            layer at (0,0) size 1x1
+              RenderBlock {HTML} at (0,0) size 1x1
+                RenderBody {BODY} at (0,0) size 1x1
+                  RenderImage {IMG} at (0,0) size 1x1
+          RenderPartObject {IFRAME} at (0,1) size 1054x51
+            layer at (0,0) size 1054x51
+              RenderView at (0,0) size 1054x51
+            layer at (0,0) size 1054x51
+              RenderBlock {HTML} at (0,0) size 1054x51
+                RenderBody {BODY} at (8,8) size 1038x30
+                  RenderBlock {PRE} at (0,0) size 1038x30
+                    RenderText {#text} at (0,0) size 1038x30
+                      text run at (0,0) width 79: "<!DOCTYPE "
+                      text run at (0,15) width 1038: "html><html><head><title>FAIL</title></head><body><p>FAIL</p><script>parent.notify(\"resources/acid3/empty.txt\")</script></body></html>"
+          RenderPartObject {IFRAME} at (0,52) size 16x8
+            layer at (0,0) size 16x8
+              RenderView at (0,0) size 16x8
+            layer at (0,0) size 16x8
+              RenderBlock {HTML} at (0,0) size 16x8
+                RenderBody {BODY} at (8,8) size 0x0
+      RenderBlock (anonymous) at (41,334) size 562x0
+        RenderBlock {FORM} at (0,0) size 562x0
+      RenderBlock (anonymous) at (41,334) size 562x0
+        RenderInline {MAP} at (0,0) size 0x0
+      RenderBlock (anonymous) at (41,334) size 562x0
+        RenderTable {TABLE} at (1,0) size 1x0
+          RenderTableSection {TBODY} at (0,0) size 1x0
+            RenderTableRow {TR} at (0,0) size 1x0
+              RenderTableCell {TD} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {P} at (0,0) size 1x0
+      RenderBlock (anonymous) at (41,334) size 562x0
+        RenderInline {MAP} at (0,0) size 0x0
+      RenderBlock (anonymous) at (41,334) size 562x24
+        RenderBlock {A} at (0,0) size 562x24 [color=#FF0000]
+          RenderText {#text} at (195,0) size 173x24
+            text run at (195,0) width 173: "LINKTEST FAILED"
+      RenderBlock (anonymous) at (41,358) size 562x0
+        RenderInline {MAP} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (41,358) size 582x98 [color=#808080]
+        RenderText {#text} at (16,28) size 119x19
+          text run at (16,28) width 119: "To pass the test,"
+        RenderBlock (floating) {SPAN} at (562,28) size 20x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (135,28) size 550x57
+          text run at (135,28) width 411: " a browser must use its default settings, the animation has"
+          text run at (0,47) width 550: "to be smooth, the score has to end on 100/100, and the final page has to look"
+          text run at (0,66) width 190: "exactly, pixel for pixel, like "
+        RenderInline {A} at (0,0) size 169x19 [color=#0000FF]
+          RenderText {#text} at (190,66) size 169x19
+            text run at (190,66) width 169: "this reference rendering"
+        RenderText {#text} at (359,66) size 5x19
+          text run at (359,66) width 5: "."
+layer at (639,17) size 14x22
+  RenderBlock (positioned) at (639,17) size 14x20 [color=#FFFFFF] [bgcolor=#FF00FF]
+    RenderText at (0,-2) size 14x24
+      text run at (0,-2) width 14: "X"
+layer at (130,84) size 300x150
+  RenderPartObject {OBJECT} at (130,84) size 300x150
+    layer at (0,0) size 300x150
+      RenderView at (0,0) size 300x150
+    layer at (0,0) size 300x16
+      RenderBlock {HTML} at (0,0) size 300x16
+        RenderBody {BODY} at (8,16) size 284x0
+          RenderBlock {P} at (0,0) size 284x0
+layer at (639,17) size 14x22
+  RenderBlock (positioned) at (639,17) size 14x20 [color=#FFFFFF] [bgcolor=#FF00FF]
+    RenderText at (0,-2) size 14x24
+      text run at (0,-2) width 14: "X"
+layer at (10,10) size 85x48
+  RenderBlock (positioned) {DIV} at (10,10) size 85x48 [color=#00000000]
+    RenderText {#text} at (0,1) size 85x46
+      text run at (0,1) width 85: "FAIL"

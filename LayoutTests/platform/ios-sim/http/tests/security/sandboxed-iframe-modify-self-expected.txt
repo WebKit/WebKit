@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate a navigation change for frame with URL http://127.0.0.1:8000/security/sandboxed-iframe-form-top.html from frame with URL http://127.0.0.1:8000/security/resources/sandboxed-iframe-form-top.html.
+
+CONSOLE MESSAGE: Sandbox access violation: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/sandboxed-iframe-modify-self.html from frame with URL http://127.0.0.1:8000/security/resources/sandboxed-iframe-modify-self.html. The frame requesting access is sandboxed into a unique origin.
+
+This is a "sanity" test case to verify that a sandboxed frame cannot break out of its sandbox by modifying its own sandbox attribute. Two attempts are made:
+
+First, an attempt is made to modify the sandbox attribute of the "self" object, referring to the frame's window. This should not have any effect (the attribute is associated with the iframe DOM node, not the window). No warning is expected.
+Second, an attempt is made to modify the iframe DOM object's sandbox attribute. A warning message (about cross-site scripting) is expected, and the sandbox attribute should remain intact.
+This test will print "PASS" on success.
+
+PASS
+
+

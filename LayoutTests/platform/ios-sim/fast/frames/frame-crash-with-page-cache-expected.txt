@@ -1,0 +1,10 @@
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+If WebKit does not assert or crash, you passed.
+open page-1
+page-1, about to navigate to page-2.
+page-2, about to navigate to page-3.
+On page-3, going back, now.
+Back on page-2, timer is still firing.
+PASS.
+

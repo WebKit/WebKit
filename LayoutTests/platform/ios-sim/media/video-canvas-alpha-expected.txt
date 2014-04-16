@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,98) size 300x150
+  RenderEmbeddedObject {VIDEO} at (0,90) size 300x150
+layer at (8,98) size 300x150
+  RenderFlexibleBox {DIV} at (0,0) size 300x150
+layer at (208,8) size 320x240
+  RenderHTMLCanvas {CANVAS} at (300,0) size 320x240

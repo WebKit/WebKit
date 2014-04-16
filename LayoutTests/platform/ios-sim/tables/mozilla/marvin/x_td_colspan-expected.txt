@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x72
+  RenderBlock {html} at (0,0) size 800x72
+    RenderBody {body} at (8,8) size 784x56
+      RenderTable {table} at (0,0) size 192x56 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 190x54
+          RenderTableRow {tr} at (0,2) size 190x24
+            RenderTableCell {td} at (2,2) size 186x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 182x19
+                text run at (2,2) width 182: "This cell spans two columns"
+          RenderTableRow {tr} at (0,28) size 190x24
+            RenderTableCell {td} at (2,28) size 92x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 52x19
+                text run at (2,2) width 52: "xxx xxx"
+            RenderTableCell {td} at (96,28) size 92x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 52x19
+                text run at (2,2) width 52: "xxx xxx"

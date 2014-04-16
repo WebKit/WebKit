@@ -1,0 +1,11 @@
+layer at (0,0) size 800x652
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x652
+  RenderBlock {HTML} at (0,0) size 800x652
+    RenderBody {BODY} at (8,8) size 784x636
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 215x19
+          text run at (0,0) width 215: "This should be pointing upwards:"
+      RenderBlock {DIV} at (0,36) size 94x600
+        RenderText {#text} at (2,0) size 90x80
+          text run at (2,0) width 80: "\x{3008}"

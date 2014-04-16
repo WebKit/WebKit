@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 250x19
+          text run at (0,0) width 250: "The next two lines should be the same:"
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 12x19
+          RenderInline (generated) at (0,0) size 12x19
+            RenderCounter at (0,0) size 8x19
+              text run at (0,0) width 8: "1"
+            RenderText at (8,0) size 4x19
+              text run at (8,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 0x19
+        RenderInline {SPAN} at (0,0) size 12x19
+          RenderInline (generated) at (0,0) size 12x19
+            RenderCounter at (12,0) size 8x19
+              text run at (12,0) width 8: "1"
+            RenderText at (20,0) size 4x19
+              text run at (20,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 55x19
+          RenderInline (generated) at (0,0) size 11x19
+            RenderText at (24,0) size 11x19
+              text run at (24,0) width 11: "R"
+          RenderInline {SPAN} at (0,0) size 25x19
+            RenderInline (generated) at (0,0) size 25x19
+              RenderCounter at (34,0) size 21x19
+                text run at (34,0) width 21: "1.1"
+              RenderText at (54,0) size 5x19
+                text run at (54,0) width 5: " "
+          RenderInline {SPAN} at (0,0) size 1x19
+          RenderInline {SPAN} at (0,0) size 21x19
+            RenderInline (generated) at (0,0) size 21x19
+              RenderCounter at (58,0) size 21x19
+                text run at (58,0) width 21: "1.1"
+              RenderText at (0,0) size 0x0
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 79x19
+          text run at (0,0) width 79: "1 1 R1.1 1.1"

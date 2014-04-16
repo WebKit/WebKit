@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 68: SECURITY_ERR: DOM Exception 18: An attempt was made to break through the security policy of the user agent.
+FAIL: Timed out waiting for notifyDone to be called
+Verify texImage2D and texSubImage2D code paths taking Video Elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Testing texImage2D with flipY=true
+

@@ -1,0 +1,56 @@
+This test checks that all of the Web Timing attributes are available and have reasonable values in the right order.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL timing.navigationStart should be >= oneHourAgoUTC. Was undefined (of type undefined).
+FAIL timing.unloadEventEnd should be >= timing.navigationStart. Was undefined (of type undefined).
+FAIL timing.redirectStart should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.redirectEnd should be 0 (of type number). Was undefined (of type undefined).
+FAIL navigation.redirectCount should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.fetchStart should be >= timing.navigationStart. Was undefined (of type undefined).
+FAIL timing.domainLookupStart should be >= timing.fetchStart. Was undefined (of type undefined).
+FAIL timing.domainLookupEnd should be >= timing.domainLookupStart. Was undefined (of type undefined).
+FAIL timing.connectStart should be >= timing.domainLookupEnd. Was undefined (of type undefined).
+FAIL timing.connectEnd should be >= timing.connectStart. Was undefined (of type undefined).
+FAIL timing.requestStart should be >= timing.connectEnd. Was undefined (of type undefined).
+FAIL timing.requestEnd should be >= timing.requestStart. Was undefined (of type undefined).
+FAIL timing.responseStart should be >= timing.requestEnd. Was undefined (of type undefined).
+FAIL timing.loadEventStart should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.loadEventEnd should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.navigationStart should be >= oneHourAgoUTC. Was undefined (of type undefined).
+FAIL timing.unloadEventEnd should be >= timing.navigationStart. Was undefined (of type undefined).
+FAIL timing.redirectStart should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.redirectEnd should be 0 (of type number). Was undefined (of type undefined).
+FAIL navigation.redirectCount should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.fetchStart should be >= timing.navigationStart. Was undefined (of type undefined).
+FAIL timing.domainLookupStart should be >= timing.fetchStart. Was undefined (of type undefined).
+FAIL timing.domainLookupEnd should be >= timing.domainLookupStart. Was undefined (of type undefined).
+FAIL timing.connectStart should be >= timing.domainLookupEnd. Was undefined (of type undefined).
+FAIL timing.connectEnd should be >= timing.connectStart. Was undefined (of type undefined).
+FAIL timing.requestStart should be >= timing.connectEnd. Was undefined (of type undefined).
+FAIL timing.requestEnd should be >= timing.requestStart. Was undefined (of type undefined).
+FAIL timing.responseStart should be >= timing.requestEnd. Was undefined (of type undefined).
+FAIL timing.responseEnd should be >= timing.responseStart. Was undefined (of type undefined).
+FAIL timing.loadEventStart should be >= timing.responseEnd. Was undefined (of type undefined).
+FAIL timing.loadEventEnd should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.navigationStart should be >= oneHourAgoUTC. Was undefined (of type undefined).
+FAIL timing.unloadEventEnd should be >= timing.navigationStart. Was undefined (of type undefined).
+FAIL timing.redirectStart should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.redirectEnd should be 0 (of type number). Was undefined (of type undefined).
+FAIL navigation.redirectCount should be 0 (of type number). Was undefined (of type undefined).
+FAIL timing.fetchStart should be >= timing.navigationStart. Was undefined (of type undefined).
+FAIL timing.domainLookupStart should be >= timing.fetchStart. Was undefined (of type undefined).
+FAIL timing.domainLookupEnd should be >= timing.domainLookupStart. Was undefined (of type undefined).
+FAIL timing.connectStart should be >= timing.domainLookupEnd. Was undefined (of type undefined).
+FAIL timing.connectEnd should be >= timing.connectStart. Was undefined (of type undefined).
+FAIL timing.requestStart should be >= timing.connectEnd. Was undefined (of type undefined).
+FAIL timing.requestEnd should be >= timing.requestStart. Was undefined (of type undefined).
+FAIL timing.responseStart should be >= timing.requestEnd. Was undefined (of type undefined).
+FAIL timing.responseEnd should be >= timing.responseStart. Was undefined (of type undefined).
+FAIL timing.loadEventStart should be >= timing.responseEnd. Was undefined (of type undefined).
+FAIL timing.loadEventEnd should be >= timing.loadEventStart + 50. Was undefined (of type undefined).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

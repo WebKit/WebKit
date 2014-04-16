@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x76
+  RenderBlock {HTML} at (0,0) size 800x76 [color=#FFFFFF]
+    RenderBody {BODY} at (8,8) size 784x60
+      RenderTable {DIV} at (0,0) size 61x60
+        RenderTableSection {DIV} at (0,0) size 61x10
+          RenderTableRow (anonymous) at (0,0) size 61x10
+            RenderTableCell (anonymous) at (0,0) size 61x10 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 61x10
+                text run at (0,0) width 61: "Header"
+        RenderTableSection (anonymous) at (0,10) size 61x10
+          RenderTableRow (anonymous) at (0,0) size 61x10
+            RenderTableCell (anonymous) at (0,0) size 61x10 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 61x10
+                RenderText {#text} at (0,0) size 11x10
+                  text run at (0,0) width 11: "A"
+        RenderTableSection {DIV} at (0,20) size 61x10
+          RenderTableRow (anonymous) at (0,0) size 61x10
+            RenderTableCell (anonymous) at (0,0) size 61x10 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 11x10
+                text run at (0,0) width 11: "B"
+        RenderTableSection (anonymous) at (0,30) size 61x20
+          RenderTableRow (anonymous) at (0,0) size 61x20
+            RenderTableCell (anonymous) at (0,0) size 61x20 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 61x10
+                RenderText {#text} at (0,0) size 11x10
+                  text run at (0,0) width 11: "C"
+              RenderBlock {DIV} at (0,10) size 61x10
+                RenderText {#text} at (0,0) size 11x10
+                  text run at (0,0) width 11: "D"
+        RenderTableSection {DIV} at (0,50) size 61x10
+          RenderTableRow (anonymous) at (0,0) size 61x10
+            RenderTableCell (anonymous) at (0,0) size 61x10 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 61x10
+                text run at (0,0) width 61: "Footer"

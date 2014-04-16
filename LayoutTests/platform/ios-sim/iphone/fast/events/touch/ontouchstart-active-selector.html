@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../../../fast/js/resources/js-test-pre.js"></script>
+<style>
+    #touchMe {
+        background-color: blue;
+        width: 200px;
+        height: 200px;
+        top: 0;
+        left: 0;
+    }
+    #touchMe:active {
+        background-color: red;
+    }
+</style>
+</head>
+<body>
+<div id="touchMe" ontouchstart=""></div>
+<script>
+
+description("This tests the :active selector on touchable elements");
+
+if (!window.eventSender)
+    debug("This test will FAIL outside of DRT, but you can test it manually by touching the blue square below. If it turns red when touched, the test is a PASS.");
+
+touchMe = document.getElementById("touchMe");
+
+shouldBe("getComputedStyle(touchMe).backgroundColor", "'rgb(0, 0, 255)'");
+
+if (window.eventSender) {
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(touchMe.offsetLeft + 10, touchMe.offsetTop + 10);
+    eventSender.touchStart();
+}
+
+shouldBe("getComputedStyle(touchMe).backgroundColor", "'rgb(255, 0, 0)'");
+
+if (window.eventSender) {
+    eventSender.clearTouchPoints();
+    eventSender.touchEnd();
+}
+
+shouldBe("getComputedStyle(touchMe).backgroundColor", "'rgb(0, 0, 255)'");
+
+</script>    
+<script src="../../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

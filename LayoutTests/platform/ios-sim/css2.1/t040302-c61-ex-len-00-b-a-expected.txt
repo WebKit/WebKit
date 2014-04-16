@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x120
+  RenderBlock {HTML} at (0,0) size 800x120
+    RenderBody {BODY} at (8,16) size 784x88
+      RenderBlock {P} at (0,0) size 784x20 [color=#000080]
+        RenderText {#text} at (0,0) size 332x19
+          text run at (0,0) width 332: "The two blocks below should have the same height."
+      RenderTable {TABLE} at (80,36) size 103x52
+        RenderTableSection {TBODY} at (0,0) size 103x52
+          RenderTableRow {TR} at (0,2) size 103x48
+            RenderTableCell {TD} at (2,2) size 49x48 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (4,4) size 41x40 [color=#000080]
+                RenderText {#text} at (0,0) size 41x40
+                  text run at (0,0) width 41: "\x{C9}"
+            RenderTableCell {TD} at (53,2) size 48x40 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (4,4) size 40x32 [border: (32px solid #000080) none]

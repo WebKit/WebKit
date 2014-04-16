@@ -1,0 +1,9 @@
+Test that setting a non-zero rate causes an async timeupdate event.
+
+EVENT(canplaythrough)
+EVENT(canplaythrough)
+EVENT(play)
+EVENT(play)
+EVENT(timeupdate)
+END OF TEST
+

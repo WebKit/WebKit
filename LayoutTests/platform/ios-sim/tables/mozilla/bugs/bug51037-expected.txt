@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 245x19
+          text run at (0,0) width 245: "The tables left position should be 250."
+      RenderBlock {P} at (0,36) size 784x25
+        RenderText {#text} at (0,1) size 36x19
+          text run at (0,1) width 36: "Left: "
+        RenderTextControl {INPUT} at (37,2) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+      RenderBlock {P} at (0,77) size 784x25
+        RenderText {#text} at (0,1) size 35x19
+          text run at (0,1) width 35: "Top: "
+        RenderTextControl {INPUT} at (36,2) size 135x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+      RenderBlock {P} at (0,118) size 784x24
+        RenderButton {INPUT} at (2,2) size 51x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (12,3) size 27x14
+            RenderText at (0,0) size 27x14
+              text run at (0,0) width 27: "Move"
+layer at (51,49) size 123x14
+  RenderBlock {DIV} at (6,3) size 123x14
+    RenderText {#text} at (0,0) size 30x14
+      text run at (0,0) width 30: "120px"
+layer at (50,90) size 123x14
+  RenderBlock {DIV} at (6,3) size 123x14
+    RenderText {#text} at (0,0) size 30x14
+      text run at (0,0) width 30: "120px"
+layer at (250,120) size 30x52
+  RenderTable {TABLE} at (250,120) size 30x52 [border: (1px outset #808080)]
+    RenderTableSection {TBODY} at (1,1) size 28x50
+      RenderTableRow {TR} at (0,2) size 28x22
+        RenderTableCell {TD} at (2,2) size 24x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 22x19
+            text run at (1,1) width 22: "foo"
+      RenderTableRow {TR} at (0,26) size 28x22
+        RenderTableCell {TD} at (2,26) size 24x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 21x19
+            text run at (1,1) width 21: "bar"

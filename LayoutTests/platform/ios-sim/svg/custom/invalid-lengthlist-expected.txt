@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 380x154
+    RenderSVGContainer {g} at (0,0) size 380x154
+      RenderSVGText {text}
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGText {text} at (0,115) size 292x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 292x19
+          chunk 1 text run 1 at (0.00,130.00) startOffset 0 endOffset 44 width 291.01: "Above a green rectangle should be displayed."
+      RenderSVGText {text} at (0,135) size 380x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 380x19
+          chunk 1 text run 1 at (0.00,150.00) startOffset 0 endOffset 61 width 379.36: "It tests that x=\"1.2.3\" as length is not accepted. Bug 15464."

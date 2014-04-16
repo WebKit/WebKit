@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 226x82 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 224x80
+          RenderTableRow {TR} at (0,2) size 224x24
+            RenderTableCell {TD} at (2,2) size 186x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 28x19
+                text run at (2,2) width 28: "Test"
+            RenderTableCell {TD} at (190,28) size 32x24 [border: (1px inset #808080)] [r=0 c=1 rs=3 cs=1]
+              RenderText {#text} at (2,2) size 28x19
+                text run at (2,2) width 28: "Test"
+          RenderTableRow {TR} at (0,28) size 224x50
+            RenderTableCell {TD} at (2,28) size 186x50 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 182x20
+                RenderInline {SPAN} at (0,0) size 168x19
+                  RenderText {#text} at (0,0) size 168x19
+                    text run at (0,0) width 168: "This cell should be visible"
+              RenderBlock (anonymous) at (2,22) size 182x26
+                RenderTable {TABLE} at (0,0) size 182x26
+                  RenderTableSection {TBODY} at (0,0) size 182x26
+                    RenderTableRow {TR} at (0,2) size 182x22
+                      RenderTableCell {TD} at (2,2) size 178x22 [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (1,1) size 176x19
+                          text run at (1,1) width 176: "This table should be visible"
+              RenderBlock (anonymous) at (2,48) size 182x0
+                RenderInline {SPAN} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0

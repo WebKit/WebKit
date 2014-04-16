@@ -1,0 +1,19 @@
+To test manually, press keys and compare results to other browsers.
+
+
+target - type - ctrlKey,altKey,shiftKey,metaKey - keyIdentifier - keyCode - charCode
+Space:
+INPUT - keydown - false,false,false,false - U+0020 - 32 - 0
+INPUT - keypress - false,false,false,false - - 32 - 32
+INPUT - keyup - false,false,false,false - U+0020 - 32 - 0
+INPUT - click
+Enter:
+INPUT - keydown - false,false,false,false - Enter - 13 - 0
+INPUT - keypress - false,false,false,false - - 13 - 13
+INPUT - click
+INPUT - keyup - false,false,false,false - Enter - 13 - 0
+A:
+INPUT - keydown - false,false,false,false - U+0041 - 65 - 0
+INPUT - keypress - false,false,false,false - - 65 - 65
+INPUT - keyup - false,false,false,false - U+0041 - 65 - 0
+

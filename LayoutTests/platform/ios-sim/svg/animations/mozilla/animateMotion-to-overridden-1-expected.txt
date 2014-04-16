@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=800.00] [height=600.00]
+    RenderSVGContainer {g} at (20,0) size 20x20
+      RenderSVGRect {rect} at (20,0) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+      RenderSVGRect {rect} at (20,0) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,0.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+    RenderSVGContainer {g} at (50,30) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
+      RenderSVGRect {rect} at (50,30) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+      RenderSVGRect {rect} at (50,30) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+    RenderSVGContainer {g} at (50,60) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+      RenderSVGRect {rect} at (50,60) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+      RenderSVGRect {rect} at (50,60) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+    RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 100 0"]
+    RenderSVGContainer {g} at (50,90) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
+      RenderSVGRect {rect} at (50,90) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+      RenderSVGRect {rect} at (50,90) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]

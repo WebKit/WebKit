@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+  <script src="../../../../fast/js/resources/js-test-pre.js"></script>
+  <style>
+    body {
+      height: 2000px;
+    }
+  </style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description('Tests that programmatic scrolling works at page load time.');
+
+var scrollEventCount = 0;
+window.addEventListener('scroll', function(e) {
+  ++scrollEventCount;
+  debug('Received scroll event ' + scrollEventCount);
+}, false);
+
+// window.scrollTo(0, 0);
+
+function onPageLoad()
+{
+    window.scrollTo(0, 10);
+    window.setTimeout(function() {
+      shouldBe('scrollEventCount', '1');
+      shouldBe('window.scrollY', '10');
+      finishJSTest();
+    }, 10); // Scroll events are async.
+};
+
+window.addEventListener('load', onPageLoad, false);
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script> 
+
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

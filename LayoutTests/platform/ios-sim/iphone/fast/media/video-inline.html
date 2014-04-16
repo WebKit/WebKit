@@ -1,0 +1,37 @@
+<html>
+<head>
+    <title>Test iOS-specific media query for inline video</title>
+    <meta name="viewport" content="width=device-width">
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+  
+        function log(m) {
+            var results = document.getElementById('results');
+            results.innerHTML += m + '<br>';
+        }
+  
+        function testQuery(query, expected) {
+            var isTrue = window.styleMedia.matchMedium(query);
+
+            var message = '\"' + query + '\" evaluates to ' + (isTrue ? 'true' : 'false');
+            message = ((isTrue == expected) ? 'PASS: ' : 'FAIL: ') + message;
+            log(message);
+        }
+  
+        function runTests() {
+            testQuery('(-webkit-video-playable-inline)', true);
+        }
+    </script>
+</head>
+<body onload="runTests()">
+    <p>
+        Testing iOS-specific media query for inline video.
+        When run inside MobileSafari on iPhone, the query should evaluate
+        as false (and the test will indicate that it has failed).
+        In all other places, including the test framework and DRT, the
+        query should evaluate as true.
+    </p>
+    <div id="results"></div>
+</body>
+</html>

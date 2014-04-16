@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x40
+  RenderBlock {foo} at (0,0) size 800x40
+    RenderText {#text} at (0,0) size 740x39
+      text run at (0,0) width 740: "This tests that xml-stylesheet processing instructions have no effect when they're not in the prolog (before the root"
+      text run at (0,20) width 495: "element). If this test is successful, this text should NOT have a black border."

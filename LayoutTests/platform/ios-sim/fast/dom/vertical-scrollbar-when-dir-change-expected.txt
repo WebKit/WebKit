@@ -1,0 +1,6 @@
+original scroll y for RTL page : Failure, actual: -3410; expected: 0
+vertical scroll y for RTL page : Success
+original scroll y for LTR page : Failure, actual: 3310; expected: 0
+vertical scroll y for LTR page : Failure, actual: 0; expected: 100
+
+

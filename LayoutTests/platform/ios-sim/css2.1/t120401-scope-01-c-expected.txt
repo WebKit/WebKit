@@ -1,0 +1,117 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 284x19
+          text run at (0,0) width 284: "The following two lines should be the same:"
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 491x19
+          RenderInline (generated) at (0,0) size 24x19
+            RenderText at (0,0) size 11x19
+              text run at (0,0) width 11: "B"
+            RenderCounter at (10,0) size 9x19
+              text run at (10,0) width 9: "1"
+            RenderText at (18,0) size 6x19
+              text run at (18,0) width 6: "-"
+          RenderInline {SPAN} at (0,0) size 442x19
+            RenderInline (generated) at (0,0) size 24x19
+              RenderText at (24,0) size 11x19
+                text run at (24,0) width 11: "B"
+              RenderCounter at (34,0) size 9x19
+                text run at (34,0) width 9: "2"
+              RenderText at (42,0) size 6x19
+                text run at (42,0) width 6: "-"
+            RenderInline {SPAN} at (0,0) size 219x19
+              RenderInline (generated) at (0,0) size 36x19
+                RenderText at (48,0) size 11x19
+                  text run at (48,0) width 11: "B"
+                RenderCounter at (58,0) size 21x19
+                  text run at (58,0) width 21: "2.1"
+                RenderText at (78,0) size 6x19
+                  text run at (78,0) width 6: "-"
+              RenderInline {SPAN} at (0,0) size 73x19
+                RenderInline (generated) at (0,0) size 36x19
+                  RenderText at (84,0) size 11x19
+                    text run at (84,0) width 11: "B"
+                  RenderCounter at (94,0) size 21x19
+                    text run at (94,0) width 21: "2.2"
+                  RenderText at (114,0) size 6x19
+                    text run at (114,0) width 6: "-"
+                RenderInline (generated) at (0,0) size 37x19
+                  RenderText at (120,0) size 12x19
+                    text run at (120,0) width 12: "A"
+                  RenderCounter at (131,0) size 21x19
+                    text run at (131,0) width 21: "2.3"
+                  RenderText at (151,0) size 6x19
+                    text run at (151,0) width 6: "-"
+              RenderInline {SPAN} at (0,0) size 74x19
+                RenderInline (generated) at (0,0) size 37x19
+                  RenderText at (156,0) size 12x19
+                    text run at (156,0) width 12: "B"
+                  RenderCounter at (167,0) size 21x19
+                    text run at (167,0) width 21: "2.4"
+                  RenderText at (187,0) size 6x19
+                    text run at (187,0) width 6: "-"
+                RenderInline (generated) at (0,0) size 38x19
+                  RenderText at (192,0) size 13x19
+                    text run at (192,0) width 13: "A"
+                  RenderCounter at (204,0) size 21x19
+                    text run at (204,0) width 21: "2.5"
+                  RenderText at (224,0) size 6x19
+                    text run at (224,0) width 6: "-"
+              RenderInline (generated) at (0,0) size 38x19
+                RenderText at (229,0) size 13x19
+                  text run at (229,0) width 13: "A"
+                RenderCounter at (241,0) size 21x19
+                  text run at (241,0) width 21: "2.6"
+                RenderText at (261,0) size 6x19
+                  text run at (261,0) width 6: "-"
+            RenderInline {SPAN} at (0,0) size 155x19
+              RenderInline (generated) at (0,0) size 37x19
+                RenderText at (266,0) size 12x19
+                  text run at (266,0) width 12: "B"
+                RenderCounter at (277,0) size 21x19
+                  text run at (277,0) width 21: "2.7"
+                RenderText at (297,0) size 6x19
+                  text run at (297,0) width 6: "-"
+              RenderInline {SPAN} at (0,0) size 74x19
+                RenderInline (generated) at (0,0) size 37x19
+                  RenderText at (302,0) size 12x19
+                    text run at (302,0) width 12: "B"
+                  RenderCounter at (313,0) size 21x19
+                    text run at (313,0) width 21: "2.8"
+                  RenderText at (333,0) size 6x19
+                    text run at (333,0) width 6: "-"
+                RenderInline (generated) at (0,0) size 38x19
+                  RenderText at (338,0) size 13x19
+                    text run at (338,0) width 13: "A"
+                  RenderCounter at (350,0) size 21x19
+                    text run at (350,0) width 21: "2.9"
+                  RenderText at (370,0) size 6x19
+                    text run at (370,0) width 6: "-"
+              RenderInline (generated) at (0,0) size 46x19
+                RenderText at (375,0) size 13x19
+                  text run at (375,0) width 13: "A"
+                RenderCounter at (387,0) size 29x19
+                  text run at (387,0) width 29: "2.10"
+                RenderText at (415,0) size 6x19
+                  text run at (415,0) width 6: "-"
+            RenderInline (generated) at (0,0) size 46x19
+              RenderText at (420,0) size 12x19
+                text run at (420,0) width 12: "A"
+              RenderCounter at (431,0) size 29x19
+                text run at (431,0) width 29: "2.11"
+              RenderText at (459,0) size 7x19
+                text run at (459,0) width 7: "-"
+          RenderInline (generated) at (0,0) size 26x19
+            RenderText at (465,0) size 12x19
+              text run at (465,0) width 12: "A"
+            RenderCounter at (476,0) size 9x19
+              text run at (476,0) width 9: "3"
+            RenderText at (484,0) size 7x19
+              text run at (484,0) width 7: "-"
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 491x19
+          text run at (0,0) width 491: "B1-B2-B2.1-B2.2-A2.3-B2.4-A2.5-A2.6-B2.7-B2.8-A2.9-A2.10-A2.11-A3-"

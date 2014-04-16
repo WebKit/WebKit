@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x134
+        RenderBlock {DIV} at (0,0) size 106x46 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 64x19
+            text run at (3,3) width 64: "a. b. "
+          RenderInline {SPAN} at (0,0) size 5x19
+            RenderText {#text} at (66,3) size 5x19
+              text run at (66,3) width 5: "i"
+          RenderText {#text} at (70,3) size 100x39
+            text run at (70,3) width 33: "\x{306F}"
+            text run at (3,23) width 56: "xxxxxxx"
+        RenderBlock {DIV} at (0,54) size 106x46 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 100x39
+            text run at (3,3) width 100: "a. b. i\x{306F}"
+            text run at (3,23) width 56: "xxxxxxx"
+        RenderBlock {DIV} at (0,108) size 106x26 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 216x19
+            text run at (3,3) width 216: "xxxxxxxxxxxxxxxxxxxxx\x{FF08}\x{624B}\x{FF09}"
+      RenderBlock {DIV} at (0,142) size 784x134
+        RenderBlock {DIV} at (0,0) size 106x46 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 64x19
+            text run at (3,3) width 64: "a. b. "
+          RenderInline {SPAN} at (0,0) size 5x19
+            RenderText {#text} at (66,3) size 5x19
+              text run at (66,3) width 5: "i"
+          RenderText {#text} at (70,3) size 100x39
+            text run at (70,3) width 33: "\x{306F}"
+            text run at (3,23) width 56: "xxxxxxx"
+        RenderBlock {DIV} at (0,54) size 106x46 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 100x39
+            text run at (3,3) width 100: "a. b. i\x{306F}"
+            text run at (3,23) width 56: "xxxxxxx"
+        RenderBlock {DIV} at (0,108) size 106x26 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 216x19
+            text run at (3,3) width 216: "xxxxxxxxxxxxxxxxxxxxx\x{FF08}\x{624B}\x{FF09}"

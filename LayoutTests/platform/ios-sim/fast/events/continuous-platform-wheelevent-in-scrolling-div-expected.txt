@@ -1,0 +1,3 @@
+FAIL div.scrollTop should be 200. Was 0.
+FAIL div.scrollLeft should be 100. Was 0.
+

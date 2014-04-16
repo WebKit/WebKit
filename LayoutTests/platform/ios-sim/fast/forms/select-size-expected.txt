@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 782x39
+        text run at (0,0) width 782: "This tests that a malformed size attribute will be parsed and corrected so that the right size attribute value is used to match"
+        text run at (0,20) width 441: "the style rule that determines whether to use a menu list or a list box."
+      RenderBR {BR} at (440,35) size 1x0
+      RenderMenuList {SELECT} at (2,42) size 50x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 38x14
+          RenderText at (0,0) size 18x14
+            text run at (0,0) width 18: "test"
+      RenderText {#text} at (0,0) size 0x0

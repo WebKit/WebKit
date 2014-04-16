@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 681x19
+        text run at (0,0) width 681: "In the list box below, the text \"This text should appear\" should be shown as the first entry into the list box."
+      RenderBR {BR} at (680,15) size 1x0
+      RenderMenuList {SELECT} at (2,22) size 147x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 135x14
+          RenderBR at (0,0) size 0x14 [bgcolor=#FFFFFF02]
+      RenderText {#text} at (0,0) size 0x0

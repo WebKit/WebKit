@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 611x19
+          text run at (0,0) width 611: "The div below should be rounded. You should see a rounded green square or the test has failed."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,150) size 784x20
+        RenderText {#text} at (0,0) size 575x19
+          text run at (0,0) width 575: "This div should not be rounded. You should see a solid green square or the test has failed."
+      RenderBlock {P} at (0,302) size 784x20
+        RenderText {#text} at (0,0) size 572x19
+          text run at (0,0) width 572: "This div should be rounded. You should see a rounded green square or the test has failed."
+layer at (8,194) size 100x100
+  RenderBlock {DIV} at (0,186) size 100x100
+layer at (8,28) size 100x100
+  RenderBlock (positioned) {DIV} at (8,28) size 100x100
+layer at (8,28) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+layer at (8,194) size 100x100
+  RenderBlock (positioned) {DIV} at (8,194) size 100x100 [bgcolor=#008000]
+layer at (8,346) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,338) size 100x100
+layer at (8,346) size 100x100
+  RenderBlock {DIV} at (0,0) size 100x100
+layer at (8,346) size 100x100
+  RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

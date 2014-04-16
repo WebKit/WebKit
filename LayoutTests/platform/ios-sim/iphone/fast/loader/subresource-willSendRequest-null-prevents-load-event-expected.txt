@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 12: PASS
+Ensure that a subresource load that is cancelled by a willSendRequest() delegate does not prevent the load event from firing. On success, 'PASS' will be logged to the console.
+
+

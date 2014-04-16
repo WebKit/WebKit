@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x10
+        RenderText {#text} at (0,-1) size 216x13
+          text run at (0,-1) width 216: "This should be fairly small text, rather than huge."
+layer at (8,34) size 200x48
+  RenderBlock (positioned) {DIV} at (8,34) size 200x48 [bgcolor=#FF0000]
+    RenderText {#text} at (0,14) size 4x19
+      text run at (0,14) width 4: " "
+layer at (8,34) size 200x48
+  RenderBlock (positioned) {SPAN} at (0,0) size 200x48 [bgcolor=#008000]
+    RenderText {#text} at (0,14) size 180x19
+      text run at (0,14) width 180: "There should be no red here"

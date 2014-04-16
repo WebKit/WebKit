@@ -1,0 +1,27 @@
+Base
+PASS event.touches[0].clientX is 100
+PASS event.touches[0].clientY is 100
+PASS event.touches[0].pageX is 100
+PASS event.touches[0].pageY is 100
+
+Just zoomed
+FAIL event.touches[0].clientX should be 83. Was 100.
+FAIL event.touches[0].clientY should be 83. Was 100.
+FAIL event.touches[0].pageX should be 83. Was 100.
+FAIL event.touches[0].pageY should be 83. Was 100.
+
+Just scrolled
+PASS event.touches[0].clientX is 100
+PASS event.touches[0].clientY is 100
+PASS event.touches[0].pageX is 150
+PASS event.touches[0].pageY is 150
+
+Zoomed and scrolled
+FAIL event.touches[0].clientX should be 84. Was 100.
+FAIL event.touches[0].clientY should be 84. Was 100.
+FAIL event.touches[0].pageX should be 133. Was 160.
+FAIL event.touches[0].pageY should be 133. Was 160.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

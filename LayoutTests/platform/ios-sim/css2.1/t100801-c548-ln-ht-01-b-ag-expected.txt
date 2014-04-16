@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x348
+  RenderBlock {HTML} at (0,0) size 800x348
+    RenderBody {BODY} at (8,8) size 784x332
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 513x19
+          text run at (0,0) width 513: "There should be a big pattern of green and lime dots below, with no red present."
+      RenderBlock {DIV} at (6,26) size 66x306 [color=#00FF00] [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderBlock {P} at (15,9) size 48x48
+          RenderText {#text} at (0,5) size 36x37
+            text run at (0,5) width 36: "X X"
+            text run at (0,29) width 36: "X X"
+        RenderBlock {P} at (15,57) size 48x48
+          RenderText {#text} at (0,5) size 36x37
+            text run at (0,5) width 36: "X X"
+            text run at (0,29) width 36: "X X"
+        RenderBlock {P} at (15,105) size 48x48
+          RenderText {#text} at (0,5) size 36x37
+            text run at (0,5) width 36: "X X"
+            text run at (0,29) width 36: "X X"
+        RenderBlock {P} at (15,153) size 48x48
+          RenderText {#text} at (0,5) size 36x37
+            text run at (0,5) width 36: "X X"
+            text run at (0,29) width 36: "X X"
+        RenderBlock {P} at (15,201) size 48x48
+          RenderText {#text} at (0,5) size 36x37
+            text run at (0,5) width 36: "X X"
+            text run at (0,29) width 36: "X X"
+        RenderBlock {P} at (15,249) size 48x48
+          RenderText {#text} at (0,5) size 36x37
+            text run at (0,5) width 36: "X X"
+            text run at (0,29) width 36: "X X"

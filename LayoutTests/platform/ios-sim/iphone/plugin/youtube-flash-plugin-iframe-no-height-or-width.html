@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+description(
+    'Test embed youtube plugin without height or width attribute. &lt;<a href="rdar://problem/12134474"> rdar://problem/12134474</a>&gt;'
+);
+
+function Test()
+{
+    setTimeout(function() {
+        embedNoHeight = document.getElementById('embed-no-height');
+        shouldBe('getComputedStyle(embedNoHeight).height', '"150px"')
+
+        embedNoWidth = document.getElementById('embed-no-width');
+        shouldBe('getComputedStyle(embedNoWidth).width', '"300px"')
+
+        embedNoWidthHeight = document.getElementById('embed-no-width-or-height');
+        shouldBe('getComputedStyle(embedNoWidthHeight).width', '"300px"');
+        shouldBe('getComputedStyle(embedNoWidthHeight).height', '"150px"');
+
+        objectNoHeight = document.getElementById('object-no-height');
+        shouldBe('getComputedStyle(objectNoHeight).height', '"150px"')
+
+        objectNoWidth = document.getElementById('object-no-width');
+        shouldBe('getComputedStyle(objectNoWidth).width', '"300px"')
+
+        objectNoWidthHeight = document.getElementById('object-no-width-or-height');
+        shouldBe('getComputedStyle(objectNoWidthHeight).width', '"300px"');
+        shouldBe('getComputedStyle(objectNoWidthHeight).height', '"150px"');
+
+        var successfullyParsed = true;
+        testRunner.notifyDone();
+    }, 100);
+}
+</script>
+</head>
+<body onLoad="Test()">
+<p id="description"></p>
+<div id="console"></div>
+
+<p>Embed without height:<br><embed id='embed-no-height' src="http://www.youtube.com/v/N0gb9v4LI4o" type="application/x-shockwave-flash" width="425"></p>
+<p>Embed without width:<br><embed id='embed-no-width' src="http://www.youtube.com/v/N0gb9v4LI4o" type="application/x-shockwave-flash" height="350"></p>
+<p>Embed without width or height:<br><embed id='embed-no-width-or-height' src="http://www.youtube.com/v/N0gb9v4LI4o" type="application/x-shockwave-flash"</p>
+
+<p>Object without height:<br><object id='object-no-height' width="425" type="application/x-shockwave-flash" data="http://www.youtube.com/v/N0gb9v4LI4o?version=3&amp;hl=en_US"></object>
+<p>Object without width:<br><object id='object-no-width' height="350" type="application/x-shockwave-flash" data="http://www.youtube.com/v/N0gb9v4LI4o?version=3&amp;hl=en_US"></object>
+<p>Object without height or width:<br><object id='object-no-width-or-height' type="application/x-shockwave-flash" data="http://www.youtube.com/v/N0gb9v4LI4o?version=3&amp;hl=en_US"></object>
+
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 40x584
+        RenderText {#text} at (0,0) size 39x566
+          text run at (0,0) width 566: "The blue box should be horizontally centered in the black box with 25px of white on the"
+          text run at (20,0) width 87: "left and right."
+layer at (64,8) size 154x104
+  RenderBlock (relative positioned) {DIV} at (56,0) size 154x104 [border: (2px solid #000000)]
+layer at (91,10) size 100x100
+  RenderImage {IMG} at (27,2) size 100x100

@@ -1,0 +1,53 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGText {text} at (65,23) size 22x34 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 22x34
+        chunk 1 text run 1 at (65.00,50.00) startOffset 0 endOffset 1 width 21.67: "A"
+    RenderSVGText {text} at (165,23) size 21x34 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 21x34
+        chunk 1 text run 1 at (165.00,50.00) startOffset 0 endOffset 1 width 20.01: "B"
+    RenderSVGText {text} at (265,23) size 21x34 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 21x34
+        chunk 1 text run 1 at (265.00,50.00) startOffset 0 endOffset 1 width 20.01: "C"
+    RenderSVGText {text} at (365,23) size 22x34 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 22x34
+        chunk 1 text run 1 at (365.00,50.00) startOffset 0 endOffset 1 width 21.67: "D"
+    RenderSVGContainer {g} at (50,67) size 345x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,45.00)}]
+      RenderSVGContainer {g} at (50,67) size 59x23
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [x=30.00] [y=15.00] [width=90.00] [height=40.00]
+        RenderSVGText {text} at (50,22) size 59x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 59x23
+            chunk 1 text run 1 at (50.00,40.00) startOffset 0 endOffset 7 width 58.31: "click A"
+      RenderSVGContainer {g} at (135,67) size 79x23
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [x=130.00] [y=15.00] [width=90.00] [height=40.00]
+        RenderSVGText {text} at (135,22) size 79x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 79x23
+            chunk 1 text run 1 at (135.00,40.00) startOffset 0 endOffset 9 width 78.49: "click B+2"
+      RenderSVGContainer {g} at (235,67) size 79x23
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [x=230.00] [y=15.00] [width=90.00] [height=40.00]
+        RenderSVGText {text} at (235,22) size 79x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 79x23
+            chunk 1 text run 1 at (235.00,40.00) startOffset 0 endOffset 9 width 78.49: "click C+4"
+      RenderSVGContainer {g} at (350,67) size 45x23
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [x=330.00] [y=15.00] [width=90.00] [height=40.00]
+        RenderSVGText {text} at (350,22) size 45x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 45x23
+            chunk 1 text run 1 at (350.00,40.00) startOffset 0 endOffset 5 width 44.41: "never"
+    RenderSVGText {text} at (15,150) size 290x32 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 290x32
+        chunk 1 text run 1 at (15.00,175.00) startOffset 0 endOffset 26 width 289.23: "Test of Eventbase targets."
+    RenderSVGText {text} at (15,228) size 338x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 338x21
+        chunk 1 text run 1 at (15.00,245.00) startOffset 0 endOffset 48 width 337.42: "Note that clicking rect D should give no result."
+    RenderSVGText {text} at (15,188) size 360x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 360x21
+        chunk 1 text run 1 at (15.00,205.00) startOffset 0 endOffset 51 width 359.89: "Clicking a rectangle should change its color at the"
+    RenderSVGText {text} at (15,208) size 364x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 364x21
+        chunk 1 text run 1 at (15.00,225.00) startOffset 0 endOffset 53 width 363.49: "time for the click + delay as indicated in each rect."
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

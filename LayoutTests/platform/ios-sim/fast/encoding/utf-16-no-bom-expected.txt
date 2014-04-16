@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x20
+  RenderBlock {TEST} at (0,0) size 800x20
+    RenderText {#text} at (0,0) size 463x19
+      text run at (0,0) width 463: "Should be \"CYRILLIC SMALL LETTER IO\" (like e with diaeresis): \x{451}"

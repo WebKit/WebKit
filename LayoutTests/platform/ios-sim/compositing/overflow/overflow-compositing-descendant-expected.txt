@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,16) size 784x20
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 475x19
+          text run at (0,0) width 475: "You should see a green box under the video. If you see red, the test failed."
+layer at (8,52) size 132x222 clip at (9,53) size 130x220 scrollHeight 225
+  RenderBlock (positioned) {DIV} at (8,52) size 132x222 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock (anonymous) at (11,11) size 110x105
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {DIV} at (11,116) size 100x100 [bgcolor=#FF0000]
+layer at (19,63) size 100x100
+  RenderEmbeddedObject {VIDEO} at (0,0) size 100x100 [bgcolor=#000000]
+layer at (19,63) size 100x100
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 100x100
+layer at (19,147) size 100x16
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,84) size 100x16
+    RenderButton {INPUT} at (0,0) size 22x16
+    RenderDeprecatedFlexibleBox {DIV} at (22,0) size 12x16
+      RenderSlider {INPUT} at (0,0) size 12x16
+        RenderFlexibleBox {DIV} at (2,0) size 8x16
+          RenderBlock {DIV} at (0,0) size 0x16
+            RenderBlock {DIV} at (0,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+          RenderBlock {DIV} at (0,0) size 16x16 [bgcolor=#FFFFFF] [border: (1px solid #424242)]
+    RenderButton {INPUT} at (34,0) size 22x16
+    RenderButton {INPUT} at (56,0) size 22x16
+    RenderButton {INPUT} at (78,0) size 22x16
+    RenderBlock {DIV} at (100,8) size 0x0
+layer at (19,168) size 100x100
+  RenderBlock (relative positioned) {DIV} at (11,116) size 100x100 [bgcolor=#008000]

@@ -1,0 +1,5 @@
+Should see only one touch at 20,20
+[TouchEvent X: 20 Y: 20]
+Now remove the element from its parent and attempt to touch it again. This touch should not register.
+PASSED. We did not see a second touch.
+

@@ -1,0 +1,10 @@
+This test checks whether the GC collects after string appends.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL Garbage Collector NOT triggered. Number of JSObjects: 195592
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

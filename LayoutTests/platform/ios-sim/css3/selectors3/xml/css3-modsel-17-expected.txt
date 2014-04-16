@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {test} at (0,0) size 800x52
+    RenderBlock {p} at (0,16) size 800x20
+      RenderInline {a} at (0,0) size 383x19 [color=#551A8B] [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 383x19
+          text run at (0,0) width 383: "You should see a green background assigned by the anchor."
+      RenderText {#text} at (0,0) size 0x0

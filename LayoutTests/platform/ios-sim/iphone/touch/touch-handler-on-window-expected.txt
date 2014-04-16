@@ -1,0 +1,19 @@
+Tests that touch events are dispatched to the DOMWindow even if no other elements have touch event listeners.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Window received touch event touchstart with target DIV
+Window received touch event touchmove with target DIV
+Window received touch event touchend with target DIV
+Window received touch event touchstart with target BODY
+Window received touch event touchend with target BODY
+Window received touch event touchstart with target DIV
+Window received touch event gesturestart with target DIV
+Window received touch event gesturechange with target DIV
+Window received touch event touchmove with target DIV
+Window received touch event gesturechange with target DIV
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+Test encoding of mailto URLs. Click on the URL - a new message with Japanese subject and body should open in your mail client.
+
+Subject : Japanese Body : Japanese

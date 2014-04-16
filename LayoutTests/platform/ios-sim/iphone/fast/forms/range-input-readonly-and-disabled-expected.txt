@@ -1,0 +1,91 @@
+
+This tests touch events on readonly and disabled sliders.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+-------------------
+Test Configuration: Normal - (<input type="range">)
+-------------------
+
+- Reset slider to non-readonly and non-disabled to make sure it works.
+PASS slider.value is "50"
+- Test drag sequence where readonly / disabled state may change during drag.
+PASS slider.value is "100"
+PASS changeEventCount is >= lastChangeEventCount + 1
+PASS slider.value is "0"
+PASS changeEventCount is >= lastChangeEventCount + 1
+(toggled state to configuration)
+PASS slider.value is "100"
+PASS changeEventCount is >= lastChangeEventCount + 1
+- Reset value to middle for second sequence.
+PASS slider.value is "50"
+- Test drag sequence where readonly / disabled state is already set.
+PASS slider.value is "100"
+PASS changeEventCount is >= lastChangeEventCount + 1
+
+-------------------
+Test Configuration: Readonly - (<input type="range" readonly>)
+-------------------
+
+- Reset slider to non-readonly and non-disabled to make sure it works.
+PASS slider.value is "50"
+- Test drag sequence where readonly / disabled state may change during drag.
+PASS slider.value is "100"
+PASS changeEventCount is >= lastChangeEventCount + 1
+PASS slider.value is "0"
+PASS changeEventCount is >= lastChangeEventCount + 1
+(toggled state to configuration)
+PASS slider.value is "0"
+PASS lastChangeEventCount is changeEventCount
+- Reset value to middle for second sequence.
+PASS slider.value is "50"
+- Test drag sequence where readonly / disabled state is already set.
+PASS slider.value is "50"
+PASS lastChangeEventCount is changeEventCount
+
+-------------------
+Test Configuration: Disabled - (<input type="range" disabled>)
+-------------------
+
+- Reset slider to non-readonly and non-disabled to make sure it works.
+PASS slider.value is "50"
+- Test drag sequence where readonly / disabled state may change during drag.
+PASS slider.value is "100"
+PASS changeEventCount is >= lastChangeEventCount + 1
+PASS slider.value is "0"
+PASS changeEventCount is >= lastChangeEventCount + 1
+(toggled state to configuration)
+PASS slider.value is "0"
+PASS lastChangeEventCount is changeEventCount
+- Reset value to middle for second sequence.
+PASS slider.value is "50"
+- Test drag sequence where readonly / disabled state is already set.
+PASS slider.value is "50"
+PASS lastChangeEventCount is changeEventCount
+
+-------------------
+Test Configuration: Readonly and Disabled - (<input type="range" readonly disabled>)
+-------------------
+
+- Reset slider to non-readonly and non-disabled to make sure it works.
+PASS slider.value is "50"
+- Test drag sequence where readonly / disabled state may change during drag.
+PASS slider.value is "100"
+PASS changeEventCount is >= lastChangeEventCount + 1
+PASS slider.value is "0"
+PASS changeEventCount is >= lastChangeEventCount + 1
+(toggled state to configuration)
+PASS slider.value is "0"
+PASS lastChangeEventCount is changeEventCount
+- Reset value to middle for second sequence.
+PASS slider.value is "50"
+- Test drag sequence where readonly / disabled state is already set.
+PASS slider.value is "50"
+PASS lastChangeEventCount is changeEventCount
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

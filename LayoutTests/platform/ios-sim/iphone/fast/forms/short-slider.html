@@ -1,0 +1,44 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<input id="x" type="file">
+<p id="description"></p>
+<div id="console"></div>
+
+<!-- Various short heights. -->
+<input type="range" style="width:3px; height:0px"><br><br>
+<input type="range" style="width:3px; height:1px"><br><br>
+<input type="range" style="width:3px; height:2px"><br><br>
+<input type="range" style="width:3px; height:3px"><br><br>
+<input type="range" style="width:3px; height:4px"><br><br>
+<input type="range" style="width:3px; height:5px"><br><br>
+
+<!-- Various short widths. -->
+<input type="range" style="width:0px; height:3px"><br><br>
+<input type="range" style="width:1px; height:3px"><br><br>
+<input type="range" style="width:2px; height:3px"><br><br>
+<input type="range" style="width:3px; height:3px"><br><br>
+<input type="range" style="width:4px; height:3px"><br><br>
+<input type="range" style="width:5px; height:3px"><br><br>
+
+<!-- Some edge cases. -->
+<input type="range" style="width:0px; height:0px"><br><br>
+
+<!-- Sizes that would actually draw the track. -->
+<input type="range" style="width:100px; height:0px"><br><br>
+<input type="range" style="width:100px; height:1px"><br><br>
+<input type="range" style="width:100px; height:2px"><br><br>
+<input type="range" style="width:100px; height:3px"><br><br>
+<input type="range" style="width:100px; height:4px"><br><br>
+
+<script>
+description("Check that a short slider does not crash MobileSafari.");
+testPassed("No crash.");
+successfullyParsed = true;
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x272
+  RenderBlock {HTML} at (0,0) size 800x272
+    RenderBody {BODY} at (8,12) size 784x248
+      RenderBlock {P} at (0,0) size 784x30
+        RenderText {#text} at (0,0) size 775x29
+          text run at (0,0) width 775: "This test verifies that line height is determined solely by a box's primary font, not by its fallback fonts. The following two lines should have a solid, unbroken red"
+          text run at (0,15) width 81: "line below them:"
+      RenderBlock {DIV} at (0,42) size 784x97
+        RenderBlock {UL} at (0,0) size 567x97
+          RenderBlock (floating) {LI} at (40,0) size 64x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 42x17
+              RenderText {#text} at (12,6) size 42x17
+                text run at (12,6) width 42: "\x{6EE8}\x{5D0E}\x{6B65}"
+          RenderBlock (floating) {LI} at (104,0) size 77x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 55x21
+              RenderText {#text} at (12,4) size 55x21
+                text run at (12,4) width 55: "\x{8521}\x{4F9D}\x{6797}"
+          RenderBlock (floating) {LI} at (181,0) size 94x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 72x28
+              RenderText {#text} at (12,1) size 72x28
+                text run at (12,1) width 72: "\x{9648}\x{7EEE}\x{8D1E}"
+          RenderBlock (floating) {LI} at (275,0) size 77x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 55x21
+              RenderText {#text} at (12,4) size 55x21
+                text run at (12,4) width 55: "\x{9648}\x{5955}\x{8FC5}"
+          RenderBlock (floating) {LI} at (352,0) size 58x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 36x14
+              RenderText {#text} at (12,8) size 36x14
+                text run at (12,8) width 36: "\x{9ED1}\x{9E2D}\x{5B50}"
+          RenderBlock (floating) {LI} at (410,0) size 64x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 42x17
+              RenderText {#text} at (12,6) size 42x17
+                text run at (12,6) width 42: "\x{674E}\x{5B87}\x{6625}"
+          RenderBlock (floating) {LI} at (474,0) size 64x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 42x17
+              RenderText {#text} at (12,6) size 42x17
+                text run at (12,6) width 42: "\x{6881}\x{9759}\x{8339}"
+      RenderBlock {DIV} at (0,151) size 784x97
+        RenderBlock {UL} at (0,0) size 567x97
+          RenderBlock (floating) {LI} at (40,0) size 64x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,6) size 42x17
+              text run at (12,6) width 42: "\x{6EE8}\x{5D0E}\x{6B65}"
+          RenderBlock (floating) {LI} at (104,0) size 77x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,4) size 55x21
+              text run at (12,4) width 55: "\x{8521}\x{4F9D}\x{6797}"
+          RenderBlock (floating) {LI} at (181,0) size 94x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,1) size 72x28
+              text run at (12,1) width 72: "\x{9648}\x{7EEE}\x{8D1E}"
+          RenderBlock (floating) {LI} at (275,0) size 77x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,4) size 55x21
+              text run at (12,4) width 55: "\x{9648}\x{5955}\x{8FC5}"
+          RenderBlock (floating) {LI} at (352,0) size 58x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,8) size 36x14
+              text run at (12,8) width 36: "\x{9ED1}\x{9E2D}\x{5B50}"
+          RenderBlock (floating) {LI} at (410,0) size 64x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,6) size 42x17
+              text run at (12,6) width 42: "\x{674E}\x{5B87}\x{6625}"
+          RenderBlock (floating) {LI} at (474,0) size 64x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,6) size 42x17
+              text run at (12,6) width 42: "\x{6881}\x{9759}\x{8339}"

@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x25
+        RenderTextControl {INPUT} at (0,2) size 600x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (600,2) size 4x17
+          text run at (600,2) width 4: " "
+        RenderBR {BR} at (604,16) size 0x0
+      RenderBlock {DIV} at (0,25) size 784x52
+        RenderText {#text} at (0,1) size 47x24
+          text run at (0,1) width 47: "This "
+        RenderInline {B} at (0,0) size 99x24
+          RenderText {#text} at (47,1) size 64x24
+            text run at (47,1) width 64: "styled "
+          RenderInline {I} at (0,0) size 35x24
+            RenderText {#text} at (111,1) size 35x24
+              text run at (111,1) width 35: "text"
+        RenderText {#text} at (146,1) size 52x24
+          text run at (146,1) width 52: ", and "
+        RenderInline {A} at (0,0) size 36x24 [color=#0000EE]
+          RenderText {#text} at (198,1) size 36x24
+            text run at (198,1) width 36: "link"
+        RenderText {#text} at (234,1) size 749x50
+          text run at (234,1) width 307: " will be pasted into the textfield. "
+          text run at (541,1) width 208: "All richness should be"
+          text run at (0,27) width 80: "stripped."
+      RenderBlock {OL} at (0,93) size 784x52
+        RenderListItem {LI} at (40,0) size 744x26
+          RenderListMarker at (-30,1) size 24x24: "1"
+          RenderText {#text} at (0,1) size 632x24
+            text run at (0,1) width 632: "Failure: document.execCommand(\"Copy\") was false, expected: true"
+        RenderListItem {LI} at (40,26) size 744x26
+          RenderListMarker at (-30,1) size 24x24: "2"
+          RenderText {#text} at (0,1) size 631x24
+            text run at (0,1) width 631: "Failure: document.execCommand(\"Paste\") was false, expected: true"
+layer at (14,13) size 588x14
+  RenderBlock {DIV} at (6,3) size 588x14

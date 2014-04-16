@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x20
+  RenderBlock {html} at (0,0) size 800x20
+    RenderBlock (anonymous) at (0,0) size 800x0
+      RenderInline {body} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+    RenderBlock (anonymous) at (0,0) size 800x20
+      RenderBlock {p} at (0,0) size 800x20
+        RenderText {#text} at (0,0) size 340x19
+          text run at (0,0) width 340: "This line should be green and there should be no red."
+    RenderBlock (anonymous) at (0,20) size 800x0
+      RenderInline {body} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
