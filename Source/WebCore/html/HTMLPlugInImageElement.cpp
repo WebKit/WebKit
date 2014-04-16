@@ -121,6 +121,7 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_plugInWasCreated(false)
     , m_deferredPromotionToPrimaryPlugIn(false)
     , m_snapshotDecision(SnapshotNotYetDecided)
+    , m_plugInDimensionsSpecified(false)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -350,18 +351,6 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
 
     if (renderer()->isEmbeddedObject())
         renderer()->repaint();
-}
-
-void HTMLPlugInImageElement::checkSnapshotStatus()
-{
-    if (!renderer()->isSnapshottedPlugIn()) {
-        if (displayState() == Playing)
-            checkSizeChangeForSnapshotting();
-        return;
-    }
-
-    // Notify the shadow root that the size changed so that we may update the overlay layout.
-    ensureUserAgentShadowRoot().dispatchEvent(Event::create(eventNames().resizeEvent, true, false));
 }
 
 static DOMWrapperWorld& plugInImageElementIsolatedWorld()
@@ -612,7 +601,56 @@ static inline bool is100Percent(Length length)
 {
     return length.isPercentNotCalculated() && length.percent() == 100;
 }
-
+    
+static inline bool isSmallerThanTinySizingThreshold(const RenderEmbeddedObject& renderer)
+{
+    LayoutRect contentRect = renderer.contentBoxRect();
+    return contentRect.width() <= sizingTinyDimensionThreshold || contentRect.height() <= sizingTinyDimensionThreshold;
+}
+    
+bool HTMLPlugInImageElement::isTopLevelFullPagePlugin(const RenderEmbeddedObject& renderer) const
+{
+    Frame& frame = *document().frame();
+    if (!frame.isMainFrame())
+        return false;
+    
+    auto& style = renderer.style();
+    IntSize visibleSize = frame.view()->visibleSize();
+    LayoutRect contentRect = renderer.contentBoxRect();
+    int contentWidth = contentRect.width();
+    int contentHeight = contentRect.height();
+    return is100Percent(style.width()) && is100Percent(style.height()) && contentWidth * contentHeight > visibleSize.area() * sizingFullPageAreaRatioThreshold;
+}
+    
+void HTMLPlugInImageElement::checkSnapshotStatus()
+{
+    if (!renderer()->isSnapshottedPlugIn()) {
+        if (displayState() == Playing)
+            checkSizeChangeForSnapshotting();
+        return;
+    }
+    
+    // If width and height styles were previously not set and we've snapshotted the plugin we may need to restart the plugin so that its state can be updated appropriately.
+    if (!document().page()->settings().snapshotAllPlugIns() && displayState() <= DisplayingSnapshot && !m_plugInDimensionsSpecified) {
+        RenderSnapshottedPlugIn& renderer = toRenderSnapshottedPlugIn(*this->renderer());
+        if (!renderer.style().logicalWidth().isSpecified() && !renderer.style().logicalHeight().isSpecified())
+            return;
+        
+        m_plugInDimensionsSpecified = true;
+        if (isTopLevelFullPagePlugin(renderer)) {
+            m_snapshotDecision = NeverSnapshot;
+            restartSnapshottedPlugIn();
+        } else if (isSmallerThanTinySizingThreshold(renderer)) {
+            m_snapshotDecision = MaySnapshotWhenResized;
+            restartSnapshottedPlugIn();
+        }
+        return;
+    }
+    
+    // Notify the shadow root that the size changed so that we may update the overlay layout.
+    ensureUserAgentShadowRoot().dispatchEvent(Event::create(eventNames().resizeEvent, true, false));
+}
+    
 void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
 {
     LOG(Plugins, "%p Plug-in URL: %s", this, m_url.utf8().data());
@@ -696,26 +734,21 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
         m_snapshotDecision = NeverSnapshot;
         return;
     }
-
+    
     auto& renderer = toRenderEmbeddedObject(*this->renderer());
     LayoutRect contentRect = renderer.contentBoxRect();
     int contentWidth = contentRect.width();
     int contentHeight = contentRect.height();
-
-    if (inMainFrame) {
-        auto& style = renderer.style();
-        bool isFullPage = is100Percent(style.width()) && is100Percent(style.height());
-        IntSize visibleViewSize = document().frame()->view()->visibleSize();
-        float contentArea = contentWidth * contentHeight;
-        float visibleArea = visibleViewSize.width() * visibleViewSize.height();
-        if (isFullPage && contentArea > visibleArea * sizingFullPageAreaRatioThreshold) {
-            LOG(Plugins, "%p Plug-in is top level full page, set to play", this);
-            m_snapshotDecision = NeverSnapshot;
-            return;
-        }
+    
+    m_plugInDimensionsSpecified = renderer.style().logicalWidth().isSpecified() || renderer.style().logicalHeight().isSpecified();
+    
+    if (isTopLevelFullPagePlugin(renderer)) {
+        LOG(Plugins, "%p Plug-in is top level full page, set to play", this);
+        m_snapshotDecision = NeverSnapshot;
+        return;
     }
 
-    if (contentWidth <= sizingTinyDimensionThreshold || contentHeight <= sizingTinyDimensionThreshold) {
+    if (isSmallerThanTinySizingThreshold(renderer)) {
         LOG(Plugins, "%p Plug-in is very small %dx%d, set to play", this, contentWidth, contentHeight);
         m_sizeWhenSnapshotted = IntSize(contentWidth, contentHeight);
         m_snapshotDecision = MaySnapshotWhenResized;

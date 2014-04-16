@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 642x18
+          text run at (0,0) width 642: "This test ensures that if we have set a plugin to be too small after the initial load that it still gets played."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 701x18
+          text run at (0,0) width 701: "Also ensure that the plugin remains snapshotted if the size was initially specified but made too small afterwards."
+      RenderBlock (anonymous) at (0,68) size 784x44
+        RenderText {#text} at (40,26) size 4x18
+          text run at (40,26) width 4: " "
+        RenderSnapshottedPlugIn {EMBED} at (44,0) size 40x40
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,76) size 40x40
+  RenderEmbeddedObject {EMBED} at (0,0) size 40x40
+layer at (52,76) size 40x40
+  RenderBlock (relative positioned) {DIV} at (0,0) size 40x40
+layer at (57,81) size 30x30
+  RenderFlexibleBox {DIV} at (5,5) size 30x30 [bgcolor=#FFFFFFBF]
+    RenderBlock {DIV} at (0,-3) size 30x36
+layer at (57,78) size 30x18 scrollWidth 139
+  RenderBlock {DIV} at (0,0) size 30x18
+    RenderText {#text} at (0,0) size 139x18
+      text run at (0,0) width 139: "Snapshotted Plug-In"
+layer at (57,96) size 30x18 scrollWidth 94
+  RenderBlock {DIV} at (0,18) size 30x18 [color=#444444]
+    RenderText {#text} at (0,0) size 94x18
+      text run at (0,0) width 94: "Click to restart"

@@ -1,0 +1,20 @@
+<p>This test ensures that if we have set a plugin to be too small after the initial load that it still gets played.</p>
+<p>Also ensure that the plugin remains snapshotted if the size was initially specified but made too small afterwards.</p>
+<script>
+if (window.testRunner) {
+    window.internals.settings.setPlugInSnapshottingEnabled(true);
+    window.internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    setTimeout(function () {
+        var embedElement = document.getElementById("embed");
+        embedElement.style.width = 40;
+        embedElement.style.height = 40;
+        var embedElement2 = document.getElementById("embed2");
+        embedElement2.style.width = 40;
+        embedElement2.style.height = 40;
+        testRunner.notifyDone();
+    }, 2000);
+}
+</script>
+<embed id="embed" src="../resources/lines.swf"></embed>
+<embed id="embed2" src="../resources/lines.swf" style="width:300px; height:300px"></embed>

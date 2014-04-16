@@ -1,3 +1,14 @@
+2014-04-14  Roger Fong  <roger_fong@apple.com>
+
+        Snapshotted plugins may need to be restarted if style properties are changed after initial load of plugin.
+        https://bugs.webkit.org/show_bug.cgi?id=131553.
+        <rdar://problem/15443375>
+
+        Reviewed by Timothy Horton.
+
+        * platform/mac-wk2/plugins/snapshotting/set-plugin-size-to-tiny-expected.txt: Added.
+        * plugins/snapshotting/set-plugin-size-to-tiny.html: Added.
+
 2014-04-14  Morten Stenshorne  <mstensho@opera.com>
 
         [New Multicolumn] Add support for column-span:all

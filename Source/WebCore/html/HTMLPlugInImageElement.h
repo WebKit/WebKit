@@ -141,6 +141,7 @@ private:
 
     void restartSimilarPlugIns();
     void removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>&);
+    bool isTopLevelFullPagePlugin(const RenderEmbeddedObject&) const;
 
     URL m_loadedUrl;
     bool m_needsWidgetUpdate;
@@ -157,6 +158,7 @@ private:
     bool m_deferredPromotionToPrimaryPlugIn;
     IntSize m_sizeWhenSnapshotted;
     SnapshotDecision m_snapshotDecision;
+    bool m_plugInDimensionsSpecified;
 };
 
 void isHTMLPlugInImageElement(const HTMLPlugInImageElement&); // Catch unnecessary runtime check of type known at compile time.

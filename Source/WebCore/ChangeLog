@@ -1,3 +1,30 @@
+2014-04-10  Roger Fong  <roger_fong@apple.com>
+
+        Snapshotted plugins may need to be restarted if style properties are changed after initial load of plugin.
+        https://bugs.webkit.org/show_bug.cgi?id=131553.
+        <rdar://problem/15443375>
+
+        Reviewed by Timothy Horton.
+
+        Test: plugins/snapshotting/set-plugin-size-to-tiny.html
+
+        When updating embedded objects during our post layout checks, check for certain style changes
+        that may result in the plugin needing to be restarted.
+
+        * html/HTMLPlugInImageElement.h: 
+        Add m_plugInDimensionsSpecified field to keep track of whether or not dimensions on the plugin’s renderer have been specified.
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement):
+        Initialize m_plugInDimensionsSpecified.
+        (WebCore::isSmallerThanTinySizingThreshold):
+        Refactoring, move check for whether or not plugin is smaller than the tiny plugin size threshold to this method.
+        (WebCore::HTMLPlugInImageElement::isTopLevelFullPage): 
+        Refactoring, move check for whether or not plugin is top level full page to this method.
+        (WebCore::HTMLPlugInImageElement::checkSnapshotStatus): 
+        Use refactored checks here as well to determine whether or not we need to restart the snapshotted plugin.
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn): Use refactored checks.
+        If plugin dimensions were specified, set m_plugInDimensionsSpecified to true.
+
 2014-04-15  Andreas Kling  <akling@apple.com>
 
         [iOS WebKit2] Listen for system memory pressure notifications.
