@@ -226,7 +226,7 @@ svg/W3C-SVG-1.1/fonts-elem-03-b.svg
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg
 svg/W3C-SVG-1.1/fonts-elem-07-b.svg
 
-# https://bugs.webkit.org/show_bug.cgi?id=35012 (SVG entity parsing broken on SnowLeopard/Windows)
+# https://bugs.webkit.org/show_bug.cgi?id=131744 (Is SVG Entity parsing still broken on Windows?)
 svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
 svg/zoom/text/zoom-coords-viewattr-01-b.svg
@@ -278,10 +278,10 @@ editing/selection/5057506.html
 # This test is dependant on DRT being able to open windows.
 fast/dom/Window/new-window-opener.html
 
-# <rdar://problem/5228278> Leopard SVG regression test failures due to different path dimensions
+# https://bugs.webkit.org/show_bug.cgi?id=131745 (Is this still broken on Windows?)
 svg/W3C-SVG-1.1/metadata-example-01-b.svg
 
-# <rdar://problem/5539818> REGRESSION (Leopard): http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html failing
+# https://bugs.webkit.org/show_bug.cgi?id=131746 (Is this still broken on Windows?)
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
 
 # <rdar://5667007> 2 SVG text tests failing (due to bad rounding?)
@@ -339,7 +339,7 @@ http/tests/navigation/reload-subframe-object.html
 fast/encoding/frame-default-enc.html
 http/tests/misc/frame-default-enc-same-domain.html
 
-# <rdar://problem/5539822> REGRESSION (Leopard): svg/custom/stroke-width-click.svg test failing
+# https://bugs.webkit.org/show_bug.cgi?id=131748 (Is this still broken on Windows?)
 svg/custom/stroke-width-click.svg
 
 # Assertion failure in FrameLoader::loadWithDocumentLoader <https://bugs.webkit.org/show_bug.cgi?id=23921>

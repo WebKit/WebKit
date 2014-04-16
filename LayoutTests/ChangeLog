@@ -1,3 +1,15 @@
+2014-04-16  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Remove references to Leopard and Snow Leopard from Windows TestExpectations
+
+        Filed new bugs to track each of these tests, so someone with a windows
+        build can try and see if the tests still fail.
+
+        Unreviewed.
+
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2014-04-16  David Hyatt  <hyatt@apple.com>
 
         Make sure to skip the RenderMultiColumnFlowThread when resolving percentage heights inside columns against
