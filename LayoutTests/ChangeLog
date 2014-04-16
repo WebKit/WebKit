@@ -1,3 +1,9 @@
+2014-04-16  David Kilzer  <ddkilzer@apple.com>
+
+        Rename LayoutTests/platformm/iphone-simulator => ios-sim
+
+        * platform/ios-sim: Renamed from LayoutTests/platform/iphone-simulator.
+
 2014-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         DataTransfer should cache its FileList
