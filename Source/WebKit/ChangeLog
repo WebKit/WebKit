@@ -1,3 +1,9 @@
+2014-04-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make Windows fail with a link error so I know what the new symbol is.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-04-10  Michael Saboff  <msaboff@apple.com>
 
         LLInt interpreter code should be generated as part of one function

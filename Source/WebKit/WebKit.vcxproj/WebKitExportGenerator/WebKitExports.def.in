@@ -373,7 +373,6 @@ EXPORTS
         symbolWithPointer(?dataChanged@BitmapImage@WebCore@@UAE_N_N@Z, ?dataChanged@BitmapImage@WebCore@@UEAA_N_N@Z)
         symbolWithPointer(?filenameExtension@BitmapImage@WebCore@@UBE?AVString@WTF@@XZ, ?filenameExtension@BitmapImage@WebCore@@UEBA?AVString@WTF@@XZ)
         symbolWithPointer(?destroyDecodedData@BitmapImage@WebCore@@MAEX_N@Z, ?destroyDecodedData@BitmapImage@WebCore@@MEAAX_N@Z)
-        symbolWithPointer(?startAnimation@BitmapImage@WebCore@@MAEX_N@Z, ?startAnimation@BitmapImage@WebCore@@MEAAX_N@Z)
         symbolWithPointer(?stopAnimation@BitmapImage@WebCore@@UAEXXZ, ?stopAnimation@BitmapImage@WebCore@@UEAAXXZ)
         symbolWithPointer(?resetAnimation@BitmapImage@WebCore@@UAEXXZ, ?resetAnimation@BitmapImage@WebCore@@UEAAXXZ)
 #if USE(CG)
