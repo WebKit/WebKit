@@ -112,16 +112,15 @@ static const char* annotationStyle =
 // will jump to the next or previous page, to match PDFKit behavior.
 static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
-@interface WKPDFPluginAccessibilityObject : NSObject
-{
+@interface WKPDFPluginAccessibilityObject : NSObject {
     PDFLayerController *_pdfLayerController;
     NSObject *_parent;
     WebKit::PDFPlugin* _pdfPlugin;
 }
 
-@property(assign) PDFLayerController *pdfLayerController;
-@property(assign) NSObject *parent;
-@property(assign) WebKit::PDFPlugin* pdfPlugin;
+@property (assign) PDFLayerController *pdfLayerController;
+@property (assign) NSObject *parent;
+@property (assign) WebKit::PDFPlugin* pdfPlugin;
 
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin;
 
@@ -129,9 +128,9 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 @implementation WKPDFPluginAccessibilityObject
 
-@synthesize pdfLayerController = _pdfLayerController;
-@synthesize parent = _parent;
-@synthesize pdfPlugin = _pdfPlugin;
+@synthesize pdfLayerController=_pdfLayerController;
+@synthesize parent=_parent;
+@synthesize pdfPlugin=_pdfPlugin;
 
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
 {
@@ -152,31 +151,31 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 {
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
         return _parent;
-    else if ([attribute isEqualToString:NSAccessibilityValueAttribute])
+    if ([attribute isEqualToString:NSAccessibilityValueAttribute])
         return [_pdfLayerController accessibilityValueAttribute];
-    else if ([attribute isEqualToString:NSAccessibilitySelectedTextAttribute])
+    if ([attribute isEqualToString:NSAccessibilitySelectedTextAttribute])
         return [_pdfLayerController accessibilitySelectedTextAttribute];
-    else if ([attribute isEqualToString:NSAccessibilitySelectedTextRangeAttribute])
+    if ([attribute isEqualToString:NSAccessibilitySelectedTextRangeAttribute])
         return [_pdfLayerController accessibilitySelectedTextRangeAttribute];
-    else if ([attribute isEqualToString:NSAccessibilityNumberOfCharactersAttribute])
+    if ([attribute isEqualToString:NSAccessibilityNumberOfCharactersAttribute])
         return [_pdfLayerController accessibilityNumberOfCharactersAttribute];
-    else if ([attribute isEqualToString:NSAccessibilityVisibleCharacterRangeAttribute])
+    if ([attribute isEqualToString:NSAccessibilityVisibleCharacterRangeAttribute])
         return [_pdfLayerController accessibilityVisibleCharacterRangeAttribute];
-    else if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
+    if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
         return [_parent accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
-    else if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
+    if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
         return [_pdfLayerController accessibilityRoleAttribute];
-    else if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
+    if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
         return [_pdfLayerController accessibilityRoleDescriptionAttribute];
-    else if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
+    if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
         return [_parent accessibilityAttributeValue:NSAccessibilityWindowAttribute];
-    else if ([attribute isEqualToString:NSAccessibilitySizeAttribute])
+    if ([attribute isEqualToString:NSAccessibilitySizeAttribute])
         return [NSValue valueWithSize:_pdfPlugin->boundsOnScreen().size()];
-    else if ([attribute isEqualToString:NSAccessibilityFocusedAttribute])
+    if ([attribute isEqualToString:NSAccessibilityFocusedAttribute])
         return [_parent accessibilityAttributeValue:NSAccessibilityFocusedAttribute];
-    else if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
+    if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
         return [_parent accessibilityAttributeValue:NSAccessibilityEnabledAttribute];
-    else if ([attribute isEqualToString:NSAccessibilityPositionAttribute])
+    if ([attribute isEqualToString:NSAccessibilityPositionAttribute])
         return [NSValue valueWithPoint:_pdfPlugin->boundsOnScreen().location()];
 
     return 0;
@@ -187,12 +186,14 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     if ([attribute isEqualToString:NSAccessibilityBoundsForRangeParameterizedAttribute]) {
         NSRect boundsInPDFViewCoordinates = [[_pdfLayerController accessibilityBoundsForRangeAttributeForParameter:parameter] rectValue];
         NSRect boundsInScreenCoordinates = _pdfPlugin->convertFromPDFViewToScreen(boundsInPDFViewCoordinates);
-        return [NSValue valueWithRect:boundsInScreenCoordinates];;
-    } else if ([attribute isEqualToString:NSAccessibilityLineForIndexParameterizedAttribute])
+        return [NSValue valueWithRect:boundsInScreenCoordinates];
+    }
+
+    if ([attribute isEqualToString:NSAccessibilityLineForIndexParameterizedAttribute])
         return [_pdfLayerController accessibilityLineForIndexAttributeForParameter:parameter];
-    else if ([attribute isEqualToString:NSAccessibilityRangeForLineParameterizedAttribute])
+    if ([attribute isEqualToString:NSAccessibilityRangeForLineParameterizedAttribute])
         return [_pdfLayerController accessibilityRangeForLineAttributeForParameter:parameter];
-    else if ([attribute isEqualToString:NSAccessibilityStringForRangeParameterizedAttribute])
+    if ([attribute isEqualToString:NSAccessibilityStringForRangeParameterizedAttribute])
         return [_pdfLayerController accessibilityStringForRangeAttributeForParameter:parameter];
 
     return 0;
@@ -207,8 +208,8 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 {
     static NSArray *attributeNames = 0;
 
-    if (!attributeNames)
-        attributeNames = [[NSArray arrayWithObjects:NSAccessibilityValueAttribute,
+    if (!attributeNames) {
+        attributeNames = @[NSAccessibilityValueAttribute,
             NSAccessibilitySelectedTextAttribute,
             NSAccessibilitySelectedTextRangeAttribute,
             NSAccessibilityNumberOfCharactersAttribute,
@@ -221,8 +222,9 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
             NSAccessibilitySizeAttribute,
             NSAccessibilityFocusedAttribute,
             NSAccessibilityEnabledAttribute,
-            NSAccessibilityPositionAttribute,
-            nil] retain];
+            NSAccessibilityPositionAttribute];
+        [attributeNames retain];
+    }
 
     return attributeNames;
 }
@@ -271,8 +273,7 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 @end
 
 
-@interface WKPDFPluginScrollbarLayer : CALayer
-{
+@interface WKPDFPluginScrollbarLayer : CALayer {
     WebKit::PDFPlugin* _pdfPlugin;
 }
 
@@ -282,7 +283,7 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 @implementation WKPDFPluginScrollbarLayer
 
-@synthesize pdfPlugin = _pdfPlugin;
+@synthesize pdfPlugin=_pdfPlugin;
 
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
 {
@@ -306,12 +307,11 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 @end
 
-@interface WKPDFLayerControllerDelegate : NSObject<PDFLayerControllerDelegate>
-{
+@interface WKPDFLayerControllerDelegate : NSObject<PDFLayerControllerDelegate> {
     WebKit::PDFPlugin* _pdfPlugin;
 }
 
-@property(assign) WebKit::PDFPlugin* pdfPlugin;
+@property (assign) WebKit::PDFPlugin* pdfPlugin;
 
 @end
 
@@ -1005,7 +1005,7 @@ void PDFPlugin::createPasswordEntryForm()
 
 void PDFPlugin::attemptToUnlockPDF(const String& password)
 {
-    [m_pdfLayerController attemptToUnlockWithPassword:password];
+    [m_pdfLayerController.get() attemptToUnlockWithPassword:password];
 
     if (![pdfDocument() isLocked]) {
         m_passwordField = nullptr;
@@ -1021,7 +1021,7 @@ void PDFPlugin::updatePageAndDeviceScaleFactors()
     if (!handlesPageScaleFactor())
         newScaleFactor *= webFrame()->page()->pageScaleFactor();
 
-    [m_pdfLayerController setDeviceScaleFactor:newScaleFactor];
+    [m_pdfLayerController.get() setDeviceScaleFactor:newScaleFactor];
 }
 
 void PDFPlugin::contentsScaleFactorChanged(float)
@@ -1505,7 +1505,7 @@ bool PDFPlugin::isEditingCommandEnabled(const String& commandName)
 {
     if (commandName == "copy" || commandName == "takeFindStringFromSelection")
         return [m_pdfLayerController currentSelection];
-        
+
     if (commandName == "selectAll")
         return true;
 
@@ -1722,7 +1722,7 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, BOOL searchFor
 
     PDFSelection *selectionForInitialSearch = [initialSelection copy];
     if (startInSelection) {
-        // Initially we want to include the selected text in the search.  So we must modify the starting search
+        // Initially we want to include the selected text in the search. So we must modify the starting search
         // selection to fit PDFDocument's search requirements: selection must have a length >= 1, begin before
         // the current selection (if searching forwards) or after (if searching backwards).
         int initialSelectionLength = [[initialSelection string] length];
@@ -1741,10 +1741,10 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, BOOL searchFor
     // If we first searched in the selection, and we found the selection, search again from just past the selection.
     if (startInSelection && [foundSelection isEqual:initialSelection])
         foundSelection = [document findString:target fromSelection:initialSelection withOptions:options];
-        
+
     if (!foundSelection && wrapSearch)
         foundSelection = [document findString:target fromSelection:nil withOptions:options];
-        
+
     return foundSelection;
 }
 
@@ -1835,10 +1835,10 @@ bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
         return ScrollableArea::handleWheelEvent(platform(event));
 
     NSUInteger currentPageIndex = [m_pdfLayerController currentPageIndex];
-    bool inFirstPage = currentPageIndex == 0;
+    bool inFirstPage = !currentPageIndex;
     bool inLastPage = [m_pdfLayerController lastPageIndex] == currentPageIndex;
 
-    bool atScrollTop = scrollPosition().y() == 0;
+    bool atScrollTop = !scrollPosition().y();
     bool atScrollBottom = scrollPosition().y() == maximumScrollPosition().y();
 
     bool inMomentumScroll = event.momentumPhase() != WebWheelEvent::PhaseNone;
@@ -1853,7 +1853,9 @@ bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
         if (event.delta().height() <= -scrollMagnitudeThresholdForPageFlip && !inMomentumScroll)
             [m_pdfLayerController gotoNextPage];
         return true;
-    } else if (atScrollTop && !inFirstPage && event.delta().height() > 0) {
+    }
+
+    if (atScrollTop && !inFirstPage && event.delta().height() > 0) {
         if (event.delta().height() >= scrollMagnitudeThresholdForPageFlip && !inMomentumScroll) {
             [CATransaction begin];
             [m_pdfLayerController gotoPreviousPage];
@@ -1875,8 +1877,8 @@ NSData *PDFPlugin::liveData() const
     // untouched by the user, so that PDFs which PDFKit can't display will still be downloadable.
     if (m_pdfDocumentWasMutated)
         return [m_pdfDocument dataRepresentation];
-    else
-        return rawData();
+    
+    return rawData();
 }
 
 NSObject *PDFPlugin::accessibilityObject() const
