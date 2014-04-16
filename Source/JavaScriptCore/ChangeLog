@@ -1,5 +1,12 @@
 2014-04-15  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, add the obvious thing that marks MakeRope as exiting since it can exit.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+2014-04-15  Filip Pizlo  <fpizlo@apple.com>
+
         compileMakeRope does not emit necessary bounds checks
         https://bugs.webkit.org/show_bug.cgi?id=130684
         <rdar://problem/16398388>
