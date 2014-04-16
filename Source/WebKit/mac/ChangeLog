@@ -1,3 +1,16 @@
+2014-04-16  Tim Horton  <timothy_horton@apple.com>
+
+        Images dragged from WebKit1 on 2x displays are too big
+        https://bugs.webkit.org/show_bug.cgi?id=131775
+        <rdar://problem/15933525>
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::startDrag):
+        Scale the drag image's logical size down by the device scale factor
+        in WebKit1 just like we do in WebKit2.
+
 2014-04-13  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Move file system-related code into WebKit

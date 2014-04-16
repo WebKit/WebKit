@@ -105,6 +105,10 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
     NSImage *dragNSImage = dragImage.get();
     WebHTMLView *sourceHTMLView = htmlView.get();
 
+    IntSize size([dragNSImage size]);
+    size.scale(1 / frame.page()->deviceScaleFactor());
+    [dragNSImage setSize:size];
+
     id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:);
     if ([delegate respondsToSelector:selector]) {
