@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
  * Copyright (C) 2012 Baidu Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,13 @@ FORMATETC* cfFileNameWFormat();
 
 FORMATETC* cfUrlWFormat();
 
+struct StgMediumDeleter {
+    void operator()(STGMEDIUM* medium)
+    {
+        ::ReleaseStgMedium(medium);
+    }
+};
+
 class DRTDataObject : public IDataObject {
 public:
     void CopyMedium(STGMEDIUM* pMedDest, STGMEDIUM* pMedSrc, FORMATETC* pFmtSrc);
@@ -62,10 +69,9 @@ public:
     static HRESULT createInstance(DRTDataObject**);
 private:
     DRTDataObject();
-    ~DRTDataObject();
     long m_ref;
-    Vector<FORMATETC*> m_formats;
-    Vector<STGMEDIUM*> m_medium;
+    Vector<std::unique_ptr<FORMATETC>> m_formats;
+    Vector<std::unique_ptr<STGMEDIUM, StgMediumDeleter>> m_medium;
 };
 
 #endif // DRTDataObject_h

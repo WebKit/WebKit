@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ class WCEnumFormatEtc : public IEnumFORMATETC
 {
 public:
     WCEnumFormatEtc(const Vector<FORMATETC>& formats);
-    WCEnumFormatEtc(const Vector<FORMATETC*>& formats);
+    WCEnumFormatEtc(const Vector<std::unique_ptr<FORMATETC>>& formats);
 
     //IUnknown members
     STDMETHOD(QueryInterface)(REFIID, void**);
@@ -55,8 +55,6 @@ private:
     size_t m_current;
 };
 
-
-
 WCEnumFormatEtc::WCEnumFormatEtc(const Vector<FORMATETC>& formats)
 : m_ref(1)
 , m_current(0)
@@ -65,12 +63,12 @@ WCEnumFormatEtc::WCEnumFormatEtc(const Vector<FORMATETC>& formats)
         m_formats.append(formats[i]);
 }
 
-WCEnumFormatEtc::WCEnumFormatEtc(const Vector<FORMATETC*>& formats)
-: m_ref(1)
-, m_current(0)
+WCEnumFormatEtc::WCEnumFormatEtc(const Vector<std::unique_ptr<FORMATETC>>& formats)
+    : m_ref(1)
+    , m_current(0)
 {
-    for(size_t i = 0; i < formats.size(); ++i)
-        m_formats.append(*formats[i]);
+    for (auto& format : formats)
+        m_formats.append(*format);
 }
 
 STDMETHODIMP  WCEnumFormatEtc::QueryInterface(REFIID riid, void** ppvObject)
@@ -178,15 +176,6 @@ WCDataObject::WCDataObject()
 {
 }
 
-WCDataObject::~WCDataObject()
-{
-    for(size_t i = 0; i < m_medium.size(); ++i) {
-        ReleaseStgMedium(m_medium[i]);
-        delete m_medium[i];
-    }
-    WTF::deprecatedDeleteAllValues(m_formats);
-}
-
 STDMETHODIMP WCDataObject::QueryInterface(REFIID riid,void** ppvObject)
 {
     *ppvObject = 0;
@@ -220,12 +209,12 @@ STDMETHODIMP WCDataObject::GetData(FORMATETC* pformatetcIn, STGMEDIUM* pmedium)
         return E_POINTER;
     pmedium->hGlobal = 0;
 
-    for(size_t i=0; i < m_formats.size(); ++i) {
+    for (size_t i = 0; i < m_formats.size(); ++i) {
         if(/*pformatetcIn->tymed & m_formats[i]->tymed &&*/     // tymed can be 0 (TYMED_NULL) - but it can have a medium that contains an pUnkForRelease
             pformatetcIn->lindex == m_formats[i]->lindex &&
             pformatetcIn->dwAspect == m_formats[i]->dwAspect &&
             pformatetcIn->cfFormat == m_formats[i]->cfFormat) {
-            CopyMedium(pmedium, m_medium[i], m_formats[i]);
+            CopyMedium(pmedium, m_medium[i].get(), m_formats[i].get());
             return S_OK;
         }
     }
@@ -245,12 +234,12 @@ STDMETHODIMP WCDataObject::QueryGetData(FORMATETC* pformatetc)
     if (!(DVASPECT_CONTENT & pformatetc->dwAspect))
         return (DV_E_DVASPECT);
     HRESULT  hr = DV_E_TYMED;
-    for(size_t i = 0; i < m_formats.size(); ++i) {
-        if(pformatetc->tymed & m_formats[i]->tymed) {
-            if(pformatetc->cfFormat == m_formats[i]->cfFormat)
+    for (auto& format : m_formats) {
+        if (pformatetc->tymed & format->tymed) {
+            if (pformatetc->cfFormat == format->cfFormat)
                 return S_OK;
-            else
-                hr = DV_E_CLIPFORMAT;
+
+            hr = DV_E_CLIPFORMAT;
         }
         else
             hr = DV_E_TYMED;
@@ -268,28 +257,20 @@ STDMETHODIMP WCDataObject::SetData(FORMATETC* pformatetc, STGMEDIUM* pmedium, BO
     if(!pformatetc || !pmedium)
         return E_POINTER;
 
-    FORMATETC* fetc=new FORMATETC;
-    if (!fetc)
-        return E_OUTOFMEMORY;
+    auto fetc = std::make_unique<FORMATETC>();
+    std::unique_ptr<STGMEDIUM, StgMediumDeleter> pStgMed(new STGMEDIUM);
 
-    STGMEDIUM* pStgMed = new STGMEDIUM;
-
-    if(!pStgMed) {
-        delete fetc;
-        return E_OUTOFMEMORY;
-    }
-
-    ZeroMemory(fetc,sizeof(FORMATETC));
-    ZeroMemory(pStgMed,sizeof(STGMEDIUM));
+    ZeroMemory(fetc.get(), sizeof(FORMATETC));
+    ZeroMemory(pStgMed.get(), sizeof(STGMEDIUM));
 
     *fetc = *pformatetc;
-    m_formats.append(fetc);
+    m_formats.append(std::move(fetc));
 
     if(fRelease)
         *pStgMed = *pmedium;
     else
-        CopyMedium(pStgMed, pmedium, pformatetc);
-    m_medium.append(pStgMed);
+        CopyMedium(pStgMed.get(), pmedium, pformatetc);
+    m_medium.append(std::move(pStgMed));
 
     return S_OK;
 }
@@ -376,17 +357,10 @@ void WCDataObject::clearData(CLIPFORMAT format)
     size_t ptr = 0;
     while (ptr < m_formats.size()) {
         if (m_formats[ptr]->cfFormat == format) {
-            FORMATETC* current = m_formats[ptr];
-            m_formats[ptr] = m_formats[m_formats.size() - 1];
-            m_formats[m_formats.size() - 1] = 0;
+            m_formats[ptr] = std::move(m_formats[m_formats.size() - 1]);
             m_formats.removeLast();
-            delete current;
-            STGMEDIUM* medium = m_medium[ptr];
-            m_medium[ptr] = m_medium[m_medium.size() - 1];
-            m_medium[m_medium.size() - 1] = 0;
+            m_medium[ptr] = std::move(m_medium[m_medium.size() - 1]);
             m_medium.removeLast();
-            ReleaseStgMedium(medium);
-            delete medium;
             continue;
         }
         ptr++;

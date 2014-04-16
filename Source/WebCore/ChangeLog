@@ -1,3 +1,23 @@
+2014-04-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Eliminate use of deleteAllValues in Windows Files
+        https://bugs.webkit.org/show_bug.cgi?id=131631
+
+        Reviewed by Darin Adler.
+
+        Update to use std::unique_ptr for object lifetime. Get rid of
+        deleteAllValues now that it is no loner needed. Use ranged for
+        loops where possible.
+
+        * platform/win/WCDataObject.cpp:
+        (WebCore::WCEnumFormatEtc::WCEnumFormatEtc):
+        (WebCore::WCDataObject::~WCDataObject):
+        (WebCore::WCDataObject::GetData):
+        (WebCore::WCDataObject::QueryGetData):
+        (WebCore::WCDataObject::SetData):
+        (WebCore::WCDataObject::clearData):
+        * platform/win/WCDataObject.h:
+
 2014-04-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Accessing a table cell with an invalid column header crashes

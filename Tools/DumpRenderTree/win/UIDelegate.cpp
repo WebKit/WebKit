@@ -36,7 +36,6 @@
 #include "TestRunner.h"
 #include <WebCore/COMPtr.h>
 #include <wtf/Assertions.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 #include <JavaScriptCore/JavaScriptCore.h>
@@ -51,14 +50,13 @@ class DRTUndoObject {
 public:
     DRTUndoObject(IWebUndoTarget* target, BSTR actionName, IUnknown* obj)
         : m_target(target)
-        , m_actionName(SysAllocString(actionName))
+        , m_actionName(actionName)
         , m_obj(obj)
     {
     }
 
     ~DRTUndoObject()
     {
-        SysFreeString(m_actionName);
     }
 
     void invoke()
@@ -68,22 +66,20 @@ public:
 
 private:
     IWebUndoTarget* m_target;
-    BSTR m_actionName;
+    _bstr_t m_actionName;
     COMPtr<IUnknown> m_obj;
 };
 
 class DRTUndoStack {
 public:
-    ~DRTUndoStack() { deprecatedDeleteAllValues(m_undoVector); }
-
     bool isEmpty() const { return m_undoVector.isEmpty(); }
-    void clear() { deprecatedDeleteAllValues(m_undoVector); m_undoVector.clear(); }
+    void clear() { m_undoVector.clear(); }
 
     void push(DRTUndoObject* undoObject) { m_undoVector.append(undoObject); }
-    DRTUndoObject* pop() { DRTUndoObject* top = m_undoVector.last(); m_undoVector.removeLast(); return top; }
+    std::unique_ptr<DRTUndoObject> pop() { std::unique_ptr<DRTUndoObject> top = std::move(m_undoVector.last()); m_undoVector.removeLast(); return std::move(top); }
 
 private:
-    Vector<DRTUndoObject*> m_undoVector;
+    Vector<std::unique_ptr<DRTUndoObject>> m_undoVector;
 };
 
 class DRTUndoManager {
@@ -98,15 +94,15 @@ public:
     bool canUndo() { return !m_undoStack->isEmpty(); }
 
 private:
-    OwnPtr<DRTUndoStack> m_redoStack;
-    OwnPtr<DRTUndoStack> m_undoStack;
+    std::unique_ptr<DRTUndoStack> m_redoStack;
+    std::unique_ptr<DRTUndoStack> m_undoStack;
     bool m_isRedoing;
     bool m_isUndoing;
 };
 
 DRTUndoManager::DRTUndoManager()
-    : m_redoStack(adoptPtr(new DRTUndoStack))
-    , m_undoStack(adoptPtr(new DRTUndoStack))
+    : m_redoStack(std::make_unique<DRTUndoStack>())
+    , m_undoStack(std::make_unique<DRTUndoStack>())
     , m_isRedoing(false)
     , m_isUndoing(false)
 {
@@ -134,9 +130,7 @@ void DRTUndoManager::redo()
 
     m_isRedoing = true;
 
-    DRTUndoObject* redoObject = m_redoStack->pop();
-    redoObject->invoke();
-    delete redoObject;
+    m_redoStack->pop()->invoke();
 
     m_isRedoing = false;
 }
@@ -148,16 +142,14 @@ void DRTUndoManager::undo()
 
     m_isUndoing = true;
 
-    DRTUndoObject* undoObject = m_undoStack->pop();
-    undoObject->invoke();
-    delete undoObject;
+    m_undoStack->pop()->invoke();
 
     m_isUndoing = false;
 }
 
 UIDelegate::UIDelegate()
     : m_refCount(1)
-    , m_undoManager(adoptPtr(new DRTUndoManager))
+    , m_undoManager(std::make_unique<DRTUndoManager>())
     , m_desktopNotifications(new DRTDesktopNotificationPresenter)
 {
     m_frame.bottom = 0;
@@ -168,7 +160,7 @@ UIDelegate::UIDelegate()
 
 void UIDelegate::resetUndoManager()
 {
-    m_undoManager = adoptPtr(new DRTUndoManager);
+    m_undoManager = std::make_unique<DRTUndoManager>();
 }
 
 HRESULT UIDelegate::QueryInterface(REFIID riid, void** ppvObject)

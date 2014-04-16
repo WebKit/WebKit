@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
  * Copyright (C) 2012 Baidu Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,7 @@ FORMATETC* cfUrlWFormat()
 class WCEnumFormatEtc : public IEnumFORMATETC {
 public:
     explicit WCEnumFormatEtc(const Vector<FORMATETC>& formats);
-    explicit WCEnumFormatEtc(const Vector<FORMATETC*>& formats);
+    explicit WCEnumFormatEtc(const Vector<std::unique_ptr<FORMATETC>>& formats);
 
     // IUnknown members
     STDMETHOD(QueryInterface)(REFIID, void**);
@@ -76,12 +76,12 @@ WCEnumFormatEtc::WCEnumFormatEtc(const Vector<FORMATETC>& formats)
 {
 }
 
-WCEnumFormatEtc::WCEnumFormatEtc(const Vector<FORMATETC*>& formats)
+WCEnumFormatEtc::WCEnumFormatEtc(const Vector<std::unique_ptr<FORMATETC>>& formats)
     : m_ref(1)
     , m_current(0)
 {
-    for (size_t i = 0; i < formats.size(); ++i)
-        m_formats.append(*formats[i]);
+    for (auto& format : formats)
+        m_formats.append(*format);
 }
 
 STDMETHODIMP WCEnumFormatEtc::QueryInterface(REFIID riid, void** ppvObject)
@@ -175,15 +175,6 @@ DRTDataObject::DRTDataObject()
 {
 }
 
-DRTDataObject::~DRTDataObject()
-{
-    for (size_t i = 0; i < m_medium.size(); ++i) {
-        ReleaseStgMedium(m_medium[i]);
-        delete m_medium[i];
-    }
-    WTF::deprecatedDeleteAllValues(m_formats);
-}
-
 STDMETHODIMP DRTDataObject::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
@@ -218,7 +209,7 @@ STDMETHODIMP DRTDataObject::GetData(FORMATETC* pformatetcIn, STGMEDIUM* pmedium)
 
     for (size_t i = 0; i < m_formats.size(); ++i) {
         if (pformatetcIn->lindex == m_formats[i]->lindex && pformatetcIn->dwAspect == m_formats[i]->dwAspect && pformatetcIn->cfFormat == m_formats[i]->cfFormat) {
-            CopyMedium(pmedium, m_medium[i], m_formats[i]);
+            CopyMedium(pmedium, m_medium[i].get(), m_formats[i].get());
             return S_OK;
         }
     }
@@ -238,9 +229,9 @@ STDMETHODIMP DRTDataObject::QueryGetData(FORMATETC* pformatetc)
     if (!(DVASPECT_CONTENT & pformatetc->dwAspect))
         return (DV_E_DVASPECT);
 
-    for (size_t i = 0; i < m_formats.size(); ++i) {
-        if (pformatetc->tymed & m_formats[i]->tymed) {
-            if (pformatetc->cfFormat == m_formats[i]->cfFormat)
+    for (auto& format : m_formats) {
+        if (pformatetc->tymed & format->tymed) {
+            if (pformatetc->cfFormat == format->cfFormat)
                 return S_OK;
         }
     }
@@ -257,28 +248,20 @@ STDMETHODIMP DRTDataObject::SetData(FORMATETC* pformatetc, STGMEDIUM* pmedium, B
     if (!pformatetc || !pmedium)
         return E_POINTER;
 
-    FORMATETC* formatetc = new FORMATETC;
-    if (!formatetc)
-        return E_OUTOFMEMORY;
+    auto formatetc = std::make_unique<FORMATETC>();
+    std::unique_ptr<STGMEDIUM, StgMediumDeleter> pStgMed(new STGMEDIUM);
 
-    STGMEDIUM* pStgMed = new STGMEDIUM;
-
-    if (!pStgMed) {
-        delete formatetc;
-        return E_OUTOFMEMORY;
-    }
-
-    ZeroMemory(formatetc, sizeof(FORMATETC));
-    ZeroMemory(pStgMed, sizeof(STGMEDIUM));
+    ZeroMemory(formatetc.get(), sizeof(FORMATETC));
+    ZeroMemory(pStgMed.get(), sizeof(STGMEDIUM));
 
     *formatetc = *pformatetc;
-    m_formats.append(formatetc);
+    m_formats.append(std::move(formatetc));
 
     if (fRelease)
         *pStgMed = *pmedium;
     else
-        CopyMedium(pStgMed, pmedium, pformatetc);
-    m_medium.append(pStgMed);
+        CopyMedium(pStgMed.get(), pmedium, pformatetc);
+    m_medium.append(std::move(pStgMed));
 
     return S_OK;
 }
@@ -363,17 +346,10 @@ void DRTDataObject::clearData(CLIPFORMAT format)
     size_t position = 0;
     while (position < m_formats.size()) {
         if (m_formats[position]->cfFormat == format) {
-            FORMATETC* current = m_formats[position];
-            m_formats[position] = m_formats[m_formats.size() - 1];
-            m_formats[m_formats.size() - 1] = 0;
+            m_formats[position] = std::move(m_formats[m_formats.size() - 1]);
             m_formats.removeLast();
-            delete current;
-            STGMEDIUM* medium = m_medium[position];
-            m_medium[position] = m_medium[m_medium.size() - 1];
-            m_medium[m_medium.size() - 1] = 0;
+            m_medium[position] = std::move(m_medium[m_medium.size() - 1]);
             m_medium.removeLast();
-            ReleaseStgMedium(medium);
-            delete medium;
             continue;
         }
         position++;

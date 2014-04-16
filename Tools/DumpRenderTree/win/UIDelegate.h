@@ -407,7 +407,7 @@ protected:
 
 private:
     RECT m_frame;
-    OwnPtr<DRTUndoManager> m_undoManager;
+    std::unique_ptr<DRTUndoManager> m_undoManager;
 
     COMPtr<IWebDesktopNotificationsDelegate> m_desktopNotifications;
 };

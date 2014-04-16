@@ -1,3 +1,35 @@
+2014-04-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Eliminate use of deleteAllValues in Windows Files
+        https://bugs.webkit.org/show_bug.cgi?id=131631
+
+        Reviewed by Darin Adler.
+
+        Switch to std::unique_ptr for memory lifetime. Get rid of
+        deleteAllValues now that it is no longer needed. Use ranged
+        for loops where possible.
+
+        * DumpRenderTree/win/DRTDataObject.cpp:
+        (WCEnumFormatEtc::WCEnumFormatEtc):
+        (DRTDataObject::~DRTDataObject):
+        (DRTDataObject::GetData):
+        (DRTDataObject::QueryGetData):
+        (DRTDataObject::SetData):
+        (DRTDataObject::clearData):
+        * DumpRenderTree/win/DRTDataObject.h:
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (DRTUndoObject::DRTUndoObject):
+        (DRTUndoObject::~DRTUndoObject):
+        (DRTUndoStack::~DRTUndoStack):
+        (DRTUndoStack::clear):
+        (DRTUndoStack::pop):
+        (DRTUndoManager::DRTUndoManager):
+        (DRTUndoManager::redo):
+        (DRTUndoManager::undo):
+        (UIDelegate::UIDelegate):
+        (UIDelegate::resetUndoManager):
+        * DumpRenderTree/win/UIDelegate.h:
+
 2014-04-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.
