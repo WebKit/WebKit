@@ -321,6 +321,11 @@ macro(ADD_WHOLE_ARCHIVE_TO_LIBRARIES _list_name)
 endmacro()
 
 build_command(COMMAND_LINE_TO_BUILD)
+# build_command unconditionally adds -i (ignore errors) for make, and there's
+# no reasonable way to turn that off, so we just replace it with -k, which has
+# the same effect, except that the return code will indicate that an error occurred.
+# See: http://www.cmake.org/cmake/help/v3.0/command/build_command.html
+string(REPLACE " -i" " -k" COMMAND_LINE_TO_BUILD ${COMMAND_LINE_TO_BUILD})
 file(WRITE
     ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/build.sh
     "#!/bin/sh\n"
