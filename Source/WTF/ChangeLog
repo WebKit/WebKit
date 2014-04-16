@@ -1,3 +1,14 @@
+2014-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        WTF should have an optional mbmalloc target so we can benchmark FastMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=131662
+
+        Reviewed by Darin Adler.
+
+        * WTF.xcodeproj/project.pbxproj: Added the target.
+        * wtf/mbmalloc.cpp: Added. Implements the libmbmalloc.dylib API required
+        by MallocBench.
+
 2014-04-16  Darin Adler  <darin@apple.com>
 
         Make Vector::takeLast work with move-only types (and optimize for types where move is faster)
