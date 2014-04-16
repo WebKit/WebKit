@@ -1,3 +1,13 @@
+2014-04-16  Darin Adler  <darin@apple.com>
+
+        Make Vector::takeLast work with move-only types (and optimize for types where move is faster)
+        https://bugs.webkit.org/show_bug.cgi?id=131735
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/Vector.h:
+        (WTF::Vector::takeLast): Added a missing std::move. All the other take functions have it.
+
 2014-04-14  Mark Lam  <mark.lam@apple.com>
 
         monotonicallyIncreasingTime() should only initialize its static timebaseInfo once.

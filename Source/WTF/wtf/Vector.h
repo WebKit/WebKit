@@ -661,7 +661,7 @@ public:
     
     T takeLast()
     {
-        T result = last();
+        T result = std::move(last());
         removeLast();
         return result;
     }
