@@ -56,6 +56,7 @@ void copyRectFromCairoSurfaceToContext(cairo_surface_t* from, cairo_t* to, const
 void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo_surface_t* to, const IntSize& offset, const IntRect&, const IntSize& = IntSize(), cairo_operator_t = CAIRO_OPERATOR_OVER);
 
 IntSize cairoSurfaceSize(cairo_surface_t*);
+void flipImageSurfaceVertically(cairo_surface_t*);
 
 } // namespace WebCore
 

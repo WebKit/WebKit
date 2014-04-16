@@ -2486,17 +2486,16 @@ EAPI Eina_Bool ewk_view_setting_tiled_backing_store_enabled_get(Evas_Object *o);
 EAPI Ewk_Context_Menu *ewk_view_context_menu_get(const Evas_Object *o);
 
 /**
- * Gets the image object of the specified area of the page
+ * Gets the image object of the specified area of the view.
  *
  * The returned image object @b should be freed after use.
  *
  * @param o view object to be captured
- * @param area The area of the page will be captured.
- * @param scale scale factor of captured object.
+ * @param area The area of the view will be captured.
  *
  * @return newly allocated image object on sucess or @c NULL on failure.
  */
-EAPI Evas_Object *ewk_view_screenshot_contents_get(const Evas_Object *o, const Eina_Rectangle *area, float scale);
+EAPI Evas_Object *ewk_view_screenshot_contents_get(const Evas_Object *o, const Eina_Rectangle *area);
 
 #ifdef __cplusplus
 }

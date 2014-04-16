@@ -1,3 +1,48 @@
+2014-04-15  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        [EFL] Fix problems with the pixel dump.
+        https://bugs.webkit.org/show_bug.cgi?id=131265
+
+        Reviewed by Gyuyoung Kim.
+
+        Painting and compositing paths of WebKit-EFL were totally modified from r166768.
+        However pixel dump codes still call deprecated functions like ewk_view_paint(),
+        which causes that nothing is drawn.
+
+        This patch adds new member functions to AcceleratedCompositingContext to support pixel dump.
+        One of new functions is AcceleratedCompositingContext::extractImageData(),
+        which replaces deprecated function calls. Besides the extractImageData() is invoked by
+        ewk_view_screenshot_contents_get() in order to take the visible content displayed on the EFL webview.
+
+        * WebCoreSupport/AcceleratedCompositingContextEfl.cpp:
+        (WebCore::AcceleratedCompositingContext::AcceleratedCompositingContext):
+        Create TextureMapper with a proper backend.
+        (WebCore::AcceleratedCompositingContext::flushPendingLayerChanges):
+        Revise a null check for m_rootLayer.
+        (WebCore::AcceleratedCompositingContext::paintToGraphicsContext):
+        Remove a creation check for TextureMapperGL.
+        (WebCore::AcceleratedCompositingContext::paintToCurrentGLContext):
+        Ditto.
+        (WebCore::AcceleratedCompositingContext::extractImageData):
+        Extract image data from the view and copy it to given Evas_Object.
+        (WebCore::AcceleratedCompositingContext::getImageData):
+        Get image data from the view and return it as cairo_surface_t on software mode.
+        (WebCore::AcceleratedCompositingContext::getImageDataGL):
+        Get image data from the view and return it as cairo_surface_t on GL mode.
+        * WebCoreSupport/AcceleratedCompositingContextEfl.h:
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::forcePaint): Repaint the entire webview before pixel dump.
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_mark_for_sync): Remove an unnecessary line.
+        (ewk_view_force_paint): Call flushAndRenderLayers().
+        (ewk_view_screenshot_contents_get): Remove 'scale' parameter and replace ewk_view_paint()
+        with AcceleratedCompositingContext::extractImageData().
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_private.h:
+        * tests/test_ewk_view.cpp:
+        (TEST_F):
+
 2014-04-12  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [SOUP] Libsoup internal credential setting should be controlled by loader decision

@@ -259,4 +259,27 @@ IntSize cairoSurfaceSize(cairo_surface_t* surface)
     }
 }
 
+void flipImageSurfaceVertically(cairo_surface_t* surface)
+{
+    ASSERT(cairo_surface_get_type(surface) == CAIRO_SURFACE_TYPE_IMAGE);
+
+    IntSize size = cairoSurfaceSize(surface);
+    ASSERT(!size.isEmpty());
+
+    int stride = cairo_image_surface_get_stride(surface);
+    int halfHeight = size.height() / 2;
+
+    uint8_t* source = static_cast<uint8_t*>(cairo_image_surface_get_data(surface));
+    std::unique_ptr<uint8_t[]> tmp = std::make_unique<uint8_t[]>(stride);
+
+    for (int i = 0; i < halfHeight; ++i) {
+        uint8_t* top = source + (i * stride);
+        uint8_t* bottom = source + ((size.height()-i-1) * stride);
+
+        memcpy(tmp.get(), top, stride);
+        memcpy(top, bottom, stride);
+        memcpy(bottom, tmp.get(), stride);
+    }
+}
+
 } // namespace WebCore

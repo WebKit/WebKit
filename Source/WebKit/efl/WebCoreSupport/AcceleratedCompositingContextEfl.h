@@ -45,6 +45,8 @@ public:
     void resize(const IntSize&);
     void flushAndRenderLayers();
 
+    void extractImageData(Evas_Object*, const IntRect&);
+
 private:
     void paintToGraphicsContext();
     void paintToCurrentGLContext();
@@ -52,6 +54,9 @@ private:
 
     bool flushPendingLayerChanges();
     void syncLayers(Timer<AcceleratedCompositingContext>*);
+
+    PassRefPtr<cairo_surface_t> getImageData(const IntRect&);
+    PassRefPtr<cairo_surface_t> getImageDataGL(const IntRect&);
 
     Evas_Object* m_view;
     Evas_Object* m_compositingObject;

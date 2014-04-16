@@ -47,6 +47,8 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool 
     Ewk_View_Private_Data* privateData = static_cast<Ewk_View_Private_Data*>(smartData->_priv);
     const Evas_Object* mainFrame = browser->mainFrame();
 
+    DumpRenderTreeSupportEfl::forcePaint(browser->mainView());
+
     int x, y, width, height;
     evas_object_geometry_get(browser->mainFrame(), &x, &y, &width, &height);
     const Eina_Rectangle rect = { x, y, width, height };
@@ -54,7 +56,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool 
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, rect.w, rect.h));
     RefPtr<cairo_t> context = adoptRef(cairo_create(surface.get()));
 
-    RefPtr<Evas_Object> screenshot = ewk_view_screenshot_contents_get(browser->mainView(), &rect, 1);
+    RefPtr<Evas_Object> screenshot = ewk_view_screenshot_contents_get(browser->mainView(), &rect);
     if (!screenshot)
         return 0;
 

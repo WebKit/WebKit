@@ -22,6 +22,7 @@
 #if USE(TEXTURE_MAPPER_GL)
 
 #include "AcceleratedCompositingContextEfl.h"
+#include "CairoUtilities.h"
 #include "CairoUtilitiesEfl.h"
 #include "GraphicsLayerTextureMapper.h"
 #include "MainFrame.h"
@@ -53,8 +54,13 @@ AcceleratedCompositingContext::AcceleratedCompositingContext(Evas_Object* ewkVie
             m_evasGLContext = EvasGLContext::create(m_evasGL.get());
     }
 
-    if (!m_evasGLContext)
+    if (m_evasGLContext) {
+        m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
+        static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
+    } else {
+        m_textureMapper = TextureMapper::create(TextureMapper::SoftwareMode);
         m_isAccelerated = false;
+    }
 }
 
 AcceleratedCompositingContext::~AcceleratedCompositingContext()
@@ -122,18 +128,13 @@ void AcceleratedCompositingContext::flushAndRenderLayers()
 
 bool AcceleratedCompositingContext::flushPendingLayerChanges()
 {
-    if (!m_rootLayer)
-        return false;
-
-    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    if (m_rootLayer)
+        m_rootLayer->flushCompositingStateForThisLayerOnly();
     return EWKPrivate::corePage(m_view)->mainFrame().view()->flushCompositingStateIncludingSubframes();
 }
 
 void AcceleratedCompositingContext::paintToGraphicsContext()
 {
-    if (!m_textureMapper)
-        m_textureMapper = TextureMapper::create(TextureMapper::SoftwareMode);
-
     RefPtr<cairo_surface_t> surface = createSurfaceForImage(m_compositingObject);
     if (!surface)
         return;
@@ -147,11 +148,6 @@ void AcceleratedCompositingContext::paintToGraphicsContext()
 
 void AcceleratedCompositingContext::paintToCurrentGLContext()
 {
-    if (!m_textureMapper) {
-        m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
-        static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
-    }
-
     if (!evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context()))
         return;
 
@@ -187,6 +183,52 @@ void AcceleratedCompositingContext::setRootGraphicsLayer(GraphicsLayer* rootLaye
 
     if (!m_syncTimer.isActive())
         m_syncTimer.startOneShot(0);
+}
+
+void AcceleratedCompositingContext::extractImageData(Evas_Object* buffer, const IntRect& rect)
+{
+    ASSERT(buffer);
+
+    Evas_Coord width, height;
+    evas_object_image_size_get(buffer, &width, &height);
+
+    ASSERT(rect.width() == width);
+    ASSERT(rect.height() == height);
+
+    RefPtr<cairo_surface_t> imageData;
+    if (m_isAccelerated) {
+        imageData = getImageDataGL(rect);
+        flipImageSurfaceVertically(imageData.get());
+    } else
+        imageData = getImageData(rect);
+
+    evas_object_image_data_copy_set(buffer, static_cast<void*>(cairo_image_surface_get_data(imageData.get())));
+}
+
+PassRefPtr<cairo_surface_t> AcceleratedCompositingContext::getImageData(const IntRect& rect)
+{
+    RefPtr<cairo_surface_t> source = createSurfaceForImage(m_compositingObject);
+    evas_object_image_data_set(m_compositingObject, static_cast<void*>(cairo_image_surface_get_data(source.get())));
+
+    if (m_viewSize == rect.size())
+        return source.release();
+
+    RefPtr<cairo_surface_t> destination = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, rect.width(), rect.height()));
+    copyRectFromOneSurfaceToAnother(source.get(), destination.get(), -IntSize(rect.x(), rect.y()), IntRect(IntPoint(), rect.size()), IntSize(), CAIRO_OPERATOR_SOURCE);
+    return destination.release();
+}
+
+PassRefPtr<cairo_surface_t> AcceleratedCompositingContext::getImageDataGL(const IntRect& rect)
+{
+    if (!evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context()))
+        return nullptr;
+
+    RefPtr<cairo_surface_t> source = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, rect.width(), rect.height()));
+    uint8_t* sourcePtr = static_cast<uint8_t*>(cairo_image_surface_get_data(source.get()));
+
+    GraphicsContext3D* context3D = static_cast<TextureMapperGL*>(m_textureMapper.get())->graphicsContext3D();
+    context3D->readPixels(rect.x(), rect.y(), rect.width(), rect.height(), GraphicsContext3D::BGRA, GraphicsContext3D::UNSIGNED_BYTE, sourcePtr);
+    return source.release();
 }
 
 } // namespace WebCore

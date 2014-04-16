@@ -4412,11 +4412,18 @@ void ewk_view_root_graphics_layer_set(Evas_Object* ewkView, WebCore::GraphicsLay
 void ewk_view_mark_for_sync(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     // Mark the image as "dirty" meaning it needs an update next time evas renders.
     // It will call the pixel get callback then.
     evas_object_image_pixels_dirty_set(smartData->image, true);
+}
+
+void ewk_view_force_paint(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    priv->acceleratedCompositingContext->flushAndRenderLayers();
 }
 
 void ewk_view_cursor_set(Evas_Object* ewkView, const WebCore::Cursor& cursor)
@@ -4543,15 +4550,10 @@ Ewk_Context_Menu* ewk_view_context_menu_get(const Evas_Object* ewkView)
 #endif
 }
 
-Evas_Object* ewk_view_screenshot_contents_get(const Evas_Object* ewkView, const Eina_Rectangle* area, float scale)
+Evas_Object* ewk_view_screenshot_contents_get(const Evas_Object* ewkView, const Eina_Rectangle* area)
 {
     if (!area || !area->w || !area->h) {
         ERR("empty area is not allowed");
-        return 0;
-    }
-
-    if (scale < std::numeric_limits<float>::epsilon()) {
-        ERR("scale factor should be bigger than zero");
         return 0;
     }
 
@@ -4562,23 +4564,12 @@ Evas_Object* ewk_view_screenshot_contents_get(const Evas_Object* ewkView, const 
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
 
     Evas_Object* screenshotImage = evas_object_image_add(canvas);
-    int surfaceWidth = area->w * scale;
-    int surfaceHeight = area->h * scale;
-    evas_object_image_size_set(screenshotImage, surfaceWidth, surfaceHeight);
-    evas_object_image_fill_set(screenshotImage, 0, 0, surfaceWidth, surfaceHeight);
-    evas_object_resize(screenshotImage, surfaceWidth, surfaceHeight);
+    evas_object_image_size_set(screenshotImage, area->w, area->h);
+    evas_object_image_fill_set(screenshotImage, 0, 0, area->w, area->h);
+    evas_object_resize(screenshotImage, area->w, area->h);
     evas_object_image_colorspace_set(screenshotImage, EVAS_COLORSPACE_ARGB8888);
-    evas_object_image_smooth_scale_set(screenshotImage, true);
 
-    Ewk_Paint_Context* context = ewk_paint_context_from_image_new(screenshotImage);
-    ewk_paint_context_save(context);
-    ewk_paint_context_scale(context, scale, scale);
-    ewk_paint_context_translate(context, -1 * area->x, -1 * area->y);
-
-    ewk_view_paint(priv, context, area);
-
-    ewk_paint_context_restore(context);
-    ewk_paint_context_free(context);
+    priv->acceleratedCompositingContext->extractImageData(screenshotImage, WebCore::IntRect(*area));
 
     return screenshotImage;
 }

@@ -349,6 +349,11 @@ void DumpRenderTreeSupportEfl::forceLayout(Evas_Object* ewkFrame)
     ewk_frame_force_layout(ewkFrame);
 }
 
+void DumpRenderTreeSupportEfl::forcePaint(Evas_Object* ewkView)
+{
+    ewk_view_force_paint(ewkView);
+}
+
 void DumpRenderTreeSupportEfl::setTracksRepaints(Evas_Object* ewkFrame, bool enabled)
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame);

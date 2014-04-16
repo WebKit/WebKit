@@ -1,5 +1,28 @@
 2014-04-15  Hyowon Kim  <hw1008.kim@samsung.com>
 
+        [EFL] Fix problems with the pixel dump.
+        https://bugs.webkit.org/show_bug.cgi?id=131265
+
+        Reviewed by Gyuyoung Kim.
+
+        Painting and compositing paths of WebKit-EFL were totally modified from r166768.
+        However pixel dump codes still call deprecated functions like ewk_view_paint(),
+        which causes that nothing is drawn.
+
+        This patch adds new member functions to AcceleratedCompositingContext to support pixel dump.
+        One of new functions is AcceleratedCompositingContext::extractImageData(),
+        which replaces deprecated function calls. Besides the extractImageData() is invoked by
+        ewk_view_screenshot_contents_get() in order to take the visible content displayed on the EFL webview.
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::flipImageSurfaceVertically): Flip pixel data of given cairo_surface_t vertically up/down.
+        Whereas Cairo uses the top-left corner as being 0,0 of the coordinate system,
+        OpenGL uses the bottom-left corner being 0,0.
+        So we need to vertically flip resultant images taken by glReadPixels().
+        * platform/graphics/cairo/CairoUtilities.h:
+
+2014-04-15  Hyowon Kim  <hw1008.kim@samsung.com>
+
         Make page overlay functionality working on coordinated graphics.
         https://bugs.webkit.org/show_bug.cgi?id=131425
 

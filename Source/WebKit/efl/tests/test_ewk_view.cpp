@@ -132,26 +132,22 @@ TEST_F(EWKTestBase, ewk_view_screenshot_contents_get)
 
     Evas_Coord width, height;
 
-    float scale = 2;
     Eina_Rectangle area;
     area.x = 10;
     area.y = 10;
     area.w = 20;
     area.h = 30;
-    Evas_Object* screenshot = ewk_view_screenshot_contents_get(webView(), &area, scale);
+    Evas_Object* screenshot = ewk_view_screenshot_contents_get(webView(), &area);
     evas_object_geometry_get(screenshot, 0, 0, &width, &height);
-    ASSERT_EQ(area.w * scale, width);
-    ASSERT_EQ(area.h * scale, height);
+    ASSERT_EQ(area.w, width);
+    ASSERT_EQ(area.h, height);
     evas_object_del(screenshot);
 
-    screenshot = ewk_view_screenshot_contents_get(webView(), &area, 0);
-    ASSERT_FALSE(screenshot);
-
-    screenshot = ewk_view_screenshot_contents_get(webView(), 0, 1);
+    screenshot = ewk_view_screenshot_contents_get(webView(), 0);
     ASSERT_FALSE(screenshot);
 
     area.w = 0;
     area.h = 0;
-    screenshot = ewk_view_screenshot_contents_get(webView(), &area, scale);
+    screenshot = ewk_view_screenshot_contents_get(webView(), &area);
     ASSERT_FALSE(screenshot);
 }

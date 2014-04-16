@@ -152,6 +152,8 @@ void ewk_view_mixed_content_run_set(Evas_Object* ewkView, bool hasRun);
 void ewk_view_root_graphics_layer_set(Evas_Object* ewkView, WebCore::GraphicsLayer* rootLayer);
 void ewk_view_mark_for_sync(Evas_Object* ewkView);
 
+void ewk_view_force_paint(Evas_Object* ewkView);
+
 #if ENABLE(FULLSCREEN_API)
 void ewk_view_fullscreen_enter(const Evas_Object* ewkView);
 void ewk_view_fullscreen_exit(const Evas_Object* ewkView);
