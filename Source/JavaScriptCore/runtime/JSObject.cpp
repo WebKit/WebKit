@@ -829,6 +829,10 @@ ContiguousJSValues JSObject::genericConvertDoubleToContiguous(VM& vm)
         case RageConvertDoubleToValue:
             v = jsNumber(value);
             break;
+        default:
+            v = JSValue();
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
         }
         ASSERT(v.isNumber());
         currentAsValue->setWithoutWriteBarrier(v);
