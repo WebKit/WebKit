@@ -1,3 +1,16 @@
+2014-04-16  Noel Gordon  <noel.gordon@gmail.com>
+
+        Progressive JPEG outputScanlines() calls should handle failure
+        https://bugs.webkit.org/show_bug.cgi?id=116701
+
+        Reviewed by Brent Fulgham.
+
+        outputScanlines() can fail and delete |this|. Copy the decoder pointer
+        member and use that copy to detect and handle the failure case.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):
+
 2014-04-16  Robert Sipka  <sipka@inf.u-szeged.hu>
 
         [curl] Add WEB_TIMING support

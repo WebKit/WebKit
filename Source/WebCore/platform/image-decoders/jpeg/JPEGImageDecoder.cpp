@@ -467,7 +467,13 @@ public:
                     if (m_info.output_scanline == 0xffffff)
                         m_info.output_scanline = 0;
 
-                    if (!m_decoder->outputScanlines()) {
+                    // If outputScanlines() fails, it deletes |this|. Therefore,
+                    // copy the decoder pointer and use it to check for failure
+                    // to avoid member access in the failure case.
+                    JPEGImageDecoder* decoder = m_decoder;
+                    if (!decoder->outputScanlines()) {
+                        if (decoder->failed()) // Careful; |this| is deleted.
+                            return false;
                         if (!m_info.output_scanline)
                             // Didn't manage to read any lines - flag so we
                             // don't call jpeg_start_output() multiple times for
