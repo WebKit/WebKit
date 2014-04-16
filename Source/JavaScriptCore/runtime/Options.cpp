@@ -226,11 +226,6 @@ static void recomputeDependentOptions()
 #if !ENABLE(FTL_JIT)
     Options::useFTLJIT() = false;
 #endif
-#if OS(WINDOWS)
-    // Temporarily disable the JIT on Windows until we have a fix for
-    // https://webkit.org/b/131182.
-    Options::useJIT() = false;
-#endif
 
     if (Options::showDisassembly()
         || Options::showDFGDisassembly()

@@ -504,6 +504,11 @@ inline bool JSValue::isMachineInt() const
     double number = asDouble();
     if (number != number)
         return false;
+#if OS(WINDOWS)
+    // Need to check for infinity on Windows to avoid floating point error on following cast, see bug 131182.
+    if (std::isinf(number))
+        return false;
+#endif
     int64_t asInt64 = static_cast<int64_t>(number);
     if (asInt64 != number)
         return false;
