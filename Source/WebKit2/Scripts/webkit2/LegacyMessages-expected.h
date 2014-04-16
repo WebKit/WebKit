@@ -295,7 +295,7 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("CreatePlugin"); }
     static const bool isSync = true;
 
-    typedef IPC::Arguments1<bool&> Reply;
+    typedef IPC::Arguments<bool&> Reply;
     CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
         : m_arguments(pluginInstanceID, parameters)
     {
@@ -318,7 +318,7 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("RunJavaScriptAlert"); }
     static const bool isSync = true;
 
-    typedef IPC::Arguments0 Reply;
+    typedef IPC::Arguments<> Reply;
     RunJavaScriptAlert(uint64_t frameID, const String& message)
         : m_arguments(frameID, message)
     {
@@ -341,7 +341,7 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("GetPlugins"); }
     static const bool isSync = true;
 
-    typedef IPC::Arguments1<Vector<WebCore::PluginInfo>&> Reply;
+    typedef IPC::Arguments<Vector<WebCore::PluginInfo>&> Reply;
     explicit GetPlugins(bool refresh)
         : m_arguments(refresh)
     {
@@ -375,7 +375,7 @@ public:
         std::unique_ptr<IPC::MessageEncoder> m_encoder;
     };
 
-    typedef IPC::Arguments1<IPC::Connection::Handle&> Reply;
+    typedef IPC::Arguments<IPC::Connection::Handle&> Reply;
     explicit GetPluginProcessConnection(const String& pluginPath)
         : m_arguments(pluginPath)
     {
@@ -409,7 +409,7 @@ public:
         std::unique_ptr<IPC::MessageEncoder> m_encoder;
     };
 
-    typedef IPC::Arguments0 Reply;
+    typedef IPC::Arguments<> Reply;
     const std::tuple<> arguments() const
     {
         return m_arguments;
@@ -518,7 +518,7 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("InterpretKeyEvent"); }
     static const bool isSync = true;
 
-    typedef IPC::Arguments1<Vector<WebCore::KeypressCommand>&> Reply;
+    typedef IPC::Arguments<Vector<WebCore::KeypressCommand>&> Reply;
     explicit InterpretKeyEvent(uint32_t type)
         : m_arguments(type)
     {

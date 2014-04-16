@@ -1,3 +1,58 @@
+2014-04-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Make IPC::Arguments a variadic template
+        https://bugs.webkit.org/show_bug.cgi?id=131684
+
+        Reviewed by Darin Adler.
+
+        Make IPC::Arguments a variadic template that uses the template parameter pack to further
+        define the std::tuple ValueType and is used to define the std::tuple container of the
+        values passed into the container.
+
+        * Platform/IPC/Arguments.h:
+        (IPC::Arguments::Arguments):
+        (IPC::Arguments::encode):
+        (IPC::Arguments::decode):
+        (IPC::Arguments0::encode): Deleted.
+        (IPC::Arguments0::decode): Deleted.
+        (IPC::Arguments1::Arguments1): Deleted.
+        (IPC::Arguments1::encode): Deleted.
+        (IPC::Arguments1::decode): Deleted.
+        (IPC::Arguments2::Arguments2): Deleted.
+        (IPC::Arguments2::encode): Deleted.
+        (IPC::Arguments2::decode): Deleted.
+        (IPC::Arguments3::Arguments3): Deleted.
+        (IPC::Arguments3::encode): Deleted.
+        (IPC::Arguments3::decode): Deleted.
+        (IPC::Arguments4::Arguments4): Deleted.
+        (IPC::Arguments4::encode): Deleted.
+        (IPC::Arguments4::decode): Deleted.
+        (IPC::Arguments5::Arguments5): Deleted.
+        (IPC::Arguments5::encode): Deleted.
+        (IPC::Arguments5::decode): Deleted.
+        (IPC::Arguments6::Arguments6): Deleted.
+        (IPC::Arguments6::encode): Deleted.
+        (IPC::Arguments6::decode): Deleted.
+        (IPC::Arguments7::Arguments7): Deleted.
+        (IPC::Arguments7::encode): Deleted.
+        (IPC::Arguments7::decode): Deleted.
+        (IPC::Arguments8::Arguments8): Deleted.
+        (IPC::Arguments8::encode): Deleted.
+        (IPC::Arguments8::decode): Deleted.
+        (IPC::Arguments10::Arguments10): Deleted.
+        (IPC::Arguments10::encode): Deleted.
+        (IPC::Arguments10::decode): Deleted.
+        * Scripts/webkit2/LegacyMessages-expected.h:
+        * Scripts/webkit2/Messages-expected.h:
+        * Scripts/webkit2/messages.py: Clean up the code a bit.
+        (reply_parameter_type):
+        (arguments_type):
+        (reply_type):
+        (decode_type):
+        (arguments_type_old): Deleted.
+        (base_class): Deleted.
+        (delayed_reply_type): Deleted.
+
 2014-04-16  Tim Horton  <timothy_horton@apple.com>
 
         Deduplicate LayerTreeContext
