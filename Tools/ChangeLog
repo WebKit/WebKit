@@ -1,3 +1,17 @@
+2014-04-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Update list of skipped unit tests:
+
+          Skip test: WebKit2Gtk/TestWebKitWebView:/webkit2/WebKitWebView/page-visibility
+
+          Unskip tests: WebKit2/TestWebKit2:WebKit2.ResizeReversePaginatedWebView
+          and WebKit2/TestWebKit2:WebKit2.ScrollPinningBehaviors
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2014-04-16  Tim Horton  <timothy_horton@apple.com>
 
         check-webkit-style doesn't check code style in .mm or .m files
