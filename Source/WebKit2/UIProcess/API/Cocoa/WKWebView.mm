@@ -952,7 +952,7 @@ static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProx
 
 - (pid_t)_webProcessIdentifier
 {
-    return _page->processIdentifier();
+    return _page->isValid() ? _page->processIdentifier() : 0;
 }
 
 - (NSData *)_sessionState
