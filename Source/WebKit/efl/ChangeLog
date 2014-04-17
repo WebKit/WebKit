@@ -1,3 +1,39 @@
+2014-04-17  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        [EFL] Remove deprecated ewk_paint code.
+        https://bugs.webkit.org/show_bug.cgi?id=131266
+
+        Reviewed by Gyuyoung Kim.
+
+        ewk_paint related code was deprecated since r166637.
+
+        * WebCoreSupport/AcceleratedCompositingContextEfl.cpp:
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::invalidateRootView): Deleted.
+        (WebCore::ChromeClientEfl::invalidateContentsAndRootView): Deleted.
+        (WebCore::ChromeClientEfl::invalidateContentsForSlowScroll): Deleted.
+        (WebCore::ChromeClientEfl::scroll): Deleted.
+        * WebCoreSupport/ChromeClientEfl.h:
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        * ewk/ewk_paint_context.cpp: Removed.
+        * ewk/ewk_paint_context_private.h: Removed.
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_del):
+        (_ewk_view_smart_calculate):
+        (ewk_view_smart_set):
+        (_ewk_view_repaints_resize): Deleted.
+        (_ewk_view_repaint_add): Deleted.
+        (_ewk_view_repaints_flush): Deleted.
+        (_ewk_view_smart_flush): Deleted.
+        (ewk_view_repaints_pop): Deleted.
+        (ewk_view_repaint_add): Deleted.
+        (ewk_view_paint): Deleted.
+        (ewk_view_paint_contents): Deleted.
+        (ewk_view_repaint): Deleted.
+        (ewk_view_scroll): Deleted.
+        (ewk_view_tiled_backing_store_invalidate): Deleted.
+        * ewk/ewk_view_private.h:
+
 2014-04-16  Jeongeun Kim  <je_julie.kim@samsung.com>
 
         [EFL] Cleanup the build from unused parameters in WebKit-efl.

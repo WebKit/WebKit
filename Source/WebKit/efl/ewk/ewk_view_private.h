@@ -26,7 +26,6 @@
 #include "NetworkStorageSession.h"
 #include "Page.h"
 #include "Widget.h"
-#include "ewk_paint_context_private.h"
 #include "ewk_view.h"
 
 namespace WebCore {
@@ -95,8 +94,6 @@ uint64_t ewk_view_exceeded_database_quota(Evas_Object* ewkView, Evas_Object* fra
 
 bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, Ewk_File_Chooser* fileChooser, Eina_List** selectedFilenames);
 
-void ewk_view_repaint(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height);
-void ewk_view_scroll(Evas_Object*, const WebCore::IntSize& delta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect);
 WebCore::Page* ewk_view_core_page_get(const Evas_Object* ewkView);
 
 void ewk_view_frame_rect_changed(Evas_Object* ewkView);
@@ -118,25 +115,14 @@ void ewk_view_editor_client_selection_changed(Evas_Object* ewkView);
 
 bool ewk_view_focus_can_cycle(Evas_Object* ewkView, Ewk_Focus_Direction direction);
 
-Eina_Bool ewk_view_paint(Ewk_View_Private_Data* priv, Ewk_Paint_Context* context, const Eina_Rectangle* area);
-Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data* priv, Ewk_Paint_Context* context, const Eina_Rectangle* area);
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void ewk_view_js_window_object_clear(Evas_Object* ewkView, Evas_Object* frame);
-#endif
-
-#if USE(TILED_BACKING_STORE)
-void ewk_view_tiled_backing_store_invalidate(Evas_Object* ewkView, const WebCore::IntRect& area);
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
 void ewk_view_need_touch_events_set(Evas_Object*, bool needed);
 bool ewk_view_need_touch_events_get(const Evas_Object*);
 #endif
-
-const Eina_Rectangle* ewk_view_repaints_pop(Ewk_View_Private_Data* priv, size_t* count);
-
-void ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height);
 
 void ewk_view_layout_if_needed_recursive(Ewk_View_Private_Data* priv);
 

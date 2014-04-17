@@ -514,40 +514,6 @@ void ChromeClientEfl::scheduleAnimation()
 }
 #endif
 
-void ChromeClientEfl::invalidateRootView(const IntRect& updateRect)
-{
-#if USE(TILED_BACKING_STORE)
-    ewk_view_tiled_backing_store_invalidate(m_view, updateRect);
-#else
-    UNUSED_PARAM(updateRect);
-    notImplemented();
-#endif
-}
-
-void ChromeClientEfl::invalidateContentsAndRootView(const IntRect& updateRect)
-{
-    if (updateRect.isEmpty())
-        return;
-
-    Evas_Coord x, y, w, h;
-
-    x = updateRect.x();
-    y = updateRect.y();
-    w = updateRect.width();
-    h = updateRect.height();
-    ewk_view_repaint(m_view, x, y, w, h);
-}
-
-void ChromeClientEfl::invalidateContentsForSlowScroll(const IntRect& updateRect)
-{
-    invalidateContentsAndRootView(updateRect);
-}
-
-void ChromeClientEfl::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
-{
-    ewk_view_scroll(m_view, scrollDelta, rectToScroll, clipRect);
-}
-
 void ChromeClientEfl::loadIconForFiles(const Vector<String>&, FileIconLoader*)
 {
     notImplemented();

@@ -156,10 +156,10 @@ public:
 
     virtual void scrollRectIntoView(const IntRect&) const override { }
 
-    virtual void invalidateRootView(const IntRect&) override;
-    virtual void invalidateContentsAndRootView(const IntRect&) override;
-    virtual void invalidateContentsForSlowScroll(const IntRect&) override;
-    virtual void scroll(const IntSize&, const IntRect&, const IntRect&) override;
+    virtual void invalidateRootView(const IntRect&) override { }
+    virtual void invalidateContentsAndRootView(const IntRect&) override { }
+    virtual void invalidateContentsForSlowScroll(const IntRect&) override { }
+    virtual void scroll(const IntSize&, const IntRect&, const IntRect&) override { }
 
     virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const override;
 

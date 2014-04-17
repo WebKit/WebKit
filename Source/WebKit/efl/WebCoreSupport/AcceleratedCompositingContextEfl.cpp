@@ -24,6 +24,7 @@
 #include "AcceleratedCompositingContextEfl.h"
 #include "CairoUtilities.h"
 #include "CairoUtilitiesEfl.h"
+#include "FrameView.h"
 #include "GraphicsLayerTextureMapper.h"
 #include "MainFrame.h"
 #include "PlatformContextCairo.h"

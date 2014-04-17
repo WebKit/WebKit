@@ -24,6 +24,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "EflInspectorUtilities.h"
+#include "FrameView.h"
 #include "InspectorController.h"
 #include "MainFrame.h"
 #include "NotImplemented.h"

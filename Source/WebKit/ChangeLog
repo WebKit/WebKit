@@ -1,3 +1,14 @@
+2014-04-17  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        [EFL] Remove deprecated ewk_paint code.
+        https://bugs.webkit.org/show_bug.cgi?id=131266
+
+        Reviewed by Gyuyoung Kim.
+
+        ewk_paint related code was deprecated since r166637.
+
+        * PlatformEfl.cmake: Remove ewk_paint_context.cpp
+
 2014-04-16  Simon Fraser  <simon.fraser@apple.com>
 
         Make Windows fail with a link error so I know what the new symbol is.
