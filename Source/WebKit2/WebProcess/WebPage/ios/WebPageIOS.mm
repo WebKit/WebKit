@@ -1803,19 +1803,43 @@ void WebPage::dynamicViewportSizeUpdate(const IntSize& minimumLayoutSize, const 
         newUnobscuredContentRect.setWidth(std::min(static_cast<float>(newContentSize.width()), newExposedContentRect.width()));
         newUnobscuredContentRect.setHeight(std::min(static_cast<float>(newContentSize.height()), newExposedContentRect.height()));
 
-        double horizontalAdjustment = 0;
-        if (newExposedContentRect.maxX() > newContentSize.width())
-            horizontalAdjustment -= newExposedContentRect.maxX() - newContentSize.width();
-        double verticalAdjustment = 0;
-        if (newExposedContentRect.maxY() > newContentSize.height())
-            verticalAdjustment -= newExposedContentRect.maxY() - newContentSize.height();
-        if (newExposedContentRect.x() < 0)
-            horizontalAdjustment += - newExposedContentRect.x();
-        if (newExposedContentRect.y() < 0)
-            verticalAdjustment += - newExposedContentRect.y();
+        if (oldContentSize != newContentSize) {
+            // If the content size has changed, keep the same relative position.
+            FloatPoint oldContentCenter = targetUnobscuredRect.center();
+            float relativeHorizontalPosition = oldContentCenter.x() / oldContentSize.width();
+            float relativeVerticalPosition =  oldContentCenter.y() / oldContentSize.height();
+            FloatPoint newRelativeContentCenter(relativeHorizontalPosition * newContentSize.width(), relativeVerticalPosition * newContentSize.height());
+            FloatPoint newUnobscuredContentRectCenter = newUnobscuredContentRect.center();
+            FloatPoint positionDelta(newRelativeContentCenter.x() - newUnobscuredContentRectCenter.x(), newRelativeContentCenter.y() - newUnobscuredContentRectCenter.y());
+            newUnobscuredContentRect.moveBy(positionDelta);
+            newExposedContentRect.moveBy(positionDelta);
+        }
 
-        newUnobscuredContentRect.move(horizontalAdjustment, verticalAdjustment);
-        newExposedContentRect.move(horizontalAdjustment, verticalAdjustment);
+        // Make the top/bottom edges "sticky" within 1 pixel.
+        if (targetUnobscuredRect.maxY() > oldContentSize.height() - 1) {
+            float bottomVerticalPosition = newContentSize.height() - newUnobscuredContentRect.height();
+            newUnobscuredContentRect.setY(bottomVerticalPosition);
+            newExposedContentRect.setY(bottomVerticalPosition);
+        }
+        if (targetUnobscuredRect.y() < 1) {
+            newUnobscuredContentRect.setY(0);
+            newExposedContentRect.setY(0);
+        }
+
+        float horizontalAdjustment = 0;
+        if (newExposedContentRect.maxX() > newContentSize.width())
+            horizontalAdjustment -= newUnobscuredContentRect.maxX() - newContentSize.width();
+        float verticalAdjustment = 0;
+        if (newExposedContentRect.maxY() > newContentSize.height())
+            verticalAdjustment -= newUnobscuredContentRect.maxY() - newContentSize.height();
+        if (newExposedContentRect.x() < 0)
+            horizontalAdjustment += - newUnobscuredContentRect.x();
+        if (newExposedContentRect.y() < 0)
+            verticalAdjustment += - newUnobscuredContentRect.y();
+
+        FloatPoint adjustmentDelta(horizontalAdjustment, verticalAdjustment);
+        newUnobscuredContentRect.moveBy(adjustmentDelta);
+        newExposedContentRect.moveBy(adjustmentDelta);
     }
 
     frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());

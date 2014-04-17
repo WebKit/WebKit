@@ -549,10 +549,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_scrollToContentOffset:(WebCore::FloatPoint)contentOffset
 {
+    if (_isAnimatingResize)
+        return;
+
     WebCore::FloatPoint scaledOffset = contentOffset;
     CGFloat zoomScale = contentZoomScale(self);
     scaledOffset.scale(zoomScale, zoomScale);
 
+    // FIXME: the offset is relative to the unobscured rect top, not the content insets!
     UIEdgeInsets inset = [_scrollView contentInset];
     scaledOffset += WebCore::FloatSize(-inset.left, -inset.top);
 
@@ -1257,7 +1261,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 {
     _hasStaticMinimumLayoutSize = YES;
     _minimumLayoutSizeOverride = minimumLayoutSizeOverride;
-    setViewportConfigurationMinimumLayoutSize(*_page, minimumLayoutSizeOverride);
+    if (!_isAnimatingResize)
+        setViewportConfigurationMinimumLayoutSize(*_page, minimumLayoutSizeOverride);
 }
 
 - (UIEdgeInsets)_obscuredInsets

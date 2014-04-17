@@ -1,5 +1,31 @@
 2014-04-16  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] Improve the approximation of the scroll position of the dynamic viewport size updates
+        https://bugs.webkit.org/show_bug.cgi?id=131720
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scrollToContentOffset:]):
+        The scrolling tree was forcing scroll at the wrong scale during the transition. 
+
+        (-[WKWebView _setMinimumLayoutSizeOverride:]):
+        This was left out by accident. The WebProcess was getting the new layout size twice, making
+        WebPage::dynamicViewportSizeUpdate() very confused when the content size changes.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        Add scrolling adjustment for the dynamic relayout case:
+        -Sticky top and bottom like the UIProcess.
+        -Keep the same relative position of the unobscured rect's center.
+
+        Also fix a bug in the horizontal and vertical adjustments: the code was using the exposed rect
+        instead of the unobscured rect, which made the adjustments off by the size of the obscured insets.
+
+        The type is changed from double to float since ARMv7 has a grudge against double.
+
+2014-04-16  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Do not update the visible content rects when setting the same obscured insets multiple times
         https://bugs.webkit.org/show_bug.cgi?id=131633
 
