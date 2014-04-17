@@ -1,5 +1,41 @@
 2014-04-17  Filip Pizlo  <fpizlo@apple.com>
 
+        InlineCallFrameSet should be refcounted
+        https://bugs.webkit.org/show_bug.cgi?id=131829
+
+        Reviewed by Geoffrey Garen.
+        
+        And DFG::Plan should hold a ref to it. Previously it was owned by Graph until it
+        became owned by JITCode. Except that if we're "failing" to compile, JITCode may die.
+        Even as it dies, the GC may still want to scan the DFG::Plan, which leads to scanning
+        the DesiredWriteBarriers, which leads to scanning the InlineCallFrameSet.
+        
+        So, just make the darn thing refcounted.
+
+        * bytecode/InlineCallFrameSet.h:
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::requiredRegisterCountForExit):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        * dfg/DFGPlan.h:
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * ftl/FTLFail.cpp:
+        (JSC::FTL::fail):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+
+2014-04-17  Filip Pizlo  <fpizlo@apple.com>
+
         FTL::fail() should manage memory "correctly"
         https://bugs.webkit.org/show_bug.cgi?id=131823
         <rdar://problem/16384297>

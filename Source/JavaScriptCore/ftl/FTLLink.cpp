@@ -60,8 +60,8 @@ void link(State& state)
     
     state.jitCode->common.requiredRegisterCountForExit = graph.requiredRegisterCountForExit();
     
-    if (!graph.m_inlineCallFrames->isEmpty())
-        state.jitCode->common.inlineCallFrames = std::move(graph.m_inlineCallFrames);
+    if (!graph.m_plan.inlineCallFrames->isEmpty())
+        state.jitCode->common.inlineCallFrames = graph.m_plan.inlineCallFrames;
     
     // Create the entrypoint. Note that we use this entrypoint totally differently
     // depending on whether we're doing OSR entry or not.

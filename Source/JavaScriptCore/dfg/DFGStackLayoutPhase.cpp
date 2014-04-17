@@ -103,7 +103,7 @@ public:
         }
         if (codeBlock()->uncheckedActivationRegister().isValid())
             usedLocals.set(codeBlock()->activationRegister().toLocal());
-        for (InlineCallFrameSet::iterator iter = m_graph.m_inlineCallFrames->begin(); !!iter; ++iter) {
+        for (InlineCallFrameSet::iterator iter = m_graph.m_plan.inlineCallFrames->begin(); !!iter; ++iter) {
             InlineCallFrame* inlineCallFrame = *iter;
             if (!inlineCallFrame->executable->usesArguments())
                 continue;

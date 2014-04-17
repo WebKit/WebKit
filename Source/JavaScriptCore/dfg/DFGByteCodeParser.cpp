@@ -3400,7 +3400,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         ASSERT(inlineCallFrameStart.isValid());
         ASSERT(callsiteBlockHead);
         
-        m_inlineCallFrame = byteCodeParser->m_graph.m_inlineCallFrames->add();
+        m_inlineCallFrame = byteCodeParser->m_graph.m_plan.inlineCallFrames->add();
         initializeLazyWriteBarrierForInlineCallFrameExecutable(
             byteCodeParser->m_graph.m_plan.writeBarriers,
             m_inlineCallFrame->executable,

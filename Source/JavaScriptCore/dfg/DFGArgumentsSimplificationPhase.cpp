@@ -122,7 +122,7 @@ public:
         bool changed = false;
         
         // Record which arguments are known to escape no matter what.
-        for (InlineCallFrameSet::iterator iter = m_graph.m_inlineCallFrames->begin(); !!iter; ++iter)
+        for (InlineCallFrameSet::iterator iter = m_graph.m_plan.inlineCallFrames->begin(); !!iter; ++iter)
             pruneObviousArgumentCreations(*iter);
         pruneObviousArgumentCreations(0); // the machine call frame.
         

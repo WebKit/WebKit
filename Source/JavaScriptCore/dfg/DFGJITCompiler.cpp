@@ -153,8 +153,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     m_jitCode->common.frameRegisterCount = m_graph.frameRegisterCount();
     m_jitCode->common.requiredRegisterCountForExit = m_graph.requiredRegisterCountForExit();
 
-    if (!m_graph.m_inlineCallFrames->isEmpty())
-        m_jitCode->common.inlineCallFrames = m_graph.m_inlineCallFrames.release();
+    if (!m_graph.m_plan.inlineCallFrames->isEmpty())
+        m_jitCode->common.inlineCallFrames = m_graph.m_plan.inlineCallFrames;
     
     m_jitCode->common.machineCaptureStart = m_graph.m_machineCaptureStart;
     m_jitCode->common.slowArguments = std::move(m_graph.m_slowArguments);

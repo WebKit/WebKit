@@ -40,9 +40,6 @@ void fail(State& state)
 {
     state.graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(state.graph.m_plan));
     
-    if (!state.graph.m_inlineCallFrames->isEmpty())
-        state.jitCode->common.inlineCallFrames = std::move(state.graph.m_inlineCallFrames);
-
     if (state.module)
         llvm->DisposeModule(state.module);
 }

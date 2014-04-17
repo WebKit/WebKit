@@ -28,12 +28,11 @@
 
 #include "CodeOrigin.h"
 #include <wtf/Bag.h>
-#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace JSC {
 
-class InlineCallFrameSet {
-    WTF_MAKE_NONCOPYABLE(InlineCallFrameSet);
+class InlineCallFrameSet : public RefCounted<InlineCallFrameSet> {
 public:
     InlineCallFrameSet();
     ~InlineCallFrameSet();

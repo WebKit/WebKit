@@ -89,7 +89,7 @@ public:
         return std::max(frameRegisterCount, requiredRegisterCountForExit);
     }
 
-    OwnPtr<InlineCallFrameSet> inlineCallFrames;
+    RefPtr<InlineCallFrameSet> inlineCallFrames;
     Vector<CodeOrigin, 0, UnsafeVectorOverflow> codeOrigins;
     
     Vector<Identifier> dfgIdentifiers;

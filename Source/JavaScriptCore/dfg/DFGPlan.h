@@ -85,6 +85,7 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
 
     OwnPtr<Finalizer> finalizer;
     
+    RefPtr<InlineCallFrameSet> inlineCallFrames;
     DesiredWatchpoints watchpoints;
     DesiredIdentifiers identifiers;
     DesiredStructureChains chains;
