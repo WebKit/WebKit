@@ -1,3 +1,12 @@
+2014-04-17  Brendan Long  <b.long@cablelabs.com>
+
+        [Gtk] Install ninja-build in Tools/gtk/install-dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=131760
+
+        Reviewed by Philippe Normand.
+
+        * gtk/install-dependencies: Install ninja-build when it's available.
+
 2014-04-16  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] run-javascriptcore-tests fails to run.

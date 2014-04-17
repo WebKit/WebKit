@@ -126,6 +126,10 @@ function installDependenciesWithApt {
     apt-get install \
         git-svn \
         subversion
+
+    # ninja is a faster build system than GNU make, but it doesn't
+    # exist on Ubuntu 12.04
+    apt-get install ninja-build || true
 }
 
 function installDependenciesWithYum {
@@ -163,6 +167,7 @@ function installDependenciesWithYum {
         libwebp-devel \
         libxslt-devel \
         mesa-libGL-devel \
+        ninja-build \
         pcre-devel \
         perl-Switch \
         perl-version \
