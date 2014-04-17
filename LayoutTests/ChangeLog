@@ -1,3 +1,37 @@
+2014-04-17  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Isolation descendant dependent flags are not updated correctly
+        https://bugs.webkit.org/show_bug.cgi?id=130892
+
+        Reviewed by Dean Jackson.
+
+        * css3/compositing/blend-mode-isolation-flags-append-non-stacking-context-blending.html: Added.
+        * css3/compositing/blend-mode-isolation-flags-append-stacking-context-blending.html: Added.
+        * css3/compositing/blend-mode-isolation-flags-remove-non-stacking-context-blending.html: Added.
+        * css3/compositing/blend-mode-isolation-flags-remove-stacking-context-blending.html: Added.
+        * css3/compositing/blend-mode-isolation-flags-turn-off-blending-no-isolation.html: Added.
+        * css3/compositing/blend-mode-isolation-flags-turn-off-blending.html: Added.
+        * css3/compositing/blend-mode-isolation-flags-turn-off-stacking-context.html: Added.
+        * css3/compositing/blend-mode-isolation-flags-turn-on-blending.html: Added.
+        * css3/compositing/blend-mode-isolation-flags-turn-on-stacking-context.html: Added.
+        * platform/mac/css3/compositing/blend-mode-background-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-isolated-group-1-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-isolated-group-2-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-isolated-group-3-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-isolation-flags-append-non-stacking-context-blending-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-isolation-flags-append-stacking-context-blending-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-isolation-flags-remove-non-stacking-context-blending-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-isolation-flags-remove-stacking-context-blending-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-isolation-flags-turn-off-blending-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-isolation-flags-turn-off-blending-no-isolation-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-isolation-flags-turn-off-stacking-context-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-isolation-flags-turn-on-blending-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-isolation-flags-turn-on-stacking-context-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-layers-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-reflection-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-simple-composited-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-simple-expected.txt:
+
 2014-04-16  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: memoize fallback time values for document.lastModified

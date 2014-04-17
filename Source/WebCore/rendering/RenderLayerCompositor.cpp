@@ -1251,6 +1251,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
 #if ENABLE(CSS_COMPOSITING)
     layer.setHasUnisolatedCompositedBlendingDescendants(childState.m_hasUnisolatedCompositedBlendingDescendants);
+    ASSERT(!layer.hasUnisolatedCompositedBlendingDescendants() || layer.hasUnisolatedBlendingDescendants());
 #endif
     // Now check for reasons to become composited that depend on the state of descendant layers.
     RenderLayer::IndirectCompositingReason indirectCompositingReason;

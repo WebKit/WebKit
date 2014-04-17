@@ -1,3 +1,59 @@
+2014-04-17  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Isolation descendant dependent flags are not updated correctly
+        https://bugs.webkit.org/show_bug.cgi?id=130892
+
+        Reviewed by Dean Jackson.
+
+        The isolation descendant dependent flag (m_hasUnisolatedBlendingDescendants)
+        will help us to determine if a layer should isolate blending descendants or not.
+        The m_hasUnisolatedBlendingDescendants flag should be set for layers that have blending descendant layers
+        not isolated by descendant stacking contexts.
+        An element isolatesBlending() if it has this flag set and creates stacking context.
+
+        Tests: css3/compositing/blend-mode-isolation-flags-append-non-stacking-context-blending.html
+               css3/compositing/blend-mode-isolation-flags-append-stacking-context-blending.html
+               css3/compositing/blend-mode-isolation-flags-remove-non-stacking-context-blending.html
+               css3/compositing/blend-mode-isolation-flags-remove-stacking-context-blending.html
+               css3/compositing/blend-mode-isolation-flags-turn-off-blending-no-isolation.html
+               css3/compositing/blend-mode-isolation-flags-turn-off-blending.html
+               css3/compositing/blend-mode-isolation-flags-turn-off-stacking-context.html
+               css3/compositing/blend-mode-isolation-flags-turn-on-blending.html
+               css3/compositing/blend-mode-isolation-flags-turn-on-stacking-context.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateBlendMode):
+        (WebCore::RenderLayer::updateAncestorChainHasBlendingDescendants):
+            When a layer has blending and it hasn't had it before, we set the isolation
+        flag for all its ancestors up to the first layer creating stacking context.
+        I removed the isComposited() check here. Isolation flags should be correct regardless
+        of compositing state. Moreover, if this method is called from styleChanged(),
+        the compositing state might not be accurate, it's going to be recalculated afterwards.  
+        (WebCore::RenderLayer::dirtyAncestorChainHasBlendingDescendants):
+            When a layer doesn't have blending, but it used to have it before, we mark
+        the isolation flag as dirty for all its ancestors up to the first layer
+        creating stacking context. The isolation flags will be recalculated by
+        RenderLayer::updateDescendantDependentFlags.
+        (WebCore::RenderLayer::updateDescendantDependentFlags):
+            Evaluates if the layer has unisolated blending descendants by traversing
+        the layer subtree.
+        (WebCore::RenderLayer::addChild):
+            When adding a subtree that has blending or has some unisolated descendants,
+        we set the flag for all the ancestors, up to the stacking context layer.
+        (WebCore::RenderLayer::removeChild):
+            When removing a subtree that had blending or had some unisolated descendants,
+        we dirty the flag so that it could be reevaluated.
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::updateTransform):
+        * rendering/RenderLayer.h:
+            Rename m_hasBlendedElementInChildStackingContext => m_hasUnisolatedBlendingDescendants
+        and m_hasBlendedElementInChildStackingContextStatusDirty => m_hasUnisolatedBlendingDescendantsStatusDirty,
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+            Add an assert to make sure that if m_hasUnisolatedCompositedBlendingDescendants is true,
+        then m_hasUnisolatedBlendingDescendants is true as well.
+
 2014-04-17  Tim Horton  <timothy_horton@apple.com>
 
         Uninline blend(Color, Color) to get AnimationUtilities out of Color.h

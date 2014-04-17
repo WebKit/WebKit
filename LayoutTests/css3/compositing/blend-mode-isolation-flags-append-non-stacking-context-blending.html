@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <!-- This test will check if the isolation flag is properly computed when we append a subtree
+          having blending elements. -->
+        <style>
+            div {
+                width: 100px;
+                height: 100px;
+                /* This forces render layers, avoiding normal flow only issues */
+                position: relative;
+            }
+
+            .stacking-context {
+                -webkit-isolation: isolate;
+                isolation: isolate;
+            }
+
+            .blending {
+                -webkit-mix-blend-mode: difference;
+                mix-blend-mode: difference;
+            }
+
+            .leaf {
+                background-color: #ff00ff;
+                left:-25px;
+            }
+
+            .append-root {
+                background-color: #ffff44;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="stacking-context" style="background-color: #00ff00;">
+            <div id="target" style="background-color: #ffff00; left: 50px;"></div>
+        </div>
+        <script type="text/javascript">
+            if (window.testRunner)
+                window.testRunner.waitUntilDone();
+
+            function change() {
+                var blendingElement = document.createElement("div");
+                blendingElement.className = "blending leaf";
+
+                var toAppend = document.createElement("div");
+                toAppend.className = "append-root";
+                toAppend.appendChild(blendingElement);
+
+                var target = document.getElementById("target");
+                target.appendChild(toAppend);
+
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
+            }
+
+            window.setTimeout("change()", 10);
+        </script>
+    </body>
+</html>

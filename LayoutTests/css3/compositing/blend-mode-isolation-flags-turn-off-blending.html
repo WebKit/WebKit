@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <!-- This test will check if the isolation flag is properly removed when we remove
+            the mix-blend-mode property from its descendants. -->
+        <style>
+            div {
+                width: 100px;
+                height: 100px;
+                /* This forces render layers, avoiding normal flow only issues */
+                position: relative;
+            }
+
+            .stacking-context {
+                -webkit-isolation: isolate;
+                isolation: isolate;
+            }
+
+            .blending {
+                -webkit-mix-blend-mode: difference;
+                mix-blend-mode: difference;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="stacking-context" style="background-color: #00ff00;">
+            <div id="target" class="blending stacking-context" style="background-color: #ffff00; left: 50px;">
+                <div>
+                    <div class="blending" style="background-color: #ff00ff;left:-25px;"></div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            if (window.testRunner)
+                window.testRunner.waitUntilDone();
+
+            function change() {
+                var target = document.getElementById("target");
+                target.className = "stacking-context";
+
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
+            }
+
+            window.setTimeout("change()", 10);
+        </script>
+    </body>
+</html>

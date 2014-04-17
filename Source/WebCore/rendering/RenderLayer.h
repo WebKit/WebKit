@@ -777,80 +777,30 @@ public:
     bool hasFilter() const { return false; }
 #endif
 
-    bool hasBlendMode() const
-    {
 #if ENABLE(CSS_COMPOSITING)
-        return renderer().hasBlendMode();
-#else
-        return false;
-#endif
-    }
-
-#if ENABLE(CSS_COMPOSITING)
+    bool hasBlendMode() const { return renderer().hasBlendMode(); }
     BlendMode blendMode() const { return m_blendMode; }
-#endif
 
-    bool isolatesCompositedBlending() const
-    {
-#if ENABLE(CSS_COMPOSITING)
-        return m_hasUnisolatedCompositedBlendingDescendants && isStackingContext();
-#else
-        return false;
-#endif
-    }
-
-#if ENABLE(CSS_COMPOSITING)
+    bool isolatesCompositedBlending() const { return m_hasUnisolatedCompositedBlendingDescendants && isStackingContext(); }
     bool hasUnisolatedCompositedBlendingDescendants() const { return m_hasUnisolatedCompositedBlendingDescendants; }
     void setHasUnisolatedCompositedBlendingDescendants(bool hasUnisolatedCompositedBlendingDescendants)
     {
         m_hasUnisolatedCompositedBlendingDescendants = hasUnisolatedCompositedBlendingDescendants;
     }
-#endif
 
-    bool isolatesBlending() const
+    bool isolatesBlending() const { return hasUnisolatedBlendingDescendants() && isStackingContext(); }
+    bool hasUnisolatedBlendingDescendants() const
     {
-#if ENABLE(CSS_COMPOSITING)
-        return m_hasBlendedElementInChildStackingContext && isStackingContext();
-#else
-        return false;
-#endif
+        ASSERT(!m_hasUnisolatedBlendingDescendantsStatusDirty);
+        return m_hasUnisolatedBlendingDescendants;
     }
-
-    bool hasBlendedElementInChildStackingContext() const
-    {
-#if ENABLE(CSS_COMPOSITING)
-        return m_hasBlendedElementInChildStackingContext;
+    bool hasUnisolatedBlendingDescendantsStatusDirty() const { return m_hasUnisolatedBlendingDescendantsStatusDirty; }
 #else
-        return false;
+    bool hasBlendMode() const { return false; }
+    bool isolatesCompositedBlending() const { return false; }
+    bool isolatesBlending() const { return false; }
+    bool hasUnisolatedBlendingDescendantsStatusDirty() const { return false; }
 #endif
-    }
-
-    void setHasBlendedElementInChildStackingContext(bool hasBlendedElementInChildStackingContext)
-    {
-#if ENABLE(CSS_COMPOSITING)
-        m_hasBlendedElementInChildStackingContext = hasBlendedElementInChildStackingContext;
-#else
-        UNUSED_PARAM(hasBlendedElementInChildStackingContext);
-#endif
-    }
-
-    bool hasBlendedElementInChildStackingContextStatusDirty() const
-    {
-#if ENABLE(CSS_COMPOSITING)
-        return m_hasBlendedElementInChildStackingContextStatusDirty;
-#else
-        return false;
-#endif
-    }
-
-    void setHasBlendedElementInChildStackingContextStatusDirty(bool hasBlendedElementInChildStackingContextStatusDirty)
-    {
-#if ENABLE(CSS_COMPOSITING)
-        m_hasBlendedElementInChildStackingContextStatusDirty = hasBlendedElementInChildStackingContextStatusDirty;
-#else
-        UNUSED_PARAM(hasBlendedElementInChildStackingContextStatusDirty);
-#endif
-    }
 
     bool isComposited() const { return m_backing != 0; }
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
@@ -1166,9 +1116,8 @@ private:
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-    void updateNonCompositedParentStackingContextHasBlendedChild(bool hasBlendedChild);
-    void dirtyAncestorParentStackingContextHasBlendedElement();
-    bool nonCompositedParentStackingContextHasBlendedChild() const;
+    void updateAncestorChainHasBlendingDescendants();
+    void dirtyAncestorChainHasBlendingDescendants();
 #endif
 
     void parentClipRects(const ClipRectsContext&, ClipRects&) const;
@@ -1310,8 +1259,8 @@ private:
 #if ENABLE(CSS_COMPOSITING)
     BlendMode m_blendMode : 5;
     bool m_hasUnisolatedCompositedBlendingDescendants : 1;
-    bool m_hasBlendedElementInChildStackingContext : 1;
-    bool m_hasBlendedElementInChildStackingContextStatusDirty : 1;
+    bool m_hasUnisolatedBlendingDescendants : 1;
+    bool m_hasUnisolatedBlendingDescendantsStatusDirty : 1;
 #endif
 
     RenderLayerModelObject& m_renderer;

@@ -1,6 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x366
+layer at (0,0) size 800x366 isolatesBlending
   RenderBlock {HTML} at (0,0) size 800x366
     RenderBody {BODY} at (8,16) size 784x0
       RenderBlock {UL} at (0,0) size 784x0
@@ -37,7 +37,7 @@ layer at (73,206) size 160x160 blendMode: multiply
   RenderBlock (relative positioned) {DIV} at (0,0) size 160x160
 layer at (53,216) size 80x150
   RenderBlock (relative positioned) {DIV} at (0,0) size 80x150 [bgcolor=#FFFF00]
-layer at (223,246) size 160x75
+layer at (223,246) size 160x75 isolatesBlending
   RenderBlock {DIV} at (0,50) size 160x75 [bgcolor=#00FFFF]
 layer at (243,206) size 160x160 blendMode: multiply
   RenderBlock (relative positioned) {DIV} at (0,0) size 160x160
