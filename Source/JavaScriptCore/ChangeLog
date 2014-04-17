@@ -1,5 +1,16 @@
 2014-04-17  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL::fail() should manage memory "correctly"
+        https://bugs.webkit.org/show_bug.cgi?id=131823
+        <rdar://problem/16384297>
+
+        Reviewed by Oliver Hunt.
+
+        * ftl/FTLFail.cpp:
+        (JSC::FTL::fail):
+
+2014-04-17  Filip Pizlo  <fpizlo@apple.com>
+
         Prediction propagator should correctly model Int52s flowing through arguments
         https://bugs.webkit.org/show_bug.cgi?id=131822
         <rdar://problem/16641408>
