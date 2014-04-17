@@ -105,6 +105,38 @@ static const double throttledLayerFlushDelay = .5;
 
 using namespace HTMLNames;
 
+class OverlapMapContainer {
+public:
+    void add(const IntRect& bounds)
+    {
+        m_layerRects.append(bounds);
+        m_boundingBox.unite(bounds);
+    }
+
+    bool overlapsLayers(const IntRect& bounds) const
+    {
+        // Checking with the bounding box will quickly reject cases when
+        // layers are created for lists of items going in one direction and
+        // never overlap with each other.
+        if (!bounds.intersects(m_boundingBox))
+            return false;
+        for (unsigned i = 0; i < m_layerRects.size(); i++) {
+            if (m_layerRects[i].intersects(bounds))
+                return true;
+        }
+        return false;
+    }
+
+    void unite(const OverlapMapContainer& otherContainer)
+    {
+        m_layerRects.appendVector(otherContainer.m_layerRects);
+        m_boundingBox.unite(otherContainer.m_boundingBox);
+    }
+private:
+    Vector<IntRect> m_layerRects;
+    IntRect m_boundingBox;
+};
+
 class RenderLayerCompositor::OverlapMap {
     WTF_MAKE_NONCOPYABLE(OverlapMap);
 public:
@@ -123,7 +155,7 @@ public:
         // contribute to overlap as soon as their composited ancestor has been
         // recursively processed and popped off the stack.
         ASSERT(m_overlapStack.size() >= 2);
-        m_overlapStack[m_overlapStack.size() - 2].append(bounds);
+        m_overlapStack[m_overlapStack.size() - 2].add(bounds);
         m_layers.add(layer);
     }
 
@@ -134,7 +166,7 @@ public:
 
     bool overlapsLayers(const IntRect& bounds) const
     {
-        return m_overlapStack.last().intersects(bounds);
+        return m_overlapStack.last().overlapsLayers(bounds);
     }
 
     bool isEmpty()
@@ -144,12 +176,12 @@ public:
 
     void pushCompositingContainer()
     {
-        m_overlapStack.append(RectList());
+        m_overlapStack.append(OverlapMapContainer());
     }
 
     void popCompositingContainer()
     {
-        m_overlapStack[m_overlapStack.size() - 2].append(m_overlapStack.last());
+        m_overlapStack[m_overlapStack.size() - 2].unite(m_overlapStack.last());
         m_overlapStack.removeLast();
     }
 
@@ -185,7 +217,7 @@ private:
         }
     };
 
-    Vector<RectList> m_overlapStack;
+    Vector<OverlapMapContainer> m_overlapStack;
     HashSet<const RenderLayer*> m_layers;
     RenderGeometryMap m_geometryMap;
 };
@@ -1090,12 +1122,19 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     
     // Clear the flag
     layer.setHasCompositingDescendant(false);
+    layer.setIndirectCompositingReason(RenderLayer::NoIndirectCompositingReason);
+
+    // Check if the layer needs to be composited for non-indirect reasons (ex. 3D transform).
+    // We use this value to avoid checking the overlap-map, if we know for sure the layer
+    // is already going to be composited for other reasons.
+    bool willBeComposited = needsToBeComposited(layer);
 
     RenderLayer::IndirectCompositingReason compositingReason = compositingState.m_subtreeIsCompositing ? RenderLayer::IndirectCompositingForStacking : RenderLayer::NoIndirectCompositingReason;
-
     bool haveComputedBounds = false;
     IntRect absBounds;
-    if (overlapMap && !overlapMap->isEmpty() && compositingState.m_testingOverlap) {
+
+    // If we know for sure the layer is going to be composited, don't bother looking it up in the overlap map
+    if (!willBeComposited && overlapMap && !overlapMap->isEmpty() && compositingState.m_testingOverlap) {
         // If we're testing for overlap, we only need to composite if we overlap something that is already composited.
         absBounds = enclosingIntRect(overlapMap->geometryMap().absoluteRect(layer.overlapBounds()));
 
@@ -1117,6 +1156,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     layer.setIndirectCompositingReason(compositingReason);
 
+    // Check if the computed indirect reason will force the layer to become composited.
+    if (!willBeComposited && layer.mustCompositeForIndirectReasons() && canBeComposited(layer))
+        willBeComposited = true;
+    ASSERT(willBeComposited == needsToBeComposited(layer));
+
     // The children of this layer don't need to composite, unless there is
     // a compositing layer among them, so start by inheriting the compositing
     // ancestor with m_subtreeIsCompositing set to false.
@@ -1126,7 +1170,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     childState.m_hasUnisolatedCompositedBlendingDescendants = false;
 #endif
 
-    bool willBeComposited = needsToBeComposited(layer);
     if (willBeComposited) {
         // Tell the parent it has compositing descendants.
         compositingState.m_subtreeIsCompositing = true;

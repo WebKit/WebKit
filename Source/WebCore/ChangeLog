@@ -1,3 +1,33 @@
+2014-04-16  Alexandru Chiculita  <achicu@adobe.com>
+
+        Improve performance of the RenderLayerCompositor::OverlapMap
+        https://bugs.webkit.org/show_bug.cgi?id=115063
+
+        Reviewed by Simon Fraser.
+
+        No new tests, no new functionality or behavior.
+
+        Do not use the OverlapMap in RenderLayerCompositor::computeCompositingRequirements if the layer already
+        has a 3D transform. This way we can avoid a potential expensive lookups when we know for sure the layer
+        is already supposed to be composited. 
+
+        Also, added a bounding box of the overlap map, so that it can catch cases when the new layer is not overlapping
+        any of the previous layers. This is pretty common when having composited layers laid out in a vertical/horizontal list.
+
+
+        * rendering/RenderLayerCompositor.cpp:
+        (OverlapMapContainer):
+        (WebCore::OverlapMapContainer::add):
+        (WebCore::OverlapMapContainer::overlapsLayers):
+        (WebCore::OverlapMapContainer::unite):
+        (WebCore):
+        (WebCore::RenderLayerCompositor::OverlapMap::add):
+        (WebCore::RenderLayerCompositor::OverlapMap::overlapsLayers):
+        (WebCore::RenderLayerCompositor::OverlapMap::pushCompositingContainer):
+        (WebCore::RenderLayerCompositor::OverlapMap::popCompositingContainer):
+        (RenderLayerCompositor::OverlapMap):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2014-04-16  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: memoize fallback time values for document.lastModified

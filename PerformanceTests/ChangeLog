@@ -1,3 +1,17 @@
+2014-04-16  Alexandru Chiculita  <achicu@adobe.com>
+
+        Improve performance of the RenderLayerCompositor::OverlapMap
+        https://bugs.webkit.org/show_bug.cgi?id=115063
+
+        Reviewed by Simon Fraser.
+
+        Testing the performance of computing the overlap of 5000 layers.
+
+        * Layout/layers_overlap_2d.html: Added. Using non-composited layers, to check
+        that the performance on the non-composited path is not changing with this patch.
+        * Layout/layers_overlap_3d.html: Added. Records the time to do the layout of 5000
+        non-overlapping 3D layers.
+
 2014-04-15  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Linking stylesheet instead of inline style definition has ruined ShapesRegions test
