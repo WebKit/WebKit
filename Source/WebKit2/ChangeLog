@@ -1,5 +1,16 @@
 2014-04-16  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] Fix the DidCommitLoad initial scrolling position
+        https://bugs.webkit.org/show_bug.cgi?id=131780
+
+        Reviewed by Jon Honeycutt.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        That code is older than _obscuredInsets and used the contentInsets as a workaround.
+
+2014-04-16  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Fix annoying scrolling bugs
         https://bugs.webkit.org/show_bug.cgi?id=131722
 

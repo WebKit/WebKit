@@ -473,8 +473,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
         _gestureController->setRenderTreeSize(layerTreeTransaction.renderTreeSize());
 
     if (_isWaitingForNewLayerTreeAfterDidCommitLoad) {
-        UIEdgeInsets inset = [_scrollView contentInset];
-        [_scrollView setContentOffset:CGPointMake(-inset.left, -inset.top)];
+        [_scrollView setContentOffset:CGPointMake(-_obscuredInsets.left, -_obscuredInsets.top)];
         _isWaitingForNewLayerTreeAfterDidCommitLoad = NO;
     }
 }
