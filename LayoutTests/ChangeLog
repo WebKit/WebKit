@@ -1,3 +1,14 @@
+2014-04-16  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: memoize fallback time values for document.lastModified
+        https://bugs.webkit.org/show_bug.cgi?id=131318
+
+        Reviewed by Joseph Pecoraro.
+
+        Mark the new test as skipped until dependent functionality is landed.
+
+        * http/tests/inspector/replay/document-last-modified-fallback-value.html: Added.
+
 2014-04-16  Dean Jackson  <dino@apple.com>
 
         MediaDocument on iOS should be full page

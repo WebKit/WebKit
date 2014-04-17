@@ -220,6 +220,7 @@
 #endif
 
 #if ENABLE(WEB_REPLAY)
+#include "WebReplayInputs.h"
 #include <replay/EmptyInputCursor.h>
 #endif
 
@@ -3891,8 +3892,20 @@ String Document::lastModified() const
     // FIXME: If this document came from the file system, the HTML5
     // specificiation tells us to read the last modification date from the file
     // system.
-    if (!foundDate)
-        date.setMillisecondsSinceEpochForDateTime(currentTimeMS());
+    if (!foundDate) {
+        double fallbackDate = currentTimeMS();
+#if ENABLE(WEB_REPLAY)
+        InputCursor& cursor = inputCursor();
+        if (cursor.isCapturing())
+            cursor.appendInput<DocumentLastModifiedDate>(fallbackDate);
+        else if (cursor.isReplaying()) {
+            if (DocumentLastModifiedDate* input = cursor.fetchInput<DocumentLastModifiedDate>())
+                fallbackDate = input->fallbackValue();
+        }
+#endif
+        date.setMillisecondsSinceEpochForDateTime(fallbackDate);
+    }
+
     return String::format("%02d/%02d/%04d %02d:%02d:%02d", date.month() + 1, date.monthDay(), date.fullYear(), date.hour(), date.minute(), date.second());
 }
 

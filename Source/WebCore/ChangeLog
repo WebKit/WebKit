@@ -1,3 +1,26 @@
+2014-04-16  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: memoize fallback time values for document.lastModified
+        https://bugs.webkit.org/show_bug.cgi?id=131318
+
+        Reviewed by Joseph Pecoraro.
+
+        If a document's Last-Modified header can't be found or used, then 
+        document.lastModified is derived from the current system time or
+        from filesystem data, which is obviously nondeterministic.
+
+        It's better to handle this inside Document::lastModified rather than using
+        MemoizedDOMResult, because only the fallback case is nondeterministic.
+
+        Test: http/tests/inspector/replay/document-last-modified-fallback-value.html
+
+        The test is skipped for now, as it will be very flaky without the
+        functionality introduced by bugs 130728 and 129391.
+
+        * dom/Document.cpp:
+        (WebCore::Document::lastModified): Save or reuse memoized fallback value.
+        * replay/WebInputs.json: Add input DocumentLastModifiedDate.
+
 2014-04-16  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Selection gets confused when the mouse is in the column gaps.

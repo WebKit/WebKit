@@ -165,6 +165,14 @@
             "members": [ ]
         },
         {
+            "name": "DocumentLastModifiedDate",
+            "description": "A fallback value used for the document's last modified date if the Last-Modified header can't be found or used.",
+            "queue": "SCRIPT_MEMOIZED",
+            "members": [
+                { "name": "fallbackValue", "type": "double" }
+            ]
+        },
+        {
             "name": "EndSegmentSentinel",
             "description": "A sentinel input to signal the end of a segment.",
             "queue": "EVENT_LOOP",
