@@ -1898,6 +1898,8 @@ private:
             Node* result;
             if (edge->hasDoubleResult()) {
                 // This will never happen.
+                dataLog("Found an Int52RepUse to a double result: ", node, " -> ", edge, "\n");
+                m_graph.dump();
                 RELEASE_ASSERT_NOT_REACHED();
             } else if (edge->shouldSpeculateInt32ForArithmetic()) {
                 result = m_insertionSet.insertNode(
@@ -1905,7 +1907,11 @@ private:
                     Edge(edge.node(), Int32Use));
             } else {
                 // This is only here for dealing with constants.
-                RELEASE_ASSERT(edge->op() == JSConstant);
+                if (edge->op() != JSConstant) {
+                    dataLog("Found an Int52RepUse on something that is neither Int32 nor a constant: ", node, " -> ", edge, "\n");
+                    m_graph.dump();
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecMachineInt, Int52Constant, node->origin,
                     OpInfo(edge->constantNumber()));

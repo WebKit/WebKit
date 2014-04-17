@@ -1,5 +1,15 @@
 2014-04-16  Filip Pizlo  <fpizlo@apple.com>
 
+        Extra error reporting for invalid value conversions
+        https://bugs.webkit.org/show_bug.cgi?id=131786
+
+        Rubber stamped by Ryosuke Niwa.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+
+2014-04-16  Filip Pizlo  <fpizlo@apple.com>
+
         Sink NaN sanitization to uses and remove it when it's unnecessary
         https://bugs.webkit.org/show_bug.cgi?id=131419
 
