@@ -1,3 +1,16 @@
+2014-04-17  Andres Gomez  <agomez@igalia.com>
+
+        [Win] cygwin to keep installing curl 7.33.0-1 and subversion 1.7.14-1
+        https://bugs.webkit.org/show_bug.cgi?id=131365
+
+        Reviewed by Brent Fulgham.
+
+        The cygwin installer is now downloading the wanted versions for
+        the local installation given to the setup wizard.
+
+        * CygwinDownloader/cygwin-downloader.py:
+        * CygwinDownloader/cygwin-downloader.zip:
+
 2014-04-17  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Make run-webkit-tests always use WKTR

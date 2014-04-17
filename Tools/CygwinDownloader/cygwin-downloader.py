@@ -70,7 +70,10 @@ required_packages = frozenset(["bc",
                                "vim",
                                "zip"])
 
-required_packages_versions = {"python": "2.6.8-2"}
+required_packages_versions = {"curl": "7.33.0-1",
+                              "libcurl4": "7.33.0-1",
+                              "python": "2.6.8-2",
+                              "subversion": "1.7.14-1"}
 
 #
 # Main
