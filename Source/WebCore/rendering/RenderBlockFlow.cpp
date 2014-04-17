@@ -1868,6 +1868,13 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
     if (diff >= StyleDifferenceRepaint)
         invalidateLineLayoutPath();
+    
+    if (multiColumnFlowThread()) {
+        for (auto child = firstChildBox();
+             child && (child->isInFlowRenderFlowThread() || child->isRenderMultiColumnSet());
+             child = child->nextSiblingBox())
+            child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK));
+    }
 }
 
 void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
