@@ -94,6 +94,8 @@ public:
     
     virtual RenderRegion* mapFromFlowToRegion(TransformState&) const override;
     
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+
 private:
     virtual const char* renderName() const override;
     virtual void addRegionToThread(RenderRegion*) override;

@@ -877,6 +877,101 @@ void RenderMultiColumnSet::addOverflowFromChildren()
         addVisualOverflow(lastRect);
 }
 
+VisiblePosition RenderMultiColumnSet::positionForPoint(const LayoutPoint& physicalPoint)
+{
+    // Determine which columns we intersect.
+    LayoutUnit colGap = columnGap();
+    LayoutUnit halfColGap = colGap / 2;
+    LayoutPoint columnPoint(columnRectAt(0).location());
+    LayoutUnit logicalOffset = 0;
+    
+    bool progressionIsInline = multiColumnFlowThread()->progressionIsInline();
+
+    LayoutPoint point = physicalPoint;
+    
+    for (unsigned i = 0; i < columnCount(); i++) {
+        // Add in half the column gap to the left and right of the rect.
+        LayoutRect colRect = columnRectAt(i);
+        flipForWritingMode(colRect);
+        if (isHorizontalWritingMode() == progressionIsInline) {
+            LayoutRect gapAndColumnRect(colRect.x() - halfColGap, colRect.y(), colRect.width() + colGap, colRect.height());
+            if (point.x() >= gapAndColumnRect.x() && point.x() < gapAndColumnRect.maxX()) {
+                if (progressionIsInline) {
+                    // FIXME: The clamping that follows is not completely right for right-to-left
+                    // content.
+                    // Clamp everything above the column to its top left.
+                    if (point.y() < gapAndColumnRect.y())
+                        point = gapAndColumnRect.location();
+                    // Clamp everything below the column to the next column's top left. If there is
+                    // no next column, this still maps to just after this column.
+                    else if (point.y() >= gapAndColumnRect.maxY()) {
+                        point = gapAndColumnRect.location();
+                        point.move(0, gapAndColumnRect.height());
+                    }
+                } else {
+                    if (point.x() < colRect.x())
+                        point.setX(colRect.x());
+                    else if (point.x() >= colRect.maxX())
+                        point.setX(colRect.maxX() - 1);
+                }
+
+                // We're inside the column. Translate the x and y into our column coordinate space.
+                if (progressionIsInline)
+                    point.move(columnPoint.x() - colRect.x(), (!style().isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset));
+                else
+                    point.move((!style().isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset) - colRect.x() + borderLeft() + paddingLeft(), 0);
+                
+                LayoutRect portion = flowThreadPortionRect();
+                flipForWritingMode(portion);
+                point.move(isHorizontalWritingMode() ? LayoutUnit() : portion.x(), isHorizontalWritingMode() ? portion.y() : LayoutUnit());
+                return multiColumnFlowThread()->positionForPoint(point);
+            }
+
+            // Move to the next position.
+            logicalOffset += progressionIsInline ? colRect.height() : colRect.width();
+        } else {
+            LayoutRect gapAndColumnRect(colRect.x(), colRect.y() - halfColGap, colRect.width(), colRect.height() + colGap);
+            if (point.y() >= gapAndColumnRect.y() && point.y() < gapAndColumnRect.maxY()) {
+                if (progressionIsInline) {
+                    // FIXME: The clamping that follows is not completely right for right-to-left
+                    // content.
+                    // Clamp everything above the column to its top left.
+                    if (point.x() < gapAndColumnRect.x())
+                        point = gapAndColumnRect.location();
+                    // Clamp everything below the column to the next column's top left. If there is
+                    // no next column, this still maps to just after this column.
+                    else if (point.x() >= gapAndColumnRect.maxX()) {
+                        point = gapAndColumnRect.location();
+                        point.move(gapAndColumnRect.width(), 0);
+                    }
+                } else {
+                    if (point.y() < colRect.y())
+                        point.setY(colRect.y());
+                    else if (point.y() >= colRect.maxY())
+                        point.setY(colRect.maxY() - 1);
+                }
+
+                // We're inside the column. Translate the x and y into our column coordinate space.
+                if (progressionIsInline)
+                    point.move((!style().isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset), columnPoint.y() - colRect.y());
+                else
+                    point.move(0, (!style().isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset) - colRect.y() + borderTop() + paddingTop());
+                
+                LayoutRect portion = flowThreadPortionRect();
+                flipForWritingMode(portion);
+                point.move(isHorizontalWritingMode() ? LayoutUnit() : portion.x(), isHorizontalWritingMode() ? portion.y() : LayoutUnit());
+                
+                return multiColumnFlowThread()->positionForPoint(point);
+            }
+
+            // Move to the next position.
+            logicalOffset += progressionIsInline ? colRect.width() : colRect.height();
+        }
+    }
+
+    return VisiblePosition();
+}
+
 const char* RenderMultiColumnSet::renderName() const
 {    
     return "RenderMultiColumnSet";

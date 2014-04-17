@@ -1,3 +1,35 @@
+2014-04-16  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Selection gets confused when the mouse is in the column gaps.
+        https://bugs.webkit.org/show_bug.cgi?id=131739
+
+        Reviewed by Enrica Casucci.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGaps):
+        Make sure not to paint selection gaps. This matches the old multi-column behavior. Even though
+        selection gaps *nearly* work with the new multi-column code, I am disabling them so that we
+        can turn them on without visual regressions.
+        
+        (WebCore::isChildHitTestCandidate):
+        Don't allow in-flow RenderFlowThreads to be descended into from positionForPoint. We always want
+        to look only at the spanners and at the sets.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::nodeAtPoint):
+        * rendering/RenderMultiColumnFlowThread.h:
+        Override nodeAtPoint to disallow the RenderMultiColumnFlowThread from being considered for hit
+        testing when no DOM node is found. It's better to just let RenderBlock's positionForPoint run
+        to drill back down into the appropriate column set.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::positionForPoint):
+        Implement positionForPoint for RenderMultiColumnSets. This is a straight-up port of the
+        old multi-column code's adjustPointToColumnContents function.
+
+        * rendering/RenderMultiColumnSet.h:
+        Add override of positionForPoint.
+
 2014-04-16  Dean Jackson  <dino@apple.com>
 
         MediaDocument on iOS should be full page

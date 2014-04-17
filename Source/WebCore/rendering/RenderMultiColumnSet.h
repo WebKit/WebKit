@@ -140,6 +140,8 @@ private:
 
     virtual void adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint& layerOffset, LayoutRect& regionBounds) override;
 
+    virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
+
     virtual const char* renderName() const;
     
     void paintColumnRules(PaintInfo&, const LayoutPoint& paintOffset);

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderMultiColumnFlowThread.h"
 
+#include "HitTestResult.h"
 #include "LayoutState.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -616,6 +617,18 @@ bool RenderMultiColumnFlowThread::isPageLogicalHeightKnown() const
     if (RenderMultiColumnSet* columnSet = lastMultiColumnSet())
         return columnSet->computedColumnHeight();
     return false;
+}
+
+bool RenderMultiColumnFlowThread::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+{
+    // You cannot be inside an in-flow RenderFlowThread without a corresponding DOM node. It's better to
+    // just let the ancestor figure out where we are instead.
+    if (hitTestAction == HitTestBlockBackground)
+        return false;
+    bool inside = RenderFlowThread::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    if (inside && !result.innerNode())
+        return false;
+    return inside;
 }
 
 }
