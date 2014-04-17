@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spanner with margins</title>
+<script>
+if (window.internals)
+    internals.settings.setRegionBasedColumnsEnabled(true);
+</script>
+
+    </head>
+    <body>
+        <p>You should see the word 'PASS' five times below (letter spacing will differ), and no red:</p>
+        <div style="zoom:2; -webkit-columns:4; columns:4; -webkit-column-gap:0; column-gap:0; width:4em;">
+            P<br>P<br>A<br>A<br>S<br>S<br>S<br>S
+           <div style="background:red;">
+                <div id="grrr" style="width:200px; border:2px solid blue; -webkit-column-span:all; column-span:all; margin:2em;">PASS<br>&nbsp;</div>
+            </div>
+            P<br>P<br>A<br>A<br>S<br>S<br><a id="foo" style="color:red" href="#">S</a><br>S
+        </div>
+
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+    <script>
+        repaintTest = function() {
+            document.getElementById('foo').style.color = 'green'
+        };
+        runRepaintTest();
+    </script>
+    </body>
+</html>

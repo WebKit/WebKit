@@ -1,3 +1,18 @@
+2014-04-17  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Column sets below spanners don't repaint properly.
+        https://bugs.webkit.org/show_bug.cgi?id=131778
+
+        Reviewed by Beth Dakin.
+
+        Added fast/repaint/spanner-with-margins.html.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+        Turn off some code that was running for in-flow RenderFlowThreads that made no sense.
+        I'm not convinced the code is right for other types of RenderFlowThreads either,
+        but will leave that to the named flow thread experts. :)
+
 2014-04-17  Koji Ishii  <kojishi@gmail.com>
 
         Catch up ruby and its tag omission rule changes in HTML5 CR Feb 2014

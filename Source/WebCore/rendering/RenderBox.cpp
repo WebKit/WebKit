@@ -2107,8 +2107,9 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     auto o = container(repaintContainer, &containerSkipped);
     if (!o)
         return;
-
-    if (o->isRenderFlowThread()) {
+    
+    // This code isn't necessary for in-flow RenderFlowThreads.
+    if (o->isOutOfFlowRenderFlowThread()) {
         RenderRegion* firstRegion = nullptr;
         RenderRegion* lastRegion = nullptr;
         if (toRenderFlowThread(o)->getRegionRangeForBox(this, firstRegion, lastRegion))

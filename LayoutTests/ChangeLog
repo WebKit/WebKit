@@ -1,3 +1,13 @@
+2014-04-17  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Column sets below spanners don't repaint properly.
+        https://bugs.webkit.org/show_bug.cgi?id=131778
+
+        Reviewed by Beth Dakin.
+
+        * fast/repaint/spanner-with-margin-expected.txt: Added.
+        * fast/repaint/spanner-with-margin.html: Added.
+
 2014-04-17  Eduardo Lima Mitev  <elima@igalia.com>
 
         [GTK] [Gardening] Updates GTK test expectations
