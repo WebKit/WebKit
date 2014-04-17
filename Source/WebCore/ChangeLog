@@ -1,3 +1,27 @@
+2014-04-17  Koji Ishii  <kojishi@gmail.com>
+
+        Catch up ruby and its tag omission rule changes in HTML5 CR Feb 2014
+        https://bugs.webkit.org/show_bug.cgi?id=131175
+
+        Reviewed by Darin Adler.
+
+        Tests: html5lib/resources/ruby.dat
+               html5lib/resources/tests19.dat
+
+        This patch makes WebKit HTML parser to match to the tag omission rules of HTML5 CR Feb 2014:
+        http://www.w3.org/TR/2014/CR-html5-20140204/syntax.html#syntax-tag-omission
+        with the support for two new elements (rb, rtc) which were also defined in the spec:
+        http://www.w3.org/TR/2014/CR-html5-20140204/text-level-semantics.html#the-rb-element
+        http://www.w3.org/TR/2014/CR-html5-20140204/text-level-semantics.html#the-rtc-element
+        to better support use cases presented by W3C I18N WG:
+        http://www.w3.org/TR/ruby-use-cases/
+
+        * html/HTMLTagNames.in: rb and rtc added as HTMLElement interfaces.
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::hasImpliedEndTag): the spec says rb and rtc have implied end tags.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): rb and rtc added. rt excludes rtc from its implied end tags.
+
 2014-04-17  Darin Adler  <darin@apple.com>
 
         Try to fix EFL and GTK builds.
