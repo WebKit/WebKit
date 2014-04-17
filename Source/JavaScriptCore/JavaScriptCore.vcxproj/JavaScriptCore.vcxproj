@@ -1051,7 +1051,7 @@
     <ClInclude Include="..\heap\EdenGCActivityCallback.h" />
     <ClInclude Include="..\heap\FullGCActivityCallback.h" />
     <ClInclude Include="..\heap\GCActivityCallback.h" />
-    <ClCompile Include="..\heap\GCLogging.cpp" />
+    <ClInclude Include="..\heap\GCLogging.h" />
     <ClInclude Include="..\heap\GCSegmentedArray.h" />
     <ClInclude Include="..\heap\GCSegmentedArrayInlines.h" />
     <ClInclude Include="..\heap\GCAssertions.h" />

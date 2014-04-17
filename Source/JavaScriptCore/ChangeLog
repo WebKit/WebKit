@@ -1,3 +1,16 @@
+2014-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        Blind attempt to fix Windows build after r166837
+        <http://webkit.org/b/131246>
+
+        Hoping to fix this build error:
+
+            warning MSB8027: Two or more files with the name of GCLogging.cpp will produce outputs to the same location. This can lead to an incorrect build result.  The files involved are ..\heap\GCLogging.cpp, ..\heap\GCLogging.cpp.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Fix copy-paste
+        boo-boo by changing the GCLogging.cpp ClCompile entry to a
+        GCLogging.h ClInclude entry.
+
 2014-04-16  Filip Pizlo  <fpizlo@apple.com>
 
         AI for GetLocal should match the DFG backend, and in this case, the best way to do that is to get rid of the "exit if empty prediction" thing since it's a vestige of a time long gone
