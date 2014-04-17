@@ -1802,15 +1802,8 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case GetLocal: {
-        SpeculatedType prediction = node->variableAccessData()->prediction();
         AbstractValue& value = m_state.variables().operand(node->local());
 
-        // If we have no prediction for this local, then don't attempt to compile.
-        if (prediction == SpecNone) {
-            terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
-            break;
-        }
-        
         // If the CFA is tracking this variable and it found that the variable
         // cannot have been assigned, then don't attempt to proceed.
         if (value.isClear()) {

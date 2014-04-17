@@ -167,10 +167,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case GetLocal: {
         VariableAccessData* variableAccessData = node->variableAccessData();
-        if (variableAccessData->prediction() == SpecNone) {
-            m_state.setIsValid(false);
-            break;
-        }
         AbstractValue value = m_state.variables().operand(variableAccessData->local().offset());
         if (!variableAccessData->isCaptured()) {
             if (value.isClear())
