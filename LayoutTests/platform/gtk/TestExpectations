@@ -1480,6 +1480,9 @@ webkit.org/b/77631 fast/multicol/span/span-as-immediate-child-property-removal.h
 webkit.org/b/77631 fast/multicol/span/span-as-immediate-columns-child-removal.html [ Failure ]
 
 webkit.org/b/80129 fast/frames/flattening/frameset-flattening-advanced.html [ Failure ]
+webkit.org/b/131793 fast/frames/frame-programmatic-noresize.html [ Failure Pass ]
+webkit.org/b/131794 fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html [ Failure Pass ]
+webkit.org/b/131794 fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false.html [ Failure Pass ]
 
 webkit.org/b/89663 editing/deleting/delete-3800834-fix.html [ Failure ]
 
@@ -1613,12 +1616,8 @@ webkit.org/b/118222 fast/text/international/synthesized-italic-vertical.html [ I
 
 webkit.org/b/118416 storage/websql/sql-error-codes.html [ Failure ]
 
-webkit.org/b/118420 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
-
 # May take too long on the bots.
 Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
-
-webkit.org/b/119840 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
 
 webkit.org/b/119841 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 
@@ -1757,8 +1756,6 @@ webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-in
 
 # PasteBoard::plainText() does not support file names.
 webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element.html [ Failure ]
-
-webkit.org/b/131619 editing/editability/ignored-content.html [ Failure ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]

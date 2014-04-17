@@ -1,3 +1,17 @@
+2014-04-17  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] [Gardening] Updates GTK test expectations
+
+        * platform/gtk/TestExpectations:
+          - Marked as flaky
+            - fast/frames/frame-programmatic-noresize.html
+            - fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html
+            - fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false.html
+          - Removed because are passing now
+            - fast/dom/gc-dom-tree-lifetime.html
+            - http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
+            - editing/editability/ignored-content.html
+
 2014-04-17  Koji Ishii  <kojishi@gmail.com>
 
         Catch up ruby and its tag omission rule changes in HTML5 CR Feb 2014
