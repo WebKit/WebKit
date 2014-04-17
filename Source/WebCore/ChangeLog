@@ -1,3 +1,20 @@
+2014-04-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Fix annoying scrolling bugs
+        https://bugs.webkit.org/show_bug.cgi?id=131722
+
+        Reviewed by Simon Fraser.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        Since ScrollingStateScrollingNode::setRequestedScrollPosition() was added, we see ScrollView::updateScrollbars()
+        keep changing the scroll position to incorrect values.
+
+        On iOS, the scrollbars are handled by the native UI, the code just compute incorrect scroll position. On WebKit1,
+        the code does not run because there is a platformWidget().
+
+        Just #ifdef the whole useless code.
+
 2014-04-16  Alexandru Chiculita  <achicu@adobe.com>
 
         Improve performance of the RenderLayerCompositor::OverlapMap

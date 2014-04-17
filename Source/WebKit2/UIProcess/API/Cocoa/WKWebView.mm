@@ -556,10 +556,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGFloat zoomScale = contentZoomScale(self);
     scaledOffset.scale(zoomScale, zoomScale);
 
-    // FIXME: the offset is relative to the unobscured rect top, not the content insets!
-    UIEdgeInsets inset = [_scrollView contentInset];
-    scaledOffset += WebCore::FloatSize(-inset.left, -inset.top);
-
+    scaledOffset -= WebCore::FloatSize(_obscuredInsets.left, _obscuredInsets.top);
     [_scrollView setContentOffset:scaledOffset];
 }
 

@@ -537,11 +537,9 @@ void ScrollView::windowResizerRectChanged()
     updateScrollbars(scrollOffset());
 }
 
-static const unsigned cMaxUpdateScrollbarsPass = 2;
-
 void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 {
-    if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget())
+    if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget() || delegatesScrolling())
         return;
 
     bool hasOverlayScrollbars = (!m_horizontalScrollbar || m_horizontalScrollbar->isOverlayScrollbar()) && (!m_verticalScrollbar || m_verticalScrollbar->isOverlayScrollbar());
@@ -640,6 +638,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             }
         }
 
+        const unsigned cMaxUpdateScrollbarsPass = 2;
         if ((sendContentResizedNotification || needAnotherPass) && m_updateScrollbarsPass < cMaxUpdateScrollbarsPass) {
             m_updateScrollbarsPass++;
             contentsResized();
@@ -732,6 +731,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         m_verticalScrollbar->offsetDidChange();
 
     m_inUpdateScrollbars = false;
+#endif
 }
 
 const int panIconSizeLength = 16;
