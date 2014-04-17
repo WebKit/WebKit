@@ -1,3 +1,15 @@
+2014-04-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Do not update the visible content rects when setting the same obscured insets multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=131633
+
+        Reviewed by Darin Adler.
+
+        We should avoid computing the visible content rects when not needed.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setObscuredInsets:]):
+
 2014-04-16  Zan Dobersek  <zdobersek@igalia.com>
 
         Make IPC::Arguments a variadic template

@@ -1271,6 +1271,10 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     ASSERT(obscuredInsets.left >= 0);
     ASSERT(obscuredInsets.bottom >= 0);
     ASSERT(obscuredInsets.right >= 0);
+
+    if (UIEdgeInsetsEqualToEdgeInsets(_obscuredInsets, obscuredInsets))
+        return;
+
     _obscuredInsets = obscuredInsets;
     [self _updateVisibleContentRects];
 }
