@@ -1,3 +1,31 @@
+2014-04-17  Andreas Kling  <akling@apple.com>
+
+        Log number of bytes reclaimed at each step of memory pressure relief.
+        <https://webkit.org/b/131751>
+
+        Reviewed by Antti Koivisto.
+
+        * platform/MemoryPressureHandler.h:
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformLog):
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+        (WebCore::MemoryPressureHandler::ReliefLogger::ReliefLogger):
+        (WebCore::MemoryPressureHandler::ReliefLogger::~ReliefLogger):
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandlerCocoa::ReliefLogger::platformMemoryUsage):
+        (WebCore::MemoryPressureHandlerCocoa::ReliefLogger::platformLog):
+
+            Add a simple RAII helper to check memory usage before and after
+            a block of code, and then dump the delta to system log.
+
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+
+            Use ReliefLogger to annotate the various attempts to reduce
+            our memory footprint. This will help us understand the efficiency
+            of our current strategy.
+
 2014-04-17  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] columnNumberForOffset is not patched for new multicolumn code yet.
