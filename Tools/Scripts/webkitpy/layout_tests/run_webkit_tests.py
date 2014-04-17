@@ -382,6 +382,10 @@ def _set_up_derived_options(port, options):
     if options.run_singly:
         options.verbose = True
 
+    # The GTK+ port only support WebKit2 so it always uses WKTR.
+    if options.platform == "gtk":
+        options.webkit_test_runner = True
+
 
 def run(port, options, args, logging_stream):
     logger = logging.getLogger()

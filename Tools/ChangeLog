@@ -1,3 +1,18 @@
+2014-04-17  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Make run-webkit-tests always use WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=131737
+
+        Reviewed by Darin Adler.
+
+        Now that the GTK+ port only has support for WebKit2, instruct
+        run-webkit-tests to always use WKTR. This avoids needing to pass
+        flag "-2" every time.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: 
+        (_set_up_derived_options): Always set webkit_test_runner when
+        the platform is GTK+.
+
 2014-04-17  Brendan Long  <b.long@cablelabs.com>
 
         [Gtk] Install ninja-build in Tools/gtk/install-dependencies
