@@ -1207,15 +1207,6 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::checkConsistency()
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
-void deprecatedDeleteAllValues(const Vector<T, inlineCapacity, OverflowHandler>& collection)
-{
-    typedef typename Vector<T, inlineCapacity, OverflowHandler>::const_iterator iterator;
-    iterator end = collection.end();
-    for (iterator it = collection.begin(); it != end; ++it)
-        delete *it;
-}
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
 inline void swap(Vector<T, inlineCapacity, OverflowHandler>& a, Vector<T, inlineCapacity, OverflowHandler>& b)
 {
     a.swap(b);
