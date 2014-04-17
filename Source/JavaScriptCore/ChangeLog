@@ -1,3 +1,9 @@
+2014-04-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix after http://trac.webkit.org/changeset/167416 (Sink NaN sanitization)
+
+        * dfg/DFGSpeculativeJIT.cpp: (JSC::DFG::SpeculativeJIT::speculate):
+
 2014-04-16  Filip Pizlo  <fpizlo@apple.com>
 
         Extra error reporting for invalid value conversions

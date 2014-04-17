@@ -4855,7 +4855,7 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         ASSERT(!needsTypeCheck(edge, SpecInt32));
         break;
     case DoubleRepUse:
-        ASSERT(!needsTypeCheck(edge, SpecDouble));
+        ASSERT(!needsTypeCheck(edge, SpecFullDouble));
         break;
     case Int52RepUse:
         ASSERT(!needsTypeCheck(edge, SpecMachineInt));
