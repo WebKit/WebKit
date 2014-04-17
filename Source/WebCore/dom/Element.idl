@@ -38,7 +38,7 @@
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
     // For ObjC this is defined on Node for legacy support.
-    [ReturnsCacheableValue] readonly attribute NamedNodeMap     attributes;
+    readonly attribute NamedNodeMap     attributes;
     boolean            hasAttributes();
 #endif
 

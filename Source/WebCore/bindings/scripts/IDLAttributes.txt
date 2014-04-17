@@ -102,7 +102,6 @@ Replaceable
 ReplaceableConstructor
 ReportExtraMemoryCost
 ReturnNewObject
-ReturnsCacheableValue
 SetterRaisesException
 SkipVTableValidation
 StrictTypeChecking

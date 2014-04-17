@@ -1,5 +1,19 @@
 2014-04-17  Andreas Kling  <akling@apple.com>
 
+        Rollout: Add a way to cache never-changing IDL attributes in the wrapper.
+        <https://webkit.org/b/131759>
+
+        This behavior may be observable from the web, so we can't do it this way.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/*:
+        * dom/Element.idl:
+        * dom/Node.idl:
+
+2014-04-17  Andreas Kling  <akling@apple.com>
+
         Cheesy Mountain Lion build fix.
 
         * platform/MemoryPressureHandler.h:

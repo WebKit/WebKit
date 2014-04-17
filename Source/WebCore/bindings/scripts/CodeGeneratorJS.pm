@@ -2121,9 +2121,8 @@ sub GenerateImplementation
             my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
-            push(@implContent, "EncodedJSValue ${getFunctionName}(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName propertyName)\n");
+            push(@implContent, "EncodedJSValue ${getFunctionName}(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    UNUSED_PARAM(propertyName);\n");
 
             if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
                 if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
@@ -2300,11 +2299,6 @@ sub GenerateImplementation
                 }
 
                 push(@implContent, "    castedThis->m_" . $attribute->signature->name . ".set(exec->vm(), castedThis, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
-
-                if ($attribute->signature->extendedAttributes->{"ReturnsCacheableValue"}) {
-                    push(@implContent, "    castedThis->putDirect(exec->vm(), propertyName, result, DontDelete | ReadOnly);\n");
-                }
-
                 push(@implContent, "    return JSValue::encode(result);\n");
 
             } else {

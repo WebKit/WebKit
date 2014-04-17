@@ -51,7 +51,7 @@
     // FIXME: the spec says this can also raise on retrieval.
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString nodeValue;
 
-    [ReturnsCacheableValue] readonly attribute unsigned short   nodeType;
+    readonly attribute unsigned short   nodeType;
     readonly attribute Node             parentNode;
     readonly attribute NodeList         childNodes;
     readonly attribute Node             firstChild;

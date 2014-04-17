@@ -125,9 +125,8 @@ bool JSattribute::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName propertyName)
+EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(propertyName);
     JSattribute* castedThis = jsDynamicCast<JSattribute*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSattributePrototype*>(slotBase))
