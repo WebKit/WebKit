@@ -1,3 +1,13 @@
+2014-04-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed Windows gardening. Restrict our new 'isinf' check
+        to 32-bit builds, and revise the comment to explain what we are
+        doing.
+
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isMachineInt): Provide motivation for the new
+        'isinf' check for our 32-bit code path.
+
 2014-04-16  Juergen Ributzka  <juergen@apple.com>
 
         Allocate the data section on the heap again for FTL on ARM64

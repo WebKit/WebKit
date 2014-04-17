@@ -506,8 +506,12 @@ inline bool JSValue::isMachineInt() const
     double number = asDouble();
     if (number != number)
         return false;
-#if OS(WINDOWS)
-    // Need to check for infinity on Windows to avoid floating point error on following cast, see bug 131182.
+#if OS(WINDOWS) && CPU(X86)
+    // The VS Compiler for 32-bit builds generates a floating point error when attempting to cast
+    // from an infinity to a 64-bit integer. We leave this routine with the floating point error
+    // left in a register, causing undefined behavior in later floating point operations.
+    //
+    // To avoid this issue, we check for infinity here, and return false in that case.
     if (std::isinf(number))
         return false;
 #endif
