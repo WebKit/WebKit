@@ -54,10 +54,13 @@ namespace WebCore {
         NavigationType type() const { return m_type; }
         const Event* event() const { return m_event.get(); }
 
+        bool processingUserGesture() const { return m_processingUserGesture; }
+
     private:
         ResourceRequest m_resourceRequest;
         NavigationType m_type;
         RefPtr<Event> m_event;
+        bool m_processingUserGesture;
     };
 
 }

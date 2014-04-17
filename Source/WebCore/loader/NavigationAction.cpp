@@ -31,6 +31,7 @@
 
 #include "Event.h"
 #include "FrameLoader.h"
+#include "ScriptController.h"
 
 namespace WebCore {
 
@@ -49,18 +50,21 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
 
 NavigationAction::NavigationAction()
     : m_type(NavigationTypeOther)
+    , m_processingUserGesture(ScriptController::processingUserGesture())
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest)
     : m_resourceRequest(resourceRequest)
     , m_type(NavigationTypeOther)
+    , m_processingUserGesture(ScriptController::processingUserGesture())
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type)
     : m_resourceRequest(resourceRequest)
     , m_type(type)
+    , m_processingUserGesture(ScriptController::processingUserGesture())
 {
 }
 
@@ -68,6 +72,7 @@ NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, Frame
         bool isFormSubmission)
     : m_resourceRequest(resourceRequest)
     , m_type(navigationType(frameLoadType, isFormSubmission, 0))
+    , m_processingUserGesture(ScriptController::processingUserGesture())
 {
 }
 
@@ -75,6 +80,7 @@ NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, Navig
     : m_resourceRequest(resourceRequest)
     , m_type(type)
     , m_event(event)
+    , m_processingUserGesture(ScriptController::processingUserGesture())
 {
 }
 
@@ -83,6 +89,7 @@ NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, Frame
     : m_resourceRequest(resourceRequest)
     , m_type(navigationType(frameLoadType, isFormSubmission, event))
     , m_event(event)
+    , m_processingUserGesture(ScriptController::processingUserGesture())
 {
 }
 

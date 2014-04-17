@@ -1,3 +1,17 @@
+2014-04-17  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/16601336> [Cocoa] _userInitiated is always NO in WKNavigationAction passed to -webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:
+        https://bugs.webkit.org/show_bug.cgi?id=131783
+
+        Reviewed by Tim Horton.
+
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::NavigationAction): Initialize m_processingUserGesture to
+        ScriptController::processingUserGesture() at the time the NavigationAction is constructed.
+        * loader/NavigationAction.h:
+        Added boolean member variable m_processionUserGesture
+        (WebCore::NavigationAction::processingUserGesture): Added this getter.
+
 2014-04-17  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Isolation descendant dependent flags are not updated correctly
