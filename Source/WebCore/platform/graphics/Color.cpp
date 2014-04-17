@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Color.h"
 
+#include "AnimationUtilities.h"
 #include "HashTools.h"
 #include <wtf/Assertions.h>
 #include <wtf/DecimalNumber.h>
@@ -452,5 +453,32 @@ RGBA32 premultipliedARGBFromColor(const Color& color)
 
     return pixelColor;
 }
+
+Color blend(const Color& from, const Color& to, double progress, bool blendPremultiplied)
+{
+    // We need to preserve the state of the valid flag at the end of the animation
+    if (progress == 1 && !to.isValid())
+        return Color();
+
+    if (blendPremultiplied) {
+        // Contrary to the name, RGBA32 actually stores ARGB, so we can initialize Color directly from premultipliedARGBFromColor().
+        // Also, premultipliedARGBFromColor() bails on zero alpha, so special-case that.
+        Color premultFrom = from.alpha() ? premultipliedARGBFromColor(from) : 0;
+        Color premultTo = to.alpha() ? premultipliedARGBFromColor(to) : 0;
+
+        Color premultBlended(blend(premultFrom.red(), premultTo.red(), progress),
+            blend(premultFrom.green(), premultTo.green(), progress),
+            blend(premultFrom.blue(), premultTo.blue(), progress),
+            blend(premultFrom.alpha(), premultTo.alpha(), progress));
+
+        return Color(colorFromPremultipliedARGB(premultBlended.rgb()));
+    }
+
+    return Color(blend(from.red(), to.red(), progress),
+        blend(from.green(), to.green(), progress),
+        blend(from.blue(), to.blue(), progress),
+        blend(from.alpha(), to.alpha(), progress));
+}
+
 
 } // namespace WebCore
