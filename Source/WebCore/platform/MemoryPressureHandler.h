@@ -83,6 +83,8 @@ public:
             platformLog();
         }
 
+        const char* logString() const { return m_logString; }
+
     private:
         size_t platformMemoryUsage();
         void platformLog();

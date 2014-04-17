@@ -1,3 +1,10 @@
+2014-04-17  Andreas Kling  <akling@apple.com>
+
+        Cheesy Mountain Lion build fix.
+
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::ReliefLogger::logString):
+
 2014-04-17  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Column rules don't respect the specified stacking order.
