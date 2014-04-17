@@ -852,14 +852,14 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         BidiRun* isolatedRun = topResolver.isolatedRuns().last();
         topResolver.isolatedRuns().removeLast();
 
-        RenderObject& startObj = isolatedRun->renderer();
+        RenderObject& startObject = isolatedRun->renderer();
 
         // Only inlines make sense with unicode-bidi: isolate (blocks are already isolated).
         // FIXME: Because enterIsolate is not passed a RenderObject, we have to crawl up the
         // tree to see which parent inline is the isolate. We could change enterIsolate
         // to take a RenderObject and do this logic there, but that would be a layering
         // violation for BidiResolver (which knows nothing about RenderObject).
-        RenderInline* isolatedInline = toRenderInline(highestContainingIsolateWithinRoot(&startObj, currentRoot));
+        RenderInline* isolatedInline = toRenderInline(highestContainingIsolateWithinRoot(startObject, currentRoot));
         ASSERT(isolatedInline);
 
         InlineBidiResolver isolatedResolver;
@@ -873,12 +873,12 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         }
         isolatedResolver.setStatus(BidiStatus(direction, isOverride(unicodeBidi)));
 
-        setUpResolverToResumeInIsolate(isolatedResolver, isolatedInline, &startObj);
+        setUpResolverToResumeInIsolate(isolatedResolver, isolatedInline, &startObject);
 
         // The starting position is the beginning of the first run within the isolate that was identified
         // during the earlier call to createBidiRunsForLine. This can be but is not necessarily the
         // first run within the isolate.
-        InlineIterator iter = InlineIterator(isolatedInline, &startObj, isolatedRun->m_start);
+        InlineIterator iter = InlineIterator(isolatedInline, &startObject, isolatedRun->m_start);
         isolatedResolver.setPositionIgnoringNestedIsolates(iter);
 
         // We stop at the next end of line; we may re-enter this isolate in the next call to constructBidiRuns().

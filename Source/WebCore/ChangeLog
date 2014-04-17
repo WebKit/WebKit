@@ -1,3 +1,30 @@
+2014-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        Tidy up isIsolatedInline() and highestContainingIsolateWithinRoot()
+        <http://webkit.org/b/131117>
+
+        Reviewed by Daniel Bates.
+
+        Based on review feedback for r166650.
+
+        * rendering/InlineIterator.h:
+        (WebCore::isIsolatedInline):
+        - Switch argument to a reference since it is never called with a
+          nullptr.
+        (WebCore::highestContainingIsolateWithinRoot):
+        - Switch first argument to a reference since it's never a
+          nullptr.
+        - Use nullptr for pointer initialization.
+        - Switch while() loop to for() loop. Pass reference to
+          isIsolatedInline().
+        (WebCore::numberOfIsolateAncestors):
+        - Switch while() loop to for() loop. Pass reference to
+          isIsolatedInline().
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::constructBidiRunsForSegment):
+        - Rename startObj to startObject.
+        - No longer need to pass the address of startObject here.
+
 2014-04-17  Andreas Kling  <akling@apple.com>
 
         Log number of bytes reclaimed at each step of memory pressure relief.

@@ -442,35 +442,28 @@ inline void InlineBidiResolver::increment()
     m_current.increment(this);
 }
 
-static inline bool isIsolatedInline(RenderObject* object)
+static inline bool isIsolatedInline(RenderObject& object)
 {
-    ASSERT(object);
-    return object->isRenderInline() && isIsolated(object->style().unicodeBidi());
+    return object.isRenderInline() && isIsolated(object.style().unicodeBidi());
 }
 
-static inline RenderObject* highestContainingIsolateWithinRoot(RenderObject* object, RenderObject* root)
+static inline RenderObject* highestContainingIsolateWithinRoot(RenderObject& initialObject, RenderObject* root)
 {
-    ASSERT(object);
-    RenderObject* containingIsolateObject = 0;
-    while (object && object != root) {
-        if (isIsolatedInline(object))
+    RenderObject* containingIsolateObject = nullptr;
+    for (RenderObject* object = &initialObject; object && object != root; object = object->parent()) {
+        if (isIsolatedInline(*object))
             containingIsolateObject = object;
-
-        object = object->parent();
     }
     return containingIsolateObject;
 }
 
 static inline unsigned numberOfIsolateAncestors(const InlineIterator& iter)
 {
-    RenderObject* object = iter.renderer();
-    if (!object)
-        return 0;
     unsigned count = 0;
-    while (object && object != iter.root()) {
-        if (isIsolatedInline(object))
+    typedef RenderObject* RenderObjectPtr;
+    for (RenderObjectPtr object = iter.renderer(), root = iter.root(); object && object != root; object = object->parent()) {
+        if (isIsolatedInline(*object))
             count++;
-        object = object->parent();
     }
     return count;
 }
