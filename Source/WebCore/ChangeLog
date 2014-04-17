@@ -1,3 +1,11 @@
+2014-04-17  Andreas Kling  <akling@apple.com>
+
+        Stub out MemoryPressureHandler::ReliefLogger on older OS X'es.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformLog):
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+
 2014-04-17  Dirk Schulze  <krit@webkit.org>
 
         Remove CANVAS_PATH where possible

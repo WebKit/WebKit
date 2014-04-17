@@ -167,6 +167,7 @@ void MemoryPressureHandler::respondToMemoryPressure()
     holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
 }
 
+#if PLATFORM(IOS) || (PLATFORM(MAC) && MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
 size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
     task_vm_info_data_t vmInfo;
@@ -194,6 +195,10 @@ void MemoryPressureHandler::ReliefLogger::platformLog()
     else
         NSLog(@"Pressure relief: %s: =dirty (at %ld bytes)\n", m_logString, currentMemory);
 }
+#else
+void MemoryPressureHandler::ReliefLogger::platformLog() { }
+size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage() { return 0; }
+#endif
 
 #if PLATFORM(IOS)
 static void respondToMemoryPressureCallback(CFRunLoopObserverRef observer, CFRunLoopActivity /*activity*/, void* /*info*/)
