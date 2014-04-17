@@ -69,6 +69,8 @@ public:
 
     size_t inbandTrackIndex();
 
+    void setPrivate(PassRefPtr<AudioTrackPrivate>);
+
 protected:
     AudioTrack(AudioTrackClient*, PassRefPtr<AudioTrackPrivate>);
 
@@ -80,6 +82,8 @@ private:
     virtual void labelChanged(TrackPrivateBase*, const AtomicString&) override;
     virtual void languageChanged(TrackPrivateBase*, const AtomicString&) override;
     virtual void willRemove(TrackPrivateBase*) override;
+
+    void updateKindFromPrivate();
 
     bool m_enabled;
     AudioTrackClient* m_client;

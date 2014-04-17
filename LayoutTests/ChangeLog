@@ -1,3 +1,13 @@
+2014-04-16  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Multiple initialization segments with same codecs in tracks fail validation.
+        https://bugs.webkit.org/show_bug.cgi?id=131768
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-multiple-initialization-segments-expected.txt: Added.
+        * media/media-source/media-source-multiple-initialization-segments.html: Added.
+
 2014-04-17  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Column sets below spanners don't repaint properly.

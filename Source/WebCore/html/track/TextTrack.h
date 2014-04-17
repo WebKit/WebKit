@@ -156,6 +156,8 @@ public:
     virtual void setLanguage(const AtomicString&) override;
 #endif
 
+    virtual bool isInband() const { return false; }
+
     using RefCounted<TrackBase>::ref;
     using RefCounted<TrackBase>::deref;
 

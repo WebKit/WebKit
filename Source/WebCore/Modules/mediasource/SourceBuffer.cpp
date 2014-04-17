@@ -508,7 +508,8 @@ void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>&)
     // 5. Queue a task to fire a simple event named updateend at this SourceBuffer object.
     scheduleEvent(eventNames().updateendEvent);
 
-    m_source->monitorSourceBuffers();
+    if (m_source)
+        m_source->monitorSourceBuffers();
     for (auto iter = m_trackBufferMap.begin(), end = m_trackBufferMap.end(); iter != end; ++iter)
         provideMediaData(iter->value, iter->key);
 }
@@ -645,7 +646,7 @@ void SourceBuffer::setActive(bool active)
 void SourceBuffer::sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const WTF::AtomicString& error)
 {
     if (!isRemoved())
-        m_source->endOfStream(error, IgnorableExceptionCode());
+        m_source->streamEndedWithError(error, IgnorableExceptionCode());
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment& segment)
@@ -668,17 +669,51 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
     // 2. If the initialization segment has no audio, video, or text tracks, then run the end of stream
     // algorithm with the error parameter set to "decode" and abort these steps.
     if (!segment.audioTracks.size() && !segment.videoTracks.size() && !segment.textTracks.size())
-        m_source->endOfStream(decodeError(), IgnorableExceptionCode());
+        m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
 
 
     // 3. If the first initialization segment flag is true, then run the following steps:
     if (m_receivedFirstInitializationSegment) {
         if (!validateInitializationSegment(segment)) {
-            m_source->endOfStream(decodeError(), IgnorableExceptionCode());
+            m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
             return;
         }
         // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
-        // NOTE: No changes to make
+        ASSERT(segment.audioTracks.size() == audioTracks()->length());
+        for (auto& audioTrackInfo : segment.audioTracks) {
+            if (audioTracks()->length() == 1) {
+                audioTracks()->item(0)->setPrivate(audioTrackInfo.track);
+                break;
+            }
+
+            auto audioTrack = audioTracks()->getTrackById(audioTrackInfo.track->id());
+            ASSERT(audioTrack);
+            audioTrack->setPrivate(audioTrackInfo.track);
+        }
+
+        ASSERT(segment.videoTracks.size() == videoTracks()->length());
+        for (auto& videoTrackInfo : segment.videoTracks) {
+            if (videoTracks()->length() == 1) {
+                videoTracks()->item(0)->setPrivate(videoTrackInfo.track);
+                break;
+            }
+
+            auto videoTrack = videoTracks()->getTrackById(videoTrackInfo.track->id());
+            ASSERT(videoTrack);
+            videoTrack->setPrivate(videoTrackInfo.track);
+        }
+
+        ASSERT(segment.textTracks.size() == textTracks()->length());
+        for (auto& textTrackInfo : segment.textTracks) {
+            if (textTracks()->length() == 1) {
+                toInbandTextTrack(textTracks()->item(0))->setPrivate(textTrackInfo.track);
+                break;
+            }
+
+            auto textTrack = textTracks()->getTrackById(textTrackInfo.track->id());
+            ASSERT(textTrack);
+            toInbandTextTrack(textTrack)->setPrivate(textTrackInfo.track);
+        }
     }
 
     // 4. Let active track flag equal false.
@@ -726,6 +761,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
 
             // 5.2.9 Add the track description for this track to the track buffer.
             trackBuffer.description = it->description;
+
+            m_audioCodecs.append(trackBuffer.description->codec());
         }
 
         // 5.3 For each video track in the initialization segment, run following steps:
@@ -764,6 +801,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
 
             // 5.3.9 Add the track description for this track to the track buffer.
             trackBuffer.description = it->description;
+
+            m_videoCodecs.append(trackBuffer.description->codec());
         }
 
         // 5.4 For each text track in the initialization segment, run following steps:
@@ -797,6 +836,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
 
             // 5.4.8 Add the track description for this track to the track buffer.
             trackBuffer.description = it->description;
+
+            m_textCodecs.append(trackBuffer.description->codec());
         }
 
         // 5.5 If active track flag equals true, then run the following steps:
@@ -844,12 +885,12 @@ bool SourceBuffer::validateInitializationSegment(const InitializationSegment& se
 
     //   * The codecs for each track, match what was specified in the first initialization segment.
     for (auto it = segment.audioTracks.begin(); it != segment.audioTracks.end(); ++it) {
-        if (!m_videoCodecs.contains(it->description->codec()))
+        if (!m_audioCodecs.contains(it->description->codec()))
             return false;
     }
 
     for (auto it = segment.videoTracks.begin(); it != segment.videoTracks.end(); ++it) {
-        if (!m_audioCodecs.contains(it->description->codec()))
+        if (!m_videoCodecs.contains(it->description->codec()))
             return false;
     }
 

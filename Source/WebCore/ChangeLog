@@ -1,3 +1,51 @@
+2014-04-16  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Multiple initialization segments with same codecs in tracks fail validation.
+        https://bugs.webkit.org/show_bug.cgi?id=131768
+
+        Additional initialization segments added to the same SourceBuffer with the same
+        codec values will fail validation. Update the validation check to add the correct
+        codec information for the initial segment, and check against the correct codecs during
+        the validation step.
+
+        Additionally, after validation, if successful update the Audio, Video, and TextTracks
+        for the SourceBuffer with the updated initialization segment information.
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-multiple-initialization-segments.html
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBufferTimerFired): m_source may have been cleared
+            as a result of the append, so check it before using.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidEndStream): Call streamEndedWithError
+            instead of endOfStream as the latter is safe to call within an update.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment): Ditto.
+            Update the track lists if validation succeeds.
+        (WebCore::SourceBuffer::validateInitializationSegment): Switch the audio and video
+            codec checks.
+
+        Add the ability for Audio, Video, and InbandTextTracks to replace their private tracks:
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::AudioTrack): Call updateKindFromPrivate().
+        (WebCore::AudioTrack::setPrivate):
+        (WebCore::AudioTrack::updateKindFromPrivate): Split out from constructor.
+        * html/track/AudioTrack.h:
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::InbandTextTrack): Call updateKindFromPrivate().
+        (WebCore::InbandTextTrack::setPrivate):
+        (WebCore::InbandTextTrack::setMode): Split up into setModeInternal().
+        (WebCore::InbandTextTrack::setModeInternal): Broke out from setMode().
+        (WebCore::InbandTextTrack::updateKindFromPrivate): Split out from constructor.
+        * html/track/InbandTextTrack.h:
+        * html/track/TextTrack.h:
+        (WebCore::TextTrack::isInband): Added, returns false.
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::VideoTrack): Call updateKindFromPrivate().
+        (WebCore::VideoTrack::setPrivate):
+        (WebCore::VideoTrack::updateKindFromPrivate):  Split out from constructor.
+        * html/track/VideoTrack.h:
+
 2014-04-17  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Column sets below spanners don't repaint properly.

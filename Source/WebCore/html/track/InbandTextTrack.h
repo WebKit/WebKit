@@ -50,8 +50,15 @@ public:
 
     virtual AtomicString inBandMetadataTrackDispatchType() const;
 
+    void setPrivate(PassRefPtr<InbandTextTrackPrivate>);
+
+    virtual bool isInband() const override { return true; }
+
 protected:
     InbandTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+
+    void setModeInternal(const AtomicString&);
+    void updateKindFromPrivate();
 
     RefPtr<InbandTextTrackPrivate> m_private;
 
@@ -74,6 +81,8 @@ private:
     virtual InbandTextTrackPrivate* privateTrack() override { return m_private.get(); }
 #endif
 };
+
+TYPE_CASTS_BASE(InbandTextTrack, TextTrack, track, track->isInband(), track.isInband());
 
 } // namespace WebCore
 

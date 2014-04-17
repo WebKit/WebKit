@@ -65,31 +65,7 @@ InbandTextTrack::InbandTextTrack(ScriptExecutionContext* context, TextTrackClien
     , m_private(trackPrivate)
 {
     m_private->setClient(this);
-    
-    switch (m_private->kind()) {
-    case InbandTextTrackPrivate::Subtitles:
-        setKind(TextTrack::subtitlesKeyword());
-        break;
-    case InbandTextTrackPrivate::Captions:
-        setKind(TextTrack::captionsKeyword());
-        break;
-    case InbandTextTrackPrivate::Descriptions:
-        setKind(TextTrack::descriptionsKeyword());
-        break;
-    case InbandTextTrackPrivate::Chapters:
-        setKind(TextTrack::chaptersKeyword());
-        break;
-    case InbandTextTrackPrivate::Metadata:
-        setKind(TextTrack::metadataKeyword());
-        break;
-    case InbandTextTrackPrivate::Forced:
-        setKind(TextTrack::forcedKeyword());
-        break;
-    case InbandTextTrackPrivate::None:
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
+    updateKindFromPrivate();
 }
 
 InbandTextTrack::~InbandTextTrack()
@@ -97,10 +73,30 @@ InbandTextTrack::~InbandTextTrack()
     m_private->setClient(0);
 }
 
+void InbandTextTrack::setPrivate(PassRefPtr<InbandTextTrackPrivate> trackPrivate)
+{
+    ASSERT(m_private);
+    ASSERT(trackPrivate);
+
+    if (m_private == trackPrivate)
+        return;
+
+    m_private->setClient(0);
+    m_private = trackPrivate;
+    m_private->setClient(this);
+
+    setModeInternal(mode());
+    updateKindFromPrivate();
+}
+
 void InbandTextTrack::setMode(const AtomicString& mode)
 {
     TextTrack::setMode(mode);
+    setModeInternal(mode);
+}
 
+void InbandTextTrack::setModeInternal(const AtomicString& mode)
+{
     if (mode == TextTrack::disabledKeyword())
         m_private->setMode(InbandTextTrackPrivate::Disabled);
     else if (mode == TextTrack::hiddenKeyword())
@@ -187,6 +183,34 @@ void InbandTextTrack::willRemove(TrackPrivateBase* trackPrivate)
         return;
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     mediaElement()->removeTextTrack(this);
+}
+
+void InbandTextTrack::updateKindFromPrivate()
+{
+    switch (m_private->kind()) {
+    case InbandTextTrackPrivate::Subtitles:
+        setKind(TextTrack::subtitlesKeyword());
+        break;
+    case InbandTextTrackPrivate::Captions:
+        setKind(TextTrack::captionsKeyword());
+        break;
+    case InbandTextTrackPrivate::Descriptions:
+        setKind(TextTrack::descriptionsKeyword());
+        break;
+    case InbandTextTrackPrivate::Chapters:
+        setKind(TextTrack::chaptersKeyword());
+        break;
+    case InbandTextTrackPrivate::Metadata:
+        setKind(TextTrack::metadataKeyword());
+        break;
+    case InbandTextTrackPrivate::Forced:
+        setKind(TextTrack::forcedKeyword());
+        break;
+    case InbandTextTrackPrivate::None:
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 } // namespace WebCore

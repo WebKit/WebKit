@@ -77,6 +77,8 @@ public:
 
     const MediaDescription& description() const;
 
+    void setPrivate(PassRefPtr<VideoTrackPrivate>);
+
 protected:
     VideoTrack(VideoTrackClient*, PassRefPtr<VideoTrackPrivate> privateTrack);
 
@@ -90,6 +92,8 @@ private:
     virtual void willRemove(TrackPrivateBase*) override;
 
     virtual bool enabled() const override { return selected(); }
+
+    void updateKindFromPrivate();
 
     bool m_selected;
     VideoTrackClient* m_client;
