@@ -1,3 +1,37 @@
+2014-04-15  Jer Noble  <jer.noble@apple.com>
+
+        Fullscreen media controls are unusable in pagination mode
+        https://bugs.webkit.org/show_bug.cgi?id=131705
+
+        Reviewed by Darin Adler.
+
+        When pagination mode is enabled, the full screen media will (depending on the width of the
+        pagination columns) overflow its column, and hit testing will be clipped to the column. In extreme
+        cases, where the column width < 0.5 * media element width, the media controls will be entirely
+        unclickable.
+
+        Rather than making the RenderFullScreen a child of the full screen element's parent's renderer,
+        make it a child of the RenderView, putting it outside of the columns entirely. Always create and
+        insert the fullscreenRenderer's placeholder, using it as the remembered insertion point for the
+        fullscreen element's renderer when we exit full screen.
+
+        Drive-by fix: don't wrap the full screen element's renderer in webkitWillEnterFullScreenForElement();
+        it will just be re-wrapped in createRendererIfNeeded().
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement): Don't wrap the full screen element's renderer.
+        (WebCore::Document::setFullScreenRenderer): Call setPlaceholderStyle.
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreenPlaceholder::willBeDestroyed): Call clearPlaceholder.
+        (WebCore::RenderFullScreen::wrapRenderer): Make fullscreenRenderer a child of the view().
+        (WebCore::RenderFullScreen::unwrapRenderer): Return the children to the parent of the placeholder().
+        (WebCore::RenderFullScreen::clearPlaceholder): Renamed from setPlaceholder().
+        (WebCore::RenderFullScreen::ensurePlaceholder): Added. 
+        (WebCore::RenderFullScreen::setPlaceholderStyle): Renamed from createPlaceholder().
+        (WebCore::RenderFullScreen::setPlaceholder): Deleted.
+        (WebCore::RenderFullScreen::createPlaceholder): Deleted.
+        * rendering/RenderFullScreen.h:
+
 2014-04-16  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Multiple initialization segments with same codecs in tracks fail validation.

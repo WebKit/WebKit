@@ -31,6 +31,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -50,7 +51,7 @@ private:
 
 void RenderFullScreenPlaceholder::willBeDestroyed()
 {
-    m_owner.setPlaceholder(0);
+    m_owner.clearPlaceholder();
     RenderBlockFlow::willBeDestroyed();
 }
 
@@ -104,7 +105,7 @@ static PassRef<RenderStyle> createFullScreenStyle()
     return fullscreenStyle;
 }
 
-RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderElement* parent, Document& document)
+RenderElement* RenderFullScreen::wrapRenderer(RenderObject* object, RenderElement* parent, Document& document)
 {
     RenderFullScreen* fullscreenRenderer = new RenderFullScreen(document, createFullScreenStyle());
     fullscreenRenderer->initializeStyle();
@@ -118,11 +119,12 @@ RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderEle
         if (RenderElement* parent = object->parent()) {
             RenderBlock* containingBlock = object->containingBlock();
             ASSERT(containingBlock);
+
             // Since we are moving the |object| to a new parent |fullscreenRenderer|,
             // the line box tree underneath our |containingBlock| is not longer valid.
             containingBlock->deleteLines();
 
-            parent->addChild(fullscreenRenderer, object);
+            parent->addChild(fullscreenRenderer->ensurePlaceholder(), object);
             object->removeFromParent();
             
             // Always just do a full layout to ensure that line boxes get deleted properly.
@@ -131,16 +133,17 @@ RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderEle
             parent->setNeedsLayoutAndPrefWidthsRecalc();
             containingBlock->setNeedsLayoutAndPrefWidthsRecalc();
         }
+
+        object->view().addChild(fullscreenRenderer);
         fullscreenRenderer->addChild(object);
-        fullscreenRenderer->setNeedsLayoutAndPrefWidthsRecalc();
     }
     document.setFullScreenRenderer(fullscreenRenderer);
-    return fullscreenRenderer;
+    return fullscreenRenderer->ensurePlaceholder();
 }
 
 void RenderFullScreen::unwrapRenderer()
 {
-    if (parent()) {
+    if (placeholder() && placeholder()->parent()) {
         RenderObject* child;
         while ((child = firstChild())) {
             // We have to clear the override size, because as a flexbox, we
@@ -149,39 +152,38 @@ void RenderFullScreen::unwrapRenderer()
             if (child->isBox())
                 toRenderBox(child)->clearOverrideSize();
             child->removeFromParent();
-            parent()->addChild(child, this);
-            parent()->setNeedsLayoutAndPrefWidthsRecalc();
+            placeholder()->parent()->addChild(child, m_placeholder);
         }
-    }
-    if (placeholder())
+
         placeholder()->removeFromParent();
+    }
     removeFromParent();
     document().setFullScreenRenderer(0);
 }
 
-void RenderFullScreen::setPlaceholder(RenderBlock* placeholder)
+void RenderFullScreen::clearPlaceholder()
 {
-    m_placeholder = placeholder;
+    m_placeholder = nullptr;
 }
 
-void RenderFullScreen::createPlaceholder(PassRef<RenderStyle> style, const LayoutRect& frameRect)
+RenderBlock* RenderFullScreen::ensurePlaceholder()
+{
+    if (m_placeholder)
+        return m_placeholder;
+
+    m_placeholder = new RenderFullScreenPlaceholder(*this, RenderStyle::create());
+    m_placeholder->initializeStyle();
+    return m_placeholder;
+}
+
+void RenderFullScreen::setPlaceholderStyle(PassRef<RenderStyle> style, const LayoutRect& frameRect)
 {
     if (style.get().width().isAuto())
         style.get().setWidth(Length(frameRect.width(), Fixed));
     if (style.get().height().isAuto())
         style.get().setHeight(Length(frameRect.height(), Fixed));
 
-    if (m_placeholder) {
-        m_placeholder->setStyle(std::move(style));
-        return;
-    }
-
-    m_placeholder = new RenderFullScreenPlaceholder(*this, std::move(style));
-    m_placeholder->initializeStyle();
-    if (parent()) {
-        parent()->addChild(m_placeholder, this);
-        parent()->setNeedsLayoutAndPrefWidthsRecalc();
-    }
+    ensurePlaceholder()->setStyle(std::move(style));
 }
 
 }

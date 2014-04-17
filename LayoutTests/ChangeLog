@@ -1,5 +1,16 @@
 2014-04-16  Jer Noble  <jer.noble@apple.com>
 
+        Fullscreen media controls are unusable in pagination mode
+        https://bugs.webkit.org/show_bug.cgi?id=131705
+
+        Reviewed by Darin Adler.
+
+        * fullscreen/full-screen-no-style-sharing-expected.txt: Rebaselined.
+        * fullscreen/video-cursor-auto-hide.html: Corrected test to move cursor
+            to the middle of the video element.
+
+2014-04-16  Jer Noble  <jer.noble@apple.com>
+
         [MSE] Multiple initialization segments with same codecs in tracks fail validation.
         https://bugs.webkit.org/show_bug.cgi?id=131768
 
