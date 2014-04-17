@@ -1,3 +1,11 @@
+2014-04-17  Darin Adler  <darin@apple.com>
+
+        Try to fix EFL and GTK builds.
+
+        * workers/WorkerGlobalScope.idl: Touch file to make it rebuild, assuming that
+        module dependencies aren't working right with CMake. Tweaked formatting quite a
+        bit while I was in here.
+
 2014-04-17  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] REGRESSION: Column set styles don't update when zooming etc.

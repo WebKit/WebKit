@@ -1,3 +1,11 @@
+2014-04-17  Darin Adler  <darin@apple.com>
+
+        Try to fix EFL and GTK builds.
+
+        * Source/cmake/OptionsEfl.cmake: Add INDEXED_DATABASE_IN_WORKERS.
+        * Source/cmake/OptionsGTK.cmake: Ditto.
+        * Source/cmakeconfig.h.cmake: Ditto.
+
 2014-04-16  Brendan Long  <b.long@cablelabs.com>
 
         [GTK][CMAKE] build-webkit doesn't detect when the build fails
