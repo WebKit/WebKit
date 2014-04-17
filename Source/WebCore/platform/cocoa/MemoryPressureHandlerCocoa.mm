@@ -175,7 +175,7 @@ size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
     if (err != KERN_SUCCESS)
         return static_cast<size_t>(-1);
 
-    return vmInfo.internal;
+    return static_cast<size_t>(vmInfo.internal);
 }
 
 void MemoryPressureHandler::ReliefLogger::platformLog()
