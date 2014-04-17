@@ -3808,7 +3808,7 @@ IntRect FrameView::convertFromRenderer(const RenderElement* renderer, const IntR
 
     // Convert from page ("absolute") to FrameView coordinates.
     if (!delegatesScrolling())
-        rect.moveBy(-scrollPosition() + IntPoint(0, headerHeight()));
+        rect.moveBy(-scrollPosition() + IntPoint(0, headerHeight() + topContentInset()));
 
     return rect;
 }
@@ -3833,7 +3833,7 @@ IntPoint FrameView::convertFromRenderer(const RenderElement* renderer, const Int
 
     // Convert from page ("absolute") to FrameView coordinates.
     if (!delegatesScrolling())
-        point.moveBy(-scrollPosition() + IntPoint(0, headerHeight()));
+        point.moveBy(-scrollPosition() + IntPoint(0, headerHeight() + topContentInset()));
     return point;
 }
 

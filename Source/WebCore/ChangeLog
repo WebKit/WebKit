@@ -1,3 +1,19 @@
+2014-04-17  Beth Dakin  <bdakin@apple.com>
+
+        Hit-testing is incorrect for plugins inside iframes when there is a 
+        topContentInset
+        https://bugs.webkit.org/show_bug.cgi?id=131826
+        -and corresponding-
+        <rdar://problem/16649996>
+
+        Reviewed by Tim Horton.
+
+        I missed one coordinate-conversion spot when getting hit-testing to work. Like 
+        headerHeight() which also manipulates the location of the root layer, 
+        topContentInset() has to be factored into all of these conversions.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::convertFromRenderer):
+
 2014-04-17  Andreas Kling  <akling@apple.com>
 
         Stub out MemoryPressureHandler::ReliefLogger on older OS X'es.
