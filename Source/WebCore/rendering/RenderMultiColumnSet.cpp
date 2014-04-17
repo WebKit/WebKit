@@ -539,24 +539,6 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
     return overflowRect;
 }
 
-void RenderMultiColumnSet::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (style().visibility() != VISIBLE)
-        return;
-
-    RenderBlock::paintObject(paintInfo, paintOffset);
-
-    // FIXME: Right now we're only painting in the foreground phase.
-    // Columns should technically respect phases and allow for background/float/foreground overlap etc., just like
-    // RenderBlocks do. Note this is a pretty minor issue, since the old column implementation clipped columns
-    // anyway, thus making it impossible for them to overlap one another. It's also really unlikely that the columns
-    // would overlap another block.
-    if (!m_flowThread || !isValid() || (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection))
-        return;
-
-    paintColumnRules(paintInfo, paintOffset);
-}
-
 void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.context->paintingDisabled())

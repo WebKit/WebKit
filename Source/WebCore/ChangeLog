@@ -1,3 +1,26 @@
+2014-04-17  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Column rules don't respect the specified stacking order.
+        https://bugs.webkit.org/show_bug.cgi?id=131804
+
+        Reviewed by Beth Dakin.
+
+        Added fast/multicol/newmulticol/compare_with_old_impl/column-rules-stacking.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::paintBoxDecorations):
+        * rendering/RenderBlockFlow.h:
+        Override paintBoxDecorations for block flows so that we can iterate over our column sets
+        and paint their rules just after painting our background and border. We can't wait until
+        the child column sets paint their backgrounds, since that is specified as being above negative
+        z-index children. We have to pretend that the column sets don't exist as
+        far as column rule painting is concerned.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::paintObject): Deleted.
+        * rendering/RenderMultiColumnSet.h:
+        Turn paintObject in RenderMultiColumnSet into an override that doesn't paint anything.
+
 2014-04-17  Beth Dakin  <bdakin@apple.com>
 
         Hit-testing is incorrect for plugins inside iframes when there is a 

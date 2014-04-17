@@ -1997,6 +1997,20 @@ void RenderBlockFlow::repaintOverhangingFloats(bool paintAllDescendants)
     }
 }
 
+void RenderBlockFlow::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& point)
+{
+    RenderBlock::paintBoxDecorations(paintInfo, point);
+    
+    if (!multiColumnFlowThread() || !paintInfo.shouldPaintWithinRoot(*this))
+        return;
+    
+    // Iterate over our children and paint the column rules as needed.
+    for (auto& columnSet : childrenOfType<RenderMultiColumnSet>(*this)) {
+        LayoutPoint childPoint = columnSet.location() + flipForWritingModeForChild(&columnSet, point);
+        columnSet.paintColumnRules(paintInfo, childPoint);
+    }
+}
+
 void RenderBlockFlow::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paintOffset, bool preservePhase)
 {
     if (!m_floatingObjects)
