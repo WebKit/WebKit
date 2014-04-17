@@ -96,9 +96,5 @@ webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]
 webkit.org/b/74144 fast/regions/universal-selector-children-to-the-same-region.html [ Skip ]
 webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
 
-# Fails or asserts on most runs.
-webkit.org/b/131679 inspector/dom/content-flow-list.html [ Skip ]
-webkit.org/b/131679 inspector/dom/content-flow-content-removal.html [ Skip ]
-
 # Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)
 webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]

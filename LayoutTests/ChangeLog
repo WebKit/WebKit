@@ -1,3 +1,14 @@
+2014-04-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't skip inspector/dom/content-flow-list.html and inspector/dom/content-flow-content-removal.html.
+
+        First, they no longer crash/assert. They fail most of the time, but that's tracked as bug 129817.
+
+        Second, skipping was ineffective anyway, because we had a preceding [ Pass Failure ]
+        entry for the same files.
+
+        * TestExpectations:
+
 2014-04-17  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] REGRESSION: Column set styles don't update when zooming etc.
