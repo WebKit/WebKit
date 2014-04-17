@@ -46,14 +46,6 @@
 #include "CustomProtocolManagerProxy.h"
 #endif
 
-#if PLATFORM(IOS) && USE(XPC_SERVICES)
-OBJC_CLASS BKSProcessAssertion;
-enum ProcessAssertionState {
-    AssertionBackground,
-    AssertionForeground
-};
-#endif
-
 namespace WebCore {
 class URL;
 struct PluginInfo;
@@ -66,7 +58,7 @@ class WebBackForwardListItem;
 class WebContext;
 class WebPageGroup;
 struct WebNavigationDataStore;
-
+    
 class WebProcessProxy : public ChildProcessProxy, ResponsivenessTimer::Client {
 public:
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem>> WebBackForwardListItemMap;
@@ -224,11 +216,6 @@ private:
 #endif
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
-    
-#if PLATFORM(IOS) && USE(XPC_SERVICES)
-    RetainPtr<BKSProcessAssertion> m_assertion;
-    ProcessAssertionState m_assertionState;
-#endif
 };
 
 #if !PLATFORM(IOS)

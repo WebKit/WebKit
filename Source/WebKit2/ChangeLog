@@ -1,3 +1,32 @@
+2014-04-16  Gavin Barraclough  <baraclough@apple.com>
+
+        On iOS keep network process running using a process assertion rather than a boost
+        https://bugs.webkit.org/show_bug.cgi?id=131779
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService):
+            - No need to leak a boost onto the NetworkProcess on iOS.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+            - Take a ProcessAssertion on the NetworkProcess.
+        * UIProcess/Shared/ChildProcessProxy.h:
+            - Added m_assertion.
+        * UIProcess/WebProcessProxy.h:
+            - Removed m_assertion.
+        * UIProcess/ios/ProcessAssertion.h: Added.
+            - Added - refactored from WebProcessProxy.h.
+        * UIProcess/ios/ProcessAssertion.mm: Added.
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::setState):
+            - Added - refactored from WebProcessProxyIOS.mm.
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::updateProcessState):
+            - Code refactored out to ProcessAssertion.mm.
+        * WebKit2.xcodeproj/project.pbxproj:
+            - Added files.
+
 2014-04-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Improve the approximation of the scroll position of the dynamic viewport size updates

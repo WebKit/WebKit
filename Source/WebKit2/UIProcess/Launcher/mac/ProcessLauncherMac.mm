@@ -180,7 +180,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     xpc_connection_set_event_handler(connection, ^(xpc_object_t event) { });
     xpc_connection_resume(connection);
 
-#if ENABLE(NETWORK_PROCESS)
+#if ENABLE(NETWORK_PROCESS) && !PLATFORM(IOS)
     // Leak a boost onto the NetworkProcess.
     if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
         xpc_object_t preBootstrapMessage = xpc_dictionary_create(0, 0, 0);

@@ -28,13 +28,7 @@
 
 #if PLATFORM(IOS)
 
-#import <AssertionServices/BKSProcessAssertion.h>
 #import <WebCore/NotImplemented.h>
-
-#if USE(XPC_SERVICES)
-const BKSProcessAssertionFlags BackgroundTabFlags = (BKSProcessAssertionAllowIdleSleep);
-const BKSProcessAssertionFlags ForegroundTabFlags = (BKSProcessAssertionAllowIdleSleep | BKSProcessAssertionPreventTaskSuspend | BKSProcessAssertionWantsForegroundResourcePriority | BKSProcessAssertionPreventTaskThrottleDown);
-#endif
 
 namespace WebKit {
 
@@ -75,7 +69,7 @@ void WebProcessProxy::updateProcessSuppressionState()
 {
     notImplemented();
 }
-
+    
 void WebProcessProxy::updateProcessState()
 {
 #if USE(XPC_SERVICES)
@@ -86,28 +80,18 @@ void WebProcessProxy::updateProcessState()
     if (!xpcConnection)
         return;
 
-    ProcessAssertionState assertionState = AssertionBackground;
+    AssertionState assertionState = AssertionState::Background;
     for (const auto& page : m_pageMap.values()) {
         if (page->isInWindow()) {
-            assertionState = AssertionForeground;
+            assertionState = AssertionState::Foreground;
             break;
         }
     }
-    BKSProcessAssertionFlags flags = (assertionState == AssertionForeground) ? ForegroundTabFlags : BackgroundTabFlags;
     
-    if (!m_assertion) {
-        pid_t pid = xpc_connection_get_pid(xpcConnection);
-        BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
-            if (!acquired) {
-                LOG_ERROR("Unable to acquire assertion for WebContent process %d", pid);
-                ASSERT_NOT_REACHED();
-            }
-        };
-        m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flags reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
-    } else if (m_assertionState != assertionState)
-        [m_assertion setFlags:flags];
-    
-    m_assertionState = assertionState;
+    if (!m_assertion)
+        m_assertion = std::make_unique<ProcessAssertion>(xpc_connection_get_pid(xpcConnection), assertionState);
+    else
+        m_assertion->setState(assertionState);
 #endif
 }
 

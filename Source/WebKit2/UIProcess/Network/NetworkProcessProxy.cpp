@@ -199,6 +199,10 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     if (m_webContext.processSuppressionEnabled())
         setProcessSuppressionEnabled(true);
 #endif
+    
+#if PLATFORM(IOS) && USE(XPC_SERVICES)
+    m_assertion = std::make_unique<ProcessAssertion>(xpc_connection_get_pid(connection()->xpcConnection()), AssertionState::Foreground);
+#endif
 }
 
 } // namespace WebKit
