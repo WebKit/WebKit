@@ -453,7 +453,8 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
-    ASSERT(!_customContentView);
+    if (_customContentView)
+        return;
 
     if (_isAnimatingResize) {
         [_contentView layer].sublayerTransform = _resizeAnimationTransformAdjustments;

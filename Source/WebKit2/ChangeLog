@@ -1,3 +1,17 @@
+2014-04-17  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] REGRESSION (r166975): WKPDFView is broken
+        https://bugs.webkit.org/show_bug.cgi?id=131828
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        Bail from updating the scroll view parameters from the layer tree update
+        while it's being managed by a custom content view.
+        We'll get any changes again in the next commit after removing the custom
+        content view (and painting the new page) anyway, so this should be OK.
+
 2014-04-17  Pratik Solanki  <psolanki@apple.com>
 
         _webProcessIdentifier should return 0 if the web process crashed
