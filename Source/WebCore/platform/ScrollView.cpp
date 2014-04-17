@@ -731,7 +731,6 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         m_verticalScrollbar->offsetDidChange();
 
     m_inUpdateScrollbars = false;
-#endif
 }
 
 const int panIconSizeLength = 16;
