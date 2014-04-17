@@ -1,3 +1,14 @@
+2014-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't include CompilationThread.h from StringImpl.h
+        https://bugs.webkit.org/show_bug.cgi?id=131817
+
+        Reviewed by Simon Fraser.
+
+        * wtf/CompilationThread.h:
+        * wtf/StdLibExtras.h:
+        * wtf/text/StringImpl.h:
+
 2014-04-17  Darin Adler  <darin@apple.com>
 
         Use HashMap<unique_ptr> and Vector<unique_ptr> instead of deprecatedDeleteAllValues

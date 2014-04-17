@@ -28,7 +28,6 @@
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE bool isCompilationThread();
 WTF_EXPORT_PRIVATE bool exchangeIsCompilationThread(bool newValue);
 
 class CompilationScope {
@@ -55,7 +54,6 @@ private:
 
 using WTF::CompilationScope;
 using WTF::exchangeIsCompilationThread;
-using WTF::isCompilationThread;
 
 #endif // CompilationThread_h
 

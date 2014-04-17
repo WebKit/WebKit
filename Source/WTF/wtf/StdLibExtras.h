@@ -278,6 +278,11 @@ inline void insertIntoBoundedVector(VectorType& vector, size_t size, const Eleme
     vector[index] = element;
 }
 
+// This is here instead of CompilationThread.h to prevent that header from being included
+// everywhere. The fact that this method, and that header, exist outside of JSC is a bug.
+// https://bugs.webkit.org/show_bug.cgi?id=131815
+WTF_EXPORT_PRIVATE bool isCompilationThread();
+
 } // namespace WTF
 
 #if OS(WINCE)
@@ -396,6 +401,7 @@ namespace chrono_literals {
 
 using WTF::KB;
 using WTF::MB;
+using WTF::isCompilationThread;
 using WTF::insertIntoBoundedVector;
 using WTF::isPointerAligned;
 using WTF::is8ByteAligned;
