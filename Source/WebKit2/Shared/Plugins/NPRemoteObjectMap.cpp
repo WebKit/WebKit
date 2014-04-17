@@ -196,34 +196,25 @@ NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVar
 
 void NPRemoteObjectMap::pluginDestroyed(Plugin* plugin)
 {
-    Vector<NPObjectMessageReceiver*> messageReceivers;
-
-    // Gather the receivers associated with this plug-in.
-    for (HashMap<uint64_t, NPObjectMessageReceiver*>::const_iterator it = m_registeredNPObjects.begin(), end = m_registeredNPObjects.end(); it != end; ++it) {
-        NPObjectMessageReceiver* npObjectMessageReceiver = it->value;
-        if (npObjectMessageReceiver->plugin() == plugin)
-            messageReceivers.append(npObjectMessageReceiver);
+    // Gather and delete the receivers associated with this plug-in.
+    Vector<NPObjectMessageReceiver*> receivers;
+    for (auto* receiver : m_registeredNPObjects.values()) {
+        if (receiver->plugin() == plugin)
+            receivers.append(receiver);
     }
-
-    // Now delete all the receivers.
-    deprecatedDeleteAllValues(messageReceivers);
-
-    Vector<NPObjectProxy*> objectProxies;
-    for (HashSet<NPObjectProxy*>::const_iterator it = m_npObjectProxies.begin(), end = m_npObjectProxies.end(); it != end; ++it) {
-        NPObjectProxy* npObjectProxy = *it;
-
-        if (npObjectProxy->plugin() == plugin)
-            objectProxies.append(npObjectProxy);
-    }
+    for (auto* receiver : receivers)
+        delete receiver;
 
     // Invalidate and remove all proxies associated with this plug-in.
-    for (size_t i = 0; i < objectProxies.size(); ++i) {
-        NPObjectProxy* npObjectProxy = objectProxies[i];
-
-        npObjectProxy->invalidate();
-
-        ASSERT(m_npObjectProxies.contains(npObjectProxy));
-        m_npObjectProxies.remove(npObjectProxy);
+    Vector<NPObjectProxy*> proxies;
+    for (auto* proxy : m_npObjectProxies) {
+        if (proxy->plugin() == plugin)
+            proxies.append(proxy);
+    }
+    for (auto* proxy : proxies) {
+        proxy->invalidate();
+        ASSERT(m_npObjectProxies.contains(proxy));
+        m_npObjectProxies.remove(proxy);
     }
 }
 
