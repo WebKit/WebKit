@@ -59,13 +59,15 @@ protected:
     TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad>);
 
     gint m_index;
-    String m_label;
-    String m_language;
+    AtomicString m_label;
+    AtomicString m_language;
     GRefPtr<GstPad> m_pad;
 
 private:
-    bool getLanguageCode(GstTagList* tags, String& value);
-    bool getTag(GstTagList* tags, const gchar* tagName, String& value);
+    bool getLanguageCode(GstTagList* tags, AtomicString& value);
+
+    template<class StringType>
+    bool getTag(GstTagList* tags, const gchar* tagName, StringType& value);
 
     TrackPrivateBase* m_owner;
     GMainLoopSource m_activeTimerHandler;

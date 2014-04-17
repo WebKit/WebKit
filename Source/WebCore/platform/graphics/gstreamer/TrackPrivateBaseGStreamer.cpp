@@ -121,7 +121,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
     setActive(active);
 }
 
-bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, String& value)
+bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, AtomicString& value)
 {
     String language;
     if (getTag(tags, GST_TAG_LANGUAGE_CODE, language)) {
@@ -135,7 +135,8 @@ bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, String& value)
     return false;
 }
 
-bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, String& value)
+template<class StringType>
+bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, StringType& value)
 {
     GUniqueOutPtr<gchar> tagValue;
     if (gst_tag_list_get_string(tags, tagName, &tagValue.outPtr())) {
