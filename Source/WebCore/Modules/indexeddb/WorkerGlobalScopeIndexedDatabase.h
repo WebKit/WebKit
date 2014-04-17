@@ -27,7 +27,7 @@
 #ifndef WorkerGlobalScopeIndexedDatabase_h
 #define WorkerGlobalScopeIndexedDatabase_h
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
 
 #include "Supplementable.h"
 #include <wtf/text/WTFString.h>

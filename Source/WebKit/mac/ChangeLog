@@ -1,3 +1,13 @@
+2014-04-17  Darin Adler  <darin@apple.com>
+
+        Add separate flag for IndexedDatabase in workers since the current implementation is not threadsafe
+        https://bugs.webkit.org/show_bug.cgi?id=131785
+        rdar://problem/16003108
+
+        Reviewed by Brady Eidson.
+        
+        * Configurations/FeatureDefines.xcconfig: Added INDEXED_DATABASE_IN_WORKERS.
+
 2014-04-16  Tim Horton  <timothy_horton@apple.com>
 
         Images dragged from WebKit1 on 2x displays are too big

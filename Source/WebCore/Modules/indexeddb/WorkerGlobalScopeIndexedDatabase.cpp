@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
 
 #include "WorkerGlobalScopeIndexedDatabase.h"
 
