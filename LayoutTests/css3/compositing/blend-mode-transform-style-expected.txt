@@ -4,6 +4,6 @@ PASS getTransformStyle("blending-with-transform-style-flat") is "flat"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Test that an element with -webkit-mix-blend-mode other than normal forces the computed value of transform-style to flat.
+Test that an element with mix-blend-mode other than normal forces the computed value of transform-style to flat.
 
 

@@ -6,9 +6,9 @@
         function setProperty(value) {
             var div = document.createElement('div');
             document.body.appendChild(div);
-            div.style.setProperty("-webkit-isolation", value);
+            div.style.setProperty("isolation", value);
 
-            var computedValue = getComputedStyle(div).getPropertyValue("-webkit-isolation");
+            var computedValue = getComputedStyle(div).getPropertyValue("isolation");
             document.body.removeChild(div);
 
             return computedValue;

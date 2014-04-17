@@ -5,13 +5,13 @@
         height: 100px;
     }
     .noblender {
-        -webkit-mix-blend-mode: normal;
+        mix-blend-mode: normal;
     }
     .blender {
-        -webkit-mix-blend-mode: difference;
+        mix-blend-mode: difference;
     }
 </style>
-<p>Test that an element with -webkit-mix-blend-mode other than normal forces the computed value of transform-style to flat.</p>
+<p>Test that an element with mix-blend-mode other than normal forces the computed value of transform-style to flat.</p>
 <div id="blend-mode-normal-with-transform-style-preserve-3d" class="noblender" style="-webkit-transform-style: preserve-3d;"></div>
 <div id="blending-with-transform-style-preserve-3d" class="blender" style="-webkit-transform-style: preserve-3d;"></div>
 <div id="blending-with-transform-style-flat" class="blender" style="-webkit-transform-style: flat;"></div>

@@ -1,4 +1,4 @@
-description("Test the parsing of the -webkit-mix-blend-mode property.");
+description("Test the parsing of the mix-blend-mode property.");
 
 function jsWrapperClass(node)
 {
@@ -30,16 +30,16 @@ function testBlendModeRule(description, rule, expectedLength, expectedValue, exp
     debug("");
     debug(description + " : " + rule);
 
-    stylesheet.insertRule("body { -webkit-mix-blend-mode: " + rule + "; }", 0);
+    stylesheet.insertRule("body { mix-blend-mode: " + rule + "; }", 0);
     cssRule = stylesheet.cssRules.item(0);
   
     shouldBe("cssRule.type", "1");
 
     declaration = cssRule.style;
     shouldBe("declaration.length", "1");
-    shouldBe("declaration.getPropertyValue('-webkit-mix-blend-mode')", "'" + expectedValue + "'");
+    shouldBe("declaration.getPropertyValue('mix-blend-mode')", "'" + expectedValue + "'");
 
-    blendModeRule = declaration.getPropertyCSSValue('-webkit-mix-blend-mode');
+    blendModeRule = declaration.getPropertyCSSValue('mix-blend-mode');
     shouldBeType("blendModeRule", "CSSPrimitiveValue");
 }
 

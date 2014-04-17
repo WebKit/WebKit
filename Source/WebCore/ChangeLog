@@ -1,3 +1,25 @@
+2014-04-17  Rik Cabanier  <cabanier@adobe.com>
+
+        [CSS Blending] Remove the -webkit- prefix for mix-blend-mode and isolation CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=131355
+
+        Reviewed by Dean Jackson.
+
+        Removed webkit prefix from mix-blend-mode and isolation. These properties
+        never shipped and their spec is now in CR.
+
+        Covered by existing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+
 2014-04-17  David Kilzer  <ddkilzer@apple.com>
 
         Tidy up isIsolatedInline() and highestContainingIsolateWithinRoot()

@@ -286,8 +286,8 @@ z-index
 -webkit-box-decoration-break
 #endif
 #if defined(ENABLE_CSS_COMPOSITING) && ENABLE_CSS_COMPOSITING
--webkit-mix-blend-mode
--webkit-isolation
+mix-blend-mode
+isolation
 #endif
 #if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
 -webkit-filter
