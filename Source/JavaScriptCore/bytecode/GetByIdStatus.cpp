@@ -218,6 +218,13 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
             ASSERT(!list->at(listIndex).doesCalls());
             
             Structure* structure = list->at(listIndex).structure();
+            
+            // FIXME: We should assert that we never see a structure that
+            // hasImpureGetOwnPropertySlot() but for which we don't
+            // newImpurePropertyFiresWatchpoints(). We're not at a point where we can do
+            // that, yet.
+            // https://bugs.webkit.org/show_bug.cgi?id=131810
+            
             if (structure->takesSlowPathInDFGForImpureProperty())
                 return GetByIdStatus(TakesSlowPath, true);
             

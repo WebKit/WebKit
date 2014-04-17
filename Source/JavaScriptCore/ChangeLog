@@ -1,3 +1,20 @@
+2014-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: ASSERT(!typeInfo().hasImpureGetOwnPropertySlot() || typeInfo().newImpurePropertyFiresWatchpoints()) on jquery tests
+        https://bugs.webkit.org/show_bug.cgi?id=131798
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Some day, we will fix https://bugs.webkit.org/show_bug.cgi?id=131810 and some version
+        of this assertion can return. For now, it's not clear that the assertion is guarding
+        any truly undesirable behavior - so it should just go away and be replaced with a
+        FIXME.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * runtime/Structure.h:
+        (JSC::Structure::takesSlowPathInDFGForImpureProperty):
+
 2014-04-17  David Kilzer  <ddkilzer@apple.com>
 
         Blind attempt to fix Windows build after r166837
