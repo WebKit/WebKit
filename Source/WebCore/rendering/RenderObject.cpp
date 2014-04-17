@@ -1086,26 +1086,6 @@ void RenderObject::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRec
         graphicsContext->endTransparencyLayer();
 }
 
-// FIXME: Make this return an unsigned integer?
-int RenderObject::columnNumberForOffset(int offset)
-{
-    int columnNumber = 0;
-    RenderBlock* containingBlock = this->containingBlock();
-    RenderView& view = containingBlock->view();
-    const Pagination& pagination = view.frameView().frame().page()->pagination();
-    if (pagination.mode == Pagination::Unpaginated)
-        return columnNumber;
-
-    ColumnInfo* columnInfo = view.columnInfo();
-    if (columnInfo && !columnInfo->progressionIsInline()) {
-        if (!columnInfo->progressionIsReversed())
-            columnNumber = (pagination.pageLength + pagination.gap - offset) / (pagination.pageLength + pagination.gap);
-        else
-            columnNumber = offset / (pagination.pageLength + pagination.gap);
-    }
-    return columnNumber;
-}
-
 #if PLATFORM(IOS)
 // This function is similar in spirit to RenderText::absoluteRectsForRange, but returns rectangles
 // which are annotated with additional state which helps iOS draw selections in its unique way.
@@ -1133,7 +1113,7 @@ void RenderObject::collectSelectionRects(Vector<SelectionRect>& rects, unsigned 
 
     unsigned numberOfQuads = quads.size();
     for (unsigned i = 0; i < numberOfQuads; ++i)
-        rects.append(SelectionRect(quads[i].enclosingBoundingBox(), isHorizontalWritingMode(), columnNumberForOffset(quads[i].enclosingBoundingBox().x())));
+        rects.append(SelectionRect(quads[i].enclosingBoundingBox(), isHorizontalWritingMode(), view().pageNumberForBlockProgressionOffset(quads[i].enclosingBoundingBox().x())));
 }
 #endif
 

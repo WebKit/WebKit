@@ -62,7 +62,7 @@ public:
     bool isHorizontal() const { return m_isHorizontal; }
     bool isInFixedPosition() const { return m_isInFixedPosition; }
     bool isRubyText() const { return m_isRubyText; }
-    int columnNumber() const { return m_columnNumber; }
+    int pageNumber() const { return m_pageNumber; }
 
     void setRect(const IntRect& rect) { m_rect = rect; }
 
@@ -125,7 +125,7 @@ private:
     bool m_isHorizontal;
     bool m_isInFixedPosition;
     bool m_isRubyText;
-    int m_columnNumber;
+    int m_pageNumber;
 };
 
 } // namespace WebCore

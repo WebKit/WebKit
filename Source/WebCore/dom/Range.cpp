@@ -1711,7 +1711,7 @@ static inline void adjustLineHeightOfSelectionRects(Vector<SelectionRect>& rects
 
 static SelectionRect coalesceSelectionRects(const SelectionRect& original, const SelectionRect& previous)
 {
-    SelectionRect result(unionRect(previous.rect(), original.rect()), original.isHorizontal(), original.columnNumber());
+    SelectionRect result(unionRect(previous.rect(), original.rect()), original.isHorizontal(), original.pageNumber());
     result.setDirection(original.containsStart() || original.containsEnd() ? original.direction() : previous.direction());
     result.setContainsStart(previous.containsStart() || original.containsStart());
     result.setContainsEnd(previous.containsEnd() || original.containsEnd());
@@ -1823,7 +1823,7 @@ void Range::collectSelectionRects(Vector<SelectionRect>& rects)
                 lineBottom = currentRectBottom;
             } else {
                 lastLineBottom = lineBottom;
-                if (currentRectTop <= lastLineBottom && i && rects[i].columnNumber() == rects[i - 1].columnNumber()) {
+                if (currentRectTop <= lastLineBottom && i && rects[i].pageNumber() == rects[i - 1].pageNumber()) {
                     lastLineTop = lineTop;
                     lineBottom = lastLineTop;
                 } else {
@@ -1914,13 +1914,13 @@ void Range::collectSelectionRects(Vector<SelectionRect>& rects)
                 // For iBooks, the interior lines may cross multiple horizontal pages.
                 interiorUnionRect.unite(currentRect.rect());
             } else {
-                unionedRects.append(SelectionRect(interiorUnionRect, currentRect.isHorizontal(), currentRect.columnNumber()));
+                unionedRects.append(SelectionRect(interiorUnionRect, currentRect.isHorizontal(), currentRect.pageNumber()));
                 interiorUnionRect = currentRect.rect();
             }
         } else {
             // Processing last line.
             if (!interiorUnionRect.isEmpty()) {
-                unionedRects.append(SelectionRect(interiorUnionRect, currentRect.isHorizontal(), currentRect.columnNumber()));
+                unionedRects.append(SelectionRect(interiorUnionRect, currentRect.isHorizontal(), currentRect.pageNumber()));
                 interiorUnionRect = IntRect();
             }
 

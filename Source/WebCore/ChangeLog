@@ -1,3 +1,41 @@
+2014-04-17  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] columnNumberForOffset is not patched for new multicolumn code yet.
+        https://bugs.webkit.org/show_bug.cgi?id=131740
+
+        Reviewed by Enrica Casucci.
+        
+        I took the opportunity to clean this code up while adding support for the new columns.
+        columnNumberForOffset only applied for paginated RenderViews and was really about
+        pages and not columns. It also only returns an actual page number if the columns are
+        block progressed (e.g., right-to-left vertical Japanese books).
+        
+        Therefore I renamed columnNumberForOffset to pageNumberForBlockProgressionOffset and
+        moved it to RenderView.
+        
+        I also renamed the member variable of SelectionRect to be pageNumber instead of
+        columnNumber in order to make it more obvious that this isn't about columns per se
+        (since the fact that we implemented RenderView's pagination mode using columns is an
+        implementation detail).
+
+        * dom/Range.cpp:
+        (WebCore::coalesceSelectionRects):
+        (WebCore::Range::collectSelectionRects):
+        * platform/ios/SelectionRect.h:
+        (WebCore::SelectionRect::pageNumber):
+        (WebCore::SelectionRect::columnNumber): Deleted.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::collectSelectionRects):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::collectSelectionRects):
+        (WebCore::RenderObject::columnNumberForOffset): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionRects):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pageNumberForBlockProgressionOffset):
+        * rendering/RenderView.h:
+
 2014-04-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] A few final cleanups to the DataObject classes.

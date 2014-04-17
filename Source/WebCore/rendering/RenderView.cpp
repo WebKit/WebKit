@@ -41,6 +41,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
@@ -1222,6 +1223,38 @@ RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator()
     if (m_wasAccumulatingRepaintRegion)
         return;
     m_rootView->flushAccumulatedRepaintRegion();
+}
+
+unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const
+{
+    int columnNumber = 0;
+    const Pagination& pagination = frameView().frame().page()->pagination();
+    if (pagination.mode == Pagination::Unpaginated)
+        return columnNumber;
+    
+    bool progressionIsInline = false;
+    bool progressionIsReversed = false;
+    
+    if (hasColumns()) {
+        ColumnInfo* colInfo = columnInfo();
+        if (!colInfo)
+            return columnNumber;
+        progressionIsInline = colInfo->progressionIsInline();
+        progressionIsReversed = colInfo->progressionIsReversed();
+    } else if (multiColumnFlowThread()) {
+        progressionIsInline = multiColumnFlowThread()->progressionIsInline();
+        progressionIsReversed = multiColumnFlowThread()->progressionIsReversed();
+    } else
+        return columnNumber;
+    
+    if (!progressionIsInline) {
+        if (!progressionIsReversed)
+            columnNumber = (pagination.pageLength + pagination.gap - offset) / (pagination.pageLength + pagination.gap);
+        else
+            columnNumber = offset / (pagination.pageLength + pagination.gap);
+    }
+
+    return columnNumber;
 }
 
 } // namespace WebCore
