@@ -1,3 +1,13 @@
+2014-04-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] A few final cleanups to the DataObject classes.
+        https://bugs.webkit.org/show_bug.cgi?id=131784
+
+        Reviewed by Anders Carlsson.
+
+        * platform/win/WCDataObject.cpp:
+        (WebCore::WCDataObject::clearData): Use 'last()' method.
+
 2014-04-15  Jer Noble  <jer.noble@apple.com>
 
         Fullscreen media controls are unusable in pagination mode

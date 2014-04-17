@@ -346,10 +346,8 @@ void DRTDataObject::clearData(CLIPFORMAT format)
     size_t position = 0;
     while (position < m_formats.size()) {
         if (m_formats[position]->cfFormat == format) {
-            m_formats[position] = std::move(m_formats[m_formats.size() - 1]);
-            m_formats.removeLast();
-            m_medium[position] = std::move(m_medium[m_medium.size() - 1]);
-            m_medium.removeLast();
+            m_formats[position] = m_formats.takeLast();
+            m_medium[position] = m_medium.takeLast();
             continue;
         }
         position++;

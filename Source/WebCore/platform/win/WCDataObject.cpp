@@ -357,10 +357,8 @@ void WCDataObject::clearData(CLIPFORMAT format)
     size_t ptr = 0;
     while (ptr < m_formats.size()) {
         if (m_formats[ptr]->cfFormat == format) {
-            m_formats[ptr] = std::move(m_formats[m_formats.size() - 1]);
-            m_formats.removeLast();
-            m_medium[ptr] = std::move(m_medium[m_medium.size() - 1]);
-            m_medium.removeLast();
+            m_formats[ptr] = m_formats.takeLast();
+            m_medium[ptr] = m_medium.takeLast();
             continue;
         }
         ptr++;

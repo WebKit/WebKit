@@ -1,3 +1,15 @@
+2014-04-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] A few final cleanups to the DataObject classes.
+        https://bugs.webkit.org/show_bug.cgi?id=131784
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/DRTDataObject.cpp:
+        (DRTDataObject::clearData): Use 'last()' method.
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (DRTUndoStack::pop): Use 'takeLast()' method.
+
 2014-04-17  Andres Gomez  <agomez@igalia.com>
 
         [Win] cygwin to keep installing curl 7.33.0-1 and subversion 1.7.14-1

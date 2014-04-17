@@ -76,7 +76,7 @@ public:
     void clear() { m_undoVector.clear(); }
 
     void push(DRTUndoObject* undoObject) { m_undoVector.append(undoObject); }
-    std::unique_ptr<DRTUndoObject> pop() { std::unique_ptr<DRTUndoObject> top = std::move(m_undoVector.last()); m_undoVector.removeLast(); return std::move(top); }
+    std::unique_ptr<DRTUndoObject> pop() { return m_undoVector.takeLast(); }
 
 private:
     Vector<std::unique_ptr<DRTUndoObject>> m_undoVector;
