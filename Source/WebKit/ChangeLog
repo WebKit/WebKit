@@ -1,3 +1,10 @@
+2014-04-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed 64-bit build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Do not
+        export 32-bit symbol in 64-bit build. 
+
 2014-04-17  Hyowon Kim  <hw1008.kim@samsung.com>
 
         [EFL] Remove deprecated ewk_paint code.

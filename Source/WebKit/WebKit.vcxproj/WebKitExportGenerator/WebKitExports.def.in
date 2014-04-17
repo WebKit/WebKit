@@ -475,7 +475,9 @@ EXPORTS
         symbolWithPointer(?setEnhancedUserInterfaceAccessibility@AXObjectCache@WebCore@@SAX_N@Z, ?setEnhancedUserInterfaceAccessibility@AXObjectCache@WebCore@@SAX_N@Z)
         symbolWithPointer(?sessionID@Page@WebCore@@QBE?AVSessionID@2@XZ, ?sessionID@Page@WebCore@@QEBA?AVSessionID@2@XZ)
         symbolWithPointer(?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVURL@2@VSessionID@2@@Z, ?resourceForURL@MemoryCache@WebCore@@QEAAPEAVCachedResource@2@AEBVURL@2@VSessionID@2@@Z)
-        symbolWithPointer(?isAPIValueWrapper@JSCell@JSC@@QBE_NXZ, ?isAPIValueWrapper@JSCell@JSC@@QEBA_NXZ)
+#if !CPU(X86_64)
+        ?isAPIValueWrapper@JSCell@JSC@@QBE_NXZ
+#endif
         symbolWithPointer(?reportDeprecatedGetterError@WebCore@@YA_JAAVExecState@JSC@@PBD1@Z, ?reportDeprecatedGetterError@WebCore@@YA_JAEAVExecState@JSC@@PEBD1@Z)
         symbolWithPointer(?throwGetterTypeError@WebCore@@YA_JAAVExecState@JSC@@PBD1@Z, ?throwGetterTypeError@WebCore@@YA_JAEAVExecState@JSC@@PEBD1@Z)
         symbolWithPointer(?throwSequenceTypeError@WebCore@@YAXAAVExecState@JSC@@@Z, ?throwSequenceTypeError@WebCore@@YAXAEAVExecState@JSC@@@Z)
