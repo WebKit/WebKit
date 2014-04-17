@@ -287,7 +287,7 @@ bool InPlaceAbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             // before and after setting it.
             source = forNode(node->child1());
             if (node->variableAccessData()->flushFormat() == FlushedDouble)
-                RELEASE_ASSERT(!(source.m_type & ~SpecDouble));
+                RELEASE_ASSERT(!(source.m_type & ~SpecFullDouble));
             break;
         
         default:

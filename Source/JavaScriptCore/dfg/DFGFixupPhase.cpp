@@ -268,7 +268,7 @@ private:
                 // We don't need to do ref'ing on the children because we're stealing them from
                 // the original division.
                 Node* newDivision = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecDouble, *node);
+                    m_indexInBlock, SpecBytecodeDouble, *node);
                 newDivision->setResult(NodeResultDouble);
                 
                 node->setOp(DoubleAsInt32);
@@ -1881,7 +1881,7 @@ private:
                     Edge(edge.node(), Int52RepUse));
             } else {
                 result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecDouble, DoubleRep, node->origin,
+                    m_indexInBlock, SpecBytecodeDouble, DoubleRep, node->origin,
                     Edge(edge.node(), NumberUse));
             }
 
@@ -1924,7 +1924,7 @@ private:
             Node* result;
             if (edge->hasDoubleResult()) {
                 result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecDouble, ValueRep, node->origin,
+                    m_indexInBlock, SpecBytecodeDouble, ValueRep, node->origin,
                     Edge(edge.node(), DoubleRepUse));
             } else {
                 result = m_insertionSet.insertNode(

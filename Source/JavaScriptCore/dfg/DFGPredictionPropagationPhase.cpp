@@ -373,7 +373,7 @@ private:
             
             if (node->child1()->shouldSpeculateFloat32Array()
                 || node->child1()->shouldSpeculateFloat64Array())
-                changed |= mergePrediction(SpecDouble);
+                changed |= mergePrediction(SpecFullDouble);
             else if (node->child1()->shouldSpeculateUint32Array()) {
                 if (isInt32Speculation(node->getHeapPrediction()))
                     changed |= mergePrediction(SpecInt32);

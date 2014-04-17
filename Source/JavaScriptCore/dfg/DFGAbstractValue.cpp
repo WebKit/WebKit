@@ -95,7 +95,7 @@ void AbstractValue::fixTypeForRepresentation(NodeFlags representation)
             m_type &= ~SpecMachineInt;
             m_type |= SpecInt52AsDouble;
         }
-        RELEASE_ASSERT(!(m_type & ~SpecDouble));
+        RELEASE_ASSERT(!(m_type & ~SpecFullDouble));
     } else if (representation == NodeResultInt52) {
         if (m_type & SpecInt52AsDouble) {
             m_type &= ~SpecInt52AsDouble;

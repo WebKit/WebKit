@@ -2163,6 +2163,13 @@ void SpeculativeJIT::compileValueRep(Node* node)
         
         FPRReg valueFPR = value.fpr();
         JSValueRegs resultRegs = result.regs();
+        
+        // It's very tempting to in-place filter the value to indicate that it's not impure NaN
+        // anymore. Unfortunately, this would be unsound. If it's a GetLocal or if the value was
+        // subject to a prior SetLocal, filtering the value would imply that the corresponding
+        // local was purified.
+        if (needsTypeCheck(node->child1(), ~SpecDoubleImpureNaN))
+            m_jit.purifyNaN(valueFPR);
 
 #if CPU(X86)
         // boxDouble() on X86 clobbers the source, so we need to copy.
@@ -2506,8 +2513,6 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
-    
-    m_jit.purifyNaN(resultReg);
     
     doubleResult(resultReg, node);
 }

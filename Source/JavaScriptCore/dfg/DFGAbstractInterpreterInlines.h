@@ -340,7 +340,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         
-        forNode(node).setType(forNode(node->child1()).m_type);
+        forNode(node).setType(forNode(node->child1()).m_type & ~SpecDoubleImpureNaN);
         forNode(node).fixTypeForRepresentation(node);
         break;
     }
@@ -1092,10 +1092,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 forNode(node).setType(SpecInt52AsDouble);
             break;
         case Array::Float32Array:
-            forNode(node).setType(SpecBytecodeDouble);
+            forNode(node).setType(SpecFullDouble);
             break;
         case Array::Float64Array:
-            forNode(node).setType(SpecBytecodeDouble);
+            forNode(node).setType(SpecFullDouble);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

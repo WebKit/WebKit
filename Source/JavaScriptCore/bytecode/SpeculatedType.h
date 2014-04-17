@@ -72,7 +72,7 @@ static const SpeculatedType SpecDoublePureNaN      = 0x02000000; // It's definit
 static const SpeculatedType SpecDoubleImpureNaN    = 0x04000000; // It's definitely a NaN that is unsafe to tag (i.e. impure).
 static const SpeculatedType SpecDoubleNaN          = 0x06000000; // It's definitely some kind of NaN.
 static const SpeculatedType SpecBytecodeDouble     = 0x03800000; // It's either a non-NaN or a NaN double, but it's definitely not impure NaN.
-static const SpeculatedType SpecDouble             = 0x07800000; // It's either a non-NaN or a NaN double.
+static const SpeculatedType SpecFullDouble         = 0x07800000; // It's either a non-NaN or a NaN double.
 static const SpeculatedType SpecBytecodeRealNumber = 0x01a00000; // It's either an Int32 or a DoubleReal.
 static const SpeculatedType SpecFullRealNumber     = 0x01e00000; // It's either an Int32 or a DoubleReal, or a Int52.
 static const SpeculatedType SpecBytecodeNumber     = 0x03a00000; // It's either an Int32 or a Double, and the Double cannot be an impure NaN.
@@ -251,7 +251,7 @@ inline bool isInt32Speculation(SpeculatedType value)
 
 inline bool isInt32SpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & (SpecDouble | SpecInt52));
+    return !(value & (SpecFullDouble | SpecInt52));
 }
 
 inline bool isInt32SpeculationExpectingDefined(SpeculatedType value)
@@ -276,7 +276,7 @@ inline bool isMachineIntSpeculationExpectingDefined(SpeculatedType value)
 
 inline bool isMachineIntSpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & SpecDouble);
+    return !(value & SpecFullDouble);
 }
 
 inline bool isInt52AsDoubleSpeculation(SpeculatedType value)
@@ -296,12 +296,12 @@ inline bool isDoubleRealSpeculation(SpeculatedType value)
 
 inline bool isDoubleSpeculation(SpeculatedType value)
 {
-    return !!value && (value & SpecDouble) == value;
+    return !!value && (value & SpecFullDouble) == value;
 }
 
 inline bool isDoubleSpeculationForArithmetic(SpeculatedType value)
 {
-    return !!(value & SpecDouble);
+    return !!(value & SpecFullDouble);
 }
 
 inline bool isBytecodeRealNumberSpeculation(SpeculatedType value)

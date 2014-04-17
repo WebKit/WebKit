@@ -743,7 +743,14 @@ private:
     {
         switch (m_node->child1().useKind()) {
         case DoubleRepUse: {
-            setJSValue(boxDouble(lowDouble(m_node->child1())));
+            LValue value = lowDouble(m_node->child1());
+            
+            if (m_interpreter.needsTypeCheck(m_node->child1(), ~SpecDoubleImpureNaN)) {
+                value = m_out.select(
+                    m_out.doubleEqual(value, value), value, m_out.constDouble(PNaN));
+            }
+            
+            setJSValue(boxDouble(value));
             return;
         }
             
@@ -2127,8 +2134,6 @@ private:
                     RELEASE_ASSERT_NOT_REACHED();
                 }
                 
-                result = m_out.select(
-                    m_out.doubleEqual(result, result), result, m_out.constDouble(PNaN));
                 setDouble(result);
                 return;
             }

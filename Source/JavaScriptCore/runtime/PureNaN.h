@@ -59,7 +59,7 @@ namespace JSC {
 // having to call purifyNaN() in surprising places.
 //
 // For naming purposes, we say that a NaN is "pure" if it is safe to tag, in the sense
-// that doing so would result in a tagged value that would base the "are you a double"
+// that doing so would result in a tagged value that would pass the "are you a double"
 // test. We say that a NaN is "impure" if attempting to tag it would result in a value
 // that would look like something other than a double.
 

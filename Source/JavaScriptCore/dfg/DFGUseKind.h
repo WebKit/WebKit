@@ -73,7 +73,7 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
     case NumberUse:
         return SpecBytecodeNumber;
     case DoubleRepUse:
-        return SpecDouble;
+        return SpecFullDouble;
     case DoubleRepRealUse:
         return SpecDoubleReal;
     case BooleanUse:

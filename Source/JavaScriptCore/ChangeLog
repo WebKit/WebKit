@@ -1,3 +1,55 @@
+2014-04-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Sink NaN sanitization to uses and remove it when it's unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=131419
+
+        Reviewed by Oliver Hunt.
+        
+        This moves NaN purification to stores that could see an impure NaN.
+        
+        5% speed-up on AsmBench, 50% speed-up on AsmBench/n-body. It is a regression on FloatMM
+        though, because of the other bug that causes that benchmark to box doubles in a loop.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isInt32SpeculationForArithmetic):
+        (JSC::isMachineIntSpeculationForArithmetic):
+        (JSC::isDoubleSpeculation):
+        (JSC::isDoubleSpeculationForArithmetic):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::fixTypeForRepresentation):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::mergeStateAtTail):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueRep):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileValueRep):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        * runtime/PureNaN.h:
+        * tests/stress/float32-array-nan-inlined.js: Added.
+        (foo):
+        (test):
+        * tests/stress/float32-array-nan.js: Added.
+        (foo):
+        (test):
+        * tests/stress/float64-array-nan-inlined.js: Added.
+        (foo):
+        (isBigEndian):
+        (test):
+        * tests/stress/float64-array-nan.js: Added.
+        (foo):
+        (isBigEndian):
+        (test):
+
 2014-04-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed Windows gardening. Restrict our new 'isinf' check
