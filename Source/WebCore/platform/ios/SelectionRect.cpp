@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-SelectionRect::SelectionRect(const IntRect& rect, bool isHorizontal, int columnNumber)
+SelectionRect::SelectionRect(const IntRect& rect, bool isHorizontal, int pageNumber)
     : m_rect(rect)
     , m_direction(LTR)
     , m_minX(0)
@@ -43,14 +43,14 @@ SelectionRect::SelectionRect(const IntRect& rect, bool isHorizontal, int columnN
     , m_isHorizontal(isHorizontal)
     , m_isInFixedPosition(false)
     , m_isRubyText(false)
-    , m_columnNumber(columnNumber)
+    , m_pageNumber(pageNumber)
 {
 }
 
 // FIXME: We should move some of these arguments to an auxillary struct.
 SelectionRect::SelectionRect(const IntRect& rect, TextDirection direction, int minX, int maxX, int maxY,
     int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd,
-    bool isHorizontal, bool isInFixedPosition, bool isRubyText, int columnNumber)
+    bool isHorizontal, bool isInFixedPosition, bool isRubyText, int pageNumber)
     : m_rect(rect)
     , m_direction(direction)
     , m_minX(minX)
@@ -65,7 +65,7 @@ SelectionRect::SelectionRect(const IntRect& rect, TextDirection direction, int m
     , m_isHorizontal(isHorizontal)
     , m_isInFixedPosition(isInFixedPosition)
     , m_isRubyText(isRubyText)
-    , m_columnNumber(columnNumber)
+    , m_pageNumber(pageNumber)
 {
 }
 
@@ -83,7 +83,7 @@ SelectionRect::SelectionRect()
     , m_isHorizontal(true)
     , m_isInFixedPosition(false)
     , m_isRubyText(false)
-    , m_columnNumber(0)
+    , m_pageNumber(0)
 {
 }
 
