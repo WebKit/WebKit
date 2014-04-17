@@ -28,8 +28,6 @@
 #ifndef DOMPath_h
 #define DOMPath_h
 
-#if ENABLE(CANVAS_PATH)
-
 #include "CanvasPathMethods.h"
 #include "SVGMatrix.h"
 #include "SVGPathUtilities.h"
@@ -52,6 +50,7 @@ public:
         return create(path);
     }
 
+#if ENABLE(CANVAS_PATH)
     void addPath(const DOMPath* path) { addPath(path, AffineTransform()); }
     void addPath(const DOMPath* path, const AffineTransform& transform)
     {
@@ -59,6 +58,7 @@ public:
             return;
         m_path.addPath(path->path(), transform);
     }
+#endif
 
     const Path& path() const { return m_path; }
 
@@ -68,7 +68,4 @@ private:
 };
 
 }
-
-#endif
-
 #endif

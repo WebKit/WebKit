@@ -1,3 +1,21 @@
+2014-04-17  Dirk Schulze  <krit@webkit.org>
+
+        Remove CANVAS_PATH where possible
+        https://bugs.webkit.org/show_bug.cgi?id=131788
+
+        Reviewed by Dean Jackson.
+
+        Since Firefox and Chrome ship the same interoperable subset of Path2D soon, 
+        it is time to remove CANVAS_PATH where possible.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::clip):
+        (WebCore::CanvasRenderingContext2D::isPointInStroke):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/DOMPath.h:
+        * html/canvas/DOMPath.idl:
+
 2014-04-17  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] Store TrackPrivateBaseGStreamer's label and language as AtomicStrings

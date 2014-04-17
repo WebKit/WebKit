@@ -903,7 +903,6 @@ void CanvasRenderingContext2D::clip(const String& windingRuleString)
 #endif
 }
 
-#if ENABLE(CANVAS_PATH)
 void CanvasRenderingContext2D::fill(DOMPath* path, const String& windingRuleString)
 {
     fillInternal(path->path(), windingRuleString);
@@ -918,7 +917,6 @@ void CanvasRenderingContext2D::clip(DOMPath* path, const String& windingRuleStri
 {
     clipInternal(path->path(), windingRuleString);
 }
-#endif
 
 void CanvasRenderingContext2D::fillInternal(const Path& path, const String& windingRuleString)
 {
@@ -1030,7 +1028,6 @@ bool CanvasRenderingContext2D::isPointInStroke(const float x, const float y)
     return isPointInStrokeInternal(m_path, x, y);
 }
 
-#if ENABLE(CANVAS_PATH)
 bool CanvasRenderingContext2D::isPointInPath(DOMPath* path, const float x, const float y, const String& windingRuleString)
 {
     return isPointInPathInternal(path->path(), x, y, windingRuleString);
@@ -1040,7 +1037,6 @@ bool CanvasRenderingContext2D::isPointInStroke(DOMPath* path, const float x, con
 {
     return isPointInStrokeInternal(path->path(), x, y);
 }
-#endif
 
 bool CanvasRenderingContext2D::isPointInPathInternal(const Path& path, float x, float y, const String& windingRuleString)
 {

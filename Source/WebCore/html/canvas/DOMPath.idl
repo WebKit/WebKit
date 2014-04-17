@@ -30,11 +30,12 @@
     Constructor,
     Constructor(DOMPath path),
     Constructor(DOMString text),
-    Conditional=CANVAS_PATH,
     InterfaceName=Path2D,
 ] interface DOMPath {
 
+#if defined(ENABLE_CANVAS_PATH) && ENABLE_CANVAS_PATH
     void addPath(DOMPath? path, optional SVGMatrix? transform);
+#endif
 
     // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
     void closePath();
