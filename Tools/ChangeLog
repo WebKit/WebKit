@@ -1,5 +1,13 @@
 2014-04-17  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[DownloadNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[ConvertResponseToDownloadNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+
+2014-04-17  Anders Carlsson  <andersca@apple.com>
+
         Remove unused API enums
         https://bugs.webkit.org/show_bug.cgi?id=131836
 

@@ -133,7 +133,7 @@ static void runTest(id <WKNavigationDelegate> navigationDelegate, id <_WKDownloa
 @end
 
 @implementation DownloadNavigationDelegate
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationPolicyDecision))decisionHandler
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
     decisionHandler(_WKNavigationActionPolicyDownload);
 }
@@ -148,7 +148,7 @@ TEST(_WKDownload, DownloadRequest)
 @end
 
 @implementation ConvertResponseToDownloadNavigationDelegate
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicyDecision))decisionHandler
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
     decisionHandler(_WKNavigationResponsePolicyBecomeDownload);
 }
