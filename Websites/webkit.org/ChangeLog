@@ -1,3 +1,12 @@
+2014-04-18  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Add mention of Safari Debug menu and finding out the WebProcess that corresponds to a tab
+        https://bugs.webkit.org/show_bug.cgi?id=131791
+
+        Reviewed by Sam Weinig.
+
+        * building/debug.html:
+
 2014-03-28  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: support for live regions

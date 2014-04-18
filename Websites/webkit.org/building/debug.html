@@ -6,9 +6,13 @@
 <div class="mac-instructions">
 <h2>Debugging on Mac OS X</h2>
 <p>To debug from within Xcode, you can use the WebKit workspace. Ensure that the Products and Intermediates locations for the workspace match those used by <code>build-webkit</code> by choosing File > Workspace Settings and clicking the Advanced button, selecting Custom, Relative to Workspace, and entering WebKitBuild both for Products and for Intermediates. Note that if you have specified a custom build location in Xcode preferences, then you don&rsquo;t need to do this.</p>
+<h3>Internal Debug Menu</h3>
+There is a Debug menu that can be enabled in Safari, and it supplies many useful options to help with debugging. To enable it, run the following in your terminal:
+<code>defaults write com.apple.Safari IncludeInternalDebugMenu 1</code>
 <h3>Debugging UIProcess</h3>
 <p>Follow the instructions on the <a href="debug-mac-uiprocess.html">debugging UIProcess</a> page.</p>
 <h3>Debugging WebProcess</h3>
+<p>Current versions of Safari use a process for each tab, so it is easy to end up with a new WebProcess and have to reattach. If you enable the Internal Debug Menu as outlined above, you can have Safari display the Process ID of the WebProcess for each tab. Simply go to Debug &gt; Miscellaneous Flags and select Show Web Process IDs In Page Titles. You should now see something like <code>[WP 60737]</code> in the title of every web page you navigate to, and 60737 is the Process ID of the WebProcess backing that tab.</p>
 <ul>
     <li>
         <p>From the command line:</p>
