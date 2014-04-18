@@ -1,3 +1,21 @@
+2014-04-18  Radu Stavila  <stavila@adobe.com>
+
+        [CSSRegions] Incorrect background paint on positioned element hover
+        https://bugs.webkit.org/show_bug.cgi?id=131617
+
+        Reviewed by Andrei Bucur.
+
+        When computing the repaint rect for absolute elements flowed into regions, the Y location of the
+        region within the flow thread must no longer be added to the repaint rect's location because absolute
+        positioned elements get pushed down through the regions by their absolute top. So adding the region's
+        position in the flow thread and then adding the element's absolute top would cause us to add
+        something twice.
+
+        Tests: fast/regions/repaint/repaint-absolute-pushed-to-next-region.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+
 2014-04-18  Philippe Normand  <pnormand@igalia.com>
 
         Remove NETWORK_INFO support

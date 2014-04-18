@@ -1,3 +1,16 @@
+2014-04-18  Radu Stavila  <stavila@adobe.com>
+
+        [CSSRegions] Incorrect background paint on positioned element hover
+        https://bugs.webkit.org/show_bug.cgi?id=131617
+
+        Reviewed by Andrei Bucur.
+
+        Added test for the proper repainting of absolute positioned elements in regions when the
+        absolute top of the elements causes it to be pushed to the next region.
+
+        * fast/regions/repaint/repaint-absolute-pushed-to-next-region-expected.txt: Added.
+        * fast/regions/repaint/repaint-absolute-pushed-to-next-region.html: Added.
+
 2014-04-18  Philippe Normand  <pnormand@igalia.com>
 
         Remove NETWORK_INFO support
