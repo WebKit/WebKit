@@ -32,7 +32,7 @@
 
 @interface WKProcessPool (WKPrivate)
 
-- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
+- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration __attribute__((objc_method_family(init))) WK_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, readonly) _WKProcessPoolConfiguration *_configuration;
 

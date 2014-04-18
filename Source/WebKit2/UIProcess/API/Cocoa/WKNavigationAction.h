@@ -34,9 +34,9 @@
  @abstract the type of action that triggered a possible navigation.
  @constant WKNavigationTypeLinkActivated    A link with an href activated by the user.
  @constant WKNavigationTypeFormSubmitted    A form was submitted.
- @constant WKNavigationTypeBackForward      The user requested an item from the back-forward list.
- @constant WKNavigationTypeReload           The user reloaded a page.
- @constant WKNavigationTypeFormResubmitted  A form as resubmitted (for example by going back, forward or reloading).
+ @constant WKNavigationTypeBackForward      An item from the back-forward list was requested.
+ @constant WKNavigationTypeReload           The page was reloaded.
+ @constant WKNavigationTypeFormResubmitted  A form was resubmitted (for example by going back, forward or reloading).
  @constant WKNavigationTypeOther            Navigation is taking place for some other reason.
  */
 typedef NS_ENUM(NSInteger, WKNavigationType) {

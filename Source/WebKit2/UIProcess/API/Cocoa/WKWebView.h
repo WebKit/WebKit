@@ -123,12 +123,12 @@ WK_API_CLASS
 /*! @abstract Whether there's a back item in the back-forward list that can be navigated to.
  @seealso backForwardList.
  */
-@property (readonly) BOOL canGoBack;
+@property (nonatomic, readonly) BOOL canGoBack;
 
 /*! @abstract Whether there's a forward item in the back-forward list that can be navigated to.
  @seealso backForwardList.
  */
-@property (readonly) BOOL canGoForward;
+@property (nonatomic, readonly) BOOL canGoForward;
 
 /*! @abstract Navigates to the back item in the back-forward list.
  @result A new navigation to the requested item, or nil if there is no back item in the back-forward list.
@@ -154,7 +154,7 @@ WK_API_CLASS
  */
 - (void)stopLoading;
 
-/*! @abstract Whether horizontal swipe gestures will trigger back-forward list navigations.
+/*! @abstract Whether horizontal swipe gestures will trigger back-forward list navigations. Defaults to NO.
  */
 @property (nonatomic) BOOL allowsBackForwardNavigationGestures;
 
@@ -165,12 +165,12 @@ WK_API_CLASS
 #endif
 
 #if !TARGET_OS_IPHONE
-/* @abstract Whether magnify gestures will change the WKWebView magnification.
+/* @abstract Whether magnify gestures will change the WKWebView magnification. Defaults to NO.
  @discussion It is possible to set the magnification property even if allowsMagnify is set to NO.
  */
 @property (nonatomic) BOOL allowsMagnification;
 
-/* @abstract The amount by which the page content is currently scaled. The default value is 1.0.
+/* @abstract The amount by which the page content is currently scaled. Defaults to 1.0.
  */
 @property (nonatomic) CGFloat magnification;
 

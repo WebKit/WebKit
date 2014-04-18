@@ -40,52 +40,52 @@ WK_API_CLASS
 
 /*! @abstract Returns an initialized WKPreferences object.
  @param userDefaultsKeyPrefix The user defaults key prefix.
- @discussion If the userDefaultsKeyPrefix argument is non-nil, it is is prepended to the keys used to store preferences 
+ @discussion If the userDefaultsKeyPrefix argument is non-nil, it is prepended to the keys used to store preferences
  in the user defaults database. If the argument is nil, the preferences object won't save anything to the user defaults database.
  */
 - (instancetype)initWithUserDefaultsKeyPrefix:(NSString *)userDefaultsKeyPrefix WK_DESIGNATED_INITIALIZER;
 
-/*! @abstract The user defaults key prefix
+/*! @abstract The user defaults key prefix.
  */
 @property (nonatomic, readonly) NSString *userDefaultsKeyPrefix;
 
-/*! @abstract The minimum font size in points.
+/*! @abstract The minimum font size in points. Defaults to 0.
  */
 @property (nonatomic) CGFloat minimumFontSize;
 
-/*! @abstract Whether JavaScript is enabled.
+/*! @abstract Whether JavaScript is enabled. Defaults to YES.
  */
 @property (nonatomic, getter=isJavaScriptEnabled) BOOL javaScriptEnabled;
 
-/*! @abstract Whether JavaScript can open windows without user interaction.
+/*! @abstract Whether JavaScript can open windows without user interaction. Defaults to NO on iOS and YES on OS X.
  */
 @property (nonatomic) BOOL javaScriptCanOpenWindowsAutomatically;
 
-/*! @abstract Whether the WKWebView suppresses content rendering until it is fully loaded into memory.
+/*! @abstract Whether the WKWebView suppresses content rendering until it is fully loaded into memory. Defaults to NO.
  */
 @property (nonatomic) BOOL suppressesIncrementalRendering;
 
 #if TARGET_OS_IPHONE
-/*! @abstract Whether HTML5 videos play inline or use the native full-screen controller.
+/*! @abstract Whether HTML5 videos play inline or use the native full-screen controller. Defaults to NO.
  */
 @property (nonatomic) BOOL allowsInlineMediaPlayback;
 
-/*! @abstract Whether HTML5 videos can play automatically or require the user to start playing them.
+/*! @abstract Whether HTML5 videos can play automatically or require the user to start playing them. Defaults to YES.
  */
 @property (nonatomic) BOOL mediaPlaybackRequiresUserAction;
 
-/*! @abstract Whether AirPlay is allowed.
+/*! @abstract Whether AirPlay is allowed. Defaults to YES.
  */
 @property (nonatomic) BOOL mediaPlaybackAllowsAirPlay;
 
 #endif
 
 #if !TARGET_OS_IPHONE
-/*! @abstract Whether Java is enabled.
+/*! @abstract Whether Java is enabled. Defaults to YES.
  */
 @property (nonatomic, getter=isJavaEnabled) BOOL javaEnabled;
 
-/*! abstract Whether plug-ins are enabled.
+/*! abstract Whether plug-ins are enabled. Defaults to YES.
  */
 @property (nonatomic, getter=arePlugInsEnabled) BOOL plugInsEnabled;
 #endif

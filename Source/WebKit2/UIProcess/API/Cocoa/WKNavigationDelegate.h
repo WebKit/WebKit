@@ -70,7 +70,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
 /*! @abstract Decides whether a navigation should be allowed or cancelled once its response is known.
  @param webView The WKWebView invoking the delegate method.
  @param navigationResponse A description of the navigation response.
- @param decisionHandler The decision handler that should be call to allow or cancel the load.
+ @param decisionHandler The decision handler that should be called to allow or cancel the load.
  */
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler;
 
