@@ -706,7 +706,7 @@ void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClientBase* wkCl
         }
 
     private:
-        virtual void didFindString(WebPageProxy* page, const String& string, uint32_t matchCount) override
+        virtual void didFindString(WebPageProxy* page, const String& string, uint32_t matchCount, int32_t matchIndex) override
         {
             if (!m_client.didFindString)
                 return;

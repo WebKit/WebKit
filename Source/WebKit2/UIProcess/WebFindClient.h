@@ -49,7 +49,7 @@ class WebImage;
 
 class WebFindClient : public API::Client<WKPageFindClientBase> {
 public:
-    void didFindString(WebPageProxy*, const String&, uint32_t matchCount);
+    void didFindString(WebPageProxy*, const String&, uint32_t matchCount, int32_t matchIndex);
     void didFailToFindString(WebPageProxy*, const String&);
     void didCountStringMatches(WebPageProxy*, const String&, uint32_t matchCount);
 };

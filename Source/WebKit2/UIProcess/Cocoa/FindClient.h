@@ -48,7 +48,7 @@ public:
 private:
     // From API::FindClient
     virtual void didCountStringMatches(WebPageProxy*, const String&, uint32_t matchCount);
-    virtual void didFindString(WebPageProxy*, const String&, uint32_t matchCount);
+    virtual void didFindString(WebPageProxy*, const String&, uint32_t matchCount, int32_t matchIndex);
     virtual void didFailToFindString(WebPageProxy*, const String&);
     
     WKWebView *m_webView;

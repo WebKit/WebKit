@@ -1,3 +1,54 @@
+2014-04-18  Alice Barraclough  <alice.barraclough@webkit.org>
+
+        Find on page - extend API by providing highlighted match index
+        https://bugs.webkit.org/show_bug.cgi?id=131776
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebFindOptions.h: Add an option for determining match index.
+
+        Plumb through the API layers the addition of a parameter for match index.
+        * UIProcess/API/APIFindClient.h:
+        (API::FindClient::didFindString):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageFindClient):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (toFindOptions):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        (NS_OPTIONS):
+        * UIProcess/API/Cocoa/_WKFindDelegate.h:
+        * UIProcess/Cocoa/FindClient.h:
+        * UIProcess/Cocoa/FindClient.mm:
+        (WebKit::FindClient::setDelegate):
+        (WebKit::FindClient::didFindString):
+        * UIProcess/WebFindClient.cpp:
+        (WebKit::WebFindClient::didFindString):
+        * UIProcess/WebFindClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFindString):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        The actual tracking of the match index is contained in FindController class.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::FindController): Start out as -1, understood to be an undefined index in this context.
+        (WebKit::FindController::updateFindUIAfterPageScroll): 
+            Perform the calculation of matchCount if the flag for DetermineMatchIndex is on.
+        If matchCount exceeds max, keep the match index undefined because otherwise the finding could advance
+        to a point where the index exceeds the match count, legitimately. If matchCount doesn't exceed the max, then make
+        sure the match index, which had been being incremented or decremented blindly back in findString(), is normalized
+        to be less than match count.
+        (WebKit::FindController::findString): 
+            If there is a user selection existing on the page, the next occurence of the string will be found after that
+        selection. In that case we still want the index to properly reflect its ordinal  position within the entire document.
+        Use findStringMatchingRanges to provide the match index, and set a flag that prevents the match index from being
+        blindly incremented or decremented later. After findString() is actually called on the page, increment or decrement
+        the find index under specific conditions. 
+        (WebKit::FindController::hideFindIndicator): Reset match index when find UI goes away.
+        * WebProcess/WebPage/FindController.h: Add m_foundStringMatchIndex to private variables.
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::hideFindIndicator): Reset match index when find UI goes away.
+
 2014-04-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Correct some issues small issues in WK2 file upload InjectedBundle APIs

@@ -47,7 +47,7 @@ void FindClient::setDelegate(id <_WKFindDelegate> delegate)
     m_delegate = delegate;
 
     m_delegateMethods.webviewDidCountStringMatches = [delegate respondsToSelector:@selector(_webView:didCountMatches:forString:)];
-    m_delegateMethods.webviewDidFindString = [delegate respondsToSelector:@selector(_webView:didFindMatches:forString:)];
+    m_delegateMethods.webviewDidFindString = [delegate respondsToSelector:@selector(_webView:didFindMatches:forString:withMatchIndex:)];
     m_delegateMethods.webviewDidFailToFindString = [delegate respondsToSelector:@selector(_webView:didFailToFindString:)];
 }
     
@@ -57,10 +57,10 @@ void FindClient::didCountStringMatches(WebPageProxy*, const String& string, uint
         [m_delegate.get() _webView:m_webView didCountMatches:matchCount forString:string];
 }
 
-void FindClient::didFindString(WebPageProxy*, const String& string, uint32_t matchCount)
+void FindClient::didFindString(WebPageProxy*, const String& string, uint32_t matchCount, int32_t matchIndex)
 {
     if (m_delegateMethods.webviewDidFindString)
-        [m_delegate.get() _webView:m_webView didFindMatches:matchCount forString:string];
+        [m_delegate.get() _webView:m_webView didFindMatches:matchCount forString:string withMatchIndex:matchIndex];
 }
 
 void FindClient::didFailToFindString(WebPageProxy*, const String& string)

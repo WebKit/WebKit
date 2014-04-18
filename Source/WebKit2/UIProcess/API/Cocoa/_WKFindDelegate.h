@@ -34,7 +34,7 @@
 @optional
 
 - (void)_webView:(WKWebView *)webView didCountMatches:(NSUInteger)matches forString:(NSString *)string;
-- (void)_webView:(WKWebView *)webView didFindMatches:(NSUInteger)matches forString:(NSString *)string;
+- (void)_webView:(WKWebView *)webView didFindMatches:(NSUInteger)matches forString:(NSString *)string withMatchIndex:(NSInteger)matchIndex;
 - (void)_webView:(WKWebView *)webView didFailToFindString:(NSString *)string;
 
 @end

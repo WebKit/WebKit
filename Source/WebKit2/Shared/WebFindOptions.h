@@ -36,7 +36,8 @@ enum FindOptions {
     FindOptionsWrapAround = 1 << 4,
     FindOptionsShowOverlay = 1 << 5,
     FindOptionsShowFindIndicator = 1 << 6,
-    FindOptionsShowHighlight = 1 << 7
+    FindOptionsShowHighlight = 1 << 7,
+    FindOptionsDetermineMatchIndex = 1 << 8,
 };
 
 } // namespace WebKit

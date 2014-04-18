@@ -95,6 +95,8 @@ private:
     bool m_isShowingFindIndicator;
     WebCore::IntRect m_findIndicatorRect;
     Vector<RefPtr<WebCore::Range>> m_findMatches;
+    // Index value is -1 if not found or if number of matches exceeds provided maximum.
+    int m_foundStringMatchIndex;
 
 #if PLATFORM(IOS)
     RefPtr<PageOverlay> m_findIndicatorOverlay;

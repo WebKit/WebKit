@@ -49,6 +49,7 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
     _WKFindOptionsShowOverlay = 1 << 5,
     _WKFindOptionsShowFindIndicator = 1 << 6,
     _WKFindOptionsShowHighlight = 1 << 7,
+    _WKFindOptionsDetermineMatchIndex = 1 << 8,
 };
 
 @class WKBrowsingContextHandle;

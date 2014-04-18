@@ -3276,9 +3276,9 @@ void WebPageProxy::setFindIndicator(const FloatRect& selectionRectInWindowCoordi
     m_pageClient.setFindIndicator(findIndicator.release(), fadeOut, animate);
 }
 
-void WebPageProxy::didFindString(const String& string, uint32_t matchCount)
+void WebPageProxy::didFindString(const String& string, uint32_t matchCount, int32_t matchIndex)
 {
-    m_findClient->didFindString(this, string, matchCount);
+    m_findClient->didFindString(this, string, matchCount, matchIndex);
 }
 
 void WebPageProxy::didFindStringMatches(const String& string, Vector<Vector<WebCore::IntRect>> matchRects, int32_t firstIndexAfterSelection)

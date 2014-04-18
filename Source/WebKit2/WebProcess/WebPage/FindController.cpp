@@ -59,6 +59,7 @@ FindController::FindController(WebPage* webPage)
     : m_webPage(webPage)
     , m_findPageOverlay(0)
     , m_isShowingFindIndicator(false)
+    , m_foundStringMatchIndex(-1)
 {
 }
 
@@ -129,14 +130,23 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
     } else {
         shouldShowOverlay = options & FindOptionsShowOverlay;
         bool shouldShowHighlight = options & FindOptionsShowHighlight;
+        bool shouldDetermineMatchIndex = options & FindOptionsDetermineMatchIndex;
         unsigned matchCount = 1;
+
+        if (shouldDetermineMatchIndex) {
+            if (pluginView)
+                matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
+            else
+                matchCount = m_webPage->corePage()->countFindMatches(string, core(options), maxMatchCount + 1);
+        }
 
         if (shouldShowOverlay || shouldShowHighlight) {
             if (maxMatchCount == std::numeric_limits<unsigned>::max())
                 --maxMatchCount;
 
             if (pluginView) {
-                matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
+                if (!shouldDetermineMatchIndex)
+                    matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
                 shouldShowOverlay = false;
             } else {
                 m_webPage->corePage()->unmarkAllTextMatches();
@@ -149,8 +159,16 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
                 matchCount = static_cast<unsigned>(kWKMoreThanMaximumMatchCount);
             }
         }
+        if (matchCount == static_cast<unsigned>(kWKMoreThanMaximumMatchCount))
+            m_foundStringMatchIndex = -1;
+        else {
+            if (m_foundStringMatchIndex < 0)
+                m_foundStringMatchIndex += matchCount;
+            if (m_foundStringMatchIndex >= (int) matchCount)
+                m_foundStringMatchIndex -= matchCount;
+        }
 
-        m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchCount));
+        m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchCount, m_foundStringMatchIndex));
 
         if (!(options & FindOptionsShowFindIndicator) || !selectedFrame || !updateFindIndicator(*selectedFrame, shouldShowOverlay))
             hideFindIndicator();
@@ -184,11 +202,32 @@ void FindController::findString(const String& string, FindOptions options, unsig
 
     willFindString();
 
+    bool foundStringStartsAfterSelection = false;
+    if (!pluginView) {
+        if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
+            FrameSelection& fs = selectedFrame->selection();
+            if (fs.selectionBounds().isEmpty()) {
+                m_findMatches.clear();
+                int indexForSelection;
+                m_webPage->corePage()->findStringMatchingRanges(string, core(options), maxMatchCount, &m_findMatches, indexForSelection);
+                m_foundStringMatchIndex = indexForSelection;
+                foundStringStartsAfterSelection = true;
+            }
+        }
+    }
+
     bool found;
     if (pluginView)
         found = pluginView->findString(string, coreOptions, maxMatchCount);
     else
         found = m_webPage->corePage()->findString(string, coreOptions);
+
+    if (found && !foundStringStartsAfterSelection) {
+        if (options & FindOptionsBackwards)
+            m_foundStringMatchIndex--;
+        else
+            m_foundStringMatchIndex++;
+    }
 
     m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition(WTF::bind(&FindController::updateFindUIAfterPageScroll, this, found, string, options, maxMatchCount));
 }
@@ -334,6 +373,7 @@ void FindController::hideFindIndicator()
     ShareableBitmap::Handle handle;
     m_webPage->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), m_webPage->corePage()->deviceScaleFactor(), handle, false, true));
     m_isShowingFindIndicator = false;
+    m_foundStringMatchIndex = -1;
     didHideFindIndicator();
 }
 

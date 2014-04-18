@@ -109,7 +109,7 @@ void FindController::hideFindIndicator()
     m_webPage->uninstallPageOverlay(m_findIndicatorOverlay.get());
     m_findIndicatorOverlay = nullptr;
     m_isShowingFindIndicator = false;
-
+    m_foundStringMatchIndex = -1;
     didHideFindIndicator();
 }
 
