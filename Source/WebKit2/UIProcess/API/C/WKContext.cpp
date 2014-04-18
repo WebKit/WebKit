@@ -53,9 +53,6 @@
 #if ENABLE(BATTERY_STATUS)
 #include "WebBatteryManagerProxy.h"
 #endif
-#if ENABLE(NETWORK_INFO)
-#include "WebNetworkInfoManagerProxy.h"
-#endif
 
 namespace API {
 template<> struct ClientTraits<WKContextDownloadClientBase> {
@@ -407,16 +404,6 @@ WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef contextRef)
 WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->supplement<WebGeolocationManagerProxy>());
-}
-
-WKNetworkInfoManagerRef WKContextGetNetworkInfoManager(WKContextRef contextRef)
-{
-#if ENABLE(NETWORK_INFO)
-    return toAPI(toImpl(contextRef)->supplement<WebNetworkInfoManagerProxy>());
-#else
-    UNUSED_PARAM(contextRef);
-    return 0;
-#endif
 }
 
 WKIconDatabaseRef WKContextGetIconDatabase(WKContextRef contextRef)

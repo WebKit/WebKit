@@ -1,3 +1,12 @@
+2014-04-18  Philippe Normand  <pnormand@igalia.com>
+
+        Remove NETWORK_INFO support
+        https://bugs.webkit.org/show_bug.cgi?id=131841
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake:
+
 2014-04-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed 64-bit build fix.

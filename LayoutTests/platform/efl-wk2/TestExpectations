@@ -50,13 +50,6 @@ webkit.org/b/98747 plugins/document-open.html [ Crash Failure ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Crash Failure ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash Failure ]
 
-# Hitting !decoder.destinationID() assertion.
-webkit.org/b/102651 [ Debug ] networkinformation/multiple-frames.html [ Crash ]
-webkit.org/b/102651 [ Debug ] networkinformation/basic-all-types-of-events.html [ Crash ]
-webkit.org/b/102651 [ Debug ] networkinformation/updates.html [ Crash ]
-webkit.org/b/102651 [ Debug ] networkinformation/add-listener-from-callback.html [ Crash ]
-webkit.org/b/102651 [ Debug ] networkinformation/basic-operation.html [ Crash ]
-
 # WebGL test cases crashing in WebCore::GraphicsContext3D::readPixels().
 webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]

@@ -140,7 +140,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/FindClientEfl.cpp
     UIProcess/efl/FormClientEfl.cpp
     UIProcess/efl/InputMethodContextEfl.cpp
-    UIProcess/efl/NetworkInfoProvider.cpp
     UIProcess/efl/PageLoadClientEfl.cpp
     UIProcess/efl/PagePolicyClientEfl.cpp
     UIProcess/efl/PageUIClientEfl.cpp

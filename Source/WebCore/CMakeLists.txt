@@ -11,7 +11,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
-    "${WEBCORE_DIR}/Modules/networkinfo"
     "${WEBCORE_DIR}/Modules/notifications"
     "${WEBCORE_DIR}/Modules/plugins"
     "${WEBCORE_DIR}/Modules/proximity"
@@ -134,7 +133,6 @@ set(WebCore_IDL_INCLUDES
     Modules/indexeddb
     Modules/indieui
     Modules/mediastream
-    Modules/networkinfo
     Modules/notifications
     Modules/proximity
     Modules/quota
@@ -240,9 +238,6 @@ set(WebCore_IDL_FILES
     Modules/mediastream/VideoStreamTrack.idl
 
     Modules/navigatorcontentutils/NavigatorContentUtils.idl
-
-    Modules/networkinfo/NavigatorNetworkInfoConnection.idl
-    Modules/networkinfo/NetworkInfoConnection.idl
 
     Modules/notifications/DOMWindowNotifications.idl
     Modules/notifications/Notification.idl
@@ -876,11 +871,6 @@ set(WebCore_SOURCES
     Modules/mediastream/VideoStreamTrack.cpp
 
     Modules/navigatorcontentutils/NavigatorContentUtils.cpp
-
-    Modules/networkinfo/NavigatorNetworkInfoConnection.cpp
-    Modules/networkinfo/NetworkInfo.cpp
-    Modules/networkinfo/NetworkInfoConnection.cpp
-    Modules/networkinfo/NetworkInfoController.cpp
 
     Modules/notifications/DOMWindowNotifications.cpp
     Modules/notifications/Notification.cpp

@@ -41,7 +41,6 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/FileAPI"
     "${WEBKIT2_DIR}/WebProcess/FullScreen"
     "${WEBKIT2_DIR}/WebProcess/Geolocation"
-    "${WEBKIT2_DIR}/WebProcess/NetworkInfo"
     "${WEBKIT2_DIR}/WebProcess/IconDatabase"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API"
@@ -226,7 +225,6 @@ set(WebKit2_SOURCES
     Shared/WebKit2Initialize.cpp
     Shared/WebMemorySampler.cpp
     Shared/WebMouseEvent.cpp
-    Shared/WebNetworkInfo.cpp
     Shared/WebOpenPanelParameters.cpp
     Shared/WebPageCreationParameters.cpp
     Shared/WebPageGroupData.cpp
@@ -332,8 +330,6 @@ set(WebKit2_SOURCES
     UIProcess/WebInspectorProxy.cpp
     UIProcess/WebKeyValueStorageManager.cpp
     UIProcess/WebMediaCacheManagerProxy.cpp
-    UIProcess/WebNetworkInfoManagerProxy.cpp
-    UIProcess/WebNetworkInfoProvider.cpp
     UIProcess/WebOpenPanelResultListenerProxy.cpp
     UIProcess/WebOriginDataManagerProxy.cpp
     UIProcess/WebOriginDataManagerProxyChangeClient.cpp
@@ -374,8 +370,6 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKKeyValueStorageManager.cpp
     UIProcess/API/C/WKMediaCacheManager.cpp
     UIProcess/API/C/WKNavigationDataRef.cpp
-    UIProcess/API/C/WKNetworkInfo.cpp
-    UIProcess/API/C/WKNetworkInfoManager.cpp
     UIProcess/API/C/WKNotification.cpp
     UIProcess/API/C/WKNotificationManager.cpp
     UIProcess/API/C/WKNotificationPermissionRequest.cpp
@@ -486,8 +480,6 @@ set(WebKit2_SOURCES
     WebProcess/Network/WebResourceLoadScheduler.cpp
     WebProcess/Network/WebResourceLoader.cpp
 
-    WebProcess/NetworkInfo/WebNetworkInfoManager.cpp
-
     WebProcess/Notifications/NotificationPermissionRequestManager.cpp
     WebProcess/Notifications/WebNotificationManager.cpp
 
@@ -527,7 +519,6 @@ set(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp
     WebProcess/WebCoreSupport/WebInspectorClient.cpp
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp
-    WebProcess/WebCoreSupport/WebNetworkInfoClient.cpp
     WebProcess/WebCoreSupport/WebNotificationClient.cpp
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
     WebProcess/WebCoreSupport/WebPlugInClient.cpp
@@ -587,7 +578,6 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebIconDatabase.messages.in
     UIProcess/WebInspectorProxy.messages.in
     UIProcess/WebMediaCacheManagerProxy.messages.in
-    UIProcess/WebNetworkInfoManagerProxy.messages.in
     UIProcess/WebOriginDataManagerProxy.messages.in
     UIProcess/WebPageProxy.messages.in
     UIProcess/WebProcessProxy.messages.in
@@ -622,8 +612,6 @@ set(WebKit2_MESSAGES_IN_FILES
 
     WebProcess/Network/NetworkProcessConnection.messages.in
     WebProcess/Network/WebResourceLoader.messages.in
-
-    WebProcess/NetworkInfo/WebNetworkInfoManager.messages.in
 
     WebProcess/Notifications/WebNotificationManager.messages.in
 

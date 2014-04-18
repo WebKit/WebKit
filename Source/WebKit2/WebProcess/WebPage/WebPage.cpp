@@ -162,10 +162,6 @@
 #include "WebBatteryClient.h"
 #endif
 
-#if ENABLE(NETWORK_INFO)
-#include "WebNetworkInfoClient.h"
-#endif
-
 #if ENABLE(VIBRATION)
 #include "WebVibrationClient.h"
 #endif
@@ -356,9 +352,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(m_page.get(), new WebGeolocationClient(this));
-#endif
-#if ENABLE(NETWORK_INFO)
-    WebCore::provideNetworkInfoTo(m_page.get(), new WebNetworkInfoClient(this));
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page.get(), new WebNotificationClient(this));

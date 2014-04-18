@@ -118,8 +118,6 @@ public:
         KeyValueStorageManager,
         MediaCacheManager,
         NavigationData,
-        NetworkInfo,
-        NetworkInfoManager,
         Notification,
         NotificationManager,
         NotificationPermissionRequest,

@@ -2250,9 +2250,6 @@ plugins/destroy-during-npp-new-object-with-fallback-content.html
 # https://bugs.webkit.org/show_bug.cgi?id=86176
 ietestcenter/css3/valuesandunits/units-000.htm
 
-# Network Information is not supported yet.
-networkinformation
-
 # Asserts/crashes in PluginView::didFinishLoading
 fast/loader/reload-zero-byte-plugin.html
 userscripts/user-script-plugin-document.html

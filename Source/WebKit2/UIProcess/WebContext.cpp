@@ -74,10 +74,6 @@
 #include "WebBatteryManagerProxy.h"
 #endif
 
-#if ENABLE(NETWORK_INFO)
-#include "WebNetworkInfoManagerProxy.h"
-#endif
-
 #if ENABLE(DATABASE_PROCESS)
 #include "DatabaseProcessCreationParameters.h"
 #include "DatabaseProcessMessages.h"
@@ -191,9 +187,6 @@ WebContext::WebContext(const String& injectedBundlePath)
 #endif
 #if ENABLE(BATTERY_STATUS)
     addSupplement<WebBatteryManagerProxy>();
-#endif
-#if ENABLE(NETWORK_INFO)
-    addSupplement<WebNetworkInfoManagerProxy>();
 #endif
 
     contexts().append(this);

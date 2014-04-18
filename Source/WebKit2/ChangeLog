@@ -1,3 +1,47 @@
+2014-04-18  Philippe Normand  <pnormand@igalia.com>
+
+        Remove NETWORK_INFO support
+        https://bugs.webkit.org/show_bug.cgi?id=131841
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * Shared/WebNetworkInfo.cpp: Removed.
+        * Shared/WebNetworkInfo.h: Removed.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetNetworkInfoManager): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKNetworkInfo.cpp: Removed.
+        * UIProcess/API/C/WKNetworkInfo.h: Removed.
+        * UIProcess/API/C/WKNetworkInfoManager.cpp: Removed.
+        * UIProcess/API/C/WKNetworkInfoManager.h: Removed.
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebNetworkInfoManagerProxy.cpp: Removed.
+        * UIProcess/WebNetworkInfoManagerProxy.h: Removed.
+        * UIProcess/WebNetworkInfoManagerProxy.messages.in: Removed.
+        * UIProcess/WebNetworkInfoProvider.cpp: Removed.
+        * UIProcess/WebNetworkInfoProvider.h: Removed.
+        * UIProcess/efl/NetworkInfoProvider.cpp: Removed.
+        * UIProcess/efl/NetworkInfoProvider.h: Removed.
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.cpp: Removed.
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.h: Removed.
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.messages.in: Removed.
+        * WebProcess/WebCoreSupport/WebNetworkInfoClient.cpp: Removed.
+        * WebProcess/WebCoreSupport/WebNetworkInfoClient.h: Removed.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+
 2014-04-17  Daniel Bates  <dabates@apple.com>
 
         [iOS] Hook up screen.{availHeight, availWidth, height, width}

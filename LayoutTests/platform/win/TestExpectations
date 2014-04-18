@@ -1484,9 +1484,6 @@ webkit.org/b/78801 touchadjustment
 # Needs BatteryClient implementation.
 webkit.org/b/62698 batterystatus/
 
-#Network Information is not supported yet.
-webkit.org/b/73528 networkinformation
-
 # Proximity Events is not supported.
 proximity
 fast/events/constructors/device-proximity-event-constructor.html

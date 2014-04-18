@@ -111,8 +111,6 @@ typedef const struct OpaqueWKInspector* WKInspectorRef;
 typedef const struct OpaqueWKKeyValueStorageManager* WKKeyValueStorageManagerRef;
 typedef const struct OpaqueWKMediaCacheManager* WKMediaCacheManagerRef;
 typedef const struct OpaqueWKNavigationData* WKNavigationDataRef;
-typedef const struct OpaqueWKNetworkInfoManager* WKNetworkInfoManagerRef;
-typedef const struct OpaqueWKNetworkInfo* WKNetworkInfoRef;
 typedef const struct OpaqueWKNotification* WKNotificationRef;
 typedef const struct OpaqueWKNotificationManager* WKNotificationManagerRef;
 typedef const struct OpaqueWKNotificationPermissionRequest* WKNotificationPermissionRequestRef;

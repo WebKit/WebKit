@@ -108,10 +108,6 @@
 #include "BatteryClientEfl.h"
 #endif
 
-#if ENABLE(NETWORK_INFO)
-#include "NetworkInfoClientEfl.h"
-#endif
-
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooserClient.h"
 #endif
@@ -617,10 +613,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #if ENABLE(DEVICE_ORIENTATION)
     WebCore::provideDeviceMotionTo(priv->page.get(), new WebCore::DeviceMotionClientEfl);
     WebCore::provideDeviceOrientationTo(priv->page.get(), new WebCore::DeviceOrientationClientEfl);
-#endif
-
-#if ENABLE(NETWORK_INFO)
-    WebCore::provideNetworkInfoTo(priv->page.get(), new WebCore::NetworkInfoClientEfl);
 #endif
 
 #if ENABLE(VIBRATION)

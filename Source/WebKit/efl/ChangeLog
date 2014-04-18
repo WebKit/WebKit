@@ -1,3 +1,15 @@
+2014-04-18  Philippe Normand  <pnormand@igalia.com>
+
+        Remove NETWORK_INFO support
+        https://bugs.webkit.org/show_bug.cgi?id=131841
+
+        Reviewed by Gyuyoung Kim.
+
+        * WebCoreSupport/NetworkInfoClientEfl.cpp: Removed.
+        * WebCoreSupport/NetworkInfoClientEfl.h: Removed.
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2014-04-17  Jeongeun Kim  <je_julie.kim@samsung.com>
 
         [EFL][WK1] SSL Strict is set according to input parameter.

@@ -41,9 +41,6 @@ class RequestManagerClientEfl;
 #if ENABLE(BATTERY_STATUS)
 class BatteryProvider;
 #endif
-#if ENABLE(NETWORK_INFO)
-class NetworkInfoProvider;
-#endif
 }
 
 class EwkContext : public EwkObject {
@@ -116,9 +113,6 @@ private:
     std::unique_ptr<EwkStorageManager> m_storageManager;
 #if ENABLE(BATTERY_STATUS)
     RefPtr<WebKit::BatteryProvider> m_batteryProvider;
-#endif
-#if ENABLE(NETWORK_INFO)
-    RefPtr<WebKit::NetworkInfoProvider> m_networkInfoProvider;
 #endif
     std::unique_ptr<WebKit::DownloadManagerEfl> m_downloadManager;
     std::unique_ptr<WebKit::RequestManagerClientEfl> m_requestManagerClient;

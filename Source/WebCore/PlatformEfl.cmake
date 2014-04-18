@@ -77,7 +77,6 @@ list(APPEND WebCore_SOURCES
     platform/efl/LocalizedStringsEfl.cpp
     platform/efl/LoggingEfl.cpp
     platform/efl/MIMETypeRegistryEfl.cpp
-    platform/efl/NetworkInfoProviderEfl.cpp
     platform/efl/PasteboardEfl.cpp
     platform/efl/PlatformKeyboardEventEfl.cpp
     platform/efl/PlatformMouseEventEfl.cpp

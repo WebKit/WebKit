@@ -84,9 +84,6 @@ struct WebProcessCreationParameters;
     
 typedef GenericCallback<ImmutableDictionary*> DictionaryCallback;
 
-#if ENABLE(NETWORK_INFO)
-class WebNetworkInfoManagerProxy;
-#endif
 #if ENABLE(NETWORK_PROCESS)
 struct NetworkProcessCreationParameters;
 #endif

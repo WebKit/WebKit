@@ -1138,9 +1138,6 @@ media/encrypted-media/
 # batterystatus not supported on iOS
 batterystatus/
 
-# networkinformation not supported on iOS
-networkinformation/
-
 # gamepad not supported on iOS
 gamepad/
 

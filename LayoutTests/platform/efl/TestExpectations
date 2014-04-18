@@ -1812,7 +1812,6 @@ webkit.org/b/128670 fast/dom/webtiming-document-open.html [ Failure ]
 webkit.org/b/128670 fast/dom/webtiming-navigate-within-document.html [ Failure ]
 webkit.org/b/128670 fast/forms/form-hides-table.html [ Failure ]
 webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
-webkit.org/b/128670 networkinformation/window-property.html [ Failure ]
 
 webkit.org/b/128901 accessibility/list-detection.html [ Failure ]
 

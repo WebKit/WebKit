@@ -283,9 +283,6 @@ webkit.org/b/99036 http/tests/pointer-lock [ Skip ]
 webkit.org/b/95582 batterystatus [ Failure ]
 webkit.org/b/95582 batterystatus/event-after-navigation.html [ Timeout ]
 
-# Network Information API support not yet.
-webkit.org/b/99052 networkinformation [ Skip ]
-
 # Touch adjustment not enabled
 webkit.org/b/99054 touchadjustment [ Failure ]
 webkit.org/b/99054 touchadjustment/iframe.html [ Timeout ]
