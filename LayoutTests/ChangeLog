@@ -1,3 +1,10 @@
+2014-04-18  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK1] media/event-attributes.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=131855
+
+        * platform/mac/TestExpectations: Marking as such.
+
 2014-04-17  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Deleting properties poisons objects
