@@ -1,3 +1,13 @@
+2014-04-17  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Pagination mode messed up with non-inline axis and reversed direction.
+        https://bugs.webkit.org/show_bug.cgi?id=131811
+
+        Reviewed by Dean Jackson.
+
+        * fast/multicol/newmulticol/compare-with-old-impl/BottomToTop-tb-expected.html: Added.
+        * fast/multicol/newmulticol/compare-with-old-impl/BottomToTop-tb.html: Added.
+
 2014-04-16  Huang Dongsung  <luxtella@company100.net>
 
         Make RenderLayerBacking get the timingFunction of the correct animation.
