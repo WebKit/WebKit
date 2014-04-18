@@ -21,9 +21,26 @@
 
 #include "config.h"
 #include "KeyframeList.h"
+
+#include "Animation.h"
 #include "RenderObject.h"
 
 namespace WebCore {
+
+TimingFunction* KeyframeValue::timingFunction(const AtomicString& name) const
+{
+    const RenderStyle* keyframeStyle = style();
+    if (!keyframeStyle || !keyframeStyle->animations())
+        return nullptr;
+
+    for (size_t i = 0; i < keyframeStyle->animations()->size(); ++i) {
+        const Animation& animation = keyframeStyle->animations()->animation(i);
+        if (name == animation.name())
+            return animation.timingFunction().get();
+    }
+
+    return nullptr;
+}
 
 KeyframeList::~KeyframeList()
 {

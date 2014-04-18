@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,7 +82,7 @@ public:
     virtual PassOwnPtr<AnimationValue> clone() const = 0;
 
 protected:
-    AnimationValue(double keyTime, PassRefPtr<TimingFunction> timingFunction = 0)
+    AnimationValue(double keyTime, TimingFunction* timingFunction = nullptr)
         : m_keyTime(keyTime)
         , m_timingFunction(timingFunction)
     {
@@ -97,7 +97,7 @@ private:
 // FIXME: Should be moved to its own header file.
 class FloatAnimationValue : public AnimationValue {
 public:
-    static PassOwnPtr<FloatAnimationValue> create(double keyTime, float value, PassRefPtr<TimingFunction> timingFunction = 0)
+    static PassOwnPtr<FloatAnimationValue> create(double keyTime, float value, TimingFunction* timingFunction = nullptr)
     {
         return adoptPtr(new FloatAnimationValue(keyTime, value, timingFunction));
     }
@@ -110,7 +110,7 @@ public:
     float value() const { return m_value; }
 
 private:
-    FloatAnimationValue(double keyTime, float value, PassRefPtr<TimingFunction> timingFunction)
+    FloatAnimationValue(double keyTime, float value, TimingFunction* timingFunction)
         : AnimationValue(keyTime, timingFunction)
         , m_value(value)
     {
@@ -123,7 +123,7 @@ private:
 // FIXME: Should be moved to its own header file.
 class TransformAnimationValue : public AnimationValue {
 public:
-    static PassOwnPtr<TransformAnimationValue> create(double keyTime, const TransformOperations& value, PassRefPtr<TimingFunction> timingFunction = 0)
+    static PassOwnPtr<TransformAnimationValue> create(double keyTime, const TransformOperations& value, TimingFunction* timingFunction = nullptr)
     {
         return adoptPtr(new TransformAnimationValue(keyTime, value, timingFunction));
     }
@@ -136,7 +136,7 @@ public:
     const TransformOperations& value() const { return m_value; }
 
 private:
-    TransformAnimationValue(double keyTime, const TransformOperations& value, PassRefPtr<TimingFunction> timingFunction)
+    TransformAnimationValue(double keyTime, const TransformOperations& value, TimingFunction* timingFunction)
         : AnimationValue(keyTime, timingFunction)
         , m_value(value)
     {
@@ -150,7 +150,7 @@ private:
 // FIXME: Should be moved to its own header file.
 class FilterAnimationValue : public AnimationValue {
 public:
-    static PassOwnPtr<FilterAnimationValue> create(double keyTime, const FilterOperations& value, PassRefPtr<TimingFunction> timingFunction = 0)
+    static PassOwnPtr<FilterAnimationValue> create(double keyTime, const FilterOperations& value, TimingFunction* timingFunction = nullptr)
     {
         return adoptPtr(new FilterAnimationValue(keyTime, value, timingFunction));
     }
@@ -163,7 +163,7 @@ public:
     const FilterOperations& value() const { return m_value; }
 
 private:
-    FilterAnimationValue(double keyTime, const FilterOperations& value, PassRefPtr<TimingFunction> timingFunction)
+    FilterAnimationValue(double keyTime, const FilterOperations& value, TimingFunction* timingFunction)
         : AnimationValue(keyTime, timingFunction)
         , m_value(value)
     {

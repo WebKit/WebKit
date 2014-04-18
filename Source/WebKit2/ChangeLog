@@ -1,3 +1,14 @@
+2014-04-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Make RenderLayerBacking get the timingFunction of the correct animation.
+        https://bugs.webkit.org/show_bug.cgi?id=100632
+
+        Reviewed by Simon Fraser.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<GraphicsLayerAnimation>::decode): Update for new signatures for
+        FloatAnimationValue, TransformAnimationValue, etc.
+
 2014-04-17  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] support replacements for misspelled words.

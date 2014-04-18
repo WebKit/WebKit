@@ -65,19 +65,6 @@ KeyframeAnimation::~KeyframeAnimation()
         endAnimation();
 }
 
-static const Animation* getAnimationFromStyleByName(const RenderStyle* style, const AtomicString& name)
-{
-    if (!style->animations())
-        return 0;
-
-    for (size_t i = 0; i < style->animations()->size(); i++) {
-        if (name == style->animations()->animation(i).name())
-            return &style->animations()->animation(i);
-    }
-
-    return 0;
-}
-
 void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property, const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& prog) const
 {
     // Find the first key
@@ -130,11 +117,7 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
     offset = prevKeyframe.key();
     scale = 1.0 / (nextKeyframe.key() - prevKeyframe.key());
 
-    const TimingFunction* timingFunction = 0;
-    if (const Animation* matchedAnimation = getAnimationFromStyleByName(fromStyle, name()))
-        timingFunction = matchedAnimation->timingFunction().get();
-
-    prog = progress(scale, offset, timingFunction);
+    prog = progress(scale, offset, prevKeyframe.timingFunction(name()));
 }
 
 void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderElement*, const RenderStyle*, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle)

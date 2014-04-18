@@ -1,3 +1,34 @@
+2014-04-16  Huang Dongsung  <luxtella@company100.net>
+
+        Make RenderLayerBacking get the timingFunction of the correct animation.
+        https://bugs.webkit.org/show_bug.cgi?id=100632
+
+        Reviewed by Simon Fraser.
+
+        When an element has multiple animations that have different timingFunctions,
+        the progress of each animation should be calculated using its respective
+        timingFunction. But at this point, the timingFunction of the first animation is
+        only used in RenderLayerBacking::startAnimation(), regardless of how many
+        animations the element has.
+
+        getAnimationFromStyleByName() was introduced in r89462 so that the
+        timingFunction of the correct animation searched by its name would be
+        used. This patch moves the function to KeyframeValue::timingFunction()
+        so that RenderLayerBacking reuses this method.
+
+        Test: animations/keyframe-multiple-timing-functions-transform.html
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeValue::timingFunction):
+        (WebCore):
+        * rendering/style/KeyframeList.h:
+        (WebCore):
+        (KeyframeValue):
+
 2014-04-17  Andreas Kling  <akling@apple.com>
 
         Rollout: Add a way to cache never-changing IDL attributes in the wrapper.

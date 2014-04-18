@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class RenderStyle;
+class TimingFunction;
 
 class KeyframeValue {
 public:
@@ -53,6 +54,8 @@ public:
 
     const RenderStyle* style() const { return m_style.get(); }
     void setStyle(PassRefPtr<RenderStyle> style) { m_style = style; }
+
+    TimingFunction* timingFunction(const AtomicString& name) const;
 
 private:
     double m_key;
