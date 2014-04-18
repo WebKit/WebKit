@@ -1,3 +1,17 @@
+2014-04-17  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Unreviewed, rolling out r167384.
+
+        Sounds like this isn't the right fix, and causes generation to
+        run far too often.
+
+        Reverted changeset:
+
+        "Fix CodeGenerator.pm to only write files if the generated
+        content has changed"
+        https://bugs.webkit.org/show_bug.cgi?id=131756
+        http://trac.webkit.org/changeset/167384
+
 2014-04-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Remove unnecessary MathExtras.h includes
