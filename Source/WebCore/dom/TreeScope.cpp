@@ -227,17 +227,19 @@ Node* nodeFromPoint(Document* document, int x, int y, LayoutPoint* localPoint)
         return nullptr;
 
     float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
-#if !PLATFORM(IOS)
-    IntPoint point = roundedIntPoint(FloatPoint(x * scaleFactor  + frameView->scrollX(), y * scaleFactor + frameView->scrollY()));
 
-    if (!frameView->visibleContentRect().contains(point))
-        return nullptr;
+    IntPoint scrollPosition = frameView->contentsScrollPosition();
+    IntPoint point = roundedIntPoint(FloatPoint(x * scaleFactor  + scrollPosition.x(), y * scaleFactor + scrollPosition.y()));
+
+    IntRect visibleRect;
+#if PLATFORM(IOS)
+    visibleRect = frameView->unobscuredContentRect();
 #else
-    IntPoint point = roundedIntPoint(FloatPoint(x * scaleFactor  + frameView->actualScrollX(), y * scaleFactor + frameView->actualScrollY()));
-
-    if (!frameView->unobscuredContentRect().contains(point))
-        return nullptr;
+    visibleRect = frameView->visibleContentRect();
 #endif
+    if (!visibleRect.contains(point))
+        return nullptr;
+
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
     HitTestResult result(point);
     document->renderView()->hitTest(request, result);

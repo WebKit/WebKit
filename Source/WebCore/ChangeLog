@@ -1,5 +1,39 @@
 2014-04-18  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Make window.scroll() and window.scrollBy() work
+        https://bugs.webkit.org/show_bug.cgi?id=131848
+        <rdar://problem/16638319>
+
+        Reviewed by Beth Dakin.
+
+        The scrolling-related functions in DOMWindow were #ifdeffed for iOS
+        to use the hacky WK1-specific "actual scroll" functions, which do nothing
+        in WK2.
+        
+        Fix by adding a scroll position wrapper (contentsScrollPosition) which does
+        the right thing on WK1 and WK2, and change almost all the places that used "actualScrollPosition"
+        to us it (with the exception of contentsScrollOffset() in MouseRelatedEvent.cpp, which has
+        confusing scaling behavior).
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        * dom/TreeScope.cpp:
+        (WebCore::nodeFromPoint): Remove #ifdefs. 
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::scrollLeft):
+        (WebCore::HTMLBodyElement::scrollTop):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+        (WebCore::DOMWindow::scrollBy):
+        (WebCore::DOMWindow::scrollTo):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::contentsScrollPosition):
+        (WebCore::ScrollView::setContentsScrollPosition):
+        * platform/ScrollView.h:
+
+2014-04-18  Simon Fraser  <simon.fraser@apple.com>
+
         Worse animation performance on pages with 3D transforms
         https://bugs.webkit.org/show_bug.cgi?id=131838
         <rdar://problem/16428630&15705876>

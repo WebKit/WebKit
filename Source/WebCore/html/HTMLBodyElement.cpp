@@ -218,11 +218,7 @@ int HTMLBodyElement::scrollLeft()
     FrameView* view = frame->view();
     if (!view)
         return 0;
-#if PLATFORM(IOS)
-    return adjustForZoom(view->actualScrollX(), *frame);
-#else
-    return adjustForZoom(view->scrollX(), *frame);
-#endif
+    return adjustForZoom(view->contentsScrollPosition().x(), *frame);
 }
 
 void HTMLBodyElement::setScrollLeft(int scrollLeft)
@@ -246,11 +242,7 @@ int HTMLBodyElement::scrollTop()
     FrameView* view = frame->view();
     if (!view)
         return 0;
-#if PLATFORM(IOS)
-    return adjustForZoom(view->actualScrollY(), *frame);
-#else
-    return adjustForZoom(view->scrollY(), *frame);
-#endif
+    return adjustForZoom(view->contentsScrollPosition().y(), *frame);
 }
 
 void HTMLBodyElement::setScrollTop(int scrollTop)

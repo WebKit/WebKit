@@ -229,6 +229,10 @@ public:
     int scrollX() const { return scrollPosition().x(); }
     int scrollY() const { return scrollPosition().y(); }
 
+    // Scroll position used by web-exposed features (has legacy iOS behavior).
+    IntPoint contentsScrollPosition() const;
+    void setContentsScrollPosition(const IntPoint&);
+
 #if PLATFORM(IOS)
     int actualScrollX() const { return unobscuredContentRect().x(); }
     int actualScrollY() const { return unobscuredContentRect().y(); }
