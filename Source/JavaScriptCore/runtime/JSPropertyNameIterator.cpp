@@ -63,7 +63,8 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
     JSPropertyNameIterator* jsPropertyNameIterator = new (NotNull, allocateCell<JSPropertyNameIterator>(vm.heap)) JSPropertyNameIterator(exec, propertyNames.data(), numCacheableSlots);
     jsPropertyNameIterator->finishCreation(vm, propertyNames.data(), o);
 
-    if (o->structure()->isDictionary())
+    // JSPropertyNameIterator doesn't know how to skip deleted buckets, so just give up.
+    if (o->structure()->isDictionary() || o->structure()->hasDeletedOffsets())
         return jsPropertyNameIterator;
 
     if (o->structure()->typeInfo().overridesGetPropertyNames())

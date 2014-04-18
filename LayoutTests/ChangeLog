@@ -1,3 +1,18 @@
+2014-04-17  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Deleting properties poisons objects
+        https://bugs.webkit.org/show_bug.cgi?id=131551
+
+        Reviewed by Geoffrey Garen.
+
+        New JS regress test. We're ~3.5x faster on this microbenchmark now.
+
+        * js/regress/delete-a-few-properties-then-get-by-id-expected.txt: Added.
+        * js/regress/delete-a-few-properties-then-get-by-id.html: Added.
+        * js/regress/script-tests/delete-a-few-properties-then-get-by-id.js: Added.
+        (MyObject):
+        (foo):
+
 2014-04-18  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/multipart/policy-ignore-crash.php erroneously depends on http stack quirks
