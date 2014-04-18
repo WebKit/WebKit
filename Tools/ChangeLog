@@ -1,3 +1,20 @@
+2014-04-17  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] AttributedStringTest API tests fail with async text input
+        https://bugs.webkit.org/show_bug.cgi?id=131833
+
+        Reviewed by Enrica Casucci.
+
+        Don't run sync NSTextInputClient tests where we don't implement these calls.
+
+        * TestWebKitAPI/Tests/mac/AttributedString.mm:
+        (TestWebKitAPI::AttributedStringTest_CustomFont::didLoadURL):
+        (TestWebKitAPI::AttributedStringTest_CustomFont::runSyncTest):
+        (TestWebKitAPI::AttributedStringTest_Strikethrough::didLoadURL):
+        (TestWebKitAPI::AttributedStringTest_Strikethrough::runSyncTest):
+        (TestWebKitAPI::AttributedStringTest_CustomFont::runTest): Deleted.
+        (TestWebKitAPI::AttributedStringTest_Strikethrough::runTest): Deleted.
+
 2014-04-18  Philippe Normand  <pnormand@igalia.com>
 
         Remove NETWORK_INFO support
