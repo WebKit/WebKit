@@ -1,3 +1,14 @@
+2014-04-18  Anders Carlsson  <andersca@apple.com>
+
+        Handle pluginOrigin being null
+        https://bugs.webkit.org/show_bug.cgi?id=131849
+        <rdar://problem/16655898>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::shouldPlugInAutoStartFromOrigin):
+
 2014-04-18  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Add a navigation delegate method corresponding to didFinishDocumentLoadForFrame for the main frame

@@ -736,7 +736,7 @@ bool WebProcess::isPlugInAutoStartOriginHash(unsigned plugInOriginHash)
 
 bool WebProcess::shouldPlugInAutoStartFromOrigin(const WebPage* page, const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
 {
-    if (m_plugInAutoStartOrigins.contains(pluginOrigin))
+    if (!pluginOrigin.isEmpty() && m_plugInAutoStartOrigins.contains(pluginOrigin))
         return true;
 
 #ifdef ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC
