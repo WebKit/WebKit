@@ -1,3 +1,16 @@
+2014-04-17  Jeongeun Kim  <je_julie.kim@samsung.com>
+
+        [EFL][WK1] SSL Strict is set according to input parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=131734.
+
+        Reviewed by Gyuyoung Kim.
+
+        The param, 'enable', should be used for setting SSL-Strict.
+        If it is true, SSLStrict is set. Otherwise, SSLStrict is unset.
+
+        * ewk/ewk_network.cpp:
+        (ewk_network_tls_certificate_check_set):
+
 2014-04-17  Hyowon Kim  <hw1008.kim@samsung.com>
 
         [EFL] Remove deprecated ewk_paint code.

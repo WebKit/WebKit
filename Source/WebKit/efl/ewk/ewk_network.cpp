@@ -53,10 +53,14 @@ Eina_Bool ewk_network_tls_certificate_check_get()
     return policy & WebCore::SoupNetworkSession::SSLStrict;
 }
 
-void ewk_network_tls_certificate_check_set(Eina_Bool checkCertificates)
+void ewk_network_tls_certificate_check_set(Eina_Bool enable)
 {
     unsigned policy = WebCore::SoupNetworkSession::defaultSession().sslPolicy();
-    WebCore::SoupNetworkSession::defaultSession().setSSLPolicy(policy | WebCore::SoupNetworkSession::SSLStrict);
+    if (enable && !(policy | WebCore::SoupNetworkSession::SSLStrict))
+        policy |= WebCore::SoupNetworkSession::SSLStrict;
+    else if (!enable && (policy | WebCore::SoupNetworkSession::SSLStrict))
+        policy &= ~WebCore::SoupNetworkSession::SSLStrict;
+    WebCore::SoupNetworkSession::defaultSession().setSSLPolicy(policy);
 }
 
 const char* ewk_network_tls_ca_certificates_path_get()
