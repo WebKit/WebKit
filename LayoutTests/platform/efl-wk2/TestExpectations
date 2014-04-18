@@ -120,8 +120,6 @@ webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/close-in-worker.html
 webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/zero-length-text.html [ Skip ]
 
-webkit.org/b/128906 fast/events/touch/basic-single-touch-events.html [ Crash ]
-
 webkit.org/b/131044 media [ Skip ]
 
 # A lot of crash happen since buildbot bagan to use Ubuntu 13.10.

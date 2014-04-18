@@ -1,5 +1,11 @@
 2014-04-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL gardening. Remove duplicated test case in EFL WK2 TestExpectations.
+
+        * platform/efl-wk2/TestExpectations:
+
+2014-04-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, fix a test case path, which was moved to different folder.
 
         * platform/efl/TestExpectations:
