@@ -1,3 +1,18 @@
+2014-04-17  Darin Adler  <darin@apple.com>
+
+        origin spoofing possible (HTTP Origin, postMessage event.origin) due to inappropriate URL escape sequence decoding
+        https://bugs.webkit.org/show_bug.cgi?id=131837
+        rdar://problem/15211936
+
+        Reviewed by Anders Carlsson and Dave Hyatt.
+
+        Tests: fast/dom/DOMURL/parsing.html
+               fast/dom/HTMLAnchorElement/anchor-element-href-parsing.html
+
+        * platform/URL.cpp:
+        (WebCore::URL::host): Removed unnecessary call to decodeURLEscapeSequences, which caused
+        problems and was not needed.
+
 2014-04-17  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Pagination mode messed up with non-inline axis and reversed direction.

@@ -1,3 +1,16 @@
+2014-04-17  Darin Adler  <darin@apple.com>
+
+        hostname extraction from a URL should not decode percent-escape sequences
+        https://bugs.webkit.org/show_bug.cgi?id=131837
+        rdar://problem/15211936
+
+        Reviewed by Anders Carlsson and Dave Hyatt.
+
+        * fast/dom/DOMURL/parsing-expected.txt: Added.
+        * fast/dom/DOMURL/parsing.html: Added.
+        * fast/dom/HTMLAnchorElement/anchor-element-href-parsing-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-element-href-parsing.html: Added.
+
 2014-04-17  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Pagination mode messed up with non-inline axis and reversed direction.

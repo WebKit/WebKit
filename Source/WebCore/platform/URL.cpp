@@ -576,7 +576,7 @@ String URL::protocol() const
 String URL::host() const
 {
     int start = hostStart();
-    return decodeURLEscapeSequences(m_string.substring(start, m_hostEnd - start));
+    return m_string.substring(start, m_hostEnd - start);
 }
 
 unsigned short URL::port() const
