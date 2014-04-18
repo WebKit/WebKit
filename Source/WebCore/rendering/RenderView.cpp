@@ -295,7 +295,7 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
     if (document().printing())
         return pageLogicalHeight();
     
-    if ((hasColumns() || multiColumnFlowThread()) && !style().hasInlineColumnAxis()) {
+    if (hasColumns() && !style().hasInlineColumnAxis()) {
         if (int pageLength = frameView().pagination().pageLength)
             return pageLength;
     }

@@ -26,12 +26,10 @@
 #include "config.h"
 #include "RenderMultiColumnSet.h"
 
-#include "FrameView.h"
 #include "PaintInfo.h"
 #include "RenderLayer.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
-#include "RenderView.h"
 
 namespace WebCore {
 
@@ -40,7 +38,6 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread& flowThread, PassRef
     , m_computedColumnCount(1)
     , m_computedColumnWidth(0)
     , m_computedColumnHeight(0)
-    , m_availableColumnHeight(0)
     , m_maxColumnHeight(RenderFlowThread::maxLogicalHeight())
     , m_minSpaceShortage(RenderFlowThread::maxLogicalHeight())
     , m_minimumColumnHeight(0)
@@ -154,19 +151,6 @@ void RenderMultiColumnSet::setAndConstrainColumnHeight(LayoutUnit newHeight)
     m_computedColumnHeight = newHeight;
     if (m_computedColumnHeight > m_maxColumnHeight)
         m_computedColumnHeight = m_maxColumnHeight;
-    
-    // FIXME: The available column height is not the same as the constrained height specified
-    // by the pagination API. The column set in this case is allowed to be bigger than the
-    // height of a single column. We cache available column height in order to use it
-    // in computeLogicalHeight later. This is pretty gross, and maybe there's a better way
-    // to formalize the idea of clamped column heights without having a view dependency
-    // here.
-    m_availableColumnHeight = m_computedColumnHeight;
-    if (multiColumnFlowThread() && !multiColumnFlowThread()->progressionIsInline() && parent()->isRenderView()) {
-        int pageLength = view().frameView().pagination().pageLength;
-        if (pageLength)
-            m_computedColumnHeight = pageLength;
-    }
     // FIXME: the height may also be affected by the enclosing pagination context, if any.
 }
 
@@ -412,7 +396,7 @@ void RenderMultiColumnSet::layout()
 
 void RenderMultiColumnSet::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    computedValues.m_extent = m_availableColumnHeight;
+    computedValues.m_extent = m_computedColumnHeight;
     computedValues.m_position = logicalTop;
 }
 
