@@ -1,3 +1,9 @@
+2014-04-18  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Unreviewed. ARM64 buildfix after r167473.
+
+        * platform/audio/DenormalDisabler.h: Put back the MathExtras.h include.
+
 2014-04-18  Radu Stavila  <stavila@adobe.com>
 
         [CSSRegions] Incorrect background paint on positioned element hover
