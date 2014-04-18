@@ -1,3 +1,26 @@
+2014-04-18  Geoffrey Garen  <ggaren@apple.com>
+
+        MallocBench: removed the --measure-heap option
+        https://bugs.webkit.org/show_bug.cgi?id=131854
+
+        Reviewed by Sam Weinig.
+
+        As of <https://bugs.webkit.org/show_bug.cgi?id=131661>, measuring the
+        heap is fast, so there's no reason to disable it.
+
+        * MallocBench/MallocBench/Benchmark.cpp:
+        (Benchmark::Benchmark):
+        (Benchmark::run):
+        (Benchmark::printReport):
+        * MallocBench/MallocBench/Benchmark.h:
+        * MallocBench/MallocBench/CommandLine.cpp:
+        (CommandLine::printUsage):
+        * MallocBench/MallocBench/CommandLine.h:
+        (CommandLine::heapSize):
+        (CommandLine::measureHeap): Deleted.
+        * MallocBench/MallocBench/main.cpp:
+        (main):
+
 2014-04-16  Alexandru Chiculita  <achicu@adobe.com>
 
         Improve performance of the RenderLayerCompositor::OverlapMap

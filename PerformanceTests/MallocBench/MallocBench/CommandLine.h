@@ -33,7 +33,6 @@ public:
     const std::string& benchmarkName() { return m_benchmarkName; }
     bool isParallel() { return m_isParallel; }
     size_t heapSize() { return m_heapSize; }
-    bool measureHeap() { return m_measureHeap; }
 
     void printUsage();
 
@@ -45,5 +44,4 @@ private:
     std::string m_benchmarkName;
     bool m_isParallel;
     size_t m_heapSize;
-    bool m_measureHeap;
 };

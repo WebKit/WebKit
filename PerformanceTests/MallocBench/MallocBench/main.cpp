@@ -40,7 +40,7 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    Benchmark benchmark(commandLine.benchmarkName(), commandLine.isParallel(), commandLine.measureHeap(), commandLine.heapSize());
+    Benchmark benchmark(commandLine.benchmarkName(), commandLine.isParallel(), commandLine.heapSize());
     if (!benchmark.isValid()) {
         cout << "Invalid benchmark: " << commandLine.benchmarkName() << endl << endl;
         benchmark.printBenchmarks();

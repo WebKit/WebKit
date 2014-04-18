@@ -59,7 +59,7 @@ public:
     static double currentTimeMS();
     static Memory currentMemoryBytes();
 
-    Benchmark(const std::string&, bool isParallel, bool measureHeap, size_t heapSize);
+    Benchmark(const std::string&, bool isParallel, size_t heapSize);
     
     bool isValid() { return m_benchmarkPair; }
     
@@ -76,7 +76,6 @@ private:
 
     const BenchmarkPair* m_benchmarkPair;
     bool m_isParallel;
-    bool m_measureHeap;
     size_t m_heapSize;
 
     Memory m_memory;

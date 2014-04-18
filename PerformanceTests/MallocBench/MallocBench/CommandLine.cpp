@@ -32,7 +32,6 @@ struct option CommandLine::longOptions[] =
     {"benchmark", required_argument, 0, 'b'},
     {"parallel", no_argument, 0, 'p'},
     {"heap", required_argument, 0, 'h'},
-    {"measure-heap", no_argument, 0, 'm'},
     {0, 0, 0, 0}
 };
 
@@ -41,7 +40,6 @@ CommandLine::CommandLine(int argc, char** argv)
     , m_argv(argv)
     , m_isParallel()
     , m_heapSize()
-    , m_measureHeap()
 {
     int optionIndex = 0;
     int ch;
@@ -60,10 +58,6 @@ CommandLine::CommandLine(int argc, char** argv)
                 m_heapSize = atoi(optarg) * 1024 * 1024;
                 break;
 
-            case 'm':
-                m_measureHeap = true;
-                break;
-
             default:
                 break;
         }
@@ -75,5 +69,5 @@ void CommandLine::printUsage()
     std::string fullPath(m_argv[0]);
     size_t pos = fullPath.find_last_of("/") + 1;
     std::string program = fullPath.substr(pos);
-    std::cout << "Usage: " << program << " --benchmark benchmark_name [ --parallel ] [ --measure-heap ] [ --heap MB ]" << std::endl;
+    std::cout << "Usage: " << program << " --benchmark benchmark_name [ --parallel ] [ --heap MB ]" << std::endl;
 }
