@@ -47,44 +47,53 @@ namespace Sizes {
 
     static const size_t superChunkSize = 32 * MB;
 
-    static const size_t smallMax = 256;
-    static const size_t smallLineSize = 512;
+    static const size_t xSmallMax = 64;
+    static const size_t xSmallLineSize = 256;
+    static const size_t xSmallLineMask = ~(xSmallLineSize - 1ul);
+
+    static const size_t xSmallChunkSize = superChunkSize / 4;
+    static const size_t xSmallChunkOffset = superChunkSize * 1 / 4;
+    static const size_t xSmallChunkMask = ~(xSmallChunkSize - 1ul);
+
+    static const size_t smallMax = 128;
+    static const size_t smallLineSize = 256;
     static const size_t smallLineMask = ~(smallLineSize - 1ul);
 
     static const size_t smallChunkSize = superChunkSize / 4;
-    static const size_t smallChunkOffset = superChunkSize * 3 / 4;
+    static const size_t smallChunkOffset = superChunkSize * 2 / 4;
     static const size_t smallChunkMask = ~(smallChunkSize - 1ul);
 
-    static const size_t mediumMax = 1024;
-    static const size_t mediumLineSize = 2048;
+    static const size_t mediumMax = 256;
+    static const size_t mediumLineSize = 512;
     static const size_t mediumLineMask = ~(mediumLineSize - 1ul);
 
     static const size_t mediumChunkSize = superChunkSize / 4;
-    static const size_t mediumChunkOffset = superChunkSize * 2 / 4;
+    static const size_t mediumChunkOffset = superChunkSize * 3 / 4;
     static const size_t mediumChunkMask = ~(mediumChunkSize - 1ul);
 
-    static const size_t largeChunkSize = superChunkSize / 2;
-    static const size_t largeChunkOffset = 0;
+    static const size_t largeChunkSize = superChunkSize / 4;
+    static const size_t largeChunkOffset = superChunkSize * 0 / 4;
     static const size_t largeChunkMask = ~(largeChunkSize - 1ul);
 
     static const size_t largeAlignment = 64;
     static const size_t largeMax = largeChunkSize * 99 / 100; // Plenty of room for metadata.
-    static const size_t largeMin = 1024;
+    static const size_t largeMin = mediumMax;
 
     static const size_t segregatedFreeListSearchDepth = 16;
 
     static const uintptr_t typeMask = (superChunkSize - 1) & ~((superChunkSize / 4) - 1); // 4 taggable chunks
+    static const uintptr_t xSmallType = (superChunkSize + xSmallChunkOffset) & typeMask;
     static const uintptr_t smallType = (superChunkSize + smallChunkOffset) & typeMask;
     static const uintptr_t mediumType = (superChunkSize + mediumChunkOffset) & typeMask;
-    static const uintptr_t largeTypeMask = ~(mediumType & smallType);
-    static const uintptr_t smallOrMediumTypeMask = mediumType & smallType;
-    static const uintptr_t smallOrMediumSmallTypeMask = smallType ^ mediumType; // Only valid if object is known to be small or medium.
-
+    static const uintptr_t largeType = (superChunkSize + largeChunkOffset) & typeMask;
+    
     static const size_t deallocatorLogCapacity = 256;
 
+    static const size_t xSmallLineCacheCapacity = 32;
     static const size_t smallLineCacheCapacity = 16;
     static const size_t mediumLineCacheCapacity = 8;
 
+    static const size_t xSmallAllocatorLogCapacity = 32;
     static const size_t smallAllocatorLogCapacity = 16;
     static const size_t mediumAllocatorLogCapacity = 8;
     

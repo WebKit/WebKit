@@ -23,44 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SegregatedFreeList_h
-#define SegregatedFreeList_h
+#ifndef XSmallTraits_h
+#define XSmallTraits_h
 
-#include "Range.h"
-#include "Vector.h"
-#include <array>
+#include "Sizes.h"
 
 namespace bmalloc {
 
-class SegregatedFreeList {
-public:
-    SegregatedFreeList();
+template<class Traits> class Chunk;
+template<class Traits> class Line;
+template<class Traits> class Page;
 
-    void insert(const Range&);
+struct XSmallTraits {
+    typedef Chunk<XSmallTraits> Chunk;
+    typedef Line<XSmallTraits> Line;
+    typedef Page<XSmallTraits> Page;
 
-    // Returns a reasonable fit for the provided size, or Range() if no fit
-    // is found. May return Range() spuriously if searching takes too long.
-    // Incrementally removes stale items from the free list while searching.
-    // Does not eagerly remove the returned range from the free list.
-    Range take(size_t);
-
-    // Returns an unreasonable fit for the provided size, or Range() if no fit
-    // is found. Never returns Range() spuriously.
-    // Incrementally removes stale items from the free list while searching.
-    // Eagerly removes the returned range from the free list.
-    Range takeGreedy(size_t);
-    
-private:
-    typedef Vector<Range> List;
-
-    List& select(size_t);
-
-    Range take(List&, size_t);
-    Range takeGreedy(List&, size_t);
-
-    std::array<List, 18> m_lists;
+    static const size_t lineSize = xSmallLineSize;
+    static const size_t minimumObjectSize = alignment;
+    static const size_t chunkSize = xSmallChunkSize;
+    static const size_t chunkOffset = xSmallChunkOffset;
+    static const uintptr_t chunkMask = xSmallChunkMask;
 };
 
 } // namespace bmalloc
 
-#endif // SegregatedFreeList_h
+#endif // XSmallTraits_h

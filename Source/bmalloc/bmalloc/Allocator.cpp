@@ -43,10 +43,11 @@ Allocator::Allocator(Deallocator& deallocator)
     , m_mediumAllocatorLog()
 {
     unsigned short size = alignment;
-    for (auto& allocator : m_smallAllocators) {
-        allocator = SmallAllocator(size);
-        size += alignment;
-    }
+    for ( ; size <= xSmallMax; size += alignment)
+        xSmallAllocatorFor(size) = XSmallAllocator(size);
+
+    for ( ; size <= smallMax; size += alignment)
+        smallAllocatorFor(size) = SmallAllocator(size);
 }
 
 Allocator::~Allocator()
@@ -56,6 +57,10 @@ Allocator::~Allocator()
     
 void Allocator::scavenge()
 {
+    for (auto& allocator : m_xSmallAllocators)
+        log(allocator);
+    processXSmallAllocatorLog();
+
     for (auto& allocator : m_smallAllocators)
         log(allocator);
     processSmallAllocatorLog();
@@ -64,14 +69,37 @@ void Allocator::scavenge()
     processMediumAllocatorLog();
 }
 
-void Allocator::log(SmallAllocator& allocator)
+void Allocator::log(XSmallAllocator& allocator)
 {
-    if (m_smallAllocatorLog.size() == m_smallAllocatorLog.capacity())
-        processSmallAllocatorLog();
-    
     if (allocator.isNull())
         return;
 
+    if (m_xSmallAllocatorLog.size() == m_xSmallAllocatorLog.capacity())
+        processXSmallAllocatorLog();
+    
+    m_xSmallAllocatorLog.push(std::make_pair(allocator.line(), allocator.derefCount()));
+}
+
+void Allocator::processXSmallAllocatorLog()
+{
+    std::lock_guard<Mutex> lock(PerProcess<Heap>::mutex());
+
+    for (auto& logEntry : m_xSmallAllocatorLog) {
+        if (!logEntry.first->deref(lock, logEntry.second))
+            continue;
+        m_deallocator.deallocateXSmallLine(lock, logEntry.first);
+    }
+    m_xSmallAllocatorLog.clear();
+}
+
+void Allocator::log(SmallAllocator& allocator)
+{
+    if (allocator.isNull())
+        return;
+
+    if (m_smallAllocatorLog.size() == m_smallAllocatorLog.capacity())
+        processSmallAllocatorLog();
+    
     m_smallAllocatorLog.push(std::make_pair(allocator.line(), allocator.derefCount()));
 }
 
@@ -89,11 +117,11 @@ void Allocator::processSmallAllocatorLog()
 
 void Allocator::log(MediumAllocator& allocator)
 {
-    if (m_mediumAllocatorLog.size() == m_mediumAllocatorLog.capacity())
-        processMediumAllocatorLog();
-
     if (allocator.isNull())
         return;
+
+    if (m_mediumAllocatorLog.size() == m_mediumAllocatorLog.capacity())
+        processMediumAllocatorLog();
 
     m_mediumAllocatorLog.push(std::make_pair(allocator.line(), allocator.derefCount()));
 }
@@ -144,6 +172,13 @@ IF_DEBUG(
     void* dummy;
     BASSERT(!allocateFastCase(size, dummy));
 )
+    if (size <= xSmallMax) {
+        XSmallAllocator& allocator = xSmallAllocatorFor(size);
+        log(allocator);
+        allocator.refill(m_deallocator.allocateXSmallLine());
+        return allocator.allocate();
+    }
+
     if (size <= smallMax) {
         SmallAllocator& allocator = smallAllocatorFor(size);
         log(allocator);

@@ -76,7 +76,7 @@ inline LargeChunk* LargeChunk::create()
 
 inline LargeChunk* LargeChunk::get(void* object)
 {
-    BASSERT(!isSmallOrMedium(object));
+    BASSERT(isLarge(object));
     return static_cast<LargeChunk*>(mask(object, largeChunkMask));
 }
 
@@ -89,7 +89,7 @@ inline BeginTag* LargeChunk::beginTag(void* object)
 
 inline EndTag* LargeChunk::endTag(void* object, size_t size)
 {
-    BASSERT(!isSmallOrMedium(object));
+    BASSERT(isLarge(object));
 
     LargeChunk* chunk = get(object);
     char* end = static_cast<char*>(object) + size;

@@ -11,6 +11,11 @@
 		1400274A18F89C2300115C97 /* VMHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 144F7BFC18BFC517003537F3 /* VMHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400274B18F89C3D00115C97 /* BoundaryTagInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 14105E7B18DBD7AF003A106E /* BoundaryTagInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400274C18F89C3D00115C97 /* SegregatedFreeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 146BEE1E18C841C50002D5A2 /* SegregatedFreeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		142FCC78190080B8009032D4 /* XSmallChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 142FCC74190080B8009032D4 /* XSmallChunk.h */; };
+		142FCC79190080B8009032D4 /* XSmallLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 142FCC75190080B8009032D4 /* XSmallLine.h */; };
+		142FCC7A190080B8009032D4 /* XSmallPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 142FCC76190080B8009032D4 /* XSmallPage.h */; };
+		142FCC7B190080B8009032D4 /* XSmallTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 142FCC77190080B8009032D4 /* XSmallTraits.h */; };
+		142FCC7D1900815E009032D4 /* XSmallAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 142FCC7C1900815E009032D4 /* XSmallAllocator.h */; };
 		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
 		1448C30118F3754C00502839 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1448C2FE18F3754300502839 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C919C818FCC59F0028DB43 /* BPlatform.h */; };
@@ -82,6 +87,11 @@
 		1417F64F18B7280C0076FA3F /* Syscall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Syscall.h; path = bmalloc/Syscall.h; sourceTree = "<group>"; };
 		1417F65218BA88A00076FA3F /* AsyncTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncTask.h; path = bmalloc/AsyncTask.h; sourceTree = "<group>"; };
 		1421A87718EE462A00B4DD68 /* Algorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Algorithm.h; path = bmalloc/Algorithm.h; sourceTree = "<group>"; };
+		142FCC74190080B8009032D4 /* XSmallChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSmallChunk.h; path = bmalloc/XSmallChunk.h; sourceTree = "<group>"; };
+		142FCC75190080B8009032D4 /* XSmallLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSmallLine.h; path = bmalloc/XSmallLine.h; sourceTree = "<group>"; };
+		142FCC76190080B8009032D4 /* XSmallPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSmallPage.h; path = bmalloc/XSmallPage.h; sourceTree = "<group>"; };
+		142FCC77190080B8009032D4 /* XSmallTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSmallTraits.h; path = bmalloc/XSmallTraits.h; sourceTree = "<group>"; };
+		142FCC7C1900815E009032D4 /* XSmallAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSmallAllocator.h; path = bmalloc/XSmallAllocator.h; sourceTree = "<group>"; };
 		143E29E918CAE8BE00FE8A0F /* MediumPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediumPage.h; path = bmalloc/MediumPage.h; sourceTree = "<group>"; };
 		143E29ED18CAE90500FE8A0F /* SmallPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmallPage.h; path = bmalloc/SmallPage.h; sourceTree = "<group>"; };
 		144469E417A46BFE00F9EA1D /* Cache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = Cache.cpp; path = bmalloc/Cache.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -195,6 +205,10 @@
 				1452478618BC757C00F80098 /* SmallLine.h */,
 				143E29ED18CAE90500FE8A0F /* SmallPage.h */,
 				147AAA9718CE5FB6002201E4 /* SmallTraits.h */,
+				142FCC74190080B8009032D4 /* XSmallChunk.h */,
+				142FCC75190080B8009032D4 /* XSmallLine.h */,
+				142FCC76190080B8009032D4 /* XSmallPage.h */,
+				142FCC77190080B8009032D4 /* XSmallTraits.h */,
 			);
 			name = "heap: small | medium";
 			sourceTree = "<group>";
@@ -237,6 +251,7 @@
 				145F685A179DC90200D65598 /* Deallocator.h */,
 				1413E47018A0661700546D68 /* MediumAllocator.h */,
 				1413E462189DE1CD00546D68 /* SmallAllocator.h */,
+				142FCC7C1900815E009032D4 /* XSmallAllocator.h */,
 			);
 			name = cache;
 			sourceTree = "<group>";
@@ -290,6 +305,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				142FCC7B190080B8009032D4 /* XSmallTraits.h in Headers */,
 				14DD78B518F48D6B00950702 /* Line.h in Headers */,
 				14DD78CF18F48D7500950702 /* Vector.h in Headers */,
 				14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */,
@@ -298,6 +314,7 @@
 				14DD78CC18F48D7500950702 /* PerThread.h in Headers */,
 				14DD78B418F48D6B00950702 /* Chunk.h in Headers */,
 				14DD78CA18F48D7500950702 /* Mutex.h in Headers */,
+				142FCC7D1900815E009032D4 /* XSmallAllocator.h in Headers */,
 				14DD78D118F48EC600950702 /* XLargeChunk.h in Headers */,
 				14DD78B918F48D6B00950702 /* MediumTraits.h in Headers */,
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
@@ -318,11 +335,14 @@
 				14DD78BB18F48D6B00950702 /* SmallChunk.h in Headers */,
 				14DD78C918F48D7500950702 /* Inline.h in Headers */,
 				1400274A18F89C2300115C97 /* VMHeap.h in Headers */,
+				142FCC7A190080B8009032D4 /* XSmallPage.h in Headers */,
 				1400274918F89C1300115C97 /* Heap.h in Headers */,
 				14DD78B818F48D6B00950702 /* MediumPage.h in Headers */,
 				14DD78C518F48D7500950702 /* Algorithm.h in Headers */,
 				14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */,
 				1400274B18F89C3D00115C97 /* BoundaryTagInlines.h in Headers */,
+				142FCC79190080B8009032D4 /* XSmallLine.h in Headers */,
+				142FCC78190080B8009032D4 /* XSmallChunk.h in Headers */,
 				14DD788E18F48CCD00950702 /* BoundaryTag.h in Headers */,
 				14DD78C818F48D7500950702 /* FixedVector.h in Headers */,
 				14DD78B718F48D6B00950702 /* MediumLine.h in Headers */,

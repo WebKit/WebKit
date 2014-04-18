@@ -31,19 +31,28 @@
 
 namespace bmalloc {
 
-enum ObjectType { Small, Medium, Large, XLarge };
+enum ObjectType { XSmall, Small, Medium, Large, XLarge };
 
 ObjectType objectType(void*);
 
-inline bool isSmallOrMedium(void* object)
+inline bool isXSmall(void* object)
 {
-    return test(object, smallOrMediumTypeMask);
+    return mask(reinterpret_cast<uintptr_t>(object), typeMask) == xSmallType;
 }
 
-inline bool isSmall(void* smallOrMedium)
+inline bool isSmall(void* object)
 {
-    BASSERT(isSmallOrMedium(smallOrMedium));
-    return test(smallOrMedium, smallOrMediumSmallTypeMask);
+    return mask(reinterpret_cast<uintptr_t>(object), typeMask) == smallType;
+}
+
+inline bool isMedium(void* object)
+{
+    return mask(reinterpret_cast<uintptr_t>(object), typeMask) == mediumType;
+}
+
+inline bool isLarge(void* object)
+{
+    return mask(reinterpret_cast<uintptr_t>(object), typeMask) == largeType;
 }
 
 } // namespace bmalloc

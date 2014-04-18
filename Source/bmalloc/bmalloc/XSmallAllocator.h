@@ -23,30 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SmallAllocator_h
-#define SmallAllocator_h
+#ifndef XSmallAllocator_h
+#define XSmallAllocator_h
 
 #include "BAssert.h"
-#include "SmallChunk.h"
+#include "XSmallChunk.h"
 
 namespace bmalloc {
 
-// Helper object for allocating small objects.
+// Helper object for allocating XSmall objects.
 
-class SmallAllocator {
+class XSmallAllocator {
 public:
-    SmallAllocator();
-    SmallAllocator(size_t);
+    XSmallAllocator();
+    XSmallAllocator(size_t);
     
     bool isNull() { return !m_ptr; }
-    SmallLine* line();
+    XSmallLine* line();
 
     bool canAllocate() { return !!m_remaining; }
     void* allocate();
 
     unsigned short objectCount();
     unsigned char derefCount();
-    void refill(SmallLine*);
+    void refill(XSmallLine*);
 
 private:
     char* m_ptr;
@@ -55,7 +55,7 @@ private:
     unsigned char m_maxObjectCount;
 };
 
-inline SmallAllocator::SmallAllocator()
+inline XSmallAllocator::XSmallAllocator()
     : m_ptr()
     , m_size()
     , m_remaining()
@@ -63,49 +63,49 @@ inline SmallAllocator::SmallAllocator()
 {
 }
 
-inline SmallAllocator::SmallAllocator(size_t size)
+inline XSmallAllocator::XSmallAllocator(size_t size)
     : m_ptr()
     , m_size(size)
     , m_remaining()
-    , m_maxObjectCount(smallLineSize / size)
+    , m_maxObjectCount(xSmallLineSize / size)
 {
 }
 
-inline SmallLine* SmallAllocator::line()
+inline XSmallLine* XSmallAllocator::line()
 {
-    return SmallLine::get(canAllocate() ? m_ptr : m_ptr - 1);
+    return XSmallLine::get(canAllocate() ? m_ptr : m_ptr - 1);
 }
 
-inline void* SmallAllocator::allocate()
+inline void* XSmallAllocator::allocate()
 {
     BASSERT(m_remaining);
-    BASSERT(m_size >= SmallLine::minimumObjectSize);
+    BASSERT(m_size >= XSmallLine::minimumObjectSize);
 
     --m_remaining;
     char* result = m_ptr;
     m_ptr += m_size;
-    BASSERT(objectType(result) == Small);
+    BASSERT(objectType(result) == XSmall);
     return result;
 }
 
-inline unsigned short SmallAllocator::objectCount()
+inline unsigned short XSmallAllocator::objectCount()
 {
     return m_maxObjectCount - m_remaining;
 }
 
-inline unsigned char SmallAllocator::derefCount()
+inline unsigned char XSmallAllocator::derefCount()
 {
-    return SmallLine::maxRefCount - objectCount();
+    return XSmallLine::maxRefCount - objectCount();
 }
 
-inline void SmallAllocator::refill(SmallLine* line)
+inline void XSmallAllocator::refill(XSmallLine* line)
 {
     BASSERT(!canAllocate());
-    line->concurrentRef(SmallLine::maxRefCount);
+    line->concurrentRef(XSmallLine::maxRefCount);
     m_ptr = line->begin();
     m_remaining = m_maxObjectCount;
 }
 
 } // namespace bmalloc
 
-#endif // SmallAllocator_h
+#endif // XSmallAllocator_h

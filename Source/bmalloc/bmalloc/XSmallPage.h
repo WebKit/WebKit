@@ -23,44 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SegregatedFreeList_h
-#define SegregatedFreeList_h
+#ifndef XSmallPage_h
+#define XSmallPage_h
 
-#include "Range.h"
-#include "Vector.h"
-#include <array>
+#include "Page.h"
+#include "XSmallTraits.h"
 
 namespace bmalloc {
 
-class SegregatedFreeList {
-public:
-    SegregatedFreeList();
-
-    void insert(const Range&);
-
-    // Returns a reasonable fit for the provided size, or Range() if no fit
-    // is found. May return Range() spuriously if searching takes too long.
-    // Incrementally removes stale items from the free list while searching.
-    // Does not eagerly remove the returned range from the free list.
-    Range take(size_t);
-
-    // Returns an unreasonable fit for the provided size, or Range() if no fit
-    // is found. Never returns Range() spuriously.
-    // Incrementally removes stale items from the free list while searching.
-    // Eagerly removes the returned range from the free list.
-    Range takeGreedy(size_t);
-    
-private:
-    typedef Vector<Range> List;
-
-    List& select(size_t);
-
-    Range take(List&, size_t);
-    Range takeGreedy(List&, size_t);
-
-    std::array<List, 18> m_lists;
-};
+typedef Page<XSmallTraits> XSmallPage;
 
 } // namespace bmalloc
 
-#endif // SegregatedFreeList_h
+#endif // XSmallPage_h

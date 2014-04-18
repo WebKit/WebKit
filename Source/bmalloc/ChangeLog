@@ -1,3 +1,205 @@
+2014-04-18  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Added an XSmall line size
+        https://bugs.webkit.org/show_bug.cgi?id=131851
+
+        Reviewed by Sam Weinig.
+
+        Reduces malloc footprint on Membuster recordings by 10%.
+
+        This is a throughput regression, but we're still way ahead of TCMalloc.
+        I have some ideas for how to recover the regression -- but I wanted to
+        get this win in first.
+
+        Full set of benchmark results:
+
+                bmalloc> ~/webkit/PerformanceTests/MallocBench/run-malloc-benchmarks --measure-heap nopatch:~/scratch/Build-nopatch/Release/ patch:~/webkit/WebKitBuild/Release/
+                                                                                                
+                                                               nopatch                      patch                                Δ
+                Peak Memory:
+                    reddit_memory_warning                      7,896kB                    7,532kB                  ^ 1.05x smaller
+                    flickr_memory_warning                     12,968kB                   12,324kB                  ^ 1.05x smaller
+                    theverge_memory_warning                   16,672kB                   15,200kB                   ^ 1.1x smaller
+
+                    <geometric mean>                          11,952kB                   11,216kB                  ^ 1.07x smaller
+                    <arithmetic mean>                         12,512kB                   11,685kB                  ^ 1.07x smaller
+                    <harmonic mean>                           11,375kB                   10,726kB                  ^ 1.06x smaller
+
+                Memory at End:
+                    reddit_memory_warning                      7,320kB                    6,856kB                  ^ 1.07x smaller
+                    flickr_memory_warning                     10,848kB                    9,692kB                  ^ 1.12x smaller
+                    theverge_memory_warning                   16,380kB                   14,872kB                   ^ 1.1x smaller
+
+                    <geometric mean>                          10,916kB                    9,961kB                   ^ 1.1x smaller
+                    <arithmetic mean>                         11,516kB                   10,473kB                   ^ 1.1x smaller
+                    <harmonic mean>                           10,350kB                    9,485kB                  ^ 1.09x smaller
+
+                MallocBench> ~/webkit/PerformanceTests/MallocBench/run-malloc-benchmarks nopatch:~/scratch/Build-nopatch/Release/ patch:~/webkit/WebKitBuild/Release/
+                                                                                                
+                                                   nopatch                patch                         Δ
+                Execution Time:
+                    churn                            127ms                151ms            ! 1.19x slower
+                    list_allocate                    130ms                164ms            ! 1.26x slower
+                    tree_allocate                    109ms                127ms            ! 1.17x slower
+                    tree_churn                       115ms                120ms            ! 1.04x slower
+                    facebook                         240ms                259ms            ! 1.08x slower
+                    fragment                          91ms                131ms            ! 1.44x slower
+                    fragment_iterate                 105ms                106ms            ! 1.01x slower
+                    message_one                      260ms                259ms             ^ 1.0x faster
+                    message_many                     149ms                154ms            ! 1.03x slower
+                    medium                           194ms                248ms            ! 1.28x slower
+                    big                              157ms                160ms            ! 1.02x slower
+
+                    <geometric mean>                 144ms                163ms            ! 1.13x slower
+                    <arithmetic mean>                152ms                171ms            ! 1.12x slower
+                    <harmonic mean>                  137ms                156ms            ! 1.14x slower
+
+                MallocBench> ~/webkit/PerformanceTests/MallocBench/run-malloc-benchmarks nopatch:~/scratch/Build-nopatch/Release/ patch:~/webkit/WebKitBuild/Release/
+                                                                                                
+                                                                       nopatch                          patch                                     Δ
+                Execution Time:
+                    churn                                                126ms                          148ms                        ! 1.17x slower
+                    churn --parallel                                      62ms                           76ms                        ! 1.23x slower
+                    list_allocate                                        130ms                          164ms                        ! 1.26x slower
+                    list_allocate --parallel                             120ms                          175ms                        ! 1.46x slower
+                    tree_allocate                                        111ms                          127ms                        ! 1.14x slower
+                    tree_allocate --parallel                              95ms                          135ms                        ! 1.42x slower
+                    tree_churn                                           115ms                          124ms                        ! 1.08x slower
+                    tree_churn --parallel                                107ms                          126ms                        ! 1.18x slower
+                    facebook                                             240ms                          276ms                        ! 1.15x slower
+                    facebook --parallel                                  802ms                        1,088ms                        ! 1.36x slower
+                    fragment                                              92ms                          130ms                        ! 1.41x slower
+                    fragment --parallel                                   66ms                          124ms                        ! 1.88x slower
+                    fragment_iterate                                     109ms                          127ms                        ! 1.17x slower
+                    fragment_iterate --parallel                           55ms                           64ms                        ! 1.16x slower
+                    message_one                                          260ms                          260ms                                      
+                    message_many                                         170ms                          238ms                         ! 1.4x slower
+                    medium                                               185ms                          250ms                        ! 1.35x slower
+                    medium --parallel                                    210ms                          334ms                        ! 1.59x slower
+                    big                                                  150ms                          169ms                        ! 1.13x slower
+                    big --parallel                                       138ms                          144ms                        ! 1.04x slower
+
+                    <geometric mean>                                     135ms                          170ms                        ! 1.26x slower
+                    <arithmetic mean>                                    167ms                          214ms                        ! 1.28x slower
+                    <harmonic mean>                                      117ms                          148ms                        ! 1.26x slower
+
+                MallocBench> ~/webkit/PerformanceTests/MallocBench/run-malloc-benchmarks TC:~/scratch/Build-TCMalloc/Release/ patch:~/webkit/WebKitBuild/Release/
+
+                                                                    TC                      patch                                Δ
+                Peak Memory:
+                    reddit_memory_warning                     13,836kB                   13,436kB                  ^ 1.03x smaller
+                    flickr_memory_warning                     24,868kB                   25,188kB                   ! 1.01x bigger
+                    theverge_memory_warning                   24,504kB                   26,636kB                   ! 1.09x bigger
+
+                    <geometric mean>                          20,353kB                   20,812kB                   ! 1.02x bigger
+                    <arithmetic mean>                         21,069kB                   21,753kB                   ! 1.03x bigger
+                    <harmonic mean>                           19,570kB                   19,780kB                   ! 1.01x bigger
+
+                Memory at End:
+                    reddit_memory_warning                      8,656kB                   10,016kB                   ! 1.16x bigger
+                    flickr_memory_warning                     11,844kB                   13,784kB                   ! 1.16x bigger
+                    theverge_memory_warning                   18,516kB                   22,748kB                   ! 1.23x bigger
+
+                    <geometric mean>                          12,382kB                   14,644kB                   ! 1.18x bigger
+                    <arithmetic mean>                         13,005kB                   15,516kB                   ! 1.19x bigger
+                    <harmonic mean>                           11,813kB                   13,867kB                   ! 1.17x bigger
+
+                MallocBench> ~/webkit/PerformanceTests/MallocBench/run-malloc-benchmarks TC:~/scratch/Build-TCMalloc/Release/ patch:~/webkit/WebKitBuild/Release/
+                                                                                                
+                                                        TC                patch                         Δ
+                Execution Time:
+                    churn                            416ms                148ms            ^ 2.81x faster
+                    list_allocate                    463ms                164ms            ^ 2.82x faster
+                    tree_allocate                    292ms                127ms             ^ 2.3x faster
+                    tree_churn                       157ms                120ms            ^ 1.31x faster
+                    facebook                         327ms                276ms            ^ 1.18x faster
+                    fragment                         335ms                129ms             ^ 2.6x faster
+                    fragment_iterate                 344ms                108ms            ^ 3.19x faster
+                    message_one                      386ms                258ms             ^ 1.5x faster
+                    message_many                     410ms                154ms            ^ 2.66x faster
+                    medium                           391ms                245ms             ^ 1.6x faster
+                    big                              261ms                167ms            ^ 1.56x faster
+
+                    <geometric mean>                 332ms                164ms            ^ 2.02x faster
+                    <arithmetic mean>                344ms                172ms            ^ 1.99x faster
+                    <harmonic mean>                  317ms                157ms            ^ 2.02x faster
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator): Don't assume that each allocator's
+        index corresponds with its size. Instead, use the size selection function
+        explicitly. Now that we have XSmall, some small allocator entries are
+        unused.
+
+        (bmalloc::Allocator::scavenge):
+        (bmalloc::Allocator::log):
+        (bmalloc::Allocator::processXSmallAllocatorLog):
+        (bmalloc::Allocator::allocateSlowCase):
+        * bmalloc/Allocator.h:
+        (bmalloc::Allocator::xSmallAllocatorFor):
+        (bmalloc::Allocator::allocateFastCase):
+        * bmalloc/Chunk.h:
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::scavenge):
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        (bmalloc::Deallocator::deallocateXSmallLine):
+        (bmalloc::Deallocator::allocateXSmallLine):
+        * bmalloc/Deallocator.h:
+        (bmalloc::Deallocator::deallocateFastCase):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeXSmallPages):
+        (bmalloc::Heap::allocateXSmallLineSlowCase):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::deallocateXSmallLine):
+        (bmalloc::Heap::allocateXSmallLine):
+        * bmalloc/LargeChunk.h:
+        (bmalloc::LargeChunk::get):
+        (bmalloc::LargeChunk::endTag):
+        * bmalloc/Line.h:
+        * bmalloc/MediumAllocator.h:
+        (bmalloc::MediumAllocator::allocate):
+        (bmalloc::MediumAllocator::refill):
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/ObjectType.h:
+        (bmalloc::isXSmall):
+        (bmalloc::isSmall):
+        (bmalloc::isMedium):
+        (bmalloc::isLarge):
+        (bmalloc::isSmallOrMedium): Deleted.
+        * bmalloc/SegregatedFreeList.h: I boiler-plate copied existing code for
+        handling small objects. There's probably a reasonable way to share this
+        code in the future -- I'll look into that once it's stopped changing.
+
+        * bmalloc/Sizes.h: Tweaked size classes to make Membuster happy. This
+        is the main reason things got slower.
+
+        * bmalloc/SmallAllocator.h:
+        (bmalloc::SmallAllocator::allocate):
+        * bmalloc/SmallTraits.h:
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::allocateXSmallChunk):
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateXSmallPage):
+        (bmalloc::VMHeap::deallocateXSmallPage):
+        * bmalloc/XSmallAllocator.h: Added.
+        (bmalloc::XSmallAllocator::isNull):
+        (bmalloc::XSmallAllocator::canAllocate):
+        (bmalloc::XSmallAllocator::XSmallAllocator):
+        (bmalloc::XSmallAllocator::line):
+        (bmalloc::XSmallAllocator::allocate):
+        (bmalloc::XSmallAllocator::objectCount):
+        (bmalloc::XSmallAllocator::derefCount):
+        (bmalloc::XSmallAllocator::refill):
+        * bmalloc/XSmallChunk.h: Added.
+        * bmalloc/XSmallLine.h: Added.
+        * bmalloc/XSmallPage.h: Added.
+        * bmalloc/XSmallTraits.h: Added.
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::realloc): Boiler-plate copy, as above.
+
 2014-04-14  Geoffrey Garen  <ggaren@apple.com>
 
         MallocBench should scavenge explicitly instead of waiting

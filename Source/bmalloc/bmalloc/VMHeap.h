@@ -34,6 +34,7 @@
 #include "SegregatedFreeList.h"
 #include "SmallChunk.h"
 #include "Vector.h"
+#include "XSmallChunk.h"
 
 namespace bmalloc {
 
@@ -45,23 +46,35 @@ class VMHeap {
 public:
     VMHeap();
 
+    XSmallPage* allocateXSmallPage();
     SmallPage* allocateSmallPage();
     MediumPage* allocateMediumPage();
     Range allocateLargeRange(size_t);
 
+    void deallocateXSmallPage(std::unique_lock<Mutex>&, XSmallPage*);
     void deallocateSmallPage(std::unique_lock<Mutex>&, SmallPage*);
     void deallocateMediumPage(std::unique_lock<Mutex>&, MediumPage*);
     void deallocateLargeRange(std::unique_lock<Mutex>&, Range);
 
 private:
+    void allocateXSmallChunk();
     void allocateSmallChunk();
     void allocateMediumChunk();
     Range allocateLargeChunk();
     
+    Vector<XSmallPage*> m_xSmallPages;
     Vector<SmallPage*> m_smallPages;
     Vector<MediumPage*> m_mediumPages;
     SegregatedFreeList m_largeRanges;
 };
+
+inline XSmallPage* VMHeap::allocateXSmallPage()
+{
+    if (!m_xSmallPages.size())
+        allocateXSmallChunk();
+
+    return m_xSmallPages.pop();
+}
 
 inline SmallPage* VMHeap::allocateSmallPage()
 {
@@ -85,6 +98,15 @@ inline Range VMHeap::allocateLargeRange(size_t size)
     if (!range)
         range = allocateLargeChunk();
     return range;
+}
+
+inline void VMHeap::deallocateXSmallPage(std::unique_lock<Mutex>& lock, XSmallPage* page)
+{
+    lock.unlock();
+    vmDeallocatePhysicalPages(page->begin()->begin(), vmPageSize);
+    lock.lock();
+    
+    m_xSmallPages.push(page);
 }
 
 inline void VMHeap::deallocateSmallPage(std::unique_lock<Mutex>& lock, SmallPage* page)

@@ -40,7 +40,7 @@ struct SmallTraits {
     typedef Page<SmallTraits> Page;
 
     static const size_t lineSize = smallLineSize;
-    static const size_t minimumObjectSize = alignment;
+    static const size_t minimumObjectSize = xSmallMax + alignment;
     static const size_t chunkSize = smallChunkSize;
     static const size_t chunkOffset = smallChunkOffset;
     static const uintptr_t chunkMask = smallChunkMask;
