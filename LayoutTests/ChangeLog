@@ -1,5 +1,17 @@
 2014-04-18  Radu Stavila  <stavila@adobe.com>
 
+        [CSS Regions] Content overflowing a transformed region is clipped
+        https://bugs.webkit.org/show_bug.cgi?id=116833
+
+        Reviewed by Mihnea Ovidenie.
+
+        Added test for overflow of content in 3d transformed regions.
+
+        * fast/regions/overflow-3dtransformed-region-expected.txt: Added.
+        * fast/regions/overflow-3dtransformed-region.html: Added.
+
+2014-04-18  Radu Stavila  <stavila@adobe.com>
+
         [CSSRegions] Incorrect background paint on positioned element hover
         https://bugs.webkit.org/show_bug.cgi?id=131617
 
