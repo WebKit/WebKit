@@ -1,3 +1,20 @@
+2014-04-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add llvmpipe (Mesa) to the JHBuild moduleset and force it when running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=131472
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server): Use the LLVMPIPE_LIBGL_PATH to set the LD_LIBRARY_PATH
+        when running WebKitTestRunner with run-webkit-tests.
+        * gtk/jhbuild.modules: Add Mesa to the modulelist so that the llvmpipe libGL is build, but not
+        installed.
+        * gtk/jhbuildrc: Set the LLVMPIPE_LIBGL_PATH environment variable so that the test driver knows
+        how to properly set the LD_LIBRARY_PATH variable. We do this because it is much easier to
+        calculate the path in the jhbuildrc than in the test driver code. This simplifies things a great
+        deal.
+
 2014-04-18  Alexey Proskuryakov  <ap@apple.com>
 
         DownloadDecideDestinationCrash API test uses an incorrect value for path
