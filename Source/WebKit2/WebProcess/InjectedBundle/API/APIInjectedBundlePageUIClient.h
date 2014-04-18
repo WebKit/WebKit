@@ -56,7 +56,7 @@ public:
     virtual void mouseDidMoveOverElement(WebKit::WebPage*, const WebCore::HitTestResult&, WebKit::WebEvent::Modifiers, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
     virtual void pageDidScroll(WebKit::WebPage*) { }
 
-    virtual WTF::String shouldGenerateFileForUpload(WebKit::WebPage*, const WTF::String& originalFilePath) { UNUSED_PARAM(originalFilePath); return emptyString(); }
+    virtual WTF::String shouldGenerateFileForUpload(WebKit::WebPage*, const WTF::String& originalFilePath) { UNUSED_PARAM(originalFilePath); return WTF::String(); }
     virtual WTF::String generateFileForUpload(WebKit::WebPage*, const WTF::String& originalFilePath) { UNUSED_PARAM(originalFilePath); return emptyString(); }
 
     enum class UIElementVisibility {
