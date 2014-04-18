@@ -594,7 +594,6 @@ webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/text.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/vertical.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackCueList/getter.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/getter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/onremovetrack.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/track-element/cloneNode.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/track-element/src-clear-cues.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
@@ -605,6 +604,7 @@ webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timest
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
+webkit.org/b/103926 media/track/w3c/interfaces/TextTrackList/onremovetrack.html [ Skip ]
 
 webkit.org/b/100636 [ Debug ] jquery/traversing.html [ Failure Crash Pass ]
 

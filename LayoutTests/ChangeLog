@@ -1,3 +1,9 @@
+2014-04-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, fix a test case path, which was moved to different folder.
+
+        * platform/efl/TestExpectations:
+
 2014-04-17  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Column rules don't respect the specified stacking order.
