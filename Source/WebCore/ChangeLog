@@ -1,3 +1,23 @@
+2014-04-18  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Add parsing support for gradients
+        https://bugs.webkit.org/show_bug.cgi?id=131444
+
+        Reviewed by Bem Jones-Bey.
+
+        Added support for shape-outside gradient values.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-linear-gradient.html
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyShape::applyValue): Accept generated images as shape-outside values.
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::checkShapeImageOrigin): Generated images get a pass, others do not.
+        (WebCore::getShapeImageAndRect): Use StyleImage::image() to get a generated image.
+        (WebCore::ShapeOutsideInfo::isEnabledFor):
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::isImageValid): Generated images are always considered valid.
+
 2014-04-18  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r155700): Pasting an image into content-editable regions is broken.

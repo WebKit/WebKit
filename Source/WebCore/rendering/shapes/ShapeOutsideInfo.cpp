@@ -120,8 +120,13 @@ void ShapeOutsideInfo::setReferenceBoxLogicalSize(LayoutSize newReferenceBoxLogi
     m_referenceBoxLogicalSize = newReferenceBoxLogicalSize;
 }
 
-static inline bool checkShapeImageOrigin(Document& document, CachedImage& cachedImage)
+static inline bool checkShapeImageOrigin(Document& document, const StyleImage& styleImage)
 {
+    if (styleImage.isGeneratedImage())
+        return true;
+
+    ASSERT(styleImage.cachedImage());
+    CachedImage& cachedImage = *(styleImage.cachedImage());
     if (cachedImage.isOriginClean(document.securityOrigin()))
         return true;
 
@@ -140,7 +145,12 @@ static void getShapeImageAndRect(const ShapeValue& shapeValue, const RenderBox& 
     const LayoutSize& imageSize = renderBox.calculateImageIntrinsicDimensions(styleImage, roundedIntSize(referenceBoxSize), RenderImage::ScaleByEffectiveZoom);
     styleImage->setContainerSizeForRenderer(&renderBox, imageSize, renderBox.style().effectiveZoom());
 
-    image = styleImage->cachedImage()->imageForRenderer(&renderBox);
+    image = nullptr;
+    if (styleImage->isCachedImage() || styleImage->isCachedImageSet())
+        image = styleImage->cachedImage()->imageForRenderer(&renderBox);
+    else if (styleImage->isGeneratedImage())
+        image = styleImage->image(const_cast<RenderBox*>(&renderBox), imageSize).get();
+
     if (renderBox.isRenderImage())
         rect = toRenderImage(&renderBox)->replacedContentRect(renderBox.intrinsicSize());
     else
@@ -293,7 +303,7 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox& box)
 
     switch (shapeValue->type()) {
     case ShapeValue::Shape: return shapeValue->shape();
-    case ShapeValue::Image: return shapeValue->isImageValid() && checkShapeImageOrigin(box.document(), *(shapeValue->image()->cachedImage()));
+    case ShapeValue::Image: return shapeValue->isImageValid() && checkShapeImageOrigin(box.document(), *(shapeValue->image()));
     case ShapeValue::Box: return true;
     }
 

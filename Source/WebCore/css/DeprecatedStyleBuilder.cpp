@@ -2178,7 +2178,7 @@ public:
             CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
             if (primitiveValue->getValueID() == CSSValueAuto)
                 setValue(styleResolver->style(), 0);
-        } else if (value->isImageValue() || value->isImageSetValue()) {
+        } else if (value->isImageValue() || value->isImageGeneratorValue() || value->isImageSetValue()) {
             RefPtr<ShapeValue> shape = ShapeValue::createImageValue(styleResolver->styleImage(property, value));
             setValue(styleResolver->style(), shape.release());
         } else if (value->isValueList()) {
