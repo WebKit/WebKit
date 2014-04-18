@@ -30,7 +30,7 @@
 
 class Interpreter {
 public:
-    Interpreter(const char* fileName);
+    Interpreter(const char* fileName, bool shouldFreeAllObjects = true);
     ~Interpreter();
 
     void run();
@@ -40,6 +40,7 @@ private:
     struct Op { Opcode opcode; size_t slot; size_t size; };
     struct Record { void* object; size_t size; };
 
+    bool m_shouldFreeAllObjects;
     int m_fd;
     size_t m_opCount;
     std::vector<Record> m_objects;

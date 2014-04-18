@@ -7,30 +7,52 @@ $binDir = "#{File.expand_path(File.dirname(__FILE__))}"
 $productDir = `perl -e 'use lib \"#{$binDir}/../../Tools/Scripts\"; use webkitdirs; print productDir()'`
 
 $benchmarks = [
+    # Single-threaded benchmarks.
     "churn",
-    "churn --parallel",
     "list_allocate",
-    "list_allocate --parallel",
     "tree_allocate",
-    "tree_allocate --parallel",
     "tree_churn",
-    "tree_churn --parallel",
-    "facebook",
-    "facebook --parallel",
     "fragment",
-    "fragment --parallel",
     "fragment_iterate",
-    "fragment_iterate --parallel",
+    "medium",
+    "big",
+
+    # Benchmarks based on browser recordings.
+    "facebook",
+    "reddit",
+    "flickr",
+    "theverge",
+
+    # Multi-threaded benchmark variants.
     "message_one",
     "message_many",
-    "medium",
+    "churn --parallel",
+    "list_allocate --parallel",
+    "tree_allocate --parallel",
+    "tree_churn --parallel",
+    # "facebook --parallel",
+    # "reddit --parallel",
+    # "flickr --parallel",
+    # "theverge --parallel",
+    "fragment --parallel",
+    "fragment_iterate --parallel",
+
+    # These tests often crash TCMalloc: <rdar://problem/13657137>.
     "medium --parallel",
-    "big",
     "big --parallel",
+
+    # Enable these tests to test memory footprint. The way they run is not
+    # really compatible with throughput testing.
+    # "reddit_memory_warning --runs 0",
+    # "flickr_memory_warning --runs 0",
+    # "theverge_memory_warning --runs 0",
+
+    # Enable this test to test shrinking back down from a large heap while a process remains active.
+    # The way it runs is not really compatible with throughput testing.
+    # "balloon"
 ]
 
 $heap = 0
-$measureHeap = false
 
 def usage
 	puts "run-malloc-benchmarks [options] <Name:/path/to/dylib> [<Name:/path/to/dylib>]"
@@ -175,7 +197,6 @@ def parseOptions
     GetoptLong.new(
         ['--benchmark', GetoptLong::REQUIRED_ARGUMENT],
         ['--heap', GetoptLong::REQUIRED_ARGUMENT],
-        ['--measure-heap', GetoptLong::NO_ARGUMENT],
         ['--help', GetoptLong::NO_ARGUMENT],
     ).each {
         | opt, arg |
@@ -184,8 +205,6 @@ def parseOptions
             $benchmarks = [ arg ]
         when '--heap'
             $heap = arg
-        when '--measure-heap'
-            $measureHeap = true
         when '--help'
             usage
             exit 1
@@ -243,12 +262,12 @@ def runBenchmarks(dylibs)
         dylibs.each {
             | dylib |
 
-            $stderr.print "\rRUNNING #{dylib.name}: #{benchmark}...                "
+            $stderr.print "\rRUNNING #{dylib.name}: #{benchmark}...                                "
             env = "DYLD_LIBRARY_PATH='#{Pathname.new(dylib.path).dirname}' "
             if dylib.name == "NanoMalloc"
                 env += "MallocNanoZone=1 "
             end
-            input = "cd '#{$productDir}'; #{env} '#{$productDir}/MallocBench' --benchmark #{benchmark} --heap #{$heap} #{$measureHeap ? '--measure-heap' : ''}"
+            input = "cd '#{$productDir}'; #{env} '#{$productDir}/MallocBench' --benchmark #{benchmark} --heap #{$heap}}"
             output =`#{input}`
             splitOutput = output.split("\n")
 
@@ -267,9 +286,9 @@ def printResults(dylibs, results)
         print
         print lpad("", fieldSize)
         print lpad(dylibs[0].name, fieldSize)
-        if dylibs[1]
+        if dylibs.length > 1
             print lpad(dylibs[1].name, fieldSize)
-            print lpad("Δ", fieldSize * 1.25)
+            print lpad("Δ", fieldSize)
         end
         print "\n"
     end
@@ -285,7 +304,7 @@ def printResults(dylibs, results)
             if results[0][1]
                 means.push(meanFunction.call(results.collect { | stats | stats[1].result }))
                 print lpad("#{prettify(means[1].round, suffix)}", fieldSize)
-                print lpad(compareFunction.call(means[0], means[1]), fieldSize * 1.25)
+                print lpad(compareFunction.call(means[0], means[1]), fieldSize)
             end
 
             print "\n"
@@ -304,7 +323,7 @@ def printResults(dylibs, results)
 
             if stats[1]
                 print lpad("#{prettify(stats[1].result, suffix)}", fieldSize)
-                print lpad(compareFunction.call(stats[0].result, stats[1].result), fieldSize * 1.25)
+                print lpad(compareFunction.call(stats[0].result, stats[1].result), fieldSize)
             end
 
             print "\n"

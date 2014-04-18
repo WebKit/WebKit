@@ -119,11 +119,12 @@ static void deallocateHeap(void*** chunks, size_t heapSize, size_t chunkSize, si
     mbfree(chunks, chunkCount * sizeof(void**));
 }
 
-Benchmark::Benchmark(const string& benchmarkName, bool isParallel, size_t heapSize)
+Benchmark::Benchmark(const string& benchmarkName, bool isParallel, size_t runs, size_t heapSize)
     : m_benchmarkPair()
     , m_elapsedTime()
     , m_isParallel(isParallel)
     , m_heapSize(heapSize)
+    , m_runs(runs)
 {
     const BenchmarkPair* benchmarkPair = std::find(
         benchmarkPairs, benchmarkPairs + benchmarksPairsCount, benchmarkName);
@@ -162,7 +163,6 @@ void Benchmark::runOnce()
 
 void Benchmark::run()
 {
-    static const size_t count = 4;
     static const size_t objectSize = 32;
     static const size_t chunkSize = 1024 * 1024;
     
@@ -170,14 +170,14 @@ void Benchmark::run()
 
     runOnce(); // Warmup run.
 
-    for (size_t i = 0; i < count; ++i) {
+    for (size_t i = 0; i < m_runs; ++i) {
         double start = currentTimeMS();
         runOnce();
         double end = currentTimeMS();
         double elapsed = end - start;
         m_elapsedTime += elapsed;
     }
-    m_elapsedTime /= count;
+    m_elapsedTime /= m_runs;
 
     deallocateHeap(heap, m_heapSize, chunkSize, objectSize);
     

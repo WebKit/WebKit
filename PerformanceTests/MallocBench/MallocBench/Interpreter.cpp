@@ -40,7 +40,8 @@
 
 #include "mbmalloc.h"
 
-Interpreter::Interpreter(const char* fileName)
+Interpreter::Interpreter(const char* fileName, bool shouldFreeAllObjects)
+    : m_shouldFreeAllObjects(shouldFreeAllObjects)
 {
     m_fd = open(fileName, O_RDWR, S_IRUSR | S_IWUSR);
     if (m_fd == -1)
@@ -120,6 +121,9 @@ void Interpreter::run()
     }
 
     // A recording might not free all of its allocations.
+    if (!m_shouldFreeAllObjects)
+        return;
+
     for (size_t i = 0; i < m_objects.size(); ++i) {
         if (!m_objects[i].object)
             continue;

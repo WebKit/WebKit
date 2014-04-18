@@ -32,18 +32,20 @@ struct option CommandLine::longOptions[] =
     {"benchmark", required_argument, 0, 'b'},
     {"parallel", no_argument, 0, 'p'},
     {"heap", required_argument, 0, 'h'},
+    {"runs", required_argument, 0, 'r'},
     {0, 0, 0, 0}
 };
 
 CommandLine::CommandLine(int argc, char** argv)
     : m_argc(argc)
     , m_argv(argv)
-    , m_isParallel()
-    , m_heapSize()
+    , m_isParallel(false)
+    , m_heapSize(0)
+    , m_runs(4)
 {
     int optionIndex = 0;
     int ch;
-    while ((ch = getopt_long(argc, argv, "b:p:h:m", longOptions, &optionIndex)) != -1) {
+    while ((ch = getopt_long(argc, argv, "b:p:h:r", longOptions, &optionIndex)) != -1) {
         switch (ch)
         {
             case 'b':
@@ -56,6 +58,10 @@ CommandLine::CommandLine(int argc, char** argv)
 
             case 'h':
                 m_heapSize = atoi(optarg) * 1024 * 1024;
+                break;
+
+            case 'r':
+                m_runs = atoi(optarg);
                 break;
 
             default:

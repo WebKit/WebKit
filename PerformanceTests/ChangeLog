@@ -1,5 +1,45 @@
 2014-04-18  Geoffrey Garen  <ggaren@apple.com>
 
+        Added some more Membuster recordings to MallocBench
+        https://bugs.webkit.org/show_bug.cgi?id=131862
+
+        Reviewed by Sam Weinig.
+
+        * MallocBench/MallocBench/Benchmark.cpp:
+        (Benchmark::Benchmark):
+        (Benchmark::run):
+        * MallocBench/MallocBench/Benchmark.h:
+        * MallocBench/MallocBench/CommandLine.cpp:
+        * MallocBench/MallocBench/CommandLine.h:
+        (CommandLine::runs): Added a --runs option, so we can specify zero runs
+        for memory warning benchmarks. Those benchmarks want zero runs so that
+        they can perform a single warmup, which does not free all allocated
+        objects, and then see how far back to 0MB they can get. Running multiple
+        times would accumulate leaks, which is not representative of the
+        simulated scenario.
+
+        * MallocBench/MallocBench/Interpreter.cpp:
+        (Interpreter::Interpreter):
+        (Interpreter::run):
+        * MallocBench/MallocBench/Interpreter.h: Support not deallocating all
+        objects allocated during the recording, so we can do low memory warning
+        memory use measurements, as above.
+
+        * MallocBench/MallocBench/flickr.cpp:
+        (benchmark_flickr_memory_warning):
+        * MallocBench/MallocBench/main.cpp:
+        (main):
+        * MallocBench/MallocBench/reddit.cpp:
+        (benchmark_reddit_memory_warning):
+        * MallocBench/MallocBench/theverge.cpp:
+        (benchmark_theverge_memory_warning): Adopt the API above.
+
+        * MallocBench/run-malloc-benchmarks: I took a first pass at listing all
+        available benchmarks here. Then I commented out the benchmarks that
+        probably aren't reasonable to run by default.
+
+2014-04-18  Geoffrey Garen  <ggaren@apple.com>
+
         MallocBench: removed the --measure-heap option
         https://bugs.webkit.org/show_bug.cgi?id=131854
 

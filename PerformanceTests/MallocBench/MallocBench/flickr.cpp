@@ -55,7 +55,8 @@ void benchmark_flickr_memory_warning(bool isParallel)
 {
     size_t times = 1;
 
-    Interpreter interpreter("flickr_memory_warning.ops");
+    bool shouldFreeAllObjects = false;
+    Interpreter interpreter("flickr_memory_warning.ops", shouldFreeAllObjects);
     for (size_t i = 0; i < times; ++i)
         interpreter.run();
 }
