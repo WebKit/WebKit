@@ -1,3 +1,26 @@
+2014-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Worse animation performance on pages with 3D transforms
+        https://bugs.webkit.org/show_bug.cgi?id=131838
+        <rdar://problem/16428630&15705876>
+
+        Reviewed by Dean Jackson.
+        
+        Testcase having layers at various z translates which shows the bucketing
+        of contentsScale, and fix results affected by the patch.
+
+        * compositing/contents-scale/rounded-contents-scale-expected.txt: Added.
+        * compositing/contents-scale/rounded-contents-scale.html: Added.
+        * compositing/contents-scale/z-translate-expected.txt:
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+        * platform/mac/compositing/overflow/composited-scrolling-paint-phases-expected.txt:
+        * platform/mac/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/mac/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+        * platform/mac/compositing/visible-rect/3d-transform-style-expected.txt:
+        * platform/mac/compositing/visible-rect/3d-transformed-expected.txt:
+        * platform/mac/compositing/visible-rect/nested-transform-expected.txt:
+
 2014-04-18  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Content overflowing a transformed region is clipped

@@ -1,5 +1,30 @@
 2014-04-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Worse animation performance on pages with 3D transforms
+        https://bugs.webkit.org/show_bug.cgi?id=131838
+        <rdar://problem/16428630&15705876>
+
+        Reviewed by Dean Jackson.
+        
+        r155977 added logic to adjust the contentsScale of compositing layers
+        based on a root-relative transform. However, this resulted in
+        the contentsScale continually changing on layers whose transforms
+        are changed dynamically, which caused lots of expensive painting.
+        
+        Fix by bucketing the part of the scale computed from the root-relative transform
+        into buckets of 0.25 via rounding.
+
+        Test: compositing/contents-scale/rounded-contents-scale.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::clampedContentsScaleForScale):
+        (WebCore::GraphicsLayerCA::updateContentsOpaque):
+        (WebCore::GraphicsLayerCA::updateContentsScale):
+        (WebCore::GraphicsLayerCA::updateContentsVisibility): Deleted.
+        (WebCore::GraphicsLayerCA::animatedLayerClones): Deleted.
+
+2014-04-18  Simon Fraser  <simon.fraser@apple.com>
+
         Remove some includes from image-related headers, and Document.h
         https://bugs.webkit.org/show_bug.cgi?id=131797
 

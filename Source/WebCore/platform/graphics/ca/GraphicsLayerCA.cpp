@@ -87,12 +87,19 @@ static inline bool isIntegral(float value)
     return static_cast<int>(value) == value;
 }
 
-static float clampedContentsScaleForScale(float scale)
+static float clampedContentsScaleForScale(float rootRelativeScale, float fixedScale)
 {
-    // Define some limits as a sanity check for the incoming scale value
-    // those too small to see.
-    const float maxScale = 10.0f;
+    // To avoid too many repaints when the root-relative scale of layers changes, round
+    // the scale to the nearest 0.25.
+    const float roundingFactor = 4;
+    float scale = roundf(rootRelativeScale * roundingFactor) / roundingFactor;
+
+    scale *= fixedScale;
+    
+    // Define some reasonable limits.
+    const float maxScale = 8;
     const float minScale = 0.01f;
+
     return std::max(minScale, std::min(scale, maxScale));
 }
 
@@ -1691,7 +1698,7 @@ void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)
 {
     bool contentsOpaque = m_contentsOpaque;
     if (contentsOpaque) {
-        float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor * pageScaleFactor * deviceScaleFactor());
+        float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor, pageScaleFactor * deviceScaleFactor());
         if (!isIntegral(contentsScale) && !m_client->paintsOpaquelyAtNonIntegralScales(this))
             contentsOpaque = false;
     }
@@ -2981,7 +2988,7 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty
 
 void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 {
-    float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor * pageScaleFactor * deviceScaleFactor());
+    float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor, pageScaleFactor * deviceScaleFactor());
 
     if (m_isPageTiledBackingLayer && tiledBacking()) {
         float zoomedOutScale = m_client->zoomedOutPageScaleFactor() * deviceScaleFactor();

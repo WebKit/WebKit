@@ -27,21 +27,21 @@
                   (preserves3D 1)
                   (transform [0.94 0.00 -0.34 0.00] [0.00 1.00 0.00 0.00] [0.34 0.00 0.94 0.00] [0.00 0.00 0.00 1.00])
                   (visible rect 0.00, 0.00 0.00 x 0.00)
-                  (contentsScale 1.21)
+                  (contentsScale 1.25)
                   (children 1
                     (GraphicsLayer
                       (bounds 300.00 0.00)
                       (preserves3D 1)
                       (transform [0.94 0.00 -0.34 0.00] [0.00 1.00 0.00 0.00] [0.34 0.00 0.94 0.00] [0.00 0.00 0.00 1.00])
                       (visible rect 0.00, 0.00 0.00 x 0.00)
-                      (contentsScale 1.44)
+                      (contentsScale 1.50)
                       (children 1
                         (GraphicsLayer
                           (bounds 500.00 500.00)
                           (contentsOpaque 1)
                           (transform [1.00 0.00 0.00 0.00] [0.00 0.82 0.57 0.00] [0.00 -0.57 0.82 0.00] [0.00 0.00 0.00 1.00])
                           (visible rect 0.00, 0.00 500.00 x 369.91)
-                          (contentsScale 1.05)
+                          (contentsScale 1.00)
                         )
                       )
                     )
@@ -75,14 +75,14 @@
                       (preserves3D 1)
                       (transform [0.77 0.00 -0.64 0.00] [0.00 1.00 0.00 0.00] [0.64 0.00 0.77 0.00] [0.00 0.00 0.00 1.00])
                       (visible rect 0.00, 0.00 0.00 x 0.00)
-                      (contentsScale 1.64)
+                      (contentsScale 1.75)
                       (children 1
                         (GraphicsLayer
                           (bounds 500.00 500.00)
                           (contentsOpaque 1)
                           (transform [1.00 0.00 0.00 0.00] [0.00 0.82 0.57 0.00] [0.00 -0.57 0.82 0.00] [0.00 0.00 0.00 1.00])
                           (visible rect 0.00, 0.00 500.00 x 351.87)
-                          (contentsScale 1.20)
+                          (contentsScale 1.25)
                         )
                       )
                     )
