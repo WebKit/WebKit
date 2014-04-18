@@ -459,7 +459,7 @@ end
 
 macro checkSwitchToJIT(increment, action)
     loadp CodeBlock[cfr], t0
-    baddis increment, CodeBlock::m_llintExecuteCounter + ExecutionCounter::m_counter[t0], .continue
+    baddis increment, CodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter[t0], .continue
     action()
     .continue:
 end
@@ -514,7 +514,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     codeBlockGetter(t1)
 if C_LOOP
 else
-    baddis 5, CodeBlock::m_llintExecuteCounter + ExecutionCounter::m_counter[t1], .continue
+    baddis 5, CodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter[t1], .continue
     if JSVALUE64
         cCall2(osrSlowPath, cfr, PC)
     else

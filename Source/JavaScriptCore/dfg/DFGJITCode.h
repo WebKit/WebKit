@@ -120,7 +120,7 @@ public:
     DFG::VariableEventStream variableEventStream;
     DFG::MinifiedGraph minifiedDFG;
 #if ENABLE(FTL_JIT)
-    ExecutionCounter tierUpCounter;
+    UpperTierExecutionCounter tierUpCounter;
     RefPtr<CodeBlock> osrEntryBlock;
     unsigned osrEntryRetry;
     bool abandonOSREntry;

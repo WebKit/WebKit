@@ -1,3 +1,55 @@
+2014-04-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Options::maximumExecutionCountsBetweenCheckpoints() should be higher for DFG->FTL tier-up but the same for other tier-ups
+        https://bugs.webkit.org/show_bug.cgi?id=131850
+
+        Reviewed by Mark Hahnenberg.
+        
+        Templatize ExecutionCounter to allow for two different styles of calculating the
+        checkpoint threshold.
+        
+        Appears to be a slight speed-up on DYEBench.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::llintExecuteCounter):
+        (JSC::CodeBlock::offsetOfJITExecuteCounter):
+        (JSC::CodeBlock::offsetOfJITExecutionActiveThreshold):
+        (JSC::CodeBlock::offsetOfJITExecutionTotalCount):
+        (JSC::CodeBlock::jitExecuteCounter):
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter<countingVariant>::ExecutionCounter):
+        (JSC::ExecutionCounter<countingVariant>::forceSlowPathConcurrently):
+        (JSC::ExecutionCounter<countingVariant>::checkIfThresholdCrossedAndSet):
+        (JSC::ExecutionCounter<countingVariant>::setNewThreshold):
+        (JSC::ExecutionCounter<countingVariant>::deferIndefinitely):
+        (JSC::applyMemoryUsageHeuristics):
+        (JSC::applyMemoryUsageHeuristicsAndConvertToInt):
+        (JSC::ExecutionCounter<countingVariant>::hasCrossedThreshold):
+        (JSC::ExecutionCounter<countingVariant>::setThreshold):
+        (JSC::ExecutionCounter<countingVariant>::reset):
+        (JSC::ExecutionCounter<countingVariant>::dump):
+        (JSC::ExecutionCounter::ExecutionCounter): Deleted.
+        (JSC::ExecutionCounter::forceSlowPathConcurrently): Deleted.
+        (JSC::ExecutionCounter::checkIfThresholdCrossedAndSet): Deleted.
+        (JSC::ExecutionCounter::setNewThreshold): Deleted.
+        (JSC::ExecutionCounter::deferIndefinitely): Deleted.
+        (JSC::ExecutionCounter::applyMemoryUsageHeuristics): Deleted.
+        (JSC::ExecutionCounter::applyMemoryUsageHeuristicsAndConvertToInt): Deleted.
+        (JSC::ExecutionCounter::hasCrossedThreshold): Deleted.
+        (JSC::ExecutionCounter::setThreshold): Deleted.
+        (JSC::ExecutionCounter::reset): Deleted.
+        (JSC::ExecutionCounter::dump): Deleted.
+        * bytecode/ExecutionCounter.h:
+        (JSC::formattedTotalExecutionCount):
+        (JSC::ExecutionCounter::maximumExecutionCountsBetweenCheckpoints):
+        (JSC::ExecutionCounter::clippedThreshold):
+        (JSC::ExecutionCounter::formattedTotalCount): Deleted.
+        * dfg/DFGJITCode.h:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/Options.h:
+
 2014-04-17  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Deleting properties poisons objects

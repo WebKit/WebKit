@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,25 @@ namespace JSC {
 
 class CodeBlock;
 
+enum CountingVariant {
+    CountingForBaseline,
+    CountingForUpperTiers
+};
+
+double applyMemoryUsageHeuristics(int32_t value, CodeBlock*);
+int32_t applyMemoryUsageHeuristicsAndConvertToInt(int32_t value, CodeBlock*);
+
+inline int32_t formattedTotalExecutionCount(float value)
+{
+    union {
+        int32_t i;
+        float f;
+    } u;
+    u.f = value;
+    return u.i;
+}
+    
+template<CountingVariant countingVariant>
 class ExecutionCounter {
 public:
     ExecutionCounter();
@@ -44,31 +63,33 @@ public:
     void deferIndefinitely();
     double count() const { return static_cast<double>(m_totalCount) + m_counter; }
     void dump(PrintStream&) const;
-    static double applyMemoryUsageHeuristics(int32_t value, CodeBlock*);
-    static int32_t applyMemoryUsageHeuristicsAndConvertToInt(int32_t value, CodeBlock*);
+    
+    static int32_t maximumExecutionCountsBetweenCheckpoints()
+    {
+        switch (countingVariant) {
+        case CountingForBaseline:
+            return Options::maximumExecutionCountsBetweenCheckpointsForBaseline();
+        case CountingForUpperTiers:
+            return Options::maximumExecutionCountsBetweenCheckpointsForUpperTiers();
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return 0;
+        }
+    }
+    
     template<typename T>
     static T clippedThreshold(JSGlobalObject* globalObject, T threshold)
     {
         int32_t maxThreshold;
         if (Options::randomizeExecutionCountsBetweenCheckpoints())
-            maxThreshold = globalObject->weakRandomInteger() % Options::maximumExecutionCountsBetweenCheckpoints();
+            maxThreshold = globalObject->weakRandomInteger() % maximumExecutionCountsBetweenCheckpoints();
         else
-            maxThreshold = Options::maximumExecutionCountsBetweenCheckpoints();
+            maxThreshold = maximumExecutionCountsBetweenCheckpoints();
         if (threshold > maxThreshold)
             threshold = maxThreshold;
         return threshold;
     }
 
-    static int32_t formattedTotalCount(float value)
-    {
-        union {
-            int32_t i;
-            float f;
-        } u;
-        u.f = value;
-        return u.i;
-    }
-    
 private:
     bool hasCrossedThreshold(CodeBlock*) const;
     bool setThreshold(CodeBlock*);
@@ -93,6 +114,9 @@ public:
     // the memory usage heuristics.
     int32_t m_activeThreshold;
 };
+
+typedef ExecutionCounter<CountingForBaseline> BaselineExecutionCounter;
+typedef ExecutionCounter<CountingForUpperTiers> UpperTierExecutionCounter;
 
 } // namespace JSC
 

@@ -223,7 +223,8 @@ typedef OptionRange optionRange;
     v(int32, evalThresholdMultiplier, 10) \
     \
     v(bool, randomizeExecutionCountsBetweenCheckpoints, false) \
-    v(int32, maximumExecutionCountsBetweenCheckpoints, 1000) \
+    v(int32, maximumExecutionCountsBetweenCheckpointsForBaseline, 1000) \
+    v(int32, maximumExecutionCountsBetweenCheckpointsForUpperTiers, 50000) \
     \
     v(unsigned, likelyToTakeSlowCaseMinimumCount, 100) \
     v(unsigned, couldTakeSlowCaseMinimumCount, 10) \

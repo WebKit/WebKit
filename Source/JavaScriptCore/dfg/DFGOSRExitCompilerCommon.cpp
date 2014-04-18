@@ -76,13 +76,22 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
     int32_t activeThreshold =
         jit.baselineCodeBlock()->adjustedCounterValue(
             Options::thresholdForOptimizeAfterLongWarmUp());
-    int32_t targetValue = ExecutionCounter::applyMemoryUsageHeuristicsAndConvertToInt(
+    int32_t targetValue = applyMemoryUsageHeuristicsAndConvertToInt(
         activeThreshold, jit.baselineCodeBlock());
-    int32_t clippedValue =
-        ExecutionCounter::clippedThreshold(jit.codeBlock()->globalObject(), targetValue);
+    int32_t clippedValue;
+    switch (jit.codeBlock()->jitType()) {
+    case JITCode::DFGJIT:
+        clippedValue = BaselineExecutionCounter::clippedThreshold(jit.codeBlock()->globalObject(), targetValue);
+        break;
+    case JITCode::FTLJIT:
+        clippedValue = UpperTierExecutionCounter::clippedThreshold(jit.codeBlock()->globalObject(), targetValue);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
     jit.store32(AssemblyHelpers::TrustedImm32(-clippedValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
     jit.store32(AssemblyHelpers::TrustedImm32(activeThreshold), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
-    jit.store32(AssemblyHelpers::TrustedImm32(ExecutionCounter::formattedTotalCount(clippedValue)), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionTotalCount()));
+    jit.store32(AssemblyHelpers::TrustedImm32(formattedTotalExecutionCount(clippedValue)), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionTotalCount()));
     
     doneAdjusting.link(&jit);
 }

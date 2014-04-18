@@ -761,7 +761,7 @@ public:
         m_llintExecuteCounter.setNewThreshold(Options::thresholdForJITSoon(), this);
     }
 
-    const ExecutionCounter& llintExecuteCounter() const
+    const BaselineExecutionCounter& llintExecuteCounter() const
     {
         return m_llintExecuteCounter;
     }
@@ -801,11 +801,11 @@ public:
         return &m_jitExecuteCounter.m_counter;
     }
 
-    static ptrdiff_t offsetOfJITExecuteCounter() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(ExecutionCounter, m_counter); }
-    static ptrdiff_t offsetOfJITExecutionActiveThreshold() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(ExecutionCounter, m_activeThreshold); }
-    static ptrdiff_t offsetOfJITExecutionTotalCount() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(ExecutionCounter, m_totalCount); }
+    static ptrdiff_t offsetOfJITExecuteCounter() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_counter); }
+    static ptrdiff_t offsetOfJITExecutionActiveThreshold() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_activeThreshold); }
+    static ptrdiff_t offsetOfJITExecutionTotalCount() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_totalCount); }
 
-    const ExecutionCounter& jitExecuteCounter() const { return m_jitExecuteCounter; }
+    const BaselineExecutionCounter& jitExecuteCounter() const { return m_jitExecuteCounter; }
 
     unsigned optimizationDelayCounter() const { return m_optimizationDelayCounter; }
 
@@ -1106,9 +1106,9 @@ private:
 
     RefPtr<CodeBlock> m_alternative;
     
-    ExecutionCounter m_llintExecuteCounter;
+    BaselineExecutionCounter m_llintExecuteCounter;
 
-    ExecutionCounter m_jitExecuteCounter;
+    BaselineExecutionCounter m_jitExecuteCounter;
     int32_t m_totalJITExecutions;
     uint32_t m_osrExitCounter;
     uint16_t m_optimizationDelayCounter;
