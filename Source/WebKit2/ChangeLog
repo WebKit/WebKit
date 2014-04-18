@@ -1,3 +1,21 @@
+2014-04-18  Andy Estes  <aestes@apple.com>
+
+        [iOS] REGRESSION (r167039): WebKit incorrectly sets a background process assertion state when displaying a PDF
+        https://bugs.webkit.org/show_bug.cgi?id=131860
+        <rdar://problem/16631282>
+
+        Reviewed by Tim Horton.
+
+        We were basing our process assertion state on whether or not the
+        process had a WKContentView in a window, but when displaying a PDF
+        we've removed the WKContentView from the window. Base this decision
+        instead on whether or not the WKWebView is in the window.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView didMoveToWindow]):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isViewInWindow):
+
 2014-04-18  Anders Carlsson  <andersca@apple.com>
 
         Address a couple of review comments

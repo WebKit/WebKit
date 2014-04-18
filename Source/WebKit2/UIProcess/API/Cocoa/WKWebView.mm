@@ -628,6 +628,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return false;
 }
 
+- (void)didMoveToWindow
+{
+    _page->viewStateDidChange(WebCore::ViewState::IsInWindow);
+}
+
 #pragma mark - UIScrollViewDelegate
 
 - (BOOL)usesStandardContentView

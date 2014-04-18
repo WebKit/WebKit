@@ -127,7 +127,7 @@ bool PageClientImpl::isViewVisible()
 
 bool PageClientImpl::isViewInWindow()
 {
-    return [m_contentView window];
+    return [m_webView window];
 }
 
 void PageClientImpl::processDidExit()
