@@ -77,7 +77,7 @@
         Additionally substitute "screenSize" for "viewporScreenSize" to make the code more understandable.
 
         * WebCore.exp.in: Export symbol for WebCore System Interface function
-        _wkGetViewportAvailableScreenSize.
+        _wkGetAvailableScreenSize.
         * dom/Document.cpp:
         (WebCore::Document::processViewport): Modified to call Chrome::screenSize(); formerly it
         called ChromeClient::viewportScreenSize().
