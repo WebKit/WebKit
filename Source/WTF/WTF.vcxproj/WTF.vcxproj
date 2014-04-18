@@ -70,7 +70,6 @@
     <ClCompile Include="..\wtf\dtoa\fast-dtoa.cc" />
     <ClCompile Include="..\wtf\dtoa\fixed-dtoa.cc" />
     <ClCompile Include="..\wtf\dtoa\strtod.cc" />
-    <ClCompile Include="..\wtf\DynamicAnnotations.cpp" />
     <ClCompile Include="..\wtf\FastBitVector.cpp" />
     <ClCompile Include="..\wtf\FastMalloc.cpp" />
     <ClCompile Include="..\wtf\FilePrintStream.cpp" />
@@ -194,7 +193,6 @@
     <ClInclude Include="..\wtf\dtoa\fixed-dtoa.h" />
     <ClInclude Include="..\wtf\dtoa\strtod.h" />
     <ClInclude Include="..\wtf\dtoa\utils.h" />
-    <ClInclude Include="..\wtf\DynamicAnnotations.h" />
     <ClInclude Include="..\wtf\Encoder.h" />
     <ClInclude Include="..\wtf\FastBitVector.h" />
     <ClInclude Include="..\wtf\FastMalloc.h" />

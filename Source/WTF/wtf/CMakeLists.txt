@@ -24,7 +24,6 @@ set(WTF_HEADERS
     Deque.h
     DisallowCType.h
     DoublyLinkedList.h
-    DynamicAnnotations.h
     Encoder.h
     FastMalloc.h
     FeatureDefines.h
@@ -159,7 +158,6 @@ set(WTF_SOURCES
     DataLog.cpp
     DateMath.cpp
     DecimalNumber.cpp
-    DynamicAnnotations.cpp
     FastBitVector.cpp
     FastMalloc.cpp
     FilePrintStream.cpp

@@ -132,9 +132,6 @@
     <ClCompile Include="..\wtf\DecimalNumber.cpp">
       <Filter>wtf</Filter>
     </ClCompile>
-    <ClCompile Include="..\wtf\DynamicAnnotations.cpp">
-      <Filter>wtf</Filter>
-    </ClCompile>
     <ClCompile Include="..\wtf\FastMalloc.cpp">
       <Filter>wtf</Filter>
     </ClCompile>
@@ -421,9 +418,6 @@
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\DoublyLinkedList.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\DynamicAnnotations.h">
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\Encoder.h">

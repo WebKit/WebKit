@@ -1,3 +1,21 @@
+2014-04-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove DynamicAnnotations.h?
+        https://bugs.webkit.org/show_bug.cgi?id=131754
+
+        Reviewed by Simon Fraser.
+
+        This file, which helped support tools like Valgrind was unused.
+
+        * WTF.vcxproj/WTF.vcxproj: Remove references to the files.
+        * WTF.vcxproj/WTF.vcxproj.filters: Remove references to the files.
+        * WTF.xcodeproj/project.pbxproj: Remove references to the files.
+        * wtf/CMakeLists.txt: Remove references to the files.
+        * wtf/DynamicAnnotations.cpp: Removed.
+        * wtf/DynamicAnnotations.h: Removed.
+        * wtf/ThreadSafeRefCounted.h: Remove references to the files.
+        * wtf/text/StringStatics.cpp: Remove references to the files.
+
 2014-04-18  Philippe Normand  <pnormand@igalia.com>
 
         Remove NETWORK_INFO support

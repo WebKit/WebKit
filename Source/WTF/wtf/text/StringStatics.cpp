@@ -30,7 +30,6 @@
 #endif
 
 #include "AtomicString.h"
-#include "DynamicAnnotations.h"
 #include "MainThread.h"
 #include "NeverDestroyed.h"
 #include "StaticConstructors.h"
@@ -45,7 +44,6 @@ namespace WTF {
 StringImpl* StringImpl::empty()
 {
     static NeverDestroyed<StringImpl> emptyString(ConstructEmptyString);
-    WTF_ANNOTATE_BENIGN_RACE(&emptyString, "Benign race on StringImpl::emptyString reference counter");
     return &emptyString.get();
 }
 
