@@ -57,7 +57,7 @@ public:
     virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t, API::Object*) { }
     virtual void didFailProvisionalLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t, const WebCore::ResourceError&, API::Object*) { }
     virtual void didCommitLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t, API::Object*) { }
-    virtual void didFinishDocumentLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didFinishDocumentLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t, API::Object*) { }
     virtual void didFinishLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t, API::Object*) { }
     virtual void didFailLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t, const WebCore::ResourceError&, API::Object*) { }
     virtual void didSameDocumentNavigationForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::SameDocumentNavigationType, API::Object*) { }

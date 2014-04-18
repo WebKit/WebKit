@@ -2413,7 +2413,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     m_loaderClient->didCommitLoadForFrame(this, frame, navigationID, userData.get());
 }
 
-void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, IPC::MessageDecoder& decoder)
+void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navigationID, IPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, process());
@@ -2423,7 +2423,7 @@ void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, IPC::MessageD
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    m_loaderClient->didFinishDocumentLoadForFrame(this, frame, userData.get());
+    m_loaderClient->didFinishDocumentLoadForFrame(this, frame, navigationID, userData.get());
 }
 
 void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID, IPC::MessageDecoder& decoder)
