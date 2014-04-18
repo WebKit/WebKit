@@ -33,6 +33,7 @@
 #include "MutationObserverRegistration.h"
 
 #include "Document.h"
+#include "QualifiedName.h"
 
 namespace WebCore {
 

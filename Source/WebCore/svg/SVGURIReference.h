@@ -22,6 +22,7 @@
 #define SVGURIReference_h
 
 #include "Document.h"
+#include "QualifiedName.h"
 
 namespace WebCore {
 

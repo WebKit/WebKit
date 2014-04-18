@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class FloatPoint;
+class QualifiedName;
 class RenderElement;
 
 typedef void (*NodeCallback)(Node&, unsigned);

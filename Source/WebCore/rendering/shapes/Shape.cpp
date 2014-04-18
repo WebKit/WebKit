@@ -32,6 +32,7 @@
 
 #include "BasicShapeFunctions.h"
 #include "BoxShape.h"
+#include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "LengthFunctions.h"
 #include "PolygonShape.h"

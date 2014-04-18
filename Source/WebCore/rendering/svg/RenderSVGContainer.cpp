@@ -25,6 +25,7 @@
 #include "RenderSVGContainer.h"
 
 #include "GraphicsContext.h"
+#include "HitTestRequest.h"
 #include "LayoutRepainter.h"
 #include "RenderIterator.h"
 #include "RenderSVGResourceFilter.h"

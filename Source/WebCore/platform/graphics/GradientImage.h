@@ -30,10 +30,11 @@
 #include "GeneratedImage.h"
 #include "Gradient.h"
 #include "Image.h"
-#include "ImageBuffer.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class ImageBuffer;
 
 class GradientImage final : public GeneratedImage {
 public:
@@ -42,18 +43,14 @@ public:
         return adoptRef(new GradientImage(generator, size));
     }
 
-    virtual ~GradientImage() { }
+    virtual ~GradientImage();
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
         const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode) override;
 
-    GradientImage(PassRefPtr<Gradient> generator, const FloatSize& size)
-        : m_gradient(generator)
-    {
-        setContainerSize(size);
-    }
+    GradientImage(PassRefPtr<Gradient>, const FloatSize&);
 
 private:
     RefPtr<Gradient> m_gradient;

@@ -65,6 +65,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/text/StringBuilder.h>
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 #import <math.h>

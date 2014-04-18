@@ -28,7 +28,6 @@
 
 #include "FloatSize.h"
 #include "FontRenderingMode.h"
-#include "FrameSnapshotting.h"
 #include "ImageOrientation.h"
 #include "IntSize.h"
 #include <wtf/Forward.h>

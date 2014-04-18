@@ -33,7 +33,6 @@
 #include "FloatSize.h"
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
-#include "IntRect.h"
 #include "NativeImagePtr.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

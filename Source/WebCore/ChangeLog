@@ -1,3 +1,42 @@
+2014-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some includes from image-related headers, and Document.h
+        https://bugs.webkit.org/show_bug.cgi?id=131797
+
+        Reviewed by Martin Robinson.
+
+        Remove some #includes from Document.h, DragImage.h, GradientImage.h,
+        Image.h, and ImageBuffer.h and deal with the fallout.
+
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setInputCursor):
+        * dom/Document.h:
+        (WebCore::Document::inputCursor):
+        * dom/MutationObserverRegistration.cpp:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * page/FrameSnapshotting.cpp:
+        * page/Page.cpp:
+        * platform/DragImage.h:
+        * platform/graphics/BitmapImage.cpp:
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::GradientImage):
+        (WebCore::GradientImage::~GradientImage):
+        * platform/graphics/GradientImage.h:
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.cpp:
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::create):
+        (WebCore::ImageBuffer::internalSize):
+        (WebCore::ImageBuffer::logicalSize):
+        (WebCore::ImageBuffer::baseTransform):
+        (WebCore::ImageBuffer::spaceSize):
+        (WebCore::ImageBuffer::setSpaceSize):
+        * rendering/RenderThemeMac.mm:
+        * rendering/shapes/Shape.cpp:
+        * rendering/svg/RenderSVGContainer.cpp:
+        * svg/SVGURIReference.h:
+
 2014-04-18  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Unreviewed. ARM64 buildfix after r167473.

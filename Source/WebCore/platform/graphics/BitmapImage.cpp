@@ -28,6 +28,7 @@
 #include "BitmapImage.h"
 
 #include "FloatRect.h"
+#include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "IntRect.h"

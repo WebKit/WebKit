@@ -40,6 +40,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"

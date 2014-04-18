@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Page.h"
 #include "RenderObject.h"

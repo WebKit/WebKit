@@ -95,6 +95,7 @@
 
 #if ENABLE(WEB_REPLAY)
 #include "ReplayController.h"
+#include <replay/InputCursor.h>
 #endif
 
 namespace WebCore {

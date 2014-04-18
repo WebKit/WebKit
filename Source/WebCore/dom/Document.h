@@ -35,12 +35,10 @@
 #include "DocumentStyleSheetCollection.h"
 #include "DocumentTiming.h"
 #include "FocusDirection.h"
-#include "HitTestRequest.h"
 #include "IconURL.h"
 #include "MutationObserver.h"
 #include "PageVisibilityState.h"
 #include "PlatformScreen.h"
-#include "QualifiedName.h"
 #include "ReferrerPolicy.h"
 #include "RenderPtr.h"
 #include "ScriptExecutionContext.h"
@@ -59,9 +57,12 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/WeakPtr.h>
 
+namespace JSC {
+class ExecState;
 #if ENABLE(WEB_REPLAY)
-#include <replay/InputCursor.h>
+class InputCursor;
 #endif
+}
 
 namespace WebCore {
 
@@ -88,7 +89,6 @@ class DocumentLoader;
 class DocumentMarkerController;
 class DocumentParser;
 class DocumentSharedObjectPool;
-class DocumentStyleSheetCollection;
 class DocumentType;
 class Element;
 class EntityReference;
@@ -130,6 +130,7 @@ class NodeIterator;
 class Page;
 class PlatformMouseEvent;
 class ProcessingInstruction;
+class QualifiedName;
 class Range;
 class RegisteredEventListener;
 class RenderView;
@@ -479,8 +480,8 @@ public:
     virtual URL baseURI() const override;
 
 #if ENABLE(WEB_REPLAY)
-    InputCursor& inputCursor() const { return *m_inputCursor; }
-    void setInputCursor(PassRefPtr<InputCursor> cursor) { m_inputCursor = cursor; }
+    JSC::InputCursor& inputCursor() const { return *m_inputCursor; }
+    void setInputCursor(PassRefPtr<JSC::InputCursor>);
 #endif
 
 #if ENABLE(PAGE_VISIBILITY_API)
@@ -1692,7 +1693,7 @@ private:
 #endif
 
 #if ENABLE(WEB_REPLAY)
-    RefPtr<InputCursor> m_inputCursor;
+    RefPtr<JSC::InputCursor> m_inputCursor;
 #endif
 
     Timer<Document> m_didAssociateFormControlsTimer;

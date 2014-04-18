@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
+#include "GraphicsContext.h"
 #include "IntRect.h"
 #include <wtf/MathExtras.h>
 

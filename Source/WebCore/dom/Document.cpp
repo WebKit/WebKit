@@ -222,6 +222,7 @@
 #if ENABLE(WEB_REPLAY)
 #include "WebReplayInputs.h"
 #include <replay/EmptyInputCursor.h>
+#include <replay/InputCursor.h>
 #endif
 
 using namespace WTF;
@@ -6187,5 +6188,12 @@ bool Document::hasFocus() const
     }
     return false;
 }
+
+#if ENABLE(WEB_REPLAY)
+void Document::setInputCursor(PassRefPtr<InputCursor> cursor)
+{
+    m_inputCursor = cursor;
+}
+#endif
 
 } // namespace WebCore
