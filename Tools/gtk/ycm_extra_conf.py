@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Copyright (C) 2013 Danilo Cesar Lemes de Paula <danilo.eu@gmail.com>
+# Copyright (C) 2014 ChangSeok Oh <shivamidow@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,9 +17,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 import os
-import re
-import subprocess
 import sys
+import ycm_core
 
 # It's very likely that this script is a symlink somewhere in the WebKit directory,
 # so we try to find the actual script location so that we can locate the tools
@@ -34,13 +34,10 @@ else:
 sys.path.insert(0, os.path.abspath(__tools_directory))
 import common
 
-MAKE_TRACE_FILE_NAME = "ycm-make-trace"
+
 FLAGS_PRECEDING_PATHS = ['-isystem', '-I', '-iquote', '--sysroot=']
-
-
 def transform_relative_paths_to_absolute_paths(arguments, build_path):
     result = []
-
     make_next_absolute = False
     for argument in arguments:
         if make_next_absolute:
@@ -64,56 +61,6 @@ def transform_relative_paths_to_absolute_paths(arguments, build_path):
     return result
 
 
-def create_make_trace_file(build_path):
-    print "Creating make trace file for YouCompleteMe, might take a few seconds"
-    os.chdir(build_path)
-    subprocess.call("make -n -s > %s" % MAKE_TRACE_FILE_NAME, shell=True)
-
-
-def make_trace_file_up_to_date(build_path):
-    trace_file = os.path.join(build_path, MAKE_TRACE_FILE_NAME)
-    if not os.path.isfile(trace_file):
-        return False
-
-    makefile = os.path.join(build_path, 'GNUmakefile')
-    if os.path.getmtime(trace_file) < os.path.getctime(makefile):
-        return False
-
-    return True
-
-
-def ensure_make_trace_file(build_path):
-    if make_trace_file_up_to_date(build_path):
-        return True
-    create_make_trace_file(build_path)
-    return make_trace_file_up_to_date(build_path)
-
-
-def get_compilation_flags_from_build_commandline(command_line, build_path):
-    flags = re.findall("-[I,D,p,O][\w,\.,/,-]*(?:=\"?\w*\"?)?", command_line)
-    return transform_relative_paths_to_absolute_paths(flags, build_path)
-
-
-def get_compilation_flags_for_file(build_path, filename):
-    trace_file_path = os.path.join(build_path, MAKE_TRACE_FILE_NAME)
-
-    try:
-        trace_file = open(trace_file_path)
-        lines = trace_file.readlines()
-        trace_file.close()
-    except:
-        print "==== Error reading %s file", trace_file_path
-        return []
-
-    basename = os.path.basename(filename)
-    for line in lines:
-        if line.find(basename) != -1 and (line.find("CC") != -1 or line.find("CXX") != -1):
-            return get_compilation_flags_from_build_commandline(line, build_path)
-
-    print "Could not find flags for %s" % filename
-    return []
-
-
 def FlagsForFile(filename, **kwargs):
     """This is the main entry point for YCM. Its interface is fixed.
 
@@ -130,24 +77,35 @@ def FlagsForFile(filename, **kwargs):
 
     # Headers can't be built, so we get the source file flags instead.
     if filename.endswith('.h'):
-        filename = filename[:-2] + ".cpp"
-        if not os.path.exists(filename):
+        alternative_extensions = ['.cpp', '.c']
+        for alternative_extension in alternative_extensions:
+            alternative_filename = filename[:-2] + alternative_extension
+            if os.path.exists(alternative_filename):
+                filename = alternative_filename
+                break
+        else:
             return result
-
         # Force config.h file inclusion, for GLib macros.
         result['flags'].append("-includeconfig.h")
 
-    build_path = common.get_build_path(fatal=False)
+    build_path = os.path.normpath(common.get_build_path(fatal=False))
     if not build_path:
         print "Could not find WebKit build path."
         return result
 
-    if not ensure_make_trace_file(build_path):
-        print "Could not create make trace file"
+    database = ycm_core.CompilationDatabase(build_path)
+    if not database:
+        print "Could not find compile_commands.json in %s, You might forget to add CMAKE_EXPORT_COMPILE_COMMANDS=ON to cmakeargs" % build_path
         return result
 
-    result['flags'].extend(get_compilation_flags_for_file(build_path, filename))
+    compilation_info = database.GetCompilationInfoForFile(filename)
+    if not compilation_info:
+        print "No compilation info."
+        return result
+
+    result['flags'] = transform_relative_paths_to_absolute_paths(list(compilation_info.compiler_flags_), compilation_info.compiler_working_dir_)
     return result
+
 
 if __name__ == "__main__":
     import sys
