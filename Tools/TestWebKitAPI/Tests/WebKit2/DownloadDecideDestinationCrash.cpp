@@ -41,7 +41,7 @@ static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownlo
 {
     didDecideDestination = true;
     WKDownloadCancel(download);
-    return Util::toWK("does not matter").leakRef();
+    return Util::toWK("/tmp/WebKitAPITest/DownloadDecideDestinationCrash").leakRef();
 }
 
 static void setContextDownloadClient(WKContextRef context)

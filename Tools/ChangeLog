@@ -1,3 +1,14 @@
+2014-04-18  Alexey Proskuryakov  <ap@apple.com>
+
+        DownloadDecideDestinationCrash API test uses an incorrect value for path
+        https://bugs.webkit.org/show_bug.cgi?id=131845
+        <rdar://problem/15925560>
+
+        Reviewed by Enrica Casucci.
+
+        * TestWebKitAPI/Tests/WebKit2/DownloadDecideDestinationCrash.cpp:
+        (TestWebKitAPI::decideDestinationWithSuggestedFilename):
+
 2014-04-17  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] AttributedStringTest API tests fail with async text input
