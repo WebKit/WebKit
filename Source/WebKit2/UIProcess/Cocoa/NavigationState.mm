@@ -239,8 +239,8 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     [navigationAction _setOriginalURL:originalRequest.url()];
     [navigationAction _setUserInitiated:navigationActionData.isProcessingUserGesture];
 
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[listener](WKNavigationPolicyDecision policyDecision) {
-        switch (policyDecision) {
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[listener](WKNavigationActionPolicy actionPolicy) {
+        switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:
             listener->use();
             break;
@@ -284,8 +284,8 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
     [navigationResponse setResponse:resourceResponse.nsURLResponse()];
     [navigationResponse setCanShowMIMEType:canShowMIMEType];
 
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse.get() decisionHandler:[listener](WKNavigationResponsePolicyDecision policyDecision) {
-        switch (policyDecision) {
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse.get() decisionHandler:[listener](WKNavigationResponsePolicy responsePolicy) {
+        switch (responsePolicy) {
         case WKNavigationResponsePolicyAllow:
             listener->use();
             break;

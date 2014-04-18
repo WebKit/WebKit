@@ -1,3 +1,16 @@
+2014-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove unused API enums
+        https://bugs.webkit.org/show_bug.cgi?id=131836
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        (NS_ENUM):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::PolicyClient::decidePolicyForResponse):
+
 2014-04-17  Brent Fulgham  <bfulgham@apple.com>
 
         Make RenderLayerBacking get the timingFunction of the correct animation.

@@ -403,10 +403,10 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 #pragma mark WKNavigationDelegate
 
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicyDecision))decisionHandler
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
     LOG(@"decidePolicyForNavigationResponse");
-    decisionHandler(WKNavigationResponsePolicyDecisionAllow);
+    decisionHandler(WKNavigationResponsePolicyAllow);
 }
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation

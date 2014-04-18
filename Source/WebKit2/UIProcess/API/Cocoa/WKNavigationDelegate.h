@@ -41,14 +41,7 @@
 typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
     WKNavigationActionPolicyCancel,
     WKNavigationActionPolicyAllow,
-
-    // FIXME: Remove this.
-    WKNavigationPolicyDecisionCancel = WKNavigationActionPolicyCancel,
-    WKNavigationPolicyDecisionAllow = WKNavigationActionPolicyAllow,
 };
-
-// FIXME: Remove this.
-typedef WKNavigationActionPolicy WKNavigationPolicyDecision;
 
 /*! @enum WKNavigationResponsePolicy
  @abstract the policy to pass back to the decision handler in webView:decidePolicyForNavigationResponse:decisionHandler:.
@@ -58,14 +51,7 @@ typedef WKNavigationActionPolicy WKNavigationPolicyDecision;
 typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
     WKNavigationResponsePolicyCancel,
     WKNavigationResponsePolicyAllow,
-
-    // FIXME: Remove this.
-    WKNavigationResponsePolicyDecisionCancel = WKNavigationResponsePolicyCancel,
-    WKNavigationResponsePolicyDecisionAllow = WKNavigationResponsePolicyAllow,
 };
-
-// FIXME: Remove this.
-typedef WKNavigationResponsePolicy WKNavigationResponsePolicyDecision;
 
 /*! A class that conforms to WKNavigationDelegate can provide methods for deciding load policy for main frame and subframe loads
  and track load progress for main frame loads.
