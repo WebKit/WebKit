@@ -12,11 +12,11 @@ if (window.testRunner)
 <?php
 # Add some padding because CFNetwork merges small multipart segments together.
 echo str_pad('', 5000);
+echo "\r\n";
 
 ob_flush();
 flush();
-?>
---asdf
+?>--asdf
 Content-type: text/rtf
 
 This chunk has an unsupported text mime type, which can cause the policy
@@ -25,6 +25,5 @@ for this load to be ignored. This causes the request to be canceled.
 <?php
 # Add some padding because CFNetwork merges small multipart segments together.
 echo str_pad('', 5000);
-?>
-
---asdf--
+echo "\r\n";
+?>--asdf--

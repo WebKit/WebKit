@@ -1,3 +1,13 @@
+2014-04-18  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/multipart/policy-ignore-crash.php erroneously depends on http stack quirks
+        https://bugs.webkit.org/show_bug.cgi?id=131853
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/multipart/policy-ignore-crash.php: Produce a nice multipart response
+        with boundaries on their own lines.
+
 2014-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         Worse animation performance on pages with 3D transforms
