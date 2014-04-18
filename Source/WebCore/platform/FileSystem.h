@@ -32,7 +32,6 @@
 
 #include <time.h>
 #include <wtf/Forward.h>
-#include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

@@ -25,8 +25,6 @@
 #ifndef DenormalDisabler_h
 #define DenormalDisabler_h
 
-#include <wtf/MathExtras.h>
-
 namespace WebCore {
 
 // Deal with denormals. They can very seriously impact performance on x86.

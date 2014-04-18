@@ -27,7 +27,6 @@
 #define SMILTime_h
 
 #include <algorithm>
-#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

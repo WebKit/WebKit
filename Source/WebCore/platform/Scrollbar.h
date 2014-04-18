@@ -30,7 +30,6 @@
 #include "ScrollTypes.h"
 #include "Timer.h"
 #include "Widget.h"
-#include <wtf/MathExtras.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

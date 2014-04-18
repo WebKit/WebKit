@@ -27,7 +27,7 @@
 #define IntPoint_h
 
 #include "IntSize.h"
-#include <wtf/MathExtras.h>
+#include <cmath>
 
 #if USE(CG)
 typedef struct CGPoint CGPoint;

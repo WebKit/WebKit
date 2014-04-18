@@ -22,7 +22,6 @@
 
 #include "FloatConversion.h"
 #include "Path.h"
-#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

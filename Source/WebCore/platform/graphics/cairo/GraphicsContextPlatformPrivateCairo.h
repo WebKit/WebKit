@@ -35,7 +35,6 @@
 #include <cairo.h>
 #include <math.h>
 #include <stdio.h>
-#include <wtf/MathExtras.h>
 
 #if PLATFORM(GTK)
 #include <pango/pango.h>

@@ -1,3 +1,21 @@
+2014-04-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Remove unnecessary MathExtras.h includes
+        https://bugs.webkit.org/show_bug.cgi?id=131789
+
+        Reviewed by Anders Carlsson.
+
+        * platform/FileSystem.h:
+        * platform/Scrollbar.h:
+        * platform/animation/AnimationUtilities.h:
+        * platform/audio/DenormalDisabler.h:
+        * platform/graphics/Font.h:
+        * platform/graphics/IntPoint.h: Included cmath instad of MathExtras.h.
+        * platform/graphics/LayoutPoint.h:
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        * rendering/svg/SVGMarkerData.h:
+        * svg/animation/SMILTime.h:
+
 2014-04-16  Huang Dongsung  <luxtella@company100.net>
 
         Make RenderLayerBacking get the timingFunction of the correct animation.

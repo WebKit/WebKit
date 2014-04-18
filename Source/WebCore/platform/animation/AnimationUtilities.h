@@ -28,7 +28,6 @@
 
 #include "IntPoint.h"
 #include "LayoutUnit.h"
-#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
