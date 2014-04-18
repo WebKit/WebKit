@@ -1,3 +1,0 @@
-This test passes if it does not crash.
-
---asdf Content-type: text/rtf This chunk has an unsupported text mime type, which can cause the policy for this load to be ignored. This causes the request to be canceled. --asdf--
