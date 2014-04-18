@@ -1,3 +1,25 @@
+2014-04-18  Katie Madonna  <madonnk@gmail.com>
+
+        Web Inspector: add entries for probe samples in the JS/Events timeline UI
+        https://bugs.webkit.org/show_bug.cgi?id=131173
+
+        Reviewed by Timothy Hatcher.
+
+        Create probe sample fired entries for the JS/Events timeline UI.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/ProbeManager.js:
+        (WebInspector.ProbeManager.prototype.probeForIdentifier): Added.
+        * UserInterface/Controllers/TimelineManager.js: Added cases for probe sample recorded.
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        * UserInterface/Images/TimelineRecordProbeSampled.svg: Added.
+        * UserInterface/Models/ScriptTimelineRecord.js: Create ProbeSampleRecorded record for ProbeSample case.
+        * UserInterface/Views/TimelineIcons.css:
+        (.probe-record .icon): Added.
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement): Added case for probe sample recorded.
+
 2014-04-15  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: CodeMirror LICENSE is not properly added to combined files

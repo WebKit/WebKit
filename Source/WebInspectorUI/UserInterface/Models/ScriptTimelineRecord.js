@@ -40,6 +40,7 @@ WebInspector.ScriptTimelineRecord = function(eventType, startTime, endTime, call
 WebInspector.ScriptTimelineRecord.EventType = {
     ScriptEvaluated: "script-timeline-record-script-evaluated",
     EventDispatched: "script-timeline-record-event-dispatch",
+    ProbeSampleRecorded: "script-timeline-record-probe-sample-recorded",
     TimerFired: "script-timeline-record-timer-fired",
     TimerInstalled: "script-timeline-record-timer-installed",
     TimerRemoved: "script-timeline-record-timer-removed",
@@ -213,6 +214,8 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
         }
 
         return WebInspector.UIString("Event Dispatched");
+    case WebInspector.ScriptTimelineRecord.EventType.ProbeSampleRecorded:
+        return WebInspector.UIString("Probe Sample Recorded");
     case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
         if (details && includeTimerIdentifierInMainTitle)
             return WebInspector.UIString("Timer %s Fired").format(details);

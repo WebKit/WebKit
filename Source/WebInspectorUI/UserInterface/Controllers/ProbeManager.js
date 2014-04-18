@@ -64,6 +64,11 @@ WebInspector.ProbeManager.prototype = {
         return sets;
     },
 
+    probeForIdentifier: function(identifier)
+    {
+        return this._probesByIdentifier.get(identifier);
+    },
+
     // Protected (called by WebInspector.DebuggerObserver)
 
     didSampleProbe: function(sample)

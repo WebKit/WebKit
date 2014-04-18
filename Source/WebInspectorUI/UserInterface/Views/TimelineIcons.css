@@ -75,6 +75,10 @@
     content: url(../Images/TimelineRecordEvent.svg);
 }
 
+.probe-record .icon {
+    content: url(../Images/TimelineRecordProbeSampled.svg);
+}
+
 .timer-record .icon {
     content: url(../Images/TimelineRecordTimer.svg);
 }

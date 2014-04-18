@@ -272,7 +272,9 @@ WebInspector.TimelineManager.prototype = {
                 break;
 
             case TimelineAgent.EventType.ProbeSample:
-                // FIXME: Create timeline records for probe samples <https://webkit.org/b/131173>
+                // Pass the startTime as the endTime since this record type has no duration.
+                sourceCodeLocation = WebInspector.probeManager.probeForIdentifier(recordPayload.data.probeId).breakpoint.sourceCodeLocation;
+                this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.ProbeSampleRecorded, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.probeId, profile));
                 break;
 
             case TimelineAgent.EventType.TimerInstall:
