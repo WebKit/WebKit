@@ -588,15 +588,15 @@ PassRefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResourc
     if (!resource)
         return nullptr;
 
+    // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
+    if (DocumentLoader* loader = m_frame.loader().documentLoader())
+        loader->addArchiveResource(resource.get());
+
     RefPtr<Element> imageElement = document().createElement(HTMLNames::imgTag, false);
     imageElement->setAttribute(HTMLNames::srcAttr, resource->url().string());
 
     RefPtr<DocumentFragment> fragment = document().createDocumentFragment();
     fragment->appendChild(imageElement.release());
-
-    // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
-    if (DocumentLoader* loader = m_frame.loader().documentLoader())
-        loader->addArchiveResource(resource.get());
 
     return fragment.release();
 }

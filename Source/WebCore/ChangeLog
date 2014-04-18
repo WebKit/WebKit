@@ -1,3 +1,14 @@
+2014-04-18  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r155700): Pasting an image into content-editable regions is broken.
+        <rdar://problem/16654156> and https://bugs.webkit.org/show_bug.cgi?id=131844
+
+        Reviewed by Enrica Casucci.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::createFragmentForImageResourceAndAddResource): Add the ArchiveResource before
+          creating the element that uses it.
+
 2014-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Make window.scroll() and window.scrollBy() work
