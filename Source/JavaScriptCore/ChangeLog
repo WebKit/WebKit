@@ -1,5 +1,12 @@
 2014-04-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Actually address Mark's review feedback.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+
+2014-04-18  Filip Pizlo  <fpizlo@apple.com>
+
         Options::maximumExecutionCountsBetweenCheckpoints() should be higher for DFG->FTL tier-up but the same for other tier-ups
         https://bugs.webkit.org/show_bug.cgi?id=131850
 

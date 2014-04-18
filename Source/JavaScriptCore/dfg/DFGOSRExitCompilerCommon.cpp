@@ -88,6 +88,8 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
+        clippedValue = 0; // Make some compilers, and mhahnenberg, happy.
+        break;
     }
     jit.store32(AssemblyHelpers::TrustedImm32(-clippedValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
     jit.store32(AssemblyHelpers::TrustedImm32(activeThreshold), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
