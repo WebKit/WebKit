@@ -286,7 +286,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_isShowingContextMenu(false)
 #endif
 #if PLATFORM(IOS)
-    , m_shouldReturnWordAtSelection(false)
     , m_lastVisibleContentRectUpdateID(0)
     , m_hasReceivedVisibleContentRectsAfterDidCommitLoad(false)
     , m_scaleWasSetByUIProcess(false)
@@ -697,15 +696,22 @@ EditorState WebPage::editorState() const
     if (selection.isCaret()) {
         result.caretRectAtStart = view->contentsToRootView(frame.selection().absoluteCaretBounds());
         result.caretRectAtEnd = result.caretRectAtStart;
-        if (m_shouldReturnWordAtSelection)
-            result.wordAtSelection = plainText(wordRangeFromPosition(selection.start()).get());
+        // FIXME: The following check should take into account writing direction.
+        result.isReplaceAllowed = result.isContentEditable && atBoundaryOfGranularity(selection.start(), WordGranularity, DirectionForward);
+        result.wordAtSelection = plainText(wordRangeFromPosition(selection.start()).get());
     } else if (selection.isRange()) {
         result.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds());
         result.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds());
         RefPtr<Range> selectedRange = selection.toNormalizedRange();
         selectedRange->collectSelectionRects(result.selectionRects);
         convertSelectionRectsToRootView(view, result.selectionRects);
-        result.selectedTextLength = plainText(selectedRange.get(), TextIteratorDefaultBehavior, true).length();
+        String selectedText = plainText(selectedRange.get(), TextIteratorDefaultBehavior, true);
+        // FIXME: We should disallow replace when the string contains only CJ characters.
+        result.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnlyWhitespace();
+        result.selectedTextLength = selectedText.length();
+        const int maxSelectedTextLength = 200;
+        if (selectedText.length() <= maxSelectedTextLength)
+            result.wordAtSelection = selectedText;
     }
 #endif
 

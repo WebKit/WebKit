@@ -56,6 +56,7 @@ messages -> WebPage LegacyReceiver {
     ExtendSelection(uint32_t granularity)
     RequestDictationContext(uint64_t callbackID)
     ReplaceDictatedText(String oldText, String newText)
+    ReplaceSelectedText(String oldText, String newText)
     RequestAutocorrectionData(String textForAutocorrection, uint64_t callbackID)
     ApplyAutocorrection(String correction, String originalText, uint64_t callbackID)
     SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied)

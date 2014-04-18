@@ -593,6 +593,7 @@ public:
     void getAutocorrectionContext(String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length);
     void requestDictationContext(PassRefPtr<DictationContextCallback>);
     void replaceDictatedText(const String& oldText, const String& newText);
+    void replaceSelectedText(const String& oldText, const String& newText);
     void didReceivePositionInformation(const InteractionInformationAtPosition&);
     void getPositionInformation(const WebCore::IntPoint&, InteractionInformationAtPosition&);
     void requestPositionInformation(const WebCore::IntPoint&);

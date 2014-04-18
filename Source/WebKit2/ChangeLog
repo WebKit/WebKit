@@ -1,3 +1,44 @@
+2014-04-17  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] support replacements for misspelled words.
+        https://bugs.webkit.org/show_bug.cgi?id=131827
+        <rdar://problem/16319657>
+
+        Reviewed by Benjamin Poulain.
+
+        This is the first part of the work to add support for replacements.
+        It handles _promptForReplace in canPerformAction to decide
+        whether to show the Replace button in the menu and add the
+        implementation of the replace action.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        (WebKit::EditorState::EditorState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectedText]):
+        (-[WKContentView replaceText:withText:]):
+        (-[WKContentView _promptForReplace:]):
+        (-[WKContentView replace:]):
+        (-[WKContentView canPerformAction:withSender:]):
+        (-[WKContentView selectWordForReplacement]): This is called
+        by UIKit when the user taps on a mispelled word to select it.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::replaceSelectedText):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::editorState):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture): Removed m_shouldReturnWordForSelection.
+        We now return always the word corresponding to the caret selection or
+        the selected text up to a maximum of 200 characters.
+        (WebKit::WebPage::extendSelection):
+        (WebKit::WebPage::replaceSelectedText):
+
 2014-04-17  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] REGRESSION (r166975): WKPDFView is broken

@@ -233,7 +233,12 @@ void WebPageProxy::replaceDictatedText(const String& oldText, const String& newT
 {
     m_process->send(Messages::WebPage::ReplaceDictatedText(oldText, newText), m_pageID);
 }
-    
+
+void WebPageProxy::replaceSelectedText(const String& oldText, const String& newText)
+{
+    m_process->send(Messages::WebPage::ReplaceSelectedText(oldText, newText), m_pageID);
+}
+
 void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, PassRefPtr<AutocorrectionDataCallback> callback)
 {
     if (!isValid()) {

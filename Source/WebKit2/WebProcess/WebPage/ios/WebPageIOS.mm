@@ -582,8 +582,6 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         }
         if (result.isNotNull())
             range = Range::create(*frame.document(), result, result);
-        if (range)
-            m_shouldReturnWordAtSelection = true;
     }
         break;
 
@@ -657,7 +655,6 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         frame.selection().setSelectedRange(range.get(), position.affinity(), true);
 
     send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, static_cast<uint32_t>(flags), callbackID));
-    m_shouldReturnWordAtSelection = false;
 }
 
 static PassRefPtr<Range> rangeForPosition(Frame* frame, const VisiblePosition& position, bool baseIsStart)
@@ -1211,12 +1208,11 @@ void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore:
 
 void WebPage::extendSelection(uint32_t granularity)
 {
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
     // For the moment we handle only WordGranularity.
-    if (granularity != WordGranularity)
+    if (granularity != WordGranularity || !frame.selection().isCaret())
         return;
 
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    ASSERT(frame.selection().isCaret());
     VisiblePosition position = frame.selection().selection().start();
     frame.selection().setSelectedRange(wordRangeFromPosition(position).get(), position.affinity(), true);
 }
@@ -1269,6 +1265,18 @@ void WebPage::requestDictationContext(uint64_t callbackID)
     }
 
     send(Messages::WebPageProxy::DictationContextCallback(selectedText, contextBefore, contextAfter, callbackID));
+}
+
+void WebPage::replaceSelectedText(const String& oldText, const String& newText)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame.selection().isRange())
+        return;
+
+    if (plainText(frame.selection().toNormalizedRange().get()) != oldText)
+        return;
+
+    frame.editor().insertText(newText, 0);
 }
 
 void WebPage::replaceDictatedText(const String& oldText, const String& newText)

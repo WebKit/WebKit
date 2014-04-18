@@ -133,6 +133,10 @@ static const float tapAndHoldDelay  = 0.75;
 - (void)selectWord;
 @end
 
+@interface UITextInteractionAssistant (StagingToRemove)
+- (void)scheduleReplacementsForText:(NSString *)text;
+@end
+
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
 
 - (instancetype)initWithContentView:(WKContentView *)view userObject:(NSObject <NSSecureCoding> *)userObject;
@@ -851,14 +855,28 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     // FIXME: To be implemented.
 }
 
+- (NSString *)selectedText
+{
+    return (NSString *)_page->editorState().wordAtSelection;
+}
+
+- (void)replaceText:(NSString *)text withText:(NSString *)word
+{
+    _page->replaceSelectedText(text, word);
+}
+
 - (void)_promptForReplace:(id)sender
 {
-    // FIXME: To be implemented.
+    if (_page->editorState().wordAtSelection.isEmpty())
+        return;
+
+    if ([_textSelectionAssistant respondsToSelector:@selector(scheduleReplacementsForText:)])
+        [_textSelectionAssistant scheduleReplacementsForText:_page->editorState().wordAtSelection];
 }
 
 - (void)replace:(id)sender
 {
-    // FIXME: To be implemented.
+    [[UIKeyboardImpl sharedInstance] replaceText:sender];
 }
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
@@ -908,10 +926,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
     }
 
-    if (action == @selector(_promptForReplace:)) {
-        // FIXME: need to implement
-        return NO;
-    }
+    if (action == @selector(_promptForReplace:))
+        return _page->editorState().selectionIsRange && _page->editorState().isReplaceAllowed && [[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled];
 
     if (action == @selector(select:)) {
         // Disable select in password fields so that you can't see word boundaries.
@@ -2017,6 +2033,11 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     // to wait to paint the selection.
     if (_usingGestureForSelection)
         [self _updateChangedSelection];
+}
+
+- (void)selectWordForReplacement
+{
+    _page->extendSelection(WordGranularity);
 }
 
 - (void)_updateChangedSelection

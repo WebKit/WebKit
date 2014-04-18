@@ -47,6 +47,7 @@ void EditorState::encode(IPC::ArgumentEncoder& encoder) const
     encoder << hasComposition;
 
 #if PLATFORM(IOS)
+    encoder << isReplaceAllowed;
     encoder << caretRectAtStart;
     encoder << caretRectAtEnd;
     encoder << selectionRects;
@@ -89,6 +90,8 @@ bool EditorState::decode(IPC::ArgumentDecoder& decoder, EditorState& result)
         return false;
 
 #if PLATFORM(IOS)
+    if (!decoder.decode(result.isReplaceAllowed))
+        return false;
     if (!decoder.decode(result.caretRectAtStart))
         return false;
     if (!decoder.decode(result.caretRectAtEnd))
