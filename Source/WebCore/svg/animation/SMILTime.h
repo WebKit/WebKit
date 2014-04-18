@@ -27,6 +27,7 @@
 #define SMILTime_h
 
 #include <algorithm>
+#include <cmath>
 
 namespace WebCore {
 

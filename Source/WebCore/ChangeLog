@@ -1,3 +1,9 @@
+2014-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * svg/animation/SMILTime.h:
+
 2014-04-17  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Unreviewed, rolling out r167384.
