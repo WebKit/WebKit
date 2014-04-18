@@ -111,9 +111,14 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
     notImplemented();
 }
 
-FloatSize WebPage::viewportScreenSize() const
+FloatSize WebPage::screenSize() const
 {
-    return m_viewportScreenSize;
+    return m_screenSize;
+}
+
+FloatSize WebPage::availableScreenSize() const
+{
+    return m_availableScreenSize;
 }
 
 void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArguments)

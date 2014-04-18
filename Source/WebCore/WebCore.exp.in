@@ -2716,7 +2716,8 @@ _wkGetScreenScaleFactor
 _wkGetUserAgent
 _wkGetVendorNameForNavigator
 _wkGetVerticalGlyphsForCharacters
-_wkGetViewportScreenSize
+_wkGetScreenSize
+_wkGetAvailableScreenSize
 _wkIsGB18030ComplianceRequired
 _wkSetLayerContentsScale
 #endif

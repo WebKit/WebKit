@@ -488,6 +488,16 @@ void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* l
     m_client.loadIconForFiles(filenames, loader);
 }
 
+FloatSize Chrome::screenSize() const
+{
+    return m_client.screenSize();
+}
+
+FloatSize Chrome::availableScreenSize() const
+{
+    return m_client.availableScreenSize();
+}
+
 void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
 #if PLATFORM(IOS)

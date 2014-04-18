@@ -1,3 +1,41 @@
+2014-04-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Hook up screen.{availHeight, availWidth, height, width}
+        https://bugs.webkit.org/show_bug.cgi?id=131821
+        <rdar://problem/16413795>
+
+        Reviewed by Benjamin Poulain and Tim Horton.
+
+        Implement WebKit2-specific support infrastructure.
+
+        Additionally substitute "screenSize" for "viewporScreenSize" to make the code more understandable.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode): Modified to encode the available screen size
+        creation parameter.
+        (WebKit::WebPageCreationParameters::decode): Modified to decode the available screen size
+        creation parameter.
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters): Initialize the available screen size
+        parameter.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::screenSize): Renamed; formerly named viewportScreenSize.
+        (WebKit::WebPageProxy::availableScreenSize): Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::screenSize): Renamed; formerly named viewportScreenSize.
+        (WebKit::WebChromeClient::availableScreenSize): Added; turns around and calls WebPage::availableScreenSize().
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Hook up WebKit System Interface function WKGetAvailableScreenSize.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialize available screen size instance variable.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::screenSize):
+        (WebKit::WebPage::availableScreenSize):
+
 2014-04-17  Anders Carlsson  <andersca@apple.com>
 
         Remove unused API enums

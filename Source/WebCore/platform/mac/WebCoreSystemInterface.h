@@ -300,7 +300,8 @@ extern AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 #endif // !PLATFORM(IOS)
 
 #if PLATFORM(IOS)
-extern CGSize (*wkGetViewportScreenSize)(void);
+extern CGSize (*wkGetScreenSize)(void);
+extern CGSize (*wkGetAvailableScreenSize)(void);
 extern void (*wkSetLayerContentsScale)(CALayer *);
 extern float (*wkGetScreenScaleFactor)(void);
 #endif

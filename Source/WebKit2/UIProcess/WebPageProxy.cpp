@@ -4211,7 +4211,8 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.colorSpace = m_pageClient.colorSpace();
 #endif
 #if PLATFORM(IOS)
-    parameters.viewportScreenSize = viewportScreenSize();
+    parameters.screenSize = screenSize();
+    parameters.availableScreenSize = availableScreenSize();
 #endif
 
     return parameters;

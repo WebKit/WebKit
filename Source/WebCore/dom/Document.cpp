@@ -2945,7 +2945,7 @@ void Document::processViewport(const String& features, ViewportArguments::Type o
     // bounds checking and determining concrete values for ValueAuto which we already do in UIKit.
     // To maintain old behavior, we just need to update a few values, leaving Auto's for UIKit.
     if (Page* page = this->page())
-        finalizeViewportArguments(m_viewportArguments, page->chrome().client().viewportScreenSize());
+        finalizeViewportArguments(m_viewportArguments, page->chrome().screenSize());
 #endif
 
     updateViewportArguments();

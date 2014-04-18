@@ -172,9 +172,16 @@ static inline NSDictionary* dictionaryForViewportArguments(const WebCore::Viewpo
               @"minimal-ui":@(arguments.minimalUI) };
 }
 
-FloatSize WebChromeClientIOS::viewportScreenSize() const
+FloatSize WebChromeClientIOS::screenSize() const
 {
-    return FloatSize(WKGetViewportScreenSize());
+    return FloatSize(WKGetScreenSize());
+}
+
+FloatSize WebChromeClientIOS::availableScreenSize() const
+{
+    // WebKit1 code should query the WAKWindow for the available screen size.
+    ASSERT_NOT_REACHED();
+    return FloatSize();
 }
 
 void WebChromeClientIOS::dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments& arguments) const

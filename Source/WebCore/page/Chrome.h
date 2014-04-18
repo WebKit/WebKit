@@ -90,6 +90,9 @@ public:
     virtual PlatformDisplayID displayID() const override;
     virtual void windowScreenDidChange(PlatformDisplayID) override;
 
+    FloatSize screenSize() const override;
+    FloatSize availableScreenSize() const override;
+
     void scrollRectIntoView(const IntRect&) const;
 
     void contentsSizeChanged(Frame*, const IntSize&) const;

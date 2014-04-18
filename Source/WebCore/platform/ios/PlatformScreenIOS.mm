@@ -28,6 +28,7 @@
 
 #import "FloatRect.h"
 #import "FrameView.h"
+#import "HostWindow.h"
 #import "IntRect.h"
 #import "NotImplemented.h"
 #import "WAKWindow.h"
@@ -58,23 +59,33 @@ bool screenIsMonochrome(Widget*)
 FloatRect screenRect(Widget* widget)
 {
     if (!widget)
-        return CGRectZero;
-    WAKWindow *window = [widget->platformWidget() window];
-    if (!window)
-        return [widget->platformWidget() frame];
-    CGRect screenRect = { CGPointZero, [window screenSize] };
-    return enclosingIntRect(screenRect);
+        return FloatRect();
+
+    if (NSView *platformWidget = widget->platformWidget()) {
+        // WebKit1
+        WAKWindow *window = [platformWidget window];
+        if (!window)
+            return [platformWidget frame];
+        CGRect screenRect = { CGPointZero, [window screenSize] };
+        return enclosingIntRect(screenRect);
+    }
+    return enclosingIntRect(FloatRect(FloatPoint(), widget->root()->hostWindow()->screenSize()));
 }
 
 FloatRect screenAvailableRect(Widget* widget)
 {
     if (!widget)
-        return CGRectZero;
-    WAKWindow *window = [widget->platformWidget() window];
-    if (!window)
-        return CGRectZero;
-    CGRect screenRect = { CGPointZero, [window availableScreenSize] };
-    return enclosingIntRect(screenRect);
+        return FloatRect();
+
+    if (NSView *platformWidget = widget->platformWidget()) {
+        // WebKit1
+        WAKWindow *window = [platformWidget window];
+        if (!window)
+            return FloatRect();
+        CGRect screenRect = { CGPointZero, [window availableScreenSize] };
+        return enclosingIntRect(screenRect);
+    }
+    return enclosingIntRect(FloatRect(FloatPoint(), widget->root()->hostWindow()->availableScreenSize()));
 }
 
 void screenColorProfile(ColorProfile&)

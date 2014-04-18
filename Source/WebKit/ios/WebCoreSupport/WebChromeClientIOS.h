@@ -52,7 +52,8 @@ public:
     virtual void setNeedsScrollNotifications(WebCore::Frame*, bool) override;
     virtual void observedContentChange(WebCore::Frame*) override;
     virtual void clearContentChangeObservers(WebCore::Frame*) override;
-    virtual WebCore::FloatSize viewportScreenSize() const override;
+    virtual WebCore::FloatSize screenSize() const override;
+    virtual WebCore::FloatSize availableScreenSize() const override;
     virtual void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const override;
     virtual void notifyRevealedSelectionByScrollingFrame(WebCore::Frame*) override;
     virtual bool isStopping() override;

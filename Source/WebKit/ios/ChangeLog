@@ -1,3 +1,21 @@
+2014-04-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Hook up screen.{availHeight, availWidth, height, width}
+        https://bugs.webkit.org/show_bug.cgi?id=131821
+        <rdar://problem/16413795>
+
+        Reviewed by Benjamin Poulain and Tim Horton.
+
+        Provide iOS-specific WebKit1 implementation for ChromeClient::availableScreenSize().
+
+        Additionally substitute "screenSize" for "viewporScreenSize" to make the code more understandable.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::screenSize): Renamed; formerly named viewportScreenSize.
+        (WebChromeClientIOS::availableScreenSize): Added; ASSERT_NOT_REACHED() as a widget
+        should consult it's associated WAKWindow for the available screen size.
+
 2014-04-08  Alexey Proskuryakov  <ap@apple.com>
 
         Rename Clipboard to DataTransfer

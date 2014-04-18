@@ -176,7 +176,9 @@ public:
 #endif
     // End methods used by HostWindow.
 
-    virtual FloatSize viewportScreenSize() const { return const_cast<ChromeClient*>(this)->windowRect().size(); }
+    virtual FloatSize screenSize() const { return const_cast<ChromeClient*>(this)->windowRect().size(); }
+    virtual FloatSize availableScreenSize() const { return const_cast<ChromeClient*>(this)->windowRect().size(); }
+
     virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const { }
 
     virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;

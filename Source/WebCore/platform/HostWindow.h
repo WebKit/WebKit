@@ -76,6 +76,9 @@ public:
 
     virtual PlatformDisplayID displayID() const = 0;
     virtual void windowScreenDidChange(PlatformDisplayID) = 0;
+
+    virtual FloatSize screenSize() const = 0;
+    virtual FloatSize availableScreenSize() const = 0;
 };
 
 } // namespace WebCore

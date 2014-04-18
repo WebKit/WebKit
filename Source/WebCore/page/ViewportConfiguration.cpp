@@ -156,7 +156,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::textDocumentParameters(
     Parameters parameters;
 
 #if PLATFORM(IOS)
-    parameters.width = static_cast<int>(wkGetViewportScreenSize().width);
+    parameters.width = static_cast<int>(wkGetScreenSize().width);
 #else
     // FIXME: this needs to be unified with ViewportArguments on all ports.
     parameters.width = 320;

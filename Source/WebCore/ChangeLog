@@ -1,3 +1,41 @@
+2014-04-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Hook up screen.{availHeight, availWidth, height, width}
+        https://bugs.webkit.org/show_bug.cgi?id=131821
+        <rdar://problem/16413795>
+
+        Reviewed by Benjamin Poulain and Tim Horton.
+
+        Implement support for screen.{availHeight, availWidth, height, width} in WebKit2 for iOS.
+
+        Additionally substitute "screenSize" for "viewporScreenSize" to make the code more understandable.
+
+        * WebCore.exp.in: Export symbol for WebCore System Interface function
+        _wkGetViewportAvailableScreenSize.
+        * dom/Document.cpp:
+        (WebCore::Document::processViewport): Modified to call Chrome::screenSize(); formerly it
+        called ChromeClient::viewportScreenSize().
+        * page/Chrome.cpp:
+        (WebCore::Chrome::screenSize): Added; turns around and calls ChromeClient::screenSize().
+        (WebCore::Chrome::availableScreenSize): Added; turns around and calls ChromeClient::availableScreenSize().
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::screenSize): Renamed; formerly named viewportScreenSize.
+        (WebCore::ChromeClient::availableScreenSize): Added; default implementation, which
+        returns the size of Chrome::windowRect().
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::textDocumentParameters):
+        * platform/HostWindow.h: Added declarations for availableScreenSize() and screenSize()
+        so that a caller (e.g. WebCore::screenRect()) can query for such screen information using
+        only the HostWindow interface. That is, a caller doesn't need to know about ChromeClient.
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenRect): Modified to query HostWindow::screenSize() when computing the
+        screen rectangle in WebKit2 for iOS.
+        (WebCore::screenAvailableRect): Modified to query HostWindow::availableScreenSize()
+        when computing the available screen rectangle in WebKit2 for iOS.
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+        * platform/mac/WebCoreSystemInterface.h:
+
 2014-04-17  Darin Adler  <darin@apple.com>
 
         origin spoofing possible (HTTP Origin, postMessage event.origin) due to inappropriate URL escape sequence decoding

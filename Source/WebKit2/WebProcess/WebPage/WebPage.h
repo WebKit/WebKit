@@ -437,7 +437,8 @@ public:
 #endif
 
 #if PLATFORM(IOS)
-    WebCore::FloatSize viewportScreenSize() const;
+    WebCore::FloatSize screenSize() const;
+    WebCore::FloatSize availableScreenSize() const;
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
     void didReceiveMobileDocType(bool);
 
@@ -1154,7 +1155,8 @@ private:
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad;
     bool m_scaleWasSetByUIProcess;
     bool m_userHasChangedPageScaleFactor;
-    WebCore::FloatSize m_viewportScreenSize;
+    WebCore::FloatSize m_screenSize;
+    WebCore::FloatSize m_availableScreenSize;
     WebCore::IntSize m_blockSelectionDesiredSize;
 #endif
 

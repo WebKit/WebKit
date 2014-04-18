@@ -115,7 +115,8 @@ struct WebPageCreationParameters {
     ColorSpaceData colorSpace;
 #endif
 #if PLATFORM(IOS)
-    WebCore::FloatSize viewportScreenSize;
+    WebCore::FloatSize screenSize;
+    WebCore::FloatSize availableScreenSize;
 #endif
 };
 

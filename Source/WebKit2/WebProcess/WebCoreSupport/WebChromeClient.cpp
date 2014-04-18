@@ -845,9 +845,14 @@ void WebChromeClient::exitFullScreenForElement(WebCore::Element* element)
 #endif
 
 #if PLATFORM(IOS)
-FloatSize WebChromeClient::viewportScreenSize() const
+FloatSize WebChromeClient::screenSize() const
 {
-    return m_page->viewportScreenSize();
+    return m_page->screenSize();
+}
+
+FloatSize WebChromeClient::availableScreenSize() const
+{
+    return m_page->availableScreenSize();
 }
 #endif
 
