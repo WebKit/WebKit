@@ -62,8 +62,8 @@ private:
     Page m_pages[pageCount];
 
     // Align to vmPageSize to avoid sharing physical pages with metadata.
-    // Otherwise, we'll confuse the scavenger into scavenging metadata.
-     alignas(vmPageSize) char m_memory[];
+    // Otherwise, we'll confuse the scavenger into trying to scavenge metadata.
+    alignas(vmPageSize) char m_memory[];
 };
 
 template<class Traits>

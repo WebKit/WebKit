@@ -1,5 +1,18 @@
 2014-04-19  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: Improved alignment in LargeChunk
+        https://bugs.webkit.org/show_bug.cgi?id=131895
+
+        Reviewed by Andreas Kling.
+
+        * bmalloc/Chunk.h:
+        * bmalloc/LargeChunk.h: Align to vmPageSize just like Chunk does.
+        Technically, the previous alignment was harmless, but I would prefer,
+        dear reader, not to have to explain the interlocking set of
+        circumstances that made it so.
+
+2014-04-19  Geoffrey Garen  <ggaren@apple.com>
+
         Rolled out r167502 because it caused a crash on the facebook benchmark.
 
         Unreviewed.

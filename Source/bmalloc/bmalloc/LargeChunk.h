@@ -64,7 +64,10 @@ private:
     // We use the X's for boundary tags and the O's for edge sentinels.
 
     BoundaryTag m_boundaryTags[boundaryTagCount];
-    alignas(largeAlignment) char m_memory[];
+
+    // Align to vmPageSize to avoid sharing physical pages with metadata.
+    // Otherwise, we'll confuse the scavenger into trying to scavenge metadata.
+    alignas(vmPageSize) char m_memory[];
 };
 
 inline LargeChunk* LargeChunk::create()
