@@ -26,10 +26,10 @@
 WK_XPC_SERVICE_VARIANT = Normal;
 
 PRODUCT_NAME = com.apple.WebKit.WebContent;
-
 INFOPLIST_FILE = $(INFOPLIST_FILE_$(PLATFORM_NAME));
 INFOPLIST_FILE_macosx = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist;
 INFOPLIST_FILE_iphoneos = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist;
+INFOPLIST_FILE_iphonesimulator = $(INFOPLIST_FILE_iphoneos);
 
 CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*] = Configurations/WebContent-iOS.entitlements
 

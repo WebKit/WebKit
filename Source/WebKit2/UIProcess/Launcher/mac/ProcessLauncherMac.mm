@@ -501,12 +501,26 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     RunLoop::main().dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, IPC::Connection::Identifier(listeningPort)));
 }
 
+static NSString *systemDirectoryPath()
+{
+    static NSString *path = [^{
+#if PLATFORM(IOS_SIMULATOR)
+        char *simulatorRoot = getenv("SIMULATOR_ROOT");
+        return simulatorRoot ? [NSString stringWithFormat:@"%s/System/", simulatorRoot] : @"/System/";
+#else
+        return @"/System/";
+#endif
+    }() copy];
+
+    return path;
+}
+
 void ProcessLauncher::launchProcess()
 {
     if (tryPreexistingProcess(m_launchOptions, this, &ProcessLauncher::didFinishLaunchingProcess))
         return;
 
-    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:@"/System/"];
+    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:systemDirectoryPath()];
 
     if (m_launchOptions.useXPC) {
         createService(m_launchOptions, isWebKitDevelopmentBuild, this, &ProcessLauncher::didFinishLaunchingProcess);

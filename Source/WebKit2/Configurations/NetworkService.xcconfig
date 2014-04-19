@@ -29,6 +29,7 @@ PRODUCT_NAME = com.apple.WebKit.Networking;
 INFOPLIST_FILE = $(INFOPLIST_FILE_$(PLATFORM_NAME));
 INFOPLIST_FILE_macosx = NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist;
 INFOPLIST_FILE_iphoneos = NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-iOS.plist;
+INFOPLIST_FILE_iphonesimulator = $(INFOPLIST_FILE_iphoneos);
 
 CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*] = Configurations/Network-iOS.entitlements
 CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*] = Configurations/Network-iOS.entitlements

@@ -1,5 +1,25 @@
 2014-04-19  Dan Bernstein  <mitz@apple.com>
 
+        Use XPC services in the iOS Simulator, but not in Mountain Lion
+        https://bugs.webkit.org/show_bug.cgi?id=131894
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/NetworkService.Development.xcconfig: Defined INFOPLIST_FILE for the
+        Simulator.
+        * Configurations/NetworkService.xcconfig: Ditto.
+        * Configurations/WebContentService.Development.xcconfig: Ditto.
+        * Configurations/WebContentService.xcconfig: Ditto.
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::systemDirectoryPath): Added this helper function that returns a slash-terminated
+        path to the System directory in the current runtime.
+        (WebKit::ProcessLauncher::launchProcess): Changed to use the above function to tell whether
+        a development version of WebKit2 is being used.
+        * WebKit2Prefix.h: Set WTF_USE_XPC_SERVICES to 1 when targeting the iOS Simulator, but not
+        when targeting Mountain Lion.
+
+2014-04-19  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Crash in -[WKWebProcessPlugInHitTestResult nodeHandle] when nodeHandle() is null
         https://bugs.webkit.org/show_bug.cgi?id=131888
 
