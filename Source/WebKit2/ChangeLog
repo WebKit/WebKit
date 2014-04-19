@@ -1,3 +1,31 @@
+2014-04-18  Anders Carlsson  <andersca@apple.com>
+
+        Don't allow app sandboxed apps without the network client entitlement to launch the network process
+        https://bugs.webkit.org/show_bug.cgi?id=131868
+        <rdar://problem/12354188>
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (WebKit::NetworkServiceInitializerDelegate::NetworkServiceInitializerDelegate):
+        Add a new delegate that implements checkEntitlements().
+
+        (NetworkServiceInitializer):
+        Pass the new delegate to XPCServiceInitializer.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        Call checkEntitlements.
+
+        (WebKit::XPCServiceInitializerDelegate::checkEntitlements):
+        Return true.
+
+        (WebKit::XPCServiceInitializerDelegate::hasEntitlement):
+        Helper function that returns whether a client has the given entitlement.
+
+        (WebKit::XPCServiceInitializerDelegate::isClientSandboxed):
+        Helper function that checks whether the client is sandboxed.
+
 2014-04-18  Alice Barraclough  <alice.barraclough@webkit.org>
 
         Find on page - extend API by providing highlighted match index
