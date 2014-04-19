@@ -3698,6 +3698,9 @@ void WebPage::runModal()
 
     m_isRunningModal = true;
     send(Messages::WebPageProxy::RunModal());
+#if !ASSERT_DISABLED
+    Ref<WebPage> protector(*this);
+#endif
     RunLoop::run();
     ASSERT(!m_isRunningModal);
 }
