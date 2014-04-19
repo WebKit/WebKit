@@ -60,8 +60,10 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
     , m_isImagination(false)
     , m_maySupportMultisampling(true)
     , m_requiresBuiltInFunctionEmulation(false)
+    , m_requiresRestrictedMaximumTextureSize(false)
 {
     m_vendor = String(reinterpret_cast<const char*>(::glGetString(GL_VENDOR)));
+    m_renderer = String(reinterpret_cast<const char*>(::glGetString(GL_RENDERER)));
 
     Vector<String> vendorComponents;
     m_vendor.lower().split(' ', vendorComponents);
@@ -96,6 +98,10 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
 
     if (m_isAMD && !systemSupportsMultisampling)
         m_maySupportMultisampling = false;
+
+    // Intel HD 3000 devices have problems with large textures. <rdar://problem/16649140>
+    if (m_isIntel)
+        m_requiresRestrictedMaximumTextureSize = m_renderer.startsWith("Intel HD Graphics 3000");
 #endif
 }
 

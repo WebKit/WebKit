@@ -67,6 +67,7 @@ public:
 
     virtual bool maySupportMultisampling() { return m_maySupportMultisampling; }
     virtual bool requiresBuiltInFunctionEmulation() { return m_requiresBuiltInFunctionEmulation; }
+    virtual bool requiresRestrictedMaximumTextureSize() { return m_requiresRestrictedMaximumTextureSize; }
 
 protected:
     friend class Extensions3DOpenGLES;
@@ -88,8 +89,10 @@ protected:
     bool m_isImagination;
     bool m_maySupportMultisampling;
     bool m_requiresBuiltInFunctionEmulation;
+    bool m_requiresRestrictedMaximumTextureSize;
 
     String m_vendor;
+    String m_renderer;
 };
 
 } // namespace WebCore

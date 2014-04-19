@@ -240,6 +240,16 @@ void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
         *value /= 4;
         break;
 #endif
+    case MAX_TEXTURE_SIZE:
+        ::glGetIntegerv(MAX_TEXTURE_SIZE, value);
+        if (getExtensions()->requiresRestrictedMaximumTextureSize())
+            *value = std::min(4096, *value);
+        break;
+    case MAX_CUBE_MAP_TEXTURE_SIZE:
+        ::glGetIntegerv(MAX_CUBE_MAP_TEXTURE_SIZE, value);
+        if (getExtensions()->requiresRestrictedMaximumTextureSize())
+            *value = std::min(1024, *value);
+        break;
     default:
         ::glGetIntegerv(pname, value);
     }

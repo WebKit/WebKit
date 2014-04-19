@@ -1,3 +1,25 @@
+2014-04-18  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Limit maximum texture sizes on older Intel hardware
+        https://bugs.webkit.org/show_bug.cgi?id=131867
+
+        Reviewed by Geoffrey Garen.
+
+        Both Chrome and Firefox limit the MAX_TEXTURE_SIZE on
+        older Intel hardware to be at most 4096. This does the
+        same for WebKit.
+
+        * platform/graphics/Extensions3D.h: Add requiresRestrictedMaximumTextureSize() accessor.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::Extensions3DOpenGLCommon): Record the value of GL_RENDERER
+        and test for "Intel HD Graphics 3000", which is the problematic hardware.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.h:
+        (WebCore::Extensions3DOpenGLCommon::requiresRestrictedMaximumTextureSize): Getter.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::getIntegerv): If you're asking for MAX_TEXTURE_SIZE or
+        MAX_CUBE_MAP_TEXTURE_SIZE, and you're on problematic hardware, return a clamped value
+        (4096 and 1024 respectively).
+
 2014-04-18  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Add parsing support for gradients

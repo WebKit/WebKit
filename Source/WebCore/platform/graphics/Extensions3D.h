@@ -253,8 +253,10 @@ public:
     virtual bool maySupportMultisampling() = 0;
 
     // Some configurations have bugs regarding built-in functions in their OpenGL drivers
-    // that must be avoided. Ports should implement this flag such configurations.
+    // that must be avoided. Ports should implement these flags on such configurations.
     virtual bool requiresBuiltInFunctionEmulation() = 0;
+    virtual bool requiresRestrictedMaximumTextureSize() = 0;
+
 };
 
 } // namespace WebCore
