@@ -1,3 +1,23 @@
+2014-04-19  Darin Adler  <darin@apple.com>
+
+        Telephone number detection should respect its setting consistently
+        https://bugs.webkit.org/show_bug.cgi?id=131893
+        rdar://problem/16597639
+
+        Reviewed by Tim Horton.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedSelection): Only start the timer
+        if shouldDetectTelephoneNumbers returns true.
+        (WebCore::Editor::shouldDetectTelephoneNumbers): Added. Calls both
+        isTelephoneNumberParsingEnabled and TelephoneNumberDetector::isSupported.
+        (WebCore::Editor::scanSelectionForTelephoneNumbers): Use
+        shouldDetectTelephoneNumbers.
+        (WebCore::Editor::clearDataDetectedTelephoneNumbers): Use document()
+        instead of m_frame.document().
+
+        * editing/Editor.h: Added declaration of shouldDetectTelephoneNumbers.
+
 2014-04-19  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Harden the layout in case there are no regions

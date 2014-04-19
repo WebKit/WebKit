@@ -507,6 +507,7 @@ private:
     bool m_editorUIUpdateTimerWasTriggeredByDictation;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+    bool shouldDetectTelephoneNumbers();
     void scanSelectionForTelephoneNumbers(Timer<Editor>&);
     void scanRangeForTelephoneNumbers(Range&, const StringView&, Vector<RefPtr<Range>>& markedRanges);
     void clearDataDetectedTelephoneNumbers();

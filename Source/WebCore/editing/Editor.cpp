@@ -3324,7 +3324,8 @@ void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::
         client()->respondToChangedSelection(&m_frame);
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
-    m_telephoneNumberDetectionUpdateTimer.startOneShot(0);
+    if (shouldDetectTelephoneNumbers())
+        m_telephoneNumberDetectionUpdateTimer.startOneShot(0);
 #endif
 
     setStartNewKillRingSequence(true);
@@ -3340,15 +3341,18 @@ void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+
+bool Editor::shouldDetectTelephoneNumbers()
+{
+    if (!m_frame.document())
+        return false;
+    return document().isTelephoneNumberParsingEnabled() && TelephoneNumberDetector::isSupported();
+}
+
 void Editor::scanSelectionForTelephoneNumbers(Timer<Editor>&)
 {
-    if (!TelephoneNumberDetector::isSupported())
+    if (!shouldDetectTelephoneNumbers())
         return;
-
-    if (!m_frame.document())
-        return;
-
-    clearDataDetectedTelephoneNumbers();
 
     Vector<RefPtr<Range>> markedRanges;
 
@@ -3409,10 +3413,11 @@ void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& string
 
 void Editor::clearDataDetectedTelephoneNumbers()
 {
-    m_frame.document()->markers().removeMarkers(DocumentMarker::TelephoneNumber);
+    document().markers().removeMarkers(DocumentMarker::TelephoneNumber);
 
     // FIXME: Do other UI cleanup here once we have other UI.
 }
+
 #endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
 
 void Editor::updateEditorUINowIfScheduled()
