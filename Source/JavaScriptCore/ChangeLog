@@ -1,3 +1,30 @@
+2014-04-18  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION(r164205): WebKit crash @StructureIDTable::get.
+        <https://webkit.org/b/130539>
+
+        Reviewed by Geoffrey Garen.
+
+        prepareOSREntry() prepares for OSR entry by first copying the local var
+        values from the baseline frame to a scartch buffer, which is then used
+        to fill in the locals in their new position in the DFG frame.  Unfortunately,
+        prepareOSREntry() was using the DFG frame's frameRegisterCount as the frame
+        size of the baseline frame.  As a result, some values of locals in the
+        baseline frame were not saved off, and the DFG frame may get initialized
+        with random content that happened to be in the uninitialized (and possibly
+        unallocated) portions of the scratch buffer.
+
+        The fix is to use OSREntryData::m_expectedValues.numberOfLocals() as the
+        number of locals in the baseline frame that we want to copy to the scratch
+        buffer.
+
+        Note: osrEntryThunkGenerator() is expecting the DFG frameRegisterCount
+        at offset 0 in the scratch buffer.  So, we continue to write that value
+        there, not the baseline frame size.
+
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+
 2014-04-18  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Move InspectorProfilerAgent to JavaScriptCore

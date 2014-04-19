@@ -205,8 +205,10 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     // 3) Set up the data in the scratch buffer and perform data format conversions.
 
     unsigned frameSize = jitCode->common.frameRegisterCount;
-    
-    Register* scratch = bitwise_cast<Register*>(vm->scratchBufferForSize(sizeof(Register) * (2 + JSStack::CallFrameHeaderSize + frameSize))->dataBuffer());
+    unsigned baselineFrameSize = entry->m_expectedValues.numberOfLocals();
+    unsigned maxFrameSize = std::max(frameSize, baselineFrameSize);
+
+    Register* scratch = bitwise_cast<Register*>(vm->scratchBufferForSize(sizeof(Register) * (2 + JSStack::CallFrameHeaderSize + maxFrameSize))->dataBuffer());
     
     *bitwise_cast<size_t*>(scratch + 0) = frameSize;
     
@@ -218,7 +220,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     Register* pivot = scratch + 2 + JSStack::CallFrameHeaderSize;
     
-    for (int index = -JSStack::CallFrameHeaderSize; index < static_cast<int>(frameSize); ++index) {
+    for (int index = -JSStack::CallFrameHeaderSize; index < static_cast<int>(baselineFrameSize); ++index) {
         VirtualRegister reg(-1 - index);
         
         if (reg.isLocal()) {
