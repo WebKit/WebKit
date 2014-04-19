@@ -1,3 +1,15 @@
+2014-04-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix AVPlayerController leak on pages with video
+        https://bugs.webkit.org/show_bug.cgi?id=131878
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController init]):
+        Assigning to the retain property will increment the count,
+        so balance the alloc with an autorelease.
+
 2014-04-19  Andreas Kling  <akling@apple.com>
 
         Slap ALWAYS_INLINE on Element attribute lookup things.

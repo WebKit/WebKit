@@ -121,7 +121,7 @@ SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend)
         return self;
     
     initAVPlayerController();
-    self.playerControllerProxy = [[classAVPlayerController alloc] init];
+    self.playerControllerProxy = [[[classAVPlayerController alloc] init] autorelease];
     return self;
 }
 
