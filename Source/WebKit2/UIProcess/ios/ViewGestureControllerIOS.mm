@@ -116,7 +116,7 @@ static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
         [recognizer setEdges:UIRectEdgeRight];
         break;
     }
-    return recognizer;
+    return [recognizer autorelease];
 }
 
 @end

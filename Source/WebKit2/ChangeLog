@@ -1,3 +1,13 @@
+2014-04-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix leak of UIScreenEdgePanGestureRecognizer in WKSwipeTransitionController
+        https://bugs.webkit.org/show_bug.cgi?id=131877
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (-[WKSwipeTransitionController gestureRecognizerForInteractiveTransition:WithTarget:action:]):
+
 2014-04-19  Dan Bernstein  <mitz@apple.com>
 
         Don’t install a source file inside WebProcess.app.
