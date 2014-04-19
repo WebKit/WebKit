@@ -36,13 +36,6 @@ VMHeap::VMHeap()
 {
 }
 
-void VMHeap::allocateXSmallChunk()
-{
-    XSmallChunk* chunk = XSmallChunk::create();
-    for (auto* it = chunk->begin(); it != chunk->end(); ++it)
-        m_xSmallPages.push(it);
-}
-
 void VMHeap::allocateSmallChunk()
 {
     SmallChunk* chunk = SmallChunk::create();

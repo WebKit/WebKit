@@ -58,7 +58,7 @@ private:
 template<class Traits>
 inline auto Line<Traits>::get(void* object) -> Line*
 {
-    BASSERT(!isLarge(object));
+    BASSERT(isSmallOrMedium(object));
     Chunk* chunk = Chunk::get(object);
     size_t lineNumber = (reinterpret_cast<char*>(object) - reinterpret_cast<char*>(chunk)) / lineSize;
     return &chunk->lines()[lineNumber];

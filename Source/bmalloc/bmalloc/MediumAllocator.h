@@ -73,7 +73,7 @@ inline void* MediumAllocator::allocate(size_t size)
 
     m_remaining -= size;
     void* object = m_end - m_remaining - size;
-    BASSERT(objectType(object) == Medium);
+    BASSERT(isSmallOrMedium(object) && !isSmall(object));
 
     ++m_objectCount;
     return object;
@@ -99,7 +99,6 @@ inline void MediumAllocator::refill(MediumLine* line)
     m_end = line->end();
     m_remaining = mediumLineSize;
     m_objectCount = 0;
-    BASSERT(objectType(m_end - 1) == Medium);
 }
 
 } // namespace bmalloc

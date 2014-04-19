@@ -1,5 +1,16 @@
 2014-04-19  Geoffrey Garen  <ggaren@apple.com>
 
+        Rolled out r167502 because it caused a crash on the facebook benchmark.
+
+        Unreviewed.
+
+            bmalloc: Added an XSmall line size
+            https://bugs.webkit.org/show_bug.cgi?id=131851
+
+            Reviewed by Sam Weinig.
+
+2014-04-19  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: Mutex should be harder to use wrong
         https://bugs.webkit.org/show_bug.cgi?id=131879
 

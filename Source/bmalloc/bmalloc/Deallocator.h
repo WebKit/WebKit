@@ -30,7 +30,6 @@
 #include "MediumLine.h"
 #include "Sizes.h"
 #include "SmallLine.h"
-#include "XSmallLine.h"
 
 namespace bmalloc {
 
@@ -44,9 +43,6 @@ public:
     void deallocate(void*);
     bool deallocateFastCase(void*);
     void deallocateSlowCase(void*);
-
-    void deallocateXSmallLine(std::lock_guard<StaticMutex>&, XSmallLine*);
-    XSmallLine* allocateXSmallLine();
 
     void deallocateSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
     SmallLine* allocateSmallLine();
@@ -62,14 +58,13 @@ private:
     void processObjectLog();
 
     FixedVector<void*, deallocatorLogCapacity> m_objectLog;
-    FixedVector<XSmallLine*, xSmallLineCacheCapacity> m_xSmallLineCache;
     FixedVector<SmallLine*, smallLineCacheCapacity> m_smallLineCache;
     FixedVector<MediumLine*, mediumLineCacheCapacity> m_mediumLineCache;
 };
 
 inline bool Deallocator::deallocateFastCase(void* object)
 {
-    if (isLarge(object))
+    if (!isSmallOrMedium(object))
         return false;
 
     BASSERT(object);

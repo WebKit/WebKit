@@ -32,7 +32,6 @@
 #include "PerProcess.h"
 #include "SmallChunk.h"
 #include "XLargeChunk.h"
-#include "XSmallChunk.h"
 #include <thread>
 
 namespace bmalloc {
@@ -61,7 +60,6 @@ void Heap::concurrentScavenge()
     
 void Heap::scavenge(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration)
 {
-    scavengeXSmallPages(lock, sleepDuration);
     scavengeSmallPages(lock, sleepDuration);
     scavengeMediumPages(lock, sleepDuration);
     scavengeLargeRanges(lock, sleepDuration);
@@ -82,22 +80,6 @@ void Heap::scavengeSmallPages(std::unique_lock<StaticMutex>& lock, std::chrono::
         if (!m_smallPages.size())
             return;
         m_vmHeap.deallocateSmallPage(lock, m_smallPages.pop());
-    }
-}
-
-void Heap::scavengeXSmallPages(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration)
-{
-    while (1) {
-        if (m_isAllocatingPages) {
-            m_isAllocatingPages = false;
-
-            sleep(lock, sleepDuration);
-            continue;
-        }
-
-        if (!m_xSmallPages.size())
-            return;
-        m_vmHeap.deallocateXSmallPage(lock, m_xSmallPages.pop());
     }
 }
 
@@ -132,27 +114,6 @@ void Heap::scavengeLargeRanges(std::unique_lock<StaticMutex>& lock, std::chrono:
             return;
         m_vmHeap.deallocateLargeRange(lock, range);
     }
-}
-
-XSmallLine* Heap::allocateXSmallLineSlowCase(std::lock_guard<StaticMutex>& lock)
-{
-    m_isAllocatingPages = true;
-
-    XSmallPage* page = [this]() {
-        if (m_xSmallPages.size())
-            return m_xSmallPages.pop();
-        
-        XSmallPage* page = m_vmHeap.allocateXSmallPage();
-        vmAllocatePhysicalPages(page->begin()->begin(), vmPageSize);
-        return page;
-    }();
-
-    XSmallLine* line = page->begin();
-    for (auto it = line + 1; it != page->end(); ++it)
-        m_xSmallLines.push(it);
-
-    page->ref(lock);
-    return line;
 }
 
 SmallLine* Heap::allocateSmallLineSlowCase(std::lock_guard<StaticMutex>& lock)

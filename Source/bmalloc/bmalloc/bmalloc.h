@@ -50,13 +50,7 @@ inline void* realloc(void* object, size_t newSize)
         return result;
 
     size_t oldSize = 0;
-    switch (objectType(object)) {
-    case XSmall: {
-        // We don't have an exact size, but we can calculate a maximum.
-        void* end = roundUpToMultipleOf<xSmallLineSize>(static_cast<char*>(object) + 1);
-        oldSize = static_cast<char*>(end) - static_cast<char*>(object);
-        break;
-    }
+    switch(objectType(object)) {
     case Small: {
         // We don't have an exact size, but we can calculate a maximum.
         void* end = roundUpToMultipleOf<smallLineSize>(static_cast<char*>(object) + 1);

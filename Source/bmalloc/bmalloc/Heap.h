@@ -28,12 +28,15 @@
 
 #include "FixedVector.h"
 #include "VMHeap.h"
+#include "MediumLine.h"
 #include "Mutex.h"
+#include "SmallPage.h"
 #include "MediumChunk.h"
+#include "MediumPage.h"
 #include "SegregatedFreeList.h"
 #include "SmallChunk.h"
+#include "SmallLine.h"
 #include "Vector.h"
-#include "XSmallChunk.h"
 #include <array>
 #include <mutex>
 
@@ -45,9 +48,6 @@ class EndTag;
 class Heap {
 public:
     Heap(std::lock_guard<StaticMutex>&);
-    
-    XSmallLine* allocateXSmallLine(std::lock_guard<StaticMutex>&);
-    void deallocateXSmallLine(std::lock_guard<StaticMutex>&, XSmallLine*);
 
     SmallLine* allocateSmallLine(std::lock_guard<StaticMutex>&);
     void deallocateSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
@@ -66,7 +66,6 @@ public:
 private:
     ~Heap() = delete;
 
-    XSmallLine* allocateXSmallLineSlowCase(std::lock_guard<StaticMutex>&);
     SmallLine* allocateSmallLineSlowCase(std::lock_guard<StaticMutex>&);
     MediumLine* allocateMediumLineSlowCase(std::lock_guard<StaticMutex>&);
 
@@ -79,16 +78,13 @@ private:
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& hasPhysicalPages);
     
     void concurrentScavenge();
-    void scavengeXSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
     void scavengeSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
     void scavengeMediumPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
     void scavengeLargeRanges(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
 
-    Vector<XSmallLine*> m_xSmallLines;
     Vector<SmallLine*> m_smallLines;
     Vector<MediumLine*> m_mediumLines;
 
-    Vector<XSmallPage*> m_xSmallPages;
     Vector<SmallPage*> m_smallPages;
     Vector<MediumPage*> m_mediumPages;
 
@@ -99,31 +95,6 @@ private:
     VMHeap m_vmHeap;
     AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;
 };
-
-inline void Heap::deallocateXSmallLine(std::lock_guard<StaticMutex>& lock, XSmallLine* line)
-{
-    XSmallPage* page = XSmallPage::get(line);
-    if (page->deref(lock)) {
-        m_xSmallPages.push(page);
-        m_scavenger.run();
-        return;
-    }
-    m_xSmallLines.push(line);
-}
-
-inline XSmallLine* Heap::allocateXSmallLine(std::lock_guard<StaticMutex>& lock)
-{
-    while (m_xSmallLines.size()) {
-        XSmallLine* line = m_xSmallLines.pop();
-        XSmallPage* page = XSmallPage::get(line);
-        if (!page->refCount(lock)) // The line was promoted to the small pages list.
-            continue;
-        page->ref(lock);
-        return line;
-    }
-
-    return allocateXSmallLineSlowCase(lock);
-}
 
 inline void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, SmallLine* line)
 {

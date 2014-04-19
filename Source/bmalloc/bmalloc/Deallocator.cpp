@@ -31,7 +31,6 @@
 #include "Inline.h"
 #include "PerProcess.h"
 #include "SmallChunk.h"
-#include "XSmallChunk.h"
 #include <algorithm>
 #include <sys/mman.h>
 
@@ -58,8 +57,6 @@ void Deallocator::scavenge()
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
     Heap* heap = PerProcess<Heap>::getFastCase();
     
-    while (m_xSmallLineCache.size())
-        heap->deallocateXSmallLine(lock, m_xSmallLineCache.pop());
     while (m_smallLineCache.size())
         heap->deallocateSmallLine(lock, m_smallLineCache.pop());
     while (m_mediumLineCache.size())
@@ -83,18 +80,13 @@ void Deallocator::processObjectLog()
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
     
     for (auto object : m_objectLog) {
-        if (isXSmall(object)) {
-            XSmallLine* line = XSmallLine::get(object);
-            if (!line->deref(lock))
-                continue;
-            deallocateXSmallLine(lock, line);
-        } else if (isSmall(object)) {
+        if (isSmall(object)) {
             SmallLine* line = SmallLine::get(object);
             if (!line->deref(lock))
                 continue;
             deallocateSmallLine(lock, line);
         } else {
-            BASSERT(isMedium(object));
+            BASSERT(isSmallOrMedium(object));
             MediumLine* line = MediumLine::get(object);
             if (!line->deref(lock))
                 continue;
@@ -112,7 +104,7 @@ void Deallocator::deallocateSlowCase(void* object)
     if (!object)
         return;
 
-    if (!isLarge(object)) {
+    if (isSmallOrMedium(object)) {
         processObjectLog();
         m_objectLog.push(object);
         return;
@@ -133,14 +125,6 @@ void Deallocator::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, SmallL
     m_smallLineCache.push(line);
 }
 
-void Deallocator::deallocateXSmallLine(std::lock_guard<StaticMutex>& lock, XSmallLine* line)
-{
-    if (m_xSmallLineCache.size() == m_xSmallLineCache.capacity())
-        return PerProcess<Heap>::getFastCase()->deallocateXSmallLine(lock, line);
-
-    m_xSmallLineCache.push(line);
-}
-
 SmallLine* Deallocator::allocateSmallLine()
 {
     if (!m_smallLineCache.size()) {
@@ -152,19 +136,6 @@ SmallLine* Deallocator::allocateSmallLine()
     }
 
     return m_smallLineCache.pop();
-}
-
-XSmallLine* Deallocator::allocateXSmallLine()
-{
-    if (!m_xSmallLineCache.size()) {
-        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-        Heap* heap = PerProcess<Heap>::getFastCase();
-
-        while (m_xSmallLineCache.size() != m_xSmallLineCache.capacity())
-            m_xSmallLineCache.push(heap->allocateXSmallLine(lock));
-    }
-
-    return m_xSmallLineCache.pop();
 }
 
 void Deallocator::deallocateMediumLine(std::lock_guard<StaticMutex>& lock, MediumLine* line)

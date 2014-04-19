@@ -30,27 +30,16 @@ namespace bmalloc {
 
 ObjectType objectType(void* object)
 {
-    switch (mask(reinterpret_cast<uintptr_t>(object), typeMask)) {
-    case xSmallType: {
-        return XSmall;
-    }
-    case smallType: {
-        return Small;
-    }
-    case mediumType: {
+    if (isSmallOrMedium(object)) {
+        if (isSmall(object))
+            return Small;
         return Medium;
     }
-    case largeType: {
-        BeginTag* beginTag = LargeChunk::beginTag(object);
-        if (!beginTag->isXLarge())
-            return Large;
-        return XLarge;
-    }
-    default: {
-        RELEASE_BASSERT(false);
-        return XLarge;
-    }
-    }
+    
+    BeginTag* beginTag = LargeChunk::beginTag(object);
+    if (!beginTag->isXLarge())
+        return Large;
+    return XLarge;
 }
 
 } // namespace bmalloc

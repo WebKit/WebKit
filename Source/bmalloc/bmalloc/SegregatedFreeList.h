@@ -58,7 +58,7 @@ private:
     Range take(List&, size_t);
     Range takeGreedy(List&, size_t);
 
-    std::array<List, 18> m_lists;
+    std::array<List, 19> m_lists;
 };
 
 } // namespace bmalloc

@@ -28,6 +28,7 @@
 
 #include "BAssert.h"
 #include "SmallChunk.h"
+#include "SmallLine.h"
 
 namespace bmalloc {
 
@@ -84,7 +85,7 @@ inline void* SmallAllocator::allocate()
     --m_remaining;
     char* result = m_ptr;
     m_ptr += m_size;
-    BASSERT(objectType(result) == Small);
+    BASSERT(isSmall(result));
     return result;
 }
 
