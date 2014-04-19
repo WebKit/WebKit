@@ -23,42 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSConsoleClient_h
-#define JSConsoleClient_h
+#ifndef WorkerProfilerAgent_h
+#define WorkerProfilerAgent_h
 
-#include "ConsoleClient.h"
+#if ENABLE(INSPECTOR)
 
-namespace Inspector {
+#include "WebProfilerAgent.h"
 
-class InspectorConsoleAgent;
-class InspectorProfilerAgent;
+namespace WebCore {
 
-class JSConsoleClient final : public JSC::ConsoleClient {
+class WorkerGlobalScope;
+
+class WorkerProfilerAgent final : public WebProfilerAgent {
+    WTF_MAKE_NONCOPYABLE(WorkerProfilerAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit JSConsoleClient(InspectorConsoleAgent*, InspectorProfilerAgent*);
-    virtual ~JSConsoleClient() { }
-
-    static bool logToSystemConsole();
-    static void setLogToSystemConsole(bool);
-    static void initializeLogToSystemConsole();
-
-protected:
-    virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<ScriptArguments>) override;
-    virtual void count(JSC::ExecState*, PassRefPtr<ScriptArguments>) override;
-    virtual void profile(JSC::ExecState*, const String& title) override;
-    virtual void profileEnd(JSC::ExecState*, const String& title) override;
-    virtual void time(JSC::ExecState*, const String& title) override;
-    virtual void timeEnd(JSC::ExecState*, const String& title) override;
-    virtual void timeStamp(JSC::ExecState*, PassRefPtr<ScriptArguments>) override;
+    WorkerProfilerAgent(InstrumentingAgents*, WorkerGlobalScope*);
+    virtual ~WorkerProfilerAgent() { }
 
 private:
-    void warnUnimplemented(const String& method);
-    void internalAddMessage(MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    virtual JSC::ExecState* profilingGlobalExecState() const override;
 
-    InspectorConsoleAgent* m_consoleAgent;
-    InspectorProfilerAgent* m_profilerAgent;
+    WorkerGlobalScope* m_workerGlobalScope;
 };
 
-}
+} // namespace WebCore
 
-#endif // !defined(JSConsoleClient_h)
+#endif // ENABLE(INSPECTOR)
+
+#endif // !defined(WorkerProfilerAgent_h)

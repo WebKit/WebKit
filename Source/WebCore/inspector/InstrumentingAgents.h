@@ -41,6 +41,7 @@
 namespace Inspector {
 class InspectorAgent;
 class InspectorDebuggerAgent;
+class InspectorProfilerAgent;
 }
 
 namespace WebCore {
@@ -53,7 +54,6 @@ class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorLayerTreeAgent;
 class InspectorPageAgent;
-class InspectorProfilerAgent;
 class InspectorResourceAgent;
 class InspectorReplayAgent;
 class InspectorTimelineAgent;
@@ -130,8 +130,8 @@ public:
     InspectorDOMDebuggerAgent* inspectorDOMDebuggerAgent() const { return m_inspectorDOMDebuggerAgent; }
     void setInspectorDOMDebuggerAgent(InspectorDOMDebuggerAgent* agent) { m_inspectorDOMDebuggerAgent = agent; }
 
-    InspectorProfilerAgent* inspectorProfilerAgent() const { return m_inspectorProfilerAgent; }
-    void setInspectorProfilerAgent(InspectorProfilerAgent* agent) { m_inspectorProfilerAgent = agent; }
+    Inspector::InspectorProfilerAgent* inspectorProfilerAgent() const { return m_inspectorProfilerAgent; }
+    void setInspectorProfilerAgent(Inspector::InspectorProfilerAgent* agent) { m_inspectorProfilerAgent = agent; }
 
     InspectorWorkerAgent* inspectorWorkerAgent() const { return m_inspectorWorkerAgent; }
     void setInspectorWorkerAgent(InspectorWorkerAgent* agent) { m_inspectorWorkerAgent = agent; }
@@ -165,7 +165,7 @@ private:
     Inspector::InspectorDebuggerAgent* m_inspectorDebuggerAgent;
     PageDebuggerAgent* m_pageDebuggerAgent;
     InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent;
-    InspectorProfilerAgent* m_inspectorProfilerAgent;
+    Inspector::InspectorProfilerAgent* m_inspectorProfilerAgent;
     InspectorWorkerAgent* m_inspectorWorkerAgent;
 };
 

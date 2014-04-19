@@ -32,18 +32,18 @@
 #include <inspector/ScriptCallStack.h>
 #include <runtime/ConsoleClient.h>
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 class ExecState;
+class Profile;
 }
 
 namespace WebCore {
 
 class Document;
 class Page;
-class ScriptProfile;
-typedef Vector<RefPtr<ScriptProfile>> ProfilesArray;
+
+typedef Vector<RefPtr<JSC::Profile>> ProfilesArray;
 
 class PageConsole final : public JSC::ConsoleClient {
 public:

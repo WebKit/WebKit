@@ -1,3 +1,88 @@
+2014-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Move InspectorProfilerAgent to JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=131673
+
+        Passes existing profiler and inspector tests.
+
+        Reviewed by Joseph Pecoraro.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * ForwardingHeaders/inspector/agents/InspectorProfilerAgent.h: Added.
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptProfile.cpp: Removed.
+        * bindings/js/ScriptProfile.h:
+        * bindings/js/ScriptProfiler.cpp: Removed.
+        * bindings/js/ScriptProfiler.h: Removed.
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::profilerEnabled):
+        (WebCore::InspectorInstrumentation::startProfiling):
+        (WebCore::InspectorInstrumentation::stopProfiling):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::startProfilingImpl):
+        (WebCore::InspectorInstrumentation::stopProfilingImpl):
+        (WebCore::InspectorInstrumentation::consoleTimeStampImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorProfilerAgent.cpp: Removed.
+        * inspector/InspectorProfilerAgent.h: Removed.
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::startProfiling):
+        (WebCore::stopProfiling):
+        (WebCore::InspectorTimelineAgent::willCallFunction):
+        (WebCore::InspectorTimelineAgent::didCallFunction):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didDispatchXHRLoadEvent): Deleted.
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorProfilerAgent):
+        (WebCore::InstrumentingAgents::setInspectorProfilerAgent):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::sourceMapURLForScript): Deleted.
+        * inspector/PageDebuggerAgent.h:
+        * inspector/PageProfilerAgent.cpp: Added.
+        (WebCore::PageProfilerAgent::PageProfilerAgent):
+        (WebCore::PageProfilerAgent::profilingGlobalExecState):
+        * inspector/PageProfilerAgent.h: Added.
+        (WebCore::PageProfilerAgent::~PageProfilerAgent):
+        * inspector/ScriptProfile.idl:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::appendProfile):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/WebConsoleAgent.cpp:
+        * inspector/WebProfilerAgent.cpp: Added.
+        (WebCore::WebProfilerAgent::WebProfilerAgent):
+        (WebCore::WebProfilerAgent::enable):
+        (WebCore::WebProfilerAgent::disable):
+        * inspector/WebProfilerAgent.h: Added.
+        (WebCore::WebProfilerAgent::~WebProfilerAgent):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        * inspector/WorkerProfilerAgent.cpp: Added.
+        (WebCore::WorkerProfilerAgent::WorkerProfilerAgent):
+        (WebCore::WorkerProfilerAgent::profilingGlobalExecState):
+        * inspector/WorkerProfilerAgent.h: Added.
+        (WebCore::WorkerProfilerAgent::~WorkerProfilerAgent):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        * page/PageConsole.cpp:
+        (WebCore::PageConsole::profile):
+        (WebCore::PageConsole::profileEnd):
+        (WebCore::PageConsole::time): Deleted.
+        (WebCore::PageConsole::timeEnd): Deleted.
+        (WebCore::PageConsole::timeStamp): Deleted.
+        * page/PageConsole.h:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * xml/XMLHttpRequest.cpp:
+
 2014-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         Contents of directly composited image layers are sometimes missing

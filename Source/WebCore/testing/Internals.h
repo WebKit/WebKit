@@ -31,6 +31,7 @@
 #include "ContextDestructionObserver.h"
 #include "ExceptionCodePlaceholder.h"
 #include "NodeList.h"
+#include "PageConsole.h"
 #include <bindings/ScriptValue.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/Float32Array.h>
@@ -56,13 +57,11 @@ class Node;
 class Page;
 class Range;
 class ScriptExecutionContext;
-class ScriptProfile;
 class SerializedScriptValue;
 class TimeRanges;
 class TypeConversions;
 
 typedef int ExceptionCode;
-typedef Vector<RefPtr<ScriptProfile>> ProfilesArray;
 
 class Internals : public RefCounted<Internals>
                 , public ContextDestructionObserver {

@@ -33,7 +33,6 @@
 #include "DOMWindow.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
-#include "ScriptProfiler.h"
 #include "ScriptState.h"
 #include "WebInjectedScriptManager.h"
 #include <inspector/ConsoleMessage.h>

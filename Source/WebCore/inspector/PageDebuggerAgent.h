@@ -56,9 +56,6 @@ public:
     virtual PageScriptDebugServer& scriptDebugServer() override;
 
 protected:
-    virtual void enable() override;
-    virtual void disable(bool isBeingDestroyed) override;
-
     virtual String sourceMapURLForScript(const Script&) override;
 
 private:

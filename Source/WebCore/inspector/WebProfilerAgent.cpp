@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptProfile_h
-#define ScriptProfile_h
+#include "config.h"
+#include "WebProfilerAgent.h"
 
-#include <profiler/Profile.h>
+#if ENABLE(INSPECTOR)
+
+#include "InstrumentingAgents.h"
+
+using namespace Inspector;
 
 namespace WebCore {
 
-typedef JSC::Profile ScriptProfile;
+WebProfilerAgent::WebProfilerAgent(InstrumentingAgents* instrumentingAgents)
+    : InspectorProfilerAgent()
+    , m_instrumentingAgents(instrumentingAgents)
+{
+}
+
+void WebProfilerAgent::enable(ShouldRecompile shouldRecompile)
+{
+    InspectorProfilerAgent::enable(shouldRecompile);
+    m_instrumentingAgents->setInspectorProfilerAgent(this);
+}
+
+void WebProfilerAgent::disable(ShouldRecompile shouldRecompile)
+{
+    InspectorProfilerAgent::enable(shouldRecompile);
+    m_instrumentingAgents->setInspectorProfilerAgent(nullptr);
+}
 
 } // namespace WebCore
 
-#endif // ScriptProfile_h
+#endif // ENABLE(INSPECTOR)

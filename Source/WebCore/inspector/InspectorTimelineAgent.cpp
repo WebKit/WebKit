@@ -50,11 +50,11 @@
 #include "RenderView.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "ScriptProfiler.h"
 #include "ScriptState.h"
 #include "TimelineRecordFactory.h"
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/ScriptBreakpoint.h>
+#include <profiler/LegacyProfiler.h>
 #include <wtf/CurrentTime.h>
 
 using namespace Inspector;
@@ -129,13 +129,23 @@ void InspectorTimelineAgent::setPageScriptDebugServer(PageScriptDebugServer* scr
     m_scriptDebugServer = scriptDebugServer;
 }
 
+static inline void startProfiling(Frame* frame, const String& title)
+{
+    JSC::LegacyProfiler::profiler()->startProfiling(toJSDOMWindow(frame, debuggerWorld())->globalExec(), title);
+}
+
+static inline PassRefPtr<JSC::Profile> stopProfiling(Frame* frame, const String& title)
+{
+    return JSC::LegacyProfiler::profiler()->stopProfiling(toJSDOMWindow(frame, debuggerWorld())->globalExec(), title);
+}
+
 void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine, Frame* frame)
 {
     pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall, true, frame);
 
     if (frame && !m_recordingProfile) {
         m_recordingProfile = true;
-        ScriptProfiler::start(toJSDOMWindow(frame, debuggerWorld())->globalExec(), ASCIILiteral("Timeline FunctionCall"));
+        startProfiling(frame, ASCIILiteral("Timeline FunctionCall"));
     }
 }
 
@@ -148,7 +158,7 @@ void InspectorTimelineAgent::didCallFunction(Frame* frame)
         TimelineRecordEntry& entry = m_recordStack.last();
         ASSERT(entry.type == TimelineRecordType::FunctionCall);
 
-        RefPtr<ScriptProfile> profile = ScriptProfiler::stop(toJSDOMWindow(frame, debuggerWorld())->globalExec(), ASCIILiteral("Timeline FunctionCall"));
+        RefPtr<JSC::Profile> profile = stopProfiling(frame, ASCIILiteral("Timeline FunctionCall"));
         if (profile)
             TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
 
@@ -306,7 +316,7 @@ void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumbe
 
     if (frame && !m_recordingProfile) {
         m_recordingProfile = true;
-        ScriptProfiler::start(toJSDOMWindow(frame, debuggerWorld())->globalExec(), ASCIILiteral("Timeline EvaluateScript"));
+        startProfiling(frame, ASCIILiteral("Timeline EvaluateScript"));
     }
 }
 
@@ -319,7 +329,7 @@ void InspectorTimelineAgent::didEvaluateScript(Frame* frame)
         TimelineRecordEntry& entry = m_recordStack.last();
         ASSERT(entry.type == TimelineRecordType::EvaluateScript);
 
-        RefPtr<ScriptProfile> profile = ScriptProfiler::stop(toJSDOMWindow(frame, debuggerWorld())->globalExec(), ASCIILiteral("Timeline EvaluateScript"));
+        RefPtr<JSC::Profile> profile = stopProfiling(frame, ASCIILiteral("Timeline EvaluateScript"));
         if (profile)
             TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
 

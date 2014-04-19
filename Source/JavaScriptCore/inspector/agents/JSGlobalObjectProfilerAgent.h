@@ -23,42 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSConsoleClient_h
-#define JSConsoleClient_h
+#ifndef JSGlobalObjectProfilerAgent_h
+#define JSGlobalObjectProfilerAgent_h
 
-#include "ConsoleClient.h"
+#if ENABLE(INSPECTOR)
+
+#include "InspectorProfilerAgent.h"
+
+namespace JSC {
+class JSGlobalObject;
+}
 
 namespace Inspector {
 
-class InspectorConsoleAgent;
-class InspectorProfilerAgent;
-
-class JSConsoleClient final : public JSC::ConsoleClient {
+class JSGlobalObjectProfilerAgent final : public InspectorProfilerAgent {
 public:
-    explicit JSConsoleClient(InspectorConsoleAgent*, InspectorProfilerAgent*);
-    virtual ~JSConsoleClient() { }
-
-    static bool logToSystemConsole();
-    static void setLogToSystemConsole(bool);
-    static void initializeLogToSystemConsole();
-
-protected:
-    virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<ScriptArguments>) override;
-    virtual void count(JSC::ExecState*, PassRefPtr<ScriptArguments>) override;
-    virtual void profile(JSC::ExecState*, const String& title) override;
-    virtual void profileEnd(JSC::ExecState*, const String& title) override;
-    virtual void time(JSC::ExecState*, const String& title) override;
-    virtual void timeEnd(JSC::ExecState*, const String& title) override;
-    virtual void timeStamp(JSC::ExecState*, PassRefPtr<ScriptArguments>) override;
+    JSGlobalObjectProfilerAgent(JSC::JSGlobalObject&);
 
 private:
-    void warnUnimplemented(const String& method);
-    void internalAddMessage(MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    virtual JSC::ExecState* profilingGlobalExecState() const override;
 
-    InspectorConsoleAgent* m_consoleAgent;
-    InspectorProfilerAgent* m_profilerAgent;
+    JSC::JSGlobalObject& m_globalObject;
 };
 
-}
+} // namespace Inspector
 
-#endif // !defined(JSConsoleClient_h)
+#endif // ENABLE(INSPECTOR)
+
+#endif // !defined(JSGlobalObjectProfilerAgent_h)

@@ -763,7 +763,6 @@ set(WebCore_INSPECTOR_DOMAINS
     ${WEBCORE_DIR}/inspector/protocol/LayerTree.json
     ${WEBCORE_DIR}/inspector/protocol/Network.json
     ${WEBCORE_DIR}/inspector/protocol/Page.json
-    ${WEBCORE_DIR}/inspector/protocol/Profiler.json
     ${WEBCORE_DIR}/inspector/protocol/Timeline.json
     ${WEBCORE_DIR}/inspector/protocol/Worker.json
 )
@@ -1153,8 +1152,6 @@ set(WebCore_SOURCES
     bindings/js/ScriptCachedFrameData.cpp
     bindings/js/ScriptController.cpp
     bindings/js/ScriptGlobalObject.cpp
-    bindings/js/ScriptProfile.cpp
-    bindings/js/ScriptProfiler.cpp
     bindings/js/ScriptState.cpp
     bindings/js/SerializedScriptValue.cpp
     bindings/js/WebCoreTypedArrayController.cpp
@@ -1748,7 +1745,6 @@ set(WebCore_SOURCES
     inspector/InspectorNodeFinder.cpp
     inspector/InspectorOverlay.cpp
     inspector/InspectorPageAgent.cpp
-    inspector/InspectorProfilerAgent.cpp
     inspector/InspectorResourceAgent.cpp
     inspector/InspectorStyleSheet.cpp
     inspector/InspectorStyleTextEditor.cpp
@@ -1758,6 +1754,7 @@ set(WebCore_SOURCES
     inspector/NetworkResourcesData.cpp
     inspector/PageConsoleAgent.cpp
     inspector/PageDebuggerAgent.cpp
+    inspector/PageProfilerAgent.cpp
     inspector/PageRuntimeAgent.cpp
     inspector/PageScriptDebugServer.cpp
     inspector/TimelineRecordFactory.cpp
@@ -1765,9 +1762,11 @@ set(WebCore_SOURCES
     inspector/WebDebuggerAgent.cpp
     inspector/WebInjectedScriptHost.cpp
     inspector/WebInjectedScriptManager.cpp
+    inspector/WebProfilerAgent.cpp
     inspector/WorkerConsoleAgent.cpp
     inspector/WorkerDebuggerAgent.cpp
     inspector/WorkerInspectorController.cpp
+    inspector/WorkerProfilerAgent.cpp
     inspector/WorkerRuntimeAgent.cpp
 
     loader/CookieJar.cpp

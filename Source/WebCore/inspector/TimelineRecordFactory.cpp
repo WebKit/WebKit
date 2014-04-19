@@ -42,11 +42,11 @@
 #include "LayoutRect.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "ScriptProfile.h"
 #include <inspector/InspectorValues.h>
 #include <inspector/ScriptBreakpoint.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
+#include <inspector/agents/InspectorProfilerAgent.h>
 #include <wtf/CurrentTime.h>
 
 using namespace Inspector;
@@ -263,9 +263,9 @@ void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQ
     data->setArray("root", createQuad(quad));
 }
 
-void TimelineRecordFactory::appendProfile(InspectorObject* data, PassRefPtr<ScriptProfile> profile)
+void TimelineRecordFactory::appendProfile(InspectorObject* data, PassRefPtr<JSC::Profile> profile)
 {
-    data->setValue(ASCIILiteral("profile"), profile->buildInspectorObject());
+    data->setValue(ASCIILiteral("profile"), InspectorProfilerAgent::buildProfileInspectorObject(profile.get()));
 }
 
 } // namespace WebCore

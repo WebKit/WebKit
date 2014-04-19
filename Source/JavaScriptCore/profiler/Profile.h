@@ -33,41 +33,41 @@
 
 namespace JSC {
 
-    class Profile : public RefCounted<Profile> {
-    public:
-        static PassRefPtr<Profile> create(const String& title, unsigned uid);
-        virtual ~Profile();
+class JS_EXPORT_PRIVATE Profile : public RefCounted<Profile> {
+public:
+    static PassRefPtr<Profile> create(const String& title, unsigned uid);
+    virtual ~Profile();
 
-        const String& title() const { return m_title; }
-        unsigned uid() const { return m_uid; }
+    const String& title() const { return m_title; }
+    unsigned uid() const { return m_uid; }
 
-        ProfileNode* head() const { return m_head.get(); }
-        void setHead(PassRefPtr<ProfileNode> head) { m_head = head; }
+    ProfileNode* head() const { return m_head.get(); }
+    void setHead(PassRefPtr<ProfileNode> head) { m_head = head; }
 
-        double totalTime() const { return m_head->totalTime(); }
+    double totalTime() const { return m_head->totalTime(); }
 
-        double idleTime() const { return m_idleTime; }
-        void setIdleTime(double idleTime) { m_idleTime = idleTime; }
+    double idleTime() const { return m_idleTime; }
+    void setIdleTime(double idleTime) { m_idleTime = idleTime; }
 
-        void forEach(void (ProfileNode::*)());
+    void forEach(void (ProfileNode::*)());
 
 #ifndef NDEBUG
-        void debugPrintData() const;
-        void debugPrintDataSampleStyle() const;
+    void debugPrintData() const;
+    void debugPrintDataSampleStyle() const;
 #endif
 
-    protected:
-        Profile(const String& title, unsigned uid);
+protected:
+    Profile(const String& title, unsigned uid);
 
-    private:
-        void removeProfileStart();
-        void removeProfileEnd();
- 
-        String m_title;
-        RefPtr<ProfileNode> m_head;
-        unsigned int m_uid;
-        double m_idleTime;
-    };
+private:
+    void removeProfileStart();
+    void removeProfileEnd();
+
+    String m_title;
+    RefPtr<ProfileNode> m_head;
+    unsigned m_uid;
+    double m_idleTime;
+};
 
 } // namespace JSC
 

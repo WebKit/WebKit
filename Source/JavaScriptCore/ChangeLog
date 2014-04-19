@@ -1,3 +1,55 @@
+2014-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Move InspectorProfilerAgent to JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=131673
+
+        Passes existing profiler and inspector tests.
+
+        Reviewed by Joseph Pecoraro.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/JSConsoleClient.cpp:
+        (Inspector::JSConsoleClient::JSConsoleClient):
+        (Inspector::JSConsoleClient::profile):
+        (Inspector::JSConsoleClient::profileEnd):
+        (Inspector::JSConsoleClient::count): Deleted.
+        * inspector/JSConsoleClient.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        * inspector/agents/InspectorProfilerAgent.cpp: Added.
+        (Inspector::InspectorProfilerAgent::InspectorProfilerAgent):
+        (Inspector::InspectorProfilerAgent::~InspectorProfilerAgent):
+        (Inspector::InspectorProfilerAgent::addProfile):
+        (Inspector::InspectorProfilerAgent::createProfileHeader):
+        (Inspector::InspectorProfilerAgent::enable):
+        (Inspector::InspectorProfilerAgent::disable):
+        (Inspector::InspectorProfilerAgent::getUserInitiatedProfileName):
+        (Inspector::InspectorProfilerAgent::getProfileHeaders):
+        (Inspector::buildInspectorObject):
+        (Inspector::InspectorProfilerAgent::buildProfileInspectorObject):
+        (Inspector::InspectorProfilerAgent::getCPUProfile):
+        (Inspector::InspectorProfilerAgent::removeProfile):
+        (Inspector::InspectorProfilerAgent::reset):
+        (Inspector::InspectorProfilerAgent::didCreateFrontendAndBackend):
+        (Inspector::InspectorProfilerAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorProfilerAgent::start):
+        (Inspector::InspectorProfilerAgent::stop):
+        (Inspector::InspectorProfilerAgent::setRecordingProfile):
+        (Inspector::InspectorProfilerAgent::startProfiling):
+        (Inspector::InspectorProfilerAgent::stopProfiling):
+        * inspector/agents/InspectorProfilerAgent.h: Added.
+        * inspector/agents/JSGlobalObjectProfilerAgent.cpp: Copied from Source/WebCore/inspector/ScriptProfile.idl.
+        (Inspector::JSGlobalObjectProfilerAgent::JSGlobalObjectProfilerAgent):
+        (Inspector::JSGlobalObjectProfilerAgent::profilingGlobalExecState):
+        * inspector/agents/JSGlobalObjectProfilerAgent.h: Copied from Source/WebCore/inspector/ScriptProfile.idl.
+        * inspector/protocol/Profiler.json: Renamed from Source/WebCore/inspector/protocol/Profiler.json.
+        * profiler/Profile.h:
+        * runtime/ConsoleClient.h:
+
 2014-04-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167527.

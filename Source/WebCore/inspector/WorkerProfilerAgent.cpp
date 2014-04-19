@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptProfile_h
-#define ScriptProfile_h
+#include "config.h"
+#include "WorkerProfilerAgent.h"
 
-#include <profiler/Profile.h>
+#if ENABLE(INSPECTOR)
+
+#include "JSDOMWindow.h"
+#include "MainFrame.h"
+#include "Page.h"
+#include "ScriptState.h"
+
+using namespace Inspector;
 
 namespace WebCore {
 
-typedef JSC::Profile ScriptProfile;
+WorkerProfilerAgent::WorkerProfilerAgent(InstrumentingAgents* instrumentingAgents, WorkerGlobalScope* workerGlobalScope)
+    : WebProfilerAgent(instrumentingAgents)
+    , m_workerGlobalScope(workerGlobalScope)
+{
+}
+
+JSC::ExecState* WorkerProfilerAgent::profilingGlobalExecState() const
+{
+    return execStateFromWorkerGlobalScope(m_workerGlobalScope);
+}
 
 } // namespace WebCore
 
-#endif // ScriptProfile_h
+#endif // ENABLE(INSPECTOR)

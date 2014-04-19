@@ -46,6 +46,7 @@ namespace Inspector {
 class InspectorAgent;
 class InspectorBackendDispatcher;
 class InspectorFrontendChannel;
+class InspectorProfilerAgent;
 class InspectorObject;
 }
 
@@ -60,7 +61,6 @@ class InspectorDOMDebuggerAgent;
 class InspectorFrontendClient;
 class InspectorOverlay;
 class InspectorPageAgent;
-class InspectorProfilerAgent;
 class InspectorResourceAgent;
 class InstrumentingAgents;
 class Node;
@@ -144,7 +144,7 @@ private:
     InspectorPageAgent* m_pageAgent;
     PageDebuggerAgent* m_debuggerAgent;
     InspectorDOMDebuggerAgent* m_domDebuggerAgent;
-    InspectorProfilerAgent* m_profilerAgent;
+    Inspector::InspectorProfilerAgent* m_profilerAgent;
 
     RefPtr<Inspector::InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     std::unique_ptr<InspectorFrontendClient> m_inspectorFrontendClient;

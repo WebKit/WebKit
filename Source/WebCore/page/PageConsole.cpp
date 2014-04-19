@@ -38,8 +38,6 @@
 #include "JSMainThreadExecState.h"
 #include "MainFrame.h"
 #include "Page.h"
-#include "ScriptProfile.h"
-#include "ScriptProfiler.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <bindings/ScriptValue.h>
@@ -167,34 +165,14 @@ void PageConsole::count(JSC::ExecState* exec, PassRefPtr<ScriptArguments> argume
 
 void PageConsole::profile(JSC::ExecState* exec, const String& title)
 {
-    // FIXME: log a console message when profiling is disabled.
-    if (!InspectorInstrumentation::profilerEnabled(&m_page))
-        return;
-
-    // If no title is given, build the next user initiated profile title.
-    String resolvedTitle = title;
-    if (title.isNull())
-        resolvedTitle = InspectorInstrumentation::getCurrentUserInitiatedProfileName(&m_page, true);
-
-    ScriptProfiler::start(exec, resolvedTitle);
-
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
-    const ScriptCallFrame& lastCaller = callStack->at(0);
-    InspectorInstrumentation::addStartProfilingMessageToConsole(&m_page, resolvedTitle, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
+    InspectorInstrumentation::startProfiling(&m_page, exec, title);
 }
 
 void PageConsole::profileEnd(JSC::ExecState* exec, const String& title)
 {
-    if (!InspectorInstrumentation::profilerEnabled(&m_page))
-        return;
-
-    RefPtr<ScriptProfile> profile = ScriptProfiler::stop(exec, title);
-    if (!profile)
-        return;
-
-    m_profiles.append(profile);
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
-    InspectorInstrumentation::addProfile(&m_page, profile, callStack);
+    RefPtr<JSC::Profile> profile = InspectorInstrumentation::stopProfiling(&m_page, exec, title);
+    if (profile)
+        m_profiles.append(profile.release());
 }
 
 void PageConsole::time(JSC::ExecState*, const String& title)

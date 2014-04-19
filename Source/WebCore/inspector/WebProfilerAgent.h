@@ -23,42 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSConsoleClient_h
-#define JSConsoleClient_h
+#ifndef WebProfilerAgent_h
+#define WebProfilerAgent_h
 
-#include "ConsoleClient.h"
+#if ENABLE(INSPECTOR)
 
-namespace Inspector {
+#include <inspector/agents/InspectorProfilerAgent.h>
 
-class InspectorConsoleAgent;
-class InspectorProfilerAgent;
+namespace WebCore {
 
-class JSConsoleClient final : public JSC::ConsoleClient {
+class InstrumentingAgents;
+
+class WebProfilerAgent : public Inspector::InspectorProfilerAgent {
+    WTF_MAKE_NONCOPYABLE(WebProfilerAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit JSConsoleClient(InspectorConsoleAgent*, InspectorProfilerAgent*);
-    virtual ~JSConsoleClient() { }
+    WebProfilerAgent(InstrumentingAgents*);
+    virtual ~WebProfilerAgent() { }
 
-    static bool logToSystemConsole();
-    static void setLogToSystemConsole(bool);
-    static void initializeLogToSystemConsole();
+    virtual void enable(ShouldRecompile) override final;
+    virtual void disable(ShouldRecompile) override final;
 
 protected:
-    virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<ScriptArguments>) override;
-    virtual void count(JSC::ExecState*, PassRefPtr<ScriptArguments>) override;
-    virtual void profile(JSC::ExecState*, const String& title) override;
-    virtual void profileEnd(JSC::ExecState*, const String& title) override;
-    virtual void time(JSC::ExecState*, const String& title) override;
-    virtual void timeEnd(JSC::ExecState*, const String& title) override;
-    virtual void timeStamp(JSC::ExecState*, PassRefPtr<ScriptArguments>) override;
-
-private:
-    void warnUnimplemented(const String& method);
-    void internalAddMessage(MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<ScriptArguments>);
-
-    InspectorConsoleAgent* m_consoleAgent;
-    InspectorProfilerAgent* m_profilerAgent;
+    InstrumentingAgents* m_instrumentingAgents;
 };
 
-}
+} // namespace WebCore
 
-#endif // !defined(JSConsoleClient_h)
+#endif // ENABLE(INSPECTOR)
+
+#endif // !defined(WebProfilerAgent_h)

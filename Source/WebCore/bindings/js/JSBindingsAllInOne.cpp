@@ -143,7 +143,6 @@
 #include "ScheduledAction.cpp"
 #include "ScriptCachedFrameData.cpp"
 #include "ScriptController.cpp"
-#include "ScriptProfiler.cpp"
 #include "ScriptState.cpp"
 #include "SerializedScriptValue.cpp"
 #include "WebCoreTypedArrayController.cpp"

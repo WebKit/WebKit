@@ -173,53 +173,27 @@ inline void InspectorInstrumentation::consoleTimeStamp(Frame* frame, PassRefPtr<
 #endif
 }
 
-inline void InspectorInstrumentation::addStartProfilingMessageToConsole(Page* page, const String& title, unsigned lineNumber, unsigned columnNumber, const String& sourceURL)
+inline void InspectorInstrumentation::startProfiling(Page* page, JSC::ExecState* exec, const String &title)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addStartProfilingMessageToConsoleImpl(instrumentingAgents, title, lineNumber, columnNumber, sourceURL);
+        startProfilingImpl(instrumentingAgents, exec, title);
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(title);
-    UNUSED_PARAM(lineNumber);
-    UNUSED_PARAM(columnNumber);
-    UNUSED_PARAM(sourceURL);
 #endif
 }
 
-inline void InspectorInstrumentation::addProfile(Page* page, PassRefPtr<ScriptProfile> profile, PassRefPtr<Inspector::ScriptCallStack> callStack)
+inline PassRefPtr<JSC::Profile> InspectorInstrumentation::stopProfiling(Page* page, JSC::ExecState* exec, const String &title)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addProfileImpl(instrumentingAgents, profile, callStack);
+        return stopProfilingImpl(instrumentingAgents, exec, title);
 #else
     UNUSED_PARAM(page);
-    UNUSED_PARAM(profile);
-    UNUSED_PARAM(callStack);
+    UNUSED_PARAM(title);
 #endif
-}
-
-inline bool InspectorInstrumentation::profilerEnabled(Page* page)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        return profilerEnabledImpl(instrumentingAgents);
-#else
-    UNUSED_PARAM(page);
-#endif
-    return false;
-}
-
-inline String InspectorInstrumentation::getCurrentUserInitiatedProfileName(Page* page, bool incrementProfileNumber)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        return InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(instrumentingAgents, incrementProfileNumber);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(incrementProfileNumber);
-#endif
-    return "";
+    return nullptr;
 }
 
 } // namespace WebCore

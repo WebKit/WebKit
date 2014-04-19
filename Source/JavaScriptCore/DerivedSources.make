@@ -107,6 +107,7 @@ INSPECTOR_DOMAINS = \
     $(JavaScriptCore)/inspector/protocol/Debugger.json \
     $(JavaScriptCore)/inspector/protocol/GenericTypes.json \
     $(JavaScriptCore)/inspector/protocol/InspectorDomain.json \
+    $(JavaScriptCore)/inspector/protocol/Profiler.json \
     $(JavaScriptCore)/inspector/protocol/Runtime.json \
 #
 

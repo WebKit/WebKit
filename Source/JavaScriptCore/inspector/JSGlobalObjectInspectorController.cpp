@@ -39,6 +39,7 @@
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectConsoleAgent.h"
 #include "JSGlobalObjectDebuggerAgent.h"
+#include "JSGlobalObjectProfilerAgent.h"
 #include "JSGlobalObjectRuntimeAgent.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
@@ -60,11 +61,13 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(m_injectedScriptManager.get(), m_globalObject);
     auto consoleAgent = std::make_unique<JSGlobalObjectConsoleAgent>(m_injectedScriptManager.get());
     auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(m_injectedScriptManager.get(), m_globalObject, consoleAgent.get());
+    auto profilerAgent = std::make_unique<JSGlobalObjectProfilerAgent>(m_globalObject);
 
     m_consoleAgent = consoleAgent.get();
-    m_consoleClient = std::make_unique<JSConsoleClient>(m_consoleAgent);
+    m_consoleClient = std::make_unique<JSConsoleClient>(m_consoleAgent, profilerAgent.get());
 
     runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
+    profilerAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
 
     m_agents.append(std::make_unique<InspectorAgent>());
     m_agents.append(std::move(runtimeAgent));

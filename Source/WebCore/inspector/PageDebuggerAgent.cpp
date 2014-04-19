@@ -58,18 +58,6 @@ PageDebuggerAgent::PageDebuggerAgent(InjectedScriptManager* injectedScriptManage
 {
 }
 
-void PageDebuggerAgent::enable()
-{
-    WebDebuggerAgent::enable();
-    m_instrumentingAgents->setPageDebuggerAgent(this);
-}
-
-void PageDebuggerAgent::disable(bool isBeingDestroyed)
-{
-    WebDebuggerAgent::disable(isBeingDestroyed);
-    m_instrumentingAgents->setPageDebuggerAgent(nullptr);
-}
-
 String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("SourceMap")));

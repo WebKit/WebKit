@@ -1109,7 +1109,6 @@ INSPECTOR_DOMAINS = \
     $(WebCore)/inspector/protocol/LayerTree.json \
     $(WebCore)/inspector/protocol/Network.json \
     $(WebCore)/inspector/protocol/Page.json \
-    $(WebCore)/inspector/protocol/Profiler.json \
     $(WebCore)/inspector/protocol/Timeline.json \
     $(WebCore)/inspector/protocol/Worker.json \
 #

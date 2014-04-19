@@ -782,6 +782,10 @@
 		14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F97446138C853E00DA1C67 /* HeapRootVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A28D4A7177B71C80007FA3C /* JSStringRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1ACF7377171CA6FB00C9BB1E /* Weak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACF7376171CA6FB00C9BB1E /* Weak.cpp */; };
+		1CAA9A1E18F4997F000A369D /* InspectorProfilerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAA9A1C18F4997F000A369D /* InspectorProfilerAgent.cpp */; };
+		1CAA9A1F18F4997F000A369D /* InspectorProfilerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAA9A1D18F4997F000A369D /* InspectorProfilerAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1CAA9A2218F4A220000A369D /* JSGlobalObjectProfilerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAA9A2018F4A220000A369D /* JSGlobalObjectProfilerAgent.cpp */; };
+		1CAA9A2318F4A220000A369D /* JSGlobalObjectProfilerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAA9A2118F4A220000A369D /* JSGlobalObjectProfilerAgent.h */; };
 		2600B5A6152BAAA70091EE5F /* JSStringJoiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2600B5A4152BAAA70091EE5F /* JSStringJoiner.cpp */; };
 		2600B5A7152BAAA70091EE5F /* JSStringJoiner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2600B5A5152BAAA70091EE5F /* JSStringJoiner.h */; };
 		2A2825D018341F2D0087FBA9 /* DelayedReleaseScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A2825CF18341F2D0087FBA9 /* DelayedReleaseScope.h */; };
@@ -2544,6 +2548,10 @@
 		1C9051450BA9E8A70081E9D0 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1CAA8B4A0D32C39A0041BCFF /* JavaScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScript.h; sourceTree = "<group>"; };
 		1CAA8B4B0D32C39A0041BCFF /* JavaScriptCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCore.h; sourceTree = "<group>"; };
+		1CAA9A1C18F4997F000A369D /* InspectorProfilerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorProfilerAgent.cpp; sourceTree = "<group>"; };
+		1CAA9A1D18F4997F000A369D /* InspectorProfilerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorProfilerAgent.h; sourceTree = "<group>"; };
+		1CAA9A2018F4A220000A369D /* JSGlobalObjectProfilerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectProfilerAgent.cpp; sourceTree = "<group>"; };
+		1CAA9A2118F4A220000A369D /* JSGlobalObjectProfilerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectProfilerAgent.h; sourceTree = "<group>"; };
 		2600B5A4152BAAA70091EE5F /* JSStringJoiner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringJoiner.cpp; sourceTree = "<group>"; };
 		2600B5A5152BAAA70091EE5F /* JSStringJoiner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringJoiner.h; sourceTree = "<group>"; };
 		2A2825CF18341F2D0087FBA9 /* DelayedReleaseScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelayedReleaseScope.h; sourceTree = "<group>"; };
@@ -5051,12 +5059,16 @@
 				A5FD0080189B191A00633231 /* InspectorConsoleAgent.h */,
 				A57D23E31890CEBF0031C7FA /* InspectorDebuggerAgent.cpp */,
 				A57D23E41890CEBF0031C7FA /* InspectorDebuggerAgent.h */,
+				1CAA9A1C18F4997F000A369D /* InspectorProfilerAgent.cpp */,
+				1CAA9A1D18F4997F000A369D /* InspectorProfilerAgent.h */,
 				A50E4B5D18809DD50068A46D /* InspectorRuntimeAgent.cpp */,
 				A50E4B5E18809DD50068A46D /* InspectorRuntimeAgent.h */,
 				A5FD0083189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp */,
 				A5FD0084189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h */,
 				A57D23E71891B0770031C7FA /* JSGlobalObjectDebuggerAgent.cpp */,
 				A57D23E81891B0770031C7FA /* JSGlobalObjectDebuggerAgent.h */,
+				1CAA9A2018F4A220000A369D /* JSGlobalObjectProfilerAgent.cpp */,
+				1CAA9A2118F4A220000A369D /* JSGlobalObjectProfilerAgent.h */,
 				A50E4B5F18809DD50068A46D /* JSGlobalObjectRuntimeAgent.cpp */,
 				A50E4B6018809DD50068A46D /* JSGlobalObjectRuntimeAgent.h */,
 			);
@@ -5890,6 +5902,7 @@
 				A76140D2182982CB00750624 /* JSArgumentsIterator.h in Headers */,
 				BC18C4170E16F5CD00B34460 /* JSArray.h in Headers */,
 				0F2B66E317B6B5AB00A7AE3F /* JSArrayBuffer.h in Headers */,
+				1CAA9A2318F4A220000A369D /* JSGlobalObjectProfilerAgent.h in Headers */,
 				0F2B66E517B6B5AB00A7AE3F /* JSArrayBufferConstructor.h in Headers */,
 				0F2B66E717B6B5AB00A7AE3F /* JSArrayBufferPrototype.h in Headers */,
 				0F2B66E917B6B5AB00A7AE3F /* JSArrayBufferView.h in Headers */,
@@ -5916,6 +5929,7 @@
 				A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */,
 				0F7576D318E1FEE9002EF4CD /* AccessorCallJITStubRoutine.h in Headers */,
 				0F2B66EC17B6B5AB00A7AE3F /* JSDataView.h in Headers */,
+				1CAA9A1F18F4997F000A369D /* InspectorProfilerAgent.h in Headers */,
 				0F2B66EE17B6B5AB00A7AE3F /* JSDataViewPrototype.h in Headers */,
 				978801411471AD920041B016 /* JSDateMath.h in Headers */,
 				C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */,
@@ -7009,6 +7023,7 @@
 				0F485329187DFDEC0083B687 /* FTLRecoveryOpcode.cpp in Sources */,
 				0F6B1CC31862C47800845D97 /* FTLRegisterAtOffset.cpp in Sources */,
 				0FCEFAAB1804C13E00472CE4 /* FTLSaveRestore.cpp in Sources */,
+				1CAA9A2218F4A220000A369D /* JSGlobalObjectProfilerAgent.cpp in Sources */,
 				0F25F1B1181635F300522F39 /* FTLSlowPathCall.cpp in Sources */,
 				0F25F1B3181635F300522F39 /* FTLSlowPathCallKey.cpp in Sources */,
 				0F9D339A1803ADB70073C2BC /* FTLStackMaps.cpp in Sources */,
@@ -7228,6 +7243,7 @@
 				0FF729AE166AD35C000F5BA3 /* ProfilerBytecodes.cpp in Sources */,
 				0F13912916771C33009CCB07 /* ProfilerBytecodeSequence.cpp in Sources */,
 				0FF729AF166AD35C000F5BA3 /* ProfilerCompilation.cpp in Sources */,
+				1CAA9A1E18F4997F000A369D /* InspectorProfilerAgent.cpp in Sources */,
 				0FF729B0166AD35C000F5BA3 /* ProfilerCompilationKind.cpp in Sources */,
 				0FF729B1166AD35C000F5BA3 /* ProfilerCompiledBytecode.cpp in Sources */,
 				0FF729B2166AD35C000F5BA3 /* ProfilerDatabase.cpp in Sources */,
