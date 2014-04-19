@@ -1,3 +1,36 @@
+2014-04-18  Stephanie Lewis  <slewis@apple.com>
+
+        Move DOM throttling out of the page throttler
+        <rdar://problem/16473004>
+        https://bugs.webkit.org/show_bug.cgi?id=131697
+
+        Reviewed by Gavin Barraclough.
+
+        No new tests since it's not web exposed.
+
+        DOM timer throttling is currently part of the page throttler which uses per process 
+        state and per page state to determine when to throttle.  This led us to being overly 
+        conservative when turning DOM throttling off.  It should only respond to view state changes.
+
+        Additionally since creating extra page throttlers SVG images caused bugs 
+        in tracking state we'll reserve the page throttler for WebKit2 views.  To avoid regressing 
+        WebKit1 we should move DOM timer throttling back to the page.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): set DOM timer throttling.
+        (WebCore::Page::setIsVisuallyIdleInternal): ditto.
+        (WebCore::Page::hiddenPageDOMTimerThrottlingStateChanged): ditto.
+        (WebCore::Page::setIsVisible): Update view state masks for WebKit1 to include IsVisibleOrOccluded and IsVisuallyIdle
+        * page/Page.h:
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler): remove DOM timer throttling.
+        (WebCore::PageThrottler::started): ditto.
+        (WebCore::PageThrottler::stopped): ditto.
+        (WebCore::PageThrottler::hiddenPageDOMTimerThrottlingStateChanged): Deleted.
+        * page/PageThrottler.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setHiddenPageDOMTimerThrottlingEnabled):
+
 2014-04-18  Dean Jackson  <dino@apple.com>
 
         [WebGL] Limit maximum texture sizes on older Intel hardware

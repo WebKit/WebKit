@@ -656,7 +656,7 @@ void Settings::setHiddenPageDOMTimerThrottlingEnabled(bool flag)
     if (m_hiddenPageDOMTimerThrottlingEnabled == flag)
         return;
     m_hiddenPageDOMTimerThrottlingEnabled = flag;
-    m_page->pageThrottler().hiddenPageDOMTimerThrottlingStateChanged();
+    m_page->hiddenPageDOMTimerThrottlingStateChanged();
 }
 #endif
 

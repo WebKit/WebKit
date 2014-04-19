@@ -199,7 +199,9 @@ Page::Page(PageClients& pageClients)
     , m_sessionID(SessionID::defaultSessionID())
 {
     ASSERT(m_editorClient);
-
+    
+    setTimerThrottlingEnabled(m_viewState & ViewState::IsVisuallyIdle);
+    
     if (m_visitedLinkStore)
         m_visitedLinkStore->addPage(*this);
 
@@ -896,6 +898,8 @@ void Page::resumeScriptedAnimations()
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
 {
+    setTimerThrottlingEnabled(isVisuallyIdle);
+    
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->scriptedAnimationControllerSetThrottled(isVisuallyIdle);
@@ -1063,6 +1067,11 @@ double Page::minimumTimerInterval() const
     return m_minimumTimerInterval;
 }
 
+void Page::hiddenPageDOMTimerThrottlingStateChanged()
+{
+    setTimerThrottlingEnabled(m_viewState & ViewState::IsVisuallyIdle);
+}
+
 void Page::setTimerThrottlingEnabled(bool enabled)
 {
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
@@ -1172,7 +1181,10 @@ void Page::setViewState(ViewState::Flags viewState)
 
 void Page::setIsVisible(bool isVisible)
 {
-    setViewState(isVisible ? m_viewState | ViewState::IsVisible : m_viewState & ~ViewState::IsVisible);
+    if (isVisible)
+        setViewState((m_viewState & ~ViewState::IsVisuallyIdle) | ViewState::IsVisible | ViewState::IsVisibleOrOccluded);
+    else
+        setViewState((m_viewState & ~(ViewState::IsVisible | ViewState::IsVisibleOrOccluded)) | ViewState::IsVisuallyIdle);
 }
 
 void Page::setIsVisibleInternal(bool isVisible)

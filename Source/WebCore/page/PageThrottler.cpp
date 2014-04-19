@@ -43,17 +43,8 @@ PageThrottler::PageThrottler(Page& page, ViewState::Flags viewState)
     , m_activity("Page is active.")
     , m_activityCount(0)
 {
-    if (m_viewState & ViewState::IsVisuallyIdle)
-        m_page.setTimerThrottlingEnabled(true);
-    else
+    if (!(m_viewState & ViewState::IsVisuallyIdle))
         m_hysteresis.start();
-}
-
-void PageThrottler::hiddenPageDOMTimerThrottlingStateChanged()
-{
-    // If timer throttling is enabled, this will temporarily disable it.
-    // After a timeout it will be reenabled, rereading the setting.
-    m_hysteresis.impulse();
 }
 
 std::unique_ptr<PageActivityAssertionToken> PageThrottler::mediaActivityToken()
@@ -97,13 +88,11 @@ void PageThrottler::setViewState(ViewState::Flags viewState)
 
 void PageThrottler::started()
 {
-    m_page.setTimerThrottlingEnabled(false);
     m_activity.beginActivity();
 }
 
 void PageThrottler::stopped()
 {
-    m_page.setTimerThrottlingEnabled(true);
     m_activity.endActivity();
 }
 

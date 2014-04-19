@@ -51,8 +51,6 @@ public:
     std::unique_ptr<PageActivityAssertionToken> mediaActivityToken();
     std::unique_ptr<PageActivityAssertionToken> pageLoadActivityToken();
 
-    void hiddenPageDOMTimerThrottlingStateChanged();
-
 private:
     friend class PageActivityAssertionToken;
     WeakPtr<PageThrottler> weakPtr() { return m_weakPtrFactory.createWeakPtr(); }

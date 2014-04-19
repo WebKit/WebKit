@@ -449,6 +449,7 @@ private:
 
     Vector<Ref<PluginViewBase>> pluginViews();
 
+    void hiddenPageDOMTimerThrottlingStateChanged();
     void setTimerThrottlingEnabled(bool);
 
     const std::unique_ptr<Chrome> m_chrome;
