@@ -1,3 +1,10 @@
+2014-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Skip fast/dom/gc-attribute-node.html which is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=131885
+
+        * platform/mac/TestExpectations:
+
 2014-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         Contents of directly composited image layers are sometimes missing

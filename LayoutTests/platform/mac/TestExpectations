@@ -206,6 +206,9 @@ http/tests/misc/webtiming-two-redirects.php
 http/tests/w3c/webperf
 fast/performance/
 
+# Properties on attribute nodes disappear with GC
+webkit.org/b/131881 fast/dom/gc-attribute-node.html [ Pass Failure ]
+
 # Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
 webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
 
