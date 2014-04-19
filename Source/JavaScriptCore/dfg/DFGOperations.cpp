@@ -971,7 +971,7 @@ JSCell* JIT_OPERATION operationMakeRope2(ExecState* exec, JSString* left, JSStri
     
     if (static_cast<int32_t>(left->length() + right->length()) < 0) {
         throwOutOfMemoryError(exec);
-        return 0;
+        return nullptr;
     }
 
     return JSRopeString::create(vm, left, right);
@@ -987,7 +987,7 @@ JSCell* JIT_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString*
     length += c->length();
     if (length.hasOverflowed()) {
         throwOutOfMemoryError(exec);
-        return 0;
+        return nullptr;
     }
 
     return JSRopeString::create(vm, a, b, c);
