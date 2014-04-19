@@ -1,3 +1,18 @@
+2014-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Harden RenderInline::inlineElementContinuation()
+
+        <https://bugs.webkit.org/show_bug.cgi?id=131858>
+
+        Reviewed by Sam Weinig.
+
+        No new tests, as there are no known cases of this happening.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::inlineElementContinuation):
+        Return nullptr if the continuation is neither a RenderInline nor a
+        RenderBlock.
+
 2014-04-18  Stephanie Lewis  <slewis@apple.com>
 
         We shouldn’t create page throttlers for other pages than WebKit2 pages.
