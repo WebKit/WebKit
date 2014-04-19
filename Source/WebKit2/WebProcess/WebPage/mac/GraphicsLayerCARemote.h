@@ -48,7 +48,7 @@ public:
 #endif
 
 private:
-    virtual bool isGraphicsLayerCARemote() const { return true; }
+    virtual bool isGraphicsLayerCARemote() const override { return true; }
 
     virtual PassRefPtr<WebCore::PlatformCALayer> createPlatformCALayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner) override;
     virtual PassRefPtr<WebCore::PlatformCALayer> createPlatformCALayer(PlatformLayer*, WebCore::PlatformCALayerClient* owner) override;

@@ -1,3 +1,33 @@
+2014-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Use 'override' in GraphicsLayerCA
+        https://bugs.webkit.org/show_bug.cgi?id=131882
+
+        Reviewed by Tim Horton.
+
+        Add 'override' to all overridden functions. Found a few that need
+        not have been virtual. Removed "allowTiledLayer" stuff that was
+        never called.
+
+        * WebCore.exp.in:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::requiresTiledLayer):
+        (WebCore::GraphicsLayerCA::setAllowTiledLayer): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::platformCALayer):
+        (WebCore::GraphicsLayerCA::hasContentsLayer): Deleted.
+        (WebCore::GraphicsLayerCA::allowTiledLayer): Deleted.
+        (WebCore::GraphicsLayerCA::isGraphicsLayerCA): Deleted.
+        (WebCore::GraphicsLayerCA::platformCALayerLayoutSublayersOfLayer): Deleted.
+        (WebCore::GraphicsLayerCA::platformCALayerRespondsToLayoutChanges): Deleted.
+        (WebCore::GraphicsLayerCA::platformCALayerContentsOrientation): Deleted.
+        (WebCore::GraphicsLayerCA::platformCALayerShowDebugBorders): Deleted.
+        (WebCore::GraphicsLayerCA::platformCALayerIncrementRepaintCount): Deleted.
+        (WebCore::GraphicsLayerCA::platformCALayerContentsOpaque): Deleted.
+        (WebCore::GraphicsLayerCA::platformCALayerDrawsContent): Deleted.
+        (WebCore::GraphicsLayerCA::platformCALayerLayerDidDisplay): Deleted.
+
 2014-04-18  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Move InspectorProfilerAgent to JavaScriptCore

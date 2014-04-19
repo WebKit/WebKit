@@ -1,3 +1,14 @@
+2014-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Use 'override' in GraphicsLayerCA
+        https://bugs.webkit.org/show_bug.cgi?id=131882
+
+        Reviewed by Tim Horton.
+        
+        Add an 'override'.
+
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+
 2014-04-19  Darin Adler  <darin@apple.com>
 
         Assertion in WebPage::runModal accesses object after it may have been destroyed

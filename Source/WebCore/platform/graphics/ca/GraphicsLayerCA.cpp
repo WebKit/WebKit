@@ -363,7 +363,6 @@ PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(Platf
 GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
-    , m_allowTiledLayer(true)
     , m_isPageTiledBackingLayer(false)
     , m_rootRelativeScaleFactor(1)
     , m_uncommittedChanges(0)
@@ -656,17 +655,6 @@ void GraphicsLayerCA::setAcceleratesDrawing(bool acceleratesDrawing)
 
     GraphicsLayer::setAcceleratesDrawing(acceleratesDrawing);
     noteLayerPropertyChanged(AcceleratesDrawingChanged);
-}
-
-void GraphicsLayerCA::setAllowTiledLayer(bool allowTiledLayer)
-{
-    if (allowTiledLayer == m_allowTiledLayer)
-        return;
-
-    m_allowTiledLayer = allowTiledLayer;
-    
-    // Handling this as a BoundsChanged will cause use to switch in or out of tiled layer as needed
-    noteLayerPropertyChanged(GeometryChanged);
 }
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
@@ -3133,7 +3121,7 @@ void GraphicsLayerCA::setCustomBehavior(CustomBehavior customBehavior)
 
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 {
-    if (!m_drawsContent || !m_allowTiledLayer || m_isPageTiledBackingLayer)
+    if (!m_drawsContent || m_isPageTiledBackingLayer)
         return false;
 
     // FIXME: catch zero-size height or width here (or earlier)?

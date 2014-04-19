@@ -60,50 +60,50 @@ public:
 
     virtual void initialize() override;
 
-    virtual void setName(const String&);
+    virtual void setName(const String&) override;
 
     virtual PlatformLayerID primaryLayerID() const override;
 
-    virtual PlatformLayer* platformLayer() const;
-    virtual PlatformCALayer* platformCALayer() const { return primaryLayer(); }
+    virtual PlatformLayer* platformLayer() const override;
+    PlatformCALayer* platformCALayer() const { return primaryLayer(); }
 
-    virtual bool setChildren(const Vector<GraphicsLayer*>&);
-    virtual void addChild(GraphicsLayer*);
-    virtual void addChildAtIndex(GraphicsLayer*, int index);
-    virtual void addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling);
-    virtual void addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling);
-    virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild);
+    virtual bool setChildren(const Vector<GraphicsLayer*>&) override;
+    virtual void addChild(GraphicsLayer*) override;
+    virtual void addChildAtIndex(GraphicsLayer*, int index) override;
+    virtual void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling) override;
+    virtual void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling) override;
+    virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild) override;
 
-    virtual void removeFromParent();
+    virtual void removeFromParent() override;
 
-    virtual void setMaskLayer(GraphicsLayer*);
-    virtual void setReplicatedLayer(GraphicsLayer*);
+    virtual void setMaskLayer(GraphicsLayer*) override;
+    virtual void setReplicatedLayer(GraphicsLayer*) override;
 
-    virtual void setPosition(const FloatPoint&);
-    virtual void setAnchorPoint(const FloatPoint3D&);
-    virtual void setSize(const FloatSize&);
-    virtual void setBoundsOrigin(const FloatPoint&);
+    virtual void setPosition(const FloatPoint&) override;
+    virtual void setAnchorPoint(const FloatPoint3D&) override;
+    virtual void setSize(const FloatSize&) override;
+    virtual void setBoundsOrigin(const FloatPoint&) override;
 
-    virtual void setTransform(const TransformationMatrix&);
+    virtual void setTransform(const TransformationMatrix&) override;
 
-    virtual void setChildrenTransform(const TransformationMatrix&);
+    virtual void setChildrenTransform(const TransformationMatrix&) override;
 
-    virtual void setPreserves3D(bool);
-    virtual void setMasksToBounds(bool);
-    virtual void setDrawsContent(bool);
-    virtual void setContentsVisible(bool);
-    virtual void setAcceleratesDrawing(bool);
+    virtual void setPreserves3D(bool) override;
+    virtual void setMasksToBounds(bool) override;
+    virtual void setDrawsContent(bool) override;
+    virtual void setContentsVisible(bool) override;
+    virtual void setAcceleratesDrawing(bool) override;
 
-    virtual void setBackgroundColor(const Color&);
+    virtual void setBackgroundColor(const Color&) override;
 
-    virtual void setContentsOpaque(bool);
-    virtual void setBackfaceVisibility(bool);
+    virtual void setContentsOpaque(bool) override;
+    virtual void setBackfaceVisibility(bool) override;
 
     // return true if we started an animation
-    virtual void setOpacity(float);
+    virtual void setOpacity(float) override;
 
 #if ENABLE(CSS_FILTERS)
-    virtual bool setFilters(const FilterOperations&);
+    virtual bool setFilters(const FilterOperations&) override;
     virtual bool filtersCanBeComposited(const FilterOperations&);
 #endif
 
@@ -111,46 +111,46 @@ public:
     virtual void setBlendMode(BlendMode) override;
 #endif
 
-    virtual void setNeedsDisplay();
-    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer);
-    virtual void setContentsNeedsDisplay();
+    virtual void setNeedsDisplay() override;
+    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
+    virtual void setContentsNeedsDisplay() override;
     
     virtual void setContentsRect(const FloatRect&) override;
     virtual void setContentsClippingRect(const FloatRect&) override;
     
-    virtual void suspendAnimations(double time);
-    virtual void resumeAnimations();
+    virtual void suspendAnimations(double time) override;
+    virtual void resumeAnimations() override;
 
-    virtual bool addAnimation(const KeyframeValueList&, const FloatSize& boxSize, const Animation*, const String& animationName, double timeOffset);
-    virtual void pauseAnimation(const String& animationName, double timeOffset);
-    virtual void removeAnimation(const String& animationName);
+    virtual bool addAnimation(const KeyframeValueList&, const FloatSize& boxSize, const Animation*, const String& animationName, double timeOffset) override;
+    virtual void pauseAnimation(const String& animationName, double timeOffset) override;
+    virtual void removeAnimation(const String& animationName) override;
 
-    virtual void setContentsToImage(Image*);
-    virtual void setContentsToMedia(PlatformLayer*);
+    virtual void setContentsToImage(Image*) override;
+    virtual void setContentsToMedia(PlatformLayer*) override;
 #if PLATFORM(IOS)
     virtual PlatformLayer* contentsLayerForMedia() const override;
 #endif
-    virtual void setContentsToCanvas(PlatformLayer*);
-    virtual void setContentsToSolidColor(const Color&);
+    virtual void setContentsToCanvas(PlatformLayer*) override;
+    virtual void setContentsToSolidColor(const Color&) override;
 
     virtual bool usesContentsLayer() const override { return m_contentsLayerPurpose != NoContentsLayer; }
     
     virtual void setShowDebugBorder(bool) override;
     virtual void setShowRepaintCounter(bool) override;
 
-    virtual void setDebugBackgroundColor(const Color&);
-    virtual void setDebugBorder(const Color&, float borderWidth);
+    virtual void setDebugBackgroundColor(const Color&) override;
+    virtual void setDebugBorder(const Color&, float borderWidth) override;
 
-    virtual void setCustomAppearance(CustomAppearance);
-    virtual void setCustomBehavior(CustomBehavior);
+    virtual void setCustomAppearance(CustomAppearance) override;
+    virtual void setCustomBehavior(CustomBehavior) override;
 
-    virtual void layerDidDisplay(PlatformLayer*);
+    virtual void layerDidDisplay(PlatformLayer*) override;
 
-    virtual void setMaintainsPixelAlignment(bool);
+    virtual void setMaintainsPixelAlignment(bool) override;
 #if PLATFORM(IOS)
     virtual FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 #endif
-    virtual void deviceOrPageScaleFactorChanged();
+    virtual void deviceOrPageScaleFactorChanged() override;
 
     struct CommitState {
         bool ancestorHasTransformAnimation;
@@ -162,40 +162,37 @@ public:
     };
     void recursiveCommitChanges(const CommitState&, const TransformState&, const TransformationMatrix& rootRelativeTransformForScaling, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
-    virtual void flushCompositingState(const FloatRect&);
-    virtual void flushCompositingStateForThisLayerOnly();
+    virtual void flushCompositingState(const FloatRect&) override;
+    virtual void flushCompositingStateForThisLayerOnly() override;
 
     virtual bool visibleRectChangeRequiresFlush(const FloatRect& visibleRect) const override;
 
     virtual TiledBacking* tiledBacking() const override;
 
-    bool allowTiledLayer() const { return m_allowTiledLayer; }
-    virtual void setAllowTiledLayer(bool b);
-
 protected:
-    virtual void setOpacityInternal(float);
+    virtual void setOpacityInternal(float) override;
     
     bool animationCanBeAccelerated(const KeyframeValueList&, const Animation*) const;
 
 private:
-    virtual bool isGraphicsLayerCA() const { return true; }
+    virtual bool isGraphicsLayerCA() const override { return true; }
 
-    virtual void willBeDestroyed();
+    virtual void willBeDestroyed() override;
 
     // PlatformCALayerClient overrides
-    virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) { }
-    virtual bool platformCALayerRespondsToLayoutChanges() const { return false; }
+    virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) override { }
+    virtual bool platformCALayerRespondsToLayoutChanges() const override { return false; }
 
-    virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime);
-    virtual CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return contentsOrientation(); }
-    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& clip);
-    virtual bool platformCALayerShowDebugBorders() const { return isShowingDebugBorder(); }
-    virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const;
-    virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) { return incrementRepaintCount(); }
+    virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime) override;
+    virtual CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return contentsOrientation(); }
+    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& clip) override;
+    virtual bool platformCALayerShowDebugBorders() const override { return isShowingDebugBorder(); }
+    virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
+    virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) override { return incrementRepaintCount(); }
 
-    virtual bool platformCALayerContentsOpaque() const { return contentsOpaque(); }
-    virtual bool platformCALayerDrawsContent() const { return drawsContent(); }
-    virtual void platformCALayerLayerDidDisplay(PlatformLayer* layer) { return layerDidDisplay(layer); }
+    virtual bool platformCALayerContentsOpaque() const override { return contentsOpaque(); }
+    virtual bool platformCALayerDrawsContent() const override { return drawsContent(); }
+    virtual void platformCALayerLayerDidDisplay(PlatformLayer* layer) override { return layerDidDisplay(layer); }
     virtual void platformCALayerSetNeedsToRevalidateTiles() override;
     virtual float platformCALayerDeviceScaleFactor() const override;
     virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const override;
@@ -204,7 +201,7 @@ private:
 
     virtual bool isCommittingChanges() const override { return m_isCommittingChanges; }
 
-    virtual double backingStoreMemoryEstimate() const;
+    virtual double backingStoreMemoryEstimate() const override;
 
     virtual bool shouldRepaintOnSizeChange() const override;
 
@@ -282,10 +279,10 @@ private:
     bool mediaLayerMustBeUpdatedOnMainThread() const;
 #endif
 
-    virtual void setReplicatedByLayer(GraphicsLayer*);
+    virtual void setReplicatedByLayer(GraphicsLayer*) override;
 
-    virtual void getDebugBorderInfo(Color&, float& width) const;
-    virtual void dumpAdditionalProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const;
+    virtual void getDebugBorderInfo(Color&, float& width) const override;
+    virtual void dumpAdditionalProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const override;
 
     void computePixelAlignment(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase,
         FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
@@ -302,7 +299,7 @@ private:
 
     bool recursiveVisibleRectChangeRequiresFlush(const TransformState&) const;
 
-    virtual bool canThrottleLayerFlush() const;
+    virtual bool canThrottleLayerFlush() const override;
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
@@ -495,7 +492,6 @@ private:
     };
     
     ContentsLayerPurpose m_contentsLayerPurpose;
-    bool m_allowTiledLayer : 1;
     bool m_isPageTiledBackingLayer : 1;
     
     float m_rootRelativeScaleFactor;
