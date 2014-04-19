@@ -1,3 +1,17 @@
+2014-04-19  Zalan Bujtas  <zalan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=131594
+        Subpixel rendering: WK1: Wrong repaint rect is calculated when layer has non-compositing transform.
+
+        Reviewed by Simon Fraser.
+
+        We need to snap the repaint rect for transformed object the same way when we paint them.
+
+        Test: fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+
 2014-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         Use 'override' in GraphicsLayerCA

@@ -1,3 +1,17 @@
+2014-04-19  Zalan Bujtas  <zalan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=131594
+        Subpixel rendering: WK1: Wrong repaint rect is calculated when layer has non-compositing transform.
+
+        Reviewed by Simon Fraser.
+
+        We need to snap the repaint rect for transformed object the same way when we paint them.
+
+        Test: fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html
+
+        * fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform-expected.txt: Added.
+        * fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html: Added.
+
 2014-04-18  Dean Jackson  <dino@apple.com>
 
         [WebGL] Two tests failing on Mountain Lion after r167520

@@ -1308,6 +1308,8 @@ webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failu
 webkit.org/b/128283 [ Debug ] transitions/shorthand-border-transitions.html [ Skip ]
 # Non-uniform scaling context.
 webkit.org/b/128081 fast/events/page-scaled-mouse-click-iframe.html
+# repaintRectsAsText reports different repaintrects on ML
+webkit.org/b/131887 [ MountainLion ] fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 # End of subpixel failures.
 
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
