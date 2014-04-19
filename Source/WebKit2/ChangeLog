@@ -1,3 +1,12 @@
+2014-04-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] implement WebKitDataCue
+        https://bugs.webkit.org/show_bug.cgi?id=131799
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig: Define ENABLE_DATACUE_VALUE.
+
 2014-04-18  Anders Carlsson  <andersca@apple.com>
 
         Keep the WebPageProxy alive for the lifetime of all PageLoadState::Transaction objects

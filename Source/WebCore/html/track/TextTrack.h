@@ -112,7 +112,7 @@ public:
     void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
     virtual void removeCue(TextTrackCue*, ExceptionCode&);
 
-    bool hasCue(VTTCue*, VTTCue::CueMatchRules = VTTCue::MatchAllFields);
+    bool hasCue(TextTrackCue*, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
     VTTRegionList* regions();

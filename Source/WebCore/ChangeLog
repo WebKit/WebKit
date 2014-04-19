@@ -1,3 +1,141 @@
+2014-04-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] implement WebKitDataCue
+        https://bugs.webkit.org/show_bug.cgi?id=131799
+
+        Reviewed by Dean Jackson.
+
+        Tests: http/tests/media/track-in-band-hls-metadata.html
+               media/track/track-datacue-value.html
+
+        * Configurations/FeatureDefines.xcconfig: Define ENABLE_DATACUE_VALUE.
+        * DerivedSources.make: Add ENABLE_DATACUE_VALUE to HTML_FLAGS when appropriate.
+
+        * CMakeLists.txt: Add JSDataCueCustom.cpp.
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
+        * bindings/js/JSDataCueCustom.cpp: Added.
+        (WebCore::JSDataCue::value): 
+        (WebCore::JSDataCue::setValue):
+        (WebCore::JSDataCueConstructor::constructJSDataCue): Custom constructor.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Drive-by fixes: don't schedule timeupdate
+            events when paused, don't call sort on an Vector that can't be sorted.
+
+        * html/track/DataCue.cpp:
+        (WebCore::DataCue::DataCue): Initialize m_type.
+        (WebCore::DataCue::~DataCue): Unprotect the JSValue if necessary.
+        (WebCore::DataCue::data): Ask the platform value for data if non-null.
+        (WebCore::DataCue::setData): Clear m_platformValue and m_value.
+        (WebCore::DataCue::isEqual): New.
+        (WebCore::DataCue::value): Return a JSValue from the platform value, or the value passed
+            to the constructor/set by script.
+        (WebCore::DataCue::setValue): Set m_value.
+        * html/track/DataCue.h:
+        * html/track/DataCue.idl:
+
+        * html/track/InbandDataTextTrack.cpp:
+        (WebCore::InbandDataTextTrack::addDataCue): Don't add the same cue more than once.
+        (WebCore::InbandDataTextTrack::updateDataCue): Update a cue's duration.
+        (WebCore::InbandDataTextTrack::removeDataCue): Remove an incomplete cue.
+        (WebCore::InbandDataTextTrack::removeCue): Remove a cue from the incomplete cue map if necessary.
+        * html/track/InbandDataTextTrack.h:
+
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::addGenericCue): CueMatchRules is now in TextTrackCue instead
+            of VTTCue.
+        * html/track/InbandTextTrack.h:
+
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::newCuesParsed): Ditto.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::hasCue): Ditto.
+        * html/track/TextTrack.h:
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::isEqual): New, test base class equality.
+        * html/track/TextTrackCue.h:
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGeneric::isEqual): Call TextTrackCue::isEqual first.
+        * html/track/TextTrackCueGeneric.h:
+
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::isEqual): Call TextTrackCue::isEqual first.
+        * html/track/VTTCue.h:
+
+        * platform/SerializedPlatformRepresentation.h: Added.
+        (WebCore::SerializedPlatformRepresentation::~SerializedPlatformRepresentation):
+        (WebCore::SerializedPlatformRepresentation::SerializedPlatformRepresentation):
+
+        * platform/graphics/InbandTextTrackPrivateClient.h: Add methods for DataCue with SerializedPlatformRepresentation.
+
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp: Added.
+        (WebCore::InbandMetadataTextTrackPrivateAVF::create):
+        (WebCore::InbandMetadataTextTrackPrivateAVF::InbandMetadataTextTrackPrivateAVF):
+        (WebCore::InbandMetadataTextTrackPrivateAVF::~InbandMetadataTextTrackPrivateAVF):
+        (WebCore::InbandMetadataTextTrackPrivateAVF::addDataCue):
+        (WebCore::InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes):
+        (WebCore::InbandMetadataTextTrackPrivateAVF::flushPartialCues):
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.h: Added.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::seekWithTolerance): currentTrack -> currentTextTrack.
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::configureInbandTracks): Ditto.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::setCurrentTextTrack):
+        (WebCore::MediaPlayerPrivateAVFoundation::setCurrentTrack): Deleted.
+
+        Renamed currentTrack and setCurrentTrack to currentTextTrack and setCurrentTextTrack.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::currentTextTrack):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::setCurrentTextTrack):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::currentTextTrack):
+        (WebCore::AVFWrapper::setCurrentTextTrack):
+        (WebCore::AVFWrapper::AVFWrapper):
+        (WebCore::AVFWrapper::processCue):
+        (WebCore::AVFWrapper::currentTrack): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::setCurrentTrack): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::currentTrack): Deleted.
+        (WebCore::AVFWrapper::setCurrentTrack): Deleted.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime): currentTrack -> currentTextTrack
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): currentTrack -> currentTextTrack.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMetadataTrack): New.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processCue): m_currentTrack -> m_currentTextTrack.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::flushCues): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack): Renamed from setCurrentTextTrack.
+        (WebCore::metadataType): Map an AVFoundation metadata key space to a metadata cue type.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive): Process new metadata.
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTrack): Deleted.
+
+        Create a JSValue representation from an AVMetadataItem.
+        * platform/mac/SerializedPlatformRepresentationMac.h: Added.
+        (WebCore::SerializedPlatformRepresentationMac::platformType):
+        (WebCore::SerializedPlatformRepresentationMac::nativeValue):
+        * platform/mac/SerializedPlatformRepresentationMac.mm: Added.
+        (WebCore::SerializedPlatformRepresentationMac::SerializedPlatformRepresentationMac):
+        (WebCore::SerializedPlatformRepresentationMac::~SerializedPlatformRepresentationMac):
+        (WebCore::SerializedPlatformRepresentationMac::create):
+        (WebCore::SerializedPlatformRepresentationMac::data):
+        (WebCore::SerializedPlatformRepresentationMac::deserialize):
+        (WebCore::SerializedPlatformRepresentationMac::isEqual):
+        (WebCore::toSerializedPlatformRepresentationMac):
+        (WebCore::jsValueWithValueInContext):
+        (WebCore::jsValueWithDataInContext):
+        (WebCore::jsValueWithArrayInContext):
+        (WebCore::jsValueWithDictionaryInContext):
+        (WebCore::jsValueWithAVMetadataItemInContext):
+
 2014-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Harden RenderInline::inlineElementContinuation()

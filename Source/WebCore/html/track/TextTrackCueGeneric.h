@@ -72,7 +72,7 @@ public:
     
     virtual void setFontSize(int, const IntSize&, bool important) override;
 
-    virtual bool isEqual(const VTTCue&, CueMatchRules) const override;
+    virtual bool isEqual(const TextTrackCue&, CueMatchRules) const override;
 
     virtual TextTrackCue::CueType cueType() const override { return TextTrackCue::Generic; }
 

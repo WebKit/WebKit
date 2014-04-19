@@ -1062,28 +1062,26 @@ std::pair<double, double> VTTCue::getCSSPosition() const
     return m_displayPosition;
 }
 
-bool VTTCue::isEqual(const VTTCue& cue, CueMatchRules match) const
+bool VTTCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
 {
-    if (cueType() != cue.cueType())
+    if (!TextTrackCue::isEqual(cue, match))
         return false;
-    
-    if (match != IgnoreDuration && endTime() != cue.endTime())
+
+    if (cue.cueType() != WebVTT)
         return false;
-    if (startTime() != cue.startTime())
+
+    const VTTCue* vttCue = toVTTCue(&cue);
+    if (text() != vttCue->text())
         return false;
-    if (text() != cue.text())
+    if (cueSettings() != vttCue->cueSettings())
         return false;
-    if (cueSettings() != cue.cueSettings())
+    if (position() != vttCue->position())
         return false;
-    if (id() != cue.id())
+    if (line() != vttCue->line())
         return false;
-    if (position() != cue.position())
+    if (size() != vttCue->size())
         return false;
-    if (line() != cue.line())
-        return false;
-    if (size() != cue.size())
-        return false;
-    if (align() != cue.align())
+    if (align() != vttCue->align())
         return false;
     
     return true;

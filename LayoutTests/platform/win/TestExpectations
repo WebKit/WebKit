@@ -2734,6 +2734,10 @@ media [ Skip ]
 
 platform/win/plugins/iframe-inside-overflow.html [ Failure ]
 
+# DataCue.value not enabled
+http/tests/media/track-in-band-hls-metadata.html [ Skip ]
+media/track/track-datacue-value.html [ Skip ]
+
 # CRASHES
 ietestcenter/Javascript/15.2.3.3-4-18.html [ Crash ]
 media/track/track-in-band-legacy-api.html [ Crash ]

@@ -110,8 +110,8 @@ public:
     void seekToTime(double, double, double);
     void updateVideoLayerGravity();
 
-    void setCurrentTrack(InbandTextTrackPrivateAVF*);
-    InbandTextTrackPrivateAVF* currentTrack() const { return m_currentTrack; }
+    void setCurrentTextTrack(InbandTextTrackPrivateAVF*);
+    InbandTextTrackPrivateAVF* currentTextTrack() const { return m_currentTextTrack; }
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     static void legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutputRef, CFArrayRef attributedString, CFArrayRef nativeSampleBuffers, CMTime itemTime);
@@ -170,7 +170,7 @@ private:
     OwnPtr<LayerClient> m_layerClient;
     COMPtr<IDirect3DDevice9Ex> m_d3dDevice;
 
-    InbandTextTrackPrivateAVF* m_currentTrack;
+    InbandTextTrackPrivateAVF* m_currentTextTrack;
 };
 
 uintptr_t AVFWrapper::s_nextAVFWrapperObjectID;
@@ -392,16 +392,16 @@ bool MediaPlayerPrivateAVFoundationCF::hasAvailableVideoFrame() const
     return (m_videoFrameHasDrawn || (videoLayer(m_avfWrapper) && AVCFPlayerLayerIsReadyForDisplay(videoLayer(m_avfWrapper))));
 }
 
-void MediaPlayerPrivateAVFoundationCF::setCurrentTrack(InbandTextTrackPrivateAVF* track)
+void MediaPlayerPrivateAVFoundationCF::setCurrentTextTrack(InbandTextTrackPrivateAVF* track)
 {
     if (m_avfWrapper)
-        m_avfWrapper->setCurrentTrack(track);
+        m_avfWrapper->setCurrentTextTrack(track);
 }
 
-InbandTextTrackPrivateAVF* MediaPlayerPrivateAVFoundationCF::currentTrack() const
+InbandTextTrackPrivateAVF* MediaPlayerPrivateAVFoundationCF::currentTextTrack() const
 {
     if (m_avfWrapper)
-        return m_avfWrapper->currentTrack();
+        return m_avfWrapper->currentTextTrack();
 
     return 0;
 }
@@ -1102,14 +1102,14 @@ void MediaPlayerPrivateAVFoundationCF::processMediaSelectionOptions()
 
 #endif // HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 
-void AVFWrapper::setCurrentTrack(InbandTextTrackPrivateAVF* track)
+void AVFWrapper::setCurrentTextTrack(InbandTextTrackPrivateAVF* track)
 {
-    if (m_currentTrack == track)
+    if (m_currentTextTrack == track)
         return;
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationCF::setCurrentTrack(%p) - selecting track %p, language = %s", this, track, track ? track->language().string().utf8().data() : "");
+    LOG(Media, "MediaPlayerPrivateAVFoundationCF::setCurrentTextTrack(%p) - selecting track %p, language = %s", this, track, track ? track->language().string().utf8().data() : "");
         
-    m_currentTrack = track;
+    m_currentTextTrack = track;
 
     if (track) {
         if (track->textTrackCategory() == InbandTextTrackPrivateAVF::LegacyClosedCaption)
@@ -1187,7 +1187,7 @@ void MediaPlayerPrivateAVFoundationCF::contentsNeedsDisplay()
 AVFWrapper::AVFWrapper(MediaPlayerPrivateAVFoundationCF* owner)
     : m_owner(owner)
     , m_objectID(s_nextAVFWrapperObjectID++)
-    , m_currentTrack(0)
+    , m_currentTextTrack(0)
 {
     ASSERT(isMainThread());
     ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
@@ -1621,10 +1621,10 @@ void AVFWrapper::processCue(void* context)
         return;
     }
 
-    if (!self->m_currentTrack)
+    if (!self->m_currentTextTrack)
         return;
 
-    self->m_currentTrack->processCue(legibleOutputData->m_attributedStrings.get(), legibleOutputData->m_time);
+    self->m_currentTextTrack->processCue(legibleOutputData->m_attributedStrings.get(), legibleOutputData->m_time);
 }
 
 void AVFWrapper::legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutputRef legibleOutput, CFArrayRef attributedStrings, CFArrayRef /*nativeSampleBuffers*/, CMTime itemTime)

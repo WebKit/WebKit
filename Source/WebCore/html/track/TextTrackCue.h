@@ -91,6 +91,12 @@ public:
     virtual CueType cueType() const = 0;
     virtual bool isRenderable() const { return false; }
 
+    enum CueMatchRules {
+        MatchAllFields,
+        IgnoreDuration,
+    };
+    virtual bool isEqual(const TextTrackCue&, CueMatchRules) const;
+
     void willChange();
     virtual void didChange();
 

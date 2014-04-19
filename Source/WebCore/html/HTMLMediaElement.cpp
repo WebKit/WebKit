@@ -1380,7 +1380,8 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
     // whenever ... the media element's readyState is changed back to HAVE_NOTHING.
     if (m_readyState != HAVE_NOTHING && m_player) {
         currentCues = m_cueTree.allOverlaps(m_cueTree.createInterval(movieTime, movieTime));
-        std::sort(currentCues.begin(), currentCues.end(), &compareCueInterval);
+        if (currentCues.size() > 1)
+            std::sort(currentCues.begin(), currentCues.end(), &compareCueInterval);
     }
 
     CueList previousCues;
@@ -1426,7 +1427,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
     // element. (In the other cases, such as explicit seeks, relevant events get
     // fired as part of the overall process of changing the current playback
     // position.)
-    if (m_lastSeekTime <= lastTime)
+    if (!m_paused && m_lastSeekTime <= lastTime)
         scheduleTimeupdateEvent(false);
 
     // Explicitly cache vector sizes, as their content is constant from here.

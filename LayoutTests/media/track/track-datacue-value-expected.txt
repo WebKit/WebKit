@@ -1,0 +1,39 @@
+Tests WebKitDataCue.value
+
+
+*** Initialize with string.
+RUN(cue = new WebKitDataCue(2, 6, 'test'))
+EXPECTED (cue.id == '') OK
+EXPECTED (cue.startTime == '2') OK
+EXPECTED (cue.endTime == '6') OK
+EXPECTED (cue.pauseOnExit == 'false') OK
+EXPECTED (typeof cue.value == 'string') OK
+EXPECTED (cue.value == 'test') OK
+EXPECTED (cue.data == 'null') OK
+EXPECTED (cue.type == '') OK
+
+*** Initialize with an object.
+RUN(cue = new WebKitDataCue(9, 16, { data: [1, 2, 3] }, 'org.test'))
+EXPECTED (cue.id == '') OK
+EXPECTED (cue.startTime == '9') OK
+EXPECTED (cue.endTime == '16') OK
+EXPECTED (cue.pauseOnExit == 'false') OK
+EXPECTED (typeof cue.value == 'object') OK
+EXPECTED (JSON.stringify(cue.value) == '{"data":[1,2,3]}') OK
+EXPECTED (cue.data == 'null') OK
+EXPECTED (cue.type == 'org.test') OK
+
+*** Set .value to an array.
+RUN(cue.value = [1,2,3])
+EXPECTED (JSON.stringify(cue.value) == '[1,2,3]') OK
+EXPECTED (cue.value.length == '3') OK
+EXPECTED (cue.value[0] == '1') OK
+EXPECTED (cue.value[1] == '2') OK
+EXPECTED (cue.value[2] == '3') OK
+
+*** Set .data to an ArrayBuffer, .value should return null.
+RUN(cue.data = new Uint8Array([1, 2, 3, 4, 5, 6]).buffer)
+EXPECTED (cue.value == 'null') OK
+
+END OF TEST
+

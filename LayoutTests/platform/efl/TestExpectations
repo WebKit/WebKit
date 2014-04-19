@@ -1401,6 +1401,10 @@ Bug(EFL) media/track/track-forced-subtitles-in-band.html [ Skip ]
 Bug(EFL) media/track/track-in-band-mode.html [ Skip ]
 Bug(EFL) media/track/in-band [ Skip ]
 
+# DataCue.value not enabled
+Bug(EFL) http/tests/media/track-in-band-hls-metadata.html [ Skip ]
+Bug(EFL) media/track/track-datacue-value.html [ Skip ]
+
 # Rendering failure, also missing expected results:
 webkit.org/b/105093 compositing/webgl/webgl-nonpremultiplied-blend.html [ Skip ]
 

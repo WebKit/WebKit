@@ -1,3 +1,29 @@
+2014-04-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] implement WebKitDataCue
+        https://bugs.webkit.org/show_bug.cgi?id=131799
+
+        Reviewed by Dean Jackson.
+
+        * http/tests/media/resources/hls: Added.
+        * http/tests/media/resources/hls/metadata: Added.
+        * http/tests/media/resources/hls/metadata/fileSequence0.ts: Added.
+        * http/tests/media/resources/hls/metadata/fileSequence1.ts: Added.
+        * http/tests/media/resources/hls/metadata/fileSequence2.ts: Added.
+        * http/tests/media/resources/hls/metadata/fileSequence3.ts: Added.
+        * http/tests/media/resources/hls/metadata/prog_index.m3u8: Added.
+        * http/tests/media/track-in-band-hls-metadata-expected.txt: Added.
+        * http/tests/media/track-in-band-hls-metadata.html: Added.
+        * media/track/track-datacue-value-expected.txt: Added.
+        * media/track/track-datacue-value.html: Added.
+        * platform/efl/TestExpectations: Skip the new tests.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt: Update.
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt: Update.
+        * platform/mac/TestExpectations: Skip DataCue test on all Mac versions. Skip HLS test on 
+            Mountain Lion.
+        * platform/win/TestExpectations: Skip the new tests.
+
 2014-04-18  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Add parsing support for gradients
