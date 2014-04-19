@@ -987,7 +987,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     bool didUpdateContentsRect = false;
     updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
-    if (!didUpdateContentsRect && m_graphicsLayer->hasContentsLayer())
+    if (!didUpdateContentsRect && m_graphicsLayer->usesContentsLayer())
         resetContentsRect();
 
     updateDrawsContent(isSimpleContainer);
@@ -1275,24 +1275,24 @@ void RenderLayerBacking::positionOverflowControlsLayers()
         IntRect hBarRect = m_owningLayer.rectForHorizontalScrollbar(borderBox);
         layer->setPosition(hBarRect.location() - offsetFromRenderer);
         layer->setSize(hBarRect.size());
-        if (layer->hasContentsLayer()) {
+        if (layer->usesContentsLayer()) {
             IntRect barRect = IntRect(IntPoint(), hBarRect.size());
             layer->setContentsRect(barRect);
             layer->setContentsClippingRect(barRect);
         }
-        layer->setDrawsContent(m_owningLayer.horizontalScrollbar() && !layer->hasContentsLayer());
+        layer->setDrawsContent(m_owningLayer.horizontalScrollbar() && !layer->usesContentsLayer());
     }
     
     if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
         IntRect vBarRect = m_owningLayer.rectForVerticalScrollbar(borderBox);
         layer->setPosition(vBarRect.location() - offsetFromRenderer);
         layer->setSize(vBarRect.size());
-        if (layer->hasContentsLayer()) {
+        if (layer->usesContentsLayer()) {
             IntRect barRect = IntRect(IntPoint(), vBarRect.size());
             layer->setContentsRect(barRect);
             layer->setContentsClippingRect(barRect);
         }
-        layer->setDrawsContent(m_owningLayer.verticalScrollbar() && !layer->hasContentsLayer());
+        layer->setDrawsContent(m_owningLayer.verticalScrollbar() && !layer->usesContentsLayer());
     }
 
     if (GraphicsLayer* layer = layerForScrollCorner()) {
@@ -2580,7 +2580,7 @@ AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID 
 
 CompositingLayerType RenderLayerBacking::compositingLayerType() const
 {
-    if (m_graphicsLayer->hasContentsLayer())
+    if (m_graphicsLayer->usesContentsLayer())
         return MediaCompositingLayer;
 
     if (m_graphicsLayer->drawsContent())

@@ -1049,7 +1049,7 @@ static void positionScrollbarLayer(GraphicsLayer* graphicsLayer, Scrollbar* scro
 
     graphicsLayer->setSize(scrollbarRect.size());
 
-    if (graphicsLayer->hasContentsLayer()) {
+    if (graphicsLayer->usesContentsLayer()) {
         graphicsLayer->setContentsRect(IntRect(0, 0, scrollbarRect.width(), scrollbarRect.height()));
         return;
     }

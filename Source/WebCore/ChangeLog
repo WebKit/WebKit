@@ -1,3 +1,40 @@
+2014-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Contents of directly composited image layers are sometimes missing
+        https://bugs.webkit.org/show_bug.cgi?id=131880
+
+        Reviewed by Tim Horton.
+        
+        RenderLayerBacking::updateGraphicsLayerGeometry() tested whether a
+        GraphicsLayer had a contents layer to determine whether to call code
+        that updates the contents rect. However, on Mac, we don't make a contents
+        layer until later at layer flush time. That would result in an empty
+        contentsRect being set.
+        
+        Fix by renaming GraphicsLayer::hasContentsLayer() to usesContentsLayer(),
+        and on Mac consulting the m_contentsLayerPurpose flag, which is set
+        at the appropriate time.
+
+        Test: compositing/images/update-content-rect.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::positionScrollbarLayer):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::getDebugBorderInfo):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::usesContentsLayer):
+        (WebCore::GraphicsLayer::hasContentsLayer): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::hasContentsLayer): Deleted.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (WebCore::GraphicsLayerTextureMapper::usesContentsLayer):
+        (WebCore::GraphicsLayerTextureMapper::hasContentsLayer): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::positionOverflowControlsLayers):
+        (WebCore::RenderLayerBacking::compositingLayerType):
+
 2014-04-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167527.

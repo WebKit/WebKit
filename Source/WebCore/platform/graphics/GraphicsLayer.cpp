@@ -370,7 +370,7 @@ void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
         return;
     }
 
-    if (hasContentsLayer()) {
+    if (usesContentsLayer()) {
         color = Color(255, 150, 255, 200); // non-painting layer with contents: pink
         width = 2;
         return;

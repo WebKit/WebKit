@@ -133,7 +133,7 @@ public:
     virtual void setContentsToCanvas(PlatformLayer*);
     virtual void setContentsToSolidColor(const Color&);
 
-    virtual bool hasContentsLayer() const { return m_contentsLayer; }
+    virtual bool usesContentsLayer() const override { return m_contentsLayerPurpose != NoContentsLayer; }
     
     virtual void setShowDebugBorder(bool) override;
     virtual void setShowRepaintCounter(bool) override;

@@ -1,3 +1,16 @@
+2014-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Contents of directly composited image layers are sometimes missing
+        https://bugs.webkit.org/show_bug.cgi?id=131880
+
+        Reviewed by Tim Horton.
+        
+        Test that that shows the issue in Safari, but not in the test
+        runner because of timing issues, but maybe it will some day.
+
+        * compositing/images/update-content-rect-expected.html: Added.
+        * compositing/images/update-content-rect.html: Added.
+
 2014-04-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167527.

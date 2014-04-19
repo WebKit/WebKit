@@ -76,7 +76,7 @@ public:
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
     virtual void setName(const String& name);
-    virtual bool hasContentsLayer() const { return m_contentsLayer; }
+    virtual bool usesContentsLayer() const { return m_contentsLayer; }
     virtual PlatformLayer* platformLayer() const { return m_contentsLayer; }
 
     inline int changeMask() const { return m_changeMask; }
