@@ -476,7 +476,6 @@
 		1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BB417C912C00CCA002BE67B /* TextCheckerCompletion.cpp */; };
 		263172CF18B469490065B9C3 /* NativeWebTouchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 263172CE18B469490065B9C3 /* NativeWebTouchEvent.h */; };
 		2684054418B85A630022C38B /* VisibleContentRectUpdateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */; };
-		2684054918B85FF70022C38B /* ViewUpdateDispatcher.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 2684054818B85FF70022C38B /* ViewUpdateDispatcher.messages.in */; };
 		2684054C18B86C350022C38B /* VisibleContentRectUpdateInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */; };
 		2684054F18B86C8E0022C38B /* ViewUpdateDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2684054518B85E7E0022C38B /* ViewUpdateDispatcher.cpp */; };
 		2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2684055018B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp */; };
@@ -7772,7 +7771,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1D26A51175964D70095BFD1 /* WebContentProcess.xib in Resources */,
-				2684054918B85FF70022C38B /* ViewUpdateDispatcher.messages.in in Resources */,
 				E133FD8A1423DD7F00FC7BFB /* WebKit.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

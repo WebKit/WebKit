@@ -1,3 +1,10 @@
+2014-04-19  Dan Bernstein  <mitz@apple.com>
+
+        Don’t install a source file inside WebProcess.app.
+
+        * WebKit2.xcodeproj/project.pbxproj: Removed ViewUpdateDispatcher.messages.in from
+        WebProcess’s Copy Bundle Resources build phase.
+
 2014-04-19  Darin Adler  <darin@apple.com>
 
         [Mac] WebView adjusts the cursor even when another window is in front
