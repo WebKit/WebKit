@@ -37,7 +37,7 @@
 
 namespace bmalloc {
 
-static inline void sleep(std::unique_lock<Mutex>& lock, std::chrono::milliseconds duration)
+static inline void sleep(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds duration)
 {
     if (duration == std::chrono::milliseconds(0))
         return;
@@ -47,7 +47,7 @@ static inline void sleep(std::unique_lock<Mutex>& lock, std::chrono::millisecond
     lock.lock();
 }
 
-Heap::Heap(std::lock_guard<Mutex>&)
+Heap::Heap(std::lock_guard<StaticMutex>&)
     : m_isAllocatingPages(false)
     , m_scavenger(*this, &Heap::concurrentScavenge)
 {
@@ -55,11 +55,11 @@ Heap::Heap(std::lock_guard<Mutex>&)
 
 void Heap::concurrentScavenge()
 {
-    std::unique_lock<Mutex> lock(PerProcess<Heap>::mutex());
+    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
     scavenge(lock, scavengeSleepDuration);
 }
     
-void Heap::scavenge(std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration)
+void Heap::scavenge(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration)
 {
     scavengeXSmallPages(lock, sleepDuration);
     scavengeSmallPages(lock, sleepDuration);
@@ -69,7 +69,7 @@ void Heap::scavenge(std::unique_lock<Mutex>& lock, std::chrono::milliseconds sle
     sleep(lock, sleepDuration);
 }
 
-void Heap::scavengeSmallPages(std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration)
+void Heap::scavengeSmallPages(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration)
 {
     while (1) {
         if (m_isAllocatingPages) {
@@ -85,7 +85,7 @@ void Heap::scavengeSmallPages(std::unique_lock<Mutex>& lock, std::chrono::millis
     }
 }
 
-void Heap::scavengeXSmallPages(std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration)
+void Heap::scavengeXSmallPages(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration)
 {
     while (1) {
         if (m_isAllocatingPages) {
@@ -101,7 +101,7 @@ void Heap::scavengeXSmallPages(std::unique_lock<Mutex>& lock, std::chrono::milli
     }
 }
 
-void Heap::scavengeMediumPages(std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration)
+void Heap::scavengeMediumPages(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration)
 {
     while (1) {
         if (m_isAllocatingPages) {
@@ -117,7 +117,7 @@ void Heap::scavengeMediumPages(std::unique_lock<Mutex>& lock, std::chrono::milli
     }
 }
 
-void Heap::scavengeLargeRanges(std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration)
+void Heap::scavengeLargeRanges(std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration)
 {
     while (1) {
         if (m_isAllocatingPages) {
@@ -134,7 +134,7 @@ void Heap::scavengeLargeRanges(std::unique_lock<Mutex>& lock, std::chrono::milli
     }
 }
 
-XSmallLine* Heap::allocateXSmallLineSlowCase(std::lock_guard<Mutex>& lock)
+XSmallLine* Heap::allocateXSmallLineSlowCase(std::lock_guard<StaticMutex>& lock)
 {
     m_isAllocatingPages = true;
 
@@ -155,7 +155,7 @@ XSmallLine* Heap::allocateXSmallLineSlowCase(std::lock_guard<Mutex>& lock)
     return line;
 }
 
-SmallLine* Heap::allocateSmallLineSlowCase(std::lock_guard<Mutex>& lock)
+SmallLine* Heap::allocateSmallLineSlowCase(std::lock_guard<StaticMutex>& lock)
 {
     m_isAllocatingPages = true;
 
@@ -176,7 +176,7 @@ SmallLine* Heap::allocateSmallLineSlowCase(std::lock_guard<Mutex>& lock)
     return line;
 }
 
-MediumLine* Heap::allocateMediumLineSlowCase(std::lock_guard<Mutex>& lock)
+MediumLine* Heap::allocateMediumLineSlowCase(std::lock_guard<StaticMutex>& lock)
 {
     m_isAllocatingPages = true;
 
@@ -197,7 +197,7 @@ MediumLine* Heap::allocateMediumLineSlowCase(std::lock_guard<Mutex>& lock)
     return line;
 }
 
-void* Heap::allocateXLarge(std::lock_guard<Mutex>&, size_t size)
+void* Heap::allocateXLarge(std::lock_guard<StaticMutex>&, size_t size)
 {
     XLargeChunk* chunk = XLargeChunk::create(size);
 
@@ -209,13 +209,13 @@ void* Heap::allocateXLarge(std::lock_guard<Mutex>&, size_t size)
     return chunk->begin();
 }
 
-void Heap::deallocateXLarge(std::lock_guard<Mutex>&, void* object)
+void Heap::deallocateXLarge(std::lock_guard<StaticMutex>&, void* object)
 {
     XLargeChunk* chunk = XLargeChunk::get(object);
     XLargeChunk::destroy(chunk);
 }
 
-void* Heap::allocateLarge(std::lock_guard<Mutex>&, size_t size)
+void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t size)
 {
     BASSERT(size <= largeMax);
     BASSERT(size >= largeMin);
@@ -239,7 +239,7 @@ void* Heap::allocateLarge(std::lock_guard<Mutex>&, size_t size)
     return range.begin();
 }
 
-void Heap::deallocateLarge(std::lock_guard<Mutex>&, void* object)
+void Heap::deallocateLarge(std::lock_guard<StaticMutex>&, void* object)
 {
     Range range = BoundaryTag::deallocate(object);
     m_largeRanges.insert(range);

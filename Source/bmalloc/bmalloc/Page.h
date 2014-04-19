@@ -45,9 +45,9 @@ public:
     
     static Page* get(Line*);
 
-    void ref(std::lock_guard<Mutex>&);
-    bool deref(std::lock_guard<Mutex>&);
-    unsigned refCount(std::lock_guard<Mutex>&);
+    void ref(std::lock_guard<StaticMutex>&);
+    bool deref(std::lock_guard<StaticMutex>&);
+    unsigned refCount(std::lock_guard<StaticMutex>&);
     
     Line* begin();
     Line* end();
@@ -57,14 +57,14 @@ private:
 };
 
 template<typename Traits>
-inline void Page<Traits>::ref(std::lock_guard<Mutex>&)
+inline void Page<Traits>::ref(std::lock_guard<StaticMutex>&)
 {
     BASSERT(m_refCount < maxRefCount);
     ++m_refCount;
 }
 
 template<typename Traits>
-inline bool Page<Traits>::deref(std::lock_guard<Mutex>&)
+inline bool Page<Traits>::deref(std::lock_guard<StaticMutex>&)
 {
     BASSERT(m_refCount);
     --m_refCount;
@@ -72,7 +72,7 @@ inline bool Page<Traits>::deref(std::lock_guard<Mutex>&)
 }
 
 template<typename Traits>
-inline unsigned Page<Traits>::refCount(std::lock_guard<Mutex>&)
+inline unsigned Page<Traits>::refCount(std::lock_guard<StaticMutex>&)
 {
     return m_refCount;
 }

@@ -27,8 +27,8 @@
 #define PerProcess_h
 
 #include "Inline.h"
-#include "Mutex.h"
 #include "Sizes.h"
+#include "StaticMutex.h"
 #include <mutex>
 
 namespace bmalloc {
@@ -48,7 +48,7 @@ namespace bmalloc {
 // x = object->m_field; // OK
 // if (gobalFlag) { ... } // Undefined behavior.
 //
-// std::lock_guard<Mutex> lock(PerProcess<Object>::mutex());
+// std::lock_guard<StaticMutex> lock(PerProcess<Object>::mutex());
 // Object* object = PerProcess<Object>::get(lock);
 // if (gobalFlag) { ... } // OK.
 
@@ -58,13 +58,13 @@ public:
     static T* get();
     static T* getFastCase();
     
-    static Mutex& mutex() { return s_mutex; }
+    static StaticMutex& mutex() { return s_mutex; }
 
 private:
     static T* getSlowCase();
 
     static std::atomic<T*> s_object;
-    static Mutex s_mutex;
+    static StaticMutex s_mutex;
 
     typedef typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type Memory;
     static Memory s_memory;
@@ -88,7 +88,7 @@ INLINE T* PerProcess<T>::get()
 template<typename T>
 NO_INLINE T* PerProcess<T>::getSlowCase()
 {
-    std::lock_guard<Mutex> lock(s_mutex);
+    std::lock_guard<StaticMutex> lock(s_mutex);
     if (!s_object.load(std::memory_order_consume)) {
         T* t = new (&s_memory) T(lock);
         s_object.store(t, std::memory_order_release);
@@ -100,7 +100,7 @@ template<typename T>
 std::atomic<T*> PerProcess<T>::s_object;
 
 template<typename T>
-Mutex PerProcess<T>::s_mutex;
+StaticMutex PerProcess<T>::s_mutex;
 
 template<typename T>
 typename PerProcess<T>::Memory PerProcess<T>::s_memory;

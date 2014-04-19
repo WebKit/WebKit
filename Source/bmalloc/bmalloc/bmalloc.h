@@ -91,7 +91,7 @@ inline void scavenge()
 {
     PerThread<Cache>::get()->scavenge();
     
-    std::unique_lock<Mutex> lock(PerProcess<Heap>::mutex());
+    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
     PerProcess<Heap>::get()->scavenge(lock, std::chrono::milliseconds(0));
 }
 

@@ -1,3 +1,93 @@
+2014-04-19  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Mutex should be harder to use wrong
+        https://bugs.webkit.org/show_bug.cgi?id=131879
+
+        Reviewed by Andreas Kling.
+
+        Mutex now has a proper constructor, so you can't deadlock by forgetting
+        to initialize it.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::processXSmallAllocatorLog):
+        (bmalloc::Allocator::processSmallAllocatorLog):
+        (bmalloc::Allocator::processMediumAllocatorLog):
+        (bmalloc::Allocator::allocateLarge):
+        (bmalloc::Allocator::allocateXLarge): Global replace Mutex => StaticMutex,
+        since the Heap mutex is a static.
+
+        * bmalloc/AsyncTask.h:
+        (bmalloc::Function>::AsyncTask): Use Mutex, since we're not static. No
+        need for explicit initialization anymore.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::scavenge):
+        (bmalloc::Deallocator::deallocateLarge):
+        (bmalloc::Deallocator::deallocateXLarge):
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSmallLine):
+        (bmalloc::Deallocator::deallocateXSmallLine):
+        (bmalloc::Deallocator::allocateSmallLine):
+        (bmalloc::Deallocator::allocateXSmallLine):
+        (bmalloc::Deallocator::deallocateMediumLine):
+        (bmalloc::Deallocator::allocateMediumLine):
+        * bmalloc/Deallocator.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::sleep):
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::concurrentScavenge):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeSmallPages):
+        (bmalloc::Heap::scavengeXSmallPages):
+        (bmalloc::Heap::scavengeMediumPages):
+        (bmalloc::Heap::scavengeLargeRanges):
+        (bmalloc::Heap::allocateXSmallLineSlowCase):
+        (bmalloc::Heap::allocateSmallLineSlowCase):
+        (bmalloc::Heap::allocateMediumLineSlowCase):
+        (bmalloc::Heap::allocateXLarge):
+        (bmalloc::Heap::deallocateXLarge):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::deallocateXSmallLine):
+        (bmalloc::Heap::allocateXSmallLine):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::allocateSmallLine):
+        (bmalloc::Heap::deallocateMediumLine):
+        (bmalloc::Heap::allocateMediumLine):
+        * bmalloc/Line.h:
+        (bmalloc::Line<Traits>::deref):
+        * bmalloc/Mutex.cpp: Removed.
+        * bmalloc/Mutex.h:
+        (bmalloc::Mutex::Mutex):
+        (bmalloc::Mutex::init): Deleted.
+        (bmalloc::Mutex::try_lock): Deleted.
+        (bmalloc::Mutex::lock): Deleted.
+        (bmalloc::Mutex::unlock): Deleted.
+        * bmalloc/Page.h:
+        (bmalloc::Page<Traits>::ref):
+        (bmalloc::Page<Traits>::deref):
+        (bmalloc::Page<Traits>::refCount):
+        * bmalloc/PerProcess.h:
+        (bmalloc::PerProcess::mutex):
+        (bmalloc::PerProcess<T>::getSlowCase):
+        * bmalloc/StaticMutex.cpp: Added.
+        (bmalloc::StaticMutex::lockSlowCase):
+        * bmalloc/StaticMutex.h: Added.
+        (bmalloc::StaticMutex::init):
+        (bmalloc::StaticMutex::try_lock):
+        (bmalloc::StaticMutex::lock):
+        (bmalloc::StaticMutex::unlock):
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::deallocateXSmallPage):
+        (bmalloc::VMHeap::deallocateSmallPage):
+        (bmalloc::VMHeap::deallocateMediumPage):
+        (bmalloc::VMHeap::deallocateLargeRange):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::scavenge): Global replace Mutex => StaticMutex,
+        since the Heap mutex is a static.
+
 2014-04-18  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: AsyncTask should use Mutex instead of std::mutex

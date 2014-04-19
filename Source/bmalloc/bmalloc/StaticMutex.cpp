@@ -23,25 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Mutex_h
-#define Mutex_h
-
 #include "StaticMutex.h"
-
-// A fast replacement for std::mutex.
+#include <thread>
 
 namespace bmalloc {
 
-class Mutex : public StaticMutex {
-public:
-    Mutex();
-};
-
-inline Mutex::Mutex()
+void StaticMutex::lockSlowCase()
 {
-    init();
+    while (!try_lock())
+        std::this_thread::yield();
 }
 
 } // namespace bmalloc
-
-#endif // Mutex_h

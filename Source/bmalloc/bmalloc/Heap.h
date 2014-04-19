@@ -44,31 +44,31 @@ class EndTag;
 
 class Heap {
 public:
-    Heap(std::lock_guard<Mutex>&);
+    Heap(std::lock_guard<StaticMutex>&);
     
-    XSmallLine* allocateXSmallLine(std::lock_guard<Mutex>&);
-    void deallocateXSmallLine(std::lock_guard<Mutex>&, XSmallLine*);
+    XSmallLine* allocateXSmallLine(std::lock_guard<StaticMutex>&);
+    void deallocateXSmallLine(std::lock_guard<StaticMutex>&, XSmallLine*);
 
-    SmallLine* allocateSmallLine(std::lock_guard<Mutex>&);
-    void deallocateSmallLine(std::lock_guard<Mutex>&, SmallLine*);
+    SmallLine* allocateSmallLine(std::lock_guard<StaticMutex>&);
+    void deallocateSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
 
-    MediumLine* allocateMediumLine(std::lock_guard<Mutex>&);
-    void deallocateMediumLine(std::lock_guard<Mutex>&, MediumLine*);
+    MediumLine* allocateMediumLine(std::lock_guard<StaticMutex>&);
+    void deallocateMediumLine(std::lock_guard<StaticMutex>&, MediumLine*);
     
-    void* allocateLarge(std::lock_guard<Mutex>&, size_t);
-    void deallocateLarge(std::lock_guard<Mutex>&, void*);
+    void* allocateLarge(std::lock_guard<StaticMutex>&, size_t);
+    void deallocateLarge(std::lock_guard<StaticMutex>&, void*);
 
-    void* allocateXLarge(std::lock_guard<Mutex>&, size_t);
-    void deallocateXLarge(std::lock_guard<Mutex>&, void*);
+    void* allocateXLarge(std::lock_guard<StaticMutex>&, size_t);
+    void deallocateXLarge(std::lock_guard<StaticMutex>&, void*);
 
-    void scavenge(std::unique_lock<Mutex>&, std::chrono::milliseconds sleepDuration);
+    void scavenge(std::unique_lock<StaticMutex>&, std::chrono::milliseconds sleepDuration);
     
 private:
     ~Heap() = delete;
 
-    XSmallLine* allocateXSmallLineSlowCase(std::lock_guard<Mutex>&);
-    SmallLine* allocateSmallLineSlowCase(std::lock_guard<Mutex>&);
-    MediumLine* allocateMediumLineSlowCase(std::lock_guard<Mutex>&);
+    XSmallLine* allocateXSmallLineSlowCase(std::lock_guard<StaticMutex>&);
+    SmallLine* allocateSmallLineSlowCase(std::lock_guard<StaticMutex>&);
+    MediumLine* allocateMediumLineSlowCase(std::lock_guard<StaticMutex>&);
 
     void* allocateLarge(Range, size_t);
     Range allocateLargeChunk();
@@ -79,10 +79,10 @@ private:
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& hasPhysicalPages);
     
     void concurrentScavenge();
-    void scavengeXSmallPages(std::unique_lock<Mutex>&, std::chrono::milliseconds);
-    void scavengeSmallPages(std::unique_lock<Mutex>&, std::chrono::milliseconds);
-    void scavengeMediumPages(std::unique_lock<Mutex>&, std::chrono::milliseconds);
-    void scavengeLargeRanges(std::unique_lock<Mutex>&, std::chrono::milliseconds);
+    void scavengeXSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
+    void scavengeSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
+    void scavengeMediumPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
+    void scavengeLargeRanges(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
 
     Vector<XSmallLine*> m_xSmallLines;
     Vector<SmallLine*> m_smallLines;
@@ -100,7 +100,7 @@ private:
     AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;
 };
 
-inline void Heap::deallocateXSmallLine(std::lock_guard<Mutex>& lock, XSmallLine* line)
+inline void Heap::deallocateXSmallLine(std::lock_guard<StaticMutex>& lock, XSmallLine* line)
 {
     XSmallPage* page = XSmallPage::get(line);
     if (page->deref(lock)) {
@@ -111,7 +111,7 @@ inline void Heap::deallocateXSmallLine(std::lock_guard<Mutex>& lock, XSmallLine*
     m_xSmallLines.push(line);
 }
 
-inline XSmallLine* Heap::allocateXSmallLine(std::lock_guard<Mutex>& lock)
+inline XSmallLine* Heap::allocateXSmallLine(std::lock_guard<StaticMutex>& lock)
 {
     while (m_xSmallLines.size()) {
         XSmallLine* line = m_xSmallLines.pop();
@@ -125,7 +125,7 @@ inline XSmallLine* Heap::allocateXSmallLine(std::lock_guard<Mutex>& lock)
     return allocateXSmallLineSlowCase(lock);
 }
 
-inline void Heap::deallocateSmallLine(std::lock_guard<Mutex>& lock, SmallLine* line)
+inline void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, SmallLine* line)
 {
     SmallPage* page = SmallPage::get(line);
     if (page->deref(lock)) {
@@ -136,7 +136,7 @@ inline void Heap::deallocateSmallLine(std::lock_guard<Mutex>& lock, SmallLine* l
     m_smallLines.push(line);
 }
 
-inline SmallLine* Heap::allocateSmallLine(std::lock_guard<Mutex>& lock)
+inline SmallLine* Heap::allocateSmallLine(std::lock_guard<StaticMutex>& lock)
 {
     while (m_smallLines.size()) {
         SmallLine* line = m_smallLines.pop();
@@ -150,7 +150,7 @@ inline SmallLine* Heap::allocateSmallLine(std::lock_guard<Mutex>& lock)
     return allocateSmallLineSlowCase(lock);
 }
 
-inline void Heap::deallocateMediumLine(std::lock_guard<Mutex>& lock, MediumLine* line)
+inline void Heap::deallocateMediumLine(std::lock_guard<StaticMutex>& lock, MediumLine* line)
 {
     MediumPage* page = MediumPage::get(line);
     if (page->deref(lock)) {
@@ -161,7 +161,7 @@ inline void Heap::deallocateMediumLine(std::lock_guard<Mutex>& lock, MediumLine*
     m_mediumLines.push(line);
 }
 
-inline MediumLine* Heap::allocateMediumLine(std::lock_guard<Mutex>& lock)
+inline MediumLine* Heap::allocateMediumLine(std::lock_guard<StaticMutex>& lock)
 {
     while (m_mediumLines.size()) {
         MediumLine* line = m_mediumLines.pop();

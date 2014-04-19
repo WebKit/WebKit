@@ -23,15 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "Mutex.h"
-#include <thread>
+#ifndef StaticMutex_h
+#define StaticMutex_h
+
+#include "BAssert.h"
+#include <atomic>
+
+// A fast replacement for std::mutex for use in static storage, where global
+// constructors and exit-time destructors are prohibited.
 
 namespace bmalloc {
 
-void Mutex::lockSlowCase()
+class StaticMutex {
+public:
+    void lock();
+    bool try_lock();
+    void unlock();
+
+private:
+    friend class Mutex;
+
+    // Static storage will zero-initialize us automatically, but Mutex needs an
+    // API for explicit initialization.
+    void init();
+
+    void lockSlowCase();
+
+    std::atomic_flag m_flag;
+};
+
+inline void StaticMutex::init()
 {
-    while (!try_lock())
-        std::this_thread::yield();
+    m_flag.clear();
+}
+
+inline bool StaticMutex::try_lock()
+{
+    return !m_flag.test_and_set(std::memory_order_acquire);
+}
+
+inline void StaticMutex::lock()
+{
+    if (!try_lock())
+        lockSlowCase();
+}
+
+inline void StaticMutex::unlock()
+{
+    m_flag.clear(std::memory_order_release);
 }
 
 } // namespace bmalloc
+
+#endif // StaticMutex_h

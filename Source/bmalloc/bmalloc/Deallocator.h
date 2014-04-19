@@ -45,13 +45,13 @@ public:
     bool deallocateFastCase(void*);
     void deallocateSlowCase(void*);
 
-    void deallocateXSmallLine(std::lock_guard<Mutex>&, XSmallLine*);
+    void deallocateXSmallLine(std::lock_guard<StaticMutex>&, XSmallLine*);
     XSmallLine* allocateXSmallLine();
 
-    void deallocateSmallLine(std::lock_guard<Mutex>&, SmallLine*);
+    void deallocateSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
     SmallLine* allocateSmallLine();
 
-    void deallocateMediumLine(std::lock_guard<Mutex>&, MediumLine*);
+    void deallocateMediumLine(std::lock_guard<StaticMutex>&, MediumLine*);
     MediumLine* allocateMediumLine();
     
     void scavenge();

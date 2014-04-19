@@ -16,6 +16,8 @@
 		142FCC7A190080B8009032D4 /* XSmallPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 142FCC76190080B8009032D4 /* XSmallPage.h */; };
 		142FCC7B190080B8009032D4 /* XSmallTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 142FCC77190080B8009032D4 /* XSmallTraits.h */; };
 		142FCC7D1900815E009032D4 /* XSmallAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 142FCC7C1900815E009032D4 /* XSmallAllocator.h */; };
+		143CB81C19022BC900B16A45 /* StaticMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143CB81A19022BC900B16A45 /* StaticMutex.cpp */; };
+		143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 143CB81B19022BC900B16A45 /* StaticMutex.h */; };
 		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
 		1448C30118F3754C00502839 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1448C2FE18F3754300502839 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C919C818FCC59F0028DB43 /* BPlatform.h */; };
@@ -62,7 +64,6 @@
 		14F271C718EA3990008C152F /* Heap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DA320E18875D9F007269E0 /* Heap.cpp */; };
 		14F271C818EA3990008C152F /* ObjectType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14105E8318E14374003A106E /* ObjectType.cpp */; };
 		14F271C918EA3990008C152F /* VMHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144F7BFB18BFC517003537F3 /* VMHeap.cpp */; };
-		14F271CA18EA3990008C152F /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144DCED817A728570093B2F2 /* Mutex.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +93,8 @@
 		142FCC76190080B8009032D4 /* XSmallPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSmallPage.h; path = bmalloc/XSmallPage.h; sourceTree = "<group>"; };
 		142FCC77190080B8009032D4 /* XSmallTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSmallTraits.h; path = bmalloc/XSmallTraits.h; sourceTree = "<group>"; };
 		142FCC7C1900815E009032D4 /* XSmallAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSmallAllocator.h; path = bmalloc/XSmallAllocator.h; sourceTree = "<group>"; };
+		143CB81A19022BC900B16A45 /* StaticMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticMutex.cpp; path = bmalloc/StaticMutex.cpp; sourceTree = "<group>"; };
+		143CB81B19022BC900B16A45 /* StaticMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticMutex.h; path = bmalloc/StaticMutex.h; sourceTree = "<group>"; };
 		143E29E918CAE8BE00FE8A0F /* MediumPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediumPage.h; path = bmalloc/MediumPage.h; sourceTree = "<group>"; };
 		143E29ED18CAE90500FE8A0F /* SmallPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmallPage.h; path = bmalloc/SmallPage.h; sourceTree = "<group>"; };
 		144469E417A46BFE00F9EA1D /* Cache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = Cache.cpp; path = bmalloc/Cache.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -101,7 +104,6 @@
 		1448C2FE18F3754300502839 /* bmalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bmalloc.h; path = bmalloc/bmalloc.h; sourceTree = "<group>"; };
 		1448C2FF18F3754300502839 /* mbmalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = mbmalloc.cpp; path = bmalloc/mbmalloc.cpp; sourceTree = "<group>"; };
 		144DCED617A649D90093B2F2 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mutex.h; path = bmalloc/Mutex.h; sourceTree = "<group>"; };
-		144DCED817A728570093B2F2 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mutex.cpp; path = bmalloc/Mutex.cpp; sourceTree = "<group>"; };
 		144F7BFB18BFC517003537F3 /* VMHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VMHeap.cpp; path = bmalloc/VMHeap.cpp; sourceTree = "<group>"; };
 		144F7BFC18BFC517003537F3 /* VMHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VMHeap.h; path = bmalloc/VMHeap.h; sourceTree = "<group>"; };
 		1452478518BC757C00F80098 /* MediumLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediumLine.h; path = bmalloc/MediumLine.h; sourceTree = "<group>"; };
@@ -279,11 +281,12 @@
 				14C919C818FCC59F0028DB43 /* BPlatform.h */,
 				14D9DB4517F2447100EAAB79 /* FixedVector.h */,
 				1413E460189DCE1E00546D68 /* Inline.h */,
-				144DCED817A728570093B2F2 /* Mutex.cpp */,
 				144DCED617A649D90093B2F2 /* Mutex.h */,
 				14446A0717A61FA400F9EA1D /* PerProcess.h */,
 				144469FD17A61F1F00F9EA1D /* PerThread.h */,
 				145F6878179E3A4400D65598 /* Range.h */,
+				143CB81A19022BC900B16A45 /* StaticMutex.cpp */,
+				143CB81B19022BC900B16A45 /* StaticMutex.h */,
 				1417F64F18B7280C0076FA3F /* Syscall.h */,
 				1479E21217A1A255006D4E9D /* Vector.h */,
 				1479E21417A1A63E006D4E9D /* VMAllocate.h */,
@@ -315,6 +318,7 @@
 				14DD78B418F48D6B00950702 /* Chunk.h in Headers */,
 				14DD78CA18F48D7500950702 /* Mutex.h in Headers */,
 				142FCC7D1900815E009032D4 /* XSmallAllocator.h in Headers */,
+				143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */,
 				14DD78D118F48EC600950702 /* XLargeChunk.h in Headers */,
 				14DD78B918F48D6B00950702 /* MediumTraits.h in Headers */,
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
@@ -432,7 +436,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				14F271CA18EA3990008C152F /* Mutex.cpp in Sources */,
+				143CB81C19022BC900B16A45 /* StaticMutex.cpp in Sources */,
 				14F271C618EA3983008C152F /* SegregatedFreeList.cpp in Sources */,
 				14F271C318EA3978008C152F /* Allocator.cpp in Sources */,
 				14F271C718EA3990008C152F /* Heap.cpp in Sources */,

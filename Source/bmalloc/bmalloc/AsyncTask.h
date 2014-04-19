@@ -74,7 +74,6 @@ AsyncTask<Object, Function>::AsyncTask(Object& object, const Function& function)
     , m_object(object)
     , m_function(function)
 {
-    m_conditionMutex.init();
 }
 
 template<typename Object, typename Function>
