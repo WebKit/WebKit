@@ -1,3 +1,19 @@
+2014-04-19  Andreas Kling  <akling@apple.com>
+
+        Slap ALWAYS_INLINE on Element attribute lookup things.
+        <https://webkit.org/b/131892>
+
+        Most of the "inline" helpers for setting/getting attributes were not
+        actually getting inlined by the compiler, so let's make that happen.
+
+        Reviewed by Geoffrey Garen.
+
+        * dom/Element.cpp:
+        (WebCore::Element::synchronizeAttribute):
+        * dom/ElementData.h:
+        (WebCore::ElementData::findAttributeByName):
+        (WebCore::ElementData::findAttributeIndexByName):
+
 2014-04-19  Darin Adler  <darin@apple.com>
 
         Telephone number detection should respect its setting consistently

@@ -262,7 +262,7 @@ inline AttributeIteratorAccessor ElementData::attributesIterator() const
     return AttributeIteratorAccessor(static_cast<const ShareableElementData*>(this)->m_attributeArray, arraySize());
 }
 
-inline const Attribute* ElementData::findAttributeByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned index = findAttributeIndexByName(name, shouldIgnoreAttributeCase);
     if (index != attributeNotFound)
@@ -270,7 +270,7 @@ inline const Attribute* ElementData::findAttributeByName(const AtomicString& nam
     return 0;
 }
 
-inline unsigned ElementData::findAttributeIndexByName(const QualifiedName& name) const
+ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const QualifiedName& name) const
 {
     const Attribute* attributes = attributeBase();
     for (unsigned i = 0, count = length(); i < count; ++i) {
@@ -282,7 +282,7 @@ inline unsigned ElementData::findAttributeIndexByName(const QualifiedName& name)
 
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
-inline unsigned ElementData::findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     const Attribute* attributes = attributeBase();
     bool doSlowCheck = shouldIgnoreAttributeCase;
@@ -302,7 +302,7 @@ inline unsigned ElementData::findAttributeIndexByName(const AtomicString& name, 
     return attributeNotFound;
 }
 
-inline const Attribute* ElementData::findAttributeByName(const QualifiedName& name) const
+ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const QualifiedName& name) const
 {
     const Attribute* attributes = attributeBase();
     for (unsigned i = 0, count = length(); i < count; ++i) {
