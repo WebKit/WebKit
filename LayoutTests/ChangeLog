@@ -1,3 +1,12 @@
+2014-04-18  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Two tests failing on Mountain Lion after r167520
+        https://bugs.webkit.org/show_bug.cgi?id=131886
+
+        Skip two failing tests.
+
+        * platform/mac/TestExpectations:
+
 2014-04-18  Timothy Hatcher  <timothy@apple.com>
 
         Skip fast/dom/gc-attribute-node.html which is flaky

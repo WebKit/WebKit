@@ -1359,3 +1359,6 @@ webkit.org/b/131715 transitions/cancel-transition.html [ Pass Failure ]
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
 webkit.org/b/131855 media/event-attributes.html [ Pass Failure ]
+
+webkit.org/b/131886 [ MountainLion ] webgl/1.0.2/conformance/textures/texture-size-limit.html [ Failure ]
+webkit.org/b/131886 [ MountainLion ] fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
