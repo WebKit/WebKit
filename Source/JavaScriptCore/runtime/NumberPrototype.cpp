@@ -104,7 +104,7 @@ static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double& x)
         return true;
     }
     
-    if (thisValue.isCell() && thisValue.asCell()->structure()->typeInfo().isNumberObject()) {
+    if (thisValue.isCell() && thisValue.asCell()->type() == NumberObjectType) {
         x = static_cast<const NumberObject*>(thisValue.asCell())->internalValue().asNumber();
         return true;
     }

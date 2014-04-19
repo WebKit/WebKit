@@ -69,7 +69,7 @@ protected:
 
 inline bool isName(JSValue v)
 {
-    return v.isCell() && v.asCell()->structure()->typeInfo().isName();
+    return v.isCell() && v.asCell()->type() == NameInstanceType;
 }
 
 } // namespace JSC

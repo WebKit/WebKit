@@ -1,3 +1,18 @@
+2014-04-19  Andreas Kling  <akling@apple.com>
+
+        Two little shortcuts to the JSType.
+        <https://webkit.org/b/131896>
+
+        Tweak two sites that take the long road through JSCell::structure()->typeInfo()
+        to look at data that's already in JSCell::type().
+
+        Reviewed by Darin Adler.
+
+        * runtime/NameInstance.h:
+        (JSC::isName):
+        * runtime/NumberPrototype.cpp:
+        (JSC::toThisNumber):
+
 2014-04-19  Filip Pizlo  <fpizlo@apple.com>
 
         Make it easier to check if an integer sum would overflow
