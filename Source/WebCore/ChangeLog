@@ -1,3 +1,20 @@
+2014-04-19  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Harden the layout in case there are no regions
+        https://bugs.webkit.org/show_bug.cgi?id=131517
+
+        Reviewed by Mihnea Ovidenie.
+
+        The patch fixes the cases when the content of a flow thread is not
+        properly invalidated when all the regions of its chain are removed.
+
+        Test: fast/regions/simplified-layout-no-regions.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegionsForBlock):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::ensureOverflowForBox):
+
 2014-04-19  Zalan Bujtas  <zalan@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=131594

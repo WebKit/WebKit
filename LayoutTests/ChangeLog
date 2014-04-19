@@ -1,3 +1,16 @@
+2014-04-19  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Harden the layout in case there are no regions
+        https://bugs.webkit.org/show_bug.cgi?id=131517
+
+        Reviewed by Mihnea Ovidenie.
+
+        Add a test that verifies the content of a flow thread is updated when all
+        the regions are removed.
+
+        * fast/regions/simplified-layout-no-regions-expected.txt: Added.
+        * fast/regions/simplified-layout-no-regions.html: Added.
+
 2014-04-19  Darin Adler  <darin@apple.com>
 
         Cleared executable bits on many .html and .txt files.

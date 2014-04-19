@@ -590,8 +590,13 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
 
 void RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* block, bool& relayoutChildren)
 {
-    if (!hasValidRegionInfo())
+    if (!hasValidRegionInfo()) {
+        // FIXME: Remove once we stop laying out flow threads without regions.
+        // If we had regions but don't any more, relayout the children because the code below
+        // can't properly detect this scenario.
+        relayoutChildren |= previousRegionCountChanged();
         return;
+    }
 
     auto it = m_regionRangeMap.find(block);
     if (it == m_regionRangeMap.end())

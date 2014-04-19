@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body.hidden ol { visibility: hidden; }
+            ol > li { position: relative; }
+            li::after { position: absolute; }
+            ol.chapter > li { counter-increment: chapter; }
+            ol.section > li::after { content: counter(chapter); }
+
+            .extract { -webkit-flow-into: f1; }
+            #region { -webkit-flow-from: f1; }
+        </style>
+    </head>
+    <body>
+        <p>The test passes if there is no crash or assert.</p>
+        <p>PASS</p>
+        <ol id="start" class="chapter">
+            <li>
+                <ol class="section extract">
+                    <li>I</li>
+                </ol>
+            </li>
+        </ol>
+        <ol class="section">
+            <li id="second">II</li>
+            <li id="third">III</li>
+        </ol>
+        <div id="region"></div>
+        <div id="end"></div>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+
+            document.body.offsetParent;
+            var range = document.createRange();
+            range.setStart(document.getElementById("start"));
+            range.setEnd(document.getElementById("start"));
+            range.surroundContents(document.getElementById("third"));
+            range.setStart(document.getElementById("second"), 1);
+            range.setEnd(document.getElementById("end"));
+            range.deleteContents();
+            document.body.offsetParent;
+
+            if (window.testRunner)
+                document.body.className = "hidden";
+        </script>
+    </body>
+</html>
+

@@ -430,6 +430,7 @@ void RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint
 
 void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverflow>& overflow, bool forceCreation)
 {
+    ASSERT(m_flowThread->renderRegionList().contains(this));
     ASSERT(isValid());
 
     RenderBoxRegionInfo* boxInfo = renderBoxRegionInfo(box);
