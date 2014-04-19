@@ -93,6 +93,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , customBehavior(GraphicsLayer::NoCustomBehavior)
     , minificationFilter(PlatformCALayer::FilterType::Linear)
     , magnificationFilter(PlatformCALayer::FilterType::Linear)
+    , blendMode(BlendModeNormal)
     , hidden(false)
     , geometryFlipped(false)
     , doubleSided(true)
@@ -125,6 +126,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , customBehavior(other.customBehavior)
     , minificationFilter(other.minificationFilter)
     , magnificationFilter(other.magnificationFilter)
+    , blendMode(other.blendMode)
     , hidden(other.hidden)
     , geometryFlipped(other.geometryFlipped)
     , doubleSided(other.doubleSided)
@@ -215,6 +217,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
 
     if (changedProperties & MagnificationFilterChanged)
         encoder.encodeEnum(magnificationFilter);
+
+    if (changedProperties & BlendModeChanged)
+        encoder.encodeEnum(blendMode);
 
     if (changedProperties & SpeedChanged)
         encoder << speed;
@@ -368,6 +373,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
 
     if (result.changedProperties & MagnificationFilterChanged) {
         if (!decoder.decodeEnum(result.magnificationFilter))
+            return false;
+    }
+
+    if (result.changedProperties & BlendModeChanged) {
+        if (!decoder.decodeEnum(result.blendMode))
             return false;
     }
 
@@ -567,6 +577,7 @@ public:
     RemoteLayerTreeTextStream& operator<<(const FilterOperations&);
     RemoteLayerTreeTextStream& operator<<(const PlatformCAAnimationRemote::Properties&);
     RemoteLayerTreeTextStream& operator<<(const RemoteLayerBackingStore&);
+    RemoteLayerTreeTextStream& operator<<(BlendMode);
     RemoteLayerTreeTextStream& operator<<(PlatformCAAnimation::AnimationType);
     RemoteLayerTreeTextStream& operator<<(PlatformCAAnimation::FillModeType);
     RemoteLayerTreeTextStream& operator<<(PlatformCAAnimation::ValueFunctionType);
@@ -714,7 +725,31 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOpe
     }
     return ts;
 }
-    
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(BlendMode blendMode)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    switch (blendMode) {
+    case BlendModeNormal: ts << "normal"; break;
+    case BlendModeMultiply: ts << "multiply"; break;
+    case BlendModeScreen: ts << "screen"; break;
+    case BlendModeOverlay: ts << "overlay"; break;
+    case BlendModeDarken: ts << "darken"; break;
+    case BlendModeLighten: ts << "lighten"; break;
+    case BlendModeColorDodge: ts << "color-dodge"; break;
+    case BlendModeColorBurn: ts << "color-burn"; break;
+    case BlendModeHardLight: ts << "hard-light"; break;
+    case BlendModeSoftLight: ts << "soft-light"; break;
+    case BlendModeDifference: ts << "difference"; break;
+    case BlendModeExclusion: ts << "exclusion"; break;
+    case BlendModeHue: ts << "hue"; break;
+    case BlendModeSaturation: ts << "saturation"; break;
+    case BlendModeColor: ts << "color"; break;
+    case BlendModeLuminosity: ts << "luminosity"; break;
+    }
+    return ts;
+}
+
 RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(PlatformCAAnimation::AnimationType type)
 {
     RemoteLayerTreeTextStream& ts = *this;
@@ -1017,6 +1052,9 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MagnificationFilterChanged)
             dumpProperty(ts, "magnificationFilter", layerProperties.magnificationFilter);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BlendModeChanged)
+            dumpProperty(ts, "blendMode", layerProperties.blendMode);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SpeedChanged)
             dumpProperty(ts, "speed", layerProperties.speed);

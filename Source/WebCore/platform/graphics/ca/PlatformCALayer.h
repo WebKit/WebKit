@@ -183,7 +183,7 @@ public:
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-    void setBlendMode(BlendMode);
+    virtual void setBlendMode(BlendMode) = 0;
 #endif
 
     virtual void setName(const String&) = 0;

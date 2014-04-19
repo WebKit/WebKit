@@ -643,7 +643,7 @@ void PlatformCALayerMac::setOpacity(float value)
 #if ENABLE(CSS_FILTERS)
 void PlatformCALayerMac::setFilters(const FilterOperations& filters)
 {
-    PlatformCAFilters::setFiltersOnLayer(this->platformLayer(), filters);
+    PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters);
 }
 
 void PlatformCALayerMac::copyFiltersFrom(const PlatformCALayer* sourceLayer)
@@ -679,9 +679,9 @@ bool PlatformCALayerMac::filtersCanBeComposited(const FilterOperations& filters)
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-void PlatformCALayer::setBlendMode(BlendMode blendMode)
+void PlatformCALayerMac::setBlendMode(BlendMode blendMode)
 {
-    PlatformCAFilters::setBlendingFiltersOnLayer(this, blendMode);
+    PlatformCAFilters::setBlendingFiltersOnLayer(platformLayer(), blendMode);
 }
 #endif
 

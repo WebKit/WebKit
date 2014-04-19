@@ -178,6 +178,9 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
     if (properties.changedProperties & RemoteLayerTreeTransaction::MagnificationFilterChanged)
         layer.magnificationFilter = toCAFilterType(properties.magnificationFilter);
 
+    if (properties.changedProperties & RemoteLayerTreeTransaction::BlendModeChanged)
+        PlatformCAFilters::setBlendingFiltersOnLayer(layer, properties.blendMode);
+
     if (properties.changedProperties & RemoteLayerTreeTransaction::SpeedChanged)
         layer.speed = properties.speed;
 

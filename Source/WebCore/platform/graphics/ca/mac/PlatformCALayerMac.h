@@ -122,6 +122,10 @@ public:
     virtual void copyFiltersFrom(const PlatformCALayer*) override;
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+    virtual void setBlendMode(BlendMode) override;
+#endif
+
     virtual void setName(const String&) override;
 
     virtual void setSpeed(float) override;

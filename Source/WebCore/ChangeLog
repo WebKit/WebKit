@@ -1,3 +1,35 @@
+2014-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Implement blend modes
+        https://bugs.webkit.org/show_bug.cgi?id=131891
+        <rdar://problem/16490085>
+
+        Reviewed by Tim Horton.
+
+        Implement blend modes with UI-side compositing.
+        
+        PlatformCALayer::setBlendMode() becomes pure virtual, and overridden in
+        PlatformCALayerMac and PlatformCALayerRemote.
+        PlatformCAFilters::setBlendingFiltersOnLayer() now takes a raw platform
+        layer, so it can be called from the UI process on a CALayer*.
+        
+        Fix an issue with GraphicsLayerCA::LayerChange flags. 1 << 31 shifts
+        a signed integer, so it ended up setting all the high bits in m_uncommittedChanges,
+        causing us to push blend modes to the UI process for every layer. Fix by shifting
+        an unsigned long long (1LLU << 31). This should also fix a build warning on Windows.
+
+        * WebCore.exp.in:
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCAFilters.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm:
+        (PlatformCAFilters::setBlendingFiltersOnLayer):
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::setFilters):
+        (PlatformCALayerMac::setBlendMode):
+        (PlatformCALayer::setBlendMode): Deleted.
+
 2014-04-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix AVPlayerController leak on pages with video

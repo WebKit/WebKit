@@ -48,7 +48,7 @@ class PlatformCALayer;
 class PlatformCAFilters {
 public:
     static void setFiltersOnLayer(PlatformLayer*, const FilterOperations&);
-    static void setBlendingFiltersOnLayer(PlatformCALayer*, const BlendMode);
+    static void setBlendingFiltersOnLayer(PlatformLayer*, const BlendMode);
     static int numAnimatedFilterProperties(FilterOperation::OperationType);
     static const char* animatedFilterPropertyName(FilterOperation::OperationType, int internalFilterPropertyIndex);
 

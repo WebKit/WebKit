@@ -28,7 +28,6 @@
 #if ENABLE(CSS_FILTERS)
 
 #import "PlatformCAFilters.h"
-
 #import "BlockExceptions.h"
 #import "FloatConversion.h"
 #import "LengthFunctions.h" // This is a layering violation.
@@ -39,13 +38,13 @@
 using namespace WebCore;
 
 // FIXME: Should share these values with FilterEffectRenderer::build() (https://bugs.webkit.org/show_bug.cgi?id=76008).
-static double sepiaFullConstants[3][3] = {
+static const double sepiaFullConstants[3][3] = {
     { 0.393, 0.769, 0.189 },
     { 0.349, 0.686, 0.168 },
     { 0.272, 0.534, 0.131 }
 };
 
-static double sepiaNoneConstants[3][3] = {
+static const double sepiaNoneConstants[3][3] = {
     { 1, 0, 0 },
     { 0, 1, 0 },
     { 0, 0, 1 }
@@ -538,11 +537,9 @@ RetainPtr<NSValue> PlatformCAFilters::colorMatrixValueForFilter(FilterOperation:
 }
 #endif
 
-void PlatformCAFilters::setBlendingFiltersOnLayer(PlatformCALayer* platformCALayer, const BlendMode blendMode)
+void PlatformCAFilters::setBlendingFiltersOnLayer(PlatformLayer* layer, const BlendMode blendMode)
 {
 #if USE_CA_FILTERS
-    CALayer* layer = platformCALayer->platformLayer();
-
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     CAFilter* filter = nil;
@@ -595,9 +592,8 @@ void PlatformCAFilters::setBlendingFiltersOnLayer(PlatformCALayer* platformCALay
     [layer setCompositingFilter:filter];
 
     END_BLOCK_OBJC_EXCEPTIONS
-
 #else
-    UNUSED_PARAM(platformCALayer);
+    UNUSED_PARAM(layer);
     UNUSED_PARAM(blendMode);
 #endif
 }

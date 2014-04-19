@@ -124,6 +124,10 @@ public:
     virtual void copyFiltersFrom(const WebCore::PlatformCALayer*) override;
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+    virtual void setBlendMode(WebCore::BlendMode) override;
+#endif
+
     virtual void setName(const String&) override;
 
     virtual void setSpeed(float) override;

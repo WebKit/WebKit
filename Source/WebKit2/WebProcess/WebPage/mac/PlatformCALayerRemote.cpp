@@ -528,6 +528,14 @@ void PlatformCALayerRemote::copyFiltersFrom(const PlatformCALayer* sourceLayer)
     ASSERT_NOT_REACHED();
 }
 
+#if ENABLE(CSS_COMPOSITING)
+void PlatformCALayerRemote::setBlendMode(BlendMode blendMode)
+{
+    m_properties.blendMode = blendMode;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BlendModeChanged);
+}
+#endif
+
 bool PlatformCALayerRemote::filtersCanBeComposited(const FilterOperations& filters)
 {
     return PlatformCALayerMac::filtersCanBeComposited(filters);

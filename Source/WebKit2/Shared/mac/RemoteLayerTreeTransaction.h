@@ -72,14 +72,15 @@ public:
         ContentsScaleChanged = 1 << 19,
         MinificationFilterChanged = 1 << 20,
         MagnificationFilterChanged = 1 << 21,
-        SpeedChanged = 1 << 22,
-        TimeOffsetChanged = 1 << 23,
-        BackingStoreChanged = 1 << 24,
-        FiltersChanged = 1 << 25,
-        AnimationsChanged = 1 << 26,
-        EdgeAntialiasingMaskChanged = 1 << 27,
-        CustomAppearanceChanged = 1 << 28,
-        CustomBehaviorChanged = 1 << 29
+        BlendModeChanged = 1 << 22,
+        SpeedChanged = 1 << 23,
+        TimeOffsetChanged = 1 << 24,
+        BackingStoreChanged = 1 << 25,
+        FiltersChanged = 1 << 26,
+        AnimationsChanged = 1 << 27,
+        EdgeAntialiasingMaskChanged = 1 << 28,
+        CustomAppearanceChanged = 1 << 29,
+        CustomBehaviorChanged = 1 << 30
     };
     typedef unsigned LayerChange;
 
@@ -143,6 +144,7 @@ public:
         WebCore::GraphicsLayer::CustomBehavior customBehavior;
         WebCore::PlatformCALayer::FilterType minificationFilter;
         WebCore::PlatformCALayer::FilterType magnificationFilter;
+        WebCore::BlendMode blendMode;
         bool hidden;
         bool geometryFlipped;
         bool doubleSided;
