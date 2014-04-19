@@ -1,5 +1,37 @@
 2014-04-18  Stephanie Lewis  <slewis@apple.com>
 
+        We shouldn’t create page throttlers for other pages than WebKit2 pages.
+        Part of <rdar://problem/16473045> Visibility state counters are often incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=131696
+
+        Reviewed by Gavin Barraclough.
+
+        No new test since not web exposed.
+
+        Page throttlers were being created for SVG images and other page instances that
+        were not accurately tracking the states that enable and disable page throttling.
+        Make the throttler an unique ptr and only initialize it for WebKit2.
+
+        This also fixes an inefficiency where we would throttle a new page on creation because 
+        we assumed it was visible even if that was not the case.
+
+        * WebCore.exp.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Check page throttler exists.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::started): ditto
+        * page/Page.cpp:
+        (WebCore::Page::Page): Don’t automatically create page throttler.
+        (WebCore::Page::createPageThrottler): Create page throttler.
+        (WebCore::Page::setViewState): Check page throttler exists.
+        * page/Page.h:
+        (WebCore::Page::pageThrottler): Make the page throttler a unique ptr.
+        * page/PageThrottler.h:
+        * page/Settings.cpp: 
+        (WebCore::Settings::setHiddenPageDOMTimerThrottlingEnabled): Check page throttler exists.
+
+2014-04-18  Stephanie Lewis  <slewis@apple.com>
+
         Move DOM throttling out of the page throttler
         <rdar://problem/16473004>
         https://bugs.webkit.org/show_bug.cgi?id=131697

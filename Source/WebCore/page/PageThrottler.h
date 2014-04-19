@@ -41,6 +41,7 @@ class Page;
 class PageActivityAssertionToken;
 
 class PageThrottler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PageThrottler(Page&, ViewState::Flags);
 

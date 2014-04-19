@@ -1,3 +1,26 @@
+2014-04-18  Stephanie Lewis  <slewis@apple.com>
+
+        We shouldn’t create page throttlers for other pages than WebKit2 pages.
+        Part of <rdar://problem/16473045> Visibility state counters are often incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=131696
+
+        Reviewed by Gavin Barraclough.
+
+        Page throttlers were being created for SVG images and other page instances that
+        were not accurately tracking the states that enable and disable page throttling.
+        Make the throttler an unique ptr and only initialize it for WebKit2.
+
+        This also fixes  an inefficiency where we would throttle a new page on creation because 
+        we assumed it was visible even if that was not the case.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp: Check page throttler exists.
+        (WebKit::NPRuntimeObjectMap::evaluate):
+        * WebProcess/WebPage/WebPage.cpp: 
+        (WebKit::WebPage::WebPage): Initialize page throttler for WebKit2 views.
+        (WebKit::WebPage::mouseEvent): Check page throttler exists.
+        (WebKit::WebPage::wheelEvent): ditto
+        (WebKit::WebPage::keyEvent): ditto
+
 2014-04-18  Anders Carlsson  <andersca@apple.com>
 
         Don't allow app sandboxed apps without the network client entitlement to launch the network process

@@ -1145,8 +1145,8 @@ void FrameLoader::completed()
 
 void FrameLoader::started()
 {
-    if (m_frame.page())
-        m_activityAssertion = m_frame.page()->pageThrottler().pageLoadActivityToken();
+    if (m_frame.page() && m_frame.page()->pageThrottler())
+        m_activityAssertion = m_frame.page()->pageThrottler()->pageLoadActivityToken();
     for (Frame* frame = &m_frame; frame; frame = frame->tree().parent())
         frame->loader().m_isComplete = false;
 }

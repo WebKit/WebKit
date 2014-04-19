@@ -188,7 +188,6 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_alternativeTextClient(pageClients.alternativeTextClient)
     , m_scriptedAnimationsSuspended(false)
-    , m_pageThrottler(*this, PageInitialViewState)
     , m_console(std::make_unique<PageConsole>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
     , m_inspectorDebuggable(std::make_unique<PageDebuggable>(*this))
@@ -1161,6 +1160,12 @@ void Page::resumeAnimatingImages()
     }
 }
 
+void Page::createPageThrottler()
+{
+    ASSERT(!m_pageThrottler);
+    m_pageThrottler = std::make_unique<PageThrottler>(*this, m_viewState);
+}
+
 void Page::setViewState(ViewState::Flags viewState)
 {
     ViewState::Flags changed = m_viewState ^ viewState;
@@ -1169,7 +1174,8 @@ void Page::setViewState(ViewState::Flags viewState)
 
     m_viewState = viewState;
     m_focusController->setViewState(viewState);
-    m_pageThrottler.setViewState(viewState);
+    if (m_pageThrottler)
+        m_pageThrottler->setViewState(viewState);
 
     if (changed & ViewState::IsVisible)
         setIsVisibleInternal(viewState & ViewState::IsVisible);
