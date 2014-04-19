@@ -71,7 +71,6 @@ struct WebPageConfiguration;
 - (void)_didRelaunchProcess;
 - (void)_preferencesDidChange;
 - (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip;
-- (void)_setCursor:(NSCursor *)cursor;
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
 - (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (bool)_executeSavedCommandBySelector:(SEL)selector;

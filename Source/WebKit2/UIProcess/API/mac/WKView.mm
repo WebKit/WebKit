@@ -2775,13 +2775,6 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
         [self _updateWindowAndViewFrames];
 }
 
-- (void)_setCursor:(NSCursor *)cursor
-{
-    if ([NSCursor currentCursor] == cursor)
-        return;
-    [cursor set];
-}
-
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState
 {
     ValidationVector items = _data->_validationMap.take(commandName);

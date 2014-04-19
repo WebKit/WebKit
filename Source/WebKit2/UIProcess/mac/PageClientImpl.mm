@@ -315,8 +315,26 @@ void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
 
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
-    if (![NSApp _cursorRectCursor])
-        [m_wkView _setCursor:cursor.platformCursor()];
+    // FIXME: Would be nice to share this code with WebKit1's WebChromeClient.
+
+    if ([NSApp _cursorRectCursor])
+        return;
+
+    if (!m_wkView)
+        return;
+
+    NSWindow *window = [m_wkView window];
+    if (!window)
+        return;
+
+    if ([window windowNumber] != [NSWindow windowNumberAtPoint:[NSEvent mouseLocation] belowWindowWithWindowNumber:0])
+        return;
+
+    NSCursor *platformCursor = cursor.platformCursor();
+    if ([NSCursor currentCursor] == platformCursor)
+        return;
+
+    [platformCursor set];
 }
 
 void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)

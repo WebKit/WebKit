@@ -1,3 +1,21 @@
+2014-04-19  Darin Adler  <darin@apple.com>
+
+        [Mac] WebView adjusts the cursor even when another window is in front
+        https://bugs.webkit.org/show_bug.cgi?id=131898
+        rdar://problem/14619911
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setCursor:]): Deleted. Moved the code all into PageClientImpl, since none of it
+        interacts with anything special about a WKView.
+
+        * UIProcess/API/mac/WKViewInternal.h: Deleted the _setCursor: method.
+
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setCursor): Added a check that the window is under the cursor
+        and do nothing if it's not.
+
 2014-04-19  Dan Bernstein  <mitz@apple.com>
 
         Use XPC services in the iOS Simulator, but not in Mountain Lion
