@@ -167,8 +167,10 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
     if (properties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged)
         layer.contentsRect = properties.contentsRect;
 
-    if (properties.changedProperties & RemoteLayerTreeTransaction::ContentsScaleChanged)
+    if (properties.changedProperties & RemoteLayerTreeTransaction::ContentsScaleChanged) {
         layer.contentsScale = properties.contentsScale;
+        layer.rasterizationScale = properties.contentsScale;
+    }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::MinificationFilterChanged)
         layer.minificationFilter = toCAFilterType(properties.minificationFilter);

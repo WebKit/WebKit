@@ -1,3 +1,19 @@
+2014-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fuzzy layers on sites using perspective and transforms
+        https://bugs.webkit.org/show_bug.cgi?id=131873
+        <rdar://problem/16540576>
+
+        Reviewed by Sam Weinig.
+        
+        Always set rasterizationScale on CALayers in the UI process
+        (as we do for WK1) so that layers are rasterized taking the
+        device scale into account. We can do unconditionally; this
+        is benign on layers that CA doesn't rasterize.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::applyPropertiesToLayer):
+
 2014-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         Use 'override' in GraphicsLayerCA
