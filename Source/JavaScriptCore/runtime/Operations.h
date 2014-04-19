@@ -44,7 +44,7 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
     int32_t length2 = s2->length();
     if (!length2)
         return s1;
-    if ((length1 + length2) < 0)
+    if (sumOverflows<int32_t>(length1, length2))
         return throwOutOfMemoryError(exec);
 
     return JSRopeString::create(vm, s1, s2);
@@ -68,9 +68,7 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, const String& u1, const String& 
     if (!length3)
         return jsString(exec, jsString(vm, u1), jsString(vm, u2));
 
-    if ((length1 + length2) < 0)
-        return throwOutOfMemoryError(exec);
-    if ((length1 + length2 + length3) < 0)
+    if (sumOverflows<int32_t>(length1, length2, length3))
         return throwOutOfMemoryError(exec);
 
     return JSRopeString::create(exec->vm(), jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));

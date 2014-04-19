@@ -968,8 +968,8 @@ JSCell* JIT_OPERATION operationMakeRope2(ExecState* exec, JSString* left, JSStri
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    
-    if (static_cast<int32_t>(left->length() + right->length()) < 0) {
+
+    if (sumOverflows<int32_t>(left->length(), right->length())) {
         throwOutOfMemoryError(exec);
         return nullptr;
     }
@@ -982,10 +982,7 @@ JSCell* JIT_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString*
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    Checked<int32_t, RecordOverflow> length = a->length();
-    length += b->length();
-    length += c->length();
-    if (length.hasOverflowed()) {
+    if (sumOverflows<int32_t>(a->length(), b->length(), c->length())) {
         throwOutOfMemoryError(exec);
         return nullptr;
     }

@@ -1,5 +1,16 @@
 2014-04-19  Filip Pizlo  <fpizlo@apple.com>
 
+        Make it easier to check if an integer sum would overflow
+        https://bugs.webkit.org/show_bug.cgi?id=131900
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/Operations.h:
+        (JSC::jsString):
+
+2014-04-19  Filip Pizlo  <fpizlo@apple.com>
+
         Address some feedback on https://bugs.webkit.org/show_bug.cgi?id=130684.
 
         * dfg/DFGOperations.cpp:
