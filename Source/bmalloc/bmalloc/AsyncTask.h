@@ -28,6 +28,7 @@
 
 #include "BAssert.h"
 #include "Inline.h"
+#include "Mutex.h"
 #include <atomic>
 #include <condition_variable>
 #include <pthread.h>
@@ -55,8 +56,8 @@ private:
 
     std::atomic<State> m_state;
 
-    std::mutex m_conditionMutex;
-    std::condition_variable m_condition;
+    Mutex m_conditionMutex;
+    std::condition_variable_any m_condition;
     pthread_t m_thread;
 
     Object& m_object;
@@ -73,6 +74,7 @@ AsyncTask<Object, Function>::AsyncTask(Object& object, const Function& function)
     , m_object(object)
     , m_function(function)
 {
+    m_conditionMutex.init();
 }
 
 template<typename Object, typename Function>
@@ -81,7 +83,7 @@ void AsyncTask<Object, Function>::join()
     if (m_state == Exited)
         return;
 
-    { std::lock_guard<std::mutex> lock(m_conditionMutex); }
+    { std::lock_guard<Mutex> lock(m_conditionMutex); }
     m_condition.notify_one();
 
     while (m_state != Exited)
@@ -104,7 +106,7 @@ NO_INLINE void AsyncTask<Object, Function>::runSlowCase()
         return;
 
     if (oldState == Sleeping) {
-        { std::lock_guard<std::mutex> lock(m_conditionMutex); }
+        { std::lock_guard<Mutex> lock(m_conditionMutex); }
         m_condition.notify_one();
         return;
     }
@@ -131,7 +133,7 @@ void AsyncTask<Object, Function>::entryPoint()
 
         expectedState = Running;
         if (m_state.compare_exchange_weak(expectedState, Sleeping)) {
-            std::unique_lock<std::mutex> lock(m_conditionMutex);
+            std::unique_lock<Mutex> lock(m_conditionMutex);
             m_condition.wait_for(lock, exitDelay, [=]() { return this->m_state != Sleeping; });
         }
 

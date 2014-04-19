@@ -33,8 +33,10 @@
 
 namespace bmalloc {
 
-class Mutex {
+struct Mutex {
 public:
+    void init();
+
     void lock();
     bool try_lock();
     void unlock();
@@ -44,6 +46,11 @@ private:
 
     std::atomic_flag m_flag;
 };
+
+inline void Mutex::init()
+{
+    m_flag.clear();
+}
 
 inline bool Mutex::try_lock()
 {

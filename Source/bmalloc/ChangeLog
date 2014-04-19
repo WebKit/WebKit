@@ -1,5 +1,23 @@
 2014-04-18  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: AsyncTask should use Mutex instead of std::mutex
+        https://bugs.webkit.org/show_bug.cgi?id=131865
+
+        Reviewed by Gavin Barraclough.
+
+        std::mutex is so slow that it makes parallelizing simple tasks through
+        AsyncTask a net regression. Mutex fixes this.
+
+        * bmalloc/AsyncTask.h:
+        (bmalloc::Function>::AsyncTask):
+        (bmalloc::Function>::join):
+        (bmalloc::Function>::runSlowCase):
+        (bmalloc::Function>::entryPoint):
+        * bmalloc/Mutex.h:
+        (bmalloc::Mutex::init):
+
+2014-04-18  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: Added an XSmall line size
         https://bugs.webkit.org/show_bug.cgi?id=131851
 
