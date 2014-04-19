@@ -26,13 +26,16 @@
 #include "config.h"
 #include "PageLoadState.h"
 
+#include "WebPageProxy.h"
+
 namespace WebKit {
 
 // Progress always starts at this value. This helps provide feedback as soon as a load starts.
 static const double initialProgressValue = 0.1;
 
-PageLoadState::PageLoadState()
-    : m_mayHaveUncommittedChanges(false)
+PageLoadState::PageLoadState(WebPageProxy& webPageProxy)
+    : m_webPageProxy(webPageProxy)
+    , m_mayHaveUncommittedChanges(false)
     , m_outstandingTransactionCount(0)
 {
 }
@@ -40,6 +43,26 @@ PageLoadState::PageLoadState()
 PageLoadState::~PageLoadState()
 {
     ASSERT(m_observers.isEmpty());
+}
+
+PageLoadState::Transaction::Transaction(PageLoadState& pageLoadState)
+    : m_webPageProxy(&pageLoadState.m_webPageProxy)
+    , m_pageLoadState(&pageLoadState)
+{
+    m_pageLoadState->beginTransaction();
+}
+
+PageLoadState::Transaction::Transaction(Transaction&& other)
+    : m_webPageProxy(std::move(other.m_webPageProxy))
+    , m_pageLoadState(other.m_pageLoadState)
+{
+    other.m_pageLoadState = nullptr;
+}
+
+PageLoadState::Transaction::~Transaction()
+{
+    if (m_pageLoadState)
+        m_pageLoadState->endTransaction();
 }
 
 void PageLoadState::addObserver(Observer& observer)

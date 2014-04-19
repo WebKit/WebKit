@@ -1,3 +1,21 @@
+2014-04-18  Anders Carlsson  <andersca@apple.com>
+
+        Keep the WebPageProxy alive for the lifetime of all PageLoadState::Transaction objects
+        https://bugs.webkit.org/show_bug.cgi?id=131872
+        <rdar://problem/15758414>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::PageLoadState):
+        (WebKit::PageLoadState::Transaction::Transaction):
+        (WebKit::PageLoadState::Transaction::~Transaction):
+        * UIProcess/PageLoadState.h:
+        (WebKit::PageLoadState::Transaction::Transaction): Deleted.
+        (WebKit::PageLoadState::Transaction::~Transaction): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+
 2014-04-18  Stephanie Lewis  <slewis@apple.com>
 
         We shouldn’t create page throttlers for other pages than WebKit2 pages.

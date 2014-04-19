@@ -30,9 +30,11 @@
 
 namespace WebKit {
 
+class WebPageProxy;
+
 class PageLoadState {
 public:
-    PageLoadState();
+    explicit PageLoadState(WebPageProxy&);
     ~PageLoadState();
 
     enum class State {
@@ -64,26 +66,13 @@ public:
     class Transaction {
         WTF_MAKE_NONCOPYABLE(Transaction);
     public:
-        Transaction(Transaction&& other)
-            : m_pageLoadState(other.m_pageLoadState)
-        {
-            other.m_pageLoadState = nullptr;
-        }
-
-        ~Transaction()
-        {
-            if (m_pageLoadState)
-                m_pageLoadState->endTransaction();
-        }
+        Transaction(Transaction&&);
+        ~Transaction();
 
     private:
         friend class PageLoadState;
 
-        explicit Transaction(PageLoadState& pageLoadState)
-            : m_pageLoadState(&pageLoadState)
-        {
-            m_pageLoadState->beginTransaction();
-        }
+        explicit Transaction(PageLoadState&);
 
         class Token {
         public:
@@ -100,6 +89,7 @@ public:
 #endif
         };
 
+        RefPtr<WebPageProxy> m_webPageProxy;
         PageLoadState* m_pageLoadState;
     };
 
@@ -184,6 +174,8 @@ private:
     static String activeURL(const Data&);
     static bool hasOnlySecureContent(const Data&);
     static double estimatedProgress(const Data&);
+
+    WebPageProxy& m_webPageProxy;
 
     Data m_committedState;
     Data m_uncommittedState;
