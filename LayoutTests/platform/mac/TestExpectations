@@ -1338,12 +1338,6 @@ webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Failure ]
 
 webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
-# WebKitDataCue is supported, not DataCue
-media/track/track-datacue.html [ Skip ]
-
-# Mountain Lion and prior do not support HLS timed metadata
-Bug(ericcarlson) [ MountainLion ] http/tests/media/track-in-band-hls-metadata.html [ Skip ]
-
 # Frequently times out on EWS, which is then misreported as crash.
 webkit.org/b/130720 [ MountainLion Release ] media/W3C/audio/canPlayType/canPlayType_application_octet_stream.html [ Pass Failure Crash Timeout ]
 

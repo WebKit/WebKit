@@ -26,6 +26,7 @@
 #import "config.h"
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
+
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 
 #import "AVTrackPrivateAVFObjCImpl.h"
@@ -39,7 +40,6 @@
 #import "FrameView.h"
 #import "GraphicsContext.h"
 #import "GraphicsContextCG.h"
-#import "InbandMetadataTextTrackPrivateAVF.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
 #import "InbandTextTrackPrivateLegacyAVFObjC.h"
 #import "OutOfBandTextTrackPrivateAVF.h"
@@ -47,7 +47,6 @@
 #import "Logging.h"
 #import "PlatformTimeRanges.h"
 #import "SecurityOrigin.h"
-#import "SerializedPlatformRepresentationMac.h"
 #import "SoftLinking.h"
 #import "TextTrackRepresentation.h"
 #import "UUID.h"
@@ -63,7 +62,6 @@
 #import <runtime/Uint8Array.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/Functional.h>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/StringBuilder.h>
 
@@ -100,7 +98,6 @@
 @end
 #endif
 
-typedef AVPlayerItem AVPlayerItemType;
 typedef AVMetadataItem AVMetadataItemType;
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
@@ -147,7 +144,6 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicAudible, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeClosedCaption, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeVideo, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVMediaTypeMetadata, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVPlayerItemDidPlayToEndTimeNotification, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetInheritURIQueryComponentFromReferencingURIKey, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVAssetImageGeneratorApertureModeCleanAperture, NSString *)
@@ -171,7 +167,6 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 #define AVMediaTypeClosedCaption getAVMediaTypeClosedCaption()
 #define AVMediaTypeVideo getAVMediaTypeVideo()
 #define AVMediaTypeAudio getAVMediaTypeAudio()
-#define AVMediaTypeMetadata getAVMediaTypeMetadata()
 #define AVPlayerItemDidPlayToEndTimeNotification getAVPlayerItemDidPlayToEndTimeNotification()
 #define AVURLAssetInheritURIQueryComponentFromReferencingURIKey getAVURLAssetInheritURIQueryComponentFromReferencingURIKey()
 #define AVAssetImageGeneratorApertureModeCleanAperture getAVAssetImageGeneratorApertureModeCleanAperture()
@@ -223,20 +218,6 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicTranscribesSpokenDialogForA
 #define AVOutOfBandAlternateTrackSourceKey getAVOutOfBandAlternateTrackSourceKey()
 #define AVMediaCharacteristicDescribesMusicAndSoundForAccessibility getAVMediaCharacteristicDescribesMusicAndSoundForAccessibility()
 #define AVMediaCharacteristicTranscribesSpokenDialogForAccessibility getAVMediaCharacteristicTranscribesSpokenDialogForAccessibility()
-#endif
-
-#if ENABLE(DATACUE_VALUE)
-SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceQuickTimeUserData, NSString*)
-SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceISOUserData, NSString*)
-SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceQuickTimeMetadata, NSString*)
-SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceiTunes, NSString*)
-SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceID3, NSString*)
-
-#define AVMetadataKeySpaceQuickTimeUserData getAVMetadataKeySpaceQuickTimeUserData()
-#define AVMetadataKeySpaceISOUserData getAVMetadataKeySpaceISOUserData()
-#define AVMetadataKeySpaceQuickTimeMetadata getAVMetadataKeySpaceQuickTimeMetadata()
-#define AVMetadataKeySpaceiTunes getAVMetadataKeySpaceiTunes()
-#define AVMetadataKeySpaceID3 getAVMetadataKeySpaceID3()
 #endif
 
 #define kCMTimeZero getkCMTimeZero()
@@ -362,7 +343,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithCallback:this]))
 #endif
-    , m_currentTextTrack(0)
+    , m_currentTrack(0)
     , m_cachedDuration(MediaPlayer::invalidTime())
     , m_cachedRate(0)
     , m_pendingStatusChanges(0)
@@ -986,9 +967,6 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(double time, double negative
     // setCurrentTime generates several event callbacks, update afterwards.
     setDelayCallbacks(true);
 
-    if (m_metadataTrack)
-        m_metadataTrack->flushPartialCues();
-
     CMTime cmTime = CMTimeMakeWithSeconds(time, 600);
     CMTime cmBefore = CMTimeMakeWithSeconds(negativeTolerance, 600);
     CMTime cmAfter = CMTimeMakeWithSeconds(positiveTolerance, 600);
@@ -1439,32 +1417,24 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
     } else {
         bool hasVideo = false;
         bool hasAudio = false;
-        bool hasMetaData = false;
         for (AVPlayerItemTrack *track in m_cachedTracks.get()) {
             if ([track isEnabled]) {
                 AVAssetTrack *assetTrack = [track assetTrack];
-                NSString *mediaType = [assetTrack mediaType];
-                if ([mediaType isEqualToString:AVMediaTypeVideo])
+                if ([[assetTrack mediaType] isEqualToString:AVMediaTypeVideo])
                     hasVideo = true;
-                else if ([mediaType isEqualToString:AVMediaTypeAudio])
+                else if ([[assetTrack mediaType] isEqualToString:AVMediaTypeAudio])
                     hasAudio = true;
-                else if ([mediaType isEqualToString:AVMediaTypeClosedCaption]) {
+                else if ([[assetTrack mediaType] isEqualToString:AVMediaTypeClosedCaption]) {
 #if !HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
                     hasCaptions = true;
 #endif
                     haveCCTrack = true;
-                } else if ([mediaType isEqualToString:AVMediaTypeMetadata]) {
-                    hasMetaData = true;
                 }
             }
         }
-
         setHasVideo(hasVideo);
         setHasAudio(hasAudio);
-#if ENABLE(DATACUE_VALUE)
-        if (hasMetaData)
-            processMetadataTrack();
-#endif
+
 
 #if ENABLE(VIDEO_TRACK)
         updateAudioTracks();
@@ -2047,43 +2017,33 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
     processNewAndRemovedTextTracks(removedTextTracks);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::processMetadataTrack()
-{
-    if (m_metadataTrack)
-        return;
-
-    m_metadataTrack = InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Metadata, InbandTextTrackPrivate::Data);
-    m_metadataTrack->setInBandMetadataTrackDispatchType("com.apple.streaming");
-    player()->addTextTrack(m_metadataTrack);
-}
-
 void MediaPlayerPrivateAVFoundationObjC::processCue(NSArray *attributedStrings, double time)
 {
-    if (!m_currentTextTrack)
+    if (!m_currentTrack)
         return;
 
-    m_currentTextTrack->processCue(reinterpret_cast<CFArrayRef>(attributedStrings), time);
+    m_currentTrack->processCue(reinterpret_cast<CFArrayRef>(attributedStrings), time);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::flushCues()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::flushCues(%p)", this);
 
-    if (!m_currentTextTrack)
+    if (!m_currentTrack)
         return;
     
-    m_currentTextTrack->resetCueValues();
+    m_currentTrack->resetCueValues();
 }
 #endif // HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 
-void MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack(InbandTextTrackPrivateAVF *track)
+void MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(InbandTextTrackPrivateAVF *track)
 {
-    if (m_currentTextTrack == track)
+    if (m_currentTrack == track)
         return;
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack(%p) - selecting track %p, language = %s", this, track, track ? track->language().string().utf8().data() : "");
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(%p) - selecting track %p, language = %s", this, track, track ? track->language().string().utf8().data() : "");
         
-    m_currentTextTrack = track;
+    m_currentTrack = track;
 
     if (track) {
         if (track->textTrackCategory() == InbandTextTrackPrivateAVF::LegacyClosedCaption)
@@ -2274,70 +2234,12 @@ void MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange(RetainPtr<NSA
     updateStates();
 }
 
-#if ENABLE(DATACUE_VALUE)
-static const AtomicString& metadataType(NSString *avMetadataKeySpace)
+void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(RetainPtr<NSArray> metadata)
 {
-    static NeverDestroyed<const AtomicString> quickTimeUserData("com.apple.quicktime.udta", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> isoUserData("org.mp4ra", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> quickTimeMetadata("com.apple.quicktime.mdta", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> iTunesMetadata("com.apple.itunes", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> id3Metadata("org.id3", AtomicString::ConstructFromLiteral);
-
-    if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceQuickTimeUserData])
-        return quickTimeUserData;
-    if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceISOUserData])
-        return isoUserData;
-    if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceQuickTimeMetadata])
-        return quickTimeMetadata;
-    if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceiTunes])
-        return iTunesMetadata;
-    if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceID3])
-        return id3Metadata;
-
-    return emptyAtom;
-}
-#endif
-
-void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(RetainPtr<NSArray> metadata, double mediaTime)
-{
-    m_currentMetaData = metadata && ![metadata isKindOfClass:[NSNull class]] ? metadata : nil;
-
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(%p) - adding %i cues at time %.2f", this, m_currentMetaData ? [m_currentMetaData.get() count] : 0, mediaTime);
-
-#if ENABLE(DATACUE_VALUE)
-    if (seeking())
+    if (!metadata || [metadata isKindOfClass:[NSNull class]])
         return;
 
-    if (!metadata || [metadata isKindOfClass:[NSNull class]]) {
-        m_metadataTrack->updatePendingCueEndTimes(mediaTime);
-        return;
-    }
-
-    if (!m_metadataTrack)
-        processMetadataTrack();
-
-    // Set the duration of all incomplete cues before adding new ones.
-    double earliesStartTime = std::numeric_limits<double>::infinity();
-    for (AVMetadataItemType *item in m_currentMetaData.get()) {
-        double start = CMTimeGetSeconds(item.time);
-        if (start < earliesStartTime)
-            earliesStartTime = start;
-    }
-    m_metadataTrack->updatePendingCueEndTimes(earliesStartTime);
-
-    for (AVMetadataItemType *item in m_currentMetaData.get()) {
-        double start = CMTimeGetSeconds(item.time);
-        double end = std::numeric_limits<double>::infinity();
-        if (CMTIME_IS_VALID(item.duration))
-            end = start + CMTimeGetSeconds(item.duration);
-
-        AtomicString type = nullAtom;
-        if (item.keySpace)
-            type = metadataType(item.keySpace);
-
-        m_metadataTrack->addDataCue(start, end, SerializedPlatformRepresentationMac::create(item), type);
-    }
-#endif
+    m_currentMetaData = metadata;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::tracksDidChange(RetainPtr<NSArray> tracks)
@@ -2506,13 +2408,8 @@ NSArray* itemKVOProperties()
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::presentationSizeDidChange, m_callback, FloatSize([newValue sizeValue]));
         else if ([keyPath isEqualToString:@"duration"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::durationDidChange, m_callback, CMTimeGetSeconds([newValue CMTimeValue]));
-        else if ([keyPath isEqualToString:@"timedMetadata"] && newValue) {
-            double now = 0;
-            CMTime itemTime = [(AVPlayerItemType *)object currentTime];
-            if (CMTIME_IS_NUMERIC(itemTime))
-                now = std::max(narrowPrecisionToFloat(CMTimeGetSeconds(itemTime)), 0.0f);
-            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::metadataDidArrive, m_callback, RetainPtr<NSArray>(newValue), now);
-        }
+        else if ([keyPath isEqualToString:@"timedMetadata"] && newValue)
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::metadataDidArrive, m_callback, RetainPtr<NSArray>(newValue));
     }
 
     if (context == MediaPlayerAVFoundationObservationContextPlayer && !willChange) {

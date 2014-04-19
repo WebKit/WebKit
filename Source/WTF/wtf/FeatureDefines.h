@@ -760,10 +760,6 @@
 #define ENABLE_VIDEO_TRACK 0
 #endif
 
-#if !defined(ENABLE_DATACUE_VALUE)
-#define ENABLE_DATACUE_VALUE 0
-#endif
-
 #if !defined(ENABLE_VIEWPORT)
 #define ENABLE_VIEWPORT 0
 #endif

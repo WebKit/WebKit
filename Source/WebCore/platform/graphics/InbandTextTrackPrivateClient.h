@@ -29,10 +29,6 @@
 #include "Color.h"
 #include "TrackPrivateBase.h"
 
-#if ENABLE(DATACUE_VALUE)
-#include "SerializedPlatformRepresentation.h"
-#endif
-
 #if ENABLE(VIDEO_TRACK)
 
 namespace WebCore {
@@ -132,17 +128,13 @@ private:
     Status m_status;
 };
 
+class WebVTTCueData;
+
 class InbandTextTrackPrivateClient : public TrackPrivateBaseClient {
 public:
     virtual ~InbandTextTrackPrivateClient() { }
 
     virtual void addDataCue(InbandTextTrackPrivate*, double start, double end, const void*, unsigned) = 0;
-
-#if ENABLE(DATACUE_VALUE)
-    virtual void addDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>, const String&) = 0;
-    virtual void updateDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>) = 0;
-    virtual void removeDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>) = 0;
-#endif
 
     virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) = 0;
     virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;

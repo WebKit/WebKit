@@ -339,10 +339,6 @@ webkit.org/b/131546 media/track/track-in-band-style.html [ Timeout ]
 webkit.org/b/131546 media/track/track-in-band-legacy-api.html [ Failure ]
 webkit.org/b/131546 media/track/track-in-band-mode.html [ Skip ]
 
-# DataCue.value not enabled
-Bug(GTK) http/tests/media/track-in-band-hls-metadata.html [ Skip ]
-Bug(GTK) media/track/track-datacue-value.html [ Skip ]
-
 # Require ENABLE(CUSTOM_ELEMENTS) support
 webkit.org/b/110735 fast/dom/custom [ Skip ]
 

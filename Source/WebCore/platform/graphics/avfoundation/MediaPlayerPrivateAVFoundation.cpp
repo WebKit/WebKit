@@ -281,9 +281,9 @@ void MediaPlayerPrivateAVFoundation::seekWithTolerance(double time, double negat
     if (currentTime() == time)
         return;
 
-    if (currentTextTrack())
-        currentTextTrack()->beginSeeking();
-
+    if (currentTrack())
+        currentTrack()->beginSeeking();
+    
     LOG(Media, "MediaPlayerPrivateAVFoundation::seek(%p) - seeking to %f", this, time);
 
     seekToTime(time, negativeTolerance, positiveTolerance);
@@ -659,8 +659,8 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
         return;
     }
 
-    if (currentTextTrack())
-        currentTextTrack()->endSeeking();
+    if (currentTrack())
+        currentTrack()->endSeeking();
 
     updateStates();
     m_player->timeChanged();
@@ -929,7 +929,7 @@ void MediaPlayerPrivateAVFoundation::configureInbandTracks()
             trackToEnable = track;
     }
 
-    setCurrentTextTrack(trackToEnable.get());
+    setCurrentTrack(trackToEnable.get());
 }
 
 void MediaPlayerPrivateAVFoundation::trackModeChanged()

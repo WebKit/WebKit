@@ -108,8 +108,8 @@ private:
     void processMediaSelectionOptions();
 #endif
 
-    virtual void setCurrentTextTrack(InbandTextTrackPrivateAVF*) override;
-    virtual InbandTextTrackPrivateAVF* currentTextTrack() const override;
+    virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) override;
+    virtual InbandTextTrackPrivateAVF* currentTrack() const override;
 
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     void processLegacyClosedCaptionsTracks();

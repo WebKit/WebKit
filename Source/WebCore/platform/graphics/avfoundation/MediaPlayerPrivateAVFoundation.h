@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-class InbandMetadataTextTrackPrivateAVF;
 class InbandTextTrackPrivateAVF;
 class GenericCueData;
 
@@ -58,8 +57,8 @@ public:
     virtual void didEnd();
     virtual void contentsNeedsDisplay() { }
     virtual void configureInbandTracks();
-    virtual void setCurrentTextTrack(InbandTextTrackPrivateAVF*) { }
-    virtual InbandTextTrackPrivateAVF* currentTextTrack() const = 0;
+    virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) { }
+    virtual InbandTextTrackPrivateAVF* currentTrack() const = 0;
 #if ENABLE(IOS_AIRPLAY)
     void playbackTargetIsWirelessChanged();
 #endif
@@ -302,7 +301,7 @@ protected:
     void processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF>>&);
     void clearTextTracks();
     Vector<RefPtr<InbandTextTrackPrivateAVF>> m_textTracks;
-
+    
 private:
     MediaPlayer* m_player;
 

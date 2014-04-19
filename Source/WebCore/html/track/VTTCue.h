@@ -153,7 +153,11 @@ public:
 
     virtual void setFontSize(int, const IntSize&, bool important);
 
-    virtual bool isEqual(const TextTrackCue&, CueMatchRules) const override;
+    enum CueMatchRules {
+        MatchAllFields,
+        IgnoreDuration,
+    };
+    virtual bool isEqual(const VTTCue&, CueMatchRules) const;
 
     virtual CueType cueType() const { return WebVTT; }
     virtual bool isRenderable() const override final { return true; }

@@ -61,7 +61,6 @@
 #include "JSDOMWindowCustom.cpp"
 #include "JSDOMWindowShell.cpp"
 #include "JSDOMWrapper.cpp"
-#include "JSDataCueCustom.cpp"
 #include "JSDataTransferCustom.cpp"
 #include "JSDedicatedWorkerGlobalScopeCustom.cpp"
 #include "JSDeviceOrientationEventCustom.cpp"

@@ -483,7 +483,7 @@ int TextTrack::trackIndexRelativeToRenderedTracks()
     return m_renderedTrackIndex;
 }
 
-bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
+bool TextTrack::hasCue(VTTCue* cue, VTTCue::CueMatchRules match)
 {
     if (cue->startTime() < 0 || cue->endTime() < 0)
         return false;
@@ -519,10 +519,13 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
                     return false;
 
                 existingCue = m_cues->item(searchStart - 1);
+                if (!cue->isRenderable())
+                    continue;
+
                 if (!existingCue || cue->startTime() > existingCue->startTime())
                     return false;
 
-                if (!existingCue->isEqual(*cue, match))
+                if (!toVTTCue(existingCue)->isEqual(*cue, match))
                     continue;
                 
                 return true;
@@ -531,7 +534,7 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
         
         size_t index = (searchStart + searchEnd) / 2;
         existingCue = m_cues->item(index);
-        if (cue->startTime() < existingCue->startTime() || (match != TextTrackCue::IgnoreDuration && cue->startTime() == existingCue->startTime() && cue->endTime() > existingCue->endTime()))
+        if (cue->startTime() < existingCue->startTime() || (match != VTTCue::IgnoreDuration && cue->startTime() == existingCue->startTime() && cue->endTime() > existingCue->endTime()))
             searchEnd = index;
         else
             searchStart = index + 1;
