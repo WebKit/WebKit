@@ -1,3 +1,13 @@
+2014-04-19  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Crash in -[WKWebProcessPlugInHitTestResult nodeHandle] when nodeHandle() is null
+        https://bugs.webkit.org/show_bug.cgi?id=131888
+
+        Reviewed by Jon Honeycutt.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm:
+        (-[WKWebProcessPlugInHitTestResult nodeHandle]): Added a null check.
+
 2014-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fuzzy layers on sites using perspective and transforms
