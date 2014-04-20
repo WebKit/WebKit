@@ -165,7 +165,6 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     , m_transitionWatchpointSet(IsWatched)
     , m_offset(invalidOffset)
     , m_inlineCapacity(inlineCapacity)
-    , m_forgivenDeletes(0)
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(classInfo->hasStaticSetterOrReadonlyProperties(vm))
@@ -193,7 +192,6 @@ Structure::Structure(VM& vm)
     , m_transitionWatchpointSet(IsWatched)
     , m_offset(invalidOffset)
     , m_inlineCapacity(0)
-    , m_forgivenDeletes(0)
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(m_classInfo->hasStaticSetterOrReadonlyProperties(vm))
@@ -220,7 +218,6 @@ Structure::Structure(VM& vm, const Structure* previous)
     , m_transitionWatchpointSet(IsWatched)
     , m_offset(invalidOffset)
     , m_inlineCapacity(previous->m_inlineCapacity)
-    , m_forgivenDeletes(previous->m_forgivenDeletes)
     , m_dictionaryKind(previous->m_dictionaryKind)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(previous->m_hasGetterSetterProperties)
@@ -313,12 +310,7 @@ void Structure::materializePropertyMap(VM& vm)
         structure = structures[i];
         if (!structure->m_nameInPrevious)
             continue;
-
-        PropertyMapEntry entry(vm, this, 
-            structure->m_nameInPrevious.get(), 
-            propertyTable()->nextOffset(m_inlineCapacity),
-            structure->m_attributesInPrevious, 
-            structure->m_specificValueInPrevious.get());
+        PropertyMapEntry entry(vm, this, structure->m_nameInPrevious.get(), structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious.get());
         propertyTable()->add(entry, m_offset, PropertyTable::PropertyOffsetMustNotChange);
     }
     
@@ -466,25 +458,10 @@ Structure* Structure::removePropertyTransition(VM& vm, Structure* structure, Pro
 {
     ASSERT(!structure->isUncacheableDictionary());
 
-    if (structure->m_forgivenDeletes < s_maxForgivenDeletes) {
-        Structure* transition = create(vm, structure);
-
-        DeferGC deferGC(vm.heap);
-        structure->materializePropertyMapIfNecessary(vm, deferGC);
-        transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
-        transition->m_offset = structure->m_offset;
-        transition->pinAndPreventTransitions();
-
-        offset = transition->remove(propertyName);
-        ASSERT(offset != invalidOffset);
-        transition->m_forgivenDeletes = structure->m_forgivenDeletes + 1;
-
-        transition->checkOffsetConsistency();
-        return transition;
-    }
-
     Structure* transition = toUncacheableDictionaryTransition(vm, structure);
+
     offset = transition->remove(propertyName);
+
     transition->checkOffsetConsistency();
     return transition;
 }
@@ -499,7 +476,7 @@ Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JS
     structure->materializePropertyMapIfNecessary(vm, deferGC);
     transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
     transition->m_offset = structure->m_offset;
-    transition->pinAndPreventTransitions();
+    transition->pin();
 
     transition->checkOffsetConsistency();
     return transition;
@@ -516,7 +493,7 @@ Structure* Structure::despecifyFunctionTransition(VM& vm, Structure* structure, 
     structure->materializePropertyMapIfNecessary(vm, deferGC);
     transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
     transition->m_offset = structure->m_offset;
-    transition->pinAndPreventTransitions();
+    transition->pin();
 
     if (transition->m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)
         transition->despecifyAllFunctions(vm);
@@ -538,7 +515,7 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
         structure->materializePropertyMapIfNecessary(vm, deferGC);
         transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
         transition->m_offset = structure->m_offset;
-        transition->pinAndPreventTransitions();
+        transition->pin();
         
         structure = transition;
     }
@@ -563,7 +540,7 @@ Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, Dicti
     transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
     transition->m_offset = structure->m_offset;
     transition->m_dictionaryKind = kind;
-    transition->pinAndPreventTransitions();
+    transition->pin();
 
     transition->checkOffsetConsistency();
     return transition;
@@ -626,7 +603,7 @@ Structure* Structure::preventExtensionsTransition(VM& vm, Structure* structure)
     transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
     transition->m_offset = structure->m_offset;
     transition->m_preventExtensions = true;
-    transition->pinAndPreventTransitions();
+    transition->pin();
 
     transition->checkOffsetConsistency();
     return transition;
@@ -775,7 +752,7 @@ PropertyOffset Structure::addPropertyWithoutTransition(VM& vm, PropertyName prop
     DeferGC deferGC(vm.heap);
     materializePropertyMapIfNecessaryForPinning(vm, deferGC);
     
-    pinAndPreventTransitions();
+    pin();
 
     return putSpecificValue(vm, propertyName, attributes, specificValue);
 }
@@ -788,7 +765,7 @@ PropertyOffset Structure::removePropertyWithoutTransition(VM& vm, PropertyName p
     DeferGC deferGC(vm.heap);
     materializePropertyMapIfNecessaryForPinning(vm, deferGC);
 
-    pinAndPreventTransitions();
+    pin();
     return remove(propertyName);
 }
 
@@ -796,11 +773,6 @@ void Structure::pin()
 {
     ASSERT(propertyTable());
     m_isPinnedPropertyTable = true;
-}
-
-void Structure::pinAndPreventTransitions()
-{
-    pin();
     clearPreviousID();
     m_nameInPrevious.clear();
 }

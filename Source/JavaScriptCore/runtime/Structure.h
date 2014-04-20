@@ -137,8 +137,6 @@ public:
     PropertyOffset removePropertyWithoutTransition(VM&, PropertyName);
     void setPrototypeWithoutTransition(VM& vm, JSValue prototype) { m_prototype.set(vm, this, prototype); }
         
-    bool hasDeletedOffsets() const;
-
     bool isDictionary() const { return m_dictionaryKind != NoneDictionaryKind; }
     bool isUncacheableDictionary() const { return m_dictionaryKind == UncachedDictionaryKind; }
 
@@ -413,7 +411,6 @@ private:
     void despecifyAllFunctions(VM&);
 
     WriteBarrier<PropertyTable>& propertyTable();
-    const WriteBarrier<PropertyTable>& propertyTable() const;
     PropertyTable* takePropertyTableOrCloneIfPinned(VM&, Structure* owner);
     PropertyTable* copyPropertyTable(VM&, Structure* owner);
     PropertyTable* copyPropertyTableForPinning(VM&, Structure* owner);
@@ -460,7 +457,6 @@ private:
     bool isValid(ExecState*, StructureChain* cachedPrototypeChain) const;
         
     void pin();
-    void pinAndPreventTransitions();
 
     Structure* previous() const
     {
@@ -516,9 +512,6 @@ private:
     
     ConcurrentJITLock m_lock;
     
-    static const unsigned s_maxForgivenDeletes = 5;
-    unsigned m_forgivenDeletes;
-
     unsigned m_dictionaryKind : 2;
     bool m_isPinnedPropertyTable : 1;
     bool m_hasGetterSetterProperties : 1;
