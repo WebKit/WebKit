@@ -89,6 +89,12 @@ namespace Sizes {
     static const size_t mediumAllocatorLogCapacity = 8;
     
     static const std::chrono::milliseconds scavengeSleepDuration = std::chrono::milliseconds(512);
+
+    inline size_t smallSizeClassFor(size_t size)
+    {
+        static const size_t smallSizeClassMask = (smallMax / alignment) - 1;
+        return mask((size - 1ul) / alignment, smallSizeClassMask);
+    }
 };
 
 using namespace Sizes;

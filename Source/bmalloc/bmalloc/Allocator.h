@@ -50,7 +50,6 @@ public:
     void scavenge();
 
 private:
-    SmallAllocator& smallAllocatorFor(size_t);
     void* allocateFastCase(SmallAllocator&);
 
     void* allocateMedium(size_t);
@@ -72,18 +71,12 @@ private:
     FixedVector<std::pair<MediumLine*, unsigned char>, mediumAllocatorLogCapacity> m_mediumAllocatorLog;
 };
 
-inline SmallAllocator& Allocator::smallAllocatorFor(size_t size)
-{
-    size_t index = mask((size - 1ul) / alignment, m_smallAllocators.size() - 1);
-    return m_smallAllocators[index];
-}
-
 inline bool Allocator::allocateFastCase(size_t size, void*& object)
 {
     if (size > smallMax)
         return false;
 
-    SmallAllocator& allocator = smallAllocatorFor(size);
+    SmallAllocator& allocator = m_smallAllocators[smallSizeClassFor(size)];
     if (!allocator.canAllocate())
         return false;
 

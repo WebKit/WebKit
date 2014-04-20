@@ -116,7 +116,7 @@ void Heap::scavengeLargeRanges(std::unique_lock<StaticMutex>& lock, std::chrono:
     }
 }
 
-SmallLine* Heap::allocateSmallLineSlowCase(std::lock_guard<StaticMutex>& lock)
+SmallLine* Heap::allocateSmallLineSlowCase(std::lock_guard<StaticMutex>& lock, size_t smallSizeClass)
 {
     m_isAllocatingPages = true;
 
@@ -130,9 +130,12 @@ SmallLine* Heap::allocateSmallLineSlowCase(std::lock_guard<StaticMutex>& lock)
     }();
 
     SmallLine* line = page->begin();
+    Vector<SmallLine*>& smallLines = m_smallLines[smallSizeClass];
     for (auto it = line + 1; it != page->end(); ++it)
-        m_smallLines.push(it);
+        smallLines.push(it);
 
+    BASSERT(!line->refCount(lock));
+    page->setSmallSizeClass(smallSizeClass);
     page->ref(lock);
     return line;
 }

@@ -145,9 +145,10 @@ IF_DEBUG(
     BASSERT(!allocateFastCase(size, dummy));
 )
     if (size <= smallMax) {
-        SmallAllocator& allocator = smallAllocatorFor(size);
+        size_t smallSizeClass = smallSizeClassFor(size);
+        SmallAllocator& allocator = m_smallAllocators[smallSizeClass];
         log(allocator);
-        allocator.refill(m_deallocator.allocateSmallLine());
+        allocator.refill(m_deallocator.allocateSmallLine(smallSizeClass));
         return allocator.allocate();
     }
 

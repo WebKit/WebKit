@@ -40,7 +40,7 @@ namespace bmalloc {
 
 Deallocator::Deallocator()
     : m_objectLog()
-    , m_smallLineCache()
+    , m_smallLineCaches()
     , m_mediumLineCache()
 {
 }
@@ -57,8 +57,10 @@ void Deallocator::scavenge()
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
     Heap* heap = PerProcess<Heap>::getFastCase();
     
-    while (m_smallLineCache.size())
-        heap->deallocateSmallLine(lock, m_smallLineCache.pop());
+    for (auto& smallLineCache : m_smallLineCaches) {
+        while (smallLineCache.size())
+            heap->deallocateSmallLine(lock, smallLineCache.pop());
+    }
     while (m_mediumLineCache.size())
         heap->deallocateMediumLine(lock, m_mediumLineCache.pop());
 }
@@ -119,23 +121,25 @@ void Deallocator::deallocateSlowCase(void* object)
 
 void Deallocator::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, SmallLine* line)
 {
-    if (m_smallLineCache.size() == m_smallLineCache.capacity())
+    SmallLineCache& smallLineCache = m_smallLineCaches[SmallPage::get(line)->smallSizeClass()];
+    if (smallLineCache.size() == smallLineCache.capacity())
         return PerProcess<Heap>::getFastCase()->deallocateSmallLine(lock, line);
 
-    m_smallLineCache.push(line);
+    smallLineCache.push(line);
 }
 
-SmallLine* Deallocator::allocateSmallLine()
+SmallLine* Deallocator::allocateSmallLine(size_t smallSizeClass)
 {
-    if (!m_smallLineCache.size()) {
+    SmallLineCache& smallLineCache = m_smallLineCaches[smallSizeClass];
+    if (!smallLineCache.size()) {
         std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
         Heap* heap = PerProcess<Heap>::getFastCase();
 
-        while (m_smallLineCache.size() != m_smallLineCache.capacity())
-            m_smallLineCache.push(heap->allocateSmallLine(lock));
+        while (smallLineCache.size() != smallLineCache.capacity())
+            smallLineCache.push(heap->allocateSmallLine(lock, smallSizeClass));
     }
 
-    return m_smallLineCache.pop();
+    return smallLineCache.pop();
 }
 
 void Deallocator::deallocateMediumLine(std::lock_guard<StaticMutex>& lock, MediumLine* line)

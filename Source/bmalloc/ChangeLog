@@ -1,3 +1,49 @@
+2014-04-20  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Segregate pages by objects size
+        https://bugs.webkit.org/show_bug.cgi?id=131909
+
+        Reviewed by Andreas Kling.
+
+        2% reduction in memory-at-end on the Membuster memory_warning benchmarks.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocateSlowCase):
+        * bmalloc/Allocator.h:
+        (bmalloc::Allocator::allocateFastCase):
+        (bmalloc::Allocator::smallAllocatorFor): Use the new shared helper
+        function for size class calculation.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::Deallocator):
+        (bmalloc::Deallocator::scavenge):
+        (bmalloc::Deallocator::deallocateSmallLine):
+        (bmalloc::Deallocator::allocateSmallLine):
+        * bmalloc/Deallocator.h: Keep a cache for every size class, since the
+        cache can't be shared anymore.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateSmallLineSlowCase):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::deallocateSmallLine): Ditto.
+
+        (bmalloc::Heap::allocateSmallLine): Check size class in addition to
+        page refcount when allocating a line because we might have deallocated
+        the page and the recycled it for another size class.
+
+        (bmalloc::Heap::deallocateMediumLine):
+        (bmalloc::Heap::allocateMediumLine):
+        * bmalloc/Line.h:
+        (bmalloc::Line::refCount):
+        * bmalloc/Page.h:
+        (bmalloc::Page::refCount):
+        (bmalloc::Page::smallSizeClass):
+        (bmalloc::Page::setSmallSizeClass):
+        (bmalloc::Page<Traits>::refCount): Deleted.
+        * bmalloc/Sizes.h:
+        (bmalloc::Sizes::smallSizeClassFor): New shared API for computing
+        an index into an array from a size.
+
 2014-04-19  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Improved alignment in LargeChunk

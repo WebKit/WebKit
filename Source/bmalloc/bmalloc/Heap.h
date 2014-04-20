@@ -49,7 +49,7 @@ class Heap {
 public:
     Heap(std::lock_guard<StaticMutex>&);
 
-    SmallLine* allocateSmallLine(std::lock_guard<StaticMutex>&);
+    SmallLine* allocateSmallLine(std::lock_guard<StaticMutex>&, size_t smallSizeClass);
     void deallocateSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
 
     MediumLine* allocateMediumLine(std::lock_guard<StaticMutex>&);
@@ -66,7 +66,7 @@ public:
 private:
     ~Heap() = delete;
 
-    SmallLine* allocateSmallLineSlowCase(std::lock_guard<StaticMutex>&);
+    SmallLine* allocateSmallLineSlowCase(std::lock_guard<StaticMutex>&, size_t smallSizeClass);
     MediumLine* allocateMediumLineSlowCase(std::lock_guard<StaticMutex>&);
 
     void* allocateLarge(Range, size_t);
@@ -82,7 +82,7 @@ private:
     void scavengeMediumPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
     void scavengeLargeRanges(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
 
-    Vector<SmallLine*> m_smallLines;
+    std::array<Vector<SmallLine*>, smallMax / alignment> m_smallLines;
     Vector<MediumLine*> m_mediumLines;
 
     Vector<SmallPage*> m_smallPages;
@@ -98,31 +98,35 @@ private:
 
 inline void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, SmallLine* line)
 {
+    BASSERT(!line->refCount(lock));
     SmallPage* page = SmallPage::get(line);
     if (page->deref(lock)) {
         m_smallPages.push(page);
         m_scavenger.run();
         return;
     }
-    m_smallLines.push(line);
+    m_smallLines[page->smallSizeClass()].push(line);
 }
 
-inline SmallLine* Heap::allocateSmallLine(std::lock_guard<StaticMutex>& lock)
+inline SmallLine* Heap::allocateSmallLine(std::lock_guard<StaticMutex>& lock, size_t smallSizeClass)
 {
-    while (m_smallLines.size()) {
-        SmallLine* line = m_smallLines.pop();
+    Vector<SmallLine*>& smallLines = m_smallLines[smallSizeClass];
+    while (smallLines.size()) {
+        SmallLine* line = smallLines.pop();
         SmallPage* page = SmallPage::get(line);
-        if (!page->refCount(lock)) // The line was promoted to the small pages list.
+        if (!page->refCount(lock) || page->smallSizeClass() != smallSizeClass) // The line was promoted to the small pages list.
             continue;
+        BASSERT(!line->refCount(lock));
         page->ref(lock);
         return line;
     }
 
-    return allocateSmallLineSlowCase(lock);
+    return allocateSmallLineSlowCase(lock, smallSizeClass);
 }
 
 inline void Heap::deallocateMediumLine(std::lock_guard<StaticMutex>& lock, MediumLine* line)
 {
+    BASSERT(!line->refCount(lock));
     MediumPage* page = MediumPage::get(line);
     if (page->deref(lock)) {
         m_mediumPages.push(page);
@@ -139,6 +143,7 @@ inline MediumLine* Heap::allocateMediumLine(std::lock_guard<StaticMutex>& lock)
         MediumPage* page = MediumPage::get(line);
         if (!page->refCount(lock)) // The line was promoted to the medium pages list.
             continue;
+        BASSERT(!line->refCount(lock));
         page->ref(lock);
         return line;
     }
