@@ -1,3 +1,15 @@
+2014-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Plug-in process crashes if NP_Initialize returns an error the second time it's called
+        https://bugs.webkit.org/show_bug.cgi?id=131903
+        <rdar://problem/14355462>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::decrementLoadCount):
+        Don't try to unload the plug-in if it hasn't been initialized.
+
 2014-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         [UI-side compositing] Implement blend modes

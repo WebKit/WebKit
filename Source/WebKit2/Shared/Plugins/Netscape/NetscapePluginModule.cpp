@@ -131,7 +131,7 @@ void NetscapePluginModule::shutdown()
 
     size_t pluginModuleIndex = initializedNetscapePluginModules().find(this);
     ASSERT(pluginModuleIndex != notFound);
-    
+
     initializedNetscapePluginModules().remove(pluginModuleIndex);
 }
 
@@ -169,7 +169,7 @@ void NetscapePluginModule::decrementLoadCount()
     ASSERT(m_loadCount > 0);
     m_loadCount--;
     
-    if (!m_loadCount) {
+    if (!m_loadCount && m_isInitialized) {
         shutdown();
         unload();
     }
