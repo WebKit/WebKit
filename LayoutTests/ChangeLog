@@ -1,3 +1,13 @@
+2014-04-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Malformed tables exposing incorrect col and colSpans
+        https://bugs.webkit.org/show_bug.cgi?id=131796
+
+        Reviewed by Darin Adler.
+
+        * accessibility/table-incorrect-colspan-cell-expected.txt: Added.
+        * accessibility/table-incorrect-colspan-cell.html: Added.
+
 2014-04-19  Zalan Bujtas  <zalan@apple.com>
 
        [Mac] Unreviewed gardening.

@@ -1,3 +1,17 @@
+2014-04-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Malformed tables exposing incorrect col and colSpans
+        https://bugs.webkit.org/show_bug.cgi?id=131796
+
+        Reviewed by Darin Adler.
+
+        Test: accessibility/table-incorrect-colspan-cell.html
+
+        When a developer has specified malformed colspans, accessibility is reporting those values instead of the effective column information.
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::columnIndexRange):
+
 2014-04-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Make the CSS JIT compile for ARM64

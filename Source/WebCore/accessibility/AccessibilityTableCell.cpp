@@ -248,9 +248,9 @@ void AccessibilityTableCell::columnIndexRange(std::pair<unsigned, unsigned>& col
     if (!m_renderer || !m_renderer->isTableCell())
         return;
     
-    RenderTableCell* renderCell = toRenderTableCell(m_renderer);
-    columnRange.first = renderCell->col();
-    columnRange.second = renderCell->colSpan();    
+    const RenderTableCell& cell = *toRenderTableCell(m_renderer);
+    columnRange.first = cell.table()->colToEffCol(cell.col());
+    columnRange.second = cell.table()->colToEffCol(cell.col() + cell.colSpan()) - columnRange.first;
 }
     
 AccessibilityObject* AccessibilityTableCell::titleUIElement() const
