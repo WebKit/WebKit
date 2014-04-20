@@ -1885,7 +1885,6 @@ Node* ByteCodeParser::emitPrototypeChecks(
         currentStructure = chain->at(i);
         base = cellConstantWithStructureCheck(currentObject, currentStructure);
     }
-    RELEASE_ASSERT(base);
     return base;
 }
 
