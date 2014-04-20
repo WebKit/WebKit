@@ -206,7 +206,7 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementCueFunctionSelector(cons
 CSSParserSelector* CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector(CSSParserString& pseudoTypeString)
 {
     PseudoClassOrCompatibilityPseudoElement pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoTypeString);
-    if (pseudoType.pseudoClass != CSSSelector::PseudoUnknown) {
+    if (pseudoType.pseudoClass != CSSSelector::PseudoClassUnknown) {
         auto selector = std::make_unique<CSSParserSelector>();
         selector->m_selector->m_match = CSSSelector::PseudoClass;
         selector->m_selector->m_pseudoType = pseudoType.pseudoClass;

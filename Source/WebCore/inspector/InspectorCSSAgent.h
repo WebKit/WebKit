@@ -94,7 +94,7 @@ public:
 
     static CSSStyleRule* asCSSStyleRule(CSSRule*);
 
-    bool forcePseudoState(Element*, CSSSelector::PseudoType);
+    bool forcePseudoState(Element*, CSSSelector::PseudoClassType);
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
     virtual void discardAgent() override;

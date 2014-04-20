@@ -254,82 +254,82 @@ static inline FunctionType mostRestrictiveFunctionType(FunctionType a, FunctionT
     return std::max(a, b);
 }
 
-static inline FunctionType addPseudoType(const CSSSelector& selector, SelectorFragment& fragment, SelectorContext selectorContext)
+static inline FunctionType addPseudoClassType(const CSSSelector& selector, SelectorFragment& fragment, SelectorContext selectorContext)
 {
-    CSSSelector::PseudoType type = selector.pseudoType();
+    CSSSelector::PseudoClassType type = selector.pseudoClassType();
     switch (type) {
     // Unoptimized pseudo selector. They are just function call to a simple testing function.
-    case CSSSelector::PseudoAutofill:
+    case CSSSelector::PseudoClassAutofill:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isAutofilled));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoChecked:
+    case CSSSelector::PseudoClassChecked:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isChecked));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoDefault:
+    case CSSSelector::PseudoClassDefault:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDefaultButtonForForm));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoDisabled:
+    case CSSSelector::PseudoClassDisabled:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isDisabled));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoEnabled:
+    case CSSSelector::PseudoClassEnabled:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isEnabled));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoFocus:
+    case CSSSelector::PseudoClassFocus:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(SelectorChecker::matchesFocusPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoIndeterminate:
+    case CSSSelector::PseudoClassIndeterminate:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(shouldAppearIndeterminate));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoInvalid:
+    case CSSSelector::PseudoClassInvalid:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isInvalid));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoOptional:
+    case CSSSelector::PseudoClassOptional:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isOptionalFormControl));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoReadOnly:
+    case CSSSelector::PseudoClassReadOnly:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesReadOnlyPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoReadWrite:
+    case CSSSelector::PseudoClassReadWrite:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesReadWritePseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoRequired:
+    case CSSSelector::PseudoClassRequired:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isRequiredFormControl));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoValid:
+    case CSSSelector::PseudoClassValid:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isValid));
         return FunctionType::SimpleSelectorChecker;
 #if ENABLE(FULLSCREEN_API)
-    case CSSSelector::PseudoFullScreen:
+    case CSSSelector::PseudoClassFullScreen:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFullScreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
 #if ENABLE(VIDEO_TRACK)
-    case CSSSelector::PseudoFuture:
+    case CSSSelector::PseudoClassFuture:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFutureCuePseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoPast:
+    case CSSSelector::PseudoClassPast:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesPastCuePseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
 
     // Optimized pseudo selectors.
-    case CSSSelector::PseudoAnyLink:
-        fragment.pseudoClasses.add(CSSSelector::PseudoLink);
+    case CSSSelector::PseudoClassAnyLink:
+        fragment.pseudoClasses.add(CSSSelector::PseudoClassLink);
         return FunctionType::SimpleSelectorChecker;
 
-    case CSSSelector::PseudoLink:
+    case CSSSelector::PseudoClassLink:
         fragment.pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
 
-    case CSSSelector::PseudoFirstChild:
-    case CSSSelector::PseudoLastChild:
-    case CSSSelector::PseudoOnlyChild:
+    case CSSSelector::PseudoClassFirstChild:
+    case CSSSelector::PseudoClassLastChild:
+    case CSSSelector::PseudoClassOnlyChild:
         fragment.pseudoClasses.add(type);
         if (selectorContext == SelectorContext::QuerySelector)
             return FunctionType::SimpleSelectorChecker;
         return FunctionType::SelectorCheckerWithCheckingContext;
 
-    case CSSSelector::PseudoNthChild:
+    case CSSSelector::PseudoClassNthChild:
         {
             if (!selector.parseNth())
                 return FunctionType::CannotMatchAnything;
@@ -392,7 +392,7 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
             fragment.classNames.append(selector->value().impl());
             break;
         case CSSSelector::PseudoClass:
-            m_functionType = mostRestrictiveFunctionType(m_functionType, addPseudoType(*selector, fragment, m_selectorContext));
+            m_functionType = mostRestrictiveFunctionType(m_functionType, addPseudoClassType(*selector, fragment, m_selectorContext));
             if (m_functionType == FunctionType::CannotCompile || m_functionType == FunctionType::CannotMatchAnything)
                 return;
             break;
@@ -1163,7 +1163,7 @@ void SelectorCodeGenerator::generateBacktrackingTailsIfNeeded(Assembler::JumpLis
 
 void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    if (fragment.pseudoClasses.contains(CSSSelector::PseudoLink))
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassLink))
         generateElementIsLink(failureCases);
 
     if (fragment.tagName)
@@ -1174,11 +1174,11 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
 
     generateElementDataMatching(failureCases, fragment);
 
-    if (fragment.pseudoClasses.contains(CSSSelector::PseudoOnlyChild))
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassOnlyChild))
         generateElementIsOnlyChild(failureCases, fragment);
-    if (fragment.pseudoClasses.contains(CSSSelector::PseudoFirstChild))
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassFirstChild))
         generateElementIsFirstChild(failureCases, fragment);
-    if (fragment.pseudoClasses.contains(CSSSelector::PseudoLastChild))
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassLastChild))
         generateElementIsLastChild(failureCases, fragment);
     if (!fragment.nthChildfilters.isEmpty())
         generateElementIsNthChild(failureCases, fragment);

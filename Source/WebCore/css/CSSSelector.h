@@ -78,67 +78,67 @@ namespace WebCore {
             ShadowDescendant,
         };
 
-        enum PseudoType {
-            PseudoUnknown = 0,
-            PseudoEmpty,
-            PseudoFirstChild,
-            PseudoFirstOfType,
-            PseudoLastChild,
-            PseudoLastOfType,
-            PseudoOnlyChild,
-            PseudoOnlyOfType,
-            PseudoNthChild,
-            PseudoNthOfType,
-            PseudoNthLastChild,
-            PseudoNthLastOfType,
-            PseudoLink,
-            PseudoVisited,
-            PseudoAny,
-            PseudoAnyLink,
-            PseudoAutofill,
-            PseudoHover,
-            PseudoDrag,
-            PseudoFocus,
-            PseudoActive,
-            PseudoChecked,
-            PseudoEnabled,
-            PseudoFullPageMedia,
-            PseudoDefault,
-            PseudoDisabled,
-            PseudoOptional,
-            PseudoRequired,
-            PseudoReadOnly,
-            PseudoReadWrite,
-            PseudoValid,
-            PseudoInvalid,
-            PseudoIndeterminate,
-            PseudoTarget,
-            PseudoLang,
-            PseudoNot,
-            PseudoRoot,
-            PseudoScope,
-            PseudoWindowInactive,
-            PseudoCornerPresent,
-            PseudoDecrement,
-            PseudoIncrement,
-            PseudoHorizontal,
-            PseudoVertical,
-            PseudoStart,
-            PseudoEnd,
-            PseudoDoubleButton,
-            PseudoSingleButton,
-            PseudoNoButton,
+        enum PseudoClassType {
+            PseudoClassUnknown = 0,
+            PseudoClassEmpty,
+            PseudoClassFirstChild,
+            PseudoClassFirstOfType,
+            PseudoClassLastChild,
+            PseudoClassLastOfType,
+            PseudoClassOnlyChild,
+            PseudoClassOnlyOfType,
+            PseudoClassNthChild,
+            PseudoClassNthOfType,
+            PseudoClassNthLastChild,
+            PseudoClassNthLastOfType,
+            PseudoClassLink,
+            PseudoClassVisited,
+            PseudoClassAny,
+            PseudoClassAnyLink,
+            PseudoClassAutofill,
+            PseudoClassHover,
+            PseudoClassDrag,
+            PseudoClassFocus,
+            PseudoClassActive,
+            PseudoClassChecked,
+            PseudoClassEnabled,
+            PseudoClassFullPageMedia,
+            PseudoClassDefault,
+            PseudoClassDisabled,
+            PseudoClassOptional,
+            PseudoClassRequired,
+            PseudoClassReadOnly,
+            PseudoClassReadWrite,
+            PseudoClassValid,
+            PseudoClassInvalid,
+            PseudoClassIndeterminate,
+            PseudoClassTarget,
+            PseudoClassLang,
+            PseudoClassNot,
+            PseudoClassRoot,
+            PseudoClassScope,
+            PseudoClassWindowInactive,
+            PseudoClassCornerPresent,
+            PseudoClassDecrement,
+            PseudoClassIncrement,
+            PseudoClassHorizontal,
+            PseudoClassVertical,
+            PseudoClassStart,
+            PseudoClassEnd,
+            PseudoClassDoubleButton,
+            PseudoClassSingleButton,
+            PseudoClassNoButton,
 #if ENABLE(FULLSCREEN_API)
-            PseudoFullScreen,
-            PseudoFullScreenDocument,
-            PseudoFullScreenAncestor,
-            PseudoAnimatingFullScreenTransition,
+            PseudoClassFullScreen,
+            PseudoClassFullScreenDocument,
+            PseudoClassFullScreenAncestor,
+            PseudoClassAnimatingFullScreenTransition,
 #endif
-            PseudoInRange,
-            PseudoOutOfRange,
+            PseudoClassInRange,
+            PseudoClassOutOfRange,
 #if ENABLE(VIDEO_TRACK)
-            PseudoFuture,
-            PseudoPast,
+            PseudoClassFuture,
+            PseudoClassPast,
 #endif
         };
 
@@ -188,12 +188,6 @@ namespace WebCore {
             RightBottomMarginBox,
         };
 
-        PseudoType pseudoType() const
-        {
-            ASSERT(m_match == PseudoClass);
-            return static_cast<PseudoType>(m_pseudoType);
-        }
-
         static PseudoElementType parsePseudoElementType(const String&);
         static PseudoId pseudoId(PseudoElementType);
 
@@ -220,8 +214,23 @@ namespace WebCore {
         int nthA() const;
         int nthB() const;
 
-        PseudoElementType pseudoElementType() const { ASSERT(m_match == PseudoElement); return static_cast<PseudoElementType>(m_pseudoType); }
-        PagePseudoClassType pagePseudoClassType() const { ASSERT(m_match == PagePseudoClass); return static_cast<PagePseudoClassType>(m_pseudoType); }
+        PseudoClassType pseudoClassType() const
+        {
+            ASSERT(m_match == PseudoClass);
+            return static_cast<PseudoClassType>(m_pseudoType);
+        }
+
+        PseudoElementType pseudoElementType() const
+        {
+            ASSERT(m_match == PseudoElement);
+            return static_cast<PseudoElementType>(m_pseudoType);
+        }
+
+        PagePseudoClassType pagePseudoClassType() const
+        {
+            ASSERT(m_match == PagePseudoClass);
+            return static_cast<PagePseudoClassType>(m_pseudoType);
+        }
 
         bool matchesPseudoElement() const;
         bool isUnknownPseudoElement() const;
@@ -316,26 +325,26 @@ inline bool CSSSelector::isCustomPseudoElement() const
     return m_match == PseudoElement && (m_pseudoType == PseudoElementUserAgentCustom || m_pseudoType == PseudoElementWebKitCustom);
 }
 
-static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoType type)
+static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoClassType type)
 {
-    return type == CSSSelector::PseudoEmpty
-        || type == CSSSelector::PseudoFirstChild
-        || type == CSSSelector::PseudoFirstOfType
-        || type == CSSSelector::PseudoLastChild
-        || type == CSSSelector::PseudoLastOfType
-        || type == CSSSelector::PseudoOnlyChild
-        || type == CSSSelector::PseudoOnlyOfType
-        || type == CSSSelector::PseudoNthChild
-        || type == CSSSelector::PseudoNthOfType
-        || type == CSSSelector::PseudoNthLastChild
-        || type == CSSSelector::PseudoNthLastOfType;
+    return type == CSSSelector::PseudoClassEmpty
+        || type == CSSSelector::PseudoClassFirstChild
+        || type == CSSSelector::PseudoClassFirstOfType
+        || type == CSSSelector::PseudoClassLastChild
+        || type == CSSSelector::PseudoClassLastOfType
+        || type == CSSSelector::PseudoClassOnlyChild
+        || type == CSSSelector::PseudoClassOnlyOfType
+        || type == CSSSelector::PseudoClassNthChild
+        || type == CSSSelector::PseudoClassNthOfType
+        || type == CSSSelector::PseudoClassNthLastChild
+        || type == CSSSelector::PseudoClassNthLastOfType;
 }
 
 inline bool CSSSelector::isSiblingSelector() const
 {
     return m_relation == DirectAdjacent
         || m_relation == IndirectAdjacent
-        || (m_match == CSSSelector::PseudoClass && pseudoClassIsRelativeToSiblings(pseudoType()));
+        || (m_match == CSSSelector::PseudoClass && pseudoClassIsRelativeToSiblings(pseudoClassType()));
 }
 
 inline bool CSSSelector::isAttributeSelector() const
@@ -369,7 +378,7 @@ inline void CSSSelector::setValue(const AtomicString& value)
 inline CSSSelector::CSSSelector()
     : m_relation(Descendant)
     , m_match(Unknown)
-    , m_pseudoType(PseudoUnknown)
+    , m_pseudoType(0)
     , m_parsedNth(false)
     , m_isLastInSelectorList(false)
     , m_isLastInTagHistory(true)
@@ -382,7 +391,7 @@ inline CSSSelector::CSSSelector()
 inline CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
     : m_relation(Descendant)
     , m_match(Tag)
-    , m_pseudoType(PseudoUnknown)
+    , m_pseudoType(0)
     , m_parsedNth(false)
     , m_isLastInSelectorList(false)
     , m_isLastInTagHistory(true)

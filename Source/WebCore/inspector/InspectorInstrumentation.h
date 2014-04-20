@@ -135,7 +135,7 @@ public:
     static void mouseDidMoveOverElement(Page*, const HitTestResult&, unsigned modifierFlags);
     static bool handleMousePress(Page*);
     static bool handleTouchEvent(Page*, Node*);
-    static bool forcePseudoState(Element*, CSSSelector::PseudoType);
+    static bool forcePseudoState(Element*, CSSSelector::PseudoClassType);
 
     static void willSendXMLHttpRequest(ScriptExecutionContext*, const String& url);
     static void didScheduleResourceRequest(Document*, const String& url);
@@ -334,7 +334,7 @@ private:
     static void mouseDidMoveOverElementImpl(InstrumentingAgents*, const HitTestResult&, unsigned modifierFlags);
     static bool handleTouchEventImpl(InstrumentingAgents*, Node*);
     static bool handleMousePressImpl(InstrumentingAgents*);
-    static bool forcePseudoStateImpl(InstrumentingAgents*, Element*, CSSSelector::PseudoType);
+    static bool forcePseudoStateImpl(InstrumentingAgents*, Element*, CSSSelector::PseudoClassType);
 
     static void willSendXMLHttpRequestImpl(InstrumentingAgents*, const String& url);
     static void didScheduleResourceRequestImpl(InstrumentingAgents*, const String& url, Frame*);
@@ -779,7 +779,7 @@ inline bool InspectorInstrumentation::handleMousePress(Page* page)
     return false;
 }
 
-inline bool InspectorInstrumentation::forcePseudoState(Element* element, CSSSelector::PseudoType pseudoState)
+inline bool InspectorInstrumentation::forcePseudoState(Element* element, CSSSelector::PseudoClassType pseudoState)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(false);

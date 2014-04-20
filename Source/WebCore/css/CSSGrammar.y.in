@@ -1219,7 +1219,7 @@ pseudo:
             selector->setMatch(CSSSelector::PseudoClass);
             selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
             selector->setPseudoClassValue($2);
-            if (selector->pseudoType() == CSSSelector::PseudoAny)
+            if (selector->pseudoClassType() == CSSSelector::PseudoClassAny)
                 $$ = selector.release();
         }
     }
@@ -1230,7 +1230,7 @@ pseudo:
         selector->setMatch(CSSSelector::PseudoClass);
         selector->setArgument($4);
         selector->setPseudoClassValue($2);
-        if (selector->pseudoType() != CSSSelector::PseudoUnknown)
+        if (selector->pseudoClassType() != CSSSelector::PseudoClassUnknown)
             $$ = selector.release();
     }
     // used by :nth-*
@@ -1240,7 +1240,7 @@ pseudo:
         selector->setMatch(CSSSelector::PseudoClass);
         selector->setArgument(AtomicString::number($4 * $5));
         selector->setPseudoClassValue($2);
-        if (selector->pseudoType() != CSSSelector::PseudoUnknown)
+        if (selector->pseudoClassType() != CSSSelector::PseudoClassUnknown)
             $$ = selector.release();
     }
     // used by :nth-*(odd/even) and :lang
@@ -1249,13 +1249,13 @@ pseudo:
         selector->setMatch(CSSSelector::PseudoClass);
         selector->setArgument($4);
         selector->setPseudoClassValue($2);
-        CSSSelector::PseudoType type = selector->pseudoType();
-        if (type == CSSSelector::PseudoUnknown)
+        CSSSelector::PseudoClassType type = selector->pseudoClassType();
+        if (type == CSSSelector::PseudoClassUnknown)
             selector = nullptr;
-        else if (type == CSSSelector::PseudoNthChild ||
-                 type == CSSSelector::PseudoNthOfType ||
-                 type == CSSSelector::PseudoNthLastChild ||
-                 type == CSSSelector::PseudoNthLastOfType) {
+        else if (type == CSSSelector::PseudoClassNthChild ||
+                 type == CSSSelector::PseudoClassNthOfType ||
+                 type == CSSSelector::PseudoClassNthLastChild ||
+                 type == CSSSelector::PseudoClassNthLastOfType) {
             if (!isValidNthToken($4))
                 selector = nullptr;
         }

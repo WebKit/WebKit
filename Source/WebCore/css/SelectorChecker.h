@@ -108,11 +108,11 @@ inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* sele
 {
     if (selector->m_match != CSSSelector::PseudoClass)
         return false;
-    CSSSelector::PseudoType pseudoType = selector->pseudoType();
-    return pseudoType == CSSSelector::PseudoLink
-        || pseudoType == CSSSelector::PseudoAnyLink
-        || pseudoType == CSSSelector::PseudoVisited
-        || pseudoType == CSSSelector::PseudoFocus;
+    CSSSelector::PseudoClassType pseudoType = selector->pseudoClassType();
+    return pseudoType == CSSSelector::PseudoClassLink
+        || pseudoType == CSSSelector::PseudoClassAnyLink
+        || pseudoType == CSSSelector::PseudoClassVisited
+        || pseudoType == CSSSelector::PseudoClassFocus;
 }
 
 inline bool SelectorChecker::tagMatches(const Element* element, const QualifiedName& tagQName)

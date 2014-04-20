@@ -198,13 +198,13 @@ bool RuleSet::findBestRuleSetAndAdd(const CSSSelector* component, RuleData& rule
     }
 #endif
     if (SelectorChecker::isCommonPseudoClassSelector(component)) {
-        switch (component->pseudoType()) {
-        case CSSSelector::PseudoLink:
-        case CSSSelector::PseudoVisited:
-        case CSSSelector::PseudoAnyLink:
+        switch (component->pseudoClassType()) {
+        case CSSSelector::PseudoClassLink:
+        case CSSSelector::PseudoClassVisited:
+        case CSSSelector::PseudoClassAnyLink:
             m_linkPseudoClassRules.append(ruleData);
             return true;
-        case CSSSelector::PseudoFocus:
+        case CSSSelector::PseudoClassFocus:
             m_focusPseudoClassRules.append(ruleData);
             return true;
         default:

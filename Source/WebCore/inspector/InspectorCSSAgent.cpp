@@ -69,11 +69,11 @@ using namespace Inspector;
 namespace WebCore {
 
 enum ForcePseudoClassFlags {
-    PseudoNone = 0,
-    PseudoHover = 1 << 0,
-    PseudoFocus = 1 << 1,
-    PseudoActive = 1 << 2,
-    PseudoVisited = 1 << 3
+    PseudoClassNone = 0,
+    PseudoClassHover = 1 << 0,
+    PseudoClassFocus = 1 << 1,
+    PseudoClassActive = 1 << 2,
+    PseudoClassVisited = 1 << 3
 };
 
 static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
@@ -83,9 +83,9 @@ static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
     DEPRECATED_DEFINE_STATIC_LOCAL(String, focus, (ASCIILiteral("focus")));
     DEPRECATED_DEFINE_STATIC_LOCAL(String, visited, (ASCIILiteral("visited")));
     if (!pseudoClassArray || !pseudoClassArray->length())
-        return PseudoNone;
+        return PseudoClassNone;
 
-    unsigned result = PseudoNone;
+    unsigned result = PseudoClassNone;
     for (size_t i = 0; i < pseudoClassArray->length(); ++i) {
         RefPtr<InspectorValue> pseudoClassValue = pseudoClassArray->get(i);
         String pseudoClass;
@@ -93,13 +93,13 @@ static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
         if (!success)
             continue;
         if (pseudoClass == active)
-            result |= PseudoActive;
+            result |= PseudoClassActive;
         else if (pseudoClass == hover)
-            result |= PseudoHover;
+            result |= PseudoClassHover;
         else if (pseudoClass == focus)
-            result |= PseudoFocus;
+            result |= PseudoClassFocus;
         else if (pseudoClass == visited)
-            result |= PseudoVisited;
+            result |= PseudoClassVisited;
     }
 
     return result;
@@ -660,7 +660,7 @@ void InspectorCSSAgent::didUnregisterNamedFlowContentElement(Document* document,
     m_frontendDispatcher->unregisteredNamedFlowContentElement(documentNodeId, namedFlow->name().string(), contentElementNodeId);
 }
 
-bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoType pseudoType)
+bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoClassType pseudoClassType)
 {
     if (m_nodeIdToForcedPseudoState.isEmpty())
         return false;
@@ -674,15 +674,15 @@ bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoTy
         return false;
 
     unsigned forcedPseudoState = it->value;
-    switch (pseudoType) {
-    case CSSSelector::PseudoActive:
-        return forcedPseudoState & PseudoActive;
-    case CSSSelector::PseudoFocus:
-        return forcedPseudoState & PseudoFocus;
-    case CSSSelector::PseudoHover:
-        return forcedPseudoState & PseudoHover;
-    case CSSSelector::PseudoVisited:
-        return forcedPseudoState & PseudoVisited;
+    switch (pseudoClassType) {
+    case CSSSelector::PseudoClassActive:
+        return forcedPseudoState & PseudoClassActive;
+    case CSSSelector::PseudoClassFocus:
+        return forcedPseudoState & PseudoClassFocus;
+    case CSSSelector::PseudoClassHover:
+        return forcedPseudoState & PseudoClassHover;
+    case CSSSelector::PseudoClassVisited:
+        return forcedPseudoState & PseudoClassVisited;
     default:
         return false;
     }

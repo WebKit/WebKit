@@ -1,3 +1,64 @@
+2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Rename the CSSSelector PseudoType to PseudoClassType
+        https://bugs.webkit.org/show_bug.cgi?id=131907
+
+        Reviewed by Andreas Kling.
+
+        Pseudo Elements and Page Pseudo Classes have been moved out of PseudoType in previous patches.
+        The remaining values in the PseudoType enumeration are the pseudo classes.
+
+        This patch is the final clean up, PseudoType is renamed to PseudoClassType.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserSelector::pseudoClassType):
+        (WebCore::CSSParserSelector::pseudoType): Deleted.
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificityForOneSelector):
+        (WebCore::appendPseudoClassFunctionTail):
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::pseudoClassType):
+        (WebCore::CSSSelector::pseudoElementType):
+        (WebCore::CSSSelector::pagePseudoClassType):
+        (WebCore::pseudoClassIsRelativeToSiblings):
+        (WebCore::CSSSelector::isSiblingSelector):
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::pseudoType): Deleted.
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::findBestRuleSetAndAdd):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::checkScrollbarPseudoClass):
+        (WebCore::SelectorChecker::determineLinkMatchType):
+        (WebCore::SelectorChecker::matchesFocusPseudoClass):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::isCommonPseudoClassSelector):
+        * css/SelectorCheckerFastPath.cpp:
+        (WebCore::SelectorCheckerFastPath::commonPseudoClassSelectorMatches):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * css/SelectorPseudoTypeMap.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py:
+        (enumerablePseudoType):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::addPseudoType): Deleted.
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::computePseudoClassMask):
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::forcePseudoStateImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::forcePseudoState):
+
 2014-04-19  Alexey Proskuryakov  <ap@apple.com>
 
         Crashes in HTMLFormElement::submit.

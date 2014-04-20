@@ -197,7 +197,7 @@ public:
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
 
     void setPseudoClassValue(const CSSParserString& pseudoClassString);
-    CSSSelector::PseudoType pseudoType() const { return m_selector->pseudoType(); }
+    CSSSelector::PseudoClassType pseudoClassType() const { return m_selector->pseudoClassType(); }
     bool isCustomPseudoElement() const { return m_selector->isCustomPseudoElement(); }
 
     bool isPseudoElementCueFunction() const

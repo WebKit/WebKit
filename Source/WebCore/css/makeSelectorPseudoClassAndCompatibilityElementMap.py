@@ -28,7 +28,7 @@ import sys
 
 
 def enumerablePseudoType(stringPseudoType):
-    output = ['CSSSelector::Pseudo']
+    output = ['CSSSelector::PseudoClass']
 
     if stringPseudoType.endswith('('):
         stringPseudoType = stringPseudoType[:-1]
@@ -107,7 +107,7 @@ struct SelectorPseudoClassOrCompatibilityPseudoElementEntry {
 
 %}
 %struct-type
-%define initializer-suffix ,{CSSSelector::PseudoUnknown,CSSSelector::PseudoElementUnknown}
+%define initializer-suffix ,{CSSSelector::PseudoClassUnknown,CSSSelector::PseudoElementUnknown}
 %define class-name SelectorPseudoClassAndCompatibilityElementMapHash
 %omit-struct-type
 %language=C++
@@ -193,7 +193,7 @@ PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementS
 
     if (entry)
         return entry->pseudoTypes;
-    return { CSSSelector::PseudoUnknown, CSSSelector::PseudoElementUnknown };
+    return { CSSSelector::PseudoClassUnknown, CSSSelector::PseudoElementUnknown };
 }
 
 } // namespace WebCore

@@ -92,7 +92,7 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     case PseudoClass:
         // FIXME: PsuedoAny should base the specificity on the sub-selectors.
         // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0530.html
-        if (pseudoType() == PseudoNot && selectorList())
+        if (pseudoClassType() == PseudoClassNot && selectorList())
             return selectorList()->first()->specificityForOneSelector();
         FALLTHROUGH;
     case Exact:
@@ -230,12 +230,12 @@ bool CSSSelector::operator==(const CSSSelector& other) const
 
 static void appendPseudoClassFunctionTail(StringBuilder& str, const CSSSelector* selector)
 {
-    switch (selector->pseudoType()) {
-    case CSSSelector::PseudoLang:
-    case CSSSelector::PseudoNthChild:
-    case CSSSelector::PseudoNthLastChild:
-    case CSSSelector::PseudoNthOfType:
-    case CSSSelector::PseudoNthLastOfType:
+    switch (selector->pseudoClassType()) {
+    case CSSSelector::PseudoClassLang:
+    case CSSSelector::PseudoClassNthChild:
+    case CSSSelector::PseudoClassNthLastChild:
+    case CSSSelector::PseudoClassNthOfType:
+    case CSSSelector::PseudoClassNthLastOfType:
         str.append(selector->argument());
         str.append(')');
         break;
@@ -268,13 +268,13 @@ String CSSSelector::selectorText(const String& rightSide) const
             str.append('.');
             serializeIdentifier(cs->value(), str);
         } else if (cs->m_match == CSSSelector::PseudoClass) {
-            switch (cs->pseudoType()) {
+            switch (cs->pseudoClassType()) {
 #if ENABLE(FULLSCREEN_API)
-            case CSSSelector::PseudoAnimatingFullScreenTransition:
+            case CSSSelector::PseudoClassAnimatingFullScreenTransition:
                 str.appendLiteral(":-webkit-animating-full-screen-transition");
                 break;
 #endif
-            case CSSSelector::PseudoAny: {
+            case CSSSelector::PseudoClassAny: {
                 str.appendLiteral(":-webkit-any(");
                 const CSSSelector* firstSubSelector = cs->selectorList()->first();
                 for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
@@ -285,180 +285,180 @@ String CSSSelector::selectorText(const String& rightSide) const
                 str.append(')');
                 break;
             }
-            case CSSSelector::PseudoAnyLink:
+            case CSSSelector::PseudoClassAnyLink:
                 str.appendLiteral(":-webkit-any-link");
                 break;
-            case CSSSelector::PseudoAutofill:
+            case CSSSelector::PseudoClassAutofill:
                 str.appendLiteral(":-webkit-autofill");
                 break;
-            case CSSSelector::PseudoDrag:
+            case CSSSelector::PseudoClassDrag:
                 str.appendLiteral(":-webkit-drag");
                 break;
-            case CSSSelector::PseudoFullPageMedia:
+            case CSSSelector::PseudoClassFullPageMedia:
                 str.appendLiteral(":-webkit-full-page-media");
                 break;
 #if ENABLE(FULLSCREEN_API)
-            case CSSSelector::PseudoFullScreen:
+            case CSSSelector::PseudoClassFullScreen:
                 str.appendLiteral(":-webkit-full-screen");
                 break;
-            case CSSSelector::PseudoFullScreenAncestor:
+            case CSSSelector::PseudoClassFullScreenAncestor:
                 str.appendLiteral(":-webkit-full-screen-ancestor");
                 break;
-            case CSSSelector::PseudoFullScreenDocument:
+            case CSSSelector::PseudoClassFullScreenDocument:
                 str.appendLiteral(":-webkit-full-screen-document");
                 break;
 #endif
-            case CSSSelector::PseudoActive:
+            case CSSSelector::PseudoClassActive:
                 str.appendLiteral(":active");
                 break;
-            case CSSSelector::PseudoChecked:
+            case CSSSelector::PseudoClassChecked:
                 str.appendLiteral(":checked");
                 break;
-            case CSSSelector::PseudoCornerPresent:
+            case CSSSelector::PseudoClassCornerPresent:
                 str.appendLiteral(":corner-present");
                 break;
-            case CSSSelector::PseudoDecrement:
+            case CSSSelector::PseudoClassDecrement:
                 str.appendLiteral(":decrement");
                 break;
-            case CSSSelector::PseudoDefault:
+            case CSSSelector::PseudoClassDefault:
                 str.appendLiteral(":default");
                 break;
-            case CSSSelector::PseudoDisabled:
+            case CSSSelector::PseudoClassDisabled:
                 str.appendLiteral(":disabled");
                 break;
-            case CSSSelector::PseudoDoubleButton:
+            case CSSSelector::PseudoClassDoubleButton:
                 str.appendLiteral(":double-button");
                 break;
-            case CSSSelector::PseudoEmpty:
+            case CSSSelector::PseudoClassEmpty:
                 str.appendLiteral(":empty");
                 break;
-            case CSSSelector::PseudoEnabled:
+            case CSSSelector::PseudoClassEnabled:
                 str.appendLiteral(":enabled");
                 break;
-            case CSSSelector::PseudoEnd:
+            case CSSSelector::PseudoClassEnd:
                 str.appendLiteral(":end");
                 break;
-            case CSSSelector::PseudoFirstChild:
+            case CSSSelector::PseudoClassFirstChild:
                 str.appendLiteral(":first-child");
                 break;
-            case CSSSelector::PseudoFirstOfType:
+            case CSSSelector::PseudoClassFirstOfType:
                 str.appendLiteral(":first-of-type");
                 break;
-            case CSSSelector::PseudoFocus:
+            case CSSSelector::PseudoClassFocus:
                 str.appendLiteral(":focus");
                 break;
 #if ENABLE(VIDEO_TRACK)
-            case CSSSelector::PseudoFuture:
+            case CSSSelector::PseudoClassFuture:
                 str.appendLiteral(":future");
                 break;
 #endif
-            case CSSSelector::PseudoHorizontal:
+            case CSSSelector::PseudoClassHorizontal:
                 str.appendLiteral(":horizontal");
                 break;
-            case CSSSelector::PseudoHover:
+            case CSSSelector::PseudoClassHover:
                 str.appendLiteral(":hover");
                 break;
-            case CSSSelector::PseudoInRange:
+            case CSSSelector::PseudoClassInRange:
                 str.appendLiteral(":in-range");
                 break;
-            case CSSSelector::PseudoIncrement:
+            case CSSSelector::PseudoClassIncrement:
                 str.appendLiteral(":increment");
                 break;
-            case CSSSelector::PseudoIndeterminate:
+            case CSSSelector::PseudoClassIndeterminate:
                 str.appendLiteral(":indeterminate");
                 break;
-            case CSSSelector::PseudoInvalid:
+            case CSSSelector::PseudoClassInvalid:
                 str.appendLiteral(":invalid");
                 break;
-            case CSSSelector::PseudoLang:
+            case CSSSelector::PseudoClassLang:
                 str.appendLiteral(":lang(");
                 appendPseudoClassFunctionTail(str, cs);
                 break;
-            case CSSSelector::PseudoLastChild:
+            case CSSSelector::PseudoClassLastChild:
                 str.appendLiteral(":last-child");
                 break;
-            case CSSSelector::PseudoLastOfType:
+            case CSSSelector::PseudoClassLastOfType:
                 str.appendLiteral(":last-of-type");
                 break;
-            case CSSSelector::PseudoLink:
+            case CSSSelector::PseudoClassLink:
                 str.appendLiteral(":link");
                 break;
-            case CSSSelector::PseudoNoButton:
+            case CSSSelector::PseudoClassNoButton:
                 str.appendLiteral(":no-button");
                 break;
-            case CSSSelector::PseudoNot:
+            case CSSSelector::PseudoClassNot:
                 str.appendLiteral(":not(");
                 if (const CSSSelectorList* selectorList = cs->selectorList())
                     str.append(selectorList->first()->selectorText());
                 str.append(')');
                 break;
-            case CSSSelector::PseudoNthChild:
+            case CSSSelector::PseudoClassNthChild:
                 str.appendLiteral(":nth-child(");
                 appendPseudoClassFunctionTail(str, cs);
                 break;
-            case CSSSelector::PseudoNthLastChild:
+            case CSSSelector::PseudoClassNthLastChild:
                 str.appendLiteral(":nth-last-child(");
                 appendPseudoClassFunctionTail(str, cs);
                 break;
-            case CSSSelector::PseudoNthLastOfType:
+            case CSSSelector::PseudoClassNthLastOfType:
                 str.appendLiteral(":nth-last-of-type(");
                 appendPseudoClassFunctionTail(str, cs);
                 break;
-            case CSSSelector::PseudoNthOfType:
+            case CSSSelector::PseudoClassNthOfType:
                 str.appendLiteral(":nth-of-type(");
                 appendPseudoClassFunctionTail(str, cs);
                 break;
-            case CSSSelector::PseudoOnlyChild:
+            case CSSSelector::PseudoClassOnlyChild:
                 str.appendLiteral(":only-child");
                 break;
-            case CSSSelector::PseudoOnlyOfType:
+            case CSSSelector::PseudoClassOnlyOfType:
                 str.appendLiteral(":only-of-type");
                 break;
-            case CSSSelector::PseudoOptional:
+            case CSSSelector::PseudoClassOptional:
                 str.appendLiteral(":optional");
                 break;
-            case CSSSelector::PseudoOutOfRange:
+            case CSSSelector::PseudoClassOutOfRange:
                 str.appendLiteral(":out-of-range");
                 break;
 #if ENABLE(VIDEO_TRACK)
-            case CSSSelector::PseudoPast:
+            case CSSSelector::PseudoClassPast:
                 str.appendLiteral(":past");
                 break;
 #endif
-            case CSSSelector::PseudoReadOnly:
+            case CSSSelector::PseudoClassReadOnly:
                 str.appendLiteral(":read-only");
                 break;
-            case CSSSelector::PseudoReadWrite:
+            case CSSSelector::PseudoClassReadWrite:
                 str.appendLiteral(":read-write");
                 break;
-            case CSSSelector::PseudoRequired:
+            case CSSSelector::PseudoClassRequired:
                 str.appendLiteral(":required");
                 break;
-            case CSSSelector::PseudoRoot:
+            case CSSSelector::PseudoClassRoot:
                 str.appendLiteral(":root");
                 break;
-            case CSSSelector::PseudoScope:
+            case CSSSelector::PseudoClassScope:
                 str.appendLiteral(":scope");
                 break;
-            case CSSSelector::PseudoSingleButton:
+            case CSSSelector::PseudoClassSingleButton:
                 str.appendLiteral(":single-button");
                 break;
-            case CSSSelector::PseudoStart:
+            case CSSSelector::PseudoClassStart:
                 str.appendLiteral(":start");
                 break;
-            case CSSSelector::PseudoTarget:
+            case CSSSelector::PseudoClassTarget:
                 str.appendLiteral(":target");
                 break;
-            case CSSSelector::PseudoValid:
+            case CSSSelector::PseudoClassValid:
                 str.appendLiteral(":valid");
                 break;
-            case CSSSelector::PseudoVertical:
+            case CSSSelector::PseudoClassVertical:
                 str.appendLiteral(":vertical");
                 break;
-            case CSSSelector::PseudoVisited:
+            case CSSSelector::PseudoClassVisited:
                 str.appendLiteral(":visited");
                 break;
-            case CSSSelector::PseudoWindowInactive:
+            case CSSSelector::PseudoClassWindowInactive:
                 str.appendLiteral(":window-inactive");
                 break;
             default:
