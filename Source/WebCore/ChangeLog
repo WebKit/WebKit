@@ -1,5 +1,12 @@
 2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
 
+        Fix the build after r167574
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+
+2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
+
         Compile the pseudo class :target
         https://bugs.webkit.org/show_bug.cgi?id=131904
 

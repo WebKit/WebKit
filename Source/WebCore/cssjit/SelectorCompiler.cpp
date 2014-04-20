@@ -1168,7 +1168,7 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassLink))
         generateElementIsLink(failureCases);
 
-    if (fragment.pseudoClasses.contains(CSSSelector::PseudoTarget))
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassTarget))
         generateElementIsTarget(failureCases);
 
     if (fragment.tagName)
