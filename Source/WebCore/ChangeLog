@@ -1,3 +1,24 @@
+2014-04-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Crashes in HTMLFormElement::submit.
+        https://bugs.webkit.org/show_bug.cgi?id=131910
+        <rdar://problem/15661790>
+
+        Based on a patch by Kent Tamura.
+
+        Reviewed by Anders Carlsson.
+
+        Tests: fast/forms/form-submission-crash-2.html
+               fast/forms/form-submission-crash.html
+
+        Code that executes arbitrary JS needs to protect objects that it uses afterwards.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareForSubmission):
+        (WebCore::HTMLFormElement::submit):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+
 2014-04-20  Antti Koivisto  <antti@apple.com>
 
         Text bounding box computation for simple line layout is wrong
