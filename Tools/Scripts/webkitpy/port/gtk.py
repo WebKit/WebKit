@@ -103,11 +103,6 @@ class GtkPort(Port):
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
         environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('lib')
         environment['AUDIO_RESOURCES_PATH'] = self.path_from_webkit_base('Source', 'WebCore', 'platform', 'audio', 'resources')
-
-        llvmpipe_libgl_path = os.environ.get('LLVMPIPE_LIBGL_PATH')
-        if llvmpipe_libgl_path:
-            environment['LD_LIBRARY_PATH'] = '%s:%s' % (llvmpipe_libgl_path, os.environ.get('LD_LIBRARY_PATH', ''))
-
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
         if self.get_option("leaks"):
             #  Turn off GLib memory optimisations https://wiki.gnome.org/Valgrind.

@@ -31,8 +31,3 @@ module_makeargs['gtk+'] = 'LDFLAGS="-lm" ' + makeargs
 # We always enable introspection so that we can sniff out problems with our
 # annotations sooner rather than later.
 autogenargs='--enable-introspection'
-
-if use_lib64:
-    os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(checkoutroot, 'Mesa-10.0.4', 'lib64'))
-else:
-    os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(checkoutroot, 'Mesa-10.0.4', 'lib'))

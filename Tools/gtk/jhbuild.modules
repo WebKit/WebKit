@@ -29,7 +29,6 @@
       <dep package="gst-plugins-bad"/>
       <dep package="gst-libav"/>
       <dep package="xserver"/>
-      <dep package="mesa"/>
     </dependencies>
   </metamodule>
 
@@ -49,8 +48,6 @@
       href="http://www.freedesktop.org"/>
   <repository type="tarball" name="xorg"
       href="http://xorg.freedesktop.org"/>
-  <repository type="tarball" name="ftp.freedesktop.org"
-      href="ftp://ftp.freedesktop.org"/>
   <repository type="tarball" name="xmlsoft.org"
       href="ftp://xmlsoft.org"/>
   <repository type="tarball" name="gstreamer"
@@ -332,13 +329,6 @@
     <branch module="/pub/GNOME/sources/gtk-doc/1.20/gtk-doc-1.20.tar.xz" version="1.20"
             repo="ftp.gnome.org"
             hash="sha256:3e6ecf134dbf92a74c24d79848fea3a48e59ab95408a38c6405905d95a293011"/>
-  </autotools>
-
-  <autotools id="mesa" autogenargs="--enable-xlib-glx --disable-dri" skip-install="true">
-    <branch module="/pub/mesa/10.0.4/MesaLib-10.0.4.tar.bz2" version="10.0.4"
-            checkoutdir="Mesa-10.0.4"
-            repo="ftp.freedesktop.org"
-            hash="sha256:ff6eb552becb25a318e53ac56b95a8c2d49e83ad674d87f52e811c0a20c25a40"/>
   </autotools>
 
 </moduleset>

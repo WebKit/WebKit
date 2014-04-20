@@ -1,3 +1,17 @@
+2014-04-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r167510.
+        https://bugs.webkit.org/show_bug.cgi?id=131915
+
+        broke GTK Debug bot (Requested by philn on #webkit).
+
+        Reverted changeset:
+
+        "[GTK] Add llvmpipe (Mesa) to the JHBuild moduleset and force
+        it when running layout tests"
+        https://bugs.webkit.org/show_bug.cgi?id=131472
+        http://trac.webkit.org/changeset/167510
+
 2014-04-18  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add llvmpipe (Mesa) to the JHBuild moduleset and force it when running layout tests
