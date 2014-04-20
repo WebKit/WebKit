@@ -937,21 +937,14 @@ bool RenderText::containsOnlyWhitespace(unsigned from, unsigned len) const
     return currPos >= (from + len);
 }
 
-FloatPoint RenderText::firstRunOrigin() const
+IntPoint RenderText::firstRunLocation() const
 {
-    return IntPoint(firstRunX(), firstRunY());
+    if (auto* layout = simpleLineLayout())
+        return SimpleLineLayout::computeTextFirstRunLocation(*this, *layout);
+
+    return m_lineBoxes.firstRunLocation();
 }
 
-float RenderText::firstRunX() const
-{
-    return firstTextBox() ? firstTextBox()->x() : 0;
-}
-
-float RenderText::firstRunY() const
-{
-    return firstTextBox() ? firstTextBox()->y() : 0;
-}
-    
 void RenderText::setSelectionState(SelectionState state)
 {
     if (state != SelectionNone)

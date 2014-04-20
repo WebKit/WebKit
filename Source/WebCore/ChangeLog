@@ -1,3 +1,47 @@
+2014-04-20  Antti Koivisto  <antti@apple.com>
+
+        Text bounding box computation for simple line layout is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=131912
+
+        Reviewed by Andreas Kling.
+
+        Top-left is currently the first line top-left which is not always correct.
+
+        * WebCore.exp.in:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::firstRunLocation):
+        (WebCore::RenderText::firstRunOrigin): Deleted.
+        (WebCore::RenderText::firstRunX): Deleted.
+        (WebCore::RenderText::firstRunY): Deleted.
+        
+            Keep just one accessor and rename it.
+            Encapsulate the line box and simple line versions.
+
+        * rendering/RenderText.h:
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::firstRunLocation):
+
+            Line box version.
+
+        * rendering/RenderTextLineBoxes.h:
+        * rendering/RenderTreeAsText.cpp:
+        
+            Simplify RenderText dumping.
+
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::computeTextBoundingBox):
+        
+            Return the correct x position.
+
+        (WebCore::SimpleLineLayout::computeTextFirstRunLocation):
+        
+            Simple line version.
+
+        * rendering/SimpleLineLayoutFunctions.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGInlineText):
+
 2014-04-19  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: RenderLayer's clipping should snap to device pixel boundaries.

@@ -55,6 +55,7 @@ bool containsTextCaretOffset(const RenderText&, const Layout&, unsigned);
 unsigned findTextCaretMinimumOffset(const RenderText&, const Layout&);
 unsigned findTextCaretMaximumOffset(const RenderText&, const Layout&);
 IntRect computeTextBoundingBox(const RenderText&, const Layout&);
+IntPoint computeTextFirstRunLocation(const RenderText&, const Layout&);
 
 Vector<IntRect> collectTextAbsoluteRects(const RenderText&, const Layout&, const LayoutPoint& accumulatedOffset);
 Vector<FloatQuad> collectTextAbsoluteQuads(const RenderText&, const Layout&, bool* wasFixed);

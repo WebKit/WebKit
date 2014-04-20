@@ -160,11 +160,20 @@ IntRect computeTextBoundingBox(const RenderText& textRenderer, const Layout& lay
         if (rect.maxY() > bottom)
             bottom = rect.maxY();
     }
-    float x = firstLineRect.x();
+    float x = left;
     float y = firstLineRect.y();
     float width = right - left;
     float height = bottom - y;
     return enclosingIntRect(FloatRect(x, y, width, height));
+}
+
+IntPoint computeTextFirstRunLocation(const RenderText& textRenderer, const Layout& layout)
+{
+    auto resolver = runResolver(toRenderBlockFlow(*textRenderer.parent()), layout);
+    auto begin = resolver.begin();
+    if (begin == resolver.end())
+        return IntPoint();
+    return flooredIntPoint((*begin).rect().location());
 }
 
 Vector<IntRect> collectTextAbsoluteRects(const RenderText& textRenderer, const Layout& layout, const LayoutPoint& accumulatedOffset)

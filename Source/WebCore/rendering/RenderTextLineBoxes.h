@@ -70,6 +70,7 @@ public:
     LayoutRect selectionRectForRange(unsigned start, unsigned end);
 
     IntRect boundingBox(const RenderText&) const;
+    IntPoint firstRunLocation() const;
     LayoutRect visualOverflowBoundingBox(const RenderText&) const;
 
     Vector<IntRect> absoluteRects(const LayoutPoint& accumulatedOffset) const;

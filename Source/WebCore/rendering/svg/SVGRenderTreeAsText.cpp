@@ -582,7 +582,7 @@ void writeSVGText(TextStream& ts, const RenderSVGText& text, int indent)
 void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText& text, int indent)
 {
     writeStandardPrefix(ts, text, indent);
-    ts << " " << enclosingIntRect(FloatRect(text.firstRunOrigin(), text.floatLinesBoundingBox().size())) << "\n";
+    ts << " " << enclosingIntRect(FloatRect(text.firstRunLocation(), text.floatLinesBoundingBox().size())) << "\n";
     writeResources(ts, text, indent);
     writeSVGInlineTextBoxes(ts, text, indent);
 }

@@ -114,8 +114,9 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     } else if (node->isText()) {
         // FIXME: Preserve old behavior even though it's strange.
         RenderText* text = toRenderText(node);
-        x = text->firstRunX();
-        y = text->firstRunY();
+        IntPoint firstRunLocation = text->firstRunLocation();
+        x = firstRunLocation.x();
+        y = firstRunLocation.y();
         IntRect box = text->linesBoundingBox();
         width = box.width();
         height = box.height();

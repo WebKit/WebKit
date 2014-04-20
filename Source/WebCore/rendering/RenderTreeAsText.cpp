@@ -200,15 +200,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         // FIXME: Would be better to dump the bounding box x and y rather than the first run's x and y, but that would involve updating
         // many test results.
         const RenderText& text = toRenderText(o);
-        IntRect linesBox = text.linesBoundingBox();
-        if (text.simpleLineLayout()) {
-            int y = linesBox.y();
-            if (text.containingBlock()->isTableCell())
-                y -= toRenderTableCell(o.containingBlock())->intrinsicPaddingBefore();
-            r = IntRect(linesBox.x(), y, linesBox.width(), linesBox.height());
-        } else
-            r = IntRect(text.firstRunX(), text.firstRunY(), linesBox.width(), linesBox.height());
-        if (adjustForTableCells && !text.firstTextBox())
+        r = IntRect(text.firstRunLocation(), text.linesBoundingBox().size());
+        if (!text.firstTextBox() && !text.simpleLineLayout())
             adjustForTableCells = false;
     } else if (o.isBR()) {
         const RenderLineBreak& br = toRenderLineBreak(o);

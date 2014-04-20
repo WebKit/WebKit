@@ -99,9 +99,7 @@ public:
     virtual IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
 
-    FloatPoint firstRunOrigin() const;
-    float firstRunX() const;
-    float firstRunY() const;
+    IntPoint firstRunLocation() const;
 
     virtual void setText(const String&, bool force = false);
     void setTextWithOffset(const String&, unsigned offset, unsigned len, bool force = false);

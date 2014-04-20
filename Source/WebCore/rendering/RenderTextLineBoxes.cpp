@@ -169,6 +169,13 @@ IntRect RenderTextLineBoxes::boundingBox(const RenderText& renderer) const
     return enclosingIntRect(FloatRect(x, y, width, height));
 }
 
+IntPoint RenderTextLineBoxes::firstRunLocation() const
+{
+    if (!m_first)
+        return IntPoint();
+    return IntPoint(m_first->topLeft());
+}
+
 LayoutRect RenderTextLineBoxes::visualOverflowBoundingBox(const RenderText& renderer) const
 {
     if (!m_first)

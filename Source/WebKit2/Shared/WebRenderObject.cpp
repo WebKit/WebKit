@@ -90,8 +90,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
         m_frameRect = toRenderBox(renderer)->pixelSnappedFrameRect();
     else if (renderer->isText()) {
         m_frameRect = toRenderText(renderer)->linesBoundingBox();
-        m_frameRect.setX(toRenderText(renderer)->firstRunX());
-        m_frameRect.setY(toRenderText(renderer)->firstRunY());
+        m_frameRect.setLocation(toRenderText(renderer)->firstRunLocation());
     } else if (renderer->isRenderInline())
         m_frameRect = toRenderBoxModelObject(renderer)->borderBoundingBox();
 

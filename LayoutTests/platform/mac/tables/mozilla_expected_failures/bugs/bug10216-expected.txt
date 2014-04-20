@@ -97,7 +97,7 @@ layer at (0,0) size 785x708
                 text run at (2,2) width 30: "Data"
       RenderTable {TABLE} at (0,572) size 87x107 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 87x54
-          RenderText {#text} at (9,0) size 88x54
+          RenderText {#text} at (9,0) size 87x54
             text run at (9,0) width 69: "The table's"
             text run at (2,18) width 83: "caption, with"
             text run at (0,36) width 87: "align=\"right\"."

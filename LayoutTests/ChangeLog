@@ -1,3 +1,23 @@
+2014-04-20  Antti Koivisto  <antti@apple.com>
+
+        Text bounding box computation for simple line layout is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=131912
+
+        Reviewed by Andreas Kling.
+        
+        Some dumped RenderText sizes change in table related test. These are progressions,
+        the new results match the contained lines. There are no visual changes.
+
+        * platform/mac/fast/table/dynamic-caption-add-remove-before-child-expected.txt:
+        * platform/mac/fast/table/multiple-captions-display-expected.txt:
+        * platform/mac/tables/mozilla/marvin/body_col-expected.txt:
+        * platform/mac/tables/mozilla/marvin/x_th_valign_baseline-expected.txt:
+        * platform/mac/tables/mozilla/other/body_col-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug10140-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug10216-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions3-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/other/test4-expected.txt:
+
 2014-04-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167501.
