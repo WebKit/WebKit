@@ -1,3 +1,18 @@
+2014-04-19  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: RenderLayer's clipping should snap to device pixel boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=131466
+
+        Reviewed by Simon Fraser.
+
+        Fractional pixel clipping can produce cruft on RenderLayers. Since RenderLayer
+        sizing and painting are snapped, painting clip rect needs to be snapped the same way.
+
+        Test: fast/clip/clip-when-rect-has-fractional-pixel-value.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect):
+
 2014-04-19  Brent Fulgham  <bfulgham@apple.com>
 
         Latched scrolling may interact badly with custom programmatic scrolling

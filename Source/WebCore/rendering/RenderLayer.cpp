@@ -3630,9 +3630,10 @@ static bool inContainingBlockChain(RenderLayer* startLayer, RenderLayer* endLaye
 void RenderLayer::clipToRect(RenderLayer* rootLayer, GraphicsContext* context, const LayoutRect& paintDirtyRect, const ClipRect& clipRect,
                              BorderRadiusClippingRule rule)
 {
+    float deviceScaleFactor = renderer().document().deviceScaleFactor();
     if (clipRect.rect() != paintDirtyRect || clipRect.hasRadius()) {
         context->save();
-        context->clip(clipRect.rect());
+        context->clip(pixelSnappedForPainting(clipRect.rect(), deviceScaleFactor));
     }
 
     if (!clipRect.hasRadius())
@@ -3645,7 +3646,7 @@ void RenderLayer::clipToRect(RenderLayer* rootLayer, GraphicsContext* context, c
         if (layer->renderer().hasOverflowClip() && layer->renderer().style().hasBorderRadius() && inContainingBlockChain(this, layer)) {
                 LayoutPoint delta;
                 layer->convertToLayerCoords(rootLayer, delta);
-                context->clipRoundedRect(FloatRoundedRect(layer->renderer().style().getRoundedInnerBorderFor(LayoutRect(delta, layer->size()))));
+                context->clipRoundedRect(layer->renderer().style().getRoundedInnerBorderFor(LayoutRect(delta, layer->size())).pixelSnappedRoundedRectForPainting(deviceScaleFactor));
         }
 
         if (layer == rootLayer)

@@ -1,3 +1,16 @@
+2014-04-19  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: RenderLayer's clipping should snap to device pixel boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=131466
+
+        Reviewed by Simon Fraser.
+
+        Fractional pixel clipping can produce cruft on RenderLayers. Since RenderLayer
+        sizing and painting are snapped, painting clip rect needs to be snapped the same way.
+
+        * fast/clip/clip-when-rect-has-fractional-pixel-value-expected.html: Added.
+        * fast/clip/clip-when-rect-has-fractional-pixel-value.html: Added.
+
 2014-04-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: grid rows are not recognized do to lack of explicit role="row", role="gridcell"
