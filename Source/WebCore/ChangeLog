@@ -1,3 +1,31 @@
+2014-04-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Latched scrolling may interact badly with custom programmatic scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=131869
+        <rdar://problem/16249557>
+
+        Reviewed by Darin Adler.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setScrollLeft): Mark scrollable area as having
+        been scrolled programmatically.
+        (WebCore::Element::setScrollTop): Ditto.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent): Check for programmatic scroll, and
+        clear latched state if the handler manually scrolled. Clear programmatic
+        scroll state at the end of event handling.
+        (WebCore::EventHandler::clearLatchedState): Refactored code.
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::platformPrepareForWheelEvents): Check
+        if scrollable area was scrolled programmatically. If it was, do
+        not honor latching behavior.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::ScrollableArea): Initialize new member.
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::isScrolledProgrammatically): Added.
+        (WebCore::ScrollableArea::setScrolledProgrammatically): Added.
+
 2014-04-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: grid rows are not recognized do to lack of explicit role="row", role="gridcell"

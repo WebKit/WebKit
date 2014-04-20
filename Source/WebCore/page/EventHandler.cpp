@@ -2593,17 +2593,39 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
             Widget* widget = toRenderWidget(target)->widget();
             if (widget && passWheelEventToWidget(e, widget)) {
                 m_isHandlingWheelEvent = false;
+                if (scrollableArea)
+                    scrollableArea->setScrolledProgrammatically(false);
                 return true;
             }
         }
 
         if (!element->dispatchWheelEvent(event)) {
             m_isHandlingWheelEvent = false;
+
+            if (scrollableArea && scrollableArea->isScrolledProgrammatically()) {
+                // Web developer is controlling scrolling. Don't attempt to latch ourselves:
+                clearLatchedState();
+                scrollableArea->setScrolledProgrammatically(false);
+            }
+
             return true;
         }
     }
 
+    if (scrollableArea)
+        scrollableArea->setScrolledProgrammatically(false);
+
     return platformCompleteWheelEvent(e, scrollableContainer, scrollableArea);
+}
+
+void EventHandler::clearLatchedState()
+{
+    m_latchedWheelEventElement = nullptr;
+#if PLATFORM(COCOA)
+    m_latchedScrollableContainer = nullptr;
+#endif
+    m_widgetIsLatched = false;
+    m_previousWheelScrolledElement = nullptr;
 }
 
 void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEvent)

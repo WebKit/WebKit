@@ -156,6 +156,9 @@ public:
     virtual bool scrolledToLeft() const;
     virtual bool scrolledToRight() const;
 
+    bool isScrolledProgrammatically() const { return m_scrolledProgrammatically; }
+    void setScrolledProgrammatically(bool state) { m_scrolledProgrammatically = state; }
+
     enum VisibleContentRectIncludesScrollbars { ExcludeScrollbars, IncludeScrollbars };
     enum VisibleContentRectBehavior {
         ContentsVisibleRect,
@@ -292,6 +295,7 @@ private:
     unsigned m_scrollbarOverlayStyle : 2; // ScrollbarOverlayStyle
 
     unsigned m_scrollOriginChanged : 1;
+    unsigned m_scrolledProgrammatically : 1;
 };
 
 } // namespace WebCore

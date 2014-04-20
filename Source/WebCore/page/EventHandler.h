@@ -436,6 +436,8 @@ private:
     void autoHideCursorTimerFired(Timer<EventHandler>&);
 #endif
 
+    void clearLatchedState();
+
     Frame& m_frame;
 
     bool m_mousePressed;

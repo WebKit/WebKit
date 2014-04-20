@@ -59,6 +59,7 @@ ScrollableArea::ScrollableArea()
     , m_horizontalScrollElasticity(ScrollElasticityNone)
     , m_scrollbarOverlayStyle(ScrollbarOverlayStyleDefault)
     , m_scrollOriginChanged(false)
+    , m_scrolledProgrammatically(false)
 {
 }
 

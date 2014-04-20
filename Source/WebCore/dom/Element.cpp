@@ -61,6 +61,7 @@
 #include "NodeRenderStyle.h"
 #include "PlatformWheelEvent.h"
 #include "PointerLockController.h"
+#include "RenderLayer.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderTheme.h"
@@ -798,16 +799,22 @@ void Element::setScrollLeft(int newLeft)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    if (RenderBox* rend = renderBox())
-        rend->setScrollLeft(static_cast<int>(newLeft * rend->style().effectiveZoom()));
+    if (RenderBox* renderer = renderBox()) {
+        renderer->setScrollLeft(static_cast<int>(newLeft * renderer->style().effectiveZoom()));
+        if (auto* scrollableArea = renderer->layer())
+            scrollableArea->setScrolledProgrammatically(true);
+    }
 }
 
 void Element::setScrollTop(int newTop)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    if (RenderBox* rend = renderBox())
-        rend->setScrollTop(static_cast<int>(newTop * rend->style().effectiveZoom()));
+    if (RenderBox* renderer = renderBox()) {
+        renderer->setScrollTop(static_cast<int>(newTop * renderer->style().effectiveZoom()));
+        if (auto* scrollableArea = renderer->layer())
+            scrollableArea->setScrolledProgrammatically(true);
+    }
 }
 
 int Element::scrollWidth()

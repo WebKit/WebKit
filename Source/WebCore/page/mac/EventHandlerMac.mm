@@ -799,10 +799,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
         isOverWidget = m_widgetIsLatched;
         m_recentWheelEventDeltaTracker->beginTrackingDeltas();
     } else if (wheelEvent.shouldResetLatching()) {
-        m_latchedWheelEventElement = nullptr;
-        m_latchedScrollableContainer = nullptr;
-        m_widgetIsLatched = false;
-        m_previousWheelScrolledElement = nullptr;
+        clearLatchedState();
         m_recentWheelEventDeltaTracker->endTrackingDeltas();
     }
     
