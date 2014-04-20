@@ -1,3 +1,10 @@
+2014-04-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Revert unintended workspace change in my last commit.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme: Set the
+        Scheme type back to Debug.
+
 2014-04-18  Philippe Normand  <pnormand@igalia.com>
 
         Remove NETWORK_INFO support
