@@ -484,6 +484,9 @@ class Instruction
             else
                 $asm.puts "mov #{armFlippedOperands(operands)}"
             end
+        when "mvlbl"
+                $asm.puts "movw #{operands[1].armOperand}, \#:lower16:#{operands[0].value}"
+                $asm.puts "movt #{operands[1].armOperand}, \#:upper16:#{operands[0].value}"
         when "nop"
             $asm.puts "nop"
         when "bieq", "bpeq", "bbeq"

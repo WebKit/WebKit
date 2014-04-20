@@ -1,3 +1,29 @@
+2014-04-20  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        JavaScriptCore: ARM build fix after r167094.
+        https://bugs.webkit.org/show_bug.cgi?id=131612
+
+        Reviewed by Michael Saboff.
+
+        After r167094 there are many build errors on ARM like these:
+
+            /tmp/ccgtHRno.s:370: Error: invalid constant (425a) after fixup
+            /tmp/ccgtHRno.s:374: Error: invalid constant (426e) after fixup
+            /tmp/ccgtHRno.s:378: Error: invalid constant (4282) after fixup
+            /tmp/ccgtHRno.s:382: Error: invalid constant (4296) after fixup
+
+        Problem is caused by the wrong generated assembly like:
+            "\tmov r2, (" LOCAL_LABEL_STRING(llint_op_strcat) " - " LOCAL_LABEL_STRING(relativePCBase) ")\n" // /home/webkit/WebKit/Source/JavaScriptCore/llint/LowLevelInterpreter.asm:741
+
+        `mov` can only move 8 bit immediate, but not every constant fit into 8 bit. Clang converts
+        the mov to a single movw or a movw and a movt, depending on the immediate, but binutils doesn't.
+        Add a new ARM specific offline assembler instruction (`mvlbl`) for the following llint_entry
+        use case: move rn, (label1-label2) which is translated to movw and movt.
+
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/arm.rb:
+        * offlineasm/instructions.rb:
+
 2014-04-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Unreviewed build fix after r167336.
