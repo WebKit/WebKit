@@ -54,7 +54,7 @@ PassRefPtr<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* re
 
 bool AccessibilityARIAGrid::addTableCellChild(AccessibilityObject* child, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
 {
-    if (!child || !child->isTableRow() || child->ariaRoleAttribute() != RowRole)
+    if (!child || (!child->isTableRow() && child->ariaRoleAttribute() != RowRole))
         return false;
         
     AccessibilityTableRow* row = toAccessibilityTableRow(child);

@@ -1,5 +1,20 @@
 2014-04-19  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: grid rows are not recognized do to lack of explicit role="row", role="gridcell"
+        https://bugs.webkit.org/show_bug.cgi?id=131819
+
+        Reviewed by Darin Adler.
+
+        Test: accessibility/table-with-missing-aria-role-rows.html
+
+        If a table is using role="grid", and it has <tr> elements that do not have
+        role="row", we should still treat them as row elements.
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addTableCellChild):
+
+2014-04-19  Chris Fleizach  <cfleizach@apple.com>
+
         AX: Malformed tables exposing incorrect col and colSpans
         https://bugs.webkit.org/show_bug.cgi?id=131796
 
