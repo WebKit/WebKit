@@ -42,10 +42,6 @@
 @protocol WKHistoryDelegatePrivate;
 @protocol WKNavigationDelegate;
 
-@interface NSObject (WKNavigationDelegateToBeRemoved)
-- (void)webView:(WKWebView *)webView didFinishLoadingNavigation:(WKNavigation *)navigation;
-@end
-
 namespace WebKit {
 
 struct WebNavigationDataStore;
@@ -142,9 +138,6 @@ private:
         bool webViewCanAuthenticateAgainstProtectionSpace : 1;
         bool webViewDidReceiveAuthenticationChallenge : 1;
         bool webViewWebProcessDidCrash : 1;
-
-        // FIXME: Remove this once no clients depend on it being called.
-        bool webViewDidFinishLoadingNavigation : 1;
     } m_navigationDelegateMethods;
 
     HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;

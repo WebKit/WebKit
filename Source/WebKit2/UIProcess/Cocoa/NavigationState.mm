@@ -120,9 +120,6 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewCanAuthenticateAgainstProtectionSpace = [delegate respondsToSelector:@selector(_webView:canAuthenticateAgainstProtectionSpace:)];
     m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallenge = [delegate respondsToSelector:@selector(_webView:didReceiveAuthenticationChallenge:)];
     m_navigationDelegateMethods.webViewWebProcessDidCrash = [delegate respondsToSelector:@selector(_webViewWebProcessDidCrash:)];
-
-    // FIXME: Remove this once no clients depend on it being called.
-    m_navigationDelegateMethods.webViewDidFinishLoadingNavigation = [delegate respondsToSelector:@selector(webView:didFinishLoadingNavigation:)];
 }
 
 RetainPtr<id <WKHistoryDelegatePrivate> > NavigationState::historyDelegate()
@@ -421,7 +418,7 @@ void NavigationState::LoaderClient::didFinishLoadForFrame(WebPageProxy*, WebFram
     if (!webFrameProxy->isMainFrame())
         return;
 
-    if (!m_navigationState.m_navigationDelegateMethods.webViewDidFinishNavigation && !m_navigationState.m_navigationDelegateMethods.webViewDidFinishLoadingNavigation)
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDidFinishNavigation)
         return;
 
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
@@ -432,12 +429,6 @@ void NavigationState::LoaderClient::didFinishLoadForFrame(WebPageProxy*, WebFram
     WKNavigation *navigation = nil;
     if (navigationID)
         navigation = m_navigationState.m_navigations.get(navigationID).get();
-
-    // FIXME: Remove this once no clients depend on it being called.
-    if (m_navigationState.m_navigationDelegateMethods.webViewDidFinishLoadingNavigation) {
-        [static_cast<id>(navigationDelegate) webView:m_navigationState.m_webView didFinishLoadingNavigation:navigation];
-        return;
-    }
 
     [navigationDelegate webView:m_navigationState.m_webView didFinishNavigation:navigation];
 }

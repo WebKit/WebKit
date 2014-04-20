@@ -1,3 +1,17 @@
+2014-04-20  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Remove unused -webView:didFinishLoadingNavigation: delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=131914
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Cocoa/NavigationState.h: Removed flag from m_navigationDelegateMethods struct.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate): Removed check for whether the method is
+        implemented.
+        (WebKit::NavigationState::LoaderClient::didFinishLoadForFrame): Stopped calling the method
+        if implemented.
+
 2014-04-19  Anders Carlsson  <andersca@apple.com>
 
         Plug-in process crashes if NP_Initialize returns an error the second time it's called
