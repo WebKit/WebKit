@@ -52,7 +52,10 @@
 - (void)setParameter:(id)parameter forKey:(NSString *)key
 {
     [self willChangeValueForKey:key];
-    [_parameters setValue:parameter forKey:key];
+    if (parameter)
+        [_parameters setValue:parameter forKey:key];
+    else
+        [_parameters removeObjectForKey:key];
     [self didChangeValueForKey:key];
 }
 

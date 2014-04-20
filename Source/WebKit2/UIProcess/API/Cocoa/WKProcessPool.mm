@@ -182,7 +182,11 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
         LOG_ERROR("Failed to encode bundle parameter: %@", exception);
     }
 
-    [_context->ensureBundleParameters() setObject:copy.get() forKey:parameter];
+    if (copy)
+        [_context->ensureBundleParameters() setObject:copy.get() forKey:parameter];
+    else
+        [_context->ensureBundleParameters() removeObjectForKey:parameter];
+
     _context->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
 }
 

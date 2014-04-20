@@ -1,5 +1,24 @@
 2014-04-20  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Crash when setting a bundle parameter to nil
+        https://bugs.webkit.org/show_bug.cgi?id=131917
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setObject:forBundleParameter:]): If the object is nil, use
+        -[NSMutableDictionary removeObjectForKey:] rather than -setObject:forKey:.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm:
+        (-[WKWebProcessBundleParameters setParameter:forKey:]): Ditto.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::setBundleParameter): Unrelatedly, create m_bundleParameters if
+        needed, as it may have not been created on intialization if no bundle parameters were set
+        at the time.
+
+2014-04-20  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Remove unused -webView:didFinishLoadingNavigation: delegate method
         https://bugs.webkit.org/show_bug.cgi?id=131914
 

@@ -152,6 +152,9 @@ void InjectedBundle::setBundleParameter(const String& key, const IPC::DataRefere
         LOG_ERROR("Failed to decode bundle parameter: %@", exception);
     }
 
+    if (!m_bundleParameters && parameter)
+        m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:[NSDictionary dictionary]]);
+
     [m_bundleParameters setParameter:parameter forKey:key];
 #endif
 }
