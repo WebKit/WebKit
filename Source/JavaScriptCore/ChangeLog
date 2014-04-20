@@ -1,3 +1,10 @@
+2014-04-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Unreviewed build fix after r167336.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchAdd32):
+
 2014-04-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167501.
