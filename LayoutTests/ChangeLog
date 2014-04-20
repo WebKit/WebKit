@@ -1,3 +1,11 @@
+2014-04-19  Zalan Bujtas  <zalan@apple.com>
+
+       [Mac] Unreviewed gardening.
+
+        repaintRectsAsText() reports wrong subpixel dirty rects on hidpi.
+
+        * platform/mac/TestExpectations:
+
 2014-04-19  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Harden the layout in case there are no regions
