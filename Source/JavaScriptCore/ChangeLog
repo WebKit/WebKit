@@ -1,3 +1,23 @@
+2014-04-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Make the CSS JIT compile for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=131834
+
+        Reviewed by Gavin Barraclough.
+
+        Extend the ARM64 MacroAssembler to support the code generation required by
+        the CSS JIT.
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::addPtrNoFlags):
+        (JSC::MacroAssemblerARM64::or32):
+        (JSC::MacroAssemblerARM64::branchPtr):
+        (JSC::MacroAssemblerARM64::test32):
+        (JSC::MacroAssemblerARM64::branch):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::test32):
+
 2014-04-19  Andreas Kling  <akling@apple.com>
 
         Two little shortcuts to the JSType.

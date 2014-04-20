@@ -1,3 +1,38 @@
+2014-04-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Make the CSS JIT compile for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=131834
+
+        Reviewed by Gavin Barraclough.
+
+        Add the CPU specific code required to compile SelectorCompiler on ARM64.
+        The code is absolutely non-functional, it would crash immediately, but it compiles.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::FunctionCall):
+        (WebCore::FunctionCall::callAndBranchOnCondition):
+        * cssjit/RegisterAllocator.h:
+        What am I supposed to do with all those registers? There are so many of them :)
+        The array calleeSavedRegisters is defined for compatibility but it cannot be reached at the moment.
+
+        (WebCore::RegisterAllocator::isValidRegister):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::modulo):
+        Implement modulo by doing dividend - (divisor * int(dividend/divisor)).
+
+        * cssjit/StackAllocator.h:
+        StackAllocator will need a small redesign to handle the 16 bytes alligned stack of
+        ARM64.
+        The code has been modified to build but it is pretty useless.
+
+        (WebCore::StackAllocator::allocateUninitialized):
+        (WebCore::StackAllocator::push):
+        (WebCore::StackAllocator::pop):
+        (WebCore::StackAllocator::popAndDiscard):
+        (WebCore::StackAllocator::popAndDiscardUpTo):
+        (WebCore::StackAllocator::alignStackPreFunctionCall):
+        (WebCore::StackAllocator::unalignStackPostFunctionCall):
+
 2014-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         [UI-side compositing] Implement blend modes

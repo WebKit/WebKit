@@ -63,16 +63,21 @@ public:
     StackReference allocateUninitialized()
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-        m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-8), JSC::MacroAssembler::stackPointerRegister);
-        m_offsetFromTop += 8;
+        m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-stackUnitInBytes), JSC::MacroAssembler::stackPointerRegister);
+        m_offsetFromTop += stackUnitInBytes;
         return StackReference(m_offsetFromTop);
     }
 
+    // FIXME: ARM64 needs an API take a list of register to push and pop to use strp and ldrp when possible.
     StackReference push(JSC::MacroAssembler::RegisterID registerID)
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
+#if CPU(ARM64)
+        m_assembler.m_assembler.str<64>(registerID, JSC::ARM64Registers::sp, JSC::PreIndex(-16));
+#else
         m_assembler.push(registerID);
-        m_offsetFromTop += 8;
+#endif
+        m_offsetFromTop += stackUnitInBytes;
         return StackReference(m_offsetFromTop);
     }
 
@@ -81,20 +86,24 @@ public:
         RELEASE_ASSERT(stackReference == m_offsetFromTop);
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
         ASSERT(m_offsetFromTop > 0);
-        m_offsetFromTop -= 8;
+        m_offsetFromTop -= stackUnitInBytes;
+#if CPU(ARM64)
+        m_assembler.m_assembler.ldr<64>(registerID, JSC::ARM64Registers::sp, JSC::PostIndex(16));
+#else
         m_assembler.pop(registerID);
+#endif
     }
 
     void popAndDiscard(StackReference stackReference)
     {
         RELEASE_ASSERT(stackReference == m_offsetFromTop);
-        m_assembler.addPtr(JSC::MacroAssembler::TrustedImm32(8), JSC::MacroAssembler::stackPointerRegister);
-        m_offsetFromTop -= 8;
+        m_assembler.addPtr(JSC::MacroAssembler::TrustedImm32(stackUnitInBytes), JSC::MacroAssembler::stackPointerRegister);
+        m_offsetFromTop -= stackUnitInBytes;
     }
 
     void popAndDiscardUpTo(StackReference stackReference)
     {
-        unsigned positionBeforeStackReference = stackReference - 8;
+        unsigned positionBeforeStackReference = stackReference - stackUnitInBytes;
         RELEASE_ASSERT(positionBeforeStackReference < m_offsetFromTop);
 
         unsigned stackDelta = m_offsetFromTop - positionBeforeStackReference;
@@ -104,20 +113,24 @@ public:
 
     void alignStackPreFunctionCall()
     {
+#if CPU(X86_64)
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-        unsigned topAlignment = 8;
+        unsigned topAlignment = stackUnitInBytes;
         if ((topAlignment + m_offsetFromTop) % 16) {
             m_hasFunctionCallPadding = true;
-            m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-8), JSC::MacroAssembler::stackPointerRegister);
+            m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-stackUnitInBytes), JSC::MacroAssembler::stackPointerRegister);
         }
+#endif
     }
 
     void unalignStackPostFunctionCall()
     {
+#if CPU(X86_64)
         if (m_hasFunctionCallPadding) {
-            m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(8), JSC::MacroAssembler::stackPointerRegister);
+            m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(stackUnitInBytes), JSC::MacroAssembler::stackPointerRegister);
             m_hasFunctionCallPadding = false;
         }
+#endif
     }
 
     void merge(StackAllocator&& stackA, StackAllocator&& stackB)
@@ -159,6 +172,14 @@ public:
     }
 
 private:
+#if CPU(ARM64)
+    static const unsigned stackUnitInBytes = 16;
+#elif CPU(X86_64)
+    static const unsigned stackUnitInBytes = 8;
+#else
+#error Stack Unit Size is undefined.
+#endif
+
     void reset()
     {
         m_offsetFromTop = 0;

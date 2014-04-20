@@ -144,11 +144,9 @@ public:
     SelectorCompilationStatus compile(JSC::VM*, JSC::MacroAssemblerCodeRef&);
 
 private:
-#if CPU(X86_64)
-    static const Assembler::RegisterID returnRegister = JSC::X86Registers::eax;
-    static const Assembler::RegisterID elementAddressRegister = JSC::X86Registers::edi;
-    static const Assembler::RegisterID checkingContextRegister = JSC::X86Registers::esi;
-#endif
+    static const Assembler::RegisterID returnRegister = JSC::GPRInfo::returnValueGPR;
+    static const Assembler::RegisterID elementAddressRegister = JSC::GPRInfo::argumentGPR0;
+    static const Assembler::RegisterID checkingContextRegister = JSC::GPRInfo::argumentGPR1;
 
     void computeBacktrackingInformation();
     void generateSelectorChecker();
@@ -928,7 +926,15 @@ Assembler::Jump SelectorCodeGenerator::jumpIfNotResolvingStyle(Assembler::Regist
 Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition condition, Assembler::RegisterID inputDividend, int divisor)
 {
     RELEASE_ASSERT(divisor);
-#if CPU(X86_64)
+#if CPU(ARM64)
+    LocalRegister divisorRegister(m_registerAllocator);
+    m_assembler.move(Assembler::TrustedImm32(divisor), divisorRegister);
+
+    LocalRegister resultRegister(m_registerAllocator);
+    m_assembler.m_assembler.sdiv<32>(resultRegister, inputDividend, divisorRegister);
+    m_assembler.mul32(divisorRegister, resultRegister);
+    return m_assembler.branchSub32(condition, inputDividend, resultRegister, resultRegister);
+#elif CPU(X86_64)
     // idiv takes RAX + an arbitrary register, and return RAX + RDX. Most of this code is about doing
     // an efficient allocation of those registers. If a register is already in use and is not the inputDividend,
     // we first try to copy it to a temporary register, it that is not possible we fall back to the stack.
@@ -990,7 +996,7 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
         LocalRegister divisorRegister(m_registerAllocator);
         m_assembler.move(Assembler::TrustedImm64(divisor), divisorRegister);
         m_assembler.m_assembler.idivl_r(divisorRegister);
-        m_assembler.test32(remainder);
+        m_assembler.test32(condition, remainder);
     }
 
     // 3) Return RAX and RDX.

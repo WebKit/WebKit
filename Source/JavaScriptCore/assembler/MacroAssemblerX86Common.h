@@ -1145,7 +1145,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    void test32(RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    void test32(ResultCondition, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         if (mask.m_value == -1)
             m_assembler.testl_rr(reg, reg);
@@ -1165,7 +1165,7 @@ public:
 
     Jump branchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
-        test32(reg, mask);
+        test32(cond, reg, mask);
         return branch(cond);
     }
 

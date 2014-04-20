@@ -35,7 +35,29 @@
 
 namespace WebCore {
 
-#if CPU(X86_64)
+#if CPU(ARM64)
+static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
+    JSC::ARM64Registers::x0,
+    JSC::ARM64Registers::x1,
+    JSC::ARM64Registers::x2,
+    JSC::ARM64Registers::x3,
+    JSC::ARM64Registers::x4,
+    JSC::ARM64Registers::x5,
+    JSC::ARM64Registers::x6,
+    JSC::ARM64Registers::x7,
+    JSC::ARM64Registers::x8,
+    JSC::ARM64Registers::x9,
+    JSC::ARM64Registers::x10,
+    JSC::ARM64Registers::x11,
+    JSC::ARM64Registers::x12,
+    JSC::ARM64Registers::x13,
+    JSC::ARM64Registers::x14,
+    JSC::ARM64Registers::x15,
+};
+static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
+    JSC::ARM64Registers::x19
+};
+#elif CPU(X86_64)
 static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
     JSC::X86Registers::eax,
     JSC::X86Registers::ecx,
@@ -53,10 +75,10 @@ static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
     JSC::X86Registers::r14,
     JSC::X86Registers::r15
 };
-static const unsigned registerCount = WTF_ARRAY_LENGTH(callerSavedRegisters) + WTF_ARRAY_LENGTH(calleeSavedRegisters);
 #else
 #error RegisterAllocator has no defined registers for the architecture.
 #endif
+static const unsigned registerCount = WTF_ARRAY_LENGTH(callerSavedRegisters) + WTF_ARRAY_LENGTH(calleeSavedRegisters);
 
 class RegisterAllocator {
 public:
@@ -116,7 +138,9 @@ public:
 
     static bool isValidRegister(JSC::MacroAssembler::RegisterID registerID)
     {
-#if CPU(X86_64)
+#if CPU(ARM64)
+        return registerID >= JSC::ARM64Registers::x0 && registerID <= JSC::ARM64Registers::x15;
+#elif CPU(X86_64)
         return registerID >= JSC::X86Registers::eax && registerID <= JSC::X86Registers::r15;
 #else
 #error RegisterAllocator does not define the valid register range for the current architecture.

@@ -37,7 +37,7 @@ namespace WebCore {
 
 class FunctionCall {
 public:
-    FunctionCall(JSC::MacroAssembler& assembler, const RegisterAllocator& registerAllocator, StackAllocator& stackAllocator, Vector<std::pair<JSC::MacroAssembler::Call, JSC::FunctionPtr>>& callRegistry)
+    FunctionCall(JSC::MacroAssembler& assembler, RegisterAllocator& registerAllocator, StackAllocator& stackAllocator, Vector<std::pair<JSC::MacroAssembler::Call, JSC::FunctionPtr>>& callRegistry)
         : m_assembler(assembler)
         , m_registerAllocator(registerAllocator)
         , m_stackAllocator(stackAllocator)
@@ -75,7 +75,7 @@ public:
     JSC::MacroAssembler::Jump callAndBranchOnCondition(JSC::MacroAssembler::ResultCondition condition)
     {
         prepareAndCall();
-        m_assembler.test32(JSC::GPRInfo::returnValueGPR, JSC::MacroAssembler::TrustedImm32(0xff));
+        m_assembler.test32(condition, JSC::GPRInfo::returnValueGPR, JSC::MacroAssembler::TrustedImm32(0xff));
         cleanupPostCall();
         return m_assembler.branch(condition);
     }
@@ -183,7 +183,7 @@ private:
     }
 
     JSC::MacroAssembler& m_assembler;
-    const RegisterAllocator& m_registerAllocator;
+    RegisterAllocator& m_registerAllocator;
     StackAllocator& m_stackAllocator;
     Vector<std::pair<JSC::MacroAssembler::Call, JSC::FunctionPtr>>& m_callRegistry;
 

@@ -289,6 +289,11 @@ public:
         store64(dataTempRegister, address.m_ptr);
     }
 
+    void addPtrNoFlags(TrustedImm32 imm, RegisterID srcDest)
+    {
+        add64(imm, srcDest);
+    }
+
     void add64(Address src, RegisterID dest)
     {
         load64(src, getCachedDataTempRegisterIDAndInvalidate());
@@ -470,6 +475,13 @@ public:
         load32(address.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.orr<32>(dataTempRegister, dataTempRegister, src);
         store32(dataTempRegister, address.m_ptr);
+    }
+
+    void or32(TrustedImm32 imm, Address address)
+    {
+        load32(address, getCachedDataTempRegisterIDAndInvalidate());
+        or32(imm, dataTempRegister, dataTempRegister);
+        store32(dataTempRegister, address);
     }
 
     void or64(RegisterID src, RegisterID dest)
@@ -1651,6 +1663,12 @@ public:
         return branch64(cond, memoryTempRegister, right);
     }
 
+    Jump branchPtr(RelationalCondition cond, BaseIndex left, RegisterID right)
+    {
+        load64(left, getCachedMemoryTempRegisterIDAndInvalidate());
+        return branch64(cond, memoryTempRegister, right);
+    }
+
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
         ASSERT(!(0xffffff00 & right.m_value));
@@ -1675,6 +1693,32 @@ public:
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         m_assembler.tst<32>(reg, mask);
+        return Jump(makeBranch(cond));
+    }
+
+    void test32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        if (mask.m_value == -1)
+            m_assembler.tst<32>(reg, reg);
+        else {
+            bool testedWithImmediate = false;
+            if ((cond == Zero) || (cond == NonZero)) {
+                LogicalImmediate logicalImm = LogicalImmediate::create32(mask.m_value);
+
+                if (logicalImm.isValid()) {
+                    m_assembler.tst<32>(reg, logicalImm);
+                    testedWithImmediate = true;
+                }
+            }
+            if (!testedWithImmediate) {
+                move(mask, getCachedDataTempRegisterIDAndInvalidate());
+                m_assembler.tst<32>(reg, dataTempRegister);
+            }
+        }
+    }
+
+    Jump branch(ResultCondition cond)
+    {
         return Jump(makeBranch(cond));
     }
 
