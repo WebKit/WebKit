@@ -755,7 +755,8 @@ public:
     // Updates for :target (CSS3 selector).
     void setCSSTarget(Element*);
     Element* cssTarget() const { return m_cssTarget; }
-    
+    static ptrdiff_t cssTargetMemoryOffset() { return OBJECT_OFFSETOF(Document, m_cssTarget); }
+
     void scheduleForcedStyleRecalc();
     void scheduleStyleRecalc();
     void unscheduleStyleRecalc();

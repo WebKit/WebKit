@@ -190,6 +190,7 @@ private:
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
     void generateElementIsLink(Assembler::JumpList& failureCases);
     void generateElementIsNthChild(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementIsTarget(Assembler::JumpList& failureCases);
 
     // Helpers.
     Assembler::Jump jumpIfNotResolvingStyle(Assembler::RegisterID checkingContextRegister);
@@ -318,6 +319,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClassLink:
+    case CSSSelector::PseudoClassTarget:
         fragment.pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
 
@@ -1166,6 +1168,9 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassLink))
         generateElementIsLink(failureCases);
 
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoTarget))
+        generateElementIsTarget(failureCases);
+
     if (fragment.tagName)
         generateElementHasTagName(failureCases, *(fragment.tagName));
 
@@ -1512,6 +1517,12 @@ static inline Assembler::Jump testIsHTMLClassOnDocument(Assembler::ResultConditi
     return assembler.branchTest32(condition, Assembler::Address(documentAddress, Document::documentClassesMemoryOffset()), Assembler::TrustedImm32(Document::isHTMLDocumentClassFlag()));
 }
 
+static void getDocument(Assembler& assembler, Assembler::RegisterID element, Assembler::RegisterID output)
+{
+    assembler.loadPtr(Assembler::Address(element, Node::treeScopeMemoryOffset()), output);
+    assembler.loadPtr(Assembler::Address(output, TreeScope::documentScopeMemoryOffset()), output);
+}
+
 void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool canDefaultToCaseSensitiveValueMatch)
 {
     LocalRegister expectedValueRegister(m_registerAllocator);
@@ -1528,12 +1539,9 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
         failureCases.append(testIsHTMLFlagOnNode(Assembler::Zero, m_assembler, elementAddressRegister));
 
         {
-            LocalRegister scratchRegister(m_registerAllocator);
-            // scratchRegister = pointer to treeScope.
-            m_assembler.loadPtr(Assembler::Address(elementAddressRegister, Node::treeScopeMemoryOffset()), scratchRegister);
-            // scratchRegister = pointer to document.
-            m_assembler.loadPtr(Assembler::Address(scratchRegister, TreeScope::documentScopeMemoryOffset()), scratchRegister);
-            failureCases.append(testIsHTMLClassOnDocument(Assembler::Zero, m_assembler, scratchRegister));
+            LocalRegister document(m_registerAllocator);
+            getDocument(m_assembler, elementAddressRegister, document);
+            failureCases.append(testIsHTMLClassOnDocument(Assembler::Zero, m_assembler, document));
         }
 
         LocalRegister valueStringImpl(m_registerAllocator);
@@ -2033,6 +2041,13 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
             moduloIsZero(failureCases, bRegister, a);
         }
     }
+}
+
+void SelectorCodeGenerator::generateElementIsTarget(Assembler::JumpList& failureCases)
+{
+    LocalRegister document(m_registerAllocator);
+    getDocument(m_assembler, elementAddressRegister, document);
+    failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(document, Document::cssTargetMemoryOffset()), elementAddressRegister));
 }
 
 }; // namespace SelectorCompiler.
