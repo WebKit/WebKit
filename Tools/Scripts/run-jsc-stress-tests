@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -635,7 +635,13 @@ end
 # for reasons that don't arise in the real world. It's used for tests that assert convergence
 # by counting recompilations.
 def defaultNoEagerRun
-    defaultQuickRun
+    runDefault
+    runNoLLInt
+    runAlwaysTriggerCopyPhase
+    runNoCJITValidatePhases
+    runDefaultFTL
+    runFTLNoCJITValidate
+    runFTLNoCJITNoInlineValidate
 end
 
 def runProfiler

@@ -1,7 +1,4 @@
-//@ skip
-// previously defaultNoEagerRun
-// This test fails with reoptimizationRetryCount=1 with both default and ftl-no-cjit.
-// Reenable this test after fixing https://bugs.webkit.org/show_bug.cgi?id=129953.
+//@ defaultNoEagerRun
 
 function foo(a) {
     a[0] = 1;

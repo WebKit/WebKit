@@ -1,3 +1,10 @@
+2014-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed test gardening, make no-eager runs run everything except eager (as opposed to
+        being the same as a "quick run", which is meant for genuinely slow tests).
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-04-21  Darin Adler  <darin@apple.com>
 
         Add HashSet::takeAny
