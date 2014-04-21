@@ -34,8 +34,6 @@ parent.innerHTML = '<input type=radio name=group1 required checked id=radio1>' +
     '<input type=radio name=group1 required id=radio2>' +
     '<input type=radio name=group1 required id=radio3>';
 var radio2 = $('radio2');
-shouldBeFalse('$("radio1").remove(); radio2.matches(":valid")');
-shouldBeTrue('radio2.remove(); radio2.matches(":valid")');
 shouldBeFalse('$("radio1").remove(); radio2.webkitMatchesSelector(":valid")');
 shouldBeTrue('radio2.remove(); radio2.webkitMatchesSelector(":valid")');
 debug('');

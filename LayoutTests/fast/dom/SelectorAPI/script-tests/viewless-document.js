@@ -20,10 +20,6 @@ shouldBe("testDoc.querySelectorAll('span').item(1)", "s2");
 shouldBe("testDoc.querySelector('.d1')", "d1");
 shouldBe("testDoc.querySelectorAll('p span').length", "1");
 
-shouldBeTrue("p1.matches('p')");
-shouldBeTrue("s1.matches('p span')");
-shouldBeTrue("s2.matches('#s2')");
-shouldBeTrue("d1.matches('.d1')");
 shouldBeTrue("p1.webkitMatchesSelector('p')");
 shouldBeTrue("s1.webkitMatchesSelector('p span')");
 shouldBeTrue("s2.webkitMatchesSelector('#s2')");

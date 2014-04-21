@@ -1,3 +1,17 @@
+2014-04-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r167584.
+        https://bugs.webkit.org/show_bug.cgi?id=131929
+
+        Broke Objective-C bindings test (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Add Element.matches, the standard name for
+        webkitMatchesSelector"
+        https://bugs.webkit.org/show_bug.cgi?id=131922
+        http://trac.webkit.org/changeset/167584
+
 2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Compile the :root pseudo class and fix a related issue with :nth-child()

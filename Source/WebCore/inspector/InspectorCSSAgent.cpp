@@ -1158,7 +1158,7 @@ PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::RuleMatch>
         const CSSSelectorList& selectorList = matchedStyleRule->selectorList();
         long index = 0;
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-            bool matched = element->matches(selector->selectorText(), IGNORE_EXCEPTION);
+            bool matched = element->webkitMatchesSelector(selector->selectorText(), IGNORE_EXCEPTION);
             if (matched)
                 matchingSelectors->addItem(index);
             ++index;
