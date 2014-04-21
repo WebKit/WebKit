@@ -480,6 +480,16 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
         _page->setInjectedBundleFormClient(nullptr);
 }
 
+- (BOOL)_defersLoading
+{
+    return _page->defersLoading();
+}
+
+- (void)_setDefersLoading:(BOOL)defersLoading
+{
+    _page->setDefersLoading(defersLoading);
+}
+
 @end
 
 #endif // WK_API_ENABLED

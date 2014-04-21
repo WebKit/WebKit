@@ -375,6 +375,7 @@ public:
 
     void stopLoading();
     void stopLoadingFrame(uint64_t frameID);
+    bool defersLoading() const;
     void setDefersLoading(bool deferLoading);
 
     void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);

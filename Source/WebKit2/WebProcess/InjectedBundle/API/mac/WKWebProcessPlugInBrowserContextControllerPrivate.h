@@ -43,6 +43,8 @@
 
 @property (weak, setter=_setFormDelegate:) id <WKWebProcessPlugInFormDelegatePrivate> _formDelegate;
 
+@property (nonatomic, setter=_setDefersLoading:) BOOL _defersLoading;
+
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle;
 
 @end

@@ -1,3 +1,20 @@
+2014-04-21  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose WebPage::setDefersLoading
+        https://bugs.webkit.org/show_bug.cgi?id=131943
+
+        Reviewed by Anders Carlsson, but he doesn’t like this.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _defersLoading]): Added this accessor.
+        (-[WKWebProcessPlugInBrowserContextController _setDefersLoading:]): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+        Declared new property _defersLoading.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::defersLoading): Added this getter.
+        * WebProcess/WebPage/WebPage.h:
+
 2014-04-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused WebKitSystemInterface functions

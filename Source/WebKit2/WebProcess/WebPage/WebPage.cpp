@@ -1040,6 +1040,11 @@ void WebPage::stopLoading()
     corePage()->userInputBridge().stopLoadingFrame(m_mainFrame->coreFrame());
 }
 
+bool WebPage::defersLoading() const
+{
+    return m_page->defersLoading();
+}
+
 void WebPage::setDefersLoading(bool defersLoading)
 {
     m_page->setDefersLoading(defersLoading);
