@@ -1,3 +1,16 @@
+2014-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Empty RenderInline objects should not be line break objects.
+
+        https://bugs.webkit.org/show_bug.cgi?id=131861
+        <rdar://problem/15663617>
+
+        Reviewed by David Hyatt.
+
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::canBreakAtThisPosition):
+        Don't break at this position if this is an empty RenderInline.
+
 2014-04-21  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] support replacements for misspelled words.

@@ -931,6 +931,10 @@ inline bool BreakingContext::canBreakAtThisPosition()
     if (m_width.committedWidth() && !m_width.fitsOnLine(m_currentCharacterIsSpace) && m_currWS == NOWRAP)
         return true;
 
+    // Avoid breaking on empty inlines.
+    if (m_current.renderer()->isRenderInline() && isEmptyInline(toRenderInline(*m_current.renderer())))
+        return false;
+
     // Avoid breaking before empty inlines.
     if (m_nextObject && m_nextObject->isRenderInline() && isEmptyInline(toRenderInline(*m_nextObject)))
         return false;

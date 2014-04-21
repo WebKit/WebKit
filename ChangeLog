@@ -1,3 +1,15 @@
+2014-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Empty RenderInline objects should not be line break objects.
+
+        https://bugs.webkit.org/show_bug.cgi?id=131861
+        <rdar://problem/15663617>
+
+        Reviewed by David Hyatt.
+
+        * ManualTests/empty-inline-as-line-break-position.html: Added.
+        This issue wouldn't reproduce in WebKitTestRunner.
+
 2014-04-19  Brent Fulgham  <bfulgham@apple.com>
 
         Revert unintended workspace change in my last commit.
