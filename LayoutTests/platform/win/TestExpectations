@@ -2297,9 +2297,6 @@ webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 # Subpixel: incorrect caret position
 webkit.org/b/126283 editing/selection/mixed-editability-10.html [ Failure ]
 
-# Expando properties on attribute nodes disappear
-webkit.org/b/127480 fast/dom/gc-attribute-node.html [ Failure ]
-
 # REGRESSION (r159892): Failing JavaScript test
 webkit.org/b/127492 js/dom/date-big-constructor.html [ Failure ]
 

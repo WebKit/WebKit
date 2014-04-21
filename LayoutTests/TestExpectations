@@ -98,3 +98,6 @@ webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
 
 # Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)
 webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
+
+# Expando properties on attribute nodes disappear
+webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]

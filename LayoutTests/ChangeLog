@@ -1,3 +1,15 @@
+2014-04-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Expando properties on attribute nodes disappear
+        https://bugs.webkit.org/show_bug.cgi?id=88045
+
+        * TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        Consolidated test expectations, because all ports are equally affected. Some
+        platforms accidentally start to pass this test sometimes, but there is no real fix yet.
+
 2014-04-20  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: RenderLayer's size is set using enclosingRect() which can result in cruft.
