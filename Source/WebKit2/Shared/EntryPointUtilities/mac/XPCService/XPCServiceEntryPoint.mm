@@ -63,8 +63,8 @@ bool XPCServiceInitializerDelegate::checkEntitlements()
     }
 
     return true;
-#endif
 }
+#endif
 
 bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Identifier& identifier)
 {

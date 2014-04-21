@@ -1,5 +1,12 @@
 2014-04-21  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::checkEntitlements):
+
+2014-04-21  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
 
         * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
