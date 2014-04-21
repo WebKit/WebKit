@@ -210,8 +210,24 @@ NavigationState::PolicyClient::~PolicyClient()
 void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy* destinationFrame, const NavigationActionData& navigationActionData, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest& request, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
-        // FIXME: <rdar://problem/15949822> Figure out what the "default delegate behavior" should be here.
-        listener->use();
+        if (!destinationFrame) {
+            listener->use();
+            return;
+        }
+
+        NSURLRequest *nsURLRequest = request.nsURLRequest(WebCore::DoNotUpdateHTTPBody);
+        if ([NSURLConnection canHandleRequest:nsURLRequest]) {
+            listener->use();
+            return;
+        }
+
+#if PLATFORM(MAC)
+        // A file URL shouldn't fall through to here, but if it did,
+        // it would be a security risk to open it.
+        if (![nsURLRequest.URL isFileURL])
+            [[NSWorkspace sharedWorkspace] openURL:nsURLRequest.URL];
+#endif
+        listener->ignore();
         return;
     }
 
@@ -266,8 +282,22 @@ void NavigationState::PolicyClient::decidePolicyForNewWindowAction(WebPageProxy*
 void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFrameProxy* frame, const WebCore::ResourceResponse& resourceResponse, const WebCore::ResourceRequest& resourceRequest, bool canShowMIMEType, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler) {
-        // FIXME: <rdar://problem/15949822> Figure out what the "default delegate behavior" should be here.
-        listener->use();
+        NSURL *url = resourceResponse.nsURLResponse().URL;
+        if ([url isFileURL]) {
+            BOOL isDirectory = NO;
+            BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:url.path isDirectory:&isDirectory];
+
+            if (exists && !isDirectory && canShowMIMEType)
+                listener->use();
+            else
+                listener->ignore();
+            return;
+        }
+
+        if (canShowMIMEType)
+            listener->use();
+        else
+            listener->ignore();
         return;
     }
 
@@ -275,7 +305,6 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
     if (!navigationDelegate)
         return;
 
-    // FIXME: Set up the navigation response object.
     auto navigationResponse = adoptNS([[WKNavigationResponse alloc] init]);
 
     [navigationResponse setFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*frame]).get()];
