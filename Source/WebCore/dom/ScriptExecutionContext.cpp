@@ -105,16 +105,6 @@ ScriptExecutionContext::ScriptExecutionContext()
 {
 }
 
-// FIXME: We should make this a member function of HashSet.
-template<typename T> inline T takeAny(HashSet<T>& set)
-{
-    ASSERT(!set.isEmpty());
-    auto iterator = set.begin();
-    T result = std::move(*iterator);
-    set.remove(iterator);
-    return result;
-}
-
 #if ASSERT_DISABLED
 
 inline void ScriptExecutionContext::checkConsistency() const
@@ -147,8 +137,8 @@ ScriptExecutionContext::~ScriptExecutionContext()
     m_inScriptExecutionContextDestructor = true;
 #endif
 
-    while (!m_destructionObservers.isEmpty())
-        takeAny(m_destructionObservers)->contextDestroyed();
+    while (auto* destructionObserver = m_destructionObservers.takeAny())
+        destructionObserver->contextDestroyed();
 
     for (auto* messagePort : m_messagePorts)
         messagePort->contextDestroyed();

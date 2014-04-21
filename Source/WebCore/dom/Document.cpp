@@ -5085,12 +5085,7 @@ void Document::removeMediaCanStartListener(MediaCanStartListener* listener)
 
 MediaCanStartListener* Document::takeAnyMediaCanStartListener()
 {
-    HashSet<MediaCanStartListener*>::iterator slot = m_mediaCanStartListeners.begin();
-    if (slot == m_mediaCanStartListeners.end())
-        return nullptr;
-    MediaCanStartListener* listener = *slot;
-    m_mediaCanStartListeners.remove(slot);
-    return listener;
+    return m_mediaCanStartListeners.takeAny();
 }
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)

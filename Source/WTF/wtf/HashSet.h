@@ -103,6 +103,8 @@ namespace WTF {
         void clear();
 
         ValueType take(const ValueType&);
+        ValueType take(iterator);
+        ValueType takeAny();
 
         static bool isValidValue(const ValueType&);
         
@@ -240,15 +242,26 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V>
-    auto HashSet<T, U, V>::take(const ValueType& value) -> ValueType
+    inline auto HashSet<T, U, V>::take(iterator it) -> ValueType
     {
-        auto it = find(value);
         if (it == end())
             return ValueTraits::emptyValue();
 
         ValueType result = std::move(const_cast<ValueType&>(*it));
         remove(it);
         return result;
+    }
+
+    template<typename T, typename U, typename V>
+    inline auto HashSet<T, U, V>::take(const ValueType& value) -> ValueType
+    {
+        return take(find(value));
+    }
+
+    template<typename T, typename U, typename V>
+    inline auto HashSet<T, U, V>::takeAny() -> ValueType
+    {
+        return take(begin());
     }
 
     template<typename T, typename U, typename V>
