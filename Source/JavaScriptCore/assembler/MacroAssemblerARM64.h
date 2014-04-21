@@ -1093,6 +1093,15 @@ public:
         m_assembler.strb(src, memoryTempRegister, 0);
     }
 
+    void store8(RegisterID src, ImplicitAddress address)
+    {
+        if (tryStoreWithOffset<8>(src, address.base, address.offset))
+            return;
+
+        signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
+        m_assembler.str<8>(src, address.base, memoryTempRegister);
+    }
+
     void store8(TrustedImm32 imm, void* address)
     {
         if (!imm.m_value) {
@@ -1104,6 +1113,16 @@ public:
         store8(dataTempRegister, address);
     }
 
+    void store8(TrustedImm32 imm, ImplicitAddress address)
+    {
+        if (!imm.m_value) {
+            store8(ARM64Registers::zr, address);
+            return;
+        }
+
+        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        store8(dataTempRegister, address);
+    }
 
     // Floating-point operations:
 

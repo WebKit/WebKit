@@ -459,10 +459,21 @@ public:
         m_assembler.baseIndexTransfer32(ARMAssembler::StoreUint8, src, address.base, address.index, static_cast<int>(address.scale), address.offset);
     }
 
+    void store8(RegisterID src, ImplicitAddress address)
+    {
+        m_assembler.dtrUp(ARMAssembler::StoreUint8, src, address.base, address.offset);
+    }
+
     void store8(RegisterID src, const void* address)
     {
         move(TrustedImmPtr(address), ARMRegisters::S0);
         m_assembler.dtrUp(ARMAssembler::StoreUint8, src, ARMRegisters::S0, 0);
+    }
+
+    void store8(TrustedImm32 imm, ImplicitAddress address)
+    {
+        move(imm, ARMRegisters::S1);
+        store8(ARMRegisters::S1, address);
     }
 
     void store8(TrustedImm32 imm, const void* address)
