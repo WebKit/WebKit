@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+html {
+    background-color:white;
+}
+html:nth-child(1) {
+    background-color:rgb(1, 2, 3);
+}
+html:nth-child(n) {
+    background-color:rgb(1, 2, 3);
+}
+html:nth-child(n+1) {
+    background-color:rgb(1, 2, 3);
+}
+
+:root:nth-child(1) {
+    background-color:rgb(1, 2, 3);
+}
+:root:nth-child(n) {
+    background-color:rgb(1, 2, 3);
+}
+:root:nth-child(n+1) {
+    background-color:rgb(1, 2, 3);
+}
+
+svg:nth-child(n) {
+    background-color:rgb(1, 2, 3);
+}
+svg:root {
+    background-color:rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <svg><g></g></svg>
+    </div>
+</body>
+<script>
+description('Verify the nth-child() pseudo class matcher always test for the parent element. Some :nth-child pseudo selectors can skip counting the siblings, but they should never skip the parent check.');
+
+shouldBe('document.querySelectorAll("html:nth-child(1)").length', '0');
+shouldBe('document.querySelectorAll("html:nth-child(n)").length', '0');
+shouldBe('document.querySelectorAll("html:nth-child(n+1)").length', '0');
+shouldBe('document.querySelectorAll(":root:nth-child(1)").length', '0');
+shouldBe('document.querySelectorAll(":root:nth-child(n)").length', '0');
+shouldBe('document.querySelectorAll(":root:nth-child(n+1)").length', '0');
+shouldBeEqualToString('getComputedStyle(document.documentElement).backgroundColor', 'rgb(255, 255, 255)');
+
+// This svg document is not the root, ":root" should not match anything, nth-child should work.
+shouldBe('document.querySelectorAll("svg:root").length', '0');
+shouldBe('document.querySelectorAll("svg:nth-child(1)").length', '1');
+shouldBe('document.querySelectorAll("svg:nth-child(n)").length', '1');
+shouldBeEqualToString('getComputedStyle(document.querySelector("svg")).backgroundColor', 'rgb(1, 2, 3)');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

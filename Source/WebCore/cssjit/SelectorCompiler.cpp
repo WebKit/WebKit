@@ -190,6 +190,7 @@ private:
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
     void generateElementIsLink(Assembler::JumpList& failureCases);
     void generateElementIsNthChild(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementIsRoot(Assembler::JumpList& failureCases);
     void generateElementIsTarget(Assembler::JumpList& failureCases);
 
     // Helpers.
@@ -319,6 +320,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClassLink:
+    case CSSSelector::PseudoClassRoot:
     case CSSSelector::PseudoClassTarget:
         fragment.pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
@@ -342,10 +344,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             // The element count is always positive.
             if (a <= 0 && b < 1)
                 return FunctionType::CannotMatchAnything;
-
-            // Anything modulo 1 is zero. Unless b restrict the range, this does not filter anything out.
-            if (a == 1 && (!b || (b == 1)))
-                return FunctionType::SimpleSelectorChecker;
 
             fragment.nthChildfilters.append(std::pair<int, int>(a, b));
             if (selectorContext == SelectorContext::QuerySelector)
@@ -1168,6 +1166,9 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassLink))
         generateElementIsLink(failureCases);
 
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassRoot))
+        generateElementIsRoot(failureCases);
+
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassTarget))
         generateElementIsTarget(failureCases);
 
@@ -1942,6 +1943,20 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
     Assembler::RegisterID parentElement = m_registerAllocator.allocateRegister();
     generateWalkToParentElement(failureCases, parentElement);
 
+    Vector<std::pair<int, int>> validSubsetFilters;
+    validSubsetFilters.reserveInitialCapacity(fragment.nthChildfilters.size());
+    for (const auto& slot : fragment.nthChildfilters) {
+        int a = slot.first;
+        int b = slot.second;
+
+        // Anything modulo 1 is zero. Unless b restricts the range, this does not filter anything out.
+        if (a == 1 && (!b || (b == 1)))
+            continue;
+        validSubsetFilters.uncheckedAppend(slot);
+    }
+    if (validSubsetFilters.isEmpty())
+        return;
+
     // Setup the counter at 1.
     LocalRegister elementCounter(m_registerAllocator);
     m_assembler.move(Assembler::TrustedImm32(1), elementCounter);
@@ -2018,7 +2033,7 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
     }
 
     // Test every the nth-child filter.
-    for (const auto& slot : fragment.nthChildfilters) {
+    for (const auto& slot : validSubsetFilters) {
         int a = slot.first;
         int b = slot.second;
 
@@ -2041,6 +2056,13 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
             moduloIsZero(failureCases, bRegister, a);
         }
     }
+}
+
+void SelectorCodeGenerator::generateElementIsRoot(Assembler::JumpList& failureCases)
+{
+    LocalRegister document(m_registerAllocator);
+    getDocument(m_assembler, elementAddressRegister, document);
+    failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(document, Document::documentElementMemoryOffset()), elementAddressRegister));
 }
 
 void SelectorCodeGenerator::generateElementIsTarget(Assembler::JumpList& failureCases)

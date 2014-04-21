@@ -1,5 +1,17 @@
 2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
 
+        Compile the :root pseudo class and fix a related issue with :nth-child()
+        https://bugs.webkit.org/show_bug.cgi?id=131926
+
+        Reviewed by Andreas Kling.
+
+        Add more test coverage that would have caught the bug with :nth-child(n).
+
+        * fast/selectors/nth-child-on-root-expected.txt: Added.
+        * fast/selectors/nth-child-on-root.html: Added.
+
+2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
+
         Add Element.matches, the standard name for webkitMatchesSelector
         https://bugs.webkit.org/show_bug.cgi?id=131922
 

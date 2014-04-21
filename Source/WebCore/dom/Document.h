@@ -406,6 +406,7 @@ public:
     {
         return m_documentElement.get();
     }
+    static ptrdiff_t documentElementMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentElement); }
 
     Element* activeElement();
     bool hasFocus() const;

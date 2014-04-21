@@ -1,5 +1,37 @@
 2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
 
+        Compile the :root pseudo class and fix a related issue with :nth-child()
+        https://bugs.webkit.org/show_bug.cgi?id=131926
+
+        Reviewed by Andreas Kling.
+
+        Add the :root pseudo class. This is another trivial selector, we just need to compare
+        the element pointer with the documentElement.
+
+        I discovered some issues with :nth-child(n) through the layout tests for ":root".
+        When the pseudo class nth-child could match anything, no code was generated. That decision
+        was taken when generating the fragments.
+
+        The specification of :nth-child() has two tests: the parent test and the counter test.
+        Since some fragments would not generate any code for :nth-child(n), they would succeed on the root,
+        which is incorrect since the root should fail the parent test.
+
+        This was fixed by moving the filtering of non-counting :nth-child() after we generate the parent
+        check.
+        We still don't generate any counter test unless required.
+
+        Test: fast/selectors/nth-child-on-root.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsRoot):
+        * dom/Document.h:
+        (WebCore::Document::documentElementMemoryOffset):
+
+2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
+
         Add Element.matches, the standard name for webkitMatchesSelector
         https://bugs.webkit.org/show_bug.cgi?id=131922
 
