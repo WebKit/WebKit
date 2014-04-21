@@ -1559,7 +1559,8 @@ sub GenerateImplementation
                 unshift(@parameterNames, $caller);
                 $content = "${implementedBy}::" . $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")";
             } else {
-                $content = "$caller->" . $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")";
+                my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementedAs"} || $codeGenerator->WK_lcfirst($functionName);
+                $content = "$caller->" . $functionImplementationName . "(" . join(", ", @parameterNames) . ")";
             }
 
             if ($returnType eq "void") {

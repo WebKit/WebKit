@@ -1,3 +1,25 @@
+2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add Element.matches, the standard name for webkitMatchesSelector
+        https://bugs.webkit.org/show_bug.cgi?id=131922
+
+        Reviewed by Andreas Kling.
+
+        This patch just renames webkitMatchesSelector() to matches().
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        The Objective-C binding generator only supported ImplementedAs for getters and setters.
+        This adds support for the option so that Element.matches can be generated for Obj-C.
+
+        * dom/Element.cpp:
+        (WebCore::Element::matches):
+        (WebCore::Element::webkitMatchesSelector): Deleted.
+        * dom/Element.h:
+        * dom/Element.idl:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+
 2014-04-20  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: RenderLayer's size is set using enclosingRect() which can result in cruft.

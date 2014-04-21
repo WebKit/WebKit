@@ -1,3 +1,38 @@
+2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add Element.matches, the standard name for webkitMatchesSelector
+        https://bugs.webkit.org/show_bug.cgi?id=131922
+
+        Reviewed by Andreas Kling.
+
+        Update the tests to verify both Element.matches and Element.webkitMatchesSelector
+
+        * fast/dom/SelectorAPI/attrname-case-insensitive-expected.txt:
+        * fast/dom/SelectorAPI/attrname-case-insensitive.html:
+        * fast/dom/SelectorAPI/attrname-case-sensitive-expected.txt:
+        * fast/dom/SelectorAPI/attrname-case-sensitive.xhtml:
+        * fast/dom/SelectorAPI/caseID-almost-strict-expected.txt:
+        * fast/dom/SelectorAPI/caseID-almost-strict.html:
+        * fast/dom/SelectorAPI/caseID-expected.txt:
+        * fast/dom/SelectorAPI/caseID-strict-expected.txt:
+        * fast/dom/SelectorAPI/caseID-strict.html:
+        * fast/dom/SelectorAPI/caseID.html:
+        * fast/dom/SelectorAPI/caseTag-expected.txt:
+        * fast/dom/SelectorAPI/caseTag.html:
+        * fast/dom/SelectorAPI/caseTagX-expected.txt:
+        * fast/dom/SelectorAPI/caseTagX.xhtml:
+        * fast/dom/SelectorAPI/detached-element-expected.txt:
+        * fast/dom/SelectorAPI/not-supported-namespace-in-selector-expected.txt:
+        * fast/dom/SelectorAPI/not-supported-namespace-in-selector.html:
+        * fast/dom/SelectorAPI/script-tests/detached-element.js:
+        * fast/dom/SelectorAPI/script-tests/undefined-null-stringify.js:
+        * fast/dom/SelectorAPI/script-tests/viewless-document.js:
+        * fast/dom/SelectorAPI/undefined-null-stringify-expected.txt:
+        * fast/dom/SelectorAPI/viewless-document-expected.txt:
+        * fast/forms/radio/radio-live-validation-style-expected.txt:
+        * fast/forms/radio/radio-live-validation-style.html:
+        * fast/harness/results.html:
+
 2014-04-20  Alexey Proskuryakov  <ap@apple.com>
 
         Expando properties on attribute nodes disappear

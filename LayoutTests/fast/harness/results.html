@@ -273,6 +273,9 @@ function stripExtension(test)
 
 function matchesSelector(node, selector)
 {
+    if (node.matches)
+        return node.matches(selector);
+
     if (node.webkitMatchesSelector)
         return node.webkitMatchesSelector(selector);
 

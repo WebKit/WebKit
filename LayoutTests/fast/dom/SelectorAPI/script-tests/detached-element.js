@@ -19,5 +19,7 @@ shouldBe("root.querySelectorAll('#testId').item(0)", "correctNode");
 shouldBeNull("noChild.querySelector('div')");
 shouldBe("noChild.querySelectorAll('div').length", "0");
 
+shouldBeTrue("correctNode.matches('div')");
+shouldBeTrue("correctNode.matches('#testId')");
 shouldBeTrue("correctNode.webkitMatchesSelector('div')");
 shouldBeTrue("correctNode.webkitMatchesSelector('#testId')");
