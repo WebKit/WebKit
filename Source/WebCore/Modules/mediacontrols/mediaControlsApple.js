@@ -99,22 +99,24 @@ Controller.prototype = {
         down: 40
     },
 
-    extend: function(child) {
+    extend: function(child)
+    {
         for (var property in this) {
             if (!child.hasOwnProperty(property))
                 child[property] = this[property];
         }
     },
 
-    // Localized string accessor
-    UIString: function(s){
-        if (!this.localizedStrings)
-            this.localizedStrings = mediaControlsLocalizedStrings();
+    UIString: function(developmentString, replaceString, replacementString)
+    {
+        var localized = UIStringTable[developmentString];
+        if (replaceString && replacementString)
+            return localized.replace(replaceString, replacementString);
 
-        if (this.localizedStrings[s])
-            return this.localizedStrings[s];
+        if (localized)
+            return localized;
 
-        console.error("Localized string \"" + s + "\" not found.");
+        console.error("Localization for string \"" + developmentString + "\" not found.");
         return "LOCALIZED STRING NOT FOUND";
     },
 
@@ -264,7 +266,7 @@ Controller.prototype = {
 
         var rewindButton = this.controls.rewindButton = document.createElement('button');
         rewindButton.setAttribute('pseudo', '-webkit-media-controls-rewind-button');
-        rewindButton.setAttribute('aria-label', this.UIString('Rewind %%sec%% Seconds').replace('%%sec%%', this.RewindAmount));
+        rewindButton.setAttribute('aria-label', this.UIString('Rewind ##sec## Seconds', '##sec##', this.RewindAmount));
         this.listenFor(rewindButton, 'click', this.handleRewindButtonClicked);
 
         var seekBackButton = this.controls.seekBackButton = document.createElement('button');

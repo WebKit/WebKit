@@ -1,3 +1,41 @@
+2014-04-18  Dean Jackson  <dino@apple.com>
+
+        [Media] Clean up localized strings in controls
+        https://bugs.webkit.org/show_bug.cgi?id=131857
+        <rdar://problem/16663005>
+
+        Reviewed by Eric Carlson.
+
+        There is no need for separate localization files
+        on OS X and iOS. Move the small number of iOS-specific
+        localizations into a shared file.
+
+        We also don't need a function to return a static table.
+        Ultimately I think we want a top-level WebKit object that
+        hold the table, but for now use a global variable
+        called UIStringTable. Since we're in an isolated world, we
+        won't clash with anything.
+
+        I noticed a few cases were we grab a localized string and
+        then instantly run a replacement on it. This should be
+        supported directly in the UIString() accessor.
+
+        * English.lproj/mediaControlsLocalizedStrings.js: Add iOS strings. Just
+        use a static table.
+        (mediaControlsLocalizedStrings): Deleted.
+        * English.lproj/mediaControlsLocalizedStringsiOS.js: Removed.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.extend): Fix braces.
+        (Controller.prototype.UIString): Use the string table, and allow replacement.
+        (Controller.prototype.createControls): Use new UIString replacement.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.updateWirelessPlaybackStatus): Use new UIString.
+        (ControllerIOS.prototype.UIString): Deleted. Use the parent class version.
+        * WebCore.xcodeproj/project.pbxproj: Remove file from Resources.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsScript): No need to include the iOS
+        specific localization file.
+
 2014-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.

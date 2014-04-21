@@ -62,21 +62,6 @@ ControllerIOS.prototype = {
         this.stopListeningFor(this.base, 'mouseout', this.handleWrapperMouseOut);
     },
 
-    UIString: function(s){
-        var string = Controller.prototype.UIString.call(this, s);
-        if (string)
-            return string;
-
-        if (!this.localizedStrings)
-            this.localizedStrings = mediaControlsLocalizedStringsiOS();
-
-        if (this.localizedStrings[s])
-            return this.localizedStrings[s];
-
-        console.error("Localized string \"" + s + "\" not found.");
-        return "LOCALIZED STRING NOT FOUND";
-    },
-
     shouldHaveStartPlaybackButton: function() {
         var allowsInline = this.host.mediaPlaybackAllowsInline;
 
@@ -121,8 +106,8 @@ ControllerIOS.prototype = {
             var deviceType = "";
             var type = this.host.externalDeviceType;
             if (type == "airplay") {
-                deviceType = this.UIString('##AIRPLAY_DEVICE_TYPE##');
-                deviceName = this.UIString('##AIRPLAY_DEVICE_NAME##').replace('##DEVICE_NAME##', this.host.externalDeviceDisplayName);
+                deviceType = this.UIString('##WIRELESS_PLAYBACK_DEVICE_TYPE##');
+                deviceName = this.UIString('##WIRELESS_PLAYBACK_DEVICE_NAME##', '##DEVICE_NAME##', this.host.externalDeviceDisplayName);
             } else if (type == "tvout") {
                 deviceType = this.UIString('##TVOUT_DEVICE_TYPE##');
                 deviceName = this.UIString('##TVOUT_DEVICE_NAME##');
@@ -424,4 +409,4 @@ ControllerIOS.prototype = {
 };
 
 Object.create(Controller.prototype).extend(ControllerIOS.prototype);
-Object.defineProperty(ControllerIOS.prototype, 'constructor', { enumerable:false, value:ControllerIOS });
+Object.defineProperty(ControllerIOS.prototype, 'constructor', { enumerable: false, value: ControllerIOS });
