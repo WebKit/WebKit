@@ -1,3 +1,24 @@
+2014-04-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening
+
+        Update gtk/TestExpectations and rebaseline some gtk test results.
+
+        * platform/gtk/TestExpectations: Mark fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html
+        as failure and fast/dom/Window/mozilla-focus-blur.html as flaky.
+        * platform/gtk/fast/multicol/newmulticol/client-rects-expected.txt: Rebaseline after r167335.
+        * platform/gtk/fast/repaint/reflection-redraw-expected.txt: Rebaseline after r167568.
+        * platform/gtk/fast/table/dynamic-caption-add-remove-before-child-expected.txt: Rebaseline after r167568.
+        * platform/gtk/fast/table/multiple-captions-display-expected.txt: Rebaseline after r167568.
+        * platform/gtk/tables/mozilla/marvin/body_col-expected.txt: Rebaseline after r167568.
+        * platform/gtk/tables/mozilla/marvin/x_th_valign_baseline-expected.txt: Rebaseline after r167568.
+        * platform/gtk/tables/mozilla/other/body_col-expected.txt: Rebaseline after r167568.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug10140-expected.txt: Rebaseline after r167568.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug10216-expected.txt: Rebaseline after r167568.
+        * platform/gtk/tables/mozilla_expected_failures/core/captions3-expected.txt: Rebaseline after r167568.
+        * platform/gtk/tables/mozilla_expected_failures/other/test4-expected.txt: Rebaseline after r167568.
+        * platform/gtk/fast/repaint/spanner-with-margin-expected.txt: Added. Rebaseline after r167439.
+
 2014-04-21  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/cache/subresource-failover-to-network.html is flaky

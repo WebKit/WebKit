@@ -123,22 +123,20 @@ layer at (558,260) size 66x116
     RenderMultiColumnSet at (8,8) size 50x100
 layer at (16,70) size 48x100
   RenderMultiColumnFlowThread at (8,8) size 48x100
-    RenderBlock (anonymous) at (0,0) size 48x100
-      RenderBR {BR} at (0,0) size 0x25
+    RenderBR {BR} at (0,0) size 0x25
+    RenderText {#text} at (0,25) size 25x75
+      text run at (0,25) width 25: "x"
+      text run at (0,50) width 25: "y"
+      text run at (0,75) width 25: "z"
+layer at (136,70) size 48x100
+  RenderMultiColumnFlowThread at (8,8) size 48x100
+    RenderBR {BR} at (0,0) size 0x25
+    RenderInline {SPAN} at (0,0) size 25x75
       RenderText {#text} at (0,25) size 25x75
         text run at (0,25) width 25: "x"
         text run at (0,50) width 25: "y"
         text run at (0,75) width 25: "z"
-layer at (136,70) size 48x100
-  RenderMultiColumnFlowThread at (8,8) size 48x100
-    RenderBlock (anonymous) at (0,0) size 48x100
-      RenderBR {BR} at (0,0) size 0x25
-      RenderInline {SPAN} at (0,0) size 25x75
-        RenderText {#text} at (0,25) size 25x75
-          text run at (0,25) width 25: "x"
-          text run at (0,50) width 25: "y"
-          text run at (0,75) width 25: "z"
-      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0
 layer at (256,70) size 48x100
   RenderMultiColumnFlowThread at (8,8) size 48x100
     RenderBlock (anonymous) at (0,0) size 48x25
@@ -179,22 +177,20 @@ layer at (16,189) size 48x100
     RenderBlock {DIV} at (0,40) size 25x25 [bgcolor=#ADD8E6]
 layer at (146,149) size 100x48
   RenderMultiColumnFlowThread at (8,8) size 100x48
-    RenderBlock (anonymous) at (0,0) size 100x48
-      RenderBR {BR} at (0,0) size 25x0
+    RenderBR {BR} at (0,0) size 25x0
+    RenderText {#text} at (25,0) size 75x25
+      text run at (25,0) width 25: "x"
+      text run at (50,0) width 25: "y"
+      text run at (75,0) width 25: "z"
+layer at (236,149) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
+    RenderBR {BR} at (0,0) size 25x0
+    RenderInline {SPAN} at (0,0) size 75x25
       RenderText {#text} at (25,0) size 75x25
         text run at (25,0) width 25: "x"
         text run at (50,0) width 25: "y"
         text run at (75,0) width 25: "z"
-layer at (236,149) size 100x48
-  RenderMultiColumnFlowThread at (8,8) size 100x48
-    RenderBlock (anonymous) at (0,0) size 100x48
-      RenderBR {BR} at (0,0) size 25x0
-      RenderInline {SPAN} at (0,0) size 75x25
-        RenderText {#text} at (25,0) size 75x25
-          text run at (25,0) width 25: "x"
-          text run at (50,0) width 25: "y"
-          text run at (75,0) width 25: "z"
-      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0
 layer at (326,149) size 100x48
   RenderMultiColumnFlowThread at (8,8) size 100x48
     RenderBlock (anonymous) at (0,0) size 25x48
@@ -235,22 +231,20 @@ layer at (686,149) size 100x48
     RenderBlock {DIV} at (40,0) size 25x25 [bgcolor=#ADD8E6]
 layer at (-24,268) size 100x48 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
   RenderMultiColumnFlowThread at (8,8) size 100x48
-    RenderBlock (anonymous) at (0,0) size 100x48
-      RenderBR {BR} at (0,0) size 25x0
+    RenderBR {BR} at (0,0) size 25x0
+    RenderText {#text} at (25,0) size 75x25
+      text run at (25,0) width 25: "x"
+      text run at (50,0) width 25: "y"
+      text run at (75,0) width 25: "z"
+layer at (66,268) size 100x48
+  RenderMultiColumnFlowThread at (8,8) size 100x48
+    RenderBR {BR} at (0,0) size 25x0
+    RenderInline {SPAN} at (0,0) size 75x25
       RenderText {#text} at (25,0) size 75x25
         text run at (25,0) width 25: "x"
         text run at (50,0) width 25: "y"
         text run at (75,0) width 25: "z"
-layer at (66,268) size 100x48
-  RenderMultiColumnFlowThread at (8,8) size 100x48
-    RenderBlock (anonymous) at (0,0) size 100x48
-      RenderBR {BR} at (0,0) size 25x0
-      RenderInline {SPAN} at (0,0) size 75x25
-        RenderText {#text} at (25,0) size 75x25
-          text run at (25,0) width 25: "x"
-          text run at (50,0) width 25: "y"
-          text run at (75,0) width 25: "z"
-      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0
 layer at (156,268) size 100x48
   RenderMultiColumnFlowThread at (8,8) size 100x48
     RenderBlock (anonymous) at (0,0) size 25x48
