@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKProcessPoolConfigurationPrivate.h"
+#import "_WKProcessPoolConfiguration.h"
 
 #if WK_API_ENABLED
 

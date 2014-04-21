@@ -47,13 +47,4 @@
 
 @end
 
-@class WKRemoteObjectRegistry;
-
-@interface WKWebProcessPlugInBrowserContextController (WKToBeRemoved)
-
-@property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
-@end;
-
-
-
 #endif // WK_API_ENABLED

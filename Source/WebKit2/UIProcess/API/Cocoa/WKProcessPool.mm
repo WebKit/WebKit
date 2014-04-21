@@ -28,18 +28,18 @@
 
 #if WK_API_ENABLED
 
-#import "_WKDownloadDelegate.h"
 #import "CacheModel.h"
 #import "DownloadClient.h"
 #import "HistoryClient.h"
 #import "ProcessModel.h"
 #import "WKObject.h"
-#import "WKProcessPoolConfigurationPrivate.h"
 #import "WeakObjCPtr.h"
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebCookieManagerProxy.h"
 #import "WebProcessMessages.h"
+#import "_WKDownloadDelegate.h"
+#import "_WKProcessPoolConfiguration.h"
 #import <WebCore/CertificateInfo.h>
 #import <wtf/RetainPtr.h>
 

@@ -1,5 +1,26 @@
 2014-04-20  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Remove interfaces in the To Be Removed groups
+        https://bugs.webkit.org/show_bug.cgi?id=131925
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterface.h: Removed.
+        * Shared/API/Cocoa/WKRemoteObjectInterface.mm: Removed.
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.h: Removed.
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm: Removed.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        * UIProcess/API/Cocoa/WKProcessPoolConfiguration.h: Removed.
+        * UIProcess/API/Cocoa/WKProcessPoolConfiguration.mm: Removed.
+        * UIProcess/API/Cocoa/WKProcessPoolConfigurationPrivate.h: Removed.
+        * UIProcess/API/Cocoa/WKProcessPoolToBeRemoved.mm: Removed.
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInBrowserContextControllerToBeRemoved.mm: Removed.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+
+2014-04-20  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Crash when setting a bundle parameter to nil
         https://bugs.webkit.org/show_bug.cgi?id=131917
 
