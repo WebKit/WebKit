@@ -376,6 +376,10 @@
 		1AC8702E130B49A2002C1257 /* WebPluginSiteDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC8702C130B49A2002C1257 /* WebPluginSiteDataManager.cpp */; };
 		1ACECD2417162DB1001FC9EF /* StorageAreaMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */; };
 		1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */; };
+		1AD01BC81905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AD01BC61905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm */; };
+		1AD01BC91905D37E00C9C45F /* _WKErrorRecoveryAttempting.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD01BC71905D37E00C9C45F /* _WKErrorRecoveryAttempting.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AD01BCC1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AD01BCA1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm */; };
+		1AD01BCD1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */; };
 		1AD09F2B1743F8E600A95E50 /* WKNPAPIPlugInContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AD09F291743F8E600A95E50 /* WKNPAPIPlugInContainer.mm */; };
 		1AD09F2C1743F8E600A95E50 /* WKNPAPIPlugInContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD09F2A1743F8E600A95E50 /* WKNPAPIPlugInContainer.h */; };
 		1AD25E95167AB08100EA9BCD /* DownloadProxyMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */; };
@@ -2164,6 +2168,10 @@
 		1AC8702C130B49A2002C1257 /* WebPluginSiteDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPluginSiteDataManager.cpp; sourceTree = "<group>"; };
 		1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaMap.cpp; sourceTree = "<group>"; };
 		1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMap.h; sourceTree = "<group>"; };
+		1AD01BC61905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKErrorRecoveryAttempting.mm; sourceTree = "<group>"; };
+		1AD01BC71905D37E00C9C45F /* _WKErrorRecoveryAttempting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKErrorRecoveryAttempting.h; sourceTree = "<group>"; };
+		1AD01BCA1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKReloadFrameErrorRecoveryAttempter.mm; sourceTree = "<group>"; };
+		1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKReloadFrameErrorRecoveryAttempter.h; sourceTree = "<group>"; };
 		1AD09F291743F8E600A95E50 /* WKNPAPIPlugInContainer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNPAPIPlugInContainer.mm; sourceTree = "<group>"; };
 		1AD09F2A1743F8E600A95E50 /* WKNPAPIPlugInContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNPAPIPlugInContainer.h; sourceTree = "<group>"; };
 		1AD09F2D1743FB0300A95E50 /* WKNPAPIPlugInContainerInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKNPAPIPlugInContainerInternal.h; sourceTree = "<group>"; };
@@ -4264,6 +4272,8 @@
 				1ABC3DF31899E437004F0626 /* NavigationState.mm */,
 				1AFE436418B6C081009C7A48 /* UIDelegate.h */,
 				1AFE436318B6C081009C7A48 /* UIDelegate.mm */,
+				1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */,
+				1AD01BCA1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm */,
 				2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */,
 				2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */,
 				2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */,
@@ -4628,6 +4638,8 @@
 				379A873818BBFE0F00588AF2 /* _WKElementAction.h */,
 				379A873718BBFE0F00588AF2 /* _WKElementAction.mm */,
 				379A873B18BBFF0700588AF2 /* _WKElementActionInternal.h */,
+				1AD01BC71905D37E00C9C45F /* _WKErrorRecoveryAttempting.h */,
+				1AD01BC61905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm */,
 				005D158E18E4C4EB00734619 /* _WKFindDelegate.h */,
 				37A64E5418F38E3C00EB30F1 /* _WKFormDelegate.h */,
 				37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */,
@@ -7003,6 +7015,7 @@
 				2684055318B86ED60022C38B /* ViewUpdateDispatcherMessages.h in Headers */,
 				516A4A5D120A2CCD00C05B7F /* APIError.h in Headers */,
 				1A433F0D113C53DD00FACDE9 /* WebErrors.h in Headers */,
+				1AD01BC91905D37E00C9C45F /* _WKErrorRecoveryAttempting.h in Headers */,
 				BC032DB910F4380F0058C15A /* WebEvent.h in Headers */,
 				BC032DBB10F4380F0058C15A /* WebEventConversion.h in Headers */,
 				BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */,
@@ -7218,6 +7231,7 @@
 				1A9E328D182165A900F5D04C /* _WKRemoteObjectInterface.h in Headers */,
 				51290993183ACEAF005522A6 /* WebIDBServerConnection.h in Headers */,
 				370F34A31829BE1E009027C8 /* WKNavigationData.h in Headers */,
+				1AD01BCD1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h in Headers */,
 				1AB7D78D1288CD9A00CFD08C /* WKDownload.h in Headers */,
 				BC4075FC124FF0270068F20A /* WKError.h in Headers */,
 				BCFD548C132D82680055D816 /* WKErrorCF.h in Headers */,
@@ -8141,6 +8155,7 @@
 				1A910072126675C4001842F5 /* FindIndicator.cpp in Sources */,
 				BCE81D8C1319F7EF00241910 /* FontInfo.cpp in Sources */,
 				378E1A4918208CD60031007A /* WKNSString.mm in Sources */,
+				1AD01BCC1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm in Sources */,
 				C55CB5B818C2A5D600CA81E1 /* WKFormSelectPicker.mm in Sources */,
 				BC06F43012DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp in Sources */,
 				BC06F44B12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp in Sources */,
@@ -8577,6 +8592,7 @@
 				33367635130C99B2006C9DE2 /* WebResourceCacheManagerProxy.cpp in Sources */,
 				33367657130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp in Sources */,
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,
+				1AD01BC81905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm in Sources */,
 				510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */,
 				3F889D14188778C900FEADAF /* WebVideoFullscreenManagerProxy.mm in Sources */,
 				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,

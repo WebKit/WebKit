@@ -1,3 +1,23 @@
+2014-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Errors passed to delegate methods should have recovery attempters
+        https://bugs.webkit.org/show_bug.cgi?id=131957
+        <rdar://problem/16642539>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.h: Added.
+        * UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.mm: Added.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::createErrorWithRecoveryAttempter):
+        (WebKit::NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::NavigationState::LoaderClient::didFailLoadWithErrorForFrame):
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.h: Added.
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm: Added.
+        (-[WKReloadFrameErrorRecoveryAttempter initWithWebView:frameHandle:urlString:]):
+        (-[WKReloadFrameErrorRecoveryAttempter attemptRecovery]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-04-21  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] implement WebKitDataCue

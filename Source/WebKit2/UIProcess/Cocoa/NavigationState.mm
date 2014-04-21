@@ -28,6 +28,8 @@
 
 #if WK_API_ENABLED
 
+#import "_WKErrorRecoveryAttempting.h"
+#import "_WKFrameHandleInternal.h"
 #import "APINavigationData.h"
 #import "APIURL.h"
 #import "APIString.h"
@@ -45,6 +47,7 @@
 #import "WKNavigationDelegatePrivate.h"
 #import "WKNavigationInternal.h"
 #import "WKNavigationResponseInternal.h"
+#import "WKReloadFrameErrorRecoveryAttempter.h"
 #import "WKWebViewInternal.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
@@ -381,6 +384,20 @@ void NavigationState::LoaderClient::didReceiveServerRedirectForProvisionalLoadFo
     [navigationDelegate webView:m_navigationState.m_webView didReceiveServerRedirectForProvisionalNavigation:navigation];
 }
 
+static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, WebFrameProxy& webFrameProxy, NSError *originalError)
+{
+    RefPtr<API::FrameHandle> frameHandle = API::FrameHandle::create(webFrameProxy.frameID());
+
+    auto recoveryAttempter = adoptNS([[WKReloadFrameErrorRecoveryAttempter alloc] initWithWebView:webView frameHandle:wrapper(*frameHandle) urlString:originalError.userInfo[NSURLErrorFailingURLStringErrorKey]]);
+
+    auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:recoveryAttempter.get(), _WKRecoveryAttempterErrorKey, nil]);
+
+    if (NSDictionary *originalUserInfo = originalError.userInfo)
+        [userInfo addEntriesFromDictionary:originalUserInfo];
+
+    return adoptNS([[NSError alloc] initWithDomain:originalError.domain code:originalError.code userInfo:userInfo.get()]);
+}
+
 void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy* webFrameProxy, uint64_t navigationID, const WebCore::ResourceError& error, API::Object*)
 {
     if (!webFrameProxy->isMainFrame())
@@ -400,7 +417,8 @@ void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebP
     if (!navigationDelegate)
         return;
 
-    [navigationDelegate webView:m_navigationState.m_webView didFailProvisionalNavigation:navigation.get() withError:error];
+    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, *webFrameProxy, error);
+    [navigationDelegate webView:m_navigationState.m_webView didFailProvisionalNavigation:navigation.get() withError:errorWithRecoveryAttempter.get()];
 }
 
 void NavigationState::LoaderClient::didCommitLoadForFrame(WebPageProxy*, WebFrameProxy* webFrameProxy, uint64_t navigationID, API::Object*)
@@ -479,7 +497,8 @@ void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy*, 
     if (navigationID)
         navigation = m_navigationState.m_navigations.get(navigationID).get();
 
-    [navigationDelegate webView:m_navigationState.m_webView didFailNavigation:navigation withError:error];
+    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, *webFrameProxy, error);
+    [navigationDelegate webView:m_navigationState.m_webView didFailNavigation:navigation withError:errorWithRecoveryAttempter.get()];
 }
 
 static _WKRenderingProgressEvents renderingProgressEvents(WebCore::LayoutMilestones milestones)
