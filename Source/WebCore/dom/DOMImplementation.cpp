@@ -328,7 +328,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
     if ((MIMETypeRegistry::isPDFOrPostScriptMIMEType(type)) && pluginData && pluginData->supportsMimeType(type, allowedPluginTypes))
         return PluginDocument::create(frame, url);
     if (Image::supportsType(type))
-        return ImageDocument::create(frame, url);
+        return ImageDocument::create(*frame, url);
 
 #if ENABLE(VIDEO)
     

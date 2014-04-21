@@ -1,3 +1,81 @@
+2014-04-21  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r160908): Safari doesn't draw rotated images properly first time
+        https://bugs.webkit.org/show_bug.cgi?id=131930
+
+        Reviewed by Anders Carlsson.
+
+        With render tree creation sufficiently lazy, we had to put some explicit
+        calls to updateStyleIfNeeded into the ImageDocument class.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): Pass a Frame&.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::imageSize): Added this helper function. This updates
+        style so we can use the renderer to compute an image size taking things like
+        orientation into account, and also passes in the zoom factor.
+        (WebCore::ImageDocument::updateDuringParsing): Moved the body of the
+        ImageDocumentParser::appendBytes function into this function. Since it's a
+        member of ImageDocument, it has better access to appropriate private members,
+        and we don't have to expose as many functions to the public. Also changed to
+        not use the frame so much. Also merged in the code that creates the document
+        instead of having it be a side effect in the cachedImage helper function; all
+        the other call sites were checking for null before calling cachedImage.
+        (WebCore::ImageDocument::finishedParsing): Moved the body of the
+        ImageDocumentParser::finish function here. Added a call to updateStyleIfNeeded
+        before using the renderer to get the image size.
+        (WebCore::ImageDocumentParser::document): Made this return a reference. It's
+        just a convenience function used in the two functions below.
+        (WebCore::ImageDocumentParser::appendBytes): Just call updateDuringParsing.
+        (WebCore::ImageDocumentParser::finish): Just call finishedParsing.
+        (WebCore::ImageDocument::ImageDocument): Take a reference for the argument,
+        use nullptr, and also initialize m_shouldShrinkImage directly instead of using
+        a shouldShrinkToFit() helper function to do it.
+        (WebCore::ImageDocument::createDocumentStructure): Removed unneeded check of
+        null for the frame, since the caller does it. Removed some unneeded
+        IGNORE_EXCEPTON and a stray semicolon. Use m_shouldShrinkImage instead of
+        calling shouldShrinkToFit since at this early point they will be identical.
+        (WebCore::ImageDocument::scale): Make non-const so we can call the new
+        imageSize helper. Use Document::view instead of Frame::view. Improved the
+        conversion to floating point so it doesn't involve a static_cast and an extra
+        conversion from int to LayoutUnit.
+        (WebCore::ImageDocument::resizeImageToFit): Ditto.
+        (WebCore::ImageDocument::imageClicked): Ditto.
+        (WebCore::ImageDocument::imageUpdated): Ditto. Also use m_shouldShrinkImage
+        ibnstead of shouldShrinkToFit.
+        (WebCore::ImageDocument::restoreImageSize): Ditto.
+        (WebCore::ImageDocument::imageFitsInWindow): Ditto.
+        (WebCore::ImageDocument::windowSizeChanged): Ditto.
+        (WebCore::ImageDocument::cachedImage): Deleted. Moved logic into updateDuringParsing.
+        (WebCore::ImageDocument::shouldShrinkToFit): Deleted. Moved logic into constructor.
+        (WebCore::ImageEventListener::handleEvent): Updated for changes above.
+        (WebCore::ImageEventListener::operator==): Simplified. No reason this has to check
+        whether both listeners are in the same document.
+        (WebCore::ImageDocumentElement::didMoveToNewDocument): Use nullptr.
+
+        * html/ImageDocument.h: Deleted some unused things, updated for changes above,
+        and made some memer functions private.
+
+        * loader/FrameLoaderClient.h: Deleted the allowScriptFromSource, allowPlugins,
+        allowImage, and allowDisplayingInsecureContent functions. These were only used in
+        Chromium and are now unneeded complexity. We could bring them back if anyone wants them.
+
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::canDisplayInsecureContent): Removed call to
+        allowDisplayingInsecureContent, just use the setting directly.
+        (WebCore::MixedContentChecker::canRunInsecureContent): Removed call to
+        allowRunningInsecureContent, just use the setting directly.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::allowPlugins): Removed call to allowPlugins, just
+        use the arePluginsEnabled setting directly.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest): Removed call to allowScriptFromSource, just
+        use the isScriptEnabled setting directly.
+        (WebCore::CachedResourceLoader::clientDefersImage): Removed call to allowImage.
+
 2014-04-21  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Pagination mode messed up with non-inline axis and reversed direction.

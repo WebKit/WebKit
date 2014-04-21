@@ -397,7 +397,7 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
 
 bool SubframeLoader::allowPlugins(ReasonForCallingAllowPlugins)
 {
-    return m_frame.loader().client().allowPlugins(m_frame.settings().arePluginsEnabled());
+    return m_frame.settings().arePluginsEnabled();
 }
 
 bool SubframeLoader::shouldUsePlugin(const URL& url, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback)

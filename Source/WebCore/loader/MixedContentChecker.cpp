@@ -65,7 +65,7 @@ bool MixedContentChecker::canDisplayInsecureContent(SecurityOrigin* securityOrig
     if (!isMixedContent(securityOrigin, url))
         return true;
 
-    bool allowed = client().allowDisplayingInsecureContent(m_frame.settings().allowDisplayOfInsecureContent(), securityOrigin, url);
+    bool allowed = m_frame.settings().allowDisplayOfInsecureContent();
     logWarning(allowed, "displayed", url);
 
     if (allowed)
@@ -79,7 +79,7 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
     if (!isMixedContent(securityOrigin, url))
         return true;
 
-    bool allowed = client().allowRunningInsecureContent(m_frame.settings().allowRunningOfInsecureContent(), securityOrigin, url);
+    bool allowed = m_frame.settings().allowRunningOfInsecureContent();
     logWarning(allowed, "ran", url);
 
     if (allowed)

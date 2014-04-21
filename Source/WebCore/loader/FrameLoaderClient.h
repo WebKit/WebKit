@@ -303,11 +303,6 @@ namespace WebCore {
         virtual void didChangeScrollOffset() { }
 
         virtual bool allowScript(bool enabledPerSettings) { return enabledPerSettings; }
-        virtual bool allowScriptFromSource(bool enabledPerSettings, const URL&) { return enabledPerSettings; }
-        virtual bool allowPlugins(bool enabledPerSettings) { return enabledPerSettings; }
-        virtual bool allowImage(bool enabledPerSettings, const URL&) { return enabledPerSettings; }
-        virtual bool allowDisplayingInsecureContent(bool enabledPerSettings, SecurityOrigin*, const URL&) { return enabledPerSettings; }
-        virtual bool allowRunningInsecureContent(bool enabledPerSettings, SecurityOrigin*, const URL&) { return enabledPerSettings; }
 
         // Clients that generally disallow universal access can make exceptions for particular URLs.
         virtual bool shouldForceUniversalAccessFromLocalURL(const URL&) { return false; }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,45 +29,47 @@
 
 namespace WebCore {
 
-class CachedImage;
 class ImageDocumentElement;
 
 class ImageDocument final : public HTMLDocument {
 public:
-    static PassRefPtr<ImageDocument> create(Frame* frame, const URL& url)
+    static PassRefPtr<ImageDocument> create(Frame& frame, const URL& url)
     {
         return adoptRef(new ImageDocument(frame, url));
     }
 
-    CachedImage* cachedImage();
-    ImageDocumentElement* imageElement() const { return m_imageElement; }
-    void disconnectImageElement() { m_imageElement = 0; }
-    
+    void updateDuringParsing();
+    void finishedParsing();
+
+    void disconnectImageElement() { m_imageElement = nullptr; }
+
     void windowSizeChanged();
-    void imageUpdated();
     void imageClicked(int x, int y);
 
 private:
-    ImageDocument(Frame*, const URL&);
+    ImageDocument(Frame&, const URL&);
 
     virtual PassRefPtr<DocumentParser> createParser() override;
-    
+
+    LayoutSize imageSize();
+
     void createDocumentStructure();
     void resizeImageToFit();
     void restoreImageSize();
-    bool imageFitsInWindow() const;
-    bool shouldShrinkToFit() const;
-    float scale() const;
-    
+    bool imageFitsInWindow();
+    float scale();
+
+    void imageUpdated();
+
     ImageDocumentElement* m_imageElement;
-    
-    // Whether enough of the image has been loaded to determine its size
+
+    // Whether enough of the image has been loaded to determine its size.
     bool m_imageSizeIsKnown;
-    
-    // Whether the image is shrunk to fit or not
+
+    // Whether the image is shrunk to fit or not.
     bool m_didShrinkImage;
-    
-    // Whether the image should be shrunk or not
+
+    // Whether the image should be shrunk or not.
     bool m_shouldShrinkImage;
 };
 
