@@ -79,6 +79,7 @@ protected:
     WebCore::IntRect m_initialFrame;
     WebCore::IntRect m_finalFrame;
     WebCore::IntPoint m_scrollPosition;
+    float m_topContentInset;
     RefPtr<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
 };

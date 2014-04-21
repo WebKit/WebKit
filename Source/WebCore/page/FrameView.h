@@ -454,6 +454,7 @@ public:
     void setFooterHeight(int);
 
     virtual float topContentInset() const override;
+    void topContentInsetDidChange();
 
     virtual void willStartLiveResize() override;
     virtual void willEndLiveResize() override;

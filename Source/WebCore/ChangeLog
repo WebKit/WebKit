@@ -1,3 +1,24 @@
+2014-04-21  Beth Dakin  <bdakin@apple.com>
+
+        topContentInset does not play well with fullscreen elements
+        https://bugs.webkit.org/show_bug.cgi?id=131955
+        -and corresponding-
+        <rdar://problem/16651925>
+
+        Reviewed by Sam Weinig.
+
+        Calling setNeedsLayout() is not sufficient when the topContentInset has changed 
+        dynamically. We need to perform the layout right away and update the scrollbars. 
+        This works completely when the inset changes due to entering/exiting fullscreen, 
+        but I left a FIXME behind because it is possible to change the inset dynamically 
+        just through the WK2 API and end up in a situation where everything looks right 
+        except for the scrollbars. 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::topContentInsetDidChange):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::setTopContentInset):
+
 2014-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Empty RenderInline objects should not be line break objects.

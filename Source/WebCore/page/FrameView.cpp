@@ -950,6 +950,18 @@ float FrameView::topContentInset() const
     return page ? page->topContentInset() : 0;
 }
     
+void FrameView::topContentInsetDidChange()
+{
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return;
+    
+    // FIXME: <rdar://problem/16642232> This call to updateScrollbars() is not actually sufficient to fix
+    // the scrollbars if the contentInset changes dynamically. 
+    layout();
+    updateScrollbars(scrollOffset());
+}
+    
 bool FrameView::hasCompositedContent() const
 {
     if (RenderView* renderView = this->renderView())

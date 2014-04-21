@@ -779,8 +779,9 @@ void Page::setTopContentInset(float contentInset)
         return;
     
     m_topContentInset = contentInset;
-    if (RenderView* renderView = mainFrame().contentRenderer())
-        renderView->setNeedsLayout();
+    
+    if (FrameView* view = mainFrame().view())
+        view->topContentInsetDidChange();
 }
     
 void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)
