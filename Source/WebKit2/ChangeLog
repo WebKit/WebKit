@@ -1,3 +1,14 @@
+2014-04-21  Gavin Barraclough  <baraclough@apple.com>
+
+        Don't use ProcessAssertion on simulator
+        https://bugs.webkit.org/show_bug.cgi?id=131950
+
+        Rubber stamped by Benjamin Poulain
+
+        * UIProcess/ios/ProcessAssertion.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::setState):
+
 2014-04-21  Anders Carlsson  <andersca@apple.com>
 
         Another build fix.

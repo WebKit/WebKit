@@ -32,9 +32,21 @@
 
 namespace WebKit {
 
+#if PLATFORM(IOS_SIMULATOR)
+
+ProcessAssertion::ProcessAssertion(pid_t, AssertionState)
+{
+}
+
+void ProcessAssertion::setState(AssertionState)
+{
+}
+
+#else
+
 const BKSProcessAssertionFlags backgroundTabFlags = (BKSProcessAssertionAllowIdleSleep);
 const BKSProcessAssertionFlags foregroundTabFlags = (BKSProcessAssertionAllowIdleSleep | BKSProcessAssertionPreventTaskSuspend | BKSProcessAssertionAllowSuspendOnSleep | BKSProcessAssertionWantsForegroundResourcePriority | BKSProcessAssertionPreventTaskThrottleDown);
-    
+
 ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState)
 {
     BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
@@ -43,12 +55,12 @@ ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState)
             ASSERT_NOT_REACHED();
         }
     };
-    
+
     BKSProcessAssertionFlags flags = (assertionState == AssertionState::Foreground) ? foregroundTabFlags : backgroundTabFlags;
     m_assertionState = assertionState;
     m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flags reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
 }
-    
+
 void ProcessAssertion::setState(AssertionState assertionState)
 {
     if (m_assertionState == assertionState)
@@ -58,6 +70,8 @@ void ProcessAssertion::setState(AssertionState assertionState)
     m_assertionState = assertionState;
     [m_assertion setFlags:flags];
 }
+
+#endif
 
 }
 
