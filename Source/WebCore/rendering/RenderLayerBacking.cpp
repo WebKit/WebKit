@@ -712,7 +712,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     /*
-    * GraphicsLayer: device pixel positioned. Floored, enclosing rect.
+    * GraphicsLayer: device pixel positioned, enclosing rect.
     * RenderLayer: subpixel positioned.
     * Offset from renderer (GraphicsLayer <-> RenderLayer::renderer()): subpixel based offset.
     *
@@ -730,7 +730,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     *
     * localCompositingBounds: this RenderLayer relative to its renderer().
     * relativeCompositingBounds: this RenderLayer relative to its parent compositing layer.
-    * enclosingRelativeCompositingBounds: this RenderLayer relative to its parent but floored to device pixel position.
+    * enclosingRelativeCompositingBounds: this RenderLayer relative to its parent, device pixel enclosing.
     * rendererOffsetFromGraphicsLayer: RenderLayer::renderer()'s offset from its enclosing GraphicsLayer.
     * devicePixelOffsetFromRenderer: rendererOffsetFromGraphicsLayer's device pixel part. (6.9px -> 6.5px in case of 2x display)
     * devicePixelFractionFromRenderer: rendererOffsetFromGraphicsLayer's fractional part (6.9px -> 0.4px in case of 2x display)
@@ -823,7 +823,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (!m_isMainFrameRenderViewLayer) {
         // For non-root layers, background is always painted by the primary graphics layer.
         ASSERT(!m_backgroundLayer);
-        bool hadSubpixelRounding = !m_devicePixelFractionFromRenderer.isZero();
+        bool hadSubpixelRounding = enclosingRelativeCompositingBounds != relativeCompositingBounds;
         m_graphicsLayer->setContentsOpaque(!hadSubpixelRounding && m_owningLayer.backgroundIsKnownToBeOpaqueInRect(localCompositingBounds));
     }
 

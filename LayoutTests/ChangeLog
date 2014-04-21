@@ -1,3 +1,17 @@
+2014-04-20  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: RenderLayer's size is set using enclosingRect() which can result in cruft.
+        https://bugs.webkit.org/show_bug.cgi?id=131468
+
+        Reviewed by Darin Adler.
+
+        Layers marked opaque may not paint edge pixels, when RenderLayer bounds are non-integral and
+        get device pixel snapped.
+        For details see this: https://trac.webkit.org/r159463
+
+        * compositing/hidpi-non-simple-compositing-layer-with-fractional-size-and-background-expected.html: Added.
+        * compositing/hidpi-non-simple-compositing-layer-with-fractional-size-and-background.html: Added.
+
 2014-04-19  Darin Adler  <darin@apple.com>
 
         Simple layout can get confused by coordinate overflow
