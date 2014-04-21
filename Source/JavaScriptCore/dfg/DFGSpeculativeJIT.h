@@ -2178,7 +2178,7 @@ public:
         m_jit.storePtr(storage, MacroAssembler::Address(resultGPR, JSObject::butterflyOffset()));
     }
 
-    // Convenience allocator for a buit-in object.
+    // Convenience allocator for a built-in object.
     template <typename ClassType, typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.
     void emitAllocateJSObject(GPRReg resultGPR, StructureType structure, StorageType storage,
         GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
@@ -2195,7 +2195,16 @@ public:
         emitAllocateJSObject(resultGPR, scratchGPR1, structure, storage, scratchGPR2, slowPath);
     }
 
+    template <typename T>
+    void emitAllocateDestructibleObject(GPRReg resultGPR, Structure* structure, 
+        GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
+    {
+        emitAllocateJSObject<T>(resultGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR1, scratchGPR2, slowPath);
+        m_jit.storePtr(TrustedImmPtr(structure->classInfo()), MacroAssembler::Address(resultGPR, JSDestructibleObject::classInfoOffset()));
+    }
+
     void emitAllocateJSArray(GPRReg resultGPR, Structure*, GPRReg storageGPR, unsigned numElements);
+    void emitAllocateArguments(GPRReg resultGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath);
 
     // Add a speculation check.
     void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail);

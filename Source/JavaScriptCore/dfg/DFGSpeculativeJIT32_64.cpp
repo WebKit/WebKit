@@ -4167,26 +4167,47 @@ void SpeculativeJIT::compile(Node* node)
         
     case CreateArguments: {
         JSValueOperand value(this, node->child1());
+        GPRTemporary scratch1(this);
+        GPRTemporary scratch2(this);
         GPRTemporary result(this, Reuse, value, PayloadWord);
         
         GPRReg valueTagGPR = value.tagGPR();
         GPRReg valuePayloadGPR = value.payloadGPR();
+        GPRReg scratch1GPR = scratch1.gpr();
+        GPRReg scratch2GPR = scratch2.gpr();
         GPRReg resultGPR = result.gpr();
         
         m_jit.move(valuePayloadGPR, resultGPR);
         
-        JITCompiler::Jump notCreated = m_jit.branch32(JITCompiler::Equal, valueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
-        
         if (node->origin.semantic.inlineCallFrame) {
+            JITCompiler::Jump notCreated = m_jit.branch32(JITCompiler::Equal, valueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
             addSlowPathGenerator(
                 slowPathCall(
                     notCreated, this, operationCreateInlinedArguments, resultGPR,
                     node->origin.semantic.inlineCallFrame));
-        } else {
+            cellResult(resultGPR, node);
+            break;
+        } 
+
+        FunctionExecutable* executable = jsCast<FunctionExecutable*>(m_jit.graph().executableFor(node->origin.semantic));
+        if (m_jit.codeBlock()->hasSlowArguments()
+            || executable->isStrictMode() 
+            || !executable->parameterCount()) {
+            JITCompiler::Jump notCreated = m_jit.branch32(JITCompiler::Equal, valueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
             addSlowPathGenerator(
                 slowPathCall(notCreated, this, operationCreateArguments, resultGPR));
+            cellResult(resultGPR, node);
+            break;
         }
-        
+
+        JITCompiler::Jump alreadyCreated = m_jit.branch32(JITCompiler::NotEqual, valueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
+
+        MacroAssembler::JumpList slowPaths;
+        emitAllocateArguments(resultGPR, scratch1GPR, scratch2GPR, slowPaths);
+            addSlowPathGenerator(
+                slowPathCall(slowPaths, this, operationCreateArguments, resultGPR));
+
+        alreadyCreated.link(&m_jit); 
         cellResult(resultGPR, node);
         break;
     }

@@ -1,3 +1,30 @@
+2014-04-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Inline allocate Arguments objects in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=131897
+
+        Reviewed by Geoffrey Garen.
+
+        Many libraries/frameworks depend on the arguments object for overloaded API entry points. 
+        This is the first step to making Arguments fast(er). We'll duplicate the logic in Arguments::create 
+        for now and take the slow path for complicated cases like slow arguments, tearing off for strict mode, etc.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateArguments):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateDestructibleObject):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/Arguments.h:
+        (JSC::Arguments::offsetOfActivation):
+        (JSC::Arguments::offsetOfOverrodeLength):
+        (JSC::Arguments::offsetOfIsStrictMode):
+        (JSC::Arguments::offsetOfRegisterArray):
+        (JSC::Arguments::offsetOfCallee):
+        (JSC::Arguments::allocationSize):
+
 2014-04-20  Andreas Kling  <akling@apple.com>
 
         Speed up jsStringWithCache() through WeakGCMap inlining.

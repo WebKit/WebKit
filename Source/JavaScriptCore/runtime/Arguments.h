@@ -89,10 +89,20 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ArgumentsType, StructureFlags), info()); 
     }
     
+    static ptrdiff_t offsetOfActivation() { return OBJECT_OFFSETOF(Arguments, m_activation); }
     static ptrdiff_t offsetOfNumArguments() { return OBJECT_OFFSETOF(Arguments, m_numArguments); }
-    static ptrdiff_t offsetOfRegisters() { return OBJECT_OFFSETOF(Arguments, m_registers); }
-    static ptrdiff_t offsetOfSlowArgumentData() { return OBJECT_OFFSETOF(Arguments, m_slowArgumentData); }
     static ptrdiff_t offsetOfOverrodeLength() { return OBJECT_OFFSETOF(Arguments, m_overrodeLength); }
+    static ptrdiff_t offsetOfIsStrictMode() { return OBJECT_OFFSETOF(Arguments, m_isStrictMode); }
+    static ptrdiff_t offsetOfRegisters() { return OBJECT_OFFSETOF(Arguments, m_registers); }
+    static ptrdiff_t offsetOfRegisterArray() { return OBJECT_OFFSETOF(Arguments, m_registerArray); }
+    static ptrdiff_t offsetOfSlowArgumentData() { return OBJECT_OFFSETOF(Arguments, m_slowArgumentData); }
+    static ptrdiff_t offsetOfCallee() { return OBJECT_OFFSETOF(Arguments, m_callee); }
+
+    static size_t allocationSize(size_t inlineCapacity)
+    {
+        ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
+        return sizeof(Arguments);
+    }
     
 protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;

@@ -106,6 +106,29 @@ void SpeculativeJIT::emitAllocateJSArray(GPRReg resultGPR, Structure* structure,
             structure, numElements)));
 }
 
+void SpeculativeJIT::emitAllocateArguments(GPRReg resultGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
+{
+    Structure* structure = m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)->argumentsStructure();
+    emitAllocateDestructibleObject<Arguments>(resultGPR, structure, scratchGPR1, scratchGPR2, slowPath);
+
+    m_jit.storePtr(TrustedImmPtr(0), MacroAssembler::Address(resultGPR, Arguments::offsetOfActivation()));
+
+    m_jit.load32(JITCompiler::payloadFor(JSStack::ArgumentCount), scratchGPR1);
+    m_jit.sub32(TrustedImm32(1), scratchGPR1);
+    m_jit.store32(scratchGPR1, MacroAssembler::Address(resultGPR, Arguments::offsetOfNumArguments()));
+
+    m_jit.store32(TrustedImm32(0), MacroAssembler::Address(resultGPR, Arguments::offsetOfOverrodeLength()));
+    m_jit.store8(TrustedImm32(m_jit.isStrictModeFor(m_currentNode->origin.semantic)), 
+        MacroAssembler::Address(resultGPR, Arguments::offsetOfIsStrictMode()));
+
+    m_jit.storePtr(GPRInfo::callFrameRegister, MacroAssembler::Address(resultGPR, Arguments::offsetOfRegisters()));
+    m_jit.storePtr(TrustedImmPtr(0), MacroAssembler::Address(resultGPR, Arguments::offsetOfRegisterArray()));
+    m_jit.storePtr(TrustedImmPtr(0), MacroAssembler::Address(resultGPR, Arguments::offsetOfSlowArgumentData()));
+
+    m_jit.loadPtr(JITCompiler::addressFor(JSStack::Callee), scratchGPR1);
+    m_jit.storePtr(scratchGPR1, MacroAssembler::Address(resultGPR, Arguments::offsetOfCallee()));
+}
+
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail)
 {
     if (!m_compileOkay)

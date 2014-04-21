@@ -4224,25 +4224,46 @@ void SpeculativeJIT::compile(Node* node)
         
     case CreateArguments: {
         JSValueOperand value(this, node->child1());
+        GPRTemporary scratch1(this);
+        GPRTemporary scratch2(this);
         GPRTemporary result(this, Reuse, value);
         
         GPRReg valueGPR = value.gpr();
+        GPRReg scratchGPR1 = scratch1.gpr();
+        GPRReg scratchGPR2 = scratch2.gpr();
         GPRReg resultGPR = result.gpr();
         
         m_jit.move(valueGPR, resultGPR);
         
-        JITCompiler::Jump notCreated = m_jit.branchTest64(JITCompiler::Zero, resultGPR);
-        
         if (node->origin.semantic.inlineCallFrame) {
+            JITCompiler::Jump notCreated = m_jit.branchTest64(JITCompiler::Zero, resultGPR);
             addSlowPathGenerator(
                 slowPathCall(
                     notCreated, this, operationCreateInlinedArguments, resultGPR,
                     node->origin.semantic.inlineCallFrame));
-        } else {
+            cellResult(resultGPR, node);
+            break;
+        } 
+
+        FunctionExecutable* executable = jsCast<FunctionExecutable*>(m_jit.graph().executableFor(node->origin.semantic));
+        if (m_jit.codeBlock()->hasSlowArguments()
+            || executable->isStrictMode() 
+            || !executable->parameterCount()) {
+            JITCompiler::Jump notCreated = m_jit.branchTest64(JITCompiler::Zero, resultGPR);
             addSlowPathGenerator(
                 slowPathCall(notCreated, this, operationCreateArguments, resultGPR));
+            cellResult(resultGPR, node);
+            break;
         }
-        
+
+        JITCompiler::Jump alreadyCreated = m_jit.branchTest64(JITCompiler::NonZero, resultGPR);
+
+        MacroAssembler::JumpList slowPaths;
+        emitAllocateArguments(resultGPR, scratchGPR1, scratchGPR2, slowPaths);
+        addSlowPathGenerator(
+            slowPathCall(slowPaths, this, operationCreateArguments, resultGPR));
+
+        alreadyCreated.link(&m_jit);
         cellResult(resultGPR, node);
         break;
     }
