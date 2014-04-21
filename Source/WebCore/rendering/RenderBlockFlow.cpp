@@ -343,7 +343,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
 
     bool pageLogicalHeightChanged = false;
     bool hasSpecifiedPageLogicalHeight = false;
-    checkForPaginationLogicalHeightChange(pageLogicalHeight, pageLogicalHeightChanged, hasSpecifiedPageLogicalHeight);
+    checkForPaginationLogicalHeightChange(relayoutChildren, pageLogicalHeight, pageLogicalHeightChanged, hasSpecifiedPageLogicalHeight);
 
     const RenderStyle& styleToUse = style();
     LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, columnInfo());
@@ -3557,7 +3557,7 @@ void RenderBlockFlow::removeChild(RenderObject& oldChild)
     RenderBlock::removeChild(oldChild);
 }
 
-void RenderBlockFlow::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight)
+void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight)
 {
     // If we don't use either of the two column implementations or a flow thread, then bail.
     if (!isRenderFlowThread() && !multiColumnFlowThread() && !hasColumns())
@@ -3568,7 +3568,10 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogi
         LogicalExtentComputedValues computedValues;
         computeLogicalHeight(LayoutUnit(), logicalTop(), computedValues);
         LayoutUnit columnHeight = computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight();
+        LayoutUnit oldHeightAvailable = flowThread->columnHeightAvailable();
         flowThread->setColumnHeightAvailable(std::max<LayoutUnit>(columnHeight, 0));
+        if (oldHeightAvailable != flowThread->columnHeightAvailable())
+            relayoutChildren = true;
     } else if (hasColumns()) {
         ColumnInfo* colInfo = columnInfo();
     

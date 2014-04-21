@@ -1765,7 +1765,9 @@ void RenderStyle::setColumnStylesFromPaginationMode(const Pagination::Mode& pagi
 {
     if (paginationMode == Pagination::Unpaginated)
         return;
-        
+    
+    setColumnFill(ColumnFillAuto);
+    
     switch (paginationMode) {
     case Pagination::LeftToRightPaginated:
         setColumnAxis(HorizontalColumnAxis);
