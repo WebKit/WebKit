@@ -70,8 +70,10 @@ void XPCServiceInitializer(xpc_connection_t connection, xpc_object_t initializer
 
     InitializeWebKit2();
 
+#if PLATFORM(MAC)
     if (!delegate.checkEntitlements())
         exit(EXIT_FAILURE);
+#endif
 
     ChildProcessInitializationParameters parameters;
     if (!delegate.getConnectionIdentifier(parameters.connectionIdentifier))
