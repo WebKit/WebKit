@@ -81,8 +81,6 @@ CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
 CFHTTPCookieStorageRef (*wkGetDefaultHTTPCookieStorage)();
 WKCFURLCredentialRef (*wkCopyCredentialFromCFPersistentStorage)(CFURLProtectionSpaceRef protectionSpace);
 void (*wkSetCFURLRequestShouldContentSniff)(CFMutableURLRequestRef, bool);
-CFArrayRef (*wkCFURLRequestCopyHTTPRequestBodyParts)(CFURLRequestRef);
-void (*wkCFURLRequestSetHTTPRequestBodyParts)(CFMutableURLRequestRef, CFArrayRef bodyParts);
 void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRef);
 #endif
 

@@ -168,8 +168,6 @@ void InitWebCoreSystemInterface(void)
     INIT(GetDefaultHTTPCookieStorage);
     INIT(CopyCredentialFromCFPersistentStorage);
     INIT(SetCFURLRequestShouldContentSniff);
-    INIT(CFURLRequestCopyHTTPRequestBodyParts);
-    INIT(CFURLRequestSetHTTPRequestBodyParts);
     INIT(SetRequestStorageSession);
 #endif
 

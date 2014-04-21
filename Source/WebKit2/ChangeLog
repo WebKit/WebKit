@@ -1,3 +1,13 @@
+2014-04-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unused WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=131938
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2014-04-21  Anders Carlsson  <andersca@apple.com>
 
         Check the com.apple.security.network.client entitlement for all processes
