@@ -1,19 +1,26 @@
 <body>
 <script>
-  if ("testRunner" in window) {
-    testRunner.dumpAsText();
+function test() {
+  if (!sessionStorage.subresourceFailoverToNetworkLoadedBefore) {
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    sessionStorage.subresourceFailoverToNetworkLoadedBefore = true;
 
-    document.cookie = "result=FAIL"
+    document.cookie = "subresourceFailoverToNetwork=FAIL";
 
     // The results of the form submission is a page that performs a non-
     // cacheable sync XHR request.  Upon returning to that page, we expect the
     // sync XHR request to still succeed.  This relies on it loading from the
     // network and not being restricted to loading from the cache (as the main
     // page is).
-    testRunner.queueLoadingScript("document.forms[0].submit()");
-    testRunner.queueBackNavigation(1);
-    testRunner.queueForwardNavigation(1);
-  }
+    setTimeout( function() { document.forms[0].submit(); }, 0);
+  } else
+    history.forward();
+}
+
+onload = test;
 </script>
 <form method="POST" action="resources/subresource-failover-to-network.cgi" enctype="multipart/form-data">
   <input type="submit">
@@ -27,4 +34,6 @@ When navigating back to a page that resulted from a form submission, the page
 is loaded with the ReturnCacheDataDontLoad cache policy.  It is important that
 subresources (including XMLHttpRequest instances) do not inherit this cache
 policy.
+<p>
+This test doesn't work in browser, because it expects page cache to be disabled.
 </body>

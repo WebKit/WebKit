@@ -1,3 +1,18 @@
+2014-04-21  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/cache/subresource-failover-to-network.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=131936
+
+        Reviewed by Brady Eidson.
+
+        The test was racy, because it was unintentionally queuing TestRunner operations
+        twice. Also, it failed to clean up its cookie.
+
+        Rewrote to not use TestRunner queuing, making the test work in browser.
+
+        * http/tests/cache/resources/subresource-failover-to-network.cgi:
+        * http/tests/cache/subresource-failover-to-network.html:
+
 2014-04-21  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Pagination mode messed up with non-inline axis and reversed direction.
