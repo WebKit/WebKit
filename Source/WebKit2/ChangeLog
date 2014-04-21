@@ -1,3 +1,30 @@
+2014-04-21  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Implement CSS viewport units
+        https://bugs.webkit.org/show_bug.cgi?id=131863
+        <rdar://problem/16279088>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (setMinimumLayoutSizeForMinimalUI):
+        (-[WKWebView _minimumLayoutSizeOverrideForMinimalUI]):
+        (-[WKWebView _setMinimumLayoutSizeOverrideForMinimalUI:]):
+        Add _setMinimumLayoutSizeOverrideForMinimalUI:, which pushes said size
+        down from the client to WebPageIOS, below.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setMinimumLayoutSizeForMinimalUI):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setMinimumLayoutSizeForMinimalUI):
+        (WebKit::WebPage::viewportConfigurationChanged):
+        Update FrameView's viewport size based on the minimum layout size for minimal UI (if we have it)
+        or the normal minimum layout size, scaled to the page's initial scale.
+
 2014-04-21  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Fix the dynamic viewport update when the viewport's max-scale conflict with the transition

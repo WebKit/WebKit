@@ -100,6 +100,7 @@
     BOOL _isWaitingForNewLayerTreeAfterDidCommitLoad;
     BOOL _hasStaticMinimumLayoutSize;
     CGSize _minimumLayoutSizeOverride;
+    CGSize _minimumLayoutSizeOverrideForMinimalUI;
 
     UIEdgeInsets _obscuredInsets;
     bool _isChangingObscuredInsetsInteractively;
@@ -1267,6 +1268,18 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _minimumLayoutSizeOverride = minimumLayoutSizeOverride;
     if (!_isAnimatingResize)
         setViewportConfigurationMinimumLayoutSize(*_page, minimumLayoutSizeOverride);
+}
+
+- (CGSize)_minimumLayoutSizeOverrideForMinimalUI
+{
+    return _minimumLayoutSizeOverrideForMinimalUI;
+}
+
+- (void)_setMinimumLayoutSizeOverrideForMinimalUI:(CGSize)size
+{
+    _minimumLayoutSizeOverrideForMinimalUI = size;
+    if (!_isAnimatingResize)
+        _page->setMinimumLayoutSizeForMinimalUI(WebCore::IntSize(CGCeiling(size.width), CGCeiling(size.height)));
 }
 
 - (UIEdgeInsets)_obscuredInsets

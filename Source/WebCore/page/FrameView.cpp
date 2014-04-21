@@ -182,6 +182,7 @@ FrameView::FrameView(Frame& frame)
 #if PLATFORM(IOS)
     , m_useCustomFixedPositionLayoutRect(false)
 #endif
+    , m_hasOverrideViewportSize(false)
     , m_shouldAutoSize(false)
     , m_inAutoSize(false)
     , m_didRunAutosize(false)
@@ -4298,5 +4299,25 @@ void FrameView::setExposedRect(FloatRect exposedRect)
     if (auto* view = renderView())
         view->compositor().scheduleLayerFlush(false /* canThrottle */);
 }
-
+    
+void FrameView::setViewportSize(IntSize size)
+{
+    if (m_hasOverrideViewportSize && m_overrideViewportSize == size)
+        return;
+    
+    m_overrideViewportSize = size;
+    m_hasOverrideViewportSize = true;
+    
+    if (Document* document = m_frame->document())
+        document->styleResolverChanged(DeferRecalcStyle);
+}
+    
+IntSize FrameView::viewportSize() const
+{
+    if (m_hasOverrideViewportSize)
+        return m_overrideViewportSize;
+    
+    return visibleContentRectIncludingScrollbars(ScrollableArea::LegacyIOSDocumentVisibleRect).size();
+}
+    
 } // namespace WebCore

@@ -1,3 +1,25 @@
+2014-04-21  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Implement CSS viewport units
+        https://bugs.webkit.org/show_bug.cgi?id=131863
+        <rdar://problem/16279088>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setViewportSize):
+        * page/FrameView.h:
+        (WebCore::FrameView::viewportSize):
+        Add setViewportSize() and viewportSize().
+        If the viewport size changes, we have to do style recalc.
+        If we have an overridden viewport size, use it.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::viewportSize):
+        * rendering/RenderView.h:
+        Get the size from FrameView.
+
 2014-04-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused WebKitSystemInterface functions

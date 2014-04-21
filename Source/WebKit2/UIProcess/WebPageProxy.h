@@ -579,6 +579,7 @@ public:
     void dynamicViewportSizeUpdate(const WebCore::IntSize& minimumLayoutSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, double targetScale);
     
     void setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize&);
+    void setMinimumLayoutSizeForMinimalUI(const WebCore::IntSize&);
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
 
     void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback>);

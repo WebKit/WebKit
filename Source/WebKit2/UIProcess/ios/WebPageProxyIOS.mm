@@ -198,6 +198,11 @@ void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::IntS
     m_process->send(Messages::WebPage::SetViewportConfigurationMinimumLayoutSize(size), m_pageID);
 }
 
+void WebPageProxy::setMinimumLayoutSizeForMinimalUI(const WebCore::IntSize& size)
+{
+    m_process->send(Messages::WebPage::SetMinimumLayoutSizeForMinimalUI(size), m_pageID);
+}
+
 void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
 {
     m_pageExtendedBackgroundColor = layerTreeTransaction.pageExtendedBackgroundColor();

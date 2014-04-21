@@ -213,6 +213,9 @@ public:
 
     void adjustViewSize();
     
+    void setViewportSize(IntSize);
+    IntSize viewportSize() const;
+    
     virtual IntRect windowClipRect(bool clipToContents = true) const override;
     IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
 
@@ -682,6 +685,9 @@ private:
     bool m_useCustomFixedPositionLayoutRect;
     IntRect m_customFixedPositionLayoutRect;
 #endif
+
+    IntSize m_overrideViewportSize;
+    bool m_hasOverrideViewportSize;
 
     // If true, automatically resize the frame view around its content.
     bool m_shouldAutoSize;

@@ -1764,6 +1764,12 @@ void WebPage::setViewportConfigurationMinimumLayoutSize(const IntSize& size)
     viewportConfigurationChanged();
 }
 
+void WebPage::setMinimumLayoutSizeForMinimalUI(const IntSize& size)
+{
+    m_minimumLayoutSizeForMinimalUI = size;
+    viewportConfigurationChanged();
+}
+
 void WebPage::dynamicViewportSizeUpdate(const IntSize& minimumLayoutSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, double targetScale)
 {
     TemporaryChange<bool> dynamicSizeUpdateGuard(m_inDynamicSizeUpdate, true);
@@ -1924,8 +1930,12 @@ void WebPage::viewportConfigurationChanged()
         scale = initialScale;
 
     m_page->setZoomedOutPageScaleFactor(initialScale);
-
-    FrameView& frameView = *m_page->mainFrame().view();
+    
+    FrameView& frameView = *mainFrameView();
+    IntSize viewportSize = !m_minimumLayoutSizeForMinimalUI.isEmpty() ? m_minimumLayoutSizeForMinimalUI : m_viewportConfiguration.minimumLayoutSize();
+    viewportSize.scale(1 / initialScale);
+    frameView.setViewportSize(viewportSize);
+    
     IntPoint scrollPosition = frameView.scrollPosition();
     if (!m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
         IntSize minimumLayoutSizeInDocumentCoordinate = m_viewportConfiguration.minimumLayoutSize();
