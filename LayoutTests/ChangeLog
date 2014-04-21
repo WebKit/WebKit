@@ -1,5 +1,17 @@
 2014-04-21  David Hyatt  <hyatt@apple.com>
 
+        [New Multicolumn] vertical-rl/unsplittable-inline-block misrenders the column rule.
+        https://bugs.webkit.org/show_bug.cgi?id=131818
+
+        Reviewed by Anders Carlsson.
+        
+        Patch the test to be column-fill:auto, since the other versions
+        of the test all had that specified already.
+
+        * fast/multicol/vertical-rl/unsplittable-inline-block.html:
+
+2014-04-21  David Hyatt  <hyatt@apple.com>
+
         [New Multicolumn] Column set drawing under horizontal scrollbar.
         https://bugs.webkit.org/show_bug.cgi?id=131812.
 
