@@ -9,6 +9,8 @@ PASS document.querySelectorAll(null).length is 1
 PASS document.querySelectorAll(null).item(0) is nullNode
 PASS document.querySelectorAll(undefined).length is 1
 PASS document.querySelectorAll(undefined).item(0) is undefinedNode
+PASS nullNode.matches(null) is true
+PASS undefinedNode.matches(undefined) is true
 PASS nullNode.webkitMatchesSelector(null) is true
 PASS undefinedNode.webkitMatchesSelector(undefined) is true
 PASS successfullyParsed is true

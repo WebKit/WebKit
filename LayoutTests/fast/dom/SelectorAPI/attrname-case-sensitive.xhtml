@@ -21,6 +21,7 @@
         var content = document.getElementById("content");
         function checkMatchingSelector(selector, elementId) {
             shouldBe("document.querySelector('" + selector + "')", "document.getElementById('" + elementId + "')");
+            shouldBeTrue("document.getElementById('" + elementId + "').matches('" + selector + "')");
             shouldBeTrue("document.getElementById('" + elementId + "').webkitMatchesSelector('" + selector + "')");
         }
 

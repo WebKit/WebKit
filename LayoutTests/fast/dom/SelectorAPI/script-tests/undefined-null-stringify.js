@@ -17,5 +17,7 @@ shouldBe("document.querySelectorAll(null).item(0)", "nullNode");
 shouldBe("document.querySelectorAll(undefined).length", "1");
 shouldBe("document.querySelectorAll(undefined).item(0)", "undefinedNode");
 
+shouldBeTrue("nullNode.matches(null)");
+shouldBeTrue("undefinedNode.matches(undefined)");
 shouldBeTrue("nullNode.webkitMatchesSelector(null)");
 shouldBeTrue("undefinedNode.webkitMatchesSelector(undefined)");

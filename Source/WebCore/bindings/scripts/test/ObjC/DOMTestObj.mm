@@ -1139,7 +1139,7 @@
 - (void)orange
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->orange();
+    IMPL->banana();
 }
 
 - (DOMbool *)strictFunction:(NSString *)str a:(float)a b:(int)b

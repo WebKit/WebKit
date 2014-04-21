@@ -2296,7 +2296,7 @@ bool Element::matchesReadWritePseudoClass() const
     return false;
 }
 
-bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
+bool Element::matches(const String& selector, ExceptionCode& ec)
 {
     SelectorQuery* selectorQuery = document().selectorQueryForString(selector, ec);
     return selectorQuery && selectorQuery->matches(*this);
