@@ -1,5 +1,20 @@
 2014-04-21  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] Fix the dynamic viewport update when the viewport's max-scale conflict with the transition
+        https://bugs.webkit.org/show_bug.cgi?id=131884
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/16667291>
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        It is fairly common to have a viewport configuration with min-scale=1 and max-scale=1.
+        Since we were only changing the minimumScale for the transition, the target scale was affected
+        by max-scale. This was breaking the transition from portrait to landscale.
+
+2014-04-21  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Make dynamic viewport size update content aware
         https://bugs.webkit.org/show_bug.cgi?id=131874
 
