@@ -1,3 +1,11 @@
+2014-04-21  Sam Weinig  <sam@webkit.org>
+
+        Attempt to fix the tests.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Navigation.mm:
+        (-[DidFailProvisionalNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        Add policy handler to override the new default of denying loads that NSURLConnection cannot handle.
+
 2014-04-21  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed test gardening, make no-eager runs run everything except eager (as opposed to
