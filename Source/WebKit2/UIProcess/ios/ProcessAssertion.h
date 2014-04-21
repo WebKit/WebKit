@@ -45,9 +45,11 @@ public:
     
     void setState(AssertionState);
     
+#if !PLATFORM(IOS_SIMULATOR)
 private:
     RetainPtr<BKSProcessAssertion> m_assertion;
     AssertionState m_assertionState;
+#endif
 };
     
 }
