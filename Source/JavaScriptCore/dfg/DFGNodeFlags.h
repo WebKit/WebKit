@@ -53,21 +53,22 @@ namespace JSC { namespace DFG {
 #define NodeMayOverflow                  0x0080
 #define NodeMayNegZero                   0x0100
                                 
-#define NodeBytecodeBackPropMask         0x1E00
+#define NodeBytecodeBackPropMask         0x3E00
 #define NodeBytecodeUseBottom            0x0000
 #define NodeBytecodeUsesAsNumber         0x0200 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
 #define NodeBytecodeNeedsNegZero         0x0400 // The result of this computation may be used in a context that observes -0.
 #define NodeBytecodeUsesAsOther          0x0800 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
 #define NodeBytecodeUsesAsValue          (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther)
 #define NodeBytecodeUsesAsInt            0x1000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
+#define NodeBytecodeUsesAsArrayIndex     0x2000 // The result of this computation is known to be used in a context that strongly prefers integer values, to the point that we should avoid using doubles if at all possible.
 
 #define NodeArithFlagsMask               (NodeBehaviorMask | NodeBytecodeBackPropMask)
 
-#define NodeDoesNotExit                  0x2000 // This flag is negated to make it natural for the default to be that a node does exit.
+#define NodeDoesNotExit                  0x4000 // This flag is negated to make it natural for the default to be that a node does exit.
 
-#define NodeRelevantToOSR                0x4000
+#define NodeRelevantToOSR                0x8000
 
-#define NodeIsFlushed                    0x8000 // Used by Graph::computeIsFlushed(), will tell you which local nodes are backwards-reachable from a Flush.
+#define NodeIsFlushed                   0x10000 // Used by Graph::computeIsFlushed(), will tell you which local nodes are backwards-reachable from a Flush.
 
 typedef uint32_t NodeFlags;
 

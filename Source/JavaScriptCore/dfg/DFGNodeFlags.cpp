@@ -99,6 +99,9 @@ void dumpNodeFlags(PrintStream& actualOut, NodeFlags flags)
     
     if (flags & NodeBytecodeUsesAsInt)
         out.print(comma, "UseAsInt");
+
+    if (flags & NodeBytecodeUsesAsArrayIndex)
+        out.print(comma, "ReallyWantsInt");
     
     if (!(flags & NodeDoesNotExit))
         out.print(comma, "CanExit");

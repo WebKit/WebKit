@@ -1,3 +1,86 @@
+2014-04-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Take block execution count estimates into account when voting double
+        https://bugs.webkit.org/show_bug.cgi?id=131906
+
+        Reviewed by Geoffrey Garen.
+        
+        This was a drama in three acts.
+        
+        Act I: Slurp in BasicBlock::executionCount and use it as a weight when counting the
+            number of uses of a variable that want double or non-double. Easy as pie. This
+            gave me a huge speed-up on FloatMM and a huge slow-down on basically everything
+            else.
+        
+        Act II: Realize that there were some programs where our previous double voting was
+            just on the edge of disaster and making it more precise tipped it over. In
+            particular, if you had an integer variable that would infrequently be used in a
+            computation that resulted in a variable that was frequently used as an array index,
+            the outer infrequentness would be the thing we'd use in the vote. So, an array
+            index would become double. We fix this by reviving global backwards propagation
+            and introducing the concept of ReallyWantsInt, which is used just for array
+            indices. Any variable transitively flagged as ReallyWantsInt will never be forced
+            double. We need that flag to be separate from UsedAsInt, since UsedAsInt needs to
+            be set in bitops for RageConversion but using it for double forcing is too much.
+            Basically, it's cheaper to have to convert a double to an int for a bitop than it
+            is to convert a double to an int for an array index; also a variable being used as
+            an array index is a much stronger hint that it ought to be an int. This recovered
+            performance on everything except programs that used FTL OSR entry.
+        
+        Act III: Realize that OSR entrypoint creation creates blocks that have NaN execution
+            count, which then completely pollutes the weighting - essentially all votes go
+            NaN. Fix this with some surgical defenses. Basically, any client of execution
+            counts should allow for them to be NaN and shouldn't completely fall off a cliff
+            when it happens.
+        
+        This is awesome. 75% speed-up on FloatMM. 11% speed-up on audio-dft. This leads to
+        7% speed-up on AsmBench and 2% speed-up on Kraken.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::run):
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpBlockHeader):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::voteNode):
+        (JSC::DFG::Graph::voteChildren):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::doDoubleVoting):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGVariableAccessData.cpp: Added.
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::mergeIsCaptured):
+        (JSC::DFG::VariableAccessData::mergeShouldNeverUnbox):
+        (JSC::DFG::VariableAccessData::predict):
+        (JSC::DFG::VariableAccessData::mergeArgumentAwarePrediction):
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormatAccordingToVote):
+        (JSC::DFG::VariableAccessData::tallyVotesForShouldUseDoubleFormat):
+        (JSC::DFG::VariableAccessData::mergeDoubleFormatState):
+        (JSC::DFG::VariableAccessData::makePredictionForDoubleFormat):
+        (JSC::DFG::VariableAccessData::flushFormat):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::vote):
+        (JSC::DFG::VariableAccessData::VariableAccessData): Deleted.
+        (JSC::DFG::VariableAccessData::mergeIsCaptured): Deleted.
+        (JSC::DFG::VariableAccessData::mergeShouldNeverUnbox): Deleted.
+        (JSC::DFG::VariableAccessData::predict): Deleted.
+        (JSC::DFG::VariableAccessData::mergeArgumentAwarePrediction): Deleted.
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormatAccordingToVote): Deleted.
+        (JSC::DFG::VariableAccessData::tallyVotesForShouldUseDoubleFormat): Deleted.
+        (JSC::DFG::VariableAccessData::mergeDoubleFormatState): Deleted.
+        (JSC::DFG::VariableAccessData::makePredictionForDoubleFormat): Deleted.
+        (JSC::DFG::VariableAccessData::flushFormat): Deleted.
+
 2014-04-21  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r167591): ARM64 and ARM traditional builds broken

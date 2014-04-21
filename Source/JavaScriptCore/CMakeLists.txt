@@ -197,6 +197,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGUseKind.cpp
     dfg/DFGValidate.cpp
     dfg/DFGValueSource.cpp
+    dfg/DFGVariableAccessData.cpp
     dfg/DFGVariableAccessDataDump.cpp
     dfg/DFGVariableEvent.cpp
     dfg/DFGVariableEventStream.cpp

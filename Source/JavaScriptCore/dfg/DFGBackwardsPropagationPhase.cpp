@@ -44,17 +44,21 @@ public:
     
     bool run()
     {
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
+        m_changed = true;
+        while (m_changed) {
+            m_changed = false;
+            for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+                BasicBlock* block = m_graph.block(blockIndex);
+                if (!block)
+                    continue;
             
-            // Prevent a tower of overflowing additions from creating a value that is out of the
-            // safe 2^48 range.
-            m_allowNestedOverflowingAdditions = block->size() < (1 << 16);
+                // Prevent a tower of overflowing additions from creating a value that is out of the
+                // safe 2^48 range.
+                m_allowNestedOverflowingAdditions = block->size() < (1 << 16);
             
-            for (unsigned indexInBlock = block->size(); indexInBlock--;)
-                propagate(block->at(indexInBlock));
+                for (unsigned indexInBlock = block->size(); indexInBlock--;)
+                    propagate(block->at(indexInBlock));
+            }
         }
         
         return true;
@@ -174,7 +178,8 @@ private:
         switch (node->op()) {
         case GetLocal: {
             VariableAccessData* variableAccessData = node->variableAccessData();
-            variableAccessData->mergeFlags(flags);
+            flags &= ~NodeBytecodeUsesAsInt; // We don't care about cross-block uses-as-int.
+            m_changed |= variableAccessData->mergeFlags(flags);
             break;
         }
             
@@ -182,7 +187,16 @@ private:
             VariableAccessData* variableAccessData = node->variableAccessData();
             if (!variableAccessData->isLoadedFrom())
                 break;
-            node->child1()->mergeFlags(NodeBytecodeUsesAsValue);
+            flags = variableAccessData->flags();
+            RELEASE_ASSERT(!(flags & ~NodeBytecodeBackPropMask));
+            flags |= NodeBytecodeUsesAsNumber; // Account for the fact that control flow may cause overflows that our modeling can't handle.
+            node->child1()->mergeFlags(flags);
+            break;
+        }
+            
+        case Flush: {
+            VariableAccessData* variableAccessData = node->variableAccessData();
+            m_changed |= variableAccessData->mergeFlags(NodeBytecodeUsesAsValue);
             break;
         }
             
@@ -199,6 +213,7 @@ private:
         case ArithIMul: {
             flags |= NodeBytecodeUsesAsInt;
             flags &= ~(NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther);
+            flags &= ~NodeBytecodeUsesAsArrayIndex;
             node->child1()->mergeFlags(flags);
             node->child2()->mergeFlags(flags);
             break;
@@ -206,7 +221,7 @@ private:
             
         case StringCharCodeAt: {
             node->child1()->mergeFlags(NodeBytecodeUsesAsValue);
-            node->child2()->mergeFlags(NodeBytecodeUsesAsValue | NodeBytecodeUsesAsInt);
+            node->child2()->mergeFlags(NodeBytecodeUsesAsValue | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
             break;
         }
             
@@ -305,17 +320,17 @@ private:
             
         case GetByVal: {
             node->child1()->mergeFlags(NodeBytecodeUsesAsValue);
-            node->child2()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt);
+            node->child2()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
             break;
         }
             
         case GetMyArgumentByValSafe: {
-            node->child1()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt);
+            node->child1()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
             break;
         }
             
         case NewArrayWithSize: {
-            node->child1()->mergeFlags(NodeBytecodeUsesAsValue | NodeBytecodeUsesAsInt);
+            node->child1()->mergeFlags(NodeBytecodeUsesAsValue | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
             break;
         }
             
@@ -323,13 +338,13 @@ private:
             // Negative zero is not observable. NaN versus undefined are only observable
             // in that you would get a different exception message. So, like, whatever: we
             // claim here that NaN v. undefined is observable.
-            node->child1()->mergeFlags(NodeBytecodeUsesAsInt | NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther);
+            node->child1()->mergeFlags(NodeBytecodeUsesAsInt | NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsArrayIndex);
             break;
         }
             
         case StringCharAt: {
             node->child1()->mergeFlags(NodeBytecodeUsesAsValue);
-            node->child2()->mergeFlags(NodeBytecodeUsesAsValue | NodeBytecodeUsesAsInt);
+            node->child2()->mergeFlags(NodeBytecodeUsesAsValue | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
             break;
         }
             
@@ -346,7 +361,7 @@ private:
         case PutByValDirect:
         case PutByVal: {
             m_graph.varArgChild(node, 0)->mergeFlags(NodeBytecodeUsesAsValue);
-            m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt);
+            m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
             m_graph.varArgChild(node, 2)->mergeFlags(NodeBytecodeUsesAsValue);
             break;
         }
@@ -396,6 +411,7 @@ private:
     }
     
     bool m_allowNestedOverflowingAdditions;
+    bool m_changed;
 };
 
 bool performBackwardsPropagation(Graph& graph)

@@ -83,7 +83,12 @@ public:
         
         BlockInsertionSet insertionSet(m_graph);
         
-        BasicBlock* newRoot = insertionSet.insert(0, PNaN);
+        // We say that the execution count of the entry block is 1, because we know for sure
+        // that this must be the case. Under our definition of executionCount, "1" means "once
+        // per invocation". We could have said NaN here, since that would ask any clients of
+        // executionCount to use best judgement - but that seems unnecessary since we know for
+        // sure what the executionCount should be in this case.
+        BasicBlock* newRoot = insertionSet.insert(0, 1);
         NodeOrigin origin = target->at(0)->origin;
         
         Vector<Node*> locals(baseline->m_numCalleeRegisters);

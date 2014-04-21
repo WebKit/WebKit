@@ -209,8 +209,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     performUnification(dfg);
     performPredictionInjection(dfg);
     
-    if (isFTL(mode))
-        performStaticExecutionCountEstimation(dfg);
+    performStaticExecutionCountEstimation(dfg);
     
     if (mode == FTLForOSREntryMode) {
         bool result = performOSREntrypointCreation(dfg);

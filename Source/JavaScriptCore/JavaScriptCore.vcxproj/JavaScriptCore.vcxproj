@@ -450,6 +450,7 @@
     <ClCompile Include="..\dfg\DFGUseKind.cpp" />
     <ClCompile Include="..\dfg\DFGValidate.cpp" />
     <ClCompile Include="..\dfg\DFGValueSource.cpp" />
+    <ClCompile Include="..\dfg\DFGVariableAccessData.cpp" />
     <ClCompile Include="..\dfg\DFGVariableAccessDataDump.cpp" />
     <ClCompile Include="..\dfg\DFGVariableEvent.cpp" />
     <ClCompile Include="..\dfg\DFGVariableEventStream.cpp" />
