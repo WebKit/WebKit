@@ -57,6 +57,11 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
     , m_isCSSRegionsEnabled(false)
     , m_isCSSCompositingEnabled(false)
     , m_isLangAttributeAwareFormControlUIEnabled(false)
+#if PLATFORM(IOS)
+    , m_isPluginReplacementEnabled(true)
+#else
+    , m_isPluginReplacementEnabled(false)
+#endif
 #if ENABLE(SCRIPTED_SPEECH)
     , m_isScriptedSpeechEnabled(false)
 #endif

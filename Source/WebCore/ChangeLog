@@ -1,3 +1,14 @@
+2014-04-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] enable plug-in replacement
+        https://bugs.webkit.org/show_bug.cgi?id=131947
+
+        Reviewed by Jer Noble.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures): initialize m_isPluginReplacementEnabled
+            to true on iOS.
+
 2014-04-21  Rik Cabanier  <cabanier@adobe.com>
 
         [CSS Blending] Remove support for non-separable blend modes from mix-blend-mode
