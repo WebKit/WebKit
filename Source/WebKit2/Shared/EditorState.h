@@ -48,6 +48,7 @@ struct EditorState {
         , hasComposition(false)
 #if PLATFORM(IOS)
         , isReplaceAllowed(false)
+        , characterBeforeSelection(0)
         , selectedTextLength(0)
 #endif
     {
@@ -65,6 +66,7 @@ struct EditorState {
 
 #if PLATFORM(IOS)
     bool isReplaceAllowed;
+    UChar32 characterBeforeSelection;
     WebCore::IntRect caretRectAtStart;
     WebCore::IntRect caretRectAtEnd;
     Vector<WebCore::SelectionRect> selectionRects;

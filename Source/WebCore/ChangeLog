@@ -1,3 +1,19 @@
+2014-04-21  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] support replacements for misspelled words.
+        https://bugs.webkit.org/show_bug.cgi?id=131827
+        <rdar://problem/16319657>
+
+        Reviewed by Darin Adler.
+
+        Adds utility function to return the character before the current selection
+        and converts the nbsp to the space character.
+
+        * WebCore.exp.in:
+        * editing/VisibleUnits.cpp:
+        (WebCore::characterBeforePosition):
+        * editing/VisibleUnits.h:
+
 2014-04-21  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] enable plug-in replacement

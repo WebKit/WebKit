@@ -1277,13 +1277,14 @@ void WebPage::requestDictationContext(uint64_t callbackID)
 void WebPage::replaceSelectedText(const String& oldText, const String& newText)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame.selection().isRange())
+    RefPtr<Range> wordRange = frame.selection().isCaret() ? wordRangeFromPosition(frame.selection().selection().start()) : frame.selection().toNormalizedRange();
+    if (plainText(wordRange.get()) != oldText)
         return;
-
-    if (plainText(frame.selection().toNormalizedRange().get()) != oldText)
-        return;
-
+    
+    frame.editor().setIgnoreCompositionSelectionChange(true);
+    frame.selection().setSelectedRange(wordRange.get(), UPSTREAM, true);
     frame.editor().insertText(newText, 0);
+    frame.editor().setIgnoreCompositionSelectionChange(false);
 }
 
 void WebPage::replaceDictatedText(const String& oldText, const String& newText)

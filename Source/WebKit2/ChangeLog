@@ -1,3 +1,30 @@
+2014-04-21  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] support replacements for misspelled words.
+        https://bugs.webkit.org/show_bug.cgi?id=131827
+        <rdar://problem/16319657>
+
+        Reviewed by Darin Adler.
+
+        This is the second a final piece to support replacements.
+        It adds some entrypoints used by the keyboard code to perform
+        replacement when reaching the edge of a word using backspace.
+        I've modified the behavior of replaceSelectedText to work both
+        with caret or range selections.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        (WebKit::EditorState::EditorState):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView isReplaceAllowed]):
+        (-[WKContentView _characterBeforeCaretSelection]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::replaceSelectedText):
+
 2014-04-21  Gavin Barraclough  <baraclough@apple.com>
 
         Don't use ProcessAssertion on simulator

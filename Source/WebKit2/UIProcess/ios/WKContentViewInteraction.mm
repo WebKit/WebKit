@@ -860,6 +860,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return (NSString *)_page->editorState().wordAtSelection;
 }
 
+- (BOOL)isReplaceAllowed
+{
+    return _page->editorState().isReplaceAllowed;
+}
+
 - (void)replaceText:(NSString *)text withText:(NSString *)word
 {
     _page->replaceSelectedText(text, word);
@@ -1329,6 +1334,11 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
         [_autocorrectionData.autocorrectionHandler release];
         _autocorrectionData.autocorrectionHandler = nil;
     }));
+}
+
+- (UTF32Char)_characterBeforeCaretSelection
+{
+    return _page->editorState().characterBeforeSelection;
 }
 
 - (CGRect)textFirstRect

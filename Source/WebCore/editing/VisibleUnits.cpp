@@ -1812,6 +1812,26 @@ int distanceBetweenPositions(const VisiblePosition& vp, const VisiblePosition& o
 
     return (thisIsStart ? -distance : distance);
 }
+    
+UChar32 characterBeforePosition(const VisiblePosition& position)
+{
+    if (position.isNull() || isStartOfDocument(position))
+        return 0;
+    VisiblePosition previousPosition = nextCharacterBoundaryInDirection(position, DirectionBackward);
+    if (previousPosition.isNull())
+        return 0;
+    String characterString = plainText(Range::create(position.deepEquivalent().anchorNode()->document(), previousPosition, position).get(), TextIteratorDefaultBehavior, true);
+    if (characterString.isEmpty())
+        return 0;
+    
+    if (characterString.length() == 2) {
+        UTF32Char lead = characterString[0];
+        UTF32Char trail = characterString[1];
+        if (U16_IS_LEAD(lead) && U16_IS_TRAIL(trail))
+            return U16_GET_SUPPLEMENTARY(lead, trail);
+    }
+    return characterString[0] != noBreakSpace ? : ' ';
+}
 
 PassRefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
 {
