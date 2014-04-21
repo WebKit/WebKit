@@ -1,3 +1,15 @@
+2014-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Unable to select 'Off' or 'Auto' from track menu when tracks consist of unsupported track types
+        https://bugs.webkit.org/show_bug.cgi?id=131908
+        <rdar://problem/15999882>
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setSelectedTextTrack): When the user selects 'Off', make sure the currently 'showing'
+        track is switched to 'disabled'.
+
 2014-04-20  Andreas Kling  <akling@apple.com>
 
         Speed up jsStringWithCache() through WeakGCMap inlining.

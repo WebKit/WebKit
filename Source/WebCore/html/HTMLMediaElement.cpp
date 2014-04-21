@@ -3714,6 +3714,9 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
             else
                 track->setMode(TextTrack::showingKeyword());
         }
+    } else if (trackToSelect == TextTrack::captionMenuOffItem()) {
+        for (int i = 0, length = trackList->length(); i < length; ++i)
+            trackList->item(i)->setMode(TextTrack::disabledKeyword());
     }
 
     CaptionUserPreferences* captionPreferences = document().page() ? document().page()->group().captionPreferences() : 0;
