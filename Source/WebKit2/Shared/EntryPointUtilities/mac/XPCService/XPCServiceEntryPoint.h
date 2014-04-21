@@ -42,7 +42,10 @@ public:
 
     virtual ~XPCServiceInitializerDelegate();
 
+#if PLATFORM(MAC)
     virtual bool checkEntitlements();
+#endif
+
     virtual bool getConnectionIdentifier(IPC::Connection::Identifier& identifier);
     virtual bool getClientIdentifier(String& clientIdentifier);
     virtual bool getClientProcessName(String& clientProcessName);

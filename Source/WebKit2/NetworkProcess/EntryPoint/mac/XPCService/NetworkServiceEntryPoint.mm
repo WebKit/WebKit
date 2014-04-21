@@ -38,22 +38,6 @@ public:
         : XPCServiceInitializerDelegate(connection, initializerMessage)
     {
     }
-
-#if PLATFORM(MAC)
-    virtual bool checkEntitlements() override
-    {
-        if (!isClientSandboxed())
-            return true;
-
-        if (!hasEntitlement("com.apple.security.network.client")) {
-            NSLog(@"Application does not have the 'com.apple.security.network.client' entitlement.");
-            return false;
-        }
-
-        return true;
-    }
-#endif
-
 };
 
 } // namespace WebKit

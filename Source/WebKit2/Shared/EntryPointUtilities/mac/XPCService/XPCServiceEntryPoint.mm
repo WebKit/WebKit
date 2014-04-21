@@ -50,9 +50,20 @@ XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate()
 {
 }
 
+#if PLATFORM(MAC)
 bool XPCServiceInitializerDelegate::checkEntitlements()
 {
+    if (!isClientSandboxed())
+        return true;
+
+    // FIXME: Once we're 100% sure that a process can't access the network we can get rid of this requirement for all processes.
+    if (!hasEntitlement("com.apple.security.network.client")) {
+        NSLog(@"Application does not have the 'com.apple.security.network.client' entitlement.");
+        return false;
+    }
+
     return true;
+#endif
 }
 
 bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Identifier& identifier)

@@ -1,3 +1,17 @@
+2014-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Check the com.apple.security.network.client entitlement for all processes
+        https://bugs.webkit.org/show_bug.cgi?id=131942
+        <rdar://problem/12354188>
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (WebKit::NetworkServiceInitializerDelegate::NetworkServiceInitializerDelegate):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::checkEntitlements):
+
 2014-04-20  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Remove interfaces in the To Be Removed groups
