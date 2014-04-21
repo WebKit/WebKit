@@ -1,3 +1,28 @@
+2014-04-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Make dynamic viewport size update content aware
+        https://bugs.webkit.org/show_bug.cgi?id=131874
+
+        Reviewed by Tim Horton.
+
+        When possible, adjust the scroll position based on the content on dynamic viewport resize.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::scalePage):
+        (WebKit::WebPage::pageDidScroll):
+        * WebProcess/WebPage/WebPage.h:
+        The scrolling heuristic are not invertible, especially the content heuristic. To have the right
+        behavior when doing resize without changing the page, we save the old scroll position and restore
+        it when the content size and scale is restored.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        On dynamic update, start by finding what node is at the center of the screen. After the layout, put that
+        node back in the center.
+
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-04-21  Anders Carlsson  <andersca@apple.com>
 
         Need default WKNavigationDelegate behavior

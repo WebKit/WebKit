@@ -50,6 +50,7 @@
 #include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/IntSizeHash.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageVisibilityState.h>
 #include <WebCore/ScrollTypes.h>
@@ -1159,6 +1160,8 @@ private:
     WebCore::FloatSize m_screenSize;
     WebCore::FloatSize m_availableScreenSize;
     WebCore::IntSize m_blockSelectionDesiredSize;
+    bool m_inDynamicSizeUpdate;
+    HashMap<std::pair<WebCore::IntSize, double>, WebCore::IntPoint> m_dynamicSizeUpdateHistory;
 #endif
 
     WebInspectorClient* m_inspectorClient;

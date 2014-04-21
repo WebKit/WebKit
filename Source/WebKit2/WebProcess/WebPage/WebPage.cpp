@@ -288,6 +288,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_userHasChangedPageScaleFactor(false)
     , m_screenSize(parameters.screenSize)
     , m_availableScreenSize(parameters.availableScreenSize)
+    , m_inDynamicSizeUpdate(false)
 #endif
     , m_inspectorClient(0)
     , m_backgroundColor(Color::white)
@@ -1286,6 +1287,8 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
         return;
 
 #if PLATFORM(IOS)
+    if (!m_inDynamicSizeUpdate)
+        m_dynamicSizeUpdateHistory.clear();
     m_scaleWasSetByUIProcess = false;
 #endif
     PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
@@ -1620,6 +1623,10 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
 
 void WebPage::pageDidScroll()
 {
+#if PLATFORM(IOS)
+    if (!m_inDynamicSizeUpdate)
+        m_dynamicSizeUpdateHistory.clear();
+#endif
     m_uiClient->pageDidScroll(this);
 
     send(Messages::WebPageProxy::PageDidScroll());
