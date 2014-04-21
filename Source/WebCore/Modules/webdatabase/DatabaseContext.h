@@ -31,40 +31,36 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "ActiveDOMObject.h"
-#include "DatabaseDetails.h"
-#include <wtf/Assertions.h>
+#include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(IOS)
 #include <wtf/Threading.h>
-#endif // PLATFORM(IOS)
+#endif
 
 namespace WebCore {
 
 class Database;
+class DatabaseDetails;
 class DatabaseBackendContext;
 class DatabaseTaskSynchronizer;
 class DatabaseThread;
-class ScriptExecutionContext;
 
-class DatabaseContext : public ThreadSafeRefCounted<DatabaseContext>, ActiveDOMObject {
+class DatabaseContext : public ThreadSafeRefCounted<DatabaseContext>, private ActiveDOMObject {
 public:
     virtual ~DatabaseContext();
 
-    // For life-cycle management (inherited from ActiveDOMObject):
-    virtual void contextDestroyed();
-    virtual void stop();
-
     PassRefPtr<DatabaseBackendContext> backend();
     DatabaseThread* databaseThread();
+
 #if PLATFORM(IOS)
     void setPaused(bool);
-#endif // PLATFORM(IOS)
+#endif
 
     void setHasOpenDatabases() { m_hasOpenDatabases = true; }
     bool hasOpenDatabases() { return m_hasOpenDatabases; }
 
-    // When the database cleanup is done, cleanupSync will be signalled.
+    // When the database cleanup is done, the sychronizer will be signalled.
     bool stopDatabases(DatabaseTaskSynchronizer*);
 
     bool allowDatabaseAccess() const;
@@ -73,7 +69,10 @@ public:
 private:
     explicit DatabaseContext(ScriptExecutionContext*);
 
-    void stopDatabases() { stopDatabases(0); }
+    void stopDatabases() { stopDatabases(nullptr); }
+
+    virtual void contextDestroyed() override final;
+    virtual void stop() override final;
 
     RefPtr<DatabaseThread> m_databaseThread;
     bool m_hasOpenDatabases; // This never changes back to false, even after the database thread is closed.
@@ -86,7 +85,7 @@ private:
 #if PLATFORM(IOS)
     Mutex m_databaseThreadMutex;
     bool m_paused;
-#endif // PLATFORM(IOS)
+#endif
 };
 
 } // namespace WebCore

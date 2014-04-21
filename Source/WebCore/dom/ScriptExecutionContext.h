@@ -31,7 +31,6 @@
 #include "ActiveDOMObject.h"
 #include "SecurityContext.h"
 #include "Supplementable.h"
-#include "URL.h"
 #include <runtime/ConsoleTypes.h>
 #include <wtf/HashSet.h>
 
@@ -49,14 +48,11 @@ namespace WebCore {
 class CachedScript;
 class DatabaseContext;
 class DOMTimer;
-class EventListener;
 class EventQueue;
 class EventTarget;
 class MessagePort;
-
-#if ENABLE(BLOB)
 class PublicURLManager;
-#endif
+class URL;
 
 class ScriptExecutionContext : public SecurityContext, public Supplementable<ScriptExecutionContext> {
 public:
@@ -76,11 +72,10 @@ public:
 
     virtual void disableEval(const String& errorMessage) = 0;
 
-    bool sanitizeScriptError(String& errorMessage, int& lineNumber, int& columnNumber, String& sourceURL, CachedScript* = 0);
-    // FIXME: <http://webkit.org/b/114315> ScriptExecutionContext log exception should include a column number
-    void reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, PassRefPtr<Inspector::ScriptCallStack>, CachedScript* = 0);
+    bool sanitizeScriptError(String& errorMessage, int& lineNumber, int& columnNumber, String& sourceURL, CachedScript* = nullptr);
+    void reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, PassRefPtr<Inspector::ScriptCallStack>, CachedScript* = nullptr);
 
-    void addConsoleMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
+    void addConsoleMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) = 0;
 
     virtual SecurityOrigin* topOrigin() const = 0;
@@ -101,24 +96,20 @@ public:
     bool activeDOMObjectsAreStopped() const { return m_activeDOMObjectsAreStopped; }
 
     // Called from the constructor and destructors of ActiveDOMObject.
-    void didCreateActiveDOMObject(ActiveDOMObject*);
-    void willDestroyActiveDOMObject(ActiveDOMObject*);
+    void didCreateActiveDOMObject(ActiveDOMObject&);
+    void willDestroyActiveDOMObject(ActiveDOMObject&);
 
     // Called after the construction of an ActiveDOMObject to synchronize suspend state.
-    void suspendActiveDOMObjectIfNeeded(ActiveDOMObject*);
+    void suspendActiveDOMObjectIfNeeded(ActiveDOMObject&);
 
-    typedef HashSet<ActiveDOMObject*> ActiveDOMObjectsSet;
-    const ActiveDOMObjectsSet& activeDOMObjects() const { return m_activeDOMObjects; }
-
-    void didCreateDestructionObserver(ContextDestructionObserver*);
-    void willDestroyDestructionObserver(ContextDestructionObserver*);
+    void didCreateDestructionObserver(ContextDestructionObserver&);
+    void willDestroyDestructionObserver(ContextDestructionObserver&);
 
     // MessagePort is conceptually a kind of ActiveDOMObject, but it needs to be tracked separately for message dispatch.
     void processMessagePortMessagesSoon();
     void dispatchMessagePortEvents();
-    void createdMessagePort(MessagePort*);
-    void destroyedMessagePort(MessagePort*);
-    const HashSet<MessagePort*>& messagePorts() const { return m_messagePorts; }
+    void createdMessagePort(MessagePort&);
+    void destroyedMessagePort(MessagePort&);
 
     void ref() { refScriptExecutionContext(); }
     void deref() { derefScriptExecutionContext(); }
@@ -185,26 +176,25 @@ protected:
 
     ActiveDOMObject::ReasonForSuspension reasonForSuspendingActiveDOMObjects() const { return m_reasonForSuspendingActiveDOMObjects; }
 
+    bool hasPendingActivity() const;
+
 private:
-    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack>, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) = 0;
+    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack>, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) = 0;
     virtual EventTarget* errorEventTarget() = 0;
     virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<Inspector::ScriptCallStack>) = 0;
     bool dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, CachedScript*);
 
-    void closeMessagePorts();
-
     virtual void refScriptExecutionContext() = 0;
     virtual void derefScriptExecutionContext() = 0;
 
+    void checkConsistency() const;
+
     HashSet<MessagePort*> m_messagePorts;
     HashSet<ContextDestructionObserver*> m_destructionObservers;
-    ActiveDOMObjectsSet m_activeDOMObjects;
-    bool m_iteratingActiveDOMObjects;
-    bool m_inDestructor;
+    HashSet<ActiveDOMObject*> m_activeDOMObjects;
 
     int m_circularSequentialID;
-    typedef HashMap<int, DOMTimer*> TimeoutMap;
-    TimeoutMap m_timeouts;
+    HashMap<int, DOMTimer*> m_timeouts;
 
     bool m_inDispatchErrorEvent;
     class PendingException;
@@ -220,6 +210,13 @@ private:
 
 #if ENABLE(SQL_DATABASE)
     RefPtr<DatabaseContext> m_databaseContext;
+#endif
+
+    bool m_activeDOMObjectAdditionForbidden;
+
+#if !ASSERT_DISABLED
+    bool m_inScriptExecutionContextDestructor;
+    bool m_activeDOMObjectRemovalForbidden;
 #endif
 };
 

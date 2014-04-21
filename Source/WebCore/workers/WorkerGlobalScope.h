@@ -76,7 +76,7 @@ namespace WebCore {
 
         WorkerThread& thread() const { return m_thread; }
 
-        bool hasPendingActivity() const;
+        using ScriptExecutionContext::hasPendingActivity;
 
         virtual void postTask(PassOwnPtr<Task>) override; // Executes the task on context's thread asynchronously.
 

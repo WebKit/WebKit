@@ -104,7 +104,7 @@ DatabaseContext::DatabaseContext(ScriptExecutionContext* context)
     , m_hasRequestedTermination(false)
 #if PLATFORM(IOS)
     , m_paused(false)
-#endif //PLATFORM(IOS)
+#endif
 {
     // ActiveDOMObject expects this to be called to set internal flags.
     suspendIfNeeded();
@@ -128,23 +128,15 @@ DatabaseContext::~DatabaseContext()
     DatabaseManager::manager().didDestructDatabaseContext();
 }
 
-// This is called if the associated ScriptExecutionContext is destructing while
+// This is called if the associated ScriptExecutionContext is destroyed while
 // we're still associated with it. That's our cue to disassociate and shutdown.
-// To do this, we stop the database and let everything shutdown naturally
-// because the database closing process may still make use of this context.
+// To do this, we stop the database and let everything shut down naturally
+// because the database closing process might still make use of this context.
 // It is not safe to just delete the context here.
 void DatabaseContext::contextDestroyed()
 {
     stopDatabases();
-
-    // Normally, willDestroyActiveDOMObject() is called in ~ActiveDOMObject().
-    // However, we're here because the destructor hasn't been called, and the
-    // ScriptExecutionContext we're associated with is about to be destructed.
-    // So, go ahead an unregister self from the ActiveDOMObject list, and
-    // set m_scriptExecutionContext to 0 so that ~ActiveDOMObject() doesn't
-    // try to do so again.
-    m_scriptExecutionContext->willDestroyActiveDOMObject(this);
-    m_scriptExecutionContext = 0;
+    ActiveDOMObject::contextDestroyed();
 }
 
 // stop() is from stopActiveDOMObjects() which indicates that the owner Frame
@@ -166,7 +158,7 @@ DatabaseThread* DatabaseContext::databaseThread()
     if (!m_databaseThread && !m_hasOpenDatabases) {
 #if PLATFORM(IOS)
         MutexLocker lock(m_databaseThreadMutex);
-#endif //PLATFORM(IOS)
+#endif
         // It's OK to ask for the m_databaseThread after we've requested
         // termination because we're still using it to execute the closing
         // of the database. However, it is NOT OK to create a new thread
@@ -177,11 +169,12 @@ DatabaseThread* DatabaseContext::databaseThread()
         // because in that case we already had a database thread and terminated it and should not create another.
         m_databaseThread = DatabaseThread::create();
         if (!m_databaseThread->start())
-            m_databaseThread = 0;
+            m_databaseThread = nullptr;
+
 #if PLATFORM(IOS)
         if (m_databaseThread)
             m_databaseThread->setPaused(m_paused);
-#endif //PLATFORM(IOS)
+#endif
     }
 
     return m_databaseThread.get();
@@ -198,7 +191,7 @@ void DatabaseContext::setPaused(bool paused)
 }
 #endif // PLATFORM(IOS)
 
-bool DatabaseContext::stopDatabases(DatabaseTaskSynchronizer* cleanupSync)
+bool DatabaseContext::stopDatabases(DatabaseTaskSynchronizer* synchronizer)
 {
     if (m_isRegistered) {
         DatabaseManager::manager().unregisterDatabaseContext(this);
@@ -216,7 +209,7 @@ bool DatabaseContext::stopDatabases(DatabaseTaskSynchronizer* cleanupSync)
     // DatabaseThread.
 
     if (m_databaseThread && !m_hasRequestedTermination) {
-        m_databaseThread->requestTermination(cleanupSync);
+        m_databaseThread->requestTermination(synchronizer);
         m_hasRequestedTermination = true;
         return true;
     }

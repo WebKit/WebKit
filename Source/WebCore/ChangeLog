@@ -1,3 +1,93 @@
+2014-04-20  Darin Adler  <darin@apple.com>
+
+        ScriptExecutionContext::stopActiveDOMObjects iterates a hash map that can change during iteration (for multiple reasons, including GC)
+        https://bugs.webkit.org/show_bug.cgi?id=52719
+
+        Reviewed by Alexey Proskuryakov.
+
+        At least two specific ways this can happen:
+
+        1) XMLHttpRequest::stop can trigger a JavaScript garbage collection.
+        2) NotificationCenter::stop can delete the last references to notifications;
+           those notifications are also active DOM objects.
+
+        Besides fixing the iteration in that function, did some other fixes for the
+        ScriptExecutionContext class, including some coding style changes. Many uses
+        of nullptr instead of 0, without listing each function separately below.
+
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::contextDestroyed): Call through to the base class
+        version of contextDestroyed rather than repeating what it does (with a large
+        comment that doesn't acknowledge the base class alread does it).
+        * Modules/webdatabase/DatabaseContext.h: Removed some unneeded includes.
+        Wrote out "private" explicitly for deriving from ActiveDOMObject. Made the
+        ActiveDOMObject function overrides private, and marked them override and final.
+
+        * dom/ActiveDOMObject.h: Updated comments. Replaced suspendIfNeededCalled with
+        assertSuspendIfNeededWasCalled, which has an empty inline version in the header.
+        Renamed m_suspendIfNeededCalled to m_suspendIfNeededWasCalled.
+
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::ActiveDOMObject): Pass a reference instead of a pointer.
+        (WebCore::ActiveDOMObject::~ActiveDOMObject): Ditto.
+        (WebCore::ActiveDOMObject::suspendIfNeeded): Ditto.
+
+        * dom/ContextDestructionObserver.cpp:
+        (WebCore::ContextDestructionObserver::observeContext): Pass a reference instead of a pointer.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::MessagePort): Pass a reference instead of a pointer.
+        (WebCore::MessagePort::~MessagePort): Ditto.
+        (WebCore::MessagePort::disentangle): Ditto.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext): Updated flags used
+        for assertions so they are conditional and updated their names.
+        (WebCore::takeAny): Added. Helper function that we can consider for HashSet in
+        the future; makes loop below easier to read.
+        (WebCore::checkConsistency): Added. Assertions that were done multiple places below,
+        and should not be written over and over again.
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext): Changed to use C++11
+        for loops and the takeAny function above.
+        (WebCore::ScriptExecutionContext::dispatchMessagePortEvents): Ditto.
+        (WebCore::ScriptExecutionContext::createdMessagePort): Changed to take a reference
+        for clarity and so it doesn't have to do an assert the pointer is non-null.
+        (WebCore::ScriptExecutionContext::destroyedMessagePort): Ditto.
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjects): Changed to use
+        C++11 for loop and reworded comment and redid assertions.
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects): Ditto.
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects): Ditto.
+        (WebCore::ScriptExecutionContext::stopActiveDOMObjects): Changed to support
+        removal of an active DOM object during the stop function. Included new comments
+        to clarify what the rules are.
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjectIfNeeded): Changed to take
+        a reference for clarity and so it doesn't have to assert a pointer is non-null.
+        (WebCore::ScriptExecutionContext::didCreateActiveDOMObject): Ditto. Also changed to
+        use RELEASE_ASSERT instead of CRASH.
+        (WebCore::ScriptExecutionContext::willDestroyActiveDOMObject): Ditto.
+        (WebCore::ScriptExecutionContext::didCreateDestructionObserver): Ditto.
+        (WebCore::ScriptExecutionContext::willDestroyDestructionObserver): Ditto.
+        (WebCore::ScriptExecutionContext::closeMessagePorts): Moved the body of this
+        function into its one call site, ScriptExecutionContext::stopActiveDOMObjects,
+        since it's simple enough when written as a C++11 for loop.
+        (WebCore::ScriptExecutionContext::hasPendingActivity): Added. This function was
+        already exported for workers, and implementing it outside this class required
+        exposing the private HashSet members; more sensible to implement it here and
+        simply make it public in WorkerGlobalScope.
+
+        * dom/ScriptExecutionContext.h: Removed unnecessary includes and forward declarations.
+        Removed a long-ago-fixed FIXME. Changed various functions to take references instead of
+        pointers. Added a protected hasPendingActivity function, deleted the closeMessagePorts
+        function, deleted the ActiveDOMObjectsSet typedef, made the assertion flags be
+        !ASSERT_DISABLED only, and deleted the messagePorts and activeDOMObjects functions.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::hasPendingActivity): Deleted. This is now implemented
+        in the base class.
+
+        * workers/WorkerGlobalScope.h: Make hasPendingActivity function from the base class
+        public instead of declaring it in this class.
+
 2014-04-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Unable to select 'Off' or 'Auto' from track menu when tracks consist of unsupported track types

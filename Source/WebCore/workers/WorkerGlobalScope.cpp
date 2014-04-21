@@ -159,23 +159,6 @@ WorkerNavigator* WorkerGlobalScope::navigator() const
     return m_navigator.get();
 }
 
-bool WorkerGlobalScope::hasPendingActivity() const
-{
-    ActiveDOMObjectsSet::const_iterator activeObjectsEnd = activeDOMObjects().end();
-    for (ActiveDOMObjectsSet::const_iterator iter = activeDOMObjects().begin(); iter != activeObjectsEnd; ++iter) {
-        if ((*iter)->hasPendingActivity())
-            return true;
-    }
-
-    HashSet<MessagePort*>::const_iterator messagePortsEnd = messagePorts().end();
-    for (HashSet<MessagePort*>::const_iterator iter = messagePorts().begin(); iter != messagePortsEnd; ++iter) {
-        if ((*iter)->hasPendingActivity())
-            return true;
-    }
-
-    return false;
-}
-
 void WorkerGlobalScope::postTask(PassOwnPtr<Task> task)
 {
     thread().runLoop().postTask(task);

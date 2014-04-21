@@ -37,21 +37,21 @@ class ActiveDOMObject : public ContextDestructionObserver {
 public:
     explicit ActiveDOMObject(ScriptExecutionContext*);
 
-    // suspendIfNeeded() should be called exactly once after object construction to synchronize
-    // the suspend state with that in ScriptExecutionContext.
+    // The suspendIfNeeded must be called exactly once after object construction to update
+    // the suspended state to match that of the ScriptExecutionContext.
     void suspendIfNeeded();
-#if !ASSERT_DISABLED
-    bool suspendIfNeededCalled() const { return m_suspendIfNeededCalled; }
-#endif
+    void assertSuspendIfNeededWasCalled() const;
 
     virtual bool hasPendingActivity() const;
 
-    // canSuspend() is used by the caller if there is a choice between suspending and stopping.
-    // For example, a page won't be suspended and placed in the back/forward cache if it has
-    // the objects that can not be suspended.
-    // However, 'suspend' can be called even if canSuspend() would return 'false'. That
-    // happens in step-by-step JS debugging for example - in this case it would be incorrect
-    // to stop the object. Exact semantics of suspend is up to the object then.
+    // The canSuspend function is used by the caller if there is a choice between suspending
+    // and stopping. For example, a page won't be suspended and placed in the back/forward
+    // cache if it contains any objects that cannot be suspended.
+
+    // However, the suspend function will sometimes be called even if canSuspend returns false.
+    // That happens in step-by-step JS debugging for example - in this case it would be incorrect
+    // to stop the object. Exact semantics of suspend is up to the object in cases like that.
+
     enum ReasonForSuspension {
         JavaScriptDebuggerPaused,
         WillDeferLoading,
@@ -59,16 +59,23 @@ public:
         PageWillBeSuspended,
         DocumentWillBePaused
     };
+
+    // These three functions must not have a side effect of creating or destroying
+    // any ActiveDOMObject. That means they must not result in calls to arbitrary JavaScript.
     virtual bool canSuspend() const;
     virtual void suspend(ReasonForSuspension);
     virtual void resume();
+
+    // This function must not have a side effect of creating an ActiveDOMObject.
+    // That means it must not result in calls to arbitrary JavaScript.
+    // It can, however, have a side effect of deleting an ActiveDOMObject.
     virtual void stop();
 
     template<class T> void setPendingActivity(T* thisObject)
     {
         ASSERT(thisObject == this);
         thisObject->ref();
-        m_pendingActivityCount++;
+        ++m_pendingActivityCount;
     }
 
     template<class T> void unsetPendingActivity(T* thisObject)
@@ -84,9 +91,17 @@ protected:
 private:
     unsigned m_pendingActivityCount;
 #if !ASSERT_DISABLED
-    bool m_suspendIfNeededCalled;
+    bool m_suspendIfNeededWasCalled;
 #endif
 };
+
+#if ASSERT_DISABLED
+
+inline void ActiveDOMObject::assertSuspendIfNeededWasCalled() const
+{
+}
+
+#endif
 
 } // namespace WebCore
 

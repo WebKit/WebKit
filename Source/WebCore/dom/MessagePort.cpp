@@ -40,7 +40,7 @@ MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext)
     , m_closed(false)
     , m_scriptExecutionContext(&scriptExecutionContext)
 {
-    m_scriptExecutionContext->createdMessagePort(this);
+    m_scriptExecutionContext->createdMessagePort(*this);
 
     // Don't need to call processMessagePortMessagesSoon() here, because the port will not be opened until start() is invoked.
 }
@@ -49,7 +49,7 @@ MessagePort::~MessagePort()
 {
     close();
     if (m_scriptExecutionContext)
-        m_scriptExecutionContext->destroyedMessagePort(this);
+        m_scriptExecutionContext->destroyedMessagePort(*this);
 }
 
 void MessagePort::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)
@@ -89,10 +89,10 @@ std::unique_ptr<MessagePortChannel> MessagePort::disentangle()
 
     m_entangledChannel->disentangle();
 
-    // We can't receive any messages or generate any events, so remove ourselves from the list of active ports.
+    // We can't receive any messages or generate any events after this, so remove ourselves from the list of active ports.
     ASSERT(m_scriptExecutionContext);
-    m_scriptExecutionContext->destroyedMessagePort(this);
-    m_scriptExecutionContext = 0;
+    m_scriptExecutionContext->destroyedMessagePort(*this);
+    m_scriptExecutionContext = nullptr;
 
     return std::move(m_entangledChannel);
 }

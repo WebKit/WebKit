@@ -92,31 +92,70 @@ void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionC
 }
 
 ScriptExecutionContext::ScriptExecutionContext()
-    : m_iteratingActiveDOMObjects(false)
-    , m_inDestructor(false)
-    , m_circularSequentialID(0)
+    : m_circularSequentialID(0)
     , m_inDispatchErrorEvent(false)
     , m_activeDOMObjectsAreSuspended(false)
     , m_reasonForSuspendingActiveDOMObjects(static_cast<ActiveDOMObject::ReasonForSuspension>(-1))
     , m_activeDOMObjectsAreStopped(false)
+    , m_activeDOMObjectAdditionForbidden(false)
+#if !ASSERT_DISABLED
+    , m_inScriptExecutionContextDestructor(false)
+    , m_activeDOMObjectRemovalForbidden(false)
+#endif
 {
 }
 
+// FIXME: We should make this a member function of HashSet.
+template<typename T> inline T takeAny(HashSet<T>& set)
+{
+    ASSERT(!set.isEmpty());
+    auto iterator = set.begin();
+    T result = std::move(*iterator);
+    set.remove(iterator);
+    return result;
+}
+
+#if ASSERT_DISABLED
+
+inline void ScriptExecutionContext::checkConsistency() const
+{
+}
+
+#else
+
+void ScriptExecutionContext::checkConsistency() const
+{
+    for (auto* messagePort : m_messagePorts)
+        ASSERT(messagePort->scriptExecutionContext() == this);
+
+    for (auto* destructionObserver : m_destructionObservers)
+        ASSERT(destructionObserver->scriptExecutionContext() == this);
+
+    for (auto* activeDOMObject : m_activeDOMObjects) {
+        ASSERT(activeDOMObject->scriptExecutionContext() == this);
+        activeDOMObject->assertSuspendIfNeededWasCalled();
+    }
+}
+
+#endif
+
 ScriptExecutionContext::~ScriptExecutionContext()
 {
-    m_inDestructor = true;
-    for (HashSet<ContextDestructionObserver*>::iterator iter = m_destructionObservers.begin(); iter != m_destructionObservers.end(); iter = m_destructionObservers.begin()) {
-        ContextDestructionObserver* observer = *iter;
-        m_destructionObservers.remove(observer);
-        ASSERT(observer->scriptExecutionContext() == this);
-        observer->contextDestroyed();
-    }
+    checkConsistency();
 
-    HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
-    for (HashSet<MessagePort*>::iterator iter = m_messagePorts.begin(); iter != messagePortsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        (*iter)->contextDestroyed();
-    }
+#if !ASSERT_DISABLED
+    m_inScriptExecutionContextDestructor = true;
+#endif
+
+    while (!m_destructionObservers.isEmpty())
+        takeAny(m_destructionObservers)->contextDestroyed();
+
+    for (auto* messagePort : m_messagePorts)
+        messagePort->contextDestroyed();
+
+#if !ASSERT_DISABLED
+    m_inScriptExecutionContextDestructor = false;
+#endif
 }
 
 void ScriptExecutionContext::processMessagePortMessagesSoon()
@@ -126,59 +165,72 @@ void ScriptExecutionContext::processMessagePortMessagesSoon()
 
 void ScriptExecutionContext::dispatchMessagePortEvents()
 {
+    checkConsistency();
+
     Ref<ScriptExecutionContext> protect(*this);
 
-    // Make a frozen copy.
-    Vector<MessagePort*> ports;
-    copyToVector(m_messagePorts, ports);
-
-    unsigned portCount = ports.size();
-    for (unsigned i = 0; i < portCount; ++i) {
-        MessagePort* port = ports[i];
-        // The port may be destroyed, and another one created at the same address, but this is safe, as the worst that can happen
-        // as a result is that dispatchMessages() will be called needlessly.
-        if (m_messagePorts.contains(port) && port->started())
-            port->dispatchMessages();
+    // Make a frozen copy of the ports so we can iterate while new ones might be added or destroyed.
+    Vector<MessagePort*> possibleMessagePorts;
+    copyToVector(m_messagePorts, possibleMessagePorts);
+    for (auto* messagePort : possibleMessagePorts) {
+        // The port may be destroyed, and another one created at the same address,
+        // but this is harmless. The worst that can happen as a result is that
+        // dispatchMessages() will be called needlessly.
+        if (m_messagePorts.contains(messagePort) && messagePort->started())
+            messagePort->dispatchMessages();
     }
 }
 
-void ScriptExecutionContext::createdMessagePort(MessagePort* port)
+void ScriptExecutionContext::createdMessagePort(MessagePort& messagePort)
 {
-    ASSERT(port);
     ASSERT((isDocument() && isMainThread())
         || (isWorkerGlobalScope() && currentThread() == toWorkerGlobalScope(this)->thread().threadID()));
 
-    m_messagePorts.add(port);
+    m_messagePorts.add(&messagePort);
 }
 
-void ScriptExecutionContext::destroyedMessagePort(MessagePort* port)
+void ScriptExecutionContext::destroyedMessagePort(MessagePort& messagePort)
 {
-    ASSERT(port);
     ASSERT((isDocument() && isMainThread())
         || (isWorkerGlobalScope() && currentThread() == toWorkerGlobalScope(this)->thread().threadID()));
 
-    m_messagePorts.remove(port);
+    m_messagePorts.remove(&messagePort);
 }
 
 bool ScriptExecutionContext::canSuspendActiveDOMObjects()
 {
-    // No protection against m_activeDOMObjects changing during iteration: canSuspend() shouldn't execute arbitrary JS.
-    m_iteratingActiveDOMObjects = true;
-    ActiveDOMObjectsSet::iterator activeObjectsEnd = m_activeDOMObjects.end();
-    for (ActiveDOMObjectsSet::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        ASSERT((*iter)->suspendIfNeededCalled());
-        if (!(*iter)->canSuspend()) {
-            m_iteratingActiveDOMObjects = false;
-            return false;
+    checkConsistency();
+
+    bool canSuspend = true;
+
+    m_activeDOMObjectAdditionForbidden = true;
+#if !ASSERT_DISABLED
+    m_activeDOMObjectRemovalForbidden = true;
+#endif
+
+    // We assume that m_activeDOMObjects will not change during iteration: canSuspend
+    // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
+    // An ASSERT or RELEASE_ASSERT will fire if this happens, but it's important to code
+    // canSuspend functions so it will not happen!
+    for (auto* activeDOMObject : m_activeDOMObjects) {
+        if (!activeDOMObject->canSuspend()) {
+            canSuspend = false;
+            break;
         }
     }
-    m_iteratingActiveDOMObjects = false;
-    return true;
+
+    m_activeDOMObjectAdditionForbidden = false;
+#if !ASSERT_DISABLED
+    m_activeDOMObjectRemovalForbidden = false;
+#endif
+
+    return canSuspend;
 }
 
 void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
 {
+    checkConsistency();
+
 #if PLATFORM(IOS)
     if (m_activeDOMObjectsAreSuspended) {
         ASSERT(m_reasonForSuspendingActiveDOMObjects == ActiveDOMObject::DocumentWillBePaused);
@@ -186,101 +238,124 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
     }
 #endif
 
-    // No protection against m_activeDOMObjects changing during iteration: suspend() shouldn't execute arbitrary JS.
-    m_iteratingActiveDOMObjects = true;
-    ActiveDOMObjectsSet::iterator activeObjectsEnd = m_activeDOMObjects.end();
-    for (ActiveDOMObjectsSet::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        ASSERT((*iter)->suspendIfNeededCalled());
-        (*iter)->suspend(why);
-    }
-    m_iteratingActiveDOMObjects = false;
+    m_activeDOMObjectAdditionForbidden = true;
+#if !ASSERT_DISABLED
+    m_activeDOMObjectRemovalForbidden = true;
+#endif
+
+    // We assume that m_activeDOMObjects will not change during iteration: suspend
+    // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
+    // An ASSERT or RELEASE_ASSERT will fire if this happens, but it's important to code
+    // suspend functions so it will not happen!
+    for (auto* activeDOMObject : m_activeDOMObjects)
+        activeDOMObject->suspend(why);
+
+    m_activeDOMObjectAdditionForbidden = false;
+#if !ASSERT_DISABLED
+    m_activeDOMObjectRemovalForbidden = false;
+#endif
+
     m_activeDOMObjectsAreSuspended = true;
     m_reasonForSuspendingActiveDOMObjects = why;
 }
 
 void ScriptExecutionContext::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
 {
+    checkConsistency();
+
     if (m_reasonForSuspendingActiveDOMObjects != why)
         return;
-
     m_activeDOMObjectsAreSuspended = false;
-    // No protection against m_activeDOMObjects changing during iteration: resume() shouldn't execute arbitrary JS.
-    m_iteratingActiveDOMObjects = true;
-    ActiveDOMObjectsSet::iterator activeObjectsEnd = m_activeDOMObjects.end();
-    for (ActiveDOMObjectsSet::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        ASSERT((*iter)->suspendIfNeededCalled());
-        (*iter)->resume();
-    }
-    m_iteratingActiveDOMObjects = false;
+
+    m_activeDOMObjectAdditionForbidden = true;
+#if !ASSERT_DISABLED
+    m_activeDOMObjectRemovalForbidden = true;
+#endif
+
+    // We assume that m_activeDOMObjects will not change during iteration: resume
+    // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
+    // An ASSERT or RELEASE_ASSERT will fire if this happens, but it's important to code
+    // resume functions so it will not happen!
+    for (auto* activeDOMObject : m_activeDOMObjects)
+        activeDOMObject->resume();
+
+    m_activeDOMObjectAdditionForbidden = false;
+#if !ASSERT_DISABLED
+    m_activeDOMObjectRemovalForbidden = false;
+#endif
 }
 
 void ScriptExecutionContext::stopActiveDOMObjects()
 {
+    checkConsistency();
+
     if (m_activeDOMObjectsAreStopped)
         return;
     m_activeDOMObjectsAreStopped = true;
-    // No protection against m_activeDOMObjects changing during iteration: stop() shouldn't execute arbitrary JS.
-    m_iteratingActiveDOMObjects = true;
-    ActiveDOMObjectsSet::iterator activeObjectsEnd = m_activeDOMObjects.end();
-    for (ActiveDOMObjectsSet::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        ASSERT((*iter)->suspendIfNeededCalled());
-        (*iter)->stop();
-    }
-    m_iteratingActiveDOMObjects = false;
 
-    // Also close MessagePorts. If they were ActiveDOMObjects (they could be) then they could be stopped instead.
-    closeMessagePorts();
+    // Make a frozen copy of the objects so we can iterate while new ones might be destroyed.
+    Vector<ActiveDOMObject*> possibleActiveDOMObjects;
+    copyToVector(m_activeDOMObjects, possibleActiveDOMObjects);
+
+    m_activeDOMObjectAdditionForbidden = true;
+
+    // We assume that new objects will not be added to m_activeDOMObjects during iteration:
+    // stop functions should not add new active DOM objects, nor execute arbitrary JavaScript.
+    // A RELEASE_ASSERT will fire if this happens, but it's important to code stop functions
+    // so it will not happen!
+    for (auto* activeDOMObject : possibleActiveDOMObjects) {
+        // Check if this object was deleted already. If so, just skip it.
+        // Calling contains on a possibly-already-deleted object is OK because we guarantee
+        // no new object can be added, so even if a new object ends up allocated with the
+        // same address, that will be *after* this function exits.
+        if (!m_activeDOMObjects.contains(activeDOMObject))
+            continue;
+        activeDOMObject->stop();
+    }
+
+    m_activeDOMObjectAdditionForbidden = false;
+
+    // FIXME: Make message ports be active DOM objects and let them implement stop instead
+    // of having this separate mechanism just for them.
+    for (auto* messagePort : m_messagePorts)
+        messagePort->close();
 }
 
-void ScriptExecutionContext::suspendActiveDOMObjectIfNeeded(ActiveDOMObject* object)
+void ScriptExecutionContext::suspendActiveDOMObjectIfNeeded(ActiveDOMObject& activeDOMObject)
 {
-    ASSERT(m_activeDOMObjects.contains(object));
-    // Ensure all ActiveDOMObjects are suspended also newly created ones.
+    ASSERT(m_activeDOMObjects.contains(&activeDOMObject));
     if (m_activeDOMObjectsAreSuspended)
-        object->suspend(m_reasonForSuspendingActiveDOMObjects);
+        activeDOMObject.suspend(m_reasonForSuspendingActiveDOMObjects);
     if (m_activeDOMObjectsAreStopped)
-        object->stop();
+        activeDOMObject.stop();
 }
 
-void ScriptExecutionContext::didCreateActiveDOMObject(ActiveDOMObject* object)
+void ScriptExecutionContext::didCreateActiveDOMObject(ActiveDOMObject& activeDOMObject)
 {
-    ASSERT(object);
-    ASSERT(!m_inDestructor);
-    if (m_iteratingActiveDOMObjects)
-        CRASH();
-    m_activeDOMObjects.add(object);
+    // The m_activeDOMObjectAdditionForbidden check is a RELEASE_ASSERT because of the
+    // consequences of having an ActiveDOMObject that is not correctly reflected in the set.
+    // If we do have one of those, it can possibly be a security vulnerability. So we'd
+    // rather have a crash than continue running with the set possibly compromised.
+    ASSERT(!m_inScriptExecutionContextDestructor);
+    RELEASE_ASSERT(!m_activeDOMObjectAdditionForbidden);
+    m_activeDOMObjects.add(&activeDOMObject);
 }
 
-void ScriptExecutionContext::willDestroyActiveDOMObject(ActiveDOMObject* object)
+void ScriptExecutionContext::willDestroyActiveDOMObject(ActiveDOMObject& activeDOMObject)
 {
-    ASSERT(object);
-    if (m_iteratingActiveDOMObjects)
-        CRASH();
-    m_activeDOMObjects.remove(object);
+    ASSERT(!m_activeDOMObjectRemovalForbidden);
+    m_activeDOMObjects.remove(&activeDOMObject);
 }
 
-void ScriptExecutionContext::didCreateDestructionObserver(ContextDestructionObserver* observer)
+void ScriptExecutionContext::didCreateDestructionObserver(ContextDestructionObserver& observer)
 {
-    ASSERT(observer);
-    ASSERT(!m_inDestructor);
-    m_destructionObservers.add(observer);
+    ASSERT(!m_inScriptExecutionContextDestructor);
+    m_destructionObservers.add(&observer);
 }
 
-void ScriptExecutionContext::willDestroyDestructionObserver(ContextDestructionObserver* observer)
+void ScriptExecutionContext::willDestroyDestructionObserver(ContextDestructionObserver& observer)
 {
-    ASSERT(observer);
-    m_destructionObservers.remove(observer);
-}
-
-void ScriptExecutionContext::closeMessagePorts() {
-    HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
-    for (HashSet<MessagePort*>::iterator iter = m_messagePorts.begin(); iter != messagePortsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        (*iter)->close();
-    }
+    m_destructionObservers.remove(&observer);
 }
 
 bool ScriptExecutionContext::sanitizeScriptError(String& errorMessage, int& lineNumber, int& columnNumber, String& sourceURL, CachedScript* cachedScript)
@@ -369,10 +444,8 @@ PublicURLManager& ScriptExecutionContext::publicURLManager()
 void ScriptExecutionContext::adjustMinimumTimerInterval(double oldMinimumTimerInterval)
 {
     if (minimumTimerInterval() != oldMinimumTimerInterval) {
-        for (TimeoutMap::iterator iter = m_timeouts.begin(); iter != m_timeouts.end(); ++iter) {
-            DOMTimer* timer = iter->value;
+        for (auto* timer : m_timeouts.values())
             timer->adjustMinimumTimerInterval(oldMinimumTimerInterval);
-        }
     }
 }
 
@@ -388,10 +461,8 @@ double ScriptExecutionContext::minimumTimerInterval() const
 
 void ScriptExecutionContext::didChangeTimerAlignmentInterval()
 {
-    for (TimeoutMap::iterator iter = m_timeouts.begin(); iter != m_timeouts.end(); ++iter) {
-        DOMTimer* timer = iter->value;
+    for (auto* timer : m_timeouts.values())
         timer->didChangeAlignmentInterval();
-    }
 }
 
 double ScriptExecutionContext::timerAlignmentInterval() const
@@ -418,5 +489,22 @@ void ScriptExecutionContext::setDatabaseContext(DatabaseContext* databaseContext
     m_databaseContext = databaseContext;
 }
 #endif
+
+bool ScriptExecutionContext::hasPendingActivity() const
+{
+    checkConsistency();
+
+    for (auto* activeDOMObject : m_activeDOMObjects) {
+        if (activeDOMObject->hasPendingActivity())
+            return true;
+    }
+
+    for (auto* messagePort : m_messagePorts) {
+        if (messagePort->hasPendingActivity())
+            return true;
+    }
+
+    return false;
+}
 
 } // namespace WebCore
