@@ -1,3 +1,9 @@
+2014-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * inspector/TimelineRecordFactory.cpp: Add missing include.
+
 2014-04-21  Zan Dobersek  <zdobersek@igalia.com>
 
         Move cross-port Source/WebCore/page/ code to std::unique_ptr
