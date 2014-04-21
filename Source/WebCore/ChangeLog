@@ -1,3 +1,20 @@
+2014-04-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        iOS and non-iOS RemoteCommandListener::create() functions should use std::make_unique<>()
+        https://bugs.webkit.org/show_bug.cgi?id=131916
+
+        Reviewed by Darin Adler.
+
+        A follow-up to r167197. Make RemoteCommandListener ctor public and use std::make_unique<>()
+        in both versions of RemoteCommandListener::create() functions (iOS and non-iOS).
+
+        * platform/RemoteCommandListener.cpp:
+        (WebCore::RemoteCommandListener::create):
+        * platform/RemoteCommandListener.h:
+        (WebCore::RemoteCommandListener::RemoteCommandListener):
+        * platform/ios/RemoteCommandListenerIOS.mm:
+        (WebCore::RemoteCommandListener::create):
+
 2014-04-21  Andreas Kling  <akling@apple.com>
 
         Micro-optimize the way we hand NodeLists to JSC.

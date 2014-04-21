@@ -39,11 +39,10 @@ public:
 class RemoteCommandListener {
 public:
     static std::unique_ptr<RemoteCommandListener> create(RemoteCommandListenerClient&);
+    RemoteCommandListener(RemoteCommandListenerClient& client) : m_client(client) { }
     virtual ~RemoteCommandListener() { }
 
 protected:
-    RemoteCommandListener(RemoteCommandListenerClient& client) : m_client(client) { };
-
     RemoteCommandListenerClient& m_client;
 };
 
