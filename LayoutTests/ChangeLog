@@ -15,6 +15,16 @@
 
 2014-04-21  David Hyatt  <hyatt@apple.com>
 
+        [New Multicolumn] Column balancing is slow on float-multicol.html
+        https://bugs.webkit.org/show_bug.cgi?id=131801
+
+        Reviewed by Enrica Casucci.
+
+        * fast/multicol/tall-float-expected.html: Added.
+        * fast/multicol/tall-float.html: Added.
+
+2014-04-21  David Hyatt  <hyatt@apple.com>
+
         [New Multicolumn] Pagination mode messed up with non-inline axis and reversed direction.
         https://bugs.webkit.org/show_bug.cgi?id=131811
 

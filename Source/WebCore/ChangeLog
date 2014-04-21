@@ -1,3 +1,27 @@
+2014-04-21  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Column balancing is slow on float-multicol.html
+        https://bugs.webkit.org/show_bug.cgi?id=131801
+
+        Reviewed by Enrica Casucci.
+
+        Added fast/multicol/tall-float.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::expandsToEncloseOverhangingFloats):
+        Make RenderFlowThreads expand to encompass floats. Also from Morten's patch for
+        Blink (#361551).
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeOverflow):
+        Fix a bug where the new multi-column code was adding in overflow for floats
+        when it should not. This was resulting in the creation of scrollbars when none
+        should exist. This is my own addition.
+
+        (WebCore::RenderBlockFlow::addOverhangingFloats):
+        Make RenderFlowThreads and RenderRegions ignore overhanging float additions. This
+        comes from Morten's patch for Blink (#361551).
+
 2014-04-21  Darin Adler  <darin@apple.com>
 
         REGRESSION (r160908): Safari doesn't draw rotated images properly first time
