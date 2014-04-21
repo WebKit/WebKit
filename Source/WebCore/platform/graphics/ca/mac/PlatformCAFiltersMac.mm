@@ -581,12 +581,8 @@ void PlatformCAFilters::setBlendingFiltersOnLayer(PlatformLayer* layer, const Bl
         case BlendModeScreen:
             filter = [CAFilter filterWithType:kCAFilterScreenBlendMode];
             break;
-        case BlendModeHue:
-        case BlendModeSaturation:
-        case BlendModeColor:
-        case BlendModeLuminosity:
-            // Non-separable blend modes are not supported.
-            break;
+        default:
+            ASSERT_NOT_REACHED();
     }
 
     [layer setCompositingFilter:filter];

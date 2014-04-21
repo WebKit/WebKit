@@ -99,38 +99,6 @@ PASS declaration.getPropertyValue('mix-blend-mode') is 'exclusion'
 PASS jsWrapperClass(blendModeRule) is 'CSSPrimitiveValue'
 PASS jsWrapperClass(blendModeRule.__proto__) is 'CSSPrimitiveValuePrototype'
 PASS jsWrapperClass(blendModeRule.constructor) is 'CSSPrimitiveValueConstructor'
-
-Basic reference : hue
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('mix-blend-mode') is 'hue'
-PASS jsWrapperClass(blendModeRule) is 'CSSPrimitiveValue'
-PASS jsWrapperClass(blendModeRule.__proto__) is 'CSSPrimitiveValuePrototype'
-PASS jsWrapperClass(blendModeRule.constructor) is 'CSSPrimitiveValueConstructor'
-
-Basic reference : saturation
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('mix-blend-mode') is 'saturation'
-PASS jsWrapperClass(blendModeRule) is 'CSSPrimitiveValue'
-PASS jsWrapperClass(blendModeRule.__proto__) is 'CSSPrimitiveValuePrototype'
-PASS jsWrapperClass(blendModeRule.constructor) is 'CSSPrimitiveValueConstructor'
-
-Basic reference : color
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('mix-blend-mode') is 'color'
-PASS jsWrapperClass(blendModeRule) is 'CSSPrimitiveValue'
-PASS jsWrapperClass(blendModeRule.__proto__) is 'CSSPrimitiveValuePrototype'
-PASS jsWrapperClass(blendModeRule.constructor) is 'CSSPrimitiveValueConstructor'
-
-Basic reference : luminosity
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('mix-blend-mode') is 'luminosity'
-PASS jsWrapperClass(blendModeRule) is 'CSSPrimitiveValue'
-PASS jsWrapperClass(blendModeRule.__proto__) is 'CSSPrimitiveValuePrototype'
-PASS jsWrapperClass(blendModeRule.constructor) is 'CSSPrimitiveValueConstructor'
 PASS successfullyParsed is true
 
 TEST COMPLETE

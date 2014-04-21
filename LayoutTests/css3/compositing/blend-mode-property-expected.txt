@@ -39,18 +39,6 @@ PASS declaration.getPropertyValue('mix-blend-mode') is 'difference'
 PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('mix-blend-mode') is 'exclusion'
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('mix-blend-mode') is 'hue'
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('mix-blend-mode') is 'saturation'
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('mix-blend-mode') is 'color'
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('mix-blend-mode') is 'luminosity'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -20,7 +20,7 @@ shouldBe("declaration.length", "1");
 shouldBe("declaration.getPropertyValue('mix-blend-mode')", "\'" + blendmode + "\'");
 }
 
-var blendmodes = ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
+var blendmodes = ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion"];
 
 for(x in blendmodes)
    testblendmode(blendmodes[x]);

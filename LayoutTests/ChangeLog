@@ -1,3 +1,26 @@
+2014-04-21  Rik Cabanier  <cabanier@adobe.com>
+
+        [CSS Blending] Remove support for non-separable blend modes from mix-blend-mode
+        https://bugs.webkit.org/show_bug.cgi?id=131824
+
+        Reviewed by Dean Jackson.
+
+        Removed or updated tests that used non-separable blend modes in combination
+        with mix-blend-mode.
+
+        * css3/compositing/blend-mode-property-expected.txt:
+        * css3/compositing/blend-mode-property-parsing-expected.txt:
+        * css3/compositing/blend-mode-simple-composited.html:
+        * css3/compositing/blend-mode-simple.html:
+        * css3/compositing/script-tests/blend-mode-property-parsing.js:
+        * css3/compositing/script-tests/blend-mode-property.js:
+        * css3/compositing/svg-blend-color.html: Removed.
+        * css3/compositing/svg-blend-hue.html: Removed.
+        * css3/compositing/svg-blend-luminosity.html: Removed.
+        * css3/compositing/svg-blend-saturation.html: Removed.
+        * platform/mac/css3/compositing/blend-mode-simple-composited-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-simple-expected.txt:
+
 2014-04-21  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] vertical-rl/unsplittable-inline-block misrenders the column rule.
