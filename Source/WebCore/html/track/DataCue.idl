@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Cable Television Labs Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,10 +25,21 @@
  */
 [
     Conditional=VIDEO_TRACK,
-    Constructor(double startTime, double endTime, [StrictTypeChecking] ArrayBuffer data),
-    ConstructorCallWith=ScriptExecutionContext,
+    CustomConstructor,
+#if defined(ENABLE_DATACUE_VALUE) && ENABLE_DATACUE_VALUE
+    CustomConstructor(double startTime, double endTime, any value, optional DOMString type),
+    InterfaceName=WebKitDataCue,
+#else
+    CustomConstructor(double startTime, double endTime, ArrayBuffer data),
+#endif
     ConstructorRaisesException,
 ] interface DataCue : TextTrackCue {
     [SetterRaisesException] attribute ArrayBuffer data;
+
+#if defined(ENABLE_DATACUE_VALUE) && ENABLE_DATACUE_VALUE
+    [CustomGetter, CustomSetter] attribute any value;
+    readonly attribute DOMString type;
+#else
     readonly attribute DOMString? text;
+#endif
 };

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Cable Television Labs Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +34,13 @@
 
 namespace WebCore {
 
+class DataCue;
 class Document;
 class InbandTextTrackPrivate;
-class TextTrackCue;
+
+#if ENABLE(DATACUE_VALUE)
+class SerializedPlatformRepresentation;
+#endif
 
 class InbandDataTextTrack : public InbandTextTrack {
 public:
@@ -46,6 +51,15 @@ private:
     InbandDataTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
     virtual void addDataCue(InbandTextTrackPrivate*, double start, double end, const void*, unsigned) override;
+
+#if ENABLE(DATACUE_VALUE)
+    virtual void addDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>, const String&) override;
+    virtual void updateDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>) override;
+    virtual void removeDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>) override;
+    virtual void removeCue(TextTrackCue*, ExceptionCode&) override;
+
+    HashMap<RefPtr<SerializedPlatformRepresentation>, RefPtr<DataCue>> m_incompleteCueMap;
+#endif
 };
 
 } // namespace WebCore

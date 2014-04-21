@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Cable Television Labs Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +31,12 @@
 
 #include "TextTrackCue.h"
 #include <runtime/ArrayBuffer.h>
+#include <runtime/JSCInlines.h>
 #include <wtf/RefCounted.h>
+
+#if ENABLE(DATACUE_VALUE)
+#include "SerializedPlatformRepresentation.h"
+#endif
 
 namespace WebCore {
 
@@ -40,7 +46,7 @@ class DataCue : public TextTrackCue {
 public:
     static PassRefPtr<DataCue> create(ScriptExecutionContext& context, double start, double end, ArrayBuffer* data, ExceptionCode& ec)
     {
-        return adoptRef(new DataCue(context, start, end, data, ec));
+        return adoptRef(new DataCue(context, start, end, data, emptyString(), ec));
     }
 
     static PassRefPtr<DataCue> create(ScriptExecutionContext& context, double start, double end, const void* data, unsigned length)
@@ -48,19 +54,58 @@ public:
         return adoptRef(new DataCue(context, start, end, data, length));
     }
 
+    static PassRefPtr<DataCue> create(ScriptExecutionContext& context, double start, double end, ArrayBuffer* data, const String& type, ExceptionCode& ec)
+    {
+        return adoptRef(new DataCue(context, start, end, data, type, ec));
+    }
+
+#if ENABLE(DATACUE_VALUE)
+    static PassRefPtr<DataCue> create(ScriptExecutionContext& context, double start, double end, PassRefPtr<SerializedPlatformRepresentation> platformValue, const String& type)
+    {
+        return adoptRef(new DataCue(context, start, end, platformValue, type));
+    }
+
+    static PassRefPtr<DataCue> create(ScriptExecutionContext& context, double start, double end, JSC::JSValue value, const String& type)
+    {
+        return adoptRef(new DataCue(context, start, end, value, type));
+    }
+#endif
+
     virtual ~DataCue();
     virtual CueType cueType() const { return Data; }
 
-    RefPtr<ArrayBuffer> data() const;
+    PassRefPtr<ArrayBuffer> data() const;
     void setData(ArrayBuffer*, ExceptionCode&);
-    String text(bool& isNull) const;
+
+#if ENABLE(DATACUE_VALUE)
+    const PassRefPtr<SerializedPlatformRepresentation> platformValue() const { return m_platformValue; }
+
+    JSC::JSValue value(JSC::ExecState*) const;
+    void setValue(JSC::ExecState*, JSC::JSValue);
+
+    String type() const { return m_type; }
+    void setType(const String& type) { m_type = type; }
+#else
+    String text(bool&) const;
+#endif
+
+    virtual bool isEqual(const TextTrackCue&, CueMatchRules) const override;
 
 protected:
-    DataCue(ScriptExecutionContext&, double start, double end, ArrayBuffer*, ExceptionCode&);
-    DataCue(ScriptExecutionContext&, double start, double end, const void* data, unsigned length);
+    DataCue(ScriptExecutionContext&, double start, double end, ArrayBuffer*, const String&, ExceptionCode&);
+    DataCue(ScriptExecutionContext&, double start, double end, const void*, unsigned);
+#if ENABLE(DATACUE_VALUE)
+    DataCue(ScriptExecutionContext&, double start, double end, PassRefPtr<SerializedPlatformRepresentation>, const String&);
+    DataCue(ScriptExecutionContext&, double start, double end, JSC::JSValue, const String&);
+#endif
 
 private:
     RefPtr<ArrayBuffer> m_data;
+    String m_type;
+#if ENABLE(DATACUE_VALUE)
+    RefPtr<SerializedPlatformRepresentation> m_platformValue;
+    JSC::JSValue m_value;
+#endif
 };
 
 DataCue* toDataCue(TextTrackCue*);

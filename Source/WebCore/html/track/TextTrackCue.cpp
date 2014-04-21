@@ -202,6 +202,21 @@ bool TextTrackCue::isOrderedBefore(const TextTrackCue* other) const
     return startTime() < other->startTime() || (startTime() == other->startTime() && endTime() > other->endTime());
 }
 
+bool TextTrackCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
+{
+    if (cueType() != cue.cueType())
+        return false;
+
+    if (match != IgnoreDuration && endTime() != cue.endTime())
+        return false;
+    if (startTime() != cue.startTime())
+        return false;
+    if (id() != cue.id())
+        return false;
+
+    return true;
+}
+
 } // namespace WebCore
 
 #endif

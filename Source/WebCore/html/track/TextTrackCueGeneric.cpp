@@ -151,8 +151,11 @@ void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bo
     LOG(Media, "TextTrackCueGeneric::setFontSize - setting cue font size to %li", lround(size));
 }
     
-bool TextTrackCueGeneric::isEqual(const VTTCue& cue, VTTCue::CueMatchRules match) const
+bool TextTrackCueGeneric::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
 {
+    if (!TextTrackCue::isEqual(cue, match))
+        return false;
+
     if (cue.cueType() != TextTrackCue::Generic)
         return false;
 
