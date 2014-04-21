@@ -1,3 +1,12 @@
+2014-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Provide feedback when we encounter an unrecognied node in the FTL backend.
+
+        Rubber stamped by Alexey Proskuryakov.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+
 2014-04-21  Andreas Kling  <akling@apple.com>
 
         Move the JSString cache from DOMWrapperWorld to VM.
