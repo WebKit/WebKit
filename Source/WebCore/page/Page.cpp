@@ -858,7 +858,7 @@ unsigned Page::pageCount() const
         document->updateLayoutIgnorePendingStylesheets();
 
     RenderView* contentRenderer = mainFrame().contentRenderer();
-    return contentRenderer ? contentRenderer->columnCount(contentRenderer->columnInfo()) : 0;
+    return contentRenderer ? contentRenderer->pageCount() : 0;
 }
 
 void Page::setIsInWindow(bool isInWindow)

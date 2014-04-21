@@ -160,6 +160,8 @@ public:
     // function and should not be mistaken for a general page number API.
     unsigned pageNumberForBlockProgressionOffset(int offset) const;
 
+    unsigned pageCount() const;
+
     // FIXME: These functions are deprecated. No code should be added that uses these.
     int bestTruncatedAt() const { return m_legacyPrinting.m_bestTruncatedAt; }
     void setBestTruncatedAt(int y, RenderBoxModelObject* forRenderer, bool forcedBreak = false);
