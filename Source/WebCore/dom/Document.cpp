@@ -4619,7 +4619,7 @@ void Document::initSecurityContext()
         // This can occur via document.implementation.createDocument().
         m_cookieURL = URL(ParsedURLString, emptyString());
         setSecurityOrigin(SecurityOrigin::createUnique());
-        setContentSecurityPolicy(ContentSecurityPolicy::create(this));
+        setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
         return;
     }
 
@@ -4639,7 +4639,7 @@ void Document::initSecurityContext()
 #endif
 
     setSecurityOrigin(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url));
-    setContentSecurityPolicy(ContentSecurityPolicy::create(this));
+    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
 
     if (Settings* settings = this->settings()) {
         if (!settings->webSecurityEnabled()) {

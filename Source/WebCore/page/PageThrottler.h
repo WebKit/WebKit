@@ -31,8 +31,6 @@
 #include "UserActivity.h"
 #include "ViewState.h"
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

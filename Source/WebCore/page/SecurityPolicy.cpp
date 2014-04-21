@@ -33,8 +33,7 @@
 #include <wtf/MainThread.h>
 #include "OriginAccessEntry.h"
 #include "SecurityOrigin.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -42,7 +41,7 @@ namespace WebCore {
 static SecurityPolicy::LocalLoadPolicy localLoadPolicy = SecurityPolicy::AllowLocalLoadsForLocalOnly;
 
 typedef Vector<OriginAccessEntry> OriginAccessWhiteList;
-typedef HashMap<String, OwnPtr<OriginAccessWhiteList>> OriginAccessMap;
+typedef HashMap<String, std::unique_ptr<OriginAccessWhiteList>> OriginAccessMap;
 
 static OriginAccessMap& originAccessMap()
 {
@@ -136,7 +135,7 @@ void SecurityPolicy::addOriginAccessWhitelistEntry(const SecurityOrigin& sourceO
     String sourceString = sourceOrigin.toString();
     OriginAccessMap::AddResult result = originAccessMap().add(sourceString, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = adoptPtr(new OriginAccessWhiteList);
+        result.iterator->value = std::make_unique<OriginAccessWhiteList>();
 
     OriginAccessWhiteList* list = result.iterator->value.get();
     list->append(OriginAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains));

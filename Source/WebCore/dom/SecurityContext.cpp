@@ -50,9 +50,9 @@ void SecurityContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securityOrigi
     m_haveInitializedSecurityOrigin = true;
 }
 
-void SecurityContext::setContentSecurityPolicy(PassOwnPtr<ContentSecurityPolicy> contentSecurityPolicy)
+void SecurityContext::setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy> contentSecurityPolicy)
 {
-    m_contentSecurityPolicy = contentSecurityPolicy;
+    m_contentSecurityPolicy = std::move(contentSecurityPolicy);
 }
 
 bool SecurityContext::isSecureTransitionTo(const URL& url) const

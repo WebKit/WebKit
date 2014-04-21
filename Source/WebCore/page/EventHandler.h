@@ -38,8 +38,8 @@
 #include "TextGranularity.h"
 #include "Timer.h"
 #include "WheelEventDeltaTracker.h"
+#include <memory>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(IOS)
@@ -464,7 +464,7 @@ private:
     Timer<EventHandler> m_cursorUpdateTimer;
 #endif
 
-    OwnPtr<AutoscrollController> m_autoscrollController;
+    std::unique_ptr<AutoscrollController> m_autoscrollController;
     bool m_mouseDownMayStartAutoscroll;
     bool m_mouseDownWasInSubframe;
 
@@ -521,7 +521,7 @@ private:
     double m_mouseDownTimestamp;
     PlatformMouseEvent m_mouseDown;
 
-    OwnPtr<WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
+    std::unique_ptr<WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
     RefPtr<Element> m_latchedWheelEventElement;
     bool m_widgetIsLatched;
 

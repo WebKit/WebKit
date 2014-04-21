@@ -810,7 +810,8 @@ private:
 class CSPDirectiveList {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<CSPDirectiveList> create(ContentSecurityPolicy*, const String&, ContentSecurityPolicy::HeaderType);
+    static std::unique_ptr<CSPDirectiveList> create(ContentSecurityPolicy*, const String&, ContentSecurityPolicy::HeaderType);
+    CSPDirectiveList(ContentSecurityPolicy*, ContentSecurityPolicy::HeaderType);
 
     const String& header() const { return m_header; }
     ContentSecurityPolicy::HeaderType headerType() const { return m_headerType; }
@@ -841,8 +842,6 @@ public:
     const Vector<URL>& reportURIs() const { return m_reportURIs; }
 
 private:
-    CSPDirectiveList(ContentSecurityPolicy*, ContentSecurityPolicy::HeaderType);
-
     void parse(const String&);
 
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
@@ -854,7 +853,7 @@ private:
     void applySandboxPolicy(const String& name, const String& sandboxPolicy);
 
     template <class CSPDirectiveType>
-    void setCSPDirective(const String& name, const String& value, OwnPtr<CSPDirectiveType>&);
+    void setCSPDirective(const String& name, const String& value, std::unique_ptr<CSPDirectiveType>&);
 
     SourceListDirective* operativeDirective(SourceListDirective*) const;
     void reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const URL& blockedURL = URL(), const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = 0) const;
@@ -885,19 +884,19 @@ private:
     bool m_haveSandboxPolicy;
     ContentSecurityPolicy::ReflectedXSSDisposition m_reflectedXSSDisposition;
 
-    OwnPtr<MediaListDirective> m_pluginTypes;
-    OwnPtr<NonceDirective> m_scriptNonce;
-    OwnPtr<SourceListDirective> m_baseURI;
-    OwnPtr<SourceListDirective> m_connectSrc;
-    OwnPtr<SourceListDirective> m_defaultSrc;
-    OwnPtr<SourceListDirective> m_fontSrc;
-    OwnPtr<SourceListDirective> m_formAction;
-    OwnPtr<SourceListDirective> m_frameSrc;
-    OwnPtr<SourceListDirective> m_imgSrc;
-    OwnPtr<SourceListDirective> m_mediaSrc;
-    OwnPtr<SourceListDirective> m_objectSrc;
-    OwnPtr<SourceListDirective> m_scriptSrc;
-    OwnPtr<SourceListDirective> m_styleSrc;
+    std::unique_ptr<MediaListDirective> m_pluginTypes;
+    std::unique_ptr<NonceDirective> m_scriptNonce;
+    std::unique_ptr<SourceListDirective> m_baseURI;
+    std::unique_ptr<SourceListDirective> m_connectSrc;
+    std::unique_ptr<SourceListDirective> m_defaultSrc;
+    std::unique_ptr<SourceListDirective> m_fontSrc;
+    std::unique_ptr<SourceListDirective> m_formAction;
+    std::unique_ptr<SourceListDirective> m_frameSrc;
+    std::unique_ptr<SourceListDirective> m_imgSrc;
+    std::unique_ptr<SourceListDirective> m_mediaSrc;
+    std::unique_ptr<SourceListDirective> m_objectSrc;
+    std::unique_ptr<SourceListDirective> m_scriptSrc;
+    std::unique_ptr<SourceListDirective> m_styleSrc;
 
     Vector<URL> m_reportURIs;
 
@@ -914,9 +913,9 @@ CSPDirectiveList::CSPDirectiveList(ContentSecurityPolicy* policy, ContentSecurit
     m_reportOnly = (type == ContentSecurityPolicy::Report || type == ContentSecurityPolicy::PrefixedReport);
 }
 
-PassOwnPtr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* policy, const String& header, ContentSecurityPolicy::HeaderType type)
+std::unique_ptr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* policy, const String& header, ContentSecurityPolicy::HeaderType type)
 {
-    OwnPtr<CSPDirectiveList> directives = adoptPtr(new CSPDirectiveList(policy, type));
+    auto directives = std::make_unique<CSPDirectiveList>(policy, type);
     directives->parse(header);
 
     if (!directives->checkEval(directives->operativeDirective(directives->m_scriptSrc.get()))) {
@@ -927,7 +926,7 @@ PassOwnPtr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* pol
     if (directives->isReportOnly() && directives->reportURIs().isEmpty())
         policy->reportMissingReportURI(header);
 
-    return directives.release();
+    return directives;
 }
 
 void CSPDirectiveList::reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const URL& blockedURL, const String& contextURL, const WTF::OrdinalNumber& contextLine, JSC::ExecState* state) const
@@ -976,7 +975,7 @@ bool CSPDirectiveList::checkEvalAndReportViolation(SourceListDirective* directiv
         return true;
 
     String suffix = String();
-    if (directive == m_defaultSrc)
+    if (directive == m_defaultSrc.get())
         suffix = " Note that 'script-src' was not explicitly set, so 'default-src' is used as a fallback.";
 
     reportViolation(directive->text(), scriptSrc, consoleMessage + "\"" + directive->text() + "\"." + suffix + "\n", URL(), contextURL, contextLine, state);
@@ -1014,7 +1013,7 @@ bool CSPDirectiveList::checkInlineAndReportViolation(SourceListDirective* direct
         return true;
 
     String suffix = String();
-    if (directive == m_defaultSrc)
+    if (directive == m_defaultSrc.get())
         suffix = makeString(" Note that '", (isScript ? "script" : "style"), "-src' was not explicitly set, so 'default-src' is used as a fallback.");
 
     reportViolation(directive->text(), isScript ? scriptSrc : styleSrc, consoleMessage + "\"" + directive->text() + "\"." + suffix + "\n", URL(), contextURL, contextLine);
@@ -1055,7 +1054,7 @@ bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* direct
         prefix = "Refused to load the stylesheet '";
 
     String suffix = String();
-    if (directive == m_defaultSrc)
+    if (directive == m_defaultSrc.get())
         suffix = " Note that '" + effectiveDirective + "' was not explicitly set, so 'default-src' is used as a fallback.";
 
     reportViolation(directive->text(), effectiveDirective, prefix + url.stringCenterEllipsizedToLength() + "' because it violates the following Content Security Policy directive: \"" + directive->text() + "\"." + suffix + "\n", url);
@@ -1314,13 +1313,13 @@ void CSPDirectiveList::parseReportURI(const String& name, const String& value)
 
 
 template<class CSPDirectiveType>
-void CSPDirectiveList::setCSPDirective(const String& name, const String& value, OwnPtr<CSPDirectiveType>& directive)
+void CSPDirectiveList::setCSPDirective(const String& name, const String& value, std::unique_ptr<CSPDirectiveType>& directive)
 {
     if (directive) {
         m_policy->reportDuplicateDirective(name);
         return;
     }
-    directive = adoptPtr(new CSPDirectiveType(name, value, m_policy));
+    directive = std::make_unique<CSPDirectiveType>(name, value, m_policy);
 }
 
 void CSPDirectiveList::applySandboxPolicy(const String& name, const String& sandboxPolicy)
@@ -1459,7 +1458,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
 
         // header1,header2 OR header1
         //        ^                  ^
-        OwnPtr<CSPDirectiveList> policy = CSPDirectiveList::create(this, String(begin, position - begin), type);
+        std::unique_ptr<CSPDirectiveList> policy = CSPDirectiveList::create(this, String(begin, position - begin), type);
         if (!policy->isReportOnly() && !policy->allowEval(0, SuppressReport))
             m_scriptExecutionContext->disableEval(policy->evalDisabledErrorMessage());
 

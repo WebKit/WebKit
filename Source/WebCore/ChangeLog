@@ -1,3 +1,66 @@
+2014-04-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move cross-port Source/WebCore/page/ code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=130534
+
+        Reviewed by Darin Adler.
+
+        Replace uses of OwnPtr and PassOwnPtr in cross-port code under Source/WebCore/page/ with
+        std::unique_ptr. Unnecessary OwnPtr.h and PassOwnPtr.h header inclusions are removed as well.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::setContentSecurityPolicy):
+        * dom/SecurityContext.h:
+        * page/CaptionUserPreferences.h:
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::create):
+        (WebCore::CSPDirectiveList::checkEvalAndReportViolation):
+        (WebCore::CSPDirectiveList::checkInlineAndReportViolation):
+        (WebCore::CSPDirectiveList::checkSourceAndReportViolation):
+        (WebCore::CSPDirectiveList::setCSPDirective):
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        * page/ContentSecurityPolicy.h:
+        * page/DOMSecurityPolicy.h:
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::fired):
+        (WebCore::DOMWindow::postMessageTimerFired):
+        * page/DOMWindow.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        * page/EventHandler.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::createRegExpForLabels):
+        (WebCore::Frame::searchForLabelsAboveCell):
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        (WebCore::matchLabelsAgainstString):
+        (WebCore::Frame::setTiledBackingStoreEnabled):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addEmbeddedObjectToUpdate):
+        (WebCore::FrameView::addSlowRepaintObject):
+        (WebCore::FrameView::addViewportConstrainedObject):
+        (WebCore::FrameView::addScrollableArea):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        * page/PageConsole.h:
+        * page/PageThrottler.h:
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::addOriginAccessWhitelistEntry):
+        * page/animation/AnimationController.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::PropertyWrapperVisitedAffectedColor::PropertyWrapperVisitedAffectedColor):
+        (WebCore::CSSPropertyAnimationWrapperMap::instance):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * page/mac/PageMac.cpp:
+        (WebCore::Page::addSchedulePair):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::applyContentSecurityPolicyFromString):
+
 2014-04-21  Darin Adler  <darin@apple.com>
 
         Add HashSet::takeAny

@@ -28,7 +28,7 @@
 
 #include "URL.h"
 #include "ScriptState.h"
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
@@ -46,15 +46,12 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 
 typedef int SandboxFlags;
-typedef Vector<OwnPtr<CSPDirectiveList>> CSPDirectiveListVector;
+typedef Vector<std::unique_ptr<CSPDirectiveList>> CSPDirectiveListVector;
 
 class ContentSecurityPolicy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<ContentSecurityPolicy> create(ScriptExecutionContext* scriptExecutionContext)
-    {
-        return adoptPtr(new ContentSecurityPolicy(scriptExecutionContext));
-    }
+    explicit ContentSecurityPolicy(ScriptExecutionContext*);
     ~ContentSecurityPolicy();
 
     void copyStateFrom(const ContentSecurityPolicy*);
@@ -137,8 +134,6 @@ public:
     bool experimentalFeaturesEnabled() const;
 
 private:
-    explicit ContentSecurityPolicy(ScriptExecutionContext*);
-
     void logToConsole(const String& message, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = 0) const;
 
     ScriptExecutionContext* m_scriptExecutionContext;

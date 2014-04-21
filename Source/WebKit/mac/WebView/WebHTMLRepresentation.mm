@@ -456,7 +456,7 @@ static NSString* searchForLabelsBeforeElement(Frame* frame, NSArray* labels, Ele
         } else if (n->hasTagName(tdTag) && !startingTableCell) {
             startingTableCell = static_cast<HTMLTableCellElement*>(n);
         } else if (n->hasTagName(trTag) && startingTableCell) {
-            NSString* result = frame->searchForLabelsAboveCell(regExp, startingTableCell, resultDistance);
+            NSString* result = frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance);
             if (result && [result length] > 0) {
                 if (resultIsInCellAbove)
                     *resultIsInCellAbove = true;
@@ -482,7 +482,7 @@ static NSString* searchForLabelsBeforeElement(Frame* frame, NSArray* labels, Ele
     // If we started in a cell, but bailed because we found the start of the form or the
     // previous element, we still might need to search the row above us for a label.
     if (startingTableCell && !searchedCellAbove) {
-        NSString* result = frame->searchForLabelsAboveCell(regExp, startingTableCell, resultDistance);
+        NSString* result = frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance);
         if (result && [result length] > 0) {
             if (resultIsInCellAbove)
                 *resultIsInCellAbove = true;

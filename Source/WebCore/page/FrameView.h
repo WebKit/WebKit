@@ -33,9 +33,9 @@
 #include "PaintPhase.h"
 #include "RenderPtr.h"
 #include "ScrollView.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -602,10 +602,10 @@ private:
     LayoutSize m_size;
     LayoutSize m_margins;
 
-    OwnPtr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
+    std::unique_ptr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
     const RefPtr<Frame> m_frame;
 
-    OwnPtr<HashSet<RenderElement*>> m_slowRepaintObjects;
+    std::unique_ptr<HashSet<RenderElement*>> m_slowRepaintObjects;
 
     bool m_needsFullRepaint;
     
@@ -697,8 +697,8 @@ private:
     // The intrinsic content size decided by autosizing.
     IntSize m_autoSizeContentSize;
 
-    OwnPtr<ScrollableAreaSet> m_scrollableAreas;
-    OwnPtr<ViewportConstrainedObjectSet> m_viewportConstrainedObjects;
+    std::unique_ptr<ScrollableAreaSet> m_scrollableAreas;
+    std::unique_ptr<ViewportConstrainedObjectSet> m_viewportConstrainedObjects;
 
     int m_headerHeight;
     int m_footerHeight;

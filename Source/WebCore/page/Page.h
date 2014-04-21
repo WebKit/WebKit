@@ -35,6 +35,7 @@
 #include "Supplementable.h"
 #include "ViewState.h"
 #include "ViewportArguments.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -257,7 +258,7 @@ public:
     void removeSchedulePair(PassRefPtr<SchedulePair>);
     SchedulePairHashSet* scheduledRunLoopPairs() { return m_scheduledRunLoopPairs.get(); }
 
-    OwnPtr<SchedulePairHashSet> m_scheduledRunLoopPairs;
+    std::unique_ptr<SchedulePairHashSet> m_scheduledRunLoopPairs;
 #endif
 
     const VisibleSelection& selection() const;

@@ -1382,7 +1382,7 @@ RenderBox* FrameView::embeddedContentBox() const
 void FrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
 {
     if (!m_embeddedObjectsToUpdate)
-        m_embeddedObjectsToUpdate = adoptPtr(new ListHashSet<RenderEmbeddedObject*>);
+        m_embeddedObjectsToUpdate = std::make_unique<ListHashSet<RenderEmbeddedObject*>>();
 
     HTMLFrameOwnerElement& element = embeddedObject.frameOwnerElement();
     if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {
@@ -1489,7 +1489,7 @@ void FrameView::addSlowRepaintObject(RenderElement* o)
     bool hadSlowRepaintObjects = hasSlowRepaintObjects();
 
     if (!m_slowRepaintObjects)
-        m_slowRepaintObjects = adoptPtr(new HashSet<RenderElement*>);
+        m_slowRepaintObjects = std::make_unique<HashSet<RenderElement*>>();
 
     m_slowRepaintObjects->add(o);
 
@@ -1523,7 +1523,7 @@ void FrameView::removeSlowRepaintObject(RenderElement* o)
 void FrameView::addViewportConstrainedObject(RenderElement* object)
 {
     if (!m_viewportConstrainedObjects)
-        m_viewportConstrainedObjects = adoptPtr(new ViewportConstrainedObjectSet);
+        m_viewportConstrainedObjects = std::make_unique<ViewportConstrainedObjectSet>();
 
     if (!m_viewportConstrainedObjects->contains(object)) {
         m_viewportConstrainedObjects->add(object);
@@ -3989,7 +3989,7 @@ String FrameView::trackedRepaintRectsAsText() const
 bool FrameView::addScrollableArea(ScrollableArea* scrollableArea)
 {
     if (!m_scrollableAreas)
-        m_scrollableAreas = adoptPtr(new ScrollableAreaSet);
+        m_scrollableAreas = std::make_unique<ScrollableAreaSet>();
     return m_scrollableAreas->add(scrollableArea).isNewEntry;
 }
 

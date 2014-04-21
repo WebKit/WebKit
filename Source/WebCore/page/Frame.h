@@ -35,6 +35,7 @@
 #include "NavigationScheduler.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
+#include <memory>
 #include <wtf/RefCounted.h>
 
 #if PLATFORM(IOS)
@@ -235,7 +236,7 @@ namespace WebCore {
         Document* documentAtPoint(const IntPoint& windowPoint);
         PassRefPtr<Range> rangeForPoint(const IntPoint& framePoint);
 
-        String searchForLabelsAboveCell(JSC::Yarr::RegularExpression*, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
+        String searchForLabelsAboveCell(const JSC::Yarr::RegularExpression&, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
         String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 
@@ -299,8 +300,8 @@ namespace WebCore {
 
         const std::unique_ptr<ScriptController> m_script;
         const std::unique_ptr<Editor> m_editor;
-        const OwnPtr<FrameSelection> m_selection;
-        const OwnPtr<EventHandler> m_eventHandler;
+        const std::unique_ptr<FrameSelection> m_selection;
+        const std::unique_ptr<EventHandler> m_eventHandler;
         const std::unique_ptr<AnimationController> m_animationController;
 
 #if PLATFORM(IOS)
@@ -351,7 +352,7 @@ namespace WebCore {
         virtual IntRect tiledBackingStoreVisibleRect() override final;
         virtual Color tiledBackingStoreBackgroundColor() const override final;
 
-        OwnPtr<TiledBackingStore> m_tiledBackingStore;
+        std::unique_ptr<TiledBackingStore> m_tiledBackingStore;
 #endif
 
         int m_activeDOMObjectsAndAnimationsSuspendedCount;

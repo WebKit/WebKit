@@ -27,7 +27,6 @@
 #define DOMSecurityPolicy_h
 
 #include "ContextDestructionObserver.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

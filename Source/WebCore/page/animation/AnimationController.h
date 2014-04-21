@@ -32,7 +32,6 @@
 #include "AnimationBase.h"
 #include "CSSPropertyNames.h"
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

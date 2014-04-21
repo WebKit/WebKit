@@ -27,6 +27,7 @@
 #ifndef SecurityContext_h
 #define SecurityContext_h
 
+#include <memory>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -76,7 +77,7 @@ protected:
     SecurityContext();
     virtual ~SecurityContext();
 
-    void setContentSecurityPolicy(PassOwnPtr<ContentSecurityPolicy>);
+    void setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy>);
 
     void didFailToInitializeSecurityOrigin() { m_haveInitializedSecurityOrigin = false; }
     bool haveInitializedSecurityOrigin() const { return m_haveInitializedSecurityOrigin; }
@@ -85,7 +86,7 @@ private:
     bool m_haveInitializedSecurityOrigin;
     SandboxFlags m_sandboxFlags;
     RefPtr<SecurityOrigin> m_securityOrigin;
-    OwnPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
+    std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
 };
 
 } // namespace WebCore

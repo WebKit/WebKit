@@ -1,3 +1,13 @@
+2014-04-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move cross-port Source/WebCore/page/ code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=130534
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (searchForLabelsBeforeElement): Pass a RegExp reference to Frame::searchForLabelsAboveCell().
+
 2014-04-19  Darin Adler  <darin@apple.com>
 
         [Mac] WebView adjusts the cursor even when another window is in front

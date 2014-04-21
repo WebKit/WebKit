@@ -106,7 +106,6 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <bindings/ScriptValue.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <yarr/RegularExpression.h>
@@ -163,8 +162,8 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     , m_ownerElement(ownerElement)
     , m_script(std::make_unique<ScriptController>(*this))
     , m_editor(std::make_unique<Editor>(*this))
-    , m_selection(adoptPtr(new FrameSelection(this)))
-    , m_eventHandler(adoptPtr(new EventHandler(*this)))
+    , m_selection(std::make_unique<FrameSelection>(this))
+    , m_eventHandler(std::make_unique<EventHandler>(*this))
     , m_animationController(std::make_unique<AnimationController>(*this))
 #if PLATFORM(IOS)
     , m_overflowAutoScrollTimer(this, &Frame::overflowAutoScrollTimerFired)
@@ -312,7 +311,7 @@ void Frame::sendOrientationChangeEvent(int orientation)
 }
 #endif // ENABLE(ORIENTATION_EVENTS)
 
-static PassOwnPtr<JSC::Yarr::RegularExpression> createRegExpForLabels(const Vector<String>& labels)
+static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& labels)
 {
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
@@ -344,10 +343,10 @@ static PassOwnPtr<JSC::Yarr::RegularExpression> createRegExpForLabels(const Vect
             pattern.appendLiteral("\\b");
     }
     pattern.append(')');
-    return adoptPtr(new JSC::Yarr::RegularExpression(pattern.toString(), TextCaseInsensitive));
+    return JSC::Yarr::RegularExpression(pattern.toString(), TextCaseInsensitive);
 }
 
-String Frame::searchForLabelsAboveCell(JSC::Yarr::RegularExpression* regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
+String Frame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
 {
     HTMLTableCellElement* aboveCell = cell->cellAbove();
     if (aboveCell) {
@@ -358,11 +357,11 @@ String Frame::searchForLabelsAboveCell(JSC::Yarr::RegularExpression* regExp, HTM
                 continue;
             // For each text chunk, run the regexp
             String nodeString = textNode->data();
-            int pos = regExp->searchRev(nodeString);
+            int pos = regExp.searchRev(nodeString);
             if (pos >= 0) {
                 if (resultDistanceFromStartOfCell)
                     *resultDistanceFromStartOfCell = lengthSearched;
-                return nodeString.substring(pos, regExp->matchedLength());
+                return nodeString.substring(pos, regExp.matchedLength());
             }
             lengthSearched += nodeString.length();
         }
@@ -376,7 +375,7 @@ String Frame::searchForLabelsAboveCell(JSC::Yarr::RegularExpression* regExp, HTM
 
 String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
 {
-    OwnPtr<JSC::Yarr::RegularExpression> regExp(createRegExpForLabels(labels));
+    JSC::Yarr::RegularExpression regExp = createRegExpForLabels(labels);
     // We stop searching after we've seen this many chars
     const unsigned int charsSearchedThreshold = 500;
     // This is the absolute max we search.  We allow a little more slop than
@@ -402,7 +401,7 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
         if (n->hasTagName(tdTag) && !startingTableCell) {
             startingTableCell = toHTMLTableCellElement(n);
         } else if (n->hasTagName(trTag) && startingTableCell) {
-            String result = searchForLabelsAboveCell(regExp.get(), startingTableCell, resultDistance);
+            String result = searchForLabelsAboveCell(regExp, startingTableCell, resultDistance);
             if (!result.isEmpty()) {
                 if (resultIsInCellAbove)
                     *resultIsInCellAbove = true;
@@ -415,11 +414,11 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
             // add 100 for slop, to make it more likely that we'll search whole nodes
             if (lengthSearched + nodeString.length() > maxCharsSearched)
                 nodeString = nodeString.right(charsSearchedThreshold - lengthSearched);
-            int pos = regExp->searchRev(nodeString);
+            int pos = regExp.searchRev(nodeString);
             if (pos >= 0) {
                 if (resultDistance)
                     *resultDistance = lengthSearched;
-                return nodeString.substring(pos, regExp->matchedLength());
+                return nodeString.substring(pos, regExp.matchedLength());
             }
             lengthSearched += nodeString.length();
         }
@@ -428,7 +427,7 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
     // If we started in a cell, but bailed because we found the start of the form or the
     // previous element, we still might need to search the row above us for a label.
     if (startingTableCell && !searchedCellAbove) {
-         String result = searchForLabelsAboveCell(regExp.get(), startingTableCell, resultDistance);
+        String result = searchForLabelsAboveCell(regExp, startingTableCell, resultDistance);
         if (!result.isEmpty()) {
             if (resultIsInCellAbove)
                 *resultIsInCellAbove = true;
@@ -449,7 +448,7 @@ static String matchLabelsAgainstString(const Vector<String>& labels, const Strin
     replace(mutableStringToMatch, JSC::Yarr::RegularExpression("\\d", TextCaseSensitive), " ");
     mutableStringToMatch.replace('_', ' ');
     
-    OwnPtr<JSC::Yarr::RegularExpression> regExp(createRegExpForLabels(labels));
+    JSC::Yarr::RegularExpression regExp = createRegExpForLabels(labels);
     // Use the largest match we can find in the whole string
     int pos;
     int length;
@@ -457,9 +456,9 @@ static String matchLabelsAgainstString(const Vector<String>& labels, const Strin
     int bestLength = -1;
     int start = 0;
     do {
-        pos = regExp->match(mutableStringToMatch, start);
+        pos = regExp.match(mutableStringToMatch, start);
         if (pos != -1) {
-            length = regExp->matchedLength();
+            length = regExp.matchedLength();
             if (length >= bestLength) {
                 bestPos = pos;
                 bestLength = length;
@@ -946,12 +945,12 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
 void Frame::setTiledBackingStoreEnabled(bool enabled)
 {
     if (!enabled) {
-        m_tiledBackingStore.clear();
+        m_tiledBackingStore = nullptr;
         return;
     }
     if (m_tiledBackingStore)
         return;
-    m_tiledBackingStore = adoptPtr(new TiledBackingStore(this));
+    m_tiledBackingStore = std::make_unique<TiledBackingStore>(this);
     m_tiledBackingStore->setCommitTileUpdatesOnIdleEventLoop(true);
     if (m_view)
         m_view->setPaintsEntireContents(true);

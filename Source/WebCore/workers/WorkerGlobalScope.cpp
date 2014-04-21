@@ -109,7 +109,7 @@ WorkerGlobalScope::~WorkerGlobalScope()
 
 void WorkerGlobalScope::applyContentSecurityPolicyFromString(const String& policy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
 {
-    setContentSecurityPolicy(ContentSecurityPolicy::create(this));
+    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
     contentSecurityPolicy()->didReceiveHeader(policy, contentSecurityPolicyType);
 }
 

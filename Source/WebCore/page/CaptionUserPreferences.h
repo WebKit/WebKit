@@ -32,7 +32,6 @@
 #include "LocalizedStrings.h"
 #include "TextTrack.h"
 #include "Timer.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

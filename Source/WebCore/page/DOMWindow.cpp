@@ -102,6 +102,7 @@
 #include <algorithm>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
+#include <memory>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
@@ -152,8 +153,9 @@ public:
 private:
     virtual void fired()
     {
-        m_window->postMessageTimerFired(adoptPtr(this));
-        // This object is deleted now.
+        // This object gets deleted when std::unique_ptr falls out of scope..
+        std::unique_ptr<PostMessageTimer> timer(this);
+        m_window->postMessageTimerFired(*timer);
     }
 
     RefPtr<DOMWindow> m_window;
@@ -841,14 +843,12 @@ void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, const Mes
     timer->startOneShot(0);
 }
 
-void DOMWindow::postMessageTimerFired(PassOwnPtr<PostMessageTimer> t)
+void DOMWindow::postMessageTimerFired(PostMessageTimer& timer)
 {
-    OwnPtr<PostMessageTimer> timer(t);
-
     if (!document() || !isCurrentlyDisplayedInFrame())
         return;
 
-    dispatchMessageEventWithOriginCheck(timer->targetOrigin(), timer->event(document()), timer->stackTrace());
+    dispatchMessageEventWithOriginCheck(timer.targetOrigin(), timer.event(document()), timer.stackTrace());
 }
 
 void DOMWindow::dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, PassRefPtr<Event> event, PassRefPtr<ScriptCallStack> stackTrace)
