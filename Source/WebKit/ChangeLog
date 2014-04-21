@@ -1,3 +1,9 @@
+2014-04-20  Andreas Kling  <akling@apple.com>
+
+        Blind Windows build fix. Hope I guessed the 64-bit mangled form right.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-04-18  Philippe Normand  <pnormand@igalia.com>
 
         Remove NETWORK_INFO support
