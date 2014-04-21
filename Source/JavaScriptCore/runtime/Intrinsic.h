@@ -57,7 +57,9 @@ enum Intrinsic {
     ArrayIteratorNextGenericIntrinsic,
     
     // Debugging intrinsics
-    DFGTrue
+    DFGTrueIntrinsic,
+    OSRExitIntrinsic,
+    IsFinalTierIntrinsic
 };
 
 } // namespace JSC

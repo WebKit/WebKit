@@ -1714,8 +1714,20 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         return true;
     }
         
-    case DFGTrue: {
+    case DFGTrueIntrinsic: {
         set(VirtualRegister(resultOperand), getJSConstantForValue(jsBoolean(true)));
+        return true;
+    }
+        
+    case OSRExitIntrinsic: {
+        addToGraph(ForceOSRExit);
+        set(VirtualRegister(resultOperand), constantUndefined());
+        return true;
+    }
+        
+    case IsFinalTierIntrinsic: {
+        set(VirtualRegister(resultOperand),
+            getJSConstantForValue(jsBoolean(Options::useFTLJIT() ? isFTL(m_graph.m_plan.mode) : true)));
         return true;
     }
         

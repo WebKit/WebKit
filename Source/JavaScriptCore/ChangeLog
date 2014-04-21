@@ -1,5 +1,38 @@
 2014-04-21  Filip Pizlo  <fpizlo@apple.com>
 
+        OSR exit should know about Int52 and Double constants
+        https://bugs.webkit.org/show_bug.cgi?id=131945
+
+        Reviewed by Oliver Hunt.
+        
+        The DFG OSR exit machinery's ignorance would lead to some constants becoming
+        jsUndefined() after OSR exit.
+        
+        The FTL OSR exit machinery's ignorance just meant that we would sometimes use a
+        stackmap constant rather than baking the constant into the OSRExit data structure.
+        So, not a big deal, but worth fixing.
+        
+        Also added some helpful hacks to jsc.cpp for testing such OSR exit pathologies.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::belongsInMinifiedGraph):
+        (JSC::DFG::MinifiedNode::hasConstantNumber):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::tryToSetConstantExitArgument):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionOtherFalse):
+        (functionUndefined):
+        * runtime/Intrinsic.h:
+        * tests/stress/fold-to-double-constant-then-exit.js: Added.
+        (foo):
+        * tests/stress/fold-to-int52-constant-then-exit.js: Added.
+        (foo):
+
+2014-04-21  Filip Pizlo  <fpizlo@apple.com>
+
         Provide feedback when we encounter an unrecognied node in the FTL backend.
 
         Rubber stamped by Alexey Proskuryakov.

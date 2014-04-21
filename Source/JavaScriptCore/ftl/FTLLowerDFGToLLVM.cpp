@@ -5891,6 +5891,8 @@ private:
         
         switch (node->op()) {
         case JSConstant:
+        case Int52Constant:
+        case DoubleConstant:
         case WeakJSConstant:
             exit.m_values[index] = ExitValue::constant(m_graph.valueOfJSConstant(node));
             return true;

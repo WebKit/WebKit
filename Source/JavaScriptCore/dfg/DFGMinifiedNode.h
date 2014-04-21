@@ -40,6 +40,8 @@ inline bool belongsInMinifiedGraph(NodeType type)
 {
     switch (type) {
     case JSConstant:
+    case Int52Constant:
+    case DoubleConstant:
     case WeakJSConstant:
     case PhantomArguments:
         return true;
@@ -84,7 +86,7 @@ public:
 private:
     static bool hasConstantNumber(NodeType type)
     {
-        return type == JSConstant;
+        return type == JSConstant || type == Int52Constant || type == DoubleConstant;
     }
     static bool hasWeakConstant(NodeType type)
     {

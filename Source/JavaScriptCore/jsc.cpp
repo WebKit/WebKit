@@ -270,6 +270,8 @@ static EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState*)
 static EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState*);
 static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionOtherFalse(ExecState*); // Need a separate function to break hash-consing of native executables.
+static EncodedJSValue JSC_HOST_CALL functionUndefined(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionMakeMasquerader(ExecState*);
 
@@ -405,7 +407,9 @@ protected:
         addFunction(vm, "getElement", functionGetElement, 1);
         addFunction(vm, "setElementRoot", functionSetElementRoot, 2);
         
-        putDirectNativeFunction(vm, this, Identifier(&vm, "DFGTrue"), 0, functionFalse, DFGTrue, DontEnum | JSC::Function);
+        putDirectNativeFunction(vm, this, Identifier(&vm, "DFGTrue"), 0, functionFalse, DFGTrueIntrinsic, DontEnum | JSC::Function);
+        putDirectNativeFunction(vm, this, Identifier(&vm, "OSRExit"), 0, functionUndefined, OSRExitIntrinsic, DontEnum | JSC::Function);
+        putDirectNativeFunction(vm, this, Identifier(&vm, "isFinalTier"), 0, functionOtherFalse, IsFinalTierIntrinsic, DontEnum | JSC::Function);
         
         addFunction(vm, "effectful42", functionEffectful42, 0);
         addFunction(vm, "makeMasquerader", functionMakeMasquerader, 0);
@@ -771,6 +775,16 @@ EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)
 EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*)
 {
     return JSValue::encode(jsBoolean(false));
+}
+
+EncodedJSValue JSC_HOST_CALL functionOtherFalse(ExecState*)
+{
+    return JSValue::encode(jsBoolean(false));
+}
+
+EncodedJSValue JSC_HOST_CALL functionUndefined(ExecState*)
+{
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*)
