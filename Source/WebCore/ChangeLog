@@ -1,3 +1,17 @@
+2014-04-19  Darin Adler  <darin@apple.com>
+
+        Simple layout can get confused by coordinate overflow
+        https://bugs.webkit.org/show_bug.cgi?id=131890
+        rdar://problem/15558510
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/css/simple-layout-overflow.html
+
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRect):
+        If lastLine is smaller than firstList, just ignore it.
+
 2014-04-20  Darin Adler  <darin@apple.com>
 
         ScriptExecutionContext::stopActiveDOMObjects iterates a hash map that can change during iteration (for multiple reasons, including GC)

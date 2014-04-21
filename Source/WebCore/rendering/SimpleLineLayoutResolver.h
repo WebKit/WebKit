@@ -283,12 +283,13 @@ inline Range<RunResolver::Iterator> RunResolver::rangeForRect(const LayoutRect& 
         return Range<Iterator>(begin(), end());
 
     unsigned firstLine = lineIndexForHeight(rect.y());
-    unsigned lastLine = lineIndexForHeight(rect.maxY());
+    unsigned lastLine = std::max(firstLine, lineIndexForHeight(rect.maxY()));
 
     auto rangeBegin = begin().advanceLines(firstLine);
     if (rangeBegin == end())
         return Range<Iterator>(end(), end());
     auto rangeEnd = rangeBegin;
+    ASSERT(lastLine >= firstLine);
     rangeEnd.advanceLines(lastLine - firstLine + 1);
     return Range<Iterator>(rangeBegin, rangeEnd);
 }

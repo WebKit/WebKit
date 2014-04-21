@@ -1,3 +1,14 @@
+2014-04-19  Darin Adler  <darin@apple.com>
+
+        Simple layout can get confused by coordinate overflow
+        https://bugs.webkit.org/show_bug.cgi?id=131890
+        rdar://problem/15558510
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/simple-layout-overflow-expected.txt: Added.
+        * fast/css/simple-layout-overflow.html: Added.
+
 2014-04-19  Alexey Proskuryakov  <ap@apple.com>
 
         Crashes in HTMLFormElement::submit.
