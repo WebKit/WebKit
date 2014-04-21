@@ -10,7 +10,7 @@
 
         * rendering/SimpleLineLayoutResolver.h:
         (WebCore::SimpleLineLayout::RunResolver::rangeForRect):
-        If lastLine is smaller than firstList, just ignore it.
+        If lastLine is smaller than firstLine, just ignore it.
 
 2014-04-20  Darin Adler  <darin@apple.com>
 
