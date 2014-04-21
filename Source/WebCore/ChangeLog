@@ -1,3 +1,21 @@
+2014-04-20  Andreas Kling  <akling@apple.com>
+
+        Speed up jsStringWithCache() through WeakGCMap inlining.
+        <https://webkit.org/b/131923>
+
+        Inline the common path of WeakGCMap::add() in jsStringWithCache().
+        26% progression on Bindings/id-getter.html
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringWithCache):
+
+            Move jsStringWithCache() out of line since we're now blowing up
+            its size quite a bit.
+
 2014-04-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the build after r167574

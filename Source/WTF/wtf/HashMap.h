@@ -114,6 +114,10 @@ public:
     template<typename V> AddResult add(const KeyType&, V&&);
     template<typename V> AddResult add(KeyType&&, V&&);
 
+    // Same as add(), but aggressively inlined.
+    template<typename V> AddResult fastAdd(const KeyType&, V&&);
+    template<typename V> AddResult fastAdd(KeyType&&, V&&);
+
     bool remove(const KeyType&);
     bool remove(iterator);
     void clear();
@@ -276,7 +280,7 @@ auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::inlineS
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
 template<typename K, typename V>
-auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::inlineAdd(K&& key, V&& value) -> AddResult
+ALWAYS_INLINE auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::inlineAdd(K&& key, V&& value) -> AddResult
 {
     return m_impl.template add<HashMapTranslator<KeyValuePairTraits, HashFunctions>>(std::forward<K>(key), std::forward<V>(value));
 }
@@ -312,6 +316,20 @@ auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::add(con
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
 template<typename T>
 auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::add(KeyType&& key, T&& mapped) -> AddResult
+{
+    return inlineAdd(std::move(key), std::forward<T>(mapped));
+}
+
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
+template<typename T>
+ALWAYS_INLINE auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::fastAdd(const KeyType& key, T&& mapped) -> AddResult
+{
+    return inlineAdd(key, std::forward<T>(mapped));
+}
+
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
+template<typename T>
+ALWAYS_INLINE auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::fastAdd(KeyType&& key, T&& mapped) -> AddResult
 {
     return inlineAdd(std::move(key), std::forward<T>(mapped));
 }

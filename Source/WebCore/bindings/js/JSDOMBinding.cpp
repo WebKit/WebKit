@@ -63,6 +63,27 @@ const JSC::HashTable& getHashTableForGlobalData(VM& vm, const JSC::HashTable& st
     return DOMObjectHashTableMap::mapFor(vm).get(staticTable);
 }
 
+JSC::JSValue jsStringWithCache(JSC::ExecState* exec, const String& s)
+{
+    StringImpl* stringImpl = s.impl();
+    if (!stringImpl || !stringImpl->length())
+        return jsEmptyString(exec);
+
+    if (stringImpl->length() == 1) {
+        UChar singleCharacter = (*stringImpl)[0u];
+        if (singleCharacter <= JSC::maxSingleCharacterString) {
+            JSC::VM* vm = &exec->vm();
+            return vm->smallStrings.singleCharacterString(static_cast<unsigned char>(singleCharacter));
+        }
+    }
+
+    JSStringCache& stringCache = currentWorld(exec).m_stringCache;
+    JSStringCache::AddResult addResult = stringCache.add(stringImpl, nullptr);
+    if (addResult.isNewEntry)
+        addResult.iterator->value = JSC::jsString(exec, String(stringImpl));
+    return JSC::JSValue(addResult.iterator->value.get());
+}
+
 JSValue jsStringOrNull(ExecState* exec, const String& s)
 {
     if (s.isNull())

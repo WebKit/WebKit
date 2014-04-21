@@ -783,7 +783,7 @@ namespace WTF {
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename HashTranslator, typename T, typename Extra>
-    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::add(T&& key, Extra&& extra) -> AddResult
+    ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::add(T&& key, Extra&& extra) -> AddResult
     {
         checkKey<HashTranslator>(key);
 

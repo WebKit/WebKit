@@ -1,3 +1,16 @@
+2014-04-20  Andreas Kling  <akling@apple.com>
+
+        Speed up jsStringWithCache() through WeakGCMap inlining.
+        <https://webkit.org/b/131923>
+
+        Add HashMap::fastAdd(), which is the same as add() except we'll tell
+        the compiler to aggressively inline it.
+
+        Reviewed by Darin Adler.
+
+        * wtf/HashMap.h:
+        * wtf/HashTable.h:
+
 2014-04-19  Filip Pizlo  <fpizlo@apple.com>
 
         Make it easier to check if an integer sum would overflow

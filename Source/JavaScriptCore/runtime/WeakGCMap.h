@@ -62,10 +62,10 @@ public:
         return m_map.set(key, std::move(value));
     }
 
-    AddResult add(const KeyType& key, ValueType value)
+    ALWAYS_INLINE AddResult add(const KeyType& key, ValueType value)
     {
         gcMapIfNeeded();
-        AddResult addResult = m_map.add(key, nullptr);
+        AddResult addResult = m_map.fastAdd(key, nullptr);
         if (!addResult.iterator->value) { // New value or found a zombie value.
             addResult.isNewEntry = true;
             addResult.iterator->value = std::move(value);
@@ -105,7 +105,7 @@ public:
 private:
     static const int minGCThreshold = 3;
 
-    void gcMap()
+    NEVER_INLINE void gcMap()
     {
         Vector<KeyType, 4> zombies;
 

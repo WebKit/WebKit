@@ -559,27 +559,6 @@ bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, String& message);
 void printErrorMessageForFrame(Frame*, const String& message);
 JSC::EncodedJSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-inline JSC::JSValue jsStringWithCache(JSC::ExecState* exec, const String& s)
-{
-    StringImpl* stringImpl = s.impl();
-    if (!stringImpl || !stringImpl->length())
-        return jsEmptyString(exec);
-
-    if (stringImpl->length() == 1) {
-        UChar singleCharacter = (*stringImpl)[0u];
-        if (singleCharacter <= JSC::maxSingleCharacterString) {
-            JSC::VM* vm = &exec->vm();
-            return vm->smallStrings.singleCharacterString(static_cast<unsigned char>(singleCharacter));
-        }
-    }
-
-    JSStringCache& stringCache = currentWorld(exec).m_stringCache;
-    JSStringCache::AddResult addResult = stringCache.add(stringImpl, nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = JSC::jsString(exec, String(stringImpl));
-    return JSC::JSValue(addResult.iterator->value.get());
-}
-
 inline String propertyNameToString(JSC::PropertyName propertyName)
 {
     return propertyName.publicName();

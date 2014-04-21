@@ -1,3 +1,17 @@
+2014-04-20  Andreas Kling  <akling@apple.com>
+
+        Speed up jsStringWithCache() through WeakGCMap inlining.
+        <https://webkit.org/b/131923>
+
+        Always inline WeakGCMap::add() but move the slow garbage collecting
+        path out-of-line.
+
+        Reviewed by Darin Adler.
+
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::add):
+        (JSC::WeakGCMap::gcMap):
+
 2014-04-20  László Langó  <llango.u-szeged@partner.samsung.com>
 
         JavaScriptCore: ARM build fix after r167094.
