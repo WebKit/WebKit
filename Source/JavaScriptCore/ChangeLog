@@ -1,3 +1,12 @@
+2014-04-21  Andreas Kling  <akling@apple.com>
+
+        Move the JSString cache from DOMWrapperWorld to VM.
+        <https://webkit.org/b/131940>
+
+        Reviewed by Geoff Garen.
+
+        * runtime/VM.h:
+
 2014-04-19  Filip Pizlo  <fpizlo@apple.com>
 
         Take block execution count estimates into account when voting double

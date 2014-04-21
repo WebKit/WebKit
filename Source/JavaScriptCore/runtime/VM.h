@@ -295,6 +295,7 @@ namespace JSC {
         NumericStrings numericStrings;
         DateInstanceCache dateInstanceCache;
         WTF::SimpleStats machineCodeBytesPerBytecodeWordForBaselineJIT;
+        WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> stringCache;
 
         AtomicStringTable* atomicStringTable() const { return m_atomicStringTable; }
 

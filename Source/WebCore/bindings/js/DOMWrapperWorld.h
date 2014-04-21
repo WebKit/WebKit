@@ -23,7 +23,6 @@
 #define DOMWrapperWorld_h
 
 #include "JSDOMGlobalObject.h"
-#include <runtime/WeakGCMap.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -33,7 +32,6 @@ class JSDOMWrapper;
 class ScriptController;
 
 typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
-typedef JSC::WeakGCMap<StringImpl*, JSC::JSString, PtrHash<StringImpl*>> JSStringCache;
 
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
 public:
@@ -51,7 +49,6 @@ public:
 
     // FIXME: can we make this private?
     DOMObjectWrapperMap m_wrappers;
-    JSStringCache m_stringCache;
     HashMap<CSSValue*, void*> m_cssValueRoots;
 
     bool isNormal() const { return m_isNormal; }

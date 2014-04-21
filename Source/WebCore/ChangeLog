@@ -1,3 +1,21 @@
+2014-04-21  Andreas Kling  <akling@apple.com>
+
+        Move the JSString cache from DOMWrapperWorld to VM.
+        <https://webkit.org/b/131940>
+
+        Since there's no need for JSStrings to be world-specific, this patch
+        moves the string cache to JSC::VM. This makes jsStringWithCache()
+        a lot faster since it no longer has to jump through twenty-eleven
+        hoops to find the DOMWrapperWorld.
+
+        Reviewed by Geoff Garen.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::clearWrappers):
+        * bindings/js/DOMWrapperWorld.h:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringWithCache):
+
 2014-04-21  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Column balancing is slow on float-multicol.html
