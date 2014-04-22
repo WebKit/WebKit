@@ -1,3 +1,23 @@
+2014-04-22  Andreas Kling  <akling@apple.com>
+
+        REGRESSION (r151839): Subframe keeps getting mousemove events with the same coordinates after hiding a hovered element.
+        <https://webkit.org/b/131974>
+        <rdar://problem/15907469>
+
+        Add a test that triggers the weirdness where removing the renderer from
+        a hovered element in a subframe would leave the subframe's EventHandler
+        in a state where it could dispatch fake mousemove events with stale
+        coordinates in response to style recalc.
+
+        Note that the final 500ms delay is because fake mousemove events are
+        sent on 250ms delay timers so we need to give it some time to catch up.
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/events/ghostly-mousemoves-in-subframe-expected.txt: Added.
+        * fast/events/ghostly-mousemoves-in-subframe.html: Added.
+        * platform/mac-wk2/fast/events/resources/ghostly-mousemoves-in-subframe-the-actual-subframe.html: Added.
+
 2014-04-22  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION: JSRegress's js/slow-stress/new-spread.html fails sometimes

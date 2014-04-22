@@ -1,3 +1,32 @@
+2014-04-22  Andreas Kling  <akling@apple.com>
+
+        REGRESSION (r151839): Subframe keeps getting mousemove events with the same coordinates after hiding a hovered element.
+        <https://webkit.org/b/131974>
+        <rdar://problem/15907469>
+
+        When the currently hovered element disappears as a result of style recalc,
+        we send a fake mousemove event to the page, to see if anything newly added
+        should become hovered.
+
+        The faking mechanism lives in EventHandler and simply synthesizes a new
+        mousemove event using the last seen mouse location.
+
+        The problem here is that we were sending this fake mousemove event to the
+        subframe where the hovered element lived. Since subframes aren't kept up
+        to date on recent mouse locations, this could cause some strange behavior
+        where a subframe would dispatch mousemove events with stale coordinates.
+
+        The solution is to always dispatch fake mousemove events from the main
+        frame's event handler. This is how real event delivery happens, and hit
+        testing will then find the appropriate subframe, if any.
+
+        Reviewed by Benjamin Poulain.
+
+        Test: fast/events/ghostly-mousemoves-in-subframe.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+
 2014-04-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Glyph spacing for system fonts may be incorrect

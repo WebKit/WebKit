@@ -1794,7 +1794,7 @@ void Document::recalcStyle(Style::Change change)
     // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
     // to check if any other elements ended up under the mouse pointer due to re-layout.
     if (m_hoveredElement && !m_hoveredElement->renderer())
-        frameView.frame().eventHandler().dispatchFakeMouseMoveEventSoon();
+        frameView.frame().mainFrame().eventHandler().dispatchFakeMouseMoveEventSoon();
 
     // Style change may reset the focus, e.g. display: none, visibility: hidden.
     resetHiddenFocusElementSoon();
