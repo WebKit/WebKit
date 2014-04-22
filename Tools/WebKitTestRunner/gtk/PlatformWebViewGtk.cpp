@@ -28,6 +28,7 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
+#include <WebKit2/WKImageCairo.h>
 #include <WebKit2/WKViewPrivate.h>
 #include <gtk/gtk.h>
 
@@ -120,9 +121,22 @@ void PlatformWebView::changeWindowScaleIfNeeded(float)
 
 WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
-    // FIXME: implement to capture pixels in the UI process,
-    // which may be necessary to capture things like 3D transforms.
-    return 0;
+    int width = gtk_widget_get_allocated_width(GTK_WIDGET(m_view));
+    int height = gtk_widget_get_allocated_height(GTK_WIDGET(m_view));
+
+    while (gtk_events_pending())
+        gtk_main_iteration();
+
+    cairo_surface_t* imageSurface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
+
+    cairo_t* context = cairo_create(imageSurface);
+    gtk_widget_draw(GTK_WIDGET(m_view), context);
+    cairo_destroy(context);
+
+    WKRetainPtr<WKImageRef> wkImage = adoptWK(WKImageCreateFromCairoSurface(imageSurface, 0 /* options */));
+
+    cairo_surface_destroy(imageSurface);
+    return wkImage;
 }
 
 void PlatformWebView::didInitializeClients()

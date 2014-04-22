@@ -1,3 +1,16 @@
+2014-04-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Should have the ability to output composited contents during layout testing
+        https://bugs.webkit.org/show_bug.cgi?id=131864
+
+        Reviewed by Philippe Normand.
+
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected): Add a path that paints the widget contents
+        to an image surface. We run the main loop a bit to match the implementation from WebKit1 and EFL.
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::windowSnapshotImage): Use the new UI-process path on GTK+.
+
 2014-04-21  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix the tests.
