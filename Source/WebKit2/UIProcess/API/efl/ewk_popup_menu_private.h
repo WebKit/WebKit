@@ -27,7 +27,7 @@
 #ifndef ewk_popup_menu_private_h
 #define ewk_popup_menu_private_h
 
-#include <Eina.h>
+#include "EflTypedefs.h"
 #include <WebKit2/WKBase.h>
 
 class EwkView;

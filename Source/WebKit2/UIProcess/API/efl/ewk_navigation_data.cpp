@@ -27,6 +27,7 @@
 #include "ewk_navigation_data.h"
 
 #include "ewk_navigation_data_private.h"
+#include "ewk_url_request_private.h"
 
 using namespace WebKit;
 

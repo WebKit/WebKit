@@ -27,7 +27,6 @@
 #define ewk_form_submission_request_private_h
 
 #include "WKDictionary.h"
-#include "WKEinaSharedString.h"
 #include "WKFormSubmissionListener.h"
 #include "WKRetainPtr.h"
 #include "ewk_object_private.h"

@@ -28,11 +28,9 @@
 #define GestureRecognizer_h
 
 #if ENABLE(TOUCH_EVENTS)
-
-#include <Ecore.h>
+#include "EflTypedefs.h"
 #include <WebCore/IntPoint.h>
 #include <WebKit2/WKEventEfl.h>
-#include <wtf/Vector.h>
 
 class EwkView;
 

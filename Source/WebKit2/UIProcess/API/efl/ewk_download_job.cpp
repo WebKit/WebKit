@@ -30,6 +30,7 @@
 #include "WKRetainPtr.h"
 #include "WKURLRequest.h"
 #include "ewk_download_job_private.h"
+#include "ewk_url_request_private.h"
 #include "ewk_url_response_private.h"
 #include <Ecore.h>
 

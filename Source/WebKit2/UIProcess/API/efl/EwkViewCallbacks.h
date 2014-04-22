@@ -27,7 +27,6 @@
 #define EwkViewCallbacks_h
 
 #include "WKEinaSharedString.h"
-#include "ewk_private.h"
 #include "ewk_view.h"
 #include <Evas.h>
 #include <WebKit2/WKGeometry.h>

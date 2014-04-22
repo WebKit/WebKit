@@ -33,6 +33,7 @@
 #include "WKPageEfl.h"
 #include "WKString.h"
 #include "ewk_file_chooser_request_private.h"
+#include "ewk_url_request_private.h"
 #include "ewk_window_features_private.h"
 #include <Ecore_Evas.h>
 

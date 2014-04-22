@@ -1,3 +1,32 @@
+2014-04-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Remove unnecessary includes in files of Source/WebKit2/UIProcess/API/efl
+        https://bugs.webkit.org/show_bug.cgi?id=131979
+
+        Reviewed by Gyuyoung Kim.
+
+        Removed unnecessary includes of header files.
+        In addition, tried to use forward declarations.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/API/efl/GestureRecognizer.h:
+        * UIProcess/API/efl/ewk_context_menu_item_private.h:
+        * UIProcess/API/efl/ewk_context_menu_private.h:
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        * UIProcess/API/efl/ewk_form_submission_request.cpp:
+        * UIProcess/API/efl/ewk_form_submission_request_private.h:
+        * UIProcess/API/efl/ewk_navigation_data.cpp:
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+        * UIProcess/API/efl/ewk_page_group_private.h:
+        * UIProcess/API/efl/ewk_popup_menu_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        * UIProcess/API/efl/ewk_window_features_private.h:
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        * UIProcess/efl/ViewClientEfl.cpp:
+
 2014-04-21  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Don't send intrinsic content size updates with dirty layout

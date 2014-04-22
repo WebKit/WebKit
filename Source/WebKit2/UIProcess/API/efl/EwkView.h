@@ -21,30 +21,18 @@
 #ifndef EwkView_h
 #define EwkView_h
 
-#include "EvasGLContext.h"
-#include "EvasGLSurface.h"
+#include "EflTypedefs.h"
 #include "EwkViewCallbacks.h"
-#include "ImmutableDictionary.h"
 #include "PageViewportController.h"
 #include "PageViewportControllerClientEfl.h"
 #include "RefPtrEfl.h"
 #include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
-#include "WebContext.h"
-#include "WebPageGroup.h"
-#include "WebPreferences.h"
 #include "WebViewEfl.h"
-#include "ewk_url_request_private.h"
-#include <Evas.h>
-#include <WebCore/FloatPoint.h>
-#include <WebCore/IntRect.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/TextDirection.h>
 #include <WebCore/Timer.h>
 #include <WebKit2/WKBase.h>
-#include <wtf/HashMap.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "GestureRecognizer.h"
@@ -75,6 +63,8 @@ class AffineTransform;
 class Color;
 class CoordinatedGraphicsScene;
 class Cursor;
+class EvasGLContext;
+class EvasGLSurface;
 class Image;
 class IntSize;
 class TransformationMatrix;
@@ -87,6 +77,7 @@ class EwkContextMenu;
 class EwkPageGroup;
 class EwkPopupMenu;
 class EwkSettings;
+class EwkUrlRequest;
 class EwkWindowFeatures;
 
 typedef struct Ewk_View_Smart_Data Ewk_View_Smart_Data;

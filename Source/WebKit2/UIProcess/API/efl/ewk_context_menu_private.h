@@ -26,9 +26,9 @@
 #ifndef ewk_context_menu_private_h
 #define ewk_context_menu_private_h
 
+#include "EflTypedefs.h"
 #include "ewk_context_menu_item.h"
 #include "ewk_object_private.h"
-#include <Eina.h>
 #include <wtf/PassRefPtr.h>
 
 class EwkView;

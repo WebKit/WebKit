@@ -23,13 +23,14 @@
 
 #include "ContextMenuClientEfl.h"
 #include "EflScreenUtilities.h"
+#include "EvasGLContext.h"
+#include "EvasGLSurface.h"
 #include "FindClientEfl.h"
 #include "FormClientEfl.h"
 #include "InputMethodContextEfl.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
-#include "NotImplemented.h"
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
@@ -72,7 +73,6 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextCairo.h>
 #include <WebKit2/WKImageCairo.h>
-#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 

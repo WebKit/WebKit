@@ -29,6 +29,7 @@
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKBase.h"
+#include "WKEinaSharedString.h"
 #include "WKString.h"
 #include "ewk_form_submission_request_private.h"
 

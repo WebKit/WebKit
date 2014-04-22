@@ -26,6 +26,7 @@
 #ifndef ewk_download_job_private_h
 #define ewk_download_job_private_h
 
+#include "EflTypedefs.h"
 #include "WKBase.h"
 #include "WKDownload.h"
 #include "WKEinaSharedString.h"
@@ -33,7 +34,6 @@
 #include "ewk_download_job.h"
 #include "ewk_url_request_private.h"
 #include "ewk_url_response_private.h"
-#include <Evas.h>
 #include <wtf/PassRefPtr.h>
 
 class EwkView;

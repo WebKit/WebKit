@@ -28,11 +28,11 @@
 
 #include "WKContextMenuItem.h"
 #include "WKEinaSharedString.h"
-#include "ewk_context_menu.h"
 #include "ewk_context_menu_item.h"
-#include "ewk_context_menu_private.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+
+class EwkContextMenu;
 
 /**
  * \struct  Ewk_Context_Menu_Item
