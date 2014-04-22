@@ -52,7 +52,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/animation"
     "${WEBCORE_DIR}/page/scrolling"
-    "${WEBCORE_DIR}/page/scrolling/coordinatedgraphics"
     "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/animation"
     "${WEBCORE_DIR}/platform/audio"
@@ -65,7 +64,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/texmap"
-    "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     "${WEBCORE_DIR}/platform/graphics/transforms"
     "${WEBCORE_DIR}/platform/image-decoders"
     "${WEBCORE_DIR}/platform/image-decoders/bmp"
@@ -1937,10 +1935,6 @@ set(WebCore_SOURCES
     page/scrolling/ScrollingStateStickyNode.cpp
     page/scrolling/ScrollingStateTree.cpp
 
-    page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
-    page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
-    page/scrolling/coordinatedgraphics/ScrollingStateScrollingNodeCoordinatedGraphics.cpp
-
     platform/CalculationValue.cpp
     platform/Clock.cpp
     platform/ClockGeneric.cpp
@@ -2123,16 +2117,6 @@ set(WebCore_SOURCES
     platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp
     platform/graphics/texmap/TextureMapperTile.cpp
     platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
-
-    platform/graphics/texmap/coordinated/AreaAllocator.cpp
-    platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
-    platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
-    platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
-    platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp
-    platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp
-    platform/graphics/texmap/coordinated/CoordinatedSurface.cpp
-    platform/graphics/texmap/coordinated/CoordinatedTile.cpp
-    platform/graphics/texmap/coordinated/UpdateAtlas.cpp
 
     platform/graphics/transforms/AffineTransform.cpp
     platform/graphics/transforms/Matrix3DTransformOperation.cpp

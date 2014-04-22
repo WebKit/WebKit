@@ -1,3 +1,15 @@
+2014-04-21  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Move CoordinatedGraphics related codes out of CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=131931
+
+        Reviewed by Gyuyoung Kim.
+
+        Move CoordinatedGraphics related files to PlatformEfl.cmake because they are not common files.
+
+        * CMakeLists.txt: 
+        * PlatformEfl.cmake:
+
 2014-04-21  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] AVSampleBufferDisplayLayer and AudioRenderer is overretained.
