@@ -663,7 +663,7 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
 {
     LayoutRect selRect = subtreeSelectionBounds(*this, clipToVisibleContent);
 
-    if (m_flowThreadController) {
+    if (hasRenderNamedFlowThreads()) {
         for (auto* namedFlowThread : *m_flowThreadController->renderNamedFlowThreadList()) {
             LayoutRect currRect = subtreeSelectionBounds(*namedFlowThread, clipToVisibleContent);
             selRect.unite(currRect);
@@ -717,7 +717,7 @@ void RenderView::repaintSelection() const
 {
     repaintSubtreeSelection(*this);
 
-    if (m_flowThreadController) {
+    if (hasRenderNamedFlowThreads()) {
         for (auto* namedFlowThread : *m_flowThreadController->renderNamedFlowThreadList())
             repaintSubtreeSelection(*namedFlowThread);
     }
