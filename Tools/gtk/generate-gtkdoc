@@ -19,6 +19,7 @@ from __future__ import print_function
 from ConfigParser import SafeConfigParser
 
 import argparse
+import codecs
 import common
 import glob
 import gtkdoc
@@ -26,6 +27,9 @@ import logging
 import os.path
 import sys
 import webkitdom
+
+sys.stdout = codecs.getwriter("utf-8")(sys.stdout)
+sys.stderr = codecs.getwriter("utf-8")(sys.stderr)
 
 def configure_logging(verbose):
     level = logging.DEBUG if verbose else logging.INFO
