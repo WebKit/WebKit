@@ -106,6 +106,10 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     if ([view _isUsingAcceleratedCompositing])
         onscreen = YES;
 
+    // If the window is layer-backed, its backing store will be empty, so we have to use a window server snapshot.
+    if ([view.window.contentView layer])
+        onscreen = YES;
+
     float deviceScaleFactor = [view _backingScaleFactor];
     NSSize webViewSize = [view frame].size;
     size_t pixelsWide = static_cast<size_t>(webViewSize.width * deviceScaleFactor);

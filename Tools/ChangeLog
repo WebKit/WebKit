@@ -1,5 +1,22 @@
 2014-04-22  Tim Horton  <timothy_horton@apple.com>
 
+        DumpRenderTree generates black snapshots on some platforms
+        https://bugs.webkit.org/show_bug.cgi?id=132029
+        <rdar://problem/16679363>
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+        DRT checks with the WebView to determine whether it can use the window's
+        backing store directly or (because of compositing) needs to take a WindowServer
+        snapshot. However, on some platforms and in some situations, the window can
+        be layer backed without the WebView necessarily currently being composited.
+        We should check with the window in addition to the WebView before going
+        ahead and using its backing store.
+
+2014-04-22  Tim Horton  <timothy_horton@apple.com>
+
         DumpRenderTree generates white snapshots on some platforms
         https://bugs.webkit.org/show_bug.cgi?id=132026
         <rdar://problem/16679363>
