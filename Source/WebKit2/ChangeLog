@@ -1,3 +1,31 @@
+2014-04-22  Tim Horton  <timothy_horton@apple.com>
+
+        WKThumbnailView doesn't quite work with topContentInset
+        https://bugs.webkit.org/show_bug.cgi?id=131976
+        <rdar://problem/16642127>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView initWithFrame:fromWKView:]):
+        _WKThumbnailView always needs a layer.
+        We don't want to use snapshots by default, this was debugging accidentally landed in the last change.
+
+        (-[_WKThumbnailView _requestSnapshotIfNeeded]):
+        Don't request a new snapshot if the scale is the same as the existing one.
+        Reduce the height of the snapshot by the topContentInset.
+        Having the origin at (0, 0) is still correct, as the inset content is in negative Y space,
+        and (0, 0) is the true origin of the content.
+
+        (-[_WKThumbnailView setScale:]):
+        When not snapshotting, we've decided that WKThumbnailView should apply the scale to the WKView layer tree,
+        instead of depending on clients to do so.
+
+        (-[_WKThumbnailView setUsesSnapshot:]):
+        We *do* need to apply thumbnail scale in the web process even when snapshotting,
+        because we use the live layer tree temporarily while waiting for the asynchronous
+        snapshot to return. This was a misstep in the last thumbnail view patch.
+
 2014-04-22  Shivakumar JM  <shiva.jm@samsung.com>
 
         [WebKit2] Cleanup the build from unused parameter in WebProcess Module 

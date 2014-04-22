@@ -55,6 +55,7 @@ using namespace WebKit;
     BOOL _shouldApplyThumbnailScale;
 
     BOOL _snapshotWasDeferred;
+    double _lastSnapshotScale;
 }
 
 @synthesize _waitingForSnapshot = _waitingForSnapshot;
@@ -64,16 +65,17 @@ using namespace WebKit;
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
+    self.wantsLayer = YES;
+
     _wkView = wkView;
     _webPageProxy = toImpl([_wkView pageRef]);
     _scale = 1;
+    _lastSnapshotScale = NAN;
 
     _originalMayStartMediaWhenInWindow = _webPageProxy->mayStartMediaWhenInWindow();
     _originalSourceViewIsInWindow = !![_wkView window];
 
     _shouldApplyThumbnailScale = !_originalSourceViewIsInWindow;
-
-    self.usesSnapshot = YES;
 
     return self;
 }
@@ -86,6 +88,7 @@ using namespace WebKit;
     [_wkView _setThumbnailView:nil];
 
     self.layer.contents = nil;
+    _lastSnapshotScale = NAN;
 
     _webPageProxy->setMayStartMediaWhenInWindow(_originalMayStartMediaWhenInWindow);
 }
@@ -110,6 +113,9 @@ using namespace WebKit;
     if (!_usesSnapshot)
         return;
 
+    if (self.layer.contents && _lastSnapshotScale == _scale)
+        return;
+
     if (_waitingForSnapshot) {
         _snapshotWasDeferred = YES;
         return;
@@ -118,10 +124,11 @@ using namespace WebKit;
     _waitingForSnapshot = YES;
 
     RetainPtr<_WKThumbnailView> thumbnailView = self;
-    IntRect snapshotRect(IntPoint(), _webPageProxy->viewSize());
+    IntRect snapshotRect(IntPoint(), _webPageProxy->viewSize() - IntSize(0, _webPageProxy->topContentInset()));
     SnapshotOptions options = SnapshotOptionsRespectDrawingAreaTransform | SnapshotOptionsInViewCoordinates;
     IntSize bitmapSize = snapshotRect.size();
     bitmapSize.scale(_scale * _webPageProxy->deviceScaleFactor());
+    _lastSnapshotScale = _scale;
     _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](bool, const ShareableBitmap::Handle& imageHandle) {
         RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageHandle, SharedMemory::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();
@@ -163,6 +170,8 @@ using namespace WebKit;
 
     if (_usesSnapshot)
         [self _requestSnapshotIfNeeded];
+
+    self.layer.sublayerTransform = CATransform3DMakeScale(_scale, _scale, 1);
 }
 
 - (void)setUsesSnapshot:(BOOL)usesSnapshot
@@ -171,7 +180,6 @@ using namespace WebKit;
         return;
 
     _usesSnapshot = usesSnapshot;
-    _shouldApplyThumbnailScale = _usesSnapshot ? false : !_originalSourceViewIsInWindow;
 
     if (!self.window)
         return;
