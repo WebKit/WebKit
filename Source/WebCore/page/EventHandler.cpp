@@ -1373,6 +1373,17 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
         }
     }
 
+    // During selection, use an I-beam regardless of the content beneath the cursor.
+    // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
+    if (m_mousePressed
+        && m_mouseDownMayStartSelect
+#if ENABLE(DRAG_SUPPORT)
+        && !m_mouseDownMayStartDrag
+#endif
+        && m_frame.selection().isCaretOrRange()
+        && !m_capturingMouseEventsElement)
+        return iBeam;
+
     switch (style ? style->cursor() : CURSOR_AUTO) {
     case CURSOR_AUTO: {
         bool editable = node->hasEditableStyle();
@@ -1386,17 +1397,6 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
                 if (FrameView* view = m_frame.view())
                     inResizer = layer->isPointInResizeControl(view->windowToContents(roundedIntPoint(result.localPoint())));
             }
-        }
-
-        // During selection, use an I-beam regardless of the content beneath the cursor when cursor style is not explicitly specified.
-        // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
-        if (m_mousePressed && m_mouseDownMayStartSelect
-#if ENABLE(DRAG_SUPPORT)
-            && !m_mouseDownMayStartDrag
-#endif
-            && m_frame.selection().isCaretOrRange()
-            && !m_capturingMouseEventsElement) {
-            return iBeam;
         }
 
         if ((editable || (renderer && renderer->isText() && node->canStartSelection())) && !inResizer && !result.scrollbar())

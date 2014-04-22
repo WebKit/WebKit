@@ -1,3 +1,10 @@
+2014-04-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rollout r156635 since the old behavior was intentional.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+
 2014-04-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167674.

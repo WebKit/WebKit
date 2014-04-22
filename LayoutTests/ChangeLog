@@ -1,3 +1,10 @@
+2014-04-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rollout r156635 since the old behavior was intentional.
+
+        * editing/caret/selection-with-caret-type-progress-expected.txt: Removed.
+        * editing/caret/selection-with-caret-type-progress.html: Removed.
+
 2014-04-22  Andreas Kling  <akling@apple.com>
 
         REGRESSION (r151839): Subframe keeps getting mousemove events with the same coordinates after hiding a hovered element.
