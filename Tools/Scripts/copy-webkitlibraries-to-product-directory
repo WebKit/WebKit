@@ -38,7 +38,8 @@ my $llvmLibraryPackage = "";
 my $useFullLibPaths = 0;
 my $preferSystemLLVMOverDrops = 0;
 my $llvmSubdirectoryName = "llvm";
-my $sdkName = "";
+my $llvmPrefix = "/usr/local/LLVMForJavaScriptCore";
+my $sdkName = ""; # Ideally we only use this for build commands, rather than deciding policies about what needs to get copied or built and where it needs to be placed.
 my $force = 0;
 
 my $programName = basename($0);
@@ -52,6 +53,7 @@ Usage: $programName [options]
   --[no-]use-full-lib-paths     Toggle using full library paths
   --[no-]prefer-system-llvm     Toggle preferring the system LLVM over the binary drops (default: $preferSystemLLVMOverDrops)
   --llvm-subdirectory=<name>    Set the name of the LLVM subdirectory to search for (default: $llvmSubdirectoryName)
+  --llvm-prefix=<path>          Set the prefix into which LLVM is installed (default: $llvmPrefix)
   --sdk-name=<name>             Set the name of the Xcode SDK to use.
   --[no-]force                  Toggle forcing the copy - i.e. ignoring timestamps (default: $force)
 EOF
@@ -65,6 +67,7 @@ GetOptions(
     'use-full-lib-paths!' => \$useFullLibPaths,
     'prefer-system-llvm!' => \$preferSystemLLVMOverDrops,
     'llvm-subdirectory=s' => \$llvmSubdirectoryName,
+    'llvm-prefix=s' => \$llvmPrefix,
     'sdk-name=s' => \$sdkName,
     'force!' => \$force
 );
@@ -142,9 +145,9 @@ if ($wksi) {
 }
 
 if ($llvm) {
-    (system("mkdir", "-p", "$productDir/usr/local/LLVMForJavaScriptCore/include") == 0) or die;
+    (system("mkdir", "-p", "$productDir$llvmPrefix/include") == 0) or die;
 
-    my $libraryDir = $useFullLibPaths ? "$productDir/usr/local/LLVMForJavaScriptCore/lib" : $productDir;
+    my $libraryDir = $useFullLibPaths ? "$productDir$llvmPrefix/lib" : $productDir;
     (system("mkdir", "-p", $libraryDir) == 0) or die;
 
     # Determine where to get LLVM binaries and headers.
@@ -278,13 +281,13 @@ if ($llvm) {
 
     (system("rm", "-f", "$productDir/ExtraIncludesForLocalLLVMBuild") == 0) or die;
     if ($useOwnLLVM) {
-        (system("rm", "-rf", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm") == 0) or die;
-        (system("rm", "-rf", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c") == 0) or die;
-        symlink("$ownLLVMDirectory/include/llvm", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm") or die;
-        symlink("$ownLLVMDirectory/include/llvm-c", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c") or die;
+        (system("rm", "-rf", "$productDir$llvmPrefix/include/llvm") == 0) or die;
+        (system("rm", "-rf", "$productDir$llvmPrefix/include/llvm-c") == 0) or die;
+        symlink("$ownLLVMDirectory/include/llvm", "$productDir$llvmPrefix/include/llvm") or die;
+        symlink("$ownLLVMDirectory/include/llvm-c", "$productDir$llvmPrefix/include/llvm-c") or die;
         symlink("$ownLLVMDirectory/wkLLVMBuild/include", "$productDir/ExtraIncludesForLocalLLVMBuild") or die;
     } elsif (!$preferSystemLLVMOverDrops) {
-        unpackIfNecessary("$productDir/usr/local/LLVMForJavaScriptCore/include", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c/Core.h", $llvmIncludePackage, 0);
+        unpackIfNecessary("$productDir$llvmPrefix/include", "$productDir$llvmPrefix/include/llvm-c/Core.h", $llvmIncludePackage, 0);
     }
 
     if ($shouldUpdateLLVMLibraryToken) {
