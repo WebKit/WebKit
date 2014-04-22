@@ -1,3 +1,16 @@
+2014-04-22  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Remove duplicated code to set size to the DrawingArea.
+        https://bugs.webkit.org/show_bug.cgi?id=131972
+
+        Reviewed by Andreas Kling.
+
+        DrawingArea's size is set in the WebView.cpp when EwkView's size is
+        changed, so we don't have to set again in the PageViewportController.
+
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        (WebKit::PageViewportController::didChangeViewportSize):
+
 2014-04-22  Tim Horton  <timothy_horton@apple.com>
 
         WKThumbnailView doesn't quite work with topContentInset
