@@ -47,6 +47,12 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
 
+#if defined(__has_include) && __has_include(<CoreText/CTFontDescriptorPriv.h>)
+#import <CoreText/CTFontDescriptorPriv.h>
+#endif
+
+extern "C" bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
+
 #if !PLATFORM(IOS)
 @interface NSFont (WebAppKitSecretAPI)
 - (BOOL)_isFakeFixedPitch;
@@ -359,11 +365,23 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
     return boundingBox;
 }
 
+static bool hasCustomTracking(CTFontRef font)
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+    UNUSED_PARAM(font);
+    return false;
+#else
+    RetainPtr<CTFontDescriptorRef> descriptor = CTFontCopyFontDescriptor(font);
+    return CTFontDescriptorIsSystemUIFont(descriptor.get())
+#endif
+}
+
 #if !PLATFORM(IOS)
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     CGSize advance = CGSizeZero;
-    if (platformData().orientation() == Horizontal || m_isBrokenIdeographFallback) {
+    bool horizontal = platformData().orientation() == Horizontal;
+    if ((horizontal || m_isBrokenIdeographFallback) && !hasCustomTracking(m_platformData.ctFont())) {
         NSFont *font = platformData().font();
         if (font && platformData().isColorBitmapFont())
             advance = NSSizeToCGSize([font advancementForGlyph:glyph]);
@@ -376,7 +394,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
             }
         }
     } else
-        CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), kCTFontVerticalOrientation, &glyph, &advance, 1);
+        CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), horizontal ? kCTFontHorizontalOrientation : kCTFontVerticalOrientation, &glyph, &advance, 1);
 
     return advance.width + m_syntheticBoldOffset;
 }

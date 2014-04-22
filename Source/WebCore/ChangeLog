@@ -1,3 +1,16 @@
+2014-04-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Glyph spacing for system fonts may be incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=131967
+
+        Reviewed by Simon Fraser.
+
+        Covered by existing tests.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformWidthForGlyph): Update to use CTFontGetAdvancesForGlyphs() for system fonts
+        (WebCore::hasCustomTracking):
+
 2014-04-22  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] widows/orphans cause assertion failures.

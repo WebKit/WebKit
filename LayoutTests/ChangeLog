@@ -1,3 +1,15 @@
+2014-04-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Glyph spacing for system fonts may be incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=131967
+
+        Reviewed by Simon Fraser.
+
+        Updating test to be more robust.
+
+        * fast/forms/search/intrinsic-search-width-with-decoration-border-padding-expected.txt:
+        * fast/forms/search/intrinsic-search-width-with-decoration-border-padding.html:
+
 2014-04-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
         REGRESSION (r167652): Broke fast/regions/cssom/region-range-for-box-crash.html in debug mode
