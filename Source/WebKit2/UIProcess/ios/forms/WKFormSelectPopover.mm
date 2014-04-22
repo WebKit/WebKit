@@ -390,7 +390,6 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     UIViewController *popoverViewController = _tableViewController.get();
     UINavigationController *navController = nil;
     NSString *title = view.assistedNodeInformation.title;
-    CGFloat titleHeight = 0;
     BOOL needsNavigationController = (_view && _UIApplicationUsesLegacyUI()) || [title length];
     if (needsNavigationController) {
         navController = [[UINavigationController alloc] initWithRootViewController:_tableViewController.get()];
@@ -398,8 +397,6 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
         
         if (_view.assistedNodeInformation.isMultiSelect && _UIApplicationUsesLegacyUI())
             _tableViewController.get().navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(_userActionDismissedPopover:)] autorelease];
-        
-        titleHeight = navController.navigationBar.bounds.size.height;
     }
     
     CGSize popoverSize = [_tableViewController.get().tableView sizeThatFits:CGSizeMake(320, CGFLOAT_MAX)];

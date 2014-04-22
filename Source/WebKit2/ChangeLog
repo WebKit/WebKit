@@ -1,3 +1,13 @@
+2014-04-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unused local variable
+        https://bugs.webkit.org/show_bug.cgi?id=132020
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectPopover initWithView:hasGroups:]):
+
 2014-04-22  Brady Eidson  <beidson@apple.com>
 
         Change Image Controls replacement to use selection and paste
