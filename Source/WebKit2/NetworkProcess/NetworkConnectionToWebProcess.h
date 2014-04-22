@@ -73,6 +73,7 @@ private:
     void performSynchronousLoad(const NetworkResourceLoadParameters&, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
 
     void removeLoadIdentifier(ResourceLoadIdentifier);
+    void setDefersLoading(ResourceLoadIdentifier, bool);
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::URL& redirectURL);
     void servePendingRequests(uint32_t resourceLoadPriority);
     void setSerialLoadingEnabled(bool);

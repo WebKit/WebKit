@@ -48,6 +48,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     , clientCredentialPolicy(DoNotAskClientForAnyCredentials)
     , shouldClearReferrerOnHTTPSToHTTPRedirect(true)
     , isMainResource(false)
+    , defersLoading(false)
 {
 }
 
@@ -97,6 +98,7 @@ void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(clientCredentialPolicy);
     encoder << shouldClearReferrerOnHTTPSToHTTPRedirect;
     encoder << isMainResource;
+    encoder << defersLoading;
 }
 
 bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, NetworkResourceLoadParameters& result)
@@ -147,6 +149,8 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
     if (!decoder.decode(result.shouldClearReferrerOnHTTPSToHTTPRedirect))
         return false;
     if (!decoder.decode(result.isMainResource))
+        return false;
+    if (!decoder.decode(result.defersLoading))
         return false;
 
     return true;

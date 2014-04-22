@@ -80,6 +80,9 @@ public:
     void start();
     void abort();
 
+    void setDefersLoading(bool);
+    bool defersLoading() const { return m_defersLoading; }
+
     // ResourceHandleClient methods
     virtual void willSendRequestAsync(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) override;
     virtual void didSendData(WebCore::ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
@@ -177,12 +180,14 @@ private:
     uint64_t m_webFrameID;
     WebCore::SessionID m_sessionID;
     WebCore::ResourceRequest m_request;
+    WebCore::ResourceRequest m_deferredRequest;
     WebCore::ResourceLoadPriority m_priority;
     WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
     WebCore::StoredCredentials m_allowStoredCredentials;
     WebCore::ClientCredentialPolicy m_clientCredentialPolicy;
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool m_isLoadingMainResource;
+    bool m_defersLoading;
 
     Vector<RefPtr<SandboxExtension>> m_requestBodySandboxExtensions;
     Vector<RefPtr<SandboxExtension>> m_resourceSandboxExtensions;

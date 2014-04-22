@@ -63,6 +63,7 @@ public:
     WebCore::ClientCredentialPolicy clientCredentialPolicy;
     bool shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool isMainResource;
+    bool defersLoading;
 };
 
 } // namespace WebKit

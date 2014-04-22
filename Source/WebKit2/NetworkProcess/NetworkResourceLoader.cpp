@@ -67,6 +67,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     , m_clientCredentialPolicy(parameters.clientCredentialPolicy)
     , m_shouldClearReferrerOnHTTPSToHTTPRedirect(parameters.shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_isLoadingMainResource(parameters.isMainResource)
+    , m_defersLoading(parameters.defersLoading)
     , m_sandboxExtensionsAreConsumed(false)
     , m_connection(connection)
 {
@@ -129,10 +130,27 @@ void NetworkResourceLoader::start()
     // FIXME (NetworkProcess): Set platform specific settings.
     m_networkingContext = RemoteNetworkingContext::create(m_sessionID, m_shouldClearReferrerOnHTTPSToHTTPRedirect);
 
+    if (m_defersLoading) {
+        m_deferredRequest = m_request;
+        return;
+    }
+
     consumeSandboxExtensions();
 
     // FIXME (NetworkProcess): Pass an actual value for defersLoading
     m_handle = ResourceHandle::create(m_networkingContext.get(), m_request, this, false /* defersLoading */, m_contentSniffingPolicy == SniffContent);
+}
+
+void NetworkResourceLoader::setDefersLoading(bool defers)
+{
+    m_defersLoading = defers;
+    if (m_handle)
+        m_handle->setDefersLoading(defers);
+    if (!defers && !m_deferredRequest.isNull()) {
+        m_request = m_deferredRequest;
+        m_deferredRequest = ResourceRequest();
+        start();
+    }
 }
 
 void NetworkResourceLoader::cleanup()

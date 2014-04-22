@@ -49,6 +49,7 @@ public:
     virtual PassRefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame*, WebCore::NetscapePlugInStreamLoaderClient*, const WebCore::ResourceRequest&) override;
     
     virtual void remove(WebCore::ResourceLoader*) override;
+    virtual void setDefersLoading(WebCore::ResourceLoader*, bool) override;
     virtual void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) override;
     
     virtual void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority = WebCore::ResourceLoadPriorityVeryLow) override;
