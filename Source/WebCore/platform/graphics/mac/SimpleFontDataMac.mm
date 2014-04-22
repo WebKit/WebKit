@@ -372,7 +372,7 @@ static bool hasCustomTracking(CTFontRef font)
     return false;
 #else
     RetainPtr<CTFontDescriptorRef> descriptor = CTFontCopyFontDescriptor(font);
-    return CTFontDescriptorIsSystemUIFont(descriptor.get())
+    return CTFontDescriptorIsSystemUIFont(descriptor.get());
 #endif
 }
 
