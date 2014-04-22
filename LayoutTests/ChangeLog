@@ -1,3 +1,14 @@
+2014-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] After a horizontal overflow scroll with a mechanical wheel mouse, vertical scrolling no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=131960
+        <rdar://problem/16142100>
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/fast/scrolling/scroll-div-no-latching-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-div-no-latching.html: Added.
+
 2014-04-21  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r166784): Gradient at background of iCloud login page doesn’t go all the way to the bottom

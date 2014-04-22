@@ -2576,6 +2576,11 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     ScrollableArea* scrollableArea = nullptr;
     platformPrepareForWheelEvents(e, result, element, scrollableContainer, scrollableArea, isOverWidget);
 
+    if (!e.useLatchedEventElement()) {
+        m_latchedWheelEventElement = nullptr;
+        m_previousWheelScrolledElement = nullptr;
+    }
+
     // FIXME: It should not be necessary to do this mutation here.
     // Instead, the handlers should know convert vertical scrolls
     // appropriately.

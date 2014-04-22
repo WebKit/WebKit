@@ -1,3 +1,16 @@
+2014-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] After a horizontal overflow scroll with a mechanical wheel mouse, vertical scrolling no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=131960
+        <rdar://problem/16142100>
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/fast/scrolling/scroll-div-no-latching.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent): When not latching, always clear m_latchedWheelEventElement and m_previousWheelScrolledElement.
+
 2014-04-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebProfilerAgent::disable is calling the wrong superclass method
