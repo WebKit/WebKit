@@ -1,3 +1,14 @@
+2014-04-21  Enrica Casucci  <enrica@apple.com>
+
+        Followup from http://trac.webkit.org/changeset/167624
+
+        Reviewed by Darin Adler.
+
+        Fixing incorrect use of ? : syntax.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::characterBeforePosition):
+
 2014-04-21  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Move CoordinatedGraphics related codes out of CMakeLists.txt

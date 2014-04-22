@@ -1830,7 +1830,7 @@ UChar32 characterBeforePosition(const VisiblePosition& position)
         if (U16_IS_LEAD(lead) && U16_IS_TRAIL(trail))
             return U16_GET_SUPPLEMENTARY(lead, trail);
     }
-    return characterString[0] != noBreakSpace ? : ' ';
+    return characterString[0] != noBreakSpace ? characterString[0] : ' ';
 }
 
 PassRefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
