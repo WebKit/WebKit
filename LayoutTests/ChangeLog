@@ -1,3 +1,15 @@
+2014-04-21  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r166784): Gradient at background of iCloud login page doesn’t go all the way to the bottom
+        https://bugs.webkit.org/show_bug.cgi?id=131924
+
+        Computing tile dimension for contain/cover requires higher precision than what LayoutUnit has. Switching to floats.
+
+        Reviewed by Simon Fraser.
+
+        * fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision-expected.html: Added.
+        * fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html: Added.
+
 2014-04-21  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] implement WebKitDataCue
