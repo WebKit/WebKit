@@ -1,3 +1,11 @@
+2014-04-21  Tim Horton  <timothy_horton@apple.com>
+
+        Remove a unnecessary forward-declared class from TiledCoreAnimationDrawingArea.
+
+        Rubber-stamped by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+
 2014-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         Don't try to use a null connection()->xpcConnection()

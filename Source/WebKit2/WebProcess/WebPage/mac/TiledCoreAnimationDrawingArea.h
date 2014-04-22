@@ -39,7 +39,6 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
-OBJC_CLASS WKContentLayer;
 
 namespace WebCore {
 class FrameView;
