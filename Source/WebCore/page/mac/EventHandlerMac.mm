@@ -752,15 +752,31 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode& node)
     return nullptr;
 }
 
-static bool scrolledToEdgeInDominantDirection(const ScrollableArea& area, DominantScrollGestureDirection direction, float deltaX, float deltaY)
+static bool deltaIsPredominantlyVertical(float deltaX, float deltaY)
 {
-    if (DominantScrollGestureDirection::Horizontal == direction && deltaX) {
+    return std::abs(deltaY) > std::abs(deltaX);
+}
+    
+static bool scrolledToEdgeInDominantDirection(const ContainerNode& container, const ScrollableArea& area, float deltaX, float deltaY)
+{
+    if (!container.renderer())
+        return true;
+
+    const RenderStyle& style = container.renderer()->style();
+
+    if (!deltaIsPredominantlyVertical(deltaX, deltaY) && deltaX) {
+        if (style.overflowX() == OHIDDEN)
+            return true;
+
         if (deltaX < 0)
             return area.scrolledToRight();
         
         return area.scrolledToLeft();
     }
-    
+
+    if (style.overflowY() == OHIDDEN)
+        return true;
+
     if (deltaY < 0)
         return area.scrolledToBottom();
     
@@ -790,7 +806,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
     
     if (wheelEvent.shouldConsiderLatching()) {
         if (scrollableArea)
-            m_startedGestureAtScrollLimit = scrolledToEdgeInDominantDirection(*scrollableArea, m_recentWheelEventDeltaTracker->dominantScrollGestureDirection(), wheelEvent.deltaX(), wheelEvent.deltaY());
+            m_startedGestureAtScrollLimit = scrolledToEdgeInDominantDirection(*scrollableContainer, *scrollableArea, wheelEvent.deltaX(), wheelEvent.deltaY());
         else
             m_startedGestureAtScrollLimit = false;
         m_latchedWheelEventElement = wheelEventTarget;

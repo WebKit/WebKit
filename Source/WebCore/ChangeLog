@@ -1,3 +1,19 @@
+2014-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Difficulty gesture scrolling vertically with trackpad after scrolling horizontally 
+        https://bugs.webkit.org/show_bug.cgi?id=131959
+        <rdar://problem/16654523>
+
+        Reviewed by Simon Fraser.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::deltaIsPredominantlyVertical): Added.
+        (WebCore::scrolledToEdgeInDominantDirection): Only consider current mouse wheel event. We don't care about
+        overall history when deciding if we are bumping against the edge of a scrollable region. Short-circuit if
+        the element style indicates that overflow is hidden, since this means there is no scroll possible in that
+        direction.
+        (WebCore::EventHandler::platformPrepareForWheelEvents): Update for new signature.
+
 2014-04-21  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] implement WebKitDataCue
