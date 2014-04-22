@@ -95,7 +95,7 @@ bool BorderEdge::obscuresBackground() const
     return true;
 }
 
-void BorderEdge::getDoubleBorderStripeWidths(LayoutUnit outerWidth, LayoutUnit innerWidth) const
+void BorderEdge::getDoubleBorderStripeWidths(LayoutUnit& outerWidth, LayoutUnit& innerWidth) const
 {
     LayoutUnit fullWidth = widthForPainting();
     innerWidth = ceilToDevicePixel(fullWidth * 2 / 3, m_devicePixelRatio);

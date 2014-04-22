@@ -59,7 +59,7 @@ public:
     inline bool shouldRender() const { return m_isPresent && widthForPainting() && hasVisibleColorAndStyle(); }
     inline bool presentButInvisible() const { return widthForPainting() && !hasVisibleColorAndStyle(); }
     inline float widthForPainting() const { return m_isPresent ?  m_flooredToDevicePixelWidth : 0; }
-    void getDoubleBorderStripeWidths(LayoutUnit outerWidth, LayoutUnit innerWidth) const;
+    void getDoubleBorderStripeWidths(LayoutUnit& outerWidth, LayoutUnit& innerWidth) const;
     bool obscuresBackgroundEdge(float scale) const;
     bool obscuresBackground() const;
 

@@ -1,3 +1,18 @@
+2014-04-22  Zalan Bujtas  <zalan@apple.com>
+
+        border-style: double rendered as solid when combined with border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=131927
+
+        Reviewed by Simon Fraser.
+
+        BorderEdge::getDoubleBorderStripeWidths() should return the calculated inner, outer border widths. 
+
+        Test: fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html
+
+        * rendering/BorderEdge.cpp:
+        (WebCore::BorderEdge::getDoubleBorderStripeWidths):
+        * rendering/BorderEdge.h:
+
 2014-04-22  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] don't ask for AVAssetTrack properties before they are available
