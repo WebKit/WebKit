@@ -1,7 +1,5 @@
 add_definitions(-D_HAS_EXCEPTIONS=0 -DNOMINMAX -DUNICODE)
 
-include_directories(${JAVASCRIPTCORE_DIR}/os-win32)
-
 if (MSVC)
     add_definitions(/WX
         /wd4018 /wd4065 /wd4068 /wd4099 /wd4100 /wd4127 /wd4138 /wd4180 /wd4189 /wd4201 /wd4244 /wd4251 /wd4275 /wd4288 /wd4291

@@ -1,3 +1,17 @@
+2014-04-22  Alex Christensen  <achristensen@webkit.org>
+
+        Removed old stdbool and inttypes headers.
+        https://bugs.webkit.org/show_bug.cgi?id=131966
+
+        Reviewed by Brent Fulgham.
+
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpCommon.props:
+        Removed references to os-win32 directory.
+        * os-win32: Removed.
+        * os-win32/inttypes.h: Removed.
+        * os-win32/stdbool.h: Removed.
+
 2014-04-21  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::clobberize() should honestly admit that profiler and debugger nodes are effectful

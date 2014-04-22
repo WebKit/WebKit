@@ -113,7 +113,6 @@ if (NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
             "/mac/" "/Mac/" "mac\\\\." "Mac\\\\."
             "/opentype/" "/Opentype/" "opentype\\\\." "Opentype\\\\."
             "/openvg/" "/Openvg/" "openvg\\\\." "Openvg\\\\."
-            "/os-win32/" "/Os-Win32/" "os-win32\\\\." "Os-Win32\\\\."
             "/qscriptengine/" "/Qscriptengine/" "qscriptengine\\\\." "Qscriptengine\\\\."
             "/qscriptstring/" "/Qscriptstring/" "qscriptstring\\\\." "Qscriptstring\\\\."
             "/qscriptvalue/" "/Qscriptvalue/" "qscriptvalue\\\\." "Qscriptvalue\\\\."
