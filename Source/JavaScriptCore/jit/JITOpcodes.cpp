@@ -646,7 +646,7 @@ void JIT::emit_op_switch_imm(Instruction* currentInstruction)
     // create jump table for switch destinations, track this switch statement.
     SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
     m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Immediate));
-    jumpTable->ctiOffsets.grow(jumpTable->branchOffsets.size());
+    jumpTable->ensureCTITable();
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchImmWithUnknownKeyType, regT0, tableIndex);
@@ -662,7 +662,7 @@ void JIT::emit_op_switch_char(Instruction* currentInstruction)
     // create jump table for switch destinations, track this switch statement.
     SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
     m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Character));
-    jumpTable->ctiOffsets.grow(jumpTable->branchOffsets.size());
+    jumpTable->ensureCTITable();
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchCharWithUnknownKeyType, regT0, tableIndex);

@@ -1,3 +1,25 @@
+2014-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Switch statements that skip the baseline JIT should work
+        https://bugs.webkit.org/show_bug.cgi?id=131965
+
+        Reviewed by Mark Hahnenberg.
+
+        * bytecode/JumpTable.h:
+        (JSC::SimpleJumpTable::ensureCTITable):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        * tests/stress/inline-llint-with-switch.js: Added.
+        (foo):
+        (bar):
+        (test):
+
 2014-04-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Arguments objects shouldn't need a destructor

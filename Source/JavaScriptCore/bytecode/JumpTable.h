@@ -94,6 +94,12 @@ namespace JSC {
         }
 
 #if ENABLE(JIT)
+        void ensureCTITable()
+        {
+            ASSERT(ctiOffsets.isEmpty() || ctiOffsets.size() == branchOffsets.size());
+            ctiOffsets.grow(branchOffsets.size());
+        }
+        
         inline CodeLocationLabel ctiForValue(int32_t value)
         {
             if (value >= min && static_cast<uint32_t>(value - min) < ctiOffsets.size())

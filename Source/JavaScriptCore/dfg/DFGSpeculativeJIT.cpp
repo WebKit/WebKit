@@ -4947,6 +4947,7 @@ void SpeculativeJIT::emitSwitchIntJump(
     SwitchData* data, GPRReg value, GPRReg scratch)
 {
     SimpleJumpTable& table = m_jit.codeBlock()->switchJumpTable(data->switchTableIndex);
+    table.ensureCTITable();
     m_jit.sub32(Imm32(table.min), value);
     addBranch(
         m_jit.branch32(JITCompiler::AboveOrEqual, value, Imm32(table.ctiOffsets.size())),
