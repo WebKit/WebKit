@@ -1,3 +1,13 @@
+2014-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Check (rather than assume) element is a RenderTableSection before using it
+        https://bugs.webkit.org/show_bug.cgi?id=121858
+
+        Reviewed by David Kilzer.
+
+        * fast/table/table-insert-object-before-td-crash-expected.txt: Added.
+        * fast/table/table-insert-object-before-td-crash.html: Added.
+
 2014-04-22  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] fast/multicol/multicol-with-child-renderLayer-for-input.html puts the textfield in the wrong place
