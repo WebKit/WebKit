@@ -1,3 +1,18 @@
+2014-04-22  Alex Christensen  <achristensen@webkit.org>
+
+        Begin implementation of video using Media Foundation.
+        https://bugs.webkit.org/show_bug.cgi?id=131830
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        Added MediaPlayerPrivateMediaFoundation files.
+        * platform/graphics/MediaPlayer.cpp:
+        Include MediaPlayerPrivateMediaFoundation inside new USE(MEDIA_FOUNDATION) flag.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp: Added.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h: Added.
+
 2014-04-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167658.

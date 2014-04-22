@@ -53,6 +53,11 @@
 #define PlatformMediaEngineClassName MediaPlayerPrivateGStreamer
 #endif
 
+#if USE(MEDIA_FOUNDATION)
+#include "MediaPlayerPrivateMediaFoundation.h"
+#define PlatformMediaEngineClassName MediaPlayerPrivateMediaFoundation
+#endif
+
 #if PLATFORM(COCOA)
 #if PLATFORM(IOS)
 #include "MediaPlayerPrivateIOS.h"

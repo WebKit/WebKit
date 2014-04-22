@@ -7443,6 +7443,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\platform\HistogramSupport.cpp" />
+    <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateMediaFoundation.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\platform\KillRingNone.cpp" />
     <ClCompile Include="..\platform\network\soup\AuthenticationChallengeSoup.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -19213,6 +19223,7 @@
     <ClInclude Include="..\platform\graphics\TiledBackingStoreClient.h" />
     <ClInclude Include="..\platform\graphics\TrackBasePrivate.h" />
     <ClInclude Include="..\platform\graphics\VideoTrackPrivate.h" />
+    <ClInclude Include="..\platform\graphics\win\MediaPlayerPrivateMediaFoundation.h" />
     <ClInclude Include="..\platform\graphics\win\SharedGDIObject.h" />
     <ClInclude Include="..\platform\HistogramSupport.h" />
     <ClInclude Include="..\platform\HostWindow.h" />

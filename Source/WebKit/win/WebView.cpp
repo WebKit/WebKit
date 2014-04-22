@@ -6276,7 +6276,7 @@ HRESULT WebView::setCanStartPlugins(BOOL canStartPlugins)
 
 void WebView::enterFullscreenForNode(Node* node)
 {
-#if ENABLE(VIDEO) && !USE(GSTREAMER)
+#if ENABLE(VIDEO) && !USE(GSTREAMER) && !USE(MEDIA_FOUNDATION)
     if (!isHTMLVideoElement(node) || !node->isElementNode())
         return;
 
@@ -6307,7 +6307,7 @@ void WebView::enterFullscreenForNode(Node* node)
 
 void WebView::exitFullscreen()
 {
-#if ENABLE(VIDEO) && !USE(GSTREAMER)
+#if ENABLE(VIDEO) && !USE(GSTREAMER) && !USE(MEDIA_FOUNDATION)
     if (!m_fullScreenVideoController)
         return;
     

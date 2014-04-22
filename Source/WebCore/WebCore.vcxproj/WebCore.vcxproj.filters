@@ -1482,6 +1482,9 @@
     <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.cpp">
       <Filter>platform\graphics\win</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateMediaFoundation.cpp">
+      <Filter>platform\graphics\win</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeMathData.cpp">
       <Filter>platform\graphics\win</Filter>
     </ClCompile>
@@ -8632,6 +8635,9 @@
     <ClInclude Include="..\platform\graphics\avfoundation\MediaPlayerPrivateAVFoundation.h">
       <Filter>platform\graphics\avfoundation</Filter>
     </ClInclude>
+    <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateMediaFoundation.h">
+      <Filter>platform\graphics\win</Filter>
+    </ClCompile>
     <ClInclude Include="..\platform\graphics\avfoundation\cf\AVFoundationCFSoftLinking.h">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClInclude>
