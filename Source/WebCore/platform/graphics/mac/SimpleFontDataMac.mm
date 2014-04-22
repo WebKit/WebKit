@@ -365,6 +365,7 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
     return boundingBox;
 }
 
+#if !PLATFORM(IOS)
 static bool hasCustomTracking(CTFontRef font)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
@@ -376,7 +377,6 @@ static bool hasCustomTracking(CTFontRef font)
 #endif
 }
 
-#if !PLATFORM(IOS)
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     CGSize advance = CGSizeZero;
