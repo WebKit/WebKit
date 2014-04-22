@@ -30,6 +30,7 @@
 
 #import "WebFrame.h"
 #import "WebPage.h"
+#import <WebCore/IntPoint.h>
 #import <WebCore/FrameView.h>
 
 /* 
@@ -64,6 +65,15 @@
 - (double)pageScale
 {
     return m_page->pageScaleFactor();
+}
+
+- (id)accessibilityHitTest:(NSPoint)point
+{
+    if (!m_page)
+        return nil;
+    
+    WebCore::IntPoint convertedPoint = m_page->screenToRootView(WebCore::IntPoint(point));
+    return [[self accessibilityRootObjectWrapper] accessibilityHitTest:convertedPoint];
 }
 
 @end
