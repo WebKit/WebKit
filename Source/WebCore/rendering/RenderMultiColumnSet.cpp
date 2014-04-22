@@ -790,9 +790,7 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
         translationOffset.setY(blockOffset);
         if (!isHorizontalWritingMode())
             translationOffset = translationOffset.transposedPoint();
-        // FIXME: The translation needs to include the multicolumn set's content offset within the
-        // multicolumn block as well. This won't be an issue until we start creating multiple multicolumn sets.
-
+        
         // Shift the dirty rect to be in flow thread coordinates with this translation applied.
         LayoutRect translatedDirtyRect(dirtyRect);
         translatedDirtyRect.moveBy(-translationOffset);
@@ -840,7 +838,7 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
             inlineOffset += contentLogicalWidth() - colLogicalWidth;
     }
     translationOffset.setX(inlineOffset);
-    LayoutUnit blockOffset = initialBlockOffset + (isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x());
+    LayoutUnit blockOffset = initialBlockOffset + logicalTop() - flowThread()->logicalTop() + (isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x());
     if (!progressionIsInline) {
         if (!progressionReversed)
             blockOffset = startColumn * colGap;
@@ -854,8 +852,6 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
     if (!isHorizontalWritingMode())
         translationOffset = translationOffset.transposedPoint();
     
-    // FIXME: The translation needs to include the multicolumn set's content offset within the
-    // multicolumn block as well. This won't be an issue until we start creating multiple multicolumn sets.
     return translationOffset;
 }
 

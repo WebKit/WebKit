@@ -1,3 +1,19 @@
+2014-04-22  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Make sure columnTranslationForOffset has the same column-span-aware
+        translation that fragment collection does.
+        https://bugs.webkit.org/show_bug.cgi?id=131738
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::collectLayerFragments):
+        Remove a FIXME that is no longer needed, since the translation offset of the 
+        column set did get patched.
+
+        (WebCore::RenderMultiColumnSet::columnTranslationForOffset):
+        Add the exact same fix to columnTranslationForOffset that was applied to collectLayerFragments.
+
 2014-04-22  Mark Lam  <mark.lam@apple.com>
 
         WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript() needs to acquire the JSLock before calling into JS.
