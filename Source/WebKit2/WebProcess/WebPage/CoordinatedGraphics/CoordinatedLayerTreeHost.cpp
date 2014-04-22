@@ -206,7 +206,7 @@ void CoordinatedLayerTreeHost::layerFlushTimerFired(Timer<CoordinatedLayerTreeHo
     performScheduledLayerFlush();
 }
 
-void CoordinatedLayerTreeHost::paintLayerContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, const IntRect& clipRect)
+void CoordinatedLayerTreeHost::paintLayerContents(const GraphicsLayer*, GraphicsContext&, const IntRect&)
 {
 }
 
