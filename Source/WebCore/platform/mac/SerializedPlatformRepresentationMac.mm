@@ -93,6 +93,7 @@ JSC::JSValue SerializedPlatformRepresentationMac::deserialize(JSC::ExecState* ex
 
     return toJS(exec, [serializedValue JSValueRef]);
 #else
+    UNUSED_PARAM(exec);
     return JSC::jsNull();
 #endif
 }

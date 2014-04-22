@@ -1,3 +1,10 @@
+2014-04-21  Dean Jackson  <dino@apple.com>
+
+        Build fix for Mountain Lion.
+
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        (WebCore::SerializedPlatformRepresentationMac::deserialize):
+
 2014-04-21  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of <rdar://problem/16631323> Page::setDefersLoading doesn’t do anything when using the Network process
