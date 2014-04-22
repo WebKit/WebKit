@@ -301,8 +301,6 @@ void RenderMultiColumnSet::recordSpaceShortage(LayoutUnit spaceShortage)
     // order to get anywhere. Some lines actually have zero height. Ignore them.
     if (spaceShortage > 0)
         m_minSpaceShortage = spaceShortage;
-
-    m_minSpaceShortage = spaceShortage;
 }
 
 void RenderMultiColumnSet::updateLogicalWidth()

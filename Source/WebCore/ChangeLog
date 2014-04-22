@@ -1,5 +1,17 @@
 2014-04-22  David Hyatt  <hyatt@apple.com>
 
+        [New Multicolumn] widows/orphans cause assertion failures.
+        https://bugs.webkit.org/show_bug.cgi?id=131233
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::recordSpaceShortage):
+        Fix an obvious bug where the space shortage is recorded twice (and the
+        if statement that kept it from being negative is accidentally ignored).
+
+2014-04-22  David Hyatt  <hyatt@apple.com>
+
         [New Multicolumn] Make sure columnTranslationForOffset has the same column-span-aware
         translation that fragment collection does.
         https://bugs.webkit.org/show_bug.cgi?id=131738
