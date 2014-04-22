@@ -89,9 +89,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case Identity:
     case Phantom:
     case HardPhantom:
-    case Breakpoint:
-    case ProfileWillCall:
-    case ProfileDidCall:
     case BitAnd:
     case BitOr:
     case BitXor:
@@ -156,6 +153,9 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case CheckTierUpAndOSREnter:
     case LoopHint:
     case InvalidationPoint:
+    case Breakpoint:
+    case ProfileWillCall:
+    case ProfileDidCall:
         write(SideState);
         return;
         

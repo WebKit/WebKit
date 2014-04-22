@@ -1,5 +1,16 @@
 2014-04-21  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::clobberize() should honestly admit that profiler and debugger nodes are effectful
+        https://bugs.webkit.org/show_bug.cgi?id=131971
+        <rdar://problem/16676511>
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
+2014-04-21  Filip Pizlo  <fpizlo@apple.com>
+
         Switch statements that skip the baseline JIT should work
         https://bugs.webkit.org/show_bug.cgi?id=131965
 
