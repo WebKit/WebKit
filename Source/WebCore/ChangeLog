@@ -1,3 +1,15 @@
+2014-04-22  Mark Lam  <mark.lam@apple.com>
+
+        WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript() needs to acquire the JSLock before calling into JS.
+        <https://webkit.org/b/132021>
+
+        Reviewed by Mark Hahnenberg.
+
+        Covered by existing layout test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2014-04-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
         REGRESSION (r167652): Broke fast/regions/cssom/region-range-for-box-crash.html in debug mode

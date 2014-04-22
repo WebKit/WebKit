@@ -5935,6 +5935,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     ScriptController& scriptController = page->mainFrame().script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
     JSC::ExecState* exec = globalObject->globalExec();
+    JSC::JSLockHolder lock(exec);
 
     JSC::JSValue functionValue = globalObject->get(exec, JSC::Identifier(exec, "createControls"));
     if (functionValue.isFunction())
