@@ -1,5 +1,34 @@
 2014-04-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION (r157328): popover to check into flight ba.com dismisses instantly when focusing form
+        https://bugs.webkit.org/show_bug.cgi?id=131949
+
+        Reviewed by Darin Adler.
+
+        The regression was caused by two bugs:
+        1. The event didn't stop propagating itself even when it should.
+           If the related target is same as the event origin, the event propagation should stop when the event reaches
+           the root of the related target's tree scope. Otherwise, it should stop when it reaches the related target.
+
+        2. Mouse event's related target exposed nodes inside a user-agent shadow DOM when the related target appeared
+           inside the origin.
+
+        Fixed the bugs by re-introducing path shrinkage algorithm removed in r157328 into EventPath::setRelatedTarget
+        and adding an algorithm to determine the least common ancestor of the related target and the current target
+        in moveToParentOrShadowHost. The latter algorithm doesn't match the shadow DOM specification:
+        http://www.w3.org/TR/2013/WD-shadow-dom-20130514/
+        but it's good enough in terms of the Web exposed behavior as we don't support author defined insertion points.
+
+        Test: fast/events/shadow-event-path.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedNodeResolver::moveToParentOrShadowHost):
+        (WebCore::EventRelatedNodeResolver::findHostOfTreeScopeInTargetTreeScope): Added.
+        (WebCore::EventDispatcher::dispatchEvent):
+        (WebCore::EventPath::setRelatedTarget):
+
+2014-04-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rollout r156635 since the old behavior was intentional.
 
         * page/EventHandler.cpp:

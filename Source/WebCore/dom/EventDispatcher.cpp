@@ -90,7 +90,7 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchLists(const TouchEvent&);
 #endif
-    void setRelatedTarget(EventTarget&);
+    void setRelatedTarget(Node& origin, EventTarget&);
 
     bool hasEventListeners(const AtomicString& eventType) const;
 
@@ -148,16 +148,48 @@ public:
             ASSERT(m_currentTreeScope->parentTreeScope() == &newTreeScope);
         }
 
-        if (m_relatedNodeInCurrentTreeScope) { // relatedNode is under the current tree scope
+        if (&newTreeScope == &m_relatedNodeTreeScope)
+            m_relatedNodeInCurrentTreeScope = &m_relatedNode;
+        else if (m_relatedNodeInCurrentTreeScope) {
             ASSERT(m_currentTreeScope);
             m_relatedNodeInCurrentTreeScope = &newTarget;
-        } else if (&newTreeScope == &m_relatedNodeTreeScope) // relatedNode is in the current tree scope;
-            m_relatedNodeInCurrentTreeScope = &m_relatedNode;
-        // Otherwise, we haven't reached the tree scope that contains relatedNode yet.
+        } else {
+            if (!m_currentTreeScope) {
+                TreeScope* newTreeScopeAncestor = &newTreeScope;
+                do {
+                    m_relatedNodeInCurrentTreeScope = findHostOfTreeScopeInTargetTreeScope(m_relatedNodeTreeScope, *newTreeScopeAncestor);
+                    newTreeScopeAncestor = newTreeScopeAncestor->parentTreeScope();
+                    if (newTreeScopeAncestor == &m_relatedNodeTreeScope) {
+                        m_relatedNodeInCurrentTreeScope = &m_relatedNode;
+                        break;
+                    }
+                } while (newTreeScopeAncestor && !m_relatedNodeInCurrentTreeScope);
+            }
+            ASSERT(m_relatedNodeInCurrentTreeScope || findHostOfTreeScopeInTargetTreeScope(newTreeScope, m_relatedNodeTreeScope)
+                || &newTreeScope.documentScope() != &m_relatedNodeTreeScope.documentScope());
+        }
 
         m_currentTreeScope = &newTreeScope;
 
         return m_relatedNodeInCurrentTreeScope;
+    }
+
+    static Node* findHostOfTreeScopeInTargetTreeScope(const TreeScope& startingTreeScope, const TreeScope& targetScope)
+    {
+        ASSERT(&targetScope != &startingTreeScope);
+        Node* previousHost = 0;
+        for (const TreeScope* scope = &startingTreeScope; scope; scope = scope->parentTreeScope()) {
+            if (scope == &targetScope) {
+                ASSERT(previousHost);
+                ASSERT_WITH_SECURITY_IMPLICATION(&previousHost->treeScope() == &targetScope);
+                return previousHost;
+            }
+            if (scope->rootNode().isShadowRoot())
+                previousHost = toShadowRoot(scope->rootNode()).hostElement();
+            else
+                ASSERT_WITH_SECURITY_IMPLICATION(!scope->parentTreeScope());
+        }
+        return 0;
     }
 
 private:
@@ -305,7 +337,7 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
     EventPath eventPath(*node, *event);
 
     if (EventTarget* relatedTarget = event->relatedTarget())
-        eventPath.setRelatedTarget(*relatedTarget);
+        eventPath.setRelatedTarget(*node, *relatedTarget);
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     if (event->isTouchEvent())
         eventPath.updateTouchLists(*toTouchEvent(event.get()));
@@ -452,7 +484,7 @@ void EventPath::updateTouchLists(const TouchEvent& touchEvent)
 }
 #endif
 
-void EventPath::setRelatedTarget(EventTarget& relatedTarget)
+void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
 {
     Node* relatedNode = relatedTarget.toNode();
     if (!relatedNode)
@@ -460,9 +492,22 @@ void EventPath::setRelatedTarget(EventTarget& relatedTarget)
 
     EventRelatedNodeResolver resolver(*relatedNode);
 
+    bool originIsRelatedTarget = &origin == relatedNode;
+    Node& rootNodeInOriginTreeScope = origin.treeScope().rootNode();
+
     size_t eventPathSize = m_path.size();
-    for (size_t i = 0; i < eventPathSize; i++)
-        toMouseOrFocusEventContext(*m_path[i]).setRelatedTarget(resolver.moveToParentOrShadowHost(*m_path[i]->node()));
+    size_t i = 0;
+    while (i < eventPathSize) {
+        Node* contextNode = m_path[i]->node();
+        Node* currentRelatedNode = resolver.moveToParentOrShadowHost(*contextNode);
+        if (!originIsRelatedTarget && m_path[i]->target() == currentRelatedNode)
+            break;
+        toMouseOrFocusEventContext(*m_path[i]).setRelatedTarget(currentRelatedNode);
+        i++;
+        if (originIsRelatedTarget && &rootNodeInOriginTreeScope == contextNode)
+            break;
+    }
+    m_path.shrink(i);
 }
 
 bool EventPath::hasEventListeners(const AtomicString& eventType) const

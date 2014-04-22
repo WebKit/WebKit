@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test records target and relatedTarget at each element while dispatching a mouse click event at an input element.</p>
+<div id="detailsContainer"><details><summary><div id="divInsideSummary"><input id="target" type="text" size="10"></summary></div></detials></div>
+<pre id="log"></pre>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function targetIdentifier(target) {
+    if (target === undefined || target === null)
+        return target;
+    if (target === window)
+        return 'window';
+    if (target === document)
+        return 'document';
+    return target.localName + (target.id ? '#' + target.id : '');
+}
+
+function attachListeners(eventname) {
+    var targets = Array.prototype.slice.call(document.querySelectorAll('*'));
+    targets.push(window);
+    targets.push(document);
+    targets.forEach(function (target) {
+        target.addEventListener(eventname, function (event) {
+            log.textContent += eventname + '@' + targetIdentifier(target) + '\n'
+                + '    target:' + targetIdentifier(event.target) + '\n'
+                + '    relatedTarget:' + targetIdentifier(event.relatedTarget) + '\n\n';
+        });
+    });
+}
+
+var log = document.getElementById('log');
+log.textContent = 'Content:' + detailsContainer.outerHTML + '\n\n';
+var target = document.getElementById('target');
+
+attachListeners('mousemove');
+attachListeners('mousedown');
+attachListeners('mouseover');
+attachListeners('mouseout');
+attachListeners('mouseenter');
+attachListeners('mouseleave');
+attachListeners('mouseup');
+attachListeners('click');
+
+function runTest() {
+    testRunner.waitUntilDone();
+    eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);
+    eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth + 100, target.offsetTop + target.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    testRunner.notifyDone();
+}
+
+if (window.testRunner && !window.eventSender)
+    log.textContent += 'This test requires eventSender.';
+else if (window.eventSender) {
+    window.onload = runTest;
+}
+
+</script>
+</body>
+</html>
