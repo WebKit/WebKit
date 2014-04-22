@@ -31,7 +31,9 @@ namespace JSC {
 enum CopyToken {
     ButterflyCopyToken,
     TypedArrayVectorCopyToken,
-    MapBackingStoreCopyToken
+    MapBackingStoreCopyToken,
+    ArgumentsRegisterArrayCopyToken,
+    ArgumentsSlowArgumentDataCopyToken
 };
 
 } // namespace JSC

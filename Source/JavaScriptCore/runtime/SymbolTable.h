@@ -39,9 +39,7 @@
 namespace JSC {
 
 struct SlowArgument {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
-
     enum Status {
         Normal = 0,
         Captured = 1,

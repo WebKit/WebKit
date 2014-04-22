@@ -1,3 +1,45 @@
+2014-04-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Arguments objects shouldn't need a destructor
+        https://bugs.webkit.org/show_bug.cgi?id=131899
+
+        Reviewed by Oliver Hunt.
+
+        This patch rids Arguments objects of their destructors. It does this by 
+        switching their backing stores to use CopiedSpace rather than malloc memory.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateArguments): Fix the code emitted for inline
+        Arguments allocation so that it only emits an extra write for strict mode code rather
+        than unconditionally.
+        * heap/CopyToken.h: New CopyTokens for the two different types of Arguments backing stores.
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::visitChildren): We need to tell the collector to copy the back stores now.
+        (JSC::Arguments::copyBackingStore): Do the actual copying of the backing stores.
+        (JSC::Arguments::deletePropertyByIndex): Update all the accesses to SlowArgumentData and m_registerArray.
+        (JSC::Arguments::deleteProperty):
+        (JSC::Arguments::defineOwnProperty):
+        (JSC::Arguments::allocateRegisterArray):
+        (JSC::Arguments::tearOff):
+        (JSC::Arguments::destroy): Deleted. We don't need the destructor any more.
+        * runtime/Arguments.h:
+        (JSC::Arguments::registerArraySizeInBytes):
+        (JSC::Arguments::SlowArgumentData::SlowArgumentData): Switch SlowArgumentData to being allocated
+        in CopiedSpace. Now the SlowArgumentData and its backing store are a single contiguous CopiedSpace
+        allocation.
+        (JSC::Arguments::SlowArgumentData::slowArguments):
+        (JSC::Arguments::SlowArgumentData::bytecodeToMachineCaptureOffset):
+        (JSC::Arguments::SlowArgumentData::setBytecodeToMachineCaptureOffset):
+        (JSC::Arguments::SlowArgumentData::sizeForNumArguments):
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::allocateSlowArguments):
+        (JSC::Arguments::tryDeleteArgument):
+        (JSC::Arguments::isDeletedArgument):
+        (JSC::Arguments::isArgument):
+        (JSC::Arguments::argument):
+        (JSC::Arguments::finishCreation):
+        * runtime/SymbolTable.h:
+
 2014-04-21  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] implement WebKitDataCue

@@ -118,8 +118,8 @@ void SpeculativeJIT::emitAllocateArguments(GPRReg resultGPR, GPRReg scratchGPR1,
     m_jit.store32(scratchGPR1, MacroAssembler::Address(resultGPR, Arguments::offsetOfNumArguments()));
 
     m_jit.store32(TrustedImm32(0), MacroAssembler::Address(resultGPR, Arguments::offsetOfOverrodeLength()));
-    m_jit.store8(TrustedImm32(m_jit.isStrictModeFor(m_currentNode->origin.semantic)), 
-        MacroAssembler::Address(resultGPR, Arguments::offsetOfIsStrictMode()));
+    if (m_jit.isStrictModeFor(m_currentNode->origin.semantic))
+        m_jit.store8(TrustedImm32(1), MacroAssembler::Address(resultGPR, Arguments::offsetOfIsStrictMode()));
 
     m_jit.storePtr(GPRInfo::callFrameRegister, MacroAssembler::Address(resultGPR, Arguments::offsetOfRegisters()));
     m_jit.storePtr(TrustedImmPtr(0), MacroAssembler::Address(resultGPR, Arguments::offsetOfRegisterArray()));
