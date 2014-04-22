@@ -1,3 +1,15 @@
+2014-04-22  Brady Eidson  <beidson@apple.com>
+
+        Change Image Controls replacement to use selection and paste
+        <rdar://problem/16302722> and https://bugs.webkit.org/show_bug.cgi?id=131992
+
+        Reviewed by Tim Horton.
+
+        * Misc/WebSharingServicePickerController.mm:
+        (-[WebSharingServicePickerController sharingService:didShareItems:]): Write the
+          replacement data to a special pasteboard, then replace the current selection from
+          that pasteboard.
+
 2014-04-21  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] implement WebKitDataCue

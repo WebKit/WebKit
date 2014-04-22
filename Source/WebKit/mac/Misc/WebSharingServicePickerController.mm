@@ -31,6 +31,10 @@
 #import "WebViewInternal.h"
 #import <AppKit/NSSharingService.h>
 #import <WebCore/BitmapImage.h>
+#import <WebCore/Editor.h>
+#import <WebCore/FocusController.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameSelection.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Page.h>
 
@@ -47,6 +51,8 @@ typedef enum {
 @end
 
 #endif
+
+static NSString *imageControlPasteboardName = @"WebKitImageControlsPasteboard";
 
 using namespace WebCore;
 
@@ -119,13 +125,21 @@ using namespace WebCore;
 
     RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData((CFDataRef)[items objectAtIndex:0], NULL));
     RetainPtr<CGImageRef> cgImage = adoptCF(CGImageSourceCreateImageAtIndex(source.get(), 0, NULL));
-    RefPtr<Image> image = BitmapImage::create(cgImage.get());
+
+    if (!cgImage)
+        return;
 
     Page* page = [_menuClient->webView() page];
     if (!page)
         return;
 
-    page->contextMenuController().replaceControlledImage(image.get());
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:imageControlPasteboardName];
+    [pasteboard declareTypes:@[ NSPasteboardTypeTIFF ] owner:nil];
+    [pasteboard setData:[items objectAtIndex:0] forType:NSPasteboardTypeTIFF];
+
+    Frame& frame = page->focusController().focusedOrMainFrame();
+    if (!frame.selection().isNone())
+        frame.editor().readSelectionFromPasteboard(imageControlPasteboardName);
 
     [self clear];
 }

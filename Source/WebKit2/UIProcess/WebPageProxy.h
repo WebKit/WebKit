@@ -1059,10 +1059,6 @@ public:
 
     void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, ImageCallback::CallbackFunction);
 
-#if ENABLE(IMAGE_CONTROLS)
-    void replaceControlledImage(PassRefPtr<ShareableBitmap>);
-#endif
-
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();

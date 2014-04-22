@@ -3445,16 +3445,6 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
     m_contextMenuClient.contextMenuDismissed(this);
 }
 
-#if ENABLE(IMAGE_CONTROLS)
-void WebPageProxy::replaceControlledImage(PassRefPtr<ShareableBitmap> newBitmap)
-{
-    RefPtr<ShareableBitmap> bitmap = newBitmap;
-    ShareableBitmap::Handle bitmapHandle;
-    bitmap->createHandle(bitmapHandle);
-    m_process->send(Messages::WebPage::ReplaceControlledImage(bitmapHandle), m_pageID);
-}
-#endif
-
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 {
     // Application custom items don't need to round-trip through to WebCore in the WebProcess.

@@ -1452,24 +1452,6 @@ void ContextMenuController::showImageControlsMenu(Event* event)
     handleContextMenuEvent(event);
     m_client.showContextMenu();
 }
-
-void ContextMenuController::replaceControlledImage(PassRefPtr<Image> newImage)
-{
-    Node* node = m_context.hitTestResult().innerNonSharedNode();
-    if (!node)
-        return;
-
-    Frame* frame = node->document().frame();
-    if (!frame)
-        return;
-
-    RenderObject* renderer = node->renderer();
-    if (!renderer || !renderer->isRenderImage())
-        return;
-
-    CachedResourceHandle<CachedImage> replacedImage = new CachedImage(URL::fakeURLWithRelativePart("image"), newImage.get(), frame->page()->sessionID());
-    toRenderImage(renderer)->imageResource().setCachedImage(replacedImage.get());
-}
 #endif
 
 } // namespace WebCore

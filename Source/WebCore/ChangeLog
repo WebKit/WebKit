@@ -1,3 +1,21 @@
+2014-04-22  Brady Eidson  <beidson@apple.com>
+
+        Change Image Controls replacement to use selection and paste
+        <rdar://problem/16302722> and https://bugs.webkit.org/show_bug.cgi?id=131992
+
+        Reviewed by Tim Horton.
+
+        * WebCore.exp.in: Remove deleted symbol.
+
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::ImageControlsButtonElementMac::defaultEventHandler):
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::showImageControlsMenu): Select the image element
+          before showing the menu.
+        (WebCore::ContextMenuController::replaceControlledImage): Deleted.
+        * page/ContextMenuController.h:
+
 2014-04-22  David Hyatt  <hyatt@apple.com>
 
         REGRESSION: Hitting asserts in new flow thread selection code.

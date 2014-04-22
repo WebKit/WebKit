@@ -1,3 +1,30 @@
+2014-04-22  Brady Eidson  <beidson@apple.com>
+
+        Change Image Controls replacement to use selection and paste
+        <rdar://problem/16302722> and https://bugs.webkit.org/show_bug.cgi?id=131992
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]): Write the
+          replacement data to a special pasteboard, then replace the current selection from
+          that pasteboard.
+
+        Remove all other code used to support the old replacement mechanism:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::replaceControlledImage): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        (WebKit::WebContextMenuProxyMac::page):
+        (WebKit::WebContextMenuProxyMac::replaceControlledImage): Deleted.
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::replaceControlledImage): Deleted.
+        * WebProcess/WebPage/WebContextMenu.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::replaceControlledImage): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-04-22  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Remove duplicated code to set size to the DrawingArea.
