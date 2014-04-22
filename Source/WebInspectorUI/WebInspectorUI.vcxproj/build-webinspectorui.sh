@@ -45,4 +45,4 @@ if [[ ${TARGET_BUILD_DIR} =~ "Release" ]] || [[ ${TARGET_BUILD_DIR} =~ "Producti
     export COMBINE_INSPECTOR_RESOURCES="YES";
 fi
 
-perl "${SRCROOT}/Scripts/copy-user-interface-resources.pl"
+/usr/bin/perl "${SRCROOT}/Scripts/copy-user-interface-resources.pl"

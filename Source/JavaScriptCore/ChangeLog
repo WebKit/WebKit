@@ -1,3 +1,13 @@
+2014-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Support Python 2.7 in Cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=132023
+
+        Reviewed by Michael Saboff.
+
+        * DerivedSources.make: Use a conditional variable to define
+        the path to Python/Perl.
+
 2014-04-22  Filip Pizlo  <fpizlo@apple.com>
 
         Switch the LLVMForJSC target to using the LLVM in /usr/local rather than /usr/local/LLVMForJavaScriptCore on iOS

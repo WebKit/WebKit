@@ -1,3 +1,13 @@
+2014-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Support Python 2.7 in Cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=132023
+
+        Reviewed by Michael Saboff.
+
+        * DerivedSources.make: Use proper path to Cygwin on
+        all platforms.
+
 2014-04-22  Andreas Kling  <akling@apple.com>
 
         REGRESSION (r151839): Subframe keeps getting mousemove events with the same coordinates after hiding a hovered element.

@@ -1413,11 +1413,9 @@ sub checkInstalledTools()
         print "svn 1.7.10 is known to be compatible with our servers. You are running $svnVersion,\nwhich may not work properly.\n"
     }
 
-    # Python 2.7.3 as shipped by Cygwin prevents the build from completing due to some issue with handling of
     # environment variables. Avoid until this is corrected.
     my $pythonVer = `python --version 2>&1`;
     die "You must have Python installed to build WebKit.\n" if ($?);
-    die "Python 2.7.3 is not compatible with the WebKit build. Please downgrade to Python 2.6.8.\n" if ($pythonVer =~ /2\.7\.3/);
 
     # cURL 7.34.0 has a bug that prevents authentication with opensource.apple.com (and other things using SSL3).
     my $curlVer = `curl --version | grep "curl"`;
