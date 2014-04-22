@@ -543,7 +543,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSou
         m_enabledVideoTrackID = trackID;
         [m_parser setShouldProvideMediaData:YES forTrackID:trackID];
         if (!m_displayLayer) {
-            m_displayLayer = [[getAVSampleBufferDisplayLayerClass() alloc] init];
+            m_displayLayer = adoptNS([[getAVSampleBufferDisplayLayerClass() alloc] init]);
             [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 didBecomeReadyForMoreSamples(trackID);
             }];
@@ -564,9 +564,9 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSou
             m_mediaSource->player()->removeAudioRenderer(renderer);
     } else {
         [m_parser setShouldProvideMediaData:YES forTrackID:trackID];
-        AVSampleBufferAudioRenderer* renderer;
+        RetainPtr<AVSampleBufferAudioRenderer> renderer;
         if (!m_audioRenderers.count(trackID)) {
-            renderer = [[getAVSampleBufferAudioRendererClass() alloc] init];
+            renderer = adoptNS([[getAVSampleBufferAudioRendererClass() alloc] init]);
             [renderer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 didBecomeReadyForMoreSamples(trackID);
             }];
@@ -575,7 +575,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSou
             renderer = m_audioRenderers[trackID].get();
 
         if (m_mediaSource)
-            m_mediaSource->player()->addAudioRenderer(renderer);
+            m_mediaSource->player()->addAudioRenderer(renderer.get());
     }
 }
 

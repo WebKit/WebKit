@@ -1,3 +1,16 @@
+2014-04-21  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] AVSampleBufferDisplayLayer and AudioRenderer is overretained.
+        https://bugs.webkit.org/show_bug.cgi?id=131963
+
+        Reviewed by Jon Honeycutt.
+
+        Adopt the results of -[[class alloc] init] rather than retaining them.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::hasVideo):
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+
 2014-04-21  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r166784): Gradient at background of iCloud login page doesn’t go all the way to the bottom
