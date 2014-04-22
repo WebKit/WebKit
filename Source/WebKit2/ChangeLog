@@ -1,5 +1,25 @@
 2014-04-21  Tim Horton  <timothy_horton@apple.com>
 
+        [wk2] Don't send intrinsic content size updates with dirty layout
+        https://bugs.webkit.org/show_bug.cgi?id=131964
+        <rdar://problem/14292718>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged):
+        (WebKit::TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        (WebKit::TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired): Deleted.
+        Instead of using a timer (which can fire while layout is dirty) to coalesce
+        intrinsic content size changes, send them only from flushLayers, just after updating layout.
+        This ensures that we never get intermediate intrinsic content sizes that won't be painted.
+
+2014-04-21  Tim Horton  <timothy_horton@apple.com>
+
         Remove a unnecessary forward-declared class from TiledCoreAnimationDrawingArea.
 
         Rubber-stamped by Simon Fraser.

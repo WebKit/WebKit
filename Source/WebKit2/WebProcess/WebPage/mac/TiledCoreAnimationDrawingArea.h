@@ -33,7 +33,6 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/LayerFlushScheduler.h>
 #include <WebCore/LayerFlushSchedulerClient.h>
-#include <WebCore/Timer.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
@@ -106,7 +105,7 @@ private:
     WebCore::TiledBacking* mainFrameTiledBacking() const;
     void updateDebugInfoLayer(bool showLayer);
 
-    void updateIntrinsicContentSizeTimerFired(WebCore::Timer<TiledCoreAnimationDrawingArea>*);
+    void updateIntrinsicContentSizeIfNeeded();
     void updateScrolledExposedRect();
 
     bool m_layerTreeStateIsFrozen;
@@ -126,7 +125,6 @@ private:
     WebCore::FloatRect m_scrolledExposedRect;
 
     WebCore::IntSize m_lastSentIntrinsicContentSize;
-    WebCore::Timer<TiledCoreAnimationDrawingArea> m_updateIntrinsicContentSizeTimer;
     bool m_inUpdateGeometry;
 
     double m_transientZoomScale;

@@ -74,7 +74,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     , m_isPaintingSuspended(!(parameters.viewState & ViewState::IsVisible))
     , m_exposedRect(FloatRect::infiniteRect())
     , m_scrolledExposedRect(FloatRect::infiniteRect())
-    , m_updateIntrinsicContentSizeTimer(this, &TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired)
     , m_transientZoomScale(1)
 {
     m_webPage->corePage()->settings().setForceCompositingMode(true);
@@ -199,28 +198,24 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     updateDebugInfoLayer(showTiledScrollingIndicator);
 }
 
-void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize&)
+void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize& size)
 {
     m_webPage->pageOverlayController().didChangeDocumentSize();
+}
 
+void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded()
+{
     if (!m_webPage->minimumLayoutSize().width())
         return;
 
-    if (m_inUpdateGeometry)
-        return;
-
-    if (!m_updateIntrinsicContentSizeTimer.isActive())
-        m_updateIntrinsicContentSizeTimer.startOneShot(0);
-}
-
-void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired(Timer<TiledCoreAnimationDrawingArea>*)
-{
-    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
+    FrameView* frameView = m_webPage->mainFrameView();
     if (!frameView)
         return;
 
-    IntSize contentSize = frameView->autoSizingIntrinsicContentSize();
+    if (frameView->needsLayout())
+        return;
 
+    IntSize contentSize = frameView->autoSizingIntrinsicContentSize();
     if (m_lastSentIntrinsicContentSize == contentSize)
         return;
 
@@ -272,6 +267,8 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     m_webPage->layoutIfNeeded();
+
+    updateIntrinsicContentSizeIfNeeded();
 
     if (m_pendingRootLayer) {
         setRootCompositingLayer(m_pendingRootLayer.get());
@@ -383,9 +380,6 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, cons
     [CATransaction synchronize];
 
     m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
-
-    if (m_webPage->minimumLayoutSize().width() && !m_updateIntrinsicContentSizeTimer.isActive())
-        m_updateIntrinsicContentSizeTimer.startOneShot(0);
 
     m_inUpdateGeometry = false;
 }
