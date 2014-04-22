@@ -294,6 +294,7 @@ namespace WebCore {
 
 static NSArray *assetMetadataKeyNames();
 static NSArray *itemKVOProperties();
+static NSArray* assetTrackMetadataKeyNames();
 
 #if !LOG_DISABLED
 static const char *boolString(bool val)
@@ -365,6 +366,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_currentTextTrack(0)
     , m_cachedDuration(MediaPlayer::invalidTime())
     , m_cachedRate(0)
+    , m_cachedTotalBytes(0)
     , m_pendingStatusChanges(0)
     , m_cachedItemStatus(MediaPlayerAVPlayerItemStatusDoesNotExist)
     , m_cachedLikelyToKeepUp(false)
@@ -783,9 +785,23 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
 void MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata(%p) - requesting metadata loading", this);
+    dispatch_group_t metadataLoadingGroup = dispatch_group_create();
+    dispatch_group_enter(metadataLoadingGroup);
     [m_avAsset.get() loadValuesAsynchronouslyForKeys:[assetMetadataKeyNames() retain] completionHandler:^{
-        [m_objcObserver.get() metadataLoaded];
+        if ([m_avAsset.get() statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
+            for (AVAssetTrack *track in [m_avAsset.get() tracks]) {
+                dispatch_group_enter(metadataLoadingGroup);
+                [track loadValuesAsynchronouslyForKeys:[assetTrackMetadataKeyNames() retain] completionHandler:^{
+                    dispatch_group_leave(metadataLoadingGroup);
+                }];
+            }
+        }
+        dispatch_group_leave(metadataLoadingGroup);
     }];
+    dispatch_group_notify(metadataLoadingGroup, dispatch_get_main_queue(), ^{
+        [m_objcObserver.get() metadataLoaded];
+    });
+    dispatch_release(metadataLoadingGroup);
 }
 
 MediaPlayerPrivateAVFoundation::ItemStatus MediaPlayerPrivateAVFoundationObjC::playerItemStatus() const
@@ -1130,11 +1146,13 @@ unsigned long long MediaPlayerPrivateAVFoundationObjC::totalBytes() const
     if (!metaDataAvailable())
         return 0;
 
-    long long totalMediaSize = 0;
-    for (AVPlayerItemTrack *thisTrack in m_cachedTracks.get())
-        totalMediaSize += [[thisTrack assetTrack] totalSampleDataLength];
+    if (m_cachedTotalBytes)
+        return m_cachedTotalBytes;
 
-    return totalMediaSize;
+    for (AVPlayerItemTrack *thisTrack in m_cachedTracks.get())
+        m_cachedTotalBytes += [[thisTrack assetTrack] totalSampleDataLength];
+
+    return m_cachedTotalBytes;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setAsset(id asset)
@@ -2343,6 +2361,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(RetainPtr<NSArray> me
 void MediaPlayerPrivateAVFoundationObjC::tracksDidChange(RetainPtr<NSArray> tracks)
 {
     m_cachedTracks = tracks;
+    m_cachedTotalBytes = 0;
 
     tracksChanged();
     updateStates();
@@ -2421,6 +2440,15 @@ NSArray* itemKVOProperties()
                 @"timedMetadata",
                 nil];
     }
+    return keys;
+}
+
+NSArray* assetTrackMetadataKeyNames()
+{
+    static NSArray* keys;
+    if (!keys)
+        keys = @[@"totalSampleDataLength", @"mediaType"];
+
     return keys;
 }
 

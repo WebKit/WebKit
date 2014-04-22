@@ -320,6 +320,7 @@ private:
     FloatSize m_cachedPresentationSize;
     double m_cachedDuration;
     double m_cachedRate;
+    mutable long long m_cachedTotalBytes;
     unsigned m_pendingStatusChanges;
     int m_cachedItemStatus;
     bool m_cachedLikelyToKeepUp;
