@@ -1,3 +1,13 @@
+2014-04-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        WebProfilerAgent::disable is calling the wrong superclass method
+        https://bugs.webkit.org/show_bug.cgi?id=131968
+
+        Reviewed by Simon Fraser.
+
+        * inspector/WebProfilerAgent.cpp:
+        (WebCore::WebProfilerAgent::disable):
+
 2014-04-21  Enrica Casucci  <enrica@apple.com>
 
         Followup from http://trac.webkit.org/changeset/167624

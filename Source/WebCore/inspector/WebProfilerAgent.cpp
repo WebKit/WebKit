@@ -48,7 +48,7 @@ void WebProfilerAgent::enable(ShouldRecompile shouldRecompile)
 
 void WebProfilerAgent::disable(ShouldRecompile shouldRecompile)
 {
-    InspectorProfilerAgent::enable(shouldRecompile);
+    InspectorProfilerAgent::disable(shouldRecompile);
     m_instrumentingAgents->setInspectorProfilerAgent(nullptr);
 }
 
