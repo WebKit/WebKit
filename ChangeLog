@@ -1,3 +1,11 @@
+2014-04-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Fix a typo in WebKitFeatures.cmake -- INITALVALUE -> INITIALVALUE.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2014-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Empty RenderInline objects should not be line break objects.

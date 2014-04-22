@@ -1,13 +1,13 @@
 set(_WEBKIT_AVAILABLE_OPTIONS "")
 
 macro(WEBKIT_OPTION_DEFINE _name _description _initialvalue)
-    set(_WEBKIT_AVAILABLE_OPTIONS_INITALVALUE_${_name} ${_initialvalue})
+    set(_WEBKIT_AVAILABLE_OPTIONS_INITIALVALUE_${_name} ${_initialvalue})
     set(_WEBKIT_AVAILABLE_OPTIONS_DESCRIPTION_${_name} ${_description})
     list(APPEND _WEBKIT_AVAILABLE_OPTIONS ${_name})
 endmacro()
 
 macro(WEBKIT_OPTION_DEFAULT_PORT_VALUE _name _value)
-    set(_WEBKIT_AVAILABLE_OPTIONS_INITALVALUE_${_name} ${_value})
+    set(_WEBKIT_AVAILABLE_OPTIONS_INITIALVALUE_${_name} ${_value})
 endmacro()
 
 macro(WEBKIT_OPTION_BEGIN)
@@ -132,7 +132,7 @@ endmacro()
 
 macro(WEBKIT_OPTION_END)
     foreach (_name ${_WEBKIT_AVAILABLE_OPTIONS})
-        option(${_name} "${_WEBKIT_AVAILABLE_OPTIONS_DESCRIPTION_${_name}}" ${_WEBKIT_AVAILABLE_OPTIONS_INITALVALUE_${_name}})
+        option(${_name} "${_WEBKIT_AVAILABLE_OPTIONS_DESCRIPTION_${_name}}" ${_WEBKIT_AVAILABLE_OPTIONS_INITIALVALUE_${_name}})
     endforeach ()
 
 
