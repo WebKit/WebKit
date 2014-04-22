@@ -1,3 +1,11 @@
+2014-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]):
+        Correct a typo that prevented tests from working properly.
+
 2014-04-21  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Should have the ability to output composited contents during layout testing

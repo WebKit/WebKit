@@ -1,5 +1,18 @@
 2014-04-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Mac] Follow-up: After a horizontal overflow scroll with a mechanical wheel mouse, vertical scrolling no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=131960
+        <rdar://problem/16142100>
+
+        Unreviewed build fix.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent): The test to clear the
+        last scrolled node was too broad. It should only follow this path
+        if both the phase and momentum phase are 'None'.
+
+2014-04-21  Brent Fulgham  <bfulgham@apple.com>
+
         [Mac] After a horizontal overflow scroll with a mechanical wheel mouse, vertical scrolling no longer works
         https://bugs.webkit.org/show_bug.cgi?id=131960
         <rdar://problem/16142100>

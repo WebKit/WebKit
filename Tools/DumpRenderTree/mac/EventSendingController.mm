@@ -714,7 +714,7 @@ const uint32_t kCGScrollWheelEventMomentumPhase = 123;
         phase = 0;
     else if ([phaseName isEqualToString: @"began"])
         phase = 1; // kCGScrollPhaseBegan
-    else if ([phaseName isEqualToString: @"changd"])
+    else if ([phaseName isEqualToString: @"changed"])
         phase = 2; // kCGScrollPhaseChanged;
     else if ([phaseName isEqualToString: @"ended"])
         phase = 4; // kCGScrollPhaseEnded

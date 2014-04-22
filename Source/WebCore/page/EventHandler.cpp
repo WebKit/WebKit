@@ -2576,7 +2576,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     ScrollableArea* scrollableArea = nullptr;
     platformPrepareForWheelEvents(e, result, element, scrollableContainer, scrollableArea, isOverWidget);
 
-    if (!e.useLatchedEventElement()) {
+    if (e.phase() == PlatformWheelEventPhaseNone && e.momentumPhase() == PlatformWheelEventPhaseNone) {
         m_latchedWheelEventElement = nullptr;
         m_previousWheelScrolledElement = nullptr;
     }
