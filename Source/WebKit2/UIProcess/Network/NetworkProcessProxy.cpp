@@ -201,7 +201,8 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
 #endif
     
 #if PLATFORM(IOS) && USE(XPC_SERVICES)
-    m_assertion = std::make_unique<ProcessAssertion>(xpc_connection_get_pid(connection()->xpcConnection()), AssertionState::Foreground);
+    if (xpc_connection_t connection = this->connection()->xpcConnection())
+        m_assertion = std::make_unique<ProcessAssertion>(xpc_connection_get_pid(connection), AssertionState::Foreground);
 #endif
 }
 

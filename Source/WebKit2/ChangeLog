@@ -1,3 +1,16 @@
+2014-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't try to use a null connection()->xpcConnection()
+        https://bugs.webkit.org/show_bug.cgi?id=131961
+
+        Reviewed by Dan Bernstein.
+        
+        If running with -WebKit2UseXPCServiceForWebProcess NO, connection()->xpcConnection()
+        is null and xpc_connection_get_pid() would crash, so null-check the xpcConnection.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+
 2014-04-21  Dan Bernstein  <mitz@apple.com>
 
         WebKit part of <rdar://problem/16631323> Page::setDefersLoading doesn’t do anything when using the Network process
