@@ -1,3 +1,17 @@
+2014-04-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        REGRESSION (r167652): Broke fast/regions/cssom/region-range-for-box-crash.html in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=131982
+
+        Reviewed by David Hyatt.
+
+        The problem was creating the Range from the arguments received at RenderView::setSelection(). Specifically
+        in this test endPos is 1 when the element has not children which creates an invalid Range.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::splitSelectionBetweenSubtrees): Pass 0 as startPos and endPos to Range::create() as we are
+        not interested in the positions at this point.
+
 2014-04-22  Brady Eidson  <beidson@apple.com>
 
         Change Image Controls replacement to use selection and paste

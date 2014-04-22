@@ -799,7 +799,7 @@ void RenderView::splitSelectionBetweenSubtrees(RenderObject* start, int startPos
         renderSubtreesMap.set(namedFlowThread, nullptr);
 
     if (start && end) {
-        RefPtr<Range> initialRange = Range::create(document(), start->node(), startPos, end->node(), endPos);
+        RefPtr<Range> initialRange = Range::create(document(), start->node(), 0, end->node(), 0);
 
         Node* startNode = initialRange->startContainer();
         Node* endNode = initialRange->endContainer();
