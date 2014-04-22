@@ -2987,6 +2987,10 @@ __ZNK7WebCore12IconDatabase24shouldStopThreadActivityEv
 __ZNK7WebCore12IconDatabase9isEnabledEv
 #endif
 
+#if ENABLE(IMAGE_CONTROLS)
+__ZN7WebCore21ContextMenuController22replaceControlledImageEN3WTF10PassRefPtrINS_5ImageEEE
+#endif
+
 #if ENABLE(INDEXED_DATABASE)
 __ZN7WebCore10IDBKeyData14setNumberValueEd
 __ZN7WebCore10IDBKeyData6decodeERNS_12KeyedDecoderERS0_

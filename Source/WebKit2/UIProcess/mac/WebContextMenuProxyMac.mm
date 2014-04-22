@@ -56,10 +56,7 @@ typedef enum {
 @property NSSharingServicePickerStyle style;
 - (NSMenu *)menu;
 @end
-
-static NSString *imageControlPasteboardName = @"WebKitImageControlsPasteboard";
-
-#endif // ENABLE(IMAGE_CONTROLS)
+#endif
 
 using namespace WebCore;
 
@@ -234,15 +231,7 @@ using namespace WebCore;
 {
     RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData((CFDataRef)[items objectAtIndex:0], NULL));
     RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(source.get(), 0, NULL));
-
-    if (!image)
-        return;
-
-    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:imageControlPasteboardName];
-    [pasteboard declareTypes:@[ NSPasteboardTypeTIFF ] owner:nil];
-    [pasteboard setData:[items objectAtIndex:0] forType:NSPasteboardTypeTIFF];
-    
-    _menuProxy->page().readSelectionFromPasteboard(imageControlPasteboardName);
+    _menuProxy->replaceControlledImage(image.get());
 }
 
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
@@ -260,7 +249,6 @@ WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy* pa
     : m_webView(webView)
     , m_page(page)
 {
-    ASSERT(m_page);
 }
 
 WebContextMenuProxyMac::~WebContextMenuProxyMac()
@@ -444,6 +432,17 @@ NSWindow *WebContextMenuProxyMac::window() const
 {
     return [m_webView window];
 }
+
+#if ENABLE(IMAGE_CONTROLS)
+void WebContextMenuProxyMac::replaceControlledImage(CGImageRef newImage)
+{
+    FloatSize newImageSize(CGImageGetWidth(newImage), CGImageGetHeight(newImage));
+    RefPtr<ShareableBitmap> newBitmap = ShareableBitmap::createShareable(expandedIntSize(newImageSize), ShareableBitmap::SupportsAlpha);
+    newBitmap->createGraphicsContext()->drawNativeImage(newImage, newImageSize, ColorSpaceDeviceRGB, FloatRect(FloatPoint(), newImageSize), FloatRect(FloatPoint(), newImageSize));
+
+    m_page->replaceControlledImage(newBitmap.release());
+}
+#endif
 
 } // namespace WebKit
 

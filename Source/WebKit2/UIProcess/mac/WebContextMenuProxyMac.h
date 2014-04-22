@@ -55,9 +55,9 @@ public:
 
 #if ENABLE(IMAGE_CONTROLS)
     void clearImageServicesMenu();
+    void replaceControlledImage(CGImageRef newImage);
 #endif
 
-    WebPageProxy& page() const { return *m_page; }
     NSWindow *window() const;
 
 private:

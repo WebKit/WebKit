@@ -1,3 +1,17 @@
+2014-04-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r167674.
+        https://bugs.webkit.org/show_bug.cgi?id=132025
+
+        Going a different way with this (Requested by bradee-oh on
+        #webkit).
+
+        Reverted changeset:
+
+        "Change Image Controls replacement to use selection and paste"
+        https://bugs.webkit.org/show_bug.cgi?id=131992
+        http://trac.webkit.org/changeset/167674
+
 2014-04-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused local variable

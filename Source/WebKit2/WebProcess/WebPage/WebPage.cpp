@@ -3114,6 +3114,15 @@ void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& i
 }
 #endif
 
+#if ENABLE(IMAGE_CONTROLS)
+void WebPage::replaceControlledImage(const ShareableBitmap::Handle& bitmapHandle)
+{
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(bitmapHandle);
+    if (bitmap)
+        m_contextMenu->replaceControlledImage(bitmap->createImage());
+}
+#endif
+
 void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
 {
     bool selectReplacement = true;

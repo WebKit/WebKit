@@ -77,6 +77,13 @@ void WebContextMenu::itemSelected(const WebContextMenuItemData& item)
     m_page->corePage()->contextMenuController().contextMenuItemSelected(&coreItem);
 }
 
+#if ENABLE(IMAGE_CONTROLS)
+void WebContextMenu::replaceControlledImage(PassRefPtr<Image> newImage)
+{
+    m_page->corePage()->contextMenuController().replaceControlledImage(newImage);
+}
+#endif
+
 void WebContextMenu::menuItemsWithUserData(Vector<WebContextMenuItemData> &menuItems, RefPtr<API::Object>& userData) const
 {
     ContextMenuController& controller = m_page->corePage()->contextMenuController();
