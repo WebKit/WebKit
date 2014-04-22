@@ -11299,6 +11299,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\rendering\SelectionSubtreeRoot.cpp" />
     <ClCompile Include="..\rendering\SimpleLineLayout.cpp" />
     <ClCompile Include="..\rendering\SimpleLineLayoutFunctions.cpp" />
     <ClCompile Include="..\rendering\TextPaintStyle.cpp" />
@@ -20097,6 +20098,7 @@
     <ClInclude Include="..\rendering\RenderWidget.h" />
     <ClInclude Include="..\rendering\RootInlineBox.h" />
     <ClInclude Include="..\rendering\ScrollBehavior.h" />
+    <ClInclude Include="..\rendering\SelectionSubtreeRoot.h" />
     <ClInclude Include="..\rendering\SimpleLineLayout.h" />
     <ClInclude Include="..\rendering\SimpleLineLayoutFunctions.h" />
     <ClInclude Include="..\rendering\SimpleLineLayoutResolver.h" />

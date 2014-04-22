@@ -1,3 +1,64 @@
+2014-04-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Regions] Selection highlight doesn't match DOM selection
+        https://bugs.webkit.org/show_bug.cgi?id=131511
+
+        Reviewed by David Hyatt.
+
+        This patch implements a subtrees approach to fix selection interaction in CSS Regions.
+
+        The idea is to divide the Render tree in subtrees. One subtree will be the RenderView (which is always present),
+        then for each RenderNamedFlowThread (which are children of RenderView) we will have an extra subtree.
+
+        For each subtree it determines the start and end positions according to the DOM tree. So, every subtree will
+        always have a start and end position, and the selection algorithm will be able to reach the end from the start
+        without problems (this allows us to remove the changes introduced in r155058).
+
+        Then selection related methods in RenderView are adapted to ensure that they are called for each subtree. Making
+        the selection highlight to match DOM selection as expected.
+
+        Test: fast/regions/selection/selecting-text-including-region.html
+
+        * CMakeLists.txt: Add new class SelectionSubtreeRoot to build file.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/RenderNamedFlowThread.h: Inherit from SelectionSubtreeRoot.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionRoot): New method to return the RenderNamedFlowThread if any or the RenderView
+        otherwise.
+        (WebCore::RenderObject::selectionStartEnd): If it's inside a RenderNamedFlowThread use specific method instead
+        of the RenderView's one.
+        * rendering/RenderObject.h: Add new method signature.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionBounds): Adapt method to subtrees approach.
+        (WebCore::RenderView::subtreeSelectionBounds): Modify previous method in order to use SelectionSubtreeRoot
+        objects.
+        (WebCore::RenderView::repaintSelection): Adapt method to subtrees approach.
+        (WebCore::RenderView::repaintSubtreeSelection): Modify previous method in order to use SelectionSubtreeRoot
+        objects.
+        (getNextOrPrevRenderObjectBasedOnDirection): Deleted method from r155058 as it is not needed anymore. Each
+        subtree will have start and end positions, so the selection algorithm will always find the end.
+        (WebCore::RenderView::setSelection): Adapt method to subtrees approach.
+        (WebCore::RenderView::splitSelectionBetweenSubtrees): Determine start and end positions for each subtree and
+        call setSubtreeSelection().
+        (WebCore::RenderView::setSubtreeSelection): Modify previous method in order to use SelectionSubtreeRoot objects.
+        * rendering/RenderView.h: Inherit from SelectionSubtreeRoot. Add signature for new helper methods receiving
+        SelectionSubtreeRoot objects.
+        * rendering/SelectionSubtreeRoot.cpp: Added.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeRoot):
+        (WebCore::SelectionSubtreeRoot::selectionStartEndPositions):
+        * rendering/SelectionSubtreeRoot.h: Added. New class to identify root elements for the subtrees. With some basic
+        attributes and methods to store the start and end positions and offsets.
+        (WebCore::SelectionSubtreeRoot::selectionStart):
+        (WebCore::SelectionSubtreeRoot::selectionStartPos):
+        (WebCore::SelectionSubtreeRoot::selectionEnd):
+        (WebCore::SelectionSubtreeRoot::selectionEndPos):
+        (WebCore::SelectionSubtreeRoot::setSelectionStart):
+        (WebCore::SelectionSubtreeRoot::setSelectionStartPos):
+        (WebCore::SelectionSubtreeRoot::setSelectionEnd):
+        (WebCore::SelectionSubtreeRoot::setSelectionEndPos):
+
 2014-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Follow-up: After a horizontal overflow scroll with a mechanical wheel mouse, vertical scrolling no longer works

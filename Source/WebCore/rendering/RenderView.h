@@ -27,8 +27,10 @@
 #include "PODFreeListArena.h"
 #include "Region.h"
 #include "RenderBlockFlow.h"
+#include "SelectionSubtreeRoot.h"
 #include <memory>
 #include <wtf/HashSet.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -37,7 +39,7 @@ class ImageQualityController;
 class RenderLayerCompositor;
 class RenderQuote;
 
-class RenderView final : public RenderBlockFlow {
+class RenderView final : public RenderBlockFlow, public SelectionSubtreeRoot {
 public:
     RenderView(Document&, PassRef<RenderStyle>);
     virtual ~RenderView();
@@ -86,7 +88,6 @@ public:
     RenderObject* selectionStart() const { return m_selectionStart; }
     RenderObject* selectionEnd() const { return m_selectionEnd; }
     IntRect selectionBounds(bool clipToVisibleContent = true) const;
-    void selectionStartEnd(int& startPos, int& endPos) const;
     void repaintSelection() const;
 
     bool printing() const;
@@ -295,6 +296,11 @@ private:
     
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
+
+    void splitSelectionBetweenSubtrees(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode);
+    void setSubtreeSelection(SelectionSubtreeRoot&, RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode);
+    LayoutRect subtreeSelectionBounds(const SelectionSubtreeRoot&, bool clipToVisibleContent = true) const;
+    void repaintSubtreeSelection(const SelectionSubtreeRoot&) const;
 
 private:
     FrameView& m_frameView;

@@ -6952,6 +6952,9 @@
     <ClCompile Include="..\platform\graphics\cairo\TiledBackingStoreBackendCairo.cpp">
       <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\SelectionSubtreeRoot.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\SimpleLineLayout.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
@@ -14806,6 +14809,9 @@
       <Filter>platform\graphics\cairo</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\SimpleLineLayoutResolver.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\SelectionSubtreeRoot.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\SimpleLineLayout.h">

@@ -1,3 +1,21 @@
+2014-04-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Regions] Selection highlight doesn't match DOM selection
+        https://bugs.webkit.org/show_bug.cgi?id=131511
+
+        Reviewed by David Hyatt.
+
+        Add new test to check highlight of render objects moved under RenderNamedFlowThread in the render tree.
+
+        Updated some tests to avoid issues with selection gap filling in the new implementation.
+
+        * fast/regions/selection/selecting-text-including-region-expected.html: Added.
+        * fast/regions/selection/selecting-text-including-region.html: Added.
+        * fast/regions/selection/selecting-text-through-different-region-flows-2-expected.html: Updated.
+        * fast/regions/selection/selecting-text-through-different-region-flows-2.html: Updated.
+        * fast/regions/selection/selection-direction-expected.html: Updated.
+        * fast/regions/selection/selection-direction.html: Updated.
+
 2014-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] After a horizontal overflow scroll with a mechanical wheel mouse, vertical scrolling no longer works

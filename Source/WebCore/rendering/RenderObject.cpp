@@ -1520,9 +1520,18 @@ Color RenderObject::selectionEmphasisMarkColor() const
     return selectionColor(CSSPropertyWebkitTextEmphasisColor);
 }
 
+SelectionSubtreeRoot& RenderObject::selectionRoot() const
+{
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (flowThread && flowThread->isRenderNamedFlowThread())
+        return *toRenderNamedFlowThread(flowThread);
+
+    return view();
+}
+
 void RenderObject::selectionStartEnd(int& spos, int& epos) const
 {
-    view().selectionStartEnd(spos, epos);
+    selectionRoot().selectionStartEndPositions(spos, epos);
 }
 
 void RenderObject::handleDynamicFloatPositionChange()

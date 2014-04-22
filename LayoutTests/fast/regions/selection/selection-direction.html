@@ -4,6 +4,7 @@
     <style>
         #source {
             -webkit-flow-into: content;
+            color: red;
         }
 
         #region {
@@ -15,24 +16,50 @@
         #outside {
             height: 100px;
             width: 200px;
+            color: green;
+            float: left;
         }
 
         body {
             margin-top: 0;
+            font-size: 20px;
+            font-family: Ahem;
+            line-height: 20px;
         }
 
         #description {
             width: 600px;
         }
+
+        h1 {
+            line-height: 50px;
+        }
+
+        .clear {
+            clear: both;
+        }
     </style>
 </head>
-<body onload="selectContentByRange(100, 10, 100, 110);">
-    <div id="source">inside region inside region inside region inside region</div>
-    <div id="outside">outside region outside region outside region outside region</div>
+<body onload="selectContentByRange(100, 50, 100, 150);">
+    <div id="source">
+        X X X X X
+        X X X X X
+        X X X X X
+        X X X X X
+        X X X X XX
+    </div>
+    <div id="outside">
+        X X X X X
+        X X X X X
+        X X X X X
+        X X X X X
+        X X X X X
+    </div>
+    <div class="clear"></div>
     <div id="region"></div>
     <div id="description">
         <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=121501">Bug #121501 - [CSS Regions] Layout Test for selection direction</a></h1>
-        <p>Selection is based in DOM tree, so if you select text from "outside region" to "inside region" the highlighted area is exactly the opposite to what the user is actually selecting.</p>
+        <p>Selection is based in DOM tree, so if you select text from "green" to "red" the highlighted area is exactly the opposite to what the user is actually selecting.</p>
     </div>
 </body>
 </html>

@@ -2340,6 +2340,7 @@ set(WebCore_SOURCES
     rendering/RenderVTTCue.cpp
     rendering/RenderWidget.cpp
     rendering/RootInlineBox.cpp
+    rendering/SelectionSubtreeRoot.cpp
     rendering/ScrollBehavior.cpp
     rendering/SimpleLineLayout.cpp
     rendering/SimpleLineLayoutFunctions.cpp

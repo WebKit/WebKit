@@ -28,6 +28,7 @@
 #define RenderNamedFlowThread_h
 
 #include "RenderFlowThread.h"
+#include "SelectionSubtreeRoot.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/ListHashSet.h>
@@ -43,7 +44,7 @@ typedef ListHashSet<RenderNamedFlowThread*> RenderNamedFlowThreadList;
 typedef HashCountedSet<RenderNamedFlowThread*> RenderNamedFlowThreadCountedSet;
 typedef ListHashSet<Element*> NamedFlowContentElements;
 
-class RenderNamedFlowThread final : public RenderFlowThread {
+class RenderNamedFlowThread final : public RenderFlowThread, public SelectionSubtreeRoot {
 public:
     RenderNamedFlowThread(Document&, PassRef<RenderStyle>, PassRef<WebKitNamedFlow>);
     virtual ~RenderNamedFlowThread();

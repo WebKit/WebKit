@@ -3,19 +3,56 @@
 <head>
 <script src="../resources/helper.js"></script>
 <style>
-body { width: 600px; }
-#footNote { font-size: 13px; }
+* {
+    margin: 0px;
+    padding: 0px;
+    font-size: 20px;
+    font-family: Ahem;
+    line-height: 20px;
+}
+#content1 {
+    height: 100px;
+    width: 200px;
+    position: absolute;
+    top: 50px;
+}
+#nestedRegion {
+    height: 100px;
+    width: 200px;
+    color: red;
+    position: absolute;
+    top: 250px;
+}
+#content2 {
+    height: 100px;
+    width: 200px;
+    position: absolute;
+    top: 150px;
+}
 </style>
 </head>
 <body onload="selectBaseAndExtent('start', 0, 'end', 1)">
-<div id="content">
-    <h1 style="margin-top: 0px">Selecting text through different CSS-Region flows</h1>
-    <div>
-    This text contains a footnote as a nested region what is diplayed <span id="start">below<span> the article. (1) If you start selecting
-        text from this article until somewhere in the footnote and then click somewhere, the selection should be cleared.
-    </div>
-    <div id="footNote">(1) This is a footnote. Footnotes can be quite long and go over several lines. This footnote
-    is nested inside the text <span id="end">above<span> and displayed here with the help of css-regions.</span></div>
+<h1>Selecting text through different CSS-Region flows</h1>
+<div id="content1">
+    X X X X X
+    X X X X X
+    X X <span id="start">X</span> X X
+    X X X X X
+    X X X X XX
+</div>
+<div id="nestedRegion">
+    X X X X X
+    X X X X X
+    X X <span id="end">X</span> X X
+    X X X X X
+    X X X X X
+</div>
+<div id="content2">
+    X X X X X
+    X X X X X
+    X X X X X
+    X X X X X
+    X X X X X
 </div>
 </body>
 </html>

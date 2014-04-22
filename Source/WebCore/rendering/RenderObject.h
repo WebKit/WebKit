@@ -60,6 +60,7 @@ class RenderLayer;
 class RenderLayerModelObject;
 class RenderNamedFlowThread;
 class RenderTheme;
+class SelectionSubtreeRoot;
 class TransformState;
 class VisiblePosition;
 #if PLATFORM(IOS)
@@ -850,6 +851,7 @@ public:
     virtual void imageChanged(CachedImage*, const IntRect* = 0) override;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) { }
 
+    SelectionSubtreeRoot& selectionRoot() const;
     void selectionStartEnd(int& spos, int& epos) const;
     
     void removeFromParent();

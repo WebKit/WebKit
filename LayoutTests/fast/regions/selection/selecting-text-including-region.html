@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/helper.js"></script>
+    <link rel="stylesheet" href="../resources/region-style.css"></link>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            line-height: 20px;
+            font-size: 20px;
+            font-family: Ahem;
+        }
+
+        #region {
+            background-color: cyan;
+        }
+
+        #description {
+            position: absolute;
+            top: 350px;
+        }
+    </style>
+    <script>
+        onMouseUpLogSelection("selected-content");
+    </script>
+</head>
+<body onload="selectContentByIds('word1', 'word2');" style="margin-top: 0;">
+    <div class="bigBox float">
+        X X X X X X X X
+        X X X X X X X X
+        X X X <span id="word1" class="token">X</span> X X X X
+        X X X X X X X X
+        X X X X X X X X
+    </div>
+    <div class="clear"></div>
+    <div class="flowArticle">
+        X X X X X X X X
+        X X X X X X X X
+        X X X X X X X X
+        X X X X X X X X
+        X X X X X X X X
+    </div>
+    <div class="bigBox float">
+        X X X X X X X X
+        X X X X X X X X
+        X X X <span id="word2" class="token">X</span> X X X X
+        X X X X X X X X
+        X X X X X X X X
+    </div>
+    <div class="clear"></div>
+    <div id="region" class="regionArticle bigBox"></div>
+    <div id="description" class="description">
+        <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=131511">Bug #131511 - [CSS Regions] Selection highlight doesn't match DOM selection</a></h1>
+        <p>This test checks the selection in 2 text wrapping a content node. If you select from <span class="token">X</span> to <span class="token">X</span> you will see that region text is highlighted and included in the selected content (because of the content of the region is between bot texts in the DOM).</p>
+        <dl>
+            <dt>Selected content:</dt>
+            <dd id="selected-content"></dd>
+        </dl>
+    </div>
+</body>
+</html>
