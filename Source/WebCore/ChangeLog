@@ -1,3 +1,18 @@
+2014-04-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r167658.
+        https://bugs.webkit.org/show_bug.cgi?id=131993
+
+        Caused many crashes on media tests (Requested by ap on
+        #webkit).
+
+        Reverted changeset:
+
+        "[Mac] don't ask for AVAssetTrack properties before they are
+        available"
+        https://bugs.webkit.org/show_bug.cgi?id=131902
+        http://trac.webkit.org/changeset/167658
+
 2014-04-22  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] fast/multicol/multicol-with-child-renderLayer-for-input.html puts the textfield in the wrong place
