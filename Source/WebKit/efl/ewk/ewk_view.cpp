@@ -2789,23 +2789,6 @@ void ewk_view_onload_event(Evas_Object* ewkView, Evas_Object* frame)
 
 /**
  * @internal
- * Reports the main frame was cleared.
- *
- * @param ewkView View.
- */
-void ewk_view_frame_main_cleared(Evas_Object* ewkView)
-{
-    DBG("ewkView=%p", ewkView);
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api->flush);
-    smartData->api->flush(smartData);
-
-    ewk_view_mixed_content_displayed_set(ewkView, false);
-    ewk_view_mixed_content_run_set(ewkView, false);
-}
-
-/**
- * @internal
  * Reports the main frame received an icon.
  *
  * @param ewkView View.
@@ -3647,32 +3630,6 @@ void ewk_view_text_direction_set(Evas_Object* ewkView, Ewk_Text_Direction direct
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void ewk_view_did_first_visually_nonempty_layout(Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-    if (!priv->flags.viewCleared) {
-        ewk_view_frame_main_cleared(ewkView);
-        ewk_view_enable_render(ewkView);
-        priv->flags.viewCleared = true;
-    }
-}
-
-/**
- * @internal
- * Dispatch finished loading.
- *
- * @param ewkView view.
- */
-void ewk_view_dispatch_did_finish_loading(Evas_Object* ewkView)
-{
-    /* If we reach this point and rendering is still disabled, WebCore will not
-     * trigger the didFirstVisuallyNonEmptyLayout signal anymore. So, we
-     * forcefully re-enable the rendering.
-     */
-    ewk_view_did_first_visually_nonempty_layout(ewkView);
 }
 
 void ewk_view_transition_to_commited_for_newpage(Evas_Object* ewkView)

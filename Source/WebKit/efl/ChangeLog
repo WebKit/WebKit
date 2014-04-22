@@ -1,3 +1,25 @@
+2014-04-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] There are many warnings in layout test since r167428
+        https://bugs.webkit.org/show_bug.cgi?id=131985
+
+        Reviewed by Gyuyoung Kim.
+
+        Since r167428, implementation of flush method was removed, but ewk_view_frame_main_cleared
+        still checked and generated many warnings.
+
+        Now, ewk_view_frame_main_cleared is not required because flush is already
+        meaningless and others are covered by ewk_frame_view_create_for_view.
+        So, this patch removed ewk_view_frame_main_cleared and related code which is already dead.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::transitionToCommittedForNewPage):
+        * ewk/ewk_view.cpp:
+        (ewk_view_frame_main_cleared): Deleted.
+        (ewk_view_did_first_visually_nonempty_layout): Deleted.
+        (ewk_view_dispatch_did_finish_loading): Deleted.
+        * ewk/ewk_view.h: Removed flush smart method.
+
 2014-04-18  Philippe Normand  <pnormand@igalia.com>
 
         Remove NETWORK_INFO support
