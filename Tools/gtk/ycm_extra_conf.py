@@ -61,6 +61,26 @@ def transform_relative_paths_to_absolute_paths(arguments, build_path):
     return result
 
 
+def get_build_path():
+    webkitbuild_path = os.path.join(common.get_build_path(fatal=False), '..')
+    if not os.path.exists(webkitbuild_path):
+        return None
+
+    release_build_path = os.path.join(webkitbuild_path, 'Release')
+    debug_build_path = os.path.join(webkitbuild_path, 'Debug')
+
+    try:
+        release_mtime = os.path.getmtime(os.path.join(release_build_path, 'compile_commands.json'))
+    except os.error:
+        release_mtime = 0
+    try:
+        debug_mtime = os.path.getmtime(os.path.join(debug_build_path, 'compile_commands.json'))
+    except os.error:
+        debug_mtime = 0
+
+    return release_build_path if release_mtime >= debug_mtime else debug_build_path
+
+
 def FlagsForFile(filename, **kwargs):
     """This is the main entry point for YCM. Its interface is fixed.
 
@@ -88,7 +108,7 @@ def FlagsForFile(filename, **kwargs):
         # Force config.h file inclusion, for GLib macros.
         result['flags'].append("-includeconfig.h")
 
-    build_path = os.path.normpath(common.get_build_path(fatal=False))
+    build_path = os.path.normpath(get_build_path())
     if not build_path:
         print "Could not find WebKit build path."
         return result

@@ -1,3 +1,17 @@
+2014-04-22  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] YCM choose a newer compile_commands.json in between Release or Debug
+        https://bugs.webkit.org/show_bug.cgi?id=131911
+
+        Reviewed by Martin Robinson.
+
+        common.get_build_path returns release path even though Debug configuration
+        is newer than Release. So YouCompleteMe is used to refer old build setup inadvertently.
+
+        * gtk/ycm_extra_conf.py:
+        (get_build_path): Compare modified time of Release and Debug. And return a recent modified path.
+        (FlagsForFile):
+
 2014-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.
