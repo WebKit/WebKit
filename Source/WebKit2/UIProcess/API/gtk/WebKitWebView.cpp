@@ -561,7 +561,7 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 
     switch (propId) {
     case PROP_WEB_CONTEXT:
-        g_value_take_object(value, webView->priv->context);
+        g_value_set_object(value, webView->priv->context);
         break;
     case PROP_GROUP:
         g_value_set_object(value, webkit_web_view_get_group(webView));

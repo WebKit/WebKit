@@ -1,3 +1,17 @@
+2014-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash after getting web view context property with g_object_get
+        https://bugs.webkit.org/show_bug.cgi?id=131983
+
+        Reviewed by Philippe Normand.
+
+        The problem is that the getter is using g_value_take_object() and
+        the default context is destroyed when the caller releases its ref.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewGetProperty): Use g_value_set_object() instead of
+        g_value_take_object().
+
 2014-03-20  Alexey Proskuryakov  <ap@apple.com>
 
         Generalize WebInspector check in maybeInitializeSandboxExtensionHandle().
