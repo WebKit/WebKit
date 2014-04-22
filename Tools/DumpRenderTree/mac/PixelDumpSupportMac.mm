@@ -28,21 +28,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PixelDumpSupport.h"
-#include "PixelDumpSupportCG.h"
+#import "config.h"
+#import "PixelDumpSupport.h"
+#import "PixelDumpSupportCG.h"
 
-#include "DumpRenderTree.h" 
-#include "TestRunner.h"
-#include <CoreGraphics/CGBitmapContext.h>
-#include <wtf/Assertions.h>
-#include <wtf/RefPtr.h>
+#import "DumpRenderTree.h" 
+#import "TestRunner.h"
+#import <CoreGraphics/CGBitmapContext.h>
+#import <QuartzCore/QuartzCore.h>
+#import <wtf/Assertions.h>
+#import <wtf/RefPtr.h>
 
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
+
+@interface CATransaction (Details)
++ (void)synchronize;
+@end
 
 static PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, size_t& rowBytes, void*& buffer)
 {
@@ -129,12 +134,11 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
         }
     } else {
       if (onscreen) {
-            // displayIfNeeded does not update the CA layers if the layer-hosting view was not marked as needing display, so
-            // we're at the mercy of CA's display-link callback to update layers in time. So we need to force a display of the view
-            // to get AppKit to update the CA layers synchronously.
-            // FIXME: this will break repaint testing if we have compositing in repaint tests
+            // FIXME: This will break repaint testing if we have compositing in repaint tests.
             // (displayWebView() painted gray over the webview, but we'll be making everything repaint again).
             [view display];
+            [CATransaction flush];
+            [CATransaction synchronize];
 
             // Ask the window server to provide us a composited version of the *real* window content including surfaces (i.e. OpenGL content)
             // Note that the returned image might differ very slightly from the window backing because of dithering artifacts in the window server compositor.

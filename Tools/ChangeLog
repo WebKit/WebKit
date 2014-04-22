@@ -1,3 +1,20 @@
+2014-04-22  Tim Horton  <timothy_horton@apple.com>
+
+        DumpRenderTree generates white snapshots on some platforms
+        https://bugs.webkit.org/show_bug.cgi?id=132026
+        <rdar://problem/16679363>
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        Link DRT against QuartzCore.
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+        Force CoreAnimation to synchronously update layers in a more explicit
+        way that doesn't depend on AppKit behavior. This is very similar to what
+        WebKitTestRunner does (indirectly) during its force repaint.
+
 2014-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Support Python 2.7 in Cygwin
