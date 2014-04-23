@@ -1,3 +1,24 @@
+2014-04-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Make checking if a font is the system font more robust
+        https://bugs.webkit.org/show_bug.cgi?id=132030
+
+        Reviewed by Dean Jackson.
+
+        Instead of inspecting a font's name to determine if it is a system font,
+        on OS X we can ask the system directly.
+
+        This patch also moves a platform-specific check into platform-specific
+        code, so that other platforms don't check for OS X-specific behavior.
+
+        Covered by existing tests.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::hasValidAverageCharWidth):
+        * platform/graphics/Font.h:
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::primaryFontDataIsSystemFont):
+
 2014-04-23  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Focus management API was moved from HTMLDocument to Document in r166668

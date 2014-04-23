@@ -34,6 +34,11 @@
 #endif
 #import <wtf/MathExtras.h>
 
+#if __has_include(<CoreText/CTFontDescriptorPriv.h>)
+#import <CoreText/CTFontDescriptorPriv.h>
+#endif
+extern "C" bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
+
 #if ENABLE(LETTERPRESS)
 #import "SoftLinking.h"
 #if __has_include(<CoreGraphics/CoreGraphicsPrivate.h>)
@@ -534,5 +539,15 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
     return result;
 }
 #endif
+
+bool Font::primaryFontDataIsSystemFont() const
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    RetainPtr<CTFontDescriptorRef> descriptor = CTFontCopyFontDescriptor(primaryFont()->platformData().ctFont());
+    return CTFontDescriptorIsSystemUIFont(descriptor.get());
+#else
+    return false;
+#endif
+}
 
 }
