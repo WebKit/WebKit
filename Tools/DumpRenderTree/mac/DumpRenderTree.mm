@@ -1098,6 +1098,9 @@ static void prepareConsistentTestingEnvironment()
 
     adjustFonts();
     registerMockScrollbars();
+
+    // The mock scrollbars setting cannot be modified after creating a view, so we have to do it now.
+    [[WebPreferences standardPreferences] setMockScrollbarsEnabled:YES];
 #else
     activateFontsIOS();
 #endif

@@ -1,3 +1,19 @@
+2014-04-23  Tim Horton  <timothy_horton@apple.com>
+
+        Mock scrollbars don't always work in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=132082
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (prepareConsistentTestingEnvironment):
+        Set the mock scrollbar setting before creating the WebView, as this setting
+        cannot be dynamically changed, so any scrollbars that are created during
+        WebView initialization and are not replaced before snapshotting will end
+        up being platform scrollbars instead of mock ones.
+        WebKitTestRunner already sets this preference before creating WKViews,
+        so we're just matching its behavior.
+
 2014-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] ShadowRoot API was removed in r164131
