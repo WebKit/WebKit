@@ -1711,20 +1711,21 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
                                        BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     GraphicsContext* graphicsContext = info.context;
-    // border-image is not affected by border-radius.
-    if (paintNinePieceImage(graphicsContext, rect, style, style.borderImage()))
-        return;
 
     if (graphicsContext->paintingDisabled())
+        return;
+
+    if (rect.isEmpty())
+        return;
+
+    // border-image is not affected by border-radius.
+    if (paintNinePieceImage(graphicsContext, rect, style, style.borderImage()))
         return;
 
     BorderEdge edges[4];
     BorderEdge::getBorderEdgeInfo(edges, style, document().deviceScaleFactor(), includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect outerBorder = style.getRoundedBorderFor(rect, &view(), includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect innerBorder = style.getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(*graphicsContext, rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
-
-    if (outerBorder.rect().isEmpty())
-        return;
 
     bool haveAlphaColor = false;
     bool haveAllSolidEdges = true;

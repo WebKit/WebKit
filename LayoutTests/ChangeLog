@@ -1,3 +1,17 @@
+2014-04-22  Zalan Bujtas  <zalan@apple.com>
+
+        Do not paint border image when the border rect is empty.
+        https://bugs.webkit.org/show_bug.cgi?id=131988
+
+        Reviewed by Darin Adler.
+
+        http://trac.webkit.org/changeset/167351 introduced an early return when border
+        rect is empty. This patch ensures that border image is not painted either in that case.
+
+        * fast/css/padding-margin-negative-border-expected.html: Borders in -expected.html does not get painted either, just
+        ensure that they are explicitly different colors.
+        * fast/css/padding-margin-negative-border.html:
+
 2014-04-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r157328): popover to check into flight ba.com dismisses instantly when focusing form

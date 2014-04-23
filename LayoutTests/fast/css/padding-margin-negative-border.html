@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <style>
+      table { width: 700px; }
+      td { width: 400px; }
+      b {  border: solid blue; }
+      i { background-color: green; }
+      .borderImage { border-image:url("resources/red-box.png") 3 3 repeat; }
+    </style>
+  </head>
   <body>
-    <table style="width:700px">
+    <table>
       <tr>
         <td>top</td>
-        <td style="width:400px">
-          <b style="border:solid;">
+        <td>
+          <b>
             <i style="
-                background-color:green;
                 margin: -30px 0px 0px 0px;
                 padding: 1px 0px 0px 0px;">
                 Here is some text.
@@ -17,13 +25,12 @@
       </tr>
     </table>
 
-    <table style="width:700px">
+    <table>
       <tr>
         <td>right</td>
-        <td style="width:400px">
-          <b style="border:solid;">
+        <td>
+          <b>
             <i style="
-                background-color:green;
                 margin: 0px -208px 0px 0px;
                 padding: 0px 1px 0px 0px;">
                 Here is some text.
@@ -33,13 +40,12 @@
       </tr>
     </table>
 
-    <table style="width:700px">
+    <table>
       <tr>
         <td>bottom</td>
-        <td style="width:400px">
-          <b style="border:solid;">
+        <td>
+          <b>
             <i style="
-                background-color:green;
                 margin: 0px 0px -30px 0px;
                 padding: 0px 0px 1px 0px;">
                 Here is some text.
@@ -49,12 +55,26 @@
       </tr>
     </table>
 
-    <table style="width:700px">
+    <table>
         <td>left</td>
-        <td style="width:400px">
-          <b style="border:solid;">
+        <td>
+          <b>
             <i style="
-                background-color:green;
+                margin: 0px 0px 0px -208px;
+                padding: 0px 0px 0px 31px;">
+                Here is some text.
+            </i>
+          </b>
+        </td>
+      </tr>
+    </table>
+
+    <table>
+      <tr>
+        <td>left</td>
+        <td>
+          <b class=borderImage>
+            <i style="
                 margin: 0px 0px 0px -208px;
                 padding: 0px 0px 0px 31px;">
                 Here is some text.
