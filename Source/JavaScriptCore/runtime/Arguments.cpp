@@ -78,6 +78,7 @@ void Arguments::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken t
             WriteBarrier<Unknown>* newRegisterArray = static_cast<WriteBarrier<Unknown>*>(visitor.allocateNewSpace(bytes));
             memcpy(newRegisterArray, registerArray, bytes);
             thisObject->m_registerArray.setWithoutWriteBarrier(newRegisterArray);
+            thisObject->m_registers = newRegisterArray - CallFrame::offsetFor(1) - 1;
             visitor.didCopy(registerArray, bytes);
         }
         return;
