@@ -90,7 +90,9 @@ void MemoryPressureHandler::install()
         if (_cache_event_source) {
             dispatch_set_context(_cache_event_source, this);
             dispatch_source_set_event_handler(_cache_event_source, ^{
-                memoryPressureHandler().respondToMemoryPressure();
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    memoryPressureHandler().respondToMemoryPressure();
+                });
             });
             dispatch_resume(_cache_event_source);
         }

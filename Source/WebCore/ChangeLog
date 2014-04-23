@@ -1,3 +1,17 @@
+2014-04-22  Andreas Kling  <akling@apple.com>
+
+        [iOS WebKit1] MemoryPressureHandler::respondToMemoryPressure called on wrong thread.
+        <https://webkit.org/b/132041>
+        <rdar://problem/16687238>
+
+        Always dispatch the memory pressure relief code on the main queue.
+        This is really only needed for iOS/WK1, but we might as well share the code.
+
+        Reviewed by Michael Saboff.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+
 2014-04-23  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] ShadowRoot API was removed in r164131
