@@ -1,3 +1,17 @@
+2014-04-23  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] run-webkit-tests script is failing to invoke run-launcher
+        https://bugs.webkit.org/show_bug.cgi?id=132051
+
+        Reviewed by Philippe Normand.
+
+        After the WK1 support was dropped, if run-webkit-tests is executed
+        without --no-show-results parameter, the launcher is being called
+        using a -2 parameter that is it causing the run-launcher to break.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.show_results_html_file):
+
 2014-04-22  Tim Horton  <timothy_horton@apple.com>
 
         DumpRenderTree generates black snapshots on some platforms
