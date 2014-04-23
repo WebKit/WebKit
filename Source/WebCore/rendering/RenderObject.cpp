@@ -1924,8 +1924,10 @@ void RenderObject::insertedIntoTree()
 
     if (!isFloating() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(this);
-
-    if (RenderFlowThread* flowThread = parent()->flowThreadContainingBlock())
+    
+    if (parent()->isRenderFlowThread())
+        toRenderFlowThread(parent())->flowThreadDescendantInserted(this);
+    else if (RenderFlowThread* flowThread = parent()->flowThreadContainingBlock())
         flowThread->flowThreadDescendantInserted(this);
 }
 

@@ -1,3 +1,51 @@
+2014-04-22  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Nested columns not working at all.
+        https://bugs.webkit.org/show_bug.cgi?id=131805
+
+        Reviewed by Dean Jackson.
+
+        Add support for nested pagination contexts, allowing for an arbitrary level
+        of nesting of multicolumn layouts. There were a number of things that had to
+        be patched in order for this to work.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::regionAtBlockOffset):
+        Make sure RenderMultiColumnFlowThreads just return null for regions at any
+        block offset. Individual region sets will be created as you cross ancestor
+        regions eventually, so this is just getting in the way.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::enclosingPaginationLayerInSubtree):
+        Add a new helper method for obtaining an enclosingPaginationLayer when
+        constrained by some root. This function ensures you don't accidentally
+        cross your subtree root when looking for enclosing pagination layers.
+
+        (WebCore::RenderLayer::collectFragments):
+        Patch collectFragments to know how to recur to collect ancestor fragments
+        in order to apply nested splitting as you cross pagination boundaries.
+
+        (WebCore::RenderLayer::updatePaintingInfoForFragments):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        (WebCore::LayerFragment::LayerFragment):
+        (WebCore::LayerFragment::setRects):
+        (WebCore::LayerFragment::moveBy):
+        (WebCore::LayerFragment::intersect):
+        Improve the LayerFragment so that it caches transformed bounding boxes as
+        well. This is needed to fix intersectsDamageRect so that it doesn't grab
+        the wrong bounding box when checking inline layers that are paginated.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantInserted):
+        Ignore inserted flow threads inside an ancestor flow thread, since we only
+        care about what the sets do.
+        
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::insertedIntoTree):
+        Make sure that nested flow thread layers return themselves when a child
+        is inserted directly under them.
+
 2014-04-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Make checking if a font is the system font more robust

@@ -4240,11 +4240,35 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext* context
     }
 }
 
+RenderLayer* RenderLayer::enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer) const
+{
+    // If we don't have an enclosing layer, or if the root layer is the same as the enclosing layer,
+    // then just return the enclosing pagination layer (it will be 0 in the former case and the rootLayer in the latter case).
+    if (!m_enclosingPaginationLayer || rootLayer == m_enclosingPaginationLayer)
+        return m_enclosingPaginationLayer;
+    
+    // Walk up the layer tree and see which layer we hit first. If it's the root, then the enclosing pagination
+    // layer isn't in our subtree and we return 0. If we hit the enclosing pagination layer first, then
+    // we can return it.
+    for (const RenderLayer* layer = this; layer; layer = layer->parent()) {
+        if (layer == rootLayer)
+            return 0;
+        if (layer == m_enclosingPaginationLayer)
+            return m_enclosingPaginationLayer;
+    }
+    
+    // This should never be reached, since an enclosing layer should always either be the rootLayer or be
+    // our enclosing pagination layer.
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer* rootLayer, RenderRegion* region, const LayoutRect& dirtyRect,
     ClipRectsType clipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy, ShouldRespectOverflowClip respectOverflowClip, const LayoutPoint* offsetFromRoot,
-    const LayoutRect* layerBoundingBox)
+    const LayoutRect* layerBoundingBox, ShouldApplyRootOffsetToFragments applyRootOffsetToFragments)
 {
-    if (!enclosingPaginationLayer() || hasTransform()) {
+    RenderLayer* paginationLayer = enclosingPaginationLayerInSubtree(rootLayer);
+    if (!paginationLayer || hasTransform()) {
         // For unpaginated layers, there is only one fragment.
         LayerFragment fragment;
         ClipRectsContext clipRectsContext(rootLayer, region, clipRectsType, inOverlayScrollbarSizeRelevancy, respectOverflowClip);
@@ -4255,11 +4279,11 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     
     // Compute our offset within the enclosing pagination layer.
     LayoutPoint offsetWithinPaginatedLayer;
-    convertToLayerCoords(enclosingPaginationLayer(), offsetWithinPaginatedLayer);
+    convertToLayerCoords(paginationLayer, offsetWithinPaginatedLayer);
     
     // Calculate clip rects relative to the enclosingPaginationLayer. The purpose of this call is to determine our bounds clipped to intermediate
     // layers between us and the pagination context. It's important to minimize the number of fragments we need to create and this helps with that.
-    ClipRectsContext paginationClipRectsContext(enclosingPaginationLayer(), region, clipRectsType, inOverlayScrollbarSizeRelevancy, respectOverflowClip);
+    ClipRectsContext paginationClipRectsContext(paginationLayer, region, clipRectsType, inOverlayScrollbarSizeRelevancy, respectOverflowClip);
     LayoutRect layerBoundsInFlowThread;
     ClipRect backgroundRectInFlowThread;
     ClipRect foregroundRectInFlowThread;
@@ -4268,9 +4292,68 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         outlineRectInFlowThread, &offsetWithinPaginatedLayer);
     
     // Take our bounding box within the flow thread and clip it.
-    LayoutRect layerBoundingBoxInFlowThread = layerBoundingBox ? *layerBoundingBox : boundingBox(enclosingPaginationLayer(), 0, &offsetWithinPaginatedLayer);
+    LayoutRect layerBoundingBoxInFlowThread = layerBoundingBox ? *layerBoundingBox : boundingBox(paginationLayer, 0, &offsetWithinPaginatedLayer);
     layerBoundingBoxInFlowThread.intersect(backgroundRectInFlowThread.rect());
+    
+    RenderFlowThread& enclosingFlowThread = toRenderFlowThread(paginationLayer->renderer());
+    RenderLayer* parentPaginationLayer = paginationLayer->parent()->enclosingPaginationLayerInSubtree(rootLayer);
+    LayerFragments ancestorFragments;
+    if (parentPaginationLayer) {
+        // Compute a bounding box accounting for fragments.
+        LayoutRect layerFragmentBoundingBoxInParentPaginationLayer = enclosingFlowThread.fragmentsBoundingBox(layerBoundingBoxInFlowThread);
+        
+        // Convert to be in the ancestor pagination context's coordinate space.
+        LayoutPoint offsetWithinParentPaginatedLayer;
+        paginationLayer->convertToLayerCoords(parentPaginationLayer, offsetWithinParentPaginatedLayer);
+        layerFragmentBoundingBoxInParentPaginationLayer.moveBy(offsetWithinParentPaginatedLayer);
+        
+        // Now collect ancestor fragments.
+        parentPaginationLayer->collectFragments(ancestorFragments, rootLayer, region, dirtyRect, clipRectsType, inOverlayScrollbarSizeRelevancy, respectOverflowClip, nullptr, &layerFragmentBoundingBoxInParentPaginationLayer, ApplyRootOffsetToFragments);
+        
+        if (ancestorFragments.isEmpty())
+            return;
+        
+        for (auto& ancestorFragment : ancestorFragments) {
+            // Shift the dirty rect into flow thread coordinates.
+            LayoutRect dirtyRectInFlowThread(dirtyRect);
+            dirtyRectInFlowThread.moveBy(-offsetWithinParentPaginatedLayer + -ancestorFragment.paginationOffset);
+            
+            size_t oldSize = fragments.size();
+            
+            // Tell the flow thread to collect the fragments. We pass enough information to create a minimal number of fragments based off the pages/columns
+            // that intersect the actual dirtyRect as well as the pages/columns that intersect our layer's bounding box.
+            enclosingFlowThread.collectLayerFragments(fragments, layerBoundingBoxInFlowThread, dirtyRectInFlowThread);
+            
+            size_t newSize = fragments.size();
+            
+            if (oldSize == newSize)
+                continue;
 
+            for (size_t i = oldSize; i < newSize; ++i) {
+                LayerFragment& fragment = fragments.at(i);
+                
+                // Set our four rects with all clipping applied that was internal to the flow thread.
+                fragment.setRects(layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread, outlineRectInFlowThread, &layerBoundingBoxInFlowThread);
+                
+                // Shift to the root-relative physical position used when painting the flow thread in this fragment.
+                fragment.moveBy(ancestorFragment.paginationOffset + fragment.paginationOffset + offsetWithinParentPaginatedLayer);
+
+                // Intersect the fragment with our ancestor's background clip so that e.g., columns in an overflow:hidden block are
+                // properly clipped by the overflow.
+                fragment.intersect(ancestorFragment.paginationClip);
+                
+                // Now intersect with our pagination clip. This will typically mean we're just intersecting the dirty rect with the column
+                // clip, so the column clip ends up being all we apply.
+                fragment.intersect(fragment.paginationClip);
+                
+                if (applyRootOffsetToFragments == ApplyRootOffsetToFragments)
+                    fragment.paginationOffset = fragment.paginationOffset + offsetWithinParentPaginatedLayer;
+            }
+        }
+        
+        return;
+    }
+    
     // Shift the dirty rect into flow thread coordinates.
     LayoutPoint offsetOfPaginationLayerFromRoot;
     enclosingPaginationLayer()->convertToLayerCoords(rootLayer, offsetOfPaginationLayerFromRoot);
@@ -4279,7 +4362,6 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
 
     // Tell the flow thread to collect the fragments. We pass enough information to create a minimal number of fragments based off the pages/columns
     // that intersect the actual dirtyRect as well as the pages/columns that intersect our layer's bounding box.
-    RenderFlowThread& enclosingFlowThread = toRenderFlowThread(enclosingPaginationLayer()->renderer());
     enclosingFlowThread.collectLayerFragments(fragments, layerBoundingBoxInFlowThread, dirtyRectInFlowThread);
     
     if (fragments.isEmpty())
@@ -4287,9 +4369,9 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     
     // Get the parent clip rects of the pagination layer, since we need to intersect with that when painting column contents.
     ClipRect ancestorClipRect = dirtyRect;
-    if (enclosingPaginationLayer()->parent()) {
+    if (paginationLayer->parent()) {
         ClipRectsContext clipRectsContext(rootLayer, region, clipRectsType, inOverlayScrollbarSizeRelevancy, respectOverflowClip);
-        ancestorClipRect = enclosingPaginationLayer()->backgroundClipRect(clipRectsContext);
+        ancestorClipRect = paginationLayer->backgroundClipRect(clipRectsContext);
         ancestorClipRect.intersect(dirtyRect);
     }
 
@@ -4297,7 +4379,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         LayerFragment& fragment = fragments.at(i);
         
         // Set our four rects with all clipping applied that was internal to the flow thread.
-        fragment.setRects(layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread, outlineRectInFlowThread);
+        fragment.setRects(layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread, outlineRectInFlowThread, &layerBoundingBoxInFlowThread);
         
         // Shift to the root-relative physical position used when painting the flow thread in this fragment.
         fragment.moveBy(fragment.paginationOffset + offsetOfPaginationLayerFromRoot);
@@ -4309,6 +4391,9 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         // Now intersect with our pagination clip. This will typically mean we're just intersecting the dirty rect with the column
         // clip, so the column clip ends up being all we apply.
         fragment.intersect(fragment.paginationClip);
+        
+        if (applyRootOffsetToFragments == ApplyRootOffsetToFragments)
+            fragment.paginationOffset = fragment.paginationOffset + offsetOfPaginationLayerFromRoot;
     }
 }
 
@@ -4321,7 +4406,7 @@ void RenderLayer::updatePaintingInfoForFragments(LayerFragments& fragments, cons
         fragment.shouldPaintContent = shouldPaintContent;
         if (this != localPaintingInfo.rootLayer || !(localPaintFlags & PaintLayerPaintingOverflowContents)) {
             LayoutPoint newOffsetFromRoot = *offsetFromRoot + fragment.paginationOffset;
-            fragment.shouldPaintContent &= intersectsDamageRect(fragment.layerBounds, fragment.backgroundRect.rect(), localPaintingInfo.rootLayer, &newOffsetFromRoot, localPaintingInfo.renderNamedFlowFragment);
+            fragment.shouldPaintContent &= intersectsDamageRect(fragment.layerBounds, fragment.backgroundRect.rect(), localPaintingInfo.rootLayer, &newOffsetFromRoot, localPaintingInfo.renderNamedFlowFragment, fragment.hasBoundingBox ? &fragment.boundingBox : 0);
         }
     }
 }
@@ -5650,7 +5735,7 @@ void RenderLayer::repaintBlockSelectionGaps()
         renderer().repaintRectangle(rect);
 }
 
-bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutPoint* offsetFromRoot, RenderRegion* region) const
+bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutPoint* offsetFromRoot, RenderRegion* region, const LayoutRect* cachedBoundingBox) const
 {
     // Always examine the canvas and the root.
     // FIXME: Could eliminate the isRoot() check if we fix background painting so that the RenderView
@@ -5678,9 +5763,13 @@ bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const Layo
         if (b.intersects(damageRect))
             return true;
     }
-
+    
     // Otherwise we need to compute the bounding box of this single layer and see if it intersects
-    // the damage rect.
+    // the damage rect. It's possible the fragment computed the bounding box already, in which case we
+    // can use the cached value.
+    if (cachedBoundingBox)
+        return cachedBoundingBox->intersects(damageRect);
+    
     return boundingBox(rootLayer, 0, offsetFromRoot).intersects(damageRect);
 }
 
@@ -5734,26 +5823,32 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, CalculateL
         renderBox()->flipForWritingMode(result);
     else
         renderer().containingBlock()->flipForWritingMode(result);
-
-    if (enclosingPaginationLayer() && (flags & UseFragmentBoxes)) {
+    
+    const RenderLayer* paginationLayer = (flags & UseFragmentBoxes) ? enclosingPaginationLayerInSubtree(ancestorLayer) : 0;
+    const RenderLayer* childLayer = this;
+    bool isPaginated = paginationLayer;
+    
+    while (paginationLayer) {
         // Split our box up into the actual fragment boxes that render in the columns/pages and unite those together to
         // get our true bounding box.
         LayoutPoint offsetWithinPaginationLayer;
-        convertToLayerCoords(enclosingPaginationLayer(), offsetWithinPaginationLayer);        
+        childLayer->convertToLayerCoords(paginationLayer, offsetWithinPaginationLayer);
         result.moveBy(offsetWithinPaginationLayer);
 
-        RenderFlowThread& enclosingFlowThread = toRenderFlowThread(enclosingPaginationLayer()->renderer());
+        RenderFlowThread& enclosingFlowThread = toRenderFlowThread(paginationLayer->renderer());
         result = enclosingFlowThread.fragmentsBoundingBox(result);
         
+        childLayer = paginationLayer;
+        paginationLayer = paginationLayer->parent()->enclosingPaginationLayerInSubtree(ancestorLayer);
+    }
+
+    if (isPaginated) {
         LayoutPoint delta;
-        if (offsetFromRoot)
-            delta = *offsetFromRoot;
-        else
-            enclosingPaginationLayer()->convertToLayerCoords(ancestorLayer, delta);
+        childLayer->convertToLayerCoords(ancestorLayer, delta);
         result.moveBy(delta);
         return result;
     }
-
+    
     LayoutPoint delta;
     if (offsetFromRoot)
         delta = *offsetFromRoot;

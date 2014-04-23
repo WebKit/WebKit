@@ -266,7 +266,7 @@ static bool isValidColumnSpanner(RenderMultiColumnFlowThread* flowThread, Render
 
 void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* descendant)
 {
-    if (m_beingEvacuated)
+    if (m_beingEvacuated || descendant->isInFlowRenderFlowThread())
         return;
     RenderObject* subtreeRoot = descendant;
     for (; descendant; descendant = descendant->nextInPreOrder(subtreeRoot)) {

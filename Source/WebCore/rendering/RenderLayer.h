@@ -236,6 +236,11 @@ enum ShouldRespectOverflowClip {
     RespectOverflowClip
 };
 
+enum ShouldApplyRootOffsetToFragments {
+    ApplyRootOffsetToFragments,
+    IgnoreRootOffsetForFragments
+};
+
 struct ClipRectsCache {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -273,14 +278,19 @@ struct LayerFragment {
 public:
     LayerFragment()
         : shouldPaintContent(false)
+        , hasBoundingBox(false)
     { }
 
-    void setRects(const LayoutRect& bounds, const ClipRect& background, const ClipRect& foreground, const ClipRect& outline)
+    void setRects(const LayoutRect& bounds, const ClipRect& background, const ClipRect& foreground, const ClipRect& outline, const LayoutRect* bbox)
     {
         layerBounds = bounds;
         backgroundRect = background;
         foregroundRect = foreground;
         outlineRect = outline;
+        if (bbox) {
+            boundingBox = *bbox;
+            hasBoundingBox = true;
+        }
     }
     
     void moveBy(const LayoutPoint& offset)
@@ -290,6 +300,7 @@ public:
         foregroundRect.moveBy(offset);
         outlineRect.moveBy(offset);
         paginationClip.moveBy(offset);
+        boundingBox.moveBy(offset);
     }
     
     void intersect(const LayoutRect& rect)
@@ -297,13 +308,16 @@ public:
         backgroundRect.intersect(rect);
         foregroundRect.intersect(rect);
         outlineRect.intersect(rect);
+        boundingBox.intersect(rect);
     }
     
     bool shouldPaintContent;
+    bool hasBoundingBox;
     LayoutRect layerBounds;
     ClipRect backgroundRect;
     ClipRect foregroundRect;
     ClipRect outlineRect;
+    LayoutRect boundingBox;
     
     // Unique to paginated fragments. The physical translation to apply to shift the layer when painting/hit-testing.
     LayoutPoint paginationOffset;
@@ -696,7 +710,7 @@ public:
     LayoutRect localClipRect(bool& clipExceedsBounds) const; // Returns the background clip rect of the layer in the local coordinate space.
 
     // Pass offsetFromRoot if known.
-    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutPoint* offsetFromRoot = 0, RenderRegion* = 0) const;
+    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutPoint* offsetFromRoot = 0, RenderRegion* = 0, const LayoutRect* cachedBoundingBox = 0) const;
 
     enum CalculateLayerBoundsFlag {
         IncludeSelfTransform = 1 << 0,
@@ -933,6 +947,8 @@ private:
 
     IntSize clampScrollOffset(const IntSize&) const;
 
+    RenderLayer* enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer) const;
+
     void setNextSibling(RenderLayer* next) { m_next = next; }
     void setPreviousSibling(RenderLayer* prev) { m_previous = prev; }
     void setParent(RenderLayer* parent);
@@ -984,7 +1000,7 @@ private:
 
     void collectFragments(LayerFragments&, const RenderLayer* rootLayer, RenderRegion*, const LayoutRect& dirtyRect,
         ClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize,
-        ShouldRespectOverflowClip = RespectOverflowClip, const LayoutPoint* offsetFromRoot = 0, const LayoutRect* layerBoundingBox = 0);
+        ShouldRespectOverflowClip = RespectOverflowClip, const LayoutPoint* offsetFromRoot = 0, const LayoutRect* layerBoundingBox = 0, ShouldApplyRootOffsetToFragments = IgnoreRootOffsetForFragments);
     void updatePaintingInfoForFragments(LayerFragments&, const LayerPaintingInfo&, PaintLayerFlags, bool shouldPaintContent, const LayoutPoint* offsetFromRoot);
     void paintBackgroundForFragments(const LayerFragments&, GraphicsContext*, GraphicsContext* transparencyLayerContext,
         const LayoutRect& transparencyPaintDirtyRect, bool haveTransparency, const LayerPaintingInfo&, PaintBehavior, RenderObject* paintingRootForRenderer);
