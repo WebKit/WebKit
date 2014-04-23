@@ -1827,6 +1827,14 @@ webkit.org/b/131540 fast/css3-text/css3-text-decoration/text-decoration-skip/tex
 
 webkit.org/b/130971 media/track/track-remove-track.html [ Failure Timeout  ]
 
+webkit.org/b/132046 svg/css/svg-resource-fragment-identifier-img-src.html  [ ImageOnlyFailure ]
+
+webkit.org/b/132054 js/dom/global-constructors-attributes.html  [ Failure ]
+
+webkit.org/b/132055 media/track/track-datacue.html  [ Timeout ]
+
+webkit.org/b/132056 webaudio/codec-tests/mp3/128kbps-44khz.html  [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

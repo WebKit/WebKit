@@ -1,3 +1,10 @@
+2014-04-23  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed GTK gardening
+        https://bugs.webkit.org/show_bug.cgi?id=132058
+
+        * platform/gtk/TestExpectations:
+
 2014-04-23  Morten Stenshorne  <mstensho@opera.com>
 
         [New Multicolumn] fast/multicol/overflow-content.html displays red
