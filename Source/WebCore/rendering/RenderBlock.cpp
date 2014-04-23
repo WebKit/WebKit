@@ -4828,6 +4828,9 @@ LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
 
 RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
 {
+    if (isInFlowRenderFlowThread())
+        return 0;
+
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     if (!flowThread || !flowThread->hasValidRegionInfo())
         return 0;
