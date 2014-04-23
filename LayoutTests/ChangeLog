@@ -1,3 +1,13 @@
+2014-04-23  Morten Stenshorne  <mstensho@opera.com>
+
+        REGRESSION (Safari 6 - ToT): Incorrectly assumes that RenderStyle data can be shared
+        https://bugs.webkit.org/show_bug.cgi?id=113058
+
+        Reviewed by David Hyatt.
+
+        * fast/css/identical-logical-height-decl-expected.html: Added.
+        * fast/css/identical-logical-height-decl.html: Added.
+
 2014-04-23  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Unreviewed GTK gardening
