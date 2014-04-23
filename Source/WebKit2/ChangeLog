@@ -1,3 +1,16 @@
+2014-04-23  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Support encoding/decoding NSUInteger arguments in WKRemoteObjectCoder.
+        https://bugs.webkit.org/show_bug.cgi?id=132040
+
+        Add support for encoding/decoding NSUInteger arguments.
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocation):
+        (decodeInvocationArguments):
+
 2014-04-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cursor doesn't change back to pointer when leaving the Safari window
