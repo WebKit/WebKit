@@ -1,3 +1,37 @@
+2014-04-22  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Refactoring editing/selection/13804.html
+        https://bugs.webkit.org/show_bug.cgi?id=131986
+
+        Reviewed by Darin Adler.
+
+        This test does not need pixel baselines (MAC, EFL, GTK) to just
+        check whether spelling marker appears on 'adf'.
+
+        According to bug 125688, the test starts using asynchronous
+        spellchecking.
+
+        Since the test mostly verifies spelling behaviour, it was moved
+        to editing/spelling directory.
+        Its name was changed to spelling-backward.html.
+
+        * editing/selection/13804.html: Removed.
+        * editing/spelling/spelling-backward-expected.txt: Added, renamed from editing/selection/13804.html.
+        * editing/spelling/spelling-backward.html: Added.
+
+        * platform/efl/editing/selection/13804-expected.png: Removed.
+        * platform/efl/editing/selection/13804-expected.txt: Removed.
+        * platform/gtk/editing/selection/13804-expected.png: Removed.
+        * platform/gtk/editing/selection/13804-expected.txt: Removed.
+        * platform/mac/editing/selection/13804-expected.png: Removed.
+        * platform/mac/editing/selection/13804-expected.txt: Removed.
+        Get rid of platform specific expectation.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        Mark spelling-backward.html as failure due to missing asynchronous spellchecking.
+
 2014-04-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening. media tests has been broken since r166395 on both EFL wk1 and wk2.

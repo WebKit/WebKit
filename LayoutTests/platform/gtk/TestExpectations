@@ -1044,6 +1044,7 @@ webkit.org/b/73003 editing/spelling/spellcheck-async-remove-frame.html [ Skip ]
 webkit.org/b/73003 editing/spelling/spellcheck-async.html [ Skip ]
 webkit.org/b/73003 editing/spelling/spellcheck-queue.html [ Skip ]
 webkit.org/b/73003 editing/spelling/spellcheck-sequencenum.html [ Skip ]
+webkit.org/b/73003 editing/spelling/spelling-backward.html [ Skip ]
 webkit.org/b/73003 editing/spelling/spelling-marker-description.html [ Skip ]
 
 # Spellcheck tests don't seem to work.
