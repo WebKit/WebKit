@@ -91,6 +91,8 @@ private:
     void collectInUseSurfaces();
     bool markOlderSurfacesPurgeable();
 
+    void platformGarbageCollectNow();
+
     Timer<IOSurfacePool> m_collectionTimer;
     CachedSurfaceMap m_cachedSurfaces;
     CachedSurfaceQueue m_inUseSurfaces;

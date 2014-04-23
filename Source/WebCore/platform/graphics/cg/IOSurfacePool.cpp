@@ -288,6 +288,7 @@ void IOSurfacePool::collectionTimerFired(Timer<IOSurfacePool>&)
     if (!m_inUseSurfaces.size() && markedAllSurfaces)
         m_collectionTimer.stop();
 
+    platformGarbageCollectNow();
     DUMP_POOL_STATISTICS();
 }
 
@@ -306,6 +307,7 @@ void IOSurfacePool::discardAllSurfaces()
     m_inUseSurfaces.clear();
     m_sizesInPruneOrder.clear();
     m_collectionTimer.stop();
+    platformGarbageCollectNow();
 }
 
 void IOSurfacePool::showPoolStatistics()

@@ -1,3 +1,25 @@
+2014-04-23  Andreas Kling  <akling@apple.com>
+
+        [iOS WebKit2] IOSurfacePool should force CA to actually garbage collect surfaces.
+        <https://webkit.org/b/132065>
+        <rdar://problem/16110687>
+
+        Add a platformGarbageCollectNow() helper function to IOSurfacePool that
+        triggers a sweep of the IOSurfaces. Call this from collectionTimerFired()
+        and discardAllSurfaces().
+
+        This lets us drop all otherwise-unused 420f surfaces on memory pressure.
+
+        Reviewed by Tim Horton.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::collectionTimerFired):
+        (WebCore::IOSurfacePool::discardAllSurfaces):
+        * platform/graphics/cg/IOSurfacePool.h:
+        * platform/graphics/cocoa/IOSurfacePoolCocoa.mm: Added.
+        (WebCore::IOSurfacePool::platformGarbageCollectNow):
+
 2014-04-23  Morten Stenshorne  <mstensho@opera.com>
 
         REGRESSION (Safari 6 - ToT): Incorrectly assumes that RenderStyle data can be shared
