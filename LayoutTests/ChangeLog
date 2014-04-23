@@ -1,3 +1,10 @@
+2014-04-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. media tests has been broken since r166395 on both EFL wk1 and wk2.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2014-04-22  Andreas Kling  <akling@apple.com>
 
         Skip fast/events/ghostly-mousemoves-in-subframe.html on Mac/WK1.
