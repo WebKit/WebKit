@@ -1,5 +1,15 @@
 2014-04-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        [EFL][WK1] There are many failures in fast/forms since r163033
+        https://bugs.webkit.org/show_bug.cgi?id=132039
+
+        Reviewed by Gyuyoung Kim.
+
+        * ewk/ewk_view.cpp: Added break statements which is missing while remove COMPILE_ASSERT_MATCHING_ENUM
+        (ewk_view_navigation_policy_decision):
+
+2014-04-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
         [EFL][WK1] There are many warnings in layout test since r167428
         https://bugs.webkit.org/show_bug.cgi?id=131985
 

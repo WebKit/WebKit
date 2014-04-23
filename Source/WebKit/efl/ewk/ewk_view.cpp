@@ -3668,16 +3668,25 @@ bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resourc
     switch (navigationType) {
     case WebCore::NavigationTypeLinkClicked:
         type = EWK_NAVIGATION_TYPE_LINK_CLICKED;
+        break;
     case WebCore::NavigationTypeFormSubmitted:
         type = EWK_NAVIGATION_TYPE_FORM_SUBMITTED;
+        break;
     case WebCore::NavigationTypeBackForward:
         type = EWK_NAVIGATION_TYPE_BACK_FORWARD;
+        break;
     case WebCore::NavigationTypeReload:
         type = EWK_NAVIGATION_TYPE_RELOAD;
+        break;
     case WebCore::NavigationTypeFormResubmitted:
         type = EWK_NAVIGATION_TYPE_FORM_RESUBMITTED;
+        break;
     case WebCore::NavigationTypeOther:
         type = EWK_NAVIGATION_TYPE_OTHER;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     return smartData->api->navigation_policy_decision(smartData, request, type);
