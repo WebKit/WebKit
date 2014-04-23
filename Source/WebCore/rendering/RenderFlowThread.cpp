@@ -760,7 +760,7 @@ bool RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
     ASSERT(box);
 
     startRegion = endRegion = nullptr;
-    if (!hasValidRegionInfo()) // We clear the ranges when we invalidate the regions.
+    if (!hasValidRegionInfo() || box->isInFlowRenderFlowThread()) // We clear the ranges when we invalidate the regions.
         return false;
 
     if (getRegionRangeForBoxFromCachedInfo(box, startRegion, endRegion))

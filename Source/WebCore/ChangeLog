@@ -1,5 +1,22 @@
 2014-04-23  David Hyatt  <hyatt@apple.com>
 
+        [New Multicolumn] Assertion failure in huge-column-count.html
+        https://bugs.webkit.org/show_bug.cgi?id=132071
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::regionAtBlockOffset):
+        Remove the code that returned 0 here, since we're going to patch a lower-level
+        function to catch all cases.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+        Don't allow in-flow RenderFlowThreads to ever have a region range. The sets
+        are what should have ranges... the flow thread needs to just be ignored.
+
+2014-04-23  David Hyatt  <hyatt@apple.com>
+
         [New Multicolumn] Crasher when clearing out a flow thread in multicolumn layout.
         https://bugs.webkit.org/show_bug.cgi?id=132069
 
