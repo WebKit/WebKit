@@ -796,6 +796,13 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
     }
 }
 
+void RenderNamedFlowThread::applyBreakAfterContent(LayoutUnit clientHeight)
+{
+    // Simulate a region break at height. If it points inside an auto logical height region,
+    // then it may determine the region computed autoheight.
+    addForcedRegionBreak(this, clientHeight, this, false);
+}
+
 bool RenderNamedFlowThread::collectsGraphicsLayersUnderRegions() const
 {
     // We only need to map layers to regions for named flow threads.

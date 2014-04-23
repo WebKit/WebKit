@@ -147,7 +147,7 @@ public:
     void markRegionsForOverflowLayoutIfNeeded();
 
     virtual bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0);
-    void applyBreakAfterContent(LayoutUnit);
+    virtual void applyBreakAfterContent(LayoutUnit) { }
 
     virtual bool isPageLogicalHeightKnown() const { return true; }
     bool pageLogicalSizeChanged() const { return m_pageLogicalSizeChanged; }

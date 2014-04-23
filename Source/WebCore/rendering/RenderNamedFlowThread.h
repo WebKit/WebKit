@@ -81,6 +81,8 @@ public:
     bool isMarkedForDestruction() const;
     void getRanges(Vector<RefPtr<Range>>&, const RenderNamedFlowFragment*) const;
 
+    virtual void applyBreakAfterContent(LayoutUnit) override final;
+
     virtual bool collectsGraphicsLayersUnderRegions() const override;
 
     // Check if the content is flown into at least a region with region styling rules.

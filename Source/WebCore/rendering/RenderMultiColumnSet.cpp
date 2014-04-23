@@ -191,20 +191,16 @@ unsigned RenderMultiColumnSet::findRunWithTallestColumns() const
 
 void RenderMultiColumnSet::distributeImplicitBreaks()
 {
-    unsigned breakCount = forcedBreaksCount();
-
 #ifndef NDEBUG
     // There should be no implicit breaks assumed at this point.
-    for (unsigned i = 0; i < breakCount; i++)
+    for (unsigned i = 0; i < forcedBreaksCount(); i++)
         ASSERT(!m_contentRuns[i].assumedImplicitBreaks());
 #endif // NDEBUG
 
-    if (!breakCount) {
-        // The flow thread would normally insert a forced break at end of content, but if this set
-        // isn't last in the multicol container, we have to do it ourselves.
-        addForcedBreak(logicalBottomInFlowThread());
-        breakCount = 1;
-    }
+    // Insert a final content run to encompass all content. This will include overflow if this is
+    // the last set.
+    addForcedBreak(logicalBottomInFlowThread());
+    unsigned breakCount = forcedBreaksCount();
 
     // If there is room for more breaks (to reach the used value of column-count), imagine that we
     // insert implicit breaks at suitable locations. At any given time, the content run with the
