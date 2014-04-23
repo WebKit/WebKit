@@ -21,6 +21,7 @@
 
 #include "WebKitDOMBlob.h"
 #include "WebKitDOMDOMStringList.h"
+#include "WebKitDOMDocument.h"
 #include "WebKitDOMHTMLCollection.h"
 #include "WebKitDOMHTMLFormElement.h"
 #include "WebKitDOMHTMLHeadElement.h"
@@ -62,6 +63,16 @@ void webkit_dom_html_element_set_class_name(WebKitDOMHTMLElement* element, const
 WebKitDOMDOMTokenList* webkit_dom_html_element_get_class_list(WebKitDOMHTMLElement* element)
 {
     return webkit_dom_element_get_class_list(WEBKIT_DOM_ELEMENT(element));
+}
+
+WebKitDOMElement* webkit_dom_html_document_get_active_element(WebKitDOMHTMLDocument* document)
+{
+    return webkit_dom_document_get_active_element(WEBKIT_DOM_DOCUMENT(document));
+}
+
+gboolean webkit_dom_html_document_has_focus(WebKitDOMHTMLDocument* document)
+{
+    return webkit_dom_document_has_focus(WEBKIT_DOM_DOCUMENT(document));
 }
 
 void webkit_dom_html_form_element_dispatch_form_change(WebKitDOMHTMLFormElement*)

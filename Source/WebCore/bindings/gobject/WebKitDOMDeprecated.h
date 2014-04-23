@@ -96,6 +96,28 @@ WEBKIT_DEPRECATED_FOR(webkit_dom_element_get_class_list) WebKitDOMDOMTokenList*
 webkit_dom_html_element_get_class_list(WebKitDOMHTMLElement* element);
 
 /**
+ * webkit_dom_html_document_get_active_element:
+ * @self: A #WebKitDOMHTMLDocument
+ *
+ * Returns: (transfer none): a #WebKitDOMElement
+ *
+ * Deprecated: 2.6: Use webkit_dom_document_get_active_element() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_document_get_active_element) WebKitDOMElement*
+webkit_dom_html_document_get_active_element(WebKitDOMHTMLDocument* self);
+
+/**
+ * webkit_dom_html_document_has_focus:
+ * @self: A #WebKitDOMHTMLDocument
+ *
+ * Returns: A #gboolean
+ *
+ * Deprecated: 2.6: Use webkit_dom_document_has_focus() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_document_has_focus) gboolean
+webkit_dom_html_document_has_focus(WebKitDOMHTMLDocument* self);
+
+/**
  * webkit_dom_html_form_element_dispatch_form_change:
  * @self: A #WebKitDOMHTMLFormElement
  *

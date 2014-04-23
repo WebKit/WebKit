@@ -1,3 +1,19 @@
+2014-04-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Focus management API was moved from HTMLDocument to Document in r166668
+        https://bugs.webkit.org/show_bug.cgi?id=132060
+
+        Reviewed by Carlos Garcia Campos.
+
+        Deprecate the removed methods in WebKitDOMHTMLDocument to keep API compatibility.
+
+        * bindings/gobject/WebKitDOMDeprecated.cpp:
+        (webkit_dom_html_document_get_active_element):
+        (webkit_dom_html_document_has_focus):
+        * bindings/gobject/WebKitDOMDeprecated.h:
+        * bindings/gobject/WebKitDOMDeprecated.symbols:
+        * bindings/gobject/webkitdom.symbols:
+
 2014-04-22  Andreas Kling  <akling@apple.com>
 
         [iOS WebKit1] MemoryPressureHandler::respondToMemoryPressure called on wrong thread.
