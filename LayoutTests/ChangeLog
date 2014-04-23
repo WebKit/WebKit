@@ -1,3 +1,13 @@
+2014-04-23  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Add expectations of new added tests.
+        https://bugs.webkit.org/show_bug.cgi?id=132052
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/fast/repaint/spanner-with-margin-expected.txt: Added. Rebaseline after r167439
+
 2014-04-22  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Refactoring editing/selection/13804.html
