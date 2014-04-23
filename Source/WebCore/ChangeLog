@@ -1,3 +1,23 @@
+2014-04-23  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Crasher when clearing out a flow thread in multicolumn layout.
+        https://bugs.webkit.org/show_bug.cgi?id=132069
+
+        Reviewed by Dean Jackson.
+
+        This is imported from a patch Morten did for Blink, but I had to change it a fair
+        bit. deleteLines() is used to handle simple line box layout instead of just calling
+        deleteLineBoxTree.
+        
+        I also had to disable the layout state to stop asserts on repaint when the children
+        get moved. Not sure why Blink didn't hit this, but it's simple enough to add a
+        LayoutStateDisabler to stop the assert.
+
+        Added fast/multicol/inline-children-crash.html
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::evacuateAndDestroy):
+
 2014-04-23  Andreas Kling  <akling@apple.com>
 
         [iOS WebKit2] IOSurfacePool should force CA to actually garbage collect surfaces.

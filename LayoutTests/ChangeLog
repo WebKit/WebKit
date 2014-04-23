@@ -1,3 +1,13 @@
+2014-04-23  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Crasher when clearing out a flow thread in multicolumn layout.
+        https://bugs.webkit.org/show_bug.cgi?id=132069
+
+        Reviewed by Dean Jackson.
+
+        * fast/multicol/inline-children-crash-expected.txt: Added.
+        * fast/multicol/inline-children-crash.html: Added.
+
 2014-04-23  Morten Stenshorne  <mstensho@opera.com>
 
         REGRESSION (Safari 6 - ToT): Incorrectly assumes that RenderStyle data can be shared
