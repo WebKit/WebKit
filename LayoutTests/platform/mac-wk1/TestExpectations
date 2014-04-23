@@ -40,5 +40,8 @@ plugins/unavailable-plugin-indicator-obscurity.html
 # Color input is not yet enabled on Mac WK1.
 fast/forms/color/input-color-onchange-event.html [ Skip ]
 
+# WK1 and WK2 mousemove events are subtly different in ways that break this test on WK1.
+fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
+
 ### END OF (2) Failures without bug reports
 ########################################

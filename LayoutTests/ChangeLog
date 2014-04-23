@@ -1,3 +1,9 @@
+2014-04-22  Andreas Kling  <akling@apple.com>
+
+        Skip fast/events/ghostly-mousemoves-in-subframe.html on Mac/WK1.
+
+        * platform/mac-wk1/TestExpectations:
+
 2014-04-22  Zalan Bujtas  <zalan@apple.com>
 
         Do not paint border image when the border rect is empty.
