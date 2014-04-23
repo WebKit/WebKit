@@ -1,3 +1,20 @@
+2014-04-23  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Improve the debugging infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=132042
+
+        Reviewed by Mihnea Ovidenie.
+
+        This patch improves the debugging code for CSS Regions.
+
+        Tests: No function change. No new tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showRegionsInformation): Print brackets around the region range when dumping
+        the render tree to the console.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::containingRegion): Convert the ASSERT to an ASSERT_WITH_SECURITY_IMPLICATION.
+
 2014-04-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cursor doesn't change back to pointer when leaving the Safari window

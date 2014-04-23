@@ -218,14 +218,17 @@ void RootInlineBox::childRemoved(InlineBox* box)
 
 RenderRegion* RootInlineBox::containingRegion() const
 {
+    RenderRegion* region = m_hasContainingRegion ? containingRegionMap().get(this) : nullptr;
+
 #ifndef NDEBUG
     if (m_hasContainingRegion) {
         RenderFlowThread* flowThread = blockFlow().flowThreadContainingBlock();
         const RenderRegionList& regionList = flowThread->renderRegionList();
-        ASSERT(regionList.contains(containingRegionMap().get(this)));
+        ASSERT_WITH_SECURITY_IMPLICATION(regionList.contains(region));
     }
 #endif
-    return m_hasContainingRegion ? containingRegionMap().get(this) : nullptr;
+
+    return region;
 }
 
 void RootInlineBox::clearContainingRegion()

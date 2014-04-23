@@ -1426,7 +1426,7 @@ void RenderObject::showRegionsInformation(int& printedCharacters) const
             RenderRegion* startRegion = nullptr;
             RenderRegion* endRegion = nullptr;
             flowThread->getRegionRangeForBox(box, startRegion, endRegion);
-            printedCharacters += fprintf(stderr, " Rs:%p Re:%p", startRegion, endRegion);
+            printedCharacters += fprintf(stderr, " [Rs:%p Re:%p]", startRegion, endRegion);
         }
     }
 }
