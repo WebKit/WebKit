@@ -773,10 +773,7 @@ void WebChromeClient::setCursor(const WebCore::Cursor& cursor)
         return;
 
     NSWindow *window = [m_webView window];
-    if (!window)
-        return;
-
-    if ([window windowNumber] != [NSWindow windowNumberAtPoint:[NSEvent mouseLocation] belowWindowWithWindowNumber:0])
+    if (!window || ![window isKeyWindow])
         return;
 
     NSCursor *platformCursor = cursor.platformCursor();

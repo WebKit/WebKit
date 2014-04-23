@@ -1,3 +1,19 @@
+2014-04-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cursor doesn't change back to pointer when leaving the Safari window
+        https://bugs.webkit.org/show_bug.cgi?id=132038
+
+        Reviewed by Alexey Proskuryakov.
+
+        r147739 incorrectly added an early exit in EventHandler::selectCursor when hit test result didn't have
+        any node associated with it. Since we will hit this code when the cursor is outside of the WebView,
+        we still need to take the CURSOR_AUTO path as did the code before r147739.
+
+        No new test is added since this behavior can't be tested in DRT or WTR.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+
 2014-04-22  Zalan Bujtas  <zalan@apple.com>
 
         Do not paint border image when the border rect is empty.
