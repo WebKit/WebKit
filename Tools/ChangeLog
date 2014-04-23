@@ -1,3 +1,16 @@
+2014-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] ShadowRoot API was removed in r164131
+        https://bugs.webkit.org/show_bug.cgi?id=132059
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add WebKitDOMShadowRoot to the list of deleted classes to generate
+        the API docs.
+
+        * gtk/webkitdom.py:
+        (WebKitDOMDocGenerator):
+
 2014-04-23  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] run-webkit-tests script is failing to invoke run-launcher

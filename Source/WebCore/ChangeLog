@@ -1,3 +1,31 @@
+2014-04-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] ShadowRoot API was removed in r164131
+        https://bugs.webkit.org/show_bug.cgi?id=132059
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add ShadowRoot removed API to WebKitDOMDeprecated to keep API/ABI compatibility.
+
+        * bindings/gobject/WebKitDOMDeprecated.cpp:
+        (webkit_dom_shadow_root_class_init):
+        (webkit_dom_shadow_root_init):
+        (webkit_dom_shadow_root_element_from_point):
+        (webkit_dom_shadow_root_get_active_element):
+        (webkit_dom_shadow_root_get_apply_author_styles):
+        (webkit_dom_shadow_root_get_element_by_id):
+        (webkit_dom_shadow_root_get_elements_by_class_name):
+        (webkit_dom_shadow_root_get_elements_by_tag_name):
+        (webkit_dom_shadow_root_get_elements_by_tag_name_ns):
+        (webkit_dom_shadow_root_get_inner_html):
+        (webkit_dom_shadow_root_get_reset_style_inheritance):
+        (webkit_dom_shadow_root_get_selection):
+        (webkit_dom_shadow_root_set_apply_author_styles):
+        (webkit_dom_shadow_root_set_inner_html):
+        (webkit_dom_shadow_root_set_reset_style_inheritance):
+        * bindings/gobject/WebKitDOMDeprecated.h:
+        * bindings/gobject/WebKitDOMDeprecated.symbols:
+
 2014-04-23  Morten Stenshorne  <mstensho@opera.com>
 
         [New Multicolumn] fast/multicol/overflow-content.html displays red

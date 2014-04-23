@@ -552,3 +552,97 @@ void webkit_dom_processing_instruction_set_data(WebKitDOMProcessingInstruction*,
     g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
 }
 
+// WebKitDOMShadowRoot
+
+typedef struct _WebKitDOMShadowRoot {
+    WebKitDOMObject parent_instance;
+} WebKitDOMShadowRoot;
+
+typedef struct _WebKitDOMShadowRootClass {
+    WebKitDOMObjectClass parent_class;
+} WebKitDOMShadowRootClass;
+
+G_DEFINE_TYPE(WebKitDOMShadowRoot, webkit_dom_shadow_root, WEBKIT_TYPE_DOM_OBJECT)
+
+static void webkit_dom_shadow_root_class_init(WebKitDOMShadowRootClass*)
+{
+}
+
+static void webkit_dom_shadow_root_init(WebKitDOMShadowRoot*)
+{
+}
+
+WebKitDOMElement* webkit_dom_shadow_root_element_from_point(WebKitDOMShadowRoot*, glong, glong)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}
+
+WebKitDOMElement* webkit_dom_shadow_root_get_active_element(WebKitDOMShadowRoot*)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}
+
+gboolean webkit_dom_shadow_root_get_apply_author_styles(WebKitDOMShadowRoot*)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}
+
+WebKitDOMElement* webkit_dom_shadow_root_get_element_by_id(WebKitDOMShadowRoot*, const gchar*)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}
+
+WebKitDOMNodeList* webkit_dom_shadow_root_get_elements_by_class_name(WebKitDOMShadowRoot*, const gchar*)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}
+
+WebKitDOMNodeList* webkit_dom_shadow_root_get_elements_by_tag_name(WebKitDOMShadowRoot*, const gchar*)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}
+
+WebKitDOMNodeList* webkit_dom_shadow_root_get_elements_by_tag_name_ns(WebKitDOMShadowRoot*, const gchar*, const gchar*)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}
+
+gchar* webkit_dom_shadow_root_get_inner_html(WebKitDOMShadowRoot*)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}
+
+gboolean webkit_dom_shadow_root_get_reset_style_inheritance(WebKitDOMShadowRoot*)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+    return FALSE;
+}
+
+WebKitDOMDOMSelection* webkit_dom_shadow_root_get_selection(WebKitDOMShadowRoot*)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}
+
+void webkit_dom_shadow_root_set_apply_author_styles(WebKitDOMShadowRoot*, gboolean)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+}
+
+void webkit_dom_shadow_root_set_inner_html(WebKitDOMShadowRoot*, const gchar*, GError**)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+}
+
+void webkit_dom_shadow_root_set_reset_style_inheritance(WebKitDOMShadowRoot*, gboolean)
+{
+    g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
+}

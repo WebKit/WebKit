@@ -31,7 +31,8 @@ class WebKitDOMDocGenerator(object):
         "WebKitDOMHTMLPropertiesCollection",
         "WebKitDOMMemoryInfo",
         "WebKitDOMMicroDataItemValue",
-        "WebKitDOMPropertyNodeList"]
+        "WebKitDOMPropertyNodeList",
+        "WebKitDOMShadowRoot"]
 
     def __init__(self, symbol_files, file_handle):
         self._symbol_files = symbol_files

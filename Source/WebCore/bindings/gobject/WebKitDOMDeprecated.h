@@ -564,6 +564,186 @@ webkit_dom_processing_instruction_get_data(WebKitDOMProcessingInstruction* self)
 WEBKIT_DEPRECATED void
 webkit_dom_processing_instruction_set_data(WebKitDOMProcessingInstruction* self, const gchar* value, GError** error);
 
+WEBKIT_DEPRECATED GType
+webkit_dom_shadow_root_get_type(void);
+
+typedef struct _WebKitDOMShadowRoot WebKitDOMShadowRoot;
+
+/**
+ * webkit_dom_shadow_root_element_from_point:
+ * @self: A #WebKitDOMShadowRoot
+ * @x: A #glong
+ * @y: A #glong
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none): a #WebKitDOMElement
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED WebKitDOMElement*
+webkit_dom_shadow_root_element_from_point(WebKitDOMShadowRoot* self, glong x, glong y);
+
+/**
+ * webkit_dom_shadow_root_get_active_element:
+ * @self: A #WebKitDOMShadowRoot
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none): a #WebKitDOMElement
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED WebKitDOMElement*
+webkit_dom_shadow_root_get_active_element(WebKitDOMShadowRoot* self);
+
+/**
+ * webkit_dom_shadow_root_get_apply_author_styles:
+ * @self: A #WebKitDOMShadowRoot
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none): a #gboolean
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED gboolean
+webkit_dom_shadow_root_get_apply_author_styles(WebKitDOMShadowRoot* self);
+
+/**
+ * webkit_dom_shadow_root_get_element_by_id:
+ * @self: A #WebKitDOMShadowRoot
+ * @id: A #gchar
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none): a #WebKitDOMElement
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED WebKitDOMElement*
+webkit_dom_shadow_root_get_element_by_id(WebKitDOMShadowRoot* self, const gchar* id);
+
+/**
+ * webkit_dom_shadow_root_get_elements_by_class_name:
+ * @self: A #WebKitDOMShadowRoot
+ * @name: A #gchar
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none): a #WebKitDOMNodeList
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED WebKitDOMNodeList*
+webkit_dom_shadow_root_get_elements_by_class_name(WebKitDOMShadowRoot* self, const gchar* name);
+
+/**
+ * webkit_dom_shadow_root_get_elements_by_tag_name:
+ * @self: A #WebKitDOMShadowRoot
+ * @name: A #gchar
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none): a #WebKitDOMNodeList
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED WebKitDOMNodeList*
+webkit_dom_shadow_root_get_elements_by_tag_name(WebKitDOMShadowRoot* self, const gchar* name);
+
+/**
+ * webkit_dom_shadow_root_get_elements_by_tag_name_ns:
+ * @self: A #WebKitDOMShadowRoot
+ * @name: A #gchar
+ * @ns: A #gchar
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none): a #WebKitDOMNodeList
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED WebKitDOMNodeList*
+webkit_dom_shadow_root_get_elements_by_tag_name_ns(WebKitDOMShadowRoot* self, const gchar* name, const gchar* ns);
+
+/**
+ * webkit_dom_shadow_root_get_inner_html:
+ * @self: A #WebKitDOMShadowRoot
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none): a #gchar
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED gchar*
+webkit_dom_shadow_root_get_inner_html(WebKitDOMShadowRoot* self);
+
+/**
+ * webkit_dom_shadow_root_get_reset_style_inheritance:
+ * @self: A #WebKitDOMShadowRoot
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none): a #gboolean
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED gboolean
+webkit_dom_shadow_root_get_reset_style_inheritance(WebKitDOMShadowRoot* self);
+
+/**
+ * webkit_dom_shadow_root_get_selection:
+ * @self: A #WebKitDOMShadowRoot
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none): a #WebKitDOMDOMSelection
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED WebKitDOMDOMSelection*
+webkit_dom_shadow_root_get_selection(WebKitDOMShadowRoot* self);
+
+/**
+ * webkit_dom_shadow_root_set_apply_author_styles:
+ * @self: A #WebKitDOMShadowRoot
+ * @value: A #gboolean
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED void
+webkit_dom_shadow_root_set_apply_author_styles(WebKitDOMShadowRoot* self, gboolean value);
+
+/**
+ * webkit_dom_shadow_root_set_inner_html:
+ * @self: A #WebKitDOMShadowRoot
+ * @html: A #gchar
+ * @error: A #GError
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED void
+webkit_dom_shadow_root_set_inner_html(WebKitDOMShadowRoot* self, const gchar* html, GError** error);
+
+/**
+ * webkit_dom_shadow_root_set_reset_style_inheritance:
+ * @self: A #WebKitDOMShadowRoot
+ * @value: A #gboolean
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED void
+webkit_dom_shadow_root_set_reset_style_inheritance(WebKitDOMShadowRoot* self, gboolean value);
+
+
 G_END_DECLS
 
 #endif /* WEBKIT_DISABLE_DEPRECATED */
