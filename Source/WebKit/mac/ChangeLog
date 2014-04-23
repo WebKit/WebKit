@@ -1,3 +1,16 @@
+2014-04-23  Anders Carlsson  <andersca@apple.com>
+
+        Don't migrate the WKView.h header from WebCore to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=132086
+
+        Reviewed by Dan Bernstein.
+
+        * MigrateHeaders.make:
+        Remove WKView.h from the list of headers to migrate.
+
+        * WebView/WebView.mm:
+        Import WKView.h.
+
 2014-04-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cursor doesn't change back to pointer when leaving the Safari window

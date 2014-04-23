@@ -239,6 +239,7 @@
 #import <WebCore/TextRun.h>
 #import <WebCore/TileControllerMemoryHandlerIOS.h>
 #import <WebCore/WAKWindow.h>
+#import <WebCore/WKView.h>
 #import <WebCore/WebCoreThread.h>
 #import <WebCore/WebCoreThreadMessage.h>
 #import <WebCore/WebCoreThreadRun.h>

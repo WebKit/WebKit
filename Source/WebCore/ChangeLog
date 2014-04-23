@@ -1,3 +1,30 @@
+2014-04-23  Anders Carlsson  <andersca@apple.com>
+
+        Don't migrate the WKView.h header from WebCore to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=132086
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add WAKViewInternal.h.
+
+        * platform/WAKViewInternal.h: Added.
+
+        * platform/ios/wak/WAKClipView.m:
+        Import WAKViewInternal.h instead of WAKViewPrivate.h.
+
+        * platform/ios/wak/WAKScrollView.mm:
+        Import WAKViewInternal.h instead of WAKViewPrivate.h.
+
+        * platform/ios/wak/WAKView.h:
+        Move ivars to a class extension in WAKViewInternal.h and remove WKView.h import.
+
+        * platform/ios/wak/WAKView.mm:
+        Import WAKViewInternal.h instead of WAKViewPrivate.h.
+
+        * platform/ios/wak/WAKViewPrivate.h:
+        Import WKViewPrivate.h.
+
 2014-04-23  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] fast/multicol/fixed-column-percent-logical-height-orthogonal-writing-mode.html fails

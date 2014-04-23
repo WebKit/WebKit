@@ -751,6 +751,7 @@
 		1A85B2110A1B258700D8C87C /* JSHTMLUListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A85B20F0A1B258700D8C87C /* JSHTMLUListElement.h */; };
 		1A85B2B60A1B2AC700D8C87C /* JSHTMLDivElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */; };
 		1A85B2B70A1B2AC700D8C87C /* JSHTMLDivElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */; };
+		1A874ADF19085E9100B03171 /* WAKViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A874ADE19085E9100B03171 /* WAKViewInternal.h */; };
 		1A88A90417553CD7000C74F9 /* FileIconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A88A90217553CD7000C74F9 /* FileIconLoader.cpp */; };
 		1A88A90517553CD7000C74F9 /* FileIconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A88A90317553CD7000C74F9 /* FileIconLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8F6B020DB53006001DB794 /* SubstituteResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6B010DB53006001DB794 /* SubstituteResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7624,6 +7625,7 @@
 		1A85B2AD0A1B2A6D00D8C87C /* HTMLDivElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDivElement.idl; sourceTree = "<group>"; };
 		1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDivElement.cpp; sourceTree = "<group>"; };
 		1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDivElement.h; sourceTree = "<group>"; };
+		1A874ADE19085E9100B03171 /* WAKViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WAKViewInternal.h; sourceTree = "<group>"; };
 		1A88A90217553CD7000C74F9 /* FileIconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileIconLoader.cpp; sourceTree = "<group>"; };
 		1A88A90317553CD7000C74F9 /* FileIconLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileIconLoader.h; sourceTree = "<group>"; };
 		1A8F6B010DB53006001DB794 /* SubstituteResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubstituteResource.h; sourceTree = "<group>"; };
@@ -18130,6 +18132,7 @@
 				A1483293187F508700DA63A6 /* WAKScrollView.mm */,
 				A1483294187F508700DA63A6 /* WAKView.h */,
 				A1483295187F508700DA63A6 /* WAKView.mm */,
+				1A874ADE19085E9100B03171 /* WAKViewInternal.h */,
 				A1483296187F508700DA63A6 /* WAKViewPrivate.h */,
 				A1483297187F508700DA63A6 /* WAKWindow.h */,
 				A1483298187F508700DA63A6 /* WAKWindow.mm */,
@@ -23329,6 +23332,7 @@
 				A80E6E0F0A19911C007FB8C5 /* CSSStyleDeclaration.h in Headers */,
 				A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */,
 				A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */,
+				1A874ADF19085E9100B03171 /* WAKViewInternal.h in Headers */,
 				FC54D05716A7673100575E4D /* CSSSupportsRule.h in Headers */,
 				7A45033018DB717200377B34 /* BufferedLineReader.h in Headers */,
 				BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */,

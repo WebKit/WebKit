@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WAKViewPrivate_h
-#define WAKViewPrivate_h
-
 #if TARGET_OS_IPHONE
 
-#import "WAKView.h"
-#import "WKViewPrivate.h"
+#import "WAKViewPrivate.h"
 
-@interface WAKView (WAKPrivate)
-- (WKViewRef)_viewRef;
-+ (WAKView *)_wrapperForViewRef:(WKViewRef)_viewRef;
-- (id)_initWithViewRef:(WKViewRef)view;
-- (BOOL)_handleResponderCall:(WKViewResponderCallbackType)type;
-- (NSMutableSet *)_subviewReferences;
-- (BOOL)_selfHandleEvent:(WebEvent *)event;
-@end
+@interface WAKView () {
+@package
+    WKViewContext viewContext;
+    WKViewRef viewRef;
 
-static inline WAKView *WAKViewForWKViewRef(WKViewRef view)
-{
-    if (!view)
-        return nil;
-    WAKView *wrapper = (WAKView *)view->wrapper;
-    if (wrapper)
-        return wrapper;
-    return [WAKView _wrapperForViewRef:view];
+    NSMutableSet *subviewReferences;    // This array is only used to keep WAKViews alive.
+                                        // The actual subviews are maintained by the WKView.
+
+    BOOL _isHidden;
+    BOOL _drawsOwnDescendants;
 }
 
-#endif // TARGET_OS_IPHONE
+@end
 
-#endif // WAKViewPrivate_h
+#endif

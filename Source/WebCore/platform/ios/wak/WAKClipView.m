@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS)
 
-#import "WAKViewPrivate.h"
+#import "WAKViewInternal.h"
 #import <wtf/Assertions.h>
 
 @implementation WAKClipView

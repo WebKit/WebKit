@@ -29,7 +29,6 @@
 #if TARGET_OS_IPHONE
 
 #import "WAKResponder.h"
-#import "WKView.h"
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 
@@ -45,16 +44,6 @@ extern NSString *WAKViewDidScrollNotification;
 @class WAKWindow;
 
 @interface WAKView : WAKResponder
-{
-    WKViewContext viewContext;
-    WKViewRef viewRef;
-    
-    NSMutableSet *subviewReferences;    // This array is only used to keep WAKViews alive.
-                                        // The actual subviews are maintained by the WKView.
-
-    BOOL _isHidden;
-    BOOL _drawsOwnDescendants;
-}
 
 + (WAKView *)focusView;
 

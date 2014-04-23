@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WAKViewPrivate.h"
+#import "WAKViewInternal.h"
 
 #if PLATFORM(IOS)
 
