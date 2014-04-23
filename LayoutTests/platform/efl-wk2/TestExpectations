@@ -553,8 +553,6 @@ webkit.org/b/130020 webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure
 
 webkit.org/b/130340 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
 
-webkit.org/b/131496 accessibility/help-text.html [ Failure ]
-
 # Need HighDPI support
 webkit.org/b/131987 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]

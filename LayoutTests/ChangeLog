@@ -1,3 +1,17 @@
+2014-04-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk1/css3/flexbox/flexbox-baseline-expected.png: Removed.
+        * platform/efl-wk1/css3/flexbox/flexbox-baseline-expected.txt: Removed.
+        * platform/efl-wk1/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt: Removed.
+        * platform/efl-wk1/fast/block/basic/020-expected.txt: Removed.
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/css3/flexbox/flexbox-baseline-expected.png: Renamed from LayoutTests/platform/efl-wk2/css3/flexbox/flexbox-baseline-expected.png.
+        * platform/efl/css3/flexbox/flexbox-baseline-expected.txt: Renamed from LayoutTests/platform/efl-wk2/css3/flexbox/flexbox-baseline-expected.txt.
+        * platform/efl/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt: Renamed from LayoutTests/platform/efl-wk2/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt.
+
 2014-04-23  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Add expectations of new added tests.
