@@ -1,3 +1,30 @@
+2014-04-23  Morten Stenshorne  <mstensho@opera.com>
+
+        Overflow propagation broken in BTT and RTL writing-modes
+        https://bugs.webkit.org/show_bug.cgi?id=113781
+
+        Reviewed by David Hyatt.
+
+        Overflow rectangles are not quite physical, not quite logical. This
+        means that we cannot use clientBoxRect() directly to represent a
+        rectangle that expresses exactly no overflow. This rectangle is the
+        padding box (relative to the border box) in vertical-lr and
+        horizontal-tb, but the block-direction borders need to be flipped in
+        vertical-rl and horizontal-bt.
+
+        Tests: fast/css/overflow-btt-border-after.html
+               fast/css/overflow-rtl-border-after.html
+
+        * WebCore.exp.in:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addLayoutOverflow):
+        (WebCore::RenderBox::addVisualOverflow):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::layoutOverflowRect):
+
 2014-04-23  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Improve the debugging infrastructure

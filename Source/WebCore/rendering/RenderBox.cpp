@@ -4311,7 +4311,7 @@ void RenderBox::addOverflowFromChild(RenderBox* child, const LayoutSize& delta)
 
 void RenderBox::addLayoutOverflow(const LayoutRect& rect)
 {
-    LayoutRect clientBox = clientBoxRect();
+    LayoutRect clientBox = flippedClientBoxRect();
     if (clientBox.contains(rect) || rect.isEmpty())
         return;
     
@@ -4352,7 +4352,7 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
         return;
         
     if (!m_overflow)
-        m_overflow = adoptRef(new RenderOverflow(clientBoxRect(), borderBox));
+        m_overflow = adoptRef(new RenderOverflow(flippedClientBoxRect(), borderBox));
     
     m_overflow->addVisualOverflow(rect);
 }
@@ -4542,6 +4542,26 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle)
     else if (style().writingMode() == BottomToTopWritingMode || parentStyle->writingMode() == BottomToTopWritingMode)
         rect.setY(height() - rect.maxY());
 
+    return rect;
+}
+
+LayoutRect RenderBox::flippedClientBoxRect() const
+{
+    // Because of the special coodinate system used for overflow rectangles (not quite logical, not
+    // quite physical), we need to flip the block progression coordinate in vertical-rl and
+    // horizontal-bt writing modes. Apart from that, this method does the same as clientBoxRect().
+
+    LayoutUnit left = borderLeft();
+    LayoutUnit top = borderTop();
+    LayoutUnit right = borderRight();
+    LayoutUnit bottom = borderBottom();
+    // Calculate physical padding box.
+    LayoutRect rect(left, top, width() - left - right, height() - top - bottom);
+    // Flip block progression axis if writing mode is vertical-rl or horizontal-bt.
+    flipForWritingMode(rect);
+    // Subtract space occupied by scrollbars. They are at their physical edge in this coordinate
+    // system, so order is important here: first flip, then subtract scrollbars.
+    rect.contract(verticalScrollbarWidth(), horizontalScrollbarHeight());
     return rect;
 }
 
