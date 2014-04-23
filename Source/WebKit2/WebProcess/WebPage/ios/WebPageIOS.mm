@@ -2059,6 +2059,13 @@ void WebPage::zoomToRect(FloatRect rect, double minimumScale, double maximumScal
     send(Messages::WebPageProxy::ZoomToRect(rect, minimumScale, maximumScale));
 }
 
+void WebPage::dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue)
+{
+    bool ignored;
+    for (const WebTouchEvent& event : queue)
+        dispatchTouchEvent(event, ignored);
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

@@ -81,7 +81,10 @@ messages -> WebPage LegacyReceiver {
     SetAllowsRemoteInspection(bool allow)
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
+    TouchEventSync(WebKit::WebTouchEvent event) -> (bool handled)
+#endif
+#if !ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)
     TouchEventSyncForTesting(WebKit::WebTouchEvent event) -> (bool handled)
 #endif

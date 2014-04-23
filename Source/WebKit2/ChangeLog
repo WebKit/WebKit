@@ -1,3 +1,61 @@
+2014-04-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Split iOS touch event dispatch for the regular touch event dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=132033
+
+        Reviewed by Simon Fraser.
+
+        The generic touch event dispatching does not work well with iOS gesture recognizers.
+        Some events are required to be synchronous, while other needs can be asynchronous and
+        can even use event coalescing. We only need UI callback for the synchronous events.
+
+        Previously, that was implemented by changing the property ShouldSendEventsSynchronously
+        on WebPageProxy. That is causing issues when synchronous events are sent right after asynchronous
+        events because the responses in WebPageProxy::didReceiveEvent() easily get out of order.
+
+        This patch completely split the UIGestureRecognizerDispatching from the normal asynchronous event dispatching.
+
+        Synchronous events are sent directly to the WebProcess and report the result to the PageClient right away.
+
+        Asynchronous events are sent to the EventDispatcher where they are coalesced until the main thread is free
+        to process events.
+
+        There can be a race where a synchronous event comes before the asynchronous events are processed. In that case,
+        the synchronous event handler starts by getting the events out of the EventDispatcher and dispatch them first.
+
+        * Shared/NativeWebTouchEvent.h:
+        (WebKit::NativeWebTouchEvent::uniqueId): Deleted.
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleSynchronousTouchEvent):
+        (WebKit::WebPageProxy::sendAsynchronousTouchEvent):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (-[WKContentView _webTouchEvent:WebKit::preventsNativeGestures:]):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::EventDispatcher):
+        (WebKit::EventDispatcher::clearQueuedTouchEventsForPage):
+        (WebKit::EventDispatcher::getQueuedTouchEventsForPage):
+        (WebKit::EventDispatcher::touchEvent):
+        (WebKit::EventDispatcher::dispatchTouchEvents):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dispatchTouchEvent):
+        (WebKit::WebPage::touchEventSync):
+        (WebKit::WebPage::touchEvent):
+        (WebKit::WebPage::touchEventSyncForTesting):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dispatchAsynchronousTouchEventsQueue):
+
 2014-04-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS hit-testing does not work when page is zoomed

@@ -37,8 +37,6 @@
 
 namespace WebKit {
 
-static unsigned uniqueTouchEventIdIndex = 0;
-
 static inline WebEvent::Type webEventTypeForUIWebTouchEventType(UIWebTouchEventType type)
 {
     switch (type) {
@@ -99,7 +97,6 @@ static inline Vector<WebPlatformTouchPoint> extractWebTouchPoint(UIWebTouchEvent
 
 NativeWebTouchEvent::NativeWebTouchEvent(UIWebTouchEventsGestureRecognizer *gestureRecognizer)
     : WebTouchEvent(webEventTypeForUIWebTouchEventType(gestureRecognizer.type), static_cast<Modifiers>(0), WTF::currentTime(), extractWebTouchPoint(gestureRecognizer), positionForCGPoint(gestureRecognizer.locationInWindow), gestureRecognizer.inJavaScriptGesture, gestureRecognizer.scale, gestureRecognizer.rotation)
-    , m_uniqueID(uniqueTouchEventIdIndex++)
 {
 }
 

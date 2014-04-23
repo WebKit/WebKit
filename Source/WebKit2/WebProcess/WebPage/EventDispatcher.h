@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,11 @@
 #include "Connection.h"
 
 #include <WebCore/WheelEventDeltaTracker.h>
+#include <WebEvent.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TCSpinLock.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WebCore {
@@ -54,6 +56,13 @@ public:
     void removeScrollingTreeForPage(WebPage*);
 #endif
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+    typedef Vector<WebTouchEvent, 1> TouchEventQueue;
+
+    void clearQueuedTouchEventsForPage(const WebPage&);
+    void getQueuedTouchEventsForPage(const WebPage&, TouchEventQueue&);
+#endif
+
     void initializeConnection(IPC::Connection*);
 
 private:
@@ -64,9 +73,16 @@ private:
 
     // Message handlers
     void wheelEvent(uint64_t pageID, const WebWheelEvent&, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom);
+#if ENABLE(IOS_TOUCH_EVENTS)
+    void touchEvent(uint64_t pageID, const WebTouchEvent&);
+#endif
+
 
     // This is called on the main thread.
     void dispatchWheelEvent(uint64_t pageID, const WebWheelEvent&);
+#if ENABLE(IOS_TOUCH_EVENTS)
+    void dispatchTouchEvents();
+#endif
 
 #if ENABLE(ASYNC_SCROLLING)
     void sendDidReceiveEvent(uint64_t pageID, const WebEvent&, bool didHandleEvent);
@@ -79,6 +95,10 @@ private:
     HashMap<uint64_t, RefPtr<WebCore::ThreadedScrollingTree>> m_scrollingTrees;
 #endif
     OwnPtr<WebCore::WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
+#if ENABLE(IOS_TOUCH_EVENTS)
+    SpinLock m_touchEventsLock;
+    HashMap<uint64_t, TouchEventQueue> m_touchEvents;
+#endif
 };
 
 } // namespace WebKit

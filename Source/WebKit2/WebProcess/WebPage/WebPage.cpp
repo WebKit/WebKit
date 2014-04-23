@@ -1948,12 +1948,28 @@ static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
 
     return page->mainFrame().eventHandler().handleTouchEvent(platform(touchEvent));
 }
+#endif
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
+{
+    m_lastInteractionLocation = touchEvent.position();
+    CurrentEvent currentEvent(touchEvent);
+    handled = handleTouchEvent(touchEvent, m_page.get());
+}
+
+void WebPage::touchEventSync(const WebTouchEvent& touchEvent, bool& handled)
+{
+    EventDispatcher::TouchEventQueue queuedEvents;
+    WebProcess::shared().eventDispatcher().getQueuedTouchEventsForPage(*this, queuedEvents);
+    dispatchAsynchronousTouchEvents(queuedEvents);
+
+    dispatchTouchEvent(touchEvent, handled);
+}
+#elif ENABLE(TOUCH_EVENTS)
 void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 {
-#if PLATFORM(IOS)
-    m_lastInteractionLocation = touchEvent.position();
-#endif
+
     bool handled = false;
     if (canHandleUserEvents()) {
         CurrentEvent currentEvent(touchEvent);
@@ -1965,9 +1981,6 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 
 void WebPage::touchEventSyncForTesting(const WebTouchEvent& touchEvent, bool& handled)
 {
-#if PLATFORM(IOS)
-    m_lastInteractionLocation = touchEvent.position();
-#endif
     CurrentEvent currentEvent(touchEvent);
     handled = handleTouchEvent(touchEvent, m_page.get());
 }
@@ -4238,6 +4251,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if PLATFORM(IOS)
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
     m_userHasChangedPageScaleFactor = false;
+
+    WebProcess::shared().eventDispatcher().clearQueuedTouchEventsForPage(*this);
 
     Document* document = frame->coreFrame()->document();
     if (document->isImageDocument())

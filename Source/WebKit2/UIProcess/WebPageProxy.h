@@ -694,7 +694,10 @@ public:
     void handleMouseEvent(const NativeWebMouseEvent&);
     void handleWheelEvent(const NativeWebWheelEvent&);
     void handleKeyboardEvent(const NativeWebKeyboardEvent&);
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
+    void handleTouchEventSynchronously(const NativeWebTouchEvent&);
+    void handleTouchEventAsynchronously(const NativeWebTouchEvent&);
+#elif ENABLE(TOUCH_EVENTS)
     void handleTouchEvent(const NativeWebTouchEvent&);
 #endif
 
@@ -1563,8 +1566,11 @@ private:
 
 #if ENABLE(TOUCH_EVENTS)
     bool m_isTrackingTouchEvents;
+#endif
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     Deque<QueuedTouchEvents> m_touchEventQueue;
 #endif
+
 #if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<WebColorPicker> m_colorPicker;
 #endif

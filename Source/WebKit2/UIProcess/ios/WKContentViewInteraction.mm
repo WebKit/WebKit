@@ -291,16 +291,13 @@ static const float tapAndHoldDelay  = 0.75;
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
     NativeWebTouchEvent nativeWebTouchEvent(gestureRecognizer);
-
     if (nativeWebTouchEvent.type() == WebKit::WebEvent::TouchStart)
         _canSendTouchEventsAsynchronously = NO;
 
-    if (!_canSendTouchEventsAsynchronously)
-        _nativeWebTouchEventUniqueIdBeingSentSynchronously = nativeWebTouchEvent.uniqueId();
-
-    _page->setShouldSendEventsSynchronously(!_canSendTouchEventsAsynchronously);
-    _page->handleTouchEvent(nativeWebTouchEvent);
-    _page->setShouldSendEventsSynchronously(false);
+    if (_canSendTouchEventsAsynchronously)
+        _page->handleTouchEventAsynchronously(nativeWebTouchEvent);
+    else
+        _page->handleTouchEventSynchronously(nativeWebTouchEvent);
 }
 
 static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
@@ -343,12 +340,6 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsNativeGesture
 {
     if (preventsNativeGesture) {
-        // If we are dispatching events synchronously and the event coming back is not the one we are sending, it is a callback
-        // from an event sent asynchronously prior to the synchronous event. In that case, it should not use that information
-        // to update UIWebTouchEventsGestureRecognizer.
-        if (!_canSendTouchEventsAsynchronously && _nativeWebTouchEventUniqueIdBeingSentSynchronously != touchEvent.uniqueId())
-            return;
-
         _canSendTouchEventsAsynchronously = YES;
         [_touchEventGestureRecognizer setDefaultPrevented:YES];
     }

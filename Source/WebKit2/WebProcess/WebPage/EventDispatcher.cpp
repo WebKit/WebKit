@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,9 @@ PassRefPtr<EventDispatcher> EventDispatcher::create()
 EventDispatcher::EventDispatcher()
     : m_queue(WorkQueue::create("com.apple.WebKit.EventDispatcher"))
     , m_recentWheelEventDeltaTracker(adoptPtr(new WheelEventDeltaTracker))
+#if ENABLE(IOS_TOUCH_EVENTS)
+    , m_touchEventsLock(SPINLOCK_INITIALIZER)
+#endif
 {
 }
 
@@ -142,6 +145,61 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 
     RunLoop::main().dispatch(bind(&EventDispatcher::dispatchWheelEvent, this, pageID, wheelEvent));
 }
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+void EventDispatcher::clearQueuedTouchEventsForPage(const WebPage& webPage)
+{
+    SpinLockHolder locker(&m_touchEventsLock);
+    m_touchEvents.remove(webPage.pageID());
+}
+
+void EventDispatcher::getQueuedTouchEventsForPage(const WebPage& webPage, TouchEventQueue& destinationQueue)
+{
+    SpinLockHolder locker(&m_touchEventsLock);
+    destinationQueue = std::move(m_touchEvents.take(webPage.pageID()));
+}
+
+void EventDispatcher::touchEvent(uint64_t pageID, const WebKit::WebTouchEvent& touchEvent)
+{
+    bool updateListWasEmpty;
+    {
+        SpinLockHolder locker(&m_touchEventsLock);
+        updateListWasEmpty = m_touchEvents.isEmpty();
+        auto addResult = m_touchEvents.add(pageID, std::move(TouchEventQueue()));
+        if (addResult.isNewEntry)
+            addResult.iterator->value.append(touchEvent);
+        else {
+            TouchEventQueue& queuedEvents = addResult.iterator->value;
+            ASSERT(!queuedEvents.isEmpty());
+            const WebTouchEvent& lastTouchEvent = queuedEvents.last();
+
+            // Coalesce touch move events.
+            WebEvent::Type type = lastTouchEvent.type();
+            if (type == WebEvent::TouchMove)
+                queuedEvents.last() = touchEvent;
+            else
+                queuedEvents.append(touchEvent);
+        }
+    }
+
+    if (updateListWasEmpty)
+        RunLoop::main().dispatch(bind(&EventDispatcher::dispatchTouchEvents, this));
+}
+
+void EventDispatcher::dispatchTouchEvents()
+{
+    HashMap<uint64_t, TouchEventQueue> localCopy;
+    {
+        SpinLockHolder locker(&m_touchEventsLock);
+        localCopy.swap(m_touchEvents);
+    }
+
+    for (auto& slot : localCopy) {
+        if (WebPage* webPage = WebProcess::shared().webPage(slot.key))
+            webPage->dispatchAsynchronousTouchEvents(slot.value);
+    }
+}
+#endif
 
 void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent)
 {

@@ -478,6 +478,7 @@ public:
     void setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection);
     WebCore::IntRect rectForElementAtInteractionLocation();
 
+    void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
 #if ENABLE(INSPECTOR)
     void showInspectorIndication();
     void hideInspectorIndication();
@@ -705,6 +706,7 @@ public:
     void applicationWillEnterForeground();
     void applicationDidBecomeActive();
     void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);
+    void dispatchTouchEvent(const WebTouchEvent&, bool& handled);
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
@@ -855,7 +857,9 @@ private:
     void wheelEventSyncForTesting(const WebWheelEvent&, bool&);
     void keyEvent(const WebKeyboardEvent&);
     void keyEventSyncForTesting(const WebKeyboardEvent&, bool&);
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
+    void touchEventSync(const WebTouchEvent&, bool& handled);
+#elif ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
     void touchEventSyncForTesting(const WebTouchEvent&, bool& handled);
 #endif

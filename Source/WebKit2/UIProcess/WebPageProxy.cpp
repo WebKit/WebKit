@@ -1493,7 +1493,48 @@ bool WebPageProxy::shouldStartTrackingTouchEvents(const WebTouchEvent& touchStar
 #endif // ENABLE(ASYNC_SCROLLING)
     return true;
 }
+#endif
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+void WebPageProxy::handleTouchEventSynchronously(const NativeWebTouchEvent& event)
+{
+    if (!isValid())
+        return;
+
+    if (event.type() == WebEvent::TouchStart)
+        m_isTrackingTouchEvents = shouldStartTrackingTouchEvents(event);
+
+    if (!m_isTrackingTouchEvents)
+        return;
+
+    m_process->responsivenessTimer()->start();
+    bool handled = false;
+    m_process->sendSync(Messages::WebPage::TouchEventSync(event), Messages::WebPage::TouchEventSync::Reply(handled), m_pageID);
+    didReceiveEvent(event.type(), handled);
+    m_pageClient.doneWithTouchEvent(event, handled);
+    m_process->responsivenessTimer()->stop();
+
+    if (event.type() == WebEvent::TouchEnd || event.type() == WebEvent::TouchCancel)
+        m_isTrackingTouchEvents = false;
+}
+
+void WebPageProxy::handleTouchEventAsynchronously(const NativeWebTouchEvent& event)
+{
+    if (!isValid())
+        return;
+
+    ASSERT(event.type() != WebEvent::TouchStart);
+
+    if (!m_isTrackingTouchEvents)
+        return;
+
+    m_process->send(Messages::EventDispatcher::TouchEvent(m_pageID, event), 0);
+
+    if (event.type() == WebEvent::TouchEnd || event.type() == WebEvent::TouchCancel)
+        m_isTrackingTouchEvents = false;
+}
+
+#elif ENABLE(TOUCH_EVENTS)
 void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
 {
     if (!isValid())
@@ -3797,7 +3838,13 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
             m_uiClient->didNotHandleKeyEvent(this, event);
         break;
     }
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
+    case WebEvent::TouchStart:
+    case WebEvent::TouchMove:
+    case WebEvent::TouchEnd:
+    case WebEvent::TouchCancel:
+        break;
+#elif ENABLE(TOUCH_EVENTS)
     case WebEvent::TouchStart:
     case WebEvent::TouchMove:
     case WebEvent::TouchEnd:
@@ -4153,7 +4200,7 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     m_processingMouseMoveEvent = false;
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     m_touchEventQueue.clear();
 #endif
 

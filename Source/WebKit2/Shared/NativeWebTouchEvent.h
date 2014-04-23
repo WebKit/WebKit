@@ -48,7 +48,6 @@ class NativeWebTouchEvent : public WebTouchEvent {
 public:
 #if PLATFORM(IOS)
     explicit NativeWebTouchEvent(UIWebTouchEventsGestureRecognizer *);
-    unsigned uniqueId() const { return m_uniqueID; }
 #elif PLATFORM(GTK)
     NativeWebTouchEvent(const NativeWebTouchEvent&);
     NativeWebTouchEvent(GdkEvent*, WebCore::GtkTouchContextHelper&);
@@ -60,9 +59,7 @@ public:
 #endif
 
 private:
-#if PLATFORM(IOS)
-    unsigned m_uniqueID;
-#elif PLATFORM(GTK)
+#if PLATFORM(GTK)
     GUniquePtr<GdkEvent> m_nativeEvent;
     const WebCore::GtkTouchContextHelper& m_touchContext;
 #elif PLATFORM(EFL)
