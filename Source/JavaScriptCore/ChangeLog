@@ -1,3 +1,24 @@
+2014-04-22  Mark Lam  <mark.lam@apple.com>
+
+        DFG::Worklist should acquire the m_lock before iterating DFG plans.
+        <https://webkit.org/b/132032>
+
+        Reviewed by Filip Pizlo.
+
+        Currently, there's a rightToRun mechanism that ensures that no compilation
+        threads are running when the GC is iterating through the DFG worklists.
+        However, this does not prevent a Worker thread from doing a DFG compilation
+        and modifying the plans in the worklists thereby invalidating the plan
+        iterator that the GC is using.  This patch fixes the issue by acquiring
+        the worklist m_lock before iterating the worklist plans.
+
+        This issue was uncovered by running the fast/workers layout tests with
+        COLLECT_ON_EVERY_ALLOCATION enabled.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::isActiveForVM):
+        (JSC::DFG::Worklist::visitChildren):
+
 2014-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Support Python 2.7 in Cygwin

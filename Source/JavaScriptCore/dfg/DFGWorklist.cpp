@@ -76,6 +76,7 @@ PassRefPtr<Worklist> Worklist::create(unsigned numberOfThreads, int relativePrio
 
 bool Worklist::isActiveForVM(VM& vm) const
 {
+    MutexLocker locker(m_lock);
     PlanMap::const_iterator end = m_plans.end();
     for (PlanMap::const_iterator iter = m_plans.begin(); iter != end; ++iter) {
         if (&iter->value->vm == &vm)
@@ -222,14 +223,21 @@ void Worklist::resumeAllThreads()
 void Worklist::visitChildren(SlotVisitor& visitor, CodeBlockSet& codeBlocks)
 {
     VM* vm = visitor.heap()->vm();
-    for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
-        Plan* plan = iter->value.get();
-        if (&plan->vm != vm)
-            continue;
-        iter->key.visitChildren(codeBlocks);
-        iter->value->visitChildren(visitor, codeBlocks);
+    {
+        MutexLocker locker(m_lock);
+        for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
+            Plan* plan = iter->value.get();
+            if (&plan->vm != vm)
+                continue;
+            iter->key.visitChildren(codeBlocks);
+            iter->value->visitChildren(visitor, codeBlocks);
+        }
     }
     
+    // This loop doesn't need further locking because:
+    // (1) no new threads can be added to m_threads. Hence, it is immutable and needs no locks.
+    // (2) ThreadData::m_safepoint is protected by that thread's m_rightToRun which we must be
+    //     holding here because of a prior call to suspendAllThreads().
     for (unsigned i = m_threads.size(); i--;) {
         ThreadData* data = m_threads[i].get();
         Safepoint* safepoint = data->m_safepoint;
