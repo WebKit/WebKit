@@ -1,3 +1,22 @@
+2014-04-23  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] fast/multicol/fixed-column-percent-logical-height-orthogonal-writing-mode.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=132078
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::skipContainingBlockForPercentHeightCalculation):
+        Add a parameter to test for orthogonal writing modes. If we're perpendicular,
+        then we should not skip the flow thread, since we resolve relative to the column width,
+        and that is always set.
+
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        Patched to pass in whether or not the box and the ancestor block are perpendicular.
+
+        * rendering/RenderBox.h:
+        Patched the signature of skipContainingBlockForPercentHeightCalculation
+
 2014-04-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Make checking if a font is the system font more robust
