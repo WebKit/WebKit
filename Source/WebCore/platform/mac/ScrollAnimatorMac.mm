@@ -464,10 +464,10 @@ enum FeatureToAnimate {
 
 - (BOOL)shouldUseLayerPerPartForScrollerImp:(id)scrollerImp
 {
+    UNUSED_PARAM(scrollerImp);
+
     if (!_scrollbar)
         return false;
-
-    ASSERT_UNUSED(scrollerImp, scrollerImp == scrollbarPainterForScrollbar(_scrollbar));
 
     return _scrollbar->supportsUpdateOnSecondaryThread();
 }

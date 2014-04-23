@@ -1,3 +1,18 @@
+2014-04-22  Tim Horton  <timothy_horton@apple.com>
+
+        ASSERTION FAILED: scrollerImp == scrollbarPainterForScrollbar(_scrollbar) on two API tests
+        https://bugs.webkit.org/show_bug.cgi?id=132034
+        <rdar://problem/16624332>
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate shouldUseLayerPerPartForScrollerImp:]):
+        scrollerImpWithStyle:controlSize:horizontal:replacingScrollerImp: moves the delegate
+        from the old scrollerImp to the new one, and also happens to call shouldUseLayerPerPartForScrollerImp.
+        Since scrollerImpWithStyle: has not returned yet, the scrollbarPainterForScrollbar still returns the old scrollerImp,
+        so this assertion fires. It's safe to remove this because supportsUpdateOnSecondaryThread doesn't make use of the imp.
+
 2014-04-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r157328): popover to check into flight ba.com dismisses instantly when focusing form
