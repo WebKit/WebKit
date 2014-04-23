@@ -116,6 +116,11 @@ using namespace WebKit;
     return (NSArray *)_frame->certificateInfo().certificateChain();
 }
 
+- (NSURL *)_provisionalURL
+{
+    return [NSURL _web_URLWithWTFString:_frame->provisionalURL()];
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
