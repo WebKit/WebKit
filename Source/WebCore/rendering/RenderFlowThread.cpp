@@ -771,13 +771,13 @@ bool RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
     // should be equal with the region for the unsplittable box if any.
     RenderBox* topMostUnsplittable = nullptr;
     RenderBox* cb = const_cast<RenderBox*>(box);
-    do {
+    while (!cb->isRenderFlowThread()) {
         if (cb->isUnsplittableForPagination())
             topMostUnsplittable = cb;
         ASSERT(cb->parent());
         cb = cb->parent()->enclosingBox();
         ASSERT(cb);
-    } while (!cb->isRenderFlowThread());
+    }
 
     if (topMostUnsplittable) {
         if (getRegionRangeForBoxFromCachedInfo(topMostUnsplittable, startRegion, endRegion)) {

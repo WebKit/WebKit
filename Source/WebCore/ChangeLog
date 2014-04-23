@@ -1,3 +1,21 @@
+2014-04-23  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Assertion failure in huge-column-count.html
+        https://bugs.webkit.org/show_bug.cgi?id=132071
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::regionAtBlockOffset):
+        Back out this change, since it wasn't general enough.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+        The real issue was that this loop needed to consider the actual box
+        rather than starting from the parent. This was a non-issue for normal
+        regions (which cannot have nested flow threads), but for columns, you 
+        have to consider the fact that the box could itself be a flow thread.
+
 2014-04-23  Andreas Kling  <akling@apple.com>
 
         [iOS] Memory pressure notification should fire on main thread.
