@@ -481,11 +481,11 @@ bool Font::hasValidAverageCharWidth() const
     if (family.isEmpty())
         return false;
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
-    // Internal fonts on OS X and iOS also have an invalid entry in the table for avgCharWidth.
-    if (primaryFontDataIsSystemFont())
+    // Internal fonts on OS X also have an invalid entry in the table for avgCharWidth.
+    // They are hidden by having a name that begins with a period, so simply search
+    // for that here rather than try to keep the list up to date.
+    if (family.startsWith('.'))
         return false;
-#endif
 
     static HashSet<AtomicString>* fontFamiliesWithInvalidCharWidthMap = 0;
 
