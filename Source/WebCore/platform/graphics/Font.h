@@ -189,6 +189,8 @@ public:
     static CodePath characterRangeCodePath(const LChar*, unsigned) { return Simple; }
     static CodePath characterRangeCodePath(const UChar*, unsigned len);
 
+    bool primaryFontDataIsSystemFont() const;
+
 private:
     enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };
 
