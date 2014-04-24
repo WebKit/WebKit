@@ -85,11 +85,10 @@ using namespace WTF;
 
 namespace WebCore {
 
-// FIXME: We should return a reference instead of a pointer since we never return a nullptr.
-FontCache* fontCache()
+FontCache& fontCache()
 {
     static NeverDestroyed<FontCache> globalFontCache;
-    return &globalFontCache.get();
+    return globalFontCache.get();
 }
 
 FontCache::FontCache()

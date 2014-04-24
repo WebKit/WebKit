@@ -42,7 +42,7 @@ FontGlyphs::FontGlyphs(PassRefPtr<FontSelector> fontSelector)
     , m_fontSelector(fontSelector)
     , m_fontSelectorVersion(m_fontSelector ? m_fontSelector->version() : 0)
     , m_familyIndex(0)
-    , m_generation(fontCache()->generation())
+    , m_generation(fontCache().generation())
     , m_pitch(UnknownPitch)
     , m_loadingCustomFonts(false)
     , m_isForPlatformFont(false)
@@ -55,12 +55,12 @@ FontGlyphs::FontGlyphs(const FontPlatformData& platformData)
     , m_fontSelector(0)
     , m_fontSelectorVersion(0)
     , m_familyIndex(cAllFamiliesScanned)
-    , m_generation(fontCache()->generation())
+    , m_generation(fontCache().generation())
     , m_pitch(UnknownPitch)
     , m_loadingCustomFonts(false)
     , m_isForPlatformFont(true)
 {
-    RefPtr<FontData> fontData = fontCache()->getCachedFontData(&platformData);
+    RefPtr<FontData> fontData = fontCache().getCachedFontData(&platformData);
     m_realizedFontData.append(fontData.release());
 }
 
@@ -71,7 +71,7 @@ void FontGlyphs::releaseFontData()
         if (m_realizedFontData[i]->isCustomFont())
             continue;
         ASSERT(!m_realizedFontData[i]->isSegmented());
-        fontCache()->releaseFontData(static_cast<const SimpleFontData*>(m_realizedFontData[i].get()));
+        fontCache().releaseFontData(static_cast<const SimpleFontData*>(m_realizedFontData[i].get()));
     }
 }
 
@@ -117,8 +117,8 @@ const FontData* FontGlyphs::realizeFontDataAt(const FontDescription& description
     // We are obtaining this font for the first time. We keep track of the families we've looked at before
     // in |m_familyIndex|, so that we never scan the same spot in the list twice. getFontData will adjust our
     // |m_familyIndex| as it scans for the right font to make.
-    ASSERT(fontCache()->generation() == m_generation);
-    RefPtr<FontData> result = fontCache()->getFontData(description, m_familyIndex, m_fontSelector.get());
+    ASSERT(fontCache().generation() == m_generation);
+    RefPtr<FontData> result = fontCache().getFontData(description, m_familyIndex, m_fontSelector.get());
     if (result) {
         m_realizedFontData.append(result);
         if (result->isLoading())
@@ -381,7 +381,7 @@ std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForCharacter(const 
         codeUnitsLength = 2;
     }
     const SimpleFontData* originalFontData = primaryFontData(description)->fontDataForCharacter(c);
-    RefPtr<SimpleFontData> characterFontData = fontCache()->systemFallbackForCharacters(description, originalFontData, m_isForPlatformFont, codeUnits, codeUnitsLength);
+    RefPtr<SimpleFontData> characterFontData = fontCache().systemFallbackForCharacters(description, originalFontData, m_isForPlatformFont, codeUnits, codeUnitsLength);
     if (characterFontData) {
         if (characterFontData->platformData().orientation() == Vertical && !characterFontData->hasVerticalGlyphs() && Font::isCJKIdeographOrSymbol(c))
             variant = BrokenIdeographVariant;

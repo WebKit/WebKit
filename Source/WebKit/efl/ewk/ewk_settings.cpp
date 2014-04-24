@@ -279,7 +279,7 @@ void ewk_settings_memory_cache_clear()
     WebCore::pageCache()->setCapacity(pageCapacity);
 
     // Invalidating the font cache and freeing all inactive font data.
-    WebCore::fontCache()->invalidate();
+    WebCore::fontCache().invalidate();
 
     // Empty the Cross-Origin Preflight cache
     WebCore::CrossOriginPreflightResultCache::shared().empty();

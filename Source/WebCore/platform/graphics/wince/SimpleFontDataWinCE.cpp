@@ -69,7 +69,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
     fontDesc.setComputedSize(lroundf(scaleFactor * fontDesc.computedSize()));
     fontDesc.setSpecifiedSize(lroundf(scaleFactor * fontDesc.specifiedSize()));
     fontDesc.setKeywordSize(lroundf(scaleFactor * fontDesc.keywordSize()));
-    FontPlatformData* result = fontCache()->getCachedFontPlatformData(fontDesc, m_platformData.family());
+    FontPlatformData* result = fontCache().getCachedFontPlatformData(fontDesc, m_platformData.family());
     if (!result)
         return 0;
     return SimpleFontData::create(*result);
@@ -87,7 +87,7 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
     // cover a given code page?
 
     // FIXME: in the case that we failed to get the interface, still use the font.
-    IMLangFontLinkType* langFontLink = fontCache()->getFontLinkInterface();
+    IMLangFontLinkType* langFontLink = fontCache().getFontLinkInterface();
     if (!langFontLink)
         return true;
 

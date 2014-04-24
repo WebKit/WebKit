@@ -1328,7 +1328,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
 {
     ASSERT(WebThreadIsCurrent());
     WebKit::MemoryMeasure measurer("Memory warning: Purging inactive font data.");
-    fontCache()->purgeInactiveFontData();
+    fontCache().purgeInactiveFontData();
 }
 
 + (void)drainLayerPool

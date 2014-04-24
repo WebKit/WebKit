@@ -51,12 +51,12 @@ static void invalidateFontCache(void*)
         callOnMainThread(&invalidateFontCache, 0);
         return;
     }
-    fontCache()->invalidate();
+    fontCache().invalidate();
 }
 
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void *, CFDictionaryRef)
 {
-    ASSERT_UNUSED(observer, observer == fontCache());
+    ASSERT_UNUSED(observer, observer == &fontCache());
     ASSERT_UNUSED(name, CFEqual(name, kCTFontManagerRegisteredFontsChangedNotification));
     invalidateFontCache(0);
 }

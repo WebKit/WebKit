@@ -53,7 +53,7 @@ public:
     DWORD codePages() const
     {
         if (!m_codePages) {
-            if (IMLangFontLinkType* langFontLink = fontCache()->getFontLinkInterface())
+            if (IMLangFontLinkType* langFontLink = fontCache().getFontLinkInterface())
                 langFontLink->CodePageToCodePages(m_codePage, &m_codePages);
         }
         return m_codePages;
@@ -262,7 +262,7 @@ PassRefPtr<FixedSizeFontData> FixedSizeFontData::create(const AtomicString& fami
 
     GetTextMetrics(g_screenDC, &fontData->m_metrics);
 
-    if (IMLangFontLinkType* langFontLink = fontCache()->getFontLinkInterface()) {
+    if (IMLangFontLinkType* langFontLink = fontCache().getFontLinkInterface()) {
         langFontLink->GetFontCodePages(g_screenDC, fontData->m_hfont.get(), &fontData->m_codePages);
         fontData->m_codePages |= FontPlatformData::getKnownFontCodePages(winFont.lfFaceName);
     }

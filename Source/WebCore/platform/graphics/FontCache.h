@@ -108,7 +108,7 @@ class FontCache {
 
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
-    friend FontCache* fontCache();
+    friend FontCache& fontCache();
 
     enum ShouldRetain { Retain, DoNotRetain };
 
@@ -203,12 +203,12 @@ private:
 };
 
 // Get the global fontCache.
-FontCache* fontCache();
+FontCache& fontCache();
 
 class FontCachePurgePreventer {
 public:
-    FontCachePurgePreventer() { fontCache()->disablePurging(); }
-    ~FontCachePurgePreventer() { fontCache()->enablePurging(); }
+    FontCachePurgePreventer() { fontCache().disablePurging(); }
+    ~FontCachePurgePreventer() { fontCache().enablePurging(); }
 };
 
 }

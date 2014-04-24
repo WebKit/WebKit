@@ -275,10 +275,10 @@ void SimpleFontData::platformDestroy()
     if (!isCustomFont() && m_derivedFontData) {
         // These come from the cache.
         if (m_derivedFontData->smallCaps)
-            fontCache()->releaseFontData(m_derivedFontData->smallCaps.get());
+            fontCache().releaseFontData(m_derivedFontData->smallCaps.get());
 
         if (m_derivedFontData->emphasisMark)
-            fontCache()->releaseFontData(m_derivedFontData->emphasisMark.get());
+            fontCache().releaseFontData(m_derivedFontData->emphasisMark.get());
     }
 }
 
@@ -313,7 +313,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
         scaledFontData.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(scaledFontTraits & NSItalicFontMask);
 
         // SimpleFontData::platformDestroy() takes care of not deleting the cached font data twice.
-        return fontCache()->getCachedFontData(&scaledFontData);
+        return fontCache().getCachedFontData(&scaledFontData);
     }
     END_BLOCK_OBJC_EXCEPTIONS;
 

@@ -193,7 +193,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::cachedFontDataCount(
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) fontCache()->fontDataCount();
+    *count = (UINT) fontCache().fontDataCount();
     return S_OK;
 }
 
@@ -202,13 +202,13 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::cachedFontDataInactiveCount(
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) fontCache()->inactiveFontDataCount();
+    *count = (UINT) fontCache().inactiveFontDataCount();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebCoreStatistics::purgeInactiveFontData(void)
 {
-    fontCache()->purgeInactiveFontData();
+    fontCache().purgeInactiveFontData();
     return S_OK;
 }
 

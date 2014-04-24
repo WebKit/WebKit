@@ -564,7 +564,7 @@ void WebProcess::terminate()
 {
 #ifndef NDEBUG
     gcController().garbageCollectNow();
-    fontCache()->invalidate();
+    fontCache().invalidate();
     memoryCache()->setDisabled(true);
 #endif
 
@@ -617,7 +617,7 @@ void WebProcess::didClose(IPC::Connection*)
     pages.clear();
 
     gcController().garbageCollectSoon();
-    fontCache()->invalidate();
+    fontCache().invalidate();
     memoryCache()->setDisabled(true);
 #endif    
 
@@ -898,8 +898,8 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     data.statisticsNumbers.set(ASCIILiteral("IconsWithDataCount"), iconDatabase().iconRecordCountWithData());
     
     // Gather font statistics.
-    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataCount"), fontCache()->fontDataCount());
-    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataInactiveCount"), fontCache()->inactiveFontDataCount());
+    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataCount"), fontCache().fontDataCount());
+    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataInactiveCount"), fontCache().inactiveFontDataCount());
     
     // Gather glyph page statistics.
     data.statisticsNumbers.set(ASCIILiteral("GlyphPageCount"), GlyphPageTreeNode::treeGlyphPageCount());

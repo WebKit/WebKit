@@ -1,3 +1,61 @@
+2014-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontCache::fontCache() never returns nullptr so it can be made to return a reference instead
+        https://bugs.webkit.org/show_bug.cgi?id=132110
+
+        Reviewed by Tim Horton.
+
+        Updates callers to use '.' instead of '->'.
+
+        No new tests are necessary because there should be no behavior change.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::~CSSFontSelector):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::fontDataForGenericFamily):
+        (WebCore::CSSFontSelector::getFallbackFontData):
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::fontCache): Return a reference
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCachePurgePreventer::FontCachePurgePreventer):
+        (WebCore::FontCachePurgePreventer::~FontCachePurgePreventer):
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::FontGlyphs):
+        (WebCore::FontGlyphs::releaseFontData):
+        (WebCore::FontGlyphs::realizeFontDataAt):
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter):
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::verticalData):
+        * platform/graphics/ios/SimpleFontDataIOS.mm:
+        (WebCore::SimpleFontData::platformCreateScaledFontData):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::invalidateFontCache):
+        (WebCore::fontCacheRegisteredFontsChangedNotificationCallback):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::platformCreateScaledFontData):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::getCJKCodePageMasks):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::containsCharacters):
+        * platform/graphics/wince/FontCacheWinCE.cpp:
+        (WebCore::getCJKCodePageMasks):
+        * platform/graphics/wince/FontPlatformData.cpp:
+        (WebCore::FontFamilyCodePageInfo::codePages):
+        (WebCore::FixedSizeFontData::create):
+        * platform/graphics/wince/GlyphPageTreeNodeWinCE.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp:
+        (WebCore::SimpleFontData::platformCreateScaledFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+
 2014-04-24  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Manage AudioSession category according to media type

@@ -51,7 +51,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                         setGlyphDataForIndex(offset + i, 0, 0);
                 }
                 return true;
-            } else if (IMLangFontLinkType* langFontLink = fontCache()->getFontLinkInterface()) {
+            } else if (IMLangFontLinkType* langFontLink = fontCache().getFontLinkInterface()) {
                 for (unsigned i = 0; i < bufferLength; ++i) {
                     DWORD actualCodePages;
                     langFontLink->GetCharCodePages(buffer[i], &actualCodePages);
