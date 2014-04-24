@@ -111,6 +111,8 @@ public:
     void rateDidChange(double);
     void metadataDidArrive(RetainPtr<NSArray>, double);
 
+    virtual void setShouldBufferData(bool);
+
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     void outputMediaDataWillChange(AVPlayerItemVideoOutput*);
 #endif
@@ -326,6 +328,7 @@ private:
     bool m_cachedBufferEmpty;
     bool m_cachedBufferFull;
     bool m_cachedHasEnabledAudio;
+    bool m_shouldBufferData;
 #if ENABLE(IOS_AIRPLAY)
     mutable bool m_allowsWirelessVideoPlayback;
 #endif

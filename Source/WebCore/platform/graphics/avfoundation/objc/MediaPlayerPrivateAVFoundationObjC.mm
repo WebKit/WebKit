@@ -371,6 +371,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_cachedBufferEmpty(false)
     , m_cachedBufferFull(false)
     , m_cachedHasEnabledAudio(false)
+    , m_shouldBufferData(true)
 #if ENABLE(IOS_AIRPLAY)
     , m_allowsWirelessVideoPlayback(true)
 #endif
@@ -2272,6 +2273,23 @@ void MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange(RetainPtr<NSA
 
     loadedTimeRangesChanged();
     updateStates();
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setShouldBufferData(bool shouldBuffer)
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::shouldBufferData(%p) - %s", this, boolString(shouldBuffer));
+    if (m_shouldBufferData == shouldBuffer)
+        return;
+
+    m_shouldBufferData = shouldBuffer;
+    
+    if (!m_avPlayer)
+        return;
+
+    if (m_shouldBufferData)
+        [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
+    else
+        [m_avPlayer.get() replaceCurrentItemWithPlayerItem:nil];
 }
 
 #if ENABLE(DATACUE_VALUE)

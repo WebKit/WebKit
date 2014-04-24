@@ -338,6 +338,7 @@ public:
     void prepareToPlay();
     void play();
     void pause();
+    void setShouldBufferData(bool);
 
 #if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
     // Represents synchronous exceptions that can be thrown from the Encrypted Media methods.

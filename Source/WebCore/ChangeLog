@@ -1,3 +1,39 @@
+2014-04-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac, iOS] Stop buffering media when on an inactive tab. 
+        https://bugs.webkit.org/show_bug.cgi?id=132077
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp: Rename 'm_isDisplaySleepDisablingSuspended'
+        to 'm_elementIsHidden'.
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::visibilityStatusChanged): Notify the
+        media session that the element is (or is not) hidden.
+        (WebCore::HTMLMediaElement::setShouldBufferData): Added.
+        * html/HTMLMediaElement.h:
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::clientWillBeginPlayback): Tell media to
+        buffer if not hidden or playing.
+        (WebCore::MediaSession::clientWillPausePlayback): Ditto.
+        (WebCore::MediaSession::visibilityChanged): Added. Client API, just relays call
+        to updateClientDataBuffering.
+        (WebCore::MediaSession::updateClientDataBuffering): Tell client it should only
+        buffer data if it's currently playing, or not hidden.
+        * platform/audio/MediaSession.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setShouldBufferData): Added: Just relays to
+        MediaPlayerPrivate object.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setShouldBufferData):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldBufferData): Added.
+        Detach the player item from the player if we don't want to continue
+        buffering or other background tasks.
+
 2014-04-23  Alexey Proskuryakov  <ap@apple.com>
 
         Eliminate internals.setMockScrollbarsEnabled()

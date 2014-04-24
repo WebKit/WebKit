@@ -105,6 +105,7 @@ bool MediaSession::clientWillBeginPlayback()
 {
     setState(Playing);
     MediaSessionManager::sharedManager().sessionWillBeginPlayback(*this);
+    updateClientDataBuffering();
     return true;
 }
 
@@ -121,6 +122,7 @@ bool MediaSession::clientWillPausePlayback()
     
     setState(Paused);
     MediaSessionManager::sharedManager().sessionWillEndPlayback(*this);
+    updateClientDataBuffering();
     return true;
 }
 
@@ -159,7 +161,20 @@ void MediaSession::didReceiveRemoteControlCommand(RemoteControlCommandType comma
 {
     m_client.didReceiveRemoteControlCommand(command);
 }
-    
+
+#if ENABLE(PAGE_VISIBILITY_API)
+void MediaSession::visibilityChanged()
+{
+    updateClientDataBuffering();
+}
+
+void MediaSession::updateClientDataBuffering()
+{
+    bool shouldBuffer = m_state == Playing || !m_client.elementIsHidden();
+    m_client.setShouldBufferData(shouldBuffer);
+}
+#endif
+
 String MediaSessionClient::mediaSessionTitle() const
 {
     return String();

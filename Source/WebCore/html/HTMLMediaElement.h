@@ -199,12 +199,17 @@ public:
     void setLoop(bool b);
     virtual void play() override;
     virtual void pause() override;
+    virtual void setShouldBufferData(bool) override;
     void fastSeek(double);
 
 // captions
     bool webkitHasClosedCaptions() const;
     bool webkitClosedCaptionsVisible() const;
     void setWebkitClosedCaptionsVisible(bool);
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    virtual bool elementIsHidden() const override { return m_elementIsHidden; }
+#endif
 
 #if ENABLE(MEDIA_STATISTICS)
 // Statistics
@@ -830,7 +835,7 @@ private:
     bool m_havePreparedToPlay : 1;
     bool m_parsingInProgress : 1;
 #if ENABLE(PAGE_VISIBILITY_API)
-    bool m_isDisplaySleepDisablingSuspended : 1;
+    bool m_elementIsHidden : 1;
 #endif
 
 #if PLATFORM(IOS)

@@ -66,6 +66,7 @@ public:
 
     virtual void play() = 0;
     virtual void pause() = 0;    
+    virtual void setShouldBufferData(bool) { }
 
     virtual bool supportsFullscreen() const { return false; }
     virtual bool supportsSave() const { return false; }

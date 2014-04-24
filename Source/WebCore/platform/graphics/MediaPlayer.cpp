@@ -513,6 +513,11 @@ void MediaPlayer::pause()
     m_private->pause();
 }
 
+void MediaPlayer::setShouldBufferData(bool shouldBuffer)
+{
+    m_private->setShouldBufferData(shouldBuffer);
+}
+
 #if ENABLE(ENCRYPTED_MEDIA)
 MediaPlayer::MediaKeyException MediaPlayer::generateKeyRequest(const String& keySystem, const unsigned char* initData, unsigned initDataLength)
 {

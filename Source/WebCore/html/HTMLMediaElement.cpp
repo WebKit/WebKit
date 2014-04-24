@@ -325,7 +325,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
 #if ENABLE(PAGE_VISIBILITY_API)
-    , m_isDisplaySleepDisablingSuspended(document.hidden())
+    , m_elementIsHidden(document.hidden())
 #endif
 #if PLATFORM(IOS)
     , m_requestingPlay(false)
@@ -4716,8 +4716,9 @@ void HTMLMediaElement::mediaVolumeDidChange()
 void HTMLMediaElement::visibilityStateChanged()
 {
     LOG(Media, "HTMLMediaElement::visibilityStateChanged");
-    m_isDisplaySleepDisablingSuspended = document().hidden();
+    m_elementIsHidden = document().hidden();
     updateSleepDisabling();
+    m_mediaSession->visibilityChanged();
 }
 #endif
 
@@ -5682,7 +5683,7 @@ bool HTMLMediaElement::shouldDisableSleep() const
 #endif
 
 #if ENABLE(PAGE_VISIBILITY_API)
-    if (m_isDisplaySleepDisablingSuspended)
+    if (m_elementIsHidden)
         return false;
 #endif
 
@@ -6141,6 +6142,12 @@ bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicSt
         *value = elementValue;
     
     return true;
+}
+
+void HTMLMediaElement::setShouldBufferData(bool shouldBuffer)
+{
+    if (m_player)
+        return m_player->setShouldBufferData(shouldBuffer);
 }
     
 }

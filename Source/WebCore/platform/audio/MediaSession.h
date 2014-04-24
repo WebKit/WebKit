@@ -72,6 +72,10 @@ public:
 
     void pauseSession();
     
+#if ENABLE(PAGE_VISIBILITY_API)
+    void visibilityChanged();
+#endif
+
     String title() const;
     double duration() const;
     double currentTime() const;
@@ -94,6 +98,10 @@ protected:
     MediaSessionClient& client() const { return m_client; }
 
 private:
+#if ENABLE(PAGE_VISIBILITY_API)
+    void updateClientDataBuffering();
+#endif
+
     MediaSessionClient& m_client;
     State m_state;
     State m_stateToRestore;
@@ -115,6 +123,9 @@ public:
     
     virtual bool canReceiveRemoteControlCommands() const = 0;
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) = 0;
+
+    virtual void setShouldBufferData(bool) { }
+    virtual bool elementIsHidden() const { return false; }
 
 protected:
     virtual ~MediaSessionClient() { }
