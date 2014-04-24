@@ -316,11 +316,11 @@ const Color& RenderThemeIOS::shadowColor() const
     return color;
 }
 
-FloatRect RenderThemeIOS::addRoundedBorderClip(RenderObject* box, GraphicsContext* context, const IntRect& rect)
+FloatRect RenderThemeIOS::addRoundedBorderClip(const RenderObject& box, GraphicsContext* context, const IntRect& rect)
 {
     // To fix inner border bleeding issues <rdar://problem/9812507>, we clip to the outer border and assert that
     // the border is opaque or transparent, unless we're checked because checked radio/checkboxes show no bleeding.
-    RenderStyle& style = box->style();
+    RenderStyle& style = box.style();
     RoundedRect border = isChecked(box) ? style.getRoundedInnerBorderFor(rect) : style.getRoundedBorderFor(rect);
 
     if (border.isRounded())
@@ -357,7 +357,7 @@ static CGPoint shortened(CGPoint start, CGPoint end, float width)
     return CGPointMake(start.x + x * ratio, start.y + y * ratio);
 }
 
-bool RenderThemeIOS::paintCheckboxDecorations(RenderObject* box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect clip = addRoundedBorderClip(box, paintInfo.context, rect);
@@ -408,17 +408,17 @@ bool RenderThemeIOS::paintCheckboxDecorations(RenderObject* box, const PaintInfo
     return false;
 }
 
-int RenderThemeIOS::baselinePosition(const RenderObject* renderer) const
+int RenderThemeIOS::baselinePosition(const RenderObject& renderer) const
 {
-    if (!renderer->isBox())
+    if (!renderer.isBox())
         return 0;
 
-    const RenderBox* box = toRenderBox(renderer);
+    const RenderBox& box = *toRenderBox(&renderer);
 
-    if (box->style().appearance() == CheckboxPart || box->style().appearance() == RadioPart)
-        return box->marginTop() + box->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
-    if (box->style().appearance() == MenulistPart)
-        return box->marginTop() + box->height() - 5; // This is to match AppKit. There might be a better way to calculate this though.
+    if (box.style().appearance() == CheckboxPart || box.style().appearance() == RadioPart)
+        return box.marginTop() + box.height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
+    if (box.style().appearance() == MenulistPart)
+        return box.marginTop() + box.height() - 5; // This is to match AppKit. There might be a better way to calculate this though.
     return RenderTheme::baselinePosition(box);
 }
 
@@ -445,7 +445,7 @@ void RenderThemeIOS::adjustRadioStyle(StyleResolver*, RenderStyle* style, Elemen
     style->setBorderRadius(IntSize(length.value() / 2.0f, length.value() / 2.0f));
 }
 
-bool RenderThemeIOS::paintRadioDecorations(RenderObject* box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect clip = addRoundedBorderClip(box, paintInfo.context, rect);
@@ -473,9 +473,9 @@ bool RenderThemeIOS::paintRadioDecorations(RenderObject* box, const PaintInfo& p
     return false;
 }
 
-bool RenderThemeIOS::paintTextFieldDecorations(RenderObject* box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    RenderStyle& style = box->style();
+    RenderStyle& style = box.style();
     IntPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
@@ -485,14 +485,14 @@ bool RenderThemeIOS::paintTextFieldDecorations(RenderObject* box, const PaintInf
     // This gradient gets drawn black when printing.
     // Do not draw the gradient if there is no visible top border.
     bool topBorderIsInvisible = !style.hasBorder() || !style.borderTopWidth() || style.borderTopIsTransparent();
-    if (!box->view().printing() && !topBorderIsInvisible)
+    if (!box.view().printing() && !topBorderIsInvisible)
         drawAxialGradient(paintInfo.context->platformContext(), gradientWithName(InsetGradient), point, FloatPoint(CGPointMake(point.x(), point.y() + 3.0f)), LinearInterpolation);
     return false;
 }
 
-bool RenderThemeIOS::paintTextAreaDecorations(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintTextAreaDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintTextFieldDecorations(renderer, paintInfo, rect);
+    return paintTextFieldDecorations(box, paintInfo, rect);
 }
 
 const int MenuListMinHeight = 15;
@@ -582,9 +582,9 @@ void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* styl
     }
 }
 
-bool RenderThemeIOS::paintMenuListButtonDecorations(RenderObject* box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    RenderStyle& style = box->style();
+    RenderStyle& style = box.style();
     float borderTopWidth = style.borderTopWidth();
     FloatRect clip(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth(), rect.width() - style.borderLeftWidth() - style.borderRightWidth(), rect.height() - style.borderTopWidth() - style.borderBottomWidth());
     CGContextRef cgContext = paintInfo.context->platformContext();
@@ -612,7 +612,7 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(RenderObject* box, const Pai
 
     float separator = clip.maxX() - MenuListButtonPaddingRight;
 
-    box->drawLineForBoxSide(paintInfo.context, separator - borderTopWidth, clip.y(), separator, clip.maxY(), BSRight, style.visitedDependentColor(CSSPropertyBorderTopColor), style.borderTopStyle(), 0, 0);
+    box.drawLineForBoxSide(paintInfo.context, separator - borderTopWidth, clip.y(), separator, clip.maxY(), BSRight, style.visitedDependentColor(CSSPropertyBorderTopColor), style.borderTopStyle(), 0, 0);
 
     FloatRect buttonClip(separator - adjustTop, clip.y() - adjustTop, MenuListButtonPaddingRight + adjustTop + adjustRight, clip.height() + adjustTop + adjustBottom);
 
@@ -631,7 +631,7 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(RenderObject* box, const Pai
 
     // Paint Indicators.
 
-    if (box->isMenuList() && toHTMLSelectElement(box->node())->multiple()) {
+    if (box.isMenuList() && toHTMLSelectElement(box.node())->multiple()) {
         int size = 2;
         int count = 3;
         int padding = 3;
@@ -684,10 +684,10 @@ void RenderThemeIOS::adjustSliderTrackStyle(StyleResolver* selector, RenderStyle
     style->setBorderRadius(LengthSize(radiusWidth, radiusHeight));
 }
 
-bool RenderThemeIOS::paintSliderTrack(RenderObject* box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     IntRect trackClip = rect;
-    RenderStyle& style = box->style();
+    RenderStyle& style = box.style();
 
     bool isHorizontal = true;
     switch (style.appearance()) {
@@ -779,7 +779,7 @@ void RenderThemeIOS::adjustSliderThumbSize(RenderStyle* style, Element*) const
     }
 }
 
-bool RenderThemeIOS::paintSliderThumbDecorations(RenderObject* box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintSliderThumbDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect clip = addRoundedBorderClip(box, paintInfo.context, rect);
@@ -807,9 +807,9 @@ double RenderThemeIOS::animationDurationForProgressBar(RenderProgress*) const
     return 0;
 }
 
-bool RenderThemeIOS::paintProgressBar(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!renderer->isProgress())
+    if (!renderer.isProgress())
         return true;
 
     const int progressBarHeight = 9;
@@ -836,7 +836,7 @@ bool RenderThemeIOS::paintProgressBar(RenderObject* renderer, const PaintInfo& p
     strokeGradient->addColorStop(1.0, Color(0x8d, 0x8d, 0x8d));
     context->setStrokeGradient(strokeGradient.release());
 
-    ColorSpace colorSpace = renderer->style().colorSpace();
+    ColorSpace colorSpace = renderer.style().colorSpace();
     context->setFillColor(Color(255, 255, 255), colorSpace);
 
     Path trackPath;
@@ -857,10 +857,10 @@ bool RenderThemeIOS::paintProgressBar(RenderObject* renderer, const PaintInfo& p
 
     context->fillRect(FloatRect(rect.x(), verticalRenderingPosition, rect.width(), upperGradientHeight));
 
-    RenderProgress* renderProgress = toRenderProgress(renderer);
-    if (renderProgress->isDeterminate()) {
+    const RenderProgress& renderProgress = *toRenderProgress(&renderer);
+    if (renderProgress.isDeterminate()) {
         // 2) Draw the progress bar.
-        double position = clampTo(renderProgress->position(), 0.0, 1.0);
+        double position = clampTo(renderProgress.position(), 0.0, 1.0);
         double barWidth = position * rect.width();
         RefPtr<Gradient> barGradient = Gradient::create(FloatPoint(rect.x(), verticalRenderingPosition + 0.5), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1));
         barGradient->addColorStop(0.0, Color(195, 217, 247));
@@ -879,7 +879,7 @@ bool RenderThemeIOS::paintProgressBar(RenderObject* renderer, const PaintInfo& p
 
         Path barPath;
         int left = rect.x();
-        if (!renderProgress->style().isLeftToRightDirection())
+        if (!renderProgress.style().isLeftToRightDirection())
             left = rect.maxX() - barWidth;
         FloatRect barRect(left + 0.25, verticalRenderingPosition + 0.25, std::max(barWidth - 0.5, 0.0), progressBarHeight - 0.5);
         barPath.addRoundedRect(barRect, roundedCornerRadius);
@@ -921,7 +921,7 @@ void RenderThemeIOS::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle
     adjustRoundBorderRadius(*style, box);
 }
 
-bool RenderThemeIOS::paintSearchFieldDecorations(RenderObject* box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     return paintTextFieldDecorations(box, paintInfo, rect);
 }
@@ -947,18 +947,18 @@ void RenderThemeIOS::adjustButtonStyle(StyleResolver* selector, RenderStyle* sty
     adjustRoundBorderRadius(*style, box);
 }
 
-bool RenderThemeIOS::paintButtonDecorations(RenderObject* box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     return paintPushButtonDecorations(box, paintInfo, rect);
 }
 
-bool RenderThemeIOS::paintPushButtonDecorations(RenderObject* box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintPushButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect clip = addRoundedBorderClip(box, paintInfo.context, rect);
 
     CGContextRef cgContext = paintInfo.context->platformContext();
-    if (box->style().visitedDependentColor(CSSPropertyBackgroundColor).isDark())
+    if (box.style().visitedDependentColor(CSSPropertyBackgroundColor).isDark())
         drawAxialGradient(cgContext, gradientWithName(ConvexGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
     else {
         drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
@@ -982,12 +982,12 @@ const int kThumbnailBorderCornerRadius = 1;
 const int kVisibleBackgroundImageWidth = 1;
 const int kMultipleThumbnailShrinkSize = 2;
 
-bool RenderThemeIOS::paintFileUploadIconDecorations(RenderObject*, RenderObject* buttonRenderer, const PaintInfo& paintInfo, const IntRect& rect, Icon* icon, FileUploadDecorations fileUploadDecorations)
+bool RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const RenderObject& buttonRenderer, const PaintInfo& paintInfo, const IntRect& rect, Icon* icon, FileUploadDecorations fileUploadDecorations)
 {
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
     IntSize cornerSize(kThumbnailBorderCornerRadius, kThumbnailBorderCornerRadius);
-    Color pictureFrameColor = buttonRenderer ? buttonRenderer->style().visitedDependentColor(CSSPropertyBorderTopColor) : Color(76.0f, 76.0f, 76.0f);
+    Color pictureFrameColor = buttonRenderer.style().visitedDependentColor(CSSPropertyBorderTopColor);
 
     IntRect thumbnailPictureFrameRect = rect;
     IntRect thumbnailRect = rect;
@@ -1000,7 +1000,7 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(RenderObject*, RenderObject*
         thumbnailRect.contract(kMultipleThumbnailShrinkSize, kMultipleThumbnailShrinkSize);
 
         // Background picture frame and simple background icon with a gradient matching the button.
-        Color backgroundImageColor = buttonRenderer ? Color(buttonRenderer->style().visitedDependentColor(CSSPropertyBackgroundColor).rgb()) : Color(206.0f, 206.0f, 206.0f);
+        Color backgroundImageColor = Color(buttonRenderer.style().visitedDependentColor(CSSPropertyBackgroundColor).rgb());
         paintInfo.context->fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor, ColorSpaceDeviceRGB);
         paintInfo.context->fillRect(thumbnailRect, backgroundImageColor, ColorSpaceDeviceRGB);
         {

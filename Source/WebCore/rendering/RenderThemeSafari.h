@@ -52,15 +52,15 @@ public:
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
-    virtual int baselinePosition(const RenderObject*) const;
+    virtual int baselinePosition(const RenderObject&) const;
 
     // A method asking if the control changes its tint when the window has focus or not.
-    virtual bool controlSupportsTints(const RenderObject*) const;
+    virtual bool controlSupportsTints(const RenderObject&) const;
 
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return true; }
 
-    virtual void adjustRepaintRect(const RenderObject*, IntRect&);
+    virtual void adjustRepaintRect(const RenderObject&, IntRect&);
 
     virtual bool isControlStyled(const RenderStyle*, const BorderData&,
                                  const FillLayer&, const Color& backgroundColor) const;
@@ -86,47 +86,47 @@ public:
 
 protected:
     // Methods for each appearance value.
-    virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void setCheckboxSize(RenderStyle*) const;
 
-    virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void setRadioSize(RenderStyle*) const;
 
     virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, WebCore::Element*) const;
-    virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void setButtonSize(RenderStyle*) const;
 
-    virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintTextField(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintMenuListButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&);
+    virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldCancelButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldDecorationPart(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldResultsDecorationPart(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldResultsDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldResultsButton(const RenderObject&, const PaintInfo&, const IntRect&);
  
-    virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&);
 
 #if ENABLE(VIDEO)
     virtual String mediaControlsStyleSheet() override;
@@ -137,7 +137,7 @@ protected:
     virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const override;
     virtual bool supportsMeter(ControlPart) const override;
     virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const override;
-    virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
     virtual bool shouldShowPlaceholderWhenFocused() const { return true; }
@@ -172,7 +172,7 @@ private:
     const IntSize* popupButtonSizes() const;
     const int* popupButtonMargins(NSControlSize) const;
     const int* popupButtonPadding(NSControlSize) const;
-    void paintMenuListButtonGradients(RenderObject*, const PaintInfo&, const IntRect&);
+    void paintMenuListButtonGradients(const RenderObject&, const PaintInfo&, const IntRect&);
     const IntSize* menuListSizes() const;
 
     const IntSize* searchFieldSizes() const;
@@ -180,7 +180,7 @@ private:
     const IntSize* resultsButtonSizes() const;
     void setSearchFieldSize(RenderStyle*) const;
 
-    ThemeControlState determineState(RenderObject*) const;
+    ThemeControlState determineState(const RenderObject&) const;
 
     String m_mediaControlsScript;
     String m_mediaControlsStyleSheet;

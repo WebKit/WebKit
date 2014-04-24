@@ -263,20 +263,20 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     }
 }
 
-bool RenderTheme::paint(RenderObject* o, ControlStates* controlStates, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, const PaintInfo& paintInfo, const IntRect& r)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
     // for that control.
     if (paintInfo.context->updatingControlTints()) {
         if (controlSupportsTints(o))
-            o->repaint();
+            o.repaint();
         return false;
     }
     if (paintInfo.context->paintingDisabled())
         return false;
 
-    ControlPart part = o->style().appearance();
+    ControlPart part = o.style().appearance();
 
 #if USE(NEW_THEME)
     switch (part) {
@@ -288,7 +288,7 @@ bool RenderTheme::paint(RenderObject* o, ControlStates* controlStates, const Pai
     case ButtonPart:
     case InnerSpinButtonPart:
         updateControlStatesForRenderer(o, controlStates);
-        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), r, o->style().effectiveZoom(), &o->view().frameView());
+        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), r, o.style().effectiveZoom(), &o.view().frameView());
         return false;
     default:
         break;
@@ -405,17 +405,17 @@ bool RenderTheme::paint(RenderObject* o, ControlStates* controlStates, const Pai
     return true; // We don't support the appearance, so let the normal background/border paint.
 }
 
-bool RenderTheme::paintBorderOnly(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderTheme::paintBorderOnly(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
 {
     if (paintInfo.context->paintingDisabled())
         return false;
 
 #if PLATFORM(IOS)
     UNUSED_PARAM(r);
-    return o->style().appearance() != NoControlPart;
+    return o.style().appearance() != NoControlPart;
 #else
     // Call the appropriate paint method based off the appearance value.
-    switch (o->style().appearance()) {
+    switch (o.style().appearance()) {
     case TextFieldPart:
         return paintTextField(o, paintInfo, r);
     case ListboxPart:
@@ -463,13 +463,13 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const PaintInfo& paintInfo, c
 #endif
 }
 
-bool RenderTheme::paintDecorations(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderTheme::paintDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (paintInfo.context->paintingDisabled())
         return false;
 
     // Call the appropriate paint method based off the appearance value.
-    switch (renderer->style().appearance()) {
+    switch (renderer.style().appearance()) {
     case MenulistButtonPart:
         return paintMenuListButtonDecorations(renderer, paintInfo, rect);
     case TextFieldPart:
@@ -666,17 +666,17 @@ Color RenderTheme::platformInactiveListBoxSelectionForegroundColor() const
     return platformInactiveSelectionForegroundColor();
 }
 
-int RenderTheme::baselinePosition(const RenderObject* o) const
+int RenderTheme::baselinePosition(const RenderObject& o) const
 {
-    if (!o->isBox())
+    if (!o.isBox())
         return 0;
 
-    const RenderBox* box = toRenderBox(o);
+    const RenderBox& box = *toRenderBox(&o);
 
 #if USE(NEW_THEME)
-    return box->height() + box->marginTop() + m_theme->baselinePositionAdjustment(o->style().appearance()) * o->style().effectiveZoom();
+    return box.height() + box.marginTop() + m_theme->baselinePositionAdjustment(o.style().appearance()) * o.style().effectiveZoom();
 #else
-    return box->height() + box->marginTop();
+    return box.height() + box.marginTop();
 #endif
 }
 
@@ -714,11 +714,11 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
     }
 }
 
-void RenderTheme::adjustRepaintRect(const RenderObject* o, IntRect& r)
+void RenderTheme::adjustRepaintRect(const RenderObject& o, IntRect& r)
 {
 #if USE(NEW_THEME)
     ControlStates states(extractControlStatesForRenderer(o));
-    m_theme->inflateControlPaintRect(o->style().appearance(), &states, r, o->style().effectiveZoom());
+    m_theme->inflateControlPaintRect(o.style().appearance(), &states, r, o.style().effectiveZoom());
 #else
     UNUSED_PARAM(o);
     UNUSED_PARAM(r);
@@ -730,10 +730,10 @@ bool RenderTheme::supportsFocusRing(const RenderStyle* style) const
     return (style->hasAppearance() && style->appearance() != TextFieldPart && style->appearance() != TextAreaPart && style->appearance() != MenulistButtonPart && style->appearance() != ListboxPart);
 }
 
-bool RenderTheme::stateChanged(RenderObject* o, ControlStates::States state) const
+bool RenderTheme::stateChanged(const RenderObject& o, ControlStates::States state) const
 {
     // Default implementation assumes the controls don't respond to changes in :hover state
-    if (state == ControlStates::HoverState && !supportsHover(&o->style()))
+    if (state == ControlStates::HoverState && !supportsHover(&o.style()))
         return false;
 
     // Assume pressed state is only responded to if the control is enabled.
@@ -741,17 +741,17 @@ bool RenderTheme::stateChanged(RenderObject* o, ControlStates::States state) con
         return false;
 
     // Repaint the control.
-    o->repaint();
+    o.repaint();
     return true;
 }
 
-void RenderTheme::updateControlStatesForRenderer(const RenderObject* o, ControlStates* controlStates) const
+void RenderTheme::updateControlStatesForRenderer(const RenderObject& o, ControlStates* controlStates) const
 {
     ControlStates newStates = extractControlStatesForRenderer(o);
     controlStates->setStates(newStates.states());
 }
 
-ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderObject* o) const
+ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderObject& o) const
 {
     ControlStates::States states = 0;
     if (isHovered(o)) {
@@ -764,7 +764,7 @@ ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderO
         if (isSpinUpButtonPartPressed(o))
             states |= ControlStates::SpinUpState;
     }
-    if (isFocused(o) && o->style().outlineStyleIsAuto())
+    if (isFocused(o) && o.style().outlineStyleIsAuto())
         states |= ControlStates::FocusState;
     if (isEnabled(o))
         states |= ControlStates::EnabledState;
@@ -781,9 +781,9 @@ ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderO
     return states;
 }
 
-bool RenderTheme::isActive(const RenderObject* o) const
+bool RenderTheme::isActive(const RenderObject& o) const
 {
-    Node* node = o->node();
+    Node* node = o.node();
     if (!node)
         return false;
 
@@ -798,41 +798,41 @@ bool RenderTheme::isActive(const RenderObject* o) const
     return page->focusController().isActive();
 }
 
-bool RenderTheme::isChecked(const RenderObject* o) const
+bool RenderTheme::isChecked(const RenderObject& o) const
 {
-    if (!o->node())
+    if (!o.node())
         return false;
 
-    HTMLInputElement* inputElement = o->node()->toInputElement();
+    HTMLInputElement* inputElement = o.node()->toInputElement();
     if (!inputElement)
         return false;
 
     return inputElement->shouldAppearChecked();
 }
 
-bool RenderTheme::isIndeterminate(const RenderObject* o) const
+bool RenderTheme::isIndeterminate(const RenderObject& o) const
 {
-    if (!o->node())
+    if (!o.node())
         return false;
 
-    HTMLInputElement* inputElement = o->node()->toInputElement();
+    HTMLInputElement* inputElement = o.node()->toInputElement();
     if (!inputElement)
         return false;
 
     return inputElement->shouldAppearIndeterminate();
 }
 
-bool RenderTheme::isEnabled(const RenderObject* o) const
+bool RenderTheme::isEnabled(const RenderObject& o) const
 {
-    Node* node = o->node();
+    Node* node = o.node();
     if (!node || !node->isElementNode())
         return true;
     return !toElement(node)->isDisabledFormControl();
 }
 
-bool RenderTheme::isFocused(const RenderObject* o) const
+bool RenderTheme::isFocused(const RenderObject& o) const
 {
-    Node* node = o->node();
+    Node* node = o.node();
     if (!node || !node->isElementNode())
         return false;
 
@@ -842,16 +842,16 @@ bool RenderTheme::isFocused(const RenderObject* o) const
     return focusDelegate == document.focusedElement() && frame && frame->selection().isFocusedAndActive();
 }
 
-bool RenderTheme::isPressed(const RenderObject* o) const
+bool RenderTheme::isPressed(const RenderObject& o) const
 {
-    if (!o->node() || !o->node()->isElementNode())
+    if (!o.node() || !o.node()->isElementNode())
         return false;
-    return toElement(o->node())->active();
+    return toElement(o.node())->active();
 }
 
-bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject* o) const
+bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject& o) const
 {
-    Node* node = o->node();
+    Node* node = o.node();
     if (!node || !node->isElementNode())
         return false;
     Element* element = toElement(node);
@@ -860,17 +860,17 @@ bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject* o) const
     return static_cast<SpinButtonElement*>(element)->upDownState() == SpinButtonElement::Up;
 }
 
-bool RenderTheme::isReadOnlyControl(const RenderObject* o) const
+bool RenderTheme::isReadOnlyControl(const RenderObject& o) const
 {
-    Node* node = o->node();
+    Node* node = o.node();
     if (!node || !node->isElementNode())
         return false;
     return toElement(node)->matchesReadOnlyPseudoClass();
 }
 
-bool RenderTheme::isHovered(const RenderObject* o) const
+bool RenderTheme::isHovered(const RenderObject& o) const
 {
-    Node* node = o->node();
+    Node* node = o.node();
     if (!node || !node->isElementNode())
         return false;
     if (!toElement(node)->isSpinButtonElement())
@@ -879,25 +879,25 @@ bool RenderTheme::isHovered(const RenderObject* o) const
     return element->hovered() && element->upDownState() != SpinButtonElement::Indeterminate;
 }
 
-bool RenderTheme::isSpinUpButtonPartHovered(const RenderObject* o) const
+bool RenderTheme::isSpinUpButtonPartHovered(const RenderObject& o) const
 {
-    Node* node = o->node();
+    Node* node = o.node();
     if (!node || !node->isElementNode() || !toElement(node)->isSpinButtonElement())
         return false;
     SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
     return element->upDownState() == SpinButtonElement::Up;
 }
 
-bool RenderTheme::isDefault(const RenderObject* o) const
+bool RenderTheme::isDefault(const RenderObject& o) const
 {
     // A button should only have the default appearance if the page is active
     if (!isActive(o))
         return false;
 
-    if (!o->frame().settings().applicationChromeMode())
+    if (!o.frame().settings().applicationChromeMode())
         return false;
     
-    return o->style().appearance() == DefaultButtonPart;
+    return o.style().appearance() == DefaultButtonPart;
 }
 
 #if !USE(NEW_THEME)
@@ -967,7 +967,7 @@ void RenderTheme::adjustInputFieldSpeechButtonStyle(StyleResolver* styleResolver
     RenderInputSpeech::adjustInputFieldSpeechButtonStyle(styleResolver, style, element);
 }
 
-bool RenderTheme::paintInputFieldSpeechButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderTheme::paintInputFieldSpeechButton(const RenderObject& object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     return RenderInputSpeech::paintInputFieldSpeechButton(object, paintInfo, rect);
 }
@@ -989,7 +989,7 @@ bool RenderTheme::supportsMeter(ControlPart) const
     return false;
 }
 
-bool RenderTheme::paintMeter(RenderObject*, const PaintInfo&, const IntRect&)
+bool RenderTheme::paintMeter(const RenderObject&, const PaintInfo&, const IntRect&)
 {
     return true;
 }
@@ -1002,9 +1002,9 @@ LayoutUnit RenderTheme::sliderTickSnappingThreshold() const
     return 0;
 }
 
-void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    Node* node = o->node();
+    Node* node = o.node();
     if (!node)
         return;
 
@@ -1018,14 +1018,14 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
 
     double min = input->minimum();
     double max = input->maximum();
-    ControlPart part = o->style().appearance();
+    ControlPart part = o.style().appearance();
     // We don't support ticks on alternate sliders like MediaVolumeSliders.
     if (part !=  SliderHorizontalPart && part != SliderVerticalPart)
         return;
     bool isHorizontal = part ==  SliderHorizontalPart;
 
     IntSize thumbSize;
-    RenderObject* thumbRenderer = input->sliderThumbElement()->renderer();
+    const RenderObject* thumbRenderer = input->sliderThumbElement()->renderer();
     if (thumbRenderer) {
         const RenderStyle& thumbStyle = thumbRenderer->style();
         int thumbWidth = thumbStyle.width().intValue();
@@ -1035,7 +1035,7 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
     }
 
     IntSize tickSize = sliderTickSize();
-    float zoomFactor = o->style().effectiveZoom();
+    float zoomFactor = o.style().effectiveZoom();
     FloatRect tickRect;
     int tickRegionSideMargin = 0;
     int tickRegionWidth = 0;
@@ -1044,7 +1044,7 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
     // We can ignoring transforms because transform is handled by the graphics context.
     if (trackRenderer)
         trackBounds = trackRenderer->absoluteBoundingBoxRectIgnoringTransforms();
-    IntRect sliderBounds = o->absoluteBoundingBoxRectIgnoringTransforms();
+    IntRect sliderBounds = o.absoluteBoundingBoxRectIgnoringTransforms();
 
     // Make position relative to the transformed ancestor element.
     trackBounds.setX(trackBounds.x() - sliderBounds.x() + rect.x());
@@ -1065,7 +1065,7 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
     }
     RefPtr<HTMLCollection> options = dataList->options();
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
-    paintInfo.context->setFillColor(o->style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    paintInfo.context->setFillColor(o.style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     for (unsigned i = 0; Node* node = options->item(i); i++) {
         ASSERT(isHTMLOptionElement(node));
         HTMLOptionElement* optionElement = toHTMLOptionElement(node);
@@ -1074,7 +1074,7 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
             continue;
         double parsedValue = parseToDoubleForNumberType(input->sanitizeValue(value));
         double tickFraction = (parsedValue - min) / (max - min);
-        double tickRatio = isHorizontal && o->style().isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
+        double tickRatio = isHorizontal && o.style().isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
         double tickPosition = round(tickRegionSideMargin + tickRegionWidth * tickRatio);
         if (isHorizontal)
             tickRect.setX(tickPosition);
@@ -1100,7 +1100,7 @@ void RenderTheme::adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*)
 {
 }
 
-IntRect RenderTheme::progressBarRectForBounds(const RenderObject*, const IntRect& bounds) const
+IntRect RenderTheme::progressBarRectForBounds(const RenderObject&, const IntRect& bounds) const
 {
     return bounds;
 }

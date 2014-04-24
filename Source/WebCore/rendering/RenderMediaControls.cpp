@@ -70,10 +70,10 @@ namespace WebCore {
 
 #if PLATFORM(WIN) && USE(CG)
 
-static WKMediaControllerThemeState determineState(RenderObject* o)
+static WKMediaControllerThemeState determineState(const RenderObject& o)
 {
     int result = 0;
-    const RenderTheme& theme = o->theme();
+    const RenderTheme& theme = o.theme();
     if (!theme.isEnabled(o) || theme.isReadOnlyControl(o))
         result |= WKMediaControllerFlagDisabled;
     if (theme.isPressed(o))
@@ -84,9 +84,9 @@ static WKMediaControllerThemeState determineState(RenderObject* o)
 }
 
 // Utility to scale when the UI part are not scaled by wkDrawMediaUIPart
-static FloatRect getUnzoomedRectAndAdjustCurrentContext(RenderObject* o, const PaintInfo& paintInfo, const IntRect &originalRect)
+static FloatRect getUnzoomedRectAndAdjustCurrentContext(const RenderObject& o, const PaintInfo& paintInfo, const IntRect &originalRect)
 {
-    float zoomLevel = o->style().effectiveZoom();
+    float zoomLevel = o.style().effectiveZoom();
     FloatRect unzoomedRect(originalRect);
     if (zoomLevel != 1.0f) {
         unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
@@ -126,35 +126,35 @@ void RenderMediaControls::adjustMediaSliderThumbSize(RenderStyle* style)
     style->setHeight(Length(static_cast<int>(size.height * zoomLevel), Fixed));
 }
 
-bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
 {
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
     switch (part) {
     case MediaEnterFullscreenButton:
     case MediaExitFullscreenButton:
-        if (MediaControlFullscreenButtonElement* btn = static_cast<MediaControlFullscreenButtonElement*>(o->node())) {
+        if (MediaControlFullscreenButtonElement* btn = static_cast<MediaControlFullscreenButtonElement*>(o.node())) {
             bool enterButton = btn->displayType() == MediaEnterFullscreenButton;
             wkDrawMediaUIPart(enterButton ? WKMediaUIPartFullscreenButton : WKMediaUIPartExitFullscreenButton, paintInfo.context->platformContext(), r, determineState(o));
         }
         break;
     case MediaShowClosedCaptionsButton:
     case MediaHideClosedCaptionsButton:
-        if (MediaControlToggleClosedCaptionsButtonElement* btn = static_cast<MediaControlToggleClosedCaptionsButtonElement*>(o->node())) {
+        if (MediaControlToggleClosedCaptionsButtonElement* btn = static_cast<MediaControlToggleClosedCaptionsButtonElement*>(o.node())) {
             bool captionsVisible = btn->displayType() == MediaHideClosedCaptionsButton;
             wkDrawMediaUIPart(captionsVisible ? WKMediaUIPartHideClosedCaptionsButton : WKMediaUIPartShowClosedCaptionsButton, paintInfo.context->platformContext(), r, determineState(o));
         }
         break;
     case MediaMuteButton:
     case MediaUnMuteButton:
-        if (MediaControlMuteButtonElement* btn = static_cast<MediaControlMuteButtonElement*>(o->node())) {
+        if (MediaControlMuteButtonElement* btn = static_cast<MediaControlMuteButtonElement*>(o.node())) {
             bool audioEnabled = btn->displayType() == MediaMuteButton;
             wkDrawMediaUIPart(audioEnabled ? WKMediaUIPartMuteButton : WKMediaUIPartUnMuteButton, paintInfo.context->platformContext(), r, determineState(o));
         }
         break;
     case MediaPauseButton:
     case MediaPlayButton:
-        if (MediaControlPlayButtonElement* btn = static_cast<MediaControlPlayButtonElement*>(o->node())) {
+        if (MediaControlPlayButtonElement* btn = static_cast<MediaControlPlayButtonElement*>(o.node())) {
             bool canPlay = btn->displayType() == MediaPlayButton;
             wkDrawMediaUIPart(canPlay ? WKMediaUIPartPlayButton : WKMediaUIPartPauseButton, paintInfo.context->platformContext(), r, determineState(o));
         }
@@ -172,7 +172,7 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, R
         wkDrawMediaUIPart(WKMediaUIPartSeekForwardButton, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaSlider: {
-        if (HTMLMediaElement* mediaElement = parentMediaElement(*o)) {
+        if (HTMLMediaElement* mediaElement = parentMediaElement(o)) {
             FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
             wkDrawMediaSliderTrack(paintInfo.context->platformContext(), unzoomedRect, mediaElement->percentLoaded() * mediaElement->duration(), mediaElement->currentTime(), mediaElement->duration(), determineState(o));
         }

@@ -725,7 +725,7 @@ RenderBlock* RenderObject::containingBlock() const
 }
 
 void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1, float y1, float x2, float y2,
-    BoxSide side, Color color, EBorderStyle borderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias)
+    BoxSide side, Color color, EBorderStyle borderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias) const
 {
     float deviceScaleFactor = document().deviceScaleFactor();
     float thickness;

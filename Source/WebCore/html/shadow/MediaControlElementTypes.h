@@ -75,7 +75,7 @@ enum MediaControlElementType {
 };
 
 HTMLMediaElement* parentMediaElement(Node*);
-inline HTMLMediaElement* parentMediaElement(RenderObject& renderer) { return parentMediaElement(renderer.node()); }
+inline HTMLMediaElement* parentMediaElement(const RenderObject& renderer) { return parentMediaElement(renderer.node()); }
 
 MediaControlElementType mediaControlElementType(Node*);
 

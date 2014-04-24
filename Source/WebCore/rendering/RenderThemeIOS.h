@@ -48,35 +48,35 @@ public:
     static CFStringRef contentSizeCategory();
 
 protected:
-    virtual int baselinePosition(const RenderObject*) const override;
+    virtual int baselinePosition(const RenderObject&) const override;
 
     virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer& background, const Color& backgroundColor) const override;
 
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(StyleResolver*, RenderStyle*, Element*) const override;
-    virtual bool paintCheckboxDecorations(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintCheckboxDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual void adjustRadioStyle(StyleResolver*, RenderStyle*, Element*) const override;
-    virtual bool paintRadioDecorations(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const override;
-    virtual bool paintButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&) override;
-    virtual bool paintPushButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    virtual bool paintPushButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual void setButtonSize(RenderStyle*) const override;
 
-    virtual bool paintFileUploadIconDecorations(RenderObject* inputRenderer, RenderObject* buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
+    virtual bool paintFileUploadIconDecorations(const RenderObject& inputRenderer, const RenderObject& buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
 
-    virtual bool paintTextFieldDecorations(RenderObject*, const PaintInfo&, const IntRect&) override;
-    virtual bool paintTextAreaDecorations(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    virtual bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const override;
-    virtual bool paintMenuListButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const override;
-    virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual void adjustSliderThumbSize(RenderStyle*, Element*) const override;
-    virtual bool paintSliderThumbDecorations(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
 #if ENABLE(PROGRESS_ELEMENT)
     // Returns the repeat interval of the animation for the progress bar.
@@ -84,7 +84,7 @@ protected:
     // Returns the duration of the animation for the progress bar.
     virtual double animationDurationForProgressBar(RenderProgress*) const override;
 
-    virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -93,7 +93,7 @@ protected:
 #endif
 
     virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const override;
-    virtual bool paintSearchFieldDecorations(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual Color platformActiveSelectionBackgroundColor() const override;
     virtual Color platformInactiveSelectionBackgroundColor() const override;
@@ -115,7 +115,7 @@ private:
     virtual ~RenderThemeIOS() { }
 
     const Color& shadowColor() const;
-    FloatRect addRoundedBorderClip(RenderObject* box, GraphicsContext*, const IntRect&);
+    FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext*, const IntRect&);
 
     String m_mediaControlsScript;
     String m_mediaControlsStyleSheet;

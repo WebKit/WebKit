@@ -1278,7 +1278,7 @@ void RenderFlowThread::addRegionsVisualOverflowFromTheme(const RenderBlock* bloc
         borderBox = region->rectFlowPortionForBox(block, borderBox);
 
         IntRect inflatedRect = pixelSnappedIntRect(borderBox);
-        block->theme().adjustRepaintRect(block, inflatedRect);
+        block->theme().adjustRepaintRect(*block, inflatedRect);
 
         region->addVisualOverflowForBox(block, inflatedRect);
         if (region == endRegion)

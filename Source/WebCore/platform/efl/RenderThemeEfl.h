@@ -78,7 +78,7 @@ public:
     virtual bool supportsFocusRing(const RenderStyle*) const;
 
     // A method asking if the control changes its tint when the window has focus or not.
-    virtual bool controlSupportsTints(const RenderObject*) const;
+    virtual bool controlSupportsTints(const RenderObject&) const;
 
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return true; }
@@ -89,7 +89,7 @@ public:
     // A method to obtain the baseline position for a "leaf" control. This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
-    virtual int baselinePosition(const RenderObject*) const;
+    virtual int baselinePosition(const RenderObject&) const;
 
     virtual Color platformActiveSelectionBackgroundColor() const;
     virtual Color platformInactiveSelectionBackgroundColor() const;
@@ -111,40 +111,40 @@ public:
     virtual void systemFont(CSSValueID, FontDescription&) const;
 
     virtual void adjustCheckboxStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustRadioStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintTextField(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintMenuListButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldResultsDecorationPart(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldResultsDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldResultsButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldCancelButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const;
 
@@ -158,16 +158,16 @@ public:
 
     virtual bool supportsDataListUI(const AtomicString&) const override;
 
-    virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
     static void setDefaultFontSize(int fontsize);
 
 #if ENABLE(PROGRESS_ELEMENT)
     virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
     virtual double animationDurationForProgressBar(RenderProgress*) const;
 #endif
@@ -200,8 +200,8 @@ private:
     void applyPartDescriptionsFrom(const String& themePath);
 
     void applyEdjeStateFromForm(Evas_Object*, const ControlStates*, bool);
-    void applyEdjeRTLState(Evas_Object*, RenderObject*, FormType, const IntRect&);
-    bool paintThemePart(RenderObject*, FormType, const PaintInfo&, const IntRect&);
+    void applyEdjeRTLState(Evas_Object*, const RenderObject&, FormType, const IntRect&);
+    bool paintThemePart(const RenderObject&, FormType, const PaintInfo&, const IntRect&);
 
     Page* m_page;
     Color m_activeSelectionBackgroundColor;

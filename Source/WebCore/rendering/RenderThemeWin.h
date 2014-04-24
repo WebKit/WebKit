@@ -66,51 +66,51 @@ public:
     virtual void systemFont(CSSValueID, FontDescription&) const;
     virtual Color systemColor(CSSValueID) const;
 
-    virtual bool paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& r)
+    virtual bool paintCheckbox(const RenderObject& o, const PaintInfo& i, const IntRect& r)
     { return paintButton(o, i, r); }
     virtual void setCheckboxSize(RenderStyle*) const;
 
-    virtual bool paintRadio(RenderObject* o, const PaintInfo& i, const IntRect& r)
+    virtual bool paintRadio(const RenderObject& o, const PaintInfo& i, const IntRect& r)
     { return paintButton(o, i, r); }
     virtual void setRadioSize(RenderStyle* style) const
     { return setCheckboxSize(style); }
 
-    virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintTextField(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual bool paintTextArea(RenderObject* o, const PaintInfo& i, const IntRect& r)
+    virtual bool paintTextArea(const RenderObject& o, const PaintInfo& i, const IntRect& r)
     { return paintTextField(o, i, r); }
 
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintMenuListButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual bool paintSliderTrack(RenderObject* o, const PaintInfo& i, const IntRect& r);
-    virtual bool paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& r);
+    virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&);
+    virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
     virtual bool popupOptionSupportsTextIndent() const { return true; }
 
     virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldCancelButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldDecorationPart(RenderObject*, const PaintInfo&, const IntRect&) { return false; }
+    virtual bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) { return false; }
 
     virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldResultsDecorationPart(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldResultsDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldResultsButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void themeChanged();
 
@@ -133,7 +133,7 @@ public:
     virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const override;
     virtual bool supportsMeter(ControlPart) const override;
     virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const override;
-    virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
     virtual bool shouldShowPlaceholderWhenFocused() const { return true; }
@@ -151,16 +151,16 @@ private:
     void addIntrinsicMargins(RenderStyle*) const;
     void close();
 
-    unsigned determineState(RenderObject*);
-    unsigned determineClassicState(RenderObject*, ControlSubPart = None);
-    unsigned determineSliderThumbState(RenderObject*);
-    unsigned determineButtonState(RenderObject*);
-    unsigned determineSpinButtonState(RenderObject*, ControlSubPart = None);
+    unsigned determineState(const RenderObject&);
+    unsigned determineClassicState(const RenderObject&, ControlSubPart = None);
+    unsigned determineSliderThumbState(const RenderObject&);
+    unsigned determineButtonState(const RenderObject&);
+    unsigned determineSpinButtonState(const RenderObject&, ControlSubPart = None);
 
     bool supportsFocus(ControlPart) const;
 
-    ThemeData getThemeData(RenderObject*, ControlSubPart = None);
-    ThemeData getClassicThemeData(RenderObject* o, ControlSubPart = None);
+    ThemeData getThemeData(const RenderObject&, ControlSubPart = None);
+    ThemeData getClassicThemeData(const RenderObject&, ControlSubPart = None);
 
     HANDLE buttonTheme() const;
     HANDLE textFieldTheme() const;

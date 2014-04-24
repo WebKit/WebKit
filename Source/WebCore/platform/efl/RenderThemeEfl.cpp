@@ -299,13 +299,13 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, const ControlSt
         edje_object_signal_emit(object, "styled", "");
 }
 
-void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, RenderObject* object, FormType type, const IntRect& rect)
+void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, const RenderObject& object, FormType type, const IntRect& rect)
 {
     if (type == SliderVertical || type == SliderHorizontal) {
-        if (!object->isSlider())
+        if (!object.isSlider())
             return; // probably have -webkit-appearance: slider..
 
-        RenderSlider* renderSlider = toRenderSlider(object);
+        const RenderSlider* renderSlider = toRenderSlider(&object);
         HTMLInputElement& input = renderSlider->element();
         double valueRange = input.maximum() - input.minimum();
 
@@ -316,7 +316,7 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, RenderObject* object, 
         // grows from the end of the slider or from the beginning. On vertical
         // sliders, it should always be the same and will not be affected by
         // text direction settings.
-        if (object->style().direction() == RTL || type == SliderVertical)
+        if (object.style().direction() == RTL || type == SliderVertical)
             msg->val[0] = 1;
         else
             msg->val[0] = 0;
@@ -325,7 +325,7 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, RenderObject* object, 
         edje_object_message_send(edje, EDJE_MESSAGE_FLOAT_SET, 0, msg.get());
 #if ENABLE(PROGRESS_ELEMENT)
     } else if (type == ProgressBar) {
-        RenderProgress* renderProgress = toRenderProgress(object);
+        const RenderProgress* renderProgress = toRenderProgress(&object);
 
         int max = rect.width();
         double value = renderProgress->position();
@@ -333,7 +333,7 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, RenderObject* object, 
         OwnPtr<Edje_Message_Float_Set> msg = adoptPtr(static_cast<Edje_Message_Float_Set*>(::operator new (sizeof(Edje_Message_Float_Set) + sizeof(double))));
         msg->count = 2;
 
-        if (object->style().direction() == RTL)
+        if (object.style().direction() == RTL)
             msg->val[0] = (1.0 - value) * max;
         else
             msg->val[0] = 0;
@@ -350,7 +350,7 @@ bool RenderThemeEfl::isControlStyled(const RenderStyle* style, const BorderData&
     return RenderTheme::isControlStyled(style, border, background, backgroundColor) || style->appearance() == MenulistButtonPart;
 }
 
-bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintThemePart(const RenderObject& object, FormType type, const PaintInfo& info, const IntRect& rect)
 {
     loadThemeIfNeeded();
     _ASSERT_ON_RELEASE_RETURN_VAL(edje(), false, "Could not paint native HTML part due to missing theme.");
@@ -359,7 +359,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
     if (!entry)
         return false;
 
-    bool haveBackgroundColor = isControlStyled(&object->style(), object->style().border(), *object->style().backgroundLayers(), Color::white);
+    bool haveBackgroundColor = isControlStyled(&object.style(), object.style().border(), *object.style().backgroundLayers(), Color::white);
     ControlStates states(extractControlStatesForRenderer(object));
     applyEdjeStateFromForm(entry->edje(), &states, haveBackgroundColor);
 
@@ -631,19 +631,19 @@ bool RenderThemeEfl::supportsFocusRing(const RenderStyle* style) const
     return supportsFocus(style->appearance());
 }
 
-bool RenderThemeEfl::controlSupportsTints(const RenderObject* object) const
+bool RenderThemeEfl::controlSupportsTints(const RenderObject& object) const
 {
     return isEnabled(object);
 }
 
-int RenderThemeEfl::baselinePosition(const RenderObject* object) const
+int RenderThemeEfl::baselinePosition(const RenderObject& object) const
 {
-    if (!object->isBox())
+    if (!object.isBox())
         return 0;
 
-    if (object->style().appearance() == CheckboxPart
-    ||  object->style().appearance() == RadioPart)
-        return toRenderBox(object)->marginTop() + toRenderBox(object)->height() - 3;
+    if (object.style().appearance() == CheckboxPart
+    ||  object.style().appearance() == RadioPart)
+        return toRenderBox(&object)->marginTop() + toRenderBox(&object)->height() - 3;
 
     return RenderTheme::baselinePosition(object);
 }
@@ -684,9 +684,9 @@ bool RenderThemeEfl::supportsSelectionForegroundColors() const
     return m_supportsSelectionForegroundColor;
 }
 
-bool RenderThemeEfl::paintSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintSliderTrack(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
-    if (object->style().appearance() == SliderHorizontalPart)
+    if (object.style().appearance() == SliderHorizontalPart)
         paintThemePart(object, SliderHorizontal, info, rect);
     else
         paintThemePart(object, SliderVertical, info, rect);
@@ -755,9 +755,9 @@ bool RenderThemeEfl::supportsDataListUI(const AtomicString& type) const
 #endif
 }
 
-bool RenderThemeEfl::paintSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintSliderThumb(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
-    if (object->style().appearance() == SliderThumbHorizontalPart)
+    if (object.style().appearance() == SliderThumbHorizontalPart)
         paintThemePart(object, SliderThumbHorizontal, info, rect);
     else
         paintThemePart(object, SliderThumbVertical, info, rect);
@@ -783,7 +783,7 @@ void RenderThemeEfl::adjustCheckboxStyle(StyleResolver* styleResolver, RenderSty
         style->setHeight(desc->min.height());
 }
 
-bool RenderThemeEfl::paintCheckbox(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintCheckbox(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, CheckBox, info, rect);
 }
@@ -806,7 +806,7 @@ void RenderThemeEfl::adjustRadioStyle(StyleResolver* styleResolver, RenderStyle*
         style->setHeight(desc->min.height());
 }
 
-bool RenderThemeEfl::paintRadio(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintRadio(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, RadioButton, info, rect);
 }
@@ -823,7 +823,7 @@ void RenderThemeEfl::adjustButtonStyle(StyleResolver* styleResolver, RenderStyle
         adjustSizeConstraints(style, Button);
 }
 
-bool RenderThemeEfl::paintButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintButton(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, Button, info, rect);
 }
@@ -841,7 +841,7 @@ void RenderThemeEfl::adjustMenuListStyle(StyleResolver* styleResolver, RenderSty
     style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-bool RenderThemeEfl::paintMenuList(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintMenuList(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, ComboBox, info, rect);
 }
@@ -862,7 +862,7 @@ void RenderThemeEfl::adjustMenuListButtonStyle(StyleResolver* styleResolver, Ren
     adjustMenuListStyle(styleResolver, style, element);
 }
 
-bool RenderThemeEfl::paintMenuListButtonDecorations(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintMenuListButtonDecorations(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintMenuList(object, info, rect);
 }
@@ -877,7 +877,7 @@ void RenderThemeEfl::adjustTextFieldStyle(StyleResolver* styleResolver, RenderSt
     style->resetBorder();
 }
 
-bool RenderThemeEfl::paintTextField(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintTextField(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, TextField, info, rect);
 }
@@ -886,7 +886,7 @@ void RenderThemeEfl::adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*)
 {
 }
 
-bool RenderThemeEfl::paintTextArea(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintTextArea(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintTextField(object, info, rect);
 }
@@ -908,7 +908,7 @@ void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(StyleResolver* styleRes
     style->setHeight(Length(decorationSize, Fixed));
 }
 
-bool RenderThemeEfl::paintSearchFieldResultsButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldResultsButton(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, SearchFieldResultsButton, info, rect);
 }
@@ -930,7 +930,7 @@ void RenderThemeEfl::adjustSearchFieldResultsDecorationPartStyle(StyleResolver* 
     style->setHeight(Length(decorationSize, Fixed));
 }
 
-bool RenderThemeEfl::paintSearchFieldResultsDecorationPart(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldResultsDecorationPart(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, SearchFieldResultsDecoration, info, rect);
 }
@@ -954,7 +954,7 @@ void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(StyleResolver* styleReso
     style->setHeight(Length(cancelButtonSize, Fixed));
 }
 
-bool RenderThemeEfl::paintSearchFieldCancelButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldCancelButton(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, SearchFieldCancelButton, info, rect);
 }
@@ -970,7 +970,7 @@ void RenderThemeEfl::adjustSearchFieldStyle(StyleResolver* styleResolver, Render
     style->setWhiteSpace(PRE);
 }
 
-bool RenderThemeEfl::paintSearchField(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintSearchField(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, SearchField, info, rect);
 }
@@ -984,7 +984,7 @@ void RenderThemeEfl::adjustInnerSpinButtonStyle(StyleResolver* styleResolver, Re
     adjustSizeConstraints(style, Spinner);
 }
 
-bool RenderThemeEfl::paintInnerSpinButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintInnerSpinButton(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, Spinner, info, rect);
 }
@@ -1022,9 +1022,9 @@ double RenderThemeEfl::animationDurationForProgressBar(RenderProgress*) const
     return progressAnimationInterval * progressAnimationFrames * 2; // "2" for back and forth;
 }
 
-bool RenderThemeEfl::paintProgressBar(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintProgressBar(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
 {
-    if (!object->isProgress())
+    if (!object.isProgress())
         return true;
 
     return paintThemePart(object, ProgressBar, info, rect);

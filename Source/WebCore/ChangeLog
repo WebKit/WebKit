@@ -1,3 +1,172 @@
+2014-04-24  Zalan Bujtas  <zalan@apple.com>
+
+        Transition RenderTheme API from RenderObject* to const RenderObject&
+        https://bugs.webkit.org/show_bug.cgi?id=132037
+
+        Reviewed by Andreas Kling.
+
+        Using const references provides better encapsulation and improve security.
+
+        No change in behavior.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::boundingBoxForQuads):
+        * dom/Element.cpp:
+        (WebCore::Element::setActive):
+        (WebCore::Element::setHovered):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::disabledStateChanged):
+        (WebCore::HTMLFormControlElement::readOnlyAttributeChanged):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::setIndeterminate):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::parseAttribute):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addVisualOverflowFromTheme):
+        (WebCore::RenderBlock::baselinePosition):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::styleDidChange):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::addRegionsVisualOverflowFromTheme):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        * rendering/RenderObject.h:
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::computeLogicalHeight):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::paint):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::baselinePosition):
+        (WebCore::RenderTheme::adjustRepaintRect):
+        (WebCore::RenderTheme::stateChanged):
+        (WebCore::RenderTheme::updateControlStatesForRenderer):
+        (WebCore::RenderTheme::extractControlStatesForRenderer):
+        (WebCore::RenderTheme::isActive):
+        (WebCore::RenderTheme::isChecked):
+        (WebCore::RenderTheme::isIndeterminate):
+        (WebCore::RenderTheme::isEnabled):
+        (WebCore::RenderTheme::isFocused):
+        (WebCore::RenderTheme::isPressed):
+        (WebCore::RenderTheme::isSpinUpButtonPartPressed):
+        (WebCore::RenderTheme::isReadOnlyControl):
+        (WebCore::RenderTheme::isHovered):
+        (WebCore::RenderTheme::isSpinUpButtonPartHovered):
+        (WebCore::RenderTheme::isDefault):
+        (WebCore::RenderTheme::paintInputFieldSpeechButton):
+        (WebCore::RenderTheme::paintMeter):
+        (WebCore::RenderTheme::paintSliderTicks):
+        (WebCore::RenderTheme::progressBarRectForBounds):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::controlSupportsTints):
+        (WebCore::RenderTheme::paintCapsLockIndicator):
+        (WebCore::RenderTheme::paintFileUploadIconDecorations):
+        (WebCore::RenderTheme::imageControlsButtonSize):
+        (WebCore::RenderTheme::paintCheckbox):
+        (WebCore::RenderTheme::paintRadio):
+        (WebCore::RenderTheme::paintButton):
+        (WebCore::RenderTheme::paintInnerSpinButton):
+        (WebCore::RenderTheme::paintCheckboxDecorations):
+        (WebCore::RenderTheme::paintRadioDecorations):
+        (WebCore::RenderTheme::paintButtonDecorations):
+        (WebCore::RenderTheme::paintTextField):
+        (WebCore::RenderTheme::paintTextFieldDecorations):
+        (WebCore::RenderTheme::paintTextArea):
+        (WebCore::RenderTheme::paintTextAreaDecorations):
+        (WebCore::RenderTheme::paintMenuList):
+        (WebCore::RenderTheme::paintMenuListDecorations):
+        (WebCore::RenderTheme::paintMenuListButtonDecorations):
+        (WebCore::RenderTheme::paintPushButtonDecorations):
+        (WebCore::RenderTheme::paintSquareButtonDecorations):
+        (WebCore::RenderTheme::paintProgressBar):
+        (WebCore::RenderTheme::paintSliderTrack):
+        (WebCore::RenderTheme::paintSliderThumb):
+        (WebCore::RenderTheme::paintSliderThumbDecorations):
+        (WebCore::RenderTheme::paintSearchField):
+        (WebCore::RenderTheme::paintSearchFieldDecorations):
+        (WebCore::RenderTheme::paintSearchFieldCancelButton):
+        (WebCore::RenderTheme::paintSearchFieldDecorationPart):
+        (WebCore::RenderTheme::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderTheme::paintSearchFieldResultsButton):
+        (WebCore::RenderTheme::paintMediaFullscreenButton):
+        (WebCore::RenderTheme::paintMediaPlayButton):
+        (WebCore::RenderTheme::paintMediaOverlayPlayButton):
+        (WebCore::RenderTheme::paintMediaMuteButton):
+        (WebCore::RenderTheme::paintMediaSeekBackButton):
+        (WebCore::RenderTheme::paintMediaSeekForwardButton):
+        (WebCore::RenderTheme::paintMediaSliderTrack):
+        (WebCore::RenderTheme::paintMediaSliderThumb):
+        (WebCore::RenderTheme::paintMediaVolumeSliderContainer):
+        (WebCore::RenderTheme::paintMediaVolumeSliderTrack):
+        (WebCore::RenderTheme::paintMediaVolumeSliderThumb):
+        (WebCore::RenderTheme::paintMediaRewindButton):
+        (WebCore::RenderTheme::paintMediaReturnToRealtimeButton):
+        (WebCore::RenderTheme::paintMediaToggleClosedCaptionsButton):
+        (WebCore::RenderTheme::paintMediaControlsBackground):
+        (WebCore::RenderTheme::paintMediaCurrentTime):
+        (WebCore::RenderTheme::paintMediaTimeRemaining):
+        (WebCore::RenderTheme::paintMediaFullScreenVolumeSliderTrack):
+        (WebCore::RenderTheme::paintMediaFullScreenVolumeSliderThumb):
+        (WebCore::RenderTheme::paintSnapshottedPluginOverlay):
+        (WebCore::RenderTheme::paintImageControlsButton):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::addRoundedBorderClip):
+        (WebCore::RenderThemeIOS::paintCheckboxDecorations):
+        (WebCore::RenderThemeIOS::baselinePosition):
+        (WebCore::RenderThemeIOS::paintRadioDecorations):
+        (WebCore::RenderThemeIOS::paintTextFieldDecorations):
+        (WebCore::RenderThemeIOS::paintTextAreaDecorations):
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations):
+        (WebCore::RenderThemeIOS::paintSliderTrack):
+        (WebCore::RenderThemeIOS::paintSliderThumbDecorations):
+        (WebCore::RenderThemeIOS::paintProgressBar):
+        (WebCore::RenderThemeIOS::paintSearchFieldDecorations):
+        (WebCore::RenderThemeIOS::paintButtonDecorations):
+        (WebCore::RenderThemeIOS::paintPushButtonDecorations):
+        (WebCore::RenderThemeIOS::paintFileUploadIconDecorations):
+        * rendering/RenderThemeMac.h:
+        (WebCore::RenderThemeMac::updateActiveState):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::documentViewFor):
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        (WebCore::RenderThemeMac::convertToPaintingRect):
+        (WebCore::RenderThemeMac::updateCheckedState):
+        (WebCore::RenderThemeMac::updateEnabledState):
+        (WebCore::RenderThemeMac::updateFocusedState):
+        (WebCore::RenderThemeMac::updatePressedState):
+        (WebCore::RenderThemeMac::controlSupportsTints):
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::paintCapsLockIndicator):
+        (WebCore::RenderThemeMac::paintTextArea):
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::paintMeter):
+        (WebCore::RenderThemeMac::progressBarRectForBounds):
+        (WebCore::RenderThemeMac::paintProgressBar):
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintMenuListButtonDecorations):
+        (WebCore::RenderThemeMac::setPopupButtonCellState):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::setSearchCellState):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldDecorationPart):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeMac::paintSnapshottedPluginOverlay):
+        (WebCore::RenderThemeMac::paintImageControlsButton):
+        (WebCore::RenderThemeMac::imageControlsButtonSize):
+
 2014-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] HTML Media capture attribute is a boolean since r163958

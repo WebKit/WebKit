@@ -44,12 +44,12 @@ public:
     static PassRefPtr<RenderTheme> create();
 
     // A method asking if the control changes its tint when the window has focus or not.
-    virtual bool controlSupportsTints(const RenderObject*) const;
+    virtual bool controlSupportsTints(const RenderObject&) const;
 
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return true; }
 
-    virtual void adjustRepaintRect(const RenderObject*, IntRect&) override;
+    virtual void adjustRepaintRect(const RenderObject&, IntRect&) override;
 
     virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer&, const Color& backgroundColor) const;
 
@@ -82,13 +82,13 @@ public:
     virtual int popupInternalPaddingTop(RenderStyle*) const;
     virtual int popupInternalPaddingBottom(RenderStyle*) const;
 
-    virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual bool popsMenuByArrowKeys() const override { return true; }
 
 #if ENABLE(METER_ELEMENT)
     virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const override;
-    virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual bool supportsMeter(ControlPart) const;
 #endif
 
@@ -97,14 +97,14 @@ public:
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
     // Returns the duration of the animation for the progress bar.
     virtual double animationDurationForProgressBar(RenderProgress*) const;
-    virtual IntRect progressBarRectForBounds(const RenderObject*, const IntRect&) const override;
+    virtual IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const override;
 #endif
 
     virtual Color systemColor(CSSValueID) const;
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
     virtual bool usesTestModeFocusRingColor() const;
     // A view associated to the contained document. Subclasses may not have such a view and return a fake.
-    NSView* documentViewFor(RenderObject*) const;
+    NSView* documentViewFor(const RenderObject&) const;
 
 
 protected:
@@ -123,43 +123,43 @@ protected:
 
     virtual bool supportsSelectionForegroundColors() const { return false; }
 
-    virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintTextField(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintMenuListButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
 #if ENABLE(PROGRESS_ELEMENT)
     virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
 
-    virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldCancelButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldDecorationPart(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldResultsDecorationPart(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldResultsDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSearchFieldResultsButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
 #if ENABLE(VIDEO)
     virtual bool supportsClosedCaptioning() const { return true; }
@@ -167,14 +167,14 @@ protected:
 
     virtual bool shouldShowPlaceholderWhenFocused() const;
 
-    virtual bool paintSnapshottedPluginOverlay(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintSnapshottedPluginOverlay(const RenderObject&, const PaintInfo&, const IntRect&);
 
 private:
     virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const override;
 
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins, float zoomLevel = 1.0f) const;
 
-    FloatRect convertToPaintingRect(const RenderObject* inputRenderer, const RenderObject* partRenderer, const FloatRect& inputRect, const IntRect&) const;
+    FloatRect convertToPaintingRect(const RenderObject& inputRenderer, const RenderObject& partRenderer, const FloatRect& inputRect, const IntRect&) const;
 
     // Get the control size based off the font. Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(RenderStyle*) const;
@@ -185,26 +185,26 @@ private:
     IntSize sizeForSystemFont(RenderStyle*, const IntSize* sizes) const;
     void setFontFromControlSize(StyleResolver*, RenderStyle*, NSControlSize) const;
 
-    void updateCheckedState(NSCell*, const RenderObject*);
-    void updateEnabledState(NSCell*, const RenderObject*);
-    void updateFocusedState(NSCell*, const RenderObject*);
-    void updatePressedState(NSCell*, const RenderObject*);
+    void updateCheckedState(NSCell*, const RenderObject&);
+    void updateEnabledState(NSCell*, const RenderObject&);
+    void updateFocusedState(NSCell*, const RenderObject&);
+    void updatePressedState(NSCell*, const RenderObject&);
     // An optional hook for subclasses to update the control tint of NSCell.
-    virtual void updateActiveState(NSCell*, const RenderObject*) { }
+    virtual void updateActiveState(NSCell*, const RenderObject&) { }
 
     // Helpers for adjusting appearance and for painting
 
-    void setPopupButtonCellState(const RenderObject*, const IntRect&);
+    void setPopupButtonCellState(const RenderObject&, const IntRect&);
     const IntSize* popupButtonSizes() const;
     const int* popupButtonMargins() const;
     const int* popupButtonPadding(NSControlSize) const;
-    void paintMenuListButtonGradients(RenderObject*, const PaintInfo&, const IntRect&);
+    void paintMenuListButtonGradients(const RenderObject&, const PaintInfo&, const IntRect&);
     const IntSize* menuListSizes() const;
 
     const IntSize* searchFieldSizes() const;
     const IntSize* cancelButtonSizes() const;
     const IntSize* resultsButtonSizes() const;
-    void setSearchCellState(RenderObject*, const IntRect&);
+    void setSearchCellState(const RenderObject&, const IntRect&);
     void setSearchFieldSize(RenderStyle*) const;
 
     NSPopUpButtonCell *popupButton() const;
@@ -226,8 +226,8 @@ private:
 #endif
 
 #if ENABLE(IMAGE_CONTROLS)
-    virtual bool paintImageControlsButton(RenderObject*, const PaintInfo&, const IntRect&) override;
-    virtual IntSize imageControlsButtonSize(const RenderObject*) const override;
+    virtual bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    virtual IntSize imageControlsButtonSize(const const RenderObject&) const override;
     NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
 #endif
 

@@ -1227,7 +1227,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         }
     }
 
-    bool themePainted = style().hasAppearance() && !theme().paint(this, controlStates, paintInfo, snappedPaintRect);
+    bool themePainted = style().hasAppearance() && !theme().paint(*this, controlStates, paintInfo, snappedPaintRect);
 
     if (controlStates && controlStates->needsRepaint())
         m_repaintTimer.startOneShot(0);
@@ -1239,12 +1239,12 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         paintBackground(paintInfo, paintRect, bleedAvoidance);
 
         if (style().hasAppearance())
-            theme().paintDecorations(this, paintInfo, snappedPaintRect);
+            theme().paintDecorations(*this, paintInfo, snappedPaintRect);
     }
     paintBoxShadow(paintInfo, paintRect, style(), Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
-    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasAppearance() || (!themePainted && theme().paintBorderOnly(this, paintInfo, snappedPaintRect))) && style().hasBorder())
+    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasAppearance() || (!themePainted && theme().paintBorderOnly(*this, paintInfo, snappedPaintRect))) && style().hasBorder())
         paintBorder(paintInfo, paintRect, style(), bleedAvoidance);
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)

@@ -1749,7 +1749,7 @@ void FrameSelection::focusedOrActiveStateChanged()
         element->setNeedsStyleRecalc();
         if (RenderObject* renderer = element->renderer())
             if (renderer && renderer->style().hasAppearance())
-                renderer->theme().stateChanged(renderer, ControlStates::FocusState);
+                renderer->theme().stateChanged(*renderer, ControlStates::FocusState);
     }
 #endif
 }

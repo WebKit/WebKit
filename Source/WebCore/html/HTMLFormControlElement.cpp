@@ -155,7 +155,7 @@ void HTMLFormControlElement::disabledStateChanged()
     setNeedsWillValidateCheck();
     didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
     if (renderer() && renderer()->style().hasAppearance())
-        renderer()->theme().stateChanged(renderer(), ControlStates::EnabledState);
+        renderer()->theme().stateChanged(*renderer(), ControlStates::EnabledState);
 }
 
 void HTMLFormControlElement::readOnlyAttributeChanged()
@@ -163,7 +163,7 @@ void HTMLFormControlElement::readOnlyAttributeChanged()
     setNeedsWillValidateCheck();
     setNeedsStyleRecalc();
     if (renderer() && renderer()->style().hasAppearance())
-        renderer()->theme().stateChanged(renderer(), ControlStates::ReadOnlyState);
+        renderer()->theme().stateChanged(*renderer(), ControlStates::ReadOnlyState);
 }
 
 void HTMLFormControlElement::requiredAttributeChanged()

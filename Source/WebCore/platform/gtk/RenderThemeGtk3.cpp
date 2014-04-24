@@ -157,11 +157,11 @@ static void adjustRectForFocus(GtkStyleContext* context, IntRect& rect)
     rect.inflate(focusWidth + focusPad);
 }
 
-void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect& rect)
+void RenderThemeGtk::adjustRepaintRect(const RenderObject& renderObject, IntRect& rect)
 {
     GtkStyleContext* context = 0;
     bool checkInteriorFocus = false;
-    ControlPart part = renderObject->style().appearance();
+    ControlPart part = renderObject.style().appearance();
     switch (part) {
     case CheckboxPart:
     case RadioPart:
@@ -220,7 +220,7 @@ static void setToggleSize(GtkStyleContext* context, RenderStyle* style)
         style->setHeight(Length(indicatorSize, Fixed));
 }
 
-static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& fullRect)
+static void paintToggle(const RenderThemeGtk* theme, GType widgetType, const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& fullRect)
 {
     GtkStyleContext* context = getStyleContext(widgetType);
     gtk_style_context_save(context);
@@ -242,7 +242,7 @@ static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObj
         rect.setHeight(indicatorSize); // In case rect.height() was equal to indicatorSize + 1.
     }
 
-    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction())));
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction())));
     gtk_style_context_add_class(context, widgetType == GTK_TYPE_CHECK_BUTTON ? GTK_STYLE_CLASS_CHECK : GTK_STYLE_CLASS_RADIO);
 
     guint flags = 0;
@@ -280,7 +280,7 @@ void RenderThemeGtk::setCheckboxSize(RenderStyle* style) const
     setToggleSize(getStyleContext(GTK_TYPE_CHECK_BUTTON), style);
 }
 
-bool RenderThemeGtk::paintCheckbox(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintCheckbox(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     paintToggle(this, GTK_TYPE_CHECK_BUTTON, renderObject, paintInfo, rect);
     return false;
@@ -291,13 +291,13 @@ void RenderThemeGtk::setRadioSize(RenderStyle* style) const
     setToggleSize(getStyleContext(GTK_TYPE_RADIO_BUTTON), style);
 }
 
-bool RenderThemeGtk::paintRadio(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintRadio(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     paintToggle(this, GTK_TYPE_RADIO_BUTTON, renderObject, paintInfo, rect);
     return false;
 }
 
-static void renderButton(RenderTheme* theme, GtkStyleContext* context, RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+static void renderButton(RenderTheme* theme, GtkStyleContext* context, const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     IntRect buttonRect(rect);
 
@@ -363,12 +363,12 @@ static void renderButton(RenderTheme* theme, GtkStyleContext* context, RenderObj
         gtk_render_focus(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
     }
 }
-bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GtkStyleContext* context = getStyleContext(GTK_TYPE_BUTTON);
     gtk_style_context_save(context);
 
-    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction())));
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction())));
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
 
     renderButton(this, context, renderObject, paintInfo, rect);
@@ -464,10 +464,10 @@ int RenderThemeGtk::popupInternalPaddingBottom(RenderStyle* style) const
     return borderWidth.bottom + focusWidth;
 }
 
-bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintMenuList(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     cairo_t* cairoContext = paintInfo.context->platformContext()->cr();
-    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction()));
+    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction()));
 
     // Paint the button.
     GtkStyleContext* buttonStyleContext = getStyleContext(GTK_TYPE_BUTTON);
@@ -595,12 +595,12 @@ bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& 
     return false;
 }
 
-bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GtkStyleContext* context = getStyleContext(GTK_TYPE_ENTRY);
     gtk_style_context_save(context);
 
-    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction())));
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction())));
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_ENTRY);
 
     guint flags = 0;
@@ -643,15 +643,15 @@ static void applySliderStyleContextClasses(GtkStyleContext* context, ControlPart
         gtk_style_context_add_class(context, GTK_STYLE_CLASS_VERTICAL);
 }
 
-bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintSliderTrack(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    ControlPart part = renderObject->style().appearance();
+    ControlPart part = renderObject.style().appearance();
     ASSERT_UNUSED(part, part == SliderHorizontalPart || part == SliderVerticalPart || part == MediaVolumeSliderPart);
 
     GtkStyleContext* context = getStyleContext(GTK_TYPE_SCALE);
     gtk_style_context_save(context);
 
-    gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style().direction()));
+    gtk_style_context_set_direction(context, gtkTextDirection(renderObject.style().direction()));
     applySliderStyleContextClasses(context, part);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_TROUGH);
 
@@ -678,15 +678,15 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInf
     return false;
 }
 
-bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintSliderThumb(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    ControlPart part = renderObject->style().appearance();
+    ControlPart part = renderObject.style().appearance();
     ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
 
     GtkStyleContext* context = getStyleContext(GTK_TYPE_SCALE);
     gtk_style_context_save(context);
 
-    gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style().direction()));
+    gtk_style_context_set_direction(context, gtkTextDirection(renderObject.style().direction()));
     applySliderStyleContextClasses(context, part);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_SLIDER);
 
@@ -729,9 +729,9 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style, Element*) const
 }
 
 #if ENABLE(PROGRESS_ELEMENT)
-bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!renderObject->isProgress())
+    if (!renderObject.isProgress())
         return true;
 
     GtkStyleContext* context = getStyleContext(GTK_TYPE_PROGRESS_BAR);
@@ -786,7 +786,7 @@ void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle* sty
     style->setMinWidth(Length(width, Fixed));
 }
 
-static void paintSpinArrowButton(RenderTheme* theme, GtkStyleContext* context, RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect, GtkArrowType arrowType)
+static void paintSpinArrowButton(RenderTheme* theme, GtkStyleContext* context, const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect, GtkArrowType arrowType)
 {
     ASSERT(arrowType == GTK_ARROW_UP || arrowType == GTK_ARROW_DOWN);
 
@@ -852,12 +852,12 @@ static void paintSpinArrowButton(RenderTheme* theme, GtkStyleContext* context, R
     gtk_style_context_restore(context);
 }
 
-bool RenderThemeGtk::paintInnerSpinButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintInnerSpinButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GtkStyleContext* context = getStyleContext(GTK_TYPE_SPIN_BUTTON);
     gtk_style_context_save(context);
 
-    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction()));
+    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction()));
     gtk_style_context_set_direction(context, direction);
 
     guint flags = 0;
