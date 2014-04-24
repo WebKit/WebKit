@@ -1,3 +1,13 @@
+2014-04-24  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        prepare-ChangeLog reports as deleted methods that has not been removed.
+        https://bugs.webkit.org/show_bug.cgi?id=131733
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/prepare-ChangeLog:
+        (originalFile): Set merge base to origin/master by default.
+
 2014-04-23  James Craig  <jcraig@apple.com>
 
         prepare-Changelog and svn-create-patch should optionally run check-webkit-style.

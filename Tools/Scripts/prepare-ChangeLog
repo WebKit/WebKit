@@ -250,7 +250,11 @@ sub originalFile($$$$)
         $command = SVN . " cat $escapedPathsString";
     } elsif (isGit()) {
         $command = GIT . " show ";
-        $command .= "$mergeBase" if $mergeBase;
+        if ($mergeBase) {
+            $command .= "$mergeBase";
+        } else {
+            $command .= "origin/master";
+        }
         $command .= ":$file";
     }
 
