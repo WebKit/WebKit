@@ -243,7 +243,7 @@ public:
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) = 0;
     virtual void dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition) = 0;
 
-    virtual void startAssistingNode(const AssistedNodeInformation&, API::Object* userData) = 0;
+    virtual void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, API::Object* userData) = 0;
     virtual void stopAssistingNode() = 0;
     virtual void selectionDidChange() = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) = 0;

@@ -109,7 +109,7 @@ private:
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
     virtual void dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition) override;
 
-    virtual void startAssistingNode(const AssistedNodeInformation&, API::Object* userData) override;
+    virtual void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, API::Object* userData) override;
     virtual void stopAssistingNode() override;
     virtual void selectionDidChange() override;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;

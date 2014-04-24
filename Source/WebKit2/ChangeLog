@@ -1,3 +1,35 @@
+2014-04-24  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] Should properly handle focus redirect (keyboard state changes when focus changes).
+        https://bugs.webkit.org/show_bug.cgi?id=132136
+        <rdar://problem/16238336>
+
+        Reviewed by Benjamin Poulain.
+
+        Focusing a field from JavaScript should not make the keyboard or the select picker
+        appear unless the user has already started interacting with one of the fields in the page.
+        Adding a parameter to StartAssistingNode to indicate whether the focus change is a result
+        of a user action.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::startAssistingNode):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userIsInteracting:userObject:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startAssistingNode):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::dispatchTouchEvent):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleTap):
+        (WebKit::WebPage::elementDidFocus):
+
 2014-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         FontCache::fontCache() never returns nullptr so it can be made to return a reference instead

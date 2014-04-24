@@ -312,9 +312,25 @@ void WebPage::handleTap(const IntPoint& point)
     if (WKObservedContentChange() != WKContentNoChange)
         return;
 
+    RefPtr<Frame> oldFocusedFrame = m_page->focusController().focusedFrame();
+    RefPtr<Element> oldFocusedElement = oldFocusedFrame ? oldFocusedFrame->document()->focusedElement() : nullptr;
+    m_userIsInteracting = true;
+
     m_lastInteractionLocation = roundedAdjustedPoint;
     mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, 0));
     mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, 0));
+
+    RefPtr<Frame> newFocusedFrame = m_page->focusController().focusedFrame();
+    RefPtr<Element> newFocusedElement = newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr;
+
+    // If the focus has not changed, we need to notify the client anyway, since it might be
+    // necessary to start assisting the node.
+    // If the node has been focused by JavaScript without user interaction, the
+    // keyboard is not on screen.
+    if (newFocusedElement && newFocusedElement == oldFocusedElement)
+        elementDidFocus(newFocusedElement.get());
+
+    m_userIsInteracting = false;
 }
 
 void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& position)
@@ -1747,7 +1763,7 @@ void WebPage::elementDidFocus(WebCore::Node* node)
         getAssistedNodeInformation(information);
         RefPtr<API::Object> userData;
         m_formClient->willBeginInputSession(this, toElement(node), WebFrame::fromCoreFrame(*node->document().frame()), userData);
-        send(Messages::WebPageProxy::StartAssistingNode(information, InjectedBundleUserMessageEncoder(userData.get())));
+        send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, InjectedBundleUserMessageEncoder(userData.get())));
     }
 }
 

@@ -1979,8 +1979,11 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return _formAccessoryView.get();
 }
 
-- (void)_startAssistingNode:(const AssistedNodeInformation&)information userObject:(NSObject <NSSecureCoding> *)userObject
+- (void)_startAssistingNode:(const AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting userObject:(NSObject <NSSecureCoding> *)userObject
 {
+    if (!userIsInteracting && !_textSelectionAssistant)
+        return;
+
     _isEditable = YES;
     _assistedNodeInformation = information;
     _inputPeripheral = nil;
