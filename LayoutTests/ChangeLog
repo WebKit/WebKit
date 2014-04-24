@@ -1,3 +1,15 @@
+2014-04-24  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        ASSERTION FAILED: !begin.isIndefinite() in WebCore::SVGSMILElement::resolveFirstInterval.
+        https://bugs.webkit.org/show_bug.cgi?id=131097
+
+        Reviewed by Darin Adler.
+
+        Test added.
+
+        * svg/animations/smil-animation-max-attribute-zero-crash-expected.txt: Added.
+        * svg/animations/smil-animation-max-attribute-zero-crash.svg: Added.
+
 2014-04-24  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Update baselines after r167568

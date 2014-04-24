@@ -1,3 +1,18 @@
+2014-04-24  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        ASSERTION FAILED: !begin.isIndefinite() in WebCore::SVGSMILElement::resolveFirstInterval.
+        https://bugs.webkit.org/show_bug.cgi?id=131097
+
+        Reviewed by Darin Adler.
+
+        According to smil animation reference, max attribute cannot be 0.
+
+        Test: svg/animations/smil-animation-max-attribute-zero-crash.svg
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::maxValue):
+          changed (result < 0) to (result <= 0)
+
 2014-04-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Remove screenColorProfile()
