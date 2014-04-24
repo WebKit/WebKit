@@ -108,8 +108,6 @@ WK_EXPORT double WKPageGetEstimatedProgress(WKPageRef page);
 
 WK_EXPORT uint64_t WKPageGetRenderTreeSize(WKPageRef page);
 
-WK_EXPORT void WKPageSetMemoryCacheClientCallsEnabled(WKPageRef page, bool memoryCacheClientCallsEnabled);
-
 WK_EXPORT WKInspectorRef WKPageGetInspector(WKPageRef page);
 
 WK_EXPORT WKVibrationRef WKPageGetVibration(WKPageRef page);

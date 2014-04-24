@@ -1,3 +1,30 @@
+2014-04-23  Andreas Kling  <akling@apple.com>
+
+        Remove unused WKPageSetMemoryCacheClientCallsEnabled API.
+        <https://webkit.org/b/132098>
+
+        This API was added to WK2 back in 2011 but never actually used.
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetMemoryCacheClientCallsEnabled): Deleted.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setMemoryCacheClientCallsEnabled): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setMemoryCacheMessagesEnabled): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Make -webkit-overflow-scrolling:touch work

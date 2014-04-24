@@ -69,8 +69,6 @@ struct WebPageCreationParameters {
 
     WebCore::Color underlayColor;
 
-    bool areMemoryCacheClientCallsEnabled;
-
     bool useFixedLayout;
     WebCore::IntSize fixedLayoutSize;
 

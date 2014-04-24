@@ -390,8 +390,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     setPageLength(parameters.pageLength);
     setGapBetweenPages(parameters.gapBetweenPages);
 
-    setMemoryCacheMessagesEnabled(parameters.areMemoryCacheClientCallsEnabled);
-
     // If the page is created off-screen, its visibilityState should be prerender.
     m_page->setViewState(m_viewState);
     if (!isVisible())
@@ -3729,11 +3727,6 @@ void WebPage::runModal()
 #endif
     RunLoop::run();
     ASSERT(!m_isRunningModal);
-}
-
-void WebPage::setMemoryCacheMessagesEnabled(bool memoryCacheMessagesEnabled)
-{
-    m_page->setMemoryCacheClientCallsEnabled(memoryCacheMessagesEnabled);
 }
 
 bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)

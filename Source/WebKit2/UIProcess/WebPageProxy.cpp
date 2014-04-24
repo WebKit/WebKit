@@ -283,7 +283,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_layerHostingMode(LayerHostingMode::InProcess)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
-    , m_areMemoryCacheClientCallsEnabled(true)
     , m_useFixedLayout(false)
     , m_suppressScrollbarAnimations(false)
     , m_paginationMode(Pagination::Unpaginated)
@@ -2030,18 +2029,6 @@ void WebPageProxy::pageScaleFactorDidChange(double scaleFactor)
 void WebPageProxy::pageZoomFactorDidChange(double zoomFactor)
 {
     m_pageZoomFactor = zoomFactor;
-}
-
-void WebPageProxy::setMemoryCacheClientCallsEnabled(bool memoryCacheClientCallsEnabled)
-{
-    if (!isValid())
-        return;
-
-    if (m_areMemoryCacheClientCallsEnabled == memoryCacheClientCallsEnabled)
-        return;
-
-    m_areMemoryCacheClientCallsEnabled = memoryCacheClientCallsEnabled;
-    m_process->send(Messages::WebPage::SetMemoryCacheMessagesEnabled(memoryCacheClientCallsEnabled), m_pageID);
 }
 
 void WebPageProxy::findStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
@@ -4228,7 +4215,6 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.drawsBackground = m_drawsBackground;
     parameters.drawsTransparentBackground = m_drawsTransparentBackground;
     parameters.underlayColor = m_underlayColor;
-    parameters.areMemoryCacheClientCallsEnabled = m_areMemoryCacheClientCallsEnabled;
     parameters.useFixedLayout = m_useFixedLayout;
     parameters.fixedLayoutSize = m_fixedLayoutSize;
     parameters.suppressScrollbarAnimations = m_suppressScrollbarAnimations;

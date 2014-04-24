@@ -668,8 +668,6 @@ public:
     void setDeviceScaleFactor(float);
     float deviceScaleFactor() const;
 
-    void setMemoryCacheMessagesEnabled(bool);
-
     void forceRepaintWithoutCallback();
 
     void unmarkAllMisspellings();

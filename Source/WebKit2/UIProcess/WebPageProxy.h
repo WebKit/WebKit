@@ -811,8 +811,6 @@ public:
     void pageScaleFactorDidChange(double);
     void pageZoomFactorDidChange(double);
 
-    void setMemoryCacheClientCallsEnabled(bool);
-
     // Find.
     void findString(const String&, FindOptions, unsigned maxMatchCount);
     void findStringMatches(const String&, FindOptions, unsigned maxMatchCount);
@@ -1520,8 +1518,6 @@ private:
 
     WebCore::Color m_underlayColor;
     WebCore::Color m_pageExtendedBackgroundColor;
-
-    bool m_areMemoryCacheClientCallsEnabled;
 
     bool m_useFixedLayout;
     WebCore::IntSize m_fixedLayoutSize;
