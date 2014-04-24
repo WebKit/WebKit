@@ -251,7 +251,7 @@ EAPI int               ewk_history_back_list_length(const Ewk_History *history);
  *
  * @return maximum number of entries this history will hold.
  */
-EAPI int               ewk_history_limit_get(Ewk_History *history);
+EAPI int               ewk_history_limit_get(const Ewk_History *history);
 
 /**
  * Set maximum capacity of given history.

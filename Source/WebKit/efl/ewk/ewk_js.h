@@ -191,7 +191,7 @@ EAPI Eina_Bool ewk_js_object_invoke(Ewk_JS_Object *obj, Ewk_JS_Variant *args, in
  * @return @c EWK_JS_OBJECT if it is an object, @c EWK_JS_ARRAY if it is an array and
  * @c EWK_JS_FUNCTION if it is a function.
  */
-EAPI Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object *obj);
+EAPI Ewk_JS_Object_Type ewk_js_object_type_get(const Ewk_JS_Object *obj);
 
 /**
  * Sets the type this object represents.

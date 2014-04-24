@@ -693,7 +693,7 @@ end:
 #endif
 }
 
-Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object* jsObject)
+Ewk_JS_Object_Type ewk_js_object_type_get(const Ewk_JS_Object* jsObject)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, EWK_JS_OBJECT_OBJECT);

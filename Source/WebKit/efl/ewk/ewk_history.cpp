@@ -219,7 +219,7 @@ int ewk_history_back_list_length(const Ewk_History* history)
     return core->backListCount();
 }
 
-int ewk_history_limit_get(Ewk_History* history)
+int ewk_history_limit_get(const Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
     return core->capacity();
