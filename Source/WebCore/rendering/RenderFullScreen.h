@@ -39,12 +39,11 @@ public:
     virtual bool isRenderFullScreen() const override { return true; }
     virtual const char* renderName() const override { return "RenderFullScreen"; }
 
-    void clearPlaceholder();
-    RenderBlock* ensurePlaceholder();
+    void setPlaceholder(RenderBlock*);
     RenderBlock* placeholder() { return m_placeholder; }
-    void setPlaceholderStyle(PassRef<RenderStyle>, const LayoutRect& frameRect);
+    void createPlaceholder(PassRef<RenderStyle>, const LayoutRect& frameRect);
 
-    static RenderElement* wrapRenderer(RenderObject*, RenderElement*, Document&);
+    static RenderFullScreen* wrapRenderer(RenderObject*, RenderElement*, Document&);
     void unwrapRenderer();
 
 private:

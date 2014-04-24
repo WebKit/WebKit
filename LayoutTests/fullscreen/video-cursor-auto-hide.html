@@ -6,7 +6,6 @@
     <script src="full-screen-test.js"></script>
     <script>
         var wrapper = document.getElementById('wrapper');
-        var video = document.getElementById('video');
 
         function checkForHiddenMouse()
         {
@@ -18,8 +17,8 @@
         {
             if (window.internals) {
                 internals.settings.setTimeWithoutMouseMovementBeforeHidingControls(0);
-                videoBox = internals.boundingBox(video);
-                eventSender.mouseMoveTo(videoBox.left + videoBox.width / 2, videoBox.top + videoBox.height / 2);
+                wrapperBox = internals.boundingBox(wrapper);
+                eventSender.mouseMoveTo(wrapperBox.left + wrapperBox.width / 2, wrapperBox.top + wrapperBox.height / 2);
                 testExpected('window.internals.getCurrentCursorInfo()', 'type=Pointer hotSpot=0,0');
                 setTimeout(checkForHiddenMouse, 0);
             }
