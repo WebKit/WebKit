@@ -28,15 +28,14 @@
 #include "config.h"
 #include "PluginPackage.h"
 
-#include <wtf/RetainPtr.h>
 #include "MIMETypeRegistry.h"
-#include "npruntime_impl.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "WebCoreNSStringExtras.h"
-#include <wtf/text/CString.h>
-
+#include "npruntime_impl.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/CString.h>
 
 #define PluginNameOrDescriptionStringNumber     126
 #define MIMEDescriptionStringNumber             127
@@ -67,7 +66,7 @@ void PluginPackage::determineQuirks(const String& mimeType)
 
 typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 
-static WTF::RetainPtr<CFDictionaryRef> readPListFile(CFStringRef fileName, bool createFile, CFBundleRef bundle)
+static RetainPtr<CFDictionaryRef> readPListFile(CFStringRef fileName, bool createFile, CFBundleRef bundle)
 {
     if (createFile) {
         BP_CreatePluginMIMETypesPreferencesFuncPtr funcPtr =
@@ -76,17 +75,15 @@ static WTF::RetainPtr<CFDictionaryRef> readPListFile(CFStringRef fileName, bool 
             funcPtr();
     }
 
-    WTF::RetainPtr<CFDictionaryRef> map;
-    WTF::RetainPtr<CFURLRef> url =
-        CFURLCreateWithFileSystemPath(kCFAllocatorDefault, fileName, kCFURLPOSIXPathStyle, false);
+    RetainPtr<CFDictionaryRef> map;
+    RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, fileName, kCFURLPOSIXPathStyle, false));
 
     CFDataRef resource = 0;
     SInt32 code;
     if (!CFURLCreateDataAndPropertiesFromResource(kCFAllocatorDefault, url.get(), &resource, 0, 0, &code))
         return map;
 
-    WTF::RetainPtr<CFPropertyListRef> propertyList =
-            CFPropertyListCreateFromXMLData(kCFAllocatorDefault, resource, kCFPropertyListImmutable, 0);
+    RetainPtr<CFPropertyListRef> propertyList = adoptCF(CFPropertyListCreateFromXMLData(kCFAllocatorDefault, resource, kCFPropertyListImmutable, 0));
 
     CFRelease(resource);
 
@@ -119,7 +116,7 @@ static Vector<String> stringListFromResourceId(SInt16 id)
 
     for (SInt16 i = 0; i < count; ++i) {
         unsigned char length = *p;
-        WTF::RetainPtr<CFStringRef> str = adoptCF(CFStringCreateWithPascalString(0, p, encoding));
+        RetainPtr<CFStringRef> str = adoptCF(CFStringCreateWithPascalString(0, p, encoding));
         list.append(str.get());
         p += 1 + length;
     }
@@ -132,19 +129,19 @@ bool PluginPackage::fetchInfo()
     if (!load())
         return false;
 
-    WTF::RetainPtr<CFDictionaryRef> mimeDict;
+    RetainPtr<CFDictionaryRef> mimeDict;
 
-    WTF::RetainPtr<CFTypeRef> mimeTypesFileName = CFBundleGetValueForInfoDictionaryKey(m_module, CFSTR("WebPluginMIMETypesFilename"));
+    RetainPtr<CFTypeRef> mimeTypesFileName = CFBundleGetValueForInfoDictionaryKey(m_module, CFSTR("WebPluginMIMETypesFilename"));
     if (mimeTypesFileName && CFGetTypeID(mimeTypesFileName.get()) == CFStringGetTypeID()) {
 
-        WTF::RetainPtr<CFStringRef> fileName = (CFStringRef)mimeTypesFileName.get();
-        WTF::RetainPtr<CFStringRef> homeDir = adoptCF(homeDirectoryPath().createCFString());
-        WTF::RetainPtr<CFStringRef> path = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%@/Library/Preferences/%@"), homeDir.get(), fileName.get()));
+        RetainPtr<CFStringRef> fileName = (CFStringRef)mimeTypesFileName.get();
+        RetainPtr<CFStringRef> homeDir = homeDirectoryPath().createCFString();
+        RetainPtr<CFStringRef> path = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%@/Library/Preferences/%@"), homeDir.get(), fileName.get()));
 
-        WTF::RetainPtr<CFDictionaryRef> plist = readPListFile(path.get(), /*createFile*/ false, m_module);
+        RetainPtr<CFDictionaryRef> plist = readPListFile(path.get(), /*createFile*/ false, m_module);
         if (plist) {
             // If the plist isn't localized, have the plug-in recreate it in the preferred language.
-            WTF::RetainPtr<CFStringRef> localizationName =
+            RetainPtr<CFStringRef> localizationName =
                 (CFStringRef)CFDictionaryGetValue(plist.get(), CFSTR("WebPluginLocalizationName"));
             CFLocaleRef locale = CFLocaleCopyCurrent();
             if (localizationName != CFLocaleGetIdentifier(locale))
@@ -172,9 +169,9 @@ bool PluginPackage::fetchInfo()
             String mimeType = (CFStringRef)keys[i];
             mimeType = mimeType.lower();
 
-            WTF::RetainPtr<CFDictionaryRef> extensionsDict = (CFDictionaryRef)values[i];
+            RetainPtr<CFDictionaryRef> extensionsDict = (CFDictionaryRef)values[i];
 
-            WTF::RetainPtr<CFNumberRef> enabled = (CFNumberRef)CFDictionaryGetValue(extensionsDict.get(), CFSTR("WebPluginTypeEnabled"));
+            RetainPtr<CFNumberRef> enabled = (CFNumberRef)CFDictionaryGetValue(extensionsDict.get(), CFSTR("WebPluginTypeEnabled"));
             if (enabled) {
                 int enabledValue = 0;
                 if (CFNumberGetValue(enabled.get(), kCFNumberIntType, &enabledValue) && enabledValue == 0)
@@ -182,7 +179,7 @@ bool PluginPackage::fetchInfo()
             }
 
             Vector<String> mimeExtensions;
-            WTF::RetainPtr<CFArrayRef> extensions = (CFArrayRef)CFDictionaryGetValue(extensionsDict.get(), CFSTR("WebPluginExtensions"));
+            RetainPtr<CFArrayRef> extensions = (CFArrayRef)CFDictionaryGetValue(extensionsDict.get(), CFSTR("WebPluginExtensions"));
             if (extensions) {
                 CFIndex extensionCount = CFArrayGetCount(extensions.get());
                 for (CFIndex i = 0; i < extensionCount; ++i) {
@@ -255,8 +252,8 @@ bool PluginPackage::load()
         return true;
     }
 
-    WTF::RetainPtr<CFStringRef> path = adoptCF(m_path.createCFString());
-    WTF::RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, path.get(),
+    RetainPtr<CFStringRef> path = m_path.createCFString();
+    RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, path.get(),
                                                                         kCFURLPOSIXPathStyle, false));
     m_module = CFBundleCreate(NULL, url.get());
     if (!m_module || !CFBundleLoadExecutable(m_module)) {

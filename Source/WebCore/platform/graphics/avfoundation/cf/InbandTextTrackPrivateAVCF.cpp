@@ -148,8 +148,8 @@ AtomicString InbandTextTrackPrivateAVCF::label() const
         return emptyAtom;
 
     // If possible, return a title in one of the user's preferred languages.
-    RetainPtr<CFArrayRef> preferredLanguages = CFLocaleCopyPreferredLanguages();
-    RetainPtr<CFArrayRef> titlesForPreferredLanguages = AVCFMediaSelectionCopyOptionsFromArrayFilteredAndSortedAccordingToPreferredLanguages(titles.get(), preferredLanguages.get());
+    RetainPtr<CFArrayRef> preferredLanguages = adoptCF(CFLocaleCopyPreferredLanguages());
+    RetainPtr<CFArrayRef> titlesForPreferredLanguages = adoptCF(AVCFMediaSelectionCopyOptionsFromArrayFilteredAndSortedAccordingToPreferredLanguages(titles.get(), preferredLanguages.get()));
     CFIndex preferredTitlesCount = CFArrayGetCount(titlesForPreferredLanguages.get());
     if (preferredTitlesCount) {
         AVCFMetadataItemRef titleMetadata = static_cast<AVCFMetadataItemRef>(CFArrayGetValueAtIndex(titlesForPreferredLanguages.get(), 0));

@@ -209,10 +209,11 @@ void PDFDocumentImage::destroyDecodedData(bool)
 }
 
 #if !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
+
 void PDFDocumentImage::createPDFDocument()
 {
     RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(data()->createCFData().get()));
-    m_document = CGPDFDocumentCreateWithProvider(dataProvider.get());
+    m_document = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
 }
 
 void PDFDocumentImage::computeBoundsForCurrentPage()
@@ -256,6 +257,7 @@ void PDFDocumentImage::drawPDFPage(GraphicsContext* context)
     // CGPDF pages are indexed from 1.
     CGContextDrawPDFPage(context->platformContext(), CGPDFDocumentGetPage(m_document.get(), 1));
 }
+
 #endif // !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
 
 }

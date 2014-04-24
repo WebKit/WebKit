@@ -177,8 +177,8 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& othe
 #if OS(DARWIN) && USE(CG)
 PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
-    if (CFDataRef data = CGFontCopyTableForTag(cgFont(), table))
-        return SharedBuffer::wrapCFData(data);
+    if (RetainPtr<CFDataRef> data = adoptCF(CGFontCopyTableForTag(cgFont(), table)))
+        return SharedBuffer::wrapCFData(data.get());
     
     return nullptr;
 }

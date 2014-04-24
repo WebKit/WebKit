@@ -320,6 +320,7 @@ namespace WebCore {
                     size_t length = CFDataGetLength(iccProfile);
                     const unsigned char* systemProfile = CFDataGetBytePtr(iccProfile);
                     outputDeviceProfile = qcms_profile_from_memory(systemProfile, length);
+                    CFRelease(iccProfile);
                 }
 #else
                 // FIXME: add support for multiple monitors.

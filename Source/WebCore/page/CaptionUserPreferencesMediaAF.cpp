@@ -608,7 +608,7 @@ static String trackDisplayName(TextTrack* track)
             }
         }
     } else {
-        String languageAndLocale = CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleIdentifier, trackLanguageIdentifier.createCFString().get());
+        String languageAndLocale = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleIdentifier, trackLanguageIdentifier.createCFString().get())).get();
         if (!languageAndLocale.isEmpty())
             displayName.append(languageAndLocale);
         else if (!language.isEmpty())

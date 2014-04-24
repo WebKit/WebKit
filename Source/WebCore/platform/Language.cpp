@@ -148,10 +148,8 @@ size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<St
 String displayNameForLanguageLocale(const String& localeName)
 {
 #if USE(CF) && !PLATFORM(WIN)
-    if (!localeName.isNull() && !localeName.isEmpty()) {
-        RetainPtr<CFLocaleRef> currentLocale = adoptCF(CFLocaleCopyCurrent());
-        return CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleIdentifier, localeName.createCFString().get());
-    }
+    if (!localeName.isEmpty())
+        return adoptCF(CFLocaleCopyDisplayNameForPropertyValue(adoptCF(CFLocaleCopyCurrent()).get(), kCFLocaleIdentifier, localeName.createCFString().get())).get();
 #endif
     return localeName;
 }

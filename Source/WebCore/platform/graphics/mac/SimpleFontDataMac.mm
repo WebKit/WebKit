@@ -372,8 +372,7 @@ static bool hasCustomTracking(CTFontRef font)
     UNUSED_PARAM(font);
     return false;
 #else
-    RetainPtr<CTFontDescriptorRef> descriptor = CTFontCopyFontDescriptor(font);
-    return CTFontDescriptorIsSystemUIFont(descriptor.get());
+    return CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get());
 #endif
 }
 

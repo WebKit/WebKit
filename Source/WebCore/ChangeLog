@@ -1,3 +1,43 @@
+2014-04-23  Darin Adler  <darin@apple.com>
+
+        [Cocoa] fix CF leaks found by code inspection
+        https://bugs.webkit.org/show_bug.cgi?id=132106
+
+        Reviewed by Andreas Kling.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::trackDisplayName): Added a missing adoptCF.
+
+        * platform/Language.cpp:
+        (WebCore::displayNameForLanguageLocale): Added a missing adoptCF.
+
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::openTypeTable): Added a missing adoptCF.
+
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp:
+        (WebCore::InbandTextTrackPrivateAVCF::label): Added two missing adoptCF.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::createImageForTimeInRect): Added two missing adoptCF.
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::createPDFDocument): Added missing adoptCF.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::cascadeToLastResortFontDescriptor): Added two missing adoptCF.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::primaryFontDataIsSystemFont): Added missing adoptCF.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::hasCustomTracking): Added missing adoptCF.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::qcmsOutputDeviceProfile): Added CFRelease.
+
+        * plugins/mac/PluginPackageMac.cpp:
+        (WebCore::readPListFile): Added two missing adoptCF.
+
 2014-04-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r157328): popover to check into flight ba.com dismisses instantly when focusing form
