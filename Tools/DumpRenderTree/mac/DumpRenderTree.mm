@@ -105,7 +105,6 @@
 #import <UIKit/UIMath.h>
 #import <UIKit/UIWebBrowserView.h>
 #import <UIKit/UIWebScrollView.h>
-#import <WebKit/WAKViewPrivate.h>
 #import <WebKit/WAKWindow.h>
 #import <WebKit/WebCoreThread.h>
 #import <WebKit/WebCoreThreadRun.h>
