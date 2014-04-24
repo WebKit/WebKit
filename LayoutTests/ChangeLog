@@ -1,3 +1,17 @@
+2014-04-24  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Clipping on text areas when shifted by one device pixel.
+        https://bugs.webkit.org/show_bug.cgi?id=132008
+
+        Reviewed by Darin Adler.
+
+        Make RenderTheme paint* functions LayoutRect aware. Textarea is device pixel snapped, while
+        other theme controls are still on integral size/positions.
+
+        * fast/forms/hidpi-textarea-on-subpixel-position-expected.html: Added.
+        * fast/forms/hidpi-textarea-on-subpixel-position.html: Added.
+        * platform/mac-wk2/TestExpectations: Due to defective RenderLayer cliprect calculation (WK2 only): webkit.org/b/132100
+
 2014-04-24  Eduardo Lima Mitev  <elima@igalia.com>
 
         Unreviewed GTK gardening

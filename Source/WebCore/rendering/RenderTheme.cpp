@@ -263,7 +263,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     }
 }
 
-bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, const PaintInfo& paintInfo, const LayoutRect& r)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
@@ -277,6 +277,7 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
         return false;
 
     ControlPart part = o.style().appearance();
+    IntRect integralSnappedRect = pixelSnappedIntRect(r);
 
 #if USE(NEW_THEME)
     switch (part) {
@@ -288,7 +289,7 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
     case ButtonPart:
     case InnerSpinButtonPart:
         updateControlStatesForRenderer(o, controlStates);
-        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), r, o.style().effectiveZoom(), &o.view().frameView());
+        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), integralSnappedRect, o.style().effectiveZoom(), &o.view().frameView());
         return false;
     default:
         break;
@@ -301,102 +302,102 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
     switch (part) {
 #if !USE(NEW_THEME)
     case CheckboxPart:
-        return paintCheckbox(o, paintInfo, r);
+        return paintCheckbox(o, paintInfo, integralSnappedRect);
     case RadioPart:
-        return paintRadio(o, paintInfo, r);
+        return paintRadio(o, paintInfo, integralSnappedRect);
     case PushButtonPart:
     case SquareButtonPart:
     case DefaultButtonPart:
     case ButtonPart:
-        return paintButton(o, paintInfo, r);
+        return paintButton(o, paintInfo, integralSnappedRect);
     case InnerSpinButtonPart:
-        return paintInnerSpinButton(o, paintInfo, r);
+        return paintInnerSpinButton(o, paintInfo, integralSnappedRect);
 #endif
     case MenulistPart:
-        return paintMenuList(o, paintInfo, r);
+        return paintMenuList(o, paintInfo, integralSnappedRect);
 #if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
     case ContinuousCapacityLevelIndicatorPart:
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
-        return paintMeter(o, paintInfo, r);
+        return paintMeter(o, paintInfo, integralSnappedRect);
 #endif
 #if ENABLE(PROGRESS_ELEMENT)
     case ProgressBarPart:
-        return paintProgressBar(o, paintInfo, r);
+        return paintProgressBar(o, paintInfo, integralSnappedRect);
 #endif
     case SliderHorizontalPart:
     case SliderVerticalPart:
-        return paintSliderTrack(o, paintInfo, r);
+        return paintSliderTrack(o, paintInfo, integralSnappedRect);
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
-        return paintSliderThumb(o, paintInfo, r);
+        return paintSliderThumb(o, paintInfo, integralSnappedRect);
     case MediaEnterFullscreenButtonPart:
     case MediaExitFullscreenButtonPart:
-        return paintMediaFullscreenButton(o, paintInfo, r);
+        return paintMediaFullscreenButton(o, paintInfo, integralSnappedRect);
     case MediaPlayButtonPart:
-        return paintMediaPlayButton(o, paintInfo, r);
+        return paintMediaPlayButton(o, paintInfo, integralSnappedRect);
     case MediaOverlayPlayButtonPart:
-        return paintMediaOverlayPlayButton(o, paintInfo, r);
+        return paintMediaOverlayPlayButton(o, paintInfo, integralSnappedRect);
     case MediaMuteButtonPart:
-        return paintMediaMuteButton(o, paintInfo, r);
+        return paintMediaMuteButton(o, paintInfo, integralSnappedRect);
     case MediaSeekBackButtonPart:
-        return paintMediaSeekBackButton(o, paintInfo, r);
+        return paintMediaSeekBackButton(o, paintInfo, integralSnappedRect);
     case MediaSeekForwardButtonPart:
-        return paintMediaSeekForwardButton(o, paintInfo, r);
+        return paintMediaSeekForwardButton(o, paintInfo, integralSnappedRect);
     case MediaRewindButtonPart:
-        return paintMediaRewindButton(o, paintInfo, r);
+        return paintMediaRewindButton(o, paintInfo, integralSnappedRect);
     case MediaReturnToRealtimeButtonPart:
-        return paintMediaReturnToRealtimeButton(o, paintInfo, r);
+        return paintMediaReturnToRealtimeButton(o, paintInfo, integralSnappedRect);
     case MediaToggleClosedCaptionsButtonPart:
-        return paintMediaToggleClosedCaptionsButton(o, paintInfo, r);
+        return paintMediaToggleClosedCaptionsButton(o, paintInfo, integralSnappedRect);
     case MediaSliderPart:
-        return paintMediaSliderTrack(o, paintInfo, r);
+        return paintMediaSliderTrack(o, paintInfo, integralSnappedRect);
     case MediaSliderThumbPart:
-        return paintMediaSliderThumb(o, paintInfo, r);
+        return paintMediaSliderThumb(o, paintInfo, integralSnappedRect);
     case MediaVolumeSliderMuteButtonPart:
-        return paintMediaMuteButton(o, paintInfo, r);
+        return paintMediaMuteButton(o, paintInfo, integralSnappedRect);
     case MediaVolumeSliderContainerPart:
-        return paintMediaVolumeSliderContainer(o, paintInfo, r);
+        return paintMediaVolumeSliderContainer(o, paintInfo, integralSnappedRect);
     case MediaVolumeSliderPart:
-        return paintMediaVolumeSliderTrack(o, paintInfo, r);
+        return paintMediaVolumeSliderTrack(o, paintInfo, integralSnappedRect);
     case MediaVolumeSliderThumbPart:
-        return paintMediaVolumeSliderThumb(o, paintInfo, r);
+        return paintMediaVolumeSliderThumb(o, paintInfo, integralSnappedRect);
     case MediaFullScreenVolumeSliderPart:
-        return paintMediaFullScreenVolumeSliderTrack(o, paintInfo, r);
+        return paintMediaFullScreenVolumeSliderTrack(o, paintInfo, integralSnappedRect);
     case MediaFullScreenVolumeSliderThumbPart:
-        return paintMediaFullScreenVolumeSliderThumb(o, paintInfo, r);
+        return paintMediaFullScreenVolumeSliderThumb(o, paintInfo, integralSnappedRect);
     case MediaTimeRemainingPart:
-        return paintMediaTimeRemaining(o, paintInfo, r);
+        return paintMediaTimeRemaining(o, paintInfo, integralSnappedRect);
     case MediaCurrentTimePart:
-        return paintMediaCurrentTime(o, paintInfo, r);
+        return paintMediaCurrentTime(o, paintInfo, integralSnappedRect);
     case MediaControlsBackgroundPart:
-        return paintMediaControlsBackground(o, paintInfo, r);
+        return paintMediaControlsBackground(o, paintInfo, integralSnappedRect);
     case MenulistButtonPart:
     case TextFieldPart:
     case TextAreaPart:
     case ListboxPart:
         return true;
     case SearchFieldPart:
-        return paintSearchField(o, paintInfo, r);
+        return paintSearchField(o, paintInfo, integralSnappedRect);
     case SearchFieldCancelButtonPart:
-        return paintSearchFieldCancelButton(o, paintInfo, r);
+        return paintSearchFieldCancelButton(o, paintInfo, integralSnappedRect);
     case SearchFieldDecorationPart:
-        return paintSearchFieldDecorationPart(o, paintInfo, r);
+        return paintSearchFieldDecorationPart(o, paintInfo, integralSnappedRect);
     case SearchFieldResultsDecorationPart:
-        return paintSearchFieldResultsDecorationPart(o, paintInfo, r);
+        return paintSearchFieldResultsDecorationPart(o, paintInfo, integralSnappedRect);
     case SearchFieldResultsButtonPart:
-        return paintSearchFieldResultsButton(o, paintInfo, r);
+        return paintSearchFieldResultsButton(o, paintInfo, integralSnappedRect);
     case SnapshottedPluginOverlayPart:
-        return paintSnapshottedPluginOverlay(o, paintInfo, r);
+        return paintSnapshottedPluginOverlay(o, paintInfo, integralSnappedRect);
 #if ENABLE(INPUT_SPEECH)
     case InputSpeechButtonPart:
-        return paintInputFieldSpeechButton(o, paintInfo, r);
+        return paintInputFieldSpeechButton(o, paintInfo, integralSnappedRect);
 #endif
 #if ENABLE(IMAGE_CONTROLS)
     case ImageControlsButtonPart:
-        return paintImageControlsButton(o, paintInfo, r);
+        return paintImageControlsButton(o, paintInfo, integralSnappedRect);
 #endif
     default:
         break;
@@ -405,7 +406,7 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
     return true; // We don't support the appearance, so let the normal background/border paint.
 }
 
-bool RenderTheme::paintBorderOnly(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderTheme::paintBorderOnly(const RenderObject& o, const PaintInfo& paintInfo, const LayoutRect& r)
 {
     if (paintInfo.context->paintingDisabled())
         return false;
@@ -414,13 +415,14 @@ bool RenderTheme::paintBorderOnly(const RenderObject& o, const PaintInfo& paintI
     UNUSED_PARAM(r);
     return o.style().appearance() != NoControlPart;
 #else
+    FloatRect devicePixelSnappedRect = pixelSnappedForPainting(r, o.document().deviceScaleFactor());
     // Call the appropriate paint method based off the appearance value.
     switch (o.style().appearance()) {
     case TextFieldPart:
-        return paintTextField(o, paintInfo, r);
+        return paintTextField(o, paintInfo, devicePixelSnappedRect);
     case ListboxPart:
     case TextAreaPart:
-        return paintTextArea(o, paintInfo, r);
+        return paintTextArea(o, paintInfo, devicePixelSnappedRect);
     case MenulistButtonPart:
     case SearchFieldPart:
         return true;
@@ -463,36 +465,39 @@ bool RenderTheme::paintBorderOnly(const RenderObject& o, const PaintInfo& paintI
 #endif
 }
 
-bool RenderTheme::paintDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderTheme::paintDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const LayoutRect& rect)
 {
     if (paintInfo.context->paintingDisabled())
         return false;
 
+    IntRect integralSnappedRect = pixelSnappedIntRect(rect);
+    FloatRect devicePixelSnappedRect = pixelSnappedForPainting(rect, renderer.document().deviceScaleFactor());
+
     // Call the appropriate paint method based off the appearance value.
     switch (renderer.style().appearance()) {
     case MenulistButtonPart:
-        return paintMenuListButtonDecorations(renderer, paintInfo, rect);
+        return paintMenuListButtonDecorations(renderer, paintInfo, integralSnappedRect);
     case TextFieldPart:
-        return paintTextFieldDecorations(renderer, paintInfo, rect);
+        return paintTextFieldDecorations(renderer, paintInfo, devicePixelSnappedRect);
     case TextAreaPart:
-        return paintTextAreaDecorations(renderer, paintInfo, rect);
+        return paintTextAreaDecorations(renderer, paintInfo, devicePixelSnappedRect);
     case CheckboxPart:
-        return paintCheckboxDecorations(renderer, paintInfo, rect);
+        return paintCheckboxDecorations(renderer, paintInfo, integralSnappedRect);
     case RadioPart:
-        return paintRadioDecorations(renderer, paintInfo, rect);
+        return paintRadioDecorations(renderer, paintInfo, integralSnappedRect);
     case PushButtonPart:
-        return paintPushButtonDecorations(renderer, paintInfo, rect);
+        return paintPushButtonDecorations(renderer, paintInfo, integralSnappedRect);
     case SquareButtonPart:
-        return paintSquareButtonDecorations(renderer, paintInfo, rect);
+        return paintSquareButtonDecorations(renderer, paintInfo, integralSnappedRect);
     case ButtonPart:
-        return paintButtonDecorations(renderer, paintInfo, rect);
+        return paintButtonDecorations(renderer, paintInfo, integralSnappedRect);
     case MenulistPart:
-        return paintMenuListDecorations(renderer, paintInfo, rect);
+        return paintMenuListDecorations(renderer, paintInfo, integralSnappedRect);
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
-        return paintSliderThumbDecorations(renderer, paintInfo, rect);
+        return paintSliderThumbDecorations(renderer, paintInfo, integralSnappedRect);
     case SearchFieldPart:
-        return paintSearchFieldDecorations(renderer, paintInfo, rect);
+        return paintSearchFieldDecorations(renderer, paintInfo, integralSnappedRect);
 #if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:

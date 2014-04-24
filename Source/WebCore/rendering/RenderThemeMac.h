@@ -123,10 +123,10 @@ protected:
 
     virtual bool supportsSelectionForegroundColors() const { return false; }
 
-    virtual bool paintTextField(const RenderObject&, const PaintInfo&, const IntRect&);
+    virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&);
     virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const IntRect&);
+    virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&);
     virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&);

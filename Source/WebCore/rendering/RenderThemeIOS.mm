@@ -473,14 +473,14 @@ bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
     return false;
 }
 
-bool RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     RenderStyle& style = box.style();
-    IntPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
+    FloatPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    paintInfo.context->clipRoundedRect(FloatRoundedRect(style.getRoundedBorderFor(rect)));
+    paintInfo.context->clipRoundedRect(FloatRoundedRect(style.getRoundedBorderFor(LayoutRect(rect))));
 
     // This gradient gets drawn black when printing.
     // Do not draw the gradient if there is no visible top border.
@@ -490,7 +490,7 @@ bool RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const Pa
     return false;
 }
 
-bool RenderThemeIOS::paintTextAreaDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintTextAreaDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     return paintTextFieldDecorations(box, paintInfo, rect);
 }

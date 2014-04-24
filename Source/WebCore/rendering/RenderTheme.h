@@ -79,9 +79,9 @@ public:
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates
     // whether the CSS border/background should also be painted.
-    bool paint(const RenderObject&, ControlStates*, const PaintInfo&, const IntRect&);
-    bool paintBorderOnly(const RenderObject&, const PaintInfo&, const IntRect&);
-    bool paintDecorations(const RenderObject&, const PaintInfo&, const IntRect&);
+    bool paint(const RenderObject&, ControlStates*, const PaintInfo&, const LayoutRect&);
+    bool paintBorderOnly(const RenderObject&, const PaintInfo&, const LayoutRect&);
+    bool paintDecorations(const RenderObject&, const PaintInfo&, const LayoutRect&);
 
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // RenderThemeMac.cpp for Mac OS X.
@@ -287,12 +287,12 @@ protected:
     virtual bool paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintTextField(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual bool paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
+    virtual bool paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
 
     virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
+    virtual bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
 
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }

@@ -811,7 +811,7 @@ NSControlSize RenderThemeMac::controlSizeForSystemFont(RenderStyle* style) const
     return NSMiniControlSize;
 }
 
-bool RenderThemeMac::paintTextField(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintTextField(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& r)
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
@@ -842,7 +842,7 @@ bool RenderThemeMac::paintCapsLockIndicator(const RenderObject&, const PaintInfo
     return false;
 }
 
-bool RenderThemeMac::paintTextArea(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintTextArea(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& r)
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawBezeledTextArea(r, isEnabled(o) && !isReadOnlyControl(o));

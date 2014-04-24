@@ -66,8 +66,8 @@ protected:
 
     virtual bool paintFileUploadIconDecorations(const RenderObject& inputRenderer, const RenderObject& buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
 
-    virtual bool paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    virtual bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    virtual bool paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    virtual bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const override;
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
