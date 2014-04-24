@@ -1,3 +1,19 @@
+2014-04-23  Andreas Kling  <akling@apple.com>
+
+        Remove Apple Dictionary workaround in WebFrameLoaderClient.
+        <https://webkit.org/b/132095>
+
+        Kill a hack to work around a WK1 client bug that got fixed years ago.
+        See <rdar://problem/6471058> for backstory.
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (applyAppleDictionaryApplicationQuirkNonInlinePart): Deleted.
+        (applyAppleDictionaryApplicationQuirk): Deleted.
+
 2014-04-23  Anders Carlsson  <andersca@apple.com>
 
         Don't migrate the WKView.h header from WebCore to WebKit

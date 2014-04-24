@@ -98,7 +98,6 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLFrameElement.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
-#import <WebCore/HTMLHeadElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/HTMLPlugInElement.h>
@@ -186,52 +185,6 @@ NSString *WebPluginContainerKey = @"WebPluginContainer";
 static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     return loader ? static_cast<WebDocumentLoaderMac*>(loader)->dataSource() : nil;
-}
-
-#if !PLATFORM(IOS)
-// Quirk for the Apple Dictionary application.
-//
-// If a top level frame has a <script> element in its <head> for a script named MainPageJavaScript.js,
-// then for that frame's document, ignore changes to the scrolling attribute of frames. That script
-// has a bug in it where it sets the scrolling attribute on frames, and that erroneous scrolling
-// attribute needs to be ignored to avoid showing extra scroll bars in the window.
-// This quirk can be removed when Apple Dictionary is fixed (see <rdar://problem/6471058>).
-
-static void applyAppleDictionaryApplicationQuirkNonInlinePart(WebFrameLoaderClient* client, const ResourceRequest& request)
-{
-    if (!request.url().isLocalFile())
-        return;
-    if (!request.url().string().endsWith("MainPageJavaScript.js"))
-        return;
-    Frame* frame = core(client->webFrame());
-    if (!frame)
-        return;
-    if (frame->tree().parent())
-        return;
-    Document* document = frame->document();
-    if (!document)
-        return;
-    HTMLHeadElement* head = document->head();
-    if (!head)
-        return;
-    for (Node* c = head->firstChild(); c; c = c->nextSibling()) {
-        if (c->hasTagName(scriptTag) && toElement(c)->getAttribute(srcAttr) == "MainPageJavaScript.js") {
-            document->setFrameElementsShouldIgnoreScrolling(true);
-            return;
-        }
-    }
-}
-#endif
-
-static inline void applyAppleDictionaryApplicationQuirk(WebFrameLoaderClient* client, const ResourceRequest& request)
-{
-#if !PLATFORM(IOS)
-    // Use a one-time-initialized global variable so we can quickly determine there's nothing to do in
-    // all applications other than Apple Dictionary.
-    static bool isAppleDictionary = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Dictionary"];
-    if (isAppleDictionary)
-        applyAppleDictionaryApplicationQuirkNonInlinePart(client, request);
-#endif
 }
 
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
@@ -346,8 +299,6 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* doc
 
 bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
 {
-    applyAppleDictionaryApplicationQuirk(this, request);
-
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 #if PLATFORM(IOS)
@@ -390,8 +341,6 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
 
 void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    applyAppleDictionaryApplicationQuirk(this, request);
-
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
