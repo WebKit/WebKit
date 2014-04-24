@@ -41,6 +41,53 @@ using namespace WebCore;
 - (void)setContextId:(uint32_t)contextID;
 @end
 
+@interface UIView (WKHitTesting)
+- (UIView *)_findDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event;
+@end
+
+@implementation UIView (WKHitTesting)
+
+// UIView hit testing assumes that views should only hit test subviews that are entirely contained
+// in the view. This is not true of web content.
+- (UIView *)_recursiveFindDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event
+{
+    if (self.clipsToBounds && ![self pointInside:point withEvent:event])
+        return nil;
+
+    __block UIView *foundView = nil;
+    [[self subviews] enumerateObjectsUsingBlock:^(UIView *view, NSUInteger idx, BOOL *stop) {
+        CGPoint subviewPoint = [view convertPoint:point fromView:self];
+
+        if ([view pointInside:subviewPoint withEvent:event])
+            foundView = view;
+
+        if (![view subviews])
+            return;
+
+        if (UIView *hitView = [view _recursiveFindDescendantViewAtPoint:subviewPoint withEvent:event])
+            foundView = hitView;
+    }];
+
+    return foundView;
+}
+
+- (UIView *)_findDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return [self _recursiveFindDescendantViewAtPoint:point withEvent:event];
+}
+
+@end
+
+@interface WKCompositingView : UIView
+@end
+
+@implementation WKCompositingView
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return [self _findDescendantViewAtPoint:point withEvent:event];
+}
+@end
+
 @interface WKTransformView : UIView
 @end
 
@@ -48,6 +95,11 @@ using namespace WebCore;
 + (Class)layerClass
 {
     return [CATransformLayer self];
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return [self _findDescendantViewAtPoint:point withEvent:event];
 }
 @end
 
@@ -68,6 +120,12 @@ using namespace WebCore;
 {
     return NSClassFromString(@"CALayerHost");
 }
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return [self _findDescendantViewAtPoint:point withEvent:event];
+}
+
 @end
 
 namespace WebKit {
@@ -89,7 +147,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         if (layerProperties && layerProperties->customBehavior == GraphicsLayer::CustomScrollingBehavior)
             layerOrView = adoptNS([[UIScrollView alloc] init]);
         else
-            layerOrView = adoptNS([[UIView alloc] init]);
+            layerOrView = adoptNS([[WKCompositingView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeTransformLayer:
         layerOrView = adoptNS([[WKTransformView alloc] init]);
@@ -98,7 +156,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         if (!m_isDebugLayerTreeHost)
             layerOrView = adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:properties.hostingContextID]);
         else
-            layerOrView = adoptNS([[UIView alloc] init]);
+            layerOrView = adoptNS([[WKCompositingView alloc] init]);
         break;
     default:
         ASSERT_NOT_REACHED();

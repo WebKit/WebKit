@@ -119,6 +119,8 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
     // in order to be scrolled by the ScrollingCoordinator.
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
     settings.setFixedPositionCreatesStackingContext(true);
+
+    m_rootLayer->setShowDebugBorder(settings.showDebugBorders());
 }
 
 #if PLATFORM(IOS)
@@ -295,8 +297,9 @@ void RemoteLayerTreeDrawingArea::didUpdate()
     }
 }
 
-void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize&)
+void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize& contentsSize)
 {
+    m_rootLayer->setSize(contentsSize);
     m_webPage->pageOverlayController().didChangeDocumentSize();
 }
 
