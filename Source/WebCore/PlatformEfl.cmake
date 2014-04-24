@@ -13,6 +13,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     "${WEBCORE_DIR}/platform/linux"
     "${WEBCORE_DIR}/platform/mediastream/gstreamer"
+    "${WEBCORE_DIR}/platform/mock/mediasource"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/efl"
     "${WEBCORE_DIR}/plugins/efl"
@@ -136,11 +137,14 @@ list(APPEND WebCore_SOURCES
     platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
     platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
     platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
+    platform/graphics/gstreamer/MediaSourceGStreamer.cpp
+    platform/graphics/gstreamer/SourceBufferPrivateGStreamer.cpp
     platform/graphics/gstreamer/TextCombinerGStreamer.cpp
     platform/graphics/gstreamer/TextSinkGStreamer.cpp
     platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
     platform/graphics/gstreamer/VideoSinkGStreamer.cpp
     platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp
+    platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp
     platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
 
     platform/graphics/harfbuzz/HarfBuzzFace.cpp
