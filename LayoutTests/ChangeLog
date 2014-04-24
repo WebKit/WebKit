@@ -1,3 +1,26 @@
+2014-04-24  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Update baselines after r167568
+        https://bugs.webkit.org/show_bug.cgi?id=132125
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local-expected.txt: Added.
+        * platform/efl/fast/repaint/reflection-redraw-expected.txt: Rebaseline after r167568.
+        * platform/efl/fast/table/multiple-captions-display-expected.txt: Rebaseline after r167568.
+        * platform/efl/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt: Added.
+        * platform/efl/tables/mozilla/marvin/body_col-expected.txt: Rebaseline after r167568.
+        * platform/efl/tables/mozilla/marvin/x_th_valign_baseline-expected.txt: Rebaseline after r167568.
+        * platform/efl/tables/mozilla/other/body_col-expected.txt: Rebaseline after r167568.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug10140-expected.txt: Rebaseline after r167568.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug10216-expected.txt: Rebaseline after r167568.
+        * platform/efl/tables/mozilla_expected_failures/core/captions3-expected.txt: Rebaseline after r167568.
+        * platform/efl/tables/mozilla_expected_failures/other/test4-expected.txt: Rebaseline after r167568.
+
 2014-04-23  Praveen R Jadhav  <praveen.j@samsung.com>
 
         [MediaStream] Implement MediaStream active attribute
