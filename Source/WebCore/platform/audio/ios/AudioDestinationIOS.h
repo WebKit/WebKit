@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "AudioBus.h"
 #include "AudioDestination.h"
 #include "AudioSessionListener.h"
+#include "MediaSession.h"
 #include <AudioUnit/AudioUnit.h>
 #include <wtf/RefPtr.h>
 
@@ -40,21 +41,26 @@ namespace WebCore {
 
 // An AudioDestination using CoreAudio's default output AudioUnit
 
-class AudioDestinationIOS : public AudioDestination, public AudioSessionListener {
+class AudioDestinationIOS final : public AudioDestination, private MediaSessionClient {
 public:
     AudioDestinationIOS(AudioIOCallback&, double sampleRate);
     virtual ~AudioDestinationIOS();
 
-    virtual void start();
-    virtual void stop();
-    bool isPlaying() { return m_isPlaying; }
-
-    float sampleRate() const { return m_sampleRate; }
-
 private:
     void configure();
-    virtual void beganAudioInterruption() override;
-    virtual void endedAudioInterruption() override;
+
+    // AudioDestination
+    virtual void start() override;
+    virtual void stop() override;
+    virtual bool isPlaying() override { return m_isPlaying; }
+    virtual float sampleRate() const override { return m_sampleRate; }
+
+    // MediaSessionClient
+    virtual MediaSession::MediaType mediaType() const { return MediaSession::WebAudio; }
+    virtual bool canReceiveRemoteControlCommands() const { return false; }
+    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) { }
+    virtual void pausePlayback() override { stop(); }
+    virtual void resumePlayback() override { start(); }
 
     // DefaultOutputUnit callback
     static OSStatus inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 busNumber, UInt32 numberOfFrames, AudioBufferList* ioData);
@@ -67,10 +73,10 @@ private:
     AudioUnit m_outputUnit;
     AudioIOCallback& m_callback;
     RefPtr<AudioBus> m_renderBus;
+    std::unique_ptr<MediaSession> m_mediaSession;
 
     double m_sampleRate;
     bool m_isPlaying;
-    bool m_interruptedOnPlayback;
 };
 
 } // namespace WebCore

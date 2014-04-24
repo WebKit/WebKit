@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,11 +46,27 @@ void MediaSessionManager::updateSessionState()
 
     if (has(MediaSession::WebAudio))
         AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
-    // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
-    // causes media LayoutTests to fail on 10.8.
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    else if ((has(MediaSession::Video) || has(MediaSession::Audio)) && Settings::lowPowerVideoAudioBufferSizeEnabled())
+    else if ((has(MediaSession::Video) || has(MediaSession::Audio)) && Settings::lowPowerVideoAudioBufferSizeEnabled()) {
+        // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
+        // causes media LayoutTests to fail on 10.8.
         AudioSession::sharedSession().setPreferredBufferSize(kLowPowerVideoBufferSize);
+    }
+#endif
+
+#if PLATFORM(IOS)
+    if (has(MediaSession::WebAudio))
+        AudioSession::sharedSession().setActive(true);
+    else
+        AudioSession::sharedSession().setActive(false);
+
+    if (!Settings::shouldManageAudioSession())
+        return;
+
+    if (has(MediaSession::Video) || has(MediaSession::Audio))
+        AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
+    else if (has(MediaSession::WebAudio))
+        AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
 #endif
 }
 

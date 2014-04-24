@@ -1,3 +1,14 @@
+2014-04-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Manage AudioSession category according to media type
+        https://bugs.webkit.org/show_bug.cgi?id=132096
+
+        Reviewed by Jer Noble.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Tell 
+            WebCore to manage the AudioSession when running in MobileSafari.
+
 2014-04-23  Andreas Kling  <akling@apple.com>
 
         Remove Apple Dictionary workaround in WebFrameLoaderClient.

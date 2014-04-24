@@ -136,8 +136,15 @@ void MediaSessionManageriOS::resetRestrictions()
     addRestriction(MediaSession::Video, ConcurrentPlaybackNotPermitted);
     addRestriction(MediaSession::Video, BackgroundPlaybackNotPermitted);
 
+    removeRestriction(MediaSession::Audio, ConcurrentPlaybackNotPermitted);
+    removeRestriction(MediaSession::Audio, BackgroundPlaybackNotPermitted);
+
+    removeRestriction(MediaSession::WebAudio, ConcurrentPlaybackNotPermitted);
+    removeRestriction(MediaSession::WebAudio, BackgroundPlaybackNotPermitted);
+
     removeRestriction(MediaSession::Audio, MetadataPreloadingNotPermitted);
     removeRestriction(MediaSession::Video, MetadataPreloadingNotPermitted);
+
     addRestriction(MediaSession::Audio, AutoPreloadingNotPermitted);
     addRestriction(MediaSession::Video, AutoPreloadingNotPermitted);
 }
@@ -193,7 +200,7 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
         [info setValue:@(duration) forKey:MPMediaItemPropertyPlaybackDuration];
     
     double currentTime = currentSession->currentTime();
-    if (std::isfinite(currentTime))
+    if (std::isfinite(currentTime) && currentTime != MediaPlayer::invalidTime())
         [info setValue:@(currentTime) forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
     
     [info setValue:(currentSession->state() == MediaSession::Playing ? @YES : @NO) forKey:MPNowPlayingInfoPropertyPlaybackRate];

@@ -310,6 +310,10 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     // 4ms should be adopted project-wide now, https://bugs.webkit.org/show_bug.cgi?id=61214
     Settings::setDefaultMinDOMTimerInterval(0.004);
 
+#if PLATFORM(IOS)
+    Settings::setShouldManageAudioSession(true);
+#endif
+
     Page::PageClients pageClients;
     pageClients.chromeClient = new WebChromeClient(this);
 #if ENABLE(CONTEXT_MENUS)

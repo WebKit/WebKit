@@ -1,3 +1,48 @@
+2014-04-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Manage AudioSession category according to media type
+        https://bugs.webkit.org/show_bug.cgi?id=132096
+
+        Reviewed by Jer Noble.
+
+        * WebCore.exp.in: Export setting.
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::HTMLMediaSession):
+        (WebCore::initializeAudioSession): Deleted.
+
+        * page/Settings.cpp:
+        * page/Settings.h:
+        (WebCore::Settings::setShouldManageAudioSession): New.
+        (WebCore::Settings::shouldManageAudioSession): Ditto.
+
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::AudioDestinationIOS): Use a MediaSession instead of inheriting
+            from AudioListener and calling the AudioSession directly.
+        (WebCore::AudioDestinationIOS::~AudioDestinationIOS): Ditto.
+        (WebCore::AudioDestinationIOS::start): Notify session.
+        (WebCore::AudioDestinationIOS::stop): Ditto.
+        (WebCore::AudioDestinationIOS::beganAudioInterruption): Deleted.
+        (WebCore::AudioDestinationIOS::endedAudioInterruption): Deleted.
+        * platform/audio/ios/AudioDestinationIOS.h:
+        (WebCore::AudioDestinationIOS::mediaType):
+        (WebCore::AudioDestinationIOS::canReceiveRemoteControlCommands):
+        (WebCore::AudioDestinationIOS::didReceiveRemoteControlCommand):
+        (WebCore::AudioDestinationIOS::isPlaying): Deleted.
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::categoryName): Debug-only logging function.
+        (WebCore::AudioSession::setCategory): Don't stick with "media" once it is set.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::resetRestrictions): Set up restrictions for WebAudio.
+        (WebCore::MediaSessionManageriOS::updateNowPlayingInfo): Don't set invalid start time.
+
+        * platform/audio/mac/MediaSessionManagerMac.cpp:
+        (MediaSessionManager::updateSessionState): Manage AudioSession.active when WebAudio clients
+            come and go. Manage AudioSession.category according to the number of WebAudio and
+            HTMLMediaElement clients.
+
 2014-04-24  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Client rects don't work with column spans.

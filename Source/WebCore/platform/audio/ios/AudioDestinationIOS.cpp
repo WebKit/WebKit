@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,17 +100,11 @@ AudioDestinationIOS::AudioDestinationIOS(AudioIOCallback& callback, double sampl
     : m_outputUnit(0)
     , m_callback(callback)
     , m_renderBus(AudioBus::create(2, kRenderBufferSize, false))
+    , m_mediaSession(MediaSession::create(*this))
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
-    , m_interruptedOnPlayback(false)
 {
-    AudioSession& session = AudioSession::sharedSession();
-    session.addListener(this);
-    session.setCategory(AudioSession::AmbientSound);
-
     audioDestinations().add(this);
-    if (audioDestinations().size() == 1)
-        session.setActive(1);
 
     // Open and initialize DefaultOutputUnit
     AudioComponent comp;
@@ -148,10 +142,7 @@ AudioDestinationIOS::AudioDestinationIOS(AudioIOCallback& callback, double sampl
 
 AudioDestinationIOS::~AudioDestinationIOS()
 {
-    AudioSession::sharedSession().removeListener(this);
     audioDestinations().remove(this);
-    if (!audioDestinations().size())
-        AudioSession::sharedSession().setActive(0);
 
     if (m_outputUnit)
         AudioComponentInstanceDispose(m_outputUnit);
@@ -192,36 +183,28 @@ void AudioDestinationIOS::configure()
 
 void AudioDestinationIOS::start()
 {
-    OSStatus result = AudioOutputUnitStart(m_outputUnit);
+    LOG(Media, "AudioDestinationIOS::start");
+    if (!m_mediaSession->clientWillBeginPlayback()) {
+        LOG(Media, "  returning because of interruption");
+        return;
+    }
 
+    OSStatus result = AudioOutputUnitStart(m_outputUnit);
     if (!result)
         m_isPlaying = true;
 }
 
 void AudioDestinationIOS::stop()
 {
-    OSStatus result = AudioOutputUnitStop(m_outputUnit);
+    LOG(Media, "AudioDestinationIOS::stop");
+    if (!m_mediaSession->clientWillPausePlayback()) {
+        LOG(Media, "  returning because of interruption");
+        return;
+    }
 
+    OSStatus result = AudioOutputUnitStop(m_outputUnit);
     if (!result)
         m_isPlaying = false;
-}
-
-void AudioDestinationIOS::beganAudioInterruption()
-{
-    if (!m_isPlaying)
-        return;
-
-    stop();
-    m_interruptedOnPlayback = true;
-}
-
-void AudioDestinationIOS::endedAudioInterruption()
-{
-    if (!m_interruptedOnPlayback)
-        return;
-
-    m_interruptedOnPlayback = false;
-    start();
 }
 
 // Pulls on our provider to get rendered audio stream.

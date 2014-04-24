@@ -902,6 +902,11 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
         
         Settings::setShouldRespectPriorityInCSSAttributeSetters(shouldRespectPriorityInCSSAttributeSetters());
 
+#if PLATFORM(IOS)
+        if (applicationIsMobileSafari())
+            Settings::setShouldManageAudioSession(true);
+#endif
+
         didOneTimeInitialization = true;
     }
 

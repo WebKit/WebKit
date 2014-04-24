@@ -69,21 +69,6 @@ static const char* restrictionName(HTMLMediaSession::BehaviorRestrictions restri
 }
 #endif
 
-static void initializeAudioSession()
-{
-#if PLATFORM(IOS)
-    static bool wasAudioSessionInitialized;
-    if (wasAudioSessionInitialized)
-        return;
-
-    wasAudioSessionInitialized = true;
-    if (!WebCore::applicationIsMobileSafari())
-        return;
-
-    AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
-#endif
-}
-
 std::unique_ptr<HTMLMediaSession> HTMLMediaSession::create(MediaSessionClient& client)
 {
     return std::make_unique<HTMLMediaSession>(client);
@@ -93,7 +78,6 @@ HTMLMediaSession::HTMLMediaSession(MediaSessionClient& client)
     : MediaSession(client)
     , m_restrictions(NoRestrictions)
 {
-    initializeAudioSession();
 }
 
 void HTMLMediaSession::addBehaviorRestriction(BehaviorRestrictions restriction)

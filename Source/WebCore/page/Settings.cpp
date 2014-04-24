@@ -100,6 +100,7 @@ bool Settings::gLowPowerVideoAudioBufferSizeEnabled = false;
 bool Settings::gNetworkDataUsageTrackingEnabled = false;
 bool Settings::gAVKitEnabled = false;
 bool Settings::gShouldOptOutOfNetworkStateObservation = false;
+bool Settings::gManageAudioSession = false;
 #endif
 
 // NOTEs
