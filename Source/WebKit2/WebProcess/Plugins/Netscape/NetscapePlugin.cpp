@@ -600,6 +600,21 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
         paramValues.append(parameters.values[i].utf8());
     }
 
+#if PLUGIN_ARCHITECTURE(X11)
+    if (equalIgnoringCase(parameters.mimeType, "application/x-shockwave-flash")) {
+        size_t wmodeIndex = parameters.names.find("wmode");
+        if (wmodeIndex != notFound) {
+            // Transparent window mode is not supported by X11 backend.
+            if (equalIgnoringCase(parameters.values[wmodeIndex], "transparent")
+                || (m_pluginModule->pluginQuirks().contains(PluginQuirks::ForceFlashWindowlessMode) && equalIgnoringCase(parameters.values[wmodeIndex], "window")))
+                paramValues[wmodeIndex] = "opaque";
+        } else if (m_pluginModule->pluginQuirks().contains(PluginQuirks::ForceFlashWindowlessMode)) {
+            paramNames.append("wmode");
+            paramValues.append("opaque");
+        }
+    }
+#endif
+
     // The strings that these pointers point to are kept alive by paramNames and paramValues.
     Vector<const char*> names;
     Vector<const char*> values;

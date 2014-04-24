@@ -1321,23 +1321,6 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
     parameters.layerHostingMode = m_frame->page()->layerHostingMode();
 #endif
 
-#if PLUGIN_ARCHITECTURE(X11)
-    // FIXME: This should really be X11-specific plug-in quirks.
-    if (equalIgnoringCase(mimeType, "application/x-shockwave-flash")) {
-        // Currently we don't support transparency and windowed mode.
-        // Inject wmode=opaque to make Flash work in these conditions.
-        size_t wmodeIndex = parameters.names.find("wmode");
-        if (wmodeIndex == notFound) {
-            parameters.names.append("wmode");
-            parameters.values.append("opaque");
-        } else if (equalIgnoringCase(parameters.values[wmodeIndex], "window"))
-            parameters.values[wmodeIndex] = "opaque";
-    } else if (equalIgnoringCase(mimeType, "application/x-webkit-test-netscape")) {
-        parameters.names.append("windowedPlugin");
-        parameters.values.append("false");
-    }
-#endif
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginElement, parameters, parameters.mimeType);
     if (!plugin)

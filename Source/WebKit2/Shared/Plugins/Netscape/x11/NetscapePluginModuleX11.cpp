@@ -176,7 +176,6 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
 
 void NetscapePluginModule::determineQuirks()
 {
-#if CPU(X86_64)
     RawPluginMetaData metaData;
     if (!getPluginInfoForLoadedPlugin(metaData))
         return;
@@ -185,11 +184,15 @@ void NetscapePluginModule::determineQuirks()
     parseMIMEDescription(metaData.mimeDescription, mimeTypes);
     for (size_t i = 0; i < mimeTypes.size(); ++i) {
         if (mimeTypes[i].type == "application/x-shockwave-flash") {
+#if CPU(X86_64)
             m_pluginQuirks.add(PluginQuirks::IgnoreRightClickInWindowlessMode);
+#endif
+#if PLATFORM(EFL)
+            m_pluginQuirks.add(PluginQuirks::ForceFlashWindowlessMode);
+#endif
             break;
         }
     }
-#endif
 }
 
 static void writeByte(char byte)

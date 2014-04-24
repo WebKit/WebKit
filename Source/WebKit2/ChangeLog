@@ -1,3 +1,30 @@
+2014-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] wmode='transparent' for flash plugin doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=120055
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Force opaque window mode for flash plugin when wmode='transparent',
+        since X11 backend doesn't support transparency. We should add
+        proper transparency support because forcing opaque window mode
+        doesn't really work. Handle this as a plugin quirk instead of
+        adding X11 specific code to WebFrameLoaderClient::createPlugin().
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::determineQuirks): Add
+        ForceFlashWindowlessMode quirk for flash in case of EFL platform
+        because EFL port doesn't support windowed plugins.
+        * Shared/Plugins/PluginQuirks.h: Add ForceFlashWindowlessMode X11
+        plugin quirk.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::initialize): Modify or add wmode
+        parameter for flash plugin, to force opaque window mode when
+        transparent mode is specified or when ForceFlashWindowlessMode
+        quirk is present.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin): Remove X11 specific code.
+
 2014-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Missing content inside long overflow-scrolling:touch 
