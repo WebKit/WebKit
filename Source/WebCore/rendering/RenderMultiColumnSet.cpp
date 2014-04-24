@@ -832,7 +832,7 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
             inlineOffset += contentLogicalWidth() - colLogicalWidth;
     }
     translationOffset.setX(inlineOffset);
-    LayoutUnit blockOffset = initialBlockOffset + logicalTop() - flowThread()->logicalTop() + (isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x());
+    LayoutUnit blockOffset = initialBlockOffset + (isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x());
     if (!progressionIsInline) {
         if (!progressionReversed)
             blockOffset = startColumn * colGap;

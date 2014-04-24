@@ -1,3 +1,19 @@
+2014-04-24  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Client rects don't work with column spans.
+        https://bugs.webkit.org/show_bug.cgi?id=132131
+
+        Reviewed by Dean Jackson.
+        
+        Don't factor in the offset of the multicolumn set from the top
+        of the multicolumn block. This was added already, and it doesn't
+        need to be a part of columnTranslationForOffset.
+
+        Added fast/multicol/client-rects-spanners.html
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::columnTranslationForOffset):
+
 2014-04-24  Praveen R Jadhav  <praveen.j@samsung.com>
 
         [EFL] WebKit build fails when MEDIA_SOURCE is enabled

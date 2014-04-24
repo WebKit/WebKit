@@ -1,3 +1,14 @@
+2014-04-24  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Client rects don't work with column spans.
+        https://bugs.webkit.org/show_bug.cgi?id=132131
+
+        Reviewed by Dean Jackson.
+
+        * fast/multicol/client-rects-spanners.html: Added.
+        * platform/mac/fast/multicol/client-rects-spanners-expected.png: Added.
+        * platform/mac/fast/multicol/client-rects-spanners-expected.txt: Added.
+
 2014-04-24  Alexey Proskuryakov  <ap@apple.com>
 
         Test that we correctly process ArrayBufferView slices in WebCrypto
