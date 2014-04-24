@@ -426,6 +426,21 @@ static CALayer *leastCommonAncestorLayer(Vector<RetainPtr<CALayer>>& layers)
     return liveLayerPathsFromRoot[0][shortestPathLength];
 }
 
+IOSurface* ViewGestureController::retrieveSnapshotForItem(WebBackForwardListItem* targetItem)
+{
+    ViewSnapshotStore::Snapshot snapshot;
+    if (!ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
+        return nullptr;
+
+    if (!snapshot.surface)
+        return nullptr;
+
+    if (snapshot.surface->setIsVolatile(false) != IOSurface::SurfaceState::Valid)
+        return nullptr;
+
+    return snapshot.surface.get();
+}
+
 void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem, SwipeDirection direction)
 {
     ASSERT(m_currentSwipeLiveLayers.isEmpty());
@@ -437,9 +452,9 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     m_swipeSnapshotLayer = adoptNS([[CALayer alloc] init]);
     [m_swipeSnapshotLayer setBackgroundColor:CGColorGetConstantColor(kCGColorWhite)];
 
-    RefPtr<IOSurface> snapshot = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
+    IOSurface* snapshot = retrieveSnapshotForItem(targetItem);
 
-    if (snapshot && snapshot->setIsVolatile(false) == IOSurface::SurfaceState::Valid) {
+    if (snapshot) {
         m_currentSwipeSnapshotSurface = snapshot;
         [m_swipeSnapshotLayer setContents:(id)snapshot->surface()];
     }
@@ -557,7 +572,11 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    uint64_t renderTreeSize = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).second;
+    ViewSnapshotStore::Snapshot snapshot;
+    uint64_t renderTreeSize = 0;
+    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
+        renderTreeSize = snapshot.renderTreeSize;
+
     m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction), m_webPageProxy.pageID());
 
     // We don't want to replace the current back-forward item's snapshot

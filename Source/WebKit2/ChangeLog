@@ -1,3 +1,39 @@
+2014-04-24  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Use a single struct for the snapshot, and pass it around
+        https://bugs.webkit.org/show_bug.cgi?id=132114
+
+        Reviewed by Simon Fraser.
+
+        Have only a single map in ViewSnapshotStore, from back-forward item
+        to ViewSnapshotStore::Snapshot, and return the Snapshot struct when looking
+        up snapshots (via getSnapshot()), so that future patches can persist additional
+        information along with the snapshot.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::retrieveSnapshotForItem):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        Adopt getSnapshot() instead of snapshotAndRenderTreeSize().
+        Move retrieveSnapshotForItem out into a separate function (for future use).
+
+        * UIProcess/mac/ViewSnapshotStore.h:
+        (WebKit::ViewSnapshotStore::disableSnapshotting):
+        (WebKit::ViewSnapshotStore::enableSnapshotting):
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::pruneSnapshots):
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        (WebKit::ViewSnapshotStore::getSnapshot):
+        (WebKit::ViewSnapshotStore::snapshotAndRenderTreeSize): Deleted.
+        Make Snapshot struct public.
+        Get rid of the separate map of back-forward items to render tree sizes.
+        When evicting, instead of removing the entry, clear out its snapshot image;
+        this way, we can keep other snapshot metadata around.
+
 2014-04-24  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] Should properly handle focus redirect (keyboard state changes when focus changes).

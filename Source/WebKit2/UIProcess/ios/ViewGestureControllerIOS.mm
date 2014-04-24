@@ -151,18 +151,18 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
     WebKit::WebBackForwardListItem* targetItem = direction == SwipeDirection::Left ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
 
-    auto snapshot = WebKit::ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
-
     RetainPtr<UIViewController> snapshotViewController = adoptNS([[UIViewController alloc] init]);
     m_snapshotView = adoptNS([[UIView alloc] initWithFrame:[m_liveSwipeView frame]]);
-    if (snapshot) {
+
+    ViewSnapshotStore::Snapshot snapshot;
+    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot)) {
 #if USE(IOSURFACE)
-        if (snapshot->setIsVolatile(false) == IOSurface::SurfaceState::Valid) {
-            [m_snapshotView layer].contents = (id)snapshot->surface();
-            m_currentSwipeSnapshotSurface = snapshot;
+        if (snapshot.surface->setIsVolatile(false) == IOSurface::SurfaceState::Valid) {
+            [m_snapshotView layer].contents = (id)snapshot.surface->surface();
+            m_currentSwipeSnapshotSurface = snapshot.surface;
         }
 #else
-        [m_snapshotView layer].contents = (id)snapshot.get();
+        [m_snapshotView layer].contents = (id)snapshot.image.get();
 #endif
     }
     [m_snapshotView setBackgroundColor:[UIColor whiteColor]];
@@ -223,9 +223,12 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         removeSwipeSnapshot();
         return;
     }
-    
-    m_targetRenderTreeSize = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).second * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
-    
+
+    ViewSnapshotStore::Snapshot snapshot;
+    m_targetRenderTreeSize = 0;
+    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
+        m_targetRenderTreeSize = snapshot.renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
+
     // We don't want to replace the current back-forward item's snapshot
     // like we normally would when going back or forward, because we are
     // displaying the destination item's snapshot.

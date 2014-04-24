@@ -130,6 +130,7 @@ private:
     void endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled);
     bool deltaIsSufficientToBeginSwipe(NSEvent *);
     bool scrollEventCanBecomeSwipe(NSEvent *, SwipeDirection&);
+    WebCore::IOSurface* retrieveSnapshotForItem(WebBackForwardListItem*);
 #endif
     
     WebPageProxy& m_webPageProxy;

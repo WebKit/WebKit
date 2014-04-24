@@ -46,19 +46,6 @@ public:
 
     static ViewSnapshotStore& shared();
 
-    void recordSnapshot(WebPageProxy&);
-#if USE(IOSURFACE)
-    std::pair<RefPtr<WebCore::IOSurface>, uint64_t> snapshotAndRenderTreeSize(WebBackForwardListItem*);
-#else
-    std::pair<RetainPtr<CGImageRef>, uint64_t> snapshotAndRenderTreeSize(WebBackForwardListItem*);
-#endif
-
-    void disableSnapshotting() { m_enabled = false; }
-    void enableSnapshotting() { m_enabled = true; }
-
-private:
-    void pruneSnapshots(WebPageProxy&);
-
     struct Snapshot {
 #if USE(IOSURFACE)
         RefPtr<WebCore::IOSurface> surface;
@@ -67,10 +54,22 @@ private:
 #endif
 
         std::chrono::steady_clock::time_point creationTime;
+        uint64_t renderTreeSize;
+
+        void clearImage();
+        bool hasImage() const;
     };
 
+    void recordSnapshot(WebPageProxy&);
+    bool getSnapshot(WebBackForwardListItem*, Snapshot&);
+
+    void disableSnapshotting() { m_enabled = false; }
+    void enableSnapshotting() { m_enabled = true; }
+
+private:
+    void pruneSnapshots(WebPageProxy&);
+
     HashMap<String, Snapshot> m_snapshotMap;
-    HashMap<String, uint64_t> m_renderTreeSizeMap;
 
     bool m_enabled;
 };
