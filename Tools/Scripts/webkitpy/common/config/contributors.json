@@ -1130,6 +1130,15 @@
             "fawek"
          ]
       },
+      "James Craig" : {
+         "emails" : [
+            "jcraig@apple.com",
+            "james@cookiecrook.com"
+         ],
+         "nicks" : [
+            "jcraig"
+         ]
+      },
       "James Hawkins" : {
          "emails" : [
             "jhawkins@chromium.org",
@@ -2997,15 +3006,6 @@
          ],
          "nicks" : [
             "hixie"
-         ]
-      },
-      "James Craig" : {
-         "emails" : [
-            "jcraig@apple.com",
-            "james@cookiecrook.com"
-         ],
-         "nicks" : [
-            "jcraig"
          ]
       },
       "Javier Fernandez" : {
