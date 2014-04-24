@@ -1,5 +1,24 @@
 2014-04-23  Andreas Kling  <akling@apple.com>
 
+        CachedResourceLoader hoards URLs indefinitely for no good reason.
+        <https://webkit.org/b/132102>
+        <rdar://problem/16708265>
+
+        Since we don't care about CachedResourceLoader::m_validatedURL's after
+        the Document has finished dispatching its initial load event, clear the
+        set at that point, and don't add any new URLs to it.
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Document.cpp:
+        (WebCore::Document::dispatchWindowLoadEvent):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::documentDidFinishLoadEvent):
+        * loader/cache/CachedResourceLoader.h:
+
+2014-04-23  Andreas Kling  <akling@apple.com>
+
         Canvas cache of clean URLs can grow without bounds.
         <https://webkit.org/b/132091>
         <rdar://problem/16695665>

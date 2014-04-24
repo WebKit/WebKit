@@ -133,6 +133,8 @@ public:
 
     static const ResourceLoaderOptions& defaultCachedResourceOptions();
 
+    void documentDidFinishLoadEvent();
+
 private:
     explicit CachedResourceLoader(DocumentLoader*);
 

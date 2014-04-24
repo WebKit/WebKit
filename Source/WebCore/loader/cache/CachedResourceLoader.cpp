@@ -477,12 +477,17 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         }
     }
 
-    if (!request.resourceRequest().url().protocolIsData())
+    if (document() && !document()->loadEventFinished() && !request.resourceRequest().url().protocolIsData())
         m_validatedURLs.add(request.resourceRequest().url());
 
     ASSERT(resource->url() == url.string());
     m_documentResources.set(resource->url(), resource);
     return resource;
+}
+
+void CachedResourceLoader::documentDidFinishLoadEvent()
+{
+    m_validatedURLs.clear();
 }
 
 CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(const CachedResourceRequest& request, CachedResource* resource)
