@@ -1,3 +1,18 @@
+2014-04-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Eliminate internals.setMockScrollbarsEnabled()
+        https://bugs.webkit.org/show_bug.cgi?id=132085
+
+        Reviewed by Tim Horton.
+
+        This was essentially unused, and also didnt work.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setMockScrollbarsEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2014-04-23  Anders Carlsson  <andersca@apple.com>
 
         Don't migrate the WKView.h header from WebCore to WebKit

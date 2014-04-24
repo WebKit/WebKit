@@ -135,7 +135,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #endif
     settings.setMediaTypeOverride(m_originalMediaTypeOverride);
     settings.setCanvasUsesAcceleratedDrawing(m_originalCanvasUsesAcceleratedDrawing);
-    settings.setMockScrollbarsEnabled(m_originalMockScrollbarsEnabled);
     RuntimeEnabledFeatures::sharedFeatures().setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
     settings.setImagesEnabled(m_imagesEnabled);
     settings.setMinDOMTimerInterval(m_minimumTimerInterval);
@@ -208,12 +207,6 @@ Settings* InternalSettings::settings() const
     if (!page())
         return 0;
     return &page()->settings();
-}
-
-void InternalSettings::setMockScrollbarsEnabled(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setMockScrollbarsEnabled(enabled);
 }
 
 void InternalSettings::setTouchEventEmulationEnabled(bool enabled, ExceptionCode& ec)

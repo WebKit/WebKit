@@ -1,6 +1,5 @@
 function runNonFastScrollableRegionTest(scale) {
     var invScale;
-    window.internals.settings.setMockScrollbarsEnabled(true);
     if (scale != undefined) {
         window.internals.setPageScaleFactor(scale, 0, 0);
         // FIXME: This is a hack for applyPageScaleFactorInCompositor() == false.

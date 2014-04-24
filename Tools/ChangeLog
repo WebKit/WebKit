@@ -1,3 +1,13 @@
+2014-04-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Eliminate internals.setMockScrollbarsEnabled()
+        https://bugs.webkit.org/show_bug.cgi?id=132085
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (resetWebPreferencesToConsistentValues):
+        No need to reset the preference, there is no way it can change.
+
 2014-04-23  James Craig  <jcraig@apple.com>
 
         Unreviewed. Moving myself from Contributors to Committers list.

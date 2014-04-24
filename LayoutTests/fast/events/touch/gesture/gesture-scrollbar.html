@@ -64,7 +64,6 @@ function exitIfNecessary()
 
 function runTest()
 {
-    internals.settings.setMockScrollbarsEnabled(true);
     if (window.eventSender) {
         description('This tests scroll gesture events on a scroll bar. ' +
             'The scrollable div below should be slightly scrolled down ' +

@@ -1,3 +1,30 @@
+2014-04-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Eliminate internals.setMockScrollbarsEnabled()
+        https://bugs.webkit.org/show_bug.cgi?id=132085
+
+        Reviewed by Tim Horton.
+
+        Remove calls, all of which were resetting it to true (which is the default, and
+        the only value that makes sense).
+
+        * compositing/geometry/fixed-position.html:
+        * compositing/geometry/horizontal-scroll-composited.html:
+        * compositing/geometry/vertical-scroll-composited.html:
+        * compositing/iframes/resources/scrollgrandchild-inner.html:
+        * compositing/overflow/fixed-position-ancestor-clip.html:
+        * compositing/resources/mock_scrollbars.js: Removed.
+        * css3/filters/blur-filter-page-scroll-parents.html:
+        * css3/filters/blur-filter-page-scroll-self.html:
+        * css3/filters/blur-filter-page-scroll.html:
+        * fast/dom/window-scroll-scaling.html:
+        * fast/events/touch/gesture/gesture-scrollbar.html:
+        * fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html:
+        * fast/sub-pixel/transformed-iframe-copy-on-scroll.html:
+        * media/video-controls-rendering.html:
+        * media/video-zoom.html:
+        * scrollingcoordinator/resources/non-fast-scrollable-region-testing.js:
+
 2014-04-23  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Crasher when clearing out a flow thread in multicolumn layout.

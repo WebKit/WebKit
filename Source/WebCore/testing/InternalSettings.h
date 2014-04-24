@@ -100,7 +100,6 @@ public:
     virtual ~InternalSettings();
     void resetToConsistentState();
 
-    void setMockScrollbarsEnabled(bool enabled, ExceptionCode&);
     void setUsesOverlayScrollbars(bool enabled, ExceptionCode&);
     void setTouchEventEmulationEnabled(bool enabled, ExceptionCode&);
     void setStandardFontFamily(const String& family, const String& script, ExceptionCode&);

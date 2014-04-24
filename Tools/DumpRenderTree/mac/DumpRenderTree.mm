@@ -881,7 +881,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setCSSGridLayoutEnabled:NO];
     [preferences setUsePreHTML5ParserQuirks:NO];
     [preferences setAsynchronousSpellCheckingEnabled:NO];
-    [preferences setMockScrollbarsEnabled:YES];
+    ASSERT([preferences mockScrollbarsEnabled]);
 
 #if ENABLE(WEB_AUDIO)
     [preferences setWebAudioEnabled:YES];
