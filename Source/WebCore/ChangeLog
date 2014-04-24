@@ -1,5 +1,11 @@
 2014-04-24  Zalan Bujtas  <zalan@apple.com>
 
+        Unreviewed build fix after r167755.
+
+        * rendering/RenderThemeMac.h:
+
+2014-04-24  Zalan Bujtas  <zalan@apple.com>
+
         Transition RenderTheme API from RenderObject* to const RenderObject&
         https://bugs.webkit.org/show_bug.cgi?id=132037
 

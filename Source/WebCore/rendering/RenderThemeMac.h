@@ -227,7 +227,7 @@ private:
 
 #if ENABLE(IMAGE_CONTROLS)
     virtual bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    virtual IntSize imageControlsButtonSize(const const RenderObject&) const override;
+    virtual IntSize imageControlsButtonSize(const RenderObject&) const override;
     NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
 #endif
 
