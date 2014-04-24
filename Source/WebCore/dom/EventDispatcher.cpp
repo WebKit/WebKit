@@ -177,7 +177,7 @@ public:
     static Node* findHostOfTreeScopeInTargetTreeScope(const TreeScope& startingTreeScope, const TreeScope& targetScope)
     {
         ASSERT(&targetScope != &startingTreeScope);
-        Node* previousHost = 0;
+        Node* previousHost = nullptr;
         for (const TreeScope* scope = &startingTreeScope; scope; scope = scope->parentTreeScope()) {
             if (scope == &targetScope) {
                 ASSERT(previousHost);
@@ -189,7 +189,7 @@ public:
             else
                 ASSERT_WITH_SECURITY_IMPLICATION(!scope->parentTreeScope());
         }
-        return 0;
+        return nullptr;
     }
 
 private:

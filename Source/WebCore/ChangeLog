@@ -1,3 +1,13 @@
+2014-04-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r157328): popover to check into flight ba.com dismisses instantly when focusing form
+        https://bugs.webkit.org/show_bug.cgi?id=131949
+
+        Address the review comment.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedNodeResolver::findHostOfTreeScopeInTargetTreeScope):
+
 2014-04-23  Andreas Kling  <akling@apple.com>
 
         CachedResourceLoader hoards URLs indefinitely for no good reason.
