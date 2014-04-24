@@ -111,7 +111,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , keyPathsOfAnimationsToRemove(other.keyPathsOfAnimationsToRemove)
     , position(other.position)
     , anchorPoint(other.anchorPoint)
-    , size(other.size)
+    , bounds(other.bounds)
     , contentsRect(other.contentsRect)
     , maskLayerID(other.maskLayerID)
     , timeOffset(other.timeOffset)
@@ -164,8 +164,8 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
     if (changedProperties & PositionChanged)
         encoder << position;
 
-    if (changedProperties & SizeChanged)
-        encoder << size;
+    if (changedProperties & BoundsChanged)
+        encoder << bounds;
 
     if (changedProperties & BackgroundColorChanged)
         encoder << backgroundColor;
@@ -280,8 +280,8 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
             return false;
     }
 
-    if (result.changedProperties & SizeChanged) {
-        if (!decoder.decode(result.size))
+    if (result.changedProperties & BoundsChanged) {
+        if (!decoder.decode(result.bounds))
             return false;
     }
 
@@ -999,8 +999,8 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::PositionChanged)
             dumpProperty(ts, "position", layerProperties.position);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SizeChanged)
-            dumpProperty(ts, "size", layerProperties.size);
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BoundsChanged)
+            dumpProperty(ts, "bounds", layerProperties.bounds);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::AnchorPointChanged)
             dumpProperty(ts, "anchorPoint", layerProperties.anchorPoint);

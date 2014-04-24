@@ -128,8 +128,8 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
         layer.anchorPointZ = properties.anchorPoint.z();
     }
 
-    if (properties.changedProperties & RemoteLayerTreeTransaction::SizeChanged)
-        layer.bounds = FloatRect(FloatPoint(), properties.size);
+    if (properties.changedProperties & RemoteLayerTreeTransaction::BoundsChanged)
+        layer.bounds = properties.bounds;
     
     if (properties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged)
         layer.backgroundColor = cgColorFromColor(properties.backgroundColor).get();

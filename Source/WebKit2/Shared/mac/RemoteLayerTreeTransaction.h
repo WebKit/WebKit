@@ -54,7 +54,7 @@ public:
         NameChanged = 1 << 1,
         ChildrenChanged = 1 << 2,
         PositionChanged = 1 << 3,
-        SizeChanged = 1 << 4,
+        BoundsChanged = 1 << 4,
         BackgroundColorChanged = 1 << 5,
         AnchorPointChanged = 1 << 6,
         BorderWidthChanged = 1 << 7,
@@ -127,7 +127,7 @@ public:
 
         WebCore::FloatPoint3D position;
         WebCore::FloatPoint3D anchorPoint;
-        WebCore::FloatSize size;
+        WebCore::FloatRect bounds;
         WebCore::FloatRect contentsRect;
         std::unique_ptr<RemoteLayerBackingStore> backingStore;
         std::unique_ptr<WebCore::FilterOperations> filters;

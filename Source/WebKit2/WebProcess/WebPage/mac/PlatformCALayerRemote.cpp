@@ -169,7 +169,7 @@ void PlatformCALayerRemote::updateBackingStore()
     if (!m_properties.backingStore)
         return;
 
-    m_properties.backingStore->ensureBackingStore(this, expandedIntSize(m_properties.size), m_properties.contentsScale, m_acceleratesDrawing, m_properties.opaque);
+    m_properties.backingStore->ensureBackingStore(this, expandedIntSize(m_properties.bounds.size()), m_properties.contentsScale, m_acceleratesDrawing, m_properties.opaque);
 }
 
 void PlatformCALayerRemote::setNeedsDisplay(const FloatRect* rect)
@@ -334,16 +334,16 @@ void PlatformCALayerRemote::setOpaque(bool value)
 
 FloatRect PlatformCALayerRemote::bounds() const
 {
-    return FloatRect(FloatPoint(), m_properties.size);
+    return m_properties.bounds;
 }
 
 void PlatformCALayerRemote::setBounds(const FloatRect& value)
 {
-    if (value.size() == m_properties.size)
+    if (value == m_properties.bounds)
         return;
 
-    m_properties.size = value.size();
-    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::SizeChanged);
+    m_properties.bounds = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BoundsChanged);
     
     if (requiresCustomAppearanceUpdateOnBoundsChange())
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
