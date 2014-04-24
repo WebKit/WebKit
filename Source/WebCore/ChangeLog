@@ -1,3 +1,25 @@
+2014-04-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] don't ask for AVAssetTrack properties before they are available
+        https://bugs.webkit.org/show_bug.cgi?id=131902
+        <rdar://problem/16505076>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, the behavior this changes can not be tested with a layout test.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): Initialize
+            m_cachedTotalBytes.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata): Don't report that
+            metadata has been loaded until the track properties we need have been loaded too.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::totalBytes): Cache totalBytes instead
+            of recalculating it every time.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksDidChange): Invalidate cached
+            total bytes.
+        (WebCore::assetTrackMetadataKeyNames): Array of AVAssetTrack properties we use.
+
 2014-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unify platformWidthForGlyph across OS X and iOS
