@@ -106,9 +106,4 @@ FloatRect screenAvailableRect(Widget* widget)
     return monitorInfo.rcWork;
 }
 
-void screenColorProfile(ColorProfile&)
-{
-    notImplemented();
-}
-
 } // namespace WebCore

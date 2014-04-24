@@ -55,7 +55,6 @@ namespace WebCore {
 
     FloatRect screenRect(Widget*);
     FloatRect screenAvailableRect(Widget*);
-    void screenColorProfile(ColorProfile&);
 
 #if PLATFORM(MAC)
     NSScreen *screenForWindow(NSWindow *);

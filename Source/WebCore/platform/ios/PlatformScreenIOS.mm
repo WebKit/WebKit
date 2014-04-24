@@ -88,9 +88,4 @@ FloatRect screenAvailableRect(Widget* widget)
     return enclosingIntRect(FloatRect(FloatPoint(), widget->root()->hostWindow()->availableScreenSize()));
 }
 
-void screenColorProfile(ColorProfile&)
-{
-    notImplemented();
-}
-
 } // namespace WebCore

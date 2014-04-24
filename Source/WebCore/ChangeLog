@@ -1,3 +1,26 @@
+2014-04-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Remove screenColorProfile()
+        https://bugs.webkit.org/show_bug.cgi?id=132035
+
+        Reviewed by Darin Adler.
+
+        Only chromium used screenColorProfile() since r120789.
+
+        * platform/PlatformScreen.h:
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenColorProfile): Deleted.
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenColorProfile): Deleted.
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::qcmsOutputDeviceProfile):
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenColorProfile): Deleted.
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenColorProfile): Deleted.
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::screenColorProfile): Deleted.
+
 2014-04-24  Zalan Bujtas  <zalan@apple.com>
 
         One more unreviewed build fix after r167755.

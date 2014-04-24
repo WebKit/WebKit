@@ -322,12 +322,6 @@ namespace WebCore {
                     outputDeviceProfile = qcms_profile_from_memory(systemProfile, length);
                     CFRelease(iccProfile);
                 }
-#else
-                // FIXME: add support for multiple monitors.
-                ColorProfile profile;
-                screenColorProfile(profile);
-                if (!profile.isEmpty())
-                    outputDeviceProfile = qcms_profile_from_memory(profile.data(), profile.size());
 #endif
                 if (outputDeviceProfile && qcms_profile_is_bogus(outputDeviceProfile)) {
                     qcms_profile_release(outputDeviceProfile);
