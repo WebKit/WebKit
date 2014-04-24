@@ -212,14 +212,6 @@ bool RemoteLayerBackingStore::display()
 
         GraphicsContext& context = m_frontSurface->ensureGraphicsContext();
 
-        if (!m_isOpaque)
-            context.clearRect(expandedScaledLayerBounds);
-
-#ifndef NDEBUG
-        if (m_isOpaque)
-            context.fillRect(expandedScaledLayerBounds, Color(255, 0, 0), ColorSpaceDeviceRGB);
-#endif
-
         context.scale(FloatSize(1, -1));
         context.translate(0, -expandedScaledSize.height());
         drawInContext(context, backImage.get());
@@ -250,6 +242,14 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
 {
     IntRect layerBounds(IntPoint(), m_size);
     IntRect scaledLayerBounds(IntPoint(), expandedIntSize(m_size * m_scale));
+
+    if (!m_isOpaque)
+        context.clearRect(scaledLayerBounds);
+
+#ifndef NDEBUG
+    if (m_isOpaque)
+        context.fillRect(scaledLayerBounds, Color(255, 0, 0), ColorSpaceDeviceRGB);
+#endif
 
     CGContextRef cgContext = context.platformContext();
 
