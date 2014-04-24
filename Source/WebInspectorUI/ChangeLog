@@ -1,3 +1,26 @@
+2014-04-24  Jonathan Wells  <jonowells@apple.com>
+
+        Web Inspector: CSS autofill suggests properties instead of values when values are needed
+        https://bugs.webkit.org/show_bug.cgi?id=132090
+
+        Reviewed by Joseph Pecoraro.
+
+        Updates are required to the CodeMirror helpers to be compatible with
+        CodeMirror 4. Some of those changes have been made to fix an issue
+        with CSS autofill, CSS code coloring, and also
+        https://bugs.webkit.org/show_bug.cgi?id=131859. The main issue is that
+        CodeMirror 4's CSS mode (css.js) stores its parsing modes in a different
+        data structure. All references to state.stack are obscelete. Many
+        are fixed here and more will be in an upcoming patch.
+
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js: Removed exception for checking state.stack properties.
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController.prototype._generateCSSCompletions): Corrected "block" state detection.
+        * UserInterface/External/CodeMirror/less.js: Removed.
+        * UserInterface/Views/CodeMirrorAdditions.js: Sets default state of "block" correctly.
+        * UserInterface/Views/CodeMirrorFormatters.js: Removed exception for checking state.stack properties.
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css: Fix styles to match CSS mode changes.
+
 2014-04-24  Antoine Quint  <graouts@webkit.org>
 
         Web Inspector: gradient editor does not appear for linear-gradient with no specified angle
@@ -306,7 +329,7 @@
         * Localizations/en.lproj/localizedStrings.js:
         * UserInterface/Models/DOMNode.js:
         * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
-        * UserInterface/Views/Main.css: 
+        * UserInterface/Views/Main.css:
 
 2014-03-28  Joseph Pecoraro  <pecoraro@apple.com>
 
@@ -858,7 +881,7 @@
 
         * UserInterface/Views/DataGrid.js:
         (WebInspector.DataGrid.prototype.removeChild):
-        Add missing semicolon.        
+        Add missing semicolon.
 
 2014-03-12  Brian Burg  <bburg@apple.com>
 
@@ -2049,7 +2072,7 @@
         of linear gradients, we parse all values, save for lengths, and in the case of radial gradients, we preserve the
         sizing information as a string and parse only the gradient stops as the sizing information is only useful to show
         in an editor if attached to an element with metrics.
-        
+
         Since instances of Gradient are used as the .value property of CodeMirrorGradientEditingController, we implement
         the required .copy() and .toString() methods. The .toString() implementations are aware of default values for angles
         and color stop offsets and only print those as necessary and use shorthands when possible.
@@ -2195,7 +2218,7 @@
         * UserInterface/CodeMirrorEditingController.js: Copied from Source/WebInspectorUI/UserInterface/CodeMirrorColorEditingController.js.
         New class meant to be subclassed by any future editing controller, and already subclassed by
         CodeMirrorColorEditingController. This class exposes several hooks for subclasses to customize its behavior:
-        
+
         .initialValue: a value we can revert to if the editing is canceled
         .cssClassName: a CSS class name that can be added to the editing controller's container
         .popoverPreferredEdges: a list of preferredEdges as passed to Popover.prototype.present() with a sensible default
@@ -2204,11 +2227,11 @@
         .popoverDidPresent: called as the popover just was presented, typically overridden when content needs to tuned only after
         being added to the DOM and setting of the necessary machinery to update the serialized value in the editor based on interaction
         within the popover without changing the serialized value upon showing the popover the very first time.
-        
+
         Additionally, the .value property must be an object supporting .toString() and .copy() method.
 
         Finally, the .editingControllerDidStartEditing() and .editingControllerDidFinishEditing() delegate methods are fired
-        as editing begins and finishes. 
+        as editing begins and finishes.
 
         (WebInspector.CodeMirrorEditingController):
         (WebInspector.CodeMirrorEditingController.prototype.get marker):
@@ -2253,7 +2276,7 @@
         * UserInterface/HoverMenu.js:
         We remove the assumption that a HoverMenu is only used to draw a single rounded rect based on a simple
         Rect and instead support presentation based on an array of Rects where we either:
-        
+
         - draw a single rounded rectangle if there is only a single Rect provided
         - draw two disconnected open-ended rects if we're provided with two non-overlapping Rects
         - draw a polygon surrounding all provided Rects in all other cases
@@ -2550,7 +2573,7 @@
 
         Reviewed by Timothy Hatcher.
 
-        Add a RuntimeManager event that the scope chain details sidebar can 
+        Add a RuntimeManager event that the scope chain details sidebar can
         listen to to trigger refresh.
 
         Testing on this is blocked by http://webkit.org/b/128724
@@ -4189,7 +4212,7 @@
 
         * UserInterface/DebuggerSidebarPanel.js:
         (WebInspector.DebuggerSidebarPanel.prototype.restoreStateFromCookie):
-        Drive-by fix to pass along relaxedMatchDelay to the superclass. 
+        Drive-by fix to pass along relaxedMatchDelay to the superclass.
 
         * UserInterface/Main.js:
         (WebInspector.loaded):
@@ -5387,7 +5410,7 @@
         Stop using __markedColor to identify a color marker and instead use the type on the matching
         WebInspector.TextMarker. Additionally, create a WebInspector.TextMarker with type
         WebInspector.TextMarker.Type.Color in createColorMarkers().
-        
+
         * UserInterface/CodeMirrorColorEditingController.js:
         (WebInspector.CodeMirrorColorEditingController):
         Use a WebInspector.TextRange to track the edited range and obtain it directly from the
@@ -5746,7 +5769,7 @@
         to retrieve an object with the following structure:
         {
              "regionFlow": <Reference to the ContentFlow object referenced by the -webkit-flow-from property of the node>,
-             "contentFlow": <Reference to the ContentFlow object referenced by the -webkit-flow-into property of 
+             "contentFlow": <Reference to the ContentFlow object referenced by the -webkit-flow-into property of
                              the node or a parent of the node>,
              "regions": [ list of DOMNodes representing the regions containers of the node. The node is split across all these regions. ]
         }
@@ -6172,7 +6195,7 @@
 
         Automatically dispatch a contextmenu event in case WebInspector.ContextMenu.prototype.show()
         is called outside of a contextmenu event handler and would therefore not show the expected
-        context menu (except in the Remote Web Inspector where this already works). 
+        context menu (except in the Remote Web Inspector where this already works).
 
         * UserInterface/ContextMenu.js:
         (WebInspector.ContextMenu.prototype.show):
@@ -6425,7 +6448,7 @@
         the arrow within the center of the attachment edge, we get in situations where we may
         shrink the popover instead of shifting it to fit within the container frame. We now first
         shift the preferred frame before getting its intersection with the container frame to
-        avoid such situations. 
+        avoid such situations.
 
         * UserInterface/Popover.js:
         (WebInspector.Popover.prototype._bestMetricsForEdge):
@@ -6594,7 +6617,7 @@
 
 2013-11-06  Timothy Hatcher  <timothy@apple.com>
 
-        Fix the display of query parameters when the value is missing. 
+        Fix the display of query parameters when the value is missing.
 
         https://bugs.webkit.org/show_bug.cgi?id=123920
 
@@ -6821,7 +6844,7 @@
 
         Reviewed by Timothy Hatcher.
 
-        Moved some global functions out of Main.js, so that they can be used in the 
+        Moved some global functions out of Main.js, so that they can be used in the
         layout tests without including Main.js.
 
         * UserInterface/Main.html: Referenced the new JS files.
@@ -7223,7 +7246,7 @@
         CSSStyleDeclarationTextEditor when the Cmd key is pressed and in the SourceCodeTextEditor
         when either the Cmd key is pressed (NonSymbolTokens mode) or when the debugger is paused
         (JavaScriptExpression mode).
-        
+
         The tokenTrackingController is now smarter about how it tracks mouse events when it's enabled,
         tracking "mouseenter" and "mouseleave" events to enable tracking allowing immediate detection of
         tokens being hovered or no longer being hovered even with quick mouse movements. Additioanlly,

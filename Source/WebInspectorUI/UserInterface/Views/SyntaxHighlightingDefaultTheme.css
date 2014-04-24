@@ -45,9 +45,10 @@
 .cm-s-default .cm-tag.cm-bracket,
 .cm-s-default .cm-atom,
 .cm-s-default .cm-keyword,
-.cm-s-default .cm-m-css.cm-tag,
+.cm-s-default .cm-m-css.cm-atom,
 .cm-s-default .cm-m-css.cm-meta,
 .cm-s-default .cm-m-css.cm-variable-3,
+.cm-s-default .cm-m-css.cm-property,
 .cm-s-default .cm-m-javascript.cm-builtin,
 .syntax-highlighted .css-keyword,
 .syntax-highlighted .css-tag,
@@ -59,7 +60,6 @@
 }
 
 .cm-s-default .cm-number,
-.cm-s-default .cm-m-css.cm-atom,
 .syntax-highlighted .css-number,
 .syntax-highlighted .javascript-number {
     color: rgb(28, 0, 207);
@@ -68,12 +68,12 @@
 .cm-s-default .cm-def,
 .cm-s-default .cm-bracket,
 .cm-s-default .cm-operator,
-.cm-s-default .cm-qualifier,
 .cm-s-default .cm-variable,
 .cm-s-default .cm-variable-2,
+.cm-s-default .cm-m-css.cm-tag,
 .cm-s-default .cm-m-css.cm-string-2,
 .cm-s-default .cm-m-css.cm-builtin,
-.cm-s-default .cm-m-css.cm-property,
+.cm-s-default .cm-m-css.cm-qualifier,
 .syntax-highlighted .css-property,
 .syntax-highlighted .css-selector,
 .syntax-highlighted .javascript-ident {

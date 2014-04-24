@@ -233,9 +233,10 @@
         // So call it to get the original start state that we will modify.
         var state = this._startState(base);
 
-        // Start the stack off like it has already parsed a rule. This causes everything
+        // Start off the state stack like it has already parsed a rule. This causes everything
         // after to be parsed as properties in a rule.
-        state.stack = ["rule"];
+        state.state = "block";
+        state.context.type = "block";
 
         return state;
     }

@@ -518,15 +518,15 @@ WebInspector.CodeMirrorCompletionController.prototype = {
 
     _generateCSSCompletions: function(mainToken, base, suffix)
     {
-        // We only support completion inside CSS rules.
-        if (!mainToken.state || !mainToken.state.stack || !mainToken.state.stack.contains("rule"))
+        // We only support completion inside CSS block context.
+        if (!mainToken.state || !mainToken.state.state || !mainToken.state.state === "block")
             return [];
 
         var token = mainToken;
         var lineNumber = this._lineNumber;
 
         // Scan backwards looking for the current property.
-        while (token.state.stack.lastValue === "propertyValue") {
+        while (token.state.state === "prop") {
             // Found the beginning of the line. Go to the previous line.
             if (!token.start) {
                 --lineNumber;
