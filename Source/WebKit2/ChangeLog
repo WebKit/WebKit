@@ -1,3 +1,29 @@
+2014-04-24  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Provide SPI allowing clients to hand events directly to swipe code, bypassing scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=132092
+        <rdar://problem/15948244>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _tryToSwipeWithEvent:ignoringPinnedState:]):
+        Added. Hand the event directly to ViewGestureController, optionally
+        ignoring whether or not the WKView is scrollable (always pretending that it is not).
+
+        * UIProcess/mac/ViewGestureController.h:
+        (WebKit::ViewGestureController::shouldIgnorePinnedState):
+        (WebKit::ViewGestureController::setShouldIgnorePinnedState):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::scrollEventCanBecomeSwipe):
+        (WebKit::ViewGestureController::handleScrollWheelEvent):
+        (WebKit::ViewGestureController::wheelEventWasNotHandledByWebCore):
+        (WebKit::scrollEventCanBecomeSwipe):
+        If we're ignoring the view's pinned state, pretend that we're always pinned,
+        and don't worry about sending events to WebCore.
+
 2014-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] wmode='transparent' for flash plugin doesn't work

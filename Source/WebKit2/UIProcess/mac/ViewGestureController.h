@@ -97,6 +97,9 @@ public:
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
 
     void endActiveGesture();
+
+    bool shouldIgnorePinnedState() { return m_shouldIgnorePinnedState; }
+    void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
 #else
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
     bool canSwipeInDirection(SwipeDirection);
@@ -126,6 +129,7 @@ private:
     void handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, SwipeDirection);
     void endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled);
     bool deltaIsSufficientToBeginSwipe(NSEvent *);
+    bool scrollEventCanBecomeSwipe(NSEvent *, SwipeDirection&);
 #endif
     
     WebPageProxy& m_webPageProxy;
@@ -162,6 +166,8 @@ private:
     PendingSwipeReason m_pendingSwipeReason;
     SwipeDirection m_pendingSwipeDirection;
     WebCore::FloatSize m_cumulativeDeltaForPendingSwipe;
+
+    bool m_shouldIgnorePinnedState;
 #else    
     UIView *m_liveSwipeView;
     RetainPtr<UIView> m_snapshotView;

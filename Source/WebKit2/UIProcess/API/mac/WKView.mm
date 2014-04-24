@@ -3893,6 +3893,23 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_gestureController->setCustomSwipeViews(views);
 }
 
+- (BOOL)_tryToSwipeWithEvent:(NSEvent *)event ignoringPinnedState:(BOOL)ignoringPinnedState
+{
+    if (!_data->_allowsBackForwardNavigationGestures)
+        return NO;
+
+    [self _ensureGestureController];
+
+    BOOL wasIgnoringPinnedState = _data->_gestureController->shouldIgnorePinnedState();
+    _data->_gestureController->setShouldIgnorePinnedState(ignoringPinnedState);
+
+    BOOL handledEvent = _data->_gestureController->handleScrollWheelEvent(event);
+
+    _data->_gestureController->setShouldIgnorePinnedState(wasIgnoringPinnedState);
+
+    return handledEvent;
+}
+
 @end
 
 @implementation WKResponderChainSink
