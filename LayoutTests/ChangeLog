@@ -1,3 +1,16 @@
+2014-04-23  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        [MediaStream] Implement MediaStream active attribute
+        https://bugs.webkit.org/show_bug.cgi?id=131973
+
+        Reviewed by Eric Carlson.
+
+        MediaStream .onended attribute will be replaced with .active attribute.
+        Patch updates the test case to verify the .active attribute.
+
+        * fast/mediastream/MediaStream-add-remove-tracks-expected.txt:
+        * fast/mediastream/MediaStream-add-remove-tracks.html:
+
 2014-04-23  Alexey Proskuryakov  <ap@apple.com>
 
         Eliminate internals.setMockScrollbarsEnabled()

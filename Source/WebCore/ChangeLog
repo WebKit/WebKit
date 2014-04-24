@@ -1,3 +1,33 @@
+2014-04-23  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        [MediaStream] Implement MediaStream active attribute
+        https://bugs.webkit.org/show_bug.cgi?id=131973
+
+        Reviewed by Eric Carlson.
+
+        MediaStream .active attribute are introduced which will replace
+        .ended attribute. This patch implements the newly introduced attributes.
+
+        MediaStream-add-remove-tracks.html is updated to handle this scenario.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::active): Added.
+        (WebCore::MediaStream::setActive): Added.
+        (WebCore::MediaStream::addTrack): Propagates 'onactive' event when required.
+        (WebCore::MediaStream::removeTrack): Propagates 'oninactive' event when required.
+        (WebCore::MediaStream::trackDidEnd): Propagates 'oninactive' event when required.
+        (WebCore::MediaStream::streamDidEnd):
+        (WebCore::MediaStream::setStreamIsActive): Added.
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+        * dom/EventNames.h:
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::MediaStreamPrivate): Initialize .active attribute
+        (WebCore::MediaStreamPrivate::setEnded):
+        (WebCore::MediaStreamPrivate::setActive): Added.
+        * platform/mediastream/MediaStreamPrivate.h:
+        (WebCore::MediaStreamPrivate::active): Added.
+
 2014-04-23  Darin Adler  <darin@apple.com>
 
         [Cocoa] fix CF leaks found by code inspection

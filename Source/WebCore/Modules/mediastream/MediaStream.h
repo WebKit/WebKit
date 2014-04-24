@@ -75,6 +75,12 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addtrack);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(removetrack);
 
+    bool active() const;
+    void setActive(bool);
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(active);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(inactive);
+
     MediaStreamPrivate* privateStream() const { return m_private.get(); }
 
     // EventTarget
@@ -104,6 +110,7 @@ private:
     // MediaStreamPrivateClient
     virtual void trackDidEnd() override final;
     virtual void streamDidEnd() override final;
+    virtual void setStreamIsActive(bool) override final;
     virtual void addRemoteSource(MediaStreamSource*) override final;
     virtual void removeRemoteSource(MediaStreamSource*) override final;
     virtual void addRemoteTrack(MediaStreamTrackPrivate*) override final;

@@ -163,6 +163,8 @@ namespace WebCore {
     macro(volumechange) \
     macro(waiting) \
     \
+    macro(active) \
+    macro(inactive) \
     macro(addtrack) \
     macro(cuechange) \
     macro(enter) \

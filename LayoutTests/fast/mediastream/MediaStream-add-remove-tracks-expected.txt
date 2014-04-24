@@ -3,8 +3,10 @@ Test adding and removing tracks.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS stream1.active is true
 PASS stream1.getAudioTracks().length is 1
 PASS stream1.getVideoTracks().length is 1
+PASS stream2.active is true
 PASS stream2.getAudioTracks().length is 1
 PASS stream2.getVideoTracks().length is 1
 
@@ -50,6 +52,7 @@ PASS stream2.ended is true
 *** it should be impossible to add a track after the stream has ended
 PASS stream2.addTrack(audioTrack) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS stream2.removeTrack(audioTrack) threw exception Error: InvalidStateError: DOM Exception 11.
+Stream2 is inactive.
 PASS successfullyParsed is true
 
 TEST COMPLETE

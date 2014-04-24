@@ -126,6 +126,18 @@ void MediaStream::setEnded()
     m_private->setEnded();
 }
 
+bool MediaStream::active() const
+{
+    return m_private->active();
+}
+
+void MediaStream::setActive(bool isActive)
+{
+    if (active() == isActive)
+        return;
+    m_private->setActive(isActive);
+}
+
 PassRefPtr<MediaStream> MediaStream::clone()
 {
     Vector<RefPtr<MediaStreamTrack>> trackSet;
@@ -172,6 +184,7 @@ bool MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack)
     tracks->append(track);
     track->addObserver(this);
     m_private->addTrack(&track->privateTrack());
+    setActive(true);
     return true;
 }
 
@@ -214,8 +227,10 @@ bool MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack)
         m_private->removeSource(track->source());
 
     track->removeObserver(this);
-    if (!m_audioTracks.size() && !m_videoTracks.size())
-        setEnded();
+    if (!m_audioTracks.size() && !m_videoTracks.size()) {
+        setEnded(); // FIXME : to be removed in bug https://bugs.webkit.org/show_bug.cgi?id=132104
+        setActive(false);
+    }
 
     return true;
 }
@@ -264,7 +279,10 @@ void MediaStream::trackDidEnd()
             return;
     }
 
-    setEnded();
+    setEnded(); // FIXME : to be removed in bug https://bugs.webkit.org/show_bug.cgi?id=132104
+
+    if (!m_audioTracks.size() && !m_videoTracks.size())
+        setActive(false);
 }
 
 void MediaStream::streamDidEnd()
@@ -273,6 +291,14 @@ void MediaStream::streamDidEnd()
         return;
 
     scheduleDispatchEvent(Event::create(eventNames().endedEvent, false, false));
+}
+
+void MediaStream::setStreamIsActive(bool streamActive)
+{
+    if (streamActive)
+        scheduleDispatchEvent(Event::create(eventNames().activeEvent, false, false));
+    else
+        scheduleDispatchEvent(Event::create(eventNames().inactiveEvent, false, false));
 }
 
 void MediaStream::contextDestroyed()

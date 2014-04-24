@@ -50,17 +50,32 @@
                 testFailed("\"addtrack\" or \"removetrack\" events should not fire as a result of local addTrack() or removeTrack() operations.");
             }
 
+            function shouldFireActive() {
+                debug("Stream2 is active.");
+                finishJSTest();
+            }
+
+            function shouldFireInActive() {
+                debug("Stream2 is inactive.");
+                finishJSTest();
+            }
+
             function gotStream2(s) {
                 stream2 = s;
 
+                shouldBe('stream1.active', 'true');
                 shouldBe('stream1.getAudioTracks().length', '1');
                 shouldBe('stream1.getVideoTracks().length', '1');
 
+                shouldBe('stream2.active', 'true');
                 shouldBe('stream2.getAudioTracks().length', '1');
                 shouldBe('stream2.getVideoTracks().length', '1');
 
                 stream1.onaddtrack = shouldNotFire;
                 stream1.onremovetrack = shouldNotFire;
+
+                stream2.onactive = shouldFireActive;
+                stream2.oninactive = shouldFireInActive;
 
                 audioTrack = stream1.getAudioTracks()[0];
                 videoTrack = stream1.getVideoTracks()[0];
@@ -119,8 +134,6 @@
                 debug("<br>*** it should be impossible to add a track after the stream has ended");
                 shouldThrow('stream2.addTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
                 shouldThrow('stream2.removeTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
-
-                setTimeout(finishJSTest, 0);
             }
 
             function gotStream1(s) {

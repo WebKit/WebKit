@@ -48,6 +48,11 @@
     attribute EventListener onaddtrack;
     attribute EventListener onremovetrack;
 
+    readonly attribute boolean active;
+
+    attribute EventListener onactive;
+    attribute EventListener oninactive;
+
     // EventTarget interface
     void addEventListener(DOMString type,
                           EventListener listener,
