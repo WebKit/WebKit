@@ -1,3 +1,27 @@
+2014-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unify platformWidthForGlyph across OS X and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=132036
+
+        Reviewed by Darin Adler.
+
+        This patch creates on shared SimpleFontData::platformWidthForGlyph() function for both OS X and iOS.
+
+        No new tests are necessary because there should be no behavior changes.
+
+        * platform/graphics/SimpleFontData.h: Signatures for two helper functions
+        * platform/graphics/ios/SimpleFontDataIOS.mm: Replace iOS implementation of platformWidthForGlyph() with
+        implementations of only the two helper functions
+        (WebCore::SimpleFontData::getRenderingStyle): Compute style argument to CGFontGetGlyphAdvancesForStyle()
+        (WebCore::SimpleFontData::advanceForColorBitmapFont): iOS doesn't have color bitmap fonts
+        (WebCore::SimpleFontData::platformWidthForGlyph): Deleted.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::getRenderingStyle): Compute style argument to CGFontGetGlyphAdvancesForStyle()
+        (WebCore::SimpleFontData::advanceForColorBitmapFont): Use [NSFont advancementForGlyph] to compute the advance
+        (WebCore::hasCustomTracking): Removed #if
+        (WebCore::isEmoji): Only relevant on iOS
+        (WebCore::SimpleFontData::platformWidthForGlyph): Shared implementation. Calls helper functions.
+
 2014-04-24  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Clipping on text areas when shifted by one device pixel.

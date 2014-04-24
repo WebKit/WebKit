@@ -54,6 +54,22 @@
 #include <cairo.h>
 #endif
 
+#if USE(CG)
+#if defined(__has_include) && __has_include(<CoreGraphics/CGFontRendering.h>)
+#include <CoreGraphics/CGFontRendering.h>
+#else
+enum {
+    kCGFontRenderingStyleAntialiasing = (1 << 0),
+    kCGFontRenderingStyleSmoothing = (1 << 1),
+    kCGFontRenderingStyleSubpixelPositioning = (1 << 2),
+    kCGFontRenderingStyleSubpixelQuantization = (1 << 3),
+    kCGFontRenderingStylePlatformNative = (1 << 9),
+    kCGFontRenderingStyleMask = 0x20F
+};
+#endif
+typedef uint32_t CGFontRenderingStyle;
+#endif
+
 namespace WebCore {
 
 class FontDescription;
@@ -243,6 +259,12 @@ private:
     void platformCommonDestroy();
     FloatRect boundsForGDIGlyph(Glyph glyph) const;
     float widthForGDIGlyph(Glyph glyph) const;
+#endif
+
+#if USE(CG)
+    bool canUseFastGlyphAdvanceGetter(Glyph glyph, CGSize& advance, bool& populatedAdvance) const;
+    CGFontRenderingStyle renderingStyle() const;
+    bool advanceForColorBitmapFont(Glyph, CGSize& result) const; // Returns true if the font is a color bitmap font
 #endif
 
     FontMetrics m_fontMetrics;

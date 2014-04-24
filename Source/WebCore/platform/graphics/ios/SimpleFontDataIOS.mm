@@ -32,9 +32,7 @@
 #import "FontCache.h"
 #import "FontDescription.h"
 #import "FontServicesIOS.h"
-#import <CoreGraphics/CGFontGlyphSupport.h>
 #import <CoreGraphics/CGFontInfo.h>
-#import <CoreGraphics/CGFontRendering.h>
 #import <CoreText/CoreText.h>
 #import <float.h>
 #import <unicode/uchar.h>
@@ -187,26 +185,14 @@ void SimpleFontData::determinePitch()
     }
 }
 
-float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
+CGFontRenderingStyle SimpleFontData::renderingStyle() const
 {
-    CGSize advance = CGSizeZero;
-    if (platformData().orientation() == Horizontal || m_isBrokenIdeographFallback) {
-        if (platformData().m_isEmoji)
-            CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), kCTFontHorizontalOrientation, &glyph, &advance, 1);
-        else {
-            float pointSize = platformData().m_size;
-            CGAffineTransform transform = CGAffineTransformMakeScale(pointSize, pointSize);
-            static const CGFontRenderingStyle renderingStyle = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
-            if (!CGFontGetGlyphAdvancesForStyle(platformData().cgFont(), &transform, renderingStyle, &glyph, 1, &advance)) {
-                RetainPtr<CFStringRef> fullName = adoptCF(CGFontCopyFullName(platformData().cgFont()));
-                LOG_ERROR("Unable to cache glyph widths for %@ %f", fullName.get(), pointSize);
-                advance.width = 0;
-            }
-        }
-    } else
-        CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), kCTFontVerticalOrientation, &glyph, &advance, 1);
+    return kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
+}
 
-    return advance.width + m_syntheticBoldOffset;
+bool SimpleFontData::advanceForColorBitmapFont(Glyph, CGSize&) const
+{
+    return false;
 }
 
 } // namespace WebCore
