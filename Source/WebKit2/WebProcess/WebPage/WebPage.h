@@ -698,7 +698,6 @@ public:
     void setViewportConfigurationMinimumLayoutSize(const WebCore::FloatSize&);
     void setMinimumLayoutSizeForMinimalUI(const WebCore::FloatSize&);
     void dynamicViewportSizeUpdate(const WebCore::FloatSize& minimumLayoutSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, double scale);
-    void viewportConfigurationChanged();
     void updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
     void willStartUserTriggeredZooming();
@@ -802,6 +801,9 @@ private:
     void didReceiveSyncWebPageMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
 #if PLATFORM(IOS)
+    void resetViewportDefaultConfiguration(WebFrame* mainFrame);
+    void viewportConfigurationChanged();
+
     static void convertSelectionRectsToRootView(WebCore::FrameView*, Vector<WebCore::SelectionRect>&);
     PassRefPtr<WebCore::Range> rangeForWebSelectionAtPosition(const WebCore::IntPoint&, const WebCore::VisiblePosition&, SelectionFlags&);
     PassRefPtr<WebCore::Range> rangeForBlockAtPoint(const WebCore::IntPoint&);

@@ -1,5 +1,26 @@
 2014-04-23  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] Image and text documents sometime gets the webpage viewport configuration
+        https://bugs.webkit.org/show_bug.cgi?id=132099
+
+        Reviewed by Tim Horton.
+
+        When didReceiveMobileDocType(), if the doctype was not XHTML mobile, we were setting
+        the viewport configuration to webpageParameters(). This is obviously not correct for
+        Image and Text documents.
+
+        This patch moves the code deciding the default configuration out of WebPage::didCommitLoad()
+        and use it from WebPage::didCommitLoad() and WebPage::didReceiveMobileDocType().
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didReceiveMobileDocType):
+        (WebKit::WebPage::resetViewportDefaultConfiguration):
+
+2014-04-23  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Fix a few mistakes affecting the initial layout and the initial unobscured rect
         https://bugs.webkit.org/show_bug.cgi?id=132093
         <rdar://problem/16703237>

@@ -134,7 +134,7 @@ void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
     if (isMobileDoctype)
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());
     else
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
+        resetViewportDefaultConfiguration(m_mainFrame.get());
 }
 
 double WebPage::minimumPageScaleFactor() const
@@ -1917,6 +1917,22 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
 
     if (scale != targetScale || roundedIntPoint(targetUnobscuredRect.location()) != roundedUnobscuredContentRect.location())
         send(Messages::WebPageProxy::DynamicViewportUpdateChangedTarget(scale, roundedUnobscuredContentRect.location()));
+}
+
+void WebPage::resetViewportDefaultConfiguration(WebFrame* frame)
+{
+    if (!frame) {
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
+        return;
+    }
+
+    Document* document = frame->coreFrame()->document();
+    if (document->isImageDocument())
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
+    else if (document->isTextDocument())
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
+    else
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
 }
 
 void WebPage::viewportConfigurationChanged()

@@ -4254,14 +4254,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
     WebProcess::shared().eventDispatcher().clearQueuedTouchEventsForPage(*this);
 
-    Document* document = frame->coreFrame()->document();
-    if (document->isImageDocument())
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
-    else if (document->isTextDocument())
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
-    else
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
-
+    resetViewportDefaultConfiguration(frame);
     m_viewportConfiguration.setViewportArguments(ViewportArguments());
     m_viewportConfiguration.setContentsSize(IntSize());
     viewportConfigurationChanged();
