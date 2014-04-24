@@ -75,7 +75,6 @@ protected:
 
 private:
     HTMLCanvasElement* m_canvas;
-    HashSet<String> m_cleanURLs;
 };
 
 } // namespace WebCore

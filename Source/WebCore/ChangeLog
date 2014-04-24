@@ -1,3 +1,19 @@
+2014-04-23  Andreas Kling  <akling@apple.com>
+
+        Canvas cache of clean URLs can grow without bounds.
+        <https://webkit.org/b/132091>
+        <rdar://problem/16695665>
+
+        Remove a silly "optimization" that kept a cache of clean URLs
+        that can be drawn into a canvas without tainting it, all to avoid
+        the "expensive" checks to determine whether it would taint.
+
+        Reviewed by Benjamin Poulain.
+
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        * html/canvas/CanvasRenderingContext.h:
+
 2014-04-23  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Fix a few mistakes affecting the initial layout and the initial unobscured rect

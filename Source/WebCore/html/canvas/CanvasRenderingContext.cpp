@@ -92,7 +92,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLVideoElement* video)
 
 bool CanvasRenderingContext::wouldTaintOrigin(const URL& url)
 {
-    if (!canvas()->originClean() || m_cleanURLs.contains(url.string()))
+    if (!canvas()->originClean())
         return false;
 
     if (canvas()->securityOrigin()->taintsCanvas(url))
@@ -101,7 +101,6 @@ bool CanvasRenderingContext::wouldTaintOrigin(const URL& url)
     if (url.protocolIsData())
         return false;
 
-    m_cleanURLs.add(url.string());
     return false;
 }
 
