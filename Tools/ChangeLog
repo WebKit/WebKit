@@ -1,3 +1,10 @@
+2014-04-24  Eduardo Lima Mitev  <elima@igalia.com>
+
+        Unreviewed GTK gardening
+
+        * Scripts/run-gtk-tests: Skips one flaky accesibility test in WK2API suite
+        (TestRunner):
+
 2014-04-24  László Langó  <llango.u-szeged@partner.samsung.com>
 
         prepare-ChangeLog reports as deleted methods that has not been removed.

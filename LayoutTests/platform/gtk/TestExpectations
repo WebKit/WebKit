@@ -397,7 +397,9 @@ webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Crash Timeout 
 webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 
 # HighDPI support is not enabled
+webkit.org/b/131347 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
@@ -777,16 +779,17 @@ webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure Timeout Pa
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # These tests are slow due to the implementation of EventSender.leapForward.
-Bug(GTK) editing/selection/click-left-of-rtl-wrapping-text.html [ Pass Slow ]
-Bug(GTK) editing/selection/doubleclick-beside-cr-span.html [ Pass Slow ]
-Bug(GTK) editing/selection/hit-test-on-text-with-line-height.html [ Pass Slow ]
-Bug(GTK) editing/selection/rtl-move-selection-right-left.html [ Pass Slow ]
 Bug(GTK) fast/events/popup-blocking-timers5.html [ Pass Slow ]
 Bug(GTK) fast/events/popup-blocking-timers6.html [ Pass Slow ]
 Bug(GTK) fast/forms/search-disabled-readonly.html [ Pass Slow ]
+# Apart from Slow, these also fail consistently, probably because they take too slow
+webkit.org/b/132135 editing/selection/caret-at-bidi-boundary.html [ Failure Pass Slow ]
+webkit.org/b/132135 editing/selection/click-left-of-rtl-wrapping-text.html [ Failure Pass Slow ]
+webkit.org/b/132135 editing/selection/doubleclick-beside-cr-span.html [ Failure Pass Slow ]
+webkit.org/b/132135 editing/selection/hit-test-on-text-with-line-height.html [ Failure Pass Slow ]
+webkit.org/b/132135 editing/selection/rtl-move-selection-right-left.html [ Failure Pass Slow ]
 
 # These tests expose possible peformance issues.
-Bug(GTK) editing/selection/caret-at-bidi-boundary.html [ Pass Slow ]
 Bug(GTK) fast/canvas/canvas-largedraws.html [ Pass Slow ]
 Bug(GTK) fast/events/dispatch-message-string-data.html [ Pass Failure Slow ]
 Bug(GTK) css3/flexbox/position-absolute-child.html [ Pass Slow ]
@@ -1716,8 +1719,8 @@ webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
 webkit.org/b/128499 svg/clip-path/clip-path-content-use-005.svg [ ImageOnlyFailure ]
 webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure ]
 webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailure ]
-webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
-webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
+webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure Pass ]
 
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
