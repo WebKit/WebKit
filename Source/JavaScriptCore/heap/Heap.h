@@ -45,8 +45,6 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 
-#define COLLECT_ON_EVERY_ALLOCATION 0
-
 namespace JSC {
 
 class CopiedSpace;

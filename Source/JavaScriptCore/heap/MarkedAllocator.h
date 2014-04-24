@@ -50,6 +50,7 @@ private:
     void* tryAllocateHelper(size_t);
     void* tryPopFreeList(size_t);
     MarkedBlock* allocateBlock(size_t);
+    ALWAYS_INLINE void doTestCollectionsIfNeeded();
     
     MarkedBlock::FreeList m_freeList;
     MarkedBlock* m_currentBlock;

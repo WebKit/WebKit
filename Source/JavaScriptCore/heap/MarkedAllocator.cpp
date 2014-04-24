@@ -143,16 +143,27 @@ inline void* MarkedAllocator::tryAllocate(size_t bytes)
     ASSERT(result || !m_currentBlock);
     return result;
 }
-    
+
+ALWAYS_INLINE void MarkedAllocator::doTestCollectionsIfNeeded()
+{
+    if (!Options::slowPathAllocsBetweenGCs())
+        return;
+
+    static unsigned allocationCount = 0;
+    if (!allocationCount) {
+        if (!m_heap->isDeferred())
+            m_heap->collectAllGarbage();
+        ASSERT(m_heap->m_operationInProgress == NoOperation);
+    }
+    if (++allocationCount >= Options::slowPathAllocsBetweenGCs())
+        allocationCount = 0;
+}
+
 void* MarkedAllocator::allocateSlowCase(size_t bytes)
 {
     ASSERT(m_heap->vm()->currentThreadIsHoldingAPILock());
-#if COLLECT_ON_EVERY_ALLOCATION
-    if (!m_heap->isDeferred())
-        m_heap->collectAllGarbage();
-    ASSERT(m_heap->m_operationInProgress == NoOperation);
-#endif
-    
+    doTestCollectionsIfNeeded();
+
     ASSERT(!m_markedSpace->isIterating());
     ASSERT(!m_freeList.head);
     m_heap->didAllocate(m_freeList.bytes);

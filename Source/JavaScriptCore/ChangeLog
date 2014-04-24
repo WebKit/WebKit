@@ -1,3 +1,25 @@
+2014-04-24  Mark Lam  <mark.lam@apple.com>
+
+        Make slowPathAllocsBetweenGCs a runtime option.
+        <https://webkit.org/b/132137>
+
+        Reviewed by Mark Hahnenberg.
+
+        This will make it easier to more casually run tests with this configuration
+        as well as to reproduce issues (instead of requiring a code mod and rebuild).
+        We will now take --slowPathAllocsBetweenGCs=N where N is the number of
+        slow path allocations before we trigger a collection.
+
+        The option defaults to 0, which is reserved to mean that we will not trigger
+        any collections there.
+
+        * heap/Heap.h:
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::doTestCollectionsIfNeeded):
+        (JSC::MarkedAllocator::allocateSlowCase):
+        * heap/MarkedAllocator.h:
+        * runtime/Options.h:
+
 2014-04-23  Mark Lam  <mark.lam@apple.com>
 
         The GC should only resume compiler threads that it suspended in the same GC pass.

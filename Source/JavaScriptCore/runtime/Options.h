@@ -250,6 +250,7 @@ typedef OptionRange optionRange;
     v(double, minHeapUtilization, 0.8) \
     v(double, minCopiedBlockUtilization, 0.9) \
     v(double, minMarkedBlockUtilization, 0.9) \
+    v(unsigned, slowPathAllocsBetweenGCs, 0) \
     \
     v(double, percentCPUPerMBForFullTimer, 0.0003125) \
     v(double, percentCPUPerMBForEdenTimer, 0.0025) \
