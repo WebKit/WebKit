@@ -1,3 +1,21 @@
+2014-04-23  James Craig  <jcraig@apple.com>
+
+        prepare-Changelog and svn-create-patch should optionally run check-webkit-style.
+        https://bugs.webkit.org/show_bug.cgi?id=131115
+
+        Reviewed by Daniel Bates.
+
+        Added [--[no-]style] param to run check-webkit-style as part of prepare-Changelog and svn-create-patch.
+
+        * Scripts/commit-log-editor: Added --no-style.
+        * Scripts/prepare-ChangeLog: Primary patch.
+        (main): Primary patch.
+        (createPatchCommand): Added --no-style.
+        * Scripts/svn-create-patch: Primary patch.
+        * Scripts/webkit-tools-completion.sh: Added --style and --no-style.
+        * Scripts/webkitpy/common/checkout/scm/svn.py: Added --no-style.
+        (SVN.create_patch): Added --no-style.
+
 2014-04-23  Anders Carlsson  <andersca@apple.com>
 
         Try to fix iOS build.

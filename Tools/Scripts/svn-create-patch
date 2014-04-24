@@ -77,15 +77,17 @@ sub testfilecmp($$);
 $ENV{'LC_ALL'} = 'C';
 
 my $showHelp;
+my $checkWebKitStyle = 1;
 my $ignoreChangelogs = 0;
 my $devNull = File::Spec->devnull();
 
 my $result = GetOptions(
     "help"       => \$showHelp,
-    "ignore-changelogs"    => \$ignoreChangelogs
+    "ignore-changelogs" => \$ignoreChangelogs,
+    "style!" => \$checkWebKitStyle,
 );
 if (!$result || $showHelp) {
-    print STDERR basename($0) . " [-h|--help] [--ignore-changelogs] [svndir1 [svndir2 ...]]\n";
+    print STDERR basename($0) . " [-h|--help] [--ignore-changelogs] [--[no-]style] [svndir1 [svndir2 ...]]\n";
     exit 1;
 }
 
@@ -104,6 +106,11 @@ my $prefix = chdirReturningRelativePath($svnRoot);
 # Generate the diffs, in an order chosen for ease of reviewing.
 for my $path (sort patchpathcmp values %diffFiles) {
     generateDiff($path, $prefix);
+}
+
+if ($checkWebKitStyle) {
+    print STDERR "  Running check-webkit-style.\n  ";
+    system "$FindBin::Bin/check-webkit-style";
 }
 
 exit 0;

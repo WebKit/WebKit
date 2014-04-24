@@ -128,6 +128,7 @@ sub main()
     my $gitCommit = 0;
     my $gitIndex = "";
     my $gitReviewer = "";
+    my $checkWebKitStyle = 1;
     my $openChangeLogs = 0;
     my $writeChangeLogs = 1;
     my $showHelp = 0;
@@ -144,6 +145,7 @@ sub main()
                    "git-index" => \$gitIndex,
                    "git-reviewer:s" => \$gitReviewer,
                    "help|h!" => \$showHelp,
+                   "style!" => \$checkWebKitStyle,
                    "open|o!" => \$openChangeLogs,
                    "write!" => \$writeChangeLogs,
                    "update!" => \$updateChangeLogs);
@@ -158,6 +160,7 @@ sub main()
         print STDERR "  --git-reviewer  When populating the ChangeLogs from a git commit claim that the spcified name reviewed the change.\n";
         print STDERR "                  This option is useful when the git commit lacks a Signed-Off-By: line\n";
         print STDERR "  -h|--help       Show this help message\n";
+        print STDERR "  --[no-]style    Run check-webkit-style script when done (default: style)\n";
         print STDERR "  -o|--open       Open ChangeLogs in an editor when done\n";
         print STDERR "  --[no-]update   Update ChangeLogs from svn before adding entry (default: update)\n";
         print STDERR "  --[no-]write    Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
@@ -224,6 +227,11 @@ sub main()
     if ($spewDiff && @$changedFiles) {
         printDiff($changedFiles, $gitCommit, $gitIndex, $mergeBase);
     }
+
+    if ($checkWebKitStyle) {
+        print STDERR "  Running check-webkit-style.\n  ";
+        system "$FindBin::Bin/check-webkit-style";
+    }  
 
     # Open ChangeLogs.
     if ($openChangeLogs && @$changeLogs) {
@@ -1657,7 +1665,7 @@ sub createPatchCommand($$$$)
 
     my $command;
     if (isSVN()) {
-        $command = "'$FindBin::Bin/svn-create-patch' $changedFilesString";
+        $command = "'$FindBin::Bin/svn-create-patch --no-style' $changedFilesString";
     } elsif (isGit()) {
         $command = GIT . " diff -M -C " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
         $command .= " -- $changedFilesString" unless $gitCommit;
