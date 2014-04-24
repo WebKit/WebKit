@@ -188,8 +188,9 @@ WebInspector.LinearGradient.linearGradientWithComponents = function(components)
             return null;
         }
         components.shift();
-    } else {
-        // We don't support any of the legacy linear gradient formats.
+    } else if (components[0].length !== 1 && !WebInspector.Color.fromString(components[0][0])) {
+        // If the first component is not a color, then we're dealing with a
+        // legacy linear gradient format that we don't support.
         return null;
     }
 
