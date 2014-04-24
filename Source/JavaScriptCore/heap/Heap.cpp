@@ -626,10 +626,8 @@ void Heap::visitCompilerWorklists()
 {
 #if ENABLE(DFG_JIT)
     GCPHASE(VisitDFGWorklists);
-    for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
-            worklist->visitChildren(m_slotVisitor, m_codeBlocks);
-    }
+    for (auto worklist : m_suspendedCompilerWorklists)
+        worklist->visitChildren(m_slotVisitor, m_codeBlocks);
 
     if (Options::logGC() == GCLogging::Verbose)
         dataLog("DFG Worklists:\n", m_slotVisitor);
@@ -881,11 +879,9 @@ void Heap::deleteAllCompiledCode()
     // means that we are running some hot JS code right now. Maybe causing
     // recompilations isn't a good idea.
 #if ENABLE(DFG_JIT)
-    for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i)) {
-            if (worklist->isActiveForVM(*vm()))
-                return;
-        }
+    for (auto worklist : m_suspendedCompilerWorklists) {
+        if (worklist->isActiveForVM(*vm()))
+            return;
     }
 #endif // ENABLE(DFG_JIT)
 
@@ -1022,9 +1018,12 @@ void Heap::suspendCompilerThreads()
 {
 #if ENABLE(DFG_JIT)
     GCPHASE(SuspendCompilerThreads);
+    ASSERT(m_suspendedCompilerWorklists.isEmpty());
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
+        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i)) {
+            m_suspendedCompilerWorklists.append(worklist);
             worklist->suspendAllThreads();
+        }
     }
 #endif
 }
@@ -1227,10 +1226,9 @@ void Heap::resumeCompilerThreads()
 {
 #if ENABLE(DFG_JIT)
     GCPHASE(ResumeCompilerThreads);
-    for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
-            worklist->resumeAllThreads();
-    }
+    for (auto worklist : m_suspendedCompilerWorklists)
+        worklist->resumeAllThreads();
+    m_suspendedCompilerWorklists.clear();
 #endif
 }
 

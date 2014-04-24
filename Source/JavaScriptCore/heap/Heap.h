@@ -71,6 +71,10 @@ class MarkedArgumentBuffer;
 class WeakGCHandlePool;
 class SlotVisitor;
 
+namespace DFG {
+class Worklist;
+}
+
 typedef std::pair<JSValue, WTF::String> ValueStringPair;
 typedef HashCountedSet<JSCell*> ProtectCountSet;
 typedef HashCountedSet<const char*> TypeCountSet;
@@ -373,6 +377,7 @@ private:
     Vector<MarkedBlock*> m_blockSnapshot;
     
     unsigned m_deferralDepth;
+    Vector<DFG::Worklist*> m_suspendedCompilerWorklists;
 };
 
 } // namespace JSC

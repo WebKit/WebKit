@@ -1,3 +1,33 @@
+2014-04-23  Mark Lam  <mark.lam@apple.com>
+
+        The GC should only resume compiler threads that it suspended in the same GC pass.
+        <https://webkit.org/b/132088>
+
+        Reviewed by Mark Hahnenberg.
+
+        Previously, this scenario can occur:
+        1. Thread 1 starts a GC and tries to suspend DFG worklist threads.  However,
+           no worklists were created yet at the that time.
+        2. Thread 2 starts to compile some functions and creates a DFG worklist, and
+           acquires the worklist thread's lock.
+        3. Thread 1's GC completes and tries to resume suspended DFG worklist thread.
+           This time, it sees the worklist created by Thread 2 and ends up unlocking
+           the worklist thread's lock that is supposedly held by Thread 2.
+        Thereafter, chaos ensues.
+
+        The fix is to cache the worklists that were actually suspended by each GC pass,
+        and only resume those when the GC is done.
+
+        This issue was discovered by enabling COLLECT_ON_EVERY_ALLOCATION and running
+        the fast/workers layout tests.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::visitCompilerWorklists):
+        (JSC::Heap::deleteAllCompiledCode):
+        (JSC::Heap::suspendCompilerThreads):
+        (JSC::Heap::resumeCompilerThreads):
+        * heap/Heap.h:
+
 2014-04-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Arguments::copyBackingStore needs to update m_registers in tandem with m_registerArray
