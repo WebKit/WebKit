@@ -1,3 +1,27 @@
+2014-04-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Fix a few mistakes affecting the initial layout and the initial unobscured rect
+        https://bugs.webkit.org/show_bug.cgi?id=132093
+
+        Reviewed by Tim Horton.
+
+        Change the minimum layout size to float point values to account for size defined on retina displays.
+        The minimum layout size supports half-pixels, the value is rounded later when computing the layout size
+        in document coordinates.
+
+        * WebCore.exp.in:
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::ViewportConfiguration):
+        Setting the initial content size is incorrect. The layout size computation already take into account
+        empty size for the first layout.
+
+        Setting the content size upfront make the first computation incorrect when the viewport arguments specify
+        the initial scale.
+
+        (WebCore::ViewportConfiguration::setMinimumLayoutSize):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::minimumLayoutSize):
+
 2014-04-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac, iOS] Stop buffering media when on an inactive tab. 

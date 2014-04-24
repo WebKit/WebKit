@@ -695,9 +695,9 @@ public:
     void updateVisibilityState(bool isInitialState = false);
 
 #if PLATFORM(IOS)
-    void setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize&);
-    void setMinimumLayoutSizeForMinimalUI(const WebCore::IntSize&);
-    void dynamicViewportSizeUpdate(const WebCore::IntSize& minimumLayoutSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, double scale);
+    void setViewportConfigurationMinimumLayoutSize(const WebCore::FloatSize&);
+    void setMinimumLayoutSizeForMinimalUI(const WebCore::FloatSize&);
+    void dynamicViewportSizeUpdate(const WebCore::FloatSize& minimumLayoutSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, double scale);
     void viewportConfigurationChanged();
     void updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
@@ -1165,7 +1165,7 @@ private:
     WebCore::FloatSize m_screenSize;
     WebCore::FloatSize m_availableScreenSize;
     WebCore::IntSize m_blockSelectionDesiredSize;
-    WebCore::IntSize m_minimumLayoutSizeForMinimalUI;
+    WebCore::FloatSize m_minimumLayoutSizeForMinimalUI;
     bool m_inDynamicSizeUpdate;
     HashMap<std::pair<WebCore::IntSize, double>, WebCore::IntPoint> m_dynamicSizeUpdateHistory;
 #endif

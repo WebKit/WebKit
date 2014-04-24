@@ -720,7 +720,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProxy& page, const CGSize& size)
 {
-    page.setViewportConfigurationMinimumLayoutSize(WebCore::IntSize(CGCeiling(size.width), CGCeiling(size.height)));
+    page.setViewportConfigurationMinimumLayoutSize(WebCore::FloatSize(size));
 }
 
 - (void)_frameOrBoundsChanged
@@ -1279,7 +1279,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 {
     _minimumLayoutSizeOverrideForMinimalUI = size;
     if (!_isAnimatingResize)
-        _page->setMinimumLayoutSizeForMinimalUI(WebCore::IntSize(CGCeiling(size.width), CGCeiling(size.height)));
+        _page->setMinimumLayoutSizeForMinimalUI(WebCore::FloatSize(size));
 }
 
 - (UIEdgeInsets)_obscuredInsets
@@ -1393,7 +1393,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(newBounds, _obscuredInsets);
     CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
 
-    _page->dynamicViewportSizeUpdate(WebCore::IntSize(CGCeiling(newMinimumLayoutSize.width), CGCeiling(newMinimumLayoutSize.height)), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, targetScale);
+    _page->dynamicViewportSizeUpdate(WebCore::FloatSize(newMinimumLayoutSize.width, newMinimumLayoutSize.height), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, targetScale);
 }
 
 - (void)_endAnimatedResize

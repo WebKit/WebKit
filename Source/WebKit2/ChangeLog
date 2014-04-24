@@ -1,3 +1,46 @@
+2014-04-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Fix a few mistakes affecting the initial layout and the initial unobscured rect
+        https://bugs.webkit.org/show_bug.cgi?id=132093
+        <rdar://problem/16703237>
+
+        Reviewed by Tim Horton.
+
+        The user of WKWebView can setup a size on device pixels, which can add half a point to the minimum
+        layout size. By rounding this up before applying the page scale, we ended up with rounding errors
+        on the layout size and the transitory unobscured content rect.
+
+        This patch fixes changes the minimal layout size to float point values to reduce the rounding problems.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (setViewportConfigurationMinimumLayoutSize):
+        (-[WKWebView _setMinimumLayoutSizeOverrideForMinimalUI:]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::setViewportConfigurationMinimumLayoutSize):
+        (WebKit::WebPageProxy::setMinimumLayoutSizeForMinimalUI):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        Defaulting the content size to the minimum layout size only works if the initial-scale is 1.
+        ViewportConfiguration knows exactly what to do before the first layout.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setViewportConfigurationMinimumLayoutSize):
+        (WebKit::WebPage::setMinimumLayoutSizeForMinimalUI):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        A few fixes here:
+        -setZoomedOutPageScaleFactor() was incorrectly using the initial scale. 99% of the time, initial scale
+         and minimum scale are equal, but the page can specify something different with the viewport meta tag.
+        -Use floating point for manipulating the minimum layout sizes, then round the value.
+        -minimumLayoutSizeInDocumentCoordinate was scaled the wrong way around.
+
+        (WebKit::WebPage::viewportConfigurationChanged):
+
 2014-04-23  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Support encoding/decoding NSUInteger arguments in WKRemoteObjectCoder.

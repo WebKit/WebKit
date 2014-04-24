@@ -26,6 +26,7 @@
 #ifndef ViewportConfiguration_h
 #define ViewportConfiguration_h
 
+#include "FloatSize.h"
 #include "IntSize.h"
 #include "ViewportArguments.h"
 #include <wtf/Noncopyable.h>
@@ -70,8 +71,8 @@ public:
     const IntSize& contentsSize() const { return m_contentSize; }
     void setContentsSize(const IntSize&);
 
-    const IntSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
-    void setMinimumLayoutSize(const IntSize&);
+    const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
+    void setMinimumLayoutSize(const FloatSize&);
 
     const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
     void setViewportArguments(const ViewportArguments&);
@@ -95,7 +96,7 @@ private:
     Parameters m_configuration;
     Parameters m_defaultConfiguration;
     IntSize m_contentSize;
-    IntSize m_minimumLayoutSize;
+    FloatSize m_minimumLayoutSize;
     ViewportArguments m_viewportArguments;
 };
 

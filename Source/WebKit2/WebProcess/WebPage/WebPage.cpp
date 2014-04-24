@@ -4263,7 +4263,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
 
     m_viewportConfiguration.setViewportArguments(ViewportArguments());
-    m_viewportConfiguration.setContentsSize(m_viewportConfiguration.minimumLayoutSize());
+    m_viewportConfiguration.setContentsSize(IntSize());
     viewportConfigurationChanged();
 #endif
 

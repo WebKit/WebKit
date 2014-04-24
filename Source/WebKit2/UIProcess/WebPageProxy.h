@@ -576,10 +576,10 @@ public:
     uint64_t nextVisibleContentRectUpdateID() const { return m_lastVisibleContentRectUpdate.updateID() + 1; }
     uint64_t lastVisibleContentRectUpdateID() const { return m_lastVisibleContentRectUpdate.updateID(); }
 
-    void dynamicViewportSizeUpdate(const WebCore::IntSize& minimumLayoutSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, double targetScale);
+    void dynamicViewportSizeUpdate(const WebCore::FloatSize& minimumLayoutSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, double targetScale);
     
-    void setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize&);
-    void setMinimumLayoutSizeForMinimalUI(const WebCore::IntSize&);
+    void setViewportConfigurationMinimumLayoutSize(const WebCore::FloatSize&);
+    void setMinimumLayoutSizeForMinimalUI(const WebCore::FloatSize&);
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
 
     void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback>);

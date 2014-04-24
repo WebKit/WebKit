@@ -1759,19 +1759,19 @@ void WebPage::elementDidBlur(WebCore::Node* node)
     }
 }
 
-void WebPage::setViewportConfigurationMinimumLayoutSize(const IntSize& size)
+void WebPage::setViewportConfigurationMinimumLayoutSize(const FloatSize& size)
 {
     m_viewportConfiguration.setMinimumLayoutSize(size);
     viewportConfigurationChanged();
 }
 
-void WebPage::setMinimumLayoutSizeForMinimalUI(const IntSize& size)
+void WebPage::setMinimumLayoutSizeForMinimalUI(const FloatSize& size)
 {
     m_minimumLayoutSizeForMinimalUI = size;
     viewportConfigurationChanged();
 }
 
-void WebPage::dynamicViewportSizeUpdate(const IntSize& minimumLayoutSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, double targetScale)
+void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, double targetScale)
 {
     TemporaryChange<bool> dynamicSizeUpdateGuard(m_inDynamicSizeUpdate, true);
     // FIXME: this does not handle the cases where the content would change the content size or scroll position from JavaScript.
@@ -1930,19 +1930,19 @@ void WebPage::viewportConfigurationChanged()
     else
         scale = initialScale;
 
-    m_page->setZoomedOutPageScaleFactor(initialScale);
-    
+    m_page->setZoomedOutPageScaleFactor(m_viewportConfiguration.minimumScale());
+
     FrameView& frameView = *mainFrameView();
-    IntSize viewportSize = !m_minimumLayoutSizeForMinimalUI.isEmpty() ? m_minimumLayoutSizeForMinimalUI : m_viewportConfiguration.minimumLayoutSize();
+    FloatSize viewportSize = !m_minimumLayoutSizeForMinimalUI.isEmpty() ? m_minimumLayoutSizeForMinimalUI : m_viewportConfiguration.minimumLayoutSize();
     viewportSize.scale(1 / initialScale);
-    frameView.setViewportSize(viewportSize);
+    frameView.setViewportSize(roundedIntSize(viewportSize));
     
     IntPoint scrollPosition = frameView.scrollPosition();
     if (!m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
-        IntSize minimumLayoutSizeInDocumentCoordinate = m_viewportConfiguration.minimumLayoutSize();
-        minimumLayoutSizeInDocumentCoordinate.scale(scale);
-
-        IntRect unobscuredContentRect(scrollPosition, minimumLayoutSizeInDocumentCoordinate);
+        FloatSize minimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.minimumLayoutSize();
+        minimumLayoutSizeInScrollViewCoordinates.scale(1 / scale);
+        IntSize minimumLayoutSizeInDocumentCoordinates = roundedIntSize(minimumLayoutSizeInScrollViewCoordinates);
+        IntRect unobscuredContentRect(scrollPosition, minimumLayoutSizeInDocumentCoordinates);
         frameView.setUnobscuredContentRect(unobscuredContentRect);
         frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());
 
