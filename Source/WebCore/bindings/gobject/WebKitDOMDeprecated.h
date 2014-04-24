@@ -765,6 +765,26 @@ webkit_dom_shadow_root_set_inner_html(WebKitDOMShadowRoot* self, const gchar* ht
 WEBKIT_DEPRECATED void
 webkit_dom_shadow_root_set_reset_style_inheritance(WebKitDOMShadowRoot* self, gboolean value);
 
+/**
+ * webkit_dom_html_input_element_get_capture:
+ * @self: A #WebKitDOMHTMLInputElement
+ *
+ * Returns: A #gchar
+ *
+ * Deprecated: 2.6: Use webkit_dom_html_input_element_get_capture_enabled() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_html_input_element_get_capture_enabled) gchar*
+webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement* self);
+
+/**
+ * webkit_dom_html_input_element_set_capture:
+ * @self: A #WebKitDOMHTMLInputElement
+ * @value: A #gchar
+ *
+ * Deprecated: 2.6: Use webkit_dom_html_input_element_set_capture_enabled() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_html_input_element_set_capture_enabled) void
+webkit_dom_html_input_element_set_capture(WebKitDOMHTMLInputElement* self, const gchar* value);
 
 G_END_DECLS
 

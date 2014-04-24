@@ -1,3 +1,25 @@
+2014-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] HTML Media capture attribute is a boolean since r163958
+        https://bugs.webkit.org/show_bug.cgi?id=132061
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add new methods webkit_dom_html_input_element_get_capture_enabled
+        and webkit_dom_html_input_element_set_capture_enabled using a
+        boolean and deprecate the old methods.
+
+        * bindings/gobject/WebKitDOMDeprecated.cpp:
+        (webkit_dom_html_input_element_get_capture):
+        (webkit_dom_html_input_element_set_capture):
+        * bindings/gobject/WebKitDOMDeprecated.h:
+        * bindings/gobject/WebKitDOMDeprecated.symbols:
+        * bindings/gobject/webkitdom.symbols:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetEffectiveFunctionName): Helper function to rename API methods
+        for special cases.
+        (GenerateFunction): Use GetEffectiveFunctionName().
+
 2014-04-23  Praveen R Jadhav  <praveen.j@samsung.com>
 
         [MediaStream] Implement MediaStream active attribute

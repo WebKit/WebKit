@@ -930,6 +930,21 @@ sub GetFunctionDeprecationInformation {
     return ($version, $replacement);
 }
 
+sub GetEffectiveFunctionName {
+    my $functionName = shift;
+
+    # Rename webkit_dom_html_input_element_[set|get]_capture functions since they were changed to set/receive a
+    # boolean instead of a string in r163958. The old methods are now manually added as deprecated.
+    if ($functionName eq "webkit_dom_html_input_element_set_capture") {
+        return "webkit_dom_html_input_element_set_capture_enabled";
+    }
+    if ($functionName eq "webkit_dom_html_input_element_get_capture") {
+        return "webkit_dom_html_input_element_get_capture_enabled";
+    }
+
+    return $functionName;
+}
+
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix, $parentNode) = @_;
 
@@ -941,7 +956,7 @@ sub GenerateFunction {
 
     my ($deprecationVersion, $deprecationReplacement) = GetFunctionDeprecationInformation($function, $parentNode);
     my $functionSigType = $prefix eq "set_" ? "void" : $function->signature->type;
-    my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($function->signature->name);
+    my $functionName = GetEffectiveFunctionName("webkit_dom_" . $decamelize . "_" . $prefix . decamelize($function->signature->name));
     my $returnType = GetGlibTypeName($functionSigType);
     my $returnValueIsGDOMType = IsGDOMClassType($functionSigType);
     my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};

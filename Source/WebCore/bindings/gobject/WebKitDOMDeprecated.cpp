@@ -657,3 +657,16 @@ void webkit_dom_shadow_root_set_reset_style_inheritance(WebKitDOMShadowRoot*, gb
 {
     g_warning("%s: Access to the DOM Shadow Root has been removed from WebKit, this function does nothing.", __func__);
 }
+
+// WebKitDOMHTMLInputElement
+
+gchar* webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement*)
+{
+    g_warning("The WebKitDOMHTMLInputElement:capture property has converted to a boolean according to the specification. This method will always return NULL. Use webkit_dom_html_input_element_get_capture_enabled() instead.");
+    return nullptr;
+}
+
+void webkit_dom_html_input_element_set_capture(WebKitDOMHTMLInputElement*, const gchar*)
+{
+    g_warning("The WebKitDOMHTMLInputElement:capture property has converted to a boolean according to the specification. This method does nothing. Use webkit_dom_html_input_element_set_capture_enabled() instead.");
+}
