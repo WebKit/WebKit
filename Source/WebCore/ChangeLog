@@ -1,5 +1,13 @@
 2014-04-24  Zalan Bujtas  <zalan@apple.com>
 
+        One more unreviewed build fix after r167755.
+
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::RenderImageControlsButton::updateLogicalWidth):
+        (WebCore::RenderImageControlsButton::computeLogicalHeight):
+
+2014-04-24  Zalan Bujtas  <zalan@apple.com>
+
         Unreviewed build fix after r167755.
 
         * rendering/RenderThemeMac.h:

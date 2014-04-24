@@ -64,7 +64,7 @@ void RenderImageControlsButton::updateLogicalWidth()
 {
     RenderBox::updateLogicalWidth();
 
-    IntSize frameSize = theme().imageControlsButtonSize(this);
+    IntSize frameSize = theme().imageControlsButtonSize(*this);
     setLogicalWidth(isHorizontalWritingMode() ? frameSize.width() : frameSize.height());
 }
 
@@ -72,7 +72,7 @@ void RenderImageControlsButton::computeLogicalHeight(LayoutUnit logicalHeight, L
 {
     RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
 
-    IntSize frameSize = theme().imageControlsButtonSize(this);
+    IntSize frameSize = theme().imageControlsButtonSize(*this);
     computedValues.m_extent = isHorizontalWritingMode() ? frameSize.height() : frameSize.width();
 }
 
