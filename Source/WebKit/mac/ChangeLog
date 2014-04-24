@@ -1,3 +1,21 @@
+2014-04-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Text caret disappears in Mail after returning from another application
+        https://bugs.webkit.org/show_bug.cgi?id=132111
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by our SPI _windowChangedKeyState not getting called upon deminiaturization.
+
+        Fixed the bug by using the standard NSWindowDidBecomeKeyNotification and NSWindowDidResignKeyNotification
+        notifications as done in WebKit2 since they DO get called upon deminiaturization.
+
+        * WebView/WebView.mm:
+        (-[WebView addWindowObserversForWindow:]):
+        (-[WebView removeWindowObservers]):
+        (-[WebView _windowKeyStateChanged:]):
+        (-[WebView _windowChangedKeyState]): Deleted.
+
 2014-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         FontCache::fontCache() never returns nullptr so it can be made to return a reference instead
