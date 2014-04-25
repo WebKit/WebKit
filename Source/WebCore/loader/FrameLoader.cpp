@@ -816,7 +816,7 @@ void FrameLoader::checkCompleted()
         return;
 
     // Important not to protect earlier in this function, because earlier parts
-    // of this function can be called the frame's destructor, and it's not legal
+    // of this function can be called in the frame's destructor, and it's not legal
     // to ref an object while it's being destroyed.
     Ref<Frame> protect(m_frame);
 
