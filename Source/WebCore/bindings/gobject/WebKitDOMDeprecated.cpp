@@ -574,6 +574,14 @@ void webkit_dom_processing_instruction_set_data(WebKitDOMProcessingInstruction*,
     g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
 }
 
+// WebKitDOMFile
+
+gchar* webkit_dom_file_get_webkit_relative_path(WebKitDOMFile*)
+{
+    g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
+    return g_strdup("");
+}
+
 // WebKitDOMHTMLIFrameElement
 
 gboolean webkit_dom_html_iframe_element_get_seamless(WebKitDOMHTMLIFrameElement*)

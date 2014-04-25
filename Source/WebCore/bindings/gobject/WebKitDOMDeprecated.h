@@ -613,6 +613,19 @@ WEBKIT_DEPRECATED void
 webkit_dom_processing_instruction_set_data(WebKitDOMProcessingInstruction* self, const gchar* value, GError** error);
 
 /**
+ * webkit_dom_file_get_webkit_relative_path:
+ * @self: A #WebKitDOMFile
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: a #gchar
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED gchar*
+webkit_dom_file_get_webkit_relative_path(WebKitDOMFile* self);
+
+/**
  * webkit_dom_html_iframe_element_get_seamless:
  * @self: A #WebKitDOMHTMLIFrameElement
  *

@@ -1,3 +1,17 @@
+2014-04-25  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] File webkitRelativePath attribute was removed in r163483
+        https://bugs.webkit.org/show_bug.cgi?id=132193
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the removed getter as deprecated API to keep backwards compatibility.
+
+        * bindings/gobject/WebKitDOMDeprecated.cpp:
+        (webkit_dom_file_get_webkit_relative_path):
+        * bindings/gobject/WebKitDOMDeprecated.h:
+        * bindings/gobject/WebKitDOMDeprecated.symbols:
+
 2014-04-25  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Overflow selection doesn't work properly
