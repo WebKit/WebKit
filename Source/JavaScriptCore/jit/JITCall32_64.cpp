@@ -304,11 +304,12 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         return;
     }
 
+    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
+
     DataLabelPtr addressOfLinkedFunctionCheck;
     Jump slowCase = branchPtrWithPatch(NotEqual, regT0, addressOfLinkedFunctionCheck, TrustedImmPtr(0));
 
     addSlowCase(slowCase);
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
 
     ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
     CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
