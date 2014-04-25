@@ -1,3 +1,17 @@
+2014-04-25  Javier Fernandez  <jfernandez@igalia.com>
+
+        REGRESSION(r167799): Breaks debug build
+        https://bugs.webkit.org/show_bug.cgi?id=132194
+
+        Reviewed by Andrei Bucur.
+
+        Fix the debug bots after r167799
+
+        No new tests, no new functionality.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateShorthand):
+
 2014-04-25  Miyoung Shin  <myid.shin@samsung.com>
 
         Web process is crashed during dispatching touchEvent created by JS.

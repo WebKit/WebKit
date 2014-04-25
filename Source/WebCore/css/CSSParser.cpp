@@ -4861,10 +4861,10 @@ bool CSSParser::parseGridTemplateRowsAndAreas(PassRefPtr<CSSValue> templateColum
 
 bool CSSParser::parseGridTemplateShorthand(bool important)
 {
-    ASSERT(RuntimeEnabledFeatures::cssGridLayoutEnabled());
+    ASSERT(cssGridLayoutEnabled());
 
     ShorthandScope scope(this, CSSPropertyWebkitGridTemplate);
-    ASSERT(gridTemplateShorthand().length() == 3);
+    ASSERT(shorthandForProperty(CSSPropertyWebkitGridTemplate).length() == 3);
 
     // At least "none" must be defined.
     if (!m_valueList->current())
