@@ -128,7 +128,7 @@ sub main()
     my $gitCommit = 0;
     my $gitIndex = "";
     my $gitReviewer = "";
-    my $checkWebKitStyle = 1;
+    my $checkWebKitStyle;
     my $openChangeLogs = 0;
     my $writeChangeLogs = 1;
     my $showHelp = 0;
@@ -166,6 +166,11 @@ sub main()
         print STDERR "  --[no-]write    Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
         print STDERR "  --email=        Specify the email address to be used in the patch\n";
         return 1;
+    }
+
+    if ($checkWebKitStyle) {
+        print STDERR "  Running check-webkit-style.\n  ";
+        system "$FindBin::Bin/check-webkit-style";
     }
 
     die "--git-commit and --git-index are incompatible." if ($gitIndex && $gitCommit);
@@ -227,11 +232,6 @@ sub main()
     if ($spewDiff && @$changedFiles) {
         printDiff($changedFiles, $gitCommit, $gitIndex, $mergeBase);
     }
-
-    if ($checkWebKitStyle) {
-        print STDERR "  Running check-webkit-style.\n  ";
-        system "$FindBin::Bin/check-webkit-style";
-    }  
 
     # Open ChangeLogs.
     if ($openChangeLogs && @$changeLogs) {

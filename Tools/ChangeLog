@@ -1,3 +1,16 @@
+2014-04-25  James Craig  <jcraig@apple.com>
+
+        Set prepare-Changelog flag so that it no longer runs check-webkit-style by default
+        https://bugs.webkit.org/show_bug.cgi?id=132209
+
+        Reviewed by Daniel Bates.
+
+        Set default to --no-style to avoid additional spew from false positives in check-webkit-style.
+        Run check-webkit-style before generating changelogs to avoid additional spurious errors.
+
+        * Scripts/prepare-ChangeLog:
+        (main): 
+
 2014-04-25  Michael Saboff  <msaboff@apple.com>
 
         Crash in platform/mac/accessibility/table-visible-rows.html
