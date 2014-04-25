@@ -147,6 +147,7 @@ private:
             : profileGroup(0)
         {
         }
+        ~JSGlobalObjectRareData() { }
 
         WeakMapSet weakMaps;
         unsigned profileGroup;
