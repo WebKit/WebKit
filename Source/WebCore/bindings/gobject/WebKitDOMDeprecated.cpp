@@ -574,6 +574,19 @@ void webkit_dom_processing_instruction_set_data(WebKitDOMProcessingInstruction*,
     g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
 }
 
+// WebKitDOMHTMLIFrameElement
+
+gboolean webkit_dom_html_iframe_element_get_seamless(WebKitDOMHTMLIFrameElement*)
+{
+    g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
+    return FALSE;
+}
+
+void webkit_dom_html_iframe_element_set_seamless(WebKitDOMHTMLIFrameElement*, gboolean)
+{
+    g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
+}
+
 // WebKitDOMShadowRoot
 
 typedef struct _WebKitDOMShadowRoot {

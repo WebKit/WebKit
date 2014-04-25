@@ -49,6 +49,8 @@ gchar* webkit_dom_processing_instruction_get_data(WebKitDOMProcessingInstruction
 void webkit_dom_processing_instruction_set_data(WebKitDOMProcessingInstruction*, const gchar*, GError**)
 WebKitDOMElement* webkit_dom_html_document_get_active_element(WebKitDOMHTMLDocument*)
 gboolean webkit_dom_html_document_has_focus(WebKitDOMHTMLDocument*)
+void webkit_dom_html_iframe_element_set_seamless(WebKitDOMHTMLIFrameElement*, gboolean)
+gboolean webkit_dom_html_iframe_element_get_seamless(WebKitDOMHTMLIFrameElement*)
 gboolean webkit_dom_html_input_element_get_webkitdirectory(WebKitDOMHTMLInputElement*)
 void webkit_dom_html_input_element_set_webkitdirectory(WebKitDOMHTMLInputElement*, gboolean)
 WebKitDOMElement* webkit_dom_shadow_root_element_from_point(WebKitDOMShadowRoot*, glong, glong)

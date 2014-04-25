@@ -612,6 +612,31 @@ webkit_dom_processing_instruction_get_data(WebKitDOMProcessingInstruction* self)
 WEBKIT_DEPRECATED void
 webkit_dom_processing_instruction_set_data(WebKitDOMProcessingInstruction* self, const gchar* value, GError** error);
 
+/**
+ * webkit_dom_html_iframe_element_get_seamless:
+ * @self: A #WebKitDOMHTMLIFrameElement
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: a #gboolean
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED gboolean
+webkit_dom_html_iframe_element_get_seamless(WebKitDOMHTMLIFrameElement* self);
+
+/**
+ * webkit_dom_html_iframe_element_set_seamless:
+ * @self: A #WebKitDOMHTMLIFrameElement
+ * @value: A #gboolean
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED void
+webkit_dom_html_iframe_element_set_seamless(WebKitDOMHTMLIFrameElement* self, gboolean value);
+
 WEBKIT_DEPRECATED GType
 webkit_dom_shadow_root_get_type(void);
 
