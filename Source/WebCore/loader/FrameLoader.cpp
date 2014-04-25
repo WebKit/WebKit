@@ -793,7 +793,6 @@ bool FrameLoader::allAncestorsAreComplete() const
 
 void FrameLoader::checkCompleted()
 {
-    Ref<Frame> protect(m_frame);
     m_shouldCallCheckCompleted = false;
 
     // Have we completed before?
@@ -815,6 +814,11 @@ void FrameLoader::checkCompleted()
     // Any frame that hasn't completed yet?
     if (!allChildrenAreComplete())
         return;
+
+    // Important not to protect earlier in this function, because earlier parts
+    // of this function can be called the frame's destructor, and it's not legal
+    // to ref an object while it's being destroyed.
+    Ref<Frame> protect(m_frame);
 
     // OK, completed.
     m_isComplete = true;

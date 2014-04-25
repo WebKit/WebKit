@@ -1,3 +1,19 @@
+2014-04-24  Darin Adler  <darin@apple.com>
+
+        FrameLoader::checkCompleted can hit the "ref'ing while destroyed" assertion
+        https://bugs.webkit.org/show_bug.cgi?id=132163
+        rdar://problem/16720640
+
+        Reviewed by Brady Eidson.
+
+        Couldn't find a way to test this yet. Would be nice to have a test.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted): Move protector until after we check
+        if the frame is already complete. That can happen in practice when this is
+        called from within the frame's destructor. All the code that runs before the
+        protector simply checks state and does not require protection.
+
 2014-04-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Mark Supplement instead of RefCountedSupplement in NavigatorContentUtils 
