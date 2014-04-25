@@ -1,5 +1,13 @@
 2014-04-25  Andreas Kling  <akling@apple.com>
 
+        Un-fast-allocate JSGlobalObjectRareData because Windows doesn't build and I'm not in the mood.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObjectRareData::JSGlobalObjectRareData):
+        (JSC::JSGlobalObject::JSGlobalObjectRareData::~JSGlobalObjectRareData): Deleted.
+
+2014-04-25  Andreas Kling  <akling@apple.com>
+
         Windows build fix attempt.
 
         * runtime/JSGlobalObject.h:
