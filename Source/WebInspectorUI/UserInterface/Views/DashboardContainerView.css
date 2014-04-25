@@ -91,7 +91,7 @@ body.window-inactive .toolbar .dashboard-container {
 }
 
 .toolbar .dashboard.visible {
-    z-index: 100;
+    z-index: 1; /* Establish a stacking context. */
 }
 
 .toolbar .dashboard.slide-out-up {
