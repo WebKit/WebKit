@@ -1,5 +1,26 @@
 2014-04-24  Jonathan Wells  <jonowells@apple.com>
 
+        Web Inspector: Should update to CodeMirror 4.1
+        https://bugs.webkit.org/show_bug.cgi?id=132140
+
+        Reviewed by Timothy Hatcher.
+
+        Updated to CodeMirror 4.1, which contains several bugfixes.
+        Release notes: http://codemirror.net/doc/releases.html#v4
+
+        * Tools/PrettyPrinting/codemirror.js:
+        * Tools/PrettyPrinting/css.js:
+        * Tools/PrettyPrinting/javascript.js:
+        * UserInterface/External/CodeMirror/codemirror.js:
+        * UserInterface/External/CodeMirror/css.js:
+        * UserInterface/External/CodeMirror/javascript.js:
+        * UserInterface/External/CodeMirror/livescript.js:
+        * UserInterface/External/CodeMirror/runmode.js:
+        * UserInterface/External/CodeMirror/xml.js:
+        Updated to CodeMirror 4.1.
+
+2014-04-24  Jonathan Wells  <jonowells@apple.com>
+
         Web Inspector: CSS autofill suggests properties instead of values when values are needed
         https://bugs.webkit.org/show_bug.cgi?id=132090
 
@@ -10,7 +31,7 @@
         with CSS autofill, CSS code coloring, and also
         https://bugs.webkit.org/show_bug.cgi?id=131859. The main issue is that
         CodeMirror 4's CSS mode (css.js) stores its parsing modes in a different
-        data structure. All references to state.stack are obscelete. Many
+        data structure. All references to state.stack are obsolete. Many
         are fixed here and more will be in an upcoming patch.
 
         * Tools/PrettyPrinting/CodeMirrorFormatters.js: Removed exception for checking state.stack properties.
