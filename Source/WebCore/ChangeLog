@@ -1,3 +1,36 @@
+2014-04-24  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Add support for offsetLeft and offsetTop.
+        https://bugs.webkit.org/show_bug.cgi?id=132080
+
+        Reviewed by Andrei Bucur.
+
+        Added fast/multicol/client-spanners-complex.html and offset-top-left.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent):
+        Patch the offsetLeft/Top loop to handle calling into RenderMultiColumnFlowThread
+        in order to adjust the coordinates for the new multicolumn layout.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::mapFromFlowToRegion):
+        Modified to use a helper that can be shared by offsetLeft/Top code. This code
+        ran for client rects, and I'm moving/refactoring it for more sharing.
+
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToRegion):
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationFromFlowToRegion):
+        * rendering/RenderMultiColumnFlowThread.h:
+        New functions that beef up what was in mapFromFlowToRegion and fix some bugs
+        with the translation code.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::columnTranslationForOffset):
+        Patched to factor in the flow thread portion rect of the specific multicolumn set.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderMultiColumnFlowThread):
+        Added for toRenderMultiColumnFlowThread capability.
+
 2014-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         ScrollingCoordinator is unaware of topContentInset

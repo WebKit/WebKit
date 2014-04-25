@@ -1,3 +1,17 @@
+2014-04-24  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Add support for offsetLeft and offsetTop.
+        https://bugs.webkit.org/show_bug.cgi?id=132080
+
+        Reviewed by Andrei Bucur.
+
+        * fast/multicol/client-rects-spanners-complex.html: Added.
+        * fast/multicol/client-rects-spanners.html:
+        * fast/multicol/offset-top-left-expected.txt: Added.
+        * fast/multicol/offset-top-left.html: Added.
+        * platform/mac/fast/multicol/client-rects-spanners-complex-expected.png: Added.
+        * platform/mac/fast/multicol/client-rects-spanners-complex-expected.txt: Added.
+
 2014-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         ScrollingCoordinator is unaware of topContentInset

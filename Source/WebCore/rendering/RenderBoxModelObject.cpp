@@ -43,6 +43,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
@@ -315,11 +316,18 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
             auto curr = parent();
             while (curr != offsetParent && !curr->isRenderNamedFlowThread()) {
                 // FIXME: What are we supposed to do inside SVG content?
-                if (!isOutOfFlowPositioned()) {
+                
+                if (curr->isInFlowRenderFlowThread()) {
+                    // We need to apply a translation based off what region we are inside.
+                    RenderRegion* region = toRenderMultiColumnFlowThread(curr)->physicalTranslationFromFlowToRegion(referencePoint);
+                    if (region)
+                        referencePoint.moveBy(region->topLeftLocation());
+                } else if (!isOutOfFlowPositioned()) {
                     if (curr->isBox() && !curr->isTableRow())
                         referencePoint.moveBy(toRenderBox(curr)->topLeftLocation());
                     referencePoint.move(curr->parent()->offsetForColumns(referencePoint));
                 }
+                
                 curr = curr->parent();
             }
             

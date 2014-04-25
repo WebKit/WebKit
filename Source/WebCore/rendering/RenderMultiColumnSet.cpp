@@ -817,7 +817,9 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
     
     LayoutRect flowThreadPortion = flowThreadPortionRectAt(startColumn);
     LayoutPoint translationOffset;
-
+    
+    LayoutRect overallFlowThreadPortion = flowThreadPortionRect();
+    
     bool progressionReversed = multiColumnFlowThread()->progressionIsReversed();
     bool progressionIsInline = multiColumnFlowThread()->progressionIsInline();
 
@@ -832,7 +834,7 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
             inlineOffset += contentLogicalWidth() - colLogicalWidth;
     }
     translationOffset.setX(inlineOffset);
-    LayoutUnit blockOffset = initialBlockOffset + (isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x());
+    LayoutUnit blockOffset = initialBlockOffset + (isHorizontalWritingMode() ? overallFlowThreadPortion.y() - flowThreadPortion.y() : overallFlowThreadPortion.x() - flowThreadPortion.x());
     if (!progressionIsInline) {
         if (!progressionReversed)
             blockOffset = startColumn * colGap;

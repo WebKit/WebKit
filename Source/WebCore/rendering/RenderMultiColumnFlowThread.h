@@ -41,6 +41,8 @@ public:
     RenderMultiColumnFlowThread(Document&, PassRef<RenderStyle>);
     ~RenderMultiColumnFlowThread();
 
+    virtual bool isRenderMultiColumnFlowThread() const override { return true; }
+
     virtual void removeFlowChildInfo(RenderObject*) override;
 
     RenderBlockFlow* multiColumnBlockFlow() const { return toRenderBlockFlow(parent()); }
@@ -94,6 +96,13 @@ public:
     
     virtual RenderRegion* mapFromFlowToRegion(TransformState&) const override;
     
+    // This method takes a logical offset and returns a physical translation that can be applied to map
+    // a physical point (corresponding to the logical offset) into the region's physical coordinate space.
+    LayoutSize physicalTranslationOffsetFromFlowToRegion(const RenderRegion*, const LayoutUnit) const;
+    
+    // The point is physical, and the result is a physical location within the region.
+    RenderRegion* physicalTranslationFromFlowToRegion(LayoutPoint&) const;
+    
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
 private:
@@ -135,6 +144,8 @@ private:
     bool m_progressionIsReversed;
     bool m_beingEvacuated;
 };
+
+RENDER_OBJECT_TYPE_CASTS(RenderMultiColumnFlowThread, isRenderMultiColumnFlowThread())
 
 } // namespace WebCore
 
