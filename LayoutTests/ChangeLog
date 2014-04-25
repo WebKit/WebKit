@@ -1,3 +1,12 @@
+2014-04-25  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION(r167799): ASSERTION in parseGridTemplateShorthand in fast/css-grid-layout/grid-template-shorthand-get-set.html
+        https://bugs.webkit.org/show_bug.cgi?id=132194
+
+        * TestExpectations:
+        Skip the test on debug testers.
+        Also unmark js/slow-stress/new-spread.html because it is fixed (https://bugs.webkit.org/show_bug.cgi?id=132022)
+
 2014-04-24  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Add support for offsetLeft and offsetTop.
