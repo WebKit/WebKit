@@ -2829,3 +2829,6 @@ crypto/subtle [ Skip ]
 
 # QuickTime plug-in not relevant to this port
 plugins/quicktime-plugin-replacement.html [ Skip ]
+
+# No HLS support
+http/tests/media/hls [ Skip ]

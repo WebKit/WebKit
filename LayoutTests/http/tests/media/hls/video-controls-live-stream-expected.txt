@@ -1,0 +1,11 @@
+
+EVENT(play)
+EXPECTED (video.duration == 'Infinity') OK
+EXPECTED (mediaControlsElement(controls, "-webkit-media-controls-rewind-button") == 'null') OK
+EXPECTED (mediaControlsElement(controls, "-webkit-media-controls-play-button") != 'null') OK
+EXPECTED (mediaControlsElement(controls, "-webkit-media-controls-status-display") != 'null') OK
+EXPECTED (mediaControlsElement(controls, "-webkit-media-controls-timeline") == 'null') OK
+EXPECTED (mediaControlsElement(controls, "-webkit-media-controls-current-time-display") == 'null') OK
+EXPECTED (mediaControlsElement(controls, "-webkit-media-controls-remaining-time-display") == 'null') OK
+END OF TEST
+

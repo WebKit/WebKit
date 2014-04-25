@@ -1,3 +1,32 @@
+2014-04-08  Jer Noble  <jer.noble@apple.com>
+
+        Support "Live" streams in media controls.
+        https://bugs.webkit.org/show_bug.cgi?id=131390
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/media/hls/video-controls-live-stream.html
+
+        Support "Live" streams by adding an isLive property to our media controls.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-status-display):
+        (video:-webkit-full-screen::-webkit-media-controls-status-display):
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller): isLive defaults to false.
+        (Controller.prototype.setIsLive): Set the isLive property and conditionally reconfigure the controls.
+        (Controller.prototype.configureInlineControls): Don't add the timeline if we are live.
+        (Controller.prototype.configureFullScreenControls): Ditto.
+        (Controller.prototype.updateStatusDisplay): Added.
+        (Controller.prototype.handleLoadStart): Call updateStatusDisplay().
+        (Controller.prototype.handleError): Ditto.
+        (Controller.prototype.handleAbort): Ditto.
+        (Controller.prototype.handleSuspend): Ditto.
+        (Controller.prototype.handleStalled): Ditto.
+        (Controller.prototype.handleWaiting): Ditto.
+        (Controller.prototype.updateDuration): Ditto.
+        (Controller.prototype.updateReadyState): Ditto.
+
 2014-04-25  Dean Jackson  <dino@apple.com>
 
         Allow a platform-specific size enumeration to be passed into popup-menu display

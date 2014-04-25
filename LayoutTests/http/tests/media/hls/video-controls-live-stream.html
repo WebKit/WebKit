@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-controls.js></script>
+        <script>
+            var controls;
+
+            function start() {
+                video = document.getElementById('video');
+                waitForEvent('play', playing);
+                waitForEventAndFail('stalled');
+                video.src = "../resources/hls/test-live.php";
+            }
+
+            function playing() {
+                testExpected('video.duration', Infinity);
+
+                controls = internals.shadowRoot(video).firstChild.firstChild;
+                testExpected('mediaControlsElement(controls, "-webkit-media-controls-rewind-button")', null);
+                testExpected('mediaControlsElement(controls, "-webkit-media-controls-play-button")', null, '!=');
+                testExpected('mediaControlsElement(controls, "-webkit-media-controls-status-display")', null, '!=');
+                testExpected('mediaControlsElement(controls, "-webkit-media-controls-timeline")', null);
+                testExpected('mediaControlsElement(controls, "-webkit-media-controls-current-time-display")', null);
+                testExpected('mediaControlsElement(controls, "-webkit-media-controls-remaining-time-display")', null);
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <video id="video" autoplay controls></video>
+    </body>
+</html>

@@ -400,9 +400,11 @@ audio::-webkit-media-controls-status-display {
     text-transform: none;
     text-indent: 0;
     text-decoration: none;
-    text-align: center;
+    text-align: left;
 
-    -webkit-box-flex: 1;
+    padding: 0 12px;
+
+    -webkit-flex: 1 1 0;
 }
 video::-webkit-media-controls-timeline,
 audio::-webkit-media-controls-timeline {
@@ -672,7 +674,7 @@ video:-webkit-full-screen::-webkit-media-controls-timeline-container {
 video:-webkit-full-screen::-webkit-media-controls-status-display {
     width: 420px;
     position: absolute;
-    bottom: 9px;
+    bottom: 7px;
     left: 8px;
     right: 8px;
 }

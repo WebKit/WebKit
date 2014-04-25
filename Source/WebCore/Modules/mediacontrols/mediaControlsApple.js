@@ -10,6 +10,7 @@ function Controller(root, video, host)
     this.host = host;
     this.controls = {};
     this.listeners = {};
+    this.isLive = false;
 
     this.addVideoListeners();
     this.createBase();
@@ -375,11 +376,27 @@ Controller.prototype = {
             return;
         this.controlsType = type;
 
+        this.reconnectControls();
+    },
+
+    setIsLive: function(live)
+    {
+        if (live === this.isLive)
+            return;
+        this.isLive = live;
+
+        this.updateStatusDisplay();
+
+        this.reconnectControls();
+    },
+
+    reconnectControls: function()
+    {
         this.disconnectControls();
 
-        if (type === Controller.InlineControls)
+        if (this.controlsType === Controller.InlineControls)
             this.configureInlineControls();
-        else if (type == Controller.FullScreenControls)
+        else if (this.controlsType == Controller.FullScreenControls)
             this.configureFullScreenControls();
 
         if (this.shouldHaveControls())
@@ -397,16 +414,19 @@ Controller.prototype = {
 
     configureInlineControls: function()
     {
-        this.controls.panel.appendChild(this.controls.rewindButton);
+        if (!this.isLive)
+            this.controls.panel.appendChild(this.controls.rewindButton);
         this.controls.panel.appendChild(this.controls.playButton);
         this.controls.panel.appendChild(this.controls.statusDisplay);
-        this.controls.panel.appendChild(this.controls.timelineBox);
-        this.controls.timelineBox.appendChild(this.controls.currentTime);
-        this.controls.timelineBox.appendChild(this.controls.thumbnailTrack);
-        this.controls.thumbnailTrack.appendChild(this.controls.timeline);
-        this.controls.thumbnailTrack.appendChild(this.controls.thumbnail);
-        this.controls.thumbnail.appendChild(this.controls.thumbnailImage);
-        this.controls.timelineBox.appendChild(this.controls.remainingTime);
+        if (!this.isLive) {
+            this.controls.panel.appendChild(this.controls.timelineBox);
+            this.controls.timelineBox.appendChild(this.controls.currentTime);
+            this.controls.timelineBox.appendChild(this.controls.thumbnailTrack);
+            this.controls.thumbnailTrack.appendChild(this.controls.timeline);
+            this.controls.thumbnailTrack.appendChild(this.controls.thumbnail);
+            this.controls.thumbnail.appendChild(this.controls.thumbnailImage);
+            this.controls.timelineBox.appendChild(this.controls.remainingTime);
+        }
         this.controls.panel.appendChild(this.controls.muteBox);
         this.controls.muteBox.appendChild(this.controls.volumeBox);
         this.controls.volumeBox.appendChild(this.controls.volume);
@@ -432,13 +452,16 @@ Controller.prototype = {
         this.controls.panel.appendChild(this.controls.captionButton);
         if (!this.isAudio())
             this.controls.panel.appendChild(this.controls.fullscreenButton);
-        this.controls.panel.appendChild(this.controls.timelineBox);
-        this.controls.timelineBox.appendChild(this.controls.currentTime);
-        this.controls.timelineBox.appendChild(this.controls.thumbnailTrack);
-        this.controls.thumbnailTrack.appendChild(this.controls.timeline);
-        this.controls.thumbnailTrack.appendChild(this.controls.thumbnail);
-        this.controls.thumbnail.appendChild(this.controls.thumbnailImage);
-        this.controls.timelineBox.appendChild(this.controls.remainingTime);
+        if (!this.isLive) {
+            this.controls.panel.appendChild(this.controls.timelineBox);
+            this.controls.timelineBox.appendChild(this.controls.currentTime);
+            this.controls.timelineBox.appendChild(this.controls.thumbnailTrack);
+            this.controls.thumbnailTrack.appendChild(this.controls.timeline);
+            this.controls.thumbnailTrack.appendChild(this.controls.thumbnail);
+            this.controls.thumbnail.appendChild(this.controls.thumbnailImage);
+            this.controls.timelineBox.appendChild(this.controls.remainingTime);
+        } else
+            this.controls.panel.appendChild(this.controls.statusDisplay);
     },
 
     updateControls: function()
@@ -450,41 +473,56 @@ Controller.prototype = {
 
     },
 
+    updateStatusDisplay: function(event)
+    {
+        if (this.video.error !== null)
+            this.controls.statusDisplay.innerText = this.UIString('Error');
+        else if (this.isLive && this.video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA)
+            this.controls.statusDisplay.innerText = this.UIString('Live Broadcast');
+        else if (this.video.networkState === HTMLMediaElement.NETWORK_LOADING)
+            this.controls.statusDisplay.innerText = this.UIString('Loading');
+        else
+            this.controls.statusDisplay.innerText = '';
+
+        this.setStatusHidden(!this.isLive && this.video.readyState > HTMLMediaElement.HAVE_NOTHING && !this.video.error);
+    },
+
     handleLoadStart: function(event)
     {
-        this.controls.statusDisplay.innerText = this.UIString('Loading');
+        this.updateStatusDisplay();
         this.updateProgress();
     },
 
     handleError: function(event)
     {
-        this.controls.statusDisplay.innerText = this.UIString('Error');
+        this.updateStatusDisplay();
     },
 
     handleAbort: function(event)
     {
-        this.controls.statusDisplay.innerText = this.UIString('Aborted');
+        this.updateStatusDisplay();
     },
 
     handleSuspend: function(event)
     {
-        this.controls.statusDisplay.innerText = this.UIString('Suspended');
+        this.updateStatusDisplay();
     },
 
     handleStalled: function(event)
     {
-        this.controls.statusDisplay.innerText = this.UIString('Stalled');
+        this.updateStatusDisplay();
         this.updateProgress();
     },
 
     handleWaiting: function(event)
     {
-        this.controls.statusDisplay.innerText = this.UIString('Waiting');
+        this.updateStatusDisplay();
     },
 
     handleReadyStateChange: function(event)
     {
         this.updateReadyState();
+        this.updateDuration();
         this.updateCaptionButton();
         this.updateCaptionContainer();
         this.updateProgress();
@@ -842,6 +880,8 @@ Controller.prototype = {
     {
         this.controls.timeline.min = 0;
         this.controls.timeline.max = this.video.duration;
+
+        this.setIsLive(this.video.duration === Number.POSITIVE_INFINITY);
     },
 
     progressFillStyle: function(context)
@@ -948,7 +988,7 @@ Controller.prototype = {
 
     updateReadyState: function()
     {
-        this.setStatusHidden(this.video.readyState > HTMLMediaElement.HAVE_NOTHING);
+        this.updateStatusDisplay();
     },
 
     setStatusHidden: function(hidden)
