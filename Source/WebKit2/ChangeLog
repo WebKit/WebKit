@@ -1,3 +1,12 @@
+2014-04-25  Enrica Casucci  <enrica@apple.com>
+
+        Remove duplicate member variable in WKAutocorrectionRects and WKAutocorrectionContext.
+        https://bugs.webkit.org/show_bug.cgi?id=132206
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
 2014-04-25  Dean Jackson  <dino@apple.com>
 
         Allow a platform-specific size enumeration to be passed into popup-menu display
