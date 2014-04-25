@@ -57,7 +57,7 @@ private:
 
     int maxFilenameWidth() const;
     
-    virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
+    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
     HTMLInputElement* uploadButton() const;
 

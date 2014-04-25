@@ -1,3 +1,84 @@
+2014-04-25  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Overflow selection doesn't work properly
+        https://bugs.webkit.org/show_bug.cgi?id=130715
+
+        Reviewed by David Hyatt.
+
+        When hit-testing, painting block selection gaps and searching for the node at a specific point inside a flow thread,
+        the region range of the box being checked must be validated in order to not return false positives. Otherwise, hit-testing
+        at the top of region B could hit elements that overflow the bottom of region A.
+
+        Tests: fast/regions/selection-in-overflow-hit-testing.html
+               fast/regions/selection-in-overflow.html
+               fast/regions/selection-in-text-after-overflow-hit-testing.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        * dom/Document.cpp:
+        (WebCore::Document::caretRangeFromPoint):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::contains):
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromHitTestResult):
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::selectionExtentRespectingEditingBoundary):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::visiblePositionForPoint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::positionForPointRespectingEditingBoundaries):
+        (WebCore::RenderBlock::positionForPointWithInlineChildren):
+        (WebCore::isChildHitTestCandidate):
+        (WebCore::RenderBlock::positionForPoint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        (WebCore::RenderBlockFlow::positionForPoint):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint):
+        * rendering/RenderBox.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::positionForPoint):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::positionForPoint):
+        * rendering/RenderInline.h:
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::positionForPoint):
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::positionForPoint):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::positionForPoint):
+        * rendering/RenderObject.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::positionForPoint):
+        * rendering/RenderRegion.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+        * rendering/RenderText.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForPoint):
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::positionForPoint):
+        * rendering/svg/RenderSVGText.h:
+
 2014-04-25  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Iframe seamless support was removed in r163427

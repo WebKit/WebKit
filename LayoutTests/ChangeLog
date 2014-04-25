@@ -1,3 +1,19 @@
+2014-04-25  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Overflow selection doesn't work properly
+        https://bugs.webkit.org/show_bug.cgi?id=130715
+
+        Reviewed by David Hyatt.
+
+        Added tests for hit-testing and painting selection gaps in the region's overflow area.
+
+        * fast/regions/selection-in-overflow-expected.html: Added.
+        * fast/regions/selection-in-overflow-hit-testing-expected.html: Added.
+        * fast/regions/selection-in-overflow-hit-testing.html: Added.
+        * fast/regions/selection-in-overflow.html: Added.
+        * fast/regions/selection-in-text-after-overflow-hit-testing-expected.html: Added.
+        * fast/regions/selection-in-text-after-overflow-hit-testing.html: Added.
+
 2014-04-25  Enrique Ocaña González  <eocanha@igalia.com>
 
         Unreviewed GTK gardening.

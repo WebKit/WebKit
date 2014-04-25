@@ -124,7 +124,7 @@ public:
 
     virtual bool canHaveChildren() const override { return false; }
     virtual bool canHaveGeneratedChildren() const override { return true; }
-    virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
+    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
     virtual bool hasAutoLogicalHeight() const { return false; }
 

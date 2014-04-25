@@ -1824,7 +1824,7 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsi
     // iterate over the lines
     // FIXME: this is wrong when lineNumber is lineCount+1,  because nextLinePosition takes you to the
     // last offset of the last line
-    VisiblePosition visiblePos = m_renderer->view().positionForPoint(IntPoint());
+    VisiblePosition visiblePos = m_renderer->view().positionForPoint(IntPoint(), nullptr);
     VisiblePosition savedVisiblePos;
     while (--lineCount) {
         savedVisiblePos = visiblePos;
@@ -2032,7 +2032,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
 #endif
     }
     
-    return innerNode->renderer()->positionForPoint(pointResult);
+    return innerNode->renderer()->positionForPoint(pointResult, nullptr);
 }
 
 // NOTE: Consider providing this utility method as AX API

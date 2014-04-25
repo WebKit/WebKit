@@ -144,7 +144,7 @@ private:
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const override;
     virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
 
-    virtual VisiblePosition positionForPoint(const LayoutPoint&) override final;
+    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override final;
 
     virtual LayoutRect frameRectForStickyPositioning() const override final { return linesBoundingBox(); }
 

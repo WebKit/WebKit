@@ -1585,7 +1585,7 @@ bool FrameSelection::contains(const LayoutPoint& point)
     if (!innerNode || !innerNode->renderer())
         return false;
     
-    VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(result.localPoint()));
+    VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(result.localPoint(), nullptr));
     if (visiblePos.isNull())
         return false;
         

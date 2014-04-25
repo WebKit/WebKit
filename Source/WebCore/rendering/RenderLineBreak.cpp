@@ -122,7 +122,7 @@ bool RenderLineBreak::canBeSelectionLeaf() const
     return true;
 }
 
-VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&)
+VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&, const RenderRegion*)
 {
     return createVisiblePosition(0, DOWNSTREAM);
 }

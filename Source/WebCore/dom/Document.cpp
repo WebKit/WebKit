@@ -1421,7 +1421,7 @@ PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
     RenderObject* renderer = node->renderer();
     if (!renderer)
         return nullptr;
-    VisiblePosition visiblePosition = renderer->positionForPoint(localPoint);
+    VisiblePosition visiblePosition = renderer->positionForPoint(localPoint, nullptr);
     if (visiblePosition.isNull())
         return nullptr;
 

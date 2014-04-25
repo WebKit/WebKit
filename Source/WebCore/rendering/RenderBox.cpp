@@ -4129,7 +4129,7 @@ LayoutRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit
     return rect;
 }
 
-VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point)
+VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
 {
     // no children...return this render object's element, if there is one, and offset 0
     if (!firstChild())
@@ -4156,6 +4156,13 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point)
     for (RenderObject* renderObject = firstChild(); renderObject; renderObject = renderObject->nextSibling()) {
         if (!renderObject->isBox())
             continue;
+
+        if (isRenderFlowThread()) {
+            ASSERT(region);
+            if (!toRenderFlowThread(this)->objectShouldPaintInFlowRegion(renderObject, region))
+                continue;
+        }
+
         RenderBox* renderer = toRenderBox(renderObject);
 
         if ((!renderer->firstChild() && !renderer->isInline() && !renderer->isRenderBlockFlow() )
@@ -4169,8 +4176,8 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point)
         
         if (point.x() <= right && point.x() >= left && point.y() <= top && point.y() >= bottom) {
             if (renderer->isTableRow())
-                return renderer->positionForPoint(point + adjustedPoint - renderer->locationOffset());
-            return renderer->positionForPoint(point - renderer->locationOffset());
+                return renderer->positionForPoint(point + adjustedPoint - renderer->locationOffset(), region);
+            return renderer->positionForPoint(point - renderer->locationOffset(), region);
         }
 
         // Find the distance from (x, y) to the box.  Split the space around the box into 8 pieces
@@ -4207,7 +4214,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point)
     }
     
     if (closestRenderer)
-        return closestRenderer->positionForPoint(adjustedPoint - closestRenderer->locationOffset());
+        return closestRenderer->positionForPoint(adjustedPoint - closestRenderer->locationOffset(), region);
     
     return createVisiblePosition(firstPositionInOrBeforeNode(nonPseudoElement()));
 }

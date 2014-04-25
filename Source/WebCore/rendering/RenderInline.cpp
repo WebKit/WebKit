@@ -845,14 +845,14 @@ bool RenderInline::hitTestCulledInline(const HitTestRequest& request, HitTestRes
     return false;
 }
 
-VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point)
+VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
 {
     // FIXME: Does not deal with relative or sticky positioned inlines (should it?)
     RenderBlock* cb = containingBlock();
     if (firstLineBox()) {
         // This inline actually has a line box.  We must have clicked in the border/padding of one of these boxes.  We
         // should try to find a result by asking our containing block.
-        return cb->positionForPoint(point);
+        return cb->positionForPoint(point, region);
     }
 
     // Translate the coords from the pre-anonymous block to the post-anonymous block.
@@ -861,11 +861,11 @@ VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point)
     while (c) {
         RenderBox* contBlock = c->isInline() ? c->containingBlock() : toRenderBlock(c);
         if (c->isInline() || c->firstChild())
-            return c->positionForPoint(parentBlockPoint - contBlock->locationOffset());
+            return c->positionForPoint(parentBlockPoint - contBlock->locationOffset(), region);
         c = toRenderBlock(c)->inlineElementContinuation();
     }
     
-    return RenderBoxModelObject::positionForPoint(point);
+    return RenderBoxModelObject::positionForPoint(point, region);
 }
 
 namespace {

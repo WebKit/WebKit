@@ -3092,7 +3092,7 @@ Position RenderBlockFlow::positionForBox(InlineBox *box, bool start) const
     return createLegacyEditingPosition(box->renderer().nonPseudoNode(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 
-VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents)
+VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, const RenderRegion* region)
 {
     ASSERT(childrenInline());
 
@@ -3109,6 +3109,9 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     RootInlineBox* firstRootBoxWithChildren = 0;
     RootInlineBox* lastRootBoxWithChildren = 0;
     for (RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox()) {
+        if (region && root->containingRegion() != region)
+            continue;
+
         if (!root->firstLeafChild())
             continue;
         if (!firstRootBoxWithChildren)
@@ -3165,7 +3168,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
             point = point.transposedPoint();
         if (closestBox->renderer().isReplaced())
             return positionForPointRespectingEditingBoundaries(*this, toRenderBox(closestBox->renderer()), point);
-        return closestBox->renderer().positionForPoint(point);
+        return closestBox->renderer().positionForPoint(point, nullptr);
     }
 
     if (lastRootBoxWithChildren) {
@@ -3182,11 +3185,11 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     return createVisiblePosition(0, DOWNSTREAM);
 }
 
-VisiblePosition RenderBlockFlow::positionForPoint(const LayoutPoint& point)
+VisiblePosition RenderBlockFlow::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
 {
     if (auto fragment = renderNamedFlowFragment())
-        return fragment->positionForPoint(point);
-    return RenderBlock::positionForPoint(point);
+        return fragment->positionForPoint(point, region);
+    return RenderBlock::positionForPoint(point, region);
 }
 
 

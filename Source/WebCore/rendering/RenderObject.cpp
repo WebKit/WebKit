@@ -2001,7 +2001,7 @@ void RenderObject::destroy()
     delete this;
 }
 
-VisiblePosition RenderObject::positionForPoint(const LayoutPoint&)
+VisiblePosition RenderObject::positionForPoint(const LayoutPoint&, const RenderRegion*)
 {
     return createVisiblePosition(caretMinOffset(), DOWNSTREAM);
 }

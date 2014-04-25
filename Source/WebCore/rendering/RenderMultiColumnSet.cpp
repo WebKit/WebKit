@@ -867,7 +867,7 @@ void RenderMultiColumnSet::addOverflowFromChildren()
         addVisualOverflow(lastRect);
 }
 
-VisiblePosition RenderMultiColumnSet::positionForPoint(const LayoutPoint& physicalPoint)
+VisiblePosition RenderMultiColumnSet::positionForPoint(const LayoutPoint& physicalPoint, const RenderRegion*)
 {
     // Determine which columns we intersect.
     LayoutUnit colGap = columnGap();
@@ -914,7 +914,7 @@ VisiblePosition RenderMultiColumnSet::positionForPoint(const LayoutPoint& physic
                 LayoutRect portion = flowThreadPortionRect();
                 flipForWritingMode(portion);
                 point.move(isHorizontalWritingMode() ? LayoutUnit() : portion.x(), isHorizontalWritingMode() ? portion.y() : LayoutUnit());
-                return multiColumnFlowThread()->positionForPoint(point);
+                return multiColumnFlowThread()->positionForPoint(point, this);
             }
 
             // Move to the next position.
@@ -951,7 +951,7 @@ VisiblePosition RenderMultiColumnSet::positionForPoint(const LayoutPoint& physic
                 flipForWritingMode(portion);
                 point.move(isHorizontalWritingMode() ? LayoutUnit() : portion.x(), isHorizontalWritingMode() ? portion.y() : LayoutUnit());
                 
-                return multiColumnFlowThread()->positionForPoint(point);
+                return multiColumnFlowThread()->positionForPoint(point, this);
             }
 
             // Move to the next position.

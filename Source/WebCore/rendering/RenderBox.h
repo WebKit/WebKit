@@ -512,7 +512,7 @@ public:
 
     LayoutRect maskClipRect();
 
-    virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
+    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
     RenderBlockFlow* outermostBlockContainingFloatingObject();
 

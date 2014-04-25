@@ -72,7 +72,7 @@ public:
 
     Vector<FloatQuad> absoluteQuadsClippedToEllipsis() const;
 
-    virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
+    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
     bool is8Bit() const { return m_text.impl()->is8Bit(); }
     const LChar* characters8() const { return m_text.impl()->characters8(); }

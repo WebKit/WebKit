@@ -973,7 +973,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
         Node* node = renderer.node();
         if (node && editingIgnoresContent(node))
             return positionInParentBeforeNode(node);
-        return renderer.positionForPoint(pointInLine);
+        return renderer.positionForPoint(pointInLine, nullptr);
     }
     
     // Could not find a previous line. This means we must already be on the first line.
@@ -1031,7 +1031,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
         Node* node = renderer.node();
         if (node && editingIgnoresContent(node))
             return positionInParentBeforeNode(node);
-        return renderer.positionForPoint(pointInLine);
+        return renderer.positionForPoint(pointInLine, nullptr);
     }
 
     // Could not find a next line. This means we must already be on the last line.

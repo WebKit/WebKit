@@ -525,7 +525,7 @@ void EventHandler::selectClosestWordFromHitTestResult(const HitTestResult& resul
     VisibleSelection newSelection;
 
     if (targetNode && targetNode->renderer()) {
-        VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint()));
+        VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint(), nullptr));
         if (pos.isNotNull()) {
             newSelection = VisibleSelection(pos);
             newSelection.expandUsingGranularity(WordGranularity);
@@ -556,7 +556,7 @@ void EventHandler::selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHit
     if (targetNode && targetNode->renderer() && m_mouseDownMayStartSelect) {
         VisibleSelection newSelection;
         Element* URLElement = result.hitTestResult().URLElement();
-        VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint()));
+        VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint(), nullptr));
         if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(URLElement))
             newSelection = VisibleSelection::selectionFromContentsOfNode(URLElement);
 
@@ -592,7 +592,7 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
         return false;
 
     VisibleSelection newSelection;
-    VisiblePosition pos(targetNode->renderer()->positionForPoint(event.localPoint()));
+    VisiblePosition pos(targetNode->renderer()->positionForPoint(event.localPoint(), nullptr));
     if (pos.isNotNull()) {
         newSelection = VisibleSelection(pos);
         newSelection.expandUsingGranularity(ParagraphGranularity);
@@ -627,7 +627,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
         }
     }
 
-    VisiblePosition visiblePos(targetNode->renderer()->positionForPoint(event.localPoint()));
+    VisiblePosition visiblePos(targetNode->renderer()->positionForPoint(event.localPoint(), nullptr));
     if (visiblePos.isNull())
         visiblePos = VisiblePosition(firstPositionInOrBeforeNode(targetNode), DOWNSTREAM);
     Position pos = visiblePos.deepEquivalent();
@@ -860,7 +860,7 @@ static VisiblePosition selectionExtentRespectingEditingBoundary(const VisibleSel
         targetNode = editableElement;
     }
 
-    return targetNode->renderer()->positionForPoint(selectionEndPoint);
+    return targetNode->renderer()->positionForPoint(selectionEndPoint, nullptr);
 }
 
 void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResult)
@@ -906,11 +906,11 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         newSelection.setExtent(positionAfterNode(rootUserSelectAllForMousePressNode).downstream(CanCrossEditingBoundary));
     } else {
         // Reset base for user select all when base is inside user-select-all area and extent < base.
-        if (rootUserSelectAllForMousePressNode && comparePositions(target->renderer()->positionForPoint(hitTestResult.localPoint()), m_mousePressNode->renderer()->positionForPoint(m_dragStartPos)) < 0)
+        if (rootUserSelectAllForMousePressNode && comparePositions(target->renderer()->positionForPoint(hitTestResult.localPoint(), nullptr), m_mousePressNode->renderer()->positionForPoint(m_dragStartPos, nullptr)) < 0)
             newSelection.setBase(positionAfterNode(rootUserSelectAllForMousePressNode).downstream(CanCrossEditingBoundary));
         
         Node* rootUserSelectAllForTarget = Position::rootUserSelectAllForNode(target);
-        if (rootUserSelectAllForTarget && m_mousePressNode->renderer() && comparePositions(target->renderer()->positionForPoint(hitTestResult.localPoint()), m_mousePressNode->renderer()->positionForPoint(m_dragStartPos)) < 0)
+        if (rootUserSelectAllForTarget && m_mousePressNode->renderer() && comparePositions(target->renderer()->positionForPoint(hitTestResult.localPoint(), nullptr), m_mousePressNode->renderer()->positionForPoint(m_dragStartPos, nullptr)) < 0)
             newSelection.setExtent(positionBeforeNode(rootUserSelectAllForTarget).upstream(CanCrossEditingBoundary));
         else if (rootUserSelectAllForTarget && m_mousePressNode->renderer())
             newSelection.setExtent(positionAfterNode(rootUserSelectAllForTarget).downstream(CanCrossEditingBoundary));
@@ -982,7 +982,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
         Node* node = event.targetNode();
         bool caretBrowsing = m_frame.settings().caretBrowsingEnabled();
         if (node && node->renderer() && (caretBrowsing || node->hasEditableStyle())) {
-            VisiblePosition pos = node->renderer()->positionForPoint(event.localPoint());
+            VisiblePosition pos = node->renderer()->positionForPoint(event.localPoint(), nullptr);
             newSelection = VisibleSelection(pos);
         }
 

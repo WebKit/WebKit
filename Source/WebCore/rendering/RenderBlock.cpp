@@ -2412,6 +2412,12 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         lastLogicalRight = logicalRightSelectionOffset(rootBlock, logicalHeight(), cache);
         return result;
     }
+    
+    if (paintInfo && paintInfo->renderNamedFlowFragment && paintInfo->paintContainer->isRenderFlowThread()) {
+        // Make sure the current object is actually flowed into the region being painted.
+        if (!toRenderFlowThread(paintInfo->paintContainer)->objectShouldPaintInFlowRegion(this, paintInfo->renderNamedFlowFragment))
+            return result;
+    }
 
     if (childrenInline())
         result = inlineSelectionGaps(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, cache, paintInfo);
@@ -2947,6 +2953,15 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     LayoutPoint adjustedLocation(accumulatedOffset + location());
     LayoutSize localOffset = toLayoutSize(adjustedLocation);
 
+    // If we are now searching inside a region, make sure this element
+    // is being fragmented into this region.
+    if (locationInContainer.region()) {
+        RenderFlowThread* flowThread = flowThreadContainingBlock();
+        ASSERT(flowThread);
+        if (!flowThread->objectShouldPaintInFlowRegion(this, locationInContainer.region()))
+            return false;
+    }
+
     if (!isRenderView()) {
         // Check if we need to do anything at all.
         LayoutRect overflowBox = visualOverflowRect();
@@ -3140,7 +3155,7 @@ VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock& parent,
     // If this is an anonymous renderer, we just recur normally
     Element* childElement= child.nonPseudoElement();
     if (!childElement)
-        return child.positionForPoint(pointInChildCoordinates);
+        return child.positionForPoint(pointInChildCoordinates, nullptr);
 
     // Otherwise, first make sure that the editability of the parent and child agree.
     // If they don't agree, then we return a visible position just before or after the child
@@ -3150,7 +3165,7 @@ VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock& parent,
 
     // If we can't find an ancestor to check editability on, or editability is unchanged, we recur like normal
     if (isEditingBoundary(ancestor, child))
-        return child.positionForPoint(pointInChildCoordinates);
+        return child.positionForPoint(pointInChildCoordinates, nullptr);
     
 #if PLATFORM(IOS)
     // On iOS we want to constrain VisiblePositions to the editable region closest to the input position, so
@@ -3169,7 +3184,7 @@ VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock& parent,
     return ancestor->createVisiblePosition(childElement->nodeIndex() + 1, UPSTREAM);
 }
 
-VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoint&)
+VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoint&, const RenderRegion*)
 {
     ASSERT_NOT_REACHED();
     return VisiblePosition();
@@ -3181,7 +3196,7 @@ static inline bool isChildHitTestCandidate(const RenderBox& box)
 }
 
 // Valid candidates in a FlowThread must be rendered by the region.
-static inline bool isChildHitTestCandidate(const RenderBox& box, RenderRegion* region, const LayoutPoint& point)
+static inline bool isChildHitTestCandidate(const RenderBox& box, const RenderRegion* region, const LayoutPoint& point)
 {
     if (!isChildHitTestCandidate(box))
         return false;
@@ -3191,10 +3206,10 @@ static inline bool isChildHitTestCandidate(const RenderBox& box, RenderRegion* r
     return block.regionAtBlockOffset(point.y()) == region;
 }
 
-VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
+VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
 {
     if (isTable())
-        return RenderBox::positionForPoint(point);
+        return RenderBox::positionForPoint(point, region);
 
     if (isReplaced()) {
         // FIXME: This seems wrong when the object's writing-mode doesn't match the line's writing-mode.
@@ -3214,10 +3229,13 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
         pointInLogicalContents = pointInLogicalContents.transposedPoint();
 
     if (childrenInline())
-        return positionForPointWithInlineChildren(pointInLogicalContents);
+        return positionForPointWithInlineChildren(pointInLogicalContents, region);
 
-    RenderRegion* region = regionAtBlockOffset(pointInLogicalContents.y());
     RenderBox* lastCandidateBox = lastChildBox();
+
+    if (!region)
+        region = regionAtBlockOffset(pointInLogicalContents.y());
+
     while (lastCandidateBox && !isChildHitTestCandidate(*lastCandidateBox, region, pointInLogicalContents))
         lastCandidateBox = lastCandidateBox->previousSiblingBox();
 
@@ -3239,7 +3257,7 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
     }
 
     // We only get here if there are no hit test candidate children below the click.
-    return RenderBox::positionForPoint(point);
+    return RenderBox::positionForPoint(point, region);
 }
 
 void RenderBlock::offsetForContents(LayoutPoint& offset) const

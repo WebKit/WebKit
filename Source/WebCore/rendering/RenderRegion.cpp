@@ -104,12 +104,12 @@ LayoutPoint RenderRegion::mapRegionPointIntoFlowThreadCoordinates(const LayoutPo
     return isHorizontalWritingMode() ? pointInThread : pointInThread.transposedPoint();
 }
 
-VisiblePosition RenderRegion::positionForPoint(const LayoutPoint& point)
+VisiblePosition RenderRegion::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
 {
     if (!isValid() || !m_flowThread->firstChild()) // checking for empty region blocks.
-        return RenderBlock::positionForPoint(point);
+        return RenderBlock::positionForPoint(point, region);
 
-    return m_flowThread->positionForPoint(mapRegionPointIntoFlowThreadCoordinates(point));
+    return m_flowThread->positionForPoint(mapRegionPointIntoFlowThreadCoordinates(point), this);
 }
 
 LayoutUnit RenderRegion::pageLogicalWidth() const
