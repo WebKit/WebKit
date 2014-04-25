@@ -132,7 +132,7 @@ public:
 
     static UnlinkedFunctionExecutable* fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
 
-    FunctionExecutable* link(VM&, const SourceCode&, size_t lineOffset, size_t sourceOffset);
+    FunctionExecutable* link(VM&, const SourceCode&, size_t lineOffset);
 
     void clearCodeForRecompilation()
     {

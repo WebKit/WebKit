@@ -485,7 +485,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
 
     for (size_t i = 0; i < functionDeclarations.size(); ++i) {
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = functionDeclarations[i].second.get();
-        JSValue value = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, m_source, lineNo(), 0), scope);
+        JSValue value = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, m_source, lineNo()), scope);
         globalObject->addFunction(callFrame, functionDeclarations[i].first, value);
     }
 

@@ -1,3 +1,20 @@
+2014-04-25  Oliver Hunt  <oliver@apple.com>
+
+        Remove unused parameter from codeblock linking function
+        https://bugs.webkit.org/show_bug.cgi?id=132199
+
+        Reviewed by Anders Carlsson.
+
+        No change in behaviour. This is just a small change to make it
+        slightly easier to reason about what the offsets in UnlinkedFunctionExecutable
+        actually mean.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::link):
+        * bytecode/UnlinkedCodeBlock.h:
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+
 2014-04-25  Andreas Kling  <akling@apple.com>
 
         Mark some things with WTF_MAKE_FAST_ALLOCATED.

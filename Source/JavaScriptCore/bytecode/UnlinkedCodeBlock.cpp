@@ -124,15 +124,14 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(&thisObject->m_symbolTableForConstruct);
 }
 
-FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& source, size_t lineOffset, size_t sourceOffset)
+FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& source, size_t lineOffset)
 {
     unsigned firstLine = lineOffset + m_firstLineOffset;
-    unsigned startOffset = sourceOffset + m_startOffset;
     bool startColumnIsOnFirstSourceLine = !m_firstLineOffset;
     unsigned startColumn = m_unlinkedBodyStartColumn + (startColumnIsOnFirstSourceLine ? source.startColumn() : 1);
     bool endColumnIsOnStartLine = !m_lineCount;
     unsigned endColumn = m_unlinkedBodyEndColumn + (endColumnIsOnStartLine ? startColumn : 1);
-    SourceCode code(source.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);
+    SourceCode code(source.provider(), m_startOffset, m_startOffset + m_sourceLength, firstLine, startColumn);
     return FunctionExecutable::create(vm, code, this, firstLine, firstLine + m_lineCount, startColumn, endColumn);
 }
 
