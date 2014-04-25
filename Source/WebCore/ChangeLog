@@ -1,3 +1,21 @@
+2014-04-25  Ion Rosca  <rosca@adobe.com>
+
+        Incomplete body painting when using blend modes
+        https://bugs.webkit.org/show_bug.cgi?id=131889
+
+        The incomplete painting was caused by the transparency layer created for
+        the root renderer. We can safely skip creating this transparency layer at
+        the root level, as there is nothing else being painted behind this layer that
+        could be used erroneously as a backdrop.
+
+        Reviewed by Simon Fraser.
+
+        Test: css3/compositing/blend-mode-with-body.html
+
+        * rendering/RenderLayer.h:
+        Changing RenderLayer::paintsWithTransparency so that it will not
+        return true when the root renderer needs to isolate blending.
+
 2014-04-25  Darin Adler  <darin@apple.com>
 
         ASSERTION FAILED: "!m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction" in svg/custom/use-instanceRoot-event-listeners.xhtml
