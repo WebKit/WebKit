@@ -110,7 +110,7 @@
 }
 
 .dashboard.debugger > .location .function-name::after {
-    content: '\0A00\2014\0A00'; /* &nbsp;&mdash;&nbsp; */
+    content: '\00A0\2014\00A0'; /* &nbsp;&mdash;&nbsp; */
 }
 
 .dashboard.debugger > .location .go-to-link {

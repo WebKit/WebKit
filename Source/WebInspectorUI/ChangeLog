@@ -1,3 +1,13 @@
+2014-04-24  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Dashboard when paused in debugger shows some missing glyph boxes
+        https://bugs.webkit.org/show_bug.cgi?id=132113
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (.dashboard.debugger > .location .function-name::after): Fix the codepoint for nbsp.
+
 2014-04-24  Jonathan Wells  <jonowells@apple.com>
 
         Web Inspector: Should update to CodeMirror 4.1
