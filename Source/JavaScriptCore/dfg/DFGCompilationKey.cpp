@@ -43,11 +43,6 @@ void CompilationKey::dump(PrintStream& out) const
     out.print("(Compile of ", *m_profiledBlock, " with ", m_mode, ")");
 }
 
-void CompilationKey::visitChildren(CodeBlockSet& codeBlocks)
-{
-    codeBlocks.mark(m_profiledBlock);
-}
-
 } } // namespace JSC::DFG
 
 

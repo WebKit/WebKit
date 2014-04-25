@@ -229,7 +229,6 @@ void Worklist::visitChildren(SlotVisitor& visitor, CodeBlockSet& codeBlocks)
             Plan* plan = iter->value.get();
             if (&plan->vm != vm)
                 continue;
-            iter->key.visitChildren(codeBlocks);
             iter->value->visitChildren(visitor, codeBlocks);
         }
     }

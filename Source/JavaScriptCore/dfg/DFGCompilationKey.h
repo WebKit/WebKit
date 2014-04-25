@@ -80,8 +80,6 @@ public:
         return WTF::pairIntHash(WTF::PtrHash<CodeBlock*>::hash(m_profiledBlock), m_mode);
     }
     
-    void visitChildren(CodeBlockSet&);
-    
     void dump(PrintStream&) const;
 
 private:

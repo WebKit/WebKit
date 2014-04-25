@@ -424,6 +424,7 @@ void Plan::visitChildren(SlotVisitor& visitor, CodeBlockSet& codeBlocks)
     for (unsigned i = mustHandleValues.size(); i--;)
         visitor.appendUnbarrieredValue(&mustHandleValues[i]);
     
+    codeBlocks.mark(codeBlock->alternative());
     codeBlocks.mark(codeBlock.get());
     codeBlocks.mark(profiledDFGCodeBlock.get());
     
