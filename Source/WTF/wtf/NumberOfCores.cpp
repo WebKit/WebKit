@@ -53,7 +53,7 @@ int numberOfProcessorCores()
     size_t length = sizeof(result);
     int name[] = {
             CTL_HW,
-            HW_NCPU
+            HW_AVAILCPU
     };
     int sysctlResult = sysctl(name, sizeof(name) / sizeof(int), &result, &length, 0, 0);
 

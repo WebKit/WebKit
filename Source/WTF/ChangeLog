@@ -1,3 +1,19 @@
+2014-04-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Figure out how many cores are available for realsies.
+
+        Rubber stamped by Andreas Kling.
+        
+        HW_AVAILCPU is more canonical than HW_NCPU. For example if you use hacks to tell Darwin
+        to make it seem like there are fewer CPUs, HW_AVAILCPU will change but HW_NCPU won't.
+        HW_NCPU doesn't reflect how much actual paralellism you'll get; it's merely reporting
+        facts about the machine you're running on. HW_AVAILCPU is almost always what WebKit
+        wants since it uses this information to decide how many threads to launch for various
+        things.
+
+        * wtf/NumberOfCores.cpp:
+        (WTF::numberOfProcessorCores):
+
 2014-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Support Python 2.7 in Cygwin
