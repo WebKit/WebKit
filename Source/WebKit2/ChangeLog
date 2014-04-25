@@ -1,3 +1,26 @@
+2014-04-25  Dean Jackson  <dino@apple.com>
+
+        Allow a platform-specific size enumeration to be passed into popup-menu display
+        https://bugs.webkit.org/show_bug.cgi?id=132195
+
+        Reviewed by Brent Fulgham. With some in-person review comments from Sam Weinig.
+
+        Platforms like OS X use a set of predefined sizes for built-in controls
+        used for <select>: normal, small and mini. Expose that information to
+        the PopupMenuClient via the PopupMenuStyle, allowing it to be passed
+        into the platform code in WebKitSystemInterface.
+
+        * Shared/PlatformPopupMenuData.cpp: Encode and decode the PopupMenuSize enum.
+        (WebKit::PlatformPopupMenuData::encode):
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h: Add PopupMenuSize member variable.
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu): Convert the PopupMenuSize
+        into a WKControlSize, and pass that into WKPopupMenu.
+        * WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm:
+        (WebKit::WebPopupMenu::setUpPlatformData): Add the PopupMenuSize to
+        the PlatformPopupMenuData.
+
 2014-04-25  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r167775): Safari crashes in ViewSnapshotStore::pruneSnapshots after loading 20 pages

@@ -191,7 +191,20 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
         END_BLOCK_OBJC_EXCEPTIONS;
     }
 
-    wkPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, font);
+    NSControlSize controlSize;
+    switch (m_client->menuStyle().menuSize()) {
+    case PopupMenuStyle::PopupMenuSizeNormal:
+        controlSize = NSRegularControlSize;
+        break;
+    case PopupMenuStyle::PopupMenuSizeSmall:
+        controlSize = NSSmallControlSize;
+        break;
+    case PopupMenuStyle::PopupMenuSizeMini:
+        controlSize = NSMiniControlSize;
+        break;
+    }
+
+    wkPopupMenuWithSize(menu, location, roundf(NSWidth(r)), dummyView.get(), index, font, controlSize);
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];

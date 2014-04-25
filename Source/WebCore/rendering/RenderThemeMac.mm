@@ -740,17 +740,22 @@ NSControlSize RenderThemeMac::controlSizeForFont(RenderStyle* style) const
     return NSMiniControlSize;
 }
 
+NSControlSize RenderThemeMac::controlSizeForCell(NSCell*, const IntSize* sizes, const IntSize& minSize, float zoomLevel) const
+{
+    if (minSize.width() >= static_cast<int>(sizes[NSRegularControlSize].width() * zoomLevel)
+        && minSize.height() >= static_cast<int>(sizes[NSRegularControlSize].height() * zoomLevel))
+        return NSRegularControlSize;
+
+    if (minSize.width() >= static_cast<int>(sizes[NSSmallControlSize].width() * zoomLevel)
+        && minSize.height() >= static_cast<int>(sizes[NSSmallControlSize].height() * zoomLevel))
+        return NSSmallControlSize;
+
+    return NSMiniControlSize;
+}
+
 void RenderThemeMac::setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minSize, float zoomLevel)
 {
-    NSControlSize size;
-    if (minSize.width() >= static_cast<int>(sizes[NSRegularControlSize].width() * zoomLevel) &&
-        minSize.height() >= static_cast<int>(sizes[NSRegularControlSize].height() * zoomLevel))
-        size = NSRegularControlSize;
-    else if (minSize.width() >= static_cast<int>(sizes[NSSmallControlSize].width() * zoomLevel) &&
-             minSize.height() >= static_cast<int>(sizes[NSSmallControlSize].height() * zoomLevel))
-        size = NSSmallControlSize;
-    else
-        size = NSMiniControlSize;
+    NSControlSize size = controlSizeForCell(cell, sizes, minSize, zoomLevel);
     if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
         [cell setControlSize:size];
 }
@@ -1381,6 +1386,22 @@ int RenderThemeMac::popupInternalPaddingBottom(RenderStyle* style) const
     if (style->appearance() == MenulistButtonPart)
         return styledPopupPaddingBottom * style->effectiveZoom();
     return 0;
+}
+
+PopupMenuStyle::PopupMenuSize RenderThemeMac::popupMenuSize(const RenderStyle* style, IntRect& rect) const
+{
+    NSPopUpButtonCell* popupButton = this->popupButton();
+    NSControlSize size = controlSizeForCell(popupButton, popupButtonSizes(), rect.size(), style->effectiveZoom());
+    switch (size) {
+    case NSRegularControlSize:
+        return PopupMenuStyle::PopupMenuSizeNormal;
+    case NSSmallControlSize:
+        return PopupMenuStyle::PopupMenuSizeSmall;
+    case NSMiniControlSize:
+        return PopupMenuStyle::PopupMenuSizeMini;
+    default:
+        return PopupMenuStyle::PopupMenuSizeNormal;
+    }
 }
 
 void RenderThemeMac::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* style, Element*) const

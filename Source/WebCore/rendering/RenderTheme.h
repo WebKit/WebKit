@@ -29,6 +29,7 @@
 #else
 #include "ThemeTypes.h"
 #endif
+#include "PopupMenuStyle.h"
 #include "RenderObject.h"
 #include "ScrollTypes.h"
 #include <wtf/PassRefPtr.h>
@@ -184,6 +185,7 @@ public:
     virtual int popupInternalPaddingTop(RenderStyle*) const { return 0; }
     virtual int popupInternalPaddingBottom(RenderStyle*) const { return 0; }
     virtual bool popupOptionSupportsTextIndent() const { return false; }
+    virtual PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle*, IntRect&) const { return PopupMenuStyle::PopupMenuSizeNormal; }
 
     virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return RegularScrollbar; }
 

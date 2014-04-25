@@ -1,3 +1,35 @@
+2014-04-25  Dean Jackson  <dino@apple.com>
+
+        Allow a platform-specific size enumeration to be passed into popup-menu display
+        https://bugs.webkit.org/show_bug.cgi?id=132195
+
+        Reviewed by Brent Fulgham. With some in-person review comments from Sam Weinig.
+
+        Platforms like OS X use a set of predefined sizes for built-in controls
+        used for <select>: normal, small and mini. Expose that information to
+        the PopupMenuClient via the PopupMenuStyle, allowing it to be passed
+        into the platform code in WebKitSystemInterface.
+
+        * platform/PopupMenuStyle.h: Add a menu size enum.
+        (WebCore::PopupMenuStyle::PopupMenuStyle):
+        (WebCore::PopupMenuStyle::menuSize):
+        * platform/mac/WebCoreSystemInterface.h: Pass in NSControlSize as a parameter
+        to WKPopupMenu.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::menuStyle): Ask the RenderTheme to calculate the size
+        of the menu button, so that it can be added to the PopupMenuStyle.
+        * rendering/RenderTheme.h: New method to retrieve the menu size.
+        (WebCore::RenderTheme::popupMenuSize): Convert an NSControlSize into a PopupMenuSize.
+        * rendering/RenderThemeMac.h: Override the base function, and add a
+        controlSizeForCell helper.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::controlSizeForCell): Used by this new
+        code and the old setControlSizeForCell to calculate the NSControlSize
+        that would be used for the button.
+        (WebCore::RenderThemeMac::setControlSize): Call the new helper.
+        (WebCore::RenderThemeMac::popupMenuSize): Return the value from the helper.
+
 2014-04-25  Javier Fernandez  <jfernandez@igalia.com>
 
         REGRESSION(r167799): ASSERTION in parseGridTemplateShorthand in fast/css-grid-layout/grid-template-shorthand-get-set.html

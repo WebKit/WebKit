@@ -93,6 +93,7 @@ void InitWebCoreSystemInterface(void)
     INIT(WindowSetAlpha);
     INIT(WindowSetScaledFrame);
     INIT(PopupMenu);
+    INIT(PopupMenuWithSize);
     INIT(SetCGFontRenderingMode);
 #endif
     INIT(SetBaseCTM);

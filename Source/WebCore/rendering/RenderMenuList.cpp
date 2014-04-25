@@ -560,8 +560,11 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
 PopupMenuStyle RenderMenuList::menuStyle() const
 {
     const RenderStyle& styleToUse = m_innerBlock ? m_innerBlock->style() : style();
-    return PopupMenuStyle(styleToUse.visitedDependentColor(CSSPropertyColor), styleToUse.visitedDependentColor(CSSPropertyBackgroundColor), styleToUse.font(), styleToUse.visibility() == VISIBLE,
-        styleToUse.display() == NONE, styleToUse.textIndent(), style().direction(), isOverride(style().unicodeBidi()));
+    IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
+    return PopupMenuStyle(styleToUse.visitedDependentColor(CSSPropertyColor), styleToUse.visitedDependentColor(CSSPropertyBackgroundColor),
+        styleToUse.font(), styleToUse.visibility() == VISIBLE, styleToUse.display() == NONE, styleToUse.textIndent(),
+        style().direction(), isOverride(style().unicodeBidi()), PopupMenuStyle::DefaultBackgroundColor,
+        PopupMenuStyle::SelectPopup, theme().popupMenuSize(&styleToUse, absBounds));
 }
 
 HostWindow* RenderMenuList::hostWindow() const

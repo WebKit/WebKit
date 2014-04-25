@@ -89,6 +89,7 @@ void InitWebCoreSystemInterface(void)
 #if !PLATFORM(IOS)
         INIT(MeasureMediaUIPart);
         INIT(PopupMenu);
+        INIT(PopupMenuWithSize);
         INIT(QTIncludeOnlyModernMediaFileTypes);
         INIT(QTMovieDataRate);
         INIT(QTMovieDisableComponent);

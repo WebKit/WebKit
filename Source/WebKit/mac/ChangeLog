@@ -1,3 +1,19 @@
+2014-04-25  Dean Jackson  <dino@apple.com>
+
+        Allow a platform-specific size enumeration to be passed into popup-menu display
+        https://bugs.webkit.org/show_bug.cgi?id=132195
+
+        Reviewed by Brent Fulgham. With some in-person review comments from Sam Weinig.
+
+        Platforms like OS X use a set of predefined sizes for built-in controls
+        used for <select>: normal, small and mini. Expose that information to
+        the PopupMenuClient via the PopupMenuStyle, allowing it to be passed
+        into the platform code in WebKitSystemInterface.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::show): Convert the WebCore menu size type into the
+        WebCoreSystemInterface type.
+
 2014-04-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167700.

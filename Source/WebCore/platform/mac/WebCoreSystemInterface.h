@@ -196,7 +196,12 @@ extern NSControl *(*wkCreateMediaUIControl)(int);
 
 extern void (*wkWindowSetAlpha)(NSWindow *, float);
 extern void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
+
 extern void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
+#if defined(__OBJC__)
+extern void (*wkPopupMenuWithSize)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize);
+#endif
+
 extern unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
 extern int (*wkQTMovieDataRate)(QTMovie*);
 extern void (*wkQTMovieDisableComponent)(uint32_t[5]);

@@ -134,7 +134,20 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     [m_webView addSubview:dummyView.get()];
     location = [dummyView convertPoint:location fromView:m_webView];
 
-    WKPopupMenu(menu, location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, font);
+    NSControlSize controlSize;
+    switch (data.menuSize) {
+    case WebCore::PopupMenuStyle::PopupMenuSizeNormal:
+        controlSize = NSRegularControlSize;
+        break;
+    case WebCore::PopupMenuStyle::PopupMenuSizeSmall:
+        controlSize = NSSmallControlSize;
+        break;
+    case WebCore::PopupMenuStyle::PopupMenuSizeMini:
+        controlSize = NSMiniControlSize;
+        break;
+    }
+
+    WKPopupMenuWithSize(menu, location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, font, controlSize);
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];
