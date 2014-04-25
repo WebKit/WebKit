@@ -438,7 +438,7 @@ JSValueRef EventSendingController::contextClick()
 
     WKRetainPtr<WKArrayRef> menuEntries = adoptWK(WKBundlePageCopyContextMenuItems(page));
     size_t entriesSize = WKArrayGetSize(menuEntries.get());
-    auto jsValuesArray = std::make_unique<JSValueRef[]>(entriesSize);
+    JSValueRef jsValuesArray[entriesSize];
     for (size_t i = 0; i < entriesSize; ++i) {
         ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(menuEntries.get(), i)) == WKContextMenuItemGetTypeID());
 
@@ -447,7 +447,7 @@ JSValueRef EventSendingController::contextClick()
         jsValuesArray[i] = JSObjectMake(context, getMenuItemClass(), privateData);
     }
 
-    return JSObjectMakeArray(context, entriesSize, jsValuesArray.get(), 0);
+    return JSObjectMakeArray(context, entriesSize, jsValuesArray, 0);
 #else
     return JSValueMakeUndefined(context);
 #endif

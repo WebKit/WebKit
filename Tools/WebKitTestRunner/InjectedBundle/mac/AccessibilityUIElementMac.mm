@@ -179,11 +179,11 @@ static NSString* attributesOfElement(id accessibilityObject)
 static JSValueRef convertElementsToObjectArray(JSContextRef context, Vector<RefPtr<AccessibilityUIElement>>& elements)
 {
     size_t elementCount = elements.size();
-    auto valueElements = std::make_unique<JSValueRef[]>(elementCount);
+    JSValueRef valueElements[elementCount];
     for (size_t i = 0; i < elementCount; ++i)
         valueElements[i] = JSObjectMake(context, elements[i]->wrapperClass(), elements[i].get());
     
-    return JSObjectMakeArray(context, elementCount, valueElements.get(), nullptr);
+    return JSObjectMakeArray(context, elementCount, valueElements, nullptr);
 }
 
 static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* value)

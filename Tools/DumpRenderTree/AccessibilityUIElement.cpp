@@ -519,11 +519,11 @@ static JSValueRef stringAttributeValueCallback(JSContextRef context, JSObjectRef
 static JSValueRef convertElementsToObjectArray(JSContextRef context, Vector<AccessibilityUIElement>& elements, JSValueRef* exception)
 {
     size_t elementCount = elements.size();
-    auto valueElements = std::make_unique<JSValueRef[]>(elementCount);
+    JSValueRef valueElements[elementCount];
     for (size_t i = 0; i < elementCount; ++i)
         valueElements[i] = AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[i]);
     
-    return JSObjectMakeArray(context, elementCount, valueElements.get(), exception);
+    return JSObjectMakeArray(context, elementCount, valueElements, exception);
 }
 
 static JSValueRef columnHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
