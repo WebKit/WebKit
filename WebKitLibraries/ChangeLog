@@ -3,6 +3,16 @@
         Update WKSI for https://webkit.org/b/132195
         <rdar://problem/16175750>
 
+        Sorry, I forgot to update the header. This should fix
+        the Mac builds.
+
+        * WebKitSystemInterface.h:
+
+2014-04-25  Dean Jackson  <dino@apple.com>
+
+        Update WKSI for https://webkit.org/b/132195
+        <rdar://problem/16175750>
+
         Reviewed by Jessie Berlin.
 
         * WebKitSystemInterface.h:
