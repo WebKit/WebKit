@@ -113,9 +113,9 @@ private:
     virtual void stopAssistingNode() override;
     virtual void selectionDidChange() override;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;
-    virtual void positionInformationDidChange(const InteractionInformationAtPosition&);
-    virtual void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>);
-    virtual void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold);
+    virtual void positionInformationDidChange(const InteractionInformationAtPosition&) override;
+    virtual void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>) override;
+    virtual void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold) override;
     virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) override;
 
 #if ENABLE(INSPECTOR)
