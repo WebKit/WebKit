@@ -1,3 +1,34 @@
+2014-04-25  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] fast/multicol/hit-test-* layout tests all fail
+        https://bugs.webkit.org/show_bug.cgi?id=132081
+
+        Reviewed by Dean Jackson.
+
+        Added a bunch of tests in fast/multicol/newmulticol/compare-with-old-impl/hit-test-*.html
+
+        * rendering/RenderBlock.h:
+        Make offsetForContents public, since I need to call it from RenderMultiColumnSet.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::populate):
+        Stop an ASSERT in the new columns code on the hit tests by making sure layout state is
+        disabled when moving children around.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::positionForPoint):
+        Refactor this function to call a helper function instead, translateRegionPointToFlowThread.
+
+        (WebCore::RenderMultiColumnSet::translateRegionPointToFlowThread):
+        This function is logical (unlike the mistaken physical function I first implemented in
+        positionForPoint).
+
+        (WebCore::RenderMultiColumnSet::updateHitTestResult):
+        * rendering/RenderMultiColumnSet.h:
+        Overridden to fill in the correct local coordinate when the HTML document is inside a paginated
+        RenderView. Note that column spans don't actually work, but once we move over to a 
+        non-column based pagination API, that will become irrelevant.
+
 2014-04-25  Andreas Kling  <akling@apple.com>
 
         Mark some things with WTF_MAKE_FAST_ALLOCATED.

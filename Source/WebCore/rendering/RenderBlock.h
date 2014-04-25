@@ -418,6 +418,9 @@ public:
 
     // FIXME: Can devirtualize once old column code is gone.
     virtual void computeLineGridPaginationOrigin(LayoutState&) const;
+    
+    // Adjust from painting offsets to the local coords of this renderer
+    void offsetForContents(LayoutPoint&) const;
 
 protected:
     virtual void addOverflowFromChildren();
@@ -568,9 +571,6 @@ protected:
     virtual ColumnInfo::PaginationUnit paginationUnit() const;
 
 protected:
-    // Adjust from painting offsets to the local coords of this renderer
-    void offsetForContents(LayoutPoint&) const;
-
     virtual bool requiresColumns(int computedColumnCount) const;
 
     bool updateLogicalWidthAndColumnWidth();
