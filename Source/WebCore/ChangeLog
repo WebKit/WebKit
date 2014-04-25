@@ -1,3 +1,19 @@
+2014-04-25  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] HTMLInputElement webkitdirectory property was removed in r163483
+        https://bugs.webkit.org/show_bug.cgi?id=132191
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the removed get and set methods as deprecated API to keep
+        backwards compatibility.
+
+        * bindings/gobject/WebKitDOMDeprecated.cpp:
+        (webkit_dom_html_input_element_get_webkitdirectory):
+        (webkit_dom_html_input_element_set_webkitdirectory):
+        * bindings/gobject/WebKitDOMDeprecated.h:
+        * bindings/gobject/WebKitDOMDeprecated.symbols:
+
 2014-04-25  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Implementation of the grid-template shorthand.

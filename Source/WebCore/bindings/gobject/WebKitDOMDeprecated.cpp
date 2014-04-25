@@ -70,6 +70,17 @@ WebKitDOMElement* webkit_dom_html_document_get_active_element(WebKitDOMHTMLDocum
     return webkit_dom_document_get_active_element(WEBKIT_DOM_DOCUMENT(document));
 }
 
+gboolean webkit_dom_html_input_element_get_webkitdirectory(WebKitDOMHTMLInputElement*)
+{
+    g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
+    return FALSE;
+}
+
+void webkit_dom_html_input_element_set_webkitdirectory(WebKitDOMHTMLInputElement*, gboolean)
+{
+    g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
+}
+
 gboolean webkit_dom_html_document_has_focus(WebKitDOMHTMLDocument* document)
 {
     return webkit_dom_document_has_focus(WEBKIT_DOM_DOCUMENT(document));

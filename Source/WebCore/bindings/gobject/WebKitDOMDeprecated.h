@@ -118,6 +118,32 @@ WEBKIT_DEPRECATED_FOR(webkit_dom_document_has_focus) gboolean
 webkit_dom_html_document_has_focus(WebKitDOMHTMLDocument* self);
 
 /**
+ * webkit_dom_html_input_element_get_webkitdirectory
+ * @self: A #WebKitDOMHTMLInputElement
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: A #gboolean
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED gboolean
+webkit_dom_html_input_element_get_webkitdirectory(WebKitDOMHTMLInputElement* self);
+
+
+/**
+ * webkit_dom_html_input_element_set_webkitdirectory
+ * @self: A #WebKitDOMHTMLInputElement
+ * @value: A #gboolean
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Deprecated: 2.6
+ */
+WEBKIT_DEPRECATED void
+webkit_dom_html_input_element_set_webkitdirectory(WebKitDOMHTMLInputElement* self, gboolean value);
+
+/**
  * webkit_dom_html_form_element_dispatch_form_change:
  * @self: A #WebKitDOMHTMLFormElement
  *
