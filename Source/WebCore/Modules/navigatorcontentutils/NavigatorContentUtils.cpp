@@ -119,16 +119,16 @@ static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
 
 NavigatorContentUtils* NavigatorContentUtils::from(Page* page)
 {
-    return static_cast<NavigatorContentUtils*>(RefCountedSupplement<Page, NavigatorContentUtils>::from(page, NavigatorContentUtils::supplementName()));
+    return static_cast<NavigatorContentUtils*>(Supplement<Page>::from(page, supplementName()));
 }
 
 NavigatorContentUtils::~NavigatorContentUtils()
 {
 }
 
-PassRef<NavigatorContentUtils> NavigatorContentUtils::create(std::unique_ptr<NavigatorContentUtilsClient> client)
+PassOwnPtr<NavigatorContentUtils> NavigatorContentUtils::create(std::unique_ptr<NavigatorContentUtilsClient> client)
 {
-    return adoptRef(*new NavigatorContentUtils(std::move(client)));
+    return adoptPtr(new NavigatorContentUtils(std::move(client)));
 }
 
 void NavigatorContentUtils::registerProtocolHandler(Navigator* navigator, const String& scheme, const String& url, const String& title, ExceptionCode& ec)
@@ -209,7 +209,7 @@ const char* NavigatorContentUtils::supplementName()
 
 void provideNavigatorContentUtilsTo(Page* page, std::unique_ptr<NavigatorContentUtilsClient> client)
 {
-    RefCountedSupplement<Page, NavigatorContentUtils>::provideTo(page, NavigatorContentUtils::supplementName(), NavigatorContentUtils::create(std::move(client)));
+    NavigatorContentUtils::provideTo(page, NavigatorContentUtils::supplementName(), NavigatorContentUtils::create(std::move(client)));
 }
 
 } // namespace WebCore

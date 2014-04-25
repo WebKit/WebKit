@@ -41,7 +41,7 @@ class Navigator;
 
 typedef int ExceptionCode;
 
-class NavigatorContentUtils final : public RefCountedSupplement<Page, NavigatorContentUtils> {
+class NavigatorContentUtils final : public Supplement<Page> {
 public:
     virtual ~NavigatorContentUtils();
 
@@ -55,7 +55,7 @@ public:
     static void unregisterProtocolHandler(Navigator*, const String& scheme, const String& url, ExceptionCode&);
 #endif
 
-    static PassRef<NavigatorContentUtils> create(std::unique_ptr<NavigatorContentUtilsClient>);
+    static PassOwnPtr<NavigatorContentUtils> create(std::unique_ptr<NavigatorContentUtilsClient>);
 
 private:
     explicit NavigatorContentUtils(std::unique_ptr<NavigatorContentUtilsClient> client)
