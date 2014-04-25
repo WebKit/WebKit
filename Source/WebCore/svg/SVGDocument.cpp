@@ -48,22 +48,6 @@ SVGSVGElement* SVGDocument::rootElement() const
     return 0;
 }
 
-void SVGDocument::dispatchZoomEvent(float prevScale, float newScale)
-{
-    RefPtr<SVGZoomEvent> event = static_pointer_cast<SVGZoomEvent>(createEvent("SVGZoomEvents", IGNORE_EXCEPTION));
-    event->initEvent(eventNames().zoomEvent, true, false);
-    event->setPreviousScale(prevScale);
-    event->setNewScale(newScale);
-    rootElement()->dispatchEvent(event.release(), IGNORE_EXCEPTION);
-}
-
-void SVGDocument::dispatchScrollEvent()
-{
-    RefPtr<Event> event = createEvent("SVGEvents", IGNORE_EXCEPTION);
-    event->initEvent(eventNames().scrollEvent, true, false);
-    rootElement()->dispatchEvent(event.release(), IGNORE_EXCEPTION);
-}
-
 bool SVGDocument::zoomAndPanEnabled() const
 {
     if (rootElement()) {

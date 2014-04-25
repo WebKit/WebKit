@@ -39,9 +39,6 @@ public:
 
     SVGSVGElement* rootElement() const;
 
-    void dispatchZoomEvent(float prevScale, float newScale);
-    void dispatchScrollEvent();
-
     bool zoomAndPanEnabled() const;
 
     void startPan(const FloatPoint& start);
