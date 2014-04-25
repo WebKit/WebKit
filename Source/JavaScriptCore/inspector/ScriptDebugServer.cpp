@@ -70,7 +70,7 @@ JSC::BreakpointID ScriptDebugServer::setBreakpoint(JSC::SourceID sourceID, const
         BreakpointIDToActionsMap::iterator it = m_breakpointIDToActions.find(id);
         ASSERT(it == m_breakpointIDToActions.end());
 #endif
-        const Vector<ScriptBreakpointAction> &actions = scriptBreakpoint.actions;
+        const BreakpointActions& actions = scriptBreakpoint.actions;
         m_breakpointIDToActions.set(id, actions);
     }
     return id;
@@ -324,14 +324,14 @@ void ScriptDebugServer::handlePause(Debugger::ReasonForPause, JSGlobalObject* vm
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidContinue, vmEntryGlobalObject);
 }
 
-const Vector<ScriptBreakpointAction>& ScriptDebugServer::getActionsForBreakpoint(JSC::BreakpointID breakpointID)
+const BreakpointActions& ScriptDebugServer::getActionsForBreakpoint(JSC::BreakpointID breakpointID)
 {
     ASSERT(breakpointID != JSC::noBreakpointID);
 
     if (m_breakpointIDToActions.contains(breakpointID))
         return m_breakpointIDToActions.find(breakpointID)->value;
     
-    static NeverDestroyed<Vector<ScriptBreakpointAction>> emptyActionVector = Vector<ScriptBreakpointAction>();
+    static NeverDestroyed<BreakpointActions> emptyActionVector = BreakpointActions();
     return emptyActionVector;
 }
 

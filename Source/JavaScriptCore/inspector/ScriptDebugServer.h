@@ -58,7 +58,7 @@ public:
 
     virtual void recompileAllJSFunctions() = 0;
 
-    const Vector<ScriptBreakpointAction>& getActionsForBreakpoint(JSC::BreakpointID);
+    const BreakpointActions& getActionsForBreakpoint(JSC::BreakpointID);
 
     class Task {
         WTF_MAKE_FAST_ALLOCATED;
@@ -96,7 +96,6 @@ protected:
     bool m_doneProcessingDebuggerEvents;
 
 private:
-    typedef Vector<ScriptBreakpointAction> BreakpointActions;
     typedef HashMap<JSC::BreakpointID, BreakpointActions> BreakpointIDToActionsMap;
 
     virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) override final;

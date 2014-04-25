@@ -55,6 +55,8 @@ struct ScriptBreakpointAction {
     String data;
 };
 
+typedef Vector<ScriptBreakpointAction> BreakpointActions;
+
 struct ScriptBreakpoint {
     ScriptBreakpoint()
     {
@@ -68,7 +70,7 @@ struct ScriptBreakpoint {
     {
     }
 
-    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, Vector<ScriptBreakpointAction>& actions, bool autoContinue)
+    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, BreakpointActions& actions, bool autoContinue)
         : lineNumber(lineNumber)
         , columnNumber(columnNumber)
         , condition(condition)
@@ -80,7 +82,7 @@ struct ScriptBreakpoint {
     int lineNumber;
     int columnNumber;
     String condition;
-    Vector<ScriptBreakpointAction> actions;
+    BreakpointActions actions;
     bool autoContinue;
 };
 

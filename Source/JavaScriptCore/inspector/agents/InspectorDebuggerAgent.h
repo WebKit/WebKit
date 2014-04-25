@@ -143,7 +143,7 @@ private:
     void clearInspectorBreakpointState();
     void clearBreakDetails();
 
-    bool breakpointActionsFromProtocol(ErrorString*, RefPtr<InspectorArray>& actions, Vector<ScriptBreakpointAction>* result);
+    bool breakpointActionsFromProtocol(ErrorString*, RefPtr<InspectorArray>& actions, BreakpointActions* result);
 
     typedef HashMap<JSC::SourceID, Script> ScriptsMap;
     typedef HashMap<String, Vector<JSC::BreakpointID>> BreakpointIdentifierToDebugServerBreakpointIDsMap;

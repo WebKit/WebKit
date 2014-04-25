@@ -1,3 +1,26 @@
+2014-04-25  Mark Lam  <mark.lam@apple.com>
+
+        Refactor debugging code to use BreakpointActions instead of Vector<ScriptBreakpointAction>.
+        <https://webkit.org/b/132201>
+
+        Reviewed by Joseph Pecoraro.
+
+        BreakpointActions is Vector<ScriptBreakpointAction>.  Let's just consistently use
+        BreakpointActions everywhere.
+
+        * inspector/ScriptBreakpoint.h:
+        (Inspector::ScriptBreakpoint::ScriptBreakpoint):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::setBreakpoint):
+        (Inspector::ScriptDebugServer::getActionsForBreakpoint):
+        * inspector/ScriptDebugServer.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::breakpointActionsFromProtocol):
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::InspectorDebuggerAgent::setBreakpoint):
+        (Inspector::InspectorDebuggerAgent::removeBreakpoint):
+        * inspector/agents/InspectorDebuggerAgent.h:
+
 2014-04-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG worklist scanning should not treat the key as a separate entity

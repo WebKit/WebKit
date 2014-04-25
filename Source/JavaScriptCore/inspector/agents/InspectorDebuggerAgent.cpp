@@ -195,7 +195,7 @@ static bool breakpointActionTypeForString(const String& typeString, ScriptBreakp
     return false;
 }
 
-bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString* errorString, RefPtr<InspectorArray>& actions, Vector<ScriptBreakpointAction>* result)
+bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString* errorString, RefPtr<InspectorArray>& actions, BreakpointActions* result)
 {
     if (!actions)
         return true;
@@ -266,7 +266,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int li
         actions = (*options)->getArray(ASCIILiteral("actions"));
     }
 
-    Vector<ScriptBreakpointAction> breakpointActions;
+    BreakpointActions breakpointActions;
     if (!breakpointActionsFromProtocol(errorString, actions, &breakpointActions))
         return;
 
@@ -317,7 +317,7 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString* errorString, const RefPt
         actions = (*options)->getArray(ASCIILiteral("actions"));
     }
 
-    Vector<ScriptBreakpointAction> breakpointActions;
+    BreakpointActions breakpointActions;
     if (!breakpointActionsFromProtocol(errorString, actions, &breakpointActions))
         return;
 
@@ -342,7 +342,7 @@ void InspectorDebuggerAgent::removeBreakpoint(ErrorString*, const String& breakp
     m_javaScriptBreakpoints.remove(breakpointIdentifier);
 
     for (JSC::BreakpointID breakpointID : m_breakpointIdentifierToDebugServerBreakpointIDs.take(breakpointIdentifier)) {
-        const Vector<ScriptBreakpointAction>& breakpointActions = scriptDebugServer().getActionsForBreakpoint(breakpointID);
+        const BreakpointActions& breakpointActions = scriptDebugServer().getActionsForBreakpoint(breakpointID);
         for (auto& action : breakpointActions)
             m_injectedScriptManager->releaseObjectGroup(objectGroupForBreakpointAction(action));
 
