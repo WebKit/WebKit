@@ -1792,7 +1792,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     PaintPhase phase = paintInfo.phase;
 
     // Check our region range to make sure we need to be painting in this region.
-    if (paintInfo.renderNamedFlowFragment && !paintInfo.renderNamedFlowFragment->flowThread()->objectShouldPaintInFlowRegion(this, paintInfo.renderNamedFlowFragment))
+    if (paintInfo.renderNamedFlowFragment && !paintInfo.renderNamedFlowFragment->flowThread()->objectShouldFragmentInFlowRegion(this, paintInfo.renderNamedFlowFragment))
         return;
 
     // Check if we need to do anything at all.
@@ -2415,7 +2415,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
     
     if (paintInfo && paintInfo->renderNamedFlowFragment && paintInfo->paintContainer->isRenderFlowThread()) {
         // Make sure the current object is actually flowed into the region being painted.
-        if (!toRenderFlowThread(paintInfo->paintContainer)->objectShouldPaintInFlowRegion(this, paintInfo->renderNamedFlowFragment))
+        if (!toRenderFlowThread(paintInfo->paintContainer)->objectShouldFragmentInFlowRegion(this, paintInfo->renderNamedFlowFragment))
             return result;
     }
 
@@ -2958,7 +2958,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (locationInContainer.region()) {
         RenderFlowThread* flowThread = flowThreadContainingBlock();
         ASSERT(flowThread);
-        if (!flowThread->objectShouldPaintInFlowRegion(this, locationInContainer.region()))
+        if (!flowThread->objectShouldFragmentInFlowRegion(this, locationInContainer.region()))
             return false;
     }
 

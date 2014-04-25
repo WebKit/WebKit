@@ -444,7 +444,7 @@ void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverf
     
     LayoutRect borderBox = box->borderBoxRectInRegion(this);
     LayoutRect clientBox;
-    ASSERT(m_flowThread->objectShouldPaintInFlowRegion(box, this));
+    ASSERT(m_flowThread->objectShouldFragmentInFlowRegion(box, this));
 
     if (!borderBox.isEmpty()) {
         borderBox = rectFlowPortionForBox(box, borderBox);

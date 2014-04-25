@@ -4159,7 +4159,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const Rend
 
         if (isRenderFlowThread()) {
             ASSERT(region);
-            if (!toRenderFlowThread(this)->objectShouldPaintInFlowRegion(renderObject, region))
+            if (!toRenderFlowThread(this)->objectShouldFragmentInFlowRegion(renderObject, region))
                 continue;
         }
 

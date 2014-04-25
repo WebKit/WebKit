@@ -804,7 +804,7 @@ bool RenderFlowThread::regionInRange(const RenderRegion* targetRegion, const Ren
     return false;
 }
 
-bool RenderFlowThread::objectShouldPaintInFlowRegion(const RenderObject* object, const RenderRegion* region) const
+bool RenderFlowThread::objectShouldFragmentInFlowRegion(const RenderObject* object, const RenderRegion* region) const
 {
     ASSERT(object);
     ASSERT(region);

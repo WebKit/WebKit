@@ -1,3 +1,33 @@
+2014-04-25  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Rename objectShouldPaintInFlowRegion to something more clear
+        https://bugs.webkit.org/show_bug.cgi?id=132050
+
+        Reviewed by Andreas Kling.
+
+        The objectShouldPaintInFlowRegion is no longer used only by the painting process
+        but also for hit-testing, so it was renamed to something more generic (objectShouldFragmentInFlowRegion).
+
+        No new tests required, it's just a method rename.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::objectShouldFragmentInFlowRegion):
+        (WebCore::RenderFlowThread::objectShouldPaintInFlowRegion): Deleted.
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::ensureOverflowForBox):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+
 2014-04-25  Enrica Casucci  <enrica@apple.com>
 
         iOS build fix after http://trac.webkit.org/changeset/167803

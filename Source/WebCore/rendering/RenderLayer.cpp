@@ -3746,7 +3746,7 @@ void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& 
             info.renderNamedFlowFragment = nullptr;
         else {
             ASSERT(namedFlowFragment->isValid());
-            if (!namedFlowFragment->flowThread()->objectShouldPaintInFlowRegion(&renderer(), namedFlowFragment))
+            if (!namedFlowFragment->flowThread()->objectShouldFragmentInFlowRegion(&renderer(), namedFlowFragment))
                 return;
         }
     }
@@ -4907,7 +4907,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     if (hitTestLocation.region()) {
         ASSERT(hitTestLocation.region()->isValid());
         RenderFlowThread* flowThread = hitTestLocation.region()->flowThread();
-        if (!flowThread->objectShouldPaintInFlowRegion(&renderer(), hitTestLocation.region()))
+        if (!flowThread->objectShouldFragmentInFlowRegion(&renderer(), hitTestLocation.region()))
             return 0;
     }
 

@@ -141,7 +141,7 @@ public:
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
     
     // Check if the object should be painted in this region and if the region is part of this flow thread.
-    bool objectShouldPaintInFlowRegion(const RenderObject*, const RenderRegion*) const;
+    bool objectShouldFragmentInFlowRegion(const RenderObject*, const RenderRegion*) const;
 
     void markAutoLogicalHeightRegionsForLayout();
     void markRegionsForOverflowLayoutIfNeeded();
