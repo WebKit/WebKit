@@ -770,6 +770,12 @@ webkit.org/b/131535 media/audio-mpeg-supported.html [ Timeout Pass ]
 
 webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure Timeout Pass ]
 
+webkit.org/b/132181 fast/loader/submit-form-while-parsing-2.html [ Failure Pass ]
+webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure Pass ]
+webkit.org/b/132183 fast/dom/adopt-node-crash-2.html [ Failure Pass ]
+webkit.org/b/132184 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure Pass ]
+webkit.org/b/132185 platform/gtk/editing/pasteboard/middle-button-paste.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

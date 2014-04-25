@@ -1,3 +1,16 @@
+2014-04-25  Enrique Ocaña González  <eocanha@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        Added test expectations for the following flaky tests:
+
+        * platform/gtk/TestExpectations:
+            fast/loader/submit-form-while-parsing-2.html
+            css3/calc/transitions-dependent.html
+            fast/dom/adopt-node-crash-2.html
+            fast/multicol/span/span-as-immediate-columns-child-dynamic.html
+            platform/gtk/editing/pasteboard/middle-button-paste.html
+
 2014-04-25  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Implementation of the grid-template shorthand.
