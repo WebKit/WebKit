@@ -1,3 +1,13 @@
+2014-04-25  Enrica Casucci  <enrica@apple.com>
+
+        iOS build fix after http://trac.webkit.org/changeset/167803
+        Unreviewed.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::checkOverflowScroll):
+        * rendering/RenderBlock.cpp:
+        (WebCore::positionForPointRespectingEditingBoundaries):
+
 2014-04-24  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Add support for offsetLeft and offsetTop.

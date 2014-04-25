@@ -625,7 +625,7 @@ int Frame::checkOverflowScroll(OverflowScrollAction action)
         layer->scrollToOffset(IntSize(layer->scrollXOffset() + deltaX, layer->scrollYOffset() + deltaY));
 
         // Handle making selection.
-        VisiblePosition visiblePosition(renderer->positionForPoint(selectionPosition));
+        VisiblePosition visiblePosition(renderer->positionForPoint(selectionPosition, nullptr));
         if (visiblePosition.isNotNull()) {
             VisibleSelection visibleSelection = selection().selection();
             visibleSelection.setExtent(visiblePosition);
