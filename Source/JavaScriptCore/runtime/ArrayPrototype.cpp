@@ -115,6 +115,8 @@ const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecStat
   map            arrayProtoFuncMap            DontEnum|Function 1
   entries        arrayProtoFuncEntries        DontEnum|Function 0
   keys           arrayProtoFuncKeys           DontEnum|Function 0
+  find           arrayProtoFuncFind           DontEnum|Function 1
+  findIndex      arrayProtoFuncFindIndex      DontEnum|Function 1
 @end
 */
 

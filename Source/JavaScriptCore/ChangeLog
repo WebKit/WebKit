@@ -1,3 +1,17 @@
+2014-04-25  Antoine Quint  <graouts@webkit.org>
+
+        Implement Array.prototype.find()
+        https://bugs.webkit.org/show_bug.cgi?id=130966
+
+        Reviewed by Oliver Hunt.
+
+        Implement Array.prototype.find() and Array.prototype.findIndex() as proposed in the Harmony spec.
+
+        * builtins/Array.prototype.js:
+        (find):
+        (findIndex):
+        * runtime/ArrayPrototype.cpp:
+
 2014-04-24  Brady Eidson  <beidson@apple.com>
 
         Rename "IMAGE_CONTROLS" feature to "SERVICE_CONTROLS"

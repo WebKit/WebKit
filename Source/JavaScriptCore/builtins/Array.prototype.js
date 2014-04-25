@@ -189,3 +189,46 @@ function fill(value /* [, start [, end]] */)
     return O;
 }
 
+function find(callback /*, thisArg */) {
+    "use strict";
+    if (this === null)
+        throw new @TypeError("Array.prototype.find requires that |this| not be null");
+    
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.find requires that |this| not be undefined");
+    
+    var array = @Object(this);
+    var length = array.length >>> 0;
+    
+    if (typeof callback !== "function")
+        throw new @TypeError("Array.prototype.find callback must be a function");
+    
+    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    for (var i = 0; i < length; i++) {
+        if (callback.@call(thisArg, array[i], i, array))
+            return array[i];
+    }
+    return undefined;
+}
+
+function findIndex(callback /*, thisArg */) {
+    "use strict";
+    if (this === null)
+        throw new @TypeError("Array.prototype.findIndex requires that |this| not be null");
+    
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.findIndex requires that |this| not be undefined");
+    
+    var array = @Object(this);
+    var length = array.length >>> 0;
+    
+    if (typeof callback !== "function")
+        throw new @TypeError("Array.prototype.findIndex callback must be a function");
+    
+    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    for (var i = 0; i < length; i++) {
+        if (callback.@call(thisArg, array[i], i, array))
+            return i;
+    }
+    return -1;
+}
