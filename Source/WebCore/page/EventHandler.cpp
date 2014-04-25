@@ -1311,7 +1311,10 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
 #endif
 
     Node* node = result.targetNode();
-    auto renderer = node ? node->renderer() : 0;
+    if (!node)
+        return NoCursorChange;
+
+    auto renderer = node->renderer();
     RenderStyle* style = renderer ? &renderer->style() : nullptr;
     bool horizontalText = !style || style->isHorizontalWritingMode();
     const Cursor& iBeam = horizontalText ? iBeamCursor() : verticalTextCursor();
@@ -1383,7 +1386,7 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
 
     switch (style ? style->cursor() : CURSOR_AUTO) {
     case CURSOR_AUTO: {
-        bool editable = node && node->hasEditableStyle();
+        bool editable = node->hasEditableStyle();
 
         if (useHandCursor(node, result.isOverLink(), shiftKey))
             return handCursor();
