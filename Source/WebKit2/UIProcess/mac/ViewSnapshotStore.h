@@ -72,6 +72,7 @@ private:
     HashMap<String, Snapshot> m_snapshotMap;
 
     bool m_enabled;
+    unsigned m_snapshotsWithImagesCount;
 };
 
 } // namespace WebKit

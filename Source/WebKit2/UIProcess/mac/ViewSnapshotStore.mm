@@ -40,6 +40,7 @@ namespace WebKit {
 
 ViewSnapshotStore::ViewSnapshotStore()
     : m_enabled(true)
+    , m_snapshotsWithImagesCount(0)
 {
 }
 
@@ -55,12 +56,12 @@ ViewSnapshotStore& ViewSnapshotStore::shared()
 
 void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
 {
-    if (m_snapshotMap.size() <= maximumSnapshotCount)
+    if (m_snapshotsWithImagesCount <= maximumSnapshotCount)
         return;
 
     uint32_t currentIndex = webPageProxy.backForwardList().currentIndex();
     uint32_t maxDistance = 0;
-    WebBackForwardListItem* mostDistantSnapshottedItem = nullptr;
+    auto mostDistantSnapshotIter = m_snapshotMap.end();
     auto backForwardEntries = webPageProxy.backForwardList().entries();
 
     // First, try to evict the snapshot for the page farthest from the current back-forward item.
@@ -75,21 +76,21 @@ void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
         if (snapshotUUID.isEmpty())
             continue;
 
-        const auto& snapshot = m_snapshotMap.find(mostDistantSnapshottedItem->snapshotUUID());
-        if (snapshot == m_snapshotMap.end())
+        const auto& snapshotIter = m_snapshotMap.find(snapshotUUID);
+        if (snapshotIter == m_snapshotMap.end())
             continue;
 
         // We're only interested in evicting snapshots that still have images.
-        if (!snapshot->value.hasImage())
+        if (!snapshotIter->value.hasImage())
             continue;
 
-        mostDistantSnapshottedItem = item;
+        mostDistantSnapshotIter = snapshotIter;
         maxDistance = distance;
     }
 
-    if (mostDistantSnapshottedItem) {
-        const auto& snapshot = m_snapshotMap.find(mostDistantSnapshottedItem->snapshotUUID());
-        snapshot->value.clearImage();
+    if (mostDistantSnapshotIter != m_snapshotMap.end()) {
+        mostDistantSnapshotIter->value.clearImage();
+        m_snapshotsWithImagesCount--;
         return;
     }
 
@@ -107,6 +108,7 @@ void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
 
     const auto& snapshot = m_snapshotMap.find(oldestSnapshotUUID);
     snapshot->value.clearImage();
+    m_snapshotsWithImagesCount--;
 }
 
 #if USE(IOSURFACE)
@@ -158,6 +160,9 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
 #endif
 
     m_snapshotMap.add(item->snapshotUUID(), snapshot);
+
+    if (snapshot.hasImage())
+        m_snapshotsWithImagesCount++;
 }
 
 bool ViewSnapshotStore::getSnapshot(WebBackForwardListItem* item, ViewSnapshotStore::Snapshot& snapshot)
