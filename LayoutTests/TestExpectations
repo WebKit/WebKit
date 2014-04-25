@@ -106,5 +106,3 @@ webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-
 
 # Expando properties on attribute nodes disappear
 webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
-
-webkit.org/b/132194 [ Debug ] fast/css-grid-layout/grid-template-shorthand-get-set.html [ Skip ]

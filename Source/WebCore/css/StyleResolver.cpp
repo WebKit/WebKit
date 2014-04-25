@@ -2263,6 +2263,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexFlow:
 #if ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyWebkitGridTemplate:
     case CSSPropertyWebkitGridArea:
     case CSSPropertyWebkitGridColumn:
     case CSSPropertyWebkitGridRow:

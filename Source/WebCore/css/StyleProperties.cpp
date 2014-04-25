@@ -160,6 +160,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
 #if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridArea:
         return getShorthandValue(webkitGridAreaShorthand());
+    case CSSPropertyWebkitGridTemplate:
+        return getShorthandValue(webkitGridTemplateShorthand());
     case CSSPropertyWebkitGridColumn:
         return getShorthandValue(webkitGridColumnShorthand());
     case CSSPropertyWebkitGridRow:

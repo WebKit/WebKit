@@ -1,3 +1,12 @@
+2014-04-25  Javier Fernandez  <jfernandez@igalia.com>
+
+        REGRESSION(r167799): ASSERTION in parseGridTemplateShorthand in fast/css-grid-layout/grid-template-shorthand-get-set.html
+        https://bugs.webkit.org/show_bug.cgi?id=132194
+
+        Reviewed by Martin Robinson.
+
+        * TestExpectations: Unskip fast/css-grid-layout/grid-template-shorthand-get-set.html.
+
 2014-04-25  David Hyatt  <hyatt@apple.com>
 
         Column rules not respecting scroll offsets.

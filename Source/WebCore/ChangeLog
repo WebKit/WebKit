@@ -1,3 +1,23 @@
+2014-04-25  Javier Fernandez  <jfernandez@igalia.com>
+
+        REGRESSION(r167799): ASSERTION in parseGridTemplateShorthand in fast/css-grid-layout/grid-template-shorthand-get-set.html
+        https://bugs.webkit.org/show_bug.cgi?id=132194
+
+        Reviewed by Martin Robinson.
+
+        Properly resolving the grid-template shorthand for the corresponding longhand
+        properties.
+
+        No new tests, grid-template-shorthand-get-set.html already covers this case.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::shorthandForProperty):
+        (WebCore::matchingShorthandsForLonghand):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2014-04-25  David Hyatt  <hyatt@apple.com>
 
         Column rules not respecting scroll offsets.
