@@ -26,6 +26,7 @@
 #include "config.h"
 
 #if ENABLE(VIDEO_TRACK)
+
 #include "JSAudioTrackList.h"
 
 #include "Element.h"
@@ -35,17 +36,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSAudioTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSAudioTrackList::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSAudioTrackList* jsAudioTrackList = jsCast<JSAudioTrackList*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsAudioTrackList, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(jsAudioTrackList->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(jsAudioTrackList, visitor);
-
-    AudioTrackList& audioTrackList = jsAudioTrackList->impl();
-    visitor.addOpaqueRoot(root(audioTrackList.element()));
-    audioTrackList.visitJSEventListeners(visitor);
+    visitor.addOpaqueRoot(root(impl().element()));
 }
 
 } // namespace WebCore

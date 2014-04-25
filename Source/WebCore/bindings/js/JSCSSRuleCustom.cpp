@@ -55,14 +55,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSCSSRule::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSCSSRule::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSCSSRule* thisObject = jsCast<JSCSSRule*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-    visitor.addOpaqueRoot(root(&thisObject->impl()));
+    visitor.addOpaqueRoot(root(&impl()));
 }
 
 JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSRule* rule)

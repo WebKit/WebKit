@@ -20,24 +20,13 @@
 #include "config.h"
 #include "JSTreeWalker.h"
 
-#include "JSNode.h"
 #include "Node.h"
-#include "NodeFilter.h"
-#include "TreeWalker.h"
-
-using namespace JSC;
 
 namespace WebCore {
 
-void JSTreeWalker::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSTreeWalker::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    JSTreeWalker* thisObject = jsCast<JSTreeWalker*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-
-    if (NodeFilter* filter = thisObject->m_impl->filter())
+    if (NodeFilter* filter = impl().filter())
         visitor.addOpaqueRoot(filter);
 }
 

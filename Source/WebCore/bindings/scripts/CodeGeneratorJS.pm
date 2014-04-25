@@ -766,9 +766,9 @@ sub InstanceNeedsVisitChildren
 {
     my $interface = shift;
     return $interface->extendedAttributes->{"JSCustomMarkFunction"}
-    || $interface->extendedAttributes->{"EventTarget"}
-    || $interface->name eq "EventTarget"
-    || $interface->extendedAttributes->{"ReportExtraMemoryCost"};
+        || $interface->extendedAttributes->{"EventTarget"}
+        || $interface->name eq "EventTarget"
+        || $interface->extendedAttributes->{"ReportExtraMemoryCost"};
 }
 
 sub GenerateHeader
@@ -1017,7 +1017,9 @@ sub GenerateHeader
 
     # visit function
     if ($needsVisitChildren) {
-        push(@headerContent, "    static void visitChildren(JSCell*, JSC::SlotVisitor&);\n\n");
+        push(@headerContent, "    static void visitChildren(JSCell*, JSC::SlotVisitor&);\n");
+        push(@headerContent, "    void visitAdditionalChildren(JSC::SlotVisitor&);\n") if $interface->extendedAttributes->{"JSCustomMarkFunction"};
+        push(@headerContent, "\n");
         $structureFlags{"JSC::OverridesVisitChildren"} = 1;
     }
 
@@ -2776,7 +2778,7 @@ sub GenerateImplementation
 
     }
 
-    if ($needsVisitChildren && !$interface->extendedAttributes->{"JSCustomMarkFunction"}) {
+    if ($needsVisitChildren) {
         push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
@@ -2787,6 +2789,7 @@ sub GenerateImplementation
         if ($interface->extendedAttributes->{"EventTarget"} || $interface->name eq "EventTarget") {
             push(@implContent, "    thisObject->impl().visitJSEventListeners(visitor);\n");
         }
+        push(@implContent, "    thisObject->visitAdditionalChildren(visitor);\n") if $interface->extendedAttributes->{"JSCustomMarkFunction"};
         if ($interface->extendedAttributes->{"ReportExtraMemoryCost"}) {
             push(@implContent, "    visitor.reportExtraMemoryUsage(cell, thisObject->impl().memoryCost());\n");
         }

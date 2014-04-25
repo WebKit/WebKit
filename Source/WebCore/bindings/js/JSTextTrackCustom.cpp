@@ -26,7 +26,9 @@
 #include "config.h"
 
 #if ENABLE(VIDEO_TRACK)
+
 #include "JSTextTrack.h"
+
 #include "JSTextTrackCueList.h"
 #include "JSTrackCustom.h"
 
@@ -34,18 +36,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSTextTrack::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSTextTrack::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSTextTrack* jsTextTrack = jsCast<JSTextTrack*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsTextTrack, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(jsTextTrack->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(jsTextTrack, visitor);
-
-    TextTrack& textTrack = jsTextTrack->impl();
-    visitor.addOpaqueRoot(root(&textTrack));
-
-    textTrack.visitJSEventListeners(visitor);
+    visitor.addOpaqueRoot(root(&impl()));
 }
 
 void JSTextTrack::setKind(ExecState* exec, JSValue value)

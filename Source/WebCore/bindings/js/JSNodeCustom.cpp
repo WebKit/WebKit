@@ -179,18 +179,9 @@ JSScope* JSNode::pushEventHandlerScope(ExecState* exec, JSScope* node) const
     return node;
 }
 
-void JSNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSNode::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSNode* thisObject = jsCast<JSNode*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-
-    Node& node = thisObject->impl();
-    node.visitJSEventListeners(visitor);
-
-    visitor.addOpaqueRoot(root(node));
+    visitor.addOpaqueRoot(root(impl()));
 }
 
 static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)

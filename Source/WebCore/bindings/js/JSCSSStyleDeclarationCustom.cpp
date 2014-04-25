@@ -45,18 +45,12 @@
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;
-using namespace WTF;
 
 namespace WebCore {
 
-void JSCSSStyleDeclaration::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSCSSStyleDeclaration::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSCSSStyleDeclaration* thisObject = jsCast<JSCSSStyleDeclaration*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-    visitor.addOpaqueRoot(root(&thisObject->impl()));
+    visitor.addOpaqueRoot(root(&impl()));
 }
 
 class CSSPropertyInfo {
@@ -65,8 +59,7 @@ public:
     bool hadPixelOrPosPrefix;
 };
 
-enum PropertyNamePrefix
-{
+enum PropertyNamePrefix {
     PropertyNamePrefixNone,
     PropertyNamePrefixCSS,
     PropertyNamePrefixPixel,

@@ -29,28 +29,14 @@
 #include "config.h"
 #include "JSAttr.h"
 
-#include "Document.h"
 #include "Element.h"
-#include "HTMLNames.h"
-
-using namespace JSC;
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
-void JSAttr::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSAttr::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    JSAttr* thisObject = jsCast<JSAttr*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-
-    Base::visitChildren(thisObject, visitor);
-    Element* element = thisObject->impl().ownerElement();
-    if (!element)
-        return;
-    visitor.addOpaqueRoot(root(element));
+    if (Element* element = impl().ownerElement())
+        visitor.addOpaqueRoot(root(element));
 }
 
 } // namespace WebCore

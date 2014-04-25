@@ -51,20 +51,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSWorkerGlobalScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSWorkerGlobalScope* thisObject = jsCast<JSWorkerGlobalScope*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-
-    if (WorkerLocation* location = thisObject->impl().optionalLocation())
+    if (WorkerLocation* location = impl().optionalLocation())
         visitor.addOpaqueRoot(location);
-    if (WorkerNavigator* navigator = thisObject->impl().optionalNavigator())
+    if (WorkerNavigator* navigator = impl().optionalNavigator())
         visitor.addOpaqueRoot(navigator);
-
-    thisObject->impl().visitJSEventListeners(visitor);
 }
 
 bool JSWorkerGlobalScope::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)

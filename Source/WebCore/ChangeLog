@@ -1,3 +1,79 @@
+2014-04-25  Darin Adler  <darin@apple.com>
+
+        ASSERTION FAILED: "!m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction" in svg/custom/use-instanceRoot-event-listeners.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=132148
+
+        Reviewed by Andreas Kling.
+
+        Changed how JSCustomMarkFunction generation works. Instead of leaving out
+        the generated visitChildren function, just generate a call to visitAdditionalChildren.
+        This eliminates the need to repeat boilerplate.
+
+        The fix for the above bug was to correct mistaken logic where JSSVGElementInstance
+        had a visitChildren that did not properly mark event listeners because it explicitly
+        did not call through to the base class visitChildren. The new arrangement makes that
+        mistake impossible.
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::visitAdditionalChildren): Use this instead of visitChildren.
+        * bindings/js/JSAudioTrackCustom.cpp:
+        (WebCore::JSAudioTrack::visitAdditionalChildren): Ditto.
+        * bindings/js/JSAudioTrackListCustom.cpp:
+        (WebCore::JSAudioTrackList::visitAdditionalChildren): Ditto.
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::JSCSSRule::visitAdditionalChildren): Ditto.
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::visitAdditionalChildren): Ditto.
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::JSCanvasRenderingContext::visitAdditionalChildren): Ditto.
+        * bindings/js/JSCryptoKeyPairCustom.cpp:
+        (WebCore::JSCryptoKeyPair::visitAdditionalChildren): Ditto.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::visitAdditionalChildren): Ditto.
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannel::visitAdditionalChildren): Ditto.
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::visitAdditionalChildren): Ditto.
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::visitAdditionalChildren): Ditto.
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::visitAdditionalChildren): Ditto.
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::visitAdditionalChildren): Ditto.
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::visitAdditionalChildren): Ditto.
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorker::visitAdditionalChildren): Ditto.
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::JSStyleSheet::visitAdditionalChildren): Ditto.
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::JSTextTrackCue::visitAdditionalChildren): Ditto.
+        * bindings/js/JSTextTrackCustom.cpp:
+        (WebCore::JSTextTrack::visitAdditionalChildren): Ditto.
+        * bindings/js/JSTextTrackListCustom.cpp:
+        (WebCore::JSTextTrackList::visitAdditionalChildren): Ditto.
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        (WebCore::JSTreeWalker::visitAdditionalChildren): Ditto.
+        * bindings/js/JSVideoTrackCustom.cpp:
+        (WebCore::JSVideoTrack::visitAdditionalChildren): Ditto.
+        * bindings/js/JSVideoTrackListCustom.cpp:
+        (WebCore::JSVideoTrackList::visitAdditionalChildren): Ditto.
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::visitAdditionalChildren): Ditto.
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        (WebCore::JSWorkerGlobalScope::visitAdditionalChildren): Ditto.
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::visitAdditionalChildren): Ditto.
+        * bindings/js/JSXPathResultCustom.cpp:
+        (WebCore::JSXPathResult::visitAdditionalChildren): Ditto.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::visitChildren): Rewrote to use modern for loops.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Generate declaration of visitAdditionalChildren.
+        (GenerateImplementation): Generate call to visitAdditionalChildren.
+
 2014-04-24  Andreas Kling  <akling@apple.com>
 
         [iOS WebKit2] Enable optimization to mmap downloaded resources once they become file-backed.

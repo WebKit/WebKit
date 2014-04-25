@@ -35,43 +35,34 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSAudioTrack::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSAudioTrack::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSAudioTrack* jsAudioTrack = jsCast<JSAudioTrack*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsAudioTrack, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(jsAudioTrack->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(jsAudioTrack, visitor);
-
-    AudioTrack& audioTrack = jsAudioTrack->impl();
-    visitor.addOpaqueRoot(root(&audioTrack));
+    visitor.addOpaqueRoot(root(&impl()));
 }
 
 void JSAudioTrack::setKind(ExecState* exec, JSValue value)
 {
-    UNUSED_PARAM(exec);
 #if ENABLE(MEDIA_SOURCE)
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
         return;
     impl().setKind(nativeValue);
 #else
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(value);
-    return;
 #endif
 }
 
 void JSAudioTrack::setLanguage(ExecState* exec, JSValue value)
 {
-    UNUSED_PARAM(exec);
 #if ENABLE(MEDIA_SOURCE)
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
         return;
     impl().setLanguage(nativeValue);
 #else
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(value);
-    return;
 #endif
 }
 

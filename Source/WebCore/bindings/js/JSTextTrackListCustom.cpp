@@ -26,6 +26,7 @@
 #include "config.h"
 
 #if ENABLE(VIDEO_TRACK)
+
 #include "JSTextTrackList.h"
 
 #include "Element.h"
@@ -35,17 +36,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSTextTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSTextTrackList::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    JSTextTrackList* jsTextTrackList = jsCast<JSTextTrackList*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsTextTrackList, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(jsTextTrackList->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(jsTextTrackList, visitor);
-    
-    TextTrackList& textTrackList = jsTextTrackList->impl();
-    visitor.addOpaqueRoot(root(textTrackList.element()));
-    textTrackList.visitJSEventListeners(visitor);
+    visitor.addOpaqueRoot(root(impl().element()));
 }
     
 } // namespace WebCore

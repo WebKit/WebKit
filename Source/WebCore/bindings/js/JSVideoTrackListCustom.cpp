@@ -26,26 +26,18 @@
 #include "config.h"
 
 #if ENABLE(VIDEO_TRACK)
+
 #include "JSVideoTrackList.h"
 
-#include "Element.h"
 #include "JSNodeCustom.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-void JSVideoTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSVideoTrackList::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSVideoTrackList* jsVideoTrackList = jsCast<JSVideoTrackList*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsVideoTrackList, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(jsVideoTrackList->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(jsVideoTrackList, visitor);
-
-    VideoTrackList& videoTrackList = jsVideoTrackList->impl();
-    visitor.addOpaqueRoot(root(videoTrackList.element()));
-    videoTrackList.visitJSEventListeners(visitor);
+    visitor.addOpaqueRoot(root(impl().element()));
 }
 
 } // namespace WebCore

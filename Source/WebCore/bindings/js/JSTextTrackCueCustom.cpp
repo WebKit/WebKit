@@ -27,8 +27,9 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "JSDataCue.h"
 #include "JSTextTrackCue.h"
+
+#include "JSDataCue.h"
 #include "JSTrackCustom.h"
 #include "JSVTTCue.h"
 #include "TextTrack.h"
@@ -81,20 +82,10 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, TextTrackCue* cue)
     }
 }
 
-void JSTextTrackCue::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSTextTrackCue::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSTextTrackCue* jsTextTrackCue = jsCast<JSTextTrackCue*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsTextTrackCue, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(jsTextTrackCue->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(jsTextTrackCue, visitor);
-
-    // Mark the cue's track root if it has one.
-    TextTrackCue& textTrackCue = jsTextTrackCue->impl();
-    if (TextTrack* textTrack = textTrackCue.track())
+    if (TextTrack* textTrack = impl().track())
         visitor.addOpaqueRoot(root(textTrack));
-    
-    textTrackCue.visitJSEventListeners(visitor);
 }
 
 } // namespace WebCore

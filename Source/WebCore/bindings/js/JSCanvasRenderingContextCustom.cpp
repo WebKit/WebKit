@@ -30,24 +30,19 @@
 #include "HTMLCanvasElement.h"
 #include "JSCanvasRenderingContext2D.h"
 #include "JSNode.h"
+
 #if ENABLE(WEBGL)
-#include "WebGLRenderingContext.h"
 #include "JSWebGLRenderingContext.h"
+#include "WebGLRenderingContext.h"
 #endif
 
 using namespace JSC;
 
 namespace WebCore {
 
-void JSCanvasRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSCanvasRenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSCanvasRenderingContext* thisObject = jsCast<JSCanvasRenderingContext*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-
-    visitor.addOpaqueRoot(root(thisObject->impl().canvas()));
+    visitor.addOpaqueRoot(root(impl().canvas()));
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, CanvasRenderingContext* object)

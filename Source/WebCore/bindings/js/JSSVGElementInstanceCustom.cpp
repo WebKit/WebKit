@@ -27,21 +27,13 @@
 #include "config.h"
 #include "JSSVGElementInstance.h"
 
-#include "JSEventTarget.h"
 #include "JSNodeCustom.h"
 
 namespace WebCore {
 
-void JSSVGElementInstance::visitChildren(JSC::JSCell* cell, JSC::SlotVisitor& visitor)
+void JSSVGElementInstance::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    JSSVGElementInstance* thisObject = JSC::jsCast<JSSVGElementInstance*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & JSC::OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    // Skip JSEventTarget::visitChildren because event listener registration is
-    // forwarded to the corresponding element.
-    JSEventTarget::Base::visitChildren(thisObject, visitor);
-    visitor.addOpaqueRoot(root(thisObject->impl().correspondingElement()));
+    visitor.addOpaqueRoot(root(impl().correspondingElement()));
 }
 
 } // namespace WebCore

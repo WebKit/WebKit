@@ -26,40 +26,27 @@
 #include "config.h"
 #include "JSStyleSheet.h"
 
-#include "CSSStyleSheet.h"
-#include "Node.h"
 #include "JSCSSStyleSheet.h"
-#include "JSNode.h"
-
-using namespace JSC;
 
 namespace WebCore {
 
-void JSStyleSheet::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSStyleSheet::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    JSStyleSheet* thisObject = jsCast<JSStyleSheet*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-    visitor.addOpaqueRoot(root(&thisObject->impl()));
+    visitor.addOpaqueRoot(root(&impl()));
 }
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, StyleSheet* styleSheet)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, StyleSheet* styleSheet)
 {
     if (!styleSheet)
-        return jsNull();
+        return JSC::jsNull();
 
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), styleSheet);
-    if (wrapper)
+    if (JSC::JSObject* wrapper = getCachedWrapper(globalObject->world(), styleSheet))
         return wrapper;
 
     if (styleSheet->isCSSStyleSheet())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSStyleSheet, styleSheet);
-    else
-        wrapper = CREATE_DOM_WRAPPER(globalObject, StyleSheet, styleSheet);
+        return CREATE_DOM_WRAPPER(globalObject, CSSStyleSheet, styleSheet);
 
-    return wrapper;
+    return CREATE_DOM_WRAPPER(globalObject, StyleSheet, styleSheet);
 }
 
 } // namespace WebCore

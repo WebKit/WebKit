@@ -35,16 +35,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSVideoTrack::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSVideoTrack::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSVideoTrack* jsVideoTrack = jsCast<JSVideoTrack*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsVideoTrack, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(jsVideoTrack->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(jsVideoTrack, visitor);
-
-    VideoTrack& videoTrack = jsVideoTrack->impl();
-    visitor.addOpaqueRoot(root(&videoTrack));
+    visitor.addOpaqueRoot(root(&impl()));
 }
 
 void JSVideoTrack::setKind(ExecState* exec, JSValue value)

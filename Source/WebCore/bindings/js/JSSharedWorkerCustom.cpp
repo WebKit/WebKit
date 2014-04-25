@@ -44,15 +44,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSSharedWorker::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSSharedWorker::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSSharedWorker* thisObject = jsCast<JSSharedWorker*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-
-    if (MessagePort* port = thisObject->impl().port())
+    if (MessagePort* port = impl().port())
         visitor.addOpaqueRoot(port);
 }
 

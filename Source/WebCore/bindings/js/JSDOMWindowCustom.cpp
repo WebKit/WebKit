@@ -58,16 +58,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSDOMWindow::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-
-    thisObject->impl().visitJSEventListeners(visitor);
-    if (Frame* frame = thisObject->impl().frame())
+    if (Frame* frame = impl().frame())
         visitor.addOpaqueRoot(frame);
 }
 

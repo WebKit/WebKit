@@ -56,30 +56,22 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSXMLHttpRequest::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSXMLHttpRequest::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    JSXMLHttpRequest* thisObject = jsCast<JSXMLHttpRequest*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-
-    if (XMLHttpRequestUpload* upload = thisObject->m_impl->optionalUpload())
+    if (XMLHttpRequestUpload* upload = impl().optionalUpload())
         visitor.addOpaqueRoot(upload);
 
-    if (Document* responseDocument = thisObject->m_impl->optionalResponseXML())
+    if (Document* responseDocument = impl().optionalResponseXML())
         visitor.addOpaqueRoot(responseDocument);
 
-    if (ArrayBuffer* responseArrayBuffer = thisObject->m_impl->optionalResponseArrayBuffer())
+    if (ArrayBuffer* responseArrayBuffer = impl().optionalResponseArrayBuffer())
         visitor.addOpaqueRoot(responseArrayBuffer);
 
-    if (Blob* responseBlob = thisObject->m_impl->optionalResponseBlob())
+    if (Blob* responseBlob = impl().optionalResponseBlob())
         visitor.addOpaqueRoot(responseBlob);
 
-    if (thisObject->m_response)
-        visitor.append(&thisObject->m_response);
-
-    thisObject->m_impl->visitJSEventListeners(visitor);
+    if (m_response)
+        visitor.append(&m_response);
 }
 
 // Custom functions
