@@ -184,6 +184,25 @@ FileList* DataTransfer::files() const
     return m_fileList.get();
 }
 
+bool DataTransfer::hasFileOfType(const String& type)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(canReadTypes());
+
+    for (const String& filename : m_pasteboard->readFilenames()) {
+        if (equalIgnoringCase(File::contentTypeFromFilePath(filename, File::AllContentTypes), type))
+            return true;
+    }
+
+    return false;
+}
+
+bool DataTransfer::hasStringOfType(const String& type)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(canReadTypes());
+
+    return !type.isNull() && types().contains(type);
+}
+
 #if !ENABLE(DRAG_SUPPORT)
 
 String DataTransfer::dropEffect() const

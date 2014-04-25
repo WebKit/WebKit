@@ -2059,28 +2059,13 @@ static String convertDragOperationToDropZoneOperation(DragOperation operation)
     }
 }
 
-static inline bool hasFileOfType(DataTransfer& dataTransfer, const String& type)
-{
-    RefPtr<FileList> fileList = dataTransfer.files();
-    for (unsigned i = 0; i < fileList->length(); i++) {
-        if (equalIgnoringCase(fileList->item(i)->type(), type))
-            return true;
-    }
-    return false;
-}
-
-static inline bool hasStringOfType(DataTransfer& dataTransfer, const String& type)
-{
-    return !type.isNull() && dataTransfer.types().contains(type);
-}
-
 static bool hasDropZoneType(DataTransfer& dataTransfer, const String& keyword)
 {
     if (keyword.startsWith("file:"))
-        return hasFileOfType(dataTransfer, keyword.substring(5));
+        return dataTransfer.hasFileOfType(keyword.substring(5));
 
     if (keyword.startsWith("string:"))
-        return hasStringOfType(dataTransfer, keyword.substring(7));
+        return dataTransfer.hasStringOfType(keyword.substring(7));
 
     return false;
 }

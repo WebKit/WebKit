@@ -76,6 +76,9 @@ namespace WebCore {
         bool canReadData() const;
         bool canWriteData() const;
 
+        bool hasFileOfType(const String&);
+        bool hasStringOfType(const String&);
+
         Pasteboard& pasteboard() { return *m_pasteboard; }
 
 #if ENABLE(DRAG_SUPPORT)

@@ -35,21 +35,6 @@
 
 namespace WebCore {
 
-static String getContentTypeFromFileName(const String& name, File::ContentTypeLookupPolicy policy)
-{
-    String type;
-    int index = name.reverseFind('.');
-    if (index != -1) {
-        if (policy == File::WellKnownContentTypes)
-            type = MIMETypeRegistry::getWellKnownMIMETypeForExtension(name.substring(index + 1));
-        else {
-            ASSERT(policy == File::AllContentTypes);
-            type = MIMETypeRegistry::getMIMETypeForExtension(name.substring(index + 1));
-        }
-    }
-    return type;
-}
-
 static std::unique_ptr<BlobData> createBlobDataForFileWithType(const String& path, const String& contentType)
 {
     auto blobData = std::make_unique<BlobData>();
@@ -61,12 +46,12 @@ static std::unique_ptr<BlobData> createBlobDataForFileWithType(const String& pat
 
 static std::unique_ptr<BlobData> createBlobDataForFile(const String& path, File::ContentTypeLookupPolicy policy)
 {
-    return createBlobDataForFileWithType(path, getContentTypeFromFileName(path, policy));
+    return createBlobDataForFileWithType(path, File::contentTypeFromFilePath(path, policy));
 }
 
 static std::unique_ptr<BlobData> createBlobDataForFileWithName(const String& path, const String& fileSystemName, File::ContentTypeLookupPolicy policy)
 {
-    return createBlobDataForFileWithType(path, getContentTypeFromFileName(fileSystemName, policy));
+    return createBlobDataForFileWithType(path, File::contentTypeFromFilePath(fileSystemName, policy));
 }
 
 File::File(const String& path, ContentTypeLookupPolicy policy)
@@ -125,6 +110,21 @@ void File::captureSnapshot(long long& snapshotSize, double& snapshotModification
 
     snapshotSize = metadata.length;
     snapshotModificationTime = metadata.modificationTime;
+}
+
+String File::contentTypeFromFilePath(const String& name, File::ContentTypeLookupPolicy policy)
+{
+    String type;
+    int index = name.reverseFind('.');
+    if (index != -1) {
+        if (policy == File::WellKnownContentTypes)
+            type = MIMETypeRegistry::getWellKnownMIMETypeForExtension(name.substring(index + 1));
+        else {
+            ASSERT(policy == File::AllContentTypes);
+            type = MIMETypeRegistry::getMIMETypeForExtension(name.substring(index + 1));
+        }
+    }
+    return type;
 }
 
 } // namespace WebCore

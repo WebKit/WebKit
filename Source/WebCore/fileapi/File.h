@@ -75,6 +75,8 @@ public:
     // Note that this involves synchronous file operation. Think twice before calling this function.
     void captureSnapshot(long long& snapshotSize, double& snapshotModificationTime) const;
 
+    static String contentTypeFromFilePath(const String&, ContentTypeLookupPolicy);
+
 private:
     File(const String& path, ContentTypeLookupPolicy);
 
