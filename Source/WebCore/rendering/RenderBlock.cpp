@@ -1826,7 +1826,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderBlock::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.context->paintingDisabled())
+    if (!hasColumns() || paintInfo.context->paintingDisabled())
         return;
 
     const Color& ruleColor = style().visitedDependentColor(CSSPropertyWebkitColumnRuleColor);
@@ -2113,8 +2113,6 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             if (didClipToRegion)
                 paintInfo.context->restore();
         }
-        if (hasColumns() && !paintInfo.paintRootBackgroundOnly())
-            paintColumnRules(paintInfo, paintOffset);
     }
 
     if (paintPhase == PaintPhaseMask && style().visibility() == VISIBLE) {
@@ -2122,14 +2120,24 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         return;
     }
 
-    // We're done.  We don't bother painting any children.
-    if (paintPhase == PaintPhaseBlockBackground || paintInfo.paintRootBackgroundOnly())
+    // If just painting the root background, then return.
+    if (paintInfo.paintRootBackgroundOnly())
         return;
 
     // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).
     LayoutPoint scrolledOffset = paintOffset;
     scrolledOffset.move(-scrolledContentOffset());
 
+    // Column rules need to account for scrolling and clipping.
+    // FIXME: Clipping of column rules does not work. We will need a separate paint phase for column rules I suspect in order to get
+    // clipping correct (since it has to paint as background but is still considered "contents").
+    if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && style().visibility() == VISIBLE)
+        paintColumnRules(paintInfo, scrolledOffset);
+
+    // Done with backgrounds, borders and column rules.
+    if (paintPhase == PaintPhaseBlockBackground)
+        return;
+    
     // 2. paint contents
     if (paintPhase != PaintPhaseSelfOutline) {
         if (hasColumns())

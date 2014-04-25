@@ -483,7 +483,7 @@ private:
     virtual void paintInlineChildren(PaintInfo&, const LayoutPoint&) { }
     void paintContents(PaintInfo&, const LayoutPoint&);
     void paintColumnContents(PaintInfo&, const LayoutPoint&, bool paintFloats = false);
-    void paintColumnRules(PaintInfo&, const LayoutPoint&);
+    virtual void paintColumnRules(PaintInfo&, const LayoutPoint&);
     void paintSelection(PaintInfo&, const LayoutPoint&);
     void paintCaret(PaintInfo&, const LayoutPoint&, CaretType);
 

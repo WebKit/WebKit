@@ -1,3 +1,14 @@
+2014-04-25  David Hyatt  <hyatt@apple.com>
+
+        Column rules not respecting scroll offsets.
+        https://bugs.webkit.org/show_bug.cgi?id=109683
+
+        Reviewed by Dean Jackson.
+
+        * fast/multicol/scrolling-column-rules.html: Added.
+        * platform/mac/fast/multicol/scrolling-column-rules-expected.png: Added.
+        * platform/mac/fast/multicol/scrolling-column-rules-expected.txt: Added.
+
 2014-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Crash applying editing commands from iframe onload event

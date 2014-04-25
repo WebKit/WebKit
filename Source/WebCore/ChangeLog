@@ -1,3 +1,30 @@
+2014-04-25  David Hyatt  <hyatt@apple.com>
+
+        Column rules not respecting scroll offsets.
+        https://bugs.webkit.org/show_bug.cgi?id=109683
+
+        Reviewed by Dean Jackson.
+
+        Added fast/multicol/scrolling-column-rules.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules):
+        Make paintColumnRules virtual so that it works with both column implementations.
+
+        (WebCore::RenderBlock::paintObject):
+        Changed to call paintColumnRules with the adjusted scroll offset and to do it after
+        bailing on the root background only check.
+
+        * rendering/RenderBlock.h:
+        paintColumnRules is now virtual.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::paintColumnRules):
+        (WebCore::RenderBlockFlow::paintBoxDecorations): Deleted.
+        * rendering/RenderBlockFlow.h:
+        Got rid of paintBoxDecorations override since it failed when hasBoxDecorations was false
+        anyway. Override paintColumnRules instead to paint at the right time.
+
 2014-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Crash applying editing commands from iframe onload event

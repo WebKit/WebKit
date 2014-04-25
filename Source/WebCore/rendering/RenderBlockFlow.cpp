@@ -1997,13 +1997,13 @@ void RenderBlockFlow::repaintOverhangingFloats(bool paintAllDescendants)
     }
 }
 
-void RenderBlockFlow::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& point)
+void RenderBlockFlow::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& point)
 {
-    RenderBlock::paintBoxDecorations(paintInfo, point);
+    RenderBlock::paintColumnRules(paintInfo, point);
     
-    if (!multiColumnFlowThread() || !paintInfo.shouldPaintWithinRoot(*this))
+    if (!multiColumnFlowThread() || paintInfo.context->paintingDisabled())
         return;
-    
+
     // Iterate over our children and paint the column rules as needed.
     for (auto& columnSet : childrenOfType<RenderMultiColumnSet>(*this)) {
         LayoutPoint childPoint = columnSet.location() + flipForWritingModeForChild(&columnSet, point);

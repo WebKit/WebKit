@@ -82,7 +82,7 @@ protected:
     virtual void dirtyLinesFromChangedChild(RenderObject* child) override final { lineBoxes().dirtyLinesFromChangedChild(this, child); }
     virtual void updateLogicalHeight() override;
 
-    virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&) override;
+    virtual void paintColumnRules(PaintInfo&, const LayoutPoint&) override;
 
 public:
     class MarginValues {
