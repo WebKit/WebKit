@@ -1,3 +1,25 @@
+2014-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        ScrollingCoordinator is unaware of topContentInset
+        https://bugs.webkit.org/show_bug.cgi?id=132158
+        <rdar://problem/16706152>
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/fast/scrolling/scroll-select-bottom-test.html
+
+        The calculation of non-fast-scrollable regions does not currently take
+        the topContentOffset into account. Consequently, the logic that decides
+        whether to stay on the scrolling thread, or drop down to an individual
+        page element, can make the wrong choice. This is especially true for
+        small scrollable regions (such as <select> elements), where the
+        topContentInset may be quite close to the size of the scrollable
+         element itself.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion): Also
+        include the topContentInset value in our calculation.
+
 2014-04-25  Javier Fernandez  <jfernandez@igalia.com>
 
         REGRESSION(r167799): Breaks debug build

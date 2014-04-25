@@ -1,0 +1,16 @@
+Put mouse here and flick downwards
+Scrollable Select
+
+
+Tests that a select doesn't pass wheel events to main frame when scrolling at bottom
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+div display height = 111
+Mouse moved to (30, 378)
+PASS Page did not receive wheel events.
+

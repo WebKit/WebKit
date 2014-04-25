@@ -1,3 +1,14 @@
+2014-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        ScrollingCoordinator is unaware of topContentInset
+        https://bugs.webkit.org/show_bug.cgi?id=132158
+        <rdar://problem/16706152>
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/fast/scrolling/scroll-select-bottom-test-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-select-bottom-test.html: Added.
+
 2014-04-25  Miyoung Shin  <myid.shin@samsung.com>
 
         Web process is crashed during dispatching touchEvent created by JS.

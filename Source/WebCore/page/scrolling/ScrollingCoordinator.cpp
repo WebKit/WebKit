@@ -124,6 +124,7 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, 
 
     IntPoint offset = frameLocation;
     offset.moveBy(frameView->frameRect().location());
+    offset.move(0, frameView->topContentInset());
 
     if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
         for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
