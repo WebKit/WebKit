@@ -352,6 +352,16 @@ StylePropertyShorthand webkitMarginCollapseShorthand()
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)
+StylePropertyShorthand webkitGridTemplateShorthand()
+{
+    static const CSSPropertyID webkitGridTemplateProperties[] = {
+        CSSPropertyWebkitGridTemplateColumns,
+        CSSPropertyWebkitGridTemplateRows,
+        CSSPropertyWebkitGridTemplateAreas
+    };
+    return StylePropertyShorthand(CSSPropertyWebkitGridTemplate, webkitGridTemplateProperties, WTF_ARRAY_LENGTH(webkitGridTemplateProperties));
+}
+
 StylePropertyShorthand webkitGridAreaShorthand()
 {
     static const CSSPropertyID webkitGridAreaProperties[] = {

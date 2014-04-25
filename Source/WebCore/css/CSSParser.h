@@ -43,6 +43,10 @@
 #include "WebKitCSSFilterValue.h"
 #endif
 
+#if ENABLE(CSS_GRID_LAYOUT)
+#include "CSSGridTemplateAreasValue.h"
+#endif
+
 namespace WebCore {
 
 class AnimationParseContext;
@@ -53,6 +57,7 @@ class CSSValue;
 class CSSValueList;
 class CSSBasicShape;
 class CSSBasicShapeInset;
+class CSSGridLineNamesValue;
 class Document;
 class Element;
 class ImmutableStyleProperties;
@@ -156,14 +161,17 @@ public:
     bool cssGridLayoutEnabled() const;
     PassRefPtr<CSSValue> parseGridPosition();
     bool parseGridItemPositionShorthand(CSSPropertyID, bool important);
+    bool parseGridTemplateRowsAndAreas(PassRefPtr<CSSValue>, bool important);
+    bool parseGridTemplateShorthand(bool important);
     bool parseGridAreaShorthand(bool important);
     bool parseSingleGridAreaLonghand(RefPtr<CSSValue>&);
-    bool parseGridTrackList(CSSPropertyID, bool important);
+    PassRefPtr<CSSValue> parseGridTrackList();
     bool parseGridTrackRepeatFunction(CSSValueList&);
     PassRefPtr<CSSValue> parseGridTrackSize(CSSParserValueList& inputList);
     PassRefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue*);
+    bool parseGridTemplateAreasRow(NamedGridAreaMap&, const unsigned, unsigned&);
     PassRefPtr<CSSValue> parseGridTemplateAreas();
-    void parseGridLineNames(CSSParserValueList&, CSSValueList&);
+    void parseGridLineNames(CSSParserValueList&, CSSValueList&, CSSGridLineNamesValue* = nullptr);
 #endif
 
     bool parseDashboardRegions(CSSPropertyID, bool important);

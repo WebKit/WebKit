@@ -310,6 +310,7 @@ isolation
 -webkit-grid-auto-rows
 -webkit-grid-column-end
 -webkit-grid-column-start
+-webkit-grid-template
 -webkit-grid-template-columns
 -webkit-grid-template-rows
 -webkit-grid-row-end

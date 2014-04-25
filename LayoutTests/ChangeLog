@@ -1,3 +1,26 @@
+2014-04-25  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Implementation of the grid-template shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=128980
+
+        Reviewed by Darin Adler.
+
+        Layout Test for the basic functionality of the grid-template shorthand. It was
+        also added a new javascript file with some utility functions.
+
+        This shorthand sets the values for the grid-template-columns,
+        grid-template-rows and grid-template-areas, so the implementation
+        tries to reuse as much available parsing functions as possible.
+
+        * fast/css-grid-layout/grid-template-shorthand-get-set-expected.txt: Added.
+        * fast/css-grid-layout/grid-template-shorthand-get-set.html: Added.
+        * fast/css-grid-layout/resources/grid-template-shorthand-parsing-utils.js: Added.
+        (testGridDefinitionsValues):
+        (testGridDefinitionsSetJSValues):
+        (testNonGridDefinitionsSetJSValues):
+        (checkGridDefinitionsSetJSValues):
+        (testGridDefinitionsSetBadJSValues):
+
 2014-04-25  Antoine Quint  <graouts@webkit.org>
 
         Implement Array.prototype.find()

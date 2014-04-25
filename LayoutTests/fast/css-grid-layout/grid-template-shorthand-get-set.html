@@ -1,0 +1,221 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+#gridTemplateWithNone {
+    -webkit-grid-template: none;
+}
+#gridTemplateSimpleForm {
+    -webkit-grid-template: 10px / 15px;
+}
+#gridTemplateSimpleFormWithNoneColumns {
+    -webkit-grid-template: none / 15px;
+}
+#gridTemplateSimpleFormWithNoneRows {
+    -webkit-grid-template: 10px / none;
+}
+#gridTemplateSimpleFormWithNone {
+    -webkit-grid-template: none / none;
+}
+#gridTemplateComplexForm {
+    -webkit-grid-template: 10px / "a" 15px;
+}
+#gridTemplateComplexFormWithLineNames {
+    -webkit-grid-template: 10px / (head) "a" 15px (tail);
+}
+#gridTemplateComplexFormWithLineNamesMultipleColumns {
+    -webkit-grid-template: 10px / (head) "a b" 15px (tail)
+}
+#gridTemplateComplexFormWithLineNamesMultipleRows {
+    -webkit-grid-template: 10px / (head1) "a" 15px (tail1)
+                          (head2) "b" 20px (tail2);
+}
+#gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns {
+    -webkit-grid-template: (first) 10px repeat(2, (nav nav2) 15px) /       "a b c" 100px (nav)
+                                                            (nav2) "d e f" 25px  (nav)
+                                                            (nav2) "g h i" 25px  (last);
+}
+#gridTemplateComplexFormWithAuto {
+    -webkit-grid-template: 10px / "a";
+}
+#gridTemplateComplexFormOnlyAreas {
+    -webkit-grid-template: "a";
+}
+
+/* Bad values. */
+
+#gridTemplateMultipleSlash {
+    -webkit-grid-template: 10px / 20px / 30px;
+}
+#gridTemplateSimpleFormJustColumns {
+    -webkit-grid-template: 10px;
+}
+#gridTemplateSimpleFormNoRows {
+    -webkit-grid-template: 10px /;
+}
+#gridTemplateSimpleFormNoColumns {
+    -webkit-grid-template: / 10px;
+}
+#gridTemplateSimpleFormNoColumnSize {
+    -webkit-grid-template: (line) / 10px;
+}
+#gridTemplateSimpleFormWithFitContent {
+    -webkit-grid-template: -webkit-fit-content / 10px;
+}
+#gridTemplateSimpleFormWithWrongRepeat {
+    -webkit-grid-template: repeat(2, 50% (title) a) / 10px;
+}
+#gridTemplateSimpleFormWithMisplacedNone1 {
+    -webkit-grid-template: 10px / none 20px;
+}
+#gridTemplateSimpleFormWithMisplacedNone2 {
+    -webkit-grid-template: 10px / 20px none;
+}
+#gridTemplateSimpleFormWithMisplacedNone3 {
+    -webkit-grid-template: none 10px / 20px;
+}
+#gridTemplateSimpleFormWithMisplacedNone4 {
+    -webkit-grid-template: 10px none / 20px;
+}
+#gridTemplateComplexFormWithRepeat {
+    -webkit-grid-template: 10px / "a" repeat(2, 50% (title));
+}
+#gridTemplateComplexFormWithWrongRepeat {
+    -webkit-grid-template: repeat(2, 50% (title) a) / "a";
+}
+#griTemplateComplexFormdWithFitAvailable {
+    -webkit-grid-template: -webkit-fit-available / "a";
+}
+#gridTemplateComplexFormNoColumnSize {
+    -webkit-grid-template: (line) / "a";
+}
+#gridTemplateComplexFormMisplacedRowsSize1 {
+    -webkit-grid-template: 25px / 10px "a";
+}
+#gridTemplateComplexFormMisplacedRowsSize2 {
+    -webkit-grid-template: 25px / "a" (name) 10px;
+}
+#gridTemplateComplexFormColumnsNotParsing1 {
+    -webkit-grid-template: a / "a" (name) 10px;
+}
+#gridTemplateComplexFormColumnsNotParsing2 {
+    -webkit-grid-template: "B" / "a" (name) 10px;
+}
+#gridTemplateComplexFormWithNoneColumns {
+    -webkit-grid-template: none / "a" (name) 10px;
+}
+
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div class="grid" id="gridTemplateWithNone"></div>
+<div class="grid" id="gridTemplateSimpleForm"></div>
+<div class="grid" id="gridTemplateSimpleFormWithNoneColumns"></div>
+<div class="grid" id="gridTemplateSimpleFormWithNoneRows"></div>
+<div class="grid" id="gridTemplateSimpleFormWithNone"></div>
+<div class="grid" id="gridTemplateComplexForm"></div>
+<div class="grid" id="gridTemplateComplexFormWithLineNames"></div>
+<div class="grid" id="gridTemplateComplexFormWithLineNamesMultipleColumns"></div>
+<div class="grid" id="gridTemplateComplexFormWithLineNamesMultipleRows"></div>
+<div class="grid" id="gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns"></div>
+<div class="grid" id="gridTemplateComplexFormWithAuto"></div>
+<div class="grid" id="gridTemplateComplexFormOnlyAreas"></div>
+<div class="grid" id="gridTemplateMultipleSlash"></div>
+<div class="grid" id="gridTemplateSimpleFormJustColumns"></div>
+<div class="grid" id="gridTemplateSimpleFormNoRows"></div>
+<div class="grid" id="gridTemplateSimpleFormNoColumns"></div>
+<div class="grid" id="gridTemplateSimpleFormNoColumnSize"></div>
+<div class="grid" id="gridTemplateSimpleFormWithFitContent"></div>
+<div class="grid" id="gridTemplateSimpleFormWithWrongRepeat"></div>
+<div class="grid" id="gridTemplateSimpleFormWithMisplacedNone1"></div>
+<div class="grid" id="gridTemplateSimpleFormWithMisplacedNone2"></div>
+<div class="grid" id="gridTemplateSimpleFormWithMisplacedNone3"></div>
+<div class="grid" id="gridTemplateSimpleFormWithMisplacedNone4"></div>
+<div class="grid" id="gridTemplateComplexFormWithRepeat"></div>
+<div class="grid" id="gridTemplateComplexFormWithWrongRepeat"></div>
+<div class="grid" id="griTemplateComplexFormdWithFitAvailable"></div>
+<div class="grid" id="gridTemplateComplexFormNoColumnSize"></div>
+<div class="grid" id="gridTemplateComplexFormMisplacedRowsSize1"></div>
+<div class="grid" id="gridTemplateComplexFormMisplacedRowsSize2"></div>
+<div class="grid" id="gridTemplateComplexFormColumnsNotParsing1"></div>
+<div class="grid" id="gridTemplateComplexFormColumnsNotParsing2"></div>
+<div class="grid" id="gridTemplateComplexFormWithNoneColumns"></div>
+<script src="resources/grid-template-shorthand-parsing-utils.js"></script>
+<script>
+    description("This test checks that the 'grid-template' shorthand is properly parsed and the longhand properties correctly assigned.");
+
+    debug("Test getting grid-template-areas set through CSS.");
+    testGridDefinitionsValues(document.getElementById("gridTemplateWithNone"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleForm"), "10px", "15px", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithNoneColumns"), "none", "15px", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithNoneRows"), "10px", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithNone"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexForm"), "10px", "15px", '"a"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNames"), "10px", "(head) 15px (tail)", '"a"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleColumns"), "10px", "(head) 15px (tail)", '"a b"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRows"), "10px", "(head1) 15px (tail1 head2) 20px (tail2)", '"a" "b"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns"), "(first) 10px (nav nav2) 15px (nav nav2) 15px", "100px (nav nav2) 25px (nav nav2) 25px (last)", '"a b c" "d e f" "g h i"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithAuto"), "10px", "0px", '"a"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormOnlyAreas"), "none", "0px", '"a"');
+
+    debug("");
+    debug("Test getting wrong values for grid-template shorthand through CSS (they should resolve to the default: 'none')");
+    testGridDefinitionsValues(document.getElementById("gridTemplateMultipleSlash"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormJustColumns"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormNoRows"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormNoColumns"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormNoColumnSize"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithFitContent"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithWrongRepeat"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithMisplacedNone1"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithMisplacedNone2"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithMisplacedNone3"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithMisplacedNone4"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithRepeat"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithWrongRepeat"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("griTemplateComplexFormdWithFitAvailable"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormNoColumnSize"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormMisplacedRowsSize1"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormMisplacedRowsSize2"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormColumnsNotParsing1"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormColumnsNotParsing2"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithNoneColumns"), "none", "none", "none");
+
+    debug("");
+    debug("Test the initial value");
+    var element = document.createElement("div");
+    document.body.appendChild(element);
+    testGridDefinitionsValues(element, "none", "none", "none");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-areas')", "'none'");
+
+    debug("");
+    debug("Test setting grid-template-columns and grid-template-rows back to 'none' through JS");
+    testGridDefinitionsSetJSValues("10px / (line) 'a' 20px", "10px", "(line) 20px", "\"a\"");
+    testGridDefinitionsSetJSValues("none", "none", "none", "none");
+
+    debug("");
+    debug("Test getting and setting grid-template shorthand through JS");
+    testGridDefinitionsSetJSValues("18px / 66px", "18px", "66px", "none");
+    testGridDefinitionsSetJSValues("10px / (head) 'a' 15px (tail)", "10px", "(head) 15px (tail)", "\"a\"");
+    testGridDefinitionsSetJSValues("'a'", "none", "0px", "\"a\"", "none", "auto");
+
+    debug("");
+    debug("Test setting grid-template shorthand to bad values through JS");
+    testGridDefinitionsSetBadJSValues("none / 'a'");
+    testGridDefinitionsSetBadJSValues("25px / 'a' (name) 10px");
+    testGridDefinitionsSetBadJSValues("'a' / 'b'");
+    testGridDefinitionsSetBadJSValues("15px");
+    testGridDefinitionsSetBadJSValues("15px / 20px none");
+    testGridDefinitionsSetBadJSValues("25px / 10px 'a'");
+
+</script>
+</body>
+</html>

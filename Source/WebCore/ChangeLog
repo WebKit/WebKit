@@ -1,3 +1,55 @@
+2014-04-25  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Implementation of the grid-template shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=128980
+
+        Reviewed by Darin Adler.
+
+        This shorthand sets the values for the grid-template-columns,
+        grid-template-rows and grid-template-areas, so the implementation
+        tries to reuse as much available parsing functions as possible.
+
+        The "parsingGridTrackList" was refactored to return a CSSValue and
+        let the "parseValue" function to assign the property value. The
+        "forwardSlash" operator is now valid when the track-list clause is
+        part of a shorthand. The "parseValue" function checkouts that only
+        additional clauses are allowed when processing shorthands; the
+        grid-columns-rows-get-set.html tests was modified to verify this.
+
+        The "parseGridTemplateAreas" was refactored too, in order to
+        process single areas's rows. This is very useful for the
+        gris-template secondary syntax, which mixes areas and rows values.
+
+        Finally, the "parseGirdLineNames" function was modified as well by
+        defining an new argument to concatenate head/tail custom-ident
+        elements and ensure the identList is at the heading index, since
+        it's now possible the parseList was rewound.
+
+        The implementation of the grid-template shorthand tries first to
+        match the <grid-template-columns> / <grid-template-rows> syntax,
+        failing back to the secondary syntax if needed.  This approach
+        requires to rewind the parseList but it produces a clearer code.
+
+        Test: fast/css-grid-layout/grid-template-shorthand-get-set.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseGridTemplateRowsAndAreas):
+        (WebCore::CSSParser::parseGridTemplateShorthand):
+        (WebCore::CSSParser::parseGridLineNames):
+        (WebCore::CSSParser::parseGridTrackList):
+        (WebCore::CSSParser::parseGridTemplateAreasRow):
+        (WebCore::CSSParser::parseGridTemplateAreas):
+        * css/CSSParser.h:
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserValueList::setCurrentIndex):
+        * css/CSSPropertyNames.in:
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitGridTemplateShorthand):
+        * css/StylePropertyShorthand.h:
+
 2014-04-25  Andreas Kling  <akling@apple.com>
 
         Remove two unused SVGDocument functions.

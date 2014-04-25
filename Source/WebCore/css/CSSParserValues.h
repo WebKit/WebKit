@@ -155,6 +155,12 @@ public:
         --m_current;
         return current();
     }
+    void setCurrentIndex(unsigned index)
+    {
+        ASSERT(index < m_values.size());
+        if (index < m_values.size())
+            m_current = index;
+    }
 
     CSSParserValue* valueAt(unsigned i) { return i < m_values.size() ? &m_values[i] : 0; }
 
