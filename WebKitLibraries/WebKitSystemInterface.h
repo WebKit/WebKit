@@ -43,7 +43,6 @@ typedef enum {
 } WKCertificateParseResult;
 
 CFStringRef WKCopyCFLocalizationPreferredName(CFStringRef localization);
-void WKSetDefaultLocalization(CFStringRef localization);
 
 CFStringRef WKSignedPublicKeyAndChallengeString(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
 WKCertificateParseResult WKAddCertificatesToKeychainFromData(const void *bytes, unsigned length);
@@ -75,7 +74,6 @@ OSType WKCarbonWindowPropertyTag(void);
 void WKDisableCGDeferredUpdates(void);
 #endif
 
-Class WKNSURLProtocolClassForRequest(NSURLRequest *request);
 void WKSetNSURLRequestShouldContentSniff(NSMutableURLRequest *request, BOOL shouldContentSniff);
 
 #if !TARGET_OS_IPHONE
@@ -289,8 +287,6 @@ void WKDeleteHTTPCookie(CFHTTPCookieStorageRef, NSHTTPCookie *);
 CFHTTPCookieStorageRef WKGetDefaultHTTPCookieStorage(void);
 WKCFURLCredentialRef WKCopyCredentialFromCFPersistentStorage(CFURLProtectionSpaceRef);
 void WKSetCFURLRequestShouldContentSniff(CFMutableURLRequestRef, bool flag);
-CFArrayRef WKCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
-void WKCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bodyParts);
 
 #if !TARGET_OS_IPHONE
 void WKSetVisibleApplicationName(CFStringRef);
@@ -455,8 +451,6 @@ CFURLRef WKGetCFURLResponseURL(CFURLResponseRef);
 CFHTTPMessageRef WKGetCFURLResponseHTTPResponse(CFURLResponseRef);
 CFStringRef WKCopyCFURLResponseSuggestedFilename(CFURLResponseRef);
 void WKSetCFURLResponseMIMEType(CFURLResponseRef, CFStringRef mimeType);
-
-CIFormat WKCIGetRGBA8Format(void);
 
 #if !TARGET_OS_IPHONE
 typedef enum {

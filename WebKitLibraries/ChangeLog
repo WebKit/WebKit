@@ -1,3 +1,14 @@
+2014-04-25  Dean Jackson  <dino@apple.com>
+
+        Update WKSI for https://webkit.org/b/132195
+        <rdar://problem/16175750>
+
+        Reviewed by Jessie Berlin.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceMavericks.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2014-04-22  Alex Christensen  <achristensen@webkit.org>
 
         Removed old stdbool and inttypes headers.
