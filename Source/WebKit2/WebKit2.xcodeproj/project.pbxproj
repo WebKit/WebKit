@@ -905,6 +905,9 @@
 		51E35205180F5D4F00E53BE9 /* DatabaseProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E35203180F5D4B00E53BE9 /* DatabaseProcessMain.mm */; };
 		51E35209180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E35208180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm */; };
 		51E3B67F16F266B3009968DC /* NetworkResourceLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */; };
+		51EF124E19098522008A6532 /* SelectionOverlayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EF124C19098522008A6532 /* SelectionOverlayController.cpp */; };
+		51EF124F19098523008A6532 /* SelectionOverlayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EF124D19098522008A6532 /* SelectionOverlayController.h */; };
+		51EF125119098531008A6532 /* SelectionOverlayControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EF125019098531008A6532 /* SelectionOverlayControllerMac.mm */; };
 		51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */; };
 		51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */; };
@@ -2757,6 +2760,9 @@
 		51E35207180F5D6100E53BE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		51E35208180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseServiceEntryPoint.mm; sourceTree = "<group>"; };
 		51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkResourceLoaderMac.mm; sourceTree = "<group>"; };
+		51EF124C19098522008A6532 /* SelectionOverlayController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectionOverlayController.cpp; sourceTree = "<group>"; };
+		51EF124D19098522008A6532 /* SelectionOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionOverlayController.h; sourceTree = "<group>"; };
+		51EF125019098531008A6532 /* SelectionOverlayControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionOverlayControllerMac.mm; sourceTree = "<group>"; };
 		51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoaderMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoaderMessages.h; sourceTree = "<group>"; };
 		51F7DC4A180CC93600212CA3 /* com.apple.WebKit.Databases.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Databases.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5316,6 +5322,8 @@
 				1A90C23512650717003E44D4 /* PageOverlay.h */,
 				2D140EAD18F37BE0005E75A0 /* PageOverlayController.cpp */,
 				2D140EAE18F37BE0005E75A0 /* PageOverlayController.h */,
+				51EF124C19098522008A6532 /* SelectionOverlayController.cpp */,
+				51EF124D19098522008A6532 /* SelectionOverlayController.h */,
 				519EF58F18EF77210003B7F4 /* TelephoneNumberOverlayController.cpp */,
 				519EF59018EF77210003B7F4 /* TelephoneNumberOverlayController.h */,
 				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
@@ -6071,6 +6079,7 @@
 				1AB16AE7164B3A8800290D62 /* RemoteLayerTreeContext.mm */,
 				1AB16ADC1648598400290D62 /* RemoteLayerTreeDrawingArea.h */,
 				1AB16ADB1648598400290D62 /* RemoteLayerTreeDrawingArea.mm */,
+				51EF125019098531008A6532 /* SelectionOverlayControllerMac.mm */,
 				519EF58D18EF770D0003B7F4 /* TelephoneNumberOverlayControllerMac.mm */,
 				1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */,
 				1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */,
@@ -7346,6 +7355,7 @@
 				29501724162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h in Headers */,
 				1F7506B61859165700EC0FF7 /* WKWebProcessPlugInNodeHandleInternal.h in Headers */,
 				1F7506B51859165400EC0FF7 /* WKWebProcessPlugInScriptWorldInternal.h in Headers */,
+				51EF124F19098523008A6532 /* SelectionOverlayController.h in Headers */,
 				373CEAD6185417AE008C363D /* WKNSData.h in Headers */,
 				1AB8A1F018400B0000E9AE69 /* WKPageFormClient.h in Headers */,
 				BC989D85161A9890000D46D3 /* WKWebProcessPlugInInternal.h in Headers */,
@@ -8447,6 +8457,7 @@
 				BCAC112012C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp in Sources */,
 				F62A76B812B1B25F0005F1B6 /* WebDatabaseManagerProxyMessageReceiver.cpp in Sources */,
 				517DD5C5180DC3E10081660B /* DatabaseProcessProxyMac.mm in Sources */,
+				51EF125119098531008A6532 /* SelectionOverlayControllerMac.mm in Sources */,
 				BC111A5D112F4FBB00337BAB /* WebDragClient.cpp in Sources */,
 				C574A37712E6099D002DFE98 /* WebDragClientMac.mm in Sources */,
 				BCA0EFA012332642007D3CFB /* WebEditCommandProxy.cpp in Sources */,
@@ -8589,6 +8600,7 @@
 				3336762F130C9998006C9DE2 /* WebResourceCacheManager.cpp in Sources */,
 				33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp in Sources */,
 				33367655130C9ECA006C9DE2 /* WebResourceCacheManagerMessageReceiver.cpp in Sources */,
+				51EF124E19098522008A6532 /* SelectionOverlayController.cpp in Sources */,
 				33367635130C99B2006C9DE2 /* WebResourceCacheManagerProxy.cpp in Sources */,
 				33367657130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp in Sources */,
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,

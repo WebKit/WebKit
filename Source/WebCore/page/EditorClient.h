@@ -55,6 +55,7 @@ class Element;
 class Frame;
 class HTMLElement;
 class KeyboardEvent;
+class LayoutRect;
 class Node;
 class Range;
 class SharedBuffer;
@@ -180,6 +181,10 @@ public:
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     virtual void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<Range>>&) { }
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+    virtual void selectionRectsDidChange(const Vector<LayoutRect>&) { }
 #endif
 
     // Support for global selections, used on platforms like the X Window System that treat

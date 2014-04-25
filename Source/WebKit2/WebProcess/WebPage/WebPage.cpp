@@ -49,6 +49,7 @@
 #include "PluginProxy.h"
 #include "PluginView.h"
 #include "PrintInfo.h"
+#include "SelectionOverlayController.h"
 #include "SessionState.h"
 #include "SessionTracker.h"
 #include "ShareableBitmap.h"
@@ -4567,6 +4568,16 @@ TelephoneNumberOverlayController& WebPage::telephoneNumberOverlayController()
         m_telephoneNumberOverlayController = TelephoneNumberOverlayController::create(this);
 
     return *m_telephoneNumberOverlayController;
+}
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+SelectionOverlayController& WebPage::selectionOverlayController()
+{
+    if (!m_selectionOverlayController)
+        m_selectionOverlayController = SelectionOverlayController::create(this);
+
+    return *m_selectionOverlayController;
 }
 #endif
 

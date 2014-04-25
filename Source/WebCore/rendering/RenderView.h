@@ -32,6 +32,10 @@
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
+#if ENABLE(SERVICE_CONTROLS)
+#include "SelectionRectGatherer.h"
+#endif
+
 namespace WebCore {
 
 class FlowThreadController;
@@ -354,6 +358,10 @@ private:
 #endif
 
     HashSet<RenderElement*> m_renderersWithPausedImageAnimation;
+
+#if ENABLE(SERVICE_CONTROLS)
+    SelectionRectGatherer m_selectionRectGatherer;
+#endif
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderView, isRenderView())

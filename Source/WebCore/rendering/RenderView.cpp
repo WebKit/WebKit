@@ -72,6 +72,9 @@ RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
 #if ENABLE(CSS_FILTERS)
     , m_hasSoftwareFilters(false)
 #endif
+#if ENABLE(SERVICE_CONTROLS)
+    , m_selectionRectGatherer(*this)
+#endif
 {
     setIsRenderView();
 
@@ -760,6 +763,12 @@ void RenderView::setMaximalOutlineSize(int o)
 
 void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode)
 {
+#if ENABLE(SERVICE_CONTROLS)
+    // Clear the current rects and create a notifier for the new rects we are about to gather.
+    // The Notifier updates the Editor when it goes out of scope and is destroyed.
+    std::unique_ptr<SelectionRectGatherer::Notifier> rectNotifier = m_selectionRectGatherer.clearAndCreateNotifier();
+#endif // ENABLE(SERVICE_CONTROLS)
+
     // Make sure both our start and end objects are defined.
     // Check www.msnbc.com and try clicking around to find the case where this happened.
     if ((start && !end) || (end && !start))
@@ -933,7 +942,14 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
     o = start;
     while (o && o != stop) {
         if ((o->canBeSelectionLeaf() || o == start || o == end) && o->selectionState() != SelectionNone) {
-            newSelectedObjects.set(o, std::make_unique<RenderSelectionInfo>(o, true));
+            std::unique_ptr<RenderSelectionInfo> selectionInfo = std::make_unique<RenderSelectionInfo>(o, true);
+
+#if ENABLE(SERVICE_CONTROLS)
+            m_selectionRectGatherer.addRect(selectionInfo->rect());
+#endif
+
+            newSelectedObjects.set(o, std::move(selectionInfo));
+
             RenderBlock* cb = o->containingBlock();
             while (cb && !cb->isRenderView()) {
                 std::unique_ptr<RenderBlockSelectionInfo>& blockInfo = newSelectedBlocks.add(cb, nullptr).iterator->value;
@@ -941,6 +957,10 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
                     break;
                 blockInfo = std::make_unique<RenderBlockSelectionInfo>(cb);
                 cb = cb->containingBlock();
+
+#if ENABLE(SERVICE_CONTROLS)
+                m_selectionRectGatherer.addRects(blockInfo->rects());
+#endif
             }
         }
 

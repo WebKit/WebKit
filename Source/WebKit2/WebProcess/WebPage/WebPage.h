@@ -140,6 +140,7 @@ class NotificationPermissionRequestManager;
 class PageBanner;
 class PageOverlay;
 class PluginView;
+class SelectionOverlayController;
 class SessionState;
 class VisibleContentRectUpdateInfo;
 class WebColorChooser;
@@ -783,6 +784,9 @@ public:
     TelephoneNumberOverlayController& telephoneNumberOverlayController();
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
 #endif
+#if ENABLE(SERVICE_CONTROLS)
+    SelectionOverlayController& selectionOverlayController();
+#endif
 
     void didChangeScrollOffsetForFrame(WebCore::Frame*);
 
@@ -1199,6 +1203,9 @@ private:
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     RefPtr<TelephoneNumberOverlayController> m_telephoneNumberOverlayController;
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    RefPtr<SelectionOverlayController> m_selectionOverlayController;
 #endif
 
     PageOverlayController m_pageOverlayController;

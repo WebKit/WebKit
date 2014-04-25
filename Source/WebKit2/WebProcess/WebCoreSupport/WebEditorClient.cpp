@@ -27,6 +27,7 @@
 #include "WebEditorClient.h"
 
 #include "EditorState.h"
+#include "SelectionOverlayController.h"
 #include "TelephoneNumberOverlayController.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -530,5 +531,12 @@ void WebEditorClient::selectedTelephoneNumberRangesChanged(const Vector<RefPtr<R
     m_page->telephoneNumberOverlayController().selectedTelephoneNumberRangesChanged(ranges);
 }
 #endif
+
+#if ENABLE(SERVICE_CONTROLS)
+void WebEditorClient::selectionRectsDidChange(const Vector<LayoutRect>& rects)
+{
+    m_page->selectionOverlayController().selectionRectsDidChange(rects);
+}
+#endif // ENABLE(SERVICE_CONTROLS)
 
 } // namespace WebKit

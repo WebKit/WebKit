@@ -1,3 +1,36 @@
+2014-04-25  Brady Eidson  <beidson@apple.com>
+
+        Add a selection overlay.
+        <rdar://problem/16727797> and https://bugs.webkit.org/show_bug.cgi?id=132200
+
+        Reviewed by David Hyatt.
+
+        No new tests (WK2 feature in development).
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Add a SelectionRectGathterer class.
+        It creates a Notifier (given a RenderView) then accepts Rects from the RenderView.
+        When the Notifier is destroyed, the appropriate EditorClient is notified of the gathered rects.
+        * editing/SelectionRectGatherer.cpp: Added.
+        (WebCore::SelectionRectGatherer::SelectionRectGatherer):
+        (WebCore::SelectionRectGatherer::addRect):
+        (WebCore::SelectionRectGatherer::addRects):
+        (WebCore::SelectionRectGatherer::Notifier::Notifier):
+        (WebCore::SelectionRectGatherer::Notifier::~Notifier):
+        (WebCore::SelectionRectGatherer::clearAndCreateNotifier):
+        * editing/SelectionRectGatherer.h: Added.
+
+        * page/EditorClient.h:
+        (WebCore::EditorClient::selectionRectsDidChange):
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::setSelection): Clear the gatherer’s rects then create a Notifier.
+        (WebCore::RenderView::setSubtreeSelection): Give all the selection rects to be painted to
+          the SelectionRectGatherer.
+        * rendering/RenderView.h:
+
 2014-04-08  Jer Noble  <jer.noble@apple.com>
 
         Support "Live" streams in media controls.
