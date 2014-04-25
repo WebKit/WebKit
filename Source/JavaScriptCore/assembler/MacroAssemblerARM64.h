@@ -504,7 +504,7 @@ public:
         LogicalImmediate logicalImm = LogicalImmediate::create64(static_cast<intptr_t>(static_cast<int64_t>(imm.m_value)));
 
         if (logicalImm.isValid()) {
-            m_assembler.orr<64>(dest, dest, logicalImm);
+            m_assembler.orr<64>(dest, src, logicalImm);
             return;
         }
 
@@ -713,7 +713,7 @@ public:
             LogicalImmediate logicalImm = LogicalImmediate::create32(imm.m_value);
 
             if (logicalImm.isValid()) {
-                m_assembler.eor<32>(dest, dest, logicalImm);
+                m_assembler.eor<32>(dest, src, logicalImm);
                 return;
             }
 
@@ -752,7 +752,7 @@ public:
             LogicalImmediate logicalImm = LogicalImmediate::create64(static_cast<intptr_t>(static_cast<int64_t>(imm.m_value)));
 
             if (logicalImm.isValid()) {
-                m_assembler.eor<64>(dest, dest, logicalImm);
+                m_assembler.eor<64>(dest, src, logicalImm);
                 return;
             }
 

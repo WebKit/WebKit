@@ -1,3 +1,18 @@
+2014-04-24  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION: Apparent hang of PCE.js Mac OS System 7.0.1 on ARM64 devices
+        https://bugs.webkit.org/show_bug.cgi?id=132147
+
+        Reviewed by Mark Lam.
+
+        Fixed or64(), eor32( ) and eor64() to use "src" register when we have a valid logicalImm.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::or64):
+        (JSC::MacroAssemblerARM64::xor32):
+        (JSC::MacroAssemblerARM64::xor64):
+        * tests/stress/regress-132147.js: Added test.
+
 2014-04-24  Mark Lam  <mark.lam@apple.com>
 
         Make slowPathAllocsBetweenGCs a runtime option.
