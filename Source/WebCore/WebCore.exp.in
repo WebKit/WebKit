@@ -2870,6 +2870,8 @@ _wkSetRequestStorageSession
 
 #if !USE(CFNETWORK)
 __ZN7WebCore14ResourceHandle25continueWillCacheResponseEP19NSCachedURLResponse
+#else
+__ZN7WebCore14ResourceHandle25continueWillCacheResponseEPK20_CFCachedURLResponse
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

@@ -103,6 +103,18 @@ size_t NetworkResourceLoader::fileBackedResourceMinimumSize()
     return SharedMemory::systemPageSize();
 }
 
+#if USE(CFNETWORK)
+void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, CFCachedURLResponseRef cfResponse)
+{
+    ASSERT_UNUSED(handle, handle == m_handle);
+
+    if (m_bytesReceived >= fileBackedResourceMinimumSize())
+        DiskCacheMonitor::monitorFileBackingStoreCreation(cfResponse, this);
+
+    m_handle->continueWillCacheResponse(cfResponse);
+}
+#endif
+
 #if !PLATFORM(IOS)
 void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *nsResponse)
 {

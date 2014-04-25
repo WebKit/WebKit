@@ -1,3 +1,15 @@
+2014-04-24  Andreas Kling  <akling@apple.com>
+
+        [iOS WebKit2] Enable optimization to mmap downloaded resources once they become file-backed.
+        <https://webkit.org/b/132171>
+        <rdar://problem/16720733>
+
+        Add a missing export for the USE(CFNETWORK) + WebKit2 combo.
+
+        Reviewed by Antti Koivisto.
+
+        * WebCore.exp.in:
+
 2014-04-24  Darin Adler  <darin@apple.com>
 
         FrameLoader::checkCompleted can hit the "ref'ing while destroyed" assertion

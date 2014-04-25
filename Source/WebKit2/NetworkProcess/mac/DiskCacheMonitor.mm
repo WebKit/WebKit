@@ -37,7 +37,7 @@
 #endif
 #endif
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
 
 typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 extern "C" void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef, CFCachedURLResponseCallBackBlock, dispatch_queue_t);
@@ -107,4 +107,4 @@ uint64_t DiskCacheMonitor::messageSenderDestinationID()
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#endif

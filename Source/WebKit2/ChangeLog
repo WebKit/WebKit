@@ -1,5 +1,22 @@
 2014-04-24  Andreas Kling  <akling@apple.com>
 
+        [iOS WebKit2] Enable optimization to mmap downloaded resources once they become file-backed.
+        <https://webkit.org/b/132171>
+        <rdar://problem/16720733>
+
+        Implement a CFNetwork-based version of NetworkResourceLoader::willCacheResponseAsync()
+        and activate the DiskCacheMonitor code path. This means that once resources go into
+        file system cache, we get notified and mmap them from disk, saving heaps of memory.
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/mac/DiskCacheMonitor.mm:
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::willCacheResponseAsync):
+
+2014-04-24  Andreas Kling  <akling@apple.com>
+
         [iOS WebKit2] RemoteLayerTreeDrawingArea should force CA to garbage collect surfaces.
         <https://webkit.org/b/132160>
         <rdar://problem/16110687>

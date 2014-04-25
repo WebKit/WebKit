@@ -111,10 +111,13 @@ public:
 
 #if PLATFORM(COCOA)
     static size_t fileBackedResourceMinimumSize();
-#if !PLATFORM(IOS)
+
+#if USE(CFNETWORK)
+    virtual void willCacheResponseAsync(WebCore::ResourceHandle*, CFCachedURLResponseRef) override;
+#else
     virtual void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *) override;
 #endif
-#endif // PLATFORM(MAC)
+#endif
 
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(IPC::Connection*, IPC::MessageDecoder&);
