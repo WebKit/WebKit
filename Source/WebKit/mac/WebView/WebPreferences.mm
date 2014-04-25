@@ -590,7 +590,7 @@ public:
 #if ENABLE(MEDIA_SOURCE)
         [NSNumber numberWithBool:YES], WebKitMediaSourceEnabledPreferenceKey,
 #endif
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
         [NSNumber numberWithBool:NO], WebKitImageControlsEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO], WebKitEnableInheritURIQueryComponentPreferenceKey,

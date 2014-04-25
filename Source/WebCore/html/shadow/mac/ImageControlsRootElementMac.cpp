@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ImageControlsRootElementMac.h"
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 
 #include "HTMLElement.h"
 #include "ImageControlsButtonElementMac.h"
@@ -109,4 +109,4 @@ RenderPtr<RenderElement> ImageControlsRootElementMac::createElementRenderer(Pass
 
 } // namespace WebCore
 
-#endif // ENABLE(IMAGE_CONTROLS)
+#endif // ENABLE(SERVICE_CONTROLS)

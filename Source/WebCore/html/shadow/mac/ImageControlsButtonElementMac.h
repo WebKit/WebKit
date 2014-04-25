@@ -28,7 +28,7 @@
 
 #include "HTMLDivElement.h"
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 
 namespace WebCore {
 
@@ -49,6 +49,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(IMAGE_CONTROLS)
+#endif // ENABLE(SERVICE_CONTROLS)
 
 #endif // ImageControlsButtonElementMac_h

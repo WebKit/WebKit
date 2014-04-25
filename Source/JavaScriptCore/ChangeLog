@@ -1,3 +1,12 @@
+2014-04-24  Brady Eidson  <beidson@apple.com>
+
+        Rename "IMAGE_CONTROLS" feature to "SERVICE_CONTROLS"
+        https://bugs.webkit.org/show_bug.cgi?id=132155
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-04-24  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION: Apparent hang of PCE.js Mac OS System 7.0.1 on ARM64 devices

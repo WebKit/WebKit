@@ -41,7 +41,7 @@ public:
 
     const HitTestResult& hitTestResult() const { return m_hitTestResult; }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     void setControlledImage(Image* controlledImage) { m_controlledImage = controlledImage; }
     Image* controlledImage() const { return m_controlledImage.get(); }
 #endif
@@ -50,7 +50,7 @@ private:
 
     HitTestResult m_hitTestResult;
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     RefPtr<Image> m_controlledImage;
 #endif
 };

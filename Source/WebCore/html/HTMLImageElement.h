@@ -124,7 +124,7 @@ private:
     float m_imageDevicePixelRatio;
     bool m_experimentalImageMenuEnabled;
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     void updateImageControls();
     void createImageControls();
     void destroyImageControls();

@@ -49,7 +49,7 @@ public:
     virtual void searchWithSpotlight() override;
     virtual void showContextMenu() override;
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     void clearSharingServicePickerController();
 #endif
 
@@ -59,7 +59,7 @@ private:
     NSMenu *contextMenuForEvent(NSEvent *, NSView *);
 
     WebView *m_webView;
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     RetainPtr<WebSharingServicePickerController> m_sharingServicePickerController;
 #endif
 };

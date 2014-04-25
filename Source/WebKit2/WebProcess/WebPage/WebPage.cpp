@@ -2616,7 +2616,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setMediaStreamEnabled(store.getBoolValueForKey(WebPreferencesKey::mediaStreamEnabledKey()));
 #endif
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     settings.setImageControlsEnabled(store.getBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey()));
 #endif
 
@@ -3146,7 +3146,7 @@ void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& i
 }
 #endif
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 void WebPage::replaceControlledImage(const ShareableBitmap::Handle& bitmapHandle)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(bitmapHandle);

@@ -44,7 +44,7 @@ ContextMenuContextData::ContextMenuContextData()
 ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context)
     : m_webHitTestResultData(WebHitTestResult::Data(context.hitTestResult()))
 {
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     Image* image = context.controlledImage();
     if (!image)
         return;
@@ -63,7 +63,7 @@ ContextMenuContextData::ContextMenuContextData(const ContextMenuContextData& oth
 ContextMenuContextData& ContextMenuContextData::operator=(const ContextMenuContextData& other)
 {
     m_webHitTestResultData = other.m_webHitTestResultData;
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     m_controlledImageHandle.clear();
 
     if (!other.m_controlledImageHandle.isNull()) {
@@ -78,7 +78,7 @@ ContextMenuContextData& ContextMenuContextData::operator=(const ContextMenuConte
 void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_webHitTestResultData;
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     encoder << m_controlledImageHandle;
 #endif
 }
@@ -88,7 +88,7 @@ bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuCo
     if (!decoder.decode(contextMenuContextData.m_webHitTestResultData))
         return false;
         
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     if (!decoder.decode(contextMenuContextData.m_controlledImageHandle))
         return false;
 #endif

@@ -129,7 +129,7 @@ void ContextMenuController::showContextMenu(Event* event, PassRefPtr<ContextMenu
     showContextMenu(event);
 }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 static Image* imageFromImageElementNode(Node& node)
 {
     RenderObject* renderer = node.renderer();
@@ -164,7 +164,7 @@ PassOwnPtr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event* eve
 
     m_context = ContextMenuContext(result);
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     if (node->isImageControlsButtonElement()) {
         if (Image* image = imageFromImageElementNode(*result.innerNonSharedNode()))
             m_context.setControlledImage(image);
@@ -843,7 +843,7 @@ void ContextMenuController::populate()
     if (!frame)
         return;
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     // The default image control menu gets populated solely by the platform.
     if (m_context.controlledImage())
         return;
@@ -1445,7 +1445,7 @@ void ContextMenuController::showContextMenuAt(Frame* frame, const IntPoint& clic
 }
 #endif
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 void ContextMenuController::showImageControlsMenu(Event* event)
 {
     clearContextMenu();

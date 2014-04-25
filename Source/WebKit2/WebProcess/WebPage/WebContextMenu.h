@@ -50,7 +50,7 @@ public:
     void itemSelected(const WebContextMenuItemData&);
     Vector<WebContextMenuItemData> items() const;
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     void replaceControlledImage(PassRefPtr<WebCore::Image>);
 #endif
 

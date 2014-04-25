@@ -69,7 +69,7 @@ public:
     void showContextMenuAt(Frame*, const IntPoint& clickPoint);
 #endif
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     void showImageControlsMenu(Event*);
     void replaceControlledImage(PassRefPtr<Image>);
 #endif

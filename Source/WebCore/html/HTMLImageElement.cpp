@@ -38,7 +38,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsRootElement.h"
 #endif
 
@@ -52,7 +52,7 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     , m_form(form)
     , m_compositeOperator(CompositeSourceOver)
     , m_imageDevicePixelRatio(1.0f)
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     , m_experimentalImageMenuEnabled(false)
 #endif
 {
@@ -160,7 +160,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         BlendMode blendOp = BlendModeNormal;
         if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))
             m_compositeOperator = CompositeSourceOver;
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     } else if (name == webkitimagemenuAttr) {
         m_experimentalImageMenuEnabled = !value.isNull();
         updateImageControls();
@@ -218,7 +218,7 @@ void HTMLImageElement::didAttachRenderers()
     if (m_imageLoader.hasPendingBeforeLoadEvent())
         return;
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     updateImageControls();
 #endif
 
@@ -433,7 +433,7 @@ bool HTMLImageElement::isServerMap() const
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
 }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 void HTMLImageElement::updateImageControls()
 {
     // If this image element is inside a shadow tree then it is part of an image control.
@@ -502,7 +502,7 @@ bool HTMLImageElement::childShouldCreateRenderer(const Node& child) const
 {
     return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
 }
-#endif // ENABLE(IMAGE_CONTROLS)
+#endif // ENABLE(SERVICE_CONTROLS)
 
 #if PLATFORM(IOS)
 // FIXME: This is a workaround for <rdar://problem/7725158>. We should find a better place for the touchCalloutEnabled() logic.

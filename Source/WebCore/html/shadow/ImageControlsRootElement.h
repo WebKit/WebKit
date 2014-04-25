@@ -26,7 +26,7 @@
 #ifndef ImageControlsRootElement_h
 #define ImageControlsRootElement_h
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 
 #include "HTMLDivElement.h"
 
@@ -49,5 +49,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(IMAGE_CONTROLS)
+#endif // ENABLE(SERVICE_CONTROLS)
 #endif // ImageControlsRootElement_h

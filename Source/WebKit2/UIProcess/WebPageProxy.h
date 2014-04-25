@@ -1060,7 +1060,7 @@ public:
 
     void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, ImageCallback::CallbackFunction);
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     void replaceControlledImage(PassRefPtr<ShareableBitmap>);
 #endif
 

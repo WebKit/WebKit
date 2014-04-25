@@ -99,7 +99,7 @@ public:
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet() { return String(); }
 #endif
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     virtual String imageControlsStyleSheet() const { return String(); }
 #endif
 
@@ -245,7 +245,7 @@ public:
     enum FileUploadDecorations { SingleFile, MultipleFiles };
     virtual bool paintFileUploadIconDecorations(const RenderObject& /*inputRenderer*/, const RenderObject& /*buttonRenderer*/, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) { return true; }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     virtual IntSize imageControlsButtonSize(const RenderObject&) const { return IntSize(); }
 #endif
 
@@ -365,7 +365,7 @@ protected:
 
     virtual bool paintSnapshottedPluginOverlay(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     virtual bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 #endif
 

@@ -39,7 +39,7 @@
 #import <WebKitSystemInterface.h>
 #import <wtf/RetainPtr.h>
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 #import <AppKit/NSSharingService.h>
 
 #if __has_include(<AppKit/NSSharingService_Private.h>)
@@ -160,7 +160,7 @@ using namespace WebCore;
 
 @end
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 @interface WKSharingServicePickerDelegate : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
     WebKit::WebContextMenuProxyMac* _menuProxy;
     RetainPtr<NSSharingServicePicker> _picker;
@@ -259,7 +259,7 @@ WebContextMenuProxyMac::~WebContextMenuProxyMac()
 
 void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemData& item)
 {
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     clearImageServicesMenu();
 #endif
 
@@ -332,7 +332,7 @@ static Vector<RetainPtr<NSMenuItem>> nsMenuItemVector(const Vector<WebContextMen
     return result;
 }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 void WebContextMenuProxyMac::setupImageServicesMenu(ShareableBitmap& image, bool includeEditorServices)
 {
     RetainPtr<CGImageRef> cgImage = image.makeCGImage();
@@ -356,7 +356,7 @@ void WebContextMenuProxyMac::clearImageServicesMenu()
 
 void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItemData>& items, const ContextMenuContextData& context)
 {
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     if (RefPtr<ShareableBitmap> image = ShareableBitmap::create(context.controlledImageHandle())) {
         setupImageServicesMenu(*image, context.webHitTestResultData().isContentEditable);
         return;
@@ -377,7 +377,7 @@ void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItemData>& item
 
 void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const Vector<WebContextMenuItemData>& items, const ContextMenuContextData& context)
 {
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     if (items.isEmpty() && context.controlledImageHandle().isNull())
         return;
 #else
@@ -391,7 +391,7 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
 
     NSRect menuRect = NSMakeRect(menuLocation.x(), menuLocation.y(), 0, 0);
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     if (!context.controlledImageHandle().isNull())
         [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setMenuProxy:this];
 
@@ -433,7 +433,7 @@ NSWindow *WebContextMenuProxyMac::window() const
     return [m_webView window];
 }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 void WebContextMenuProxyMac::replaceControlledImage(CGImageRef newImage)
 {
     FloatSize newImageSize(CGImageGetWidth(newImage), CGImageGetHeight(newImage));

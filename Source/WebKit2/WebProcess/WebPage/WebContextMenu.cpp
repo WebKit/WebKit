@@ -77,7 +77,7 @@ void WebContextMenu::itemSelected(const WebContextMenuItemData& item)
     m_page->corePage()->contextMenuController().contextMenuItemSelected(&coreItem);
 }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 void WebContextMenu::replaceControlledImage(PassRefPtr<Image> newImage)
 {
     m_page->corePage()->contextMenuController().replaceControlledImage(newImage);

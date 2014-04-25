@@ -193,7 +193,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
     }
 #endif
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     if (!imageControlsStyleSheet && element->isImageControlsRootElement()) {
         String imageControlsRules = RenderTheme::themeForPage(element->document().page())->imageControlsStyleSheet();
         imageControlsStyleSheet = parseUASheet(imageControlsRules);

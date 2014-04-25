@@ -2389,7 +2389,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setMediaSourceEnabled([preferences mediaSourceEnabled]);
 #endif
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     settings.setImageControlsEnabled([preferences imageControlsEnabled]);
 #endif
 

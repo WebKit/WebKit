@@ -28,7 +28,7 @@
 
 #include "ImageControlsRootElement.h"
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 
 namespace WebCore {
 
@@ -45,5 +45,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(IMAGE_CONTROLS)
+#endif // ENABLE(SERVICE_CONTROLS)
 #endif // ImageControlsRootElementMac_h

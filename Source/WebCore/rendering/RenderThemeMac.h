@@ -28,7 +28,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/HashMap.h>
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 OBJC_CLASS NSServicesRolloverButtonCell;
 #endif
 
@@ -117,7 +117,7 @@ protected:
     virtual String mediaControlsScript() override;
 #endif
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     virtual String imageControlsStyleSheet() const override;
 #endif
 
@@ -225,7 +225,7 @@ private:
     const int* progressBarMargins(NSControlSize) const;
 #endif
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     virtual bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual IntSize imageControlsButtonSize(const RenderObject&) const override;
     NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
@@ -238,7 +238,7 @@ private:
     mutable RetainPtr<NSSliderCell> m_sliderThumbVertical;
     mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicator;
     mutable RetainPtr<NSTextFieldCell> m_textField;
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     mutable RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButton;
 #endif
 

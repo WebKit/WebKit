@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ImageControlsButtonElementMac.h"
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 
 #include "ContextMenuController.h"
 #include "Event.h"
@@ -115,4 +115,4 @@ RenderPtr<RenderElement> ImageControlsButtonElementMac::createElementRenderer(Pa
 
 } // namespace WebCore
 
-#endif // ENABLE(IMAGE_CONTROLS)
+#endif // ENABLE(SERVICE_CONTROLS)

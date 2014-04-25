@@ -76,12 +76,12 @@
 #endif
 
 #if defined(__LP64__) && __LP64__
-#define HAVE_APPKIT_IMAGE_CONTROLS_SUPPORT 1
+#define HAVE_APPKIT_SERVICE_CONTROLS_SUPPORT 1
 #else
-#define HAVE_APPKIT_IMAGE_CONTROLS_SUPPORT 0
+#define HAVE_APPKIT_SERVICE_CONTROLS_SUPPORT 0
 #endif
 
-#if ENABLE(IMAGE_CONTROLS) && HAVE(APPKIT_IMAGE_CONTROLS_SUPPORT)
+#if ENABLE(SERVICE_CONTROLS) && HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
 
 #if __has_include(<AppKit/AppKitDefines_Private.h>)
 #import <AppKit/AppKitDefines_Private.h>
@@ -105,7 +105,7 @@ typedef enum {
 } NSSharingServicePickerStyle;
 #endif
 
-#endif // ENABLE(IMAGE_CONTROLS)
+#endif // ENABLE(SERVICE_CONTROLS)
 
 // The methods in this file are specific to the Mac OS X platform.
 
@@ -253,7 +253,7 @@ String RenderThemeMac::mediaControlsScript()
 #endif // ENABLE(VIDEO)
 
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 String RenderThemeMac::imageControlsStyleSheet() const
 {
     return String(imageControlsMacUserAgentStyleSheet, sizeof(imageControlsMacUserAgentStyleSheet));
@@ -1990,10 +1990,10 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
     return StringTruncator::centerTruncate(strToTruncate, width, font, StringTruncator::EnableRoundingHacks);
 }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
 {
-#if HAVE(APPKIT_IMAGE_CONTROLS_SUPPORT)
+#if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
     if (!m_servicesRolloverButton) {
         m_servicesRolloverButton = [NSServicesRolloverButtonCell serviceRolloverButtonCellForStyle:NSSharingServicePickerStyleRollover];
         [m_servicesRolloverButton setBordered:NO];
@@ -2010,7 +2010,7 @@ bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, cons
     if (paintInfo.phase != PaintPhaseBlockBackground)
         return true;
 
-#if HAVE(APPKIT_IMAGE_CONTROLS_SUPPORT)
+#if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
     NSServicesRolloverButtonCell *cell = servicesRolloverButtonCell();
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
@@ -2032,7 +2032,7 @@ bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, cons
 
 IntSize RenderThemeMac::imageControlsButtonSize(const RenderObject&) const
 {
-#if HAVE(APPKIT_IMAGE_CONTROLS_SUPPORT)
+#if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
     return IntSize(servicesRolloverButtonCell().cellSize);
 #else
     return IntSize();

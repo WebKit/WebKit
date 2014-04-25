@@ -1,3 +1,55 @@
+2014-04-24  Brady Eidson  <beidson@apple.com>
+
+        Rename "IMAGE_CONTROLS" feature to "SERVICE_CONTROLS"
+        https://bugs.webkit.org/show_bug.cgi?id=132155
+
+        Reviewed by Tim Horton.
+
+        No new tests (No change in behavior).
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * WebCore.exp.in:
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * dom/Node.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::didAttachRenderers):
+        * html/HTMLImageElement.h:
+        * html/shadow/ImageControlsRootElement.cpp:
+        * html/shadow/ImageControlsRootElement.h:
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        * html/shadow/mac/ImageControlsButtonElementMac.h:
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        * html/shadow/mac/ImageControlsRootElementMac.h:
+        * page/ContextMenuContext.cpp:
+        (WebCore::ContextMenuContext::ContextMenuContext):
+        * page/ContextMenuContext.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::maybeCreateContextMenu):
+        (WebCore::ContextMenuController::populate):
+        * page/ContextMenuController.h:
+        * page/Settings.in:
+        * platform/ThemeTypes.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::canHaveChildren):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::servicesRolloverButtonCell):
+        (WebCore::RenderThemeMac::paintImageControlsButton):
+        (WebCore::RenderThemeMac::imageControlsButtonSize):
+
 2014-04-24  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Restore PageDebuggerAgent::enable / disable

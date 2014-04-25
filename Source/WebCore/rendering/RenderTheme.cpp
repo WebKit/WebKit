@@ -254,7 +254,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     case InputSpeechButtonPart:
         return adjustInputFieldSpeechButtonStyle(&styleResolver, &style, e);
 #endif
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
         break;
 #endif
@@ -395,7 +395,7 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
     case InputSpeechButtonPart:
         return paintInputFieldSpeechButton(o, paintInfo, integralSnappedRect);
 #endif
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
         return paintImageControlsButton(o, paintInfo, integralSnappedRect);
 #endif
@@ -454,7 +454,7 @@ bool RenderTheme::paintBorderOnly(const RenderObject& o, const PaintInfo& paintI
 #if ENABLE(INPUT_SPEECH)
     case InputSpeechButtonPart:
 #endif
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
 #endif
     default:
@@ -519,7 +519,7 @@ bool RenderTheme::paintDecorations(const RenderObject& renderer, const PaintInfo
 #if ENABLE(INPUT_SPEECH)
     case InputSpeechButtonPart:
 #endif
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
 #endif
     default:

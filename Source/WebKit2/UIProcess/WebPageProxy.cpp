@@ -3458,7 +3458,7 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
     Vector<WebContextMenuItemData> items;
     bool useProposedItems = true;
     bool askClientToChangeMenu = clientEligibility == ContextMenuClientEligibility::EligibleForClient;
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     if (!contextMenuContextData.controlledImageHandle().isNull())
         askClientToChangeMenu = false;
 #endif
@@ -3473,7 +3473,7 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
     m_contextMenuClient.contextMenuDismissed(this);
 }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 void WebPageProxy::replaceControlledImage(PassRefPtr<ShareableBitmap> newBitmap)
 {
     RefPtr<ShareableBitmap> bitmap = newBitmap;

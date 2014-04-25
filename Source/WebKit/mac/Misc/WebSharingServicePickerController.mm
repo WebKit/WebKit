@@ -25,7 +25,7 @@
 
 #import "WebSharingServicePickerController.h"
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 
 #import "WebContextMenuClient.h"
 #import "WebViewInternal.h"

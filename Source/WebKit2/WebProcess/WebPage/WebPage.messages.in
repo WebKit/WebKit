@@ -364,7 +364,7 @@ messages -> WebPage LegacyReceiver {
     
     TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, uint64_t callbackID)
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     ReplaceControlledImage(WebKit::ShareableBitmap::Handle newBitmapHandle)
 #endif
 }

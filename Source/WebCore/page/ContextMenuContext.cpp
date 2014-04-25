@@ -37,7 +37,7 @@ ContextMenuContext::ContextMenuContext()
 
 ContextMenuContext::ContextMenuContext(const HitTestResult& hitTestResult)
     : m_hitTestResult(hitTestResult)
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     , m_controlledImage(nullptr)
 #endif
 {

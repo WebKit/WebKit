@@ -53,7 +53,7 @@ public:
     
     const WebHitTestResult::Data& webHitTestResultData() const { return m_webHitTestResultData; }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     const ShareableBitmap::Handle& controlledImageHandle() const { return m_controlledImageHandle; }
 #endif
 
@@ -64,7 +64,7 @@ private:
 
     WebHitTestResult::Data m_webHitTestResultData;
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     ShareableBitmap::Handle m_controlledImageHandle;
 #endif
 };

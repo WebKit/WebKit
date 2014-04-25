@@ -771,7 +771,7 @@ public:
 
     void getBytecodeProfile(uint64_t callbackID);
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     void replaceControlledImage(const ShareableBitmap::Handle&);
 #endif
     

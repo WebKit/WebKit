@@ -53,7 +53,7 @@ public:
     
     void contextMenuItemSelected(const WebContextMenuItemData&);
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     void clearImageServicesMenu();
     void replaceControlledImage(CGImageRef newImage);
 #endif
@@ -65,12 +65,12 @@ private:
 
     void populate(const Vector<WebContextMenuItemData>&, const ContextMenuContextData&);
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     void setupImageServicesMenu(ShareableBitmap&, bool includeEditorServices);
 #endif
 
     RetainPtr<NSPopUpButtonCell> m_popup;
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     RetainPtr<NSMenu> m_servicesMenu;
 #endif
     WKView* m_webView;

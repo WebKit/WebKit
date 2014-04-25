@@ -662,7 +662,7 @@ void RenderImage::updateAltText()
 
 bool RenderImage::canHaveChildren() const
 {
-#if !ENABLE(IMAGE_CONTROLS)
+#if !ENABLE(SERVICE_CONTROLS)
     return false;
 #else
     return m_hasShadowControls;

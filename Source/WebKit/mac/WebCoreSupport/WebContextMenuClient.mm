@@ -360,7 +360,7 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view)
     if (!page)
         return nil;
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     if (Image* image = page->contextMenuController().context().controlledImage()) {
         ASSERT(page->contextMenuController().context().hitTestResult().innerNode());
         bool isContentEditable = page->contextMenuController().context().hitTestResult().innerNode()->isContentEditable();
@@ -395,7 +395,7 @@ void WebContextMenuClient::showContextMenu()
         [NSMenu popUpContextMenu:menu withEvent:event forView:view];
 }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 void WebContextMenuClient::clearSharingServicePickerController()
 {
     m_sharingServicePickerController = nil;

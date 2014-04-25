@@ -178,7 +178,7 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
             WebPage::fromCorePage(page)->setArtificialPluginInitializationDelayEnabled(enabled);
     }
 
-#if ENABLE(IMAGE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
     if (preference == "WebKitImageControlsEnabled") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey(), enabled);
         for (auto* page : pages)
