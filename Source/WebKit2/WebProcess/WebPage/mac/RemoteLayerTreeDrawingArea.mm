@@ -42,6 +42,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
+#import <QuartzCore/QuartzCore.h>
 
 using namespace WebCore;
 
@@ -295,6 +296,10 @@ void RemoteLayerTreeDrawingArea::didUpdate()
         scheduleCompositingLayerFlush();
         m_hadFlushDeferredWhileWaitingForBackingStoreSwap = false;
     }
+
+    // This empty transaction serves to trigger CA's garbage collection of IOSurfaces. See <rdar://problem/16110687>
+    [CATransaction begin];
+    [CATransaction commit];
 }
 
 void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize& contentsSize)

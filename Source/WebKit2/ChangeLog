@@ -1,3 +1,18 @@
+2014-04-24  Andreas Kling  <akling@apple.com>
+
+        [iOS WebKit2] RemoteLayerTreeDrawingArea should force CA to garbage collect surfaces.
+        <https://webkit.org/b/132160>
+        <rdar://problem/16110687>
+
+        Do an empty CATransaction at the end of RemoteLayerTreeDrawingArea::flushLayers()
+        to get CA to garbage collect its IOSurfaces. This helps clean up unused surfaces
+        that we'd otherwise end up hanging on to for a long time.
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::didUpdate):
+
 2014-04-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167700.
