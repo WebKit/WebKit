@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class DeviceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~DeviceClient() { }
 

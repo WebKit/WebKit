@@ -86,6 +86,7 @@ inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef
 #endif
 
 class FontPlatformData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();

@@ -110,6 +110,7 @@ enum FindDirection { FindDirectionForward, FindDirectionBackward };
 
 class Page : public Supplementable<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
+    WTF_MAKE_FAST_ALLOCATED;
     friend class Settings;
     friend class PageThrottler;
 

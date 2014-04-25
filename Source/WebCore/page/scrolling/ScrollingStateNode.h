@@ -146,6 +146,7 @@ private:
 };
 
 class ScrollingStateNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ScrollingStateNode(ScrollingNodeType, ScrollingStateTree&, ScrollingNodeID);
     virtual ~ScrollingStateNode();

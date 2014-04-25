@@ -49,6 +49,7 @@ class WorkerGlobalScopeProxy;
 typedef String ErrorString;
 
 class InspectorWorkerAgent : public InspectorAgentBase, public Inspector::InspectorWorkerBackendDispatcherHandler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorWorkerAgent(InstrumentingAgents*);
     ~InspectorWorkerAgent();

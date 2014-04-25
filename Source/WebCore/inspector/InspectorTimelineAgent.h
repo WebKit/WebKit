@@ -126,6 +126,7 @@ class InspectorTimelineAgent
     , public Inspector::InspectorTimelineBackendDispatcherHandler
     , public Inspector::ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum InspectorType { PageInspector, WorkerInspector };
 

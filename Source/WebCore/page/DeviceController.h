@@ -39,6 +39,7 @@ class DeviceClient;
 class Page;
 
 class DeviceController : public Supplement<Page> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DeviceController(DeviceClient*);
     ~DeviceController() { }

@@ -50,6 +50,7 @@ class InstrumentingAgents;
 typedef String ErrorString;
 
 class InspectorDatabaseAgent : public InspectorAgentBase, public Inspector::InspectorDatabaseBackendDispatcherHandler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorDatabaseAgent(InstrumentingAgents*);
     ~InspectorDatabaseAgent();

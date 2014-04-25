@@ -45,6 +45,7 @@ class HTMLMapElement;
 class TreeScope;
 
 class DocumentOrderedMap {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void add(const AtomicStringImpl&, Element&, const TreeScope&);
     void remove(const AtomicStringImpl&, Element&);

@@ -38,6 +38,7 @@ class Identifier;
 class VM;
 
 class BuiltinExecutables {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<BuiltinExecutables> create(VM& vm)
     {

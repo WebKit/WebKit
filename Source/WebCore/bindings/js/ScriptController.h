@@ -69,6 +69,8 @@ enum ReasonForCallingCanExecuteScripts {
 };
 
 class ScriptController {
+    WTF_MAKE_FAST_ALLOCATED;
+
     friend class ScriptCachedFrameData;
     typedef HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindowShell>> ShellMap;
 

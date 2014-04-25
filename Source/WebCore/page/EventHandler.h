@@ -119,6 +119,7 @@ enum CheckDragHysteresis { ShouldCheckDragHysteresis, DontCheckDragHysteresis };
 
 class EventHandler {
     WTF_MAKE_NONCOPYABLE(EventHandler);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit EventHandler(Frame&);
     ~EventHandler();

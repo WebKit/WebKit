@@ -235,6 +235,7 @@ private:
 
 // Caches top-level code such as <script>, eval(), new Function, and JSEvaluateScript().
 class CodeCache {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<CodeCache> create() { return adoptPtr(new CodeCache); }
 

@@ -1,3 +1,23 @@
+2014-04-25  Andreas Kling  <akling@apple.com>
+
+        Mark some things with WTF_MAKE_FAST_ALLOCATED.
+        <https://webkit.org/b/132198>
+
+        Use FastMalloc for more things.
+
+        Reviewed by Anders Carlsson.
+
+        * builtins/BuiltinExecutables.h:
+        * heap/GCThreadSharedData.h:
+        * inspector/JSConsoleClient.h:
+        * inspector/agents/InspectorAgent.h:
+        * runtime/CodeCache.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+        (JSC::HashTable::deleteTable):
+        * runtime/WeakGCMap.h:
+
 2014-04-25  Antoine Quint  <graouts@webkit.org>
 
         Implement Array.prototype.find()

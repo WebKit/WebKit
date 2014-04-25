@@ -53,6 +53,7 @@ class SecurityOrigin;
 typedef String ErrorString;
 
 class PageRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PageRuntimeAgent(Inspector::InjectedScriptManager*, Page*, InspectorPageAgent*);
     virtual ~PageRuntimeAgent() { }

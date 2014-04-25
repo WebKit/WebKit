@@ -71,6 +71,7 @@ class InspectorCSSAgent
     , public Inspector::InspectorCSSBackendDispatcherHandler
     , public InspectorStyleSheet::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class InlineStyleOverrideScope {
     public:

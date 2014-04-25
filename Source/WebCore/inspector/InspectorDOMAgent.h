@@ -95,6 +95,7 @@ struct EventListenerInfo {
 
 class InspectorDOMAgent : public InspectorAgentBase, public Inspector::InspectorDOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     struct DOMListener {
         virtual ~DOMListener()

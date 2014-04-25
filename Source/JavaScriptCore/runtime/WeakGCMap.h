@@ -37,6 +37,7 @@ namespace JSC {
 template<typename KeyArg, typename ValueArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
     typename KeyTraitsArg = HashTraits<KeyArg>>
 class WeakGCMap {
+    WTF_MAKE_FAST_ALLOCATED;
     typedef Weak<ValueArg> ValueType;
     typedef HashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
 

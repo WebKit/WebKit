@@ -49,6 +49,7 @@ typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorAgent final : public InspectorAgentBase, public InspectorInspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorAgent();
     virtual ~InspectorAgent();

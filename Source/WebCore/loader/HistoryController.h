@@ -45,6 +45,7 @@ class StringWithDirection;
 
 class HistoryController {
     WTF_MAKE_NONCOPYABLE(HistoryController);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
 

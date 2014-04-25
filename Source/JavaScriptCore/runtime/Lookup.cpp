@@ -29,7 +29,7 @@ namespace JSC {
 void HashTable::createTable(VM& vm) const
 {
     ASSERT(!keys);
-    keys = new StringImpl*[numberOfValues];
+    keys = static_cast<StringImpl**>(fastMalloc(sizeof(StringImpl*) * numberOfValues));
 
     for (int i = 0; i < numberOfValues; ++i) {
         if (values[i].m_key)
@@ -46,7 +46,7 @@ void HashTable::deleteTable() const
             if (keys[i])
                 keys[i]->deref();
         }
-        delete [] keys;
+        fastFree(keys);
         keys = nullptr;
     }
 }

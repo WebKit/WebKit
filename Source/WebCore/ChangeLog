@@ -1,3 +1,34 @@
+2014-04-25  Andreas Kling  <akling@apple.com>
+
+        Mark some things with WTF_MAKE_FAST_ALLOCATED.
+        <https://webkit.org/b/132198>
+
+        Use FastMalloc for more things.
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/js/ScriptController.h:
+        * dom/DocumentOrderedMap.h:
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/PageRuntimeAgent.h:
+        * loader/HistoryController.h:
+        * page/DeviceClient.h:
+        * page/DeviceController.h:
+        * page/EventHandler.h:
+        * page/Page.h:
+        * page/scrolling/ScrollingStateNode.h:
+        * platform/graphics/FontGenericFamilies.h:
+        * platform/graphics/FontPlatformData.h:
+
 2014-04-25  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Rename objectShouldPaintInFlowRegion to something more clear

@@ -68,6 +68,7 @@ typedef String ErrorString;
 
 class InspectorPageAgent : public InspectorAgentBase, public Inspector::InspectorPageBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorPageAgent(InstrumentingAgents*, Page*, InspectorClient*, InspectorOverlay*);
 

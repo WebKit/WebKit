@@ -76,6 +76,7 @@ struct WebSocketFrame;
 typedef String ErrorString;
 
 class InspectorResourceAgent : public InspectorAgentBase, public Inspector::InspectorNetworkBackendDispatcherHandler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*);
     ~InspectorResourceAgent();

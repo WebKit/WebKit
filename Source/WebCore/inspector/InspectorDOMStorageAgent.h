@@ -52,6 +52,7 @@ class Storage;
 typedef String ErrorString;
 
 class InspectorDOMStorageAgent : public InspectorAgentBase, public Inspector::InspectorDOMStorageBackendDispatcherHandler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorDOMStorageAgent(InstrumentingAgents*, InspectorPageAgent*);
     ~InspectorDOMStorageAgent();

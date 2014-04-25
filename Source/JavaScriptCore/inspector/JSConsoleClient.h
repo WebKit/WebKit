@@ -34,6 +34,7 @@ class InspectorConsoleAgent;
 class InspectorProfilerAgent;
 
 class JSConsoleClient final : public JSC::ConsoleClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit JSConsoleClient(InspectorConsoleAgent*, InspectorProfilerAgent*);
     virtual ~JSConsoleClient() { }

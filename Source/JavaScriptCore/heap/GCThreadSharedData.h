@@ -51,6 +51,7 @@ enum GCPhase {
 };
 
 class GCThreadSharedData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GCThreadSharedData(VM*);
     ~GCThreadSharedData();
