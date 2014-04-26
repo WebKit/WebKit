@@ -298,6 +298,13 @@ IntRect WebPage::rectForElementAtInteractionLocation()
     return result.innerNodeFrame()->view()->contentsToRootView(hitNode->renderer()->absoluteBoundingBoxRect(true));
 }
 
+void WebPage::updateSelectionAppearance()
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame.editor().ignoreCompositionSelectionChange() && (frame.editor().hasComposition() || !frame.selection().selection().isNone()))
+        didChangeSelection();
+}
+
 void WebPage::handleTap(const IntPoint& point)
 {
     Frame& mainframe = m_page->mainFrame();

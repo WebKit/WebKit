@@ -478,6 +478,7 @@ public:
     void setAssistedNodeValueAsNumber(double);
     void setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection);
     WebCore::IntRect rectForElementAtInteractionLocation();
+    void updateSelectionAppearance();
 
     void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
 #if ENABLE(INSPECTOR)

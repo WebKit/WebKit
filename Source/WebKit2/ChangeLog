@@ -1,3 +1,21 @@
+2014-04-25  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (iOS WebKit2): Selection is not being repainted during live resize.
+        https://bugs.webkit.org/show_bug.cgi?id=132216
+        <rdar://problem/16628819>
+
+        Reviewed by Benjamin Poulain.
+
+        Since the selection is drawn in the UIProcess on iOS,
+        we need to update the selection rects and force a repaint
+        during a live resize.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateSelectionAppearance):
+
 2014-04-25  Brady Eidson  <beidson@apple.com>
 
         Add a selection overlay.

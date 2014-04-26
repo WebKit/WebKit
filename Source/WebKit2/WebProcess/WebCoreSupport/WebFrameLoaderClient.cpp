@@ -597,6 +597,10 @@ void WebFrameLoaderClient::dispatchDidLayout()
 
     webPage->recomputeShortCircuitHorizontalWheelEventsState();
 
+#if PLATFORM(IOS)
+    webPage->updateSelectionAppearance();
+#endif
+
     // NOTE: Unlike the other layout notifications, this does not notify the
     // the UIProcess for every call.
 
