@@ -1,3 +1,15 @@
+2014-04-26  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Rename a bundle form delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=132221
+
+        Reviewed by Adele Peterson.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h: Renamed.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]): Check for the method
+        under the old (“new”) name and under the new name.
+
 2014-04-25  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Synthesized getter for WKNavigationAction's _userInitiated property has the wrong name
