@@ -262,6 +262,9 @@ void EventDispatcher::dispatchSimulatedClick(Element* element, Event* underlying
 
 static void callDefaultEventHandlersInTheBubblingOrder(Event& event, const EventPath& path)
 {
+    if (path.isEmpty())
+        return;
+
     // Non-bubbling events call only one default event handler, the one for the target.
     path.contextAt(0).node()->defaultEventHandler(&event);
     ASSERT(!event.defaultPrevented());

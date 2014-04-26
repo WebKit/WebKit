@@ -1,3 +1,16 @@
+2014-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r167689): Hovering file name in a file input causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=132214
+
+        Reviewed by Andreas Kling.
+
+        Add a regression test.
+
+        * fast/events/shadow-event-path-2-expected.txt: Added.
+        * fast/events/shadow-event-path-2.html: Added.
+        * fast/events/shadow-event-path.html:
+
 2014-04-25  Oliver Hunt  <oliver@apple.com>
 
         Need earlier cell test

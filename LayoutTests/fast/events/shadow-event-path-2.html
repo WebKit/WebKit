@@ -2,7 +2,7 @@
 <html>
 <body>
 <p>This test records target and relatedTarget at each element while dispatching a mouse click event at an input element.</p>
-<div id="detailsContainer"><details><summary><div id="divInsideSummary"><input id="target" type="text" size="10"></summary></div></detials></div>
+<div id="detailsContainer"><input id="target" type="file"></div>
 <pre id="log"></pre>
 <script src="resources/shadow-event-path-shared.js"></script>
 <script>
@@ -14,10 +14,8 @@ if (window.testRunner && !window.eventSender)
     log('This test requires eventSender.');
 else if (window.eventSender) {
     var target = document.getElementById('target');
-    eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);
-    eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth + 100, target.offsetTop + target.offsetHeight / 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    for (var x = -10; x <= 500; x += 10)
+        eventSender.mouseMoveTo(target.offsetLeft + x, target.offsetTop + target.offsetHeight / 2);
 }
 
 </script>
