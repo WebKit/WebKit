@@ -1,3 +1,24 @@
+2014-04-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Add an intermediary view to do the target transform and adjustment transform
+        https://bugs.webkit.org/show_bug.cgi?id=132175
+
+        Reviewed by Enrica Casucci.
+
+        Some utility views of WKContentView account for the transforms between the content view
+        and the utility view.
+
+        Since the dynamic resize relies on setting subLayerTransforms, it is getting in the way.
+
+        This patch adds a layer in between for the animation. That way the content view remains
+        unscaled.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView _dynamicViewportUpdateChangedTargetToScale:position:]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _endAnimatedResize]):
+
 2014-04-25  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (iOS WebKit2): Selection is not being repainted during live resize.

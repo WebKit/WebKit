@@ -106,6 +106,7 @@
     bool _isChangingObscuredInsetsInteractively;
     BOOL _isAnimatingResize;
     CATransform3D _resizeAnimationTransformAdjustments;
+    RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;
     CGFloat _keyboardVerticalOverlap;
 
@@ -458,7 +459,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
         return;
 
     if (_isAnimatingResize) {
-        [_contentView layer].sublayerTransform = _resizeAnimationTransformAdjustments;
+        [_resizeAnimationView layer].sublayerTransform = _resizeAnimationTransformAdjustments;
         return;
     }
 
@@ -483,7 +484,8 @@ static CGFloat contentZoomScale(WKWebView* webView)
 - (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition
 {
     if (_isAnimatingResize) {
-        double currentTargetScale = [[_contentView layer] affineTransform].a;
+        CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
+        double currentTargetScale = animatingScaleTarget * [[_contentView layer] transform].m11;
         double scale = newScale / currentTargetScale;
         _resizeAnimationTransformAdjustments = CATransform3DMakeScale(scale, scale, 0);
 
@@ -492,8 +494,8 @@ static CGFloat contentZoomScale(WKWebView* webView)
         newContentOffset.y -= _obscuredInsets.top;
         CGPoint currentContentOffset = [_scrollView contentOffset];
 
-        _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / currentTargetScale;
-        _resizeAnimationTransformAdjustments.m42 = (currentContentOffset.y - newContentOffset.y) / currentTargetScale;
+        _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / animatingScaleTarget;
+        _resizeAnimationTransformAdjustments.m42 = (currentContentOffset.y - newContentOffset.y) / animatingScaleTarget;
     }
 }
 
@@ -1329,6 +1331,10 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _isAnimatingResize = YES;
     _resizeAnimationTransformAdjustments = CATransform3DIdentity;
 
+    _resizeAnimationView = adoptNS([[UIView alloc] init]);
+    [_scrollView addSubview:_resizeAnimationView.get()];
+    [_resizeAnimationView addSubview:_contentView.get()];
+
     CGRect oldBounds = self.bounds;
     CGSize oldMinimumLayoutSize = oldBounds.size;
     if (_hasStaticMinimumLayoutSize)
@@ -1353,10 +1359,12 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     [_scrollView setMaximumZoomScale:std::max(newBounds.size.width / contentSizeInContentViewCoordinates.width, [_scrollView maximumZoomScale])];
 
     // Compute the new scale to keep the current content width in the scrollview.
-    CGFloat oldWebViewWidthInContentViewCoordinates = oldBounds.size.width / contentZoomScale(self);
+    CGFloat currentScale = contentZoomScale(self);
+    CGFloat oldWebViewWidthInContentViewCoordinates = oldBounds.size.width / currentScale;
     CGFloat visibleContentViewWidthInContentCoordinates = std::min(contentSizeInContentViewCoordinates.width, oldWebViewWidthInContentViewCoordinates);
     CGFloat targetScale = newBounds.size.width / visibleContentViewWidthInContentCoordinates;
-    [_scrollView setZoomScale:targetScale];
+    CGFloat resizeAnimationViewAnimationScale = targetScale / currentScale;
+    [_resizeAnimationView setTransform:CGAffineTransformMakeScale(resizeAnimationViewAnimationScale, resizeAnimationViewAnimationScale)];
 
     // Compute a new position to keep the content centered.
     CGPoint originalContentCenter = oldUnobscuredContentRect.center();
@@ -1399,19 +1407,25 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_endAnimatedResize
 {
     if (!_customContentView) {
+        [_scrollView addSubview:_contentView.get()];
+
         CALayer *contentViewLayer = [_contentView layer];
         CATransform3D resizeAnimationTransformAdjustements = _resizeAnimationTransformAdjustments;
         CGFloat adjustmentScale = resizeAnimationTransformAdjustements.m11;
         contentViewLayer.sublayerTransform = CATransform3DIdentity;
 
-        CGFloat currentScale = contentZoomScale(self);
+        CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
+        CGFloat currentScale = [[_resizeAnimationView layer] transform].m11 * [[_contentView layer] transform].m11;
         CGPoint currentScrollOffset = [_scrollView contentOffset];
         [_scrollView setZoomScale:adjustmentScale * currentScale];
 
-        double horizontalScrollAdjustement = _resizeAnimationTransformAdjustments.m41 * currentScale;
-        double verticalScrollAdjustment = _resizeAnimationTransformAdjustments.m42 * currentScale;
+        double horizontalScrollAdjustement = _resizeAnimationTransformAdjustments.m41 * animatingScaleTarget;
+        double verticalScrollAdjustment = _resizeAnimationTransformAdjustments.m42 * animatingScaleTarget;
 
         [_scrollView setContentOffset:CGPointMake(currentScrollOffset.x - horizontalScrollAdjustement, currentScrollOffset.y - verticalScrollAdjustment)];
+
+        [_resizeAnimationView removeFromSuperview];
+        _resizeAnimationView = nil;
     }
 
     _resizeAnimationTransformAdjustments = CATransform3DIdentity;
