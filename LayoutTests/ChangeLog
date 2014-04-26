@@ -1,3 +1,15 @@
+2014-04-24  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r164133): Selection doesn't paint when scrolling some pages
+        https://bugs.webkit.org/show_bug.cgi?id=132172
+
+        Reviewed by Brent Fulgham.
+
+        * fast/dynamic/remove-invisible-node-inside-selection-expected.html: Added.
+        * fast/dynamic/remove-invisible-node-inside-selection.html: Added.
+        * fast/dynamic/remove-node-inside-selection-expected.html: Added.
+        * fast/dynamic/remove-node-inside-selection.html: Added.
+
 2014-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r167689): Hovering file name in a file input causes a crash

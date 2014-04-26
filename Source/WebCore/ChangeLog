@@ -1,3 +1,24 @@
+2014-04-24  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r164133): Selection doesn't paint when scrolling some pages
+        https://bugs.webkit.org/show_bug.cgi?id=132172
+        rdar://problem/16719473
+
+        Reviewed by Brent Fulgham.
+
+        Tests: fast/dynamic/remove-invisible-node-inside-selection.html
+               fast/dynamic/remove-node-inside-selection.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::clearRenderViewSelection): Changed to take a Node& because having
+        this take a Position& was unnecessary and strange, when really it just needs
+        to take a document as an argument.
+        (WebCore::DragCaretController::nodeWillBeRemoved): Updated for the above.
+        (WebCore::FrameSelection::respondToNodeModification): Added code to set the
+        m_pendingSelectionUpdate flag and call RenderView::setNeedsLayout so the
+        selection will be recomputed after it's temporarily cleared when one of
+        the selected nodes is removed.
+
 2014-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r167689): Hovering file name in a file input causes a crash
