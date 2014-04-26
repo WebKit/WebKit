@@ -1,3 +1,17 @@
+2014-04-25  Andreas Kling  <akling@apple.com>
+
+        Bump jQuery to same version that dromaeo.com uses.
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * Dromaeo/resources/dromaeo/web/lib/jquery-1.10.2.min.js: Added.
+        * Dromaeo/resources/dromaeo/web/tests/cssquery-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-attr-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-event-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-modify-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-style-jquery.html:
+        * Dromaeo/resources/dromaeo/web/tests/jslib-traverse-jquery.html:
+
 2014-04-18  Geoffrey Garen  <ggaren@apple.com>
 
         Added some more Membuster recordings to MallocBench
