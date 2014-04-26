@@ -1257,11 +1257,13 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName prope
 
 ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
+    VM& vm = exec->vm();
     JSObject* object = this;
     while (true) {
-        if (object->methodTable(exec->vm())->getOwnPropertySlotByIndex(object, exec, propertyName, slot))
+        Structure& structure = *object->structure(vm);
+        if (structure.classInfo()->methodTable.getOwnPropertySlotByIndex(object, exec, propertyName, slot))
             return true;
-        JSValue prototype = object->prototype();
+        JSValue prototype = structure.storedPrototype();
         if (!prototype.isObject())
             return false;
         object = asObject(prototype);

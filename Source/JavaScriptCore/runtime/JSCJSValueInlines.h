@@ -683,13 +683,13 @@ inline JSValue JSValue::get(ExecState* exec, PropertyName propertyName, Property
     return jsUndefined();
 }
 
-inline JSValue JSValue::get(ExecState* exec, unsigned propertyName) const
+ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, unsigned propertyName) const
 {
     PropertySlot slot(asValue());
     return get(exec, propertyName, slot);
 }
 
-inline JSValue JSValue::get(ExecState* exec, unsigned propertyName, PropertySlot& slot) const
+ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, unsigned propertyName, PropertySlot& slot) const
 {
     // If this is a primitive, we'll need to synthesize the prototype -
     // and if it's a string there are special properties to check first.

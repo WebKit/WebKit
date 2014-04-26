@@ -259,7 +259,7 @@ EncodedJSValue JIT_OPERATION operationValueAddNotNumber(ExecState* exec, Encoded
     return JSValue::encode(jsAddSlowCase(exec, op1, op2));
 }
 
-static inline EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t index)
+static ALWAYS_INLINE EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t index)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);

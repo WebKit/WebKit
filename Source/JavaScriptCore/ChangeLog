@@ -1,3 +1,30 @@
+2014-04-25  Andreas Kling  <akling@apple.com>
+
+        Inline (C++) GetByVal with numeric indices more aggressively.
+        <https://webkit.org/b/132218>
+
+        We were already inlining the string indexed GetByVal path pretty well,
+        while the path for numeric indices got neglected. No more!
+
+        ~9.5% improvement on Dromaeo/dom-traverse.html on my MBP:
+
+            Before: 199.50 runs/s
+             After: 218.58 runs/s
+
+        Reviewed by Phil Pizlo.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::get):
+
+            ALWAYS_INLINE all the things.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::getPropertySlot):
+
+            Avoid fetching the Structure more than once. We have the same
+            optimization in the string-indexed code path.
+
 2014-04-25  Oliver Hunt  <oliver@apple.com>
 
         Need earlier cell test
