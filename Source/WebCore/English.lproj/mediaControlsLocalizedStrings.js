@@ -14,6 +14,7 @@ var UIStringTable = {
     'Error': 'Error',
     'Exit Full Screen': 'Exit Full Screen',
     'Fast Forward': 'Fast Forward',
+    'Live Broadcast': 'Live Broadcast',
     'Loading': 'Loading',
     'Maximum Volume': 'Maximum Volume',
     'Minimum Volume': 'Minimum Volume',
