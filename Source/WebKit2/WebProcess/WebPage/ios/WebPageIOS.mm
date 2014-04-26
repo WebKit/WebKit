@@ -1682,7 +1682,10 @@ void WebPage::focusNextAssistedNode(bool isForward)
 
 void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 {
-    information.elementRect = m_page->focusController().focusedOrMainFrame().view()->contentsToRootView(m_assistedNode->renderer()->absoluteBoundingBoxRect());
+    if (RenderObject* renderer = m_assistedNode->renderer())
+        information.elementRect = m_page->focusController().focusedOrMainFrame().view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
+    else
+        information.elementRect = IntRect();
     information.minimumScaleFactor = m_viewportConfiguration.minimumScale();
     information.maximumScaleFactor = m_viewportConfiguration.maximumScale();
     information.hasNextNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), true);
