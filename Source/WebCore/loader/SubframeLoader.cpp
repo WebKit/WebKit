@@ -322,6 +322,9 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
 
 Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const AtomicString& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
 {
+    if (!url.isValid())
+        return nullptr;
+
     Frame* frame = ownerElement.contentFrame();
     if (frame)
         frame->navigationScheduler().scheduleLocationChange(m_frame.document()->securityOrigin(), url.string(), m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList);

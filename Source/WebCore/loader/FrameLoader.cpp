@@ -3426,14 +3426,15 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
 {
     ASSERT(!features.dialog || request.frameName().isEmpty());
 
+    created = false;
+
     if (!request.frameName().isEmpty() && request.frameName() != "_blank") {
-        if (Frame* frame = lookupFrame->loader().findFrameForNavigation(request.frameName(), openerFrame->document())) {
+        if (RefPtr<Frame> frame = lookupFrame->loader().findFrameForNavigation(request.frameName(), openerFrame->document())) {
             if (request.frameName() != "_self") {
                 if (Page* page = frame->page())
                     page->chrome().focus();
             }
-            created = false;
-            return frame;
+            return frame.release();
         }
     }
 
@@ -3441,7 +3442,7 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
     if (isDocumentSandboxed(openerFrame, SandboxPopups)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
         openerFrame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked opening '" + request.resourceRequest().url().stringCenterEllipsizedToLength() + "' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set.");
-        return 0;
+        return nullptr;
     }
 
     // FIXME: Setting the referrer should be the caller's responsibility.
@@ -3453,29 +3454,42 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
 
     Page* oldPage = openerFrame->page();
     if (!oldPage)
-        return 0;
+        return nullptr;
 
-    NavigationAction action(requestWithReferrer.resourceRequest());
-    Page* page = oldPage->chrome().createWindow(openerFrame, requestWithReferrer, features, action);
+    Page* page = oldPage->chrome().createWindow(openerFrame, requestWithReferrer, features, NavigationAction(requestWithReferrer.resourceRequest()));
     if (!page)
-        return 0;
+        return nullptr;
 
-    page->mainFrame().loader().forceSandboxFlags(openerFrame->document()->sandboxFlags());
+    RefPtr<Frame> frame = &page->mainFrame();
+
+    frame->loader().forceSandboxFlags(openerFrame->document()->sandboxFlags());
 
     if (request.frameName() != "_blank")
-        page->mainFrame().tree().setName(request.frameName());
+        frame->tree().setName(request.frameName());
 
     page->chrome().setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
+
+    if (!frame->page())
+        return nullptr;
     page->chrome().setStatusbarVisible(features.statusBarVisible);
+
+    if (!frame->page())
+        return nullptr;
     page->chrome().setScrollbarsVisible(features.scrollbarsVisible);
+
+    if (!frame->page())
+        return nullptr;
     page->chrome().setMenubarVisible(features.menuBarVisible);
+
+    if (!frame->page())
+        return nullptr;
     page->chrome().setResizable(features.resizable);
 
     // 'x' and 'y' specify the location of the window, while 'width' and 'height'
     // specify the size of the viewport. We can only resize the window, so adjust
     // for the difference between the window size and the viewport size.
 
-// FIXME: We should reconcile the initialization of viewport arguments between iOS and OpenSource.
+    // FIXME: We should reconcile the initialization of viewport arguments between iOS and non-IOS.
 #if !PLATFORM(IOS)
     FloatSize viewportSize = page->chrome().pageRect().size();
     FloatRect windowRect = page->chrome().windowRect();
@@ -3492,6 +3506,8 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
     // Ensure non-NaN values, minimum size as well as being within valid screen area.
     FloatRect newWindowRect = DOMWindow::adjustWindowRect(page, windowRect);
 
+    if (!frame->page())
+        return nullptr;
     page->chrome().setWindowRect(newWindowRect);
 #else
     // On iOS, width and height refer to the viewport dimensions.
@@ -3501,13 +3517,15 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
         arguments.width = features.width;
     if (features.heightSet && features.height)
         arguments.height = features.height;
-    page->mainFrame().setViewportArguments(arguments);
+    frame->setViewportArguments(arguments);
 #endif
 
+    if (!frame->page())
+        return nullptr;
     page->chrome().show();
 
     created = true;
-    return &page->mainFrame();
+    return frame.release();
 }
 
 } // namespace WebCore

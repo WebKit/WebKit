@@ -1891,19 +1891,20 @@ void DOMWindow::setLocation(const String& urlString, DOMWindow& activeWindow, DO
         return;
 
     URL completedURL = firstFrame->document()->completeURL(urlString);
-    if (completedURL.isNull())
+    if (!completedURL.isValid())
         return;
 
     if (isInsecureScriptAccess(activeWindow, completedURL))
         return;
 
+    Frame* referrerFrame = activeDocument->frame();
+    if (!referrerFrame)
+        return;
+
     // We want a new history item if we are processing a user gesture.
     LockHistory lockHistory = (locking != LockHistoryBasedOnGestureState || !ScriptController::processingUserGesture()) ? LockHistory::Yes : LockHistory::No;
     LockBackForwardList lockBackForwardList = (locking != LockHistoryBasedOnGestureState) ? LockBackForwardList::Yes : LockBackForwardList::No;
-    m_frame->navigationScheduler().scheduleLocationChange(activeDocument->securityOrigin(),
-        // FIXME: What if activeDocument()->frame() is 0?
-        completedURL, activeDocument->frame()->loader().outgoingReferrer(),
-        lockHistory, lockBackForwardList);
+    m_frame->navigationScheduler().scheduleLocationChange(activeDocument->securityOrigin(), completedURL, referrerFrame->loader().outgoingReferrer(), lockHistory, lockBackForwardList);
 }
 
 void DOMWindow::printErrorMessage(const String& message)
@@ -1988,7 +1989,7 @@ PassRefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicS
     if (!completedURL.isEmpty() && !completedURL.isValid()) {
         // Don't expose client code to invalid URLs.
         activeWindow.printErrorMessage("Unable to open a window with invalid URL '" + completedURL.string() + "'.\n");
-        return 0;
+        return nullptr;
     }
 
     // For whatever reason, Firefox uses the first frame to determine the outgoingReferrer. We replicate that behavior here.
@@ -2003,7 +2004,7 @@ PassRefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicS
     bool created;
     RefPtr<Frame> newFrame = WebCore::createWindow(activeFrame, openerFrame, frameRequest, windowFeatures, created);
     if (!newFrame)
-        return 0;
+        return nullptr;
 
     newFrame->loader().setOpener(openerFrame);
     newFrame->page()->setOpenedByDOM();
@@ -2032,24 +2033,24 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
     DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!isCurrentlyDisplayedInFrame())
-        return 0;
+        return nullptr;
     Document* activeDocument = activeWindow.document();
     if (!activeDocument)
-        return 0;
+        return nullptr;
     Frame* firstFrame = firstWindow.frame();
     if (!firstFrame)
-        return 0;
+        return nullptr;
 
     if (!firstWindow.allowPopUp()) {
         // Because FrameTree::find() returns true for empty strings, we must check for empty frame names.
         // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
         if (frameName.isEmpty() || !m_frame->tree().find(frameName))
-            return 0;
+            return nullptr;
     }
 
     // Get the target frame for the special cases of _top and _parent.
     // In those cases, we schedule a location change right now and return early.
-    Frame* targetFrame = 0;
+    Frame* targetFrame = nullptr;
     if (frameName == "_top")
         targetFrame = &m_frame->tree().top();
     else if (frameName == "_parent") {
@@ -2060,9 +2061,11 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
     }
     if (targetFrame) {
         if (!activeDocument->canNavigate(targetFrame))
-            return 0;
+            return nullptr;
 
         URL completedURL = firstFrame->document()->completeURL(urlString);
+        if (!completedURL.isValid())
+            return nullptr;
 
         if (targetFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
             return targetFrame->document()->domWindow();
@@ -2080,7 +2083,7 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
 
     WindowFeatures windowFeatures(windowFeaturesString);
     RefPtr<Frame> result = createWindow(urlString, frameName, windowFeatures, activeWindow, firstFrame, m_frame);
-    return result ? result->document()->domWindow() : 0;
+    return result ? result->document()->domWindow() : nullptr;
 }
 
 void DOMWindow::showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, std::function<void (DOMWindow&)> prepareDialogFunction)
