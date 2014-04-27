@@ -1,3 +1,18 @@
+2014-04-26  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r167775): Safari crashes in ViewSnapshotStore::pruneSnapshots after loading 20 pages
+        https://bugs.webkit.org/show_bug.cgi?id=132204
+        <rdar://problem/16735622>
+
+        Reviewed by Dan Bernstein and Sam Weinig.
+
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::pruneSnapshots):
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        Fix a bug where the count of snapshots with live images was too high
+        because we were failing to decrement it when replacing a snapshot of
+        an existing item with a fresh one.
+
 2014-04-26  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Rename a bundle form delegate method

@@ -100,14 +100,14 @@ void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
     String oldestSnapshotUUID;
 
     for (const auto& uuidAndSnapshot : m_snapshotMap) {
-        if (uuidAndSnapshot.value.creationTime < oldestSnapshotTime) {
+        if (uuidAndSnapshot.value.creationTime < oldestSnapshotTime && uuidAndSnapshot.value.hasImage()) {
             oldestSnapshotTime = uuidAndSnapshot.value.creationTime;
             oldestSnapshotUUID = uuidAndSnapshot.key;
         }
     }
 
-    const auto& snapshot = m_snapshotMap.find(oldestSnapshotUUID);
-    snapshot->value.clearImage();
+    const auto& snapshotIter = m_snapshotMap.find(oldestSnapshotUUID);
+    snapshotIter->value.clearImage();
     m_snapshotsWithImagesCount--;
 }
 
@@ -143,8 +143,14 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
     pruneSnapshots(webPageProxy);
 
     String oldSnapshotUUID = item->snapshotUUID();
-    if (!oldSnapshotUUID.isEmpty())
-        m_snapshotMap.remove(oldSnapshotUUID);
+    if (!oldSnapshotUUID.isEmpty()) {
+        const auto& oldSnapshotIter = m_snapshotMap.find(oldSnapshotUUID);
+        if (oldSnapshotIter != m_snapshotMap.end()) {
+            if (oldSnapshotIter->value.hasImage())
+                m_snapshotsWithImagesCount--;
+            m_snapshotMap.remove(oldSnapshotIter);
+        }
+    }
 
     item->setSnapshotUUID(createCanonicalUUIDString());
     
