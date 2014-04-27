@@ -1,3 +1,15 @@
+2014-04-27  David Kilzer  <ddkilzer@apple.com>
+
+        Roll out changes not part of the patch reviewed for Bug 132089
+        <http://webkit.org/b/132089>
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadOrRedirectSubframe):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setLocation):
+        (WebCore::DOMWindow::createWindow):
+        (WebCore::DOMWindow::open):
+
 2014-04-26  Darin Adler  <darin@apple.com>
 
         Frame and page lifetime fixes in WebCore::createWindow
