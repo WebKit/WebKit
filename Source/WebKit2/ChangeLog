@@ -1,3 +1,34 @@
+2014-04-27  Antti Koivisto  <antti@apple.com>
+
+        Coalesce responses on network process side
+        https://bugs.webkit.org/show_bug.cgi?id=132229
+
+        Reviewed by Andreas Kling.
+        
+        To reduce IPC we should coalesce response data in the network process and send it over with single IPC call.
+
+        * NetworkProcess/AsynchronousNetworkLoaderClient.cpp:
+        (WebKit::AsynchronousNetworkLoaderClient::AsynchronousNetworkLoaderClient):
+        (WebKit::AsynchronousNetworkLoaderClient::didReceiveResponse):
+        (WebKit::AsynchronousNetworkLoaderClient::didReceiveBuffer):
+        (WebKit::AsynchronousNetworkLoaderClient::didFinishLoading):
+        (WebKit::AsynchronousNetworkLoaderClient::didFail):
+        (WebKit::AsynchronousNetworkLoaderClient::dispatchPartialCoalescedResponse):
+        (WebKit::AsynchronousNetworkLoaderClient::clearCoalescedResponse):
+        (WebKit::AsynchronousNetworkLoaderClient::responseCoalesceTimerFired):
+        
+            Coalesce the response. Completed response is sent on didFinishLoading. If the coalesce timer fires
+            before that the data accumulated so far is dispatched.
+
+        * NetworkProcess/AsynchronousNetworkLoaderClient.h:
+        * NetworkProcess/NetworkResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveCompleteResponse):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        
+            Add a new message type that covers didReceiveResponse, didReceiveBuffer and didFinishLoading in a single message.
+
 2014-04-26  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r167775): Safari crashes in ViewSnapshotStore::pruneSnapshots after loading 20 pages
