@@ -32,7 +32,6 @@
 #include "NPObjectProxy.h"
 #include "NPRuntimeUtilities.h"
 #include "NPVariantData.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebKit {
 

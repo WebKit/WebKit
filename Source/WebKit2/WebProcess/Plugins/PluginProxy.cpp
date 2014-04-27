@@ -96,7 +96,7 @@ bool PluginProxy::initialize(const Parameters& parameters)
     m_connection->addPluginProxy(this);
 
     // Ask the plug-in process to create a plug-in.
-    m_pendingPluginCreationParameters = adoptPtr(new PluginCreationParameters);
+    m_pendingPluginCreationParameters = std::make_unique<PluginCreationParameters>();
 
     m_pendingPluginCreationParameters->pluginInstanceID = m_pluginInstanceID;
     m_pendingPluginCreationParameters->windowNPObjectID = windowNPObjectID();
@@ -170,7 +170,7 @@ void PluginProxy::didCreatePluginInternal(bool wantsWheelEvents, uint32_t remote
 
     // Whether synchronously or asynchronously, this plug-in was created and we shouldn't need to remember
     // anything about how.
-    m_pendingPluginCreationParameters.clear();
+    m_pendingPluginCreationParameters = nullptr;
     m_waitingOnAsynchronousInitialization = false;
 }
 
@@ -184,7 +184,7 @@ void PluginProxy::didFailToCreatePluginInternal()
 
     // Whether synchronously or asynchronously, this plug-in failed to create and we shouldn't need to remember
     // anything about how.
-    m_pendingPluginCreationParameters.clear();
+    m_pendingPluginCreationParameters = nullptr;
     m_waitingOnAsynchronousInitialization = false;
 }
 

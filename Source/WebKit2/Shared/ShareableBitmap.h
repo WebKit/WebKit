@@ -28,7 +28,6 @@
 
 #include "SharedMemory.h"
 #include <WebCore/IntRect.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

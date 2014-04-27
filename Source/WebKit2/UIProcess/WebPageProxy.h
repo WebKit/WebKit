@@ -68,10 +68,9 @@
 #include <WebCore/TextChecking.h>
 #include <WebCore/TextGranularity.h>
 #include <WebCore/ViewState.h>
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -1554,11 +1553,11 @@ private:
 
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
     Deque<NativeWebWheelEvent> m_wheelEventQueue;
-    Deque<OwnPtr<Vector<NativeWebWheelEvent>>> m_currentlyProcessedWheelEvents;
+    Deque<std::unique_ptr<Vector<NativeWebWheelEvent>>> m_currentlyProcessedWheelEvents;
 
     bool m_processingMouseMoveEvent;
-    OwnPtr<NativeWebMouseEvent> m_nextMouseMoveEvent;
-    OwnPtr<NativeWebMouseEvent> m_currentlyProcessedMouseDownEvent;
+    std::unique_ptr<NativeWebMouseEvent> m_nextMouseMoveEvent;
+    std::unique_ptr<NativeWebMouseEvent> m_currentlyProcessedMouseDownEvent;
 
 #if ENABLE(TOUCH_EVENTS)
     bool m_isTrackingTouchEvents;

@@ -27,7 +27,6 @@
 #define MessageReceiver_h
 
 #include <wtf/Assertions.h>
-#include <wtf/OwnPtr.h>
 
 namespace IPC {
 

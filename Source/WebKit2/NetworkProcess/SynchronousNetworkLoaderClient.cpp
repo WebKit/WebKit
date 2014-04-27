@@ -88,7 +88,7 @@ void SynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader*, Sh
     // It's unclear if the potential complexities of that approach are worth it.
     
     if (!m_responseData)
-        m_responseData = adoptPtr(new Vector<char>);
+        m_responseData = std::make_unique<Vector<char>>();
 
     m_responseData->append(buffer->data(), buffer->size());
 }

@@ -20,8 +20,6 @@
 #include "config.h"
 #include "Module.h"
 
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {

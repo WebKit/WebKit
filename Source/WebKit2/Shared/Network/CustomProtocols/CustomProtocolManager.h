@@ -40,6 +40,8 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 OBJC_CLASS WKCustomProtocol;
+#else
+#include "CustomProtocolManagerImpl.h"
 #endif
 
 
@@ -55,7 +57,6 @@ class ResourceResponse;
 namespace WebKit {
 
 class ChildProcess;
-class CustomProtocolManagerImpl;
 struct NetworkProcessCreationParameters;
 
 class CustomProtocolManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::Connection::WorkQueueMessageReceiver {

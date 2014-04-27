@@ -39,6 +39,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/Timer.h>
 #include <WebCore/ViewState.h>
+#include <memory>
 #include <wtf/Deque.h>
 #include <wtf/RunLoop.h>
 
@@ -223,7 +224,7 @@ private:
     virtual void didFinishLoad(WebFrame*);
     virtual void didFailLoad(WebFrame*, bool wasCancelled);
 
-    OwnPtr<WebEvent> createWebEvent(WebCore::MouseEvent*) const;
+    std::unique_ptr<WebEvent> createWebEvent(WebCore::MouseEvent*) const;
 
     RefPtr<WebCore::HTMLPlugInElement> m_pluginElement;
     RefPtr<Plugin> m_plugin;

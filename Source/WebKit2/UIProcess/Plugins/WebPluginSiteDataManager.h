@@ -31,6 +31,7 @@
 #include "APIObject.h"
 #include "Arguments.h"
 #include "GenericCallback.h"
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
@@ -69,10 +70,10 @@ private:
     void didClearSiteDataForAllPlugins(uint64_t callbackID);
 
     class GetSitesWithDataState;
-    HashMap<uint64_t, OwnPtr<GetSitesWithDataState>> m_pendingGetSitesWithData;
+    HashMap<uint64_t, std::unique_ptr<GetSitesWithDataState>> m_pendingGetSitesWithData;
 
     class ClearSiteDataState;
-    HashMap<uint64_t, OwnPtr<ClearSiteDataState>> m_pendingClearSiteData;
+    HashMap<uint64_t, std::unique_ptr<ClearSiteDataState>> m_pendingClearSiteData;
 };
 
 } // namespace WebKit

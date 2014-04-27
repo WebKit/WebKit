@@ -29,8 +29,6 @@
 #include "APIObject.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/URL.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 

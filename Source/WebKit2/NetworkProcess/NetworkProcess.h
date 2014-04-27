@@ -34,6 +34,7 @@
 #include "MessageReceiverMap.h"
 #include "NetworkResourceLoadScheduler.h"
 #include <WebCore/SessionID.h>
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -63,7 +64,7 @@ public:
     template <typename T>
     void addSupplement()
     {
-        m_supplements.add(T::supplementName(), adoptPtr<NetworkProcessSupplement>(new T(this)));
+        m_supplements.add(T::supplementName(), std::make_unique<T>(this));
     }
 
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess*);
@@ -134,7 +135,7 @@ private:
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
 
-    typedef HashMap<const char*, OwnPtr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
+    typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
 
 #if PLATFORM(COCOA)

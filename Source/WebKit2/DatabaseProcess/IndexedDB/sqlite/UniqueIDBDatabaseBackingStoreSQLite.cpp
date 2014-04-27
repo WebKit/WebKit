@@ -630,7 +630,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& trans
 
     m_cursors.set(cursor->identifier(), cursor);
 
-    OwnPtr<JSLockHolder> locker;
+    std::unique_ptr<JSLockHolder> locker;
     while (!cursor->currentKey().isNull) {
         const IDBKeyData& key = cursor->currentKey();
         const Vector<uint8_t>& valueBuffer = cursor->currentValueBuffer();
@@ -638,12 +638,12 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& trans
         if (!m_globalObject) {
             ASSERT(!m_vm);
             m_vm = VM::create();
-            locker = adoptPtr(new JSLockHolder(m_vm.get()));
+            locker = std::make_unique<JSLockHolder>(m_vm.get());
             m_globalObject.set(*m_vm, JSGlobalObject::create(*m_vm, JSGlobalObject::createStructure(*m_vm, jsNull())));
         }
 
         if (!locker)
-            locker = adoptPtr(new JSLockHolder(m_vm.get()));
+            locker = std::make_unique<JSLockHolder>(m_vm.get());
 
         Deprecated::ScriptValue value = deserializeIDBValueBuffer(m_globalObject->globalExec(), valueBuffer, true);
         Vector<IDBKeyData> indexKeys;

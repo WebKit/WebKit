@@ -38,7 +38,6 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
 
 #if OS(DARWIN)

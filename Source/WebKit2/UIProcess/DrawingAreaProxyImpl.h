@@ -29,7 +29,6 @@
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {

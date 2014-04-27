@@ -339,7 +339,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     pageClients.visitedLinkStore = VisitedLinkTableController::getOrCreate(parameters.visitedLinkTableID);
 
-    m_page = adoptPtr(new Page(pageClients));
+    m_page = std::make_unique<Page>(pageClients);
 
     m_drawingArea = DrawingArea::create(this, parameters);
     m_drawingArea->setPaintingEnabled(false);
@@ -3548,7 +3548,7 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
 #endif // PLATFORM(MAC)
 
     if (!m_printContext)
-        m_printContext = adoptPtr(new PrintContext(coreFrame));
+        m_printContext = std::make_unique<PrintContext>(coreFrame);
 
     drawingArea()->setLayerTreeStateIsFrozen(true);
     m_printContext->begin(printInfo.availablePaperWidth, printInfo.availablePaperHeight);

@@ -37,6 +37,7 @@
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageMap.h>
 #include <WebCore/TextEncoding.h>
+#include <memory>
 
 using namespace WebCore;
 
@@ -631,14 +632,14 @@ StorageManager::LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNa
 
 static void callCallbackFunction(void* context, void (*callbackFunction)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context), Vector<RefPtr<WebCore::SecurityOrigin>>* securityOriginsPtr)
 {
-    OwnPtr<Vector<RefPtr<WebCore::SecurityOrigin>>> securityOrigins = adoptPtr(securityOriginsPtr);
+    std::unique_ptr<Vector<RefPtr<WebCore::SecurityOrigin>>> securityOrigins(securityOriginsPtr);
     callbackFunction(*securityOrigins, context);
 }
 
 void StorageManager::getOriginsInternal(FunctionDispatcher* dispatcher, void* context, void (*callbackFunction)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context))
 {
-    OwnPtr<Vector<RefPtr<WebCore::SecurityOrigin>>> securityOrigins = adoptPtr(new Vector<RefPtr<WebCore::SecurityOrigin>>(m_localStorageDatabaseTracker->origins()));
-    dispatcher->dispatch(bind(callCallbackFunction, context, callbackFunction, securityOrigins.leakPtr()));
+    auto securityOrigins = std::make_unique<Vector<RefPtr<WebCore::SecurityOrigin>>>(m_localStorageDatabaseTracker->origins());
+    dispatcher->dispatch(bind(callCallbackFunction, context, callbackFunction, securityOrigins.release()));
 }
 
 void StorageManager::getStorageDetailsByOriginInternal(FunctionDispatcher* dispatcher, void* context, void (*callbackFunction)(const Vector<LocalStorageDetails>& storageDetails, void* context))

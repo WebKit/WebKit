@@ -171,21 +171,21 @@ public:
 
     static ExceededDatabaseQuotaRecords& shared();
 
-    PassOwnPtr<Record> createRecord(uint64_t frameID, String originIdentifier,
+    std::unique_ptr<Record> createRecord(uint64_t frameID, String originIdentifier,
         String databaseName, String displayName, uint64_t currentQuota,
         uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, 
         PassRefPtr<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply>);
 
-    void add(PassOwnPtr<Record>);
-    bool areBeingProcessed() const { return m_currentRecord; }
+    void add(std::unique_ptr<Record>);
+    bool areBeingProcessed() const { return !!m_currentRecord; }
     Record* next();
 
 private:
     ExceededDatabaseQuotaRecords() { }
     ~ExceededDatabaseQuotaRecords() { }
 
-    Deque<OwnPtr<Record>> m_records;
-    OwnPtr<Record> m_currentRecord;
+    Deque<std::unique_ptr<Record>> m_records;
+    std::unique_ptr<Record> m_currentRecord;
 };
 
 ExceededDatabaseQuotaRecords& ExceededDatabaseQuotaRecords::shared()
@@ -194,12 +194,12 @@ ExceededDatabaseQuotaRecords& ExceededDatabaseQuotaRecords::shared()
     return records;
 }
 
-PassOwnPtr<ExceededDatabaseQuotaRecords::Record> ExceededDatabaseQuotaRecords::createRecord(
+std::unique_ptr<ExceededDatabaseQuotaRecords::Record> ExceededDatabaseQuotaRecords::createRecord(
     uint64_t frameID, String originIdentifier, String databaseName, String displayName,
     uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage,
     uint64_t expectedUsage, PassRefPtr<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply> reply)
 {
-    OwnPtr<Record> record = adoptPtr(new Record);
+    auto record = std::make_unique<Record>();
     record->frameID = frameID;
     record->originIdentifier = originIdentifier;
     record->databaseName = databaseName;
@@ -209,17 +209,17 @@ PassOwnPtr<ExceededDatabaseQuotaRecords::Record> ExceededDatabaseQuotaRecords::c
     record->currentDatabaseUsage = currentDatabaseUsage;
     record->expectedUsage = expectedUsage;
     record->reply = reply;
-    return record.release();
+    return std::move(record);
 }
 
-void ExceededDatabaseQuotaRecords::add(PassOwnPtr<ExceededDatabaseQuotaRecords::Record> record)
+void ExceededDatabaseQuotaRecords::add(std::unique_ptr<ExceededDatabaseQuotaRecords::Record> record)
 {
-    m_records.append(record);
+    m_records.append(std::move(record));
 }
 
 ExceededDatabaseQuotaRecords::Record* ExceededDatabaseQuotaRecords::next()
 {
-    m_currentRecord.clear();
+    m_currentRecord = nullptr;
     if (!m_records.isEmpty())
         m_currentRecord = m_records.takeFirst();
     return m_currentRecord.get();
@@ -1264,7 +1264,7 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
         m_process->responsivenessTimer()->start();
     else {
         if (m_processingMouseMoveEvent) {
-            m_nextMouseMoveEvent = adoptPtr(new NativeWebMouseEvent(event));
+            m_nextMouseMoveEvent = std::make_unique<NativeWebMouseEvent>(event);
             return;
         }
 
@@ -1276,7 +1276,7 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
     // we fake a mouse up event by using this stored down event. This event gets cleared
     // when the mouse up message is received from WebProcess.
     if (event.type() == WebEvent::MouseDown)
-        m_currentlyProcessedMouseDownEvent = adoptPtr(new NativeWebMouseEvent(event));
+        m_currentlyProcessedMouseDownEvent = std::make_unique<NativeWebMouseEvent>(event);
 
     if (m_shouldSendEventsSynchronously) {
         bool handled = false;
@@ -1372,17 +1372,17 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
         return;
     }
 
-    OwnPtr<Vector<NativeWebWheelEvent>> coalescedWheelEvent = adoptPtr(new Vector<NativeWebWheelEvent>);
+    auto coalescedWheelEvent = std::make_unique<Vector<NativeWebWheelEvent>>();
     coalescedWheelEvent->append(event);
-    m_currentlyProcessedWheelEvents.append(coalescedWheelEvent.release());
+    m_currentlyProcessedWheelEvents.append(std::move(coalescedWheelEvent));
     sendWheelEvent(event);
 }
 
 void WebPageProxy::processNextQueuedWheelEvent()
 {
-    OwnPtr<Vector<NativeWebWheelEvent>> nextCoalescedEvent = adoptPtr(new Vector<NativeWebWheelEvent>);
+    auto nextCoalescedEvent = std::make_unique<Vector<NativeWebWheelEvent>>();
     WebWheelEvent nextWheelEvent = coalescedWheelEvent(m_wheelEventQueue, *nextCoalescedEvent.get());
-    m_currentlyProcessedWheelEvents.append(nextCoalescedEvent.release());
+    m_currentlyProcessedWheelEvents.append(std::move(nextCoalescedEvent));
     sendWheelEvent(nextWheelEvent);
 }
 
@@ -3787,7 +3787,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::Wheel: {
         MESSAGE_CHECK(!m_currentlyProcessedWheelEvents.isEmpty());
 
-        OwnPtr<Vector<NativeWebWheelEvent>> oldestCoalescedEvent = m_currentlyProcessedWheelEvents.takeFirst();
+        std::unique_ptr<Vector<NativeWebWheelEvent>> oldestCoalescedEvent = m_currentlyProcessedWheelEvents.takeFirst();
 
         // FIXME: Dispatch additional events to the didNotHandleWheelEvent client function.
         if (!handled) {
@@ -4301,10 +4301,10 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(uint64_t frameID, Pass
 void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, PassRefPtr<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply> reply)
 {
     ExceededDatabaseQuotaRecords& records = ExceededDatabaseQuotaRecords::shared();
-    OwnPtr<ExceededDatabaseQuotaRecords::Record> newRecord =  records.createRecord(frameID,
+    std::unique_ptr<ExceededDatabaseQuotaRecords::Record> newRecord = records.createRecord(frameID,
         originIdentifier, databaseName, displayName, currentQuota, currentOriginUsage,
         currentDatabaseUsage, expectedUsage, reply);
-    records.add(newRecord.release());
+    records.add(std::move(newRecord));
 
     if (records.areBeingProcessed())
         return;

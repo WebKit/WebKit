@@ -1,3 +1,92 @@
+2014-04-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move cross-port WebKit2 code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=129670
+
+        Reviewed by Darin Adler.
+
+        Replace uses of OwnPtr, PassOwnPtr in cross-port WebKit2 code with std::unique_ptr.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createIndex):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::addSupplement):
+        * NetworkProcess/SynchronousNetworkLoaderClient.cpp:
+        (WebKit::SynchronousNetworkLoaderClient::didReceiveBuffer):
+        * NetworkProcess/SynchronousNetworkLoaderClient.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/MessageReceiver.h:
+        * Platform/Module.h:
+        * Platform/WorkQueue.h:
+        * Platform/efl/ModuleEfl.cpp:
+        (WebKit::Module::load):
+        * Platform/mac/LayerHostingContext.mm:
+        * Shared/APIURL.h:
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        * Shared/ShareableBitmap.h:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/InspectorServer/WebSocketServer.cpp:
+        (WebKit::WebSocketServer::didAcceptConnection):
+        (WebKit::WebSocketServer::didCloseWebSocketServerConnection):
+        * UIProcess/InspectorServer/WebSocketServer.h:
+        * UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp:
+        (WebKit::connectionCallback):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::createDownloadProxy):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::getSitesWithData):
+        (WebKit::WebPluginSiteDataManager::clearSiteData):
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithDataForAllPlugins):
+        (WebKit::WebPluginSiteDataManager::didClearSiteDataForAllPlugins):
+        * UIProcess/Plugins/WebPluginSiteDataManager.h:
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::callCallbackFunction):
+        (WebKit::StorageManager::getOriginsInternal):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::ExceededDatabaseQuotaRecords::areBeingProcessed):
+        (WebKit::ExceededDatabaseQuotaRecords::createRecord):
+        (WebKit::ExceededDatabaseQuotaRecords::add):
+        (WebKit::ExceededDatabaseQuotaRecords::next):
+        (WebKit::WebPageProxy::handleMouseEvent):
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::WebPageProxy::processNextQueuedWheelEvent):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createDownloadProxy):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::PluginDestructionProtector::PluginDestructionProtector):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::deliverData):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        (WebKit::PluginProxy::didCreatePluginInternal):
+        (WebKit::PluginProxy::didFailToCreatePluginInternal):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::createWebEvent):
+        (WebKit::PluginView::handleEvent):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::EventDispatcher):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::beginPrinting):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::addSupplement):
+
 2014-04-27  Antti Koivisto  <antti@apple.com>
 
         Coalesce responses on network process side

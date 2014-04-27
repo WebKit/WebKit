@@ -31,6 +31,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <memory>
 #include <wtf/RefCounted.h>
 
 #if ENABLE(NETWORK_PROCESS)
@@ -66,7 +67,7 @@ private:
     RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> m_delayedReply;
     WebCore::ResourceResponse m_response;
     WebCore::ResourceError m_error;
-    OwnPtr<Vector<char>> m_responseData;
+    std::unique_ptr<Vector<char>> m_responseData;
 };
 
 } // namespace WebKit

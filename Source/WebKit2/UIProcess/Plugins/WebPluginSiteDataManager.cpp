@@ -153,7 +153,7 @@ void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCal
     ASSERT(!m_pendingGetSitesWithData.contains(callbackID));
 
     GetSitesWithDataState* state = new GetSitesWithDataState(this, callbackID);
-    m_pendingGetSitesWithData.set(callbackID, adoptPtr(state));
+    m_pendingGetSitesWithData.set(callbackID, std::unique_ptr<GetSitesWithDataState>(state));
     state->getSitesWithDataForNextPlugin();
 }
 
@@ -197,7 +197,7 @@ void WebPluginSiteDataManager::clearSiteData(API::Array* sites, uint64_t flags, 
     ASSERT(!m_pendingClearSiteData.contains(callbackID));
 
     ClearSiteDataState* state = new ClearSiteDataState(this, sitesVector, flags, maxAgeInSeconds, callbackID);
-    m_pendingClearSiteData.set(callbackID, adoptPtr(state));
+    m_pendingClearSiteData.set(callbackID, std::unique_ptr<ClearSiteDataState>(state));
     state->clearSiteDataForNextPlugin();
 }
 
@@ -222,7 +222,7 @@ void WebPluginSiteDataManager::didGetSitesWithDataForSinglePlugin(const Vector<S
 
 void WebPluginSiteDataManager::didGetSitesWithDataForAllPlugins(const Vector<String>& sites, uint64_t callbackID)
 {
-    OwnPtr<GetSitesWithDataState> state = m_pendingGetSitesWithData.take(callbackID);
+    std::unique_ptr<GetSitesWithDataState> state = m_pendingGetSitesWithData.take(callbackID);
     ASSERT(state);
 
     didGetSitesWithData(sites, callbackID);
@@ -238,7 +238,7 @@ void WebPluginSiteDataManager::didClearSiteDataForSinglePlugin(uint64_t callback
 
 void WebPluginSiteDataManager::didClearSiteDataForAllPlugins(uint64_t callbackID)
 {
-    OwnPtr<ClearSiteDataState> state = m_pendingClearSiteData.take(callbackID);
+    std::unique_ptr<ClearSiteDataState> state = m_pendingClearSiteData.take(callbackID);
     ASSERT(state);
 
     didClearSiteData(callbackID);

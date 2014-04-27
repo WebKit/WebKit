@@ -31,7 +31,6 @@
 #include "UniqueIDBDatabase.h" 
 #include "UniqueIDBDatabaseBackingStore.h"
 #include <JavaScriptCore/Strong.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 

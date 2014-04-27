@@ -59,8 +59,8 @@
 #include <WebCore/ViewState.h>
 #include <WebCore/ViewportConfiguration.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
+#include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -994,7 +994,7 @@ private:
 
     uint64_t m_pageID;
 
-    OwnPtr<WebCore::Page> m_page;
+    std::unique_ptr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;
     RefPtr<InjectedBundleBackForwardList> m_backForwardList;
 
@@ -1125,7 +1125,7 @@ private:
     GeolocationPermissionRequestManager m_geolocationPermissionRequestManager;
 #endif
 
-    OwnPtr<WebCore::PrintContext> m_printContext;
+    std::unique_ptr<WebCore::PrintContext> m_printContext;
 #if PLATFORM(GTK)
     RefPtr<WebPrintOperationGtk> m_printOperation;
 #endif

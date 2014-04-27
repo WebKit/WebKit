@@ -52,8 +52,6 @@ public:
     PluginProcessConnection* getPluginProcessConnection(uint64_t pluginProcessToken);
     void removePluginProcessConnection(PluginProcessConnection*);
 
-    void didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(IPC::Connection*, OwnPtr<IPC::MessageDecoder>&);
-
 private:
     PluginProcessConnectionManager();
 

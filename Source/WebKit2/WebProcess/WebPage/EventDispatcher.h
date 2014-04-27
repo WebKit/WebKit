@@ -30,6 +30,7 @@
 
 #include <WebCore/WheelEventDeltaTracker.h>
 #include <WebEvent.h>
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -94,7 +95,7 @@ private:
     Mutex m_scrollingTreesMutex;
     HashMap<uint64_t, RefPtr<WebCore::ThreadedScrollingTree>> m_scrollingTrees;
 #endif
-    OwnPtr<WebCore::WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
+    std::unique_ptr<WebCore::WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
 #if ENABLE(IOS_TOUCH_EVENTS)
     SpinLock m_touchEventsLock;
     HashMap<uint64_t, TouchEventQueue> m_touchEvents;

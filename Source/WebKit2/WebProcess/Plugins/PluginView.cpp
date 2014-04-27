@@ -829,7 +829,7 @@ String PluginView::getSelectionString() const
     return m_plugin->getSelectionString();
 }
 
-OwnPtr<WebEvent> PluginView::createWebEvent(MouseEvent* event) const
+std::unique_ptr<WebEvent> PluginView::createWebEvent(MouseEvent* event) const
 {
     WebEvent::Type type = WebEvent::NoType;
     unsigned clickCount = 1;
@@ -871,7 +871,7 @@ OwnPtr<WebEvent> PluginView::createWebEvent(MouseEvent* event) const
     if (event->metaKey())
         modifiers |= WebEvent::MetaKey;
 
-    return adoptPtr(new WebMouseEvent(type, button, m_plugin->convertToRootView(IntPoint(event->offsetX(), event->offsetY())), event->screenLocation(), 0, 0, 0, clickCount, static_cast<WebEvent::Modifiers>(modifiers), 0));
+    return std::make_unique<WebMouseEvent>(type, button, m_plugin->convertToRootView(IntPoint(event->offsetX(), event->offsetY())), event->screenLocation(), 0, 0, 0, clickCount, static_cast<WebEvent::Modifiers>(modifiers), 0);
 }
 
 void PluginView::handleEvent(Event* event)
@@ -880,7 +880,7 @@ void PluginView::handleEvent(Event* event)
         return;
 
     const WebEvent* currentEvent = WebPage::currentEvent();
-    OwnPtr<WebEvent> simulatedWebEvent;
+    std::unique_ptr<WebEvent> simulatedWebEvent;
     if (event->isMouseEvent() && toMouseEvent(event)->isSimulated()) {
         simulatedWebEvent = createWebEvent(toMouseEvent(event));
         currentEvent = simulatedWebEvent.get();

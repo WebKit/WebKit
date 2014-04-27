@@ -37,6 +37,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/LinkHash.h>
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -204,7 +205,7 @@ private:
     WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
 
-    OwnPtr<DownloadProxyMap> m_downloadProxyMap;
+    std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManagerProxy m_customProtocolManagerProxy;

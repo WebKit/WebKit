@@ -31,7 +31,6 @@
 #include <WebCore/SocketStreamHandle.h>
 #include <gio/gio.h>
 #include <glib.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -47,9 +46,9 @@ static gboolean connectionCallback(GSocketService* /*service*/, GSocketConnectio
     LOG(InspectorServer, "New Connection from %s:%d.", addressString.get(), g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(socketAddress.get())));
 #endif
 
-    OwnPtr<WebSocketServerConnection> webSocketConnection = adoptPtr(new WebSocketServerConnection(server->client(), server));
+    auto webSocketConnection = std::make_unique<WebSocketServerConnection>(server->client(), server);
     webSocketConnection->setSocketHandle(SocketStreamHandle::create(connection, webSocketConnection.get()));
-    server->didAcceptConnection(webSocketConnection.release());
+    server->didAcceptConnection(std::move(webSocketConnection));
 
     return TRUE;
 }

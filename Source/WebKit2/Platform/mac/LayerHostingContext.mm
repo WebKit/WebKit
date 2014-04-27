@@ -26,7 +26,6 @@
 #import "config.h"
 #import "LayerHostingContext.h"
 
-#import <wtf/OwnPtr.h>
 #import <WebKitSystemInterface.h>
 
 #if __has_include(<QuartzCore/QuartzCorePrivate.h>)

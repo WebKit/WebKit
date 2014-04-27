@@ -100,7 +100,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebPr
 DownloadProxy* NetworkProcessProxy::createDownloadProxy()
 {
     if (!m_downloadProxyMap)
-        m_downloadProxyMap = adoptPtr(new DownloadProxyMap(this));
+        m_downloadProxyMap = std::make_unique<DownloadProxyMap>(this);
 
     return m_downloadProxyMap->createDownloadProxy(m_webContext);
 }

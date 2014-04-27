@@ -25,7 +25,6 @@
 #include "WebPopupItem.h"
 #include <WebCore/PopupMenu.h>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -99,7 +99,7 @@ public:
     template <typename T>
     void addSupplement()
     {
-        m_supplements.add(T::supplementName(), adoptPtr<WebProcessSupplement>(new T(this)));
+        m_supplements.add(T::supplementName(), std::make_unique<T>(this));
     }
 
     WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_webConnection.get(); }
@@ -302,7 +302,7 @@ private:
 
     HashMap<uint64_t, WebFrame*> m_frameMap;
 
-    typedef HashMap<const char*, OwnPtr<WebProcessSupplement>, PtrHash<const char*>> WebProcessSupplementMap;
+    typedef HashMap<const char*, std::unique_ptr<WebProcessSupplement>, PtrHash<const char*>> WebProcessSupplementMap;
     WebProcessSupplementMap m_supplements;
 
     TextCheckerState m_textCheckerState;

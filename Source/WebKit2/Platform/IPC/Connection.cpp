@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Connection.h"
 
+#include <memory>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
@@ -277,7 +278,7 @@ void Connection::removeWorkQueueMessageReceiver(StringReference messageReceiverN
 
 void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver* workQueueMessageReceiver, MessageDecoder* incomingMessageDecoder)
 {
-    OwnPtr<MessageDecoder> decoder = adoptPtr(incomingMessageDecoder);
+    std::unique_ptr<MessageDecoder> decoder(incomingMessageDecoder);
 
     if (!decoder->isSyncMessage()) {
         workQueueMessageReceiver->didReceiveMessage(this, *decoder);

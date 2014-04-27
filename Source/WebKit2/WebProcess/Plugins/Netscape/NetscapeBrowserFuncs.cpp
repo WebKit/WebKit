@@ -36,6 +36,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/SharedBuffer.h>
+#include <memory>
 #include <utility>
 #include <wtf/text/StringBuilder.h>
 
@@ -49,11 +50,11 @@ public:
     explicit PluginDestructionProtector(NetscapePlugin* plugin)
     {
         if (plugin)
-            m_protector = adoptPtr(new PluginController::PluginDestructionProtector(static_cast<Plugin*>(plugin)->controller()));
+            m_protector = std::make_unique<PluginController::PluginDestructionProtector>(static_cast<Plugin*>(plugin)->controller());
     }
     
 private:
-    OwnPtr<PluginController::PluginDestructionProtector> m_protector;
+    std::unique_ptr<PluginController::PluginDestructionProtector> m_protector;
 };
 
 static bool startsWithBlankLine(const char* bytes, unsigned length)

@@ -30,6 +30,7 @@
 
 #include <WebCore/FileSystem.h>
 #include <WebCore/npruntime_internal.h>
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -106,7 +107,7 @@ private:
     CString m_headers;
 
     RunLoop::Timer<NetscapePluginStream> m_deliveryDataTimer;
-    OwnPtr< Vector<uint8_t>> m_deliveryData;
+    std::unique_ptr<Vector<uint8_t>> m_deliveryData;
     bool m_stopStreamWhenDoneDelivering;
 };
 

@@ -29,8 +29,8 @@
 
 #if ENABLE(INSPECTOR_SERVER)
 
+#include <memory>
 #include <wtf/Deque.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(SOUP)
@@ -61,7 +61,7 @@ public:
     void close();
 
     WebSocketServerClient* client() const { return m_client; }
-    void didAcceptConnection(PassOwnPtr<WebSocketServerConnection>);
+    void didAcceptConnection(std::unique_ptr<WebSocketServerConnection>);
 
 private:
     void didCloseWebSocketServerConnection(WebSocketServerConnection*);
@@ -71,7 +71,7 @@ private:
     void platformClose();
 
     ServerState m_state;
-    Deque<OwnPtr<WebSocketServerConnection> > m_connections;
+    Deque<std::unique_ptr<WebSocketServerConnection>> m_connections;
     WebSocketServerClient* m_client;
     String m_bindAddress;
     unsigned short m_port;

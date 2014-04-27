@@ -35,6 +35,7 @@
 #include <WebCore/FindOptions.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/SecurityOrigin.h>
+#include <memory>
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
@@ -215,7 +216,7 @@ private:
     // The client ID for the CA layer in the plug-in process. Will be 0 if the plug-in is not a CA plug-in.
     uint32_t m_remoteLayerClientID;
     
-    OwnPtr<PluginCreationParameters> m_pendingPluginCreationParameters;
+    std::unique_ptr<PluginCreationParameters> m_pendingPluginCreationParameters;
     bool m_waitingOnAsynchronousInitialization;
 
 #if PLATFORM(COCOA)
