@@ -1,3 +1,9 @@
+2014-04-27  Pratik Solanki  <psolanki@apple.com>
+
+        Unreviewed. iOS build fix.
+
+        * UIProcess/ios/SmartMagnificationController.h:
+
 2014-04-27  Zan Dobersek  <zdobersek@igalia.com>
 
         Move cross-port WebKit2 code to std::unique_ptr
