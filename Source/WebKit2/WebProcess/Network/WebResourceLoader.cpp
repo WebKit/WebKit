@@ -108,7 +108,7 @@ void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResp
     ResourceResponse responseCopy(response);
 
 #if USE(QUICK_LOOK)
-    setUpQuickLookHandleIfNeeded(response);
+    m_quickLookHandle = QuickLookHandle::create(resourceLoader(), response.nsURLResponse());
     if (m_quickLookHandle)
         responseCopy = ResourceResponse(m_quickLookHandle->nsResponse());
 #endif

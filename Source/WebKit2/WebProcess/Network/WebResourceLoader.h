@@ -94,8 +94,6 @@ private:
 #endif
 
 #if USE(QUICK_LOOK)
-    void setUpQuickLookHandleIfNeeded(const WebCore::ResourceResponse&);
-
     std::unique_ptr<WebCore::QuickLookHandle> m_quickLookHandle;
 #endif
 

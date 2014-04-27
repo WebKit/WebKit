@@ -30,6 +30,7 @@
 
 #import "FileSystemIOS.h"
 #import "Logging.h"
+#import "ResourceError.h"
 #import "ResourceHandle.h"
 #import "ResourceLoader.h"
 #import "RuntimeApplicationChecksIOS.h"
@@ -319,6 +320,69 @@ const char* WebCore::QLPreviewProtocol()
 @end
 #endif
 
+@interface WebResourceLoaderQuickLookDelegate : NSObject <NSURLConnectionDelegate> {
+    RefPtr<ResourceLoader> _resourceLoader;
+}
+@end
+
+@implementation WebResourceLoaderQuickLookDelegate
+
+- (id)initWithResourceLoader:(PassRefPtr<ResourceLoader>)resourceLoader
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _resourceLoader = resourceLoader;
+    return self;
+}
+
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+- (void)connection:(NSURLConnection *)connection didReceiveDataArray:(NSArray *)dataArray
+{
+    UNUSED_PARAM(connection);
+    if (!_resourceLoader)
+        return;
+    _resourceLoader->didReceiveDataArray(reinterpret_cast<CFArrayRef>(dataArray));
+}
+#endif
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+{
+    UNUSED_PARAM(connection);
+    if (!_resourceLoader)
+        return;
+    
+    // QuickLook code sends us a nil data at times. The check below is the same as the one in
+    // ResourceHandleMac.cpp added for a different bug.
+    if (![data length])
+        return;
+    _resourceLoader->didReceiveData(reinterpret_cast<const char*>([data bytes]), [data length], lengthReceived, DataPayloadBytes);
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+    UNUSED_PARAM(connection);
+    if (!_resourceLoader)
+        return;
+    
+    _resourceLoader->didFinishLoading(0);
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+    UNUSED_PARAM(connection);
+    
+    _resourceLoader->didFail(ResourceError(error));
+}
+
+- (void)clearHandle
+{
+    _resourceLoader = nullptr;
+}
+
+@end
+
 namespace WebCore {
 
 NSString *createTemporaryFileForQuickLook(NSString *fileName)
@@ -387,13 +451,14 @@ CFURLResponseRef QuickLookHandle::cfResponse()
 }
 #endif
 
-std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceLoader* loader, NSURLResponse *response, id delegate)
+std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceLoader* loader, NSURLResponse *response)
 {
     ASSERT_ARG(loader, loader);
     if (!loader->request().isMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[response MIMEType]])
         return nullptr;
 
-    std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([loader->originalRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, response, delegate));
+    RetainPtr<WebResourceLoaderQuickLookDelegate> delegate = adoptNS([[WebResourceLoaderQuickLookDelegate alloc] initWithResourceLoader:loader]);
+    std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([loader->originalRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, response, delegate.get()));
     loader->didCreateQuickLookHandle(*quickLookHandle);
     return std::move(quickLookHandle);
 }

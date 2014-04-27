@@ -86,7 +86,7 @@ public:
 #if USE(CFNETWORK)
     static std::unique_ptr<QuickLookHandle> create(ResourceHandle*, SynchronousResourceHandleCFURLConnectionDelegate*, CFURLResponseRef);
 #endif
-    static std::unique_ptr<QuickLookHandle> create(ResourceLoader*, NSURLResponse *, id delegate);
+    static std::unique_ptr<QuickLookHandle> create(ResourceLoader*, NSURLResponse *);
     ~QuickLookHandle();
 
     bool didReceiveDataArray(CFArrayRef);
