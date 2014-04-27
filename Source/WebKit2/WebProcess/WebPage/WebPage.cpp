@@ -1291,9 +1291,6 @@ void WebPage::windowScreenDidChange(uint64_t displayID)
 
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {
-    if (scale == pageScaleFactor())
-        return;
-
 #if PLATFORM(IOS)
     if (!m_inDynamicSizeUpdate)
         m_dynamicSizeUpdateHistory.clear();
@@ -1305,7 +1302,13 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
         return;
     }
 
+    float oldPageScaleFactor = pageScaleFactor();
+
     m_page->setPageScaleFactor(scale, origin);
+
+    // We can't early return before setPageScaleFactor because the origin might be different.
+    if (scale == oldPageScaleFactor)
+        return;
 
     for (auto* pluginView : m_pluginViews)
         pluginView->pageScaleFactorDidChange();

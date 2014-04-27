@@ -1,3 +1,21 @@
+2014-04-27  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r164702): Double tap doesn't stay under the new element once the animation finishes
+        https://bugs.webkit.org/show_bug.cgi?id=132239
+        <rdar://problem/16192842>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scalePage):
+        The early-return added to WebPage::scalePage breaks callers who depend
+        on being able to call scalePage() with the same scale but a different
+        origin and having that change take effect.
+
+        Page::setPageScaleFactor already has the requisite logic, so move
+        the early return down after that call, and guard only notification
+        of page scale changes.
+
 2014-04-25  Andy Estes  <aestes@apple.com>
 
         [iOS] Stop creating a WKWebResourceQuickLookDelegate for every WebResourceLoader
