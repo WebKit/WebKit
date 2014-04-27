@@ -1,3 +1,17 @@
+2014-04-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Local files should not be allowed to read pasteboard data during drag
+        https://bugs.webkit.org/show_bug.cgi?id=131767
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/files/local-file-drag-security.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::tryDHTMLDrag):
+        Make an old Dashboard quirk really Dashboard only.
+
 2014-04-24  Darin Adler  <darin@apple.com>
 
         REGRESSION (r164133): Selection doesn't paint when scrolling some pages

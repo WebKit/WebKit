@@ -660,6 +660,7 @@ fast/files/file-list-test.html
 fast/files/file-reader-abort.html
 fast/files/file-reader-directory-crash.html
 fast/files/file-reader-event-listener.html
+fast/files/local-file-drag-security.html
 fast/files/null-origin-string.html
 fast/files/read-blob-async.html
 fast/files/read-file-async.html

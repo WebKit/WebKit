@@ -181,7 +181,12 @@ DragOperation DragController::dragEntered(DragData& dragData)
 void DragController::dragExited(DragData& dragData)
 {
     if (RefPtr<FrameView> v = m_page.mainFrame().view()) {
-        DataTransferAccessPolicy policy = (!m_documentUnderMouse || m_documentUnderMouse->securityOrigin()->isLocal()) ? DataTransferAccessPolicy::Readable : DataTransferAccessPolicy::TypesReadable;
+#if ENABLE(DASHBOARD_SUPPORT)
+        DataTransferAccessPolicy policy = (m_page.mainFrame().settings().usesDashboardBackwardCompatibilityMode() && (!m_documentUnderMouse || m_documentUnderMouse->securityOrigin()->isLocal())) ?
+        DataTransferAccessPolicy::Readable : DataTransferAccessPolicy::TypesReadable;
+#else
+        DataTransferAccessPolicy policy = DataTransferAccessPolicy::TypesReadable;
+#endif
         RefPtr<DataTransfer> dataTransfer = DataTransfer::createForDragAndDrop(policy, dragData);
         dataTransfer->setSourceOperation(dragData.draggingSourceOperationMask());
         m_page.mainFrame().eventHandler().cancelDragAndDrop(createMouseEvent(dragData), dataTransfer.get());
@@ -587,7 +592,12 @@ bool DragController::tryDHTMLDrag(DragData& dragData, DragOperation& operation)
     if (!viewProtector)
         return false;
 
-    DataTransferAccessPolicy policy = m_documentUnderMouse->securityOrigin()->isLocal() ? DataTransferAccessPolicy::Readable : DataTransferAccessPolicy::TypesReadable;
+#if ENABLE(DASHBOARD_SUPPORT)
+    DataTransferAccessPolicy policy = (mainFrame->settings().usesDashboardBackwardCompatibilityMode() && m_documentUnderMouse->securityOrigin()->isLocal()) ?
+        DataTransferAccessPolicy::Readable : DataTransferAccessPolicy::TypesReadable;
+#else
+    DataTransferAccessPolicy policy = DataTransferAccessPolicy::TypesReadable;
+#endif
     RefPtr<DataTransfer> dataTransfer = DataTransfer::createForDragAndDrop(policy, dragData);
     DragOperation srcOpMask = dragData.draggingSourceOperationMask();
     dataTransfer->setSourceOperation(srcOpMask);
