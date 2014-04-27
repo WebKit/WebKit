@@ -1,3 +1,9 @@
+2014-04-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Adding failure expectations for 6 failing reference tests.
+
+        * platform/gtk/TestExpectations:
+
 2014-04-26  Alexey Proskuryakov  <ap@apple.com>
 
         Local files should not be allowed to read pasteboard data during drag

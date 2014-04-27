@@ -1635,6 +1635,8 @@ webkit.org/b/118416 storage/websql/sql-error-codes.html [ Failure ]
 Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
 
 webkit.org/b/119841 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
+webkit.org/b/119841 fast/sub-pixel/sub-pixel-root-layer.html [ ImageOnlyFailure ]
+webkit.org/b/119841 fast/sub-pixel/zoomed-em-border.html [ ImageOnlyFailure ]
 
 webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Failure ]
 
@@ -1868,6 +1870,14 @@ webkit.org/b/132126 media/restore-from-page-cache.html [ Crash ]
 
 # This test gives timeout sometimes.
 webkit.org/b/132128 fast/text/international/embed-bidi-style-in-isolate-crash.html [ Timeout Pass ]
+
+webkit.org/b/132232 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]
+
+webkit.org/b/132233 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
+
+webkit.org/b/132234 fast/regions/wheel-scrollable-single-region.html [ ImageOnlyFailure ]
+
+webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
