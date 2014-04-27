@@ -1,3 +1,23 @@
+2014-04-27  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Zoom): Pages with 'background-attachment: fixed' don't behave correctly when zoomed
+        https://bugs.webkit.org/show_bug.cgi?id=132225
+        <rdar://problem/15729975>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::layerForTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::adjustTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+        Factor out code to choose which layer (and shadow layer) to apply the transient zoom to.
+        If we have a contentsContainmentLayer (because we have composited background-attachment: fixed),
+        it applies page scale, so we should apply the transient zoom to that layer
+        instead of the RenderView's main GraphicsLayer.
+
 2014-04-27  Pratik Solanki  <psolanki@apple.com>
 
         Unreviewed. iOS build fix.
