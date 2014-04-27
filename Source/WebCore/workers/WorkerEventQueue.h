@@ -48,9 +48,9 @@ private:
     ScriptExecutionContext& m_scriptExecutionContext;
     bool m_isClosed;
 
-    class EventDispatcherTask;
-    typedef HashMap<RefPtr<Event>, EventDispatcherTask*> EventTaskMap;
-    EventTaskMap m_eventTaskMap;
+    class EventDispatcher;
+    typedef HashMap<RefPtr<Event>, EventDispatcher*> EventDispatcherMap;
+    EventDispatcherMap m_eventDispatcherMap;
 };
 
 }

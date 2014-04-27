@@ -205,61 +205,6 @@ void WorkerThread::runEventLoop()
     m_runLoop.run(m_workerGlobalScope.get());
 }
 
-class WorkerThreadShutdownFinishTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<WorkerThreadShutdownFinishTask> create()
-    {
-        return adoptPtr(new WorkerThreadShutdownFinishTask());
-    }
-
-    virtual void performTask(ScriptExecutionContext *context)
-    {
-        // It's not safe to call clearScript until all the cleanup tasks posted by functions initiated by WorkerThreadShutdownStartTask have completed.
-        toWorkerGlobalScope(context)->clearScript();
-    }
-
-    virtual bool isCleanupTask() const { return true; }
-};
-
-class WorkerThreadShutdownStartTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<WorkerThreadShutdownStartTask> create()
-    {
-        return adoptPtr(new WorkerThreadShutdownStartTask());
-    }
-
-    virtual void performTask(ScriptExecutionContext *context)
-    {
-        WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
-
-#if ENABLE(SQL_DATABASE)
-        // FIXME: Should we stop the databases as part of stopActiveDOMObjects() below?
-        DatabaseTaskSynchronizer cleanupSync;
-        DatabaseManager::manager().stopDatabases(workerGlobalScope, &cleanupSync);
-#endif
-
-        workerGlobalScope->stopActiveDOMObjects();
-
-        workerGlobalScope->notifyObserversOfStop();
-
-        // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
-        // which become dangling once Heap is destroyed.
-        workerGlobalScope->removeAllEventListeners();
-
-#if ENABLE(SQL_DATABASE)
-        // We wait for the database thread to clean up all its stuff so that we
-        // can do more stringent leak checks as we exit.
-        cleanupSync.waitForTaskCompletion();
-#endif
-
-        // Stick a shutdown command at the end of the queue, so that we deal
-        // with all the cleanup tasks the databases post first.
-        workerGlobalScope->postTask(WorkerThreadShutdownFinishTask::create());
-    }
-
-    virtual bool isCleanupTask() const { return true; }
-};
-
 void WorkerThread::stop()
 {
     // Mutex protection is necessary because stop() can be called before the context is fully created.
@@ -272,22 +217,51 @@ void WorkerThread::stop()
 #if ENABLE(SQL_DATABASE)
         DatabaseManager::manager().interruptAllDatabasesForContext(m_workerGlobalScope.get());
 #endif
-        m_runLoop.postTaskAndTerminate(WorkerThreadShutdownStartTask::create());
+        m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext* context ) {
+            WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
+
+#if ENABLE(SQL_DATABASE)
+            // FIXME: Should we stop the databases as part of stopActiveDOMObjects() below?
+            DatabaseTaskSynchronizer cleanupSync;
+            DatabaseManager::manager().stopDatabases(workerGlobalScope, &cleanupSync);
+#endif
+
+            workerGlobalScope->stopActiveDOMObjects();
+
+            workerGlobalScope->notifyObserversOfStop();
+
+            // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
+            // which become dangling once Heap is destroyed.
+            workerGlobalScope->removeAllEventListeners();
+
+#if ENABLE(SQL_DATABASE)
+            // We wait for the database thread to clean up all its stuff so that we
+            // can do more stringent leak checks as we exit.
+            cleanupSync.waitForTaskCompletion();
+#endif
+
+            // Stick a shutdown command at the end of the queue, so that we deal
+            // with all the cleanup tasks the databases post first.
+            workerGlobalScope->postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext* context) {
+                WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
+                // It's not safe to call clearScript until all the cleanup tasks posted by functions initiated by WorkerThreadShutdownStartTask have completed.
+                workerGlobalScope->clearScript();
+            } });
+
+        } });
         return;
     }
     m_runLoop.terminate();
 }
-
-class ReleaseFastMallocFreeMemoryTask : public ScriptExecutionContext::Task {
-    virtual void performTask(ScriptExecutionContext*) override { WTF::releaseFastMallocFreeMemory(); }
-};
 
 void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()
 {
     std::lock_guard<std::mutex> lock(threadSetMutex());
 
     for (auto* workerThread : workerThreads())
-        workerThread->runLoop().postTask(adoptPtr(new ReleaseFastMallocFreeMemoryTask));
+        workerThread->runLoop().postTask([] (ScriptExecutionContext*) {
+            WTF::releaseFastMallocFreeMemory();
+        });
 }
 
 } // namespace WebCore

@@ -80,17 +80,12 @@ private:
 };
 
 JSGlobalObjectTask::JSGlobalObjectTask(JSDOMGlobalObject* globalObject, PassRefPtr<Microtask> task)
-    : m_callback(JSGlobalObjectCallback::create(globalObject, task))
+    : ScriptExecutionContext::Task(nullptr)
 {
-}
-
-JSGlobalObjectTask::~JSGlobalObjectTask()
-{
-}
-
-void JSGlobalObjectTask::performTask(ScriptExecutionContext*)
-{
-    m_callback->call();
+    RefPtr<JSGlobalObjectCallback> callback = JSGlobalObjectCallback::create(globalObject, task);
+    m_task = [=] (ScriptExecutionContext*) {
+        callback->call();
+    };
 }
 
 } // namespace WebCore

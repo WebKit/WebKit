@@ -87,39 +87,17 @@ Database::Database(PassRefPtr<DatabaseBackendContext> databaseContext,
     ASSERT(m_databaseContext->databaseThread());
 }
 
-class DerefContextTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<DerefContextTask> create(PassRefPtr<ScriptExecutionContext> context)
-    {
-        return adoptPtr(new DerefContextTask(context));
-    }
-
-    virtual void performTask(ScriptExecutionContext* context)
-    {
-        ASSERT_UNUSED(context, context == m_context);
-        m_context.clear();
-    }
-
-    virtual bool isCleanupTask() const { return true; }
-
-private:
-    DerefContextTask(PassRefPtr<ScriptExecutionContext> context)
-        : m_context(context)
-    {
-    }
-    
-    RefPtr<ScriptExecutionContext> m_context;
-};
-
 Database::~Database()
 {
     // The reference to the ScriptExecutionContext needs to be cleared on the JavaScript thread.  If we're on that thread already, we can just let the RefPtr's destruction do the dereffing.
     if (!m_scriptExecutionContext->isContextThread()) {
         // Grab a pointer to the script execution here because we're releasing it when we pass it to
         // DerefContextTask::create.
-        ScriptExecutionContext* scriptExecutionContext = m_scriptExecutionContext.get();
-        
-        scriptExecutionContext->postTask(DerefContextTask::create(m_scriptExecutionContext.release()));
+        PassRefPtr<ScriptExecutionContext> passedContext = m_scriptExecutionContext.release();
+        passedContext->postTask({ScriptExecutionContext::Task::CleanupTask, [=] (ScriptExecutionContext* context) {
+            ASSERT_UNUSED(context, context == passedContext);
+            RefPtr<ScriptExecutionContext> scriptExecutionContext(passedContext);
+        }});
     }
 }
 
@@ -187,49 +165,25 @@ void Database::readTransaction(PassRefPtr<SQLTransactionCallback> callback, Pass
     runTransaction(callback, errorCallback, successCallback, true);
 }
 
-static void callTransactionErrorCallback(ScriptExecutionContext*, PassRefPtr<SQLTransactionErrorCallback> callback, PassRefPtr<SQLError> error)
-{
-    callback->handleEvent(error.get());
-}
-
 void Database::runTransaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
     PassRefPtr<VoidCallback> successCallback, bool readOnly, const ChangeVersionData* changeVersionData)
 {
-    RefPtr<SQLTransactionErrorCallback> anotherRefToErrorCallback = errorCallback;
-    RefPtr<SQLTransaction> transaction = SQLTransaction::create(this, callback, successCallback, anotherRefToErrorCallback, readOnly);
+    RefPtr<SQLTransactionErrorCallback> errorCallbackProtector(errorCallback);
+    RefPtr<SQLTransaction> transaction = SQLTransaction::create(this, callback, successCallback, errorCallbackProtector, readOnly);
 
-    RefPtr<SQLTransactionBackend> transactionBackend;
-    transactionBackend = backend()->runTransaction(transaction.release(), readOnly, changeVersionData);
-    if (!transactionBackend && anotherRefToErrorCallback) {
-        RefPtr<SQLError> error = SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed");
-        scriptExecutionContext()->postTask(createCallbackTask(&callTransactionErrorCallback, anotherRefToErrorCallback, error.release()));
-    }
+    RefPtr<SQLTransactionBackend> transactionBackend(backend()->runTransaction(transaction.release(), readOnly, changeVersionData));
+    if (!transactionBackend && errorCallbackProtector)
+        scriptExecutionContext()->postTask([=] (ScriptExecutionContext*) {
+            errorCallbackProtector->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed").get());
+        });
 }
-
-class DeliverPendingCallbackTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<DeliverPendingCallbackTask> create(PassRefPtr<SQLTransaction> transaction)
-    {
-        return adoptPtr(new DeliverPendingCallbackTask(transaction));
-    }
-
-    virtual void performTask(ScriptExecutionContext*)
-    {
-        m_transaction->performPendingCallback();
-    }
-
-private:
-    DeliverPendingCallbackTask(PassRefPtr<SQLTransaction> transaction)
-        : m_transaction(transaction)
-    {
-    }
-
-    RefPtr<SQLTransaction> m_transaction;
-};
 
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
 {
-    m_scriptExecutionContext->postTask(DeliverPendingCallbackTask::create(transaction));
+    RefPtr<SQLTransaction> transactionProtector(transaction);
+    m_scriptExecutionContext->postTask([=] (ScriptExecutionContext*) {
+        transactionProtector->performPendingCallback();
+    });
 }
 
 Vector<String> Database::performGetTableNames()

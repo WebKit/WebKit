@@ -1,3 +1,214 @@
+2014-04-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        ScriptExecutionContext::Task should work well with C++11 lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=129795
+
+        Reviewed by Darin Adler.
+
+        Instead of having classes that subclass ScriptExecutionContext::Task and override
+        the performTask(ScriptExecutionContext*) method, have the ScriptExecutionContext::Task
+        take in a std::function<void (ScriptExecutionContext*)>-like object trough the constructor
+        which would contain the code currently kept in the performTask() methods.
+
+        This enables inlining C++11 lambdas into ScriptExecutionContext::postTask() calls. For
+        cleanup tasks, the Task object can be implicitly constructed by using the initializer list
+        constructor with the first argument being the ScriptExecutionContext::Task::CleanupTask tag.
+        The ScriptExecutionContext class remains non-copyable and now stores the passed-in invokable
+        object in the std::function wrapper, along with a boolean member that indicates whether the
+        task is of cleanup nature.
+
+        * Modules/quota/StorageErrorCallback.cpp:
+        (WebCore::StorageErrorCallback::CallbackTask::CallbackTask):
+        (WebCore::StorageErrorCallback::CallbackTask::performTask): Deleted.
+        * Modules/quota/StorageErrorCallback.h:
+        (WebCore::StorageErrorCallback::CallbackTask::create): Deleted.
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::~Database):
+        (WebCore::Database::runTransaction):
+        (WebCore::Database::scheduleTransactionCallback):
+        (WebCore::DerefContextTask::create): Deleted.
+        (WebCore::DerefContextTask::performTask): Deleted.
+        (WebCore::DerefContextTask::isCleanupTask): Deleted.
+        (WebCore::DerefContextTask::DerefContextTask): Deleted.
+        (WebCore::callTransactionErrorCallback): Deleted.
+        (WebCore::DeliverPendingCallbackTask::create): Deleted.
+        (WebCore::DeliverPendingCallbackTask::performTask): Deleted.
+        (WebCore::DeliverPendingCallbackTask::DeliverPendingCallbackTask): Deleted.
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabase):
+        (WebCore::DatabaseCreationCallbackTask::create): Deleted.
+        (WebCore::DatabaseCreationCallbackTask::performTask): Deleted.
+        (WebCore::DatabaseCreationCallbackTask::DatabaseCreationCallbackTask): Deleted.
+        * Modules/webdatabase/DatabaseSync.cpp:
+        (WebCore::CloseSyncDatabaseOnContextThreadTask::create): Deleted.
+        (WebCore::CloseSyncDatabaseOnContextThreadTask::performTask): Deleted.
+        (WebCore::CloseSyncDatabaseOnContextThreadTask::CloseSyncDatabaseOnContextThreadTask): Deleted.
+        * Modules/webdatabase/SQLCallbackWrapper.h:
+        (WebCore::SQLCallbackWrapper::clear):
+        (WebCore::SQLCallbackWrapper::SafeReleaseTask::create): Deleted.
+        (WebCore::SQLCallbackWrapper::SafeReleaseTask::performTask): Deleted.
+        (WebCore::SQLCallbackWrapper::SafeReleaseTask::isCleanupTask): Deleted.
+        (WebCore::SQLCallbackWrapper::SafeReleaseTask::SafeReleaseTask): Deleted.
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnect):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessage):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageError):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadDestroy):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::disconnect):
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask::create): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask::~WorkerGlobalScopeDidInitializeTask): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask::WorkerGlobalScopeDidInitializeTask): Deleted.
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * bindings/js/JSCallbackData.h:
+        (WebCore::DeleteCallbackDataTask::DeleteCallbackDataTask):
+        (WebCore::DeleteCallbackDataTask::create): Deleted.
+        (WebCore::DeleteCallbackDataTask::performTask): Deleted.
+        (WebCore::DeleteCallbackDataTask::isCleanupTask): Deleted.
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        (WebCore::JSGlobalObjectTask::JSGlobalObjectTask):
+        (WebCore::JSGlobalObjectTask::~JSGlobalObjectTask): Deleted.
+        (WebCore::JSGlobalObjectTask::performTask): Deleted.
+        * bindings/js/JSDOMGlobalObjectTask.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::queueTaskToEventLoop):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::queueTaskToEventLoop):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackImplementation):
+        * dom/CrossThreadTask.h:
+        (WebCore::CrossThreadTask1::performTask):
+        (WebCore::CrossThreadTask2::performTask):
+        (WebCore::CrossThreadTask3::performTask):
+        (WebCore::CrossThreadTask4::performTask):
+        (WebCore::CrossThreadTask5::performTask):
+        (WebCore::CrossThreadTask6::performTask):
+        (WebCore::CrossThreadTask7::performTask):
+        (WebCore::CrossThreadTask8::performTask):
+        (WebCore::createCallbackTask):
+        (WebCore::CrossThreadTask1::create): Deleted.
+        (WebCore::CrossThreadTask2::create): Deleted.
+        (WebCore::CrossThreadTask3::create): Deleted.
+        (WebCore::CrossThreadTask4::create): Deleted.
+        (WebCore::CrossThreadTask5::create): Deleted.
+        (WebCore::CrossThreadTask6::create): Deleted.
+        (WebCore::CrossThreadTask7::create): Deleted.
+        (WebCore::CrossThreadTask8::create): Deleted.
+        * dom/Document.cpp:
+        (WebCore::Document::addConsoleMessage):
+        (WebCore::Document::addMessage):
+        (WebCore::Document::postTask):
+        (WebCore::Document::pendingTasksTimerFired):
+        (WebCore::PerformTaskContext::PerformTaskContext): Deleted.
+        (WebCore::Document::didReceiveTask): Deleted.
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::processMessagePortMessagesSoon):
+        (WebCore::ScriptExecutionContext::timerAlignmentInterval):
+        (WebCore::ProcessMessagesSoonTask::create): Deleted.
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::performTask): Deleted.
+        (WebCore::ScriptExecutionContext::Task::~Task): Deleted.
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::Task::Task):
+        (WebCore::ScriptExecutionContext::Task::performTask):
+        (WebCore::ScriptExecutionContext::Task::isCleanupTask):
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask):
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::create): Deleted.
+        * dom/StringCallback.cpp:
+        (WebCore::StringCallback::scheduleCallback):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::postListenerTask):
+        (WebCore::CallCacheListenerTask::create): Deleted.
+        (WebCore::CallCacheListenerTask::CallCacheListenerTask): Deleted.
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::postTaskToLoader):
+        (WebCore::SharedWorkerProxy::postTaskForModeToWorkerGlobalScope):
+        (WebCore::SharedWorkerConnectTask::SharedWorkerConnectTask):
+        (WebCore::DefaultSharedWorkerRepository::workerScriptLoaded):
+        (WebCore::DefaultSharedWorkerRepository::connectToWorker):
+        (WebCore::SharedWorkerConnectTask::create): Deleted.
+        (WebCore::SharedWorkerConnectTask::performTask): Deleted.
+        * workers/WorkerEventQueue.cpp:
+        (WebCore::WorkerEventQueue::EventDispatcher::EventDispatcher):
+        (WebCore::WorkerEventQueue::EventDispatcher::~EventDispatcher):
+        (WebCore::WorkerEventQueue::EventDispatcher::dispatch):
+        (WebCore::WorkerEventQueue::enqueueEvent):
+        (WebCore::WorkerEventQueue::cancelEvent):
+        (WebCore::WorkerEventQueue::close):
+        * workers/WorkerEventQueue.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::close):
+        (WebCore::WorkerGlobalScope::postTask):
+        (WebCore::WorkerGlobalScope::addConsoleMessage):
+        (WebCore::WorkerGlobalScope::addMessage):
+        (WebCore::CloseWorkerGlobalScopeTask::create): Deleted.
+        (WebCore::CloseWorkerGlobalScopeTask::performTask): Deleted.
+        (WebCore::CloseWorkerGlobalScopeTask::isCleanupTask): Deleted.
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerLoaderProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerGlobalScope):
+        (WebCore::WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope):
+        (WebCore::WorkerMessagingProxy::postTaskToLoader):
+        (WebCore::WorkerMessagingProxy::postExceptionToWorkerObject):
+        (WebCore::WorkerMessagingProxy::workerThreadCreated):
+        (WebCore::WorkerMessagingProxy::notifyNetworkStateChange):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeDestroyed):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeClosed):
+        (WebCore::WorkerMessagingProxy::postMessageToPageInspector):
+        (WebCore::WorkerMessagingProxy::confirmMessageFromWorkerObject):
+        (WebCore::WorkerMessagingProxy::reportPendingActivity):
+        (WebCore::MessageWorkerGlobalScopeTask::create): Deleted.
+        (WebCore::MessageWorkerGlobalScopeTask::MessageWorkerGlobalScopeTask): Deleted.
+        (WebCore::MessageWorkerGlobalScopeTask::performTask): Deleted.
+        (WebCore::MessageWorkerTask::create): Deleted.
+        (WebCore::MessageWorkerTask::MessageWorkerTask): Deleted.
+        (WebCore::MessageWorkerTask::performTask): Deleted.
+        (WebCore::WorkerExceptionTask::create): Deleted.
+        (WebCore::WorkerExceptionTask::WorkerExceptionTask): Deleted.
+        (WebCore::WorkerExceptionTask::performTask): Deleted.
+        (WebCore::WorkerGlobalScopeDestroyedTask::create): Deleted.
+        (WebCore::WorkerGlobalScopeDestroyedTask::WorkerGlobalScopeDestroyedTask): Deleted.
+        (WebCore::WorkerGlobalScopeDestroyedTask::performTask): Deleted.
+        (WebCore::WorkerTerminateTask::create): Deleted.
+        (WebCore::WorkerTerminateTask::WorkerTerminateTask): Deleted.
+        (WebCore::WorkerTerminateTask::performTask): Deleted.
+        (WebCore::WorkerThreadActivityReportTask::create): Deleted.
+        (WebCore::WorkerThreadActivityReportTask::WorkerThreadActivityReportTask): Deleted.
+        (WebCore::WorkerThreadActivityReportTask::performTask): Deleted.
+        (WebCore::PostMessageToPageInspectorTask::create): Deleted.
+        (WebCore::PostMessageToPageInspectorTask::PostMessageToPageInspectorTask): Deleted.
+        (WebCore::PostMessageToPageInspectorTask::performTask): Deleted.
+        (WebCore::NotifyNetworkStateChangeTask::create): Deleted.
+        (WebCore::NotifyNetworkStateChangeTask::NotifyNetworkStateChangeTask): Deleted.
+        (WebCore::NotifyNetworkStateChangeTask::performTask): Deleted.
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::postTask):
+        (WebCore::WorkerRunLoop::postTaskAndTerminate):
+        (WebCore::WorkerRunLoop::postTaskForMode):
+        (WebCore::WorkerRunLoop::Task::create):
+        (WebCore::WorkerRunLoop::Task::performTask):
+        (WebCore::WorkerRunLoop::Task::Task):
+        * workers/WorkerRunLoop.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::stop):
+        (WebCore::WorkerThread::releaseFastMallocFreeMemoryInAllThreads):
+        (WebCore::WorkerThreadShutdownFinishTask::create): Deleted.
+        (WebCore::WorkerThreadShutdownFinishTask::performTask): Deleted.
+        (WebCore::WorkerThreadShutdownFinishTask::isCleanupTask): Deleted.
+        (WebCore::WorkerThreadShutdownStartTask::create): Deleted.
+        (WebCore::WorkerThreadShutdownStartTask::performTask): Deleted.
+        (WebCore::WorkerThreadShutdownStartTask::isCleanupTask): Deleted.
+
 2014-04-27  Antti Koivisto  <antti@apple.com>
 
         Coalesce responses on network process side

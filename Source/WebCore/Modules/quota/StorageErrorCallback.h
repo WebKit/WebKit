@@ -50,16 +50,9 @@ public:
 
     class CallbackTask : public ScriptExecutionContext::Task {
     public:
-        static PassOwnPtr<CallbackTask> create(PassRefPtr<StorageErrorCallback> callback, ExceptionCode ec)
-        {
-            return adoptPtr(new CallbackTask(callback, ec));
-        }
-
-        virtual void performTask(ScriptExecutionContext*);
-
-    private:
         CallbackTask(PassRefPtr<StorageErrorCallback>, ExceptionCode);
 
+    private:
         RefPtr<StorageErrorCallback> m_callback;
         ExceptionCode m_ec;
     };
