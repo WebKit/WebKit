@@ -2824,14 +2824,15 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         styleResolverChanged(DeferRecalcStyle);
     } else if (equalIgnoringCase(equiv, "refresh")) {
         double delay;
-        String url;
-        if (frame && parseHTTPRefresh(content, true, delay, url)) {
-            if (url.isEmpty())
-                url = m_url.string();
+        String urlString;
+        if (frame && parseHTTPRefresh(content, true, delay, urlString)) {
+            URL completedURL;
+            if (urlString.isEmpty())
+                completedURL = m_url;
             else
-                url = completeURL(url).string();
-            if (!protocolIsJavaScript(url))
-                frame->navigationScheduler().scheduleRedirect(delay, url);
+                completedURL = completeURL(urlString);
+            if (!protocolIsJavaScript(completedURL))
+                frame->navigationScheduler().scheduleRedirect(delay, completedURL);
             else {
                 String message = "Refused to refresh " + m_url.stringCenterEllipsizedToLength() + " to a javascript: URL";
                 addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);

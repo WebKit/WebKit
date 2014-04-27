@@ -36,6 +36,7 @@
 #include "SecurityPolicy.h"
 #include "ThreadableBlobRegistry.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -597,10 +598,10 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin* other) const
     return true;
 }
 
-String SecurityOrigin::urlWithUniqueSecurityOrigin()
+URL SecurityOrigin::urlWithUniqueSecurityOrigin()
 {
     ASSERT(isMainThread());
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, uniqueSecurityOriginURL, (ASCIILiteral("data:,")));
+    static NeverDestroyed<URL> uniqueSecurityOriginURL(ParsedURLString, ASCIILiteral("data:,"));
     return uniqueSecurityOriginURL;
 }
 
