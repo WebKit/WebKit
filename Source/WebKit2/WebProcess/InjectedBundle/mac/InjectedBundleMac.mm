@@ -131,7 +131,10 @@ void InjectedBundle::activateMacFontAscentHack()
 #if WK_API_ENABLED
 WKWebProcessBundleParameters *InjectedBundle::bundleParameters()
 {
-    ASSERT(m_bundleParameters);
+    // We must not return nil even if no parameters are currently set, in order to allow the client
+    // to use KVO.
+    if (!m_bundleParameters)
+        m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:@{ }]);
 
     return m_bundleParameters.get();
 }

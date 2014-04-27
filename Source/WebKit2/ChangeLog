@@ -1,3 +1,14 @@
+2014-04-27  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] -[WKWebProcessPlugInController parameters] returns nil if no parameters have been set yet
+        https://bugs.webkit.org/show_bug.cgi?id=132223
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::bundleParameters): Create the WKWebProcessBundleParameters if
+        needed.
+
 2014-04-27  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r164702): Double tap doesn't stay under the new element once the animation finishes
