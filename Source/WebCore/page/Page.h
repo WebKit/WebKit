@@ -282,7 +282,12 @@ public:
 
     float topContentInset() const { return m_topContentInset; }
     void setTopContentInset(float);
-
+    
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    float textAutosizingWidth() const { return m_textAutosizingWidth; }
+    void setTextAutosizingWidth(float textAutosizingWidth) { m_textAutosizingWidth = textAutosizingWidth; }
+#endif
+    
     bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
     void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
     void lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars);
@@ -504,7 +509,11 @@ private:
     float m_deviceScaleFactor;
 
     float m_topContentInset;
-
+    
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    float m_textAutosizingWidth;
+#endif
+    
     bool m_suppressScrollbarAnimations;
     
     unsigned m_verticalScrollElasticity : 2; // ScrollElasticity

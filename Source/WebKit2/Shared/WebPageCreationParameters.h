@@ -115,6 +115,7 @@ struct WebPageCreationParameters {
 #if PLATFORM(IOS)
     WebCore::FloatSize screenSize;
     WebCore::FloatSize availableScreenSize;
+    float textAutosizingWidth;
 #endif
 };
 

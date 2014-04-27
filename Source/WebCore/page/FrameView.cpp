@@ -1285,7 +1285,7 @@ void FrameView::layout(bool allowSubtree)
         root->layout();
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         float minZoomFontSize = frame().settings().minimumZoomFontSize();
-        float visWidth = frame().page()->mainFrame().textAutosizingWidth();
+        float visWidth = frame().page()->textAutosizingWidth();
         if (minZoomFontSize && visWidth && !root->view().printing()) {
             root->adjustComputedFontSizesOnBlocks(minZoomFontSize, visWidth);    
             bool needsLayout = root->needsLayout();

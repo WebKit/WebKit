@@ -240,11 +240,6 @@ namespace WebCore {
         String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-        void setTextAutosizingWidth(float);
-        float textAutosizingWidth() const;
-#endif
-
 #if PLATFORM(IOS)
         // Scroll the selection in an overflow layer on iOS.
         void scrollOverflowLayer(RenderLayer* , const IntRect& visibleRect, const IntRect& exposeRect);
@@ -323,10 +318,6 @@ namespace WebCore {
         int m_timersPausedCount;
         VisibleSelection m_rangedSelectionBase;
         VisibleSelection m_rangedSelectionInitialExtent;
-#endif
-
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-        float m_textAutosizingWidth;
 #endif
 
         float m_pageZoomFactor;

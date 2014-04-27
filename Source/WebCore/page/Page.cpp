@@ -162,6 +162,9 @@ Page::Page(PageClients& pageClients)
     , m_zoomedOutPageScaleFactor(0)
     , m_deviceScaleFactor(1)
     , m_topContentInset(0)
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    , m_textAutosizingWidth(0)
+#endif
     , m_suppressScrollbarAnimations(false)
     , m_verticalScrollElasticity(ScrollElasticityAllowed)
     , m_horizontalScrollElasticity(ScrollElasticityAllowed)
@@ -783,7 +786,7 @@ void Page::setTopContentInset(float contentInset)
     if (FrameView* view = mainFrame().view())
         view->topContentInsetDidChange();
 }
-    
+
 void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)
 {
     if (suppressAnimations == m_suppressScrollbarAnimations)

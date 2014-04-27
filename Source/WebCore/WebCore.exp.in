@@ -3113,7 +3113,6 @@ _wkIOSurfaceContextCreateImage
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 __ZN7WebCore12RenderObject19resetTextAutosizingEv
-__ZN7WebCore5Frame22setTextAutosizingWidthEf
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

@@ -477,7 +477,12 @@ FloatSize WebPageProxy::availableScreenSize()
 {
     return FloatSize(WKGetAvailableScreenSize());
 }
-
+    
+float WebPageProxy::textAutosizingWidth()
+{
+    return WKGetScreenSize().width;
+}
+    
 void WebPageProxy::dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition)
 {
     m_pageClient.dynamicViewportUpdateChangedTarget(newScale, newScrollPosition);

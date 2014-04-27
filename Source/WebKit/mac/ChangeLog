@@ -1,3 +1,15 @@
+2014-04-27  Sam Weinig  <sam@webkit.org>
+
+        [iOS WebKit2] Add support for text autosizing
+        <rdar://problem/16545245>
+        https://bugs.webkit.org/show_bug.cgi?id=132237
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _setTextAutosizingWidth:]):
+        Forward setting of the text autosizing width to the Page.
+
 2014-04-25  Dean Jackson  <dino@apple.com>
 
         Allow a platform-specific size enumeration to be passed into popup-menu display

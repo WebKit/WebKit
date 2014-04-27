@@ -1915,8 +1915,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)_setTextAutosizingWidth:(CGFloat)width
 {
-    WebCore::Frame *frame = core(self);
-    frame->setTextAutosizingWidth(width);
+    WebCore::Frame* frame = core(self);
+    Page* page = frame->page();
+    if (!page)
+        return;
+
+    page->setTextAutosizingWidth(width);
 }
 #else
 - (void)resetTextAutosizingBeforeLayout

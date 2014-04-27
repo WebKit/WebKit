@@ -1350,7 +1350,7 @@ private:
 #if PLATFORM(IOS)
     WebCore::FloatSize screenSize();
     WebCore::FloatSize availableScreenSize();
-
+    float textAutosizingWidth();
 
     void dynamicViewportUpdateChangedTarget(double newTargetScale, const WebCore::FloatPoint& newScrollPosition);
     void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& geometries, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius);

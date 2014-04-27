@@ -73,6 +73,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 #if PLATFORM(IOS)
     encoder << screenSize;
     encoder << availableScreenSize;
+    encoder << textAutosizingWidth;
 #endif
 }
 
@@ -153,6 +154,8 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
     if (!decoder.decode(parameters.screenSize))
         return false;
     if (!decoder.decode(parameters.availableScreenSize))
+        return false;
+    if (!decoder.decode(parameters.textAutosizingWidth))
         return false;
 #endif
 
