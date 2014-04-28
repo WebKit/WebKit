@@ -942,6 +942,12 @@ sub GetEffectiveFunctionName {
         return "webkit_dom_html_input_element_get_capture_enabled";
     }
 
+    # webkit_dom_text_track_add_cue raises an exception since r163974. We need to add a with_error version to
+    # keep API backwards compatibility.
+    if ($functionName eq "webkit_dom_text_track_add_cue") {
+        return "webkit_dom_text_track_add_cue_with_error";
+    }
+
     return $functionName;
 }
 

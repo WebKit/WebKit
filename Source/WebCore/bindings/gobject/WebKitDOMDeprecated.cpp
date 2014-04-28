@@ -29,6 +29,7 @@
 #include "WebKitDOMObject.h"
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMProcessingInstruction.h"
+#include "WebKitDOMTextTrack.h"
 #include "WebKitDOMVTTCue.h"
 #include "WebKitDOMWebKitNamedFlow.h"
 
@@ -794,4 +795,11 @@ void webkit_dom_text_track_cue_set_text(WebKitDOMTextTrackCue* self, const gchar
 {
     g_return_if_fail(WEBKIT_DOM_IS_VTT_CUE(self));
     webkit_dom_vtt_cue_set_text(WEBKIT_DOM_VTT_CUE(self), value);
+}
+
+// WebKitDOMTextTrack
+
+void webkit_dom_text_track_add_cue(WebKitDOMTextTrack* self, WebKitDOMTextTrackCue* cue)
+{
+    return webkit_dom_text_track_add_cue_with_error(self, cue, nullptr);
 }

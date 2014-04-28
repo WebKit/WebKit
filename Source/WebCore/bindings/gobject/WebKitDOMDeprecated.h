@@ -1013,6 +1013,16 @@ webkit_dom_text_track_cue_get_text(WebKitDOMTextTrackCue* self);
 WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_set_text) void
 webkit_dom_text_track_cue_set_text(WebKitDOMTextTrackCue* self, const gchar* value);
 
+/**
+ * webkit_dom_text_track_add_cue:
+ * @self: A #WebKitDOMTextTrack
+ * @cue: A #WebKitDOMTextTrackCue
+ *
+ * Deprecated: 2.6: Use webkit_dom_text_track_add_cue_with_error() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_text_track_add_cue_with_error) void
+webkit_dom_text_track_add_cue(WebKitDOMTextTrack* self, WebKitDOMTextTrackCue* cue);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DISABLE_DEPRECATED */

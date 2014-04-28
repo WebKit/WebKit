@@ -1,5 +1,26 @@
 2014-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] TextTrack::addCue can raise an exception since r163974
+        https://bugs.webkit.org/show_bug.cgi?id=132227
+
+        Reviewed by Martin Robinson.
+
+        webkit_dom_text_track_add_cue() now receives a GError paramater
+        which is an API break. Add
+        webkit_dom_text_track_add_cue_with_error and keep
+        webkit_dom_text_track_add_cue as deprecated to keep API
+        compatibility.
+
+        * bindings/gobject/WebKitDOMDeprecated.cpp:
+        (webkit_dom_text_track_add_cue):
+        * bindings/gobject/WebKitDOMDeprecated.h:
+        * bindings/gobject/WebKitDOMDeprecated.symbols:
+        * bindings/gobject/webkitdom.symbols:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetEffectiveFunctionName):
+
+2014-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] TextTrackCue API changed in r163649
         https://bugs.webkit.org/show_bug.cgi?id=132226
 
