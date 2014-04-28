@@ -1,3 +1,38 @@
+2014-04-27  Andrei Bucur  <abucur@adobe.com>
+
+        Store the containing region map inside the flow thread
+        https://bugs.webkit.org/show_bug.cgi?id=131647
+
+        Reviewed by Mihnea Ovidenie.
+
+        The patch moves the containing region map inside the flow thread where
+        it can be better handled in case the region chain changes and the map
+        needs to be cleared.
+
+        As a result of this move we are able to also cleanup the lines region
+        information of a block flow when it is removed from the tree.
+
+        Test: fast/regions/inline-strike-through.html
+
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::removeFlowChildInfo):
+        (WebCore::RenderFlowThread::invalidateRegions):
+        (WebCore::RenderFlowThread::removeLineRegionInfo):
+        (WebCore::RenderFlowThread::checkLinesConsistency):
+        (WebCore::RenderFlowThread::containingRegionMap):
+        * rendering/RenderFlowThread.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::containingRegionMap):
+        (WebCore::RootInlineBox::~RootInlineBox):
+        (WebCore::RootInlineBox::paint):
+        (WebCore::RootInlineBox::containingRegion):
+        (WebCore::RootInlineBox::clearContainingRegion):
+        (WebCore::RootInlineBox::setContainingRegion):
+
 2014-04-27  Darin Adler  <darin@apple.com>
 
         REGRESSION (r159345): The hover state for links in the top navigation of Yahoo.com doesn't work

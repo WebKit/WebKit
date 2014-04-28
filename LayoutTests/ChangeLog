@@ -1,3 +1,16 @@
+2014-04-27  Andrei Bucur  <abucur@adobe.com>
+
+        Store the containing region map inside the flow thread
+        https://bugs.webkit.org/show_bug.cgi?id=131647
+
+        Reviewed by Mihnea Ovidenie.
+
+        Add a test that verifies the containing region map is properly cleared
+        when the region chain changes.
+
+        * fast/regions/inline-strike-through-expected.txt: Added.
+        * fast/regions/inline-strike-through.html: Added.
+
 2014-04-27  Darin Adler  <darin@apple.com>
 
         REGRESSION (r159345): The hover state for links in the top navigation of Yahoo.com doesn't work

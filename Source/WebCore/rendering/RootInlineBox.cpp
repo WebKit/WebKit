@@ -53,11 +53,10 @@ COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInl
 typedef WTF::HashMap<const RootInlineBox*, std::unique_ptr<EllipsisBox>> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap = 0;
 
-typedef HashMap<const RootInlineBox*, RenderRegion*> ContainingRegionMap;
-static ContainingRegionMap& containingRegionMap()
+static ContainingRegionMap& containingRegionMap(RenderBlockFlow& block)
 {
-    static NeverDestroyed<ContainingRegionMap> map;
-    return map;
+    ASSERT(block.flowThreadContainingBlock());
+    return block.flowThreadContainingBlock()->containingRegionMap();
 }
 
 RootInlineBox::RootInlineBox(RenderBlockFlow& block)
@@ -72,8 +71,8 @@ RootInlineBox::~RootInlineBox()
 {
     detachEllipsisBox();
 
-    if (m_hasContainingRegion)
-        containingRegionMap().remove(this);
+    if (blockFlow().flowThreadContainingBlock())
+        containingRegionMap(blockFlow()).remove(this);
 }
 
 void RootInlineBox::detachEllipsisBox()
@@ -175,8 +174,11 @@ void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const LayoutPoint& pa
 void RootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     // Check if we are in the correct region.
-    if (paintInfo.renderNamedFlowFragment && m_hasContainingRegion && containingRegion() != reinterpret_cast<RenderRegion*>(paintInfo.renderNamedFlowFragment))
-        return;
+    if (paintInfo.renderNamedFlowFragment) {
+        RenderRegion* region = containingRegion();
+        if (region && region != reinterpret_cast<RenderRegion*>(paintInfo.renderNamedFlowFragment))
+            return;
+    }
     
     InlineFlowBox::paint(paintInfo, paintOffset, lineTop, lineBottom);
     paintEllipsisBox(paintInfo, paintOffset, lineTop, lineBottom);
@@ -218,10 +220,12 @@ void RootInlineBox::childRemoved(InlineBox* box)
 
 RenderRegion* RootInlineBox::containingRegion() const
 {
-    RenderRegion* region = m_hasContainingRegion ? containingRegionMap().get(this) : nullptr;
+    ContainingRegionMap& regionMap = containingRegionMap(blockFlow());
+    bool hasContainingRegion = regionMap.contains(this);
+    RenderRegion* region = hasContainingRegion ? regionMap.get(this) : nullptr;
 
 #ifndef NDEBUG
-    if (m_hasContainingRegion) {
+    if (hasContainingRegion) {
         RenderFlowThread* flowThread = blockFlow().flowThreadContainingBlock();
         const RenderRegionList& regionList = flowThread->renderRegionList();
         ASSERT_WITH_SECURITY_IMPLICATION(regionList.contains(region));
@@ -234,22 +238,18 @@ RenderRegion* RootInlineBox::containingRegion() const
 void RootInlineBox::clearContainingRegion()
 {
     ASSERT(!isDirty());
-    ASSERT(blockFlow().flowThreadContainingBlock());
 
-    if (!m_hasContainingRegion)
+    if (!containingRegionMap(blockFlow()).contains(this))
         return;
 
-    containingRegionMap().remove(this);
-    m_hasContainingRegion = false;
+    containingRegionMap(blockFlow()).remove(this);
 }
 
 void RootInlineBox::setContainingRegion(RenderRegion& region)
 {
     ASSERT(!isDirty());
-    ASSERT(blockFlow().flowThreadContainingBlock());
 
-    containingRegionMap().set(this, &region);
-    m_hasContainingRegion = true;
+    containingRegionMap(blockFlow()).set(this, &region);
 }
 
 LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
