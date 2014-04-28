@@ -2695,8 +2695,8 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
 {
     ASSERT(childrenInline());
 
-    if (m_simpleLineLayout)
-        return SimpleLineLayout::hitTestFlow(*this, *m_simpleLineLayout, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    if (auto simpleLineLayout = this->simpleLineLayout())
+        return SimpleLineLayout::hitTestFlow(*this, *simpleLineLayout, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 
     return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
@@ -2802,8 +2802,8 @@ int RenderBlockFlow::firstLineBaseline() const
     if (!hasLines())
         return -1;
 
-    if (m_simpleLineLayout)
-        return SimpleLineLayout::computeFlowFirstLineBaseline(*this, *m_simpleLineLayout);
+    if (auto simpleLineLayout = this->simpleLineLayout())
+        return SimpleLineLayout::computeFlowFirstLineBaseline(*this, *simpleLineLayout);
 
     ASSERT(firstRootBox());
     return firstRootBox()->logicalTop() + firstLineStyle().fontMetrics().ascent(firstRootBox()->baselineType());
@@ -2826,8 +2826,8 @@ int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
              + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
     }
 
-    if (m_simpleLineLayout)
-        return SimpleLineLayout::computeFlowLastLineBaseline(*this, *m_simpleLineLayout);
+    if (auto simpleLineLayout = this->simpleLineLayout())
+        return SimpleLineLayout::computeFlowLastLineBaseline(*this, *simpleLineLayout);
 
     bool isFirstLine = lastRootBox() == firstRootBox();
     const RenderStyle& style = isFirstLine ? firstLineStyle() : this->style();
@@ -2983,9 +2983,9 @@ int RenderBlockFlow::lineCount(const RootInlineBox* stopRootInlineBox, bool* fou
     int count = 0;
 
     if (childrenInline()) {
-        if (m_simpleLineLayout) {
+        if (auto simpleLineLayout = this->simpleLineLayout()) {
             ASSERT(!stopRootInlineBox);
-            return m_simpleLineLayout->lineCount();
+            return simpleLineLayout->lineCount();
         }
         for (auto box = firstRootBox(); box; box = box->nextRootBox()) {
             count++;
@@ -3212,8 +3212,8 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
 {
     ASSERT(childrenInline());
 
-    if (m_simpleLineLayout) {
-        SimpleLineLayout::paintFlow(*this, *m_simpleLineLayout, paintInfo, paintOffset);
+    if (auto simpleLineLayout = this->simpleLineLayout()) {
+        SimpleLineLayout::paintFlow(*this, *simpleLineLayout, paintInfo, paintOffset);
         return;
     }
     m_lineBoxes.paint(this, paintInfo, paintOffset);
@@ -3319,8 +3319,8 @@ bool RenderBlockFlow::hasLines() const
 {
     ASSERT(childrenInline());
 
-    if (m_simpleLineLayout)
-        return m_simpleLineLayout->lineCount();
+    if (auto simpleLineLayout = this->simpleLineLayout())
+        return simpleLineLayout->lineCount();
 
     return lineBoxes().firstLineBox();
 }
@@ -3347,9 +3347,27 @@ void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
     toRenderText(firstChild())->deleteLineBoxesBeforeSimpleLineLayout();
 }
 
+const SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout() const
+{
+    if (m_lineLayoutPath == UndeterminedPath)
+        const_cast<RenderBlockFlow&>(*this).m_lineLayoutPath = SimpleLineLayout::canUseFor(*this) ? SimpleLinesPath : LineBoxesPath;
+
+    if (m_lineLayoutPath == SimpleLinesPath)
+        return m_simpleLineLayout.get();
+
+    const_cast<RenderBlockFlow&>(*this).createLineBoxes();
+    return nullptr;
+}
+
 void RenderBlockFlow::ensureLineBoxes()
 {
     m_lineLayoutPath = ForceLineBoxesPath;
+    createLineBoxes();
+}
+
+void RenderBlockFlow::createLineBoxes()
+{
+    ASSERT(m_lineLayoutPath == LineBoxesPath || m_lineLayoutPath == ForceLineBoxesPath);
 
     if (!m_simpleLineLayout)
         return;

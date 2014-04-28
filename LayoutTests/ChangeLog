@@ -1,3 +1,17 @@
+2014-04-27  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r159345): The hover state for links in the top navigation of Yahoo.com doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=132241
+        rdar://problem/16501924
+
+        Reviewed by Andreas Kling.
+
+        * fast/text/simple-lines-hover-underline-expected.html: Added.
+        * fast/text/simple-lines-hover-underline.html: Added.
+
+        * fast/text/simple-lines-hover.html: Removed an unneeded style element with a style rule that
+        does nothing.
+
 2014-04-27  Praveen R Jadhav  <praveen.j@samsung.com>
 
         [MediaStream] .ended shouldn't be part of MediaStream IDL

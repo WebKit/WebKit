@@ -1,3 +1,33 @@
+2014-04-27  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r159345): The hover state for links in the top navigation of Yahoo.com doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=132241
+        rdar://problem/16501924
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/text/simple-lines-hover-underline.html
+
+        Checked that this does not hurt performance by running the
+        run-perf-tests PerformanceTests/Layout/line-layout.html command before and after.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::hitTestInlineChildren): Use simpleLineLayout function rather than
+        getting at the data member directly.
+        (WebCore::RenderBlockFlow::firstLineBaseline): Ditto.
+        (WebCore::RenderBlockFlow::inlineBlockBaseline): Ditto.
+        (WebCore::RenderBlockFlow::lineCount): Ditto.
+        (WebCore::RenderBlockFlow::paintInlineChildren): Ditto.
+        (WebCore::RenderBlockFlow::hasLines): Ditto.
+        (WebCore::RenderBlockFlow::simpleLineLayout): Added logic to determine which path to use if
+        m_lineLayoutPath is undetermined, and call createLineBoxes if it's not simple.
+        (WebCore::RenderBlockFlow::ensureLineBoxes): Factored out most of the code into a new
+        createLineBoxes function.
+        (WebCore::RenderBlockFlow::createLineBoxes): Ditto.
+
+        * rendering/RenderBlockFlow.h: Made simpleLineLayout function no longer an inline.
+        Added a private createLineBoxes function.
+
 2014-04-27  Praveen R Jadhav  <praveen.j@samsung.com>
 
         [MediaStream] .ended shouldn't be part of MediaStream IDL
