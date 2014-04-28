@@ -39,18 +39,20 @@ using namespace WebCore;
 @interface WKOverflowScrollViewDelegate : NSObject <UIScrollViewDelegate> {
     WebKit::ScrollingTreeOverflowScrollingNodeIOS* _scrollingTreeNode;
 }
+
+@property (nonatomic, getter=_isInUserInteraction) BOOL inUserInteraction;
+
 - (instancetype)initWithScrollingTreeNode:(WebKit::ScrollingTreeOverflowScrollingNodeIOS*)node;
 
 @end
-
 
 @implementation WKOverflowScrollViewDelegate
 
 - (instancetype)initWithScrollingTreeNode:(WebKit::ScrollingTreeOverflowScrollingNodeIOS*)node
 {
-    if ((self = [super init])) {
+    if ((self = [super init]))
         _scrollingTreeNode = node;
-    }
+
     return self;
 }
 
@@ -61,14 +63,18 @@ using namespace WebCore;
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
+    _inUserInteraction = YES;
 }
 
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)willDecelerate
 {
+    if (!willDecelerate)
+        _inUserInteraction = NO;
 }
 
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    _inUserInteraction = NO;
 }
 
 @end
@@ -132,7 +138,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
         if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize))
             scrollView.contentSize = scrollingStateNode.totalContentsSize();
 
-        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition))
+        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition) && ![m_scrollViewDelegate _isInUserInteraction])
             scrollView.contentOffset = scrollingStateNode.scrollPosition();
 
         END_BLOCK_OBJC_EXCEPTIONS

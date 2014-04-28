@@ -1,3 +1,15 @@
+2014-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] flickery scrolling with overflow-scrolling:touch
+        https://bugs.webkit.org/show_bug.cgi?id=132150
+
+        Reviewed by Tim Horton.
+
+        Fix typo in a comment.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll):
+
 2014-04-28  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Builtin cursors do not properly handle transparency

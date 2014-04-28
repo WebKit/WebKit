@@ -1,3 +1,24 @@
+2014-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] flickery scrolling with overflow-scrolling:touch
+        https://bugs.webkit.org/show_bug.cgi?id=132150
+        <rdar://problem/16683006>
+
+        Reviewed by Tim Horton.
+        
+        Maintain a flag that tells us if the user is interacting
+        with the UIScrollView, and while set, don't clobber the contentOffset
+        via scrolling tree updates.
+
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (-[WKOverflowScrollViewDelegate initWithScrollingTreeNode:WebKit::]):
+        (-[WKOverflowScrollViewDelegate scrollViewWillBeginDragging:]):
+        (-[WKOverflowScrollViewDelegate scrollViewDidEndDragging:willDecelerate:]):
+        (-[WKOverflowScrollViewDelegate scrollViewDidEndDecelerating:]): We need this one,
+        not scrollViewDidEndScrollingAnimation:, to detect the end of decleration.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren):
+        (-[WKOverflowScrollViewDelegate scrollViewDidEndScrollingAnimation:]): Deleted.
+
 2014-04-28  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [X11] Add missing case for mime type application/x-webkit-test-netscape
