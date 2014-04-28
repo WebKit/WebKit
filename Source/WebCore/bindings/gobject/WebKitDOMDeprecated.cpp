@@ -29,6 +29,7 @@
 #include "WebKitDOMObject.h"
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMProcessingInstruction.h"
+#include "WebKitDOMVTTCue.h"
 #include "WebKitDOMWebKitNamedFlow.h"
 
 using namespace WebKit;
@@ -701,4 +702,96 @@ gchar* webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement*)
 void webkit_dom_html_input_element_set_capture(WebKitDOMHTMLInputElement*, const gchar*)
 {
     g_warning("The WebKitDOMHTMLInputElement:capture property has converted to a boolean according to the specification. This method does nothing. Use webkit_dom_html_input_element_set_capture_enabled() instead.");
+}
+
+// WebKitDOMTextTrackCue
+
+WebKitDOMDocumentFragment* webkit_dom_text_track_cue_get_cue_as_html(WebKitDOMTextTrackCue* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_VTT_CUE(self), nullptr);
+    return webkit_dom_vtt_cue_get_cue_as_html(WEBKIT_DOM_VTT_CUE(self));
+}
+
+gchar* webkit_dom_text_track_cue_get_vertical(WebKitDOMTextTrackCue* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_VTT_CUE(self), nullptr);
+    return webkit_dom_vtt_cue_get_vertical(WEBKIT_DOM_VTT_CUE(self));
+}
+
+void webkit_dom_text_track_cue_set_vertical(WebKitDOMTextTrackCue* self, const gchar* value, GError** error)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_VTT_CUE(self));
+    webkit_dom_vtt_cue_set_vertical(WEBKIT_DOM_VTT_CUE(self), value, error);
+}
+
+gboolean webkit_dom_text_track_cue_get_snap_to_lines(WebKitDOMTextTrackCue* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_VTT_CUE(self), FALSE);
+    return webkit_dom_vtt_cue_get_snap_to_lines(WEBKIT_DOM_VTT_CUE(self));
+}
+
+void webkit_dom_text_track_cue_set_snap_to_lines(WebKitDOMTextTrackCue* self, gboolean value)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_VTT_CUE(self));
+    webkit_dom_vtt_cue_set_snap_to_lines(WEBKIT_DOM_VTT_CUE(self), value);
+}
+
+glong webkit_dom_text_track_cue_get_line(WebKitDOMTextTrackCue* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_VTT_CUE(self), -1);
+    return webkit_dom_vtt_cue_get_line(WEBKIT_DOM_VTT_CUE(self));
+}
+
+void webkit_dom_text_track_cue_set_line(WebKitDOMTextTrackCue* self, glong value, GError** error)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_VTT_CUE(self));
+    webkit_dom_vtt_cue_set_line(WEBKIT_DOM_VTT_CUE(self), value, error);
+}
+
+glong webkit_dom_text_track_cue_get_position(WebKitDOMTextTrackCue* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_VTT_CUE(self), -1);
+    return webkit_dom_vtt_cue_get_position(WEBKIT_DOM_VTT_CUE(self));
+}
+
+void webkit_dom_text_track_cue_set_position(WebKitDOMTextTrackCue* self, glong value, GError** error)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_VTT_CUE(self));
+    webkit_dom_vtt_cue_set_position(WEBKIT_DOM_VTT_CUE(self), value, error);
+}
+
+glong webkit_dom_text_track_cue_get_size(WebKitDOMTextTrackCue* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_VTT_CUE(self), -1);
+    return webkit_dom_vtt_cue_get_size(WEBKIT_DOM_VTT_CUE(self));
+}
+
+void webkit_dom_text_track_cue_set_size(WebKitDOMTextTrackCue* self, glong value, GError** error)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_VTT_CUE(self));
+    webkit_dom_vtt_cue_set_size(WEBKIT_DOM_VTT_CUE(self), value, error);
+}
+
+gchar* webkit_dom_text_track_cue_get_align(WebKitDOMTextTrackCue* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_VTT_CUE(self), nullptr);
+    return webkit_dom_vtt_cue_get_align(WEBKIT_DOM_VTT_CUE(self));
+}
+
+void webkit_dom_text_track_cue_set_align(WebKitDOMTextTrackCue* self, const gchar* value, GError** error)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_VTT_CUE(self));
+    webkit_dom_vtt_cue_set_align(WEBKIT_DOM_VTT_CUE(self), value, error);
+}
+
+gchar* webkit_dom_text_track_cue_get_text(WebKitDOMTextTrackCue* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_VTT_CUE(self), nullptr);
+    return webkit_dom_vtt_cue_get_text(WEBKIT_DOM_VTT_CUE(self));
+}
+
+void webkit_dom_text_track_cue_set_text(WebKitDOMTextTrackCue* self, const gchar* value)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_VTT_CUE(self));
+    webkit_dom_vtt_cue_set_text(WEBKIT_DOM_VTT_CUE(self), value);
 }

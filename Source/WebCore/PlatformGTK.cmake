@@ -630,11 +630,13 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 
         html/track/AudioTrack.idl
         html/track/AudioTrackList.idl
+        html/track/DataCue.idl
         html/track/TextTrack.idl
         html/track/TextTrackCue.idl
         html/track/TextTrackCueList.idl
         html/track/TextTrackList.idl
         html/track/TrackEvent.idl
+        html/track/VTTCue.idl
         html/track/VideoTrack.idl
         html/track/VideoTrackList.idl
     )

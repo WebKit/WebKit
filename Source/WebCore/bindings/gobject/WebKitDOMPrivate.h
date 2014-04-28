@@ -37,6 +37,7 @@ class StyleSheet;
 class HTMLCollection;
 class EventTarget;
 class Blob;
+class TextTrackCue;
 } // namespace WebCore
 
 namespace WebKit {
@@ -46,6 +47,9 @@ WebKitDOMStyleSheet* wrap(WebCore::StyleSheet*);
 WebKitDOMHTMLCollection* wrap(WebCore::HTMLCollection*);
 WebKitDOMEventTarget* wrap(WebCore::EventTarget*);
 WebKitDOMBlob* wrap(WebCore::Blob*);
+#if ENABLE(VIDEO_TRACK)
+WebKitDOMTextTrackCue* wrap(WebCore::TextTrackCue*);
+#endif
 } // namespace WebKit
 
 #endif // WebKitDOMPrivate_h

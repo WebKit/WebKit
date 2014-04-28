@@ -43,7 +43,7 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
                     "Event" => 1, "CSSRule" => 1, "CSSValue" => 1, "StyleSheet" => 1, "MediaList" => 1,
                     "Counter" => 1, "Rect" => 1, "RGBColor" => 1, "XPathExpression" => 1, "XPathResult" => 1,
                     "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1, "Blob" => 1, "DOMTokenList" => 1,
-                    "HTMLCollection" => 1);
+                    "HTMLCollection" => 1, "TextTrackCue" => 1);
 
 # List of function parameters that are allowed to be NULL
 my $canBeNullParams = {
@@ -1460,7 +1460,7 @@ sub GenerateEndHeader {
 sub IsPolymorphic {
     my $type = shift;
 
-    return scalar(grep {$_ eq $type} qw(Blob Event HTMLCollection Node StyleSheet));
+    return scalar(grep {$_ eq $type} qw(Blob Event HTMLCollection Node StyleSheet TextTrackCue));
 }
 
 sub GenerateEventTargetIface {

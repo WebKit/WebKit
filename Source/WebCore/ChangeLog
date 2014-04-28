@@ -1,3 +1,42 @@
+2014-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] TextTrackCue API changed in r163649
+        https://bugs.webkit.org/show_bug.cgi?id=132226
+
+        Reviewed by Martin Robinson.
+
+        TextTrackCue is now a base class and part of its API was moved to
+        the derived class VTTCue. Update the GObject DOM bindings to keep
+        backwards compatibility.
+
+        * PlatformGTK.cmake: Generate bindings for DataCue and VTTCue.
+        * bindings/gobject/WebKitDOMDeprecated.cpp:
+        (webkit_dom_text_track_cue_get_cue_as_html): Mark as deprecated in
+        favor of VTTCue API.
+        (webkit_dom_text_track_cue_get_vertical): Ditto.
+        (webkit_dom_text_track_cue_set_vertical): Ditto.
+        (webkit_dom_text_track_cue_get_snap_to_lines): Ditto.
+        (webkit_dom_text_track_cue_set_snap_to_lines): Ditto.
+        (webkit_dom_text_track_cue_get_line): Ditto.
+        (webkit_dom_text_track_cue_set_line): Ditto.
+        (webkit_dom_text_track_cue_get_position): Ditto.
+        (webkit_dom_text_track_cue_set_position): Ditto.
+        (webkit_dom_text_track_cue_get_size): Ditto.
+        (webkit_dom_text_track_cue_set_size): Ditto.
+        (webkit_dom_text_track_cue_get_align): Ditto.
+        (webkit_dom_text_track_cue_set_align): Ditto.
+        (webkit_dom_text_track_cue_get_text): Ditto.
+        (webkit_dom_text_track_cue_set_text): Ditto.
+        * bindings/gobject/WebKitDOMDeprecated.h:
+        * bindings/gobject/WebKitDOMDeprecated.symbols: Add new deprecated symbols.
+        * bindings/gobject/WebKitDOMPrivate.cpp:
+        (WebKit::wrap): Add generic wrap for TextTrackCue now that it's a
+        base class to generate DataCue or VTTCue objects.
+        * bindings/gobject/WebKitDOMPrivate.h:
+        * bindings/gobject/webkitdom.symbols: Add DataCue symbols.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (IsPolymorphic): Add TextTrackCue to the list of polymorphic classes.
+
 2014-04-27  Andrei Bucur  <abucur@adobe.com>
 
         Store the containing region map inside the flow thread

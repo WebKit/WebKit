@@ -850,6 +850,169 @@ webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement* self);
 WEBKIT_DEPRECATED_FOR(webkit_dom_html_input_element_set_capture_enabled) void
 webkit_dom_html_input_element_set_capture(WebKitDOMHTMLInputElement* self, const gchar* value);
 
+/**
+ * webkit_dom_text_track_cue_get_cue_as_html:
+ * @self: A #WebKitDOMTextTrackCue
+ *
+ * Returns: (transfer none): A #WebKitDOMDocumentFragment
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_get_cue_as_html() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_get_cue_as_html) WebKitDOMDocumentFragment*
+webkit_dom_text_track_cue_get_cue_as_html(WebKitDOMTextTrackCue* self);
+
+/**
+ * webkit_dom_text_track_cue_get_vertical:
+ * @self: A #WebKitDOMTextTrackCue
+ *
+ * Returns: A #gchar
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_get_vertical() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_get_vertical) gchar*
+webkit_dom_text_track_cue_get_vertical(WebKitDOMTextTrackCue* self);
+
+/**
+ * webkit_dom_text_track_cue_set_vertical:
+ * @self: A #WebKitDOMTextTrackCue
+ * @value: A #gchar
+ * @error: #GError
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_set_vertical() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_set_vertical) void
+webkit_dom_text_track_cue_set_vertical(WebKitDOMTextTrackCue* self, const gchar* value, GError** error);
+
+/**
+ * webkit_dom_text_track_cue_get_snap_to_lines:
+ * @self: A #WebKitDOMTextTrackCue
+ *
+ * Returns: A #gboolean
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_get_snap_to_lines() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_get_snap_to_lines) gboolean
+webkit_dom_text_track_cue_get_snap_to_lines(WebKitDOMTextTrackCue* self);
+
+/**
+ * webkit_dom_text_track_cue_set_snap_to_lines:
+ * @self: A #WebKitDOMTextTrackCue
+ * @value: A #gboolean
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_set_snap_to_lines() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_set_snap_to_lines) void
+webkit_dom_text_track_cue_set_snap_to_lines(WebKitDOMTextTrackCue* self, gboolean value);
+
+/**
+ * webkit_dom_text_track_cue_get_line:
+ * @self: A #WebKitDOMTextTrackCue
+ *
+ * Returns: A #glong
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_get_line() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_get_line) glong
+webkit_dom_text_track_cue_get_line(WebKitDOMTextTrackCue* self);
+
+/**
+ * webkit_dom_text_track_cue_set_line:
+ * @self: A #WebKitDOMTextTrackCue
+ * @value: A #glong
+ * @error: #GError
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_set_line() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_set_line) void
+webkit_dom_text_track_cue_set_line(WebKitDOMTextTrackCue* self, glong value, GError** error);
+
+/**
+ * webkit_dom_text_track_cue_get_position:
+ * @self: A #WebKitDOMTextTrackCue
+ *
+ * Returns: A #glong
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_get_position() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_get_position) glong
+webkit_dom_text_track_cue_get_position(WebKitDOMTextTrackCue* self);
+
+/**
+ * webkit_dom_text_track_cue_set_position:
+ * @self: A #WebKitDOMTextTrackCue
+ * @value: A #glong
+ * @error: #GError
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_set_position() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_set_position) void
+webkit_dom_text_track_cue_set_position(WebKitDOMTextTrackCue* self, glong value, GError** error);
+
+/**
+ * webkit_dom_text_track_cue_get_size:
+ * @self: A #WebKitDOMTextTrackCue
+ *
+ * Returns: A #glong
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_get_size() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_get_size) glong
+webkit_dom_text_track_cue_get_size(WebKitDOMTextTrackCue* self);
+
+/**
+ * webkit_dom_text_track_cue_set_size:
+ * @self: A #WebKitDOMTextTrackCue
+ * @value: A #glong
+ * @error: #GError
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_set_size() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_set_size) void
+webkit_dom_text_track_cue_set_size(WebKitDOMTextTrackCue* self, glong value, GError** error);
+
+/**
+ * webkit_dom_text_track_cue_get_align:
+ * @self: A #WebKitDOMTextTrackCue
+ *
+ * Returns: A #gchar
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_get_align() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_get_align) gchar*
+webkit_dom_text_track_cue_get_align(WebKitDOMTextTrackCue* self);
+
+/**
+ * webkit_dom_text_track_cue_set_align:
+ * @self: A #WebKitDOMTextTrackCue
+ * @value: A #gchar
+ * @error: #GError
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_set_align() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_set_align) void
+webkit_dom_text_track_cue_set_align(WebKitDOMTextTrackCue* self, const gchar* value, GError** error);
+
+/**
+ * webkit_dom_text_track_cue_get_text:
+ * @self: A #WebKitDOMTextTrackCue
+ *
+ * Returns: A #gchar
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_get_text() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_get_text) gchar*
+webkit_dom_text_track_cue_get_text(WebKitDOMTextTrackCue* self);
+
+/**
+ * webkit_dom_text_track_cue_set_text:
+ * @self: A #WebKitDOMTextTrackCue
+ * @value: A #gchar
+ *
+ * Deprecated: 2.6: Use webkit_dom_vtt_cue_set_text() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_vtt_cue_set_text) void
+webkit_dom_text_track_cue_set_text(WebKitDOMTextTrackCue* self, const gchar* value);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DISABLE_DEPRECATED */
