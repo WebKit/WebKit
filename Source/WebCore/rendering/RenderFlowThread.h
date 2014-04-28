@@ -44,13 +44,11 @@ class RenderFlowThread;
 class RenderNamedFlowFragment;
 class RenderStyle;
 class RenderRegion;
-class RootInlineBox;
 
 typedef ListHashSet<RenderRegion*> RenderRegionList;
 typedef Vector<RenderLayer*> RenderLayerList;
 typedef HashMap<RenderNamedFlowFragment*, RenderLayerList> RegionToLayerListMap;
 typedef HashMap<RenderLayer*, RenderNamedFlowFragment*> LayerToRegionMap;
-typedef HashMap<const RootInlineBox*, RenderRegion*> ContainingRegionMap;
 
 // RenderFlowThread is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
@@ -65,7 +63,6 @@ public:
     virtual void removeFlowChildInfo(RenderObject*);
 #ifndef NDEBUG
     bool hasChildInfo(RenderObject* child) const { return child && child->isBox() && m_regionRangeMap.contains(toRenderBox(child)); }
-    bool checkLinesConsistency(const RenderBlockFlow*) const;
 #endif
 
     virtual void addRegionToThread(RenderRegion*) = 0;
@@ -123,6 +120,7 @@ public:
 
     virtual RenderRegion* mapFromFlowToRegion(TransformState&) const;
 
+    void removeRenderBoxRegionInfo(RenderBox*);
     void logicalWidthChangedInRegionsForBlock(const RenderBlock*, bool&);
 
     LayoutUnit contentLogicalWidthOfFirstRegion() const;
@@ -222,8 +220,6 @@ public:
 
     virtual void layout() override;
 
-    ContainingRegionMap& containingRegionMap();
-
 private:
     virtual bool isRenderFlowThread() const override final { return true; }
 
@@ -263,9 +259,6 @@ protected:
     inline const RenderBox* currentActiveRenderBox() const;
 
     bool getRegionRangeForBoxFromCachedInfo(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
-
-    void removeRenderBoxRegionInfo(RenderBox*);
-    void removeLineRegionInfo(const RenderBlockFlow*);
 
     RenderRegionList m_regionList;
     unsigned short m_previousRegionCount;
@@ -327,9 +320,6 @@ protected:
 
     // Map a region to the list of layers that paint in that region.
     std::unique_ptr<RegionToLayerListMap> m_regionToLayerListMap;
-
-    // Map a line to its containing region.
-    std::unique_ptr<ContainingRegionMap> m_lineToRegionMap;
 
     // Map a box to the list of regions in which the box is rendered.
     typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;

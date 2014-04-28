@@ -91,8 +91,6 @@ void RenderFlowThread::styleDidChange(StyleDifference diff, const RenderStyle* o
 
 void RenderFlowThread::removeFlowChildInfo(RenderObject* child)
 {
-    if (child->isRenderBlockFlow())
-        removeLineRegionInfo(toRenderBlockFlow(child));
     if (child->isBox())
         removeRenderBoxRegionInfo(toRenderBox(child));
 }
@@ -119,8 +117,6 @@ void RenderFlowThread::invalidateRegions()
         m_layerToRegionMap->clear();
     if (m_regionToLayerListMap)
         m_regionToLayerListMap->clear();
-    if (m_lineToRegionMap)
-        m_lineToRegionMap->clear();
     m_layersToRegionMappingsDirty = true;
     setNeedsLayout();
 
@@ -592,20 +588,6 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
     m_regionRangeMap.remove(box);
 }
 
-void RenderFlowThread::removeLineRegionInfo(const RenderBlockFlow* blockFlow)
-{
-    ASSERT(blockFlow->m_lineLayoutPath != SimpleLinesPath);
-    if (!m_lineToRegionMap)
-        return;
-
-    for (RootInlineBox* curr = blockFlow->firstRootBox(); curr; curr = curr->nextRootBox()) {
-        if (m_lineToRegionMap->contains(curr))
-            m_lineToRegionMap->remove(curr);
-    }
-
-    ASSERT_WITH_SECURITY_IMPLICATION(checkLinesConsistency(blockFlow));
-}
-
 void RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* block, bool& relayoutChildren)
 {
     if (!hasValidRegionInfo()) {
@@ -904,25 +886,6 @@ bool RenderFlowThread::isAutoLogicalHeightRegionsCountConsistent() const
     }
 
     return autoLogicalHeightRegions == m_autoLogicalHeightRegionsCount;
-}
-
-bool RenderFlowThread::checkLinesConsistency(const RenderBlockFlow* removedBlock) const
-{
-    if (!m_lineToRegionMap)
-        return true;
-
-    for (auto& linePair : *m_lineToRegionMap.get()) {
-        const RootInlineBox* line = linePair.key;
-        RenderRegion* region = linePair.value;
-        if (&line->blockFlow() == removedBlock)
-            return false;
-        if (line->blockFlow().flowThreadState() == NotInsideFlowThread)
-            return false;
-        if (!m_regionList.contains(region))
-            return false;
-    }
-
-    return true;
 }
 #endif
 
@@ -1440,14 +1403,6 @@ void RenderFlowThread::clearRegionsOverflow(const RenderBox* box)
         if (region == endRegion)
             break;
     }
-}
-
-ContainingRegionMap& RenderFlowThread::containingRegionMap()
-{
-    if (!m_lineToRegionMap)
-        m_lineToRegionMap = std::make_unique<ContainingRegionMap>();
-
-    return *m_lineToRegionMap.get();
 }
 
 CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)
