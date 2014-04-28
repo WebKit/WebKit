@@ -1,3 +1,19 @@
+2014-04-27  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        TouchEvent is not handled after releasing any point among touched points.
+        https://bugs.webkit.org/show_bug.cgi?id=132043
+
+        Reviewed by Benjamin Poulain.
+
+        Handle TouchEvent until all touched points are released by setting
+        trackingTouchEvents variable to false when all points are released.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::areAllTouchPointsReleased):
+        (WebKit::WebPageProxy::handleTouchEventSynchronously):
+        (WebKit::WebPageProxy::handleTouchEventAsynchronously):
+        (WebKit::WebPageProxy::handleTouchEvent):
+
 2014-04-27  Alexey Proskuryakov  <ap@apple.com>
 
         Don't use DispatchMessageEvenWhenWaitingForSyncReply for messages from NetworkProcess
