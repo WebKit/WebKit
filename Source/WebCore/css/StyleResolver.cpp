@@ -184,7 +184,7 @@ public:
         CSSValue* cssValue[3];
     };
 
-    bool hasProperty(CSSPropertyID id) const { return m_propertyIsPresent.test(id); }
+    bool hasProperty(CSSPropertyID id) const;
     Property& property(CSSPropertyID);
     bool addMatches(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly = false);
 
@@ -3665,6 +3665,12 @@ StyleResolver::CascadedProperties::CascadedProperties(TextDirection direction, W
 {
 }
 
+inline bool StyleResolver::CascadedProperties::hasProperty(CSSPropertyID id) const
+{
+    ASSERT(id < m_propertyIsPresent.size());
+    return m_propertyIsPresent[id];
+}
+
 inline StyleResolver::CascadedProperties::Property& StyleResolver::CascadedProperties::property(CSSPropertyID id)
 {
     return m_properties[id];
@@ -3690,7 +3696,8 @@ void StyleResolver::CascadedProperties::set(CSSPropertyID id, CSSValue& cssValue
     ASSERT(!shouldApplyPropertyInParseOrder(id));
 
     auto& property = m_properties[id];
-    if (!m_propertyIsPresent.test(id))
+    ASSERT(id < m_propertyIsPresent.size());
+    if (!m_propertyIsPresent[id])
         memset(property.cssValue, 0, sizeof(property.cssValue));
     m_propertyIsPresent.set(id);
     setPropertyInternal(property, id, cssValue, linkMatchType);

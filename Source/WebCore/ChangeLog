@@ -1,3 +1,21 @@
+2014-04-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        std::bitset<>::test() does unnecessary bounds checks on CSSPropertyID bitsets
+        https://bugs.webkit.org/show_bug.cgi?id=131685
+
+        Reviewed by Darin Adler.
+
+        Use std::bitset<>::operator[]() instead of std::bitset<>::test() to avoid
+        bounds checks which are not necessary as long as a CSSPropertyID value is used.
+
+        * css/CSSParser.cpp:
+        (WebCore::filterProperties):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::asText):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::CascadedProperties::hasProperty):
+        (WebCore::StyleResolver::CascadedProperties::set):
+
 2014-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] TextTrack kind and mode attributes are enums since r166180

@@ -1474,7 +1474,8 @@ static inline void filterProperties(bool important, const CSSParser::ParsedPrope
         if (property.isImportant() != important)
             continue;
         const unsigned propertyIDIndex = property.id() - firstCSSProperty;
-        if (seenProperties.test(propertyIDIndex))
+        ASSERT(propertyIDIndex < seenProperties.size());
+        if (seenProperties[propertyIDIndex])
             continue;
         seenProperties.set(propertyIDIndex);
         output[--unusedEntries] = property;

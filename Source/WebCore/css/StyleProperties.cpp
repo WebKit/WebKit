@@ -826,13 +826,14 @@ String StyleProperties::asText() const
                 borderFallbackShorthandProperty = CSSPropertyBorderColor;
 
             // FIXME: Deal with cases where only some of border-(top|right|bottom|left) are specified.
-            if (!shorthandPropertyAppeared.test(CSSPropertyBorder - firstCSSProperty)) {
+            ASSERT(CSSPropertyBorder - firstCSSProperty < shorthandPropertyAppeared.size());
+            if (!shorthandPropertyAppeared[CSSPropertyBorder - firstCSSProperty]) {
                 value = borderPropertyValue(ReturnNullOnUncommonValues);
                 if (value.isNull())
                     shorthandPropertyAppeared.set(CSSPropertyBorder - firstCSSProperty);
                 else
                     shorthandPropertyID = CSSPropertyBorder;
-            } else if (shorthandPropertyUsed.test(CSSPropertyBorder - firstCSSProperty))
+            } else if (shorthandPropertyUsed[CSSPropertyBorder - firstCSSProperty])
                 shorthandPropertyID = CSSPropertyBorder;
             if (!shorthandPropertyID)
                 shorthandPropertyID = borderFallbackShorthandProperty;
@@ -927,9 +928,10 @@ String StyleProperties::asText() const
 
         unsigned shortPropertyIndex = shorthandPropertyID - firstCSSProperty;
         if (shorthandPropertyID) {
-            if (shorthandPropertyUsed.test(shortPropertyIndex))
+            ASSERT(shortPropertyIndex < shorthandPropertyUsed.size());
+            if (shorthandPropertyUsed[shortPropertyIndex])
                 continue;
-            if (!shorthandPropertyAppeared.test(shortPropertyIndex) && value.isNull())
+            if (!shorthandPropertyAppeared[shortPropertyIndex] && value.isNull())
                 value = getPropertyValue(shorthandPropertyID);
             shorthandPropertyAppeared.set(shortPropertyIndex);
         }
