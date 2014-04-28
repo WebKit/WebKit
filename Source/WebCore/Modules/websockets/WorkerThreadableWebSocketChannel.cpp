@@ -359,6 +359,44 @@ WorkerThreadableWebSocketChannel::Bridge::~Bridge()
     disconnect();
 }
 
+class WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<ScriptExecutionContext::Task> create(WorkerThreadableWebSocketChannel::Peer* peer,
+                                                           WorkerLoaderProxy* loaderProxy,
+                                                           PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
+    {
+        return adoptPtr(new WorkerGlobalScopeDidInitializeTask(peer, loaderProxy, workerClientWrapper));
+    }
+
+    virtual ~WorkerGlobalScopeDidInitializeTask() { }
+    virtual void performTask(ScriptExecutionContext* context) override
+    {
+        ASSERT_UNUSED(context, context->isWorkerGlobalScope());
+        if (m_workerClientWrapper->failedWebSocketChannelCreation()) {
+            // If Bridge::initialize() quitted earlier, we need to kick mainThreadDestroy() to delete the peer.
+            OwnPtr<WorkerThreadableWebSocketChannel::Peer> peer = adoptPtr(m_peer);
+            m_peer = 0;
+            m_loaderProxy->postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadDestroy, peer.release()));
+        } else
+            m_workerClientWrapper->didCreateWebSocketChannel(m_peer);
+    }
+    virtual bool isCleanupTask() const override { return true; }
+
+private:
+    WorkerGlobalScopeDidInitializeTask(WorkerThreadableWebSocketChannel::Peer* peer,
+                                   WorkerLoaderProxy* loaderProxy,
+                                   PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
+        : m_peer(peer)
+        , m_loaderProxy(loaderProxy)
+        , m_workerClientWrapper(workerClientWrapper)
+    {
+    }
+
+    WorkerThreadableWebSocketChannel::Peer* m_peer;
+    WorkerLoaderProxy* m_loaderProxy;
+    RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
+};
+
 void WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecutionContext* context, WorkerLoaderProxy* loaderProxy, PassRefPtr<ThreadableWebSocketChannelClientWrapper> prpClientWrapper, const String& taskMode)
 {
     ASSERT(isMainThread());
@@ -366,18 +404,12 @@ void WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecut
 
     RefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper = prpClientWrapper;
 
-    Peer* peerPtr = Peer::create(clientWrapper, *loaderProxy, context, taskMode);
-    bool sent = loaderProxy->postTaskForModeToWorkerGlobalScope({ ScriptExecutionContext::Task::CleanupTask, [=] (ScriptExecutionContext* context) {
-        ASSERT_UNUSED(context, context->isWorkerGlobalScope());
-        if (clientWrapper->failedWebSocketChannelCreation()) {
-            // If Bridge::initialize() quitted earlier, we need to kick mainThreadDestroy() to delete the peer.
-            loaderProxy->postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadDestroy, AllowCrossThreadAccess(peerPtr)));
-        } else
-            clientWrapper->didCreateWebSocketChannel(peerPtr);
-    } }, taskMode);
+    Peer* peer = Peer::create(clientWrapper, *loaderProxy, context, taskMode);
+    bool sent = loaderProxy->postTaskForModeToWorkerGlobalScope(
+        WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask::create(peer, loaderProxy, clientWrapper), taskMode);
     if (!sent) {
         clientWrapper->clearPeer();
-        delete peerPtr;
+        delete peer;
     }
 }
 
@@ -543,21 +575,25 @@ void WorkerThreadableWebSocketChannel::Bridge::fail(const String& reason)
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadFail, AllowCrossThreadAccess(m_peer), reason));
 }
 
-void WorkerThreadableWebSocketChannel::mainThreadDestroy(ScriptExecutionContext* context, Peer* peerPtr)
+void WorkerThreadableWebSocketChannel::mainThreadDestroy(ScriptExecutionContext* context, PassOwnPtr<Peer> peer)
 {
     ASSERT(isMainThread());
     ASSERT_UNUSED(context, context->isDocument());
-    std::unique_ptr<Peer> peer(peerPtr);
+    ASSERT_UNUSED(peer, peer);
+
+    // Peer object will be deleted even if the task does not run in the main thread's cleanup period, because
+    // the destructor for the task object (created by createCallbackTask()) will automatically delete the peer.
 }
 
 void WorkerThreadableWebSocketChannel::Bridge::disconnect()
 {
     clearClientWrapper();
     if (m_peer) {
-        m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadDestroy, AllowCrossThreadAccess(m_peer)));
-        m_peer = nullptr;
+        OwnPtr<Peer> peer = adoptPtr(m_peer);
+        m_peer = 0;
+        m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadDestroy, peer.release()));
     }
-    m_workerGlobalScope = nullptr;
+    m_workerGlobalScope = 0;
 }
 
 void WorkerThreadableWebSocketChannel::mainThreadSuspend(ScriptExecutionContext* context, Peer* peer)

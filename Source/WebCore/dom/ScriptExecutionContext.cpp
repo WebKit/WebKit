@@ -55,6 +55,19 @@ using namespace Inspector;
 
 namespace WebCore {
 
+class ProcessMessagesSoonTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<ProcessMessagesSoonTask> create()
+    {
+        return adoptPtr(new ProcessMessagesSoonTask);
+    }
+
+    virtual void performTask(ScriptExecutionContext* context) override
+    {
+        context->dispatchMessagePortEvents();
+    }
+};
+
 class ScriptExecutionContext::PendingException {
     WTF_MAKE_NONCOPYABLE(PendingException);
 public:
@@ -72,6 +85,11 @@ public:
     String m_sourceURL;
     RefPtr<ScriptCallStack> m_callStack;
 };
+
+void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionContext* context)
+{
+    context->addConsoleMessage(m_source, m_level, m_message);
+}
 
 ScriptExecutionContext::ScriptExecutionContext()
     : m_circularSequentialID(0)
@@ -132,9 +150,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
 void ScriptExecutionContext::processMessagePortMessagesSoon()
 {
-    postTask([] (ScriptExecutionContext* context) {
-        context->dispatchMessagePortEvents();
-    });
+    postTask(ProcessMessagesSoonTask::create());
 }
 
 void ScriptExecutionContext::dispatchMessagePortEvents()
@@ -442,6 +458,10 @@ void ScriptExecutionContext::didChangeTimerAlignmentInterval()
 double ScriptExecutionContext::timerAlignmentInterval() const
 {
     return Settings::defaultDOMTimerAlignmentInterval();
+}
+
+ScriptExecutionContext::Task::~Task()
+{
 }
 
 JSC::VM& ScriptExecutionContext::vm()

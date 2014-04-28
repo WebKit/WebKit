@@ -192,34 +192,34 @@ void WorkerRunLoop::terminate()
     m_messageQueue.kill();
 }
 
-void WorkerRunLoop::postTask(ScriptExecutionContext::Task task)
+void WorkerRunLoop::postTask(PassOwnPtr<ScriptExecutionContext::Task> task)
 {
-    postTaskForMode(std::move(task), defaultMode());
+    postTaskForMode(task, defaultMode());
 }
 
-void WorkerRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task task)
+void WorkerRunLoop::postTaskAndTerminate(PassOwnPtr<ScriptExecutionContext::Task> task)
 {
-    m_messageQueue.appendAndKill(Task::create(std::move(task), defaultMode().isolatedCopy()));
+    m_messageQueue.appendAndKill(Task::create(task, defaultMode().isolatedCopy()));
 }
 
-void WorkerRunLoop::postTaskForMode(ScriptExecutionContext::Task task, const String& mode)
+void WorkerRunLoop::postTaskForMode(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
-    m_messageQueue.append(Task::create(std::move(task), mode.isolatedCopy()));
+    m_messageQueue.append(Task::create(task, mode.isolatedCopy()));
 }
 
-std::unique_ptr<WorkerRunLoop::Task> WorkerRunLoop::Task::create(ScriptExecutionContext::Task task, const String& mode)
+std::unique_ptr<WorkerRunLoop::Task> WorkerRunLoop::Task::create(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
-    return std::unique_ptr<Task>(new Task(std::move(task), mode));
+    return std::unique_ptr<Task>(new Task(task, mode));
 }
 
 void WorkerRunLoop::Task::performTask(const WorkerRunLoop& runLoop, ScriptExecutionContext* context)
 {
-    if ((!toWorkerGlobalScope(context)->isClosing() && !runLoop.terminated()) || m_task.isCleanupTask())
-        m_task.performTask(context);
+    if ((!toWorkerGlobalScope(context)->isClosing() && !runLoop.terminated()) || m_task->isCleanupTask())
+        m_task->performTask(context);
 }
 
-WorkerRunLoop::Task::Task(ScriptExecutionContext::Task task, const String& mode)
-    : m_task(std::move(task))
+WorkerRunLoop::Task::Task(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
+    : m_task(task)
     , m_mode(mode.isolatedCopy())
 {
 }

@@ -1100,6 +1100,41 @@ void ApplicationCacheGroup::scheduleReachedMaxAppCacheSizeCallback()
     // The timer will delete itself once it fires.
 }
 
+class CallCacheListenerTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<CallCacheListenerTask> create(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID, int progressTotal, int progressDone)
+    {
+        return adoptPtr(new CallCacheListenerTask(loader, eventID, progressTotal, progressDone));
+    }
+
+    virtual void performTask(ScriptExecutionContext* context) override
+    {
+        
+        ASSERT_UNUSED(context, context->isDocument());
+        Frame* frame = m_documentLoader->frame();
+        if (!frame)
+            return;
+    
+        ASSERT(frame->loader().documentLoader() == m_documentLoader.get());
+
+        m_documentLoader->applicationCacheHost()->notifyDOMApplicationCache(m_eventID, m_progressTotal, m_progressDone);
+    }
+
+private:
+    CallCacheListenerTask(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID, int progressTotal, int progressDone)
+        : m_documentLoader(loader)
+        , m_eventID(eventID)
+        , m_progressTotal(progressTotal)
+        , m_progressDone(progressDone)
+    {
+    }
+
+    RefPtr<DocumentLoader> m_documentLoader;
+    ApplicationCacheHost::EventID m_eventID;
+    int m_progressTotal;
+    int m_progressDone;
+};
+
 void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID eventID, int progressTotal, int progressDone, const HashSet<DocumentLoader*>& loaderSet)
 {
     HashSet<DocumentLoader*>::const_iterator loaderSetEnd = loaderSet.end();
@@ -1115,17 +1150,7 @@ void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID event
     
     ASSERT(frame->loader().documentLoader() == loader);
 
-    RefPtr<DocumentLoader> loaderProtector(loader);
-    frame->document()->postTask([=] (ScriptExecutionContext* context) {
-        ASSERT_UNUSED(context, context->isDocument());
-        Frame* frame = loaderProtector->frame();
-        if (!frame)
-            return;
-
-        ASSERT(frame->loader().documentLoader() == loaderProtector);
-
-        loaderProtector->applicationCacheHost()->notifyDOMApplicationCache(eventID, progressTotal, progressDone);
-    });
+    frame->document()->postTask(CallCacheListenerTask::create(loader, eventID, progressTotal, progressDone));
 }
 
 void ApplicationCacheGroup::setUpdateStatus(UpdateStatus status)

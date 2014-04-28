@@ -117,6 +117,29 @@ void DatabaseManager::setIsAvailable(bool available)
     m_databaseIsAvailable = available;
 }
 
+class DatabaseCreationCallbackTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<DatabaseCreationCallbackTask> create(PassRefPtr<Database> database, PassRefPtr<DatabaseCallback> creationCallback)
+    {
+        return adoptPtr(new DatabaseCreationCallbackTask(database, creationCallback));
+    }
+
+    virtual void performTask(ScriptExecutionContext*)
+    {
+        m_creationCallback->handleEvent(m_database.get());
+    }
+
+private:
+    DatabaseCreationCallbackTask(PassRefPtr<Database> database, PassRefPtr<DatabaseCallback> callback)
+        : m_database(database)
+        , m_creationCallback(callback)
+    {
+    }
+
+    RefPtr<Database> m_database;
+    RefPtr<DatabaseCallback> m_creationCallback;
+};
+
 PassRefPtr<DatabaseContext> DatabaseManager::existingDatabaseContextFor(ScriptExecutionContext* context)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -311,9 +334,7 @@ PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* conte
 
     if (backend->isNew() && creationCallback.get()) {
         LOG(StorageAPI, "Scheduling DatabaseCreationCallbackTask for database %p\n", database.get());
-        database->m_scriptExecutionContext->postTask([=] (ScriptExecutionContext*) {
-            creationCallback->handleEvent(database.get());
-        });
+        database->m_scriptExecutionContext->postTask(DatabaseCreationCallbackTask::create(database, creationCallback));
     }
 
     ASSERT(database);

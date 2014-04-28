@@ -115,35 +115,17 @@ public:
     void deref() { derefScriptExecutionContext(); }
 
     class Task {
+        WTF_MAKE_NONCOPYABLE(Task);
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        enum CleanupTaskTag { CleanupTask };
-
-        template<typename T, typename = typename std::enable_if<!std::is_base_of<Task, T>::value && std::is_convertible<T, std::function<void (ScriptExecutionContext*)>>::value>::type>
-        Task(T task)
-            : m_task(std::move(task))
-            , m_isCleanupTask(false)
-        {
-        }
-
-        template<typename T, typename = typename std::enable_if<std::is_convertible<T, std::function<void (ScriptExecutionContext*)>>::value>::type>
-        Task(CleanupTaskTag, T task)
-            : m_task(std::move(task))
-            , m_isCleanupTask(true)
-        {
-        }
-
-        Task(Task&&) = default;
-
-        void performTask(ScriptExecutionContext* context) { m_task(context); }
-        bool isCleanupTask() const { return m_isCleanupTask; }
-
-    protected:
-        std::function<void (ScriptExecutionContext*)> m_task;
-        bool m_isCleanupTask;
+        Task() { }
+        virtual ~Task();
+        virtual void performTask(ScriptExecutionContext*) = 0;
+        // Certain tasks get marked specially so that they aren't discarded, and are executed, when the context is shutting down its message queue.
+        virtual bool isCleanupTask() const { return false; }
     };
 
-    virtual void postTask(Task) = 0; // Executes the task on context's thread asynchronously.
+    virtual void postTask(PassOwnPtr<Task>) = 0; // Executes the task on context's thread asynchronously.
 
     // Gets the next id in a circular sequence from 1 to 2^31-1.
     int circularSequentialID();
@@ -175,12 +157,21 @@ public:
 protected:
     class AddConsoleMessageTask : public Task {
     public:
+        static PassOwnPtr<AddConsoleMessageTask> create(MessageSource source, MessageLevel level, const String& message)
+        {
+            return adoptPtr(new AddConsoleMessageTask(source, level, message));
+        }
+        virtual void performTask(ScriptExecutionContext*) override;
+    private:
         AddConsoleMessageTask(MessageSource source, MessageLevel level, const String& message)
-            : Task([=] (ScriptExecutionContext* context) {
-                context->addConsoleMessage(source, level, message);
-            })
+            : m_source(source)
+            , m_level(level)
+            , m_message(message.isolatedCopy())
         {
         }
+        MessageSource m_source;
+        MessageLevel m_level;
+        String m_message;
     };
 
     ActiveDOMObject::ReasonForSuspension reasonForSuspendingActiveDOMObjects() const { return m_reasonForSuspendingActiveDOMObjects; }

@@ -1007,7 +1007,7 @@ public:
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
     void parseDNSPrefetchControlHeader(const String&);
 
-    virtual void postTask(Task) override; // Executes the task on context's thread asynchronously.
+    virtual void postTask(PassOwnPtr<Task>) override; // Executes the task on context's thread asynchronously.
 
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();
@@ -1336,6 +1336,8 @@ private:
 
     void pendingTasksTimerFired(Timer<Document>&);
 
+    static void didReceiveTask(void*);
+    
     template <typename CharacterType>
     void displayBufferModifiedByEncodingInternal(CharacterType*, unsigned) const;
 
@@ -1641,7 +1643,7 @@ private:
 #endif
 
     Timer<Document> m_pendingTasksTimer;
-    Vector<Task> m_pendingTasks;
+    Vector<OwnPtr<Task>> m_pendingTasks;
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 public:

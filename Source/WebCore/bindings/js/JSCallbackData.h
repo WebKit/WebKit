@@ -79,12 +79,21 @@ private:
 
 class DeleteCallbackDataTask : public ScriptExecutionContext::Task {
 public:
-    DeleteCallbackDataTask(JSCallbackData* data)
-        : ScriptExecutionContext::Task({ ScriptExecutionContext::Task::CleanupTask, [=] (ScriptExecutionContext*) {
-            delete data;
-        } })
+    static PassOwnPtr<DeleteCallbackDataTask> create(JSCallbackData* data)
     {
+        return adoptPtr(new DeleteCallbackDataTask(data));
     }
+
+    virtual void performTask(ScriptExecutionContext*)
+    {
+        delete m_data;
+    }
+    virtual bool isCleanupTask() const { return true; }
+private:
+
+    DeleteCallbackDataTask(JSCallbackData* data) : m_data(data) {}
+
+    JSCallbackData* m_data;
 };
 
 } // namespace WebCore

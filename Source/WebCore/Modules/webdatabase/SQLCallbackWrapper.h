@@ -57,7 +57,7 @@ public:
 
     void clear()
     {
-        ScriptExecutionContext* scriptExecutionContextPtr;
+        ScriptExecutionContext* context;
         T* callback;
         {
             MutexLocker locker(m_mutex);
@@ -70,14 +70,10 @@ public:
                 m_scriptExecutionContext = 0;
                 return;
             }
-            scriptExecutionContextPtr = m_scriptExecutionContext.release().leakRef();
+            context = m_scriptExecutionContext.release().leakRef();
             callback = m_callback.release().leakRef();
         }
-        scriptExecutionContextPtr->postTask({ ScriptExecutionContext::Task::CleanupTask, [=] (ScriptExecutionContext* context) {
-            ASSERT_UNUSED(context, context == scriptExecutionContextPtr && context->isContextThread());
-            callback->deref();
-            scriptExecutionContextPtr->deref();
-        } });
+        context->postTask(SafeReleaseTask::create(callback));
     }
 
     PassRefPtr<T> unwrap()
@@ -92,6 +88,31 @@ public:
     bool hasCallback() const { return m_callback; }
 
 private:
+    class SafeReleaseTask : public ScriptExecutionContext::Task {
+    public:
+        static PassOwnPtr<SafeReleaseTask> create(T* callbackToRelease)
+        {
+            return adoptPtr(new SafeReleaseTask(callbackToRelease));
+        }
+
+        virtual void performTask(ScriptExecutionContext* context)
+        {
+            ASSERT(m_callbackToRelease && context && context->isContextThread());
+            m_callbackToRelease->deref();
+            context->deref();
+        }
+
+        virtual bool isCleanupTask() const { return true; }
+
+    private:
+        explicit SafeReleaseTask(T* callbackToRelease)
+            : m_callbackToRelease(callbackToRelease)
+        {
+        }
+
+        T* m_callbackToRelease;
+    };
+
     Mutex m_mutex;
     RefPtr<T> m_callback;
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
