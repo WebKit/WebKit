@@ -484,8 +484,6 @@ webkit.org/b/116977 [ Debug ] media/event-attributes.html [ Crash Pass ]
 
 webkit.org/b/131222 [ Debug ] media/video-currentsrc-cleared.html [ Crash Pass ]
 
-webkit.org/b/117756 [ Debug ] media/track/media-element-enqueue-event-crash.html [ Crash ]
-
 webkit.org/b/131224 [ Debug ] media/track/track-insert-after-load-crash.html [ Crash ]
 
 webkit.org/b/131225 [ Debug ] media/track/track-remove-quickly.html [ Crash ]
@@ -506,7 +504,7 @@ webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Crash ]
 # Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/55126 media/video-aspect-ratio.html [ Failure Pass ]
+webkit.org/b/55126 media/video-aspect-ratio.html [ Failure Crash Timeout Pass ]
 
 webkit.org/b/122481 svg/animations/svglengthlist-animation-3.html [ Failure Pass ]
 webkit.org/b/62204 svg/custom/circular-marker-reference-4.svg [ Failure Pass ]
@@ -568,7 +566,6 @@ webkit.org/b/89811 media/media-blocked-by-beforeload.html [ Failure Pass ]
 webkit.org/b/84856 media/media-controller-playback.html [ Failure Pass ]
 
 webkit.org/b/83878 media/track/track-mode.html [ Failure Pass ]
-webkit.org/b/88867 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Pass ]
 
 webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
 
@@ -591,16 +588,9 @@ webkit.org/b/88230 svg/stroke/non-scaling-stroke-pattern.svg [ ImageOnlyFailure 
 webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/104809 media/adopt-node-crash.html [ Crash Timeout Pass ]
-webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Crash Failure ]
-webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Crash Failure Timeout ]
-webkit.org/b/104809 media/event-queue-crash.html [ Crash Pass ]
+webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Failure Timeout Crash ]
+webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Failure Timeout ]
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
-webkit.org/b/104809 media/video-load-preload-none.html [ Crash Timeout Pass ]
-webkit.org/b/104809 media/video-source-type-params.html [ Crash Timeout Pass ]
-webkit.org/b/104809 media/video-src-set.html [ Crash Timeout Pass ]
-webkit.org/b/104809 media/W3C/video/events/event_loadstart_manual.html [ Crash Pass ]
-webkit.org/b/104809 media/W3C/audio/events/event_pause_manual.html [ Crash Pass ]
-webkit.org/b/104809 fast/dom/beforeload/remove-video-in-beforeload-listener.html [ Crash Pass ]
 
 # This test also crashes after the FTL merge
 webkit.org/b/106415 webkit.org/b/119255 fast/workers/worker-close-more.html [ Timeout Crash Pass ]
@@ -642,13 +632,9 @@ webkit.org/b/115630 fast/images/support-broken-image-delegate.html [ Failure Pas
 webkit.org/b/116960 perf/adding-radio-buttons.html [ Failure Pass ]
 webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 
-webkit.org/b/116975 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure Pass ]
-
 webkit.org/b/116976 media/video-played-collapse.html [ Failure Pass ]
 
 webkit.org/b/116977 media/event-attributes.html [ Failure Timeout Pass ]
-
-webkit.org/b/117583 http/tests/media/video-load-twice.html [ Failure Pass ]
 
 webkit.org/b/103443 fast/parser/parser-yield-timing.html [ Failure Pass ]
 
@@ -675,10 +661,6 @@ webkit.org/b/119253 [ Debug ] fast/media/update-media-query-css-parser.html [ Ti
 webkit.org/b/119253 fast/workers/dedicated-worker-lifecycle.html [ Timeout Pass ]
 
 webkit.org/b/124511 media/video-played-reset.html [ Failure Pass ]
-
-webkit.org/b/124512 media/video-seek-with-negative-playback.html [ Failure Pass ]
-
-webkit.org/b/124513 media/video-ended-event-negative-playback.html [ Failure Pass ]
 
 webkit.org/b/125407 plugins/plugin-clip-subframe.html [ Failure Pass ]
 
@@ -710,7 +692,7 @@ webkit.org/b/58337 fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html 
 
 # media/audio-garbage-collect.html is flaky
 # https://bugs.webkit.org/show_bug.cgi?id=72698
-webkit.org/b/72698 media/audio-garbage-collect.html [ Failure Timeout Pass ]
+webkit.org/b/72698 media/audio-garbage-collect.html [ Timeout Pass ]
 
 # Tests showing flakiness in the bot
 Bug(GTK) editing/pasteboard/smart-paste-004.html [ Failure Pass ]
@@ -765,8 +747,6 @@ Bug(GTK) fast/workers/storage/test-authorizer.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/test-authorizer-sync.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/transaction-in-transaction-sync.html [ Failure Pass ]
 Bug(GTK) http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure Pass ]
-Bug(GTK) media/video-transformed.html [ Failure Pass ]
-Bug(GTK) media/W3C/audio/networkState/networkState_during_loadstart.html [ Failure Pass ]
 webkit.org/b/131533 media/track/track-remove-active-cue-crash.html [ Timeout Pass ]
 webkit.org/b/131534 media/media-ended.html [ Timeout Pass ]
 webkit.org/b/131535 media/audio-mpeg-supported.html [ Timeout Pass ]
@@ -866,9 +846,9 @@ webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-ori
 # EventSender::dumpFilenameBeingDragged not implemented.
 webkit.org/b/61826 fast/events/drag-image-filename.html [ Timeout ]
 
-Bug(GTK) media/progress-events-generated-correctly.html [ Failure Timeout ]
+Bug(GTK) media/progress-events-generated-correctly.html [ Timeout ]
 
-webkit.org/b/108925 http/tests/media/video-play-stall.html [ Timeout Failure ]
+webkit.org/b/108925 http/tests/media/video-play-stall.html [ Timeout ]
 
 webkit.org/b/114789 fast/events/page-visibility-transition-test.html [ Timeout ]
 
@@ -905,8 +885,6 @@ webkit.org/b/122571 inspector-protocol/page/frameStartedLoading.html [ Timeout P
 webkit.org/b/122571 inspector-protocol/page/frameScheduledNavigation.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/page/setEmulatedMedia.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/css/getSupportedCSSProperties.html [ Timeout Pass ]
-
-webkit.org/b/124487 [ Release ] media/video-duration-known-after-eos.html [ Timeout ]
 
 webkit.org/b/130411 editing/spelling/spellcheck-paste.html [ Timeout ]
 webkit.org/b/130411 editing/spelling/spelling-changed-text.html [ Timeout ]
@@ -1244,10 +1222,9 @@ webkit.org/b/44478 fast/text/hyphenate-first-word.html [ Skip ]
 webkit.org/b/44478 fast/text/hyphenate-locale.html [ Skip ]
 webkit.org/b/44478 fast/text/hyphen-min-preferred-width.html [ Skip ]
 
-# GTK is moving from toggle button to a menu of tracks.
-webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Timeout Failure ]
-webkit.org/b/101670 media/track/track-user-preferences.html [ Failure ]
-webkit.org/b/101670 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure ]
+webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Failure ]
+webkit.org/b/123097 media/track/track-user-preferences.html [ Skip ]
+webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure ]
 
 Bug(GTK) http/tests/loading/bad-scheme-subframe.html [ Failure ]
 
@@ -1501,8 +1478,8 @@ webkit.org/b/131794 fast/frames/frame-with-noresize-can-be-resized-after-setting
 
 webkit.org/b/89663 editing/deleting/delete-3800834-fix.html [ Failure ]
 
-# GTK is moving from the simple toggle button to a menu of tracks
-webkit.org/b/95428 media/video-controls-captions.html [ Failure Timeout ]
+# As Mac, GTK doesn't have a toggle for CC any more, it's based on a menu of choices.
+webkit.org/b/123097 media/video-controls-captions.html [ Skip ]
 
 webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
@@ -1672,7 +1649,7 @@ webkit.org/b/124504 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Failure ]
-webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [ Timeout Failure ]
+webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 
@@ -1723,7 +1700,6 @@ webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failu
 
 # After webkit.org/b/123097 we flag these tests that also fail in mac
 webkit.org/b/123097 media/track/track-cue-mutable-text.html [ Failure ]
-webkit.org/b/123097 media/video-controls-captions-trackmenu-sorted.html [ Failure Crash Pass ]
 webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
 
 # Regressions in svg/clip-path
@@ -1837,7 +1813,9 @@ webkit.org/b/131501 fast/css3-text/css3-text-decoration/text-decoration-skip/gly
 
 webkit.org/b/131540 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure ]
 
-webkit.org/b/130971 media/track/track-remove-track.html [ Failure Timeout  ]
+webkit.org/b/130971 media/track/track-remove-track.html [ Timeout ]
+
+webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Timeout Pass Crash ]
 
 webkit.org/b/132046 svg/css/svg-resource-fragment-identifier-img-src.html  [ ImageOnlyFailure ]
 
