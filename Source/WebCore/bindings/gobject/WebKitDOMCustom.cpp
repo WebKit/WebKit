@@ -70,8 +70,7 @@ gchar* webkit_dom_text_track_get_kind(WebKitDOMTextTrack* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEXT_TRACK(self), 0);
     WebCore::TextTrack* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->kind());
-    return result;
+    return convertToUTF8String(item->kind());
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Video Track")
     return 0;
@@ -84,8 +83,7 @@ gchar* webkit_dom_text_track_get_mode(WebKitDOMTextTrack* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEXT_TRACK(self), 0);
     WebCore::TextTrack* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->mode());
-    return result;
+    return convertToUTF8String(item->mode());
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Video Track")
     return 0;
@@ -98,9 +96,7 @@ void webkit_dom_text_track_set_mode(WebKitDOMTextTrack* self, const gchar* value
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEXT_TRACK(self));
     g_return_if_fail(value);
-    WebCore::TextTrack* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setMode(convertedValue);
+    WebKit::core(self)->setMode(WTF::String::fromUTF8(value));
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Video Track")
 #endif /* ENABLE(VIDEO_TRACK) */

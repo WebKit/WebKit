@@ -23,6 +23,21 @@
 
         Reviewed by Martin Robinson.
 
+        Improve coding style according to review comments, that I forgot
+        to do before landing previous commit.
+
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_text_track_get_kind):
+        (webkit_dom_text_track_get_mode):
+        (webkit_dom_text_track_set_mode):
+
+2014-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] TextTrack kind and mode attributes are enums since r166180
+        https://bugs.webkit.org/show_bug.cgi?id=132228
+
+        Reviewed by Martin Robinson.
+
         We don't support enum values yet in GObject DOM bindings, but they
         are internally strings anyway, so we can keep the old
         implementations using strings as custom functions until we
