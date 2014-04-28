@@ -1,3 +1,17 @@
+2014-04-28  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r167853.
+        https://bugs.webkit.org/show_bug.cgi?id=132288
+
+        caused crashes+timeouts+layout test failures described in the
+        bug (Requested by thorton on #webkit).
+
+        Reverted changeset:
+
+        "Coalesce responses on network process side"
+        https://bugs.webkit.org/show_bug.cgi?id=132229
+        http://trac.webkit.org/changeset/167853
+
 2014-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] flickery scrolling with overflow-scrolling:touch

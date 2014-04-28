@@ -28,8 +28,6 @@
 
 #include "NetworkLoaderClient.h"
 #include "ShareableResource.h"
-#include <WebCore/ResourceResponse.h>
-#include <wtf/RunLoop.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
@@ -49,16 +47,6 @@ private:
     virtual void didSendData(NetworkResourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     virtual void didFinishLoading(NetworkResourceLoader*, double finishTime) override;
     virtual void didFail(NetworkResourceLoader*, const WebCore::ResourceError&) override;
-
-    void dispatchPartialCoalescedResponse(NetworkResourceLoader*);
-    void clearCoalescedResponse();
-    void responseCoalescingTimerFired();
-
-    RunLoop::Timer<AsynchronousNetworkLoaderClient> m_responseCoalescingTimer;
-    NetworkResourceLoader* m_coalescingLoader;
-    WebCore::ResourceResponse m_coalescingResponse;
-    RefPtr<WebCore::SharedBuffer> m_coalescingResponseData;
-    long long m_coalescingResponseEncodedDataLength;
 };
 
 } // namespace WebKit

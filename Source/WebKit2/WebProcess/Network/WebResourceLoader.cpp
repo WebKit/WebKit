@@ -130,22 +130,6 @@ void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResp
         send(Messages::NetworkResourceLoader::ContinueDidReceiveResponse());
 }
 
-void WebResourceLoader::didReceiveCompleteResponse(const ResourceResponse& response, const CertificateInfo& certificateInfo, const IPC::DataReference& data, int64_t encodedDataLength, double finishTime)
-{
-    LOG(Network, "(WebProcess) WebResourceLoader::didReceiveCompleteResponse for '%s'. Status %d.", m_coreLoader->url().string().utf8().data(), response.httpStatusCode());
-
-    Ref<WebResourceLoader> protect(*this);
-
-    didReceiveResponseWithCertificateInfo(response, certificateInfo, false);
-    if (!m_coreLoader)
-        return;
-    if (!data.isEmpty())
-        didReceiveData(data, encodedDataLength);
-    if (!m_coreLoader)
-        return;
-    didFinishResourceLoad(finishTime);
-}
-
 void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %i for '%s'", (int)data.size(), m_coreLoader->url().string().utf8().data());

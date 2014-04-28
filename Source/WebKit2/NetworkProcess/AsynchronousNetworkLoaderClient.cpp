@@ -42,9 +42,6 @@ using namespace WebCore;
 namespace WebKit {
 
 AsynchronousNetworkLoaderClient::AsynchronousNetworkLoaderClient()
-    : m_responseCoalescingTimer(RunLoop::main(), this, &AsynchronousNetworkLoaderClient::responseCoalescingTimerFired)
-    , m_coalescingLoader(nullptr)
-    , m_coalescingResponseEncodedDataLength(0)
 {
 }
 
@@ -62,17 +59,6 @@ void AsynchronousNetworkLoaderClient::canAuthenticateAgainstProtectionSpace(Netw
 
 void AsynchronousNetworkLoaderClient::didReceiveResponse(NetworkResourceLoader* loader, const ResourceResponse& response)
 {
-    if (!loader->isLoadingMainResource()) {
-        ASSERT(!m_coalescingLoader);
-        m_coalescingResponse = response;
-        m_coalescingLoader = loader;
-
-        // FIXME: Some resources can only be used when completely loaded. We should always delay those until completion.
-        static const double responseCoalescingTime = 0.1;
-        m_responseCoalescingTimer.startOneShot(responseCoalescingTime);
-        return;
-    }
-
     loader->sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, CertificateInfo(response), loader->isLoadingMainResource()));
 }
 
@@ -82,29 +68,12 @@ void AsynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader* lo
     ShareableResource::Handle shareableResourceHandle;
     NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer);
     if (!shareableResourceHandle.isNull()) {
-        if (m_responseCoalescingTimer.isActive()) {
-            ASSERT(!m_coalescingResponse.isNull());
-            ASSERT(!m_coalescingResponseData);
-            loader->send(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(m_coalescingResponse, CertificateInfo(m_coalescingResponse), false));
-            clearCoalescedResponse();
-        }
         // Since we're delivering this resource by ourselves all at once and don't need anymore data or callbacks from the network layer, abort the loader.
         loader->abort();
         loader->send(Messages::WebResourceLoader::DidReceiveResource(shareableResourceHandle, currentTime()));
         return;
     }
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-
-    if (m_responseCoalescingTimer.isActive()) {
-        ASSERT(m_coalescingLoader == loader);
-        ASSERT(!m_coalescingResponse.isNull());
-        if (m_coalescingResponseData)
-            m_coalescingResponseData->append(buffer);
-        else
-            m_coalescingResponseData = buffer;
-        m_coalescingResponseEncodedDataLength += encodedDataLength;
-        return;
-    }
 
     IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
     loader->sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
@@ -117,57 +86,13 @@ void AsynchronousNetworkLoaderClient::didSendData(NetworkResourceLoader* loader,
 
 void AsynchronousNetworkLoaderClient::didFinishLoading(NetworkResourceLoader* loader, double finishTime)
 {
-    if (m_responseCoalescingTimer.isActive()) {
-        ASSERT(!m_coalescingResponse.isNull());
-        IPC::DataReference dataReference;
-        if (m_coalescingResponseData)
-            dataReference = IPC::DataReference(reinterpret_cast<const uint8_t*>(m_coalescingResponseData->data()), m_coalescingResponseData->size());
-
-        loader->send(Messages::WebResourceLoader::DidReceiveCompleteResponse(m_coalescingResponse, CertificateInfo(m_coalescingResponse), dataReference, m_coalescingResponseEncodedDataLength, finishTime));
-        clearCoalescedResponse();
-        return;
-    }
-
     loader->send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
 }
 
 void AsynchronousNetworkLoaderClient::didFail(NetworkResourceLoader* loader, const ResourceError& error)
 {
-    if (m_responseCoalescingTimer.isActive())
-        dispatchPartialCoalescedResponse(loader);
-
     loader->send(Messages::WebResourceLoader::DidFailResourceLoad(error));
 }
-
-void AsynchronousNetworkLoaderClient::dispatchPartialCoalescedResponse(NetworkResourceLoader* loader)
-{
-    ASSERT(m_coalescingLoader == loader);
-    ASSERT(!m_coalescingResponse.isNull());
-    loader->sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(m_coalescingResponse, CertificateInfo(m_coalescingResponse), false));
-
-    if (m_coalescingResponseData) {
-        IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(m_coalescingResponseData->data()), m_coalescingResponseData->size());
-        loader->sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, m_coalescingResponseEncodedDataLength));
-    }
-
-    clearCoalescedResponse();
-}
-
-void AsynchronousNetworkLoaderClient::clearCoalescedResponse()
-{
-    m_coalescingResponse = ResourceResponse();
-    m_coalescingLoader = nullptr;
-    m_coalescingResponseData = nullptr;
-    m_coalescingResponseEncodedDataLength = 0;
-    m_responseCoalescingTimer.stop();
-}
-
-void AsynchronousNetworkLoaderClient::responseCoalescingTimerFired()
-{
-    ASSERT(m_coalescingLoader);
-    dispatchPartialCoalescedResponse(m_coalescingLoader);
-}
-
 
 } // namespace WebKit
 

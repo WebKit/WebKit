@@ -35,7 +35,6 @@
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/ResourceResponse.h>
 #include <WebCore/SessionID.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>

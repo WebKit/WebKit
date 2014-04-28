@@ -81,7 +81,6 @@ private:
     void willSendRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent);
     void didReceiveResponseWithCertificateInfo(const WebCore::ResourceResponse&, const WebCore::CertificateInfo&, bool needsContinueDidReceiveResponseMessage);
-    void didReceiveCompleteResponse(const WebCore::ResourceResponse&, const WebCore::CertificateInfo&, const IPC::DataReference&, int64_t encodedDataLength, double finishTime);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
     void didFinishResourceLoad(double finishTime);
     void didFailResourceLoad(const WebCore::ResourceError&);
