@@ -1,3 +1,9 @@
+2014-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update GObject DOM bindings symbols file.
+
+        * bindings/gobject/webkitdom.symbols: Add missing symbols.
+
 2014-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         OrderIterator refactoring to avoid extra loops
