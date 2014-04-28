@@ -1,3 +1,18 @@
+2014-04-27  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r164702): Double tap doesn't stay under the new element once the animation finishes
+        https://bugs.webkit.org/show_bug.cgi?id=132239
+        <rdar://problem/16192842>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scalePage):
+        The change in r167864 broke iOS animated resize, because it was depending on
+        the dynamic size update code not running if the scale wasn't going to change.
+        So, as a band-aid we should bail from doing that work if the scales aren't different.
+        In the long term we should try to untangle this code and make it less platform dependent.
+
 2014-04-27  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         TouchEvent is not handled after releasing any point among touched points.

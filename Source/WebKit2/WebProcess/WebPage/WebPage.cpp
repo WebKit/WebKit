@@ -1291,10 +1291,14 @@ void WebPage::windowScreenDidChange(uint64_t displayID)
 
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {
+    bool willChangeScaleFactor = scale != pageScaleFactor();
+
 #if PLATFORM(IOS)
-    if (!m_inDynamicSizeUpdate)
-        m_dynamicSizeUpdateHistory.clear();
-    m_scaleWasSetByUIProcess = false;
+    if (willChangeScaleFactor) {
+        if (!m_inDynamicSizeUpdate)
+            m_dynamicSizeUpdateHistory.clear();
+        m_scaleWasSetByUIProcess = false;
+    }
 #endif
     PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
     if (pluginView && pluginView->handlesPageScaleFactor()) {
@@ -1302,12 +1306,10 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
         return;
     }
 
-    float oldPageScaleFactor = pageScaleFactor();
-
     m_page->setPageScaleFactor(scale, origin);
 
     // We can't early return before setPageScaleFactor because the origin might be different.
-    if (scale == oldPageScaleFactor)
+    if (!willChangeScaleFactor)
         return;
 
     for (auto* pluginView : m_pluginViews)
