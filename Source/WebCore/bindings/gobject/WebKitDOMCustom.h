@@ -50,6 +50,33 @@ WEBKIT_API void webkit_dom_html_media_element_set_current_time(WebKitDOMHTMLMedi
  */
 WEBKIT_API gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* input);
 
+/**
+ * webkit_dom_text_track_get_kind:
+ * @self: A #WebKitDOMTextTrack
+ *
+ * Returns: A #gchar
+ */
+WEBKIT_API gchar*
+webkit_dom_text_track_get_kind(WebKitDOMTextTrack* self);
+
+/**
+ * webkit_dom_text_track_get_mode:
+ * @self: A #WebKitDOMTextTrack
+ *
+ * Returns: A #gchar
+ */
+WEBKIT_API gchar*
+webkit_dom_text_track_get_mode(WebKitDOMTextTrack* self);
+
+/**
+ * webkit_dom_text_track_set_mode:
+ * @self: A #WebKitDOMTextTrack
+ * @value: A #gchar
+ *
+ */
+WEBKIT_API void
+webkit_dom_text_track_set_mode(WebKitDOMTextTrack* self, const gchar* value);
+
 G_END_DECLS
 
 #endif
