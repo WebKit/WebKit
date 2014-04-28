@@ -1,3 +1,20 @@
+2014-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GObject introspection links to installed libs when using jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=132220
+
+        Reviewed by Martin Robinson.
+
+        The problem is that gobject-introspection is linking the temporary
+        binaries adding the library paths present LDFLAGS environment
+        variable first, taking precedence over the libraries in the build
+        dir. Since the libraries paths of the dependencies are already
+        correctly deduced by gobject-introspection using ldd, we can
+        just unset the LDFLAGS variable before calling g-ir-scanner to
+        make sure the libraries in the build dir take predence.
+
+        * PlatformGTK.cmake:
+
 2014-04-27  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r164702): Double tap doesn't stay under the new element once the animation finishes
