@@ -90,7 +90,9 @@ function installDependenciesWithApt {
         libgpg-error-dev \
         pulseaudio-utils \
         python-gi \
-        ruby
+        ruby \
+        ruby-json \
+        ruby-highline
 
     # These are dependencies necessary for building the jhbuild.
     apt-get install \
@@ -185,7 +187,9 @@ function installDependenciesWithYum {
         php \
         pulseaudio-utils \
         pygobject3-base \
-        ruby
+        ruby \
+        rubygem-json \
+        rubygem-highline
 
     # These are dependencies necessary for building the jhbuild.
     yum install \
