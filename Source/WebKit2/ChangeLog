@@ -1,5 +1,24 @@
 2014-04-24  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Make subview rebuilding more incremental
+        https://bugs.webkit.org/show_bug.cgi?id=132162
+        <rdar://problem/16718916>
+
+        Reviewed by Sam Weinig.
+        
+        Previously we did bulk replacement of subviews, but that triggers
+        UIKit to send spurious will/DidMoveToWindow messages, which can
+        interfere with UIScrollView scrolling.
+        
+        Make _web_setSubviews more incremental, only removing
+        deleted subviews, adding new ones, and moving existing ones
+        into the correct order.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (-[UIView _web_setSubviews:]):
+
+2014-04-24  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] flickery scrolling with overflow-scrolling:touch
         https://bugs.webkit.org/show_bug.cgi?id=132150
         <rdar://problem/16683006>
