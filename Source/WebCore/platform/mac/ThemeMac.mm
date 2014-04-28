@@ -193,6 +193,9 @@ static void setControlSize(NSCell* cell, const std::array<IntSize, 3>& sizes, co
 
 static void updateStates(NSCell* cell, const ControlStates* controlStates, bool useAnimation = false)
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 10100
+    UNUSED_PARAM(useAnimation);
+#endif
     ControlStates::States states = controlStates->states();
 
     // Hover state is not supported by Aqua.
@@ -200,8 +203,13 @@ static void updateStates(NSCell* cell, const ControlStates* controlStates, bool 
     // Pressed state
     bool oldPressed = [cell isHighlighted];
     bool pressed = states & ControlStates::PressedState;
-    if (pressed != oldPressed)
+    if (pressed != oldPressed) {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+        [(NSButtonCell*)cell _setHighlighted:pressed animated:useAnimation];
+#else
         [cell setHighlighted:pressed];
+#endif
+    }
     
     // Enabled state
     bool oldEnabled = [cell isEnabled];
@@ -219,7 +227,6 @@ static void updateStates(NSCell* cell, const ControlStates* controlStates, bool 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
         [(NSButtonCell*)cell _setState:newState animated:useAnimation];
 #else
-        UNUSED_PARAM(useAnimation);
         [cell setState:newState];
 #endif
     }
