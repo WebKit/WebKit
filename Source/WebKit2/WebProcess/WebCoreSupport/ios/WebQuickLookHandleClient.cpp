@@ -47,7 +47,7 @@ void WebQuickLookHandleClient::didReceiveDataArray(CFArrayRef dataArray)
     CFArrayApplyFunction(dataArray, CFRangeMake(0, CFArrayGetCount(dataArray)), [](const void* value, void* context) {
         ASSERT(CFGetTypeID(value) == CFDataGetTypeID());
         static_cast<QuickLookDocumentData*>(context)->append((CFDataRef)value);
-    }, this);
+    }, &m_data);    
 }
 
 void WebQuickLookHandleClient::didFinishLoading()

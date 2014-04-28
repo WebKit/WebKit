@@ -1,3 +1,14 @@
+2014-04-28  Andy Estes  <aestes@apple.com>
+
+        Fix a transcription error from r167901.
+
+        When addressing Darin's review feedback, I moved the iteration of dataArray from
+        QuickLookDocumentData::append() to WebQuickLookHandleClient::didReceiveDataArray(),
+        but I forgot to update the context argument to CFArrayApplyFunction() accordingly.
+
+        * WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.cpp:
+        (WebKit::WebQuickLookHandleClient::didReceiveDataArray):
+
 2014-04-28  Enrica Casucci  <enrica@apple.com>
 
         [WK2 iOS] Need to show title in the action sheet for images not inside an anchor element.
