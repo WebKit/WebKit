@@ -30,6 +30,13 @@
 
 #import <WebCore/NotImplemented.h>
 
+#if USE(QUICK_LOOK)
+#import "WebFrame.h"
+#import "WebPage.h"
+#import "WebQuickLookHandleClient.h"
+#import <WebCore/QuickLook.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -49,6 +56,20 @@ RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(DocumentLo
     notImplemented();
     return nullptr;
 }
+
+#if USE(QUICK_LOOK)
+void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& handle)
+{
+    if (!m_frame->isMainFrame())
+        return;
+
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    handle.setClient(WebQuickLookHandleClient::create(handle, webPage->pageID()));
+}
+#endif
 
 } // namespace WebKit
 

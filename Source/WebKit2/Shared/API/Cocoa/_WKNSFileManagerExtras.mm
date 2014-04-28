@@ -23,33 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKNavigationDelegate.h>
-#import <WebKit2/WKWebViewPrivate.h>
+#import "config.h"
+#import "_WKNSFileManagerExtras.h"
 
-#if WK_API_ENABLED
+#if USE(QUICK_LOOK)
 
-static const WKNavigationActionPolicy _WKNavigationActionPolicyDownload = (WKNavigationActionPolicy)(WKNavigationActionPolicyAllow + 1);
+#import <WebCore/QuickLook.h>
 
-static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownload = (WKNavigationResponsePolicy)(WKNavigationResponsePolicyAllow + 1);
+@implementation NSFileManager (WKExtras)
 
-@protocol WKNavigationDelegatePrivate <WKNavigationDelegate>
-
-@optional
-
-- (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation;
-
-- (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents;
-
-- (BOOL)_webView:(WKWebView *)webView canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
-- (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
-
-- (void)_webViewWebProcessDidCrash:(WKWebView *)webView;
-
-#if TARGET_OS_IPHONE
-- (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti;
-- (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData;
-#endif
++ (NSString *)_web_createTemporaryFileForQuickLook:(NSString *)fileName
+{
+    return WebCore::createTemporaryFileForQuickLook(fileName);
+}
 
 @end
 
-#endif
+#endif // USE(QUICK_LOOK)

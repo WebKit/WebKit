@@ -53,6 +53,10 @@
 #import "WebPageProxy.h"
 #import <wtf/NeverDestroyed.h>
 
+#if USE(QUICK_LOOK)
+#import "QuickLookDocumentData.h"
+#endif
+
 namespace WebKit {
 
 static HashMap<WebPageProxy*, NavigationState*>& navigationStates()
@@ -123,6 +127,10 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewCanAuthenticateAgainstProtectionSpace = [delegate respondsToSelector:@selector(_webView:canAuthenticateAgainstProtectionSpace:)];
     m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallenge = [delegate respondsToSelector:@selector(_webView:didReceiveAuthenticationChallenge:)];
     m_navigationDelegateMethods.webViewWebProcessDidCrash = [delegate respondsToSelector:@selector(_webViewWebProcessDidCrash:)];
+#if USE(QUICK_LOOK)
+    m_navigationDelegateMethods.webViewDidStartLoadForQuickLookDocumentInMainFrame = [delegate respondsToSelector:@selector(_webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:)];
+    m_navigationDelegateMethods.webViewDidFinishLoadForQuickLookDocumentInMainFrame = [delegate respondsToSelector:@selector(_webView:didFinishLoadForQuickLookDocumentInMainFrame:)];
+#endif
 }
 
 RetainPtr<id <WKHistoryDelegatePrivate> > NavigationState::historyDelegate()
@@ -566,6 +574,32 @@ void NavigationState::LoaderClient::didChangeBackForwardList(WebKit::WebPageProx
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:_WKBackForwardListDidChangeNotification object:wrapper(m_navigationState.m_webView->_page->backForwardList())];
 }
+
+#if USE(QUICK_LOOK)
+void NavigationState::LoaderClient::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDidStartLoadForQuickLookDocumentInMainFrame)
+        return;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:fileName uti:uti];
+}
+
+void NavigationState::LoaderClient::didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData& data)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDidFinishLoadForQuickLookDocumentInMainFrame)
+        return;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)data.decodedData()];
+}
+#endif
 
 void NavigationState::willChangeIsLoading()
 {

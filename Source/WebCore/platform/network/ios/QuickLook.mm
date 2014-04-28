@@ -515,9 +515,14 @@ QuickLookHandle::~QuickLookHandle()
     [m_delegate clearHandle];
 }
 
-NSString *QuickLookHandle::previewFileName() const
+String QuickLookHandle::previewFileName() const
 {
     return [m_converter previewFileName];
+}
+
+String QuickLookHandle::previewUTI() const
+{
+    return [m_converter previewUTI];
 }
 
 NSURL *QuickLookHandle::previewRequestURL() const

@@ -1,3 +1,52 @@
+2014-04-24  Andy Estes  <aestes@apple.com>
+
+        [iOS] Implement WebQuickLookHandleClient for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=132157
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/Cocoa/_WKNSFileManagerExtras.h: Added.
+        * Shared/API/Cocoa/_WKNSFileManagerExtras.mm: Added.
+        (+[NSFileManager _web_createTemporaryFileForQuickLook:]): Called WebCore::createTemporaryFileForQuickLook().
+        * Shared/ios/QuickLookDocumentData.cpp: Added.
+        (WebKit::QuickLookDocumentData::QuickLookDocumentData):
+        (WebKit::QuickLookDocumentData::append): Appened each CFDataRef to m_data and added their sizes to m_size.
+        (WebKit::QuickLookDocumentData::decodedData): Returned the combined CFDataRef created by decode().
+        Named this method 'decodedData' to indicate that it should only be called on objects populated by decode().
+        (WebKit::QuickLookDocumentData::clear): Cleared m_data and reset m_size to 0.
+        (WebKit::QuickLookDocumentData::encode): Implemented a custom encoding function to avoid having to combine
+        m_data into contiguous memory at encoding time. Encoded m_size then sequentially encoded each member of m_data.
+        (WebKit::QuickLookDocumentData::decode): Decoded the byte stream into a single CFDataRef. Eagerly copied the
+        decoded data rather than using a DataReference since we know this will outlive the decoder.
+        * Shared/ios/QuickLookDocumentData.h: Added.
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didStartLoadForQuickLookDocumentInMainFrame):
+        (API::LoaderClient::didFinishLoadForQuickLookDocumentInMainFrame):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::LoaderClient::didStartLoadForQuickLookDocumentInMainFrame):
+        (WebKit::NavigationState::LoaderClient::didFinishLoadForQuickLookDocumentInMainFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame):
+        (WebKit::WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        (WebKit::WebFrameLoaderClient::didCreateQuickLookHandle):
+        * WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.cpp: Added.
+        (WebKit::WebQuickLookHandleClient::WebQuickLookHandleClient): Sent DidStartLoadForQuickLookDocumentInMainFrame
+        to WebPageProxy.
+        (WebKit::WebQuickLookHandleClient::didReceiveDataArray): Appended dataArray to m_data.
+        (WebKit::WebQuickLookHandleClient::didFinishLoading): Sent DidFinishLoadForQuickLookDocumentInMainFrame to
+        WebPageProxy and then cleared m_data.
+        (WebKit::WebQuickLookHandleClient::didFail): Cleared m_data.
+        * WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.h: Added.
+        (WebKit::WebQuickLookHandleClient::create):
+
 2014-04-28  Brady Eidson  <beidson@apple.com>
 
         Hide service controls for selection behind a runtime switch

@@ -23,33 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKNavigationDelegate.h>
-#import <WebKit2/WKWebViewPrivate.h>
+#ifndef QuickLookDocumentData_h
+#define QuickLookDocumentData_h
 
-#if WK_API_ENABLED
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
-static const WKNavigationActionPolicy _WKNavigationActionPolicyDownload = (WKNavigationActionPolicy)(WKNavigationActionPolicyAllow + 1);
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
 
-static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownload = (WKNavigationResponsePolicy)(WKNavigationResponsePolicyAllow + 1);
+namespace WebKit {
 
-@protocol WKNavigationDelegatePrivate <WKNavigationDelegate>
+class QuickLookDocumentData {
+public:
+    void append(CFDataRef);
+    CFDataRef decodedData() const;
+    void clear();
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, QuickLookDocumentData&);
 
-@optional
+private:
+    Vector<RetainPtr<CFDataRef>, 1> m_data;
+};
+} // namespace WebKit
 
-- (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation;
-
-- (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents;
-
-- (BOOL)_webView:(WKWebView *)webView canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
-- (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
-
-- (void)_webViewWebProcessDidCrash:(WKWebView *)webView;
-
-#if TARGET_OS_IPHONE
-- (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti;
-- (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData;
-#endif
-
-@end
-
-#endif
+#endif // QuickLookDocumentData_h

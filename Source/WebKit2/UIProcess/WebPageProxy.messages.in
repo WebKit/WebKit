@@ -367,4 +367,9 @@ messages -> WebPageProxy {
     ShowTelephoneNumberMenu(String telephoneNumber, WebCore::IntPoint point)
 #endif
 #endif
+
+#if USE(QUICK_LOOK)
+    DidStartLoadForQuickLookDocumentInMainFrame(String fileName, String uti)
+    DidFinishLoadForQuickLookDocumentInMainFrame(WebKit::QuickLookDocumentData data)
+#endif
 }

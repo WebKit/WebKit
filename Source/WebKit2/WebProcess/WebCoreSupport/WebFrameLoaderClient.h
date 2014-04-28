@@ -229,6 +229,10 @@ private:
 
     virtual void forcePageTransitionIfNeeded() override;
 
+#if USE(QUICK_LOOK)
+    virtual void didCreateQuickLookHandle(WebCore::QuickLookHandle&) override;
+#endif
+
     WebFrame* m_frame;
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView;

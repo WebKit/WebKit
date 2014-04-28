@@ -23,33 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKNavigationDelegate.h>
-#import <WebKit2/WKWebViewPrivate.h>
-
-#if WK_API_ENABLED
-
-static const WKNavigationActionPolicy _WKNavigationActionPolicyDownload = (WKNavigationActionPolicy)(WKNavigationActionPolicyAllow + 1);
-
-static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownload = (WKNavigationResponsePolicy)(WKNavigationResponsePolicyAllow + 1);
-
-@protocol WKNavigationDelegatePrivate <WKNavigationDelegate>
-
-@optional
-
-- (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation;
-
-- (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents;
-
-- (BOOL)_webView:(WKWebView *)webView canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
-- (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
-
-- (void)_webViewWebProcessDidCrash:(WKWebView *)webView;
+#import <WebKit2/WKFoundation.h>
 
 #if TARGET_OS_IPHONE
-- (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti;
-- (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData;
-#endif
+
+@interface NSFileManager (WKExtras)
+
++ (NSString *)_web_createTemporaryFileForQuickLook:(NSString *)fileName;
 
 @end
 
-#endif
+#endif // TARGET_OS_IPHONE

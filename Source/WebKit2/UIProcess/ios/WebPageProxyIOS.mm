@@ -44,6 +44,11 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
 
+#if USE(QUICK_LOOK)
+#import "APILoaderClient.h"
+#import <wtf/text/WTFString.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -574,6 +579,21 @@ void WebPageProxy::zoomToRect(FloatRect rect, double minimumScale, double maximu
 {
     m_pageClient.zoomToRect(rect, minimumScale, maximumScale);
 }
+
+#if USE(QUICK_LOOK)
+    
+void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)
+{
+    // Ensure that fileName isn't really a path name
+    static_assert(notFound + 1 == 0, "The following line assumes WTF::notFound equals -1");
+    m_loaderClient->didStartLoadForQuickLookDocumentInMainFrame(fileName.substring(fileName.reverseFind('/') + 1), uti);
+}
+
+void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData& data)
+{
+    m_loaderClient->didFinishLoadForQuickLookDocumentInMainFrame(data);
+}
+#endif
 
 } // namespace WebKit
 

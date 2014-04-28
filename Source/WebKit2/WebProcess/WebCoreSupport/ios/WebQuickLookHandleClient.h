@@ -23,33 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKNavigationDelegate.h>
-#import <WebKit2/WKWebViewPrivate.h>
+#ifndef WebQuickLookHandleClient_h
+#define WebQuickLookHandleClient_h
 
-#if WK_API_ENABLED
+#if USE(QUICK_LOOK)
 
-static const WKNavigationActionPolicy _WKNavigationActionPolicyDownload = (WKNavigationActionPolicy)(WKNavigationActionPolicyAllow + 1);
+#include "QuickLookDocumentData.h"
+#include <WebCore/QuickLookHandleClient.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
-static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownload = (WKNavigationResponsePolicy)(WKNavigationResponsePolicyAllow + 1);
+namespace WebCore {
+class QuickLookHandle;
+}
 
-@protocol WKNavigationDelegatePrivate <WKNavigationDelegate>
+namespace WebKit {
 
-@optional
+class WebFrame;
 
-- (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation;
+class WebQuickLookHandleClient final : public WebCore::QuickLookHandleClient {
+public:
+    static PassRefPtr<WebQuickLookHandleClient> create(const WebCore::QuickLookHandle& handle, uint64_t pageID)
+    {
+        return adoptRef(new WebQuickLookHandleClient(handle, pageID));
+    }
 
-- (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents;
+private:
+    WebQuickLookHandleClient(const WebCore::QuickLookHandle&, uint64_t pageID);
+    virtual void didReceiveDataArray(CFArrayRef) override;
+    virtual void didFinishLoading() override;
+    virtual void didFail() override;
 
-- (BOOL)_webView:(WKWebView *)webView canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
-- (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+    const String m_fileName;
+    const String m_uti;
+    const uint64_t m_pageID;
+    QuickLookDocumentData m_data;
+};
 
-- (void)_webViewWebProcessDidCrash:(WKWebView *)webView;
+} // namespace WebKit
 
-#if TARGET_OS_IPHONE
-- (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti;
-- (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData;
-#endif
+#endif // USE(QUICK_LOOK)
 
-@end
-
-#endif
+#endif // WebQuickLookHandleClient_h

@@ -23,33 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKNavigationDelegate.h>
-#import <WebKit2/WKWebViewPrivate.h>
+#include "config.h"
+#include "WebQuickLookHandleClient.h"
 
-#if WK_API_ENABLED
+#if USE(QUICK_LOOK)
 
-static const WKNavigationActionPolicy _WKNavigationActionPolicyDownload = (WKNavigationActionPolicy)(WKNavigationActionPolicyAllow + 1);
+#include "WebPageProxyMessages.h"
+#include "WebProcess.h"
+#include <WebCore/QuickLook.h>
 
-static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownload = (WKNavigationResponsePolicy)(WKNavigationResponsePolicyAllow + 1);
+namespace WebKit {
 
-@protocol WKNavigationDelegatePrivate <WKNavigationDelegate>
+WebQuickLookHandleClient::WebQuickLookHandleClient(const WebCore::QuickLookHandle& handle, uint64_t pageID)
+    : m_fileName(handle.previewFileName())
+    , m_uti(handle.previewUTI())
+    , m_pageID(pageID)
+{
+    WebProcess::shared().send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(m_fileName, m_uti), m_pageID);
+}
 
-@optional
+void WebQuickLookHandleClient::didReceiveDataArray(CFArrayRef dataArray)
+{
+    CFArrayApplyFunction(dataArray, CFRangeMake(0, CFArrayGetCount(dataArray)), [](const void* value, void* context) {
+        ASSERT(CFGetTypeID(value) == CFDataGetTypeID());
+        static_cast<QuickLookDocumentData*>(context)->append((CFDataRef)value);
+    }, this);
+}
 
-- (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation;
+void WebQuickLookHandleClient::didFinishLoading()
+{
+    WebProcess::shared().send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(m_data), m_pageID);
+    m_data.clear();
+}
 
-- (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents;
+void WebQuickLookHandleClient::didFail()
+{
+    m_data.clear();
+}
 
-- (BOOL)_webView:(WKWebView *)webView canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
-- (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+} // namespace WebKit
 
-- (void)_webViewWebProcessDidCrash:(WKWebView *)webView;
-
-#if TARGET_OS_IPHONE
-- (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti;
-- (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData;
-#endif
-
-@end
-
-#endif
+#endif // USE(QUICK_LOOK)

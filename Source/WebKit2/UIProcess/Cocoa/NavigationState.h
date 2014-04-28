@@ -103,6 +103,10 @@ private:
         virtual void didReceiveAuthenticationChallengeInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::AuthenticationChallengeProxy*) override;
         virtual void processDidCrash(WebKit::WebPageProxy*) override;
         virtual void didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem* addedItem, Vector<RefPtr<WebKit::WebBackForwardListItem>> removedItems) override;
+#if USE(QUICK_LOOK)
+        virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) override;
+        virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData&) override;
+#endif
 
         NavigationState& m_navigationState;
     };
@@ -138,6 +142,10 @@ private:
         bool webViewCanAuthenticateAgainstProtectionSpace : 1;
         bool webViewDidReceiveAuthenticationChallenge : 1;
         bool webViewWebProcessDidCrash : 1;
+#if USE(QUICK_LOOK)
+        bool webViewDidStartLoadForQuickLookDocumentInMainFrame : 1;
+        bool webViewDidFinishLoadForQuickLookDocumentInMainFrame : 1;
+#endif
     } m_navigationDelegateMethods;
 
     HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;

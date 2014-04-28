@@ -1,3 +1,16 @@
+2014-04-24  Andy Estes  <aestes@apple.com>
+
+        [iOS] Implement WebQuickLookHandleClient for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=132157
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Exported QuickLookHandle::previewUTI().
+        * platform/network/ios/QuickLook.h:
+        * platform/network/ios/QuickLook.mm:
+        (WebCore::QuickLookHandle::previewFileName): Changed to return a WTF::String.
+        (WebCore::QuickLookHandle::previewUTI): Added.
+
 2014-04-28  Chris Fleizach  <cfleizach@apple.com>
 
         REGRESSION: Intermittent crash in SpeechSynthesis::didFinishSpeaking

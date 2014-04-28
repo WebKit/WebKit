@@ -101,7 +101,8 @@ public:
 
     void setClient(PassRefPtr<QuickLookHandleClient> client) { m_client = client; }
 
-    NSString *previewFileName() const;
+    String previewFileName() const;
+    String previewUTI() const;
     NSURL *firstRequestURL() const { return m_firstRequestURL.get(); }
     NSURL *previewRequestURL() const;
     QLPreviewConverter *converter() const { return m_converter.get(); }

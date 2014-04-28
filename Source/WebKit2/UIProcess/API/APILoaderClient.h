@@ -39,6 +39,7 @@ class ResourceError;
 namespace WebKit {
 class AuthenticationChallengeProxy;
 class ImmutableDictionary;
+class QuickLookDocumentData;
 class WebBackForwardListItem;
 class WebFrameProxy;
 class WebPageProxy;
@@ -100,6 +101,11 @@ public:
     virtual WebCore::WebGLLoadPolicy webGLLoadPolicy(WebKit::WebPageProxy*, const WTF::String&) const { return WebCore::WebGLLoadPolicy::WebGLAllowCreation; }
     virtual WebCore::WebGLLoadPolicy resolveWebGLLoadPolicy(WebKit::WebPageProxy*, const WTF::String&) const { return WebCore::WebGLLoadPolicy::WebGLAllowCreation; }
 #endif // ENABLE(WEBGL)
+
+#if USE(QUICK_LOOK)
+    virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) { }
+    virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData&) { }
+#endif
 };
 
 } // namespace API
