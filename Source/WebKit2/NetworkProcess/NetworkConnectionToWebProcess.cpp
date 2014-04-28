@@ -58,7 +58,6 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(IPC::Connection::Id
     : m_serialLoadingEnabled(false)
 {
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
-    m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
     m_connection->open();
 }
 

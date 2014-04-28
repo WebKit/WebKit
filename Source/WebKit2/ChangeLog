@@ -1,3 +1,24 @@
+2014-04-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't use DispatchMessageEvenWhenWaitingForSyncReply for messages from NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=132144
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/AsynchronousNetworkLoaderClient.cpp:
+        (WebKit::AsynchronousNetworkLoaderClient::willSendRequest):
+        (WebKit::AsynchronousNetworkLoaderClient::canAuthenticateAgainstProtectionSpace):
+        Dont use the IPC::DispatchMessageEvenWhenWaitingForSyncReply flag. It's not needed,
+        almost never works in NetworkProcess, but may cause trouble if it did.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess): Removed
+        setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage()
+        function call, because there are no more any messages in NetworkProcess it could affect.
+
+        * Platform/IPC/Connection.cpp: (IPC::Connection::dispatchMessage): Added a FIXME
+        for an unrelated bug Anders and myself noticed while looking into this.
+
 2014-04-27  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] -[WKWebProcessPlugInController parameters] returns nil if no parameters have been set yet

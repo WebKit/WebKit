@@ -794,6 +794,8 @@ void Connection::dispatchMessage(std::unique_ptr<MessageDecoder> message)
     m_didReceiveInvalidMessage |= message->isInvalid();
     m_inDispatchMessageCount--;
 
+    // FIXME: For Delayed synchronous messages, we should not decrement the counter until we send a response.
+    // Otherwise, we would deadlock if processing the message results in a sync message back after we exit this function.
     if (message->shouldDispatchMessageWhenWaitingForSyncReply())
         m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount--;
 
