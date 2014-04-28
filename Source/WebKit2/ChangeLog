@@ -1,3 +1,17 @@
+2014-04-28  Enrica Casucci  <enrica@apple.com>
+
+        [WK2 iOS] Need to show title in the action sheet for images not inside an anchor element.
+        https://bugs.webkit.org/show_bug.cgi?id=132304
+        <rdar://problem/16535227>
+
+        Reviewed by Benjamin Poulain.
+
+        If the image in not inside an anchor tag, we must use the title attribute as
+        title for the action sheet.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant _createSheetWithElementActions:showLinkTitle:]):
+
 2014-04-28  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Swipe): Discard snapshots made with a different view size/pixel density

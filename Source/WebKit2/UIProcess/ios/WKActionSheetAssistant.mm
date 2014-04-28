@@ -192,7 +192,7 @@ using namespace WebKit;
 
     NSString *titleString = nil;
     BOOL titleIsURL = NO;
-    if (showLinkTitle) {
+    if (showLinkTitle && [[targetURL absoluteString] length]) {
         if (isJavaScriptURL)
             titleString = WEB_UI_STRING_KEY("JavaScript", "JavaScript Action Sheet Title", "Title for action sheet for JavaScript link");
         else {
