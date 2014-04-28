@@ -42,16 +42,12 @@
     MediaStreamTrack getTrackById(DOMString trackId);
     MediaStream clone();
 
-    readonly attribute boolean ended;
-
-    attribute EventListener onended;
-    attribute EventListener onaddtrack;
-    attribute EventListener onremovetrack;
-
     readonly attribute boolean active;
 
     attribute EventListener onactive;
     attribute EventListener oninactive;
+    attribute EventListener onaddtrack;
+    attribute EventListener onremovetrack;
 
     // EventTarget interface
     void addEventListener(DOMString type,

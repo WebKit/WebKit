@@ -49,7 +49,6 @@ class MediaStreamPrivateClient : public MediaStreamTrack::Observer {
 public:
     virtual ~MediaStreamPrivateClient() { }
 
-    virtual void streamDidEnd() = 0;
     virtual void setStreamIsActive(bool) = 0;
     virtual void addRemoteSource(MediaStreamSource*) = 0;
     virtual void removeRemoteSource(MediaStreamSource*) = 0;
@@ -87,10 +86,6 @@ public:
     void addRemoteSource(MediaStreamSource*);
     void removeRemoteSource(MediaStreamSource*);
 
-    // Deprecated. to be removed in bug https://bugs.webkit.org/show_bug.cgi?id=132104
-    bool ended() const { return m_ended; }
-    void setEnded();
-
     bool active() const { return m_isActive; }
     void setActive(bool);
 
@@ -111,7 +106,6 @@ private:
 
     Vector<RefPtr<MediaStreamTrackPrivate>> m_audioPrivateTracks;
     Vector<RefPtr<MediaStreamTrackPrivate>> m_videoPrivateTracks;
-    bool m_ended; // Deprecated. to be removed in bug https://bugs.webkit.org/show_bug.cgi?id=132104
     bool m_isActive;
 };
 

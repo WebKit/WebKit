@@ -1,3 +1,40 @@
+2014-04-27  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        [MediaStream] .ended shouldn't be part of MediaStream IDL
+        https://bugs.webkit.org/show_bug.cgi?id=132104
+
+        Reviewed by Eric Carlson.
+
+        .ended attribute is spec'ed out of MediaStream IDL. Instead, .active
+        is introduced to handle more scenarios. This patch replaces all 'ended'
+        attribute calls with corresponding 'active' attributes. 
+
+        MediaStream-add-remove-tracks.html is updated.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::addTrack): Replaced ended() with active().
+        (WebCore::MediaStream::removeTrack): setEnded() isn't called. setActive()
+        is retained which propagates oninactive event.
+        (WebCore::MediaStream::trackDidEnd): setEnded() isn't called.
+        (WebCore::MediaStream::removeRemoteSource): Replaced ended() with active().
+        (WebCore::MediaStream::addRemoteTrack): Replaced ended() with active().
+        (WebCore::MediaStream::removeRemoteTrack): Replaced ended() with active().
+        (WebCore::MediaStream::ended): Deleted.
+        (WebCore::MediaStream::setEnded): Deleted.
+        (WebCore::MediaStream::streamDidEnd): Deleted.
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::didRemoveRemoteStream): Replaced setEnded()
+        with setActive().
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::MediaStreamPrivate):
+        (WebCore::MediaStreamPrivate::setActive): Updated comment from bug 
+        https://bugs.webkit.org/show_bug.cgi?id=131973
+        (WebCore::MediaStreamPrivate::setEnded): Deleted.
+        * platform/mediastream/MediaStreamPrivate.h:
+        (WebCore::MediaStreamPrivate::ended): Deleted.
+
 2014-04-25  Andy Estes  <aestes@apple.com>
 
         [iOS] Stop creating a WKWebResourceQuickLookDelegate for every WebResourceLoader

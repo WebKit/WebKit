@@ -651,7 +651,7 @@ void RTCPeerConnection::didRemoveRemoteStream(MediaStreamPrivate* privateStream)
 
     // FIXME: this class shouldn't know that the private stream client is a MediaStream!
     RefPtr<MediaStream> stream = static_cast<MediaStream*>(privateStream->client());
-    stream->setEnded();
+    stream->setActive(false);
 
     if (m_signalingState == SignalingStateClosed)
         return;
