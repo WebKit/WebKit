@@ -1,3 +1,17 @@
+2014-04-28  Enrica Casucci  <enrica@apple.com>
+
+        WK2 iOS: crash when handling a synthetic keyboard event.
+        https://bugs.webkit.org/show_bug.cgi?id=132296
+        <rdar://problem/16469726>
+
+        Reviewed by Benjamin Poulain.
+
+        Adding a null check, since synthetic keyboard events do not
+        have a corresponding platform event. We already do this on OS X.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+
 2014-04-24  Andy Estes  <aestes@apple.com>
 
         [iOS] Implement WebQuickLookHandleClient for WebKit2

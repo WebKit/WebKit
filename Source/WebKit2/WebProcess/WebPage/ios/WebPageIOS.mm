@@ -154,9 +154,13 @@ bool WebPage::allowsUserScaling() const
 
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
 {
+    const PlatformKeyboardEvent* platformEvent = event->keyEvent();
+    if (!platformEvent)
+        return false;
+
     // FIXME: Interpret the event immediately upon receiving it in UI process, without sending to WebProcess first.
     bool eventWasHandled = false;
-    bool sendResult = WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(), event->keyEvent()->type() == PlatformKeyboardEvent::Char),
+    bool sendResult = WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(), platformEvent->type() == PlatformKeyboardEvent::Char),
                                                                                Messages::WebPageProxy::InterpretKeyEvent::Reply(eventWasHandled), m_pageID);
     if (!sendResult)
         return false;
