@@ -6,6 +6,12 @@
 
 2014-04-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Flagged some tests.
+
+2014-04-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         Unreviewed GTK gardening. Adding failure expectations for 6
         failing and flaky tests. Removed 1.
 
