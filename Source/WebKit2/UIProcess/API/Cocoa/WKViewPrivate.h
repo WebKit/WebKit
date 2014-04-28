@@ -106,6 +106,8 @@
 
 // Views must be layer-backed, have no transform applied, be in back-to-front z-order, and the whole set must be a contiguous opaque rectangle.
 - (void)_setCustomSwipeViews:(NSArray *)customSwipeViews;
+// The top content inset is applied in the window's coordinate space, to the union of the custom swipe view's frames.
+- (void)_setCustomSwipeViewsTopContentInset:(float)topContentInset;
 - (BOOL)_tryToSwipeWithEvent:(NSEvent *)event ignoringPinnedState:(BOOL)ignoringPinnedState;
 
 #endif

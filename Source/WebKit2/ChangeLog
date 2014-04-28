@@ -1,3 +1,69 @@
+2014-04-28  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Swipe): Discard snapshots made with a different view size/pixel density
+        https://bugs.webkit.org/show_bug.cgi?id=132115
+
+        Reviewed by Simon Fraser.
+
+        We shouldn't try to use snapshots if they no longer match the destination view size.
+        To do this, we need an accurate understanding of the topContentInset, both for the Web view,
+        and for any custom views, because we don't want to include the inset area in the snapshot,
+        and we don't want to reject snapshots that differ from the current view only because they have an inset or not.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        (-[WKView _setCustomSwipeViewsTopContentInset:]):
+        Add and plumb through a topContentInset property to apply to the custom swipe views.
+        For simplicitly's sake in the multi-view case, it is applied in window coordinates,
+        so clients will have to do conversions if necessary.
+        Don't include the top content inset in the snapshot that is taken.
+
+        * UIProcess/mac/ViewGestureController.h:
+        (WebKit::ViewGestureController::setCustomSwipeViewsTopContentInset):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::windowRelativeBoundsForCustomSwipeViews):
+        Apply the aforementioned custom swipe view top content inset.
+
+        (WebKit::ViewGestureController::determineSnapshotLayerParent):
+        (WebKit::ViewGestureController::determineLayerAdjacentToSnapshotForParent):
+        Factor these out of beginSwipeGesture.
+
+        (WebKit::ViewGestureController::retrieveSnapshotForItem):
+        Don't return a snapshot if the current deviceScaleFactor doesn't match that
+        at which the snapshot was taken, or if the size of the snapshot doesn't match
+        the unobscured part of the snapshot layer (the layer's size sans top content inset).
+
+        (WebKit::layerGeometryFlippedToRoot): Added.
+        Determine whether geometry flipping occurs between a layer and the root of the tree it is in.
+
+        (WebKit::ViewGestureController::applyDebuggingPropertiesToSwipeViews):
+        Factor out debugging layer properties, and add some borders and backgrounds to our layers.
+        I switched to invert instead of blur because blur makes the borders hard to use.
+
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        Add an additional layer, the swipeLayer, which is the parent of the swipeSnapshotLayer.
+        We use this layer to compensate for geometry flipping, since we don't necessarily
+        know the structure of the layer tree ahead of time when inserting snapshots into the
+        client's layer tree, in the custom swipe view case.
+        The swipe layer is always the full size of the view, including topContentInset, and
+        has a white background in order to fill in that space. The snapshot layer is the size
+        of the view *excluding* the topContentInset, which should match the size of the snapshot image
+        itself (and we reject the image and just paint white if this is not the case).
+
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        Move and remove the new swipeLayer.
+
+        * UIProcess/mac/ViewSnapshotStore.h:
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        Store the deviceScaleFactor at the time the snapshot was taken.
+        Fix a bug where the count of snapshots with live images was too high
+        because we were failing to decrement it when replacing a snapshot of
+        an existing item with a fresh one.
+
 2014-04-28  Enrica Casucci  <enrica@apple.com>
 
         WK2 iOS: crash when handling a synthetic keyboard event.

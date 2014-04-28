@@ -3043,8 +3043,13 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     FloatRect boundsForCustomSwipeViews = _data->_gestureController->windowRelativeBoundsForCustomSwipeViews();
     if (!boundsForCustomSwipeViews.isEmpty())
         windowCaptureRect = boundsForCustomSwipeViews;
-    else
-        windowCaptureRect = [self convertRect:self.bounds toView:nil];
+    else {
+        NSRect unobscuredBounds = self.bounds;
+        float topContentInset = _data->_page->topContentInset();
+        unobscuredBounds.origin.y += topContentInset;
+        unobscuredBounds.size.height -= topContentInset;
+        windowCaptureRect = [self convertRect:unobscuredBounds toView:nil];
+    }
 
     NSRect windowCaptureScreenRect = [window convertRectToScreen:windowCaptureRect];
     CGRect windowScreenRect;
@@ -3891,6 +3896,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         views.append(view);
 
     _data->_gestureController->setCustomSwipeViews(views);
+}
+
+- (void)_setCustomSwipeViewsTopContentInset:(float)topContentInset
+{
+    [self _ensureGestureController];
+    _data->_gestureController->setCustomSwipeViewsTopContentInset(topContentInset);
 }
 
 - (BOOL)_tryToSwipeWithEvent:(NSEvent *)event ignoringPinnedState:(BOOL)ignoringPinnedState

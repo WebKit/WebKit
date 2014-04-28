@@ -157,6 +157,7 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
     Snapshot snapshot;
     snapshot.creationTime = std::chrono::steady_clock::now();
     snapshot.renderTreeSize = webPageProxy.renderTreeSize();
+    snapshot.deviceScaleFactor = webPageProxy.deviceScaleFactor();
 
 #if USE(IOSURFACE)
     snapshot.surface = createIOSurfaceFromImage(snapshotImage.get());

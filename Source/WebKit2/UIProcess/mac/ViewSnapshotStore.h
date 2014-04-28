@@ -55,6 +55,7 @@ public:
 
         std::chrono::steady_clock::time_point creationTime;
         uint64_t renderTreeSize;
+        float deviceScaleFactor;
 
         void clearImage();
         bool hasImage() const;
