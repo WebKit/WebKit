@@ -759,6 +759,15 @@ webkit.org/b/132183 fast/dom/adopt-node-crash-2.html [ Failure Pass ]
 webkit.org/b/132184 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure Pass ]
 webkit.org/b/132185 platform/gtk/editing/pasteboard/middle-button-paste.html [ Failure Pass ]
 
+#Some media fragment tests are flaky
+webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0086.html [ Failure Pass ]
+
+webkit.org/b/132249 http/tests/media/video-cookie.html [ Failure Pass ]
+
+webkit.org/b/132250 media/audio-mpeg4-supported.html [ Timeout Pass ]
+webkit.org/b/132251 media/controls-drag-timebar.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1162,8 +1171,6 @@ Bug(GTK) fast/media/media-query-list-05.html [ Failure ]
 Bug(GTK) fast/media/media-query-list-06.html [ Failure ]
 
 Bug(GTK) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
-
-Bug(GTK) media/video-volume-slider.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Tests failing
@@ -1856,6 +1863,8 @@ webkit.org/b/132233 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnl
 webkit.org/b/132234 fast/regions/wheel-scrollable-single-region.html [ ImageOnlyFailure ]
 
 webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
+
+webkit.org/b/132253 media/volume-bar-empty-when-muted.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
