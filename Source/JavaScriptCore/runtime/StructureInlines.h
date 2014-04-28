@@ -135,6 +135,7 @@ inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
 inline void Structure::setEnumerationCache(VM& vm, JSPropertyNameIterator* enumerationCache)
 {
     ASSERT(!isDictionary());
+    ASSERT(!hadDeletedOffsets());
     if (!typeInfo().structureHasRareData())
         allocateRareData(vm);
     rareData()->setEnumerationCache(vm, this, enumerationCache);
@@ -217,7 +218,20 @@ inline bool Structure::putWillGrowOutOfLineStorage()
     return propertyTable()->size() == totalStorageCapacity();
 }
 
-ALWAYS_INLINE WriteBarrier<PropertyTable>& Structure::propertyTable()
+inline bool Structure::hadDeletedOffsets() const
+{
+    // If we had deleted anything then we would have pinned our property table.
+    if (!propertyTable())
+        return false;
+    return propertyTable()->hadDeletedOffset();
+}
+
+inline WriteBarrier<PropertyTable>& Structure::propertyTable()
+{
+    return const_cast<WriteBarrier<PropertyTable>&>(static_cast<const Structure*>(this)->propertyTable());
+}
+
+inline const WriteBarrier<PropertyTable>& Structure::propertyTable() const
 {
     ASSERT(!globalObject() || !globalObject()->vm().heap.isCollecting());
     return m_propertyTableUnsafe;
@@ -239,8 +253,8 @@ ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
     if (isCompilationThread())
         return true;
     
-    RELEASE_ASSERT(numberOfSlotsForLastOffset(m_offset, m_inlineCapacity) == propertyTable->propertyStorageSize());
     unsigned totalSize = propertyTable->propertyStorageSize();
+    RELEASE_ASSERT(numberOfSlotsForLastOffset(m_offset, m_inlineCapacity) == totalSize);
     RELEASE_ASSERT((totalSize < inlineCapacity() ? 0 : totalSize - inlineCapacity()) == numberOfOutOfLineSlotsForLastOffset(m_offset));
 
     return true;
