@@ -535,7 +535,8 @@ void WebEditorClient::selectedTelephoneNumberRangesChanged(const Vector<RefPtr<R
 #if ENABLE(SERVICE_CONTROLS)
 void WebEditorClient::selectionRectsDidChange(const Vector<LayoutRect>& rects)
 {
-    m_page->selectionOverlayController().selectionRectsDidChange(rects);
+    if (m_page->serviceControlsEnabled())
+        m_page->selectionOverlayController().selectionRectsDidChange(rects);
 }
 #endif // ENABLE(SERVICE_CONTROLS)
 

@@ -249,6 +249,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_numberOfPrimarySnapshotDetectionAttempts(0)
     , m_determinePrimarySnapshottedPlugInTimer(RunLoop::main(), this, &WebPage::determinePrimarySnapshottedPlugInTimerFired)
 #endif
+#if ENABLE(SERVICE_CONTROLS)
+    , m_serviceControlsEnabled(false)
+#endif
     , m_layerHostingMode(parameters.layerHostingMode)
 #if PLATFORM(COCOA)
     , m_pdfPluginEnabled(false)
@@ -2495,6 +2498,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if PLATFORM(COCOA)
     m_pdfPluginEnabled = store.getBoolValueForKey(WebPreferencesKey::pdfPluginEnabledKey());
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+    m_serviceControlsEnabled = store.getBoolValueForKey(WebPreferencesKey::serviceControlsEnabledKey());
 #endif
 
     // FIXME: This should be generated from macro expansion for all preferences,

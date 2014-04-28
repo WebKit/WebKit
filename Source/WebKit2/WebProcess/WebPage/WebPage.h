@@ -787,6 +787,7 @@ public:
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     SelectionOverlayController& selectionOverlayController();
+    bool serviceControlsEnabled() const { return m_serviceControlsEnabled; }
 #endif
 
     void didChangeScrollOffsetForFrame(WebCore::Frame*);
@@ -1038,6 +1039,10 @@ private:
     String m_primaryPlugInOrigin;
     String m_primaryPlugInMimeType;
     RunLoop::Timer<WebPage> m_determinePrimarySnapshottedPlugInTimer;
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+    bool m_serviceControlsEnabled;
 #endif
 
     // The layer hosting mode.
