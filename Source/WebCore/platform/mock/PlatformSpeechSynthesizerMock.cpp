@@ -44,8 +44,10 @@ PlatformSpeechSynthesizerMock::~PlatformSpeechSynthesizerMock()
 void PlatformSpeechSynthesizerMock::speakingFinished(Timer<PlatformSpeechSynthesizerMock>*)
 {
     ASSERT(m_utterance.get());
-    client()->didFinishSpeaking(m_utterance);
+    RefPtr<PlatformSpeechSynthesisUtterance> protect(m_utterance);
     m_utterance = 0;
+    
+    client()->didFinishSpeaking(protect);
 }
     
 void PlatformSpeechSynthesizerMock::initializeVoiceList()
