@@ -48,11 +48,15 @@ static GRefPtr<GdkCursor> createNamedCursor(CustomCursorType cursorType)
 
     RefPtr<cairo_surface_t> source = adoptRef(cairo_image_surface_create_for_data(const_cast<unsigned char*>(cursor.bits), CAIRO_FORMAT_A1, 32, 32, 4));
     RefPtr<cairo_surface_t> mask = adoptRef(cairo_image_surface_create_for_data(const_cast<unsigned char*>(cursor.mask_bits), CAIRO_FORMAT_A1, 32, 32, 4));
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_A1, 32, 32));
+
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 32, 32));
     RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));
 
-    cairo_set_source_surface(cr.get(), source.get(), 0, 0);
+    cairo_set_source_rgb(cr.get(), 1, 1, 1);
     cairo_mask_surface(cr.get(), mask.get(), 0, 0);
+
+    cairo_set_source_surface(cr.get(), source.get(), 0, 0);
+    cairo_paint(cr.get());
 
 #if GTK_CHECK_VERSION(3, 9, 12)
     return adoptGRef(gdk_cursor_new_from_surface(gdk_display_get_default(), surface.get(), cursor.hot_x, cursor.hot_y));

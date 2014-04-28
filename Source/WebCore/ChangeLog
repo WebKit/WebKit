@@ -1,3 +1,20 @@
+2014-04-28  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Builtin cursors do not properly handle transparency
+        https://bugs.webkit.org/show_bug.cgi?id=131866
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Tested by ManualTests/cursor.html.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createNamedCursor): Instead of interpreting the source bitmap as an A1 image, use
+        it as a 1-bit black and white image. We do this by:
+            1. Painting the result to a full color image with transparency instead of an alpha-only surface.
+            2. Masking a white background using the cursor alpha surface.
+            3. Painting the black parts of the cursor by painting the source surface, where black pixels
+            will be interpreted as full opaque pixels.
+
 2014-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update GObject DOM bindings symbols file.
