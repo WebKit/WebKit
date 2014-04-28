@@ -145,6 +145,8 @@ void CodeBlockSet::traceMarked(SlotVisitor& visitor)
 void CodeBlockSet::rememberCurrentlyExecutingCodeBlocks(Heap* heap)
 {
 #if ENABLE(GGC)
+    if (verbose)
+        dataLog("Remembering ", m_currentlyExecuting.size(), " code blocks.\n");
     for (CodeBlock* codeBlock : m_currentlyExecuting) {
         heap->addToRememberedSet(codeBlock->ownerExecutable());
         ASSERT(codeBlock->m_mayBeExecuting);

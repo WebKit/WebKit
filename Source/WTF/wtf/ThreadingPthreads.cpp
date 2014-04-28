@@ -44,6 +44,8 @@
 #include "ThreadFunctionInvocation.h"
 #include "ThreadIdentifierDataPthreads.h"
 #include "ThreadSpecific.h"
+#include <wtf/DataLog.h>
+#include <wtf/RawPointer.h>
 #include <wtf/WTFThreadData.h>
 #include <errno.h>
 

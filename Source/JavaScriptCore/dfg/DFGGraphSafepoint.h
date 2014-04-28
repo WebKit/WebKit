@@ -36,7 +36,7 @@ class Graph;
 
 class GraphSafepoint {
 public:
-    GraphSafepoint(Graph&);
+    GraphSafepoint(Graph&, Safepoint::Result&);
     ~GraphSafepoint();
     
 private:

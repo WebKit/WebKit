@@ -124,7 +124,7 @@ Plan::Plan(PassRefPtr<CodeBlock> passedCodeBlock, CodeBlock* profiledDFGCodeBloc
     , identifiers(codeBlock.get())
     , weakReferences(codeBlock.get())
     , willTryToTierUp(false)
-    , isCompiled(false)
+    , stage(Preparing)
 {
 }
 
@@ -143,8 +143,11 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
     this->threadData = threadData;
     
     double before = 0;
-    if (reportCompileTimes())
+    CString codeBlockName;
+    if (reportCompileTimes()) {
         before = currentTimeMS();
+        codeBlockName = toCString(*codeBlock);
+    }
     
     SamplingRegion samplingRegion("DFG Compilation (Plan)");
     CompilationScope compilationScope;
@@ -154,7 +157,8 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
 
     CompilationPath path = compileInThreadImpl(longLivedState);
 
-    RELEASE_ASSERT(finalizer);
+    RELEASE_ASSERT(path == CancelPath || finalizer);
+    RELEASE_ASSERT((path == CancelPath) == (stage == Cancelled));
     
     if (reportCompileTimes()) {
         const char* pathName;
@@ -168,13 +172,16 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
         case FTLPath:
             pathName = "FTL";
             break;
+        case CancelPath:
+            pathName = "Cancelled";
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             pathName = "";
             break;
         }
         double now = currentTimeMS();
-        dataLog("Optimized ", *codeBlock, " using ", mode, " with ", pathName, " into ", finalizer->codeSize(), " bytes in ", now - before, " ms");
+        dataLog("Optimized ", codeBlockName, " using ", mode, " with ", pathName, " into ", finalizer ? finalizer->codeSize() : 0, " bytes in ", now - before, " ms");
         if (path == FTLPath)
             dataLog(" (DFG: ", beforeFTL - before, ", LLVM: ", now - beforeFTL, ")");
         dataLog(".\n");
@@ -322,10 +329,13 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:");
         
         bool haveLLVM;
+        Safepoint::Result safepointResult;
         {
-            GraphSafepoint safepoint(dfg);
+            GraphSafepoint safepoint(dfg, safepointResult);
             haveLLVM = initializeLLVM();
         }
+        if (safepointResult.didGetCancelled())
+            return CancelPath;
         
         if (!haveLLVM) {
             finalizer = adoptPtr(new FailedFinalizer(*this));
@@ -343,8 +353,10 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             return FTLPath;
         }
         
-        FTL::compile(state);
-            
+        FTL::compile(state, safepointResult);
+        if (safepointResult.didGetCancelled())
+            return CancelPath;
+        
         if (Options::llvmAlwaysFailsBeforeLink()) {
             FTL::fail(state);
             return FTLPath;
@@ -384,10 +396,20 @@ void Plan::reallyAdd(CommonData* commonData)
     writeBarriers.trigger(vm);
 }
 
+void Plan::notifyCompiling()
+{
+    stage = Compiling;
+}
+
+void Plan::notifyCompiled()
+{
+    stage = Compiled;
+}
+
 void Plan::notifyReady()
 {
     callback->compilationDidBecomeReadyAsynchronously(codeBlock.get());
-    isCompiled = true;
+    stage = Ready;
 }
 
 CompilationResult Plan::finalizeWithoutNotifyingCallback()
@@ -419,8 +441,11 @@ CompilationKey Plan::key()
     return CompilationKey(codeBlock->alternative(), mode);
 }
 
-void Plan::visitChildren(SlotVisitor& visitor, CodeBlockSet& codeBlocks)
+void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor, CodeBlockSet& codeBlocks)
 {
+    if (!isKnownToBeLiveDuringGC())
+        return;
+    
     for (unsigned i = mustHandleValues.size(); i--;)
         visitor.appendUnbarrieredValue(&mustHandleValues[i]);
     
@@ -432,6 +457,37 @@ void Plan::visitChildren(SlotVisitor& visitor, CodeBlockSet& codeBlocks)
     weakReferences.visitChildren(visitor);
     writeBarriers.visitChildren(visitor);
     transitions.visitChildren(visitor);
+}
+
+bool Plan::isKnownToBeLiveDuringGC()
+{
+    if (stage == Cancelled)
+        return false;
+    if (!Heap::isMarked(codeBlock->ownerExecutable()))
+        return false;
+    if (!codeBlock->alternative()->isKnownToBeLiveDuringGC())
+        return false;
+    if (!!profiledDFGCodeBlock && !profiledDFGCodeBlock->isKnownToBeLiveDuringGC())
+        return false;
+    return true;
+}
+
+void Plan::cancel()
+{
+    codeBlock = nullptr;
+    profiledDFGCodeBlock = nullptr;
+    mustHandleValues.clear();
+    compilation = nullptr;
+    finalizer.clear();
+    inlineCallFrames = nullptr;
+    watchpoints = DesiredWatchpoints();
+    identifiers = DesiredIdentifiers();
+    chains = DesiredStructureChains();
+    weakReferences = DesiredWeakReferences();
+    writeBarriers = DesiredWriteBarriers();
+    transitions = DesiredTransitions();
+    callback = nullptr;
+    stage = Cancelled;
 }
 
 } } // namespace JSC::DFG

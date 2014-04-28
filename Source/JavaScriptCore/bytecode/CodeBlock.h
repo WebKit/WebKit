@@ -947,6 +947,8 @@ public:
     void beginValidationDidFail();
     NO_RETURN_DUE_TO_CRASH void endValidationDidFail();
 
+    bool isKnownToBeLiveDuringGC(); // Will only return valid results when called during GC. Assumes that you've already established that the owner executable is live.
+
 protected:
     virtual void visitWeakReferences(SlotVisitor&) override;
     virtual void finalizeUnconditionally() override;
@@ -1001,29 +1003,7 @@ private:
     void dumpArrayProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
     void dumpRareCaseProfile(PrintStream&, const char* name, RareCaseProfile*, bool& hasPrintedProfiling);
         
-#if ENABLE(DFG_JIT)
-    bool shouldImmediatelyAssumeLivenessDuringScan()
-    {
-        // Interpreter and Baseline JIT CodeBlocks don't need to be jettisoned when
-        // their weak references go stale. So if a basline JIT CodeBlock gets
-        // scanned, we can assume that this means that it's live.
-        if (!JITCode::isOptimizingJIT(jitType()))
-            return true;
-
-        // For simplicity, we don't attempt to jettison code blocks during GC if
-        // they are executing. Instead we strongly mark their weak references to
-        // allow them to continue to execute soundly.
-        if (m_mayBeExecuting)
-            return true;
-
-        if (Options::forceDFGCodeBlockLiveness())
-            return true;
-
-        return false;
-    }
-#else
-    bool shouldImmediatelyAssumeLivenessDuringScan() { return true; }
-#endif
+    bool shouldImmediatelyAssumeLivenessDuringScan();
     
     void propagateTransitions(SlotVisitor&);
     void determineLiveness(SlotVisitor&);

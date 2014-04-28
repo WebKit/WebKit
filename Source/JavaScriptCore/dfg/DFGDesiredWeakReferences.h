@@ -43,6 +43,7 @@ class CommonData;
 
 class DesiredWeakReferences {
 public:
+    DesiredWeakReferences();
     DesiredWeakReferences(CodeBlock*);
     ~DesiredWeakReferences();
 

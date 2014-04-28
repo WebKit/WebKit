@@ -490,12 +490,12 @@ static void fixFunctionBasedOnStackMaps(
     }
 }
 
-void compile(State& state)
+void compile(State& state, Safepoint::Result& safepointResult)
 {
     char* error = 0;
     
     {
-        GraphSafepoint safepoint(state.graph);
+        GraphSafepoint safepoint(state.graph, safepointResult);
         
         LLVMMCJITCompilerOptions options;
         llvm->InitializeMCJITCompilerOptions(&options, sizeof(options));
@@ -566,7 +566,10 @@ void compile(State& state)
         llvm->DisposePassManager(modulePasses);
         llvm->DisposeExecutionEngine(engine);
     }
-
+    if (safepointResult.didGetCancelled())
+        return;
+    RELEASE_ASSERT(!state.graph.m_vm.heap.isCollecting());
+    
     if (shouldShowDisassembly()) {
         for (unsigned i = 0; i < state.jitCode->handles().size(); ++i) {
             ExecutableMemoryHandle* handle = state.jitCode->handles()[i].get();

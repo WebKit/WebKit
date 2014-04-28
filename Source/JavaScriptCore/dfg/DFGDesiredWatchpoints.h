@@ -81,7 +81,6 @@ struct ArrayBufferViewWatchpointAdaptor {
 
 template<typename WatchpointSetType, typename Adaptor = GenericSetAdaptor<WatchpointSetType>>
 class GenericDesiredWatchpoints {
-    WTF_MAKE_NONCOPYABLE(GenericDesiredWatchpoints);
 #if !ASSERT_DISABLED
     typedef HashMap<WatchpointSetType*, bool> StateMap;
 #endif

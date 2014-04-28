@@ -1,3 +1,86 @@
+2014-04-27  Filip Pizlo  <fpizlo@apple.com>
+
+        GC should be able to remove things from the DFG worklist and cancel on-going compilations if it knows that the compilation would already be invalidated
+        https://bugs.webkit.org/show_bug.cgi?id=132166
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+        
+        The GC can aid type inference by removing structures that are dead and jettisoning
+        code that relies on those structures. This can dramatically accelerate type inference
+        for some tricky programs.
+        
+        Unfortunately, we previously pinned any structures that enqueued compilations depended
+        on. This means that if you're on a machine that only runs a single compilation thread
+        and where compilations are relatively slow, you have a high chance of large numbers of
+        structures being pinned during any GC since the compilation queue is likely to be full
+        of random stuff.
+        
+        This comprehensively fixes this issue by allowing the GC to remove compilation plans
+        if the things they depend on are dead, and to even cancel safepointed compilations.
+        
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shouldImmediatelyAssumeLivenessDuringScan):
+        (JSC::CodeBlock::isKnownToBeLiveDuringGC):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::shouldImmediatelyAssumeLivenessDuringScan): Deleted.
+        * dfg/DFGDesiredIdentifiers.cpp:
+        (JSC::DFG::DesiredIdentifiers::DesiredIdentifiers):
+        * dfg/DFGDesiredIdentifiers.h:
+        * dfg/DFGDesiredWatchpoints.h:
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::DesiredWeakReferences):
+        * dfg/DFGDesiredWeakReferences.h:
+        * dfg/DFGGraphSafepoint.cpp:
+        (JSC::DFG::GraphSafepoint::GraphSafepoint):
+        * dfg/DFGGraphSafepoint.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::notifyCompiling):
+        (JSC::DFG::Plan::notifyCompiled):
+        (JSC::DFG::Plan::notifyReady):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::isKnownToBeLiveDuringGC):
+        (JSC::DFG::Plan::cancel):
+        (JSC::DFG::Plan::visitChildren): Deleted.
+        * dfg/DFGPlan.h:
+        * dfg/DFGSafepoint.cpp:
+        (JSC::DFG::Safepoint::Result::~Result):
+        (JSC::DFG::Safepoint::Result::didGetCancelled):
+        (JSC::DFG::Safepoint::Safepoint):
+        (JSC::DFG::Safepoint::~Safepoint):
+        (JSC::DFG::Safepoint::checkLivenessAndVisitChildren):
+        (JSC::DFG::Safepoint::isKnownToBeLiveDuringGC):
+        (JSC::DFG::Safepoint::cancel):
+        (JSC::DFG::Safepoint::visitChildren): Deleted.
+        * dfg/DFGSafepoint.h:
+        (JSC::DFG::Safepoint::Result::Result):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::compilationState):
+        (JSC::DFG::Worklist::waitUntilAllPlansForVMAreReady):
+        (JSC::DFG::Worklist::removeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::visitWeakReferences):
+        (JSC::DFG::Worklist::removeDeadPlans):
+        (JSC::DFG::Worklist::runThread):
+        (JSC::DFG::Worklist::visitChildren): Deleted.
+        * dfg/DFGWorklist.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLCompile.h:
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks):
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::visitCompilerWorklistWeakReferences):
+        (JSC::Heap::removeDeadCompilerWorklistEntries):
+        (JSC::Heap::visitWeakHandles):
+        (JSC::Heap::collect):
+        (JSC::Heap::visitCompilerWorklists): Deleted.
+        * heap/Heap.h:
+
 2014-04-28  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Deleting properties poisons objects

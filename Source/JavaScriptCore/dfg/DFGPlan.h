@@ -60,17 +60,21 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
         CompilationMode, unsigned osrEntryBytecodeIndex,
         const Operands<JSValue>& mustHandleValues);
     ~Plan();
-    
+
     void compileInThread(LongLivedState&, ThreadData*);
     
     CompilationResult finalizeWithoutNotifyingCallback();
     void finalizeAndNotifyCallback();
     
+    void notifyCompiling();
+    void notifyCompiled();
     void notifyReady();
     
     CompilationKey key();
     
-    void visitChildren(SlotVisitor&, CodeBlockSet&);
+    void checkLivenessAndVisitChildren(SlotVisitor&, CodeBlockSet&);
+    bool isKnownToBeLiveDuringGC();
+    void cancel();
     
     VM& vm;
     RefPtr<CodeBlock> codeBlock;
@@ -96,15 +100,16 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     bool willTryToTierUp;
 
     double beforeFTL;
-    
-    bool isCompiled;
+
+    enum Stage { Preparing, Compiling, Compiled, Ready, Cancelled };
+    Stage stage;
 
     RefPtr<DeferredCompilationCallback> callback;
 
 private:
     bool reportCompileTimes() const;
     
-    enum CompilationPath { FailPath, DFGPath, FTLPath };
+    enum CompilationPath { FailPath, DFGPath, FTLPath, CancelPath };
     CompilationPath compileInThreadImpl(LongLivedState&);
     
     bool isStillValid();

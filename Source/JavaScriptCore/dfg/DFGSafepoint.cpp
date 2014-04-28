@@ -35,10 +35,25 @@
 
 namespace JSC { namespace DFG {
 
-Safepoint::Safepoint(Plan& plan)
+Safepoint::Result::~Result()
+{
+    RELEASE_ASSERT(m_wasChecked);
+}
+
+bool Safepoint::Result::didGetCancelled()
+{
+    m_wasChecked = true;
+    return m_didGetCancelled;
+}
+
+Safepoint::Safepoint(Plan& plan, Result& result)
     : m_plan(plan)
     , m_didCallBegin(false)
+    , m_result(result)
 {
+    RELEASE_ASSERT(result.m_wasChecked);
+    result.m_wasChecked = false;
+    result.m_didGetCancelled = false;
 }
 
 Safepoint::~Safepoint()
@@ -46,8 +61,8 @@ Safepoint::~Safepoint()
     RELEASE_ASSERT(m_didCallBegin);
     if (ThreadData* data = m_plan.threadData) {
         RELEASE_ASSERT(data->m_safepoint == this);
-        data->m_safepoint = nullptr;
         data->m_rightToRun.lock();
+        data->m_safepoint = nullptr;
     }
 }
 
@@ -68,11 +83,37 @@ void Safepoint::begin()
     m_didCallBegin = true;
 }
 
-void Safepoint::visitChildren(SlotVisitor& visitor)
+void Safepoint::checkLivenessAndVisitChildren(SlotVisitor& visitor)
 {
     RELEASE_ASSERT(m_didCallBegin);
+
+    if (m_result.m_didGetCancelled)
+        return; // We were cancelled during a previous GC!
+    
+    if (!isKnownToBeLiveDuringGC())
+        return;
+    
     for (unsigned i = m_scannables.size(); i--;)
         m_scannables[i]->visitChildren(visitor);
+}
+
+bool Safepoint::isKnownToBeLiveDuringGC()
+{
+    RELEASE_ASSERT(m_didCallBegin);
+    
+    if (m_result.m_didGetCancelled)
+        return true; // We were cancelled during a previous GC, so let's not mess with it this time around - pretend it's live and move on.
+    
+    return m_plan.isKnownToBeLiveDuringGC();
+}
+
+void Safepoint::cancel()
+{
+    RELEASE_ASSERT(m_didCallBegin);
+    RELEASE_ASSERT(!m_result.m_didGetCancelled); // We cannot get cancelled twice because subsequent GCs will think that we're alive and they will not do anything to us.
+    
+    m_plan.cancel();
+    m_result.m_didGetCancelled = true;
 }
 
 VM& Safepoint::vm() const

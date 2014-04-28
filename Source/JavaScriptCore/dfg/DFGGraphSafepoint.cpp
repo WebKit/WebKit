@@ -33,8 +33,8 @@
 
 namespace JSC { namespace DFG {
 
-GraphSafepoint::GraphSafepoint(Graph& graph)
-    : m_safepoint(graph.m_plan)
+GraphSafepoint::GraphSafepoint(Graph& graph, Safepoint::Result& result)
+    : m_safepoint(graph.m_plan, result)
 {
     m_safepoint.add(&graph);
     m_safepoint.begin();

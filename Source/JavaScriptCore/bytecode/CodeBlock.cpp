@@ -1972,6 +1972,49 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 #endif // ENABLE(DFG_JIT)
 }
 
+bool CodeBlock::shouldImmediatelyAssumeLivenessDuringScan()
+{
+#if ENABLE(DFG_JIT)
+    // Interpreter and Baseline JIT CodeBlocks don't need to be jettisoned when
+    // their weak references go stale. So if a basline JIT CodeBlock gets
+    // scanned, we can assume that this means that it's live.
+    if (!JITCode::isOptimizingJIT(jitType()))
+        return true;
+
+    // For simplicity, we don't attempt to jettison code blocks during GC if
+    // they are executing. Instead we strongly mark their weak references to
+    // allow them to continue to execute soundly.
+    if (m_mayBeExecuting)
+        return true;
+
+    if (Options::forceDFGCodeBlockLiveness())
+        return true;
+
+    return false;
+#else
+    return true;
+#endif
+}
+
+bool CodeBlock::isKnownToBeLiveDuringGC()
+{
+#if ENABLE(DFG_JIT)
+    // This should return true for:
+    // - Code blocks that behave like normal objects - i.e. if they are referenced then they
+    //   are live.
+    // - Code blocks that were running on the stack.
+    // - Code blocks that survived the last GC if the current GC is an Eden GC. This is
+    //   because either livenessHasBeenProved would have survived as true or m_mayBeExecuting
+    //   would survive as true.
+    // - Code blocks that don't have any dead weak references.
+    
+    return shouldImmediatelyAssumeLivenessDuringScan()
+        || m_jitCode->dfgCommon()->livenessHasBeenProved;
+#else
+    return true;
+#endif
+}
+
 void CodeBlock::propagateTransitions(SlotVisitor& visitor)
 {
     UNUSED_PARAM(visitor);
@@ -2215,7 +2258,7 @@ void CodeBlock::finalizeUnconditionally()
 
 #if ENABLE(DFG_JIT)
     // Check if we're not live. If we are, then jettison.
-    if (!(shouldImmediatelyAssumeLivenessDuringScan() || m_jitCode->dfgCommon()->livenessHasBeenProved)) {
+    if (!isKnownToBeLiveDuringGC()) {
         if (Options::verboseOSR())
             dataLog(*this, " has dead weak references, jettisoning during GC.\n");
 

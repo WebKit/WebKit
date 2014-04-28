@@ -71,7 +71,9 @@ public:
     
     bool isActiveForVM(VM&) const;
     
-    void visitChildren(SlotVisitor&, CodeBlockSet&); // Only called on the main thread after suspending all threads.
+    // Only called on the main thread after suspending all threads.
+    void visitWeakReferences(SlotVisitor&, CodeBlockSet&);
+    void removeDeadPlans(VM&);
     
     void dump(PrintStream&) const;
     

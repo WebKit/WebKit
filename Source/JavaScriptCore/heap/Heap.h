@@ -274,7 +274,8 @@ private:
     void visitExternalRememberedSet();
     void visitSmallStrings();
     void visitConservativeRoots(ConservativeRoots&);
-    void visitCompilerWorklists();
+    void visitCompilerWorklistWeakReferences();
+    void removeDeadCompilerWorklistEntries();
     void visitProtectedObjects(HeapRootVisitor&);
     void visitTempSortVectors(HeapRootVisitor&);
     void visitArgumentBuffers(HeapRootVisitor&);

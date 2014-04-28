@@ -516,7 +516,6 @@ void Heap::markRoots(double gcStartTime)
         visitExternalRememberedSet();
         visitSmallStrings();
         visitConservativeRoots(conservativeRoots);
-        visitCompilerWorklists();
         visitProtectedObjects(heapRootVisitor);
         visitTempSortVectors(heapRootVisitor);
         visitArgumentBuffers(heapRootVisitor);
@@ -622,17 +621,23 @@ void Heap::visitConservativeRoots(ConservativeRoots& roots)
     m_slotVisitor.donateAndDrain();
 }
 
-void Heap::visitCompilerWorklists()
+void Heap::visitCompilerWorklistWeakReferences()
 {
 #if ENABLE(DFG_JIT)
-    GCPHASE(VisitDFGWorklists);
     for (auto worklist : m_suspendedCompilerWorklists)
-        worklist->visitChildren(m_slotVisitor, m_codeBlocks);
+        worklist->visitWeakReferences(m_slotVisitor, m_codeBlocks);
 
     if (Options::logGC() == GCLogging::Verbose)
         dataLog("DFG Worklists:\n", m_slotVisitor);
+#endif
+}
 
-    m_slotVisitor.donateAndDrain();
+void Heap::removeDeadCompilerWorklistEntries()
+{
+#if ENABLE(DFG_JIT)
+    GCPHASE(FinalizeDFGWorklists);
+    for (auto worklist : m_suspendedCompilerWorklists)
+        worklist->removeDeadPlans(*m_vm);
 #endif
 }
 
@@ -743,6 +748,8 @@ void Heap::visitWeakHandles(HeapRootVisitor& visitor)
     while (true) {
         m_objectSpace.visitWeakSets(visitor);
         harvestWeakReferences();
+        visitCompilerWorklistWeakReferences();
+        m_codeBlocks.traceMarked(m_slotVisitor); // New "executing" code blocks may be discovered.
         if (m_slotVisitor.isEmpty())
             break;
 
@@ -998,6 +1005,7 @@ void Heap::collect(HeapOperation collectionType)
     copyBackingStores();
 
     finalizeUnconditionalFinalizers();
+    removeDeadCompilerWorklistEntries();
     deleteUnmarkedCompiledCode();
     deleteSourceProviderCaches();
     notifyIncrementalSweeper();
