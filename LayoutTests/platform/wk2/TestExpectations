@@ -242,6 +242,8 @@ webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure 
 
 webkit.org/b/127683 http/tests/navigation/new-window-redirect-history.html [ Crash ]
 
+webkit.org/b/132297 svg/custom/bug79798.html [ Skip ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

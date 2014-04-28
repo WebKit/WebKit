@@ -1,3 +1,11 @@
+2014-04-28  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r167845): ASSERT(!m_renderView.needsLayout()) in svg/custom/bug79798.html
+        https://bugs.webkit.org/show_bug.cgi?id=132297
+
+        * platform/wk2/TestExpectations:
+        Skip the test.
+
 2014-04-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167871.
