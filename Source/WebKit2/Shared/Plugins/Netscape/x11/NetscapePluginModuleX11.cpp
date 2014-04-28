@@ -195,24 +195,20 @@ void NetscapePluginModule::determineQuirks()
     }
 }
 
-static void writeByte(char byte)
+static void writeCharacter(char byte)
 {
     int result;
     while ((result = fputc(byte, stdout)) == EOF && errno == EINTR) { }
     ASSERT(result != EOF);
 }
 
-static void writeCharacter(UChar character)
-{
-    writeByte(reinterpret_cast<const char*>(&character)[0]);
-    writeByte(reinterpret_cast<const char*>(&character)[1]);
-}
-
 static void writeLine(const String& line)
 {
-    unsigned length = line.length();
-    for (unsigned i = 0; i < length; ++i) {
-        UChar character = line[i];
+    CString utf8String = line.utf8();
+    const char* utf8Data = utf8String.data();
+
+    for (unsigned i = 0; i < utf8String.length(); i++) {
+        char character = utf8Data[i];
         if (character != '\n')
             writeCharacter(character);
     }
