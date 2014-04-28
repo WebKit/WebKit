@@ -97,7 +97,7 @@ const char* webkit_plugin_get_description(WebKitPlugin* plugin)
     g_return_val_if_fail(WEBKIT_IS_PLUGIN(plugin), 0);
 
     if (!plugin->priv->description.isNull())
-        plugin->priv->description.data();
+        return plugin->priv->description.data();
 
     if (plugin->priv->pluginInfo.info.desc.isEmpty())
         return 0;
