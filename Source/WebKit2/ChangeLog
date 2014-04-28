@@ -1,3 +1,15 @@
+2014-04-28  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [X11] Add missing case for mime type application/x-webkit-test-netscape
+        https://bugs.webkit.org/show_bug.cgi?id=132278
+
+        Reviewed by Darin Adler.
+
+        Case for x-webkit-test-netscape has been omitted along with r167759.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::initialize):
+
 2014-04-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2][X11] NetscapePluginModule::scanPlugin() should write UTF-8 strings to stdout

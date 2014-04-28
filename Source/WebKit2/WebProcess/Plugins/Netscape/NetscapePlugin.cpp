@@ -612,6 +612,9 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
             paramNames.append("wmode");
             paramValues.append("opaque");
         }
+    } else if (equalIgnoringCase(parameters.mimeType, "application/x-webkit-test-netscape")) {
+        paramNames.append("windowedPlugin");
+        paramValues.append("false");
     }
 #endif
 
