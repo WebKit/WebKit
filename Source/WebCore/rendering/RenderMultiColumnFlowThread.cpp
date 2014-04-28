@@ -28,6 +28,7 @@
 
 #include "HitTestResult.h"
 #include "LayoutState.h"
+#include "RenderIterator.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderView.h"
@@ -582,6 +583,49 @@ void RenderMultiColumnFlowThread::computeLineGridPaginationOrigin(LayoutState& l
     }
 }
 
+void RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
+{
+    // First get the transform state's point into the block flow thread's physical coordinate space.
+    parent()->mapAbsoluteToLocalPoint(mode, transformState);
+    LayoutPoint transformPoint = roundedLayoutPoint(transformState.mappedPoint());
+    
+    // Now walk through each region.
+    const RenderMultiColumnSet* candidateColumnSet = nullptr;
+    LayoutPoint candidatePoint;
+    
+    for (const auto& columnSet : childrenOfType<RenderMultiColumnSet>(*parent())) {
+        LayoutSize containerOffset = columnSet.offsetFromContainer(parent(), LayoutPoint());
+        
+        candidatePoint = transformPoint - containerOffset;
+        candidateColumnSet = &columnSet;
+        
+        // We really have no clue what to do with overflow. We'll just use the closest region to the point in that case.
+        LayoutUnit pointOffset = isHorizontalWritingMode() ? candidatePoint.y() : candidatePoint.x();
+        LayoutUnit regionOffset = isHorizontalWritingMode() ? columnSet.topLeftLocation().y() : columnSet.topLeftLocation().x();
+        if (pointOffset < regionOffset + columnSet.logicalHeight())
+            break;
+    }
+    
+    // Once we have a good guess as to which region we hit tested through (and yes, this was just a heuristic, but it's
+    // the best we could do), then we can map from the region into the flow thread.
+    LayoutSize translationOffset = physicalTranslationFromRegionToFlow(candidateColumnSet, candidatePoint);
+    bool preserve3D = mode & UseTransforms && (parent()->style().preserves3D() || style().preserves3D());
+    if (mode & UseTransforms && shouldUseTransformFromContainer(parent())) {
+        TransformationMatrix t;
+        getTransformFromContainer(parent(), translationOffset, t);
+        transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    } else
+        transformState.move(translationOffset.width(), translationOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+}
+
+LayoutSize RenderMultiColumnFlowThread::physicalTranslationFromRegionToFlow(const RenderMultiColumnSet* columnSet, const LayoutPoint& physicalPoint) const
+{
+    LayoutPoint logicalPoint = columnSet->flipForWritingMode(physicalPoint);
+    LayoutPoint translatedPoint = columnSet->translateRegionPointToFlowThread(logicalPoint);
+    LayoutPoint physicalTranslatedPoint = columnSet->flipForWritingMode(translatedPoint);
+    return physicalPoint - physicalTranslatedPoint;
+}
+
 RenderRegion* RenderMultiColumnFlowThread::mapFromFlowToRegion(TransformState& transformState) const
 {
     if (!hasValidRegionInfo())
@@ -604,7 +648,6 @@ RenderRegion* RenderMultiColumnFlowThread::mapFromFlowToRegion(TransformState& t
 
 LayoutSize RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToRegion(const RenderRegion* renderRegion, const LayoutUnit logicalOffset) const
 {
-    
     // Now that we know which multicolumn set we hit, we need to get the appropriate translation offset for the column.
     const RenderMultiColumnSet* columnSet = toRenderMultiColumnSet(renderRegion);
     LayoutPoint translationOffset = columnSet->columnTranslationForOffset(logicalOffset);

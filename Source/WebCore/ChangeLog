@@ -1,3 +1,27 @@
+2014-04-28  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] event.offsetX/offsetY don't work correctly
+        https://bugs.webkit.org/show_bug.cgi?id=132284
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint):
+        Change the code here to only trigger for CSS Regions and not for
+        multi-column. Add a FIXME pointing out that the code is broken even for
+        CSS regions.
+
+         * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint):
+        Override mapAbsoluteToLocalPoint in order to guess a region and attempt
+        to translate the point from that region to the flow thread local coordinate
+        space.
+
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationFromRegionToFlow):
+        * rendering/RenderMultiColumnFlowThread.h:
+        New helper function that just wraps calling the region's logical translation
+        function and converting to/from physical coordinates.
+
 2014-04-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167857.

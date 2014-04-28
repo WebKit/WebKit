@@ -103,8 +103,13 @@ public:
     // The point is physical, and the result is a physical location within the region.
     RenderRegion* physicalTranslationFromFlowToRegion(LayoutPoint&) const;
     
+    // This method is the inverse of the previous method and goes from region to flow.
+    LayoutSize physicalTranslationFromRegionToFlow(const RenderMultiColumnSet*, const LayoutPoint&) const;
+    
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
-
+    
+    virtual void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const override;
+    
 private:
     virtual const char* renderName() const override;
     virtual void addRegionToThread(RenderRegion*) override;
