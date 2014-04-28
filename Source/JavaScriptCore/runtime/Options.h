@@ -204,7 +204,7 @@ typedef OptionRange optionRange;
     v(unsigned, maximumBinaryStringSwitchCaseLength, 50) \
     v(unsigned, maximumBinaryStringSwitchTotalLength, 2000) \
     \
-    v(int32, thresholdForJITAfterWarmUp, 100) \
+    v(int32, thresholdForJITAfterWarmUp, 500) \
     v(int32, thresholdForJITSoon, 100) \
     \
     v(int32, thresholdForOptimizeAfterWarmUp, 1000) \

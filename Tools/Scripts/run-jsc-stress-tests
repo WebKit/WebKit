@@ -179,9 +179,8 @@ end
 $numFailures = 0
 
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20"]
-
+NO_CJIT_OPTIONS = ["--enableConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100"]
 NO_FTL_OPTIONS = ["--useFTLJIT=false"]
-
 FTL_OPTIONS = ["--useFTLJIT=true", "--enableExperimentalFTLCoverage=true"]
 
 $runlist = []
@@ -532,11 +531,11 @@ def runNoLLInt
 end
 
 def runNoCJITValidate
-    run("no-cjit", "--enableConcurrentJIT=false", "--validateBytecode=true", "--validateGraph=true")
+    run("no-cjit", "--validateBytecode=true", "--validateGraph=true", *NO_CJIT_OPTIONS)
 end
 
 def runNoCJITValidatePhases
-    run("no-cjit-validate-phases", "--enableConcurrentJIT=false", "--validateBytecode=true", "--validateGraphAtEachPhase=true")
+    run("no-cjit-validate-phases", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *NO_CJIT_OPTIONS)
 end
 
 def runDefaultFTL
@@ -544,19 +543,19 @@ def runDefaultFTL
 end
 
 def runFTLNoCJIT
-    run("ftl-no-cjit", "--enableConcurrentJIT=false", *FTL_OPTIONS) if $enableFTL
+    run("ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def runFTLNoCJITValidate
-    run("ftl-no-cjit-validate", "--enableConcurrentJIT=false", "--validateGraph=true", *FTL_OPTIONS) if $enableFTL
+    run("ftl-no-cjit-validate", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def runFTLNoCJITNoInlineValidate
-    run("ftl-no-cjit-no-inline-validate", "--enableConcurrentJIT=false", "--validateGraph=true", "--maximumInliningDepth=1", "--maximumInliningDepthForMustInline=1", *FTL_OPTIONS) if $enableFTL
+    run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", "--maximumInliningDepthForMustInline=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def runFTLNoCJITOSRValidation
-    run("ftl-no-cjit-osr-validation", "--enableConcurrentJIT=false", "--validateFTLOSRExitLiveness=true", *FTL_OPTIONS) if $enableFTL
+    run("ftl-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def runDFGEager
@@ -564,7 +563,7 @@ def runDFGEager
 end
 
 def runDFGEagerNoCJITValidate
-    run("dfg-eager-no-cjit-validate", "--enableConcurrentJIT=false", "--validateGraph=true", *EAGER_OPTIONS)
+    run("dfg-eager-no-cjit-validate", "--validateGraph=true", *(EAGER_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runFTLEager
@@ -572,11 +571,11 @@ def runFTLEager
 end
 
 def runFTLEagerNoCJITValidate
-    run("ftl-eager-no-cjit", "--enableConcurrentJIT=false", "--validateGraph=true", *(FTL_OPTIONS + EAGER_OPTIONS)) if $enableFTL
+    run("ftl-eager-no-cjit", "--validateGraph=true", *(FTL_OPTIONS + EAGER_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def runFTLEagerNoCJITOSRValidation
-    run("ftl-eager-no-cjit-osr-validation", "--enableConcurrentJIT=false", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + EAGER_OPTIONS)) if $enableFTL
+    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + EAGER_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def runAlwaysTriggerCopyPhase
@@ -584,19 +583,19 @@ def runAlwaysTriggerCopyPhase
 end
 
 def runNoCJITNoASO
-    run("no-cjit-no-aso", "--enableConcurrentJIT=false", "--enableArchitectureSpecificOptimizations=false")
+    run("no-cjit-no-aso", "--enableArchitectureSpecificOptimizations=false", *NO_CJIT_OPTIONS)
 end
 
 def runFTLNoCJITNoSimpleOpt
-    run("ftl-no-cjit-no-simple-opt", "--enableConcurrentJIT=false", "--llvmSimpleOpt=false", *FTL_OPTIONS) if $enableFTL
+    run("ftl-no-cjit-no-simple-opt", "--llvmSimpleOpt=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def runNoCJITNoAccessInlining
-    run("no-cjit-no-access-inlining", "--enableConcurrentJIT=false", "--enableAccessInlining=false")
+    run("no-cjit-no-access-inlining", "--enableAccessInlining=false", *NO_CJIT_OPTIONS)
 end
 
 def runFTLNoCJITNoAccessInlining
-    run("ftl-no-cjit-no-access-inlining", "--enableConcurrentJIT=false", "--enableAccessInlining=false", *FTL_OPTIONS) if $enableFTL
+    run("ftl-no-cjit-no-access-inlining", "--enableAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def defaultRun
@@ -682,11 +681,11 @@ def runLayoutTestNoLLInt
 end
 
 def runLayoutTestNoCJIT
-    runLayoutTest("no-cjit", "--enableConcurrentJIT=false")
+    runLayoutTest("no-cjit", *NO_CJIT_OPTIONS)
 end
 
 def runLayoutTestDFGEagerNoCJIT
-    runLayoutTest("dfg-eager-no-cjit", "--enableConcurrentJIT=false", *EAGER_OPTIONS)
+    runLayoutTest("dfg-eager-no-cjit", *(EAGER_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runLayoutTestDefaultFTL
@@ -694,11 +693,11 @@ def runLayoutTestDefaultFTL
 end
 
 def runLayoutTestFTLNoCJIT
-    runLayoutTest("ftl-no-cjit", "--testTheFTL=true", "--enableConcurrentJIT=false", *FTL_OPTIONS) if $enableFTL
+    runLayoutTest("ftl-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def runLayoutTestFTLEagerNoCJIT
-    runLayoutTest("ftl-eager-no-cjit", "--testTheFTL=true", "--enableConcurrentJIT=false", *(FTL_OPTIONS + EAGER_OPTIONS)) if $enableFTL
+    runLayoutTest("ftl-eager-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + EAGER_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def noFTLRunLayoutTest
@@ -781,11 +780,11 @@ def runMozillaTestBaselineJIT(mode, *extraFiles)
 end
 
 def runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
-    runMozillaTest("dfg-eager-no-cjit-validate-phases", mode, extraFiles, "--enableConcurrentJIT=false", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *EAGER_OPTIONS)
+    runMozillaTest("dfg-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(EAGER_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
-    runMozillaTest("ftl-eager-no-cjit-validate-phases", mode, extraFiles, "--enableConcurrentJIT=false", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + EAGER_OPTIONS)) if $enableFTL
+    runMozillaTest("ftl-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + EAGER_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def defaultRunMozillaTest(mode, *extraFiles)

@@ -1,3 +1,13 @@
+2014-04-28  Filip Pizlo  <fpizlo@apple.com>
+
+        The LLInt is awesome and it should get more of the action.
+
+        Rubber stamped by Geoffrey Garen.
+        
+        5% speed-up on JSBench and no meaningful regressions.  Should be a PLT/DYE speed-up also.
+
+        * runtime/Options.h:
+
 2014-04-27  Filip Pizlo  <fpizlo@apple.com>
 
         GC should be able to remove things from the DFG worklist and cancel on-going compilations if it knows that the compilation would already be invalidated

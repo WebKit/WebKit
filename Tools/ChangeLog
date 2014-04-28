@@ -1,3 +1,12 @@
+2014-04-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Make sure that the coverage of our tests doesn't change much if we change the thresholds now and in the future, but making
+        "no-cjit" runs force the old-school threshold.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-04-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] install-dependencies should also install ruby-json and ruby-highline
