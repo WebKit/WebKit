@@ -1493,18 +1493,15 @@ bool WebPageProxy::shouldStartTrackingTouchEvents(const WebTouchEvent& touchStar
     return true;
 }
 
-static bool areAllTouchPointsReleased(const WebTouchEvent& event)
-{
-    for (const auto& touchPoint : event.touchPoints()) {
-        if (touchPoint.state() != WebPlatformTouchPoint::TouchReleased && touchPoint.state() != WebPlatformTouchPoint::TouchCancelled)
-            return false;
-    }
-
-    return true;
-}
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
+
+static bool areAllTouchPointsReleased(const WebTouchEvent& event)
+{
+    return event.type() == WebEvent::TouchEnd || event.type() != WebEvent::TouchCancel;
+}
+
 void WebPageProxy::handleTouchEventSynchronously(const NativeWebTouchEvent& event)
 {
     if (!isValid())
@@ -1542,7 +1539,19 @@ void WebPageProxy::handleTouchEventAsynchronously(const NativeWebTouchEvent& eve
     if (areAllTouchPointsReleased(event))
         m_isTrackingTouchEvents = false;
 }
+
 #elif ENABLE(TOUCH_EVENTS)
+
+static bool areAllTouchPointsReleased(const WebTouchEvent& event)
+{
+    for (const auto& touchPoint : event.touchPoints()) {
+        if (touchPoint.state() != WebPlatformTouchPoint::TouchReleased && touchPoint.state() != WebPlatformTouchPoint::TouchCancelled)
+            return false;
+    }
+
+    return true;
+}
+
 void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
 {
     if (!isValid())
