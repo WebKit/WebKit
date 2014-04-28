@@ -68,7 +68,6 @@ struct RenderFlexibleBox::Violation {
 
 RenderFlexibleBox::RenderFlexibleBox(Element& element, PassRef<RenderStyle> style)
     : RenderBlock(element, std::move(style), 0)
-    , m_orderIterator(*this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
 {
     setChildrenInline(false); // All of our children must be block-level.
@@ -76,7 +75,6 @@ RenderFlexibleBox::RenderFlexibleBox(Element& element, PassRef<RenderStyle> styl
 
 RenderFlexibleBox::RenderFlexibleBox(Document& document, PassRef<RenderStyle> style)
     : RenderBlock(document, std::move(style), 0)
-    , m_orderIterator(*this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
 {
     setChildrenInline(false); // All of our children must be block-level.
@@ -275,13 +273,11 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     dirtyForLayoutFromPercentageHeightDescendants();
 
-    Vector<LineContext> lineContexts;
-    OrderIterator::OrderValues orderValues;
-    computeMainAxisPreferredSizes(orderValues);
-    m_orderIterator.setOrderValues(std::move(orderValues));
+    prepareOrderIteratorAndMargins();
 
     ChildFrameRects oldChildRects;
     appendChildFrameRects(oldChildRects);
+    Vector<LineContext> lineContexts;
     layoutFlexItems(relayoutChildren, lineContexts);
 
     updateLogicalHeight();
@@ -834,16 +830,12 @@ LayoutUnit RenderFlexibleBox::computeChildMarginValue(const Length& margin)
     return minimumValueForLength(margin, availableSize);
 }
 
-void RenderFlexibleBox::computeMainAxisPreferredSizes(OrderIterator::OrderValues& orderValues)
+void RenderFlexibleBox::prepareOrderIteratorAndMargins()
 {
-    ASSERT(orderValues.isEmpty());
+    OrderIteratorPopulator populator(m_orderIterator);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        // Avoid growing the vector for the common-case default value of 0. This optimizes the most common case which is
-        // one or a few values with the default order 0
-        int order = child->style().order();
-        if (orderValues.isEmpty() || orderValues.last() != order)
-            orderValues.append(order);
+        populator.collectChild(*child);
 
         if (child->isOutOfFlowPositioned())
             continue;

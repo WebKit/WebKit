@@ -1,3 +1,54 @@
+2014-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        OrderIterator refactoring to avoid extra loops
+        https://bugs.webkit.org/show_bug.cgi?id=119061
+
+        Reviewed by Darin Adler.
+
+        This patch removes order values Vector and use a Vector of pairs instead. The pairs are formed by a child
+        (RenderBox) and the index of this child. In addition, OrderIterator code is simplified.
+
+        It provides a helper class OrderIteratorPopulator, used for manipulating the Vector directly. Which allows to
+        consolidate the code into a single implementation across flexbox and grid. OrderIteratorPopulator part is based
+        on a patch from Blink r153971 by <jchaffraix@chromium.org>.
+
+        Current implementation is O(number of children * number of order values). Now it will just do a sort operation
+        and then a regular loop. So if you have different order values in a flexbox or grid the performance will
+        improve.
+
+        Comparing results of perf-tests:
+        * Layout/auto-grid-lots-of-data: ~0.5% worse.
+        * Layout/fixed-grid-lots-of-data: ~0.5% worse.
+        * Layout/fixed-grid-lots-of-data (setting 100 different order values): ~50% better.
+        * Layout/flexbox-lots-of-data: ~5% better.
+
+        No new tests, already covered by current tests.
+
+        * rendering/OrderIterator.cpp:
+        (WebCore::OrderIterator::currentChild): Return current child according to m_childrenIndex.
+        (WebCore::OrderIterator::first): Initialize m_childrenIndex and return current child.
+        (WebCore::OrderIterator::next): Increase m_childrenIndex and return current child.
+        (WebCore::compareByOrderValueAndIndex): Sorts the Vector by order value and index.
+        (WebCore::OrderIteratorPopulator::~OrderIteratorPopulator): Calls compareByOrderValueAndIndex() if there is any
+        child with non default order value.
+        (WebCore::OrderIteratorPopulator::collectChild): Adds the child and index to the Vector. Update
+        m_allChildrenHaveDefaultOrderValue accordingly.
+        (WebCore::OrderIterator::OrderIterator): Deleted.
+        (WebCore::OrderIterator::setOrderValues): Deleted.
+        (WebCore::OrderIterator::reset): Deleted.
+        * rendering/OrderIterator.h:
+        (WebCore::OrderIteratorPopulator::OrderIteratorPopulator): New helper class to manipulate the Vector.
+        (WebCore::OrderIterator::currentChild): Deleted.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::RenderFlexibleBox): Remove OrderIterator intialization.
+        (WebCore::RenderFlexibleBox::layoutBlock): Remove unneeded code related to old OrderValues vector.
+        (WebCore::RenderFlexibleBox::prepareOrderIteratorAndMargins): Populate OrderIterator using collectChild().
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes): Deleted.
+        * rendering/RenderFlexibleBox.h: Rename computeMainAxisPreferredSizes() to prepareOrderIteratorAndMargins().
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::RenderGrid): Remove OrderIterator initialization.
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator): Populate OrderIterator using collectChild().
+
 2014-04-28  Zan Dobersek  <zdobersek@igalia.com>
 
         std::bitset<>::test() does unnecessary bounds checks on CSSPropertyID bitsets

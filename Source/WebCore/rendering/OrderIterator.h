@@ -41,22 +41,37 @@ class RenderBox;
 
 class OrderIterator {
 public:
-    OrderIterator(RenderBox&);
+    friend class OrderIteratorPopulator;
 
-    typedef Vector<int, 1> OrderValues;
-    void setOrderValues(OrderValues&&);
-
-    RenderBox* currentChild() const { return m_currentChild; }
+    RenderBox* currentChild() const;
     RenderBox* first();
     RenderBox* next();
 
 private:
     void reset();
 
-    RenderBox& m_containerBox;
-    RenderBox* m_currentChild;
-    OrderValues m_orderValues;
-    int m_orderIndex;
+    Vector<std::pair<RenderBox*, int>> m_children;
+    size_t m_childrenIndex;
+};
+
+class OrderIteratorPopulator {
+public:
+    OrderIteratorPopulator(OrderIterator& iterator)
+        : m_iterator(iterator)
+        , m_childIndex(0)
+        , m_allChildrenHaveDefaultOrderValue(true)
+    {
+        m_iterator.m_children.clear();
+    }
+
+    ~OrderIteratorPopulator();
+
+    void collectChild(RenderBox&);
+
+private:
+    OrderIterator& m_iterator;
+    size_t m_childIndex;
+    bool m_allChildrenHaveDefaultOrderValue;
 };
 
 } // namespace WebCore

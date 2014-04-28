@@ -32,66 +32,51 @@
 #include "config.h"
 #include "OrderIterator.h"
 
-#include "RenderFlexibleBox.h"
-#include "RenderGrid.h"
+#include "RenderBox.h"
 
 namespace WebCore {
 
-static const int cInvalidIndex = -1;
-
-OrderIterator::OrderIterator(RenderBox& containerBox)
-    : m_containerBox(containerBox)
+RenderBox* OrderIterator::currentChild() const
 {
-    reset();
-}
+    if (m_childrenIndex == m_children.size())
+        return nullptr;
 
-void OrderIterator::setOrderValues(OrderValues&& orderValues)
-{
-    reset();
-    m_orderValues = std::move(orderValues);
-    if (m_orderValues.size() < 2)
-        return;
-
-    std::sort(m_orderValues.begin(), m_orderValues.end());
-    auto nextElement = std::unique(m_orderValues.begin(), m_orderValues.end());
-    m_orderValues.shrinkCapacity(nextElement - m_orderValues.begin());
+    return m_children[m_childrenIndex].first;
 }
 
 RenderBox* OrderIterator::first()
 {
-    reset();
-    return next();
+    m_childrenIndex = 0;
+    return currentChild();
 }
 
 RenderBox* OrderIterator::next()
 {
-    int endIndex = m_orderValues.size();
-    do {
-        if (m_currentChild) {
-            m_currentChild = m_currentChild->nextSiblingBox();
-            continue;
-        }
-
-        if (m_orderIndex == endIndex)
-            return nullptr;
-
-        if (m_orderIndex != cInvalidIndex) {
-            ++m_orderIndex;
-            if (m_orderIndex == endIndex)
-                return nullptr;
-        } else
-            m_orderIndex = 0;
-
-        m_currentChild = m_containerBox.firstChildBox();
-    } while (!m_currentChild || m_currentChild->style().order() != m_orderValues[m_orderIndex]);
-
-    return m_currentChild;
+    ++m_childrenIndex;
+    return currentChild();
 }
 
-void OrderIterator::reset()
+static bool compareByOrderValueAndIndex(std::pair<RenderBox*, int> childAndIndex1, std::pair<RenderBox*, int> childAndIndex2)
 {
-    m_currentChild = nullptr;
-    m_orderIndex = cInvalidIndex;
+    if (childAndIndex1.first->style().order() != childAndIndex2.first->style().order())
+        return childAndIndex1.first->style().order() < childAndIndex2.first->style().order();
+    return childAndIndex1.second < childAndIndex2.second;
 }
+
+OrderIteratorPopulator::~OrderIteratorPopulator()
+{
+    if (!m_allChildrenHaveDefaultOrderValue)
+        std::sort(m_iterator.m_children.begin(), m_iterator.m_children.end(), compareByOrderValueAndIndex);
+}
+
+void OrderIteratorPopulator::collectChild(RenderBox& child)
+{
+    std::pair<RenderBox*, int> childAndIndex = { &child, m_childIndex++ };
+    m_iterator.m_children.append(childAndIndex);
+
+    if (m_allChildrenHaveDefaultOrderValue && child.style().order())
+        m_allChildrenHaveDefaultOrderValue = false;
+}
+
 
 } // namespace WebCore
