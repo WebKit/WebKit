@@ -1,3 +1,14 @@
+2014-04-27  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Remove indexedDB's dependency on leveldb and disable indexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=132176
+
+        Reviewed by Gyuyoung Kim.
+
+        EFL port will use sqlite to support indexedDB. So, this patch removes levelDB dependency for now.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2014-04-22  Alex Christensen  <achristensen@webkit.org>
 
         Removed old stdbool and inttypes headers.
