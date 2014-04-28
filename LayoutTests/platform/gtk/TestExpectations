@@ -41,6 +41,10 @@
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/132275 fast/multicol/client-rects-spanners-complex.html [ Missing ]
+webkit.org/b/132275 fast/multicol/client-rects-spanners.html [ Missing ]
+webkit.org/b/132275 fast/multicol/scrolling-column-rules.html [ Missing ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -385,7 +389,7 @@ fast/events/touch/gesture [ Skip ]
 # These tests rely on touch event grouping, which X11/GTK+ doesn't do by design
 webkit.org/b/128172 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
 webkit.org/b/128172 fast/events/touch/basic-multi-touch-events.html [ Failure ]
-webkit.org/b/128172 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
+webkit.org/b/128172 fast/events/touch/touch-input-element-change-documents.html [ Failure Timeout ]
 webkit.org/b/128172 fast/events/touch/frame-hover-update.html [ Failure ]
 webkit.org/b/128172 fast/events/touch/multi-touch-grouped-targets.html [ Timeout Failure ]
 webkit.org/b/128172 fast/events/touch/multi-touch-inside-nested-iframes.html [ Crash Timeout ]
@@ -426,7 +430,7 @@ webkit.org/b/86176 [ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Cr
 
 webkit.org/b/93812 [ Debug ] svg/custom/use-instanceRoot-as-event-target.xhtml [ Crash Pass ]
 
-webkit.org/b/90957 [ Release ] js/dom/random-array-gc-stress.html [ Crash Pass ]
+webkit.org/b/90957 [ Release ] js/dom/random-array-gc-stress.html [ Timeout Crash Pass ]
 
 webkit.org/b/94458 [ Debug ] fast/events/message-port-context-destroyed.html [ Crash Pass ]
 
@@ -563,7 +567,7 @@ webkit.org/b/89650 svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Failure Pass ]
 webkit.org/b/80158 plugins/netscape-plugin-page-cache-works.html [ Failure Pass ]
 
 webkit.org/b/89811 media/media-blocked-by-beforeload.html [ Failure Pass ]
-webkit.org/b/84856 media/media-controller-playback.html [ Failure Pass ]
+webkit.org/b/84856 media/media-controller-playback.html [ Failure Timeout Pass ]
 
 webkit.org/b/83878 media/track/track-mode.html [ Failure Pass ]
 
@@ -760,13 +764,49 @@ webkit.org/b/132184 fast/multicol/span/span-as-immediate-columns-child-dynamic.h
 webkit.org/b/132185 platform/gtk/editing/pasteboard/middle-button-paste.html [ Failure Pass ]
 
 #Some media fragment tests are flaky
+webkit.org/b/132248 media/media-fragments/TC0037.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0085.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0086.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0088.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0089.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0091.html [ Failure Pass ]
 
 webkit.org/b/132249 http/tests/media/video-cookie.html [ Failure Pass ]
 
 webkit.org/b/132250 media/audio-mpeg4-supported.html [ Timeout Pass ]
 webkit.org/b/132251 media/controls-drag-timebar.html [ Timeout Pass ]
+
+webkit.org/b/132254 fast/sub-pixel/simple-clipping.html [ ImageOnlyFailure Pass ]
+webkit.org/b/132255 fast/dom/Window/window-resize-and-move-sub-frame.html [ Timeout Pass ]
+webkit.org/b/132256 fast/frames/lots-of-objects.html [ Pass Slow ]
+webkit.org/b/132257 fast/history/form-submit-in-frame-via-onclick.html [ Timeout Pass ]
+webkit.org/b/132260 fast/workers/worker-close.html [ Timeout Pass ]
+webkit.org/b/132261 html5lib/generated/run-tests16-data.html [ Timeout Pass ]
+webkit.org/b/132262 http/tests/media/video-redirect.html [ Timeout Pass ]
+webkit.org/b/132264 inspector-protocol/page/deny-X-FrameOption.html [ Failure Timeout Pass ]
+webkit.org/b/132267 mathml/wbr-in-mroot-crash.html [ Timeout Pass ]
+webkit.org/b/132272 fast/dom/gc-10.html [ Failure Pass ]
+
+#Fast overflow
+webkit.org/b/132258 fast/overflow/hit-test-overflow-controls.html [ Failure ImageOnlyFailure Pass ]
+webkit.org/b/132258 fast/overflow/overflow-text-hit-testing.html [ Failure Pass ]
+webkit.org/b/132258 fast/overflow/scrollbar-click-retains-focus.html [ Failure Pass ]
+
+#Media controls
+webkit.org/b/132271 media/controls-styling-strict.html [ Failure Timeout Pass ]
+webkit.org/b/132271 media/media-controller-playbackrate.html [ Timeout Pass Crash ]
+webkit.org/b/132271 media/track/add-and-remove-track.html [ Timeout Pass ]
+
+#JS slow stress
+webkit.org/b/132266 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Timeout Pass ]
+webkit.org/b/132266 js/slow-stress/array-prototype-filter.html [ Timeout Pass ]
+webkit.org/b/132266 js/slow-stress/Int32Array-alloc-huge.html [ Timeout Pass ]
+
+#Regions
+webkit.org/b/132273 fast/regions/simplified-layout-no-regions.html [ Failure Pass ]
+webkit.org/b/132273 fast/regions/full-screen-video-in-region-crash.html [ Failure Pass ]
+webkit.org/b/132273 fast/regions/full-screen-video-from-region.html [ Pass Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -796,12 +836,12 @@ Bug(GTK) [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ P
 Bug(GTK) [ Debug ] fast/css/visited-link-hang.html [ Pass Slow ]
 Bug(GTK) js/dom/create-lots-of-workers.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-double-vote-fuzz.html [ Pass Slow ]
-Bug(GTK) [ Debug ] js/dfg-float32array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] js/dfg-float64array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] js/dfg-int16array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] js/dfg-int32array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] js/dfg-int32array-overflow-values.html [ Pass Slow ]
-Bug(GTK) [ Debug ] js/dfg-int8array.html [ Pass Slow ]
+Bug(GTK) js/dfg-float32array.html [ Pass Slow ]
+Bug(GTK) js/dfg-float64array.html [ Pass Slow ]
+Bug(GTK) js/dfg-int16array.html [ Pass Slow ]
+Bug(GTK) js/dfg-int32array.html [ Pass Slow ]
+Bug(GTK) js/dfg-int32array-overflow-values.html [ Pass Slow ]
+Bug(GTK) js/dfg-int8array.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint16array.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint32array.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint32array-overflow-values.html [ Pass Slow ]
@@ -812,12 +852,13 @@ Bug(GTK) js/dom/string-replacement-outofmemory.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dom/toString-and-valueOf-override.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/regress/method-on-number.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/frames/lots-of-iframes.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/frames/lots-of-objects.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/workers/worker-cloneport.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Pass Slow ]
 Bug(GTK) [ Debug ] jquery/core.html [ Pass Slow ]
-Bug(GTK) [ Debug ] jquery/event.html [ Pass Slow ]
-Bug(GTK) [ Debug ] jquery/manipulation.html [ Pass Slow ]
+Bug(GTK) jquery/event.html [ Pass Slow ]
+Bug(GTK) jquery/manipulation.html [ Pass Slow ]
+Bug(GTK) jquery/offset.html [ Pass Slow ]
+Bug(GTK) jquery/traversing.html [ Pass Slow ]
 Bug(GTK) sputnik/ [ Pass Slow ]
 Bug(GTK) tables/mozilla/other/slashlogo.html [ Pass Slow ]
 
@@ -886,6 +927,7 @@ webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-condition.html [ T
 webkit.org/b/122571 inspector-protocol/debugger/removeBreakpoint.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/setVariableValue.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/call-frame-this-strict.html [ Timeout Pass ]
+webkit.org/b/132259 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure Pass ]
 webkit.org/b/122571 inspector-protocol/dom/request-child-nodes-depth.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/dom/focus.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/runtime/getProperties.html [ Timeout Pass ]
@@ -914,6 +956,8 @@ Bug(GTK) fast/forms/select/optgroup-clicking.html [ Timeout ]
 Bug(GTK) fast/media/media-query-list-04.html [ Timeout ]
 
 webkit.org/b/131545 media/media-event-listeners.html [ Timeout ]
+
+webkit.org/b/132266 js/slow-stress/emscripten-memops.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1592,7 +1636,7 @@ webkit.org/b/115437 fast/regions/region-content-flown-into-region.html [ ImageOn
 
 webkit.org/b/115437 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 
-webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
+webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/115633 accessibility/meter-element.html [ Failure ]
 
@@ -1865,6 +1909,8 @@ webkit.org/b/132234 fast/regions/wheel-scrollable-single-region.html [ ImageOnly
 webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
 
 webkit.org/b/132253 media/volume-bar-empty-when-muted.html [ Failure ]
+
+webkit.org/b/132274 fast/multicol/newmulticol/compare-with-old-impl/column-rules-stacking.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
