@@ -1,3 +1,11 @@
+2014-04-29  Enrica Casucci  <enrica@apple.com>
+
+        iOS build fix after http://trac.webkit.org/changeset/167937.
+        Unreviewed.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::adjustButtonStyle):
+
 2014-04-29  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] off-by-one error in Shape::createRasterShape()
