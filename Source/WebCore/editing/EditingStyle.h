@@ -48,6 +48,7 @@ class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
 class CSSPrimitiveValue;
 class CSSValue;
+class ComputedStyleExtractor;
 class Document;
 class Element;
 class HTMLElement;
@@ -108,6 +109,8 @@ public:
     void removeBlockProperties();
     void removeStyleAddedByNode(Node*);
     void removeStyleConflictingWithStyleOfNode(Node*);
+    template<typename T>
+    void removeEquivalentProperties(const T&);
     void collapseTextDecorationProperties();
     enum ShouldIgnoreTextOnlyProperties { IgnoreTextOnlyProperties, DoNotIgnoreTextOnlyProperties };
     TriState triStateOfStyle(EditingStyle*) const;

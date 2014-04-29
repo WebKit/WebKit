@@ -593,8 +593,8 @@ void EditingStyle::removeStyleAddedByNode(Node* node)
         return;
     RefPtr<MutableStyleProperties> parentStyle = copyPropertiesFromComputedStyle(node->parentNode(), EditingPropertiesInEffect);
     RefPtr<MutableStyleProperties> nodeStyle = copyPropertiesFromComputedStyle(node, EditingPropertiesInEffect);
-    nodeStyle->removeEquivalentProperties(parentStyle.get());
-    m_mutableStyle->removeEquivalentProperties(nodeStyle.get());
+    removeEquivalentProperties(*parentStyle);
+    removeEquivalentProperties(*nodeStyle);
 }
 
 void EditingStyle::removeStyleConflictingWithStyleOfNode(Node* node)
@@ -603,12 +603,13 @@ void EditingStyle::removeStyleConflictingWithStyleOfNode(Node* node)
         return;
 
     RefPtr<MutableStyleProperties> parentStyle = copyPropertiesFromComputedStyle(node->parentNode(), EditingPropertiesInEffect);
-    RefPtr<MutableStyleProperties> nodeStyle = copyPropertiesFromComputedStyle(node, EditingPropertiesInEffect);
-    nodeStyle->removeEquivalentProperties(parentStyle.get());
+    RefPtr<EditingStyle> nodeStyle = EditingStyle::create(node, EditingPropertiesInEffect);
+    nodeStyle->removeEquivalentProperties(*parentStyle);
 
-    unsigned propertyCount = nodeStyle->propertyCount();
+    MutableStyleProperties* style = nodeStyle->style();
+    unsigned propertyCount = style->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i)
-        m_mutableStyle->removeProperty(nodeStyle->propertyAt(i).id());
+        m_mutableStyle->removeProperty(style->propertyAt(i).id());
 }
 
 void EditingStyle::collapseTextDecorationProperties()
@@ -916,7 +917,7 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
         direction = m_mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
     }
 
-    m_mutableStyle->removeEquivalentProperties(styleAtPosition);
+    removeEquivalentProperties(*styleAtPosition);
 
     if (textAlignResolvingStartAndEnd(m_mutableStyle.get()) == textAlignResolvingStartAndEnd(styleAtPosition))
         m_mutableStyle->removeProperty(CSSPropertyTextAlign);
@@ -1189,6 +1190,19 @@ void EditingStyle::removePropertiesInElementDefaultStyle(Element* element)
     RefPtr<StyleProperties> defaultStyle = styleFromMatchedRulesForElement(element, StyleResolver::UAAndUserCSSRules);
 
     removePropertiesInStyle(m_mutableStyle.get(), defaultStyle.get());
+}
+
+template<typename T>
+void EditingStyle::removeEquivalentProperties(const T& style)
+{
+    Vector<CSSPropertyID> propertiesToRemove;
+    for (auto& property : m_mutableStyle->m_propertyVector) {
+        if (style.propertyMatches(property.id(), property.value()))
+            propertiesToRemove.append(property.id());
+    }
+    // FIXME: This should use mass removal.
+    for (auto& property : propertiesToRemove)
+        m_mutableStyle->removeProperty(property);
 }
 
 void EditingStyle::forceInline()
@@ -1542,28 +1556,28 @@ template<typename T>
 static PassRefPtr<MutableStyleProperties> extractPropertiesNotIn(StyleProperties* styleWithRedundantProperties, T* baseStyle)
 {
     ASSERT(styleWithRedundantProperties);
-    RefPtr<MutableStyleProperties> result = styleWithRedundantProperties->mutableCopy();
-
-    result->removeEquivalentProperties(baseStyle);
+    RefPtr<EditingStyle> result = EditingStyle::create(styleWithRedundantProperties);
+    result->removeEquivalentProperties(*baseStyle);
+    RefPtr<MutableStyleProperties> mutableStyle = result->style();
 
     RefPtr<CSSValue> baseTextDecorationsInEffect = extractPropertyValue(baseStyle, CSSPropertyWebkitTextDecorationsInEffect);
-    diffTextDecorations(result.get(), CSSPropertyTextDecoration, baseTextDecorationsInEffect.get());
-    diffTextDecorations(result.get(), CSSPropertyWebkitTextDecorationsInEffect, baseTextDecorationsInEffect.get());
+    diffTextDecorations(mutableStyle.get(), CSSPropertyTextDecoration, baseTextDecorationsInEffect.get());
+    diffTextDecorations(mutableStyle.get(), CSSPropertyWebkitTextDecorationsInEffect, baseTextDecorationsInEffect.get());
 
-    if (extractPropertyValue(baseStyle, CSSPropertyFontWeight) && fontWeightIsBold(result.get()) == fontWeightIsBold(baseStyle))
-        result->removeProperty(CSSPropertyFontWeight);
+    if (extractPropertyValue(baseStyle, CSSPropertyFontWeight) && fontWeightIsBold(mutableStyle.get()) == fontWeightIsBold(baseStyle))
+        mutableStyle->removeProperty(CSSPropertyFontWeight);
 
-    if (extractPropertyValue(baseStyle, CSSPropertyColor) && textColorFromStyle(result.get()) == textColorFromStyle(baseStyle))
-        result->removeProperty(CSSPropertyColor);
+    if (extractPropertyValue(baseStyle, CSSPropertyColor) && textColorFromStyle(mutableStyle.get()) == textColorFromStyle(baseStyle))
+        mutableStyle->removeProperty(CSSPropertyColor);
 
     if (extractPropertyValue(baseStyle, CSSPropertyTextAlign)
-        && textAlignResolvingStartAndEnd(result.get()) == textAlignResolvingStartAndEnd(baseStyle))
-        result->removeProperty(CSSPropertyTextAlign);
+        && textAlignResolvingStartAndEnd(mutableStyle.get()) == textAlignResolvingStartAndEnd(baseStyle))
+        mutableStyle->removeProperty(CSSPropertyTextAlign);
 
-    if (extractPropertyValue(baseStyle, CSSPropertyBackgroundColor) && backgroundColorFromStyle(result.get()) == backgroundColorFromStyle(baseStyle))
-        result->removeProperty(CSSPropertyBackgroundColor);
+    if (extractPropertyValue(baseStyle, CSSPropertyBackgroundColor) && backgroundColorFromStyle(mutableStyle.get()) == backgroundColorFromStyle(baseStyle))
+        mutableStyle->removeProperty(CSSPropertyBackgroundColor);
 
-    return result.release();
+    return mutableStyle.release();
 }
 
 template<typename T>

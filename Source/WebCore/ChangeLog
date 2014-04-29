@@ -1,3 +1,24 @@
+2014-04-29  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Move removeEquivalentProperties functions to EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=131093
+
+        Reviewed by Darin Adler.
+
+        Moved the removeEquivalentProperties functions
+        from StyleProperties to EditingStyle class.
+
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::removeEquivalentProperties): Deleted.
+        * css/StyleProperties.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::removeStyleAddedByNode):
+        (WebCore::EditingStyle::removeStyleConflictingWithStyleOfNode):
+        (WebCore::EditingStyle::prepareToApplyAt):
+        (WebCore::EditingStyle::removeEquivalentProperties):
+        (WebCore::extractPropertiesNotIn):
+        * editing/EditingStyle.h:
+
 2014-04-29  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Implement support for compositing

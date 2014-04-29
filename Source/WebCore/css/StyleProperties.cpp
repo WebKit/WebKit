@@ -1173,34 +1173,6 @@ bool StyleProperties::propertyMatches(CSSPropertyID propertyID, const CSSValue* 
     return propertyAt(foundPropertyIndex).value()->equals(*propertyValue);
 }
 
-void MutableStyleProperties::removeEquivalentProperties(const StyleProperties* style)
-{
-    Vector<CSSPropertyID> propertiesToRemove;
-    unsigned size = m_propertyVector.size();
-    for (unsigned i = 0; i < size; ++i) {
-        PropertyReference property = propertyAt(i);
-        if (style->propertyMatches(property.id(), property.value()))
-            propertiesToRemove.append(property.id());
-    }    
-    // FIXME: This should use mass removal.
-    for (unsigned i = 0; i < propertiesToRemove.size(); ++i)
-        removeProperty(propertiesToRemove[i]);
-}
-
-void MutableStyleProperties::removeEquivalentProperties(const ComputedStyleExtractor* computedStyle)
-{
-    Vector<CSSPropertyID> propertiesToRemove;
-    unsigned size = m_propertyVector.size();
-    for (unsigned i = 0; i < size; ++i) {
-        PropertyReference property = propertyAt(i);
-        if (computedStyle->propertyMatches(property.id(), property.value()))
-            propertiesToRemove.append(property.id());
-    }    
-    // FIXME: This should use mass removal.
-    for (unsigned i = 0; i < propertiesToRemove.size(); ++i)
-        removeProperty(propertiesToRemove[i]);
-}
-
 PassRef<MutableStyleProperties> StyleProperties::mutableCopy() const
 {
     return adoptRef(*new MutableStyleProperties(*this));

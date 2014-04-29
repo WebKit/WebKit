@@ -211,10 +211,6 @@ public:
     void removeBlockProperties();
     bool removePropertiesInSet(const CSSPropertyID* set, unsigned length);
 
-    // FIXME: These two can be moved to EditingStyle.cpp
-    void removeEquivalentProperties(const StyleProperties*);
-    void removeEquivalentProperties(const ComputedStyleExtractor*);
-
     void mergeAndOverrideOnConflict(const StyleProperties&);
 
     void clear();
