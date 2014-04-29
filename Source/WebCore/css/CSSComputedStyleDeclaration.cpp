@@ -2806,7 +2806,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 #endif
 #if ENABLE(CSS_SHAPES)
         case CSSPropertyWebkitShapeMargin:
-            return cssValuePool().createValue(style->shapeMargin());
+            return cssValuePool().createValue(style->shapeMargin(), style.get());
         case CSSPropertyWebkitShapeImageThreshold:
             return cssValuePool().createValue(style->shapeImageThreshold(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitShapeOutside:

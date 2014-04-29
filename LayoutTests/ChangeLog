@@ -1,3 +1,12 @@
+2014-04-29  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] complex calc values for shape-margin return null for computed style
+        https://bugs.webkit.org/show_bug.cgi?id=132313
+
+        Reviewed by Bem Jones-Bey.
+
+        * fast/shapes/parsing/parsing-shape-margin.html:
+
 2014-04-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Row span info is wrong for table cells when a footer section is placed above a body section
