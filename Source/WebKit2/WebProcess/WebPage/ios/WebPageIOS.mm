@@ -322,7 +322,7 @@ void WebPage::handleTap(const IntPoint& point)
 {
     Frame& mainframe = m_page->mainFrame();
     FloatPoint adjustedPoint;
-    mainframe.nodeRespondingToClickEvents(point, adjustedPoint);
+    Node* nodeRespondingToClick = mainframe.nodeRespondingToClickEvents(point, adjustedPoint);
     IntPoint roundedAdjustedPoint = roundedIntPoint(adjustedPoint);
 
     WKBeginObservingContentChanges(true);
@@ -336,9 +336,10 @@ void WebPage::handleTap(const IntPoint& point)
     RefPtr<Element> oldFocusedElement = oldFocusedFrame ? oldFocusedFrame->document()->focusedElement() : nullptr;
     m_userIsInteracting = true;
 
+    bool tapWasHandled = false;
     m_lastInteractionLocation = roundedAdjustedPoint;
-    mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, 0));
-    mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, 0));
+    tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, 0));
+    tapWasHandled |= mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, 0));
 
     RefPtr<Frame> newFocusedFrame = m_page->focusController().focusedFrame();
     RefPtr<Element> newFocusedElement = newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr;
@@ -351,6 +352,9 @@ void WebPage::handleTap(const IntPoint& point)
         elementDidFocus(newFocusedElement.get());
 
     m_userIsInteracting = false;
+
+    if (!tapWasHandled || !nodeRespondingToClick || !nodeRespondingToClick->isElementNode())
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(point));
 }
 
 void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& position)

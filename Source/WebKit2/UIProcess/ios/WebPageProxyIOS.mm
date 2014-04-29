@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "APIUIClient.h"
 #import "DataReference.h"
 #import "EditingRange.h"
 #import "NativeWebKeyboardEvent.h"
@@ -578,6 +579,11 @@ void WebPageProxy::showPlaybackTargetPicker(bool hasVideo, const IntRect& elemen
 void WebPageProxy::zoomToRect(FloatRect rect, double minimumScale, double maximumScale)
 {
     m_pageClient.zoomToRect(rect, minimumScale, maximumScale);
+}
+
+void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
+{
+    m_uiClient->didNotHandleTapAsClick(point);
 }
 
 #if USE(QUICK_LOOK)

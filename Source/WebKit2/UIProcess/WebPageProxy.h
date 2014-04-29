@@ -614,6 +614,7 @@ public:
     void applicationWillResignActive();
     void applicationDidBecomeActive();
     void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);
+    void didNotHandleTapAsClick(const WebCore::IntPoint&);
 #endif
 
     const EditorState& editorState() const { return m_editorState; }

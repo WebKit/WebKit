@@ -64,6 +64,7 @@ private:
         virtual void runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, std::function<void (const WTF::String&)> completionHandler) override;
     #if PLATFORM(IOS)
         virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) override;
+        virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
     #endif
 
         UIDelegate& m_uiDelegate;
@@ -79,6 +80,7 @@ private:
         bool webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler : 1;
 #if PLATFORM(IOS)
         bool webViewActionsForElementDefaultActions : 1;
+        bool webViewDidNotHandleTapAsClickAtPoint : 1;
 #endif
     } m_delegateMethods;
 };
