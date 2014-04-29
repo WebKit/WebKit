@@ -168,7 +168,7 @@ void RasterShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logical
     for (int y = y1; y < y2;  y++)
         excludedInterval.unite(intervals.intervalAt(y));
 
-    result.append(LineSegment(excludedInterval.x1(), excludedInterval.x2() + 1));
+    result.append(LineSegment(excludedInterval.x1(), excludedInterval.x2()));
 }
 
 } // namespace WebCore

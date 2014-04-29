@@ -1,3 +1,25 @@
+2014-04-29  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] off-by-one error in Shape::createRasterShape()
+        https://bugs.webkit.org/show_bug.cgi?id=132154
+
+        Reviewed by Bem Jones-Bey.
+
+        This is a port of a patch for a bug that was reported by and fixed in Blink by
+        David Vest: https://codereview.chromium.org/237123002/.  Shape::createRasterShape()
+        now consistently reports "end-point exclusive" intervals. Before the patch
+        an entire row of pixels was above the shape-image-threshold, the interval's end
+        index was reported as image.width. Now it's image.width + 1, which is consistent
+        with the way the end index is reported if the last above threshold pixel is within
+        an image row.
+
+        Two existing tests were revised to account for this change.
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShape::getExcludedIntervals):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+
 2014-04-29  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Wrap CSS length conversion arguments in an object

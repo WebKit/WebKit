@@ -1,3 +1,16 @@
+2014-04-29  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] off-by-one error in Shape::createRasterShape()
+        https://bugs.webkit.org/show_bug.cgi?id=132154
+
+        Reviewed by Bem Jones-Bey.
+
+        Change two tests that had incorrect X values to account for the off-by-one
+        in Shape::createRasterShape().
+
+        * fast/shapes/shape-outside-floats/shape-outside-insert-svg-shape.html:
+        * fast/shapes/shape-outside-floats/shape-outside-linear-gradient-expected.html:
+
 2014-04-29  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] complex calc args for inset round vanish

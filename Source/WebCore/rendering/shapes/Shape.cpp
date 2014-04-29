@@ -202,7 +202,11 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
                     if (startX == -1 && alphaAboveThreshold) {
                         startX = x;
                     } else if (startX != -1 && (!alphaAboveThreshold || x == imageRect.width() - 1)) {
-                        intervals->intervalAt(y + imageRect.y()).unite(IntShapeInterval(startX + imageRect.x(), x + imageRect.x()));
+                        // We're creating "end-point exclusive" intervals here. The value of an interval's x1 is
+                        // the first index of an above-threshold pixel for y, and the value of x2 is 1+ the index
+                        // of the last above-threshold pixel.
+                        int endX = alphaAboveThreshold ? x + 1 : x;
+                        intervals->intervalAt(y + imageRect.y()).unite(IntShapeInterval(startX + imageRect.x(), endX + imageRect.x()));
                         startX = -1;
                     }
                 }
