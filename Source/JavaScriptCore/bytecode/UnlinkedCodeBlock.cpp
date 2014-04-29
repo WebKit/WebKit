@@ -51,7 +51,14 @@ const ClassInfo UnlinkedFunctionCodeBlock::s_info = { "UnlinkedFunctionCodeBlock
 
 static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, UnlinkedFunctionKind functionKind, ParserError& error)
 {
-    RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(&vm, source, executable->parameters(), executable->name(), executable->toStrictness(), JSParseFunctionCode, error);
+    RefPtr<FunctionParameters> parameters = executable->parameters(&vm);
+    if (!parameters) {
+        error = ParserError(ParserError::StackOverflow);
+        error.m_line = source.firstLine();
+        return 0;
+    }
+
+    RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(&vm, source, parameters.get(), executable->name(), executable->toStrictness(), JSParseFunctionCode, error);
 
     if (!body) {
         ASSERT(error.m_type != ParserError::ErrorNone);
@@ -60,7 +67,7 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunc
 
     if (executable->forceUsesArguments())
         body->setUsesArguments();
-    body->finishParsing(executable->parameters(), executable->name(), executable->functionMode());
+    body->finishParsing(parameters.get(), executable->name(), executable->functionMode());
     executable->recordParse(body->features(), body->hasCapturedVariables());
     
     UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(body->needsActivation(), body->usesEval(), body->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction));
@@ -92,7 +99,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_isBuiltinFunction(kind == UnlinkedBuiltinFunction)
     , m_name(node->ident())
     , m_inferredName(node->inferredName())
-    , m_parameters(node->parameters())
+    , m_parameterCount(node->parameterCount())
     , m_firstLineOffset(node->firstLine() - source.firstLine())
     , m_lineCount(node->lastLine() - node->firstLine())
     , m_unlinkedFunctionNameStart(node->functionNameStart() - source.startOffset())
@@ -103,11 +110,6 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_features(node->features())
     , m_functionMode(node->functionMode())
 {
-}
-
-size_t UnlinkedFunctionExecutable::parameterCount() const
-{
-    return m_parameters->size();
 }
 
 void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -122,6 +124,7 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(&thisObject->m_nameValue);
     visitor.append(&thisObject->m_symbolTableForCall);
     visitor.append(&thisObject->m_symbolTableForConstruct);
+    visitor.append(&thisObject->m_parameterString);
 }
 
 FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& source, size_t lineOffset)
@@ -184,16 +187,30 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(VM& vm, cons
     return result;
 }
 
+void UnlinkedFunctionExecutable::finishCreation(VM& vm, const SourceCode& source, FunctionBodyNode* node)
+{
+    Base::finishCreation(vm);
+    m_nameValue.set(vm, this, jsString(&vm, name().string()));
+    // We make an isolated copy of the parameter string as we don't want to keep the
+    // full source string alive.
+    String parameterString = source.provider()->getRange(node->parametersStartOffset(), node->parametersEndOffset()).isolatedCopy();
+    m_parameterString.set(vm, this, jsString(&vm, parameterString));
+}
+
 String UnlinkedFunctionExecutable::paramString() const
 {
-    FunctionParameters& parameters = *m_parameters;
-    StringBuilder builder;
-    for (size_t pos = 0; pos < parameters.size(); ++pos) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        parameters.at(pos)->toString(builder);
-    }
-    return builder.toString();
+    return m_parameterString->tryGetValue();
+}
+
+RefPtr<FunctionParameters> UnlinkedFunctionExecutable::parameters(VM* vm)
+{
+    if (!m_parameterCount)
+        return FunctionParameters::create(nullptr);
+
+    SourceCode parameterSource = makeSource(m_parameterString->tryGetValue());
+    RefPtr<FunctionParameters> parameters = parseParameters(vm, parameterSource, toStrictness());
+    ASSERT(!parameters || parameters->size() == m_parameterCount);
+    return parameters;
 }
 
 UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info)

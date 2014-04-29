@@ -1,3 +1,45 @@
+2014-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Don't hold on to parameterBindingNodes forever
+        https://bugs.webkit.org/show_bug.cgi?id=132360
+
+        Reviewed by Geoffrey Garen.
+
+        Don't keep the parameter nodes anymore. Instead we store the
+        original parameter string and reparse whenever we actually
+        need them. Because we only actually need them for compilation
+        this only results in a single extra parse.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        (JSC::UnlinkedFunctionExecutable::finishCreation):
+        (JSC::UnlinkedFunctionExecutable::paramString):
+        (JSC::UnlinkedFunctionExecutable::parameters):
+        (JSC::UnlinkedFunctionExecutable::parameterCount): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::create):
+        (JSC::UnlinkedFunctionExecutable::parameterCount):
+        (JSC::UnlinkedFunctionExecutable::parameters): Deleted.
+        (JSC::UnlinkedFunctionExecutable::finishCreation): Deleted.
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::ASTBuilder):
+        (JSC::ASTBuilder::setFunctionBodyParameters):
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::parametersStartOffset):
+        (JSC::FunctionBodyNode::parametersEndOffset):
+        (JSC::FunctionBodyNode::setParameterLocation):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::parseParameters):
+        * parser/Parser.h:
+        (JSC::parse):
+        * parser/SourceCode.h:
+        (JSC::SourceCode::subExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::setFunctionBodyParameters):
+
 2014-04-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSProxies should be cacheable

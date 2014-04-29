@@ -1535,6 +1535,8 @@ namespace JSC {
 
         FunctionParameters* parameters() const { return m_parameters.get(); }
         size_t parameterCount() const { return m_parameters->size(); }
+        int parametersStartOffset() const { return m_parametersStart.endOffset; }
+        int parametersEndOffset() const { return m_parametersEnd.startOffset; }
 
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
@@ -1557,6 +1559,11 @@ namespace JSC {
 
         static const bool scopeIsFunction = true;
 
+        void setParameterLocation(const JSTokenLocation& openParen, const JSTokenLocation& closeParen)
+        {
+            m_parametersStart = openParen;
+            m_parametersEnd = closeParen;
+        }
     private:
         FunctionBodyNode(VM*, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, bool inStrictContext);
         FunctionBodyNode(VM*, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
@@ -1565,6 +1572,8 @@ namespace JSC {
         Identifier m_inferredName;
         FunctionMode m_functionMode;
         RefPtr<FunctionParameters> m_parameters;
+        JSTokenLocation m_parametersStart;
+        JSTokenLocation m_parametersEnd;
         int m_functionNameStart;
         unsigned m_startColumn;
         unsigned m_endColumn;

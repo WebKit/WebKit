@@ -103,7 +103,7 @@ namespace JSC {
         int endOffset() const { return m_endChar; }
         int length() const { return m_endChar - m_startChar; }
         
-        SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn);
+        SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn) const;
 
     private:
         RefPtr<SourceProvider> m_provider;
@@ -118,7 +118,7 @@ namespace JSC {
         return SourceCode(StringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
     }
 
-    inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn)
+    inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn) const
     {
         ASSERT(provider()->source()[openBrace] == '{');
         ASSERT(provider()->source()[closeBrace] == '}');

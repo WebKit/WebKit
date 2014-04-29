@@ -76,7 +76,7 @@ class ASTBuilder {
         Operator m_op;
     };
 public:
-    ASTBuilder(VM* vm, SourceCode* sourceCode)
+    ASTBuilder(VM* vm, const SourceCode* sourceCode)
         : m_vm(vm)
         , m_sourceCode(sourceCode)
         , m_scope(vm)
@@ -287,6 +287,11 @@ public:
     FunctionBodyNode* createFunctionBody(const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool inStrictContext)
     {
         return FunctionBodyNode::create(m_vm, startLocation, endLocation, startColumn, endColumn, inStrictContext);
+    }
+
+    void setFunctionBodyParameters(FunctionBodyNode* body, const JSTokenLocation& openParen, const JSTokenLocation& closeParen)
+    {
+        body->setParameterLocation(openParen, closeParen);
     }
 
     void setFunctionNameStart(FunctionBodyNode* body, int functionNameStart)
@@ -722,7 +727,7 @@ private:
     }
     
     VM* m_vm;
-    SourceCode* m_sourceCode;
+    const SourceCode* m_sourceCode;
     Scope m_scope;
     Vector<BinaryOperand, 10, UnsafeVectorOverflow> m_binaryOperandStack;
     Vector<AssignmentInfo, 10, UnsafeVectorOverflow> m_assignmentInfoStack;
