@@ -26,6 +26,14 @@
 #import "config.h"
 #import "WebFrameLoaderClient.h"
 
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/HistoryController.h>
+#import <WebCore/HistoryItem.h>
+#import <WebCore/Page.h>
+#import <WebFrame.h>
+#import <WebPage.h>
+
 #if PLATFORM(IOS)
 
 #import <WebCore/NotImplemented.h>
@@ -70,6 +78,21 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
     handle.setClient(WebQuickLookHandleClient::create(handle, webPage->pageID()));
 }
 #endif
+
+void WebFrameLoaderClient::restoreViewState()
+{
+    Frame& frame = *m_frame->coreFrame();
+    HistoryItem* currentItem = frame.loader().history().currentItem();
+    if (FrameView* view = frame.view()) {
+        Page* page = frame.page();
+        if (!view->wasScrolledByUser()) {
+            if (page && m_frame->isMainFrame() && currentItem->pageScaleFactor())
+                m_frame->page()->restorePageState(currentItem->pageScaleFactor(), currentItem->scrollPoint());
+            else
+                view->setScrollPosition(currentItem->scrollPoint());
+        }
+    }
+}
 
 } // namespace WebKit
 

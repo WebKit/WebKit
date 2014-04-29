@@ -444,6 +444,7 @@ public:
     WebCore::FloatSize availableScreenSize() const;
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
     void didReceiveMobileDocType(bool);
+    void restorePageState(double scale, const WebCore::IntPoint& origin);
 
     double minimumPageScaleFactor() const;
     double maximumPageScaleFactor() const;

@@ -121,20 +121,21 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     if (m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction))
         m_webPageProxy->setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost.rootLayer());
 
+#if PLATFORM(IOS)
+    m_webPageProxy->didCommitLayerTree(layerTreeTransaction);
+#endif
+
 #if ENABLE(ASYNC_SCROLLING)
     bool fixedOrStickyLayerChanged = false;
     m_webPageProxy->scrollingCoordinatorProxy()->updateScrollingTree(scrollingTreeTransaction, fixedOrStickyLayerChanged);
-#endif
-#if PLATFORM(IOS)
-    m_webPageProxy->didCommitLayerTree(layerTreeTransaction);
 
-#if ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(IOS)
     if (fixedOrStickyLayerChanged) {
         // If we got a new layer for a fixed or sticky node, its position from the WebProcess is probably stale. We need to re-run the "viewport" changed logic to udpate it with our UI-side state.
         m_webPageProxy->scrollingCoordinatorProxy()->viewportChangedViaDelegatedScrolling(m_webPageProxy->scrollingCoordinatorProxy()->rootScrollingNodeID(), m_webPageProxy->unobscuredContentRect(), m_webPageProxy->displayedContentScale());
     }
 #endif
-#endif
+#endif // ENABLE(ASYNC_SCROLLING)
 
     showDebugIndicator(m_webPageProxy->preferences().tiledScrollingIndicatorVisible());
 

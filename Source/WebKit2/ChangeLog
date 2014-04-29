@@ -1,5 +1,47 @@
 2014-04-28  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] Restore the scroll position and scale from the HistoryItem (mostly)
+        https://bugs.webkit.org/show_bug.cgi?id=132307
+        <rdar://problem/16031704>
+
+        Reviewed by Simon Fraser.
+
+        Restore the scroll position and scale on back-forward by restoring the values from HistoryItem.
+        This covers the common cases, see <rdar://problem/16031704>.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView _didCommitLoadForMainFrame]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _didCommitLoadForMainFrame]):
+        Get rid of the old code restoring the scroll position. This is now done by the WebProcess.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        Update the scrolling tree after invoking didCommitLayerTree() on the WebPageProxy.
+
+        WKContentView and WKWebView states are updated in response to didCommitLayerTree(), the content size
+        and scale in particular are set there.
+
+        After that, the content size/scale is in the same state as the layerTree update, and we can scroll
+        the content as needed.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        iOS WebKit1 uses a custom restoreViewState(), do the same for WebKit2 since the generic code is #ifdefed out.
+        This is also necessary for the main frame's state update.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::restorePageState):
+        Restore the scale and position of the main frame. For now, we assume m_userHasChangedPageScaleFactor is set otherwise
+        the initial-scale would override the restored value. We will need to fix that, the value should probably be saved with
+        the history.
+
+2014-04-28  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] iOS fix after r167867
         https://bugs.webkit.org/show_bug.cgi?id=132302
 

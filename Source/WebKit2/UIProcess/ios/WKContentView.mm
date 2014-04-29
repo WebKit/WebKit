@@ -412,7 +412,6 @@ static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, 
 
 - (void)_didCommitLoadForMainFrame
 {
-    [_webView _didCommitLoadForMainFrame];
     [self _stopAssistingNode];
 }
 

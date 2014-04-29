@@ -97,7 +97,6 @@
     RetainPtr<WKScrollView> _scrollView;
     RetainPtr<WKContentView> _contentView;
 
-    BOOL _isWaitingForNewLayerTreeAfterDidCommitLoad;
     BOOL _hasStaticMinimumLayoutSize;
     CGSize _minimumLayoutSizeOverride;
     CGSize _minimumLayoutSizeOverrideForMinimalUI;
@@ -410,11 +409,6 @@
     [_customContentView web_setContentProviderData:data suggestedFilename:suggestedFilename];
 }
 
-- (void)_didCommitLoadForMainFrame
-{
-    _isWaitingForNewLayerTreeAfterDidCommitLoad = YES;
-}
-
 // This is a convenience method that will convert _page->pageExtendedBackgroundColor() from a WebCore::Color to a UIColor *.
 - (UIColor *)pageExtendedBackgroundColor
 {
@@ -469,16 +463,11 @@ static CGFloat contentZoomScale(WKWebView* webView)
     [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];
     if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom])
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
-    
+
     [self _updateScrollViewBackground];
 
     if (_gestureController)
         _gestureController->setRenderTreeSize(layerTreeTransaction.renderTreeSize());
-
-    if (_isWaitingForNewLayerTreeAfterDidCommitLoad) {
-        [_scrollView setContentOffset:CGPointMake(-_obscuredInsets.left, -_obscuredInsets.top)];
-        _isWaitingForNewLayerTreeAfterDidCommitLoad = NO;
-    }
 }
 
 - (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition

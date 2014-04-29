@@ -1117,6 +1117,7 @@ void WebFrameLoaderClient::saveViewStateToItem(HistoryItem*)
     notImplemented();
 }
 
+#if !PLATFORM(IOS)
 void WebFrameLoaderClient::restoreViewState()
 {
     // Inform the UI process of the scale factor.
@@ -1131,6 +1132,7 @@ void WebFrameLoaderClient::restoreViewState()
     if (m_frame == m_frame->page()->mainWebFrame())
         m_frame->page()->drawingArea()->setNeedsDisplay();
 }
+#endif
 
 void WebFrameLoaderClient::provisionalLoadStarted()
 {

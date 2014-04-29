@@ -137,6 +137,15 @@ void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
         resetViewportDefaultConfiguration(m_mainFrame.get());
 }
 
+void WebPage::restorePageState(double scale, const IntPoint& scrollPosition)
+{
+    scalePage(scale, scrollPosition);
+    m_page->mainFrame().view()->setScrollPosition(scrollPosition);
+
+    // FIXME: we should get the value of userHasChangedPageScaleFactor from the history.
+    m_userHasChangedPageScaleFactor = true;
+}
+
 double WebPage::minimumPageScaleFactor() const
 {
     return m_viewportConfiguration.minimumScale();
