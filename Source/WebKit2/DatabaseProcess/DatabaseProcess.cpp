@@ -98,6 +98,7 @@ void DatabaseProcess::removeUniqueIDBDatabase(const UniqueIDBDatabase& database)
 void DatabaseProcess::initializeDatabaseProcess(const DatabaseProcessCreationParameters& parameters)
 {
     m_indexedDatabaseDirectory = parameters.indexedDatabaseDirectory;
+    SandboxExtension::consumePermanently(parameters.indexedDatabaseDirectoryExtensionHandle);
 
     ensureIndexedDatabaseRelativePathExists(StringImpl::empty());
 }

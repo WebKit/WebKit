@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,11 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC) && ENABLE(DATABASE_PROCESS)
+#if PLATFORM(IOS) && ENABLE(DATABASE_PROCESS)
 
 #import "DatabaseProcess.h"
 
 #import "SandboxInitializationParameters.h"
-#import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 
@@ -40,25 +39,17 @@ namespace WebKit {
 
 void DatabaseProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {
-    // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
-    setApplicationIsDaemon();
 }
 
 void DatabaseProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Database Storage", "visible name of the database process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-    WKSetVisibleApplicationName((CFStringRef)applicationName);
 }
 
 void DatabaseProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-    // Need to overide the default, because service has a different bundle ID.
-    NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
-    sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.Databases" ofType:@"sb"]);
-
-    ChildProcess::initializeSandbox(parameters, sandboxParameters);
+    notImplemented();
 }
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC) && ENABLE(DATABASE_PROCESS)
+#endif // PLATFORM(IOS) && ENABLE(DATABASE_PROCESS)

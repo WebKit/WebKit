@@ -24,6 +24,7 @@ VPATH = \
     $(WebKit2) \
     $(WebKit2)/DatabaseProcess \
     $(WebKit2)/DatabaseProcess/IndexedDB \
+    $(WebKit2)/DatabaseProcess/mac \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/mac \
     $(WebKit2)/PluginProcess \
@@ -179,6 +180,7 @@ endif
 
 SANDBOX_PROFILES = \
 	com.apple.WebProcess.sb \
+	com.apple.WebKit.Databases.sb \
 	com.apple.WebKit.NetworkProcess.sb
 
 all: $(SANDBOX_PROFILES)

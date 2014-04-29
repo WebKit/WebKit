@@ -27,6 +27,7 @@
 #ifndef DatabaseProcessCreationParameters_h
 #define DatabaseProcessCreationParameters_h
 
+#include "SandboxExtension.h"
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
@@ -45,6 +46,7 @@ struct DatabaseProcessCreationParameters {
     static bool decode(IPC::ArgumentDecoder&, DatabaseProcessCreationParameters&);
 
     String indexedDatabaseDirectory;
+    SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
 };
 
 } // namespace WebKit

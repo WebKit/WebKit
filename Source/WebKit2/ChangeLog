@@ -1,3 +1,42 @@
+2014-04-29  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] DatabaseProcess should be sandboxed
+        https://bugs.webkit.org/show_bug.cgi?id=132324
+        <rdar://problem/15961708>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/WebKit2.xcconfig: Added the profile to the list of files skipped
+        on iOS.
+
+        * DatabaseProcess/DatabaseProcess.cpp: (WebKit::DatabaseProcess::initializeDatabaseProcess):
+        Consume a sandbox extension for IndexedDB directory (which we get with initialization
+        message after entering sandbox).
+
+        * DatabaseProcess/ios: Added.
+        * DatabaseProcess/ios/DatabaseProcessIOS.mm: Copied from Source/WebKit2/DatabaseProcess/mac/DatabaseProcessMac.mm.
+        Separated from Mac version to match how other processes are implemented.
+
+        * DatabaseProcess/mac/DatabaseProcessMac.mm: (WebKit::DatabaseProcess::initializeProcessName):
+        Removed ifdefs.
+
+        * DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in: Added.
+
+        * DerivedSources.make: Generate the profile from .sb.in.
+
+        * Shared/Databases/DatabaseProcessCreationParameters.cpp:
+        (WebKit::DatabaseProcessCreationParameters::encode):
+        (WebKit::DatabaseProcessCreationParameters::decode):
+        * Shared/Databases/DatabaseProcessCreationParameters.h:
+        Added a sandbox extension for indexedDatabaseDirectory.
+
+        * Shared/SecurityOriginData.h: Added an unrelated FIXME.
+
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::ensureDatabaseProcess): Create
+        a sandbox extension for indexedDatabaseDirectory.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added new files.
+
 2014-04-28  Andy Estes  <aestes@apple.com>
 
         [iOS] Introduce -didNotHandleTapAsClickAtPoint: to WKUIDelegatePrivate
