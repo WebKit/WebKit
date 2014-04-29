@@ -1,3 +1,15 @@
+2014-04-28  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r153142) ASSERT from CodeBlock::dumpBytecode dumping String Switch Jump Tables
+        https://bugs.webkit.org/show_bug.cgi?id=132315
+
+        Reviewed by Mark Hahnenberg.
+
+        Used the StringImpl version of utf8() instead of creating a String first.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+
 2014-04-28  Filip Pizlo  <fpizlo@apple.com>
 
         The LLInt is awesome and it should get more of the action.

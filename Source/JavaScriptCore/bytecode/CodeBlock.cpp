@@ -554,7 +554,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
             out.printf("  %1d = {\n", i);
             StringJumpTable::StringOffsetTable::const_iterator end = m_rareData->m_stringSwitchJumpTables[i].offsetTable.end();
             for (StringJumpTable::StringOffsetTable::const_iterator iter = m_rareData->m_stringSwitchJumpTables[i].offsetTable.begin(); iter != end; ++iter)
-                out.printf("\t\t\"%s\" => %04d\n", String(iter->key).utf8().data(), iter->value.branchOffset);
+                out.printf("\t\t\"%s\" => %04d\n", iter->key->utf8().data(), iter->value.branchOffset);
             out.printf("      }\n");
             ++i;
         } while (i < m_rareData->m_stringSwitchJumpTables.size());
