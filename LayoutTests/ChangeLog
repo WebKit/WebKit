@@ -1,3 +1,13 @@
+2014-04-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        SelectorCodeGenerator::generateElementIsNthChild() leaks the parent register :nth-child() is non-filtering
+        https://bugs.webkit.org/show_bug.cgi?id=132311
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/several-nth-child-expected.txt: Added.
+        * fast/selectors/several-nth-child.html: Added.
+
 2014-04-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: backtracking with current / parent element for child

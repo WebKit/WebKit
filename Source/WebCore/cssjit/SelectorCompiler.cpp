@@ -2143,8 +2143,12 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
             continue;
         validSubsetFilters.uncheckedAppend(slot);
     }
-    if (validSubsetFilters.isEmpty())
+    if (validSubsetFilters.isEmpty()) {
+        m_registerAllocator.deallocateRegister(parentElement);
         return;
+    }
+    if (m_selectorContext == SelectorContext::QuerySelector)
+        m_registerAllocator.deallocateRegister(parentElement);
 
     // Setup the counter at 1.
     LocalRegister elementCounter(m_registerAllocator);

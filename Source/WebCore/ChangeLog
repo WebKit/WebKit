@@ -1,3 +1,22 @@
+2014-04-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        SelectorCodeGenerator::generateElementIsNthChild() leaks the parent register :nth-child() is non-filtering
+        https://bugs.webkit.org/show_bug.cgi?id=132311
+
+        Reviewed by Andreas Kling.
+
+        In two cases, the parent register was never returned to the register allocator:
+        -Non filtering selectors (the early return).
+        -Non marking selectors (at the moment: only querySelector API).
+
+        Unfortunately, generateElementIsNthChild() makes function call, which forces us to do this manual allocation
+        of the parentElement register. Long term, I want RegisterAllocator and FunctionCall to have a special type for that.
+
+        Test: fast/selectors/several-nth-child.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+
 2014-04-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: backtracking with current / parent element for child
