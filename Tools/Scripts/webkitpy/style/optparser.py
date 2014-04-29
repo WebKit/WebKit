@@ -149,7 +149,8 @@ class CommandOptionValues(object):
                  is_verbose=False,
                  min_confidence=1,
                  output_format="emacs",
-                 commit_queue=False):
+                 commit_queue=False,
+                 git_index=False):
         if filter_rules is None:
             filter_rules = []
 
@@ -170,6 +171,7 @@ class CommandOptionValues(object):
         self.min_confidence = min_confidence
         self.output_format = output_format
         self.commit_queue = commit_queue
+        self.git_index = git_index
 
     # Useful for unit testing.
     def __eq__(self, other):
@@ -185,6 +187,8 @@ class CommandOptionValues(object):
         if self.min_confidence != other.min_confidence:
             return False
         if self.output_format != other.output_format:
+            return False
+        if self.git_index != other.git_index:
             return False
 
         return True
@@ -341,6 +345,7 @@ class ArgumentParser(object):
 
         commit_queue_help = "force commit queue to check contributors.json change"
         parser.add_option("--commit-queue", action="store_true", dest="commit_queue", default=False, help=commit_queue_help)
+        parser.add_option("--git-index", action="store_true", dest="git_index", default=False, help="Scan staged files only")
 
         # Override OptionParser's error() method so that option help will
         # also display when an error occurs.  Normally, just the usage
@@ -428,6 +433,7 @@ class ArgumentParser(object):
         min_confidence = options.min_confidence
         output_format = options.output_format
         commit_queue = options.commit_queue
+        git_index = options.git_index
 
         if filter_value is not None and not filter_value:
             # Then the user explicitly passed no filter, for
@@ -458,7 +464,8 @@ class ArgumentParser(object):
                                       is_verbose=is_verbose,
                                       min_confidence=min_confidence,
                                       output_format=output_format,
-                                      commit_queue=commit_queue)
+                                      commit_queue=commit_queue,
+                                      git_index=git_index)
 
         return (paths, options)
 

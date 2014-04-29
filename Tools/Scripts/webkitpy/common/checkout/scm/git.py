@@ -280,7 +280,7 @@ class Git(SCM, SVNRepository):
 
         return "Subversion Revision: " + revision + '\n' + diff
 
-    def create_patch(self, git_commit=None, changed_files=None):
+    def create_patch(self, git_commit=None, changed_files=None, git_index=False):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
@@ -293,7 +293,10 @@ class Git(SCM, SVNRepository):
         if self._filesystem.exists(order_file):
             order = "-O%s" % order_file
 
-        command = [self.executable_name, 'diff', '--binary', '--no-color', "--no-ext-diff", "--full-index", "--no-renames", order, self.merge_base(git_commit), "--"]
+        command = [self.executable_name, 'diff', '--binary', '--no-color', "--no-ext-diff", "--full-index", "--no-renames", order, self.merge_base(git_commit)]
+        if git_index:
+            command += ['--cached']
+        command += ["--"]
         if changed_files:
             command += changed_files
         return self.prepend_svn_revision(self.run(command, decode_output=False, cwd=self.checkout_root))

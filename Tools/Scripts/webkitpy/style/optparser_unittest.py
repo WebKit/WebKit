@@ -204,6 +204,7 @@ class CommandOptionValuesTest(unittest.TestCase):
         self.assertFalse(options.is_verbose)
         self.assertEqual(options.min_confidence, 1)
         self.assertEqual(options.output_format, "emacs")
+        self.assertFalse(options.git_index)
 
         # Check argument validation.
         self.assertRaises(ValueError, ProcessorOptions, output_format="bad")
@@ -219,12 +220,14 @@ class CommandOptionValuesTest(unittest.TestCase):
                                    git_commit="commit",
                                    is_verbose=True,
                                    min_confidence=3,
-                                   output_format="vs7")
+                                   output_format="vs7",
+                                   git_index=True)
         self.assertEqual(options.filter_rules, ["+"])
         self.assertEqual(options.git_commit, "commit")
         self.assertTrue(options.is_verbose)
         self.assertEqual(options.min_confidence, 3)
         self.assertEqual(options.output_format, "vs7")
+        self.assertTrue(options.git_index)
 
     def test_eq(self):
         """Test __eq__ equality function."""
@@ -239,7 +242,8 @@ class CommandOptionValuesTest(unittest.TestCase):
                                    git_commit=None,
                                    is_verbose=False,
                                    min_confidence=1,
-                                   output_format="emacs")
+                                   output_format="emacs",
+                                   git_index=False)
         # Verify that we created options correctly.
         self.assertTrue(options.__eq__(ProcessorOptions()))
 
@@ -248,6 +252,7 @@ class CommandOptionValuesTest(unittest.TestCase):
         self.assertFalse(options.__eq__(ProcessorOptions(is_verbose=True)))
         self.assertFalse(options.__eq__(ProcessorOptions(min_confidence=2)))
         self.assertFalse(options.__eq__(ProcessorOptions(output_format="vs7")))
+        self.assertFalse(options.__eq__(ProcessorOptions(git_index=True)))
 
     def test_ne(self):
         """Test __ne__ inequality function."""
