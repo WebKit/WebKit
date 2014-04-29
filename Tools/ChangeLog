@@ -1,3 +1,14 @@
+2014-04-28  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION (r167751): svn-create-patch is very slow
+        https://bugs.webkit.org/show_bug.cgi?id=132300
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/svn-create-patch:
+        Change default behavior of svn-create-patch to no longer run the style checker. It can still be run
+        by calling `svn-create-patch --style`.
+
 2014-04-29  Enrique Ocaña González  <eocanha@igalia.com>
 
         Generate Eclipse project + ninja build for GTK+ if Eclipse in available in the PATH

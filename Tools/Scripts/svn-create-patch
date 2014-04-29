@@ -77,7 +77,7 @@ sub testfilecmp($$);
 $ENV{'LC_ALL'} = 'C';
 
 my $showHelp;
-my $checkWebKitStyle = 1;
+my $checkWebKitStyle = 0;
 my $ignoreChangelogs = 0;
 my $devNull = File::Spec->devnull();
 
