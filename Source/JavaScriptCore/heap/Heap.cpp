@@ -1340,7 +1340,11 @@ public:
 void Heap::zombifyDeadObjects()
 {
     // Sweep now because destructors will crash once we're zombified.
-    m_objectSpace.sweep();
+    {
+        SamplingRegion samplingRegion("Garbage Collection: Sweeping");
+        DelayedReleaseScope delayedReleaseScope(m_objectSpace);
+        m_objectSpace.sweep();
+    }
     HeapIterationScope iterationScope(*this);
     m_objectSpace.forEachDeadCell<Zombify>(iterationScope);
 }

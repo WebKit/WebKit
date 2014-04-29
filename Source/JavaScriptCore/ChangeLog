@@ -1,3 +1,15 @@
+2014-04-29  Mark Lam  <mark.lam@apple.com>
+
+        Fix bit rot in zombie mode heap code.
+        <https://webkit.org/b/132342>
+
+        Reviewed by Mark Hahnenberg.
+
+        Need to enter a DelayedReleaseScope before doing a sweep.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::zombifyDeadObjects):
+
 2014-04-29  Tomas Popela  <tpopela@redhat.com>
 
         LLINT loadisFromInstruction doesn't need special case for big endians
