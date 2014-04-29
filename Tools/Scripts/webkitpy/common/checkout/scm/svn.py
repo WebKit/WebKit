@@ -264,7 +264,7 @@ class SVN(SCM, SVNRepository):
         return match.group('value')
 
     # FIXME: This method should be on Checkout.
-    def create_patch(self, git_commit=None, changed_files=None):
+    def create_patch(self, git_commit=None, changed_files=None, git_index=None):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
