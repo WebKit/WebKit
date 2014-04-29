@@ -578,7 +578,7 @@ webkit.org/b/61121 http/tests/appcache/interrupted-update.html [ Failure Pass ]
 webkit.org/b/91314 http/tests/misc/webtiming-origins.html [ Failure Pass ]
 
 webkit.org/b/94119 storage/websql/database-lock-after-reload.html [ Failure Pass ]
-webkit.org/b/132283 storage/websql/database-lock-after-reload.html [ Failure Pass ]
+webkit.org/b/132283 storage/websql/read-transactions-running-concurrently.html [ Failure Pass ]
 
 webkit.org/b/93812 [ Release ] svg/custom/use-instanceRoot-as-event-target.xhtml [ Pass Timeout ]
 
@@ -706,7 +706,7 @@ Bug(GTK) editing/selection/click-in-margins-inside-editable-div.html [ Failure P
 Bug(GTK) fast/dom/MutationObserver/database-callback-delivery.html [ Failure Pass ]
 Bug(GTK) fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Failure Pass ]
 Bug(GTK) fast/events/mouseclick-target-and-positioning.html [ Failure Pass ]
-Bug(GTK) fast/events/mouse-drag-from-frame.html [ Failure Pass ]
+Bug(GTK) fast/events/mouse-drag-from-frame.html [ Timeout Failure Pass ]
 Bug(GTK) fast/events/mouse-focus-imagemap.html [ Failure Pass ]
 Bug(GTK) fast/events/mousemove-after-drag-over-scrollbar.html [ Failure Pass ]
 Bug(GTK) fast/events/mouse-moved-remove-frame-crash.html [ Failure Pass ]
@@ -983,7 +983,8 @@ webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-condition.html [ T
 webkit.org/b/122571 inspector-protocol/debugger/removeBreakpoint.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/setVariableValue.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/call-frame-this-strict.html [ Timeout Pass ]
-webkit.org/b/132259 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure Pass ]
+webkit.org/b/122571 inspector-protocol/profiler/console-profile.html [ Failure Pass ]
 webkit.org/b/122571 inspector-protocol/dom/request-child-nodes-depth.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/dom/focus.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/runtime/getProperties.html [ Timeout Pass ]
@@ -1967,6 +1968,8 @@ webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-
 webkit.org/b/132253 media/volume-bar-empty-when-muted.html [ Failure ]
 
 webkit.org/b/132274 fast/multicol/newmulticol/compare-with-old-impl/column-rules-stacking.html [ ImageOnlyFailure ]
+
+webkit.org/b/132328 js/dom/basic-weakmap.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

@@ -1,3 +1,9 @@
+2014-04-29  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Flagged some tests.
+
 2014-04-28  Benjamin Poulain  <benjamin@webkit.org>
 
         SelectorCodeGenerator::generateElementIsNthChild() leaks the parent register :nth-child() is non-filtering
