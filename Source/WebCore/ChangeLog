@@ -1,3 +1,38 @@
+2014-04-29  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] shape-outside polygon fails when first vertex is 0,0
+        https://bugs.webkit.org/show_bug.cgi?id=132132
+
+        Reviewed by Bem Jones-Bey.
+
+        ShapeInterval now distinguishes between x1==x2 - isEmpty() and x1,x2 haven't been
+        set yet - isUndefined(). Removed the ShapeInterval setX1() and setX2() methods, since
+        they're no longer used.
+
+        The polygon algorithm for computing excluded intervals now ignores horizontal
+        edges. It also ignores edges whose lower vertex matches the top of the line, if
+        the edge's Y direction is upwards (away from the top of the line). The rationale
+        for this was explained here:
+        http://hansmuller-webkit.blogspot.com/2012/11/revised-horizontal-box-algorithm.html
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-polygon-zero-vertex.html
+
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::OffsetPolygonEdge::clippedEdgeXRange):
+        (WebCore::PolygonShape::getExcludedIntervals):
+        * rendering/shapes/ShapeInterval.h:
+        (WebCore::ShapeInterval::ShapeInterval):
+        (WebCore::ShapeInterval::isUndefined):
+        (WebCore::ShapeInterval::x1):
+        (WebCore::ShapeInterval::x2):
+        (WebCore::ShapeInterval::width):
+        (WebCore::ShapeInterval::isEmpty):
+        (WebCore::ShapeInterval::setX1):
+        (WebCore::ShapeInterval::setX2):
+        (WebCore::ShapeInterval::overlaps):
+        (WebCore::ShapeInterval::contains):
+        (WebCore::ShapeInterval::unite):
+
 2014-04-29  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Fix getClientRects() for content nodes

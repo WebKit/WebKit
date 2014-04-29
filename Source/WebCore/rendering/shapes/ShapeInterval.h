@@ -38,29 +38,27 @@ template <typename T>
 class ShapeInterval {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ShapeInterval(T x1 = 0, T x2 = 0)
+    ShapeInterval()
+        : m_x1(-1)
+        , m_x2(-2)
+    {
+        // The initial values of m_x1,x2 don't matter (unless you're looking
+        // at them in the debugger) so long as isUndefined() is true.
+        ASSERT(isUndefined());
+    }
+
+    ShapeInterval(T x1, T x2)
         : m_x1(x1)
         , m_x2(x2)
     {
         ASSERT(x2 >= x1);
     }
 
-    T x1() const { return m_x1; }
-    T x2() const { return m_x2; }
-    T width() const { return m_x2 - m_x1; }
-    bool isEmpty() const { return !m_x1 && !m_x2; }
-
-    void setX1(T x1)
-    {
-        ASSERT(m_x2 >= x1);
-        m_x1 = x1;
-    }
-
-    void setX2(T x2)
-    {
-        ASSERT(x2 >= m_x1);
-        m_x2 = x2;
-    }
+    bool isUndefined() const { return m_x2 < m_x1; }
+    T x1() const { return isUndefined() ? 0 : m_x1; }
+    T x2() const { return isUndefined() ? 0 : m_x2; }
+    T width() const { return isUndefined() ? 0 : m_x2 - m_x1; }
+    bool isEmpty() const { return isUndefined() ? true : m_x1 == m_x2; }
 
     void set(T x1, T x2)
     {
@@ -71,19 +69,23 @@ public:
 
     bool overlaps(const ShapeInterval<T>& interval) const
     {
+        if (isUndefined() || interval.isUndefined())
+            return false;
         return x2() >= interval.x1() && x1() <= interval.x2();
     }
 
     bool contains(const ShapeInterval<T>& interval) const
     {
+        if (isUndefined() || interval.isUndefined())
+            return false;
         return x1() <= interval.x1() && x2() >= interval.x2();
     }
 
     void unite(const ShapeInterval<T>& interval)
     {
-        if (interval.isEmpty())
+        if (interval.isUndefined())
             return;
-        if (isEmpty())
+        if (isUndefined())
             set(interval.x1(), interval.x2());
         else
             set(std::min<T>(x1(), interval.x1()), std::max<T>(x2(), interval.x2()));

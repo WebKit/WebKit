@@ -66,7 +66,7 @@ float OffsetPolygonEdge::xIntercept(float y) const
 
 FloatShapeInterval OffsetPolygonEdge::clippedEdgeXRange(float y1, float y2) const
 {
-    if (!overlapsYRange(y1, y2))
+    if (!overlapsYRange(y1, y2) || (y1 == maxY() && vertex2().y() < vertex1().y()))
         return FloatShapeInterval();
 
     if (isWithinYRange(y1, y2))
@@ -132,6 +132,8 @@ void PolygonShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logica
     FloatShapeInterval excludedInterval;
     for (unsigned i = 0; i < overlappingEdges.size(); i++) {
         const FloatPolygonEdge& edge = *(overlappingEdges[i]);
+        if (edge.maxY() == edge.minY())
+            continue;
         if (!shapeMargin())
             excludedInterval.unite(OffsetPolygonEdge(edge, FloatSize()).clippedEdgeXRange(y1, y2));
         else {
