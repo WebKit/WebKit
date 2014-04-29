@@ -1,3 +1,20 @@
+2014-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove Settings::compositedScrollingForFramesEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=132352
+
+        Reviewed by Andreas Kling.
+
+        The usesCompositedScrolling setting was only used by Chromium, so
+        remove it and associated code.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::usesCompositedScrolling): Deleted.
+        * page/FrameView.h:
+        * page/Settings.in:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollLayerPosition):
+
 2014-04-29  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Move removeEquivalentProperties functions to EditingStyle

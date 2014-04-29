@@ -97,9 +97,6 @@ unsafePluginPastingEnabled initial=true
 acceleratedCompositingForFixedPositionEnabled initial=defaultAcceleratedCompositingForFixedPositionEnabled
 acceleratedCompositingForOverflowScrollEnabled initial=false
 
-# Works only in conjunction with forceCompositingMode.
-compositedScrollingForFramesEnabled initial=false
-
 experimentalNotificationsEnabled initial=false
 webGLEnabled initial=false
 webGLErrorsToConsoleEnabled initial=true

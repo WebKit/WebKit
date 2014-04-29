@@ -1,3 +1,13 @@
+2014-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove Settings::compositedScrollingForFramesEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=132352
+
+        Reviewed by Andreas Kling.
+
+        * compositing/iframes/iframe-composited-scrolling-expected.txt: Removed.
+        * compositing/iframes/iframe-composited-scrolling.html: Removed.
+
 2014-04-29  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Implement support for compositing

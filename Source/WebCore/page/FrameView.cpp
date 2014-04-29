@@ -752,16 +752,6 @@ void FrameView::restoreBackingStores()
     compositor.updateCompositingLayers(CompositingUpdateAfterLayout);
 }
 
-bool FrameView::usesCompositedScrolling() const
-{
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return false;
-    if (frame().settings().compositedScrollingForFramesEnabled())
-        return renderView->compositor().inForcedCompositingMode();
-    return false;
-}
-
 GraphicsLayer* FrameView::layerForScrolling() const
 {
     RenderView* renderView = this->renderView();

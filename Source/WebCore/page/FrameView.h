@@ -555,7 +555,6 @@ private:
     virtual ScrollableArea* enclosingScrollableArea() const override;
     virtual IntRect scrollableAreaBoundingBox() const override;
     virtual bool scrollAnimatorEnabled() const override;
-    virtual bool usesCompositedScrolling() const override;
     virtual GraphicsLayer* layerForScrolling() const override;
     virtual GraphicsLayer* layerForHorizontalScrollbar() const override;
     virtual GraphicsLayer* layerForVerticalScrollbar() const override;

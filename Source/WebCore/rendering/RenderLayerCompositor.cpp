@@ -1572,12 +1572,6 @@ void RenderLayerCompositor::updateScrollLayerPosition()
     FrameView& frameView = m_renderView.frameView();
     IntPoint scrollPosition = frameView.scrollPosition();
 
-    const Settings& settings = m_renderView.frameView().frame().settings();
-    if (settings.compositedScrollingForFramesEnabled()) {
-        if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->scrollableAreaScrollLayerDidChange(&frameView);
-    }
-
     m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 
     if (GraphicsLayer* fixedBackgroundLayer = fixedRootBackgroundLayer())
