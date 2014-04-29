@@ -1,5 +1,29 @@
 2014-04-29  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Row span info is wrong for table cells when a footer section is placed above a body section
+        https://bugs.webkit.org/show_bug.cgi?id=131832
+
+        Reviewed by Mario Sanchez Prada.
+
+        If a <footer> section is placed before the body, it renders AX row information and order incorrectly.
+        This also affects ARIA tables because they add their children by looking at renderer children, instead
+        interrogating the RenderTable directly.
+
+        Test: accessibility/table-with-footer-section-above-body.html
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addTableCellChild):
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren):
+        (WebCore::AccessibilityTable::addChildrenFromSection):
+        * accessibility/AccessibilityTable.h:
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::rowIndexRange):
+        (WebCore::AccessibilityTableCell::columnIndexRange):
+
+2014-04-29  Chris Fleizach  <cfleizach@apple.com>
+
         AX: SpeechSynthesisUtterance cannot addEventListener
         https://bugs.webkit.org/show_bug.cgi?id=132321
 

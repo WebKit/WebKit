@@ -35,6 +35,7 @@
 #include "AccessibilityTableHeaderContainer.h"
 #include "AccessibilityTableRow.h"
 #include "RenderObject.h"
+#include "RenderTableSection.h"
 
 namespace WebCore {
 
@@ -109,11 +110,28 @@ void AccessibilityARIAGrid::addChildren()
     
     AXObjectCache* axCache = m_renderer->document().axObjectCache();
     
-    // add only rows that are labeled as aria rows
+    // Add the children rows but be mindful in case there are footer sections in this table.
     HashSet<AccessibilityObject*> appendedRows;
     unsigned columnCount = 0;
-    for (RefPtr<AccessibilityObject> child = firstChild(); child; child = child->nextSibling())
-        addRowDescendant(child.get(), appendedRows, columnCount);
+    AccessibilityChildrenVector footerSections;
+    for (RefPtr<AccessibilityObject> child = firstChild(); child; child = child->nextSibling()) {
+        bool footerSection = false;
+        if (RenderObject* childRenderer = child->renderer()) {
+            if (childRenderer->isTableSection()) {
+                if (RenderTableSection* childSection = toRenderTableSection(childRenderer)) {
+                    if (childSection == childSection->table()->footer()) {
+                        footerSections.append(child);
+                        footerSection = true;
+                    }
+                }
+            }
+        }
+        if (!footerSection)
+            addRowDescendant(child.get(), appendedRows, columnCount);
+    }
+    
+    for (const auto& footerSection : footerSections)
+        addRowDescendant(footerSection.get(), appendedRows, columnCount);
     
     // make the columns based on the number of columns in the first body
     for (unsigned i = 0; i < columnCount; ++i) {

@@ -98,6 +98,7 @@ protected:
 private:
     virtual void titleElementText(Vector<AccessibilityText>&) const override;
     HTMLTableElement* tableElement() const;
+    void addChildrenFromSection(RenderTableSection*, unsigned& maxColumnCount);
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTable, isTable())

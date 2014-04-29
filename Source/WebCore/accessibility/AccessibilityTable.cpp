@@ -360,50 +360,23 @@ void AccessibilityTable::addChildren()
         return;
     
     RenderTable* table = toRenderTable(m_renderer);
-    AXObjectCache* axCache = m_renderer->document().axObjectCache();
-
     // Go through all the available sections to pull out the rows and add them as children.
     table->recalcSectionsIfNeeded();
-    RenderTableSection* tableSection = table->topSection();
-    if (!tableSection)
-        return;
     
     unsigned maxColumnCount = 0;
-    while (tableSection) {
-        
-        HashSet<AccessibilityObject*> appendedRows;
-        unsigned numRows = tableSection->numRows();
-        for (unsigned rowIndex = 0; rowIndex < numRows; ++rowIndex) {
-            
-            RenderTableRow* renderRow = tableSection->rowRendererAt(rowIndex);
-            if (!renderRow)
-                continue;
-            
-            AccessibilityObject* rowObject = axCache->getOrCreate(renderRow);
-            if (!rowObject->isTableRow())
-                continue;
-            
-            AccessibilityTableRow* row = toAccessibilityTableRow(rowObject);
-            // We need to check every cell for a new row, because cell spans
-            // can cause us to miss rows if we just check the first column.
-            if (appendedRows.contains(row))
-                continue;
-            
-            row->setRowIndex(static_cast<int>(m_rows.size()));
-            m_rows.append(row);
-            if (!row->accessibilityIsIgnored())
-                m_children.append(row);
-#if PLATFORM(GTK) || PLATFORM(EFL)
-            else
-                m_children.appendVector(row->children());
-#endif
-            appendedRows.add(row);
-        }
+    RenderTableSection* footer = table->footer();
     
-        maxColumnCount = std::max(tableSection->numColumns(), maxColumnCount);
-        tableSection = table->sectionBelow(tableSection, SkipEmptySections);
+    for (RenderTableSection* tableSection = table->topSection(); tableSection; tableSection = table->sectionBelow(tableSection, SkipEmptySections)) {
+        if (tableSection == footer)
+            continue;
+        addChildrenFromSection(tableSection, maxColumnCount);
     }
     
+    // Process the footer last, in case it was ordered earlier in the DOM.
+    if (footer)
+        addChildrenFromSection(footer, maxColumnCount);
+    
+    AXObjectCache* axCache = m_renderer->document().axObjectCache();
     // make the columns based on the number of columns in the first body
     unsigned length = maxColumnCount;
     for (unsigned i = 0; i < length; ++i) {
@@ -418,6 +391,45 @@ void AccessibilityTable::addChildren()
     AccessibilityObject* headerContainerObject = headerContainer();
     if (headerContainerObject && !headerContainerObject->accessibilityIsIgnored())
         m_children.append(headerContainerObject);
+}
+
+void AccessibilityTable::addChildrenFromSection(RenderTableSection* tableSection, unsigned& maxColumnCount)
+{
+    ASSERT(tableSection);
+    if (!tableSection)
+        return;
+    
+    AXObjectCache* axCache = m_renderer->document().axObjectCache();
+    HashSet<AccessibilityObject*> appendedRows;
+    unsigned numRows = tableSection->numRows();
+    for (unsigned rowIndex = 0; rowIndex < numRows; ++rowIndex) {
+        
+        RenderTableRow* renderRow = tableSection->rowRendererAt(rowIndex);
+        if (!renderRow)
+            continue;
+        
+        AccessibilityObject* rowObject = axCache->getOrCreate(renderRow);
+        if (!rowObject->isTableRow())
+            continue;
+        
+        AccessibilityTableRow* row = toAccessibilityTableRow(rowObject);
+        // We need to check every cell for a new row, because cell spans
+        // can cause us to miss rows if we just check the first column.
+        if (appendedRows.contains(row))
+            continue;
+        
+        row->setRowIndex(static_cast<int>(m_rows.size()));
+        m_rows.append(row);
+        if (!row->accessibilityIsIgnored())
+            m_children.append(row);
+#if PLATFORM(GTK) || PLATFORM(EFL)
+        else
+            m_children.appendVector(row->children());
+#endif
+        appendedRows.add(row);
+    }
+    
+    maxColumnCount = std::max(tableSection->numColumns(), maxColumnCount);
 }
     
 AccessibilityObject* AccessibilityTable::headerContainer()

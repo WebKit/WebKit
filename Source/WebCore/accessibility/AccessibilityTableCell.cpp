@@ -231,13 +231,15 @@ void AccessibilityTableCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRan
     if (!table || !section)
         return;
 
-    RenderTableSection* tableSection = table->topSection();    
+    RenderTableSection* footerSection = table->footer();
     unsigned rowOffset = 0;
-    while (tableSection) {
+    for (RenderTableSection* tableSection = table->topSection(); tableSection; tableSection = table->sectionBelow(tableSection, SkipEmptySections)) {
+        // Don't add row offsets for bottom sections that are placed in before the body section.
+        if (tableSection == footerSection)
+            continue;
         if (tableSection == section)
             break;
         rowOffset += tableSection->numRows();
-        tableSection = table->sectionBelow(tableSection, SkipEmptySections);
     }
 
     rowRange.first += rowOffset;
