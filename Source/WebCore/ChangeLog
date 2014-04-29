@@ -1,5 +1,29 @@
 2014-04-29  Zoltan Horvath  <zoltan@webkit.org>
 
+        [CSS Shapes] complex calc args for inset round vanish
+        https://bugs.webkit.org/show_bug.cgi?id=132293
+
+        Reviewed by Bem Jones-Bey.
+
+        In order to use calc in the rounded parameters for inset shapes, we need
+        to pass RenderStyle for the value creation as we did for the width arguments.
+        Without taking RenderStyle into account, we hit an assert not reache
+        in CSSPrimitiveValue::init in the debug builds.
+
+        I've added new parsing test.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::init):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::create):
+        * css/CSSValuePool.h:
+        (WebCore::CSSValuePool::createValue):
+
+2014-04-29  Zoltan Horvath  <zoltan@webkit.org>
+
         [CSS Shapes] complex calc values for shape-margin return null for computed style
         https://bugs.webkit.org/show_bug.cgi?id=132313
 

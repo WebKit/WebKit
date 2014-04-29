@@ -317,10 +317,10 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle* st
     ASSERT_NOT_REACHED();
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue(const LengthSize& lengthSize)
+CSSPrimitiveValue::CSSPrimitiveValue(const LengthSize& lengthSize, const RenderStyle* style)
     : CSSValue(PrimitiveClass)
 {
-    init(lengthSize);
+    init(lengthSize, style);
 }
 
 void CSSPrimitiveValue::init(const Length& length)
@@ -388,11 +388,11 @@ void CSSPrimitiveValue::init(const Length& length)
     ASSERT_NOT_REACHED();
 }
 
-void CSSPrimitiveValue::init(const LengthSize& lengthSize)
+void CSSPrimitiveValue::init(const LengthSize& lengthSize, const RenderStyle* style)
 {
     m_primitiveUnitType = CSS_PAIR;
     m_hasCachedCSSText = false;
-    m_value.pair = Pair::create(create(lengthSize.width()), create(lengthSize.height())).leakRef();
+    m_value.pair = Pair::create(create(lengthSize.width(), style), create(lengthSize.height(), style)).leakRef();
 }
 
 void CSSPrimitiveValue::init(PassRefPtr<Counter> c)

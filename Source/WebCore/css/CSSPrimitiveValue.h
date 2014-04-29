@@ -214,7 +214,7 @@ public:
     static PassRef<CSSPrimitiveValue> create(double value, UnitTypes type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
     static PassRef<CSSPrimitiveValue> create(const String& value, UnitTypes type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
     static PassRef<CSSPrimitiveValue> create(const Length& value, const RenderStyle* style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
-    static PassRef<CSSPrimitiveValue> create(const LengthSize& value) { return adoptRef(*new CSSPrimitiveValue(value)); }
+    static PassRef<CSSPrimitiveValue> create(const LengthSize& value, const RenderStyle* style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
 
     template<typename T> static PassRef<CSSPrimitiveValue> create(T value)
     {
@@ -346,7 +346,7 @@ private:
     CSSPrimitiveValue(unsigned color); // RGB value
     CSSPrimitiveValue(const Length&);
     CSSPrimitiveValue(const Length&, const RenderStyle*);
-    CSSPrimitiveValue(const LengthSize&);
+    CSSPrimitiveValue(const LengthSize&, const RenderStyle*);
     CSSPrimitiveValue(const String&, UnitTypes);
     CSSPrimitiveValue(double, UnitTypes);
 
@@ -368,7 +368,7 @@ private:
     template<typename T> operator T*(); // compile-time guard
 
     void init(const Length&);
-    void init(const LengthSize&);
+    void init(const LengthSize&, const RenderStyle*);
     void init(PassRefPtr<Counter>);
     void init(PassRefPtr<Rect>);
     void init(PassRefPtr<Pair>);

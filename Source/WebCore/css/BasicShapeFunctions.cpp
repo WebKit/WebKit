@@ -112,10 +112,10 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
         insetValue->setBottom(pool.createValue(inset->bottom(), style));
         insetValue->setLeft(pool.createValue(inset->left(), style));
 
-        insetValue->setTopLeftRadius(pool.createValue(inset->topLeftRadius()));
-        insetValue->setTopRightRadius(pool.createValue(inset->topRightRadius()));
-        insetValue->setBottomRightRadius(pool.createValue(inset->bottomRightRadius()));
-        insetValue->setBottomLeftRadius(pool.createValue(inset->bottomLeftRadius()));
+        insetValue->setTopLeftRadius(pool.createValue(inset->topLeftRadius(), style));
+        insetValue->setTopRightRadius(pool.createValue(inset->topRightRadius(), style));
+        insetValue->setBottomRightRadius(pool.createValue(inset->bottomRightRadius(), style));
+        insetValue->setBottomLeftRadius(pool.createValue(inset->bottomLeftRadius(), style));
 
         basicShapeValue = insetValue.release();
         break;

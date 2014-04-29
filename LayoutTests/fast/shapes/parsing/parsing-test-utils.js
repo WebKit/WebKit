@@ -39,6 +39,7 @@ var validShapeValues = [
     "inset(10px round 0px / 10px)",
 
     ["inset(calc(25%*3 - 10in) 0 0 0)", "inset(calc(75% - 10in) 0px 0px)", "inset(calc(75% - 960px) 0px 0px)"],
+    ["inset(10px 10px 10px 10px round calc(25%*3 - 10in))", "inset(10px round calc(75% - 10in))", "inset(10px round calc(75% - 960px))"],
 
     ["circle()", "circle(at 50% 50%)", "circle(closest-side at 50% 50%)"],
     ["circle(farthest-side)", "circle(farthest-side at 50% 50%)", "circle(farthest-side at 50% 50%)"],
