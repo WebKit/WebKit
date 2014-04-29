@@ -1,5 +1,23 @@
 2014-04-29  Mark Lam  <mark.lam@apple.com>
 
+        Zombifying sweep should ignore retired blocks.
+        <https://webkit.org/b/132344>
+
+        Reviewed by Mark Hahnenberg.
+
+        By definition, retired blocks do not have "dead" objects, or at least
+        none that we know of yet until the next marking phase has been run
+        over it.  So, we should not be sweeping them (even for zombie mode).
+
+        * heap/Heap.cpp:
+        (JSC::Heap::zombifyDeadObjects):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::zombifySweep):
+        * heap/MarkedSpace.h:
+        (JSC::ZombifySweep::operator()):
+
+2014-04-29  Mark Lam  <mark.lam@apple.com>
+
         Fix bit rot in zombie mode heap code.
         <https://webkit.org/b/132342>
 

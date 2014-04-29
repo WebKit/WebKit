@@ -63,6 +63,14 @@ struct Sweep : MarkedBlock::VoidFunctor {
     void operator()(MarkedBlock* block) { block->sweep(); }
 };
 
+struct ZombifySweep : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block)
+    {
+        if (block->needsSweeping())
+            block->sweep();
+    }
+};
+
 struct MarkCount : MarkedBlock::CountFunctor {
     void operator()(MarkedBlock* block) { count(block->markCount()); }
 };
@@ -121,6 +129,7 @@ public:
     void clearRememberedSet();
     void clearNewlyAllocated();
     void sweep();
+    void zombifySweep();
     size_t objectCount();
     size_t size();
     size_t capacity();

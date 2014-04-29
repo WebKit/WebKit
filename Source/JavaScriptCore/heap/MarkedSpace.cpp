@@ -127,6 +127,14 @@ void MarkedSpace::sweep()
     forEachBlock<Sweep>();
 }
 
+void MarkedSpace::zombifySweep()
+{
+    if (Options::logGC())
+        dataLog("Zombifying sweep...");
+    m_heap->sweeper()->willFinishSweeping();
+    forEachBlock<ZombifySweep>();
+}
+
 void MarkedSpace::resetAllocators()
 {
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
