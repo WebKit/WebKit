@@ -1,3 +1,52 @@
+2014-04-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSProxies should be cacheable
+        https://bugs.webkit.org/show_bug.cgi?id=132351
+
+        Reviewed by Geoffrey Garen.
+
+        Whenever we encounter a proxy in an inline cache we should try to cache on the 
+        proxy's target instead of giving up.
+
+        This patch adds support for a simple "recursive" inline cache if the base object
+        we're accessing is a pure forwarding proxy. JSGlobalObject and its subclasses 
+        are the only ones to benefit from this right now.
+
+        This is performance neutral on the benchmarks we track. Currently we won't
+        cache on JSDOMWindow due to HasImpureGetOwnPropertySlot, but this issue will be fixed soon.
+
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+        (JSC::tryBuildGetByIDList):
+        (JSC::tryCachePutByID):
+        (JSC::tryBuildPutByIdList):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionCreateProxy):
+        * runtime/IntendedStructureChain.cpp:
+        (JSC::IntendedStructureChain::isNormalized):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isProxy):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/JSProxy.h:
+        (JSC::JSProxy::createStructure):
+        (JSC::JSProxy::targetOffset):
+        * runtime/JSType.h:
+        * runtime/Operations.h:
+        (JSC::isPrototypeChainNormalized):
+        * runtime/Structure.h:
+        (JSC::Structure::isProxy):
+        * tests/stress/proxy-inline-cache.js: Added.
+        (cacheOnTarget.getX):
+        (cacheOnTarget):
+        (cacheOnPrototypeOfTarget.getX):
+        (cacheOnPrototypeOfTarget):
+        (dontCacheOnProxyInPrototypeChain.getX):
+        (dontCacheOnProxyInPrototypeChain):
+        (dontCacheOnTargetOfProxyInPrototypeChainOfTarget.getX):
+        (dontCacheOnTargetOfProxyInPrototypeChainOfTarget):
+
 2014-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         Use LLVM as a backend for the fourth-tier DFG JIT (a.k.a. the FTL JIT)

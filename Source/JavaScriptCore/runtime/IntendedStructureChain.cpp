@@ -118,11 +118,11 @@ bool IntendedStructureChain::mayInterceptStoreTo(VM& vm, StringImpl* uid)
 
 bool IntendedStructureChain::isNormalized()
 {
-    if (m_head->typeInfo().type() == ProxyType)
+    if (m_head->isProxy())
         return false;
     for (unsigned i = 0; i < m_vector.size(); ++i) {
         Structure* structure = m_vector[i];
-        if (structure->typeInfo().type() == ProxyType)
+        if (structure->isProxy())
             return false;
         if (structure->isDictionary())
             return false;

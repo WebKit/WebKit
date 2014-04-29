@@ -158,7 +158,7 @@ inline bool JSCell::isGetterSetter() const
 
 inline bool JSCell::isProxy() const
 {
-    return m_type == ProxyType;
+    return m_type == ImpureProxyType || m_type == PureForwardingProxyType;
 }
 
 inline bool JSCell::isAPIValueWrapper() const

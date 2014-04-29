@@ -241,6 +241,8 @@ void Element::finishCreation(VM& vm)
 
 static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer);
 
+static EncodedJSValue JSC_HOST_CALL functionCreateProxy(ExecState*);
+
 static EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateElement(ExecState*);
@@ -413,6 +415,8 @@ protected:
         
         addFunction(vm, "effectful42", functionEffectful42, 0);
         addFunction(vm, "makeMasquerader", functionMakeMasquerader, 0);
+
+        addFunction(vm, "createProxy", functionCreateProxy, 1);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -569,6 +573,18 @@ EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState* exec)
     Root* root = jsCast<Root*>(exec->argument(1));
     element->setRoot(root);
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionCreateProxy(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    JSValue target = exec->argument(0);
+    if (!target.isObject())
+        return JSValue::encode(jsUndefined());
+    JSObject* jsTarget = asObject(target.asCell());
+    Structure* structure = JSProxy::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsTarget->prototype());
+    JSProxy* proxy = JSProxy::create(exec->vm(), structure, jsTarget);
+    return JSValue::encode(proxy);
 }
 
 EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState* exec)

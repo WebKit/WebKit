@@ -261,7 +261,7 @@ inline size_t normalizePrototypeChain(CallFrame* callFrame, JSCell* base)
 inline bool isPrototypeChainNormalized(JSGlobalObject* globalObject, Structure* structure)
 {
     for (;;) {
-        if (structure->typeInfo().type() == ProxyType)
+        if (structure->isProxy())
             return false;
             
         JSValue v = structure->prototypeForLookup(globalObject);

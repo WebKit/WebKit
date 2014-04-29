@@ -103,6 +103,12 @@ public:
     int32_t objectInitializationBlob() const { return m_blob.blobExcludingStructureID(); }
     int64_t idBlob() const { return m_blob.blob(); }
 
+    bool isProxy() const
+    {
+        JSType type = m_blob.type();
+        return type == ImpureProxyType || type == PureForwardingProxyType;
+    }
+
     static void dumpStatistics();
 
     JS_EXPORT_PRIVATE static Structure* addPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&, PutPropertySlot::Context = PutPropertySlot::UnknownContext);

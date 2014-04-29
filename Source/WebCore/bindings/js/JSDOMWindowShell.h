@@ -59,7 +59,7 @@ namespace WebCore {
 
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype) 
         {
-            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::ProxyType, StructureFlags), info());
+            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::PureForwardingProxyType, StructureFlags), info());
         }
 
         DOMWrapperWorld& world() { return m_world.get(); }

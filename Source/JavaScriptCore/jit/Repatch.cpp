@@ -285,7 +285,7 @@ static FunctionPtr customFor(const PutPropertySlot& slot)
 static void generateByIdStub(
     ExecState* exec, ByIdStubKind kind, const Identifier& propertyName,
     FunctionPtr custom, StructureStubInfo& stubInfo, StructureChain* chain, size_t count,
-    PropertyOffset offset, Structure* structure, CodeLocationLabel successLabel,
+    PropertyOffset offset, Structure* structure, bool loadTargetFromProxy, CodeLocationLabel successLabel,
     CodeLocationLabel slowCaseLabel, RefPtr<JITStubRoutine>& stubRoutine)
 {
     VM* vm = &exec->vm();
@@ -308,10 +308,21 @@ static void generateByIdStub(
     }
     
     MacroAssembler::JumpList failureCases;
-    
+
+    GPRReg baseForGetGPR;
+    if (loadTargetFromProxy) {
+        baseForGetGPR = valueRegs.payloadGPR();
+        failureCases.append(stubJit.branch8(
+            MacroAssembler::NotEqual, 
+            MacroAssembler::Address(baseGPR, JSCell::typeInfoTypeOffset()), 
+            MacroAssembler::TrustedImm32(PureForwardingProxyType)));
+        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSProxy::targetOffset()), baseForGetGPR);
+    } else
+        baseForGetGPR = baseGPR;
+
     failureCases.append(branchStructure(stubJit,
         MacroAssembler::NotEqual, 
-        MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()), 
+        MacroAssembler::Address(baseForGetGPR, JSCell::structureIDOffset()), 
         structure));
 
     CodeBlock* codeBlock = exec->codeBlock();
@@ -339,7 +350,7 @@ static void generateByIdStub(
         stubJit.move(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR);
         baseForAccessGPR = scratchGPR;
     } else
-        baseForAccessGPR = baseGPR;
+        baseForAccessGPR = baseForGetGPR;
     
     GPRReg loadedValueGPR = InvalidGPRReg;
     if (kind != CallCustomGetter && kind != CallCustomSetter) {
@@ -450,7 +461,7 @@ static void generateByIdStub(
                 loadedValueGPR, calleeFrame.withOffset(JSStack::Callee * sizeof(Register)));
 
             stubJit.storeCell(
-                baseGPR,
+                baseForGetGPR,
                 calleeFrame.withOffset(
                     virtualRegisterForArgument(0).offset() * sizeof(Register)));
             
@@ -508,14 +519,14 @@ static void generateByIdStub(
             // setter: void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
 #if USE(JSVALUE64)
             if (kind == CallCustomGetter)
-                stubJit.setupArgumentsWithExecState(baseForAccessGPR, baseGPR, MacroAssembler::TrustedImmPtr(propertyName.impl()));
+                stubJit.setupArgumentsWithExecState(baseForAccessGPR, baseForGetGPR, MacroAssembler::TrustedImmPtr(propertyName.impl()));
             else
-                stubJit.setupArgumentsWithExecState(baseForAccessGPR, baseGPR, valueRegs.gpr());
+                stubJit.setupArgumentsWithExecState(baseForAccessGPR, baseForGetGPR, valueRegs.gpr());
 #else
             if (kind == CallCustomGetter)
-                stubJit.setupArgumentsWithExecState(baseForAccessGPR, baseGPR, MacroAssembler::TrustedImm32(JSValue::CellTag), MacroAssembler::TrustedImmPtr(propertyName.impl()));
+                stubJit.setupArgumentsWithExecState(baseForAccessGPR, baseForGetGPR, MacroAssembler::TrustedImm32(JSValue::CellTag), MacroAssembler::TrustedImmPtr(propertyName.impl()));
             else
-                stubJit.setupArgumentsWithExecState(baseForAccessGPR, baseGPR, MacroAssembler::TrustedImm32(JSValue::CellTag), valueRegs.payloadGPR(), valueRegs.tagGPR());
+                stubJit.setupArgumentsWithExecState(baseForAccessGPR, baseForGetGPR, MacroAssembler::TrustedImm32(JSValue::CellTag), valueRegs.payloadGPR(), valueRegs.tagGPR());
 #endif
             stubJit.storePtr(GPRInfo::callFrameRegister, &vm->topCallFrame);
 
@@ -715,15 +726,24 @@ static void patchJumpToGetByIdStub(CodeBlock* codeBlock, StructureStubInfo& stub
 static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier& ident, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     if (!baseValue.isCell()
-        || !slot.isCacheable()
-        || !baseValue.asCell()->structure()->propertyAccessesAreCacheable())
+        || !slot.isCacheable())
         return false;
 
-    CodeBlock* codeBlock = exec->codeBlock();
-    VM* vm = &exec->vm();
     JSCell* baseCell = baseValue.asCell();
-    Structure* structure = baseCell->structure();
-    
+    bool loadTargetFromProxy = false;
+    if (baseCell->type() == PureForwardingProxyType) {
+        baseValue = jsCast<JSProxy*>(baseCell)->target();
+        baseCell = baseValue.asCell();
+        loadTargetFromProxy = true;
+    }
+
+    VM* vm = &exec->vm();
+    CodeBlock* codeBlock = exec->codeBlock();
+    Structure* structure = baseCell->structure(*vm);
+
+    if (!structure->propertyAccessesAreCacheable())
+        return false;
+
     if (stubInfo.patch.spillMode == NeedToSpill) {
         // We cannot do as much inline caching if the registers were not flushed prior to this GetById. In particular,
         // non-Value cached properties require planting calls, which requires registers to have been flushed. Thus,
@@ -756,8 +776,8 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     
     RefPtr<JITStubRoutine> stubRoutine;
     generateByIdStub(
-        exec, kindFor(slot), ident, customFor(slot), stubInfo, prototypeChain, count, offset,
-        structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
+        exec, kindFor(slot), ident, customFor(slot), stubInfo, prototypeChain, count, offset, 
+        structure, loadTargetFromProxy, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
         CodeLocationLabel(list->currentSlowPathTarget(stubInfo)), stubRoutine);
     
     GetByIdAccess::AccessType accessType;
@@ -1175,7 +1195,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
 
         generateByIdStub(
             exec, kindFor(slot), ident, customFor(slot), stubInfo, prototypeChain, count,
-            offset, structure,
+            offset, structure, false,
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase),
             stubRoutine);
@@ -1307,7 +1327,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
 
         generateByIdStub(
             exec, kindFor(slot), propertyName, customFor(slot), stubInfo, prototypeChain, count,
-            offset, structure,
+            offset, structure, false,
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
             CodeLocationLabel(list->currentSlowPathTarget()),
             stubRoutine);

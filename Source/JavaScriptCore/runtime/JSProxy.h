@@ -41,14 +41,15 @@ public:
         return proxy;
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, JSType proxyType = ImpureProxyType)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ProxyType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(proxyType, StructureFlags), info());
     }
 
     DECLARE_EXPORT_INFO;
 
     JSObject* target() const { return m_target.get(); }
+    static ptrdiff_t targetOffset() { return OBJECT_OFFSETOF(JSProxy, m_target); }
 
 protected:
     JSProxy(VM& vm, Structure* structure)

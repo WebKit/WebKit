@@ -298,7 +298,7 @@ protected:
         structure()->setGlobalObject(vm, this);
         m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
         init();
-        setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, prototype()), this));
+        setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, prototype(), PureForwardingProxyType), this));
     }
 
     void finishCreation(VM& vm, JSObject* thisValue)
