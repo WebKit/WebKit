@@ -483,7 +483,7 @@ LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const Layou
         }
     }
 
-    return mappedRect.isEmpty() ? mappedRect : m_flowThread->mapFromFlowThreadToLocal(box, mappedRect);
+    return m_flowThread->mapFromFlowThreadToLocal(box, mappedRect);
 }
 
 void RenderRegion::addLayoutOverflowForBox(const RenderBox* box, const LayoutRect& rect)
@@ -571,6 +571,21 @@ LayoutRect RenderRegion::visualOverflowRectForBoxForPropagation(const RenderBoxM
     flowThread()->flipForWritingModeLocalCoordinates(rect);
 
     return rect;
+}
+
+CurrentRenderRegionMaintainer::CurrentRenderRegionMaintainer(RenderRegion& region)
+    : m_region(region)
+{
+    RenderFlowThread* flowThread = region.flowThread();
+    // A flow thread can have only one current region.
+    ASSERT(!flowThread->currentRegion());
+    flowThread->setCurrentRegionMaintainer(this);
+}
+
+CurrentRenderRegionMaintainer::~CurrentRenderRegionMaintainer()
+{
+    RenderFlowThread* flowThread = m_region.flowThread();
+    flowThread->setCurrentRegionMaintainer(nullptr);
 }
 
 } // namespace WebCore

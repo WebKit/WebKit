@@ -1,5 +1,64 @@
 2014-04-29  Andrei Bucur  <abucur@adobe.com>
 
+        [CSS Regions] Fix getClientRects() for content nodes
+        https://bugs.webkit.org/show_bug.cgi?id=117407
+
+        Reviewed by David Hyatt.
+
+        This patch modifies getClientRects() to return a list of fragments
+        for a fragmented box instead of a single rectangle positioned inside
+        the region where the box center would appear.
+
+        The approach is to split the border box of the element in regions using
+        the layout positioning. Then each fragment is mapped to the view coordinates
+        and the result added to the list of rectangles. To preserve the originating
+        region when mapping the fragment through the ancestor tree I've introduced
+        the concept of a current region. The current region is stored inside a
+        CurrentRenderRegionMaintainer object, created whenever an algorithm needing
+        it needs to run. When the maintainer is destroyed, the cleanup is made
+        automatically. The RenderFlowThread holds a pointer to this structure for
+        easy access.
+
+        Tests: fast/regions/cssom/client-rects-fixed-content.html
+               fast/regions/cssom/client-rects-forced-breaks.html
+               fast/regions/cssom/client-rects-inline-complex.html
+               fast/regions/cssom/client-rects-inline.html
+               fast/regions/cssom/client-rects-nested-regions.html
+               fast/regions/cssom/client-rects-positioned.html
+               fast/regions/cssom/client-rects-relative-position.html
+               fast/regions/cssom/client-rects-simple-block.html
+               fast/regions/cssom/client-rects-transforms.html
+               fast/regions/cssom/client-rects-unsplittable-float.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::absoluteQuads): Split the box in fragments.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteQuads): Split the box in fragments.
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::mapFromFlowToRegion):
+        (WebCore::RenderFlowThread::mapLocalToContainer):
+        (WebCore::RenderFlowThread::currentRegion):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::absoluteQuadsForBoxInRegion): Get
+        the fragments for this box in the region.
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::absoluteQuadsForBox): Virtual function
+        that can be used to implement fragments to client rects mapping.
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::rectFlowPortionForBox): Small change to correctly
+        map empty rectangles to containers.
+        (WebCore::CurrentRenderRegionMaintainer::CurrentRenderRegionMaintainer):
+        (WebCore::CurrentRenderRegionMaintainer::~CurrentRenderRegionMaintainer):
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::absoluteQuadsForBoxInRegion):
+        (WebCore::CurrentRenderRegionMaintainer::region):
+
+2014-04-29  Andrei Bucur  <abucur@adobe.com>
+
         Store the containing region map inside the flow thread
         https://bugs.webkit.org/show_bug.cgi?id=131647
 

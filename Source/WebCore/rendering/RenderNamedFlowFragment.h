@@ -116,6 +116,8 @@ public:
 
     void updateRegionFlags();
 
+    virtual void absoluteQuadsForBoxInRegion(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) override;
+
 private:
     virtual const char* renderName() const override { return "RenderNamedFlowFragment"; }
 

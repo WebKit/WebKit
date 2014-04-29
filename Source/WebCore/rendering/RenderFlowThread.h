@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class CurrentRenderRegionMaintainer;
 struct LayerFragment;
 typedef Vector<LayerFragment, 1> LayerFragments;
 class RenderFlowThread;
@@ -220,10 +221,15 @@ public:
 
     // Used to estimate the maximum height of the flow thread.
     static LayoutUnit maxLogicalHeight() { return LayoutUnit::max() / 2; }
-    
+
     bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
 
+    virtual bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) const { return false; }
+
     virtual void layout() override;
+
+    void setCurrentRegionMaintainer(CurrentRenderRegionMaintainer* currentRegionMaintainer) { m_currentRegionMaintainer = currentRegionMaintainer; }
+    RenderRegion* currentRegion() const;
 
     ContainingRegionMap& containingRegionMap();
 
@@ -352,6 +358,8 @@ protected:
     unsigned m_autoLogicalHeightRegionsCount;
 
     RegionIntervalTree m_regionIntervalTree;
+
+    CurrentRenderRegionMaintainer* m_currentRegionMaintainer;
 
     bool m_regionsInvalidated : 1;
     bool m_regionsHaveUniformLogicalWidth : 1;

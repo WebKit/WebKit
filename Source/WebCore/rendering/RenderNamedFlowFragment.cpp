@@ -524,4 +524,18 @@ void RenderNamedFlowFragment::detachRegion()
     RenderRegion::detachRegion();
 }
 
+void RenderNamedFlowFragment::absoluteQuadsForBoxInRegion(Vector<FloatQuad>& quads, bool* wasFixed, const RenderBox* renderer, float localTop, float localBottom)
+{
+    LayoutRect layoutLocalRect(0, localTop, renderer->borderBoxRectInRegion(this).width(), localBottom - localTop);
+    LayoutRect fragmentRect = rectFlowPortionForBox(renderer, layoutLocalRect);
+
+    // We want to skip the 0px height fragments for non-empty boxes that may appear in case the bottom of the box
+    // overlaps the bottom of a region.
+    if (localBottom != localTop && !fragmentRect.height())
+        return;
+
+    CurrentRenderRegionMaintainer regionMaintainer(*this);
+    quads.append(renderer->localToAbsoluteQuad(FloatRect(fragmentRect), 0 /* mode */, wasFixed));
+}
+
 } // namespace WebCore

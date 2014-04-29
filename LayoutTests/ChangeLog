@@ -1,5 +1,38 @@
 2014-04-29  Andrei Bucur  <abucur@adobe.com>
 
+        [CSS Regions] Fix getClientRects() for content nodes
+        https://bugs.webkit.org/show_bug.cgi?id=117407
+
+        Reviewed by David Hyatt.
+
+        Tests verifying getClientRects works correctly in different situations.
+
+        * fast/regions/cssom/client-rects-fixed-content-expected.txt: Added.
+        * fast/regions/cssom/client-rects-fixed-content.html: Added.
+        * fast/regions/cssom/client-rects-forced-breaks-expected.txt: Added.
+        * fast/regions/cssom/client-rects-forced-breaks.html: Added.
+        * fast/regions/cssom/client-rects-inline-complex-expected.txt: Added.
+        * fast/regions/cssom/client-rects-inline-complex.html: Added.
+        * fast/regions/cssom/client-rects-inline-expected.txt: Added.
+        * fast/regions/cssom/client-rects-inline.html: Added.
+        * fast/regions/cssom/client-rects-nested-regions-expected.txt: Added.
+        * fast/regions/cssom/client-rects-nested-regions.html: Added.
+        * fast/regions/cssom/client-rects-positioned-expected.txt: Added.
+        * fast/regions/cssom/client-rects-positioned.html: Added.
+        * fast/regions/cssom/client-rects-relative-position-expected.txt: Added.
+        * fast/regions/cssom/client-rects-relative-position.html: Added.
+        * fast/regions/cssom/client-rects-simple-block-expected.txt: Added.
+        * fast/regions/cssom/client-rects-simple-block.html: Added.
+        * fast/regions/cssom/client-rects-transforms-expected.txt: Added.
+        * fast/regions/cssom/client-rects-transforms.html: Added.
+        * fast/regions/cssom/client-rects-unsplittable-float-expected.txt: Added.
+        * fast/regions/cssom/client-rects-unsplittable-float.html: Added.
+        * fast/regions/resources/helper.js: 
+        (testClientRects): Function that compares the actual client rects for an
+        element to a list of expected client rects.
+
+2014-04-29  Andrei Bucur  <abucur@adobe.com>
+
         Store the containing region map inside the flow thread
         https://bugs.webkit.org/show_bug.cgi?id=131647
 

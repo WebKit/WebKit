@@ -4698,15 +4698,18 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (isAnonymousBlockContinuation()) {
-        // FIXME: This is wrong for block-flows that are horizontal.
-        // https://bugs.webkit.org/show_bug.cgi?id=46781
-        FloatRect localRect(0, -collapsedMarginBefore(),
-                            width(), height() + collapsedMarginBefore() + collapsedMarginAfter());
+    FloatRect localRect = isAnonymousBlockContinuation() 
+        ? FloatRect(0, -collapsedMarginBefore(), width(), height() + collapsedMarginBefore() + collapsedMarginAfter())
+        : FloatRect(0, 0, width(), height());
+    
+    // FIXME: This is wrong for block-flows that are horizontal.
+    // https://bugs.webkit.org/show_bug.cgi?id=46781
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread || !flowThread->absoluteQuadsForBox(quads, wasFixed, this, localRect.y(), localRect.maxY()))
         quads.append(localToAbsoluteQuad(localRect, 0 /* mode */, wasFixed));
+
+    if (isAnonymousBlockContinuation())
         continuation()->absoluteQuads(quads, wasFixed);
-    } else
-        quads.append(RenderBox::localToAbsoluteQuad(FloatRect(0, 0, width(), height()), 0 /* mode */, wasFixed));
 }
 
 LayoutRect RenderBlock::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const

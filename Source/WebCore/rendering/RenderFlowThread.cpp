@@ -55,6 +55,7 @@ RenderFlowThread::RenderFlowThread(Document& document, PassRef<RenderStyle> styl
     : RenderBlockFlow(document, std::move(style))
     , m_previousRegionCount(0)
     , m_autoLogicalHeightRegionsCount(0)
+    , m_currentRegionMaintainer(nullptr)
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
     , m_regionsHaveUniformLogicalHeight(true)
@@ -542,17 +543,16 @@ RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformSta
     if (!hasValidRegionInfo())
         return 0;
 
-    LayoutRect boxRect = transformState.mappedQuad().enclosingBoundingBox();
-    flipForWritingMode(boxRect);
+    RenderRegion* renderRegion = currentRegion();
+    if (!renderRegion) {
+        LayoutRect boxRect = transformState.mappedQuad().enclosingBoundingBox();
+        flipForWritingMode(boxRect);
 
-    // FIXME: We need to refactor RenderObject::absoluteQuads to be able to split the quads across regions,
-    // for now we just take the center of the mapped enclosing box and map it to a region.
-    // Note: Using the center in order to avoid rounding errors.
-
-    LayoutPoint center = boxRect.center();
-    RenderRegion* renderRegion = const_cast<RenderFlowThread*>(this)->regionAtBlockOffset(this, isHorizontalWritingMode() ? center.y() : center.x(), true, DisallowRegionAutoGeneration);
-    if (!renderRegion)
-        return 0;
+        LayoutPoint center = boxRect.center();
+        renderRegion = const_cast<RenderFlowThread*>(this)->regionAtBlockOffset(this, isHorizontalWritingMode() ? center.y() : center.x(), true, DisallowRegionAutoGeneration);
+        if (!renderRegion)
+            return 0;
+    }
 
     LayoutRect flippedRegionRect(renderRegion->flowThreadPortionRect());
     flipForWritingMode(flippedRegionRect);
@@ -1223,7 +1223,23 @@ void RenderFlowThread::mapLocalToContainer(const RenderLayerModelObject* repaint
 
     if (RenderRegion* region = mapFromFlowToRegion(transformState)) {
         // FIXME: The cast below is probably not the best solution, we may need to find a better way.
-        static_cast<const RenderObject*>(region)->mapLocalToContainer(region->containerForRepaint(), transformState, mode, wasFixed);
+        const RenderObject* regionObject = static_cast<const RenderObject*>(region);
+
+        // If the repaint container is nullptr, we have to climb up to the RenderView, otherwise swap
+        // it with the region's repaint container.
+        repaintContainer = repaintContainer ? region->containerForRepaint() : nullptr;
+
+        if (RenderFlowThread* regionFlowThread = region->flowThreadContainingBlock()) {
+            RenderRegion* startRegion = nullptr;
+            RenderRegion* endRegion = nullptr;
+            if (regionFlowThread->getRegionRangeForBox(region, startRegion, endRegion)) {
+                CurrentRenderRegionMaintainer regionMaintainer(*startRegion);
+                regionObject->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+                return;
+            }
+        }
+
+        regionObject->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
     }
 }
 
@@ -1441,6 +1457,11 @@ void RenderFlowThread::clearRegionsOverflow(const RenderBox* box)
         if (region == endRegion)
             break;
     }
+}
+
+RenderRegion* RenderFlowThread::currentRegion() const
+{
+    return m_currentRegionMaintainer ? &m_currentRegionMaintainer->region() : nullptr;
 }
 
 ContainingRegionMap& RenderFlowThread::containingRegionMap()

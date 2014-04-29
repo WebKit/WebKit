@@ -128,6 +128,8 @@ public:
 
     virtual bool hasAutoLogicalHeight() const { return false; }
 
+    virtual void absoluteQuadsForBoxInRegion(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) { }
+
 protected:
     RenderRegion(Element&, PassRef<RenderStyle>, RenderFlowThread*);
     RenderRegion(Document&, PassRef<RenderStyle>, RenderFlowThread*);
@@ -178,6 +180,17 @@ private:
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderRegion, isRenderRegion())
+
+class CurrentRenderRegionMaintainer {
+    WTF_MAKE_NONCOPYABLE(CurrentRenderRegionMaintainer);
+public:
+    CurrentRenderRegionMaintainer(RenderRegion&);
+    ~CurrentRenderRegionMaintainer();
+
+    RenderRegion& region() const { return m_region; }
+private:
+    RenderRegion& m_region;
+};
 
 } // namespace WebCore
 

@@ -76,6 +76,28 @@ function testBoundingRects(expectedBoundingRects, tolerance)
     return !results.length;
 }
 
+function testClientRects(id, expectedClientRects, tolerance)
+{
+    if (tolerance === undefined)
+        tolerance = 0;
+
+    var results = [];
+    var actualRects = document.getElementById(id).getClientRects();
+    if (actualRects.length != expectedClientRects.length)
+        results.push("FAIL: The element #" + id + " has a wrong count of client rects: " + actualRects.length + "(actual) vs. " + expectedClientRects.length + "(expected)");
+    else {
+        for (var i = 0; i < expectedClientRects.length; ++i) {
+            var expectedRect = expectedClientRects[i];
+            var actualRect = actualRects[i];
+            assertEqualRects(results, id, rectToArray(actualRect), expectedRect, tolerance);
+        }
+    }
+
+    document.write("<p>" + (results.length ? results.join("<br />") : "PASS") + "</p>");
+    
+    return !results.length;
+}
+
 function assertRectContains(results, name, containerRect, insideRect, tolerance)
 {
     // make the container rect bigger with tolerance

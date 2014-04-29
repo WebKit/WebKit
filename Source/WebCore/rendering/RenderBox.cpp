@@ -555,7 +555,13 @@ void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumul
 
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height()), 0 /* mode */, wasFixed));
+    FloatRect localRect(0, 0, width(), height());
+
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (flowThread && flowThread->absoluteQuadsForBox(quads, wasFixed, this, localRect.y(), localRect.maxY()))
+        return;
+
+    quads.append(localToAbsoluteQuad(localRect, 0 /* mode */, wasFixed));
 }
 
 void RenderBox::updateLayerTransform()

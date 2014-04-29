@@ -839,4 +839,24 @@ void RenderNamedFlowThread::removeFlowChildInfo(RenderObject* child)
     clearRenderObjectCustomStyle(child);
 }
 
+bool RenderNamedFlowThread::absoluteQuadsForBox(Vector<FloatQuad>& quads, bool* wasFixed, const RenderBox* renderer, float localTop, float localBottom) const
+{
+    RenderRegion* startRegion = nullptr;
+    RenderRegion* endRegion = nullptr;
+    // If the box doesn't have a range, we don't know how it is fragmented so fallback to the default behaviour.
+    if (!getRegionRangeForBox(renderer, startRegion, endRegion))
+        return false;
+
+    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
+        RenderRegion* region = *iter;
+
+        region->absoluteQuadsForBoxInRegion(quads, wasFixed, renderer, localTop, localBottom);
+
+        if (region == endRegion)
+            break;
+    }
+
+    return true;
+}
+
 }
