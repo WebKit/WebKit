@@ -106,11 +106,7 @@ if JSVALUE64
     const tagMask = csr2
     
     macro loadisFromInstruction(offset, dest)
-if BIG_ENDIAN
-        loadis 4 + offset * 8[PB, PC, 8], dest
-else
         loadis offset * 8[PB, PC, 8], dest
-end
     end
     
     macro loadpFromInstruction(offset, dest)

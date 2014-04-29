@@ -1,3 +1,20 @@
+2014-04-29  Tomas Popela  <tpopela@redhat.com>
+
+        LLINT loadisFromInstruction doesn't need special case for big endians
+        https://bugs.webkit.org/show_bug.cgi?id=132330
+
+        Reviewed by Mark Lam.
+
+        The change introduced in r167076 was wrong. We should not apply the offset
+        adjustment on loadisFromInstruction usage as the instruction
+        (UnlinkedInstruction) is declared as an union (i.e. with the int32_t
+        operand variable). The offset of the other union members will be the
+        same as the offset of the first one, that is 0. The behavior here is the
+        same on little and big endian architectures. Thus we don't need
+        special case for big endians.
+
+        * llint/LowLevelInterpreter.asm:
+
 2014-04-28  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Simplify tryCacheGetById
