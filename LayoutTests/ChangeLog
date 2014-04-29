@@ -1,3 +1,18 @@
+2014-04-29  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        REGRESSION (r167879): Heap-use-after-free in WebCore::RenderFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=132337
+
+        Reviewed by Simon Fraser.
+
+        From Blink r154582 by <jchaffraix@chromium.org>
+
+        Add new layout test to check that removing a child doesn't cause a crash
+        in OrderIterator.
+
+        * fast/flexbox/order-iterator-crash-expected.txt: Added.
+        * fast/flexbox/order-iterator-crash.html: Added.
+
 2014-04-29  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] off-by-one error in Shape::createRasterShape()

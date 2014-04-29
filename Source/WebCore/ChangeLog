@@ -1,3 +1,37 @@
+2014-04-29  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        REGRESSION (r167879): Heap-use-after-free in WebCore::RenderFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=132337
+
+        Reviewed by Simon Fraser.
+
+        From Blink r154582 by <jchaffraix@chromium.org>
+
+        This is a regression from the changes in OrderIterator. The issue is
+        that we don't invalidate our iterator when a child is removed. This
+        means that we could hold onto free'd memory until the next layout
+        when we will recompute the iterator.
+
+        The solution is simple: just clear the memory when we remove a child.
+
+        Note that RenderGrid is not impacted by this bug as we don't use the
+        iterator outside layout yet, but if we do it at some point the very same
+        problem will arise, so the same treatment was applied to the class.
+
+        Test: fast/flexbox/order-iterator-crash.html
+
+        * rendering/OrderIterator.cpp:
+        (WebCore::OrderIterator::invalidate): Clear m_children Vector.
+        * rendering/OrderIterator.h:
+        (WebCore::OrderIteratorPopulator::OrderIteratorPopulator): Use
+        invalidate() method.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::removeChild): Invalidate m_orderIterator.
+        * rendering/RenderFlexibleBox.h: Add removeChild() signature.
+        * rendering/RenderGrid.cpp: Invalidate m_orderIterator.
+        (WebCore::RenderGrid::removeChild):
+        * rendering/RenderGrid.h: Add removeChild() header.
+
 2014-04-29  Enrica Casucci  <enrica@apple.com>
 
         iOS build fix after http://trac.webkit.org/changeset/167937.

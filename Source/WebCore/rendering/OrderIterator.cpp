@@ -56,6 +56,11 @@ RenderBox* OrderIterator::next()
     return currentChild();
 }
 
+void OrderIterator::invalidate()
+{
+    m_children.clear();
+}
+
 static bool compareByOrderValueAndIndex(std::pair<RenderBox*, int> childAndIndex1, std::pair<RenderBox*, int> childAndIndex2)
 {
     if (childAndIndex1.first->style().order() != childAndIndex2.first->style().order())

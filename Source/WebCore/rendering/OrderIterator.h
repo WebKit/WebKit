@@ -47,6 +47,8 @@ public:
     RenderBox* first();
     RenderBox* next();
 
+    void invalidate();
+
 private:
     void reset();
 
@@ -61,7 +63,7 @@ public:
         , m_childIndex(0)
         , m_allChildrenHaveDefaultOrderValue(true)
     {
-        m_iterator.m_children.clear();
+        m_iterator.invalidate();
     }
 
     ~OrderIteratorPopulator();

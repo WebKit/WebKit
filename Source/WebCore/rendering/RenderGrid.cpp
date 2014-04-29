@@ -1186,6 +1186,12 @@ const char* RenderGrid::renderName() const
     return "RenderGrid";
 }
 
+void RenderGrid::removeChild(RenderObject& child)
+{
+    RenderBlock::removeChild(child);
+    m_orderIterator.invalidate();
+}
+
 } // namespace WebCore
 
 #endif /* ENABLE(CSS_GRID_LAYOUT) */

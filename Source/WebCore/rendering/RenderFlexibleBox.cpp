@@ -1392,4 +1392,10 @@ bool RenderFlexibleBox::isLeftLayoutOverflowAllowed() const
     return isHorizontalFlow();
 }
 
+void RenderFlexibleBox::removeChild(RenderObject& child)
+{
+    RenderBlock::removeChild(child);
+    m_orderIterator.invalidate();
+}
+
 }

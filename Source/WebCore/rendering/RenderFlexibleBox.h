@@ -60,6 +60,8 @@ public:
     bool isTopLayoutOverflowAllowed() const override;
     bool isLeftLayoutOverflowAllowed() const override;
 
+    void removeChild(RenderObject&) override;
+
 protected:
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     virtual void computePreferredLogicalWidths() override;
