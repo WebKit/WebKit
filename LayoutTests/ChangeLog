@@ -1,3 +1,13 @@
+2014-04-28  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Skip editing/pasteboard which EFL port does not support.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2014-04-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Layout Test fast/events/shadow-event-path[-2].html is failing

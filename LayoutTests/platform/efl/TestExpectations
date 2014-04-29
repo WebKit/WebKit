@@ -322,22 +322,7 @@ svg/W3C-SVG-1.1/paths-data-03-f.svg
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 
 # Missing drag'n'drop and pasteboard support.
-webkit.org/b/86623 editing/pasteboard/data-transfer-items-drag-drop-string.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drag-and-drop-image-contenteditable.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drag-drop-input-textarea.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drag-drop-list.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drag-drop-url-text.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drag-drop-url-with-style.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drag-image-in-about-blank-frame.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drop-inputtext-acquires-style.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drop-link.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drop-text-events.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/files-during-page-drags.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/get-data-text-plain-drop.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/copy-image-with-alt-text.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/simplfiying-markup-should-not-strip-content.html [ Failure ]
+webkit.org/b/86623 editing/pasteboard [ Skip ]
 webkit.org/b/86623 editing/selection/4895428-1.html [ Failure ]
 webkit.org/b/86623 editing/selection/4895428-4.html [ Failure ]
 webkit.org/b/86623 editing/selection/drag-text-delay.html [ Failure ]
@@ -382,20 +367,6 @@ webkit.org/b/86623 http/tests/misc/drag-over-iframe-invalid-source-crash.html
 webkit.org/b/86623 http/tests/security/dataTransfer-set-data-file-url.html
 webkit.org/b/86623 http/tests/security/drag-drop-different-origin.html
 webkit.org/b/86623 http/tests/security/drag-over-remote-content-iframe.html
-webkit.org/b/86623 editing/pasteboard/cleanup-on-move.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/drag-list-item.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/copy-inside-h1-preserves-h1.html [ Failure ]
-webkit.org/b/86623 editing/pasteboard/copy-without-selection.html [ Failure ]
-
-# Missing drag'n'drop, needs baselines
-webkit.org/b/86623 editing/pasteboard/4947130.html [ Missing ]
-webkit.org/b/86623 editing/pasteboard/drag-drop-dead-frame.html [ Missing ]
-webkit.org/b/86623 editing/pasteboard/drag-drop-modifies-page.html [ Missing ]
-webkit.org/b/86623 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html [ Missing ]
-webkit.org/b/86623 editing/pasteboard/drag-selected-image-to-contenteditable.html [ Missing ]
-webkit.org/b/86623 editing/pasteboard/drop-text-without-selection.html [ Missing ]
-webkit.org/b/86623 editing/pasteboard/smart-drag-drop.html [ Missing ]
-webkit.org/b/86623 editing/pasteboard/subframe-dragndrop-1.html [ Missing ]
 
 # WebKitTestRunner needs pasteboard implementation
 webkit.org/b/102486 editing/pasteboard/line-feed-between-br-and-b-should-not-reorder-pasted-content.html [ Failure ]
