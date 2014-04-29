@@ -381,16 +381,6 @@ void RenderMultiColumnSet::endFlow(RenderBlock* container, LayoutUnit bottomInCo
     LayoutUnit logicalBottomInFlowThread = flowThread->offsetFromLogicalTopOfFirstRegion(container) + bottomInContainer;
     setLogicalBottomInFlowThread(logicalBottomInFlowThread);
     container->setLogicalHeight(bottomInContainer);
-    unsigned colCount = columnCount();
-    if (colCount > 1) {
-        LayoutUnit paddedLogicalBottomInFlowThread = logicalTopInFlowThread() + computedColumnHeight() * colCount;
-        if (logicalBottomInFlowThread != paddedLogicalBottomInFlowThread) {
-            // Stretch the container to fully contain all columns, so that later content doesn't
-            // start at the wrong position and end up bleeding into the columns of this set.
-            container->setLogicalHeight(container->logicalHeight() + paddedLogicalBottomInFlowThread - logicalBottomInFlowThread);
-            setLogicalBottomInFlowThread(paddedLogicalBottomInFlowThread);
-        }
-    }
 }
 
 void RenderMultiColumnSet::layout()
@@ -819,8 +809,6 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
     LayoutRect flowThreadPortion = flowThreadPortionRectAt(startColumn);
     LayoutPoint translationOffset;
     
-    LayoutRect overallFlowThreadPortion = flowThreadPortionRect();
-    
     bool progressionReversed = multiColumnFlowThread()->progressionIsReversed();
     bool progressionIsInline = multiColumnFlowThread()->progressionIsInline();
 
@@ -835,7 +823,7 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
             inlineOffset += contentLogicalWidth() - colLogicalWidth;
     }
     translationOffset.setX(inlineOffset);
-    LayoutUnit blockOffset = initialBlockOffset + (isHorizontalWritingMode() ? overallFlowThreadPortion.y() - flowThreadPortion.y() : overallFlowThreadPortion.x() - flowThreadPortion.x());
+    LayoutUnit blockOffset = initialBlockOffset - (isHorizontalWritingMode() ? flowThreadPortion.y() : flowThreadPortion.x());
     if (!progressionIsInline) {
         if (!progressionReversed)
             blockOffset = startColumn * colGap;
@@ -852,9 +840,10 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
     return translationOffset;
 }
 
-void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint& layerOffset, LayoutRect& regionBounds)
+void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint&, LayoutRect&)
 {
-    regionBounds.moveBy(roundedIntPoint(-columnTranslationForOffset(isHorizontalWritingMode() ? layerOffset.y() : layerOffset.x())));
+    // This only fires for named flow thread compositing code, so let's make sure to ASSERT if this ever gets invoked.
+    ASSERT_NOT_REACHED();
 }
 
 void RenderMultiColumnSet::addOverflowFromChildren()

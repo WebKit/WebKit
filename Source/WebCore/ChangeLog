@@ -1,3 +1,46 @@
+2014-04-29  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Implement support for compositing
+        https://bugs.webkit.org/show_bug.cgi?id=132298
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::accumulateOffsetTowardsAncestor):
+        Add in a case for the new columns that calls into the multi-column flow thread
+        to get an offset to adjust by.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread):
+        Make sure this code only runs for named flow threads.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::canBeComposited):
+        Turn on compositing support for in-flow RenderFlowThreads instead of always returning
+        false
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToRegion):
+        Changed this function to fix a couple of bugs exposed by compositing/columns tests. Its
+        end goal is the same, but the approach is improved.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::endFlow):
+        Don't pad out to a multiple of column height. You can't flip around a flow thread
+        to get back to accurate physical coordinates if bogus padding is introduced. This
+        seemed to have no effect on any layout tests when removed, so I don't think it 
+        was really serving any useful purpose.
+
+        (WebCore::RenderMultiColumnSet::columnTranslationForOffset):
+        Don't factor in the overall flow thread portion, since this is handled by the callers
+        now.
+
+        (WebCore::RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect):
+        * rendering/RenderMultiColumnSet.h:
+        Change this function to be ASSERT_NOT_REACHED(), since we want to know if someone calls
+        it. It only runs for named flow thread compositing code, so it would be a mistake if
+        this ever gets invoked.
+
 2014-04-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSProxies should be cacheable

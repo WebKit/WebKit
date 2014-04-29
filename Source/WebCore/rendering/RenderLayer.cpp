@@ -86,6 +86,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderMarquee.h"
+#include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
@@ -2057,6 +2058,12 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
             LayoutSize layerColumnOffset;
             parentLayer->renderer().adjustForColumns(layerColumnOffset, location);
             location += layerColumnOffset;
+            
+            if (parentLayer->renderer().isRenderMultiColumnFlowThread()) {
+                RenderRegion* region = toRenderMultiColumnFlowThread(parentLayer->renderer()).physicalTranslationFromFlowToRegion(location);
+                if (region)
+                    location.moveBy(region->topLeftLocation() + -parentLayer->renderBox()->topLeftLocation());
+            }
         }
     }
 

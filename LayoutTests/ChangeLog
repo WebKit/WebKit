@@ -1,3 +1,99 @@
+2014-04-29  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Implement support for compositing
+        https://bugs.webkit.org/show_bug.cgi?id=132298
+        
+        Reviewed by Simon Fraser.
+    
+        Minor pixel test changes based off how we flip now.
+
+        * platform/mac/fast/multicol/block-axis-horizontal-bt-expected.png:
+        * platform/mac/fast/multicol/block-axis-horizontal-tb-expected.png:
+        * platform/mac/fast/multicol/block-axis-vertical-lr-expected.png:
+        * platform/mac/fast/multicol/block-axis-vertical-rl-expected.png:
+        * platform/mac/fast/multicol/border-padding-pagination-expected.png:
+        * platform/mac/fast/multicol/client-rects-spanners-complex-expected.txt:
+        * platform/mac/fast/multicol/client-rects-spanners-expected.txt:
+        * platform/mac/fast/multicol/column-break-with-balancing-expected.png:
+        * platform/mac/fast/multicol/column-count-with-rules-expected.png:
+        * platform/mac/fast/multicol/column-rules-expected.png:
+        * platform/mac/fast/multicol/column-rules-stacking-expected.png:
+        * platform/mac/fast/multicol/columns-shorthand-parsing-expected.png:
+        * platform/mac/fast/multicol/float-avoidance-expected.png:
+        * platform/mac/fast/multicol/float-multicol-expected.png:
+        * platform/mac/fast/multicol/float-paginate-complex-expected.png:
+        * platform/mac/fast/multicol/float-paginate-empty-lines-expected.png:
+        * platform/mac/fast/multicol/float-paginate-expected.png:
+        * platform/mac/fast/multicol/layers-in-multicol-expected.png:
+        * platform/mac/fast/multicol/layers-split-across-columns-expected.png:
+        * platform/mac/fast/multicol/margin-collapse-expected.png:
+        * platform/mac/fast/multicol/max-height-columns-block-expected.png:
+        * platform/mac/fast/multicol/nested-columns-expected.png:
+        * platform/mac/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/mac/fast/multicol/overflow-across-columns-expected.png:
+        * platform/mac/fast/multicol/overflow-across-columns-percent-height-expected.png:
+        * platform/mac/fast/multicol/overflow-unsplittable-expected.png:
+        * platform/mac/fast/multicol/paginate-block-replaced-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTop-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTop-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTop-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTop-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-tb-expected.png:
+        * platform/mac/fast/multicol/positioned-split-expected.png:
+        * platform/mac/fast/multicol/positive-leading-expected.png:
+        * platform/mac/fast/multicol/scrolling-overflow-expected.png:
+        * platform/mac/fast/multicol/shadow-breaking-expected.png:
+        * platform/mac/fast/multicol/single-line-expected.png:
+        * platform/mac/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/mac/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/mac/fast/multicol/span/anonymous-style-inheritance-expected.png:
+        * platform/mac/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/mac/fast/multicol/span/span-as-nested-inline-block-child-expected.png:
+        * platform/mac/fast/multicol/span/span-margin-collapsing-expected.png:
+        * platform/mac/fast/multicol/table-margin-collapse-expected.png:
+        * platform/mac/fast/multicol/table-vertical-align-expected.png:
+        * platform/mac/fast/multicol/unsplittable-inline-block-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/border-padding-pagination-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/column-break-with-balancing-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/column-count-with-rules-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/column-rules-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/float-paginate-complex-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/float-paginate-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/unsplittable-inline-block-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/border-padding-pagination-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/column-break-with-balancing-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/column-count-with-rules-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/column-rules-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-complex-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/unsplittable-inline-block-expected.png:
+
 2014-04-29  Oliver Hunt  <oliver@apple.com>
 
         Don't hold on to parameter BindingNodes forever

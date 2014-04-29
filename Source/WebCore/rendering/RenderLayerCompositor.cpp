@@ -2065,8 +2065,7 @@ bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
         if (layer.isRenderFlowThread())
             return false;
 
-        // A faster way of saying layer.enclosingFlowThreadLayer()->isFlowThreadCollectingGraphicsLayersUnderRegions()
-        return layer.isInsideOutOfFlowThread();
+        return true;
     }
     return false;
 }

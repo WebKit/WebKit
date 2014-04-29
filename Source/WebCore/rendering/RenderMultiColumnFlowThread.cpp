@@ -654,16 +654,22 @@ LayoutSize RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToRegio
     
     // Now we know how we want the rect to be translated into the region. At this point we're converting
     // back to physical coordinates.
-    LayoutRect flippedRegionRect(renderRegion->flowThreadPortionRect());
-    if (isHorizontalWritingMode())
-        flippedRegionRect.setHeight(columnSet->computedColumnHeight());
-    else
-        flippedRegionRect.setWidth(columnSet->computedColumnHeight());
-    flipForWritingMode(flippedRegionRect);
+    if (style().isFlippedBlocksWritingMode()) {
+        LayoutRect portionRect(columnSet->flowThreadPortionRect());
+        LayoutRect columnRect = columnSet->columnRectAt(0);
+        LayoutUnit physicalDeltaFromPortionBottom = logicalHeight() - columnSet->logicalBottomInFlowThread();
+        if (isHorizontalWritingMode())
+            columnRect.setHeight(portionRect.height());
+        else
+            columnRect.setWidth(portionRect.width());
+        columnSet->flipForWritingMode(columnRect);
+        if (isHorizontalWritingMode())
+            translationOffset.move(0, columnRect.y() - portionRect.y() - physicalDeltaFromPortionBottom);
+        else
+            translationOffset.move(columnRect.x() - portionRect.x() - physicalDeltaFromPortionBottom, 0);
+    }
     
-    flippedRegionRect.moveBy(-translationOffset);
-    
-    return renderRegion->contentBoxRect().location() - flippedRegionRect.location();
+    return LayoutSize(translationOffset.x(), translationOffset.y());
 }
 
 RenderRegion* RenderMultiColumnFlowThread::physicalTranslationFromFlowToRegion(LayoutPoint& physicalPoint) const

@@ -1001,7 +1001,7 @@ void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(LayoutRect
     if (!m_owningLayer.isInsideFlowThread())
         return;
 
-    RenderLayer* flowThreadLayer = m_owningLayer.isInsideOutOfFlowThread() ? m_owningLayer.stackingContainer() : m_owningLayer.enclosingFlowThreadAncestor();
+    RenderLayer* flowThreadLayer = m_owningLayer.isInsideOutOfFlowThread() ? m_owningLayer.stackingContainer() : nullptr;
     if (flowThreadLayer && flowThreadLayer->isRenderFlowThread()) {
         if (m_owningLayer.isFlowThreadCollectingGraphicsLayersUnderRegions()) {
             // The RenderNamedFlowThread is not composited, as we need it to paint the 
