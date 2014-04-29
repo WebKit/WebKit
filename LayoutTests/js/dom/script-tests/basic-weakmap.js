@@ -41,34 +41,3 @@ shouldThrow("map.delete(undefined)")
 shouldBe("map.set(new String('foo'), 'foo')", "map");
 shouldBe("map.get(new String('foo'))", "undefined");
 shouldBeFalse("map.has(new String('foo'))");
-
-var keys = [];
-var values = [];
-
-var count = 2000;
-for (var i = 0; i < count; i++) {
-	keys[i] = {}
-	values[i] = {v : keys[i]}
-	keys[i].v = values[i]
-}
-for (var i = 0; i < count; i++) {
-	map.set(keys[i], values[i])
-}
-gc();
-
-if (this.GCController) {
-	var currentObjectCount = GCController.getJSObjectCount()
-    keys = null;
-    gc();
-    var keyLessObjectCount = GCController.getJSObjectCount()
-    // Somewhat approximate
-    shouldBeTrue("Math.abs(currentObjectCount - keyLessObjectCount) < 100");
-    for (var i = 0; i < count; i++) {
-    	if (map.get(values[i].v) != values[i])
-    		fail("Key was incorrectly removed from weak map");
-    }
-    values = null;
-    gc();
-    var valueLessObjectCount = GCController.getJSObjectCount()
-    shouldBeTrue("(keyLessObjectCount - valueLessObjectCount) > " + (count * 3 / 4));
-}

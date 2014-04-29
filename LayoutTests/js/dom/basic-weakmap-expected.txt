@@ -38,8 +38,6 @@ PASS map.delete(undefined) threw exception TypeError: A WeakMap cannot have a no
 PASS map.set(new String('foo'), 'foo') is map
 PASS map.get(new String('foo')) is undefined
 PASS map.has(new String('foo')) is false
-PASS Math.abs(currentObjectCount - keyLessObjectCount) < 100 is true
-PASS (keyLessObjectCount - valueLessObjectCount) > 1500 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

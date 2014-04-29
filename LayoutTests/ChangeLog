@@ -1,3 +1,17 @@
+2014-04-29  Andreas Kling  <akling@apple.com>
+
+        REGRESSION (r167906?): js/dom/basic-weakmap.html is much more flaky than before
+        <https://webkit.org/b/132322>
+
+        Remove the part of js/dom/basic-weakmap.html that expects deterministic behavior
+        from our non-deterministic GC.
+
+        Rubber-stamped by Phil Pizlo.
+
+        * TestExpectations:
+        * js/dom/basic-weakmap-expected.txt:
+        * js/dom/script-tests/basic-weakmap.js:
+
 2014-04-29  Geoffrey Garen  <ggaren@apple.com>
 
         String.prototype.trim removes U+200B from strings.
