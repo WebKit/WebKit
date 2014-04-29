@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "DataReference.h"
 #import "PageClientImpl.h"
 #import "ShareableBitmap.h"
 #import "StringUtilities.h"
@@ -56,7 +57,8 @@ typedef enum {
 @property NSSharingServicePickerStyle style;
 - (NSMenu *)menu;
 @end
-#endif
+
+#endif // ENABLE(SERVICE_CONTROLS)
 
 using namespace WebCore;
 
@@ -229,9 +231,15 @@ using namespace WebCore;
 
 - (void)sharingService:(NSSharingService *)sharingService didShareItems:(NSArray *)items
 {
-    RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData((CFDataRef)[items objectAtIndex:0], NULL));
+    NSData *data = [items objectAtIndex:0];
+    RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData((CFDataRef)data, NULL));
     RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(source.get(), 0, NULL));
-    _menuProxy->replaceControlledImage(image.get());
+
+    if (!image)
+        return;
+
+    IPC::DataReference dataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+    _menuProxy->page().replaceSelectionWithPasteboardData(NSPasteboardTypeTIFF, dataReference);
 }
 
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
@@ -249,6 +257,7 @@ WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy* pa
     : m_webView(webView)
     , m_page(page)
 {
+    ASSERT(m_page);
 }
 
 WebContextMenuProxyMac::~WebContextMenuProxyMac()
@@ -432,17 +441,6 @@ NSWindow *WebContextMenuProxyMac::window() const
 {
     return [m_webView window];
 }
-
-#if ENABLE(SERVICE_CONTROLS)
-void WebContextMenuProxyMac::replaceControlledImage(CGImageRef newImage)
-{
-    FloatSize newImageSize(CGImageGetWidth(newImage), CGImageGetHeight(newImage));
-    RefPtr<ShareableBitmap> newBitmap = ShareableBitmap::createShareable(expandedIntSize(newImageSize), ShareableBitmap::SupportsAlpha);
-    newBitmap->createGraphicsContext()->drawNativeImage(newImage, newImageSize, ColorSpaceDeviceRGB, FloatRect(FloatPoint(), newImageSize), FloatRect(FloatPoint(), newImageSize));
-
-    m_page->replaceControlledImage(newBitmap.release());
-}
-#endif
 
 } // namespace WebKit
 

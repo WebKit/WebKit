@@ -395,6 +395,13 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
     return result;
 }
 
+#if ENABLE(SERVICE_CONTROLS)
+void WebPageProxy::replaceSelectionWithPasteboardData(const String& type, const IPC::DataReference& data)
+{
+    process().send(Messages::WebPage::ReplaceSelectionWithPasteboardData(type, data), m_pageID);
+}
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
 void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, bool isLinkDrag)
 {

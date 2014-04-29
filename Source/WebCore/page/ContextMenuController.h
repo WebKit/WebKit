@@ -71,7 +71,6 @@ public:
 
 #if ENABLE(SERVICE_CONTROLS)
     void showImageControlsMenu(Event*);
-    void replaceControlledImage(PassRefPtr<Image>);
 #endif
 
 private:

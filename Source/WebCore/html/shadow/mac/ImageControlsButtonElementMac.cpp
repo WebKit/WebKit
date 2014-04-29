@@ -30,11 +30,15 @@
 
 #include "ContextMenuController.h"
 #include "Event.h"
+#include "Frame.h"
+#include "FrameSelection.h"
 #include "HTMLDivElement.h"
 #include "Page.h"
+#include "Range.h"
 #include "RenderBlockFlow.h"
 #include "RenderStyle.h"
 #include "RenderTheme.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 
@@ -99,8 +103,32 @@ PassRefPtr<ImageControlsButtonElementMac> ImageControlsButtonElementMac::maybeCr
 void ImageControlsButtonElementMac::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
-        if (Page* page = document().page())
-            page->contextMenuController().showImageControlsMenu(event);
+        Frame* frame = document().frame();
+        if (!frame)
+            return;
+
+        Page* page = document().page();
+        if (!page)
+            return;
+
+        ContainerNode* parent = parentNode();
+        Element* hostElement = nullptr;
+        while (parent) {
+            if (parent->isShadowRoot()) {
+                hostElement = static_cast<ShadowRoot*>(parent)->hostElement();
+                break;
+            }
+            parent = parent->parentNode();
+        }
+
+        if (!hostElement)
+            return;
+        ASSERT(isHTMLImageElement(hostElement));
+
+        RefPtr<Range> range = Range::create(document(), Position(hostElement, Position::PositionIsBeforeAnchor), Position(hostElement, Position::PositionIsAfterAnchor));
+        frame->selection().setSelection(VisibleSelection(range.get()));
+
+        page->contextMenuController().showImageControlsMenu(event);
         event->setDefaultHandled();
         return;
     }

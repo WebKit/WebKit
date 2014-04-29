@@ -41,6 +41,7 @@
 #include "WebFrameNetworkingContext.h"
 #include "WebIDBFactoryBackend.h"
 #include "WebPage.h"
+#include "WebPasteboardOverrides.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/Color.h>
@@ -374,12 +375,25 @@ PassRefPtr<StorageNamespace> WebPlatformStrategies::sessionStorageNamespace(Page
 
 void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteboardName)
 {
+    // First check the overrides.
+    // The purpose of the overrides is to avoid messaging back to the UI process.
+    // Therefore, if there are any overridden types, we return just those.
+    types = WebPasteboardOverrides::sharedPasteboardOverrides().overriddenTypes(pasteboardName);
+    if (!types.isEmpty())
+        return;
+
     WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::GetPasteboardTypes(pasteboardName),
                                                 Messages::WebContext::GetPasteboardTypes::Reply(types), 0);
 }
 
 PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName)
 {
+    // First check the overrides.
+    Vector<char> overrideBuffer;
+    if (WebPasteboardOverrides::sharedPasteboardOverrides().getDataForOverride(pasteboardName, pasteboardType, overrideBuffer))
+        return SharedBuffer::adoptVector(overrideBuffer);
+
+    // Fallback to messaging the UI process for native pasteboard content.
     SharedMemory::Handle handle;
     uint64_t size = 0;
     WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::GetPasteboardBufferForType(pasteboardName, pasteboardType),

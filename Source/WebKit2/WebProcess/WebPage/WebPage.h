@@ -587,6 +587,11 @@ public:
     void shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, bool& result);
     void acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&, bool& result);
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
+
+#if ENABLE(SERVICE_CONTROLS)
+    void replaceSelectionWithPasteboardData(const String& type, const IPC::DataReference&);
+#endif
+
 #elif PLATFORM(EFL)
     void confirmComposition(const String& compositionString);
     void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);
@@ -773,10 +778,6 @@ public:
     PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(WebCore::Frame&, const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
     void getBytecodeProfile(uint64_t callbackID);
-
-#if ENABLE(SERVICE_CONTROLS)
-    void replaceControlledImage(const ShareableBitmap::Handle&);
-#endif
     
     // Some platforms require accessibility-enabled processes to spin the run loop so that the WebProcess doesn't hang.
     // While this is not ideal, it does not have to be applied to every platform at the moment.

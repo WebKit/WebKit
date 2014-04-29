@@ -1,3 +1,56 @@
+2014-04-29  Brady Eidson  <beidson@apple.com>
+
+        Change Image Controls replacement to use selection and paste
+        <rdar://problem/16302722> and https://bugs.webkit.org/show_bug.cgi?id=131992
+
+        Reviewed by Tim Horton.
+
+        Add a "pasteboard override" mechanism which allows WebKit to keep pasteboard content local
+        to the WebProcess and access it there without having to message up to the UI process:
+        * WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp: Added.
+        (WebKit::WebPasteboardOverrides::sharedPasteboardOverrides):
+        (WebKit::WebPasteboardOverrides::WebPasteboardOverrides):
+        (WebKit::WebPasteboardOverrides::addOverride):
+        (WebKit::WebPasteboardOverrides::removeOverride):
+        (WebKit::WebPasteboardOverrides::overriddenTypes):
+        (WebKit::WebPasteboardOverrides::getDataForOverride):
+        * WebProcess/WebCoreSupport/WebPasteboardOverrides.h: Added.
+
+        Change the pasteboard strategy to consult the pasteboard overrides before consulting the native pasteboard:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getTypes):
+        (WebKit::WebPlatformStrategies::bufferForType):
+
+        Add "replaceSelectionWithPasteboardData" which uses the new pasteboard overrides mechanism
+        and then has WebCore perform the replacement:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::replaceSelectionPasteboardName):
+        (WebKit::WebPage::replaceSelectionWithPasteboardData):
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::replaceSelectionWithPasteboardData):
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        (WebKit::WebContextMenuProxyMac::page):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]): Use "replaceSelectionWithPasteboardData".
+        (WebKit::WebContextMenuProxyMac::WebContextMenuProxyMac):
+        (WebKit::WebContextMenuProxyMac::replaceControlledImage): Deleted.
+
+        Remain other remnants of "replaceControlledImage":
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::replaceControlledImage): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::replaceControlledImage): Deleted.
+        * WebProcess/WebPage/WebContextMenu.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::replaceControlledImage): Deleted.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-04-29  Tim Horton  <timothy_horton@apple.com>
 
         Build fix.

@@ -812,6 +812,10 @@ public:
     ColorSpaceData colorSpace();
 #endif
 
+#if ENABLE(SERVICE_CONTROLS)
+    void replaceSelectionWithPasteboardData(const String& type, const IPC::DataReference&);
+#endif
+
     void pageScaleFactorDidChange(double);
     void pageZoomFactorDidChange(double);
 
@@ -1063,10 +1067,6 @@ public:
     void setThumbnailScale(double);
 
     void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, ImageCallback::CallbackFunction);
-
-#if ENABLE(SERVICE_CONTROLS)
-    void replaceControlledImage(PassRefPtr<ShareableBitmap>);
-#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);

@@ -45,6 +45,7 @@
 #import "WebImage.h"
 #import "WebInspector.h"
 #import "WebPageProxyMessages.h"
+#import "WebPasteboardOverrides.h"
 #import "WebPreferencesStore.h"
 #import "WebProcess.h"
 #import <PDFKit/PDFKit.h>
@@ -669,6 +670,24 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
 
     return didPerformAction;
 }
+
+#if ENABLE(SERVICE_CONTROLS)
+static String& replaceSelectionPasteboardName()
+{
+    static NeverDestroyed<String> string("ReplaceSelectionPasteboard");
+    return string;
+}
+
+void WebPage::replaceSelectionWithPasteboardData(const String& type, const IPC::DataReference& data)
+{
+    WebPasteboardOverrides::sharedPasteboardOverrides().addOverride(replaceSelectionPasteboardName(), type, data.vector());
+
+    bool result;
+    readSelectionFromPasteboard(replaceSelectionPasteboardName(), result);
+
+    WebPasteboardOverrides::sharedPasteboardOverrides().removeOverride(replaceSelectionPasteboardName(), type);
+}
+#endif
 
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
 {

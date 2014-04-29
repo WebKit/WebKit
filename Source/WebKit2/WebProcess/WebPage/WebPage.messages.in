@@ -303,6 +303,10 @@ messages -> WebPage LegacyReceiver {
     GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
     ReadSelectionFromPasteboard(String pasteboardName) -> (bool result)
 
+#if ENABLE(SERVICE_CONTROLS)
+    ReplaceSelectionWithPasteboardData(String type, IPC::DataReference data)
+#endif
+
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result)
     AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
 
@@ -363,8 +367,4 @@ messages -> WebPage LegacyReceiver {
     GetBytecodeProfile(uint64_t callbackID)
     
     TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, uint64_t callbackID)
-
-#if ENABLE(SERVICE_CONTROLS)
-    ReplaceControlledImage(WebKit::ShareableBitmap::Handle newBitmapHandle)
-#endif
 }
