@@ -121,9 +121,9 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
 
     for (var columnName of columnNames) {
         var column = {};
-        column.width = columnName.length;
-        column.title = columnName;
-        column.sortable = true;
+        column["width"] = columnName.length;
+        column["title"] = columnName;
+        column["sortable"] = true;
 
         columnsData[columnName] = column;
     }
@@ -215,7 +215,7 @@ WebInspector.DataGrid.prototype = {
     set sortColumnIdentifier(columnIdentifier)
     {
         console.assert(columnIdentifier && this.columns.has(columnIdentifier));
-        console.assert(this.columns.get(columnIdentifier).has("sortable"));
+        console.assert("sortable" in this.columns.get(columnIdentifier));
 
         if (this._sortColumnIdentifier === columnIdentifier)
             return;
@@ -353,7 +353,7 @@ WebInspector.DataGrid.prototype = {
         var widths = {};
         // For the first width approximation, use the character length of column titles.
         for (var [identifier, column] of this.columns)
-            widths[identifier] = column.get("title", "").length;
+            widths[identifier] = (column["title"] || "").length;
 
         // Now approximate the width of each column as max(title, cells).
         var children = maxDescentLevel ? this._enumerateChildren(this, [], maxDescentLevel + 1) : this.children;
@@ -408,7 +408,7 @@ WebInspector.DataGrid.prototype = {
         }
 
         for (var [identifier, column] of this.columns)
-            column.get("element").style.width = widths[identifier] + "%";
+            column["element"].style.width = widths[identifier] + "%";
         this._columnWidthsInitialized = false;
         this.updateLayout();
     },
@@ -421,57 +421,55 @@ WebInspector.DataGrid.prototype = {
         var listeners = new WebInspector.EventListenerSet(this, "DataGrid column DOM listeners");
 
         // Copy configuration properties instead of keeping a reference to the passed-in object.
-        var column = new Map;
-        for (var propertyName in columnData)
-            column.set(propertyName, columnData[propertyName]);
+        var column = Object.shallowCopy(columnData);
+        column["listeners"] = listeners;
+        column["ordinal"] = insertionIndex;
+        column["columnIdentifier"] = columnIdentifier;
 
-        column.set("listeners", listeners);
-        column.set("ordinal", insertionIndex);
-        column.set("columnIdentifier", columnIdentifier);
         this.orderedColumns.splice(insertionIndex, 0, columnIdentifier);
 
         for (var [identifier, existingColumn] of this.columns) {
-            var ordinal = existingColumn.get("ordinal");
+            var ordinal = existingColumn["ordinal"];
             if (ordinal >= insertionIndex) // Also adjust the "old" column at insertion index.
-                existingColumn.set("ordinal", ordinal + 1);
+                existingColumn["ordinal"] = ordinal + 1;
         }
         this.columns.set(columnIdentifier, column);
 
-        if (column.has("disclosure"))
+        if (column["disclosure"])
             this.disclosureColumnIdentifier = columnIdentifier;
 
         var headerColumnElement = document.createElement("col");
-        if (column.has("width"))
-            headerColumnElement.style.width = column.get("width");
-        column.set("element", headerColumnElement);
+        if (column["width"])
+            headerColumnElement.style.width = column["width"];
+        column["element"] = headerColumnElement;
         var referenceElement = this._headerTableColumnGroupElement.children[insertionIndex];
         this._headerTableColumnGroupElement.insertBefore(headerColumnElement, referenceElement);
 
         var headerCellElement = document.createElement("th");
         headerCellElement.className = columnIdentifier + "-column";
         headerCellElement.columnIdentifier = columnIdentifier;
-        if (column.has("aligned"))
-            headerCellElement.classList.add(column.get("aligned"));
+        if (column["aligned"])
+            headerCellElement.classList.add(column["aligned"]);
         this._headerTableCellElements.set(columnIdentifier, headerCellElement);
         var referenceElement = this._headerTableRowElement.children[insertionIndex];
         this._headerTableRowElement.insertBefore(headerCellElement, referenceElement);
 
         var div = headerCellElement.createChild("div");
-        if (column.has("titleDOMFragment"))
-            div.appendChild(column.get("titleDOMFragment"));
+        if (column["titleDOMFragment"])
+            div.appendChild(column["titleDOMFragment"]);
         else
-            div.textContent = column.get("title", "");
+            div.textContent = column["title"] || "";
 
-        if (column.get("sortable")) {
+        if (column["sortable"]) {
             listeners.register(headerCellElement, "click", this._headerCellClicked);
             headerCellElement.classList.add(WebInspector.DataGrid.SortableColumnStyleClassName);
         }
 
-        if (column.has("group"))
-            headerCellElement.classList.add("column-group-" + column.get("group"));
+        if (column["group"])
+            headerCellElement.classList.add("column-group-" + column["group"]);
 
-        if (column.has("collapsesGroup")) {
-            console.assert(column.get("group") !== column.get("collapsesGroup"));
+        if (column["collapsesGroup"]) {
+            console.assert(column["group"] !== column["collapsesGroup"]);
 
             var dividerElement = headerCellElement.createChild("div");
             dividerElement.className = "divider";
@@ -483,7 +481,7 @@ WebInspector.DataGrid.prototype = {
             listeners.register(collapseDiv, "mouseout", this._mouseoutColumnCollapser);
             listeners.register(collapseDiv, "click", this._clickInColumnCollapser);
 
-            headerCellElement.collapsesGroup = column.get("collapsesGroup");
+            headerCellElement.collapsesGroup = column["collapsesGroup"];
             headerCellElement.classList.add("collapser");
         }
 
@@ -492,19 +490,19 @@ WebInspector.DataGrid.prototype = {
         var dataColumnElement = headerColumnElement.cloneNode();
         var referenceElement = this._dataTableColumnGroupElement.children[insertionIndex];
         this._dataTableColumnGroupElement.insertBefore(dataColumnElement, referenceElement);
-        column.set("bodyElement", dataColumnElement);
+        column["bodyElement"] = dataColumnElement;
 
         var fillerCellElement = document.createElement("td");
         fillerCellElement.className = columnIdentifier + "-column";
         fillerCellElement.__columnIdentifier = columnIdentifier;
-        if (column.has("group"))
-            fillerCellElement.classList.add("column-group-" + column.get("group"));
+        if (column["group"])
+            fillerCellElement.classList.add("column-group-" + column["group"]);
         var referenceElement = this._fillerRowElement.children[insertionIndex];
         this._fillerRowElement.insertBefore(fillerCellElement, referenceElement);
 
         listeners.install();
 
-        if (column.has("hidden"))
+        if (column["hidden"])
             this._hideColumn(columnIdentifier);
     },
 
@@ -515,16 +513,16 @@ WebInspector.DataGrid.prototype = {
         this.columns.delete(columnIdentifier);
         this.orderedColumns.splice(this.orderedColumns.indexOf(columnIdentifier), 1);
 
-        var removedOrdinal = removedColumn.get("ordinal");
+        var removedOrdinal = removedColumn["ordinal"];
         for (var [identifier, column] of this.columns) {
-            var ordinal = column.get("ordinal");
+            var ordinal = column["ordinal"];
             if (ordinal > removedOrdinal)
-                column.set("ordinal", ordinal - 1);
+                column["ordinal"] = ordinal - 1;
         }
 
-        removedColumn.get("listeners").uninstall(true);
+        removedColumn["listeners"].uninstall(true);
 
-        if (removedColumn.has("disclosure"))
+        if (removedColumn["disclosure"])
             delete this.disclosureColumnIdentifier;
 
         if (this.sortColumnIdentifier === columnIdentifier)
@@ -598,7 +596,7 @@ WebInspector.DataGrid.prototype = {
     {
         var result = {};
         for (var [identifier, column] of this.columns) {
-            var width = this._headerTableColumnGroupElement.children[column.get("ordinal")].style.width;
+            var width = this._headerTableColumnGroupElement.children[column["ordinal"]].style.width;
             result[columnIdentifier] = parseFloat(width);
         }
         return result;
@@ -608,7 +606,7 @@ WebInspector.DataGrid.prototype = {
     {
         for (var [identifier, column] of this.columns) {
             var width = (columnWidthsMap[identifier] || 0) + "%";
-            var ordinal = column.get("ordinal");
+            var ordinal = column["ordinal"];
             this._headerTableColumnGroupElement.children[ordinal].style.width = width;
             this._dataTableColumnGroupElement.children[ordinal].style.width = width;
         }
@@ -618,20 +616,20 @@ WebInspector.DataGrid.prototype = {
 
     _isColumnVisible: function(columnIdentifier)
     {
-        return !this.columns.get(columnIdentifier).has("hidden");
+        return !this.columns.get(columnIdentifier)["hidden"];
     },
 
     _showColumn: function(columnIdentifier)
     {
-        this.columns.get(columnIdentifier).delete("hidden");
+        delete this.columns.get(columnIdentifier)["hidden"];
     },
 
     _hideColumn: function(columnIdentifier)
     {
         var column = this.columns.get(columnIdentifier);
-        column.set("hidden", true);
+        column["hidden"] = true;
 
-        var columnElement = column.get("element");
+        var columnElement = column["element"];
         columnElement.style.width = 0;
 
         this._columnWidthsInitialized = false;
@@ -1027,7 +1025,7 @@ WebInspector.DataGrid.prototype = {
     {
         var collapserColumnIdentifier = null;
         for (var [identifier, column] of this.columns) {
-            if (column.get("collapsesGroup") == columnGroup) {
+            if (column["collapsesGroup"] == columnGroup) {
                 collapserColumnIdentifier = identifier;
                 break;
             }
@@ -1049,7 +1047,7 @@ WebInspector.DataGrid.prototype = {
 
         var showOrHide = columnsWillCollapse ? this._hideColumn : this._showColumn;
         for (var [identifier, column] of this.columns) {
-            if (column.get("group") === cell.collapsesGroup)
+            if (column["group"] === cell.collapsesGroup)
                 showOrHide.call(this, identifier);
         }
 
@@ -1554,11 +1552,11 @@ WebInspector.DataGridNode.prototype = {
 
         var column = this.dataGrid.columns.get(columnIdentifier);
 
-        if (column.has("aligned"))
-            cellElement.classList.add(column.get("aligned"));
+        if (column["aligned"])
+            cellElement.classList.add(column["aligned"]);
 
-        if (column.has("group"))
-            cellElement.classList.add("column-group-" + column.get("group"));
+        if (column["group"])
+            cellElement.classList.add("column-group-" + column["group"]);
 
         var div = cellElement.createChild("div");
         var content = this.createCellContent(columnIdentifier, cellElement);

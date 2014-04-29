@@ -182,7 +182,7 @@ WebInspector.ProbeSetDataGrid.prototype = {
 
         var oldColumn = this.columns.get(probe.id);
         this.removeColumn(probe.id);
-        var ordinal = oldColumn.get("ordinal");
+        var ordinal = oldColumn["ordinal"];
         var newColumn = {title: event.data.newValue};
         this.insertColumn(probe.id, newColumn, ordinal);
 

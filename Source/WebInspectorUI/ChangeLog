@@ -1,3 +1,36 @@
+2014-04-29  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: DataGrid columns should be objects not Maps
+        https://bugs.webkit.org/show_bug.cgi?id=129383
+
+        Reviewed by Timothy Hatcher.
+
+        This reverts an earlier conversion to maps, so that column properties
+        (which rarely change) can be optimized.
+
+        String literals for column properties have been preserved so columns
+        can be easily converted into objects with methods.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.autoSizeColumns):
+        (WebInspector.DataGrid.prototype.set var):
+        (WebInspector.DataGrid.prototype.set if):
+        (WebInspector.DataGrid.prototype.insertColumn):
+        (WebInspector.DataGrid.prototype.removeColumn.get this):
+        (WebInspector.DataGrid.prototype.removeColumn):
+        (WebInspector.DataGrid.prototype.columnWidthsMap):
+        (WebInspector.DataGrid.prototype.applyColumnWidthsMap):
+        (WebInspector.DataGrid.prototype._collapseColumnGroupWithCell):
+        (WebInspector.DataGridNode.prototype.createCell.get if):
+        (WebInspector.DataGridNode.prototype.createCell):
+        (WebInspector.DataGrid.prototype.get length): Deleted.
+        * UserInterface/Views/ProbeSetDataGrid.js:
+        (WebInspector.ProbeSetDataGrid.prototype._probeExpressionChanged.get this):
+        (WebInspector.ProbeSetDataGrid.prototype._probeExpressionChanged):
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype.treeElementMatchesActiveScopeFilters.scopeBar.this.columns.get string_appeared_here):
+        (WebInspector.TimelineDataGrid.prototype.treeElementMatchesActiveScopeFilters):
+
 2014-04-25  Jonathan Wells  <jonowells@apple.com>
 
         Web Inspector: DOM Tree debugger popover obscures dashboard
