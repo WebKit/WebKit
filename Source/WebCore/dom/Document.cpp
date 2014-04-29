@@ -4876,7 +4876,7 @@ void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
 void Document::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask::create(source, level, message));
+        postTask(AddConsoleMessageTask(source, level, message.isolatedCopy()));
         return;
     }
 
@@ -4887,7 +4887,7 @@ void Document::addConsoleMessage(MessageSource source, MessageLevel level, const
 void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask::create(source, level, message));
+        postTask(AddConsoleMessageTask(source, level, message));
         return;
     }
 
@@ -4900,51 +4900,32 @@ SecurityOrigin* Document::topOrigin() const
     return topDocument().securityOrigin();
 }
 
-struct PerformTaskContext {
-    WTF_MAKE_NONCOPYABLE(PerformTaskContext); WTF_MAKE_FAST_ALLOCATED;
-public:
-    PerformTaskContext(WeakPtr<Document> document, PassOwnPtr<ScriptExecutionContext::Task> task)
-        : documentReference(document)
-        , task(task)
-    {
-    }
-
-    WeakPtr<Document> documentReference;
-    OwnPtr<ScriptExecutionContext::Task> task;
-};
-
-void Document::didReceiveTask(void* untypedContext)
+void Document::postTask(Task task)
 {
-    ASSERT(isMainThread());
+    Task* taskPtr = std::make_unique<Task>(std::move(task)).release();
+    WeakPtr<Document> documentReference(m_weakFactory.createWeakPtr());
 
-    OwnPtr<PerformTaskContext> context = adoptPtr(static_cast<PerformTaskContext*>(untypedContext));
-    ASSERT(context);
+    callOnMainThread([=] {
+        ASSERT(isMainThread());
+        std::unique_ptr<Task> task(taskPtr);
 
-    Document* document = context->documentReference.get();
-    if (!document)
-        return;
+        Document* document = documentReference.get();
+        if (!document)
+            return;
 
-    Page* page = document->page();
-    if ((page && page->defersLoading()) || !document->m_pendingTasks.isEmpty()) {
-        document->m_pendingTasks.append(context->task.release());
-        return;
-    }
-
-    context->task->performTask(document);
-}
-
-void Document::postTask(PassOwnPtr<Task> task)
-{
-    callOnMainThread(didReceiveTask, new PerformTaskContext(m_weakFactory.createWeakPtr(), task));
+        Page* page = document->page();
+        if ((page && page->defersLoading()) || !document->m_pendingTasks.isEmpty())
+            document->m_pendingTasks.append(std::move(*task.release()));
+        else
+            task->performTask(document);
+    });
 }
 
 void Document::pendingTasksTimerFired(Timer<Document>&)
 {
-    while (!m_pendingTasks.isEmpty()) {
-        OwnPtr<Task> task = m_pendingTasks[0].release();
-        m_pendingTasks.remove(0);
-        task->performTask(this);
-    }
+    Vector<Task> pendingTasks = std::move(m_pendingTasks);
+    for (auto& task : pendingTasks)
+        task.performTask(this);
 }
 
 void Document::suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension reason)

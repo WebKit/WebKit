@@ -158,27 +158,6 @@ void DatabaseSync::markAsDeletedAndClose()
     // FIXME: need to do something similar to closeImmediately(), but in a sync way
 }
 
-class CloseSyncDatabaseOnContextThreadTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<CloseSyncDatabaseOnContextThreadTask> create(PassRefPtr<DatabaseSync> database)
-    {
-        return adoptPtr(new CloseSyncDatabaseOnContextThreadTask(database));
-    }
-
-    virtual void performTask(ScriptExecutionContext*)
-    {
-        m_database->closeImmediately();
-    }
-
-private:
-    CloseSyncDatabaseOnContextThreadTask(PassRefPtr<DatabaseSync> database)
-        : m_database(database)
-    {
-    }
-
-    RefPtr<DatabaseSync> m_database;
-};
-
 void DatabaseSync::closeImmediately()
 {
     ASSERT(m_scriptExecutionContext->isContextThread());

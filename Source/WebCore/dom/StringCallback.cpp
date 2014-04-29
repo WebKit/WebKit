@@ -36,36 +36,12 @@
 
 namespace WebCore {
 
-namespace {
-
-class DispatchCallbackTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<DispatchCallbackTask> create(PassRefPtr<StringCallback> callback, const String& data)
-    {
-        return adoptPtr(new DispatchCallbackTask(callback, data));
-    }
-
-    virtual void performTask(ScriptExecutionContext*) override
-    {
-        m_callback->handleEvent(m_data);
-    }
-
-private:
-    DispatchCallbackTask(PassRefPtr<StringCallback> callback, const String& data)
-        : m_callback(callback)
-        , m_data(data)
-    {
-    }
-
-    RefPtr<StringCallback> m_callback;
-    const String m_data;
-};
-
-} // namespace
-
 void StringCallback::scheduleCallback(ScriptExecutionContext* context, const String& data)
 {
-    context->postTask(DispatchCallbackTask::create(this, data));
+    RefPtr<StringCallback> protector(this);
+    context->postTask([=] (ScriptExecutionContext*) {
+        this->handleEvent(data);
+    });
 }
 
 } // namespace WebCore

@@ -37,6 +37,7 @@
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannelClient.h"
 #include "WorkerThreadableWebSocketChannel.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -114,7 +115,7 @@ private:
     ThreadableWebSocketChannel::SendResult m_sendRequestResult;
     unsigned long m_bufferedAmount;
     bool m_suspended;
-    Vector<OwnPtr<ScriptExecutionContext::Task>> m_pendingTasks;
+    Vector<std::unique_ptr<ScriptExecutionContext::Task>> m_pendingTasks;
 };
 
 } // namespace WebCore

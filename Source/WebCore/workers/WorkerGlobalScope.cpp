@@ -64,22 +64,6 @@ using namespace Inspector;
 
 namespace WebCore {
 
-class CloseWorkerGlobalScopeTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<CloseWorkerGlobalScopeTask> create()
-    {
-        return adoptPtr(new CloseWorkerGlobalScopeTask);
-    }
-
-    virtual void performTask(ScriptExecutionContext *context)
-    {
-        // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
-        toWorkerGlobalScope(context)->thread().workerReportingProxy().workerGlobalScopeClosed();
-    }
-
-    virtual bool isCleanupTask() const { return true; }
-};
-
 WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, WorkerThread& thread, PassRefPtr<SecurityOrigin> topOrigin)
     : m_url(url)
     , m_userAgent(userAgent)
@@ -149,7 +133,12 @@ void WorkerGlobalScope::close()
     // After m_closing is set, all the tasks in the queue continue to be fetched but only
     // tasks with isCleanupTask()==true will be executed.
     m_closing = true;
-    postTask(CloseWorkerGlobalScopeTask::create());
+    postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext* context) {
+        ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
+        WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
+        // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
+        workerGlobalScope->thread().workerReportingProxy().workerGlobalScopeClosed();
+    } });
 }
 
 WorkerNavigator* WorkerGlobalScope::navigator() const
@@ -159,9 +148,9 @@ WorkerNavigator* WorkerGlobalScope::navigator() const
     return m_navigator.get();
 }
 
-void WorkerGlobalScope::postTask(PassOwnPtr<Task> task)
+void WorkerGlobalScope::postTask(Task task)
 {
-    thread().runLoop().postTask(task);
+    thread().runLoop().postTask(std::move(task));
 }
 
 int WorkerGlobalScope::setTimeout(PassOwnPtr<ScheduledAction> action, int timeout)
@@ -234,7 +223,7 @@ void WorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const 
 void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask::create(source, level, message));
+        postTask(AddConsoleMessageTask(source, level, message));
         return;
     }
 
@@ -245,7 +234,7 @@ void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel lev
 void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask::create(source, level, message));
+        postTask(AddConsoleMessageTask(source, level, message));
         return;
     }
 
