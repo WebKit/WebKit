@@ -1752,7 +1752,7 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
         endPadding = 1;
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
         addLayoutOverflow(curr->paddedLayoutOverflowRect(endPadding));
-        RenderRegion* region = curr->containingRegion();
+        RenderRegion* region = flowThreadContainingBlock() ? curr->containingRegion() : nullptr;
         if (region)
             region->addLayoutOverflowForBox(this, curr->paddedLayoutOverflowRect(endPadding));
         if (!hasOverflowClip()) {
