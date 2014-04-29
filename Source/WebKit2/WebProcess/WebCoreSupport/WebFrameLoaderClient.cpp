@@ -733,7 +733,12 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     RefPtr<WebFrame> originatingFrame;
     switch (action->navigationType()) {
     case NavigationTypeLinkClicked:
-        originatingFrame = action->hitTestResult()->frame();
+        if (EventTarget* target = navigationAction.event()->target()) {
+            if (Node* node = target->toNode()) {
+                if (Frame* frame = node->document().frame())
+                    originatingFrame = WebFrame::fromCoreFrame(*frame);
+            }
+        }
         break;
     case NavigationTypeFormSubmitted:
     case NavigationTypeFormResubmitted:

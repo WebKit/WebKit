@@ -256,7 +256,7 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
         if (sourceFrame == destinationFrame)
             [navigationAction setSourceFrame:[navigationAction targetFrame]];
         else
-            [navigationAction setTargetFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*sourceFrame]).get()];
+            [navigationAction setSourceFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*sourceFrame]).get()];
     }
 
     [navigationAction setNavigationType:toWKNavigationType(navigationActionData.navigationType)];
