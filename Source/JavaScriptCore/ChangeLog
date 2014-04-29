@@ -1,3 +1,15 @@
+2014-04-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Simplify tryCacheGetById
+        https://bugs.webkit.org/show_bug.cgi?id=132314
+
+        Reviewed by Oliver Hunt and Filip Pizlo.
+
+        This is neutral across all benchmarks we track, although it looks like a wee 0.5% progression on sunspider.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID): If we fail to cache on self, we just repatch to call tryBuildGetByIDList next time.
+
 2014-04-28  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r153142) ASSERT from CodeBlock::dumpBytecode dumping String Switch Jump Tables

@@ -676,47 +676,15 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         return false;
 
     // Optimize self access.
-    if (slot.slotBase() == baseValue) {
-        if (!slot.isCacheableValue()
-            || !MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))) {
-            repatchCall(codeBlock, stubInfo.callReturnLocation, operationGetByIdBuildList);
+    if (slot.slotBase() == baseValue
+        && slot.isCacheableValue()
+        && MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))) {
+            repatchByIdSelfAccess(*vm, codeBlock, stubInfo, structure, propertyName, slot.cachedOffset(), operationGetByIdBuildList, true);
+            stubInfo.initGetByIdSelf(*vm, codeBlock->ownerExecutable(), structure);
             return true;
-        }
-
-        repatchByIdSelfAccess(*vm, codeBlock, stubInfo, structure, propertyName, slot.cachedOffset(), operationGetByIdBuildList, true);
-        stubInfo.initGetByIdSelf(*vm, codeBlock->ownerExecutable(), structure);
-        return true;
     }
-    
-    if (structure->isDictionary())
-        return false;
 
-    if (stubInfo.patch.spillMode == NeedToSpill) {
-        // We cannot do as much inline caching if the registers were not flushed prior to this GetById. In particular,
-        // non-Value cached properties require planting calls, which requires registers to have been flushed. Thus,
-        // if registers were not flushed, don't do non-Value caching.
-        if (!slot.isCacheableValue())
-            return false;
-    }
-    
-    PropertyOffset offset = slot.cachedOffset();
-    size_t count = normalizePrototypeChainForChainAccess(exec, baseValue, slot.slotBase(), propertyName, offset);
-    if (count == InvalidPrototypeChain)
-        return false;
-
-    StructureChain* prototypeChain = structure->prototypeChain(exec);
-    generateByIdStub(
-        exec, kindFor(slot), propertyName, customFor(slot), stubInfo, prototypeChain, count,
-        offset, structure,
-        stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
-        stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase),
-        stubInfo.stubRoutine);
-    
-    RepatchBuffer repatchBuffer(codeBlock);
-    replaceWithJump(repatchBuffer, stubInfo, stubInfo.stubRoutine->code().code());
-    repatchCall(repatchBuffer, stubInfo.callReturnLocation, operationGetByIdBuildList);
-    
-    stubInfo.initGetByIdChain(*vm, codeBlock->ownerExecutable(), structure, prototypeChain, count, slot.isCacheableValue());
+    repatchCall(codeBlock, stubInfo.callReturnLocation, operationGetByIdBuildList);
     return true;
 }
 
