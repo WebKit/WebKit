@@ -127,21 +127,21 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
     return pool.createValue(basicShapeValue.release());
 }
 
-static Length convertToLength(const RenderStyle* style, const RenderStyle* rootStyle, CSSPrimitiveValue* value)
+static Length convertToLength(const CSSToLengthConversionData& conversionData, CSSPrimitiveValue* value)
 {
-    return value->convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(style, rootStyle, style->effectiveZoom());
+    return value->convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(conversionData);
 }
 
-static LengthSize convertToLengthSize(const RenderStyle* style, const RenderStyle* rootStyle, CSSPrimitiveValue* value)
+static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversionData, CSSPrimitiveValue* value)
 {
     if (!value)
         return LengthSize(Length(0, Fixed), Length(0, Fixed));
 
     Pair* pair = value->getPairValue();
-    return LengthSize(convertToLength(style, rootStyle, pair->first()), convertToLength(style, rootStyle, pair->second()));
+    return LengthSize(convertToLength(conversionData, pair->first()), convertToLength(conversionData, pair->second()));
 }
 
-static BasicShapeCenterCoordinate convertToCenterCoordinate(const RenderStyle* style, const RenderStyle* rootStyle, CSSPrimitiveValue* value)
+static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthConversionData& conversionData, CSSPrimitiveValue* value)
 {
     BasicShapeCenterCoordinate::Direction direction;
     Length offset = Length(0, Fixed);
@@ -153,9 +153,9 @@ static BasicShapeCenterCoordinate convertToCenterCoordinate(const RenderStyle* s
         keyword = value->getValueID();
     else if (Pair* pair = value->getPairValue()) {
         keyword = pair->first()->getValueID();
-        offset = convertToLength(style, rootStyle, pair->second());
+        offset = convertToLength(conversionData, pair->second());
     } else
-        offset = convertToLength(style, rootStyle, value);
+        offset = convertToLength(conversionData, value);
 
     switch (keyword) {
     case CSSValueTop:
@@ -179,7 +179,7 @@ static BasicShapeCenterCoordinate convertToCenterCoordinate(const RenderStyle* s
     return BasicShapeCenterCoordinate(direction, offset);
 }
 
-static BasicShapeRadius cssValueToBasicShapeRadius(const RenderStyle* style, const RenderStyle* rootStyle, PassRefPtr<CSSPrimitiveValue> radius)
+static BasicShapeRadius cssValueToBasicShapeRadius(const CSSToLengthConversionData& conversionData, PassRefPtr<CSSPrimitiveValue> radius)
 {
     if (!radius)
         return BasicShapeRadius(BasicShapeRadius::ClosestSide);
@@ -196,10 +196,10 @@ static BasicShapeRadius cssValueToBasicShapeRadius(const RenderStyle* style, con
         }
     }
 
-    return BasicShapeRadius(convertToLength(style, rootStyle, radius.get()));
+    return BasicShapeRadius(convertToLength(conversionData, radius.get()));
 }
 
-PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const RenderStyle* rootStyle, const CSSBasicShape* basicShapeValue)
+PassRefPtr<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionData, const CSSBasicShape* basicShapeValue)
 {
     RefPtr<BasicShape> basicShape;
 
@@ -208,9 +208,9 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         const CSSBasicShapeCircle* circleValue = static_cast<const CSSBasicShapeCircle *>(basicShapeValue);
         RefPtr<BasicShapeCircle> circle = BasicShapeCircle::create();
 
-        circle->setCenterX(convertToCenterCoordinate(style, rootStyle, circleValue->centerX()));
-        circle->setCenterY(convertToCenterCoordinate(style, rootStyle, circleValue->centerY()));
-        circle->setRadius(cssValueToBasicShapeRadius(style, rootStyle, circleValue->radius()));
+        circle->setCenterX(convertToCenterCoordinate(conversionData, circleValue->centerX()));
+        circle->setCenterY(convertToCenterCoordinate(conversionData, circleValue->centerY()));
+        circle->setRadius(cssValueToBasicShapeRadius(conversionData, circleValue->radius()));
 
         basicShape = circle.release();
         break;
@@ -219,11 +219,11 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         const CSSBasicShapeEllipse* ellipseValue = static_cast<const CSSBasicShapeEllipse *>(basicShapeValue);
         RefPtr<BasicShapeEllipse> ellipse = BasicShapeEllipse::create();
 
-        ellipse->setCenterX(convertToCenterCoordinate(style, rootStyle, ellipseValue->centerX()));
-        ellipse->setCenterY(convertToCenterCoordinate(style, rootStyle, ellipseValue->centerY()));
+        ellipse->setCenterX(convertToCenterCoordinate(conversionData, ellipseValue->centerX()));
+        ellipse->setCenterY(convertToCenterCoordinate(conversionData, ellipseValue->centerY()));
 
-        ellipse->setRadiusX(cssValueToBasicShapeRadius(style, rootStyle, ellipseValue->radiusX()));
-        ellipse->setRadiusY(cssValueToBasicShapeRadius(style, rootStyle, ellipseValue->radiusY()));
+        ellipse->setRadiusX(cssValueToBasicShapeRadius(conversionData, ellipseValue->radiusX()));
+        ellipse->setRadiusY(cssValueToBasicShapeRadius(conversionData, ellipseValue->radiusY()));
 
         basicShape = ellipse.release();
         break;
@@ -235,7 +235,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         polygon->setWindRule(polygonValue->windRule());
         const Vector<RefPtr<CSSPrimitiveValue>>& values = polygonValue->values();
         for (unsigned i = 0; i < values.size(); i += 2)
-            polygon->appendPoint(convertToLength(style, rootStyle, values.at(i).get()), convertToLength(style, rootStyle, values.at(i + 1).get()));
+            polygon->appendPoint(convertToLength(conversionData, values.at(i).get()), convertToLength(conversionData, values.at(i + 1).get()));
 
         basicShape = polygon.release();
         break;
@@ -244,15 +244,15 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         const CSSBasicShapeInset* rectValue = static_cast<const CSSBasicShapeInset* >(basicShapeValue);
         RefPtr<BasicShapeInset> rect = BasicShapeInset::create();
 
-        rect->setTop(convertToLength(style, rootStyle, rectValue->top()));
-        rect->setRight(convertToLength(style, rootStyle, rectValue->right()));
-        rect->setBottom(convertToLength(style, rootStyle, rectValue->bottom()));
-        rect->setLeft(convertToLength(style, rootStyle, rectValue->left()));
+        rect->setTop(convertToLength(conversionData, rectValue->top()));
+        rect->setRight(convertToLength(conversionData, rectValue->right()));
+        rect->setBottom(convertToLength(conversionData, rectValue->bottom()));
+        rect->setLeft(convertToLength(conversionData, rectValue->left()));
 
-        rect->setTopLeftRadius(convertToLengthSize(style, rootStyle, rectValue->topLeftRadius()));
-        rect->setTopRightRadius(convertToLengthSize(style, rootStyle, rectValue->topRightRadius()));
-        rect->setBottomRightRadius(convertToLengthSize(style, rootStyle, rectValue->bottomRightRadius()));
-        rect->setBottomLeftRadius(convertToLengthSize(style, rootStyle, rectValue->bottomLeftRadius()));
+        rect->setTopLeftRadius(convertToLengthSize(conversionData, rectValue->topLeftRadius()));
+        rect->setTopRightRadius(convertToLengthSize(conversionData, rectValue->topRightRadius()));
+        rect->setBottomRightRadius(convertToLengthSize(conversionData, rectValue->bottomRightRadius()));
+        rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->bottomLeftRadius()));
 
         basicShape = rect.release();
         break;

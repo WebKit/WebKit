@@ -1225,6 +1225,7 @@ set(WebCore_SOURCES
     css/CSSStyleSheet.cpp
     css/CSSSupportsRule.cpp
     css/CSSTimingFunctionValue.cpp
+    css/CSSToLengthConversionData.cpp
     css/CSSToStyleMap.cpp
     css/CSSUnicodeRangeValue.cpp
     css/CSSValue.cpp

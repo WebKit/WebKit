@@ -593,9 +593,9 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             if (!firstValue->isShadowValue())
                 return;
             CSSShadowValue* item = toCSSShadowValue(firstValue);
-            IntPoint location(item->x->computeLength<int>(state.style(), state.rootElementStyle()),
-                item->y->computeLength<int>(state.style(), state.rootElementStyle()));
-            int blur = item->blur ? item->blur->computeLength<int>(state.style(), state.rootElementStyle()) : 0;
+            IntPoint location(item->x->computeLength<int>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)),
+                item->y->computeLength<int>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)));
+            int blur = item->blur ? item->blur->computeLength<int>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)) : 0;
             Color color;
             if (item->color)
                 color = colorFromPrimitiveValue(item->color.get());

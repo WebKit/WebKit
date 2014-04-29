@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class CSSToLengthConversionData;
 class RenderStyle;
 
 enum CalculationCategory {
@@ -57,9 +58,9 @@ public:
 
     virtual ~CSSCalcExpressionNode() { }
     virtual bool isZero() const = 0;
-    virtual std::unique_ptr<CalcExpressionNode> createCalcExpression(const RenderStyle*, const RenderStyle* rootStyle, double zoom = 1.0) const = 0;
+    virtual std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData&) const = 0;
     virtual double doubleValue() const = 0;
-    virtual double computeLengthPx(const RenderStyle* currentStyle, const RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const = 0;
+    virtual double computeLengthPx(const CSSToLengthConversionData&) const = 0;
     virtual String customCSSText() const = 0;
     virtual bool equals(const CSSCalcExpressionNode& other) const { return m_category == other.m_category && m_isInteger == other.m_isInteger; }
     virtual Type type() const = 0;
@@ -89,9 +90,9 @@ public:
     bool isInt() const { return m_expression->isInteger(); }
     double doubleValue() const;
     bool isNegative() const { return m_expression->doubleValue() < 0; }
-    double computeLengthPx(const RenderStyle* currentStyle, const RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const;
+    double computeLengthPx(const CSSToLengthConversionData&) const;
 
-    PassRef<CalculationValue> createCalculationValue(const RenderStyle* currentStyle, const RenderStyle* rootStyle, double zoom = 1.0) const;
+    PassRef<CalculationValue> createCalculationValue(const CSSToLengthConversionData&) const;
 
     String customCSSText() const;
     bool equals(const CSSCalcValue&) const;
@@ -112,9 +113,9 @@ inline CSSCalcValue::CSSCalcValue(PassRef<CSSCalcExpressionNode> expression, boo
 {
 }
 
-inline PassRef<CalculationValue> CSSCalcValue::createCalculationValue(const RenderStyle* style, const RenderStyle* rootStyle, double zoom) const
+inline PassRef<CalculationValue> CSSCalcValue::createCalculationValue(const CSSToLengthConversionData& conversionData) const
 {
-    return CalculationValue::create(m_expression->createCalcExpression(style, rootStyle, zoom),
+    return CalculationValue::create(m_expression->createCalcExpression(conversionData),
         m_shouldClampToNonNegative ? CalculationRangeNonNegative : CalculationRangeAll);
 }
 

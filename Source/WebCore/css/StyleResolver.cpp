@@ -243,6 +243,7 @@ inline void StyleResolver::State::clear()
 #if ENABLE(CSS_FILTERS)
     m_filtersWithPendingSVGDocuments.clear();
 #endif
+    m_cssToLengthConversionData = CSSToLengthConversionData(nullptr, nullptr);
 }
 
 void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType)
@@ -422,6 +423,8 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
     m_style = nullptr;
     m_pendingImageProperties.clear();
     m_fontDirty = false;
+
+    m_cssToLengthConversionData = CSSToLengthConversionData(m_style.get(), m_rootElementStyle);
 }
 
 static const unsigned cStyleSearchThreshold = 10;
@@ -1448,14 +1451,14 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(Element* ele
 // -------------------------------------------------------------------------------------
 // this is mostly boring stuff on how to apply a certain rule to the renderstyle...
 
-Length StyleResolver::convertToIntLength(const CSSPrimitiveValue* primitiveValue, const RenderStyle* style, const RenderStyle* rootStyle, double multiplier)
+Length StyleResolver::convertToIntLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
 {
-    return primitiveValue ? primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | FractionConversion | ViewportPercentageConversion>(style, rootStyle, multiplier) : Length(Undefined);
+    return primitiveValue ? primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | FractionConversion | ViewportPercentageConversion>(conversionData) : Length(Undefined);
 }
 
-Length StyleResolver::convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const RenderStyle* style, const RenderStyle* rootStyle, double multiplier)
+Length StyleResolver::convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
 {
-    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion | FractionConversion | ViewportPercentageConversion>(style, rootStyle, multiplier) : Length(Undefined);
+    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion | FractionConversion | ViewportPercentageConversion>(conversionData) : Length(Undefined);
 }
 
 static bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
@@ -1856,7 +1859,7 @@ static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, const Styl
         return true;
     }
 
-    workingLength = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | ViewportPercentageConversion | CalculatedConversion | AutoConversion>(state.style(), state.rootElementStyle(), state.style()->effectiveZoom());
+    workingLength = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | ViewportPercentageConversion | CalculatedConversion | AutoConversion>(state.cssToLengthConversionData());
     if (workingLength.length().isUndefined())
         return false;
 
@@ -2021,8 +2024,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 
     CSSPrimitiveValue* primitiveValue = value->isPrimitiveValue() ? toCSSPrimitiveValue(value) : 0;
-
-    float zoomFactor = state.style()->effectiveZoom();
 
     // What follows is a list that maps the CSS properties into their corresponding front-end
     // RenderStyle values.
@@ -2301,16 +2302,16 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             if (!currValue->isShadowValue())
                 continue;
             CSSShadowValue* item = toCSSShadowValue(currValue);
-            int x = item->x->computeLength<int>(state.style(), state.rootElementStyle(), zoomFactor);
+            int x = item->x->computeLength<int>(state.cssToLengthConversionData());
             if (item->x->isViewportPercentageLength())
                 x = viewportPercentageValue(*item->x, x);
-            int y = item->y->computeLength<int>(state.style(), state.rootElementStyle(), zoomFactor);
+            int y = item->y->computeLength<int>(state.cssToLengthConversionData());
             if (item->y->isViewportPercentageLength())
                 y = viewportPercentageValue(*item->y, y);
-            int blur = item->blur ? item->blur->computeLength<int>(state.style(), state.rootElementStyle(), zoomFactor) : 0;
+            int blur = item->blur ? item->blur->computeLength<int>(state.cssToLengthConversionData()) : 0;
             if (item->blur && item->blur->isViewportPercentageLength())
                 blur = viewportPercentageValue(*item->blur, blur);
-            int spread = item->spread ? item->spread->computeLength<int>(state.style(), state.rootElementStyle(), zoomFactor) : 0;
+            int spread = item->spread ? item->spread->computeLength<int>(state.cssToLengthConversionData()) : 0;
             if (item->spread && item->spread->isViewportPercentageLength())
                 spread = viewportPercentageValue(*item->spread, spread);
             ShadowStyle shadowStyle = item->style && item->style->getValueID() == CSSValueInset ? Inset : Normal;
@@ -2342,7 +2343,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         RefPtr<StyleReflection> reflection = StyleReflection::create();
         reflection->setDirection(*reflectValue->direction());
         if (reflectValue->offset())
-            reflection->setOffset(reflectValue->offset()->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(state.style(), state.rootElementStyle(), zoomFactor));
+            reflection->setOffset(reflectValue->offset()->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(state.cssToLengthConversionData()));
         NinePieceImage mask;
         mask.setMaskDefaults();
         m_styleMap.mapNinePieceImage(id, reflectValue->mask(), mask);
@@ -2403,10 +2404,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 
         DashboardRegion* first = region;
         while (region) {
-            Length top = convertToIntLength(region->top(), state.style(), state.rootElementStyle());
-            Length right = convertToIntLength(region->right(), state.style(), state.rootElementStyle());
-            Length bottom = convertToIntLength(region->bottom(), state.style(), state.rootElementStyle());
-            Length left = convertToIntLength(region->left(), state.style(), state.rootElementStyle());
+            Length top = convertToIntLength(region->top(), state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            Length right = convertToIntLength(region->right(), state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            Length bottom = convertToIntLength(region->bottom(), state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            Length left = convertToIntLength(region->left(), state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
 
             if (top.isUndefined())
                 top = Length();
@@ -2442,11 +2443,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             else if (primitiveValue->getValueID() == CSSValueThick)
                 result *= 5;
             Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(result, CSSPrimitiveValue::CSS_EMS));
-            width = value.get().computeLength<float>(state.style(), state.rootElementStyle(), zoomFactor);
+            width = value.get().computeLength<float>(state.cssToLengthConversionData());
             break;
         }
         default:
-            width = primitiveValue->computeLength<float>(state.style(), state.rootElementStyle(), zoomFactor);
+            width = primitiveValue->computeLength<float>(state.cssToLengthConversionData());
             break;
         }
         state.style()->setTextStrokeWidth(width);
@@ -2455,7 +2456,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitTransform: {
         HANDLE_INHERIT_AND_INITIAL(transform, Transform);
         TransformOperations operations;
-        transformsForValue(state.style(), state.rootElementStyle(), value, operations);
+        transformsForValue(value, state.cssToLengthConversionData(), operations);
         state.style()->setTransform(operations);
         return;
     }
@@ -2472,11 +2473,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 
         float perspectiveValue;
         if (primitiveValue->isLength())
-            perspectiveValue = primitiveValue->computeLength<float>(state.style(), state.rootElementStyle(), zoomFactor);
+            perspectiveValue = primitiveValue->computeLength<float>(state.cssToLengthConversionData());
         else if (primitiveValue->isNumber()) {
             // For backward compatibility, treat valueless numbers as px.
             Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(primitiveValue->getDoubleValue(), CSSPrimitiveValue::CSS_PX));
-            perspectiveValue = value.get().computeLength<float>(state.style(), state.rootElementStyle(), zoomFactor);
+            perspectiveValue = value.get().computeLength<float>(state.cssToLengthConversionData());
         } else
             return;
 
@@ -3314,8 +3315,6 @@ void StyleResolver::loadPendingSVGDocuments()
 bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& outOperations)
 {
     State& state = m_state;
-    RenderStyle* style = state.style();
-    RenderStyle* rootStyle = state.rootElementStyle();
     ASSERT(outOperations.isEmpty());
     
     if (!inValue)
@@ -3330,7 +3329,6 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
     if (!inValue->isValueList())
         return false;
 
-    float zoomFactor = style ? style->effectiveZoom() : 1;
     FilterOperations operations;
     for (CSSValueListIterator i = inValue; i.hasMore(); i.advance()) {
         CSSValue* currValue = i.value();
@@ -3416,7 +3414,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
         case WebKitCSSFilterValue::BlurFilterOperation: {
             Length stdDeviation = Length(0, Fixed);
             if (filterValue->length() >= 1)
-                stdDeviation = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+                stdDeviation = convertToFloatLength(firstValue, state.cssToLengthConversionData());
             if (stdDeviation.isUndefined())
                 return false;
 
@@ -3432,14 +3430,14 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
                 continue;
 
             CSSShadowValue* item = toCSSShadowValue(cssValue);
-            int x = item->x->computeLength<int>(style, rootStyle, zoomFactor);
+            int x = item->x->computeLength<int>(state.cssToLengthConversionData());
             if (item->x->isViewportPercentageLength())
                 x = viewportPercentageValue(*item->x, x);
-            int y = item->y->computeLength<int>(style, rootStyle, zoomFactor);
+            int y = item->y->computeLength<int>(state.cssToLengthConversionData());
             if (item->y->isViewportPercentageLength())
                 y = viewportPercentageValue(*item->y, y);
             IntPoint location(x, y);
-            int blur = item->blur ? item->blur->computeLength<int>(style, rootStyle, zoomFactor) : 0;
+            int blur = item->blur ? item->blur->computeLength<int>(state.cssToLengthConversionData()) : 0;
             if (item->blur && item->blur->isViewportPercentageLength())
                 blur = viewportPercentageValue(*item->blur, blur);
             Color color;

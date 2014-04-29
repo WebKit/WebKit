@@ -171,9 +171,9 @@ double CSSCalcValue::doubleValue() const
     return clampToPermittedRange(m_expression->doubleValue());
 }
 
-double CSSCalcValue::computeLengthPx(const RenderStyle* currentStyle, const RenderStyle* rootStyle, double multiplier, bool computingFontSize) const
+double CSSCalcValue::computeLengthPx(const CSSToLengthConversionData& conversionData) const
 {
-    return clampToPermittedRange(m_expression->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize));
+    return clampToPermittedRange(m_expression->computeLengthPx(conversionData));
 }
 
 class CSSCalcPrimitiveValue final : public CSSCalcExpressionNode {
@@ -202,18 +202,18 @@ private:
         return m_value->cssText();
     }
 
-    virtual std::unique_ptr<CalcExpressionNode> createCalcExpression(const RenderStyle* style, const RenderStyle* rootStyle, double zoom) const override
+    virtual std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData& conversionData) const override
     {
         switch (category()) {
         case CalcNumber:
             return std::make_unique<CalcExpressionNumber>(m_value->getFloatValue());
         case CalcLength:
-            return std::make_unique<CalcExpressionLength>(Length(m_value->computeLength<float>(style, rootStyle, zoom), WebCore::Fixed));
+            return std::make_unique<CalcExpressionLength>(Length(m_value->computeLength<float>(conversionData), WebCore::Fixed));
         case CalcPercent:
         case CalcPercentLength: {
             CSSPrimitiveValue* primitiveValue = m_value.get();
             return std::make_unique<CalcExpressionLength>(primitiveValue
-                ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | FractionConversion>(style, rootStyle, zoom) : Length(Undefined));
+                ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | FractionConversion>(conversionData) : Length(Undefined));
         }
         // Only types that could be part of a Length expression can be converted
         // to a CalcExpressionNode. CalcPercentNumber makes no sense as a Length.
@@ -232,11 +232,11 @@ private:
         return 0;
     }
 
-    virtual double computeLengthPx(const RenderStyle* currentStyle, const RenderStyle* rootStyle, double multiplier, bool computingFontSize) const override
+    virtual double computeLengthPx(const CSSToLengthConversionData& conversionData) const override
     {
         switch (category()) {
         case CalcLength:
-            return m_value->computeLength<double>(currentStyle, rootStyle, multiplier, computingFontSize);
+            return m_value->computeLength<double>(conversionData);
         case CalcPercent:
         case CalcNumber:
             return m_value->getDoubleValue();
@@ -394,12 +394,12 @@ private:
         return !doubleValue();
     }
 
-    virtual std::unique_ptr<CalcExpressionNode> createCalcExpression(const RenderStyle* style, const RenderStyle* rootStyle, double zoom) const override
+    virtual std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData& conversionData) const override
     {
-        std::unique_ptr<CalcExpressionNode> left(m_leftSide->createCalcExpression(style, rootStyle, zoom));
+        std::unique_ptr<CalcExpressionNode> left(m_leftSide->createCalcExpression(conversionData));
         if (!left)
             return nullptr;
-        std::unique_ptr<CalcExpressionNode> right(m_rightSide->createCalcExpression(style, rootStyle, zoom));
+        std::unique_ptr<CalcExpressionNode> right(m_rightSide->createCalcExpression(conversionData));
         if (!right)
             return nullptr;
         return std::make_unique<CalcExpressionBinaryOperation>(std::move(left), std::move(right), m_operator);
@@ -410,10 +410,10 @@ private:
         return evaluate(m_leftSide->doubleValue(), m_rightSide->doubleValue());
     }
 
-    virtual double computeLengthPx(const RenderStyle* currentStyle, const RenderStyle* rootStyle, double multiplier, bool computingFontSize) const override
+    virtual double computeLengthPx(const CSSToLengthConversionData& conversionData) const override
     {
-        const double leftValue = m_leftSide->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize);
-        const double rightValue = m_rightSide->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize);
+        const double leftValue = m_leftSide->computeLengthPx(conversionData);
+        const double rightValue = m_rightSide->computeLengthPx(conversionData);
         return evaluate(leftValue, rightValue);
     }
 

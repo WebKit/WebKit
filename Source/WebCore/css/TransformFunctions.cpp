@@ -76,19 +76,18 @@ static TransformOperation::OperationType transformOperationType(WebKitCSSTransfo
     return TransformOperation::NONE;
 }
 
-static Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const RenderStyle* style, const RenderStyle* rootStyle, double multiplier)
+static Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
 {
-    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion | FractionConversion | ViewportPercentageConversion>(style, rootStyle, multiplier) : Length(Undefined);
+    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion | FractionConversion | ViewportPercentageConversion>(conversionData) : Length(Undefined);
 }
 
-bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, CSSValue* value, TransformOperations& outOperations)
+bool transformsForValue(CSSValue* value, const CSSToLengthConversionData& conversionData, TransformOperations& outOperations)
 {
     if (!value || !value->isValueList()) {
         outOperations.clear();
         return false;
     }
 
-    float zoomFactor = style ? style->effectiveZoom() : 1;
     TransformOperations operations;
     for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
         CSSValue* currValue = i.value();
@@ -165,13 +164,13 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
             Length tx = Length(0, Fixed);
             Length ty = Length(0, Fixed);
             if (transformValue->operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
-                ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+                ty = convertToFloatLength(firstValue, conversionData);
             else {
-                tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+                tx = convertToFloatLength(firstValue, conversionData);
                 if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                     if (transformValue->length() > 1) {
                         CSSPrimitiveValue* secondValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1));
-                        ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor);
+                        ty = convertToFloatLength(secondValue, conversionData);
                     }
                 }
             }
@@ -188,19 +187,19 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
             Length ty = Length(0, Fixed);
             Length tz = Length(0, Fixed);
             if (transformValue->operationType() == WebKitCSSTransformValue::TranslateZTransformOperation)
-                tz = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+                tz = convertToFloatLength(firstValue, conversionData);
             else if (transformValue->operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
-                ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+                ty = convertToFloatLength(firstValue, conversionData);
             else {
-                tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+                tx = convertToFloatLength(firstValue, conversionData);
                 if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                     if (transformValue->length() > 2) {
                         CSSPrimitiveValue* thirdValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(2));
-                        tz = convertToFloatLength(thirdValue, style, rootStyle, zoomFactor);
+                        tz = convertToFloatLength(thirdValue, conversionData);
                     }
                     if (transformValue->length() > 1) {
                         CSSPrimitiveValue* secondValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1));
-                        ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor);
+                        ty = convertToFloatLength(secondValue, conversionData);
                     }
                 }
             }
@@ -273,8 +272,8 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
             double b = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1))->getDoubleValue();
             double c = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(2))->getDoubleValue();
             double d = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(3))->getDoubleValue();
-            double e = zoomFactor * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(4))->getDoubleValue();
-            double f = zoomFactor * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(5))->getDoubleValue();
+            double e = conversionData.zoom() * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(4))->getDoubleValue();
+            double f = conversionData.zoom() * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(5))->getDoubleValue();
             operations.operations().append(MatrixTransformOperation::create(a, b, c, d, e, f));
             break;
         }
@@ -293,8 +292,8 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
                 toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(9))->getDoubleValue(),
                 toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(10))->getDoubleValue(),
                 toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(11))->getDoubleValue(),
-                zoomFactor * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(12))->getDoubleValue(),
-                zoomFactor * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(13))->getDoubleValue(),
+                conversionData.zoom() * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(12))->getDoubleValue(),
+                conversionData.zoom() * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(13))->getDoubleValue(),
                 toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(14))->getDoubleValue(),
                 toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(15))->getDoubleValue());
             operations.operations().append(Matrix3DTransformOperation::create(matrix));
@@ -303,7 +302,7 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
         case WebKitCSSTransformValue::PerspectiveTransformOperation: {
             Length p = Length(0, Fixed);
             if (firstValue->isLength())
-                p = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+                p = convertToFloatLength(firstValue, conversionData);
             else {
                 // This is a quirk that should go away when 3d transforms are finalized.
                 double val = firstValue->getDoubleValue();

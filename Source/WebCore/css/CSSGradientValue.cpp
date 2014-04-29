@@ -27,6 +27,7 @@
 #include "CSSGradientValue.h"
 
 #include "CSSCalculationValue.h"
+#include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
 #include "FloatSize.h"
 #include "FloatSizeHash.h"
@@ -128,10 +129,8 @@ PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleR
     return result.release();
 }
 
-void CSSGradientValue::addStops(Gradient* gradient, RenderElement* renderer, const RenderStyle& rootStyle, float maxLengthForRepeat)
+void CSSGradientValue::addStops(Gradient* gradient, const CSSToLengthConversionData& conversionData, float maxLengthForRepeat)
 {
-    RenderStyle& style = renderer->style();
-
     if (m_gradientType == CSSDeprecatedLinearGradient || m_gradientType == CSSDeprecatedRadialGradient) {
         sortStopsIfNeeded();
 
@@ -181,9 +180,9 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderElement* renderer, con
                 }
                 float length;
                 if (stop.m_position->isLength())
-                    length = stop.m_position->computeLength<float>(&style, &rootStyle, style.effectiveZoom());
+                    length = stop.m_position->computeLength<float>(conversionData);
                 else {
-                    Ref<CalculationValue> calculationValue { stop.m_position->cssCalcValue()->createCalculationValue(&style, &rootStyle, style.effectiveZoom()) };
+                    Ref<CalculationValue> calculationValue { stop.m_position->cssCalcValue()->createCalculationValue(conversionData) };
                     length = calculationValue->evaluate(gradientLength);
                 }
                 stops[i].offset = (gradientLength > 0) ? length / gradientLength : 0;
@@ -392,19 +391,17 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderElement* renderer, con
     gradient->setStopsSorted(true);
 }
 
-static float positionFromValue(CSSPrimitiveValue* value, const RenderStyle& style, const RenderStyle& rootStyle, const FloatSize& size, bool isHorizontal)
+static float positionFromValue(CSSPrimitiveValue* value, const CSSToLengthConversionData& conversionData, const FloatSize& size, bool isHorizontal)
 {
-    float zoomFactor = style.effectiveZoom();
-
     if (value->isNumber())
-        return value->getFloatValue() * zoomFactor;
+        return value->getFloatValue() * conversionData.zoom();
 
     int edgeDistance = isHorizontal ? size.width() : size.height();
     if (value->isPercentage())
         return value->getFloatValue() / 100.f * edgeDistance;
 
     if (value->isCalculatedPercentageWithLength()) {
-        Ref<CalculationValue> calculationValue { value->cssCalcValue()->createCalculationValue(&style, &rootStyle, style.effectiveZoom()) };
+        Ref<CalculationValue> calculationValue { value->cssCalcValue()->createCalculationValue(conversionData) };
         return calculationValue->evaluate(edgeDistance);
     }
 
@@ -425,18 +422,18 @@ static float positionFromValue(CSSPrimitiveValue* value, const RenderStyle& styl
         break;
     }
 
-    return value->computeLength<float>(&style, &rootStyle, zoomFactor);
+    return value->computeLength<float>(conversionData);
 }
 
-FloatPoint CSSGradientValue::computeEndPoint(CSSPrimitiveValue* horizontal, CSSPrimitiveValue* vertical, const RenderStyle& style, const RenderStyle& rootStyle, const FloatSize& size)
+FloatPoint CSSGradientValue::computeEndPoint(CSSPrimitiveValue* horizontal, CSSPrimitiveValue* vertical, const CSSToLengthConversionData& conversionData, const FloatSize& size)
 {
     FloatPoint result;
 
     if (horizontal)
-        result.setX(positionFromValue(horizontal, style, rootStyle, size, true));
+        result.setX(positionFromValue(horizontal, conversionData, size, true));
 
     if (vertical)
-        result.setY(positionFromValue(vertical, style, rootStyle, size, false));
+        result.setY(positionFromValue(vertical, conversionData, size, false));
 
     return result;
 }
@@ -647,7 +644,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement* rende
 {
     ASSERT(!size.isEmpty());
 
-    RenderStyle& rootStyle = *renderer->document().documentElement()->renderStyle();
+    CSSToLengthConversionData conversionData(&renderer->style(), renderer->document().documentElement()->renderStyle());
 
     FloatPoint firstPoint;
     FloatPoint secondPoint;
@@ -657,9 +654,9 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement* rende
     } else {
         switch (m_gradientType) {
         case CSSDeprecatedLinearGradient:
-            firstPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), renderer->style(), rootStyle, size);
+            firstPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), conversionData, size);
             if (m_secondX || m_secondY)
-                secondPoint = computeEndPoint(m_secondX.get(), m_secondY.get(), renderer->style(), rootStyle, size);
+                secondPoint = computeEndPoint(m_secondX.get(), m_secondY.get(), conversionData, size);
             else {
                 if (m_firstX)
                     secondPoint.setX(size.width() - firstPoint.x());
@@ -668,7 +665,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement* rende
             }
             break;
         case CSSPrefixedLinearGradient:
-            firstPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), renderer->style(), rootStyle, size);
+            firstPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), conversionData, size);
             if (m_firstX)
                 secondPoint.setX(size.width() - firstPoint.x());
             if (m_firstY)
@@ -687,7 +684,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement* rende
                 float angle = 90 - rad2deg(atan2(rise, run));
                 endPointsFromAngle(angle, size, firstPoint, secondPoint, m_gradientType);
             } else if (m_firstX || m_firstY) { 
-                secondPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), renderer->style(), rootStyle, size);
+                secondPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), conversionData, size);
                 if (m_firstX)
                     firstPoint.setX(size.width() - secondPoint.x());
                 if (m_firstY)
@@ -704,7 +701,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement* rende
     RefPtr<Gradient> gradient = Gradient::create(firstPoint, secondPoint);
 
     // Now add the stops.
-    addStops(gradient.get(), renderer, rootStyle, 1);
+    addStops(gradient.get(), conversionData, 1);
 
     return gradient.release();
 }
@@ -891,17 +888,15 @@ String CSSRadialGradientValue::customCSSText() const
     return result.toString();
 }
 
-float CSSRadialGradientValue::resolveRadius(CSSPrimitiveValue* radius, const RenderStyle& style, const RenderStyle& rootStyle, float* widthOrHeight)
+float CSSRadialGradientValue::resolveRadius(CSSPrimitiveValue* radius, const CSSToLengthConversionData& conversionData, float* widthOrHeight)
 {
-    float zoomFactor = style.effectiveZoom();
-
     float result = 0;
     if (radius->isNumber()) // Can the radius be a percentage?
-        result = radius->getFloatValue() * zoomFactor;
+        result = radius->getFloatValue() * conversionData.zoom();
     else if (widthOrHeight && radius->isPercentage())
         result = *widthOrHeight * radius->getFloatValue() / 100;
     else
-        result = radius->computeLength<float>(&style, &rootStyle, zoomFactor);
+        result = radius->computeLength<float>(conversionData);
 
     return result;
 }
@@ -987,15 +982,15 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderElement* rende
 {
     ASSERT(!size.isEmpty());
 
-    RenderStyle& rootStyle = *renderer->document().documentElement()->renderStyle();
+    CSSToLengthConversionData conversionData(&renderer->style(), renderer->document().documentElement()->renderStyle());
 
-    FloatPoint firstPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), renderer->style(), rootStyle, size);
+    FloatPoint firstPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), conversionData, size);
     if (!m_firstX)
         firstPoint.setX(size.width() / 2);
     if (!m_firstY)
         firstPoint.setY(size.height() / 2);
 
-    FloatPoint secondPoint = computeEndPoint(m_secondX.get(), m_secondY.get(), renderer->style(), rootStyle, size);
+    FloatPoint secondPoint = computeEndPoint(m_secondX.get(), m_secondY.get(), conversionData, size);
     if (!m_secondX)
         secondPoint.setX(size.width() / 2);
     if (!m_secondY)
@@ -1003,18 +998,18 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderElement* rende
 
     float firstRadius = 0;
     if (m_firstRadius)
-        firstRadius = resolveRadius(m_firstRadius.get(), renderer->style(), rootStyle);
+        firstRadius = resolveRadius(m_firstRadius.get(), conversionData);
 
     float secondRadius = 0;
     float aspectRatio = 1; // width / height.
     if (m_secondRadius)
-        secondRadius = resolveRadius(m_secondRadius.get(), renderer->style(), rootStyle);
+        secondRadius = resolveRadius(m_secondRadius.get(), conversionData);
     else if (m_endHorizontalSize) {
         float width = size.width();
         float height = size.height();
-        secondRadius = resolveRadius(m_endHorizontalSize.get(), renderer->style(), rootStyle, &width);
+        secondRadius = resolveRadius(m_endHorizontalSize.get(), conversionData, &width);
         if (m_endVerticalSize)
-            aspectRatio = secondRadius / resolveRadius(m_endVerticalSize.get(), renderer->style(), rootStyle, &height);
+            aspectRatio = secondRadius / resolveRadius(m_endVerticalSize.get(), conversionData, &height);
         else
             aspectRatio = 1;
     } else {
@@ -1120,7 +1115,7 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderElement* rende
     }
 
     // Now add the stops.
-    addStops(gradient.get(), renderer, rootStyle, maxExtent);
+    addStops(gradient.get(), conversionData, maxExtent);
 
     return gradient.release();
 }

@@ -33,6 +33,7 @@
 #include "CSSCalculationValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSReflectionDirection.h"
+#include "CSSToLengthConversionData.h"
 #include "ColorSpace.h"
 #include "CSSValueKeywords.h"
 #include "FontDescription.h"
@@ -4631,14 +4632,14 @@ enum LengthConversion {
     ViewportPercentageConversion = 1 << 6
 };
 
-template<int supported> Length CSSPrimitiveValue::convertToLength(const RenderStyle* style, const RenderStyle* rootStyle, double multiplier, bool computingFontSize) const
+template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLengthConversionData& conversionData) const
 {
-    if ((supported & (FixedIntegerConversion | FixedFloatConversion)) && isFontRelativeLength() && (!style || !rootStyle))
+    if ((supported & (FixedIntegerConversion | FixedFloatConversion)) && isFontRelativeLength() && (!conversionData.style() || !conversionData.rootStyle()))
         return Length(Undefined);
     if ((supported & FixedIntegerConversion) && isLength())
-        return computeLength<Length>(style, rootStyle, multiplier, computingFontSize);
+        return computeLength<Length>(conversionData);
     if ((supported & FixedFloatConversion) && isLength())
-        return Length(computeLength<double>(style, rootStyle, multiplier), Fixed);
+        return Length(computeLength<double>(conversionData), Fixed);
     if ((supported & PercentConversion) && isPercentage())
         return Length(getDoubleValue(), Percent);
     if ((supported & FractionConversion) && isNumber())
@@ -4646,7 +4647,7 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(const RenderSt
     if ((supported & AutoConversion) && getValueID() == CSSValueAuto)
         return Length(Auto);
     if ((supported & CalculatedConversion) && isCalculated())
-        return Length(cssCalcValue()->createCalculationValue(style, rootStyle, multiplier));
+        return Length(cssCalcValue()->createCalculationValue(conversionData));
     if ((supported & ViewportPercentageConversion) && isViewportPercentageLength())
         return viewportPercentageLength();
     return Length(Undefined);

@@ -28,6 +28,7 @@
 
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
 #include "ExceptionCode.h"
 #include "StyleProperties.h"
@@ -66,7 +67,7 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
             return;
 
         TransformOperations operations;
-        if (!transformsForValue(0, 0, value.get(), operations)) {
+        if (!transformsForValue(value.get(), CSSToLengthConversionData(), operations)) {
             ec = SYNTAX_ERR;
             return;
         }

@@ -220,7 +220,7 @@ public:
         else if (valueType == Number)
             setValue(styleResolver->style(), *primitiveValue);
         else if (valueType == ComputeLength)
-            setValue(styleResolver->style(), primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom()));
+            setValue(styleResolver->style(), primitiveValue->computeLength<T>(styleResolver->state().cssToLengthConversionData()));
     }
 
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
@@ -230,7 +230,7 @@ class ApplyPropertyClip {
 private:
     static Length convertToLength(StyleResolver* styleResolver, CSSPrimitiveValue* value)
     {
-        return value->convertToLength<FixedIntegerConversion | PercentConversion | FractionConversion | AutoConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+        return value->convertToLength<FixedIntegerConversion | PercentConversion | FractionConversion | AutoConversion>(styleResolver->state().cssToLengthConversionData());
     }
 public:
     static void applyInheritValue(CSSPropertyID propertyID, StyleResolver* styleResolver)
@@ -387,13 +387,13 @@ public:
         if (autoEnabled && primitiveValue->getValueID() == CSSValueAuto)
             setValue(styleResolver->style(), Length());
         else if (primitiveValue->isLength()) {
-            Length length = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+            Length length = primitiveValue->computeLength<Length>(styleResolver->state().cssToLengthConversionData());
             length.setHasQuirk(primitiveValue->isQuirkValue());
             setValue(styleResolver->style(), length);
         } else if (primitiveValue->isPercentage())
             setValue(styleResolver->style(), Length(primitiveValue->getDoubleValue(), Percent));
         else if (primitiveValue->isCalculatedPercentageWithLength())
-            setValue(styleResolver->style(), Length(primitiveValue->cssCalcValue()->createCalculationValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom())));
+            setValue(styleResolver->style(), Length(primitiveValue->cssCalcValue()->createCalculationValue(styleResolver->state().cssToLengthConversionData())));
         else if (primitiveValue->isViewportPercentageLength())
             setValue(styleResolver->style(), primitiveValue->viewportPercentageLength());
     }
@@ -442,15 +442,16 @@ public:
         if (!pair || !pair->first() || !pair->second())
             return;
 
+        CSSToLengthConversionData conversionData = styleResolver->state().cssToLengthConversionData();
         Length radiusWidth;
         if (pair->first()->isPercentage())
             radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
         else if (pair->first()->isViewportPercentageLength())
             radiusWidth = Length(styleResolver->viewportPercentageValue(*pair->first(), pair->first()->getIntValue()), Fixed);
         else if (pair->first()->isCalculatedPercentageWithLength())
-            radiusWidth = Length(pair->first()->cssCalcValue()->createCalculationValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom()));
+            radiusWidth = Length(pair->first()->cssCalcValue()->createCalculationValue(conversionData));
         else
-            radiusWidth = pair->first()->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+            radiusWidth = pair->first()->computeLength<Length>(conversionData);
 
         Length radiusHeight;
         if (pair->second()->isPercentage())
@@ -458,9 +459,9 @@ public:
         else if (pair->second()->isViewportPercentageLength())
             radiusHeight = Length(styleResolver->viewportPercentageValue(*pair->second(), pair->second()->getIntValue()), Fixed);
         else if (pair->second()->isCalculatedPercentageWithLength())
-            radiusHeight = Length(pair->second()->cssCalcValue()->createCalculationValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom()));
+            radiusHeight = Length(pair->second()->cssCalcValue()->createCalculationValue(conversionData));
         else
-            radiusHeight = pair->second()->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+            radiusHeight = pair->second()->computeLength<Length>(conversionData);
 
         if (radiusWidth.isNegative() || radiusHeight.isNegative())
             return;
@@ -611,13 +612,13 @@ public:
         } else if (thicknessEnabled && ident == CSSValueThick) {
             length = 5;
         } else if (ident == CSSValueInvalid) {
-            float zoom = (svgZoomEnabled && styleResolver->useSVGZoomRules()) ? 1.0f : styleResolver->style()->effectiveZoom();
+            CSSToLengthConversionData conversionData = (svgZoomEnabled && styleResolver->useSVGZoomRules()) ? styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f) : styleResolver->state().cssToLengthConversionData();
 
             // Any original result that was >= 1 should not be allowed to fall below 1.
             // This keeps border lines from vanishing.
-            length = primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), zoom);
-            if (zoom < 1.0f && length < 1.0) {
-                T originalLength = primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), 1.0);
+            length = primitiveValue->computeLength<T>(conversionData);
+            if (conversionData.zoom() < 1.0f && length < 1.0) {
+                T originalLength = primitiveValue->computeLength<T>(conversionData.copyWithAdjustedZoom(1.0f));
                 if (originalLength >= 1.0)
                     length = 1.0;
             }
@@ -868,11 +869,11 @@ public:
             fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize
                                               || !(primitiveValue->isPercentage() || primitiveValue->isFontRelativeLength()));
             if (primitiveValue->isLength())
-                size = primitiveValue->computeLength<float>(styleResolver->parentStyle(), styleResolver->rootElementStyle(), 1.0, true);
+                size = primitiveValue->computeLength<float>(CSSToLengthConversionData(styleResolver->parentStyle(), styleResolver->rootElementStyle(), 1.0f, true));
             else if (primitiveValue->isPercentage())
                 size = (primitiveValue->getFloatValue() * parentSize) / 100.0f;
             else if (primitiveValue->isCalculatedPercentageWithLength()) {
-                Ref<CalculationValue> calculationValue { primitiveValue->cssCalcValue()->createCalculationValue(styleResolver->parentStyle(), styleResolver->rootElementStyle()) };
+                Ref<CalculationValue> calculationValue { primitiveValue->cssCalcValue()->createCalculationValue(styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f)) };
                 size = calculationValue->evaluate(parentSize);
             } else if (primitiveValue->isViewportPercentageLength())
                 size = valueForLength(primitiveValue->viewportPercentageLength(), 0, styleResolver->document().renderView());
@@ -1292,6 +1293,14 @@ static TextDecorationSkip valueToDecorationSkip(CSSPrimitiveValue& primitiveValu
     return TextDecorationSkipNone;
 }
 
+static inline CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(StyleResolver& styleResolver)
+{
+    if (Frame* frame = styleResolver.document().frame())
+        return styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(styleResolver.style()->effectiveZoom() * frame->textZoomFactor());
+
+    return styleResolver.state().cssToLengthConversionData();
+}
+
 class ApplyPropertyTextDecorationSkip {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
@@ -1336,7 +1345,7 @@ public:
                 break;
             }
         } else {
-            Length marqueeLength = styleResolver->convertToIntLength(primitiveValue, styleResolver->style(), styleResolver->rootElementStyle());
+            Length marqueeLength = styleResolver->convertToIntLength(primitiveValue, styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
             if (!marqueeLength.isUndefined())
                 styleResolver->style()->setMarqueeIncrement(marqueeLength);
         }
@@ -1442,10 +1451,7 @@ public:
         if (primitiveValue->getValueID() == CSSValueNormal)
             lineHeight = RenderStyle::initialLineHeight();
         else if (primitiveValue->isLength()) {
-            double multiplier = styleResolver->style()->effectiveZoom();
-            if (Frame* frame = styleResolver->document().frame())
-                multiplier *= frame->textZoomFactor();
-            lineHeight = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), multiplier);
+            lineHeight = primitiveValue->computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(*styleResolver));
         } else if (primitiveValue->isPercentage()) {
             // FIXME: percentage should not be restricted to an integer here.
             lineHeight = Length((styleResolver->style()->computedFontSize() * primitiveValue->getIntValue()) / 100, Fixed);
@@ -1480,12 +1486,7 @@ public:
         if (primitiveValue->getValueID() == CSSValueNormal)
             lineHeight = RenderStyle::initialLineHeight();
         else if (primitiveValue->isLength()) {
-            double multiplier = styleResolver->style()->effectiveZoom();
-            if (styleResolver->style()->textSizeAdjust().isNone()) {
-                if (Frame* frame = styleResolver->document().frame())
-                    multiplier *= frame->textZoomFactor();
-            }
-            lineHeight = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), multiplier);
+            lineHeight = primitiveValue->computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(*styleResolver));
             if (styleResolver->style()->textSizeAdjust().isPercentage())
                 lineHeight = Length(lineHeight.value() * styleResolver->style()->textSizeAdjust().multiplier(), Fixed);
         } else if (primitiveValue->isPercentage()) {
@@ -1537,10 +1538,7 @@ public:
         if (primitiveValue->getValueID() == CSSValueNormal)
             wordSpacing = RenderStyle::initialWordSpacing();
         else if (primitiveValue->isLength()) {
-            double multiplier = styleResolver->style()->effectiveZoom();
-            if (Frame* frame = styleResolver->document().frame())
-                multiplier *= frame->textZoomFactor();
-            wordSpacing = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), multiplier);
+            wordSpacing = primitiveValue->computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(*styleResolver));
         } else if (primitiveValue->isPercentage())
             wordSpacing = Length(primitiveValue->getDoubleValue(), Percent);
         else if (primitiveValue->isNumber())
@@ -1563,12 +1561,12 @@ private:
     static Length mmLength(double mm)
     {
         Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM));
-        return value.get().computeLength<Length>(0, 0);
+        return value.get().computeLength<Length>(CSSToLengthConversionData());
     }
     static Length inchLength(double inch)
     {
         Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN));
-        return value.get().computeLength<Length>(0, 0);
+        return value.get().computeLength<Length>(CSSToLengthConversionData());
     }
     static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
     {
@@ -1664,8 +1662,9 @@ public:
                 // <length>{2}
                 if (!second->isLength())
                     return;
-                width = first->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle());
-                height = second->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle());
+                CSSToLengthConversionData conversionData = styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f);
+                width = first->computeLength<Length>(conversionData);
+                height = second->computeLength<Length>(conversionData);
             } else {
                 // <page-size> <orientation>
                 // The value order is guaranteed. See CSSParser::parseSizeParameter.
@@ -1683,7 +1682,7 @@ public:
             if (primitiveValue->isLength()) {
                 // <length>
                 pageSizeType = PAGE_SIZE_RESOLVED;
-                width = height = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle());
+                width = height = primitiveValue->computeLength<Length>(styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
             } else {
                 switch (primitiveValue->getValueID()) {
                 case 0:
@@ -1961,7 +1960,7 @@ public:
         if (primitiveValue->getValueID())
             return styleResolver->style()->setVerticalAlign(*primitiveValue);
 
-        styleResolver->style()->setVerticalAlignLength(primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom()));
+        styleResolver->style()->setVerticalAlignLength(primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->state().cssToLengthConversionData()));
     }
 
     static PropertyHandler createHandler()
@@ -2139,7 +2138,7 @@ public:
         for (unsigned i = 0; i < valueList.length(); ++i) {
             auto& primitiveValue = toCSSPrimitiveValue(*valueList.itemWithoutBoundsCheck(i));
             if (primitiveValue.isShape() && !operation)
-                operation = ShapeClipPathOperation::create(basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue.getShapeValue()));
+                operation = ShapeClipPathOperation::create(basicShapeForValue(styleResolver->state().cssToLengthConversionData(), primitiveValue.getShapeValue()));
             else if ((primitiveValue.getValueID() == CSSValueContentBox
                 || primitiveValue.getValueID() == CSSValueBorderBox
                 || primitiveValue.getValueID() == CSSValuePaddingBox
@@ -2188,7 +2187,7 @@ public:
             for (unsigned i = 0; i < valueList->length(); ++i) {
                 CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(valueList->itemWithoutBoundsCheck(i));
                 if (primitiveValue->isShape())
-                    shape = basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue->getShapeValue());
+                    shape = basicShapeForValue(styleResolver->state().cssToLengthConversionData(), primitiveValue->getShapeValue());
                 else if (primitiveValue->getValueID() == CSSValueContentBox
                     || primitiveValue->getValueID() == CSSValueBorderBox
                     || primitiveValue->getValueID() == CSSValuePaddingBox
@@ -2301,7 +2300,7 @@ public:
 
             CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(item);
             if (!primitiveValue->getValueID())
-                lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+                lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->state().cssToLengthConversionData());
 #if ENABLE(CSS3_TEXT)
             else if (primitiveValue->getValueID() == CSSValueWebkitEachLine)
                 textIndentLineValue = TextIndentEachLine;

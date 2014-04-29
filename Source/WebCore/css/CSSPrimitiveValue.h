@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class CSSCalcValue;
+class CSSToLengthConversionData;
 class Counter;
 class DashboardRegion;
 class Pair;
@@ -265,10 +266,10 @@ public:
      * this is screen/printer dependent, so we probably need a config option for this,
      * and some tool to calibrate.
      */
-    template<typename T> T computeLength(const RenderStyle* currStyle, const RenderStyle* rootStyle, float multiplier = 1.0f, bool computingFontSize = false) const;
+    template<typename T> T computeLength(const CSSToLengthConversionData&) const;
 
     // Converts to a Length, mapping various unit types appropriately.
-    template<int> Length convertToLength(const RenderStyle* currStyle, const RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const;
+    template<int> Length convertToLength(const CSSToLengthConversionData&) const;
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_primitiveUnitType = type; }
@@ -378,7 +379,7 @@ private:
     void init(PassRefPtr<CSSCalcValue>);
     bool getDoubleValueInternal(UnitTypes targetUnitType, double* result) const;
 
-    double computeLengthDouble(const RenderStyle* currentStyle, const RenderStyle* rootStyle, float multiplier, bool computingFontSize) const;
+    double computeLengthDouble(const CSSToLengthConversionData&) const;
 
     union {
         CSSPropertyID propertyID;

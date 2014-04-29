@@ -22,6 +22,7 @@
 #ifndef StyleResolver_h
 #define StyleResolver_h
 
+#include "CSSToLengthConversionData.h"
 #include "CSSToStyleMap.h"
 #include "CSSValueList.h"
 #include "DocumentRuleSets.h"
@@ -354,7 +355,11 @@ public:
         Document& document() const { return m_element->document(); }
         Element* element() const { return m_element; }
         StyledElement* styledElement() const { return m_styledElement; }
-        void setStyle(PassRef<RenderStyle> style) { m_style = std::move(style); }
+        void setStyle(PassRef<RenderStyle> style)
+        {
+            m_style = std::move(style);
+            m_cssToLengthConversionData = CSSToLengthConversionData(m_style.get(), m_rootElementStyle);
+        }
         RenderStyle* style() const { return m_style.get(); }
         PassRef<RenderStyle> takeStyle() { return m_style.releaseNonNull(); }
 
@@ -397,6 +402,8 @@ public:
 
         bool useSVGZoomRules() const { return m_element && m_element->isSVGElement(); }
 
+        CSSToLengthConversionData cssToLengthConversionData() const { return m_cssToLengthConversionData; }
+
     private:
         // FIXME(bug 108563): to make it easier to review, these member
         // variables are public. However we should add methods to access
@@ -428,6 +435,8 @@ public:
         BorderData m_borderData;
         FillLayer m_backgroundData;
         Color m_backgroundColor;
+
+        CSSToLengthConversionData m_cssToLengthConversionData;
     };
 
     State& state() { return m_state; }
@@ -445,8 +454,8 @@ public:
     bool applyPropertyToRegularStyle() const { return m_state.applyPropertyToRegularStyle(); }
     bool applyPropertyToVisitedLinkStyle() const { return m_state.applyPropertyToVisitedLinkStyle(); }
 
-    static Length convertToIntLength(const CSSPrimitiveValue*, const RenderStyle*, const RenderStyle* rootStyle, double multiplier = 1);
-    static Length convertToFloatLength(const CSSPrimitiveValue*, const RenderStyle*, const RenderStyle* rootStyle, double multiplier = 1);
+    static Length convertToIntLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&);
+    static Length convertToFloatLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&);
 
     CSSToStyleMap* styleMap() { return &m_styleMap; }
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }

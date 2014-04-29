@@ -43,7 +43,7 @@ class CSSToStyleMap {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    CSSToStyleMap(StyleResolver* resolver) : m_resolver(resolver) { }
+    CSSToStyleMap(StyleResolver*);
 
     void mapFillAttachment(CSSPropertyID, FillLayer*, CSSValue*);
     void mapFillClip(CSSPropertyID, FillLayer*, CSSValue*);

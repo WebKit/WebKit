@@ -1,3 +1,158 @@
+2014-04-29  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Wrap CSS length conversion arguments in an object
+        https://bugs.webkit.org/show_bug.cgi?id=131552
+
+        Reviewed by Andreas Kling.
+
+        This patch introduces a class CSSToLengthConversionData to wrap the
+        data required to convert CSS lengths to Lengths. This simplifies the
+        plumbing that goes on whenever we need to resolve CSS lengths and
+        makes it easier to update the arguments needed for resolving these (in
+        particular adding a RenderView for resolving viewport units at style
+        recalc time; removing the computingFontSize bool also appears
+        possible).
+
+        Note that the zoom argument, which was previously a float in some
+        places and a double in others is now a float.
+
+        This is a port of a Blink patch by timloh@chromium.org.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::convertToLength):
+        (WebCore::convertToLengthSize):
+        (WebCore::convertToCenterCoordinate):
+        (WebCore::cssValueToBasicShapeRadius):
+        (WebCore::basicShapeForValue):
+        * css/BasicShapeFunctions.h:
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::computeLengthPx):
+        (WebCore::determineCategory):
+        * css/CSSCalculationValue.h:
+        (WebCore::CSSCalcValue::createCalculationValue):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::addStops):
+        (WebCore::positionFromValue):
+        (WebCore::CSSGradientValue::computeEndPoint):
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSRadialGradientValue::resolveRadius):
+        (WebCore::CSSRadialGradientValue::createGradient):
+        * css/CSSGradientValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLength):
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::convertToLength):
+        * css/CSSToLengthConversionData.cpp: Added.
+        (WebCore::CSSToLengthConversionData::zoom):
+        * css/CSSToLengthConversionData.h: Added.
+        (WebCore::CSSToLengthConversionData::CSSToLengthConversionData):
+        (WebCore::CSSToLengthConversionData::style):
+        (WebCore::CSSToLengthConversionData::rootStyle):
+        (WebCore::CSSToLengthConversionData::computingFontSize):
+        (WebCore::CSSToLengthConversionData::copyWithAdjustedZoom):
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::CSSToStyleMap):
+        (WebCore::CSSToStyleMap::mapFillSize):
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+        (WebCore::CSSToStyleMap::mapNinePieceImageQuad):
+        * css/CSSToStyleMap.h:
+        (WebCore::CSSToStyleMap::CSSToStyleMap): Deleted.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyAuto::applyValue):
+        (WebCore::ApplyPropertyClip::convertToLength):
+        (WebCore::ApplyPropertyLength::applyValue):
+        (WebCore::ApplyPropertyBorderRadius::applyValue):
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        (WebCore::csstoLengthConversionDataWithTextZoomFactor):
+        (WebCore::ApplyPropertyMarqueeIncrement::applyValue):
+        (WebCore::ApplyPropertyLineHeight::applyValue):
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::applyValue):
+        (WebCore::ApplyPropertyWordSpacing::applyValue):
+        (WebCore::ApplyPropertyPageSize::mmLength):
+        (WebCore::ApplyPropertyPageSize::inchLength):
+        (WebCore::ApplyPropertyPageSize::applyValue):
+        (WebCore::ApplyPropertyVerticalAlign::applyValue):
+        (WebCore::ApplyPropertyClipPath::applyValue):
+        (WebCore::ApplyPropertyShape::applyValue):
+        (WebCore::ApplyPropertyTextIndent::applyValue):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::colorMediaFeatureEval):
+        (WebCore::color_indexMediaFeatureEval):
+        (WebCore::monochromeMediaFeatureEval):
+        (WebCore::orientationMediaFeatureEval):
+        (WebCore::aspect_ratioMediaFeatureEval):
+        (WebCore::device_aspect_ratioMediaFeatureEval):
+        (WebCore::device_pixel_ratioMediaFeatureEval):
+        (WebCore::resolutionMediaFeatureEval):
+        (WebCore::gridMediaFeatureEval):
+        (WebCore::computeLength):
+        (WebCore::device_heightMediaFeatureEval):
+        (WebCore::device_widthMediaFeatureEval):
+        (WebCore::heightMediaFeatureEval):
+        (WebCore::widthMediaFeatureEval):
+        (WebCore::min_colorMediaFeatureEval):
+        (WebCore::max_colorMediaFeatureEval):
+        (WebCore::min_color_indexMediaFeatureEval):
+        (WebCore::max_color_indexMediaFeatureEval):
+        (WebCore::min_monochromeMediaFeatureEval):
+        (WebCore::max_monochromeMediaFeatureEval):
+        (WebCore::min_aspect_ratioMediaFeatureEval):
+        (WebCore::max_aspect_ratioMediaFeatureEval):
+        (WebCore::min_device_aspect_ratioMediaFeatureEval):
+        (WebCore::max_device_aspect_ratioMediaFeatureEval):
+        (WebCore::min_device_pixel_ratioMediaFeatureEval):
+        (WebCore::max_device_pixel_ratioMediaFeatureEval):
+        (WebCore::min_heightMediaFeatureEval):
+        (WebCore::max_heightMediaFeatureEval):
+        (WebCore::min_widthMediaFeatureEval):
+        (WebCore::max_widthMediaFeatureEval):
+        (WebCore::min_device_heightMediaFeatureEval):
+        (WebCore::max_device_heightMediaFeatureEval):
+        (WebCore::min_device_widthMediaFeatureEval):
+        (WebCore::max_device_widthMediaFeatureEval):
+        (WebCore::min_resolutionMediaFeatureEval):
+        (WebCore::max_resolutionMediaFeatureEval):
+        (WebCore::animationMediaFeatureEval):
+        (WebCore::transitionMediaFeatureEval):
+        (WebCore::transform_2dMediaFeatureEval):
+        (WebCore::transform_3dMediaFeatureEval):
+        (WebCore::view_modeMediaFeatureEval):
+        (WebCore::video_playable_inlineMediaFeatureEval):
+        (WebCore::hoverMediaFeatureEval):
+        (WebCore::pointerMediaFeatureEval):
+        (WebCore::MediaQueryEvaluator::eval):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        (WebCore::StyleResolver::State::initForStyleResolve):
+        (WebCore::StyleResolver::convertToIntLength):
+        (WebCore::StyleResolver::convertToFloatLength):
+        (WebCore::createGridTrackBreadth):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::setStyle):
+        (WebCore::StyleResolver::State::cssToLengthConversionData):
+        * css/TransformFunctions.cpp:
+        (WebCore::convertToFloatLength):
+        (WebCore::transformsForValue):
+        * css/TransformFunctions.h:
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::applyCommonButtonPaddingToStyle):
+        (WebCore::RenderThemeIOS::adjustButtonStyle):
+
 2014-04-29  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] complex calc args for inset round vanish

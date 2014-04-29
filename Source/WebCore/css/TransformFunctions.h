@@ -34,11 +34,12 @@
 
 namespace WebCore {
 
+class CSSToLengthConversionData;
 class CSSValue;
 class RenderStyle;
 class WebKitCSSTransformValue;
 
-bool transformsForValue(const RenderStyle*, const RenderStyle* rootStyle, CSSValue*, TransformOperations&);
+bool transformsForValue(CSSValue*, const CSSToLengthConversionData&, TransformOperations&);
 
 }
 #endif
