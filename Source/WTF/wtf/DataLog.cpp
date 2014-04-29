@@ -26,11 +26,12 @@
 #include "config.h"
 #include "DataLog.h"
 #include <stdarg.h>
+#include <string.h>
 #include <wtf/FilePrintStream.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/Threading.h>
 
-#if OS(UNIX)
+#if OS(UNIX) || OS(DARWIN)
 #include <unistd.h>
 #endif
 
@@ -42,9 +43,12 @@
 
 #define DATA_LOG_TO_FILE 0
 
-// Uncomment to force logging to the given file regardless of what the environment variable says. Note that
-// we will append ".<pid>.txt" where <pid> is the PID.
+// Set to 1 to use the temp directory from confstr instead of hardcoded directory.
+// The last component of DATA_LOG_FILENAME will still be used.
+#define DATA_LOG_TO_DARWIN_TEMP_DIR 0
 
+// Uncomment to force logging to the given file regardless of what the environment variable says.
+// Note that we will append ".<pid>.txt" where <pid> is the PID.
 // This path won't work on Windows, make sure to change to something like C:\\Users\\<more path>\\log.txt.
 #define DATA_LOG_FILENAME "/tmp/WTFLog"
 
@@ -61,23 +65,55 @@ static uint64_t fileData[(sizeof(FilePrintStream) + 7) / 8];
 static void initializeLogFileOnce()
 {
 #if DATA_LOG_TO_FILE
-#ifdef DATA_LOG_FILENAME
+    const long maxPathLength = 1024;
+
+    char filenameSuffix[maxPathLength + 1];
+
+#if PLATFORM(WIN)
+    _snprintf(filenameSuffix, sizeof(filenameSuffix), ".%d.txt", GetCurrentProcessId());
+#else
+    snprintf(filenameSuffix, sizeof(filenameSuffix), ".%d.txt", getpid());
+#endif
+
+#if DATA_LOG_TO_DARWIN_TEMP_DIR
+    char filenameBuffer[maxPathLength + 1];
+    unsigned suffixLength = strlen(filenameSuffix);
+
+#if defined(DATA_LOG_FILENAME)
+    char* logBasename = strrchr(DATA_LOG_FILENAME, '/');
+    if (!logBasename)
+        logBasename = (char*)DATA_LOG_FILENAME;
+#else
+    const char* logBasename = "WTFLog";
+#endif
+
+    const char* filename = 0;
+
+    size_t lastComponentLength = strlen(logBasename) + suffixLength;
+    size_t dirnameLength = confstr(_CS_DARWIN_USER_TEMP_DIR, filenameBuffer, 1024);
+    if ((dirnameLength + lastComponentLength + suffixLength) < maxPathLength) {
+        strncat(filenameBuffer, logBasename, maxPathLength - dirnameLength);
+        filename = filenameBuffer;
+    }
+#elif defined(DATA_LOG_FILENAME)
     const char* filename = DATA_LOG_FILENAME;
 #else
     const char* filename = getenv("WTF_DATA_LOG_FILENAME");
 #endif
-    char actualFilename[1024];
-
-#if PLATFORM(WIN)
-    _snprintf(actualFilename, sizeof(actualFilename), "%s.%d.txt", filename, GetCurrentProcessId());
-#else
-    snprintf(actualFilename, sizeof(actualFilename), "%s.%d.txt", filename, getpid());
-#endif
+    char actualFilename[maxPathLength + 1];
 
     if (filename) {
+#if PLATFORM(WIN)
+        _snprintf(actualFilename, sizeof(actualFilename), "%s%s", filename, filenameSuffix);
+#else
+        snprintf(actualFilename, sizeof(actualFilename), "%s%s", filename, filenameSuffix);
+#endif
+        
         file = FilePrintStream::open(actualFilename, "w").release();
-        if (!file)
-            fprintf(stderr, "Warning: Could not open log file %s for writing.\n", actualFilename);
+        if (file)
+            WTFLogAlways("*** DataLog output to \"%s\" ***\n", actualFilename);
+        else
+            WTFLogAlways("Warning: Could not open DataLog file %s for writing.\n", actualFilename);
     }
 #endif // DATA_LOG_TO_FILE
     if (!file) {
