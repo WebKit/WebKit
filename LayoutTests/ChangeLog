@@ -1,3 +1,11 @@
+2014-04-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Removed remaining editing/pasteboard which are already skipped.
+
+        * platform/efl/TestExpectations:
+
 2014-04-29  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed GTK gardening.
