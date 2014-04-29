@@ -2364,11 +2364,7 @@ void RenderLayer::scrollTo(int x, int y)
         requiresRepaint = false;
 
     // Just schedule a full repaint of our object.
-#if PLATFORM(IOS)
-    if (!hasAcceleratedTouchScrolling())
-#else
     if (requiresRepaint)
-#endif
         renderer().repaintUsingContainer(repaintContainer, m_repaintRect);
 
     // Schedule the scroll and scroll-related DOM events.
@@ -2695,16 +2691,9 @@ IntRect RenderLayer::visibleContentRectInternal(VisibleContentRectIncludesScroll
 {
     int verticalScrollbarWidth = 0;
     int horizontalScrollbarHeight = 0;
-    if (scrollbarInclusion == IncludeScrollbars) {
+    if (showsOverflowControls() && scrollbarInclusion == IncludeScrollbars) {
         verticalScrollbarWidth = (verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar()) ? verticalScrollbar()->width() : 0;
         horizontalScrollbarHeight = (horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar()) ? horizontalScrollbar()->height() : 0;
-
-#if PLATFORM(IOS)
-        if (hasAcceleratedTouchScrolling()) {
-            verticalScrollbarWidth = 0;
-            horizontalScrollbarHeight = 0;
-        }
-#endif
     }
     
     return IntRect(IntPoint(scrollXOffset(), scrollYOffset()),
@@ -2924,11 +2913,8 @@ IntSize RenderLayer::scrollbarOffset(const Scrollbar* scrollbar) const
 
 void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
 {
-#if PLATFORM(IOS)
-    // No need to invalidate scrollbars if we're using accelerated scrolling.
-    if (hasAcceleratedTouchScrolling())
+    if (!showsOverflowControls())
         return;
-#endif
 
     if (scrollbar == m_vBar.get()) {
         if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
@@ -2960,11 +2946,8 @@ void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& r
 
 void RenderLayer::invalidateScrollCornerRect(const IntRect& rect)
 {
-#if PLATFORM(IOS)
-    // No need to invalidate the scroll corner if we're using accelerated scrolling.
-    if (hasAcceleratedTouchScrolling())
+    if (!showsOverflowControls())
         return;
-#endif
 
     if (GraphicsLayer* layer = layerForScrollCorner()) {
         layer->setNeedsDisplayInRect(rect);
@@ -3084,26 +3067,20 @@ ScrollableArea* RenderLayer::enclosingScrollableArea() const
 
 int RenderLayer::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy) const
 {
-    if (!m_vBar || (m_vBar->isOverlayScrollbar() && (relevancy == IgnoreOverlayScrollbarSize || !m_vBar->shouldParticipateInHitTesting())))
+    if (!m_vBar
+        || !showsOverflowControls()
+        || (m_vBar->isOverlayScrollbar() && (relevancy == IgnoreOverlayScrollbarSize || !m_vBar->shouldParticipateInHitTesting())))
         return 0;
-
-#if PLATFORM(IOS)
-    if (hasAcceleratedTouchScrolling()) 
-        return 0;
-#endif
 
     return m_vBar->width();
 }
 
 int RenderLayer::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevancy) const
 {
-    if (!m_hBar || (m_hBar->isOverlayScrollbar() && (relevancy == IgnoreOverlayScrollbarSize || !m_hBar->shouldParticipateInHitTesting())))
+    if (!m_hBar
+        || !showsOverflowControls()
+        || (m_hBar->isOverlayScrollbar() && (relevancy == IgnoreOverlayScrollbarSize || !m_hBar->shouldParticipateInHitTesting())))
         return 0;
-
-#if PLATFORM(IOS)
-    if (hasAcceleratedTouchScrolling()) 
-        return 0;
-#endif
 
     return m_hBar->height();
 }
@@ -3374,17 +3351,25 @@ bool RenderLayer::overflowControlsIntersectRect(const IntRect& localRect) const
     return false;
 }
 
+bool RenderLayer::showsOverflowControls() const
+{
+#if PLATFORM(IOS)
+    // Don't render (custom) scrollbars if we have accelerated scrolling.
+    if (hasAcceleratedTouchScrolling())
+        return false;
+#endif
+
+    return true;
+}
+
 void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect, bool paintingOverlayControls)
 {
     // Don't do anything if we have no overflow.
     if (!renderer().hasOverflowClip())
         return;
 
-#if PLATFORM(IOS)
-    // Don't render (custom) scrollbars if we have accelerated scrolling.
-    if (hasAcceleratedTouchScrolling())
+    if (!showsOverflowControls())
         return;
-#endif
 
     // Overlay scrollbars paint in a second pass through the layer tree so that they will paint
     // on top of everything else. If this is the normal painting pass, paintingOverlayControls
@@ -6425,15 +6410,14 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         && !renderer().hasFilter()
 #endif
 #if PLATFORM(IOS)
-            && !hasAcceleratedTouchScrolling()
+        && !hasAcceleratedTouchScrolling()
 #endif
 #if ENABLE(CSS_COMPOSITING)
         && !renderer().hasBlendMode()
 #endif
         && !isTransparent()
         && !needsCompositedScrolling()
-        && !renderer().style().hasFlowFrom()
-        ;
+        && !renderer().style().hasFlowFrom();
 }
 
 bool RenderLayer::shouldBeSelfPaintingLayer() const

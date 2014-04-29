@@ -1,5 +1,36 @@
 2014-04-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove some PLATFORM(IOS) #ifdefs related to hasAcceleratedTouchScrolling()
+        https://bugs.webkit.org/show_bug.cgi?id=132353
+
+        Reviewed by Tim Horton & Darin Adler.
+
+        Minor cleanup and refactoring to remove #idefs.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo): No need for this #ifdef, usesCompositedScrolling()
+        gives the right answser already.
+        (WebCore::RenderLayer::visibleContentRectInternal): Use showsOverflowControls() to
+        avoid #ifdef.
+        (WebCore::RenderLayer::invalidateScrollbarRect): Ditto.
+        (WebCore::RenderLayer::invalidateScrollCornerRect): Ditto.
+        (WebCore::RenderLayer::verticalScrollbarWidth): Ditto.
+        (WebCore::RenderLayer::horizontalScrollbarHeight): Ditto.
+        (WebCore::RenderLayer::showsOverflowControls): Return false on iOS.
+        (WebCore::RenderLayer::paintOverflowControls): Ditto.
+        (WebCore::RenderLayer::calculateClipRects): Ditto.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::layerOrAncestorIsTransformedOrUsingCompositedScrolling):
+        Just #ifdef in side of this function rather than having two similar functions.
+        (WebCore::RenderLayerBacking::shouldClipCompositedBounds):
+        (WebCore::hasNonZeroTransformOrigin):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): Use a local bool
+        to reduce #ifdefs.
+        (WebCore::layerOrAncestorIsTransformedOrScrolling): Deleted.
+
+2014-04-29  Simon Fraser  <simon.fraser@apple.com>
+
         Remove Settings::compositedScrollingForFramesEnabled
         https://bugs.webkit.org/show_bug.cgi?id=132352
 

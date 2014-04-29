@@ -400,37 +400,23 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle* style)
 }
 #endif
 
-static bool hasNonZeroTransformOrigin(const RenderObject& renderer)
-{
-    const RenderStyle& style = renderer.style();
-    return (style.transformOriginX().type() == Fixed && style.transformOriginX().value())
-        || (style.transformOriginY().type() == Fixed && style.transformOriginY().value());
-}
-
-#if PLATFORM(IOS)
-// FIXME: We should merge the concept of RenderLayer::{hasAcceleratedTouchScrolling, needsCompositedScrolling}()
-// so that we can remove this iOS-specific variant.
-static bool layerOrAncestorIsTransformedOrScrolling(RenderLayer& layer)
-{
-    for (RenderLayer* curr = &layer; curr; curr = curr->parent()) {
-        if (curr->hasTransform() || curr->hasAcceleratedTouchScrolling())
-            return true;
-    }
-
-    return false;
-}
-#else
+// FIXME: the hasAcceleratedTouchScrolling()/needsCompositedScrolling() concepts need to be merged.
 static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& layer)
 {
     for (RenderLayer* curr = &layer; curr; curr = curr->parent()) {
-        if (curr->hasTransform() || curr->needsCompositedScrolling())
+        if (curr->hasTransform()
+#if PLATFORM(IOS)
+            || curr->hasAcceleratedTouchScrolling()
+#else
+            || curr->needsCompositedScrolling()
+#endif
+            )
             return true;
     }
 
     return false;
 }
-#endif
-    
+
 bool RenderLayerBacking::shouldClipCompositedBounds() const
 {
 #if !PLATFORM(IOS)
@@ -442,18 +428,20 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
     if (m_usingTiledCacheLayer)
         return false;
 
-#if !PLATFORM(IOS)
     if (layerOrAncestorIsTransformedOrUsingCompositedScrolling(m_owningLayer))
         return false;
-#else
-    if (layerOrAncestorIsTransformedOrScrolling(m_owningLayer))
-        return false;
-#endif
 
     if (m_owningLayer.isFlowThreadCollectingGraphicsLayersUnderRegions())
         return false;
 
     return true;
+}
+
+static bool hasNonZeroTransformOrigin(const RenderObject& renderer)
+{
+    const RenderStyle& style = renderer.style();
+    return (style.transformOriginX().type() == Fixed && style.transformOriginX().value())
+        || (style.transformOriginY().type() == Fixed && style.transformOriginY().value());
 }
 
 void RenderLayerBacking::updateCompositedBounds()
@@ -548,16 +536,16 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
         layerConfigChanged = true;
     
     bool needsDescendentsClippingLayer = compositor().clipsCompositingDescendants(m_owningLayer);
-
+    bool usesCompositedScrolling;
 #if PLATFORM(IOS)
-    // Our scrolling layer will clip.
-    if (m_owningLayer.hasAcceleratedTouchScrolling())
-        needsDescendentsClippingLayer = false;
+    usesCompositedScrolling = m_owningLayer.hasAcceleratedTouchScrolling();
 #else
+    usesCompositedScrolling = m_owningLayer.needsCompositedScrolling();
+#endif
+
     // Our scrolling layer will clip.
-    if (m_owningLayer.needsCompositedScrolling())
+    if (usesCompositedScrolling)
         needsDescendentsClippingLayer = false;
-#endif // PLATFORM(IOS)
 
     if (updateAncestorClippingLayer(compositor().clippedByAncestor(m_owningLayer)))
         layerConfigChanged = true;
@@ -568,13 +556,8 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     if (updateOverflowControlsLayers(requiresHorizontalScrollbarLayer(), requiresVerticalScrollbarLayer(), requiresScrollCornerLayer()))
         layerConfigChanged = true;
 
-#if PLATFORM(IOS)
-    if (updateScrollingLayers(m_owningLayer.hasAcceleratedTouchScrolling()))
+    if (updateScrollingLayers(usesCompositedScrolling))
         layerConfigChanged = true;
-#else
-    if (updateScrollingLayers(m_owningLayer.needsCompositedScrolling()))
-        layerConfigChanged = true;
-#endif // PLATFORM(IOS)
 
     if (layerConfigChanged)
         updateInternalHierarchy();

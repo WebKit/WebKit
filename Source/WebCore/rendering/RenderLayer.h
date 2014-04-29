@@ -458,8 +458,8 @@ public:
     bool requiresScrollBoundsOriginUpdate() const { return m_requiresScrollBoundsOriginUpdate; }
     void setRequiresScrollBoundsOriginUpdate(bool requiresUpdate = true) { m_requiresScrollBoundsOriginUpdate = requiresUpdate; }
 
+    // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
     bool hasAcceleratedTouchScrolling() const;
-
 #endif
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
@@ -1057,6 +1057,8 @@ private:
     bool hasVerticalOverflow() const;
     bool hasScrollableHorizontalOverflow() const;
     bool hasScrollableVerticalOverflow() const;
+
+    bool showsOverflowControls() const;
 
     bool shouldBeNormalFlowOnly() const;
 
