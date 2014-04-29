@@ -1,3 +1,14 @@
+2014-04-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: SpeechSynthesisUtterance cannot addEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=132321
+
+        Reviewed by Mario Sanchez Prada.
+
+        Modified an existing test (speech-synthesis-speak.html) to use addEventTarget.
+
+        * Modules/speech/SpeechSynthesisUtterance.idl:
+
 2014-04-29  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] shape-outside polygon fails when first vertex is 0,0

@@ -43,4 +43,13 @@
     attribute EventListener onresume;
     attribute EventListener onmark;
     attribute EventListener onboundary;
+
+    // EventTarget interface
+    void addEventListener(DOMString type, 
+                          EventListener listener, 
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type, 
+                             EventListener listener, 
+                             optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event evt);
 };
