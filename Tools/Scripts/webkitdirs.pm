@@ -1781,6 +1781,12 @@ sub canUseNinja(@)
     return $? == 0;
 }
 
+sub canUseEclipse(@)
+{
+    system('which eclipse > /dev/null');
+    return $? == 0;
+}
+
 sub cmakeGeneratedBuildfile(@)
 {
     my ($willUseNinja) = @_;
@@ -1819,7 +1825,11 @@ sub generateBuildSystemFromCMakeProject
 
     if ($willUseNinja) {
         push @args, "-G";
-        push @args, "Ninja";
+        if (canUseEclipse()) {
+            push @args, "'Eclipse CDT4 - Ninja'";
+        } else {
+            push @args, "Ninja";
+        }
     }
 
     # Don't warn variables which aren't used by cmake ports.
