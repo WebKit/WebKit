@@ -4311,6 +4311,8 @@ static int primarySnapshottedPlugInMinimumWidth = 400;
 static int primarySnapshottedPlugInMinimumHeight = 300;
 static unsigned maxPrimarySnapshottedPlugInDetectionAttempts = 2;
 static int deferredPrimarySnapshottedPlugInDetectionDelay = 3;
+static float overlappingImageBoundsScale = 1.1;
+static float minimumOverlappingImageToPluginDimensionScale = .9;
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 void WebPage::determinePrimarySnapshottedPlugInTimerFired()
@@ -4372,6 +4374,10 @@ void WebPage::determinePrimarySnapshottedPlugIn()
             if (plugInImageElement.displayState() == HTMLPlugInElement::Playing)
                 continue;
 
+            auto pluginRenderer = plugInImageElement.renderer();
+            if (!pluginRenderer || !pluginRenderer->isBox())
+                continue;
+            auto& pluginRenderBox = toRenderBox(*pluginRenderer);
             IntRect plugInRectRelativeToView = plugInImageElement.clientRect();
             if (plugInRectRelativeToView.isEmpty())
                 continue;
@@ -4384,17 +4390,30 @@ void WebPage::determinePrimarySnapshottedPlugIn()
             mainRenderView.hitTest(request, hitTestResult);
 
             Element* element = hitTestResult.innerElement();
-            if (element != &plugInImageElement)
+            if (!element)
                 continue;
 
-            auto renderer = plugInImageElement.renderer();
-            if (!renderer || !renderer->isBox())
-                continue;
-            auto& renderBox = toRenderBox(*renderer);
-            if (renderBox.contentWidth() < primarySnapshottedPlugInMinimumWidth || renderBox.contentHeight() < primarySnapshottedPlugInMinimumHeight)
+            IntRect elementRectRelativeToView = element->clientRect();
+            IntRect elementRectRelativeToTopDocument(elementRectRelativeToView.location() + scrollOffset, elementRectRelativeToView.size());
+            LayoutUnit xOffset = (plugInRectRelativeToTopDocument.width() * overlappingImageBoundsScale - plugInRectRelativeToTopDocument.width()) / LayoutUnit(2);
+            LayoutUnit yOffset = (plugInRectRelativeToTopDocument.height() * overlappingImageBoundsScale - plugInRectRelativeToTopDocument.height()) / LayoutUnit(2);
+            LayoutRect inflatedPluginRect = plugInRectRelativeToTopDocument;
+            inflatedPluginRect.inflateX(xOffset);
+            inflatedPluginRect.inflateY(yOffset);
+
+            if (element != &plugInImageElement) {
+                if (!(isHTMLImageElement(element)
+                    && inflatedPluginRect.contains(elementRectRelativeToTopDocument)
+                    && elementRectRelativeToTopDocument.width() > pluginRenderBox.width() * minimumOverlappingImageToPluginDimensionScale
+                    && elementRectRelativeToTopDocument.height() > pluginRenderBox.height() * minimumOverlappingImageToPluginDimensionScale))
+                    continue;
+                LOG(Plugins, "Primary Plug-In Detection: Plug-in is hidden by an image that is roughly aligned with it, autoplaying regardless of whether or not it's actually the primary plug-in.");
+                plugInImageElement.restartSnapshottedPlugIn();
+            }
+            if (pluginRenderBox.contentWidth() < primarySnapshottedPlugInMinimumWidth || pluginRenderBox.contentHeight() < primarySnapshottedPlugInMinimumHeight)
                 continue;
 
-            LayoutUnit contentArea = renderBox.contentWidth() * renderBox.contentHeight();
+            LayoutUnit contentArea = pluginRenderBox.contentWidth() * pluginRenderBox.contentHeight();
             if (contentArea > candidatePlugInArea * primarySnapshottedPlugInSearchBucketSize) {
                 candidatePlugIn = &plugInImageElement;
                 candidatePlugInArea = contentArea;

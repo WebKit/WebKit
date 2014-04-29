@@ -1,3 +1,18 @@
+2014-04-28  Roger Fong  <roger_fong@apple.com>
+
+        Plugins hidden by images should autoplay.
+        https://bugs.webkit.org/show_bug.cgi?id=132222.
+        <rdar://problem/16653536>
+
+        Reviewed by Jon Lee and Darin Adler.
+
+        * platform/mac-wk2/plugins/snapshotting/autoplay-plugin-blocked-by-image-expected.txt: Added.
+        * platform/mac-wk2/plugins/snapshotting/autoplay-plugin-mostly-blocked-by-image-expected.txt: Added.
+        * platform/mac-wk2/plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image-expected.txt: Added.
+        * plugins/snapshotting/autoplay-plugin-blocked-by-image.html: Added.
+        * plugins/snapshotting/autoplay-plugin-mostly-blocked-by-image.html: Added.
+        * plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html: Added.
+
 2014-04-29  Andreas Kling  <akling@apple.com>
 
         REGRESSION (r167906?): js/dom/basic-weakmap.html is much more flaky than before

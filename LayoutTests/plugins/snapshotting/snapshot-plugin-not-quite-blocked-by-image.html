@@ -1,0 +1,16 @@
+<p>This tests that a plugin should be snapshotted if it is partially covered by an image but not enough to be considered blocking.</p>
+<p> It additionally tests that we take transforms into account. </p>
+<script>
+if (window.testRunner) {
+    window.internals.settings.setPlugInSnapshottingEnabled(true);
+    window.internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    setTimeout(function () {
+        testRunner.notifyDone();
+    }, 1000);
+}
+</script>
+<embed src="../resources/lines.swf" width="600" height="600"></embed>
+<img src="../resources/apple.gif" width="600" height="600" style="position:relative; top:-525px; left:0px">
+<embed src="../resources/lines.swf" width="600" height="600"></embed>
+<img src="../resources/apple.gif" width="300" height="300" style="-webkit-transform:translate(-500px,-200px)">

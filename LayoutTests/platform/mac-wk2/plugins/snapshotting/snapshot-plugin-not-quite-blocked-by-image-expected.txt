@@ -1,0 +1,52 @@
+layer at (0,0) size 785x2214
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x2214
+  RenderBlock {HTML} at (0,0) size 785x2214
+    RenderBody {BODY} at (8,8) size 769x2198
+      RenderBlock {P} at (0,0) size 769x36
+        RenderText {#text} at (0,0) size 719x36
+          text run at (0,0) width 719: "This tests that a plugin should be snapshotted if it is partially covered by an image but not enough to be considered"
+          text run at (0,18) width 59: "blocking."
+      RenderBlock {P} at (0,52) size 769x18
+        RenderText {#text} at (0,0) size 353x18
+          text run at (0,0) width 353: "It additionally tests that we take transforms into account."
+      RenderBlock (anonymous) at (0,86) size 769x2112
+        RenderSnapshottedPlugIn {EMBED} at (0,0) size 600x600
+        RenderText {#text} at (600,586) size 4x18
+          text run at (600,586) width 4: " "
+        RenderText {#text} at (600,1190) size 4x18
+          text run at (600,1190) width 4: " "
+        RenderSnapshottedPlugIn {EMBED} at (0,1208) size 600x600
+        RenderText {#text} at (600,1794) size 4x18
+          text run at (600,1794) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,94) size 600x600
+  RenderBlock (relative positioned) {DIV} at (0,0) size 600x600
+layer at (13,99) size 590x590
+  RenderFlexibleBox {DIV} at (5,5) size 590x590 [bgcolor=#FFFFFFBF]
+    RenderBlock {DIV} at (225,277) size 140x36
+layer at (239,376) size 139x18
+  RenderBlock {DIV} at (0,0) size 139x18
+    RenderText {#text} at (0,0) size 139x18
+      text run at (0,0) width 139: "Snapshotted Plug-In"
+layer at (239,394) size 139x18
+  RenderBlock {DIV} at (0,18) size 139x18 [color=#444444]
+    RenderText {#text} at (0,0) size 94x18
+      text run at (0,0) width 94: "Click to restart"
+layer at (8,173) size 600x600
+  RenderImage {IMG} at (0,604) size 600x600
+layer at (8,1302) size 600x600
+  RenderBlock (relative positioned) {DIV} at (0,0) size 600x600
+layer at (13,1307) size 590x590
+  RenderFlexibleBox {DIV} at (5,5) size 590x590 [bgcolor=#FFFFFFBF]
+    RenderBlock {DIV} at (225,277) size 140x36
+layer at (239,1584) size 139x18
+  RenderBlock {DIV} at (0,0) size 139x18
+    RenderText {#text} at (0,0) size 139x18
+      text run at (0,0) width 139: "Snapshotted Plug-In"
+layer at (239,1602) size 139x18
+  RenderBlock {DIV} at (0,18) size 139x18 [color=#444444]
+    RenderText {#text} at (0,0) size 94x18
+      text run at (0,0) width 94: "Click to restart"
+layer at (8,1906) size 300x300
+  RenderImage {IMG} at (0,1812) size 300x300
