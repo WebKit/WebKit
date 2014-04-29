@@ -541,10 +541,7 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen(PlatformLayer& videoLayer
         [[m_viewController view] addSubview:[m_playerViewController view]];
         [m_playerViewController view].frame = initialRect;
         [m_playerViewController didMoveToParentViewController:m_viewController.get()];
-
-        // FIXME: remove the following once <rdar://problem/16578727> is fixed.
-        if ([m_playerViewController respondsToSelector:@selector(_updatePlaybackControlsViewController)])
-            [m_playerViewController performSelector:@selector(_updatePlaybackControlsViewController)];
+        [[m_playerViewController view] layoutIfNeeded];
 
         __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect2(this);
 
