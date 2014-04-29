@@ -1,3 +1,18 @@
+2014-04-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] iOS fix after r167867
+        https://bugs.webkit.org/show_bug.cgi?id=132302
+
+        Reviewed by Simon Fraser.
+
+        iOS Touch Points uses "phase" for describing the touch points state for historical reasons.
+        This patch adds state() as a synonym for phase, and revert r167893.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebPlatformTouchPoint::state):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::areAllTouchPointsReleased):
+
 2014-04-28  Andy Estes  <aestes@apple.com>
 
         Fix a transcription error from r167901.

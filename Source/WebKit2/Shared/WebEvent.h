@@ -280,6 +280,7 @@ public:
     unsigned identifier() const { return m_identifier; }
     WebCore::IntPoint location() const { return m_location; }
     TouchPointState phase() const { return static_cast<TouchPointState>(m_phase); }
+    TouchPointState state() const { return phase(); }
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebPlatformTouchPoint&);
