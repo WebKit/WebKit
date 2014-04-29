@@ -1,3 +1,14 @@
+2014-04-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WK2] Avoid Vector copies in WebViewBaseInputMethodFilter::setPreedit()
+        https://bugs.webkit.org/show_bug.cgi?id=132323
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebViewBaseInputMethodFilter.cpp:
+        (WebKit::WebViewBaseInputMethodFilter::setPreedit): Inline the Vector object construction into
+        the WebPageProxy::setComposition() call to avoid extra Vector copies and moves.
+
 2014-04-28  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/16750708> REGRESSION (r159358): Crash in InjectedBundleHitTestResult::frame

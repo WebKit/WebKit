@@ -87,14 +87,9 @@ void WebViewBaseInputMethodFilter::cancelCurrentComposition()
 void WebViewBaseInputMethodFilter::setPreedit(String newPreedit, int /* cursorOffset */)
 {
     // TODO: We should parse the PangoAttrList that we get from the IM context here.
-    Vector<CompositionUnderline> underlines;
-    underlines.append(CompositionUnderline(0, newPreedit.length(), Color(1, 1, 1), false));
-
     ASSERT(m_webPageProxy);
-    m_webPageProxy->setComposition(newPreedit, underlines,
-                                   m_cursorOffset, m_cursorOffset,
-                                   0 /* replacement start */,
-                                   0 /* replacement end */);
+    m_webPageProxy->setComposition(newPreedit, Vector<CompositionUnderline>{ CompositionUnderline(0, newPreedit.length(), Color(1, 1, 1), false) },
+        m_cursorOffset, m_cursorOffset, 0 /* replacement start */, 0 /* replacement end */);
 }
 
 } // namespace WebKit
