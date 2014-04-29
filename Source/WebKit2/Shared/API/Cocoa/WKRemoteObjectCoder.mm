@@ -146,6 +146,15 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
             break;
         }
 
+        // unsigned
+        case 'I': {
+            unsigned value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, @(value));
+            break;
+        }
+
         // char
         case 'c': {
             char value;
@@ -164,18 +173,18 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
             break;
         }
 
-        // NSInteger
+        // long
         case 'q': {
-            NSInteger value;
+            long value;
             [invocation getArgument:&value atIndex:i];
 
             encodeToObjectStream(encoder, @(value));
             break;
         }
 
-        // NSUInteger
+        // unsigned long
         case 'Q': {
-            NSUInteger value;
+            unsigned long value;
             [invocation getArgument:&value atIndex:i];
 
             encodeToObjectStream(encoder, @(value));
@@ -421,6 +430,13 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
             break;
         }
 
+        // unsigned
+        case 'I': {
+            unsigned value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) unsignedIntValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
         // char
         case 'c': {
             char value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) charValue];
@@ -435,16 +451,16 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
             break;
         }
 
-        // NSInteger
+        // long
         case 'q': {
-            NSInteger value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) integerValue];
+            long value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) longValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
 
-        // NSUInteger
+        // unsigned long
         case 'Q': {
-            NSUInteger value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) unsignedIntegerValue];
+            unsigned long value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) unsignedLongValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }

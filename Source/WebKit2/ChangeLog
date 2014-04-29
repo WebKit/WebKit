@@ -1,3 +1,15 @@
+2014-04-29  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/16745596> [Cocoa] Crash when invoking a method with an unsigned parameter on a remote object
+        https://bugs.webkit.org/show_bug.cgi?id=132366
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocation): Handle the 'I' type code. Interpret the 'q' and 'Q' type codes in an
+        architecture-independent manner.
+        (decodeInvocationArguments): Ditto.
+
 2014-04-29  Roger Fong  <roger_fong@apple.com>
 
         Don't immediately snapshot plugin to allow for proper dominant plugin detection.
