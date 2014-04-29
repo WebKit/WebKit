@@ -1,3 +1,11 @@
+2014-04-29  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r167906?): js/dom/basic-weakmap.html is much more flaky than before
+        https://bugs.webkit.org/show_bug.cgi?id=132322
+
+        * TestExpectations:
+        Mark the test as flaky.
+
 2014-04-29  Manuel Rego Casasnovas  <rego@igalia.com>
 
         REGRESSION (r167879): Heap-use-after-free in WebCore::RenderFlexibleBox

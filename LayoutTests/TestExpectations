@@ -107,3 +107,5 @@ webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-
 # Expando properties on attribute nodes disappear
 webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
 
+# REGRESSION (r167906?): js/dom/basic-weakmap.html is much more flaky than before
+webkit.org/b/132322 js/dom/basic-weakmap.html [ Failure Pass ]
