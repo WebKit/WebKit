@@ -1,3 +1,9 @@
+2014-04-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix cloop build.
+
+        * wtf/Platform.h:
+
 2014-04-29  Michael Saboff  <msaboff@apple.com>
 
         For DARWIN platforms, use system temporary directory for DataLog output

@@ -639,6 +639,9 @@
 #if defined(ENABLE_LLINT_C_LOOP) && ENABLE_LLINT_C_LOOP
 #define ENABLE_JIT 0
 #define ENABLE_DFG_JIT 0
+#ifdef ENABLE_FTL_JIT
+#undef ENABLE_FTL_JIT
+#endif
 #define ENABLE_FTL_JIT 0
 #endif
 
