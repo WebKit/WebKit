@@ -37,7 +37,7 @@ use POSIX;
 
 my $coverageSupport = 0;
 my $showHelp = 0;
-my $ftlJIT = 0;
+my $ftlJIT = isAppleWebKit();
 my $forceCLoop = 0;
 my $cli = 0;
 my $makeArgs = "";
@@ -89,8 +89,8 @@ if (cmakeBasedPortName()) {
 }
 
 if (isAppleMacWebKit()) {
-    if ($ftlJIT) {
-        push @options, "ENABLE_FTL_JIT=ENABLE_FTL_JIT";
+    if (!$ftlJIT) {
+        push @options, "ENABLE_FTL_JIT=";
     }
     if ($forceCLoop) {
         push @options, "ENABLE_LLINT_C_LOOP=ENABLE_LLINT_C_LOOP";

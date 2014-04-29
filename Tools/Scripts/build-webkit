@@ -178,7 +178,6 @@ if (!isIOSWebKit() && !-d "WebKitLibraries") {
 }
 
 my @options = ();
-my $hasFTLJIT = 0;
 
 if (isAppleMacWebKit()) {
     push @options, XcodeOptions();
@@ -191,7 +190,6 @@ if (isAppleMacWebKit()) {
 
     foreach (@features) {
         my $option = option($_->{define}, ${$_->{value}}, $_->{default});
-        $hasFTLJIT = 1 if ($_->{define} eq "ENABLE_FTL_JIT") and (${$_->{value}});
         push @options, $option unless $option eq "";
     }
 
@@ -222,11 +220,7 @@ if (isAppleMacWebKit()) {
         splice(@projects, $webKitIndex, 0, "Source/WebInspectorUI");
 
         # Copy library and header from WebKitLibraries to a findable place in the product directory.
-        my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", "--wksi");
-        if ($hasFTLJIT) {
-            push @copyLibrariesArgs, "--llvm";
-        }
-        push @copyLibrariesArgs, productDir();
+        my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", "--wksi", "--llvm", productDir());
         print(join(" ", @copyLibrariesArgs) . "\n");
         (system(@copyLibrariesArgs) == 0) or die;
     } else {

@@ -1,3 +1,14 @@
+2014-04-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Use LLVM as a backend for the fourth-tier DFG JIT (a.k.a. the FTL JIT)
+        https://bugs.webkit.org/show_bug.cgi?id=112840
+
+        Rubber stamped by Geoffrey Garen.
+
+        * Scripts/build-jsc: Enable it on Mac.
+        * Scripts/build-webkit: Enable it on Mac.
+        * Scripts/export-llvm-build: Make it slightly easier to export the build if you've done a "make install".
+
 2014-04-28  Sam Weinig  <sam@webkit.org>
 
         REGRESSION (r167751): svn-create-patch is very slow

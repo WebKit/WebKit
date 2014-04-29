@@ -48,6 +48,7 @@ $includePackage = Pathname.new("LLVMIncludes.tar.bz2")
 $llvmBuild = Pathname.new("./llvm")
 $llvmBinary = Pathname.new("./llvm/Release")
 $llvmSource = Pathname.new("./llvm")
+$prefix = nil
 $compression = "bzip2"
 
 def usage
@@ -63,6 +64,7 @@ def usage
     puts "                          Default is #{$llvmBinary}."
     puts "--llvm-source      (-s)   Change which LLVM source directory to use."
     puts "                          Default is #{$llvmSource}."
+    puts "--prefix           (-p)   Use an \"installed\" LLVM with the given prefix."
     puts "--compression             Change what compression to do. Can be one of gzip,"
     puts "                          bzip2, or none."
     puts "                          Default is #{$compression}."
@@ -75,6 +77,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--llvm-build', '-b', GetoptLong::REQUIRED_ARGUMENT],
                ['--llvm-binary', '-B', GetoptLong::REQUIRED_ARGUMENT],
                ['--llvm-source', '-s', GetoptLong::REQUIRED_ARGUMENT],
+               ['--prefix', '-p', GetoptLong::REQUIRED_ARGUMENT],
                ['--compression', GetoptLong::REQUIRED_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -90,6 +93,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $llvmBinary = Pathname.new(arg)
     when '--llvm-source'
         $llvmSource = Pathname.new(arg)
+    when '--prefix'
+        $prefix = Pathname.new(arg)
     when '--compression'
         $compression = arg
     else
@@ -110,6 +115,12 @@ def compressionChar
     else
         raise "Bad choice of compression."
     end
+end
+
+if $prefix
+    $llvmBinary = $prefix
+    $llvmBuild = $prefix
+    $llvmSource = $prefix
 end
 
 mychdir($llvmBinary + "lib") {

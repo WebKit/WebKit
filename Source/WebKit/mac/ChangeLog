@@ -1,3 +1,12 @@
+2014-04-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Use LLVM as a backend for the fourth-tier DFG JIT (a.k.a. the FTL JIT)
+        https://bugs.webkit.org/show_bug.cgi?id=112840
+
+        Rubber stamped by Geoffrey Garen.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-04-29  Brady Eidson  <beidson@apple.com>
 
         Change Image Controls replacement to use selection and paste
