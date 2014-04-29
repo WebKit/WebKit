@@ -1,3 +1,27 @@
+2014-04-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: backtracking with current / parent element for child
+        https://bugs.webkit.org/show_bug.cgi?id=132057
+
+        Reviewed by Benjamin Poulain.
+
+        Calculate appropriate backtracking start height from the closest
+        descendant. And at first, we use it for a simple optimization.
+
+        1. When backtracking start height equals to current height, we
+        can simply jump to a descendant element check phase.
+        2. When backtracking start height equals to current height + 1, we
+        can simply jump to a descendant element traversing phase.
+
+        We can apply this optimization to fragments with adjacent combinators.
+        But, in the meantime, we start to implement it for a fragment with
+        child combinator.
+
+        * fast/selectors/backtracking-child-combinator-with-tail-expected.txt: Added.
+        * fast/selectors/backtracking-child-combinator-with-tail.html: Added.
+        * fast/selectors/backtracking-child-combinator-without-tail-expected.txt: Added.
+        * fast/selectors/backtracking-child-combinator-without-tail.html: Added.
+
 2014-04-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL gardening.

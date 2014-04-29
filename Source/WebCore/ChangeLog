@@ -1,3 +1,43 @@
+2014-04-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: backtracking with current / parent element for child
+        https://bugs.webkit.org/show_bug.cgi?id=132057
+
+        Reviewed by Benjamin Poulain.
+
+        Calculate appropriate backtracking start height from the closest
+        descendant. And at first, we use it for a simple optimization.
+
+        1. When backtracking start height equals to current height, we
+        can simply jump to a descendant element check phase.
+        2. When backtracking start height equals to current height + 1, we
+        can simply jump to a descendant element traversing phase.
+
+        We can apply this optimization to fragments with adjacent combinators.
+        But, in the meantime, we start to implement it for a fragment with
+        child combinator.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorFragment::SelectorFragment):
+        (WebCore::SelectorCompiler::TagNamePattern::TagNamePattern):
+        (WebCore::SelectorCompiler::solveDescendantBacktrackingActionForChild):
+        (WebCore::SelectorCompiler::solveBacktrackingAction):
+        (WebCore::SelectorCompiler::equalTagNames):
+        (WebCore::SelectorCompiler::equalTagNamePatterns):
+        (WebCore::SelectorCompiler::computeBacktrackingStartHeightFromDescendant):
+        (WebCore::SelectorCompiler::computeBacktrackingHeightFromDescendant):
+        (WebCore::SelectorCompiler::requiresAdjacentTail):
+        (WebCore::SelectorCompiler::requiresDescendantTail):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::computeBacktrackingInformation):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateWalkToParentNode):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateWalkToParentElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateParentElementTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAncestorTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateIndirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+
 2014-04-28  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Restore the scroll position and scale from the HistoryItem (mostly)

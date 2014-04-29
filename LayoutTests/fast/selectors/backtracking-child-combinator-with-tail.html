@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+/* default */
+span.target {
+    background-color:rgb(0,0,0);
+}
+a > b > b > b span.target {
+    background-color:rgb(1,2,3);
+}
+c.ok > c > c > c span.target {
+    background-color:rgb(4,5,6);
+}
+</style>
+</head>
+<body>
+<div style="display:none">
+    <a>
+        <!-- selector "a" fails here and start normal backtracking (with tail) !-->
+        <b>
+            <!-- selector "a" fails here and start normal backtracking (with tail) !-->
+            <b>
+                <b>
+                    <b>
+                        <b>
+                            <b>
+                                <span class="target" id="target1"></span>
+                            </b>
+                        </b>
+                    </b>
+                </b>
+            </b>
+        </b>
+    </a>
+
+    <!-- selector "a" fails here and start normal backtracking (with tail). And fails. !-->
+    <b>
+        <!-- selector "a" fails here and start normal backtracking (with tail) !-->
+        <b>
+            <!-- selector "a" fails here and start normal backtracking (with tail) !-->
+            <b>
+                <b>
+                    <b>
+                        <b>
+                            <b>
+                                <span class="target" id="target2"></span>
+                            </b>
+                        </b>
+                    </b>
+                </b>
+            </b>
+        </b>
+    </b>
+
+    <c class="ok">
+        <!-- selector "c.ok" fails here and start normal backtracking (with tail) !-->
+        <c class="ng">
+            <!-- selector "c.ok" fails here and start normal backtracking (with tail) !-->
+            <c class="ng">
+                <c>
+                    <c>
+                        <c>
+                            <c>
+                                <span class="target" id="target3"></span>
+                            </c>
+                        </c>
+                    </c>
+                </c>
+            </c>
+        </c>
+    </c>
+
+    <!-- selector "c.ok" fails here and start normal backtracking (with tail). And fails. !-->
+    <c class="ng">
+        <!-- selector "c.ok" fails here and start normal backtracking (with tail) !-->
+        <c class="ng">
+            <!-- selector "c.ok" fails here and start normal backtracking (with tail) !-->
+            <c class="ng">
+                <c>
+                    <c>
+                        <c>
+                            <c>
+                                <span class="target" id="target4"></span>
+                            </c>
+                        </c>
+                    </c>
+                </c>
+            </c>
+        </c>
+    </c>
+</div>
+</body>
+<script>
+description('The backtracking child combinator with tail cases');
+
+debug("Backtracking with tail, tag name matching failed. Restart with the backtracking start element.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).backgroundColor', 'rgb(1, 2, 3)');
+
+debug("Backtracking with tail, tag name matching failed. Restart with the backtracking start element. And fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking with tail, others matching failed. Restart with the backtracking start element.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).backgroundColor', 'rgb(4, 5, 6)');
+
+debug("Backtracking with tail, others matching failed. Restart with the backtracking start element. And fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target4")).backgroundColor', 'rgb(0, 0, 0)');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>
+
