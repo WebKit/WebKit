@@ -33,7 +33,6 @@ var whitespace      = [
     {s : '\u3000', t : 'IDEOGRAPHIC SPACE'},
     {s : '\u2028', t : 'LINE SEPARATOR'},
     {s : '\u2029', t : 'PARAGRAPH SEPARATOR'},
-    {s : '\u200B', t : 'ZERO WIDTH SPACE (category Cf)'}
 ];
 
 for (var i = 0; i < whitespace.length; i++) {
@@ -63,10 +62,9 @@ shouldBe("rightTrimString.trim()",      "testString");
 shouldBe("rightTrimString.trimLeft()",  "testString");
 shouldBe("rightTrimString.trimRight()", "rightTrimString");
 
-var testValues = ["0", "Infinity", "NaN", "true", "false", "({})", "({toString:function(){return 'wibble'}})", "['an','array']"];
+var testValues = ["0", "Infinity", "NaN", "true", "false", "({})", "({toString:function(){return 'wibble'}})", "['an','array']", "'\u200b'"];
 for (var i = 0; i < testValues.length; i++) {
     shouldBe("trim.call("+testValues[i]+")", "'"+eval(testValues[i])+"'");
     shouldBe("trimLeft.call("+testValues[i]+")", "'"+eval(testValues[i])+"'");
     shouldBe("trimRight.call("+testValues[i]+")", "'"+eval(testValues[i])+"'");
 }
-

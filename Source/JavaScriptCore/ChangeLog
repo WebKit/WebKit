@@ -1,3 +1,14 @@
+2014-04-29  Geoffrey Garen  <ggaren@apple.com>
+
+        String.prototype.trim removes U+200B from strings.
+        https://bugs.webkit.org/show_bug.cgi?id=130184
+
+        Reviewed by Michael Saboff.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::trimString):
+        (JSC::isTrimWhitespace): Deleted.
+
 2014-04-29  Mark Lam  <mark.lam@apple.com>
 
         Zombifying sweep should ignore retired blocks.

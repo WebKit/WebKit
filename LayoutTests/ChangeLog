@@ -1,3 +1,13 @@
+2014-04-29  Geoffrey Garen  <ggaren@apple.com>
+
+        String.prototype.trim removes U+200B from strings.
+        https://bugs.webkit.org/show_bug.cgi?id=130184
+
+        Reviewed by Michael Saboff.
+
+        * js/script-tests/string-trim.js:
+        * js/string-trim-expected.txt:
+
 2014-04-29  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: Intermittent crash in SpeechSynthesis::didFinishSpeaking

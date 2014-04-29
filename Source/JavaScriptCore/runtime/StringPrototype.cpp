@@ -1505,11 +1505,6 @@ enum {
     TrimRight = 2
 };
 
-static inline bool isTrimWhitespace(UChar c)
-{
-    return isStrWhiteSpace(c) || c == 0x200b;
-}
-
 static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKind)
 {
     if (!checkObjectCoercible(thisValue))
@@ -1517,12 +1512,12 @@ static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKin
     String str = thisValue.toString(exec)->value(exec);
     unsigned left = 0;
     if (trimKind & TrimLeft) {
-        while (left < str.length() && isTrimWhitespace(str[left]))
+        while (left < str.length() && isStrWhiteSpace(str[left]))
             left++;
     }
     unsigned right = str.length();
     if (trimKind & TrimRight) {
-        while (right > left && isTrimWhitespace(str[right - 1]))
+        while (right > left && isStrWhiteSpace(str[right - 1]))
             right--;
     }
 
