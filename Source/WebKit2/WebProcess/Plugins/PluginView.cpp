@@ -622,7 +622,7 @@ void PluginView::didInitializePlugin()
             m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
         }
         if (frame() && !frame()->settings().maximumPlugInSnapshotAttempts()) {
-            m_pluginElement->setDisplayState(HTMLPlugInElement::DisplayingSnapshot);
+            beginSnapshottingRunningPlugin();
             return;
         }
         m_pluginSnapshotTimer.restart();

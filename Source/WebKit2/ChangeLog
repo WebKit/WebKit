@@ -1,3 +1,16 @@
+2014-04-29  Roger Fong  <roger_fong@apple.com>
+
+        Don't immediately snapshot plugin to allow for proper dominant plugin detection.
+        https://bugs.webkit.org/show_bug.cgi?id=132294.
+        <rdar://problem/16745679>
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::didInitializePlugin):
+        Instead of immediately setting the display state to DisplaySnapshot,
+        put it on a timer to let the page fully layout and get hit test properly.
+
 2014-04-28  Roger Fong  <roger_fong@apple.com>
 
         Plugins hidden by images should autoplay.
