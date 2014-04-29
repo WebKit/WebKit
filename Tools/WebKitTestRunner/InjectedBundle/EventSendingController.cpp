@@ -437,17 +437,18 @@ JSValueRef EventSendingController::contextClick()
     mouseUp(2, 0);
 
     WKRetainPtr<WKArrayRef> menuEntries = adoptWK(WKBundlePageCopyContextMenuItems(page));
+    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
+    JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
     size_t entriesSize = WKArrayGetSize(menuEntries.get());
-    JSValueRef jsValuesArray[entriesSize];
     for (size_t i = 0; i < entriesSize; ++i) {
         ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(menuEntries.get(), i)) == WKContextMenuItemGetTypeID());
 
         WKContextMenuItemRef item = static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(menuEntries.get(), i));
         MenuItemPrivateData* privateData = new MenuItemPrivateData(page, item);
-        jsValuesArray[i] = JSObjectMake(context, getMenuItemClass(), privateData);
+        JSObjectSetPropertyAtIndex(context, arrayObj, i, JSObjectMake(context, getMenuItemClass(), privateData), 0);
     }
 
-    return JSObjectMakeArray(context, entriesSize, jsValuesArray, 0);
+    return arrayResult;
 #else
     return JSValueMakeUndefined(context);
 #endif

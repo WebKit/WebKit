@@ -194,14 +194,15 @@ JSValueRef originsArrayToJS(JSContextRef context, NSArray *origins)
 {
     NSUInteger count = [origins count];
 
-    JSValueRef jsOriginsArray[count];
+    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
+    JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
     for (NSUInteger i = 0; i < count; i++) {
         NSString *origin = [[origins objectAtIndex:i] databaseIdentifier];
         JSRetainPtr<JSStringRef> originJS(Adopt, JSStringCreateWithCFString((CFStringRef)origin));
-        jsOriginsArray[i] = JSValueMakeString(context, originJS.get());
+        JSObjectSetPropertyAtIndex(context, arrayObj, i, JSValueMakeString(context, originJS.get()), 0);
     }
 
-    return JSObjectMakeArray(context, count, jsOriginsArray, NULL);
+    return arrayResult;
 }
 
 JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)

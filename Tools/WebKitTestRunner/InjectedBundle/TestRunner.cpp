@@ -275,14 +275,15 @@ static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef string
 {
     const size_t count = WKArrayGetSize(strings);
 
-    auto jsStringsArray = std::make_unique<JSValueRef[]>(count);
+    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
+    JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
     for (size_t i = 0; i < count; ++i) {
         WKStringRef stringRef = static_cast<WKStringRef>(WKArrayGetItemAtIndex(strings, i));
         JSRetainPtr<JSStringRef> stringJS = toJS(stringRef);
-        jsStringsArray[i] = JSValueMakeString(context, stringJS.get());
+        JSObjectSetPropertyAtIndex(context, arrayObj, i, JSValueMakeString(context, stringJS.get()), 0);
     }
 
-    return JSObjectMakeArray(context, count, jsStringsArray.get(), 0);
+    return arrayResult;
 }
 
 JSValueRef TestRunner::originsWithApplicationCache()

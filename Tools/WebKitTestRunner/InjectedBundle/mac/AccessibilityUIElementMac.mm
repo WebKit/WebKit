@@ -178,12 +178,13 @@ static NSString* attributesOfElement(id accessibilityObject)
 
 static JSValueRef convertElementsToObjectArray(JSContextRef context, Vector<RefPtr<AccessibilityUIElement>>& elements)
 {
+    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
+    JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
     size_t elementCount = elements.size();
-    JSValueRef valueElements[elementCount];
     for (size_t i = 0; i < elementCount; ++i)
-        valueElements[i] = JSObjectMake(context, elements[i]->wrapperClass(), elements[i].get());
+        JSObjectSetPropertyAtIndex(context, arrayObj, i, JSObjectMake(context, elements[i]->wrapperClass(), elements[i].get()), 0);
     
-    return JSObjectMakeArray(context, elementCount, valueElements, nullptr);
+    return arrayResult;
 }
 
 static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* value)

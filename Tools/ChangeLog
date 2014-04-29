@@ -1,3 +1,26 @@
+2014-04-28  Michael Saboff  <msaboff@apple.com>
+
+        Crash in platform/mac/accessibility/table-visible-rows.html
+        https://bugs.webkit.org/show_bug.cgi?id=132146
+
+        Reviewed by Filip Pizlo.
+
+        Instead of creating a local JSValueRef array on the stack and passing that to
+        JSObjectMakeArray(), changed to create an empty JSArray and then populate the
+        values using the JSObjectSetPropertyAtIndex() API.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (elementsForRangeCallback):
+        (convertElementsToObjectArray):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (originsArrayToJS):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::contextClick):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::stringArrayToJS):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::convertElementsToObjectArray):
+
 2014-04-28  Filip Pizlo  <fpizlo@apple.com>
 
         Make sure that the coverage of our tests doesn't change much if we change the thresholds now and in the future, but making

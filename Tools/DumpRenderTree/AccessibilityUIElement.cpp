@@ -312,12 +312,13 @@ static JSValueRef elementsForRangeCallback(JSContextRef context, JSObjectRef fun
     Vector<AccessibilityUIElement> elements;
     toAXElement(thisObject)->elementsForRange(location, length, elements);
     
+    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
+    JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
     unsigned elementsSize = elements.size();
-    JSValueRef valueElements[elementsSize];
     for (unsigned k = 0; k < elementsSize; ++k)
-        valueElements[k] = AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[k]);
+        JSObjectSetPropertyAtIndex(context, arrayObj, k, AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[k]), 0);
     
-    return JSObjectMakeArray(context, elementsSize, valueElements, 0);
+    return arrayResult;
 }
 
 static JSValueRef increaseTextSelectionCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -518,12 +519,14 @@ static JSValueRef stringAttributeValueCallback(JSContextRef context, JSObjectRef
 
 static JSValueRef convertElementsToObjectArray(JSContextRef context, Vector<AccessibilityUIElement>& elements, JSValueRef* exception)
 {
+    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
+    JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
+
     size_t elementCount = elements.size();
-    JSValueRef valueElements[elementCount];
     for (size_t i = 0; i < elementCount; ++i)
-        valueElements[i] = AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[i]);
-    
-    return JSObjectMakeArray(context, elementCount, valueElements, exception);
+        JSObjectSetPropertyAtIndex(context, arrayObj, i, AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[i]), 0);
+
+    return arrayResult;
 }
 
 static JSValueRef columnHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
