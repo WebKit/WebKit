@@ -1500,6 +1500,17 @@ void MediaControlTextTrackContainerElement::textTrackRepresentationBoundsChanged
     updateSizes();
 }
 
+void MediaControlTextTrackContainerElement::hide()
+{
+    classList()->add("hidden", IGNORE_EXCEPTION);
+}
+
+void MediaControlTextTrackContainerElement::show()
+{
+    classList()->remove("hidden", IGNORE_EXCEPTION);
+}
+    
+
 #endif // ENABLE(VIDEO_TRACK)
 
 // ----------------------------

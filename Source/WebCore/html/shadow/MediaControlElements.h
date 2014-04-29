@@ -476,6 +476,9 @@ public:
     void exitedFullscreen();
     static const AtomicString& textTrackContainerElementShadowPseudoId();
 
+    virtual void show() override;
+    virtual void hide() override;
+
 private:
     void updateTimerFired(Timer<MediaControlTextTrackContainerElement>&);
 

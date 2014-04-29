@@ -709,6 +709,10 @@ video::-webkit-media-text-track-container {
     -webkit-line-box-contain: block inline-box replaced;
 }
 
+video::-webkit-media-text-track-container .hidden {
+    display: none;
+}
+
 video::cue {
     background-color: rgba(0, 0, 0, 0.8);
 }
