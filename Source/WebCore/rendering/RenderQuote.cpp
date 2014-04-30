@@ -343,7 +343,7 @@ void RenderQuote::updateText()
     if (m_text == text)
         return;
 
-    while (RenderObject* child = firstChild())
+    while (RenderObject* child = lastChild())
         child->destroy();
 
     if (text == emptyString() || text == String()) {
