@@ -3384,7 +3384,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 RenderInline* RenderBlock::inlineElementContinuation() const
 { 
     RenderBoxModelObject* continuation = this->continuation();
-    return continuation && continuation->isInline() ? toRenderInline(continuation) : 0;
+    return continuation && continuation->isRenderInline() ? toRenderInline(continuation) : 0;
 }
 
 RenderBlock* RenderBlock::blockElementContinuation() const
