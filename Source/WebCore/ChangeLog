@@ -1,3 +1,22 @@
+2014-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Removing unused argument in InlineFlowBox::placeBoxesInInlineDirection()
+        https://bugs.webkit.org/show_bug.cgi?id=132369
+
+        Reviewed by Darin Adler.
+
+        This was not caught by our compiler because placeBoxesInInlineDirection()
+        is mutually-recursive with placeBoxRangeInInlineDirection().
+
+        No new tests are necessary because there should be no behavior change.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInInlineDirection):
+        (WebCore::InlineFlowBox::placeBoxRangeInInlineDirection):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForLine):
+
 2014-04-29  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Switch video from GStreamer to Media Foundation.
