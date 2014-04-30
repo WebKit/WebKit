@@ -45,6 +45,8 @@ public:
     static void registerBlobURL(SecurityOrigin*, const URL&, const URL& srcURL);
     static void unregisterBlobURL(const URL&);
 
+    static unsigned long long registerBlobURLForSlice(const URL& newURL, const URL& srcURL, long long start, long long end);
+
     // Returns the origin for the given blob URL. This is because we are not able to embed the unique security origin or the origin of file URL
     // in the blob URL.
     static PassRefPtr<SecurityOrigin> getCachedOrigin(const URL&);

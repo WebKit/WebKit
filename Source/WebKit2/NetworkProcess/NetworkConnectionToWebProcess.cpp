@@ -241,6 +241,11 @@ void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const
     NetworkBlobRegistry::shared().registerBlobURL(this, url, srcURL);
 }
 
+void NetworkConnectionToWebProcess::registerBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end, uint64_t& resultSize)
+{
+    resultSize = NetworkBlobRegistry::shared().registerBlobURLForSlice(this, url, srcURL, start, end);
+}
+
 void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)
 {
     NetworkBlobRegistry::shared().unregisterBlobURL(this, url);

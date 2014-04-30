@@ -60,6 +60,16 @@ void BlobRegistryProxy::unregisterBlobURL(const URL& url)
     WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURL(url), 0);
 }
 
+unsigned long long BlobRegistryProxy::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)
+{
+    ASSERT(WebProcess::shared().usesNetworkProcess());
+
+    uint64_t resultSize;
+    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::RegisterBlobURLForSlice(url, srcURL, start, end), Messages::NetworkConnectionToWebProcess::RegisterBlobURLForSlice::Reply(resultSize), 0))
+        return 0;
+    return resultSize;
+}
+
 }
 
 #endif // ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)

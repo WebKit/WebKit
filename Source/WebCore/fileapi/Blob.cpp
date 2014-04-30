@@ -97,6 +97,16 @@ Blob::Blob(const URL& srcURL, const String& type, long long size)
     ThreadableBlobRegistry::registerBlobURL(0, m_internalURL, srcURL);
 }
 
+#if ENABLE(BLOB)
+Blob::Blob(const URL& srcURL, long long start, long long end, const String& type)
+    : m_type(Blob::normalizedContentType(type))
+{
+    // Create a new internal URL and register it with the same blob data as the source URL.
+    m_internalURL = BlobURL::createInternalURL();
+    m_size = ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end);
+}
+#endif
+
 Blob::~Blob()
 {
     ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
@@ -169,52 +179,6 @@ bool Blob::isNormalizedContentType(const CString& contentType)
     }
     return true;
 }
-
-#if ENABLE(BLOB)
-PassRefPtr<Blob> Blob::slice(long long start, long long end, const String& contentType) const
-{
-    // When we slice a file for the first time, we obtain a snapshot of the file by capturing its current size and modification time.
-    // The modification time will be used to verify if the file has been changed or not, when the underlying data are accessed.
-    long long size;
-    double modificationTime;
-    if (isFile()) {
-        // FIXME: This involves synchronous file operation. We need to figure out how to make it asynchronous.
-        toFile(this)->captureSnapshot(size, modificationTime);
-    } else {
-        ASSERT(m_size != -1);
-        size = m_size;
-    }
-
-    // Convert the negative value that is used to select from the end.
-    if (start < 0)
-        start = start + size;
-    if (end < 0)
-        end = end + size;
-
-    // Clamp the range if it exceeds the size limit.
-    if (start < 0)
-        start = 0;
-    if (end < 0)
-        end = 0;
-    if (start >= size) {
-        start = 0;
-        end = 0;
-    } else if (end < start)
-        end = start;
-    else if (end > size)
-        end = size;
-
-    long long length = end - start;
-    auto blobData = std::make_unique<BlobData>();
-    blobData->setContentType(Blob::normalizedContentType(contentType));
-    if (isFile())
-        blobData->appendFile(toFile(this)->path(), start, length, modificationTime);
-    else
-        blobData->appendBlob(m_internalURL, start, length);
-
-    return Blob::create(std::move(blobData), length);
-}
-#endif
 
 URLRegistry& Blob::registry() const
 {

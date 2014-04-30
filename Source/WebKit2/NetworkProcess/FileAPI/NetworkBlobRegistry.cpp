@@ -84,6 +84,22 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
     m_blobsForConnection.find(connection)->value.add(url);
 }
 
+uint64_t NetworkBlobRegistry::registerBlobURLForSlice(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL, int64_t start, int64_t end)
+{
+    uint64_t resultSize = blobRegistry().registerBlobURLForSlice(url, srcURL, start, end);
+
+    // FIXME: Only store extensions for files that the slice actually contains, not for all the files in original blob.
+    SandboxExtensionMap::iterator iter = m_sandboxExtensions.find(srcURL.string());
+    if (iter != m_sandboxExtensions.end())
+        m_sandboxExtensions.add(url.string(), iter->value);
+
+    ASSERT(m_blobsForConnection.contains(connection));
+    ASSERT(m_blobsForConnection.find(connection)->value.contains(srcURL));
+    m_blobsForConnection.find(connection)->value.add(url);
+
+    return resultSize;
+}
+
 void NetworkBlobRegistry::unregisterBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::URL& url)
 {
     blobRegistry().unregisterBlobURL(url);

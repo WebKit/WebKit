@@ -82,7 +82,10 @@ public:
     virtual URLRegistry& registry() const override;
 
 #if ENABLE(BLOB)
-    PassRefPtr<Blob> slice(long long start = 0, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const;
+    PassRefPtr<Blob> slice(long long start = 0, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const
+    {
+        return adoptRef(new Blob(m_internalURL, start, end, contentType));
+    }
 #endif
 
 protected:
@@ -91,6 +94,11 @@ protected:
 
     // For deserialization.
     Blob(const URL& srcURL, const String& type, long long size);
+
+#if ENABLE(BLOB)
+    // For slicing.
+    Blob(const URL& srcURL, long long start, long long end, const String& contentType);
+#endif
 
     // This is an internal URL referring to the blob data associated with this object. It serves
     // as an identifier for this blob. The internal URL is never used to source the blob's content

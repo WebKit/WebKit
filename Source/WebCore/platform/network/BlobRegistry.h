@@ -51,6 +51,9 @@ public:
     // Registers a new blob URL referring to the blob data identified by the specified srcURL.
     virtual void registerBlobURL(const URL&, const URL& srcURL) = 0;
 
+    // Negative start and end values select from the end.
+    virtual unsigned long long registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end) = 0;
+
     virtual void unregisterBlobURL(const URL&) = 0;
 
     virtual bool isBlobRegistryImpl() const { return false; }

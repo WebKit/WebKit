@@ -37,6 +37,7 @@ public:
     virtual void registerBlobURL(const WebCore::URL&, std::unique_ptr<WebCore::BlobData>) override;
     virtual void registerBlobURL(const WebCore::URL&, const WebCore::URL& srcURL) override;
     virtual void unregisterBlobURL(const WebCore::URL&) override;
+    virtual unsigned long long registerBlobURLForSlice(const WebCore::URL&, const WebCore::URL& srcURL, long long start, long long end) override;
 };
 
 }

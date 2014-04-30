@@ -36,6 +36,8 @@
 
 #include "BlobResourceHandle.h"
 #include "BlobStorageData.h"
+#include "FileMetadata.h"
+#include "FileSystem.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
@@ -99,6 +101,7 @@ void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, cons
     }
 
     for (; iter != items.end() && length > 0; ++iter) {
+        ASSERT(iter->length != BlobDataItem::toEndOfFile);
         long long currentLength = iter->length - offset;
         long long newLength = currentLength > length ? length : currentLength;
         if (iter->type == BlobDataItem::Data)
@@ -156,6 +159,43 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
     m_blobs.set(url.string(), src);
 }
 
+unsigned long long BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)
+{
+    ASSERT(isMainThread());
+    BlobStorageData* originalStorageData = m_blobs.get(srcURL.string());
+    if (!originalStorageData)
+        return 0;
+
+    unsigned long long originalSize = blobSize(srcURL);
+
+    // Convert the negative value that is used to select from the end.
+    if (start < 0)
+        start = start + originalSize;
+    if (end < 0)
+        end = end + originalSize;
+
+    // Clamp the range if it exceeds the size limit.
+    if (start < 0)
+        start = 0;
+    if (end < 0)
+        end = 0;
+    if (static_cast<unsigned long long>(start) >= originalSize) {
+        start = 0;
+        end = 0;
+    } else if (end < start)
+        end = start;
+    else if (static_cast<unsigned long long>(end) > originalSize)
+        end = originalSize;
+
+    unsigned long long newLength = end - start;
+    RefPtr<BlobStorageData> newStorageData = BlobStorageData::create(originalStorageData->contentType(), originalStorageData->contentDisposition());
+
+    appendStorageItems(newStorageData.get(), originalStorageData->items(), start, newLength);
+
+    m_blobs.set(url.string(), newStorageData.release());
+    return newLength;
+}
+
 void BlobRegistryImpl::unregisterBlobURL(const URL& url)
 {
     ASSERT(isMainThread());
@@ -166,6 +206,29 @@ BlobStorageData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
 {
     ASSERT(isMainThread());
     return m_blobs.get(url.string());
+}
+
+unsigned long long BlobRegistryImpl::blobSize(const URL& url)
+{
+    ASSERT(isMainThread());
+    BlobStorageData* storageData = m_blobs.get(url.string());
+    if (!storageData)
+        return 0;
+
+    unsigned long long result = 0;
+    for (const BlobDataItem& item : storageData->items()) {
+        if (item.length == BlobDataItem::toEndOfFile) {
+            FileMetadata metadata;
+            if (!getFileMetadata(item.path, metadata))
+                return 0;
+
+            // FIXME: Factor out size and modification tracking for a cleaner implementation.
+            const_cast<BlobDataItem&>(item).length = metadata.length;
+            const_cast<BlobDataItem&>(item).expectedModificationTime = metadata.modificationTime;
+        }
+        result += item.length;
+    }
+    return result;
 }
 
 } // namespace WebCore

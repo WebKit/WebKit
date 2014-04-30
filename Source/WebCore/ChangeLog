@@ -1,3 +1,30 @@
+2014-04-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Move Blob.slice() implementation into BlobRegistryImpl
+        https://bugs.webkit.org/show_bug.cgi?id=132402
+
+        Reviewed by Anders Carlsson.
+
+        Part or centralizing the responsibility for file size tracking.
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::slice): Deleted.
+        * fileapi/Blob.h:
+        (WebCore::Blob::slice):
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURLForSlice):
+        (WebCore::registerBlobURLTask): Deleted.
+        (WebCore::registerBlobURLFromTask): Deleted.
+        * fileapi/ThreadableBlobRegistry.h:
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::appendStorageItems):
+        (WebCore::BlobRegistryImpl::registerBlobURLForSlice):
+        (WebCore::BlobRegistryImpl::blobSize):
+        * platform/network/BlobRegistryImpl.h:
+
 2014-04-30  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix after r168041.
