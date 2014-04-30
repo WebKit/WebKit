@@ -1,3 +1,9 @@
+2014-04-29  David Hyatt  <hyatt@apple.com>
+
+        Fix test up so that it looks the same as it did before my landing in r167965.
+
+        * fast/multicol/mixed-positioning-stacking-order.html:
+
 2014-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Remove Settings::compositedScrollingForFramesEnabled
