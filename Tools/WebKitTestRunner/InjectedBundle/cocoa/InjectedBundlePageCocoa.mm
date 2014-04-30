@@ -26,49 +26,13 @@
 #import "config.h"
 #import "InjectedBundlePage.h"
 
-#import "StringFunctions.h"
+#import "CrashReporterInfo.h"
 #import <WebKit2/WKBundleFrame.h>
 #import <WebKit2/WKURLCF.h>
-#import <WebKitSystemInterface.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/text/StringBuilder.h>
-#import <wtf/text/WTFString.h>
 
 namespace WTR {
 
 using namespace WTF;
-
-static String testPathFromURL(WKURLRef url)
-{
-    RetainPtr<CFURLRef> cfURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, url));
-    if (!cfURL)
-        return String();
-
-    RetainPtr<CFStringRef> schemeCFString = adoptCF(CFURLCopyScheme(cfURL.get()));
-    RetainPtr<CFStringRef> pathCFString = adoptCF(CFURLCopyPath(cfURL.get()));
-
-    String schemeString(schemeCFString.get());
-    String pathString(pathCFString.get());
-    
-    if (equalIgnoringCase(schemeString, "file")) {
-        String layoutTests("/LayoutTests/");
-        size_t layoutTestsOffset = pathString.find(layoutTests);
-        if (layoutTestsOffset == notFound)
-            return String();
-
-        return pathString.substring(layoutTestsOffset + layoutTests.length());
-    }
-
-    if (!equalIgnoringCase(schemeString, "http") && !equalIgnoringCase(schemeString, "https"))
-        return String();
-
-    RetainPtr<CFStringRef> hostCFString = adoptCF(CFURLCopyHostName(cfURL.get()));
-    String hostString(hostCFString.get());
-    if (hostString == "127.0.0.1"  && (CFURLGetPortNumber(cfURL.get()) == 8000 || CFURLGetPortNumber(cfURL.get()) == 8443))
-        return pathString;
-
-    return String();
-}
 
 void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRef frame)
 {
@@ -76,14 +40,7 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
         return;
 
     WKRetainPtr<WKURLRef> mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(frame));
-    
-    String testPath = testPathFromURL(mainFrameURL.get());
-    if (!testPath.isNull()) {
-        StringBuilder builder;
-        builder.appendLiteral("CRASHING TEST: ");
-        builder.append(testPath);
-        WKSetCrashReportApplicationSpecificInformation(builder.toString().createCFString().get());
-    }
+    setCrashReportApplicationSpecificInformationToURL(mainFrameURL.get());
 }
 
 } // namespace WTR

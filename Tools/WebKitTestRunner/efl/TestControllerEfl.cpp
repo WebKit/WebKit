@@ -63,6 +63,10 @@ void TestController::platformDestroy()
 {
 }
 
+void TestController::platformWillRunTest(const TestInvocation&)
+{
+}
+
 void TestController::platformRunUntil(bool& condition, double timeout)
 {
     if (timeout == m_noTimeout) {

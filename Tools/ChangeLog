@@ -1,5 +1,50 @@
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Add test URL to crash reports for the UI process, clean up project
+        https://bugs.webkit.org/show_bug.cgi?id=131954
+
+        Reviewed by Darin Adler.
+        
+        WebKitTestRunner was adding application-specific information to crash reports
+        to log the test path, but only in the web process. Fix it to also do this
+        for the UI process, for both iOS and OS X.
+        
+        Moved InjectedBundlePageMac.mm to InjectedBundlePageCocoa.mm and compile it for
+        both iOS and OS X.
+        
+        Factored crash reprorter-related code into CrashReporterInfo, and call it from
+        a new TestController::platformWillRunTest() function on Mac and iOS.
+        
+        Also remove Xcode-added unit test junk from the project.
+
+        * WebKitTestRunner/InjectedBundle/cocoa/InjectedBundlePageCocoa.mm: Copied from Tools/WebKitTestRunner/InjectedBundle/ios/InjectedBundlePageIOS.mm.
+        (WTR::InjectedBundlePage::platformDidStartProvisionalLoadForFrame):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::url):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/WebKitTestRunnerAppTests/WebKitTestRunnerAppTests-Info.plist: Removed.
+        * WebKitTestRunner/WebKitTestRunnerAppTests/WebKitTestRunnerAppTests.m: Removed.
+        * WebKitTestRunner/WebKitTestRunnerAppTests/en.lproj/InfoPlist.strings: Removed.
+        * WebKitTestRunner/cocoa/CrashReporterInfo.h: Renamed from Tools/WebKitTestRunner/InjectedBundle/ios/InjectedBundlePageIOS.mm.
+        * WebKitTestRunner/cocoa/CrashReporterInfo.mm: Renamed from Tools/WebKitTestRunner/InjectedBundle/mac/InjectedBundlePageMac.mm.
+        (WTR::testPathFromURL):
+        (WTR::setCrashReportApplicationSpecificInformationToURL):
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::platformWillRunTest):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformWillRunTest):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformWillRunTest):
+        (WTR::TestController::setHidden):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformWillRunTest):
+
+2014-04-30  Simon Fraser  <simon.fraser@apple.com>
+
         Fix DRT assertion about mock scrollbars, which doesn't apply to iOS.
 
         Reviewed by Tim Horton.

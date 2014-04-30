@@ -117,6 +117,7 @@ private:
     void platformInitialize();
     void platformDestroy();
     void platformInitializeContext();
+    void platformWillRunTest(const TestInvocation&);
     void platformRunUntil(bool& done, double timeout);
     void platformDidCommitLoadForFrame(WKPageRef, WKFrameRef);
     void initializeInjectedBundlePath();

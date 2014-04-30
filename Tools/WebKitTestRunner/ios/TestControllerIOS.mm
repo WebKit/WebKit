@@ -26,7 +26,9 @@
 #import "config.h"
 #import "TestController.h"
 
+#import "CrashReporterInfo.h"
 #import "PlatformWebView.h"
+#import "TestInvocation.h"
 #import <WebKit2/WKStringCF.h>
 #include <wtf/MainThread.h>
 
@@ -55,6 +57,11 @@ void TestController::initializeTestPluginDirectory()
     m_testPluginDirectory.adopt(WKStringCreateWithCFString((CFStringRef)[[NSBundle mainBundle] bundlePath]));
 }
 
+void TestController::platformWillRunTest(const TestInvocation& testInvocation)
+{
+    setCrashReportApplicationSpecificInformationToURL(testInvocation.url());
+}
+
 void TestController::platformRunUntil(bool& done, double timeout)
 {
     NSDate *endDate = (timeout > 0) ? [NSDate dateWithTimeIntervalSinceNow:timeout] : [NSDate distantFuture];
@@ -81,7 +88,8 @@ const char* TestController::platformLibraryPathForTesting()
     return [[@"~/Library/Application Support/WebKitTestRunner" stringByExpandingTildeInPath] UTF8String];
 }
 
-void TestController::setHidden(bool) {
+void TestController::setHidden(bool)
+{
     // FIXME: implement for iOS
 }
 

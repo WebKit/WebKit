@@ -754,6 +754,8 @@ bool TestController::runTest(const char* inputLine)
     if (command.timeout > 0)
         m_currentInvocation->setCustomTimeout(command.timeout);
 
+    platformWillRunTest(*m_currentInvocation);
+
     m_currentInvocation->invoke();
     m_currentInvocation.clear();
 

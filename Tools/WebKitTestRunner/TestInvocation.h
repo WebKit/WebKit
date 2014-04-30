@@ -40,6 +40,8 @@ public:
     explicit TestInvocation(const std::string& pathOrURL);
     ~TestInvocation();
 
+    WKURLRef url() const;
+
     void setIsPixelTest(const std::string& expectedPixelHash);
 
     void setCustomTimeout(int duration);

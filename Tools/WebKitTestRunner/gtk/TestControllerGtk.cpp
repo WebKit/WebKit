@@ -65,6 +65,10 @@ static gboolean timeoutCallback(gpointer)
     return FALSE;
 }
 
+void TestController::platformWillRunTest(const TestInvocation&)
+{
+}
+
 void TestController::platformRunUntil(bool&, double timeout)
 {
     cancelTimeout();

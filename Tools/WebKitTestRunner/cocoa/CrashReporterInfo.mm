@@ -24,22 +24,55 @@
  */
 
 #import "config.h"
-#import "InjectedBundlePage.h"
+#import "CrashReporterInfo.h"
 
 #import "StringFunctions.h"
-#import <WebKit2/WKBundleFrame.h>
 #import <WebKit2/WKURLCF.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/text/StringBuilder.h>
-#import <wtf/text/WTFString.h>
 
 namespace WTR {
 
-using namespace WTF;
-
-void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRef)
+static String testPathFromURL(WKURLRef url)
 {
+    RetainPtr<CFURLRef> cfURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, url));
+    if (!cfURL)
+        return String();
+
+    RetainPtr<CFStringRef> schemeCFString = adoptCF(CFURLCopyScheme(cfURL.get()));
+    RetainPtr<CFStringRef> pathCFString = adoptCF(CFURLCopyPath(cfURL.get()));
+
+    String schemeString(schemeCFString.get());
+    String pathString(pathCFString.get());
+    
+    if (equalIgnoringCase(schemeString, "file")) {
+        String layoutTests("/LayoutTests/");
+        size_t layoutTestsOffset = pathString.find(layoutTests);
+        if (layoutTestsOffset == notFound)
+            return String();
+
+        return pathString.substring(layoutTestsOffset + layoutTests.length());
+    }
+
+    if (!equalIgnoringCase(schemeString, "http") && !equalIgnoringCase(schemeString, "https"))
+        return String();
+
+    RetainPtr<CFStringRef> hostCFString = adoptCF(CFURLCopyHostName(cfURL.get()));
+    String hostString(hostCFString.get());
+    if (hostString == "127.0.0.1"  && (CFURLGetPortNumber(cfURL.get()) == 8000 || CFURLGetPortNumber(cfURL.get()) == 8443))
+        return pathString;
+
+    return String();
+}
+
+void setCrashReportApplicationSpecificInformationToURL(WKURLRef url)
+{
+    String testPath = testPathFromURL(url);
+    if (!testPath.isNull()) {
+        String message("CRASHING TEST:");
+        message = message + testPath;
+        WKSetCrashReportApplicationSpecificInformation(message.createCFString().get());
+    }
 }
 
 } // namespace WTR

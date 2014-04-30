@@ -106,6 +106,11 @@ TestInvocation::~TestInvocation()
 {
 }
 
+WKURLRef TestInvocation::url() const
+{
+    return m_url.get();
+}
+
 void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
 {
     m_dumpPixels = true;

@@ -26,8 +26,10 @@
 #import "config.h"
 #import "TestController.h"
 
+#import "CrashReporterInfo.h"
 #import "PlatformWebView.h"
 #import "PoseAsClass.h"
+#import "TestInvocation.h"
 #import "WebKitTestRunnerPasteboard.h"
 #import <WebKit2/WKStringCF.h>
 #import <mach-o/dyld.h> 
@@ -64,6 +66,11 @@ void TestController::initializeInjectedBundlePath()
 void TestController::initializeTestPluginDirectory()
 {
     m_testPluginDirectory.adopt(WKStringCreateWithCFString((CFStringRef)[[NSBundle mainBundle] bundlePath]));
+}
+
+void TestController::platformWillRunTest(const TestInvocation& testInvocation)
+{
+    setCrashReportApplicationSpecificInformationToURL(testInvocation.url());
 }
 
 void TestController::platformRunUntil(bool& done, double timeout)
