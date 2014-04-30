@@ -32,6 +32,7 @@
 
 namespace WebKit {
 
+#if !PLATFORM(IOS_SIMULATOR)
 const BKSProcessAssertionFlags suspendedTabFlags = (BKSProcessAssertionAllowIdleSleep);
 const BKSProcessAssertionFlags backgroundTabFlags = (BKSProcessAssertionAllowIdleSleep | BKSProcessAssertionPreventTaskSuspend | BKSProcessAssertionAllowSuspendOnSleep);
 const BKSProcessAssertionFlags foregroundTabFlags = (BKSProcessAssertionAllowIdleSleep | BKSProcessAssertionPreventTaskSuspend | BKSProcessAssertionAllowSuspendOnSleep | BKSProcessAssertionWantsForegroundResourcePriority | BKSProcessAssertionPreventTaskThrottleDown);
@@ -47,7 +48,8 @@ static BKSProcessAssertionFlags flagsForState(AssertionState assertionState)
         return foregroundTabFlags;
     }
 }
-    
+#endif
+
 ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState)
 {
     m_assertionState = assertionState;
