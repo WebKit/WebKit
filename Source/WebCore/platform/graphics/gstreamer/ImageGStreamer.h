@@ -27,6 +27,7 @@
 #include "GRefPtrGStreamer.h"
 
 #include <gst/gst.h>
+#include <gst/video/video.h>
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -64,8 +65,7 @@ class ImageGStreamer : public RefCounted<ImageGStreamer> {
         FloatRect m_cropRect;
 
 #if USE(CAIRO)
-        GRefPtr<GstBuffer> m_buffer;
-        GstMapInfo m_mapInfo;
+        GstVideoFrame m_videoFrame;
 #endif
     };
 }
