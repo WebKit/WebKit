@@ -70,7 +70,7 @@ void* prepareOSREntry(
     for (int argument = values.numberOfArguments(); argument--;) {
         JSValue valueOnStack = exec->r(virtualRegisterForArgument(argument).offset()).jsValue();
         JSValue reconstructedValue = values.argument(argument);
-        if (valueOnStack == reconstructedValue)
+        if (valueOnStack == reconstructedValue || !argument)
             continue;
         dataLog("Mismatch between reconstructed values and the the value on the stack for argument arg", argument, " for ", *entryCodeBlock, " at bc#", bytecodeIndex, ":\n");
         dataLog("    Value on stack: ", valueOnStack, "\n");

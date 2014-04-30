@@ -1370,17 +1370,12 @@ void SpeculativeJIT::compileCurrentBlock()
     m_jit.jitAssertTagsInPlace();
     m_jit.jitAssertArgumentCountSane();
 
-    for (size_t i = 0; i < m_block->variablesAtHead.numberOfArguments(); ++i) {
-        m_stream->appendAndLog(
-            VariableEvent::setLocal(
-                virtualRegisterForArgument(i), virtualRegisterForArgument(i), DataFormatJS));
-    }
-    
     m_state.reset();
     m_state.beginBasicBlock(m_block);
     
-    for (size_t i = 0; i < m_block->variablesAtHead.numberOfLocals(); ++i) {
-        Node* node = m_block->variablesAtHead.local(i);
+    for (size_t i = m_block->variablesAtHead.size(); i--;) {
+        int operand = m_block->variablesAtHead.operandForIndex(i);
+        Node* node = m_block->variablesAtHead[i];
         if (!node)
             continue; // No need to record dead SetLocal's.
         
@@ -1388,10 +1383,12 @@ void SpeculativeJIT::compileCurrentBlock()
         DataFormat format;
         if (!node->refCount())
             continue; // No need to record dead SetLocal's.
-        else
-            format = dataFormatFor(variable->flushFormat());
+        format = dataFormatFor(variable->flushFormat());
         m_stream->appendAndLog(
-            VariableEvent::setLocal(virtualRegisterForLocal(i), variable->machineLocal(), format));
+            VariableEvent::setLocal(
+                VirtualRegister(operand),
+                variable->machineLocal(),
+                format));
     }
     
     m_codeOriginForExitTarget = CodeOrigin();

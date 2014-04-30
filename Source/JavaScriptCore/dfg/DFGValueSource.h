@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -174,6 +174,8 @@ public:
         return kind() != SourceNotSet;
     }
     
+    bool operator!() const { return !isSet(); }
+    
     ValueSourceKind kind() const
     {
         return m_kind;
@@ -215,6 +217,7 @@ public:
     }
     
     void dump(PrintStream&) const;
+    void dumpInContext(PrintStream&, DumpContext*) const;
     
 private:
     ValueSourceKind m_kind;

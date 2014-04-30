@@ -1849,6 +1849,7 @@ void SpeculativeJIT::compile(Node* node)
         // But it may be profitable to use this as a hook to run speculation checks
         // on arguments, thereby allowing us to trivially eliminate such checks if
         // the argument is not used.
+        recordSetLocal(dataFormatFor(node->variableAccessData()->flushFormat()));
         break;
 
     case BitAnd:

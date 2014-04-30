@@ -1,3 +1,27 @@
+2014-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Argument flush formats should not be presumed to be JSValue since 'this' is weird
+        https://bugs.webkit.org/show_bug.cgi?id=132404
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock): Don't assume that arguments are flushed as JSValue. Use the logic for locals instead.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): SetArgument "changes" the format because before this we wouldn't know we had arguments.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Ditto.
+        * dfg/DFGValueSource.cpp:
+        (JSC::DFG::ValueSource::dumpInContext): Make this easier to dump.
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::operator!): Make this easier to dump because Operands<T> uses T::operator!().
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry): This had a useful assertion for everything except 'this'.
+        * tests/stress/strict-to-this-int.js: Added.
+        (foo):
+        (Number.prototype.valueOf):
+        (test):
+
 2014-04-29  Oliver Hunt  <oliver@apple.com>
 
         Don't hold on to parameterBindingNodes forever
