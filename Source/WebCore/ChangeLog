@@ -1,5 +1,25 @@
 2014-04-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r167135
+
+    2014-04-10  Chris Fleizach  <cfleizach@apple.com>
+
+            Heap-use-after-free in WebCore::SpeechSynthesisUtterance::startTime
+            https://bugs.webkit.org/show_bug.cgi?id=131482
+
+            Reviewed by David Kilzer.
+
+            Hold onto the utterance until it has time to fire, in case other references have been removed.
+
+            Merged from Blink r171077 by <dmazzoni@chromium.org>
+
+            Test: platform/mac/fast/speechsynthesis/speech-synthesis-gc-utterance-crash.html
+
+            * Modules/speech/SpeechSynthesis.cpp:
+            (WebCore::SpeechSynthesis::handleSpeakingCompleted):
+
+2014-04-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r167093
 
     2014-04-08  Jon Honeycutt  <jhoneycutt@apple.com>
