@@ -583,6 +583,24 @@ void RenderMultiColumnFlowThread::computeLineGridPaginationOrigin(LayoutState& l
     }
 }
 
+LayoutSize RenderMultiColumnFlowThread::offsetFromContainer(RenderObject* enclosingContainer, const LayoutPoint& physicalPoint, bool* offsetDependsOnPoint) const
+{
+    ASSERT(enclosingContainer == container());
+
+    if (offsetDependsOnPoint)
+        *offsetDependsOnPoint = true;
+    
+    LayoutPoint translatedPhysicalPoint(physicalPoint);
+    RenderRegion* region = physicalTranslationFromFlowToRegion(translatedPhysicalPoint);
+    if (region)
+        translatedPhysicalPoint.moveBy(region->topLeftLocation());
+    
+    LayoutSize offset(translatedPhysicalPoint.x(), translatedPhysicalPoint.y());
+    if (enclosingContainer->isBox())
+        offset -= toRenderBox(enclosingContainer)->scrolledContentOffset();
+    return offset;
+}
+    
 void RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
     // First get the transform state's point into the block flow thread's physical coordinate space.

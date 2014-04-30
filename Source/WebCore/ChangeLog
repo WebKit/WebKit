@@ -1,3 +1,19 @@
+2014-04-29  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Multiple tests assert in RenderGeometryMap
+        https://bugs.webkit.org/show_bug.cgi?id=132285
+
+        Reviewed by Simon Fraser.
+
+        Implement offsetFromContainer for RenderMultiColumnFlowThread so that the
+        geometry map gets the right offsets. This is really only relevant for the 
+        geometry map, since I already overrode mapAbsoluteToLocalPoint and multicolumn
+        flow threads are repaint containers (so mapLocalToAbsolute never needs offsetFromContainer).
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::offsetFromContainer):
+        * rendering/RenderMultiColumnFlowThread.h:
+
 2014-04-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] When pageScaleFactor * deviceScaleFactor = 1, the tile grid is completely messed up
