@@ -99,6 +99,10 @@
 #include "AttributedString.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "ProcessThrottler.h"
+#endif
+
 namespace API {
 class FindClient;
 class FormClient;
@@ -756,7 +760,7 @@ public:
 
     void listenForLayoutMilestones(WebCore::LayoutMilestones);
 
-    void didUpdateViewState() { m_waitingForDidUpdateViewState = false; }
+    void didUpdateViewState();
 
     bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
     bool hasVerticalScrollbar() const { return m_mainFrameHasVerticalScrollbar; }
@@ -1005,7 +1009,7 @@ public:
     void setMediaVolume(float);
     void setMayStartMediaWhenInWindow(bool);
     bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
-
+        
     // WebPopupMenuProxy::Client
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent();
 
@@ -1073,7 +1077,8 @@ private:
     void platformInitialize();
 
     void updateViewState(WebCore::ViewState::Flags flagsToUpdate = WebCore::ViewState::AllFlags);
-
+    void updateVisibilityToken();
+        
     void resetState();
     void resetStateAfterProcessExited();
 
@@ -1501,10 +1506,14 @@ private:
 
     WebCore::ViewState::Flags m_viewState;
 
+#if PLATFORM(IOS)
+    std::unique_ptr<ProcessThrottler::VisibilityToken> m_visibilityToken;
+#endif
+        
     bool m_canGoBack;
     bool m_canGoForward;
     Ref<WebBackForwardList> m_backForwardList;
-    
+        
     bool m_maintainsInactiveSelection;
 
     String m_toolTip;
@@ -1659,7 +1668,8 @@ private:
     bool m_mayStartMediaWhenInWindow;
 
     bool m_waitingForDidUpdateViewState;
-
+    unsigned m_pendingViewStateUpdates;
+        
 #if PLATFORM(COCOA)
     HashMap<String, String> m_temporaryPDFFiles;
 #endif

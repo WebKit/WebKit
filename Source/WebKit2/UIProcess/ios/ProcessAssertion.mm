@@ -26,39 +26,43 @@
 #import "config.h"
 #import "ProcessAssertion.h"
 
-#if PLATFORM(IOS) && USE(XPC_SERVICES)
+#if PLATFORM(IOS)
 
 #import <AssertionServices/BKSProcessAssertion.h>
 
 namespace WebKit {
 
-#if PLATFORM(IOS_SIMULATOR)
-
-ProcessAssertion::ProcessAssertion(pid_t, AssertionState)
-{
-}
-
-void ProcessAssertion::setState(AssertionState)
-{
-}
-
-#else
-
-const BKSProcessAssertionFlags backgroundTabFlags = (BKSProcessAssertionAllowIdleSleep);
+const BKSProcessAssertionFlags suspendedTabFlags = (BKSProcessAssertionAllowIdleSleep);
+const BKSProcessAssertionFlags backgroundTabFlags = (BKSProcessAssertionAllowIdleSleep | BKSProcessAssertionPreventTaskSuspend | BKSProcessAssertionAllowSuspendOnSleep);
 const BKSProcessAssertionFlags foregroundTabFlags = (BKSProcessAssertionAllowIdleSleep | BKSProcessAssertionPreventTaskSuspend | BKSProcessAssertionAllowSuspendOnSleep | BKSProcessAssertionWantsForegroundResourcePriority | BKSProcessAssertionPreventTaskThrottleDown);
-
+    
+static BKSProcessAssertionFlags flagsForState(AssertionState assertionState)
+{
+    switch (assertionState) {
+    case AssertionState::Suspended:
+        return suspendedTabFlags;
+    case AssertionState::Background:
+        return backgroundTabFlags;
+    case AssertionState::Foreground:
+        return foregroundTabFlags;
+    }
+}
+    
 ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState)
 {
+    m_assertionState = assertionState;
+    
+#if PLATFORM(IOS_SIMULATOR)
+    UNUSED_PARAM(pid);
+#else
     BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
         if (!acquired) {
             LOG_ERROR("Unable to acquire assertion for process %d", pid);
             ASSERT_NOT_REACHED();
         }
     };
-
-    BKSProcessAssertionFlags flags = (assertionState == AssertionState::Foreground) ? foregroundTabFlags : backgroundTabFlags;
-    m_assertionState = assertionState;
-    m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flags reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
+    m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
+#endif
 }
 
 void ProcessAssertion::setState(AssertionState assertionState)
@@ -66,13 +70,12 @@ void ProcessAssertion::setState(AssertionState assertionState)
     if (m_assertionState == assertionState)
         return;
 
-    BKSProcessAssertionFlags flags = (assertionState == AssertionState::Foreground) ? foregroundTabFlags : backgroundTabFlags;
     m_assertionState = assertionState;
-    [m_assertion setFlags:flags];
-}
-
+#if !PLATFORM(IOS_SIMULATOR)
+    [m_assertion setFlags:flagsForState(assertionState)];
 #endif
-
+}
+    
 }
 
 #endif // PLATFORM(IOS) && USE(XPC_SERVICES)

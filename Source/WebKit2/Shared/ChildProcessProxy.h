@@ -32,10 +32,6 @@
 
 #include <wtf/ThreadSafeRefCounted.h>
 
-#if PLATFORM(IOS) && USE(XPC_SERVICES)
-#include "ProcessAssertion.h"
-#endif
-
 namespace WebKit {
 
 class ChildProcessProxy : ProcessLauncher::Client, public IPC::Connection::Client, public ThreadSafeRefCounted<ChildProcessProxy> {
@@ -85,10 +81,6 @@ protected:
 
     bool dispatchMessage(IPC::Connection*, IPC::MessageDecoder&);
     bool dispatchSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
-    
-#if PLATFORM(IOS) && USE(XPC_SERVICES)
-    std::unique_ptr<ProcessAssertion> m_assertion;
-#endif
     
 private:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) = 0;

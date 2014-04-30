@@ -38,6 +38,10 @@
 #include "CustomProtocolManagerProxy.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "ProcessAssertion.h"
+#endif
+
 namespace WebCore {
 class AuthenticationChallenge;
 }
@@ -96,6 +100,10 @@ private:
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
+#endif
+    
+#if PLATFORM(IOS)
+    std::unique_ptr<ProcessAssertion> m_assertion;
 #endif
 };
 

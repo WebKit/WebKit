@@ -59,6 +59,8 @@ private:
     virtual bool isViewFocused() override;
     virtual bool isViewVisible() override;
     virtual bool isViewInWindow() override;
+    virtual bool isViewVisibleOrOccluded() override;
+    virtual bool isVisuallyIdle() override;
     virtual void processDidExit() override;
     virtual void didRelaunchProcess() override;
     virtual void pageClosed() override;

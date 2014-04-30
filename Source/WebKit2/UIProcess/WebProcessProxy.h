@@ -47,6 +47,10 @@
 #include "CustomProtocolManagerProxy.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "ProcessThrottler.h"
+#endif
+
 namespace WebCore {
 class URL;
 struct PluginInfo;
@@ -131,8 +135,10 @@ public:
 
     void windowServerConnectionStateChanged();
 
-    void updateProcessState();
-
+#if PLATFORM(IOS)
+    ProcessThrottler& throttler() { return *m_throttler; }
+#endif
+    
 private:
     explicit WebProcessProxy(WebContext&);
 
@@ -217,11 +223,11 @@ private:
 #endif
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
-};
-
-#if !PLATFORM(IOS)
-inline void WebProcessProxy::updateProcessState() { }
+    
+#if PLATFORM(IOS)
+    std::unique_ptr<ProcessThrottler> m_throttler;
 #endif
+};
 
 } // namespace WebKit
 

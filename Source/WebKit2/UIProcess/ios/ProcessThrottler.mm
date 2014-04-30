@@ -15,7 +15,7 @@
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO , PROCUREMENT OF
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
@@ -23,38 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProcessAssertion_h
-#define ProcessAssertion_h
-
-#include <wtf/RetainPtr.h>
+#import "config.h"
+#import "ProcessThrottler.h"
 
 #if PLATFORM(IOS)
 
-OBJC_CLASS BKSProcessAssertion;
-
 namespace WebKit {
-    
-enum class AssertionState {
-    Suspended,
-    Background,
-    Foreground
-};
 
-class ProcessAssertion {
-public:
-    ProcessAssertion(pid_t, AssertionState);
+ProcessThrottler::VisibilityToken::VisibilityToken(ProcessThrottler& throttler, Visibility visibility)
+    : m_throttler(throttler.weakPtr())
+    , m_visibility(Visibility::Hidden)
+    , m_hideTimer(this, &VisibilityToken::hideTimerFired)
+{
+    setVisibility(visibility);
+}
+
+ProcessThrottler::VisibilityToken::~VisibilityToken()
+{
+    setVisibility(Visibility::Hidden);
+}
+
+void ProcessThrottler::VisibilityToken::hideTimerFired(WebCore::Timer<VisibilityToken>*)
+{
+    ASSERT(m_visibility == Visibility::Hiding);
+    m_visibility = Visibility::Hidden;
+}
+
+void ProcessThrottler::VisibilityToken::setVisibilityInternal(Visibility visibility)
+{
+    ProcessThrottler* throttler = m_throttler.get();
+    if (!throttler) {
+        m_visibility = visibility;
+        return;
+    }
     
-    void setState(AssertionState);
+    if (m_visibility == Visibility::Visible)
+        throttler->m_visibleCount--;
+    else if (m_visibility == Visibility::Hiding)
+        throttler->m_hidingCount--;
     
-private:
-#if !PLATFORM(IOS_SIMULATOR)
-    RetainPtr<BKSProcessAssertion> m_assertion;
-#endif
-    AssertionState m_assertionState;
-};
+    m_visibility = visibility;
+    
+    if (m_visibility == Visibility::Visible)
+        throttler->m_visibleCount++;
+    else if (m_visibility == Visibility::Hiding)
+        throttler->m_hidingCount++;
+    
+    throttler->updateAssertion();
+}
     
 }
 
-#endif // PLATFORM(IOS) && USE(XPC_SERVICES)
-
-#endif // ProcessAssertion_h
+#endif // PLATFORM(IOS)

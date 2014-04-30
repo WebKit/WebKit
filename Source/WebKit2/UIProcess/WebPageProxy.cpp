@@ -269,6 +269,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
     , m_viewState(ViewState::NoFlags)
+#if PLATFORM(IOS)
+    , m_visibilityToken(process.throttler().visibilityToken(ProcessThrottler::Visibility::Hidden))
+#endif
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_loadStateAtProcessExit(FrameLoadState::State::Finished)
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
@@ -351,6 +354,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
     , m_waitingForDidUpdateViewState(false)
+    , m_pendingViewStateUpdates(0)
     , m_scrollPinningBehavior(DoNotPin)
     , m_navigationID(0)
 {
@@ -358,7 +362,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
         m_visitedLinkProvider->addProcess(m_process.get());
 
     updateViewState();
-
+    updateVisibilityToken();
+    
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     m_layerHostingMode = m_viewState & ViewState::IsInWindow ? m_pageClient.viewLayerHostingMode() : LayerHostingMode::OutOfProcess;
 #endif
@@ -516,7 +521,8 @@ void WebPageProxy::reattachToWebProcess()
     ASSERT(m_process->state() == WebProcessProxy::State::Terminated);
 
     updateViewState();
-
+    updateVisibilityToken();
+    
     m_isValid = true;
 
     if (m_process->context().processModel() == ProcessModelSharedSecondaryProcess)
@@ -1052,8 +1058,15 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     updateViewState(mayHaveChanged);
     ViewState::Flags changed = m_viewState ^ previousViewState;
 
-    if (changed)
-        m_process->send(Messages::WebPage::SetViewState(m_viewState, wantsReply == WantsReplyOrNot::DoesWantReply), m_pageID);
+    if (changed) {
+        bool requestReply = wantsReply == WantsReplyOrNot::DoesWantReply;
+        if (requestReply)
+            ++m_pendingViewStateUpdates;
+    
+        updateVisibilityToken();
+        
+        m_process->send(Messages::WebPage::SetViewState(m_viewState, requestReply), m_pageID);
+    }
 
     if (changed & ViewState::IsVisuallyIdle)
         m_process->pageSuppressibilityChanged(this);
@@ -1080,12 +1093,28 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     }
 #endif
 
-    if (changed & ViewState::IsInWindow)
-        process().updateProcessState();
-
     updateBackingStoreDiscardableState();
 }
+    
+void WebPageProxy::updateVisibilityToken()
+{
+#if PLATFORM(IOS)
+    if (isViewVisible())
+        m_visibilityToken->setVisibility(ProcessThrottler::Visibility::Visible);
+    else if (m_visibilityToken->visibility() != ProcessThrottler::Visibility::Hidden && m_pendingViewStateUpdates)
+        m_visibilityToken->setVisibility(ProcessThrottler::Visibility::Hiding);
+    else
+        m_visibilityToken->setVisibility(ProcessThrottler::Visibility::Hidden);
+#endif
+}
 
+void WebPageProxy::didUpdateViewState()
+{
+    m_waitingForDidUpdateViewState = false;
+    --m_pendingViewStateUpdates;
+    updateVisibilityToken();
+}
+    
 void WebPageProxy::layerHostingModeDidChange()
 {
     if (!isValid())

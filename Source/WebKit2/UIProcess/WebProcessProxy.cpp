@@ -97,6 +97,9 @@ WebProcessProxy::WebProcessProxy(WebContext& context)
     , m_processSuppressionEnabled(false)
 #endif
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
+#if PLATFORM(IOS)
+    , m_throttler(std::make_unique<ProcessThrottler>())
+#endif
 {
     connect();
 }
@@ -458,7 +461,12 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #if PLATFORM(COCOA)
     updateProcessSuppressionState();
 #endif
-    updateProcessState();
+    
+#if PLATFORM(IOS) && USE(XPC_SERVICES)
+    xpc_connection_t xpcConnection = connection()->xpcConnection();
+    ASSERT(xpcConnection);
+    m_throttler->didConnnectToProcess(xpc_connection_get_pid(xpcConnection));
+#endif
 }
 
 WebFrameProxy* WebProcessProxy::webFrame(uint64_t frameID) const

@@ -1,3 +1,104 @@
+2014-04-30  Gavin Barraclough  <baraclough@apple.com>
+
+        Fix PageVisibility on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=132393
+
+        Reviewed by Andreas Kling.
+
+        Currently page visibility API doesn't work correctly on WK2 iOS for a few reasons,
+        the most significant of which being that the moment a WKWebView leaves the window
+        we'll suspend the content process, which removes the possibility for any notification
+        to be delivered. This patch addresses this issue, by allowing the process to run for
+        long enough for the notification to be delivered.
+
+        1) Introduce a new class, ProcessThrottler, to encapsulate the process suspension logic.
+        2) WebPageProxy uses ProcessThrottler::VisibilityToken to communicate visibility to the throttler.
+        3) WebPageProxy tracks pending didUpdateViewState messages to detect when the view state update in
+           the web content process has completed.
+        4) Distiguish between 'Background' and 'Suspended' states in the ProcessAssertion.
+
+        * Shared/ChildProcessProxy.h:
+            - moved m_assertion to NetworkProcessProxy / WebProcessProxy.
+        * UIProcess/Network/NetworkProcessProxy.h:
+            - added m_assertion.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+            - initialize VisibilityToken state.
+        (WebKit::WebPageProxy::reattachToWebProcess):
+            - reinitialize VisibilityToken state.
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - update VisibilityToken, increment m_pendingViewStateUpdates as necessary.
+        (WebKit::WebPageProxy::updateVisibilityToken):
+            - update the VisibiliyToken based on page visibility, and whether an update is still pending.
+        (WebKit::WebPageProxy::didUpdateViewState):
+            - detect when a view state change has completed in the web process, and update throttle state as necessary.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::didUpdateViewState): Deleted.
+            - moved to .cpp.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+            - initialize m_throttler.
+        (WebKit::WebProcessProxy::didFinishLaunching):
+            - notify the PageThrottler of the new connection.
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::throttler):
+            - added accessor.
+        (WebKit::WebProcessProxy::updateProcessState): Deleted.
+            - moved trottling login to ProcessThrottler.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewVisibleOrOccluded):
+            - these should only be true when the view is in a window.
+        (WebKit::PageClientImpl::isVisuallyIdle):
+            - this should only be true when the view is not in a window.
+        * UIProcess/ios/ProcessAssertion.h:
+        * UIProcess/ios/ProcessAssertion.mm:
+        (WebKit::flagsForState):
+            - map from enum -> BKSAssertion flags values.
+        (WebKit::ProcessAssertion::ProcessAssertion):
+            - use flagsForState (add support for Suspended state).
+        (WebKit::ProcessAssertion::setState):
+            - use flagsForState (add support for Suspended state).
+        * UIProcess/ios/ProcessThrottler.h: Added.
+        (WebKit::ProcessThrottler::VisibilityToken::visibility):
+            - accessor.
+        (WebKit::ProcessThrottler::VisibilityToken::setVisibility):
+            - update Visibility value; update the token as necessary.
+        (WebKit::ProcessThrottler::ProcessThrottler):
+            - constructor; does not take an assention until didConnnectToProcess is called.
+        (WebKit::ProcessThrottler::visibilityToken):
+            - create a VisibilityToken.
+        (WebKit::ProcessThrottler::didConnnectToProcess):
+            - take an assertion.
+        (WebKit::ProcessThrottler::weakPtr):
+            - create a weak pointer, used for references from VisibilityToken to the throttler.
+        (WebKit::ProcessThrottler::assertionState):
+            - determine the correct AssertionState for the process, based on current visibility.
+        (WebKit::ProcessThrottler::updateAssertion):
+            - update assertion, called in response to visibility change.
+        * UIProcess/ios/ProcessThrottler.mm: Added.
+        (WebKit::ProcessThrottler::VisibilityToken::VisibilityToken):
+            - constructor.
+        (WebKit::ProcessThrottler::VisibilityToken::~VisibilityToken):
+            - set visibility to hidden to reset.
+        (WebKit::ProcessThrottler::VisibilityToken::hideTimerFired):
+            - automatically decay from Hiding -> Hidden on a timeout.
+        (WebKit::ProcessThrottler::VisibilityToken::setVisibilityInternal):
+            - update counters tracking visibility in ProcessThrottler.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didMoveToWindow]):
+            - This affects all view state flags, not just the 'InWindow' state.
+              If the view moves out of a window request a reply from the WebContent - we use this
+              to detect when the page visibility event has completed.
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::updateProcessState): Deleted.
+            - removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+            - added new files.
+
 2014-04-30  Anders Carlsson  <andersca@apple.com>
 
         Preemptive header fixes for when WebKit.framework is going to provide the modern API

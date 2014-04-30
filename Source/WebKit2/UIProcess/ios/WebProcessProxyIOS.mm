@@ -70,31 +70,6 @@ void WebProcessProxy::updateProcessSuppressionState()
     notImplemented();
 }
     
-void WebProcessProxy::updateProcessState()
-{
-#if USE(XPC_SERVICES)
-    if (state() != State::Running)
-        return;
-
-    xpc_connection_t xpcConnection = connection()->xpcConnection();
-    if (!xpcConnection)
-        return;
-
-    AssertionState assertionState = AssertionState::Background;
-    for (const auto& page : m_pageMap.values()) {
-        if (page->isInWindow()) {
-            assertionState = AssertionState::Foreground;
-            break;
-        }
-    }
-    
-    if (!m_assertion)
-        m_assertion = std::make_unique<ProcessAssertion>(xpc_connection_get_pid(xpcConnection), assertionState);
-    else
-        m_assertion->setState(assertionState);
-#endif
-}
-
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)
