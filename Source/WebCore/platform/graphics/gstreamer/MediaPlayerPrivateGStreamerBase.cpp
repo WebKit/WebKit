@@ -93,24 +93,16 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_volumeSignalHandler(0)
     , m_muteSignalHandler(0)
 {
-#if GLIB_CHECK_VERSION(2, 31, 0)
     m_bufferMutex = new GMutex;
     g_mutex_init(m_bufferMutex);
-#else
-    m_bufferMutex = g_mutex_new();
-#endif
 }
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
     g_signal_handler_disconnect(m_webkitVideoSink.get(), m_repaintHandler);
 
-#if GLIB_CHECK_VERSION(2, 31, 0)
     g_mutex_clear(m_bufferMutex);
     delete m_bufferMutex;
-#else
-    g_mutex_free(m_bufferMutex);
-#endif
 
     if (m_buffer)
         gst_buffer_unref(m_buffer);

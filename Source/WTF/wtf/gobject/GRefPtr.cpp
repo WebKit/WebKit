@@ -64,7 +64,6 @@ template <> void derefGPtr(GMainLoop* ptr)
         g_main_loop_unref(ptr);
 }
 
-#if GLIB_CHECK_VERSION(2, 32, 0)
 template <> GBytes* refGPtr(GBytes* ptr)
 {
     if (ptr)
@@ -77,23 +76,6 @@ template <> void derefGPtr(GBytes* ptr)
     if (ptr)
         g_bytes_unref(ptr);
 }
-
-# else
-
-typedef struct _GBytes {
-    bool fake;
-} GBytes;
-
-template <> GBytes* refGPtr(GBytes* ptr)
-{
-    return ptr;
-}
-
-template <> void derefGPtr(GBytes* ptr)
-{
-}
-
-#endif
 
 template <> GVariant* refGPtr(GVariant* ptr)
 {

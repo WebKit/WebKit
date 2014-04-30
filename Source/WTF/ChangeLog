@@ -1,3 +1,20 @@
+2014-04-30  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK][GStreamer] Remove unnecessary GLIB_CHECK_VERSION #ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=132390
+
+        Reviewed by Philippe Normand.
+
+        Since EFL port use GLib 2.38 and GTK+, 2.33.2, I assume it is OK
+        remove, in GTK+ and GST, the existing glib version guards.
+
+        This code was rollback from r149879 because Qt MIPS used it. But since
+        Qt is gone, it is safe to remove now.
+
+        * wtf/gobject/GRefPtr.cpp:
+        (WTF::refGPtr): Deleted.
+        (WTF::derefGPtr): Deleted.
+
 2014-04-29  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Switch video from GStreamer to Media Foundation.

@@ -102,15 +102,10 @@ static void webkit_video_sink_init(WebKitVideoSink* sink)
 {
     sink->priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, WEBKIT_TYPE_VIDEO_SINK, WebKitVideoSinkPrivate);
     new (sink->priv) WebKitVideoSinkPrivate();
-#if GLIB_CHECK_VERSION(2, 31, 0)
     sink->priv->dataCondition = new GCond;
     g_cond_init(sink->priv->dataCondition);
     sink->priv->bufferMutex = new GMutex;
     g_mutex_init(sink->priv->bufferMutex);
-#else
-    sink->priv->dataCondition = g_cond_new();
-    sink->priv->bufferMutex = g_mutex_new();
-#endif
 
     gst_video_info_init(&sink->priv->info);
 }
@@ -228,22 +223,14 @@ static void webkitVideoSinkDispose(GObject* object)
     WebKitVideoSinkPrivate* priv = sink->priv;
 
     if (priv->dataCondition) {
-#if GLIB_CHECK_VERSION(2, 31, 0)
         g_cond_clear(priv->dataCondition);
         delete priv->dataCondition;
-#else
-        g_cond_free(priv->dataCondition);
-#endif
         priv->dataCondition = 0;
     }
 
     if (priv->bufferMutex) {
-#if GLIB_CHECK_VERSION(2, 31, 0)
         g_mutex_clear(priv->bufferMutex);
         delete priv->bufferMutex;
-#else
-        g_mutex_free(priv->bufferMutex);
-#endif
         priv->bufferMutex = 0;
     }
 
