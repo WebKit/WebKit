@@ -1,3 +1,14 @@
+2014-04-30  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Move removeEquivalentProperties functions to EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=131093
+
+        Reviewed by Csaba Osztrogonác.
+
+        A follow-up to r167967. Use single line declaration for template methods.
+
+        * editing/EditingStyle.h:
+
 2014-04-30  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Enable runtime feature by default

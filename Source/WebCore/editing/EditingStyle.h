@@ -109,8 +109,7 @@ public:
     void removeBlockProperties();
     void removeStyleAddedByNode(Node*);
     void removeStyleConflictingWithStyleOfNode(Node*);
-    template<typename T>
-    void removeEquivalentProperties(const T&);
+    template<typename T> void removeEquivalentProperties(const T&);
     void collapseTextDecorationProperties();
     enum ShouldIgnoreTextOnlyProperties { IgnoreTextOnlyProperties, DoNotIgnoreTextOnlyProperties };
     TriState triStateOfStyle(EditingStyle*) const;
@@ -158,8 +157,7 @@ private:
     void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);
     void setProperty(CSSPropertyID, const String& value, bool important = false);
     void extractFontSizeDelta();
-    template<typename T>
-    TriState triStateOfStyle(T* styleToCompare, ShouldIgnoreTextOnlyProperties) const;
+    template<typename T> TriState triStateOfStyle(T* styleToCompare, ShouldIgnoreTextOnlyProperties) const;
     bool conflictsWithInlineStyleOfElement(StyledElement*, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const;
     void mergeInlineAndImplicitStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude);
     void mergeStyle(const StyleProperties*, CSSPropertyOverrideMode);
