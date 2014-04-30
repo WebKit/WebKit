@@ -103,6 +103,10 @@
 
     UIEdgeInsets _obscuredInsets;
     bool _isChangingObscuredInsetsInteractively;
+
+    UIEdgeInsets _extendedBackgroundExclusionInsets;
+    CALayer *_extendedBackgroundLayer;
+
     BOOL _isAnimatingResize;
     CATransform3D _resizeAnimationTransformAdjustments;
     RetainPtr<UIView> _resizeAnimationView;
@@ -179,9 +183,16 @@
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
-    [_scrollView setBackgroundColor:[UIColor whiteColor]];
 
     [self addSubview:_scrollView.get()];
+
+    {
+        RetainPtr<CALayer> backgroundLayer = [[CALayer alloc] init];
+        _extendedBackgroundLayer = backgroundLayer.get();
+        _extendedBackgroundLayer.frame = bounds;
+        _extendedBackgroundLayer.backgroundColor = cachedCGColor(WebCore::Color(WebCore::Color::white), WebCore::ColorSpaceDeviceRGB);
+        [[self layer] insertSublayer:_extendedBackgroundLayer below:[_scrollView layer]];
+    }
 
     _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration) webView:self]);
     _page = [_contentView page];
@@ -409,16 +420,6 @@
     [_customContentView web_setContentProviderData:data suggestedFilename:suggestedFilename];
 }
 
-// This is a convenience method that will convert _page->pageExtendedBackgroundColor() from a WebCore::Color to a UIColor *.
-- (UIColor *)pageExtendedBackgroundColor
-{
-    WebCore::Color color = _page->pageExtendedBackgroundColor();
-    if (!color.isValid())
-        return nil;
-
-    return [UIColor colorWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)];
-}
-
 static CGFloat contentZoomScale(WKWebView* webView)
 {
     UIView *zoomView;
@@ -434,17 +435,17 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
 - (void)_updateScrollViewBackground
 {
-    UIColor *pageExtendedBackgroundColor = [self pageExtendedBackgroundColor];
+    WebCore::Color color = _page->pageExtendedBackgroundColor();
+    RetainPtr<CGColorRef> cgColor = cachedCGColor(color, WebCore::ColorSpaceDeviceRGB);
 
     CGFloat zoomScale = contentZoomScale(self);
     CGFloat minimumZoomScale = [_scrollView minimumZoomScale];
     if (zoomScale < minimumZoomScale) {
         CGFloat slope = 12;
         CGFloat opacity = std::max(1 - slope * (minimumZoomScale - zoomScale), static_cast<CGFloat>(0));
-        pageExtendedBackgroundColor = [pageExtendedBackgroundColor colorWithAlphaComponent:opacity];
+        cgColor = adoptCF(CGColorCreateCopyWithAlpha(cgColor.get(), opacity));
     }
-
-    [_scrollView setBackgroundColor:pageExtendedBackgroundColor];
+    _extendedBackgroundLayer.backgroundColor = cgColor.get();
 }
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
@@ -717,6 +718,10 @@ static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProx
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = self.bounds;
+
+    CGRect backgroundLayerRect = UIEdgeInsetsInsetRect(bounds, _extendedBackgroundExclusionInsets);
+    _extendedBackgroundLayer.frame = backgroundLayerRect;
+
     if (!_hasStaticMinimumLayoutSize && !_isAnimatingResize)
         setViewportConfigurationMinimumLayoutSize(*_page, bounds.size);
     [_scrollView setFrame:bounds];
@@ -1300,6 +1305,20 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (BOOL)_backgroundExtendsBeyondPage
 {
     return _page->backgroundExtendsBeyondPage();
+}
+
+- (void)_setExtendedBackgroundExclusionInsets:(UIEdgeInsets)extendedBackgroundExclusionInsets
+{
+    if (UIEdgeInsetsEqualToEdgeInsets(extendedBackgroundExclusionInsets, _extendedBackgroundExclusionInsets))
+        return;
+
+    _extendedBackgroundExclusionInsets = extendedBackgroundExclusionInsets;
+    _extendedBackgroundLayer.frame = UIEdgeInsetsInsetRect(self.bounds, _extendedBackgroundExclusionInsets);
+}
+
+- (UIEdgeInsets)_extendedBackgroundExclusionInsets
+{
+    return _extendedBackgroundExclusionInsets;
 }
 
 - (void)_beginInteractiveObscuredInsetsChange

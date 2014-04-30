@@ -1,3 +1,25 @@
+2014-04-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] Add a SPI to exclude the extended background from some areas of WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=132406
+        <rdar://problem/16762197>
+
+        Reviewed by Beth Dakin.
+
+        Move the extended background to a separate layer bellow the UIScrollView.
+
+        The geometry of that layer is then changed based on ExtendedBackgroundExclusionInsets
+        as needed.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView _updateScrollViewBackground]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _setExtendedBackgroundExclusionInsets:]):
+        (-[WKWebView _extendedBackgroundExclusionInsets]):
+        (-[WKWebView pageExtendedBackgroundColor]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Fix build error when building for iOS simulator.
