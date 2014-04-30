@@ -1,3 +1,18 @@
+2014-04-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac, iOS] Support caption activation via JS webkitHasClosedCaptions method
+        https://bugs.webkit.org/show_bug.cgi?id=132320
+
+        Reviewed by Eric Carlson.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video::-webkit-media-text-track-container .hidden): Added.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::configureTextTrackGroup): Added call to
+        new 'updateCaptionsContainer'.
+        (WebCore::HTMLMediaElement::updateCaptionContainer): Added.
+        * html/HTMLMediaElement.h:
+
 2014-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=132363
