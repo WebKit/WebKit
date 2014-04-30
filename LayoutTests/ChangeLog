@@ -1,3 +1,10 @@
+2014-04-30  Alexey Proskuryakov  <ap@apple.com>
+
+        compositing/repaint/repaint-on-layer-grouping-change.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=132385
+
+        * platform/mac/TestExpectations: Marked as such.
+
 2014-04-29  David Hyatt  <hyatt@apple.com>
 
         Fix test up so that it looks the same as it did before my landing in r167965.
