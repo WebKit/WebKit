@@ -34,7 +34,7 @@ use File::Basename;
 use File::Spec;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
-use JSON;
+use JSON::PP;
 use lib $FindBin::Bin;
 use List::Util qw(sum);
 use List::Util qw(max);

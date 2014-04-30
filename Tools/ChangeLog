@@ -1,3 +1,13 @@
+2014-04-29  Stephanie Lewis  <slewis@apple.com>
+
+        <rdar://problem/16765765> Use JSON::PP in perl scripts instead of JSON.
+        
+        Rubber stamped by Jessie Berlin.
+
+        JSON.pm was removed from our tools setup.
+
+        * Scripts/generate-coverage-data:
+
 2014-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         Use LLVM as a backend for the fourth-tier DFG JIT (a.k.a. the FTL JIT)
