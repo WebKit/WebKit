@@ -1081,7 +1081,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // Calling focus() may cause us to lose our renderer. Return true so
             // that our caller doesn't process the event further, but don't set
             // the event as handled.
-            if (!renderer())
+            if (!renderer() || !renderer()->isMenuList())
                 return true;
 
             // Save the selection so it can be compared to the new selection
