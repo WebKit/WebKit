@@ -46,8 +46,8 @@ typedef std::basic_string <char, std::char_traits<char>, TStringAllocator> TStri
 typedef std::basic_ostringstream<char, std::char_traits<char>, TStringAllocator> TStringStream;
 inline TString* NewPoolTString(const char* s)
 {
-  void* memory = GetGlobalPoolAllocator()->allocate(sizeof(TString));
-  return new(memory) TString(s);
+	void* memory = GetGlobalPoolAllocator()->allocate(sizeof(TString));
+	return new(memory) TString(s);
 }
 
 //

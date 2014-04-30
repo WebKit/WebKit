@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -43,14 +43,16 @@ TOutputGLSLBase::TOutputGLSLBase(TInfoSinkBase& objSink,
                                  ShArrayIndexClampingStrategy clampingStrategy,
                                  ShHashFunction64 hashFunction,
                                  NameMap& nameMap,
-                                 TSymbolTable& symbolTable)
+                                 TSymbolTable& symbolTable,
+                                 int shaderVersion)
     : TIntermTraverser(true, true, true),
       mObjSink(objSink),
       mDeclaringVariables(false),
       mClampingStrategy(clampingStrategy),
       mHashFunction(hashFunction),
       mNameMap(nameMap),
-      mSymbolTable(symbolTable)
+      mSymbolTable(symbolTable),
+      mShaderVersion(shaderVersion)
 {
 }
 
@@ -159,8 +161,8 @@ const ConstantUnion* TOutputGLSLBase::writeConstantUnion(const TType& type,
 void TOutputGLSLBase::visitSymbol(TIntermSymbol* node)
 {
     TInfoSinkBase& out = objSink();
-    if (mLoopUnroll.NeedsToReplaceSymbolWithValue(node))
-        out << mLoopUnroll.GetLoopIndexValue(node);
+    if (mLoopUnrollStack.needsToReplaceSymbolWithValue(node))
+        out << mLoopUnrollStack.getLoopIndexValue(node);
     else
         out << hashVariableName(node->getSymbol());
 
@@ -256,7 +258,7 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary* node)
                 const TField* field = structure->fields()[index->getIConst(0)];
 
                 TString fieldName = field->name();
-                if (!mSymbolTable.findBuiltIn(structure->name()))
+                if (!mSymbolTable.findBuiltIn(structure->name(), mShaderVersion))
                     fieldName = hashName(fieldName);
 
                 out << fieldName;
@@ -643,7 +645,8 @@ bool TOutputGLSLBase::visitLoop(Visit visit, TIntermLoop* node)
     TLoopType loopType = node->getType();
     if (loopType == ELoopFor)  // for loop
     {
-        if (!node->getUnrollFlag()) {
+        if (!node->getUnrollFlag())
+        {
             out << "for (";
             if (node->getInit())
                 node->getInit()->traverse(this);
@@ -656,6 +659,18 @@ bool TOutputGLSLBase::visitLoop(Visit visit, TIntermLoop* node)
             if (node->getExpression())
                 node->getExpression()->traverse(this);
             out << ")\n";
+        }
+        else
+        {
+            // Need to put a one-iteration loop here to handle break.
+            TIntermSequence &declSeq =
+                node->getInit()->getAsAggregate()->getSequence();
+            TIntermSymbol *indexSymbol =
+                declSeq[0]->getAsBinaryNode()->getLeft()->getAsSymbolNode();
+            TString name = hashVariableName(indexSymbol->getSymbol());
+            out << "for (int " << name << " = 0; "
+                << name << " < 1; "
+                << "++" << name << ")\n";
         }
     }
     else if (loopType == ELoopWhile)  // while loop
@@ -674,15 +689,15 @@ bool TOutputGLSLBase::visitLoop(Visit visit, TIntermLoop* node)
     // Loop body.
     if (node->getUnrollFlag())
     {
-        TLoopIndexInfo indexInfo;
-        mLoopUnroll.FillLoopIndexInfo(node, indexInfo);
-        mLoopUnroll.Push(indexInfo);
-        while (mLoopUnroll.SatisfiesLoopCondition())
+        out << "{\n";
+        mLoopUnrollStack.push(node);
+        while (mLoopUnrollStack.satisfiesLoopCondition())
         {
             visitCodeBlock(node->getBody());
-            mLoopUnroll.Step();
+            mLoopUnrollStack.step();
         }
-        mLoopUnroll.Pop();
+        mLoopUnrollStack.pop();
+        out << "}\n";
     }
     else
     {
@@ -777,7 +792,7 @@ TString TOutputGLSLBase::hashName(const TString& name)
 
 TString TOutputGLSLBase::hashVariableName(const TString& name)
 {
-    if (mSymbolTable.findBuiltIn(name) != NULL)
+    if (mSymbolTable.findBuiltIn(name, mShaderVersion) != NULL)
         return name;
     return hashName(name);
 }
@@ -785,8 +800,10 @@ TString TOutputGLSLBase::hashVariableName(const TString& name)
 TString TOutputGLSLBase::hashFunctionName(const TString& mangled_name)
 {
     TString name = TFunction::unmangleName(mangled_name);
-    if (mSymbolTable.findBuiltIn(mangled_name) != NULL || name == "main")
-        return name;
+    if (mSymbolTable.findBuiltIn(mangled_name, mShaderVersion) != NULL || name == "main")
+    {
+        return translateTextureFunction(name);
+    }
     return hashName(name);
 }
 

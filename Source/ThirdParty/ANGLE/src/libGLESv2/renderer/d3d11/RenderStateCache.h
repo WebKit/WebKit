@@ -30,8 +30,7 @@ class RenderStateCache
     void initialize(ID3D11Device *device);
     void clear();
 
-    // Increments refcount on the returned blend state, Release() must be called.
-    ID3D11BlendState *getBlendState(gl::Framebuffer *framebuffer, const gl::BlendState &blendState);
+    ID3D11BlendState *getBlendState(const gl::Framebuffer *framebuffer, const gl::BlendState &blendState);
     ID3D11RasterizerState *getRasterizerState(const gl::RasterizerState &rasterState,
                                               bool scissorEnabled, unsigned int depthSize);
     ID3D11DepthStencilState *getDepthStencilState(const gl::DepthStencilState &dsState);

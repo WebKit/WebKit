@@ -194,4 +194,3 @@ IndexRangeCache *StaticIndexBufferInterface::getIndexRangeCache()
 }
 
 }
-

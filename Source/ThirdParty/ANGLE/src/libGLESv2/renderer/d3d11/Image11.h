@@ -34,24 +34,25 @@ class Image11 : public Image
 
     static Image11 *makeImage11(Image *img);
 
-    static void generateMipmap(Image11 *dest, Image11 *src);
+    static void generateMipmap(GLuint clientVersion, Image11 *dest, Image11 *src);
 
     virtual bool isDirty() const;
 
-    virtual bool updateSurface(TextureStorageInterface2D *storage, int level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height);
-    virtual bool updateSurface(TextureStorageInterfaceCube *storage, int face, int level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height);
+    virtual bool copyToStorage(TextureStorageInterface2D *storage, int level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height);
+    virtual bool copyToStorage(TextureStorageInterfaceCube *storage, int face, int level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height);
+    virtual bool copyToStorage(TextureStorageInterface3D *storage, int level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth);
+    virtual bool copyToStorage(TextureStorageInterface2DArray *storage, int level, GLint xoffset, GLint yoffset, GLint arrayLayer, GLsizei width, GLsizei height);
 
-    virtual bool redefine(Renderer *renderer, GLint internalformat, GLsizei width, GLsizei height, bool forceRelease);
+    virtual bool redefine(Renderer *renderer, GLenum target, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, bool forceRelease);
 
-    virtual bool isRenderableFormat() const;
     DXGI_FORMAT getDXGIFormat() const;
     
-    virtual void loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-                  GLint unpackAlignment, const void *input);
-    virtual void loadCompressedData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+    virtual void loadData(GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth,
+                          GLint unpackAlignment, GLenum type, const void *input);
+    virtual void loadCompressedData(GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth,
                                     const void *input);
 
-    virtual void copy(GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height, gl::Framebuffer *source);
+    virtual void copy(GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height, gl::Framebuffer *source);
 
   protected:
     HRESULT map(D3D11_MAP mapType, D3D11_MAPPED_SUBRESOURCE *map);
@@ -60,14 +61,14 @@ class Image11 : public Image
   private:
     DISALLOW_COPY_AND_ASSIGN(Image11);
 
-    ID3D11Texture2D *getStagingTexture();
+    ID3D11Resource *getStagingTexture();
     unsigned int getStagingSubresource();
     void createStagingTexture();
 
     Renderer11 *mRenderer;
 
     DXGI_FORMAT mDXGIFormat;
-    ID3D11Texture2D *mStagingTexture;
+    ID3D11Resource *mStagingTexture;
     unsigned int mStagingSubresource;
 };
 

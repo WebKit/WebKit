@@ -1,6 +1,6 @@
 #include "precompiled.h"
 //
-// Copyright (c) 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2013-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -22,7 +22,7 @@ BufferStorage9::BufferStorage9()
 
 BufferStorage9::~BufferStorage9()
 {
-    delete[] mMemory;
+    SafeDeleteArray(mMemory);
 }
 
 BufferStorage9 *BufferStorage9::makeBufferStorage9(BufferStorage *bufferStorage)
@@ -60,9 +60,27 @@ void BufferStorage9::setData(const void* data, unsigned int size, unsigned int o
     }
 }
 
+void BufferStorage9::copyData(BufferStorage* sourceStorage, unsigned int size,
+                              unsigned int sourceOffset, unsigned int destOffset)
+{
+    BufferStorage9* source = makeBufferStorage9(sourceStorage);
+    if (source)
+    {
+        void* sourceMemory = reinterpret_cast<char*>(source->mMemory) + sourceOffset;
+        void* destMemory = reinterpret_cast<char*>(mMemory) + destOffset;
+
+        memcpy(destMemory, sourceMemory, size);
+    }
+}
+
 void BufferStorage9::clear()
 {
     mSize = 0;
+}
+
+void BufferStorage9::markTransformFeedbackUsage()
+{
+    UNREACHABLE();
 }
 
 unsigned int BufferStorage9::getSize() const
@@ -73,6 +91,24 @@ unsigned int BufferStorage9::getSize() const
 bool BufferStorage9::supportsDirectBinding() const
 {
     return false;
+}
+
+// We do not suppot buffer mapping facility in D3D9
+bool BufferStorage9::isMapped() const
+{
+    UNREACHABLE();
+    return false;
+}
+
+void *BufferStorage9::map(GLbitfield access)
+{
+    UNREACHABLE();
+    return NULL;
+}
+
+void BufferStorage9::unmap()
+{
+    UNREACHABLE();
 }
 
 }

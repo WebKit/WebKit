@@ -11,12 +11,14 @@
 #define LIBGLESV2_RENDERER_VERTEXDATAMANAGER_H_
 
 #include "libGLESv2/Constants.h"
+#include "libGLESv2/VertexAttribute.h"
 #include "common/angleutils.h"
 
 namespace gl
 {
 class VertexAttribute;
 class ProgramBinary;
+struct VertexAttribCurrentValueData;
 }
 
 namespace rx
@@ -31,6 +33,7 @@ struct TranslatedAttribute
     bool active;
 
     const gl::VertexAttribute *attribute;
+    GLenum currentValueType;
     unsigned int offset;
     unsigned int stride;   // 0 means not to advance the read pointer at all
 
@@ -46,7 +49,8 @@ class VertexDataManager
     VertexDataManager(rx::Renderer *renderer);
     virtual ~VertexDataManager();
 
-    GLenum prepareVertexData(const gl::VertexAttribute attribs[], gl::ProgramBinary *programBinary, GLint start, GLsizei count, TranslatedAttribute *outAttribs, GLsizei instances);
+    GLenum prepareVertexData(const gl::VertexAttribute attribs[], const gl::VertexAttribCurrentValueData currentValues[],
+                             gl::ProgramBinary *programBinary, GLint start, GLsizei count, TranslatedAttribute *outAttribs, GLsizei instances);
 
   private:
     DISALLOW_COPY_AND_ASSIGN(VertexDataManager);
@@ -55,7 +59,8 @@ class VertexDataManager
 
     StreamingVertexBufferInterface *mStreamingBuffer;
 
-    float mCurrentValue[gl::MAX_VERTEX_ATTRIBS][4];
+    gl::VertexAttribCurrentValueData mCurrentValue[gl::MAX_VERTEX_ATTRIBS];
+
     StreamingVertexBufferInterface *mCurrentValueBuffer[gl::MAX_VERTEX_ATTRIBS];
     std::size_t mCurrentValueOffsets[gl::MAX_VERTEX_ATTRIBS];
 };

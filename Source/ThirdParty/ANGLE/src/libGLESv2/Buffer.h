@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -35,11 +35,21 @@ class Buffer : public RefCountObject
 
     void bufferData(const void *data, GLsizeiptr size, GLenum usage);
     void bufferSubData(const void *data, GLsizeiptr size, GLintptr offset);
+    void copyBufferSubData(Buffer* source, GLintptr sourceOffset, GLintptr destOffset, GLsizeiptr size);
+    GLvoid *mapRange(GLintptr offset, GLsizeiptr length, GLbitfield access);
+    void unmap();
 
     GLenum usage() const;
+    GLint accessFlags() const;
+    GLboolean mapped() const;
+    GLvoid *mapPointer() const;
+    GLint64 mapOffset() const;
+    GLint64 mapLength() const;
 
     rx::BufferStorage *getStorage() const;
-    unsigned int size() const;
+    GLint64 size() const;
+
+    void markTransformFeedbackUsage();
 
     rx::StaticVertexBufferInterface *getStaticVertexBuffer();
     rx::StaticIndexBufferInterface *getStaticIndexBuffer();
@@ -53,6 +63,11 @@ class Buffer : public RefCountObject
 
     rx::Renderer *mRenderer;
     GLenum mUsage;
+    GLint mAccessFlags;
+    GLboolean mMapped;
+    GLvoid *mMapPointer;
+    GLint64 mMapOffset;
+    GLint64 mMapLength;
 
     rx::BufferStorage *mBufferStorage;
 

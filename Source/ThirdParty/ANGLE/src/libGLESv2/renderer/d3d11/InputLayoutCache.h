@@ -67,7 +67,7 @@ class InputLayoutCache
     };
 
     ID3D11InputLayout *mCurrentIL;
-    unsigned int mCurrentBuffers[gl::MAX_VERTEX_ATTRIBS];
+    ID3D11Buffer *mCurrentBuffers[gl::MAX_VERTEX_ATTRIBS];
     UINT mCurrentVertexStrides[gl::MAX_VERTEX_ATTRIBS];
     UINT mCurrentVertexOffsets[gl::MAX_VERTEX_ATTRIBS];
 

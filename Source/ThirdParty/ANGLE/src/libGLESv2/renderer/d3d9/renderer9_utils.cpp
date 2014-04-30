@@ -9,10 +9,13 @@
 // specific to the D3D9 renderer.
 
 #include "libGLESv2/renderer/d3d9/renderer9_utils.h"
-#include "libGLESv2/mathutil.h"
+#include "common/mathutil.h"
 #include "libGLESv2/Context.h"
 
 #include "common/debug.h"
+
+namespace rx
+{
 
 namespace gl_d3d9
 {
@@ -36,7 +39,7 @@ D3DCMPFUNC ConvertComparison(GLenum comparison)
     return d3dComp;
 }
 
-D3DCOLOR ConvertColor(gl::Color color)
+D3DCOLOR ConvertColor(gl::ColorF color)
 {
     return D3DCOLOR_RGBA(gl::unorm<8>(color.red),
                          gl::unorm<8>(color.green),
@@ -80,6 +83,8 @@ D3DBLENDOP ConvertBlendOp(GLenum blendOp)
       case GL_FUNC_ADD:              d3dBlendOp = D3DBLENDOP_ADD;         break;
       case GL_FUNC_SUBTRACT:         d3dBlendOp = D3DBLENDOP_SUBTRACT;    break;
       case GL_FUNC_REVERSE_SUBTRACT: d3dBlendOp = D3DBLENDOP_REVSUBTRACT; break;
+      case GL_MIN_EXT:               d3dBlendOp = D3DBLENDOP_MIN;         break;
+      case GL_MAX_EXT:               d3dBlendOp = D3DBLENDOP_MAX;         break;
       default: UNREACHABLE();
     }
 
@@ -237,264 +242,6 @@ void ConvertMinFilter(GLenum minFilter, D3DTEXTUREFILTERTYPE *d3dMinFilter, D3DT
     }
 }
 
-D3DFORMAT ConvertRenderbufferFormat(GLenum format)
-{
-    switch (format)
-    {
-      case GL_NONE:                 return D3DFMT_NULL;
-      case GL_RGBA4:
-      case GL_RGB5_A1:
-      case GL_RGBA8_OES:            return D3DFMT_A8R8G8B8;
-      case GL_RGB565:               return D3DFMT_R5G6B5;
-      case GL_RGB8_OES:             return D3DFMT_X8R8G8B8;
-      case GL_DEPTH_COMPONENT16:
-      case GL_STENCIL_INDEX8:       
-      case GL_DEPTH24_STENCIL8_OES: return D3DFMT_D24S8;
-      default: UNREACHABLE();       return D3DFMT_A8R8G8B8;
-    }
-}
-
-D3DMULTISAMPLE_TYPE GetMultisampleTypeFromSamples(GLsizei samples)
-{
-    if (samples <= 1)
-        return D3DMULTISAMPLE_NONE;
-    else
-        return (D3DMULTISAMPLE_TYPE)samples;
-}
-
-}
-
-namespace d3d9_gl
-{
-
-unsigned int GetStencilSize(D3DFORMAT stencilFormat)
-{
-    if (stencilFormat == D3DFMT_INTZ)
-    {
-        return 8;
-    }
-    switch(stencilFormat)
-    {
-      case D3DFMT_D24FS8:
-      case D3DFMT_D24S8:
-        return 8;
-      case D3DFMT_D24X4S4:
-        return 4;
-      case D3DFMT_D15S1:
-        return 1;
-      case D3DFMT_D16_LOCKABLE:
-      case D3DFMT_D32:
-      case D3DFMT_D24X8:
-      case D3DFMT_D32F_LOCKABLE:
-      case D3DFMT_D16:
-        return 0;
-    //case D3DFMT_D32_LOCKABLE:  return 0;   // DirectX 9Ex only
-    //case D3DFMT_S8_LOCKABLE:   return 8;   // DirectX 9Ex only
-      default:
-        return 0;
-    }
-}
-
-unsigned int GetAlphaSize(D3DFORMAT colorFormat)
-{
-    switch (colorFormat)
-    {
-      case D3DFMT_A16B16G16R16F:
-        return 16;
-      case D3DFMT_A32B32G32R32F:
-        return 32;
-      case D3DFMT_A2R10G10B10:
-        return 2;
-      case D3DFMT_A8R8G8B8:
-        return 8;
-      case D3DFMT_A1R5G5B5:
-        return 1;
-      case D3DFMT_X8R8G8B8:
-      case D3DFMT_R5G6B5:
-        return 0;
-      default:
-        return 0;
-    }
-}
-
-GLsizei GetSamplesFromMultisampleType(D3DMULTISAMPLE_TYPE type)
-{
-    if (type == D3DMULTISAMPLE_NONMASKABLE)
-        return 0;
-    else
-        return type;
-}
-
-bool IsFormatChannelEquivalent(D3DFORMAT d3dformat, GLenum format)
-{
-    switch (d3dformat)
-    {
-      case D3DFMT_L8:
-        return (format == GL_LUMINANCE);
-      case D3DFMT_A8L8:
-        return (format == GL_LUMINANCE_ALPHA);
-      case D3DFMT_DXT1:
-        return (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || format == GL_COMPRESSED_RGB_S3TC_DXT1_EXT);
-      case D3DFMT_DXT3:
-        return (format == GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE);
-      case D3DFMT_DXT5:
-        return (format == GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE);
-      case D3DFMT_A8R8G8B8:
-      case D3DFMT_A16B16G16R16F:
-      case D3DFMT_A32B32G32R32F:
-        return (format == GL_RGBA || format == GL_BGRA_EXT);
-      case D3DFMT_X8R8G8B8:
-        return (format == GL_RGB);
-      default:
-        if (d3dformat == D3DFMT_INTZ && gl::IsDepthTexture(format))
-            return true;
-        return false;
-    }
-}
-
-GLenum ConvertBackBufferFormat(D3DFORMAT format)
-{
-    switch (format)
-    {
-      case D3DFMT_A4R4G4B4: return GL_RGBA4;
-      case D3DFMT_A8R8G8B8: return GL_RGBA8_OES;
-      case D3DFMT_A1R5G5B5: return GL_RGB5_A1;
-      case D3DFMT_R5G6B5:   return GL_RGB565;
-      case D3DFMT_X8R8G8B8: return GL_RGB8_OES;
-      default:
-        UNREACHABLE();
-    }
-
-    return GL_RGBA4;
-}
-
-GLenum ConvertDepthStencilFormat(D3DFORMAT format)
-{
-    if (format == D3DFMT_INTZ)
-    {
-        return GL_DEPTH24_STENCIL8_OES;
-    }
-    switch (format)
-    {
-      case D3DFMT_D16:
-      case D3DFMT_D24X8:
-        return GL_DEPTH_COMPONENT16;
-      case D3DFMT_D24S8:
-        return GL_DEPTH24_STENCIL8_OES;
-      case D3DFMT_UNKNOWN:
-        return GL_NONE;
-      default:
-        UNREACHABLE();
-    }
-
-    return GL_DEPTH24_STENCIL8_OES;
-}
-
-GLenum ConvertRenderTargetFormat(D3DFORMAT format)
-{
-    if (format == D3DFMT_INTZ)
-    {
-        return GL_DEPTH24_STENCIL8_OES;
-    }
-    
-    switch (format)
-    {
-      case D3DFMT_A4R4G4B4: return GL_RGBA4;
-      case D3DFMT_A8R8G8B8: return GL_RGBA8_OES;
-      case D3DFMT_A1R5G5B5: return GL_RGB5_A1;
-      case D3DFMT_R5G6B5:   return GL_RGB565;
-      case D3DFMT_X8R8G8B8: return GL_RGB8_OES;
-      case D3DFMT_D16:
-      case D3DFMT_D24X8:
-        return GL_DEPTH_COMPONENT16;
-      case D3DFMT_D24S8:
-        return GL_DEPTH24_STENCIL8_OES;
-      case D3DFMT_UNKNOWN:
-        return GL_NONE;
-      default:
-        UNREACHABLE();
-    }
-
-    return GL_RGBA4;
-}
-
-GLenum GetEquivalentFormat(D3DFORMAT format)
-{
-    if (format == D3DFMT_INTZ)
-        return GL_DEPTH24_STENCIL8_OES;
-    if (format == D3DFMT_NULL)
-        return GL_NONE;
-
-    switch (format)
-    {
-      case D3DFMT_A4R4G4B4:             return GL_RGBA4;
-      case D3DFMT_A8R8G8B8:             return GL_RGBA8_OES;
-      case D3DFMT_A1R5G5B5:             return GL_RGB5_A1;
-      case D3DFMT_R5G6B5:               return GL_RGB565;
-      case D3DFMT_X8R8G8B8:             return GL_RGB8_OES;
-      case D3DFMT_D16:                  return GL_DEPTH_COMPONENT16;
-      case D3DFMT_D24S8:                return GL_DEPTH24_STENCIL8_OES;
-      case D3DFMT_UNKNOWN:              return GL_NONE;
-      case D3DFMT_DXT1:                 return GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-      case D3DFMT_DXT3:                 return GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE;
-      case D3DFMT_DXT5:                 return GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE;
-      case D3DFMT_A32B32G32R32F:        return GL_RGBA32F_EXT;
-      case D3DFMT_A16B16G16R16F:        return GL_RGBA16F_EXT;
-      case D3DFMT_L8:                   return GL_LUMINANCE8_EXT;
-      case D3DFMT_A8L8:                 return GL_LUMINANCE8_ALPHA8_EXT;
-      default:              UNREACHABLE();
-        return GL_NONE;
-    }
-}
-
-}
-
-namespace d3d9
-{
-
-bool IsCompressedFormat(D3DFORMAT surfaceFormat)
-{
-    switch(surfaceFormat)
-    {
-      case D3DFMT_DXT1:
-      case D3DFMT_DXT2:
-      case D3DFMT_DXT3:
-      case D3DFMT_DXT4:
-      case D3DFMT_DXT5:
-        return true;
-      default:
-        return false;
-    }
-}
-
-size_t ComputeRowSize(D3DFORMAT format, unsigned int width)
-{
-    if (format == D3DFMT_INTZ)
-    {
-        return 4 * width;
-    }
-    switch (format)
-    {
-      case D3DFMT_L8:
-          return 1 * width;
-      case D3DFMT_A8L8:
-          return 2 * width;
-      case D3DFMT_X8R8G8B8:
-      case D3DFMT_A8R8G8B8:
-        return 4 * width;
-      case D3DFMT_A16B16G16R16F:
-        return 8 * width;
-      case D3DFMT_A32B32G32R32F:
-        return 16 * width;
-      case D3DFMT_DXT1:
-        return 8 * ((width + 3) / 4);
-      case D3DFMT_DXT3:
-      case D3DFMT_DXT5:
-        return 16 * ((width + 3) / 4);
-      default:
-        UNREACHABLE();
-        return 0;
-    }
 }
 
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -31,6 +31,9 @@ void TranslatorGLSL::translate(TIntermNode* root) {
     // Write GLSL version.
     writeVersion(getShaderType(), root, sink);
 
+    // Write extension behaviour as needed
+    writeExtensionBehavior();
+
     // Write emulated built-in functions if needed.
     getBuiltInFunctionEmulator().OutputEmulatedFunctionDefinition(
         sink, false);
@@ -39,6 +42,23 @@ void TranslatorGLSL::translate(TIntermNode* root) {
     getArrayBoundsClamper().OutputClampingFunctionDefinition(sink);
 
     // Write translated shader.
-    TOutputGLSL outputGLSL(sink, getArrayIndexClampingStrategy(), getHashFunction(), getNameMap(), getSymbolTable());
+    TOutputGLSL outputGLSL(sink, getArrayIndexClampingStrategy(), getHashFunction(), getNameMap(), getSymbolTable(), getShaderVersion());
     root->traverse(&outputGLSL);
+}
+
+void TranslatorGLSL::writeExtensionBehavior() {
+    TInfoSinkBase& sink = getInfoSink().obj;
+    const TExtensionBehavior& extensionBehavior = getExtensionBehavior();
+    for (TExtensionBehavior::const_iterator iter = extensionBehavior.begin();
+         iter != extensionBehavior.end(); ++iter) {
+        if (iter->second == EBhUndefined)
+            continue;
+
+        // For GLSL output, we don't need to emit most extensions explicitly,
+        // but some we need to translate.
+        if (iter->first == "GL_EXT_shader_texture_lod") {
+            sink << "#extension GL_ARB_shader_texture_lod : "
+                 << getBehaviorString(iter->second) << "\n";
+        }
+    }
 }

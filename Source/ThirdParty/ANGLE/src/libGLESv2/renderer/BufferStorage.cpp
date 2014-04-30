@@ -33,8 +33,4 @@ void BufferStorage::updateSerial()
     mSerial = mNextSerial++;
 }
 
-void BufferStorage::markBufferUsage()
-{
-}
-
 }

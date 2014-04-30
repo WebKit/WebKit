@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -12,7 +12,7 @@
 //
 class TConstTraverser : public TIntermTraverser {
 public:
-    TConstTraverser(ConstantUnion* cUnion, bool singleConstParam, TOperator constructType, TInfoSink& sink, TSymbolTable& symTable, TType& t)
+    TConstTraverser(ConstantUnion* cUnion, bool singleConstParam, TOperator constructType, TInfoSink& sink, TType& t)
         : error(false),
           index(0),
           unionArray(cUnion),
@@ -20,10 +20,10 @@ public:
           constructorType(constructType),
           singleConstantParam(singleConstParam),
           infoSink(sink),
-          symbolTable(symTable),
           size(0),
-          isMatrix(false),
-          matrixSize(0) {
+          isDiagonalMatrixInit(false),
+          matrixCols(0),
+          matrixRows(0) {
     }
 
     bool error;
@@ -44,10 +44,10 @@ protected:
     TOperator constructorType;
     bool singleConstantParam;
     TInfoSink& infoSink;
-    TSymbolTable& symbolTable;
     size_t size; // size of the constructor ( 4 for vec4)
-    bool isMatrix;
-    size_t matrixSize; // dimension of the matrix (nominal size and not the instance size)
+    bool isDiagonalMatrixInit;
+    int matrixCols; // columns of the matrix
+    int matrixRows; // rows of the matrix
 };
 
 //
@@ -118,8 +118,9 @@ bool TConstTraverser::visitAggregate(Visit visit, TIntermAggregate* node)
         size = node->getType().getObjectSize();
 
         if (node->getType().isMatrix()) {
-            isMatrix = true;
-            matrixSize = node->getType().getNominalSize();
+            isDiagonalMatrixInit = true;
+            matrixCols = node->getType().getCols();
+            matrixRows = node->getType().getRows();
         }
     }       
 
@@ -136,8 +137,9 @@ bool TConstTraverser::visitAggregate(Visit visit, TIntermAggregate* node)
         singleConstantParam = false;   
         constructorType = EOpNull;
         size = 0;
-        isMatrix = false;
-        matrixSize = 0;
+        isDiagonalMatrixInit = false;
+        matrixCols = 0;
+        matrixRows = 0;
     }
     return false;
 }
@@ -165,10 +167,10 @@ void TConstTraverser::visitConstantUnion(TIntermConstantUnion* node)
         return;
 
     if (!singleConstantParam) {
-        size_t size = node->getType().getObjectSize();
+        size_t objectSize = node->getType().getObjectSize();
     
         ConstantUnion *rightUnionArray = node->getUnionArrayPointer();
-        for (size_t i = 0; i < size; i++) {
+        for (size_t i=0; i < objectSize; i++) {
             if (index >= instanceSize)
                 return;
             leftUnionArray[index] = rightUnionArray[i];
@@ -178,8 +180,8 @@ void TConstTraverser::visitConstantUnion(TIntermConstantUnion* node)
     } else {
         size_t totalSize = index + size;
         ConstantUnion *rightUnionArray = node->getUnionArrayPointer();
-        if (!isMatrix) {
-            size_t count = 0;
+        if (!isDiagonalMatrixInit) {
+            int count = 0;
             for (size_t i = index; i < totalSize; i++) {
                 if (i >= instanceSize)
                     return;
@@ -191,21 +193,25 @@ void TConstTraverser::visitConstantUnion(TIntermConstantUnion* node)
                 if (node->getType().getObjectSize() > 1)
                     count++;
             }
-        } else {  // for matrix constructors
-            size_t count = 0;
-            size_t element = index;
-            for (size_t i = index; i < totalSize; i++) {
-                if (i >= instanceSize)
-                    return;
-                if (element - i == 0 || (i - element) % (matrixSize + 1) == 0 )
-                    leftUnionArray[i] = rightUnionArray[count];
-                else 
-                    leftUnionArray[i].setFConst(0.0f);
+        }
+        else
+        {
+            // for matrix diagonal constructors from a single scalar
+            for (int i = 0, col = 0; col < matrixCols; col++)
+            {
+                for (int row = 0; row < matrixRows; row++, i++)
+                {
+                    if (col == row)
+                    {
+                        leftUnionArray[i] = rightUnionArray[0];
+                    }
+                    else
+                    {
+                        leftUnionArray[i].setFConst(0.0f);
+                    }
 
-                (index)++;
-
-                if (node->getType().getObjectSize() > 1)
-                    count++;                
+                    (index)++;
+                }
             }
         }
     }
@@ -230,12 +236,12 @@ bool TConstTraverser::visitBranch(Visit visit, TIntermBranch* node)
 // Individual functions can be initialized to 0 to skip processing of that
 // type of node.  It's children will still be processed.
 //
-bool TIntermediate::parseConstTree(const TSourceLoc& line, TIntermNode* root, ConstantUnion* unionArray, TOperator constructorType, TSymbolTable& symbolTable, TType t, bool singleConstantParam)
+bool TIntermediate::parseConstTree(const TSourceLoc& line, TIntermNode* root, ConstantUnion* unionArray, TOperator constructorType, TType t, bool singleConstantParam)
 {
     if (root == 0)
         return false;
 
-    TConstTraverser it(unionArray, singleConstantParam, constructorType, infoSink, symbolTable, t);
+    TConstTraverser it(unionArray, singleConstantParam, constructorType, infoSink, t);
 
     root->traverse(&it);
     if (it.error)

@@ -56,6 +56,28 @@ void SafeDeleteArray(T*& resource)
     resource = NULL;
 }
 
+// Provide a less-than function for comparing structs
+// Note: struct memory must be initialized to zero, because of packing gaps
+template <typename T>
+inline bool StructLessThan(const T &a, const T &b)
+{
+    return (memcmp(&a, &b, sizeof(T)) < 0);
+}
+
+// Provide a less-than function for comparing structs
+// Note: struct memory must be initialized to zero, because of packing gaps
+template <typename T>
+inline bool StructEquals(const T &a, const T &b)
+{
+    return (memcmp(&a, &b, sizeof(T)) == 0);
+}
+
+template <typename T>
+inline void StructZero(T *obj)
+{
+    memset(obj, 0, sizeof(T));
+}
+
 #if defined(_MSC_VER)
 #define snprintf _snprintf
 #endif
@@ -66,5 +88,7 @@ void SafeDeleteArray(T*& resource)
 
 #define GL_BGRA4_ANGLEX 0x6ABC
 #define GL_BGR5_A1_ANGLEX 0x6ABD
+#define GL_INT_64_ANGLEX 0x6ABE
+#define GL_STRUCT_ANGLEX 0x6ABF
 
 #endif // COMMON_ANGLEUTILS_H_

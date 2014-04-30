@@ -7,7 +7,11 @@
 // precompiled.h: Precompiled header file for libGLESv2.
 
 #define GL_APICALL
+#include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
 #include <GLES2/gl2.h>
+
+#define GL_GLEXT_PROTOTYPES
 #include <GLES2/gl2ext.h>
 
 #define EGLAPI
@@ -16,6 +20,7 @@
 #include <assert.h>
 #include <cstddef>
 #include <float.h>
+#include <stdint.h>
 #include <intrin.h>
 #include <math.h>
 #include <stdarg.h>
@@ -32,12 +37,15 @@
 #include <unordered_map>
 #include <vector>
 
+#if defined(ANGLE_ENABLE_D3D9)
 #include <d3d9.h>
-#include <d3d11.h>
+#include <D3Dcompiler.h>
+#endif // ANGLE_ENABLE_D3D9
+
+#if defined(ANGLE_ENABLE_D3D11)
+#include <D3D10_1.h>
+#include <D3D11.h>
 #include <dxgi.h>
 #include <dxgi1_2.h>
-#include <d3dcompiler.h>
-
-#ifdef _MSC_VER
-#include <hash_map>
-#endif
+#include <D3Dcompiler.h>
+#endif // ANGLE_ENABLE_D3D11

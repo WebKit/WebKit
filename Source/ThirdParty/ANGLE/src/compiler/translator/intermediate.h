@@ -19,6 +19,7 @@
 #include "GLSLANG/ShaderLang.h"
 
 #include <algorithm>
+#include <queue>
 #include "compiler/translator/Common.h"
 #include "compiler/translator/Types.h"
 #include "compiler/translator/ConstantUnion.h"
@@ -50,11 +51,17 @@ enum TOperator {
     EOpPreDecrement,
 
     EOpConvIntToBool,
+    EOpConvUIntToBool,
     EOpConvFloatToBool,
     EOpConvBoolToFloat,
     EOpConvIntToFloat,
+    EOpConvUIntToFloat,
     EOpConvFloatToInt,
     EOpConvBoolToInt,
+    EOpConvUIntToInt,
+    EOpConvIntToUInt,
+    EOpConvFloatToUInt,
+    EOpConvBoolToUInt,
 
     //
     // binary operations
@@ -86,6 +93,7 @@ enum TOperator {
     EOpIndexDirect,
     EOpIndexIndirect,
     EOpIndexDirectStruct,
+    EOpIndexDirectInterfaceBlock,
 
     EOpVectorSwizzle,
 
@@ -155,6 +163,7 @@ enum TOperator {
     //
 
     EOpConstructInt,
+    EOpConstructUInt,
     EOpConstructBool,
     EOpConstructFloat,
     EOpConstructVec2,
@@ -166,6 +175,9 @@ enum TOperator {
     EOpConstructIVec2,
     EOpConstructIVec3,
     EOpConstructIVec4,
+    EOpConstructUVec2,
+    EOpConstructUVec3,
+    EOpConstructUVec4,
     EOpConstructMat2,
     EOpConstructMat3,
     EOpConstructMat4,
@@ -232,6 +244,10 @@ public:
     virtual bool replaceChildNode(
         TIntermNode *original, TIntermNode *replacement) = 0;
 
+    // For traversing a tree in no particular order, but using
+    // heap memory.
+    virtual void enqueueChildren(std::queue<TIntermNode*> *nodeQueue) const = 0;
+
 protected:
     TSourceLoc line;
 };
@@ -261,18 +277,21 @@ public:
     TBasicType getBasicType() const { return type.getBasicType(); }
     TQualifier getQualifier() const { return type.getQualifier(); }
     TPrecision getPrecision() const { return type.getPrecision(); }
+    int getCols() const { return type.getCols(); }
+    int getRows() const { return type.getRows(); }
     int getNominalSize() const { return type.getNominalSize(); }
+    int getSecondarySize() const { return type.getSecondarySize(); }
     
+    bool isInterfaceBlock() const { return type.isInterfaceBlock(); }
     bool isMatrix() const { return type.isMatrix(); }
     bool isArray()  const { return type.isArray(); }
     bool isVector() const { return type.isVector(); }
     bool isScalar() const { return type.isScalar(); }
+    bool isScalarInt() const { return type.isScalarInt(); }
     const char* getBasicString() const { return type.getBasicString(); }
     const char* getQualifierString() const { return type.getQualifierString(); }
     TString getCompleteString() const { return type.getCompleteString(); }
 
-    int totalRegisterCount() const { return type.totalRegisterCount(); }
-    int elementRegisterCount() const { return type.elementRegisterCount(); }
     int getArraySize() const { return type.getArraySize(); }
 
 protected:
@@ -314,6 +333,8 @@ public:
     void setUnrollFlag(bool flag) { unrollFlag = flag; }
     bool getUnrollFlag() { return unrollFlag; }
 
+    virtual void enqueueChildren(std::queue<TIntermNode*> *nodeQueue) const;
+
 protected:
     TLoopType type;
     TIntermNode* init;  // for-loop initialization
@@ -340,6 +361,8 @@ public:
     TOperator getFlowOp() { return flowOp; }
     TIntermTyped* getExpression() { return expression; }
 
+    virtual void enqueueChildren(std::queue<TIntermNode*> *nodeQueue) const;
+
 protected:
     TOperator flowOp;
     TIntermTyped* expression;  // non-zero except for "return exp;" statements
@@ -354,7 +377,7 @@ public:
     // per process globalpoolallocator, then it causes increased memory usage per compile
     // it is essential to use "symbol = sym" to assign to symbol
     TIntermSymbol(int i, const TString& sym, const TType& t) : 
-            TIntermTyped(t), id(i)  { symbol = sym; originalSymbol = sym; } 
+        TIntermTyped(t), id(i)  { symbol = sym; }
 
     virtual bool hasSideEffects() const { return false; }
 
@@ -362,18 +385,16 @@ public:
     const TString& getSymbol() const { return symbol; }
 
     void setId(int newId) { id = newId; }
-    void setSymbol(const TString& sym) { symbol = sym; }
-
-    const TString& getOriginalSymbol() const { return originalSymbol; }
 
     virtual void traverse(TIntermTraverser*);
     virtual TIntermSymbol* getAsSymbolNode() { return this; }
     virtual bool replaceChildNode(TIntermNode *, TIntermNode *) { return false; }
 
+    virtual void enqueueChildren(std::queue<TIntermNode*> *nodeQueue) const {}
+
 protected:
     int id;
     TString symbol;
-    TString originalSymbol;
 };
 
 class TIntermConstantUnion : public TIntermTyped {
@@ -385,6 +406,7 @@ public:
     ConstantUnion* getUnionArrayPointer() const { return unionArrayPointer; }
     
     int getIConst(size_t index) const { return unionArrayPointer ? unionArrayPointer[index].getIConst() : 0; }
+    unsigned int getUConst(size_t index) const { return unionArrayPointer ? unionArrayPointer[index].getUConst() : 0; }
     float getFConst(size_t index) const { return unionArrayPointer ? unionArrayPointer[index].getFConst() : 0.0f; }
     bool getBConst(size_t index) const { return unionArrayPointer ? unionArrayPointer[index].getBConst() : false; }
 
@@ -393,6 +415,8 @@ public:
     virtual bool replaceChildNode(TIntermNode *, TIntermNode *) { return false; }
 
     TIntermTyped* fold(TOperator, TIntermTyped*, TInfoSink&);
+
+    virtual void enqueueChildren(std::queue<TIntermNode*> *nodeQueue) const {}
 
 protected:
     ConstantUnion *unionArrayPointer;
@@ -440,6 +464,8 @@ public:
     void setAddIndexClamp() { addIndexClamp = true; }
     bool getAddIndexClamp() { return addIndexClamp; }
 
+    virtual void enqueueChildren(std::queue<TIntermNode*> *nodeQueue) const;
+
 protected:
     TIntermTyped* left;
     TIntermTyped* right;
@@ -469,6 +495,8 @@ public:
 
     void setUseEmulatedFunction() { useEmulatedFunction = true; }
     bool getUseEmulatedFunction() { return useEmulatedFunction; }
+
+    virtual void enqueueChildren(std::queue<TIntermNode*> *nodeQueue) const;
 
 protected:
     TIntermTyped* operand;
@@ -514,6 +542,8 @@ public:
     void setUseEmulatedFunction() { useEmulatedFunction = true; }
     bool getUseEmulatedFunction() { return useEmulatedFunction; }
 
+    virtual void enqueueChildren(std::queue<TIntermNode*> *nodeQueue) const;
+
 protected:
     TIntermAggregate(const TIntermAggregate&); // disallow copy constructor
     TIntermAggregate& operator=(const TIntermAggregate&); // disallow assignment operator
@@ -551,6 +581,8 @@ public:
     TIntermNode* getTrueBlock() const { return trueBlock; }
     TIntermNode* getFalseBlock() const { return falseBlock; }
     TIntermSelection* getAsSelectionNode() { return this; }
+
+    virtual void enqueueChildren(std::queue<TIntermNode*> *nodeQueue) const;
 
 protected:
     TIntermTyped* condition;
@@ -630,6 +662,32 @@ protected:
 
     // All the nodes from root to the current node's parent during traversing.
     TVector<TIntermNode *> path;
+};
+
+//
+// For traversing the tree, and computing max depth.
+// Takes a maximum depth limit to prevent stack overflow.
+//
+class TMaxDepthTraverser : public TIntermTraverser
+{
+public:
+    POOL_ALLOCATOR_NEW_DELETE();
+    TMaxDepthTraverser(int depthLimit)
+      : TIntermTraverser(true, true, false, false),
+        depthLimit(depthLimit)
+    {}
+
+    virtual bool visitBinary(Visit visit, TIntermBinary*) { return depthCheck(); }
+    virtual bool visitUnary(Visit visit, TIntermUnary*) { return depthCheck(); }
+    virtual bool visitSelection(Visit visit, TIntermSelection*) { return depthCheck(); }
+    virtual bool visitAggregate(Visit visit, TIntermAggregate*) { return depthCheck(); }
+    virtual bool visitLoop(Visit visit, TIntermLoop*) { return depthCheck(); }
+    virtual bool visitBranch(Visit visit, TIntermBranch*) { return depthCheck(); }
+
+protected:
+    int depthLimit;
+
+    bool depthCheck() const { return maxDepth < depthLimit; }
 };
 
 #endif // __INTERMEDIATE_H

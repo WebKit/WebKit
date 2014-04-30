@@ -10,16 +10,16 @@
 #ifndef LIBGLESV2_RENDERER_RENDERER9_UTILS_H
 #define LIBGLESV2_RENDERER_RENDERER9_UTILS_H
 
-#include "libGLESv2/utilities.h"
+#include "libGLESv2/angletypes.h"
 
-const D3DFORMAT D3DFMT_INTZ = ((D3DFORMAT)(MAKEFOURCC('I','N','T','Z')));
-const D3DFORMAT D3DFMT_NULL = ((D3DFORMAT)(MAKEFOURCC('N','U','L','L')));
+namespace rx
+{
 
 namespace gl_d3d9
 {
 
 D3DCMPFUNC ConvertComparison(GLenum comparison);
-D3DCOLOR ConvertColor(gl::Color color);
+D3DCOLOR ConvertColor(gl::ColorF color);
 D3DBLEND ConvertBlendFunc(GLenum blend);
 D3DBLENDOP ConvertBlendOp(GLenum blendOp);
 D3DSTENCILOP ConvertStencilOp(GLenum stencilOp);
@@ -29,31 +29,11 @@ D3DCUBEMAP_FACES ConvertCubeFace(GLenum cubeFace);
 DWORD ConvertColorMask(bool red, bool green, bool blue, bool alpha);
 D3DTEXTUREFILTERTYPE ConvertMagFilter(GLenum magFilter, float maxAnisotropy);
 void ConvertMinFilter(GLenum minFilter, D3DTEXTUREFILTERTYPE *d3dMinFilter, D3DTEXTUREFILTERTYPE *d3dMipFilter, float maxAnisotropy);
-D3DFORMAT ConvertRenderbufferFormat(GLenum format);
-D3DMULTISAMPLE_TYPE GetMultisampleTypeFromSamples(GLsizei samples);
-
-}
-
-namespace d3d9_gl
-{
-
-GLuint GetAlphaSize(D3DFORMAT colorFormat);
-GLuint GetStencilSize(D3DFORMAT stencilFormat);
-
-GLsizei GetSamplesFromMultisampleType(D3DMULTISAMPLE_TYPE type);
-
-bool IsFormatChannelEquivalent(D3DFORMAT d3dformat, GLenum format);
-GLenum ConvertBackBufferFormat(D3DFORMAT format);
-GLenum ConvertDepthStencilFormat(D3DFORMAT format);
-GLenum ConvertRenderTargetFormat(D3DFORMAT format);
-GLenum GetEquivalentFormat(D3DFORMAT format);
 
 }
 
 namespace d3d9
 {
-bool IsCompressedFormat(D3DFORMAT format);
-size_t ComputeRowSize(D3DFORMAT format, unsigned int width);
 
 inline bool isDeviceLostError(HRESULT errorCode)
 {
@@ -67,6 +47,8 @@ inline bool isDeviceLostError(HRESULT errorCode)
       default:
         return false;
     }
+}
+
 }
 
 }

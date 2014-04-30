@@ -17,27 +17,16 @@ namespace rx
 class FenceImpl
 {
   public:
-    FenceImpl() : mStatus(GL_FALSE), mCondition(GL_NONE) { };
+    FenceImpl() { };
     virtual ~FenceImpl() { };
 
-    virtual GLboolean isFence() = 0;
-    virtual void setFence(GLenum condition) = 0;
-    virtual GLboolean testFence() = 0;
-    virtual void finishFence() = 0;
-    virtual void getFenceiv(GLenum pname, GLint *params) = 0;
-
-  protected:
-    void setStatus(GLboolean status) { mStatus = status; }
-    GLboolean getStatus() const { return mStatus; }
-
-    void setCondition(GLuint condition) { mCondition = condition; }
-    GLuint getCondition() const { return mCondition; }
+    virtual bool isSet() const = 0;
+    virtual void set() = 0;
+    virtual bool test(bool flushCommandBuffer) = 0;
+    virtual bool hasError() const = 0;
 
   private:
     DISALLOW_COPY_AND_ASSIGN(FenceImpl);
-
-    GLboolean mStatus;
-    GLenum mCondition;
 };
 
 }

@@ -34,6 +34,7 @@ class SwapChain11 : public SwapChain
 
     virtual ID3D11Texture2D *getDepthStencilTexture();
     virtual ID3D11DepthStencilView *getDepthStencil();
+    virtual ID3D11ShaderResourceView *getDepthStencilShaderResource();
 
     EGLint getWidth() const { return mWidth; }
     EGLint getHeight() const { return mHeight; }
@@ -66,6 +67,7 @@ class SwapChain11 : public SwapChain
 
     ID3D11Texture2D *mDepthStencilTexture;
     ID3D11DepthStencilView *mDepthStencilDSView;
+    ID3D11ShaderResourceView *mDepthStencilSRView;
 
     ID3D11Buffer *mQuadVB;
     ID3D11SamplerState *mPassThroughSampler;

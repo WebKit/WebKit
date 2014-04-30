@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2012-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,8 +10,9 @@
 #define LIBGLESV2_RENDERER_RENDERER9_H_
 
 #include "common/angleutils.h"
-#include "libGLESv2/mathutil.h"
-#include "libGLESv2/renderer/ShaderCache.h"
+#include "common/mathutil.h"
+#include "libGLESv2/renderer/d3d/HLSLCompiler.h"
+#include "libGLESv2/renderer/d3d9/ShaderCache.h"
 #include "libGLESv2/renderer/d3d9/VertexDeclarationCache.h"
 #include "libGLESv2/renderer/Renderer.h"
 #include "libGLESv2/renderer/RenderTarget.h"
@@ -27,6 +28,7 @@ class VertexDataManager;
 class IndexDataManager;
 class StreamingIndexBufferInterface;
 struct TranslatedAttribute;
+class Blit9;
 
 class Renderer9 : public Renderer
 {
@@ -57,22 +59,14 @@ class Renderer9 : public Renderer
     IDirect3DPixelShader9 *createPixelShader(const DWORD *function, size_t length);
     HRESULT createVertexBuffer(UINT Length, DWORD Usage, IDirect3DVertexBuffer9 **ppVertexBuffer);
     HRESULT createIndexBuffer(UINT Length, DWORD Usage, D3DFORMAT Format, IDirect3DIndexBuffer9 **ppIndexBuffer);
-#if 0
-    void *createTexture2D();
-    void *createTextureCube();
-    void *createQuery();
-    void *createIndexBuffer();
-    void *createVertexbuffer();
-
-    // state setup
-    void applyShaders();
-    void applyConstants();
-#endif
+    virtual void generateSwizzle(gl::Texture *texture);
     virtual void setSamplerState(gl::SamplerType type, int index, const gl::SamplerState &sampler);
     virtual void setTexture(gl::SamplerType type, int index, gl::Texture *texture);
 
+    virtual bool setUniformBuffers(const gl::Buffer *vertexUniformBuffers[], const gl::Buffer *fragmentUniformBuffers[]);
+
     virtual void setRasterizerState(const gl::RasterizerState &rasterState);
-    virtual void setBlendState(gl::Framebuffer *framebuffer, const gl::BlendState &blendState, const gl::Color &blendColor,
+    virtual void setBlendState(gl::Framebuffer *framebuffer, const gl::BlendState &blendState, const gl::ColorF &blendColor,
                                unsigned int sampleMask);
     virtual void setDepthStencilState(const gl::DepthStencilState &depthStencilState, int stencilRef,
                                       int stencilBackRef, bool frontFaceCCW);
@@ -82,14 +76,18 @@ class Renderer9 : public Renderer
                              bool ignoreViewport);
 
     virtual bool applyRenderTarget(gl::Framebuffer *frameBuffer);
-    virtual void applyShaders(gl::ProgramBinary *programBinary);
-    virtual void applyUniforms(gl::ProgramBinary *programBinary, gl::UniformArray *uniformArray);
+    virtual void applyShaders(gl::ProgramBinary *programBinary, bool rasterizerDiscard, bool transformFeedbackActive, const gl::VertexFormat inputLayout[]);
+    virtual void applyUniforms(const gl::ProgramBinary &programBinary);
     virtual bool applyPrimitiveType(GLenum primitiveType, GLsizei elementCount);
-    virtual GLenum applyVertexBuffer(gl::ProgramBinary *programBinary, gl::VertexAttribute vertexAttributes[], GLint first, GLsizei count, GLsizei instances);
+    virtual GLenum applyVertexBuffer(gl::ProgramBinary *programBinary, const gl::VertexAttribute vertexAttributes[], gl::VertexAttribCurrentValueData currentValues[],
+                                     GLint first, GLsizei count, GLsizei instances);
     virtual GLenum applyIndexBuffer(const GLvoid *indices, gl::Buffer *elementArrayBuffer, GLsizei count, GLenum mode, GLenum type, TranslatedIndexData *indexInfo);
 
-    virtual void drawArrays(GLenum mode, GLsizei count, GLsizei instances);
-    virtual void drawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, gl::Buffer *elementArrayBuffer, const TranslatedIndexData &indexInfo, GLsizei instances);
+    virtual void applyTransformFeedbackBuffers(gl::Buffer *transformFeedbackBuffers[], GLintptr offsets[]);
+
+    virtual void drawArrays(GLenum mode, GLsizei count, GLsizei instances, bool transformFeedbackActive);
+    virtual void drawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices,
+                              gl::Buffer *elementArrayBuffer, const TranslatedIndexData &indexInfo, GLsizei instances);
 
     virtual void clear(const gl::ClearParameters &clearParams, gl::Framebuffer *frameBuffer);
 
@@ -108,14 +106,20 @@ class Renderer9 : public Renderer
     virtual GUID getAdapterIdentifier() const;
 
     virtual bool getBGRATextureSupport() const;
-    virtual bool getDXT1TextureSupport();
-    virtual bool getDXT3TextureSupport();
-    virtual bool getDXT5TextureSupport();
-    virtual bool getEventQuerySupport();
-    virtual bool getFloat32TextureSupport(bool *filtering, bool *renderable);
-    virtual bool getFloat16TextureSupport(bool *filtering, bool *renderable);
-    virtual bool getLuminanceTextureSupport();
-    virtual bool getLuminanceAlphaTextureSupport();
+    virtual bool getDXT1TextureSupport() const;
+    virtual bool getDXT3TextureSupport() const;
+    virtual bool getDXT5TextureSupport() const;
+    virtual bool getEventQuerySupport() const;
+    virtual bool getFloat32TextureSupport() const;
+    virtual bool getFloat32TextureFilteringSupport() const;
+    virtual bool getFloat32TextureRenderingSupport() const;
+    virtual bool getFloat16TextureSupport() const;
+    virtual bool getFloat16TextureFilteringSupport() const;
+    virtual bool getFloat16TextureRenderingSupport() const;
+    virtual bool getRGB565TextureSupport() const;
+    virtual bool getLuminanceTextureSupport() const;
+    virtual bool getLuminanceAlphaTextureSupport() const;
+    virtual bool getRGTextureSupport() const;
     virtual unsigned int getMaxVertexTextureImageUnits() const;
     virtual unsigned int getMaxCombinedTextureImageUnits() const;
     virtual unsigned int getReservedVertexUniformVectors() const;
@@ -123,61 +127,90 @@ class Renderer9 : public Renderer
     virtual unsigned int getMaxVertexUniformVectors() const;
     virtual unsigned int getMaxFragmentUniformVectors() const;
     virtual unsigned int getMaxVaryingVectors() const;
+    virtual unsigned int getMaxVertexShaderUniformBuffers() const;
+    virtual unsigned int getMaxFragmentShaderUniformBuffers() const;
+    virtual unsigned int getReservedVertexUniformBuffers() const;
+    virtual unsigned int getReservedFragmentUniformBuffers() const;
+    virtual unsigned int getMaxTransformFeedbackBuffers() const;
+    virtual unsigned int getMaxTransformFeedbackSeparateComponents() const;
+    virtual unsigned int getMaxTransformFeedbackInterleavedComponents() const;
+    virtual unsigned int getMaxUniformBufferSize() const;
     virtual bool getNonPower2TextureSupport() const;
     virtual bool getDepthTextureSupport() const;
     virtual bool getOcclusionQuerySupport() const;
     virtual bool getInstancingSupport() const;
     virtual bool getTextureFilterAnisotropySupport() const;
+    virtual bool getPBOSupport() const;
     virtual float getTextureMaxAnisotropy() const;
     virtual bool getShareHandleSupport() const;
     virtual bool getDerivativeInstructionSupport() const;
     virtual bool getPostSubBufferSupport() const;
+    virtual int getMaxRecommendedElementsIndices() const;
+    virtual int getMaxRecommendedElementsVertices() const;
 
     virtual int getMajorShaderModel() const;
     virtual float getMaxPointSize() const;
     virtual int getMaxViewportDimension() const;
     virtual int getMaxTextureWidth() const;
     virtual int getMaxTextureHeight() const;
+    virtual int getMaxTextureDepth() const;
+    virtual int getMaxTextureArrayLayers() const;
     virtual bool get32BitIndexSupport() const;
     DWORD getCapsDeclTypes() const;
     virtual int getMinSwapInterval() const;
     virtual int getMaxSwapInterval() const;
 
     virtual GLsizei getMaxSupportedSamples() const;
+    virtual GLsizei getMaxSupportedFormatSamples(GLenum internalFormat) const;
+    virtual GLsizei getNumSampleCounts(GLenum internalFormat) const;
+    virtual void getSampleCounts(GLenum internalFormat, GLsizei bufSize, GLint *params) const;
     int getNearestSupportedSamples(D3DFORMAT format, int requested) const;
     
     virtual unsigned int getMaxRenderTargets() const;
 
-    D3DFORMAT ConvertTextureInternalFormat(GLint internalformat);
+    D3DFORMAT ConvertTextureInternalFormat(GLenum internalformat);
 
     // Pixel operations
     virtual bool copyToRenderTarget(TextureStorageInterface2D *dest, TextureStorageInterface2D *source);
     virtual bool copyToRenderTarget(TextureStorageInterfaceCube *dest, TextureStorageInterfaceCube *source);
+    virtual bool copyToRenderTarget(TextureStorageInterface3D *dest, TextureStorageInterface3D *source);
+    virtual bool copyToRenderTarget(TextureStorageInterface2DArray *dest, TextureStorageInterface2DArray *source);
 
     virtual bool copyImage(gl::Framebuffer *framebuffer, const gl::Rectangle &sourceRect, GLenum destFormat,
                            GLint xoffset, GLint yoffset, TextureStorageInterface2D *storage, GLint level);
     virtual bool copyImage(gl::Framebuffer *framebuffer, const gl::Rectangle &sourceRect, GLenum destFormat,
                            GLint xoffset, GLint yoffset, TextureStorageInterfaceCube *storage, GLenum target, GLint level);
+    virtual bool copyImage(gl::Framebuffer *framebuffer, const gl::Rectangle &sourceRect, GLenum destFormat,
+                           GLint xoffset, GLint yoffset, GLint zOffset, TextureStorageInterface3D *storage, GLint level);
+    virtual bool copyImage(gl::Framebuffer *framebuffer, const gl::Rectangle &sourceRect, GLenum destFormat,
+                           GLint xoffset, GLint yoffset, GLint zOffset, TextureStorageInterface2DArray *storage, GLint level);
 
     virtual bool blitRect(gl::Framebuffer *readTarget, const gl::Rectangle &readRect, gl::Framebuffer *drawTarget, const gl::Rectangle &drawRect,
-                          bool blitRenderTarget, bool blitDepthStencil);
-    virtual void readPixels(gl::Framebuffer *framebuffer, GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type,
-                            GLsizei outputPitch, bool packReverseRowOrder, GLint packAlignment, void* pixels);
+                          const gl::Rectangle *scissor, bool blitRenderTarget, bool blitDepth, bool blitStencil, GLenum filter);
+    virtual void readPixels(gl::Framebuffer *framebuffer, GLint x, GLint y, GLsizei width, GLsizei height, GLenum format,
+                            GLenum type, GLuint outputPitch, const gl::PixelPackState &pack, void* pixels);
 
     // RenderTarget creation
     virtual RenderTarget *createRenderTarget(SwapChain *swapChain, bool depth);
-    virtual RenderTarget *createRenderTarget(int width, int height, GLenum format, GLsizei samples, bool depth);
+    virtual RenderTarget *createRenderTarget(int width, int height, GLenum format, GLsizei samples);
 
     // Shader operations
-    virtual ShaderExecutable *loadExecutable(const void *function, size_t length, rx::ShaderType type);
-    virtual ShaderExecutable *compileToExecutable(gl::InfoLog &infoLog, const char *shaderHLSL, rx::ShaderType type, D3DWorkaroundType workaround);
+    virtual ShaderExecutable *loadExecutable(const void *function, size_t length, rx::ShaderType type,
+                                             const std::vector<gl::LinkedVarying> &transformFeedbackVaryings,
+                                             bool separatedOutputBuffers);
+    virtual ShaderExecutable *compileToExecutable(gl::InfoLog &infoLog, const char *shaderHLSL, rx::ShaderType type,
+                                                  const std::vector<gl::LinkedVarying> &transformFeedbackVaryings,
+                                                  bool separatedOutputBuffers, D3DWorkaroundType workaround);
+    virtual UniformStorage *createUniformStorage(size_t storageSize);
 
     // Image operations
     virtual Image *createImage();
     virtual void generateMipmap(Image *dest, Image *source);
     virtual TextureStorage *createTextureStorage2D(SwapChain *swapChain);
-    virtual TextureStorage *createTextureStorage2D(int levels, GLenum internalformat, GLenum usage, bool forceRenderable, GLsizei width, GLsizei height);
-    virtual TextureStorage *createTextureStorageCube(int levels, GLenum internalformat, GLenum usage, bool forceRenderable, int size);
+    virtual TextureStorage *createTextureStorage2D(GLenum internalformat, bool renderTarget, GLsizei width, GLsizei height, int levels);
+    virtual TextureStorage *createTextureStorageCube(GLenum internalformat, bool renderTarget, int size, int levels);
+    virtual TextureStorage *createTextureStorage3D(GLenum internalformat, bool renderTarget, GLsizei width, GLsizei height, GLsizei depth, int levels);
+    virtual TextureStorage *createTextureStorage2DArray(GLenum internalformat, bool renderTarget, GLsizei width, GLsizei height, GLsizei depth, int levels);
 
     // Buffer creation
     virtual VertexBuffer *createVertexBuffer();
@@ -188,26 +221,33 @@ class Renderer9 : public Renderer
     virtual QueryImpl *createQuery(GLenum type);
     virtual FenceImpl *createFence();
 
+    // Buffer-to-texture and Texture-to-buffer copies
+    virtual bool supportsFastCopyBufferToTexture(GLenum internalFormat) const;
+    virtual bool fastCopyBufferToTexture(const gl::PixelUnpackState &unpack, unsigned int offset, RenderTarget *destRenderTarget,
+                                         GLenum destinationFormat, GLenum sourcePixelsType, const gl::Box &destArea);
+
     // D3D9-renderer specific methods
     bool boxFilter(IDirect3DSurface9 *source, IDirect3DSurface9 *dest);
 
     D3DPOOL getTexturePool(DWORD usage) const;
 
     virtual bool getLUID(LUID *adapterLuid) const;
+    virtual GLenum getNativeTextureFormat(GLenum internalFormat) const;
+    virtual rx::VertexConversionType getVertexConversionType(const gl::VertexFormat &vertexFormat) const;
+    virtual GLenum getVertexComponentType(const gl::VertexFormat &vertexFormat) const;
 
   private:
     DISALLOW_COPY_AND_ASSIGN(Renderer9);
 
     void deinitialize();
 
-    void applyUniformnfv(gl::Uniform *targetUniform, const GLfloat *v);
-    void applyUniformniv(gl::Uniform *targetUniform, const GLint *v);
-    void applyUniformnbv(gl::Uniform *targetUniform, const GLint *v);
+    void applyUniformnfv(gl::LinkedUniform *targetUniform, const GLfloat *v);
+    void applyUniformniv(gl::LinkedUniform *targetUniform, const GLint *v);
+    void applyUniformnbv(gl::LinkedUniform *targetUniform, const GLint *v);
 
     void drawLineLoop(GLsizei count, GLenum type, const GLvoid *indices, int minIndex, gl::Buffer *elementArrayBuffer);
     void drawIndexedPoints(GLsizei count, GLenum type, const GLvoid *indices, int minIndex, gl::Buffer *elementArrayBuffer);
 
-    void getMultiSampleSupport(D3DFORMAT format, bool *multiSampleArray);
     bool copyToRenderTarget(IDirect3DSurface9 *dest, IDirect3DSurface9 *source, bool fromManaged);
     gl::Renderbuffer *getNullColorbuffer(gl::Renderbuffer *depthbuffer);
 
@@ -232,7 +272,9 @@ class Renderer9 : public Renderer
     IDirect3DDevice9 *mDevice;
     IDirect3DDevice9Ex *mDeviceEx;  // Might be null if D3D9Ex is not supported.
 
-    Blit *mBlit;
+    HLSLCompiler mCompiler;
+
+    Blit9 *mBlit;
 
     HWND mDeviceWindow;
 
@@ -256,6 +298,8 @@ class Renderer9 : public Renderer
 
     bool mDepthTextureSupport;
 
+    bool mRGB565TextureSupport;
+
     bool mFloat32TextureSupport;
     bool mFloat32FilterSupport;
     bool mFloat32RenderSupport;
@@ -271,8 +315,18 @@ class Renderer9 : public Renderer
     bool mLuminanceTextureSupport;
     bool mLuminanceAlphaTextureSupport;
 
-    std::map<D3DFORMAT, bool *> mMultiSampleSupport;
-    GLsizei mMaxSupportedSamples;
+    bool mRGTextureSupport;
+
+    struct MultisampleSupportInfo
+    {
+        bool supportedSamples[D3DMULTISAMPLE_16_SAMPLES + 1];
+        unsigned int maxSupportedSamples;
+    };
+    typedef std::map<D3DFORMAT, MultisampleSupportInfo> MultisampleSupportMap;
+    MultisampleSupportMap mMultiSampleSupport;
+    unsigned int mMaxSupportedSamples;
+
+    MultisampleSupportInfo getMultiSampleSupport(D3DFORMAT format);
 
     // current render target states
     unsigned int mAppliedRenderTargetSerial;
@@ -308,7 +362,7 @@ class Renderer9 : public Renderer
 
     bool mForceSetBlendState;
     gl::BlendState mCurBlendState;
-    gl::Color mCurBlendColor;
+    gl::ColorF mCurBlendColor;
     GLuint mCurSampleMask;
 
     // Currently applied sampler states
@@ -323,7 +377,8 @@ class Renderer9 : public Renderer
     unsigned int mCurPixelTextureSerials[gl::MAX_TEXTURE_IMAGE_UNITS];
 
     unsigned int mAppliedIBSerial;
-    unsigned int mAppliedProgramBinarySerial;
+    IDirect3DVertexShader9 *mAppliedVertexShader;
+    IDirect3DPixelShader9 *mAppliedPixelShader;
     
     rx::dx_VertexConstants mVertexConstants;
     rx::dx_PixelConstants mPixelConstants;

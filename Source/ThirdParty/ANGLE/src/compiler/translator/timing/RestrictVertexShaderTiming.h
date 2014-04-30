@@ -7,8 +7,6 @@
 #ifndef COMPILER_TIMING_RESTRICT_VERTEX_SHADER_TIMING_H_
 #define COMPILER_TIMING_RESTRICT_VERTEX_SHADER_TIMING_H_
 
-#include "GLSLANG/ShaderLang.h"
-
 #include "compiler/translator/intermediate.h"
 #include "compiler/translator/InfoSink.h"
 

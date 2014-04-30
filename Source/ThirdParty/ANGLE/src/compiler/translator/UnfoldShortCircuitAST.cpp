@@ -69,7 +69,7 @@ void UnfoldShortCircuitAST::updateTree()
         // In AST traversing, a parent is visited before its children.
         // After we replace a node, if an immediate child is to
         // be replaced, we need to make sure we don't update the replaced
-    // node; instead, we update the replacement node.
+	// node; instead, we update the replacement node.
         for (size_t jj = ii + 1; jj < replacements.size(); ++jj)
         {
             NodeUpdateEntry& entry2 = replacements[jj];

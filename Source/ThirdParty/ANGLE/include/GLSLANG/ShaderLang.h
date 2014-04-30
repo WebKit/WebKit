@@ -36,8 +36,8 @@ extern "C" {
 #endif
 
 // Version number for shader translation API.
-// It is incremented everytime the API changes.
-#define ANGLE_SH_VERSION 112
+// It is incremented every time the API changes.
+#define ANGLE_SH_VERSION 123
 
 //
 // The names of the following enums have been derived by replacing GL prefix
@@ -88,6 +88,7 @@ typedef enum {
 typedef enum {
   SH_NONE           = 0,
   SH_INT            = 0x1404,
+  SH_UNSIGNED_INT   = 0x1405,
   SH_FLOAT          = 0x1406,
   SH_FLOAT_VEC2     = 0x8B50,
   SH_FLOAT_VEC3     = 0x8B51,
@@ -95,6 +96,9 @@ typedef enum {
   SH_INT_VEC2       = 0x8B53,
   SH_INT_VEC3       = 0x8B54,
   SH_INT_VEC4       = 0x8B55,
+  SH_UNSIGNED_INT_VEC2 = 0x8DC6,
+  SH_UNSIGNED_INT_VEC3 = 0x8DC7,
+  SH_UNSIGNED_INT_VEC4 = 0x8DC8,
   SH_BOOL           = 0x8B56,
   SH_BOOL_VEC2      = 0x8B57,
   SH_BOOL_VEC3      = 0x8B58,
@@ -102,10 +106,29 @@ typedef enum {
   SH_FLOAT_MAT2     = 0x8B5A,
   SH_FLOAT_MAT3     = 0x8B5B,
   SH_FLOAT_MAT4     = 0x8B5C,
+  SH_FLOAT_MAT2x3   = 0x8B65,
+  SH_FLOAT_MAT2x4   = 0x8B66,
+  SH_FLOAT_MAT3x2   = 0x8B67,
+  SH_FLOAT_MAT3x4   = 0x8B68,
+  SH_FLOAT_MAT4x2   = 0x8B69,
+  SH_FLOAT_MAT4x3   = 0x8B6A,
   SH_SAMPLER_2D     = 0x8B5E,
+  SH_SAMPLER_3D     = 0x8B5F,
   SH_SAMPLER_CUBE   = 0x8B60,
   SH_SAMPLER_2D_RECT_ARB = 0x8B63,
-  SH_SAMPLER_EXTERNAL_OES = 0x8D66
+  SH_SAMPLER_EXTERNAL_OES = 0x8D66,
+  SH_SAMPLER_2D_ARRAY   = 0x8DC1,
+  SH_INT_SAMPLER_2D     = 0x8DCA,
+  SH_INT_SAMPLER_3D     = 0x8DCB,
+  SH_INT_SAMPLER_CUBE   = 0x8DCC,
+  SH_INT_SAMPLER_2D_ARRAY = 0x8DCF,
+  SH_UNSIGNED_INT_SAMPLER_2D     = 0x8DD2,
+  SH_UNSIGNED_INT_SAMPLER_3D     = 0x8DD3,
+  SH_UNSIGNED_INT_SAMPLER_CUBE   = 0x8DD4,
+  SH_UNSIGNED_INT_SAMPLER_2D_ARRAY = 0x8DD7,
+  SH_SAMPLER_2D_SHADOW       = 0x8B62,
+  SH_SAMPLER_CUBE_SHADOW     = 0x8DC5,
+  SH_SAMPLER_2D_ARRAY_SHADOW = 0x8DC4
 } ShDataType;
 
 typedef enum {
@@ -116,19 +139,24 @@ typedef enum {
 } ShPrecisionType;
 
 typedef enum {
-  SH_INFO_LOG_LENGTH             =  0x8B84,
-  SH_OBJECT_CODE_LENGTH          =  0x8B88,  // GL_SHADER_SOURCE_LENGTH
-  SH_ACTIVE_UNIFORMS             =  0x8B86,
-  SH_ACTIVE_UNIFORM_MAX_LENGTH   =  0x8B87,
-  SH_ACTIVE_ATTRIBUTES           =  0x8B89,
-  SH_ACTIVE_ATTRIBUTE_MAX_LENGTH =  0x8B8A,
-  SH_VARYINGS                    =  0x8BBB,
-  SH_VARYING_MAX_LENGTH          =  0x8BBC,
-  SH_MAPPED_NAME_MAX_LENGTH      =  0x6000,
-  SH_NAME_MAX_LENGTH             =  0x6001,
-  SH_HASHED_NAME_MAX_LENGTH      =  0x6002,
-  SH_HASHED_NAMES_COUNT          =  0x6003,
-  SH_ACTIVE_UNIFORMS_ARRAY       =  0x6004
+  SH_INFO_LOG_LENGTH                = 0x8B84,
+  SH_OBJECT_CODE_LENGTH             = 0x8B88,  // GL_SHADER_SOURCE_LENGTH
+  SH_ACTIVE_UNIFORMS                = 0x8B86,
+  SH_ACTIVE_UNIFORM_MAX_LENGTH      = 0x8B87,
+  SH_ACTIVE_ATTRIBUTES              = 0x8B89,
+  SH_ACTIVE_ATTRIBUTE_MAX_LENGTH    = 0x8B8A,
+  SH_VARYINGS                       = 0x8BBB,
+  SH_VARYING_MAX_LENGTH             = 0x8BBC,
+  SH_MAPPED_NAME_MAX_LENGTH         = 0x6000,
+  SH_NAME_MAX_LENGTH                = 0x6001,
+  SH_HASHED_NAME_MAX_LENGTH         = 0x6002,
+  SH_HASHED_NAMES_COUNT             = 0x6003,
+  SH_ACTIVE_UNIFORMS_ARRAY          = 0x6004,
+  SH_SHADER_VERSION                 = 0x6005,
+  SH_ACTIVE_INTERFACE_BLOCKS_ARRAY  = 0x6006,
+  SH_ACTIVE_OUTPUT_VARIABLES_ARRAY  = 0x6007,
+  SH_ACTIVE_ATTRIBUTES_ARRAY        = 0x6008,
+  SH_ACTIVE_VARYINGS_ARRAY          = 0x6009,
 } ShShaderInfo;
 
 // Compile options.
@@ -140,13 +168,17 @@ typedef enum {
   SH_VARIABLES               = 0x0008,
   SH_LINE_DIRECTIVES         = 0x0010,
   SH_SOURCE_PATH             = 0x0020,
-  SH_MAP_LONG_VARIABLE_NAMES = 0x0040,
-  SH_UNROLL_FOR_LOOP_WITH_INTEGER_INDEX = 0x0080,
+  SH_UNROLL_FOR_LOOP_WITH_INTEGER_INDEX = 0x0040,
+  // If a sampler array index happens to be a loop index,
+  //   1) if its type is integer, unroll the loop.
+  //   2) if its type is float, fail the shader compile.
+  // This is to work around a mac driver bug.
+  SH_UNROLL_FOR_LOOP_WITH_SAMPLER_ARRAY_INDEX = 0x0080,
 
   // This is needed only as a workaround for certain OpenGL driver bugs.
   SH_EMULATE_BUILT_IN_FUNCTIONS = 0x0100,
 
-  // This is an experimental flag to enforce restrictions that aim to prevent
+  // This is an experimental flag to enforce restrictions that aim to prevent 
   // timing attacks.
   // It generates compilation errors for shaders that could expose sensitive
   // texture information via the timing channel.
@@ -252,10 +284,17 @@ typedef struct
     int ARB_texture_rectangle;
     int EXT_draw_buffers;
     int EXT_frag_depth;
+    int EXT_shader_texture_lod;
 
     // Set to 1 if highp precision is supported in the fragment language.
     // Default is 0.
     int FragmentPrecisionHigh;
+
+    // GLSL ES 3.0 constants.
+    int MaxVertexOutputVectors;
+    int MaxFragmentInputVectors;
+    int MinProgramTexelOffset;
+    int MaxProgramTexelOffset;
 
     // Name Hashing.
     // Set a 64 bit hash function to enable user-defined name hashing.
@@ -280,7 +319,7 @@ COMPILER_EXPORT void ShInitBuiltInResources(ShBuiltInResources* resources);
 
 //
 // ShHandle held by but opaque to the driver.  It is allocated,
-// managed, and de-allocated by the compiler. It's contents
+// managed, and de-allocated by the compiler. It's contents 
 // are defined by and used by the compiler.
 //
 // If handle creation fails, 0 will be returned.
@@ -364,6 +403,7 @@ COMPILER_EXPORT int ShCompile(
 // SH_HASHED_NAME_MAX_LENGTH: the max length of a hashed name including the
 //                            null termination character.
 // SH_HASHED_NAMES_COUNT: the number of hashed names from the latest compile.
+// SH_SHADER_VERSION: the version of the shader language
 //
 // params: Requested parameter
 COMPILER_EXPORT void ShGetInfo(const ShHandle handle,

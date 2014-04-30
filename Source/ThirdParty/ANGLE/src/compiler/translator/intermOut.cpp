@@ -1,10 +1,11 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
 
 #include "compiler/translator/localintermediate.h"
+#include "compiler/translator/SymbolTable.h"
 
 //
 // Two purposes:
@@ -43,10 +44,10 @@ TString TType::getCompleteString() const
         stream << getQualifierString() << " " << getPrecisionString() << " ";
     if (array)
         stream << "array[" << getArraySize() << "] of ";
-    if (matrix)
-        stream << static_cast<int>(size) << "X" << static_cast<int>(size) << " matrix of ";
-    else if (size > 1)
-        stream << static_cast<int>(size) << "-component vector of ";
+    if (isMatrix())
+        stream << getCols() << "X" << getRows() << " matrix of ";
+    else if (isVector())
+        stream << getNominalSize() << "-component vector of ";
 
     stream << getBasicString();
     return stream.str();
@@ -103,6 +104,7 @@ bool TOutputTraverser::visitBinary(Visit visit, TIntermBinary* node)
         case EOpIndexDirect:   out << "direct index";   break;
         case EOpIndexIndirect: out << "indirect index"; break;
         case EOpIndexDirectStruct:   out << "direct index for structure";   break;
+        case EOpIndexDirectInterfaceBlock: out << "direct index for interface block"; break;
         case EOpVectorSwizzle: out << "vector swizzle"; break;
 
         case EOpAdd:    out << "add";                     break;
@@ -152,11 +154,16 @@ bool TOutputTraverser::visitUnary(Visit visit, TIntermUnary* node)
         case EOpPreDecrement:   out << "Pre-Decrement";        break;
 
         case EOpConvIntToBool:  out << "Convert int to bool";  break;
+        case EOpConvUIntToBool: out << "Convert uint to bool"; break;
         case EOpConvFloatToBool:out << "Convert float to bool";break;
         case EOpConvBoolToFloat:out << "Convert bool to float";break;
         case EOpConvIntToFloat: out << "Convert int to float"; break;
+        case EOpConvUIntToFloat:out << "Convert uint to float";break;
         case EOpConvFloatToInt: out << "Convert float to int"; break;
         case EOpConvBoolToInt:  out << "Convert bool to int";  break;
+        case EOpConvIntToUInt:  out << "Convert int to uint";  break;
+        case EOpConvFloatToUInt:out << "Convert float to uint";break;
+        case EOpConvBoolToUInt: out << "Convert bool to uint"; break;
 
         case EOpRadians:        out << "radians";              break;
         case EOpDegrees:        out << "degrees";              break;
@@ -182,9 +189,9 @@ bool TOutputTraverser::visitUnary(Visit visit, TIntermUnary* node)
 
         case EOpLength:         out << "length";               break;
         case EOpNormalize:      out << "normalize";            break;
-            //  case EOpDPdx:           out << "dPdx";                 break;               
-            //  case EOpDPdy:           out << "dPdy";                 break;   
-            //  case EOpFwidth:         out << "fwidth";               break;                   
+            //	case EOpDPdx:           out << "dPdx";                 break;               
+            //	case EOpDPdy:           out << "dPdy";                 break;   
+            //	case EOpFwidth:         out << "fwidth";               break;                   
 
         case EOpAny:            out << "any";                  break;
         case EOpAll:            out << "all";                  break;
@@ -232,6 +239,10 @@ bool TOutputTraverser::visitAggregate(Visit visit, TIntermAggregate* node)
         case EOpConstructIVec2: out << "Construct ivec2"; break;
         case EOpConstructIVec3: out << "Construct ivec3"; break;
         case EOpConstructIVec4: out << "Construct ivec4"; break;
+        case EOpConstructUInt:  out << "Construct uint";  break;
+        case EOpConstructUVec2: out << "Construct uvec2"; break;
+        case EOpConstructUVec3: out << "Construct uvec3"; break;
+        case EOpConstructUVec4: out << "Construct uvec4"; break;
         case EOpConstructMat2:  out << "Construct mat2";  break;
         case EOpConstructMat3:  out << "Construct mat3";  break;
         case EOpConstructMat4:  out << "Construct mat4";  break;
@@ -337,6 +348,10 @@ void TOutputTraverser::visitConstantUnion(TIntermConstantUnion* node)
             case EbtInt:
                 out << node->getUnionArrayPointer()[i].getIConst();
                 out << " (const int)\n";
+                break;
+            case EbtUInt:
+                out << node->getUnionArrayPointer()[i].getUConst();
+                out << " (const uint)\n";
                 break;
             default:
                 out.message(EPrefixInternalError, node->getLine(), "Unknown constant");

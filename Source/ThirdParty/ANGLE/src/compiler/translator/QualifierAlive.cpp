@@ -12,7 +12,7 @@ public:
     {
     }
 
-    bool wasFound() { return found; }
+	bool wasFound() { return found; }
 
 protected:
     bool found;

@@ -31,14 +31,8 @@ ShaderExecutable9::ShaderExecutable9(const void *function, size_t length, IDirec
 
 ShaderExecutable9::~ShaderExecutable9()
 {
-    if (mVertexExecutable)
-    {
-        mVertexExecutable->Release();
-    }
-    if (mPixelExecutable)
-    {
-        mPixelExecutable->Release();
-    }
+    SafeRelease(mVertexExecutable);
+    SafeRelease(mPixelExecutable);
 }
 
 ShaderExecutable9 *ShaderExecutable9::makeShaderExecutable9(ShaderExecutable *executable)

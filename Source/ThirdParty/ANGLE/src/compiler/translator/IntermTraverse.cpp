@@ -45,7 +45,7 @@ void TIntermBinary::traverse(TIntermTraverser *it)
     //
     if (it->preVisit)
         visit = it->visitBinary(PreVisit, this);
-    
+
     //
     // Visit the children, in the right order.
     //
@@ -53,11 +53,11 @@ void TIntermBinary::traverse(TIntermTraverser *it)
     {
         it->incrementDepth(this);
 
-        if (it->rightToLeft) 
+        if (it->rightToLeft)
         {
             if (right)
                 right->traverse(it);
-            
+
             if (it->inVisit)
                 visit = it->visitBinary(InVisit, this);
 
@@ -68,7 +68,7 @@ void TIntermBinary::traverse(TIntermTraverser *it)
         {
             if (left)
                 left->traverse(it);
-            
+
             if (it->inVisit)
                 visit = it->visitBinary(InVisit, this);
 
@@ -102,7 +102,7 @@ void TIntermUnary::traverse(TIntermTraverser *it)
         operand->traverse(it);
         it->decrementDepth();
     }
-    
+
     if (visit && it->postVisit)
         it->visitUnary(PostVisit, this);
 }
@@ -113,10 +113,10 @@ void TIntermUnary::traverse(TIntermTraverser *it)
 void TIntermAggregate::traverse(TIntermTraverser *it)
 {
     bool visit = true;
-    
+
     if (it->preVisit)
         visit = it->visitAggregate(PreVisit, this);
-    
+
     if (visit)
     {
         it->incrementDepth(this);
@@ -147,7 +147,7 @@ void TIntermAggregate::traverse(TIntermTraverser *it)
                 }
             }
         }
-        
+
         it->decrementDepth();
     }
 
@@ -164,7 +164,7 @@ void TIntermSelection::traverse(TIntermTraverser *it)
 
     if (it->preVisit)
         visit = it->visitSelection(PreVisit, this);
-    
+
     if (visit) {
         it->incrementDepth(this);
         if (it->rightToLeft) {
@@ -196,7 +196,7 @@ void TIntermLoop::traverse(TIntermTraverser *it)
 
     if (it->preVisit)
         visit = it->visitLoop(PreVisit, this);
-    
+
     if (visit)
     {
         it->incrementDepth(this);
@@ -246,7 +246,7 @@ void TIntermBranch::traverse(TIntermTraverser *it)
 
     if (it->preVisit)
         visit = it->visitBranch(PreVisit, this);
-    
+
     if (visit && expression) {
         it->incrementDepth(this);
         expression->traverse(it);

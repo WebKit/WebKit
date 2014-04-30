@@ -8,19 +8,27 @@
 #define COMPILER_TRANSLATORHLSL_H_
 
 #include "compiler/translator/ShHandle.h"
-#include "compiler/translator/Uniform.h"
+#include "common/shadervars.h"
 
 class TranslatorHLSL : public TCompiler {
 public:
     TranslatorHLSL(ShShaderType type, ShShaderSpec spec, ShShaderOutput output);
 
     virtual TranslatorHLSL *getAsTranslatorHLSL() { return this; }
-    const sh::ActiveUniforms &getUniforms() { return mActiveUniforms; }
+    const std::vector<gl::Uniform> &getUniforms() { return mActiveUniforms; }
+    const std::vector<gl::InterfaceBlock> &getInterfaceBlocks() const { return mActiveInterfaceBlocks; }
+    const std::vector<gl::Attribute> &getOutputVariables() { return mActiveOutputVariables; }
+    const std::vector<gl::Attribute> &getAttributes() { return mActiveAttributes; }
+    const std::vector<gl::Varying> &getVaryings() { return mActiveVaryings; }
 
 protected:
     virtual void translate(TIntermNode* root);
 
-    sh::ActiveUniforms mActiveUniforms;
+    std::vector<gl::Uniform> mActiveUniforms;
+    std::vector<gl::InterfaceBlock> mActiveInterfaceBlocks;
+    std::vector<gl::Attribute> mActiveOutputVariables;
+    std::vector<gl::Attribute> mActiveAttributes;
+    std::vector<gl::Varying> mActiveVaryings;
     ShShaderOutput mOutputType;
 };
 

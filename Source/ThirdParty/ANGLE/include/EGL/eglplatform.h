@@ -25,7 +25,7 @@
 */
 
 /* Platform-specific types and definitions for egl.h
- * $Revision: 12306 $ on $Date: 2010-08-25 09:51:28 -0700 (Wed, 25 Aug 2010) $
+ * $Revision: 12306 $ on $Date: 2010-08-25 12:51:28 -0400 (Wed, 25 Aug 2010) $
  *
  * Adopters may modify khrplatform.h and this file to suit their platform.
  * You are encouraged to submit all modifications to the Khronos group so that
@@ -83,13 +83,7 @@ typedef int   EGLNativeDisplayType;
 typedef void *EGLNativeWindowType;
 typedef void *EGLNativePixmapType;
 
-#elif defined(WL_EGL_PLATFORM)
-
-typedef struct wl_display     *EGLNativeDisplayType;
-typedef struct wl_egl_pixmap  *EGLNativePixmapType;
-typedef struct wl_egl_window  *EGLNativeWindowType;
-
-#elif defined(__unix__) && !defined(ANDROID)
+#elif defined(__unix__)
 
 /* X11 (tentative)  */
 #include <X11/Xlib.h>
@@ -98,14 +92,6 @@ typedef struct wl_egl_window  *EGLNativeWindowType;
 typedef Display *EGLNativeDisplayType;
 typedef Pixmap   EGLNativePixmapType;
 typedef Window   EGLNativeWindowType;
-
-#elif defined(ANDROID)
-
-struct egl_native_pixmap_t;
-
-typedef struct ANativeWindow*           EGLNativeWindowType;
-typedef struct egl_native_pixmap_t*     EGLNativePixmapType;
-typedef void*                           EGLNativeDisplayType;
 
 #else
 #error "Platform not recognized"

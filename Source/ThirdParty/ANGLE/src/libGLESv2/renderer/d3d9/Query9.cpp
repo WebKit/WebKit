@@ -24,11 +24,7 @@ Query9::Query9(rx::Renderer9 *renderer, GLenum type) : QueryImpl(type)
 
 Query9::~Query9()
 {
-    if (mQuery)
-    {
-        mQuery->Release();
-        mQuery = NULL;
-    }
+    SafeRelease(mQuery);
 }
 
 void Query9::begin()

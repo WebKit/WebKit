@@ -272,8 +272,8 @@ bool Extensions3DOpenGLES::supportsExtension(const String& name)
             m_glIsVertexArrayOES = reinterpret_cast<PFNGLISVERTEXARRAYOESPROC>(eglGetProcAddress("glIsVertexArrayOES"));
             m_supportsOESvertexArrayObject = true;
         } else if (!m_supportsIMGMultisampledRenderToTexture && name == "GL_IMG_multisampled_render_to_texture") {
-            m_glFramebufferTexture2DMultisampleIMG = reinterpret_cast<PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMG>(eglGetProcAddress("glFramebufferTexture2DMultisampleIMG"));
-            m_glRenderbufferStorageMultisampleIMG = reinterpret_cast<PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMG>(eglGetProcAddress("glRenderbufferStorageMultisampleIMG"));
+            m_glFramebufferTexture2DMultisampleIMG = reinterpret_cast<PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMGPROC>(eglGetProcAddress("glFramebufferTexture2DMultisampleIMG"));
+            m_glRenderbufferStorageMultisampleIMG = reinterpret_cast<PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMGPROC>(eglGetProcAddress("glRenderbufferStorageMultisampleIMG"));
             m_supportsIMGMultisampledRenderToTexture = true;
         } else if (!m_glGetGraphicsResetStatusEXT && name == "GL_EXT_robustness") {
             m_glGetGraphicsResetStatusEXT = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSEXTPROC>(eglGetProcAddress("glGetGraphicsResetStatusEXT"));

@@ -13,6 +13,10 @@ int GetSortOrder(ShDataType type)
 {
     switch (type) {
         case SH_FLOAT_MAT4:
+        case SH_FLOAT_MAT2x4:
+        case SH_FLOAT_MAT3x4:
+        case SH_FLOAT_MAT4x2:
+        case SH_FLOAT_MAT4x3:
             return 0;
         case SH_FLOAT_MAT2:
             return 1;
@@ -21,6 +25,8 @@ int GetSortOrder(ShDataType type)
         case SH_BOOL_VEC4:
             return 2;
         case SH_FLOAT_MAT3:
+        case SH_FLOAT_MAT2x3:
+        case SH_FLOAT_MAT3x2:
             return 3;
         case SH_FLOAT_VEC3:
         case SH_INT_VEC3:
@@ -50,11 +56,17 @@ int VariablePacker::GetNumComponentsPerRow(ShDataType type)
     switch (type) {
         case SH_FLOAT_MAT4:
         case SH_FLOAT_MAT2:
+        case SH_FLOAT_MAT2x4:
+        case SH_FLOAT_MAT3x4:
+        case SH_FLOAT_MAT4x2:
+        case SH_FLOAT_MAT4x3:
         case SH_FLOAT_VEC4:
         case SH_INT_VEC4:
         case SH_BOOL_VEC4:
             return 4;
         case SH_FLOAT_MAT3:
+        case SH_FLOAT_MAT2x3:
+        case SH_FLOAT_MAT3x2:
         case SH_FLOAT_VEC3:
         case SH_INT_VEC3:
         case SH_BOOL_VEC3:
@@ -81,8 +93,14 @@ int VariablePacker::GetNumRows(ShDataType type)
 {
     switch (type) {
         case SH_FLOAT_MAT4:
+        case SH_FLOAT_MAT2x4:
+        case SH_FLOAT_MAT3x4:
+        case SH_FLOAT_MAT4x3:
+        case SH_FLOAT_MAT4x2:
             return 4;
         case SH_FLOAT_MAT3:
+        case SH_FLOAT_MAT2x3:
+        case SH_FLOAT_MAT3x2:
             return 3;
         case SH_FLOAT_MAT2:
             return 2;
@@ -196,6 +214,14 @@ bool VariablePacker::CheckVariablesWithinPackingLimits(int maxVectors, const TVa
     topNonFullRow_ = 0;
     bottomNonFullRow_ = maxRows_ - 1;
     TVariableInfoList variables(in_variables);
+
+    // Check whether each variable fits in the available vectors.
+    for (size_t i = 0; i < variables.size(); i++) {
+        const TVariableInfo& variable = variables[i];
+        if (variable.size > maxVectors / GetNumRows(variable.type)) {
+            return false;
+        }
+    }
 
     // As per GLSL 1.017 Appendix A, Section 7 variables are packed in specific
     // order by type, then by size of array, largest first.

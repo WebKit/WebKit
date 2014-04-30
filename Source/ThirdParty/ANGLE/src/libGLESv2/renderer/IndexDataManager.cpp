@@ -13,7 +13,7 @@
 
 #include "libGLESv2/Buffer.h"
 #include "libGLESv2/main.h"
-#include "libGLESv2/utilities.h"
+#include "libGLESv2/formatutils.h"
 #include "libGLESv2/renderer/IndexBuffer.h"
 
 namespace rx
@@ -138,7 +138,7 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
           default: UNREACHABLE(); alignedOffset = false;
         }
 
-        unsigned int typeSize = gl::ComputeTypeSize(type);
+        unsigned int typeSize = gl::GetTypeBytes(type);
 
         // check for integer overflows
         if (static_cast<unsigned int>(count) > (std::numeric_limits<unsigned int>::max() / typeSize) ||
@@ -167,7 +167,6 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
     {
         indexBuffer = streamingBuffer;
         streamOffset = offset;
-        storage->markBufferUsage();
 
         if (!buffer->getIndexRangeCache()->findRange(type, offset, count, &translated->minIndex,
                                                      &translated->maxIndex, NULL))
@@ -180,10 +179,11 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
     else if (staticBuffer && staticBuffer->getBufferSize() != 0 && staticBuffer->getIndexType() == type && alignedOffset)
     {
         indexBuffer = staticBuffer;
+
         if (!staticBuffer->getIndexRangeCache()->findRange(type, offset, count, &translated->minIndex,
                                                            &translated->maxIndex, &streamOffset))
         {
-            streamOffset = (offset / gl::ComputeTypeSize(type)) * gl::ComputeTypeSize(destinationIndexType);
+            streamOffset = (offset / gl::GetTypeBytes(type)) * gl::GetTypeBytes(destinationIndexType);
             computeRange(type, indices, count, &translated->minIndex, &translated->maxIndex);
             staticBuffer->getIndexRangeCache()->addRange(type, offset, count, translated->minIndex,
                                                          translated->maxIndex, streamOffset);
@@ -198,7 +198,7 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
             if (staticBuffer->getBufferSize() == 0 && alignedOffset)
             {
                 indexBuffer = staticBuffer;
-                convertCount = storage->getSize() / gl::ComputeTypeSize(type);
+                convertCount = storage->getSize() / gl::GetTypeBytes(type);
             }
             else
             {
@@ -213,7 +213,7 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
             return GL_INVALID_OPERATION;
         }
 
-        unsigned int indexTypeSize = gl::ComputeTypeSize(destinationIndexType);
+        unsigned int indexTypeSize = gl::GetTypeBytes(destinationIndexType);
         if (convertCount > std::numeric_limits<unsigned int>::max() / indexTypeSize)
         {
             ERR("Reserving %u indicies of %u bytes each exceeds the maximum buffer size.", convertCount, indexTypeSize);
@@ -246,7 +246,7 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
 
         if (staticBuffer)
         {
-            streamOffset = (offset / gl::ComputeTypeSize(type)) * gl::ComputeTypeSize(destinationIndexType);
+            streamOffset = (offset / gl::GetTypeBytes(type)) * gl::GetTypeBytes(destinationIndexType);
             staticBuffer->getIndexRangeCache()->addRange(type, offset, count, translated->minIndex,
                                                          translated->maxIndex, streamOffset);
         }
@@ -255,12 +255,12 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
     translated->storage = directStorage ? storage : NULL;
     translated->indexBuffer = indexBuffer->getIndexBuffer();
     translated->serial = directStorage ? storage->getSerial() : indexBuffer->getSerial();
-    translated->startIndex = streamOffset / gl::ComputeTypeSize(destinationIndexType);
+    translated->startIndex = streamOffset / gl::GetTypeBytes(destinationIndexType);
     translated->startOffset = streamOffset;
 
     if (buffer)
     {
-        buffer->promoteStaticUsage(count * gl::ComputeTypeSize(type));
+        buffer->promoteStaticUsage(count * gl::GetTypeBytes(type));
     }
 
     return GL_NO_ERROR;

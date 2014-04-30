@@ -34,10 +34,10 @@ class Config;
 class Surface
 {
   public:
-    Surface(Display *display, const egl::Config *config, HWND window, EGLint postSubBufferSupported);
+    Surface(Display *display, const egl::Config *config, HWND window, EGLint fixedSize, EGLint width, EGLint height, EGLint postSubBufferSupported);
     Surface(Display *display, const egl::Config *config, HANDLE shareHandle, EGLint width, EGLint height, EGLenum textureFormat, EGLenum textureTarget);
 
-    ~Surface();
+    virtual ~Surface();
 
     bool initialize();
     void release();
@@ -63,6 +63,8 @@ class Surface
 
     virtual void setBoundTexture(gl::Texture2D *texture);
     virtual gl::Texture2D *getBoundTexture() const;
+
+    EGLint isFixedSize() const;
 
 private:
     DISALLOW_COPY_AND_ASSIGN(Surface);
@@ -99,6 +101,7 @@ private:
 //  EGLenum vgColorSpace;          // Color space for OpenVG
     EGLint mSwapInterval;
     EGLint mPostSubBufferSupported;
+    EGLint mFixedSize;
     
     bool mSwapIntervalDirty;
     gl::Texture2D *mTexture;

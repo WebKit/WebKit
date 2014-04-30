@@ -25,21 +25,15 @@ class VertexBuffer11 : public VertexBuffer
 
     static VertexBuffer11 *makeVertexBuffer11(VertexBuffer *vetexBuffer);
 
-    virtual bool storeVertexAttributes(const gl::VertexAttribute &attrib, GLint start, GLsizei count, GLsizei instances,
-                                       unsigned int offset);
-    virtual bool storeRawData(const void* data, unsigned int size, unsigned int offset);
+    virtual bool storeVertexAttributes(const gl::VertexAttribute &attrib, const gl::VertexAttribCurrentValueData &currentValue,
+                                       GLint start, GLsizei count, GLsizei instances, unsigned int offset);
 
     virtual bool getSpaceRequired(const gl::VertexAttribute &attrib, GLsizei count, GLsizei instances,
                                   unsigned int *outSpaceRequired) const;
 
-    virtual bool requiresConversion(const gl::VertexAttribute &attrib) const;
-
     virtual unsigned int getBufferSize() const;
     virtual bool setBufferSize(unsigned int size);
     virtual bool discard();
-
-    unsigned int getVertexSize(const gl::VertexAttribute &attrib) const;
-    DXGI_FORMAT getDXGIFormat(const gl::VertexAttribute &attrib) const;
 
     ID3D11Buffer *getBuffer() const;
 
@@ -51,22 +45,6 @@ class VertexBuffer11 : public VertexBuffer
     ID3D11Buffer *mBuffer;
     unsigned int mBufferSize;
     bool mDynamicUsage;
-
-    typedef void (*VertexConversionFunction)(const void *, unsigned int, unsigned int, void *);
-    struct VertexConverter
-    {
-        VertexConversionFunction conversionFunc;
-        bool identity;
-        DXGI_FORMAT dxgiFormat;
-        unsigned int outputElementSize;
-    };
-
-    enum { NUM_GL_VERTEX_ATTRIB_TYPES = 6 };
-
-    // This table is used to generate mAttributeTypes.
-    static const VertexConverter mPossibleTranslations[NUM_GL_VERTEX_ATTRIB_TYPES][2][4]; // [GL types as enumerated by typeIndex()][normalized][size - 1]
-
-    static const VertexConverter &getVertexConversion(const gl::VertexAttribute &attribute);
 };
 
 }

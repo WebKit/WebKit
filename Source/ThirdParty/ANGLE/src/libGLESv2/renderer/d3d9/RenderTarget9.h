@@ -21,10 +21,13 @@ class RenderTarget9 : public RenderTarget
 {
   public:
     RenderTarget9(Renderer *renderer, IDirect3DSurface9 *surface);
-    RenderTarget9(Renderer *renderer, GLsizei width, GLsizei height, GLenum format, GLsizei samples);
+    RenderTarget9(Renderer *renderer, GLsizei width, GLsizei height, GLenum internalFormat, GLsizei samples);
     virtual ~RenderTarget9();
 
     static RenderTarget9 *makeRenderTarget9(RenderTarget *renderTarget);
+
+    virtual void invalidate(GLint x, GLint y, GLsizei width, GLsizei height);
+
     IDirect3DSurface9 *getSurface();
 
   private:

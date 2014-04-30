@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -51,7 +51,6 @@ public:
     virtual bool isVariable() const { return false; }
     void setUniqueId(int id) { uniqueId = id; }
     int getUniqueId() const { return uniqueId; }
-    virtual void dump(TInfoSink &infoSink) const = 0;
     void relateToExtension(const TString& ext) { extension = ext; }
     const TString& getExtension() const { return extension; }
 
@@ -82,8 +81,6 @@ public:
     const TType& getType() const { return type; }
     bool isUserType() const { return userType; }
     void setQualifier(TQualifier qualifier) { type.setQualifier(qualifier); }
-
-    virtual void dump(TInfoSink &infoSink) const;
 
     ConstantUnion* getConstPointer()
     { 
@@ -120,7 +117,7 @@ private:
 //
 struct TParameter {
     TString *name;
-    TType* type;
+    TType *type;
 };
 
 //
@@ -166,8 +163,6 @@ public:
     size_t getParamCount() const { return parameters.size(); }  
     const TParameter& getParam(size_t i) const { return parameters[i]; }
 
-    virtual void dump(TInfoSink &infoSink) const;
-
 private:
     DISALLOW_COPY_AND_ASSIGN(TFunction);
 
@@ -179,6 +174,18 @@ private:
     bool defined;
 };
 
+//
+// Interface block name sub-symbol
+//
+class TInterfaceBlockName : public TSymbol
+{
+public:
+    TInterfaceBlockName(const TString *name)
+        : TSymbol(name)
+    {}
+
+    virtual ~TInterfaceBlockName() {}
+};
 
 class TSymbolTableLevel {
 public:
@@ -192,6 +199,8 @@ public:
 
     bool insert(const TString &name, TSymbol &symbol)
     {
+        symbol.setUniqueId(++uniqueId);
+
         //
         // returning true means symbol was added to the table
         //
@@ -214,27 +223,26 @@ public:
             return (*it).second;
     }
 
-    const_iterator begin() const
-    {
-        return level.begin();
-    }
-
-    const_iterator end() const
-    {
-        return level.end();
-    }
-
     void relateToOperator(const char* name, TOperator op);
     void relateToExtension(const char* name, const TString& ext);
-    void dump(TInfoSink &infoSink) const;
 
 protected:
     tLevel level;
+    static int uniqueId;     // for unique identification in code generation
+};
+
+enum ESymbolLevel
+{
+    COMMON_BUILTINS = 0,
+    ESSL1_BUILTINS = 1,
+    ESSL3_BUILTINS = 2,
+    LAST_BUILTIN_LEVEL = ESSL3_BUILTINS,
+    GLOBAL_LEVEL = 3
 };
 
 class TSymbolTable {
 public:
-    TSymbolTable() : uniqueId(0)
+    TSymbolTable()
     {
         //
         // The symbol table cannot be used until push() is called, but
@@ -242,6 +250,7 @@ public:
         // that the symbol table has not been preloaded with built-ins.
         //
     }
+
     ~TSymbolTable();
 
     //
@@ -249,9 +258,9 @@ public:
     // 'push' calls, so that built-ins are at level 0 and the shader
     // globals are at level 1.
     //
-    bool isEmpty() { return table.size() == 0; }
-    bool atBuiltInLevel() { return table.size() == 1; }
-    bool atGlobalLevel() { return table.size() <= 2; }
+    bool isEmpty() { return table.empty(); }
+    bool atBuiltInLevel() { return currentLevel() <= LAST_BUILTIN_LEVEL; }
+    bool atGlobalLevel() { return currentLevel() <= GLOBAL_LEVEL; }
     void push()
     {
         table.push_back(new TSymbolTableLevel);
@@ -267,79 +276,110 @@ public:
         precisionStack.pop_back();
     }
 
-    bool insert(TSymbol& symbol)
+    bool declare(TSymbol &symbol)
     {
-        symbol.setUniqueId(++uniqueId);
-        return table[currentLevel()]->insert(symbol);
+        return insert(currentLevel(), symbol);
     }
 
-    bool insertConstInt(const char *name, int value)
+    bool insert(ESymbolLevel level, TSymbol &symbol)
+    {
+        return table[level]->insert(symbol);
+    }
+
+    bool insertConstInt(ESymbolLevel level, const char *name, int value)
     {
         TVariable *constant = new TVariable(NewPoolTString(name), TType(EbtInt, EbpUndefined, EvqConst, 1));
         constant->getConstPointer()->setIConst(value);
-        return insert(*constant);
+        return insert(level, *constant);
     }
 
-    bool insertBuiltIn(TType *rvalue, const char *name, TType *ptype1, TType *ptype2 = 0, TType *ptype3 = 0)
+    void insertBuiltIn(ESymbolLevel level, TType *rvalue, const char *name, TType *ptype1, TType *ptype2 = 0, TType *ptype3 = 0, TType *ptype4 = 0, TType *ptype5 = 0)
     {
+        if (ptype1->getBasicType() == EbtGSampler2D)
+        {
+            bool gvec4 = (rvalue->getBasicType() == EbtGVec4);
+            insertBuiltIn(level, gvec4 ? new TType(EbtFloat, 4) : rvalue, name, new TType(EbtSampler2D), ptype2, ptype3, ptype4, ptype5);
+            insertBuiltIn(level, gvec4 ? new TType(EbtInt, 4) : rvalue, name, new TType(EbtISampler2D), ptype2, ptype3, ptype4, ptype5);
+            insertBuiltIn(level, gvec4 ? new TType(EbtUInt, 4) : rvalue, name, new TType(EbtUSampler2D), ptype2, ptype3, ptype4, ptype5);
+            return;
+        }
+        else if (ptype1->getBasicType() == EbtGSampler3D)
+        {
+            bool gvec4 = (rvalue->getBasicType() == EbtGVec4);
+            insertBuiltIn(level, gvec4 ? new TType(EbtFloat, 4) : rvalue, name, new TType(EbtSampler3D), ptype2, ptype3, ptype4, ptype5);
+            insertBuiltIn(level, gvec4 ? new TType(EbtInt, 4) : rvalue, name, new TType(EbtISampler3D), ptype2, ptype3, ptype4, ptype5);
+            insertBuiltIn(level, gvec4 ? new TType(EbtUInt, 4) : rvalue, name, new TType(EbtUSampler3D), ptype2, ptype3, ptype4, ptype5);
+            return;
+        }
+        else if (ptype1->getBasicType() == EbtGSamplerCube)
+        {
+            bool gvec4 = (rvalue->getBasicType() == EbtGVec4);
+            insertBuiltIn(level, gvec4 ? new TType(EbtFloat, 4) : rvalue, name, new TType(EbtSamplerCube), ptype2, ptype3, ptype4, ptype5);
+            insertBuiltIn(level, gvec4 ? new TType(EbtInt, 4) : rvalue, name, new TType(EbtISamplerCube), ptype2, ptype3, ptype4, ptype5);
+            insertBuiltIn(level, gvec4 ? new TType(EbtUInt, 4) : rvalue, name, new TType(EbtUSamplerCube), ptype2, ptype3, ptype4, ptype5);
+            return;
+        }
+        else if (ptype1->getBasicType() == EbtGSampler2DArray)
+        {
+            bool gvec4 = (rvalue->getBasicType() == EbtGVec4);
+            insertBuiltIn(level, gvec4 ? new TType(EbtFloat, 4) : rvalue, name, new TType(EbtSampler2DArray), ptype2, ptype3, ptype4, ptype5);
+            insertBuiltIn(level, gvec4 ? new TType(EbtInt, 4) : rvalue, name, new TType(EbtISampler2DArray), ptype2, ptype3, ptype4, ptype5);
+            insertBuiltIn(level, gvec4 ? new TType(EbtUInt, 4) : rvalue, name, new TType(EbtUSampler2DArray), ptype2, ptype3, ptype4, ptype5);
+            return;
+        }
+
         TFunction *function = new TFunction(NewPoolTString(name), *rvalue);
 
         TParameter param1 = {NULL, ptype1};
         function->addParameter(param1);
 
-        if(ptype2)
+        if (ptype2)
         {
             TParameter param2 = {NULL, ptype2};
             function->addParameter(param2);
         }
 
-        if(ptype3)
+        if (ptype3)
         {
             TParameter param3 = {NULL, ptype3};
             function->addParameter(param3);
         }
 
-        return insert(*function);
+        if (ptype4)
+        {
+            TParameter param4 = {NULL, ptype4};
+            function->addParameter(param4);
+        }
+
+        if (ptype5)
+        {
+            TParameter param5 = {NULL, ptype5};
+            function->addParameter(param5);
+        }
+
+        insert(level, *function);
     }
 
-    TSymbol* find(const TString& name, bool* builtIn = 0, bool *sameScope = 0) 
-    {
-        int level = currentLevel();
-        TSymbol* symbol;
-        do {
-            symbol = table[level]->find(name);
-            --level;
-        } while (symbol == 0 && level >= 0);
-        level++;
-        if (builtIn)
-            *builtIn = level == 0;
-        if (sameScope)
-            *sameScope = level == currentLevel();
-        return symbol;
-    }
-
-    TSymbol* findBuiltIn(const TString &name)
-    {
-        return table[0]->find(name);
-    }
-
-    TSymbolTableLevel* getOuterLevel() {
-        assert(table.size() >= 2);
+    TSymbol *find(const TString &name, int shaderVersion, bool *builtIn = NULL, bool *sameScope = NULL);
+    TSymbol *findBuiltIn(const TString &name, int shaderVersion);
+    
+    TSymbolTableLevel *getOuterLevel() {
+        assert(currentLevel() >= 1);
         return table[currentLevel() - 1];
     }
 
-    void relateToOperator(const char* name, TOperator op) {
-        table[0]->relateToOperator(name, op);
+    void relateToOperator(ESymbolLevel level, const char* name, TOperator op) {
+        table[level]->relateToOperator(name, op);
     }
-    void relateToExtension(const char* name, const TString& ext) {
-        table[0]->relateToExtension(name, ext);
+    void relateToExtension(ESymbolLevel level, const char* name, const TString& ext) {
+        table[level]->relateToExtension(name, ext);
     }
     void dump(TInfoSink &infoSink) const;
 
     bool setDefaultPrecision(const TPublicType& type, TPrecision prec) {
         if (!supportsPrecision(type.type))
             return false;
-        if (type.size != 1 || type.matrix || type.array)
+        if (type.isAggregate())
             return false; // Not allowed to set for aggregate types
         int indexOfLastElement = static_cast<int>(precisionStack.size()) - 1;
         (*precisionStack[indexOfLastElement])[type.type] = prec; // Uses map operator [], overwrites the current value
@@ -347,15 +387,20 @@ public:
     }
 
     // Searches down the precisionStack for a precision qualifier for the specified TBasicType
-    TPrecision getDefaultPrecision(TBasicType type) {
+    TPrecision getDefaultPrecision( TBasicType type){
+
         if (!supportsPrecision(type))
             return EbpUndefined;
+
+        // unsigned integers use the same precision as signed
+        TBasicType baseType = (type == EbtUInt) ? EbtInt : type;
+
         int level = static_cast<int>(precisionStack.size()) - 1;
         assert(level >= 0); // Just to be safe. Should not happen.
         PrecisionStackLevel::iterator it;
         TPrecision prec = EbpUndefined; // If we dont find anything we return this. Should we error check this?
         while (level >= 0) {
-            it = precisionStack[level]->find(type);
+            it = precisionStack[level]->find(baseType);
             if (it != precisionStack[level]->end()) {
                 prec = (*it).second;
                 break;
@@ -366,17 +411,16 @@ public:
     }
 
 private:
-    int currentLevel() const { return static_cast<int>(table.size()) - 1; }
+    ESymbolLevel currentLevel() const { return static_cast<ESymbolLevel>(table.size() - 1); }
 
     bool supportsPrecision(TBasicType type) {
       // Only supports precision for int, float, and sampler types.
-      return type == EbtFloat || type == EbtInt || IsSampler(type);
+      return type == EbtFloat || type == EbtInt || type == EbtUInt || IsSampler(type);
     }
 
-    int uniqueId;     // for unique identification in code generation
     std::vector<TSymbolTableLevel*> table;
     typedef TMap<TBasicType, TPrecision> PrecisionStackLevel;
-    std::vector<PrecisionStackLevel*> precisionStack;
+    std::vector< PrecisionStackLevel*> precisionStack;
 };
 
 #endif // _SYMBOL_TABLE_INCLUDED_

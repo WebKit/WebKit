@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -9,8 +9,8 @@
 
 #include <set>
 
-#include "compiler/translator/ForLoopUnroll.h"
 #include "compiler/translator/intermediate.h"
+#include "compiler/translator/LoopInfo.h"
 #include "compiler/translator/ParseContext.h"
 
 class TOutputGLSLBase : public TIntermTraverser
@@ -20,7 +20,8 @@ public:
                     ShArrayIndexClampingStrategy clampingStrategy,
                     ShHashFunction64 hashFunction,
                     NameMap& nameMap,
-                    TSymbolTable& symbolTable);
+                    TSymbolTable& symbolTable,
+                    int shaderVersion);
 
 protected:
     TInfoSinkBase& objSink() { return mObjSink; }
@@ -50,6 +51,8 @@ protected:
     TString hashVariableName(const TString& name);
     // Same as hashName(), but without hashing built-in functions.
     TString hashFunctionName(const TString& mangled_name);
+    // Used to translate function names for differences between ESSL and GLSL
+    virtual TString translateTextureFunction(TString& name) { return name; }
 
 private:
     bool structDeclared(const TStructure* structure) const;
@@ -64,7 +67,8 @@ private:
     typedef std::set<TString> DeclaredStructs;
     DeclaredStructs mDeclaredStructs;
 
-    ForLoopUnroll mLoopUnroll;
+    // Stack of loops that need to be unrolled.
+    TLoopStack mLoopUnrollStack;
 
     ShArrayIndexClampingStrategy mClampingStrategy;
 
@@ -74,6 +78,8 @@ private:
     NameMap& mNameMap;
 
     TSymbolTable& mSymbolTable;
+
+    const int mShaderVersion;
 };
 
 #endif  // CROSSCOMPILERGLSL_OUTPUTGLSLBASE_H_

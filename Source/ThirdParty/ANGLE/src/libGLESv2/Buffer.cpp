@@ -1,6 +1,6 @@
 #include "precompiled.h"
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,15 +19,21 @@
 namespace gl
 {
 
-Buffer::Buffer(rx::Renderer *renderer, GLuint id) : RefCountObject(id)
+Buffer::Buffer(rx::Renderer *renderer, GLuint id)
+    : RefCountObject(id),
+      mRenderer(renderer),
+      mUsage(GL_DYNAMIC_DRAW),
+      mAccessFlags(0),
+      mMapped(GL_FALSE),
+      mMapPointer(NULL),
+      mMapOffset(0),
+      mMapLength(0),
+      mBufferStorage(NULL),
+      mStaticVertexBuffer(NULL),
+      mStaticIndexBuffer(NULL),
+      mUnmodifiedDataUse(0)
 {
-    mRenderer = renderer;
-    mUsage = GL_DYNAMIC_DRAW;
-
     mBufferStorage = renderer->createBufferStorage();
-    mStaticVertexBuffer = NULL;
-    mStaticIndexBuffer = NULL;
-    mUnmodifiedDataUse = 0;
 }
 
 Buffer::~Buffer()
@@ -58,13 +64,41 @@ void Buffer::bufferSubData(const void *data, GLsizeiptr size, GLintptr offset)
 {
     mBufferStorage->setData(data, size, offset);
     mIndexRangeCache.invalidateRange(offset, size);
+    invalidateStaticData();
+}
 
-    if ((mStaticVertexBuffer && mStaticVertexBuffer->getBufferSize() != 0) || (mStaticIndexBuffer && mStaticIndexBuffer->getBufferSize() != 0))
-    {
-        invalidateStaticData();
-    }
+void Buffer::copyBufferSubData(Buffer* source, GLintptr sourceOffset, GLintptr destOffset, GLsizeiptr size)
+{
+    mBufferStorage->copyData(source->mBufferStorage, size, sourceOffset, destOffset);
+    invalidateStaticData();
+}
 
-    mUnmodifiedDataUse = 0;
+GLvoid *Buffer::mapRange(GLintptr offset, GLsizeiptr length, GLbitfield access)
+{
+    ASSERT(!mMapped);
+
+    void *dataPointer = mBufferStorage->map(access);
+
+    mMapped = GL_TRUE;
+    mMapPointer = static_cast<GLvoid*>(static_cast<GLubyte*>(dataPointer) + offset);
+    mMapOffset = static_cast<GLint64>(offset);
+    mMapLength = static_cast<GLint64>(length);
+    mAccessFlags = static_cast<GLint>(access);
+
+    return mMapPointer;
+}
+
+void Buffer::unmap()
+{
+    ASSERT(mMapped);
+
+    mBufferStorage->unmap();
+
+    mMapped = GL_FALSE;
+    mMapPointer = NULL;
+    mMapOffset = 0;
+    mMapLength = 0;
+    mAccessFlags = 0;
 }
 
 rx::BufferStorage *Buffer::getStorage() const
@@ -72,14 +106,45 @@ rx::BufferStorage *Buffer::getStorage() const
     return mBufferStorage;
 }
 
-unsigned int Buffer::size() const
+GLint64 Buffer::size() const
 {
-    return mBufferStorage->getSize();
+    return static_cast<GLint64>(mBufferStorage->getSize());
 }
 
 GLenum Buffer::usage() const
 {
     return mUsage;
+}
+
+GLint Buffer::accessFlags() const
+{
+    return mAccessFlags;
+}
+
+GLboolean Buffer::mapped() const
+{
+    return mMapped;
+}
+
+GLvoid *Buffer::mapPointer() const
+{
+    return mMapPointer;
+}
+
+GLint64 Buffer::mapOffset() const
+{
+    return mMapOffset;
+}
+
+GLint64 Buffer::mapLength() const
+{
+    return mMapLength;
+}
+
+void Buffer::markTransformFeedbackUsage()
+{
+    mBufferStorage->markTransformFeedbackUsage();
+    invalidateStaticData();
 }
 
 rx::StaticVertexBufferInterface *Buffer::getStaticVertexBuffer()
@@ -94,11 +159,14 @@ rx::StaticIndexBufferInterface *Buffer::getStaticIndexBuffer()
 
 void Buffer::invalidateStaticData()
 {
-    delete mStaticVertexBuffer;
-    mStaticVertexBuffer = NULL;
+    if ((mStaticVertexBuffer && mStaticVertexBuffer->getBufferSize() != 0) || (mStaticIndexBuffer && mStaticIndexBuffer->getBufferSize() != 0))
+    {
+        delete mStaticVertexBuffer;
+        mStaticVertexBuffer = NULL;
 
-    delete mStaticIndexBuffer;
-    mStaticIndexBuffer = NULL;
+        delete mStaticIndexBuffer;
+        mStaticIndexBuffer = NULL;
+    }
 
     mUnmodifiedDataUse = 0;
 }

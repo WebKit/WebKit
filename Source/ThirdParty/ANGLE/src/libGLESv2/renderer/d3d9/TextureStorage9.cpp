@@ -1,6 +1,6 @@
 #include "precompiled.h"
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2012-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -15,12 +15,13 @@
 #include "libGLESv2/renderer/d3d9/SwapChain9.h"
 #include "libGLESv2/renderer/d3d9/RenderTarget9.h"
 #include "libGLESv2/renderer/d3d9/renderer9_utils.h"
+#include "libGLESv2/renderer/d3d9/formatutils9.h"
 #include "libGLESv2/Texture.h"
 
 namespace rx
 {
 TextureStorage9::TextureStorage9(Renderer *renderer, DWORD usage)
-    : mLodOffset(0),
+    : mTopLevel(0),
       mRenderer(Renderer9::makeRenderer9(renderer)),
       mD3DUsage(usage),
       mD3DPool(mRenderer->getTexturePool(usage))
@@ -37,46 +38,25 @@ TextureStorage9 *TextureStorage9::makeTextureStorage9(TextureStorage *storage)
     return static_cast<TextureStorage9*>(storage);
 }
 
-DWORD TextureStorage9::GetTextureUsage(D3DFORMAT d3dfmt, GLenum glusage, bool forceRenderable)
+DWORD TextureStorage9::GetTextureUsage(GLenum internalformat, Renderer9 *renderer, bool renderTarget)
 {
+    GLuint clientVersion = renderer->getCurrentClientVersion();
+
     DWORD d3dusage = 0;
 
-    if (d3dfmt == D3DFMT_INTZ)
+    if (gl::GetDepthBits(internalformat, clientVersion) > 0 ||
+        gl::GetStencilBits(internalformat, clientVersion) > 0)
     {
         d3dusage |= D3DUSAGE_DEPTHSTENCIL;
     }
-    else if(forceRenderable || (TextureStorage9::IsTextureFormatRenderable(d3dfmt) && (glusage == GL_FRAMEBUFFER_ATTACHMENT_ANGLE)))
+    else if (renderTarget && (gl_d3d9::GetRenderFormat(internalformat, renderer) != D3DFMT_UNKNOWN))
     {
         d3dusage |= D3DUSAGE_RENDERTARGET;
     }
+
     return d3dusage;
 }
 
-bool TextureStorage9::IsTextureFormatRenderable(D3DFORMAT format)
-{
-    if (format == D3DFMT_INTZ)
-    {
-        return true;
-    }
-    switch(format)
-    {
-      case D3DFMT_L8:
-      case D3DFMT_A8L8:
-      case D3DFMT_DXT1:
-      case D3DFMT_DXT3:
-      case D3DFMT_DXT5:
-        return false;
-      case D3DFMT_A8R8G8B8:
-      case D3DFMT_X8R8G8B8:
-      case D3DFMT_A16B16G16R16F:
-      case D3DFMT_A32B32G32R32F:
-        return true;
-      default:
-        UNREACHABLE();
-    }
-
-    return false;
-}
 
 bool TextureStorage9::isRenderTarget() const
 {
@@ -98,17 +78,18 @@ DWORD TextureStorage9::getUsage() const
     return mD3DUsage;
 }
 
-int TextureStorage9::getLodOffset() const
+int TextureStorage9::getTopLevel() const
 {
-    return mLodOffset;
+    return mTopLevel;
 }
 
-int TextureStorage9::levelCount()
+int TextureStorage9::getLevelCount() const
 {
-    return getBaseTexture() ? getBaseTexture()->GetLevelCount() - getLodOffset() : 0;
+    return getBaseTexture() ? (getBaseTexture()->GetLevelCount() - getTopLevel()) : 0;
 }
 
-TextureStorage9_2D::TextureStorage9_2D(Renderer *renderer, SwapChain9 *swapchain) : TextureStorage9(renderer, D3DUSAGE_RENDERTARGET)
+TextureStorage9_2D::TextureStorage9_2D(Renderer *renderer, SwapChain9 *swapchain)
+    : TextureStorage9(renderer, D3DUSAGE_RENDERTARGET)
 {
     IDirect3DTexture9 *surfaceTexture = swapchain->getOffscreenTexture();
     mTexture = surfaceTexture;
@@ -117,8 +98,8 @@ TextureStorage9_2D::TextureStorage9_2D(Renderer *renderer, SwapChain9 *swapchain
     initializeRenderTarget();
 }
 
-TextureStorage9_2D::TextureStorage9_2D(Renderer *renderer, int levels, GLenum internalformat, GLenum usage, bool forceRenderable, GLsizei width, GLsizei height)
-    : TextureStorage9(renderer, GetTextureUsage(Renderer9::makeRenderer9(renderer)->ConvertTextureInternalFormat(internalformat), usage, forceRenderable))
+TextureStorage9_2D::TextureStorage9_2D(Renderer *renderer, GLenum internalformat, bool renderTarget, GLsizei width, GLsizei height, int levels)
+    : TextureStorage9(renderer, GetTextureUsage(internalformat, Renderer9::makeRenderer9(renderer), renderTarget))
 {
     mTexture = NULL;
     mRenderTarget = NULL;
@@ -127,9 +108,11 @@ TextureStorage9_2D::TextureStorage9_2D(Renderer *renderer, int levels, GLenum in
     if (width > 0 && height > 0)
     {
         IDirect3DDevice9 *device = mRenderer->getDevice();
-        gl::MakeValidSize(false, gl::IsCompressed(internalformat), &width, &height, &mLodOffset);
-        HRESULT result = device->CreateTexture(width, height, levels ? levels + mLodOffset : 0, getUsage(),
-                                               mRenderer->ConvertTextureInternalFormat(internalformat), getPool(), &mTexture, NULL);
+        D3DFORMAT format = gl_d3d9::GetTextureFormat(internalformat, mRenderer);
+        d3d9::MakeValidSize(false, format, &width, &height, &mTopLevel);
+        UINT creationLevels = (levels == 0) ? 0 : mTopLevel + levels;
+
+        HRESULT result = device->CreateTexture(width, height, creationLevels, getUsage(), format, getPool(), &mTexture, NULL);
 
         if (FAILED(result))
         {
@@ -143,12 +126,8 @@ TextureStorage9_2D::TextureStorage9_2D(Renderer *renderer, int levels, GLenum in
 
 TextureStorage9_2D::~TextureStorage9_2D()
 {
-    if (mTexture)
-    {
-        mTexture->Release();
-    }
-
-    delete mRenderTarget;
+    SafeRelease(mTexture);
+    SafeDelete(mRenderTarget);
 }
 
 TextureStorage9_2D *TextureStorage9_2D::makeTextureStorage9_2D(TextureStorage *storage)
@@ -165,11 +144,11 @@ IDirect3DSurface9 *TextureStorage9_2D::getSurfaceLevel(int level, bool dirty)
 
     if (mTexture)
     {
-        HRESULT result = mTexture->GetSurfaceLevel(level + mLodOffset, &surface);
+        HRESULT result = mTexture->GetSurfaceLevel(level + mTopLevel, &surface);
         ASSERT(SUCCEEDED(result));
 
         // With managed textures the driver needs to be informed of updates to the lower mipmap levels
-        if (level + mLodOffset != 0 && isManaged() && dirty)
+        if (level + mTopLevel != 0 && isManaged() && dirty)
         {
             mTexture->AddDirtyRect(NULL);
         }
@@ -178,7 +157,7 @@ IDirect3DSurface9 *TextureStorage9_2D::getSurfaceLevel(int level, bool dirty)
     return surface;
 }
 
-RenderTarget *TextureStorage9_2D::getRenderTarget()
+RenderTarget *TextureStorage9_2D::getRenderTarget(int level)
 {
     return mRenderTarget;
 }
@@ -193,8 +172,8 @@ void TextureStorage9_2D::generateMipmap(int level)
         mRenderer->boxFilter(upper, lower);
     }
 
-    if (upper != NULL) upper->Release();
-    if (lower != NULL) lower->Release();
+    SafeRelease(upper);
+    SafeRelease(lower);
 }
 
 IDirect3DBaseTexture9 *TextureStorage9_2D::getBaseTexture() const
@@ -214,8 +193,8 @@ void TextureStorage9_2D::initializeRenderTarget()
     }
 }
 
-TextureStorage9_Cube::TextureStorage9_Cube(Renderer *renderer, int levels, GLenum internalformat, GLenum usage, bool forceRenderable, int size)
-    : TextureStorage9(renderer, GetTextureUsage(Renderer9::makeRenderer9(renderer)->ConvertTextureInternalFormat(internalformat), usage, forceRenderable))
+TextureStorage9_Cube::TextureStorage9_Cube(Renderer *renderer, GLenum internalformat, bool renderTarget, int size, int levels)
+    : TextureStorage9(renderer, GetTextureUsage(internalformat, Renderer9::makeRenderer9(renderer), renderTarget))
 {
     mTexture = NULL;
     for (int i = 0; i < 6; ++i)
@@ -229,9 +208,11 @@ TextureStorage9_Cube::TextureStorage9_Cube(Renderer *renderer, int levels, GLenu
     {
         IDirect3DDevice9 *device = mRenderer->getDevice();
         int height = size;
-        gl::MakeValidSize(false, gl::IsCompressed(internalformat), &size, &height, &mLodOffset);
-        HRESULT result = device->CreateCubeTexture(size, levels ? levels + mLodOffset : 0, getUsage(),
-                                                   mRenderer->ConvertTextureInternalFormat(internalformat), getPool(), &mTexture, NULL);
+        D3DFORMAT format = gl_d3d9::GetTextureFormat(internalformat, mRenderer);
+        d3d9::MakeValidSize(false, format, &size, &height, &mTopLevel);
+        UINT creationLevels = (levels == 0) ? 0 : mTopLevel + levels;
+
+        HRESULT result = device->CreateCubeTexture(size, creationLevels, getUsage(), format, getPool(), &mTexture, NULL);
 
         if (FAILED(result))
         {
@@ -245,14 +226,11 @@ TextureStorage9_Cube::TextureStorage9_Cube(Renderer *renderer, int levels, GLenu
 
 TextureStorage9_Cube::~TextureStorage9_Cube()
 {
-    if (mTexture)
-    {
-        mTexture->Release();
-    }
+    SafeRelease(mTexture);
 
     for (int i = 0; i < 6; ++i)
     {
-        delete mRenderTarget[i];
+        SafeDelete(mRenderTarget[i]);
     }
 }
 
@@ -271,7 +249,7 @@ IDirect3DSurface9 *TextureStorage9_Cube::getCubeMapSurface(GLenum faceTarget, in
     if (mTexture)
     {
         D3DCUBEMAP_FACES face = gl_d3d9::ConvertCubeFace(faceTarget);
-        HRESULT result = mTexture->GetCubeMapSurface(face, level + mLodOffset, &surface);
+        HRESULT result = mTexture->GetCubeMapSurface(face, level + mTopLevel, &surface);
         ASSERT(SUCCEEDED(result));
 
         // With managed textures the driver needs to be informed of updates to the lower mipmap levels
@@ -284,23 +262,23 @@ IDirect3DSurface9 *TextureStorage9_Cube::getCubeMapSurface(GLenum faceTarget, in
     return surface;
 }
 
-RenderTarget *TextureStorage9_Cube::getRenderTarget(GLenum faceTarget)
+RenderTarget *TextureStorage9_Cube::getRenderTargetFace(GLenum faceTarget, int level)
 {
-    return mRenderTarget[gl::TextureCubeMap::faceIndex(faceTarget)];
+    return mRenderTarget[gl::TextureCubeMap::targetToIndex(faceTarget)];
 }
 
-void TextureStorage9_Cube::generateMipmap(int face, int level)
+void TextureStorage9_Cube::generateMipmap(int faceIndex, int level)
 {
-    IDirect3DSurface9 *upper = getCubeMapSurface(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, level - 1, false);
-    IDirect3DSurface9 *lower = getCubeMapSurface(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, level, true);
+    IDirect3DSurface9 *upper = getCubeMapSurface(GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex, level - 1, false);
+    IDirect3DSurface9 *lower = getCubeMapSurface(GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex, level, true);
 
     if (upper != NULL && lower != NULL)
     {
         mRenderer->boxFilter(upper, lower);
     }
 
-    if (upper != NULL) upper->Release();
-    if (lower != NULL) lower->Release();
+    SafeRelease(upper);
+    SafeRelease(lower);
 }
 
 IDirect3DBaseTexture9 *TextureStorage9_Cube::getBaseTexture() const

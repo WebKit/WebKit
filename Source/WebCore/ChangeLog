@@ -1,3 +1,21 @@
+2014-04-30  Alex Christensen  <achristensen@webkit.org>
+
+        Updated ANGLE.
+        https://bugs.webkit.org/show_bug.cgi?id=132367
+        <rdar://problem/16211451>
+
+        Reviewed by Dean Jackson.
+
+        * CMakeLists.txt
+        Fixed ANGLE compiling with the update.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE):
+        Removed SH_MAP_LONG_VARIABLE_NAMES which is no longer defined in ANGLE.
+        See https://chromium.googlesource.com/angle/angle/+/3cdfcce86b38ef31a0afd71855887193a7924468
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        Updated type names from ANGLE.
+
 2014-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         Move Blob.slice() implementation into BlobRegistryImpl

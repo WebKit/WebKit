@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,11 +19,15 @@
 #include <algorithm>
 #include <climits>
 
+int TSymbolTableLevel::uniqueId = 0;
+
 TType::TType(const TPublicType &p) :
-            type(p.type), precision(p.precision), qualifier(p.qualifier), size(p.size), matrix(p.matrix), array(p.array), arraySize(p.arraySize), structure(0)
+            type(p.type), precision(p.precision), qualifier(p.qualifier), primarySize(p.primarySize), secondarySize(p.secondarySize), array(p.array), layoutQualifier(p.layoutQualifier), arraySize(p.arraySize),
+            interfaceBlock(0), structure(0)
 {
-    if (p.userDef)
+    if (p.userDef) {
         structure = p.userDef->getStruct();
+    }
 }
 
 //
@@ -37,17 +41,45 @@ TString TType::buildMangledName() const
     else if (isVector())
         mangledName += 'v';
 
-    switch (type) {
-    case EbtFloat:       mangledName += 'f';      break;
-    case EbtInt:         mangledName += 'i';      break;
-    case EbtBool:        mangledName += 'b';      break;
-    case EbtSampler2D:   mangledName += "s2";     break;
-    case EbtSamplerCube: mangledName += "sC";     break;
-    case EbtStruct:      mangledName += structure->mangledName(); break;
-    default:             break;
+    switch (type)
+    {
+      case EbtFloat:                mangledName += 'f';      break;
+      case EbtInt:                  mangledName += 'i';      break;
+      case EbtUInt:                 mangledName += 'u';      break;
+      case EbtBool:                 mangledName += 'b';      break;
+      case EbtSampler2D:            mangledName += "s2";     break;
+      case EbtSampler3D:            mangledName += "s3";     break;
+      case EbtSamplerCube:          mangledName += "sC";     break;
+      case EbtSampler2DArray:       mangledName += "s2a";    break;
+      case EbtSamplerExternalOES:   mangledName += "sext";   break;
+      case EbtSampler2DRect:        mangledName += "s2r";    break;
+      case EbtISampler2D:           mangledName += "is2";    break;
+      case EbtISampler3D:           mangledName += "is3";    break;
+      case EbtISamplerCube:         mangledName += "isC";    break;
+      case EbtISampler2DArray:      mangledName += "is2a";   break;
+      case EbtUSampler2D:           mangledName += "us2";    break;
+      case EbtUSampler3D:           mangledName += "us3";    break;
+      case EbtUSamplerCube:         mangledName += "usC";    break;
+      case EbtUSampler2DArray:      mangledName += "us2a";   break;
+      case EbtSampler2DShadow:      mangledName += "s2s";    break;
+      case EbtSamplerCubeShadow:    mangledName += "sCs";    break;
+      case EbtSampler2DArrayShadow: mangledName += "s2as";   break;
+      case EbtStruct:               mangledName += structure->mangledName(); break;
+      case EbtInterfaceBlock:       mangledName += interfaceBlock->mangledName(); break;
+      default:                      UNREACHABLE();
     }
 
-    mangledName += static_cast<char>('0' + getNominalSize());
+    if (isMatrix())
+    {
+        mangledName += static_cast<char>('0' + getCols());
+        mangledName += static_cast<char>('x');
+        mangledName += static_cast<char>('0' + getRows());
+    }
+    else
+    {
+        mangledName += static_cast<char>('0' + getNominalSize());
+    }
+
     if (isArray()) {
         char buf[20];
         snprintf(buf, sizeof(buf), "%d", arraySize);
@@ -60,14 +92,12 @@ TString TType::buildMangledName() const
 
 size_t TType::getObjectSize() const
 {
-    size_t totalSize = 0;
+    size_t totalSize;
 
     if (getBasicType() == EbtStruct)
         totalSize = structure->objectSize();
-    else if (matrix)
-        totalSize = size * size;
     else
-        totalSize = size;
+        totalSize = primarySize * secondarySize;
 
     if (isArray()) {
         size_t arraySize = getArraySize();
@@ -90,9 +120,9 @@ bool TStructure::containsArrays() const
     return false;
 }
 
-TString TStructure::buildMangledName() const
+TString TFieldListCollection::buildMangledName() const
 {
-    TString mangledName("struct-");
+    TString mangledName(mangledNamePrefix());
     mangledName += *mName;
     for (size_t i = 0; i < mFields->size(); ++i) {
         mangledName += '-';
@@ -101,7 +131,7 @@ TString TStructure::buildMangledName() const
     return mangledName;
 }
 
-size_t TStructure::calculateObjectSize() const
+size_t TFieldListCollection::calculateObjectSize() const
 {
     size_t size = 0;
     for (size_t i = 0; i < mFields->size(); ++i) {
@@ -121,39 +151,6 @@ int TStructure::calculateDeepestNesting() const
         maxNesting = std::max(maxNesting, (*mFields)[i]->type()->getDeepestStructNesting());
     }
     return 1 + maxNesting;
-}
-
-//
-// Dump functions.
-//
-
-void TVariable::dump(TInfoSink& infoSink) const
-{
-    infoSink.debug << getName().c_str() << ": " << type.getQualifierString() << " " << type.getPrecisionString() << " " << type.getBasicString();
-    if (type.isArray()) {
-        infoSink.debug << "[0]";
-    }
-    infoSink.debug << "\n";
-}
-
-void TFunction::dump(TInfoSink &infoSink) const
-{
-    infoSink.debug << getName().c_str() << ": " <<  returnType.getBasicString() << " " << getMangledName().c_str() << "\n";
-}
-
-void TSymbolTableLevel::dump(TInfoSink &infoSink) const
-{
-    tLevel::const_iterator it;
-    for (it = level.begin(); it != level.end(); ++it)
-        (*it).second->dump(infoSink);
-}
-
-void TSymbolTable::dump(TInfoSink &infoSink) const
-{
-    for (int level = currentLevel(); level >= 0; --level) {
-        infoSink.debug << "LEVEL " << level << "\n";
-        table[level]->dump(infoSink);
-    }
 }
 
 //
@@ -202,15 +199,58 @@ void TSymbolTableLevel::relateToExtension(const char* name, const TString& ext)
 {
     for (tLevel::iterator it = level.begin(); it != level.end(); ++it) {
         TSymbol* symbol = it->second;
-        if (symbol->getName() == name)
+        if (symbol->getName() == name) {
             symbol->relateToExtension(ext);
+        }
     }
+}
+
+TSymbol::TSymbol(const TSymbol& copyOf)
+{
+    name = NewPoolTString(copyOf.name->c_str());
+    uniqueId = copyOf.uniqueId;
+}
+
+TSymbol *TSymbolTable::find(const TString &name, int shaderVersion, bool *builtIn, bool *sameScope)
+{
+    int level = currentLevel();
+    TSymbol *symbol;
+
+    do
+    {
+        if (level == ESSL3_BUILTINS && shaderVersion != 300) level--;
+        if (level == ESSL1_BUILTINS && shaderVersion != 100) level--;
+
+        symbol = table[level]->find(name);
+    }
+    while (symbol == 0 && --level >= 0);
+
+    if (builtIn)
+        *builtIn = (level <= LAST_BUILTIN_LEVEL);
+    if (sameScope)
+        *sameScope = (level == currentLevel());
+
+    return symbol;
+}
+
+TSymbol *TSymbolTable::findBuiltIn(const TString &name, int shaderVersion)
+{
+    for (int level = LAST_BUILTIN_LEVEL; level >= 0; level--)
+    {
+        if (level == ESSL3_BUILTINS && shaderVersion != 300) level--;
+        if (level == ESSL1_BUILTINS && shaderVersion != 100) level--;
+
+        TSymbol *symbol = table[level]->find(name);
+
+        if (symbol)
+            return symbol;
+    }
+
+    return 0;
 }
 
 TSymbolTable::~TSymbolTable()
 {
-    for (size_t i = 0; i < table.size(); ++i)
-        delete table[i];
-    for (size_t i = 0; i < precisionStack.size(); ++i)
-        delete precisionStack[i];
+    while (table.size() > 0)
+        pop();
 }

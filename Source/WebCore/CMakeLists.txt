@@ -3019,6 +3019,14 @@ if (WTF_USE_3D_GRAPHICS)
     endif ()
 
     list(APPEND ANGLESupport_SOURCES
+        ${THIRDPARTY_DIR}/ANGLE/src/common/blocklayout.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/debug.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/event_tracer.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/mathutil.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/RefCountObject.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/shadervars.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/utilities.cpp
+    
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulator.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/CodeGen.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Compiler.cpp
@@ -3027,6 +3035,7 @@ if (WTF_USE_3D_GRAPHICS)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Diagnostics.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/DirectiveHandler.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ForLoopUnroll.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/FlagStd140Structs.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InfoSink.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Initialize.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InitializeDll.cpp
@@ -3035,7 +3044,7 @@ if (WTF_USE_3D_GRAPHICS)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Intermediate.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermTraverse.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Intermediate.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/MapLongVariableNames.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/LoopInfo.cpp        
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputESSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputGLSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputGLSLBase.cpp
@@ -3054,6 +3063,7 @@ if (WTF_USE_3D_GRAPHICS)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UnfoldShortCircuit.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UnfoldShortCircuitAST.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Uniform.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateOutputs.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateLimitations.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VariableInfo.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VariablePacker.cpp

@@ -1,3 +1,20 @@
+2014-04-30  Alex Christensen  <achristensen@webkit.org>
+
+        Updated ANGLE.
+        https://bugs.webkit.org/show_bug.cgi?id=132367
+        <rdar://problem/16211451>
+
+        Reviewed by Dean Jackson.
+
+        * ANGLE.plist:
+        Updated and xml encoded.
+        * ANGLE.xcodeproj/project.pbxproj:
+        Added needed new source files.
+        * changes.diff: 
+        Added to keep track of differences between WebKit's copy of ANGLE and the master repository.
+        
+        Updated ANGLE source files to e7a453a5bd76705ccb151117fa844846d4aa90af.  Long list of changes omitted.
+
 2014-03-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the autotools build

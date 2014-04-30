@@ -2,21 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <array>
-	<dict>
-		<key>OpenSourceProject</key>
-		<string>ANGLE</string>
-		<key>OpenSourceVersion</key>
-		<string>836bd2176e5607b14846cf1fbc5932dbc91318f4</string>
-		<key>OpenSourceWebsiteURL</key>
-		<string>http://code.google.com/p/angleproject/</string>
-		<key>OpenSourceSCM</key>
-		<string>git clone https://code.google.com/p/angleproject/ && cd angleproject && git checkout 836bd2176e5607b14846cf1fbc5932dbc91318f4</string>
-		<key>OpenSourceImportDate</key>
-		<string>2014-02-18</string>
-		<key>OpenSourceLicense</key>
-		<string>BSD</string>
-		<key>OpenSourceLicenseFile</key>
-		<string>ANGLE.txt</string>
-	</dict>
+    <dict>
+        <key>OpenSourceProject</key>
+        <string>ANGLE</string>
+        <key>OpenSourceVersion</key>
+        <string>e7a453a5bd76705ccb151117fa844846d4aa90af</string>
+        <key>OpenSourceWebsiteURL</key>
+        <string>http://code.google.com/p/angleproject/</string>
+        <key>OpenSourceSCM</key>
+        <string>git clone https://chromium.googlesource.com/angle/angle &amp;&amp; cd angle &amp;&amp; git checkout e7a453a5bd76705ccb151117fa844846d4aa90af</string>
+        <key>OpenSourceImportDate</key>
+        <string>2014-04-29</string>
+        <key>OpenSourceLicense</key>
+        <string>BSD</string>
+        <key>OpenSourceLicenseFile</key>
+        <string>ANGLE.txt</string>
+    </dict>
 </array>
 </plist>

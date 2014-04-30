@@ -9,8 +9,8 @@
 // ranges of indices.
 
 #include "libGLESv2/renderer/IndexRangeCache.h"
+#include "libGLESv2/formatutils.h"
 #include "common/debug.h"
-#include "libGLESv2/utilities.h"
 #include <tuple>
 
 namespace rx
@@ -31,7 +31,7 @@ void IndexRangeCache::invalidateRange(unsigned int offset, unsigned int size)
     while (i != mIndexRangeCache.end())
     {
         unsigned int rangeStart = i->second.streamOffset;
-        unsigned int rangeEnd = i->second.streamOffset + (gl::ComputeTypeSize(i->first.type) * i->first.count);
+        unsigned int rangeEnd = i->second.streamOffset + (gl::GetTypeBytes(i->first.type) * i->first.count);
 
         if (invalidateEnd < rangeStart || invalidateStart > rangeEnd)
         {

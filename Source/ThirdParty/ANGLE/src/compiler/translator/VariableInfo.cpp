@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -21,11 +21,32 @@ ShDataType getVariableDataType(const TType& type)
     switch (type.getBasicType()) {
       case EbtFloat:
           if (type.isMatrix()) {
-              switch (type.getNominalSize()) {
-                case 2: return SH_FLOAT_MAT2;
-                case 3: return SH_FLOAT_MAT3;
-                case 4: return SH_FLOAT_MAT4;
-                default: UNREACHABLE();
+              switch (type.getCols())
+              {
+                case 2:
+                  switch (type.getRows())
+                  {
+                    case 2: return SH_FLOAT_MAT2;
+                    case 3: return SH_FLOAT_MAT2x3;
+                    case 4: return SH_FLOAT_MAT2x4;
+                    default: UNREACHABLE();
+                  }
+                case 3:
+                  switch (type.getRows())
+                  {
+                    case 2: return SH_FLOAT_MAT3x2;
+                    case 3: return SH_FLOAT_MAT3;
+                    case 4: return SH_FLOAT_MAT3x4;
+                    default: UNREACHABLE();
+                  }
+                case 4:
+                  switch (type.getRows())
+                  {
+                    case 2: return SH_FLOAT_MAT4x2;
+                    case 3: return SH_FLOAT_MAT4x3;
+                    case 4: return SH_FLOAT_MAT4;
+                    default: UNREACHABLE();
+                  }
               }
           } else if (type.isVector()) {
               switch (type.getNominalSize()) {
@@ -50,6 +71,19 @@ ShDataType getVariableDataType(const TType& type)
           } else {
               return SH_INT;
           }
+      case EbtUInt:
+          if (type.isMatrix()) {
+              UNREACHABLE();
+          } else if (type.isVector()) {
+              switch (type.getNominalSize()) {
+                case 2: return SH_UNSIGNED_INT_VEC2;
+                case 3: return SH_UNSIGNED_INT_VEC3;
+                case 4: return SH_UNSIGNED_INT_VEC4;
+                default: UNREACHABLE();
+              }
+          } else {
+              return SH_UNSIGNED_INT;
+          }
       case EbtBool:
           if (type.isMatrix()) {
               UNREACHABLE();
@@ -64,9 +98,22 @@ ShDataType getVariableDataType(const TType& type)
               return SH_BOOL;
           }
       case EbtSampler2D: return SH_SAMPLER_2D;
+      case EbtSampler3D: return SH_SAMPLER_3D;
       case EbtSamplerCube: return SH_SAMPLER_CUBE;
       case EbtSamplerExternalOES: return SH_SAMPLER_EXTERNAL_OES;
       case EbtSampler2DRect: return SH_SAMPLER_2D_RECT_ARB;
+      case EbtSampler2DArray: return SH_SAMPLER_2D_ARRAY;
+      case EbtISampler2D: return SH_INT_SAMPLER_2D;
+      case EbtISampler3D: return SH_INT_SAMPLER_3D;
+      case EbtISamplerCube: return SH_INT_SAMPLER_CUBE;
+      case EbtISampler2DArray: return SH_INT_SAMPLER_2D_ARRAY;
+      case EbtUSampler2D: return SH_UNSIGNED_INT_SAMPLER_2D;
+      case EbtUSampler3D: return SH_UNSIGNED_INT_SAMPLER_3D;
+      case EbtUSamplerCube: return SH_UNSIGNED_INT_SAMPLER_CUBE;
+      case EbtUSampler2DArray: return SH_UNSIGNED_INT_SAMPLER_2D_ARRAY;
+      case EbtSampler2DShadow: return SH_SAMPLER_2D_SHADOW;
+      case EbtSamplerCubeShadow: return SH_SAMPLER_CUBE_SHADOW;
+      case EbtSampler2DArrayShadow: return SH_SAMPLER_2D_ARRAY_SHADOW;
       default: UNREACHABLE();
     }
     return SH_NONE;
@@ -134,7 +181,7 @@ void getUserDefinedVariableInfo(const TType& type,
                                 TVariableInfoList& infoList,
                                 ShHashFunction64 hashFunction)
 {
-    ASSERT(type.getBasicType() == EbtStruct);
+    ASSERT(type.getBasicType() == EbtStruct || type.isInterfaceBlock());
 
     const TFieldList& fields = type.getStruct()->fields();
     for (size_t i = 0; i < fields.size(); ++i) {
@@ -227,7 +274,7 @@ void CollectVariables::visitSymbol(TIntermSymbol* symbol)
             info.size = 1;
             info.precision = EbpMedium;  // Use mediump as it doesn't really matter.
             info.staticUse = true;
-        mVaryings.push_back(info);
+	    mVaryings.push_back(info);
             mFragCoordAdded = true;
         }
         return;
@@ -240,7 +287,7 @@ void CollectVariables::visitSymbol(TIntermSymbol* symbol)
             info.size = 1;
             info.precision = EbpUndefined;
             info.staticUse = true;
-        mVaryings.push_back(info);
+	    mVaryings.push_back(info);
             mFrontFacingAdded = true;
         }
         return;
@@ -253,7 +300,7 @@ void CollectVariables::visitSymbol(TIntermSymbol* symbol)
             info.size = 1;
             info.precision = EbpMedium;  // Use mediump as it doesn't really matter.
             info.staticUse = true;
-        mVaryings.push_back(info);
+	    mVaryings.push_back(info);
             mPointCoordAdded = true;
         }
         return;
@@ -273,12 +320,26 @@ bool CollectVariables::visitAggregate(Visit, TIntermAggregate* node)
     case EOpDeclaration: {
         const TIntermSequence& sequence = node->getSequence();
         TQualifier qualifier = sequence.front()->getAsTyped()->getQualifier();
-        if (qualifier == EvqAttribute || qualifier == EvqUniform ||
+        if (qualifier == EvqAttribute || qualifier == EvqVertexIn || qualifier == EvqUniform ||
             qualifier == EvqVaryingIn || qualifier == EvqVaryingOut ||
             qualifier == EvqInvariantVaryingIn || qualifier == EvqInvariantVaryingOut)
         {
-            TVariableInfoList& infoList = qualifier == EvqAttribute ? mAttribs :
-                (qualifier == EvqUniform ? mUniforms : mVaryings);
+            TVariableInfoList *infoList = NULL;
+
+            switch (qualifier)
+            {
+              case EvqAttribute:
+              case EvqVertexIn:
+                infoList = &mAttribs;
+                break;
+              case EvqUniform:
+                infoList = &mUniforms;
+                break;
+              default:
+                infoList = &mVaryings;
+                break;
+            }
+
             for (TIntermSequence::const_iterator i = sequence.begin();
                  i != sequence.end(); ++i)
             {
@@ -293,11 +354,11 @@ bool CollectVariables::visitAggregate(Visit, TIntermAggregate* node)
                 if (mHashFunction == NULL)
                     processedSymbol = variable->getSymbol();
                 else
-                    processedSymbol = TIntermTraverser::hash(variable->getOriginalSymbol(), mHashFunction);
+                    processedSymbol = TIntermTraverser::hash(variable->getSymbol(), mHashFunction);
                 getVariableInfo(variable->getType(),
-                                variable->getOriginalSymbol(),
+                                variable->getSymbol(),
                                 processedSymbol,
-                                infoList,
+                                *infoList,
                                 mHashFunction);
                 visitChildren = false;
             }

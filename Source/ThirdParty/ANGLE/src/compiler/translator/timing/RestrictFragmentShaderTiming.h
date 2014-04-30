@@ -7,8 +7,6 @@
 #ifndef COMPILER_TIMING_RESTRICT_FRAGMENT_SHADER_TIMING_H_
 #define COMPILER_TIMING_RESTRICT_FRAGMENT_SHADER_TIMING_H_
 
-#include "GLSLANG/ShaderLang.h"
-
 #include "compiler/translator/intermediate.h"
 #include "compiler/translator/depgraph/DependencyGraph.h"
 

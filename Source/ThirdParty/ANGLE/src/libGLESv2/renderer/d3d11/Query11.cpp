@@ -9,10 +9,25 @@
 
 #include "libGLESv2/renderer/d3d11/Query11.h"
 #include "libGLESv2/renderer/d3d11/Renderer11.h"
+#include "libGLESv2/renderer/d3d11/renderer11_utils.h"
 #include "libGLESv2/main.h"
 
 namespace rx
 {
+
+static bool checkOcclusionQuery(ID3D11DeviceContext *context, ID3D11Query *query, UINT64 *numPixels)
+{
+    HRESULT result = context->GetData(query, numPixels, sizeof(UINT64), 0);
+    return (result == S_OK);
+}
+
+static bool checkStreamOutPrimitivesWritten(ID3D11DeviceContext *context, ID3D11Query *query, UINT64 *numPrimitives)
+{
+    D3D11_QUERY_DATA_SO_STATISTICS soStats = { 0 };
+    HRESULT result = context->GetData(query, &soStats, sizeof(D3D11_QUERY_DATA_SO_STATISTICS), 0);
+    *numPrimitives = soStats.NumPrimitivesWritten;
+    return (result == S_OK);
+}
 
 Query11::Query11(rx::Renderer11 *renderer, GLenum type) : QueryImpl(type)
 {
@@ -22,11 +37,7 @@ Query11::Query11(rx::Renderer11 *renderer, GLenum type) : QueryImpl(type)
 
 Query11::~Query11()
 {
-    if (mQuery)
-    {
-        mQuery->Release();
-        mQuery = NULL;
-    }
+    SafeRelease(mQuery);
 }
 
 void Query11::begin()
@@ -34,7 +45,7 @@ void Query11::begin()
     if (mQuery == NULL)
     {
         D3D11_QUERY_DESC queryDesc;
-        queryDesc.Query = D3D11_QUERY_OCCLUSION;
+        queryDesc.Query = gl_d3d11::ConvertQueryType(getType());
         queryDesc.MiscFlags = 0;
 
         if (FAILED(mRenderer->getDevice()->CreateQuery(&queryDesc, &mQuery)))
@@ -92,21 +103,42 @@ GLboolean Query11::testQuery()
 {
     if (mQuery != NULL && mStatus != GL_TRUE)
     {
-        UINT64 numPixels = 0;
-        HRESULT result = mRenderer->getDeviceContext()->GetData(mQuery, &numPixels, sizeof(UINT64), 0);
-        if (result == S_OK)
+        ID3D11DeviceContext *context = mRenderer->getDeviceContext();
+
+        bool queryFinished = false;
+        switch (getType())
+        {
+          case GL_ANY_SAMPLES_PASSED_EXT:
+          case GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT:
+            {
+                UINT64 numPixels = 0;
+                queryFinished = checkOcclusionQuery(context, mQuery, &numPixels);
+                if (queryFinished)
+                {
+                    mResult = (numPixels > 0) ? GL_TRUE : GL_FALSE;
+                }
+            }
+            break;
+
+          case GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN:
+            {
+                UINT64 numPrimitives = 0;
+                queryFinished = checkStreamOutPrimitivesWritten(context, mQuery, &numPrimitives);
+                if (queryFinished)
+                {
+                    mResult = static_cast<GLuint>(numPrimitives);
+                }
+            }
+            break;
+
+        default:
+            UNREACHABLE();
+            break;
+        }
+
+        if (queryFinished)
         {
             mStatus = GL_TRUE;
-
-            switch (getType())
-            {
-              case GL_ANY_SAMPLES_PASSED_EXT:
-              case GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT:
-                mResult = (numPixels > 0) ? GL_TRUE : GL_FALSE;
-                break;
-              default:
-                UNREACHABLE();
-            }
         }
         else if (mRenderer->testDeviceLost(true))
         {

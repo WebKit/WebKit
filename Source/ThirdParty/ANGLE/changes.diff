@@ -1,0 +1,227 @@
+diff --git a/include/GLSLANG/ShaderLang.h b/include/GLSLANG/ShaderLang.h
+index 7970bfa..9cdcc24 100644
+--- a/include/GLSLANG/ShaderLang.h
++++ b/include/GLSLANG/ShaderLang.h
+@@ -23,7 +23,7 @@
+ #define COMPILER_EXPORT
+ #endif
+ 
+-#include "KHR/khrplatform.h"
++#include "khrplatform.h"
+ #include <stddef.h>
+ 
+ //
+diff --git a/src/common/mathutil.h b/src/common/mathutil.h
+index 9061bbd..0b4f384 100644
+--- a/src/common/mathutil.h
++++ b/src/common/mathutil.h
+@@ -478,7 +478,7 @@ inline unsigned int average(unsigned int a, unsigned int b)
+ 
+ inline signed int average(signed int a, signed int b)
+ {
+-    return ((long long)a + (long long)b) / 2;
++    return (signed int)((long long)a + (long long)b) / 2;
+ }
+ 
+ inline float average(float a, float b)
+diff --git a/src/common/shadervars.cpp b/src/common/shadervars.cpp
+index c9843dc..bc3d1c0 100644
+--- a/src/common/shadervars.cpp
++++ b/src/common/shadervars.cpp
+@@ -59,7 +59,7 @@ void Varying::resetRegisterAssignment()
+     elementIndex = GL_INVALID_INDEX;
+ }
+ 
+-BlockMemberInfo::BlockMemberInfo(int offset, int arrayStride, int matrixStride, bool isRowMajorMatrix)
++BlockMemberInfo::BlockMemberInfo(long offset, long arrayStride, long matrixStride, bool isRowMajorMatrix)
+     : offset(offset),
+       arrayStride(arrayStride),
+       matrixStride(matrixStride),
+diff --git a/src/common/shadervars.h b/src/common/shadervars.h
+index eba0141..7466777 100644
+--- a/src/common/shadervars.h
++++ b/src/common/shadervars.h
+@@ -42,8 +42,8 @@ struct ShaderVariable
+ 
+ struct Uniform : public ShaderVariable
+ {
+-    unsigned int registerIndex;
+-    unsigned int elementIndex;     // For struct varyings
++    unsigned long registerIndex;
++    unsigned long elementIndex;     // For struct varyings
+     std::vector<Uniform> fields;
+ 
+     Uniform(GLenum typeIn, GLenum precisionIn, const char *nameIn, unsigned int arraySizeIn,
+@@ -88,11 +88,11 @@ struct Varying : public ShaderVariable
+ 
+ struct BlockMemberInfo
+ {
+-    BlockMemberInfo(int offset, int arrayStride, int matrixStride, bool isRowMajorMatrix);
++    BlockMemberInfo(long offset, long arrayStride, long matrixStride, bool isRowMajorMatrix);
+ 
+-    int offset;
+-    int arrayStride;
+-    int matrixStride;
++    long offset;
++    long arrayStride;
++    long matrixStride;
+     bool isRowMajorMatrix;
+ 
+     static const BlockMemberInfo defaultBlockInfo;
+diff --git a/src/compiler/preprocessor/ExpressionParser.cpp b/src/compiler/preprocessor/ExpressionParser.cpp
+index 7c6adc6..fe7a653 100644
+--- a/src/compiler/preprocessor/ExpressionParser.cpp
++++ b/src/compiler/preprocessor/ExpressionParser.cpp
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 2.7.1.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison implementation for Yacc-like parsers in C
+    
+       Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+diff --git a/src/compiler/preprocessor/Tokenizer.cpp b/src/compiler/preprocessor/Tokenizer.cpp
+index 25aefa9..de8efff 100644
+--- a/src/compiler/preprocessor/Tokenizer.cpp
++++ b/src/compiler/preprocessor/Tokenizer.cpp
+@@ -549,6 +549,12 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
+ #pragma GCC diagnostic ignored "-Wmissing-noreturn"
+ #endif
+ 
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wunknown-pragmas"
++#pragma clang diagnostic ignored "-Wdeprecated-register"
++#endif
++
+ typedef std::string YYSTYPE;
+ typedef pp::SourceLocation YYLTYPE;
+ 
+@@ -698,6 +704,8 @@ static void yy_flex_strncpy (char *,yyconst char *,int ,yyscan_t yyscanner);
+ static int yy_flex_strlen (yyconst char * ,yyscan_t yyscanner);
+ #endif
+ 
++#define YY_NO_INPUT
++
+ #ifndef YY_NO_INPUT
+ 
+ #ifdef __cplusplus
+@@ -2314,6 +2322,10 @@ void ppfree (void * ptr , yyscan_t yyscanner)
+ 
+ #define YYTABLES_NAME "yytables"
+ 
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
++
+ namespace pp {
+ 
+ Tokenizer::Tokenizer(Diagnostics* diagnostics)
+diff --git a/src/compiler/preprocessor/Tokenizer.l b/src/compiler/preprocessor/Tokenizer.l
+index ab9d99a..850c639 100644
+--- a/src/compiler/preprocessor/Tokenizer.l
++++ b/src/compiler/preprocessor/Tokenizer.l
+@@ -33,6 +33,12 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
+ #pragma GCC diagnostic ignored "-Wmissing-noreturn"
+ #endif
+ 
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wunknown-pragmas"
++#pragma clang diagnostic ignored "-Wdeprecated-register"
++#endif
++
+ typedef std::string YYSTYPE;
+ typedef pp::SourceLocation YYLTYPE;
+ 
+@@ -265,6 +271,10 @@ FRACTIONAL_CONSTANT  ({DIGIT}*"."{DIGIT}+)|({DIGIT}+".")
+ 
+ %%
+ 
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
++
+ namespace pp {
+ 
+ Tokenizer::Tokenizer(Diagnostics* diagnostics) : mHandle(0)
+diff --git a/src/compiler/translator/glslang.l b/src/compiler/translator/glslang.l
+index 518b78d..c8ff855 100644
+--- a/src/compiler/translator/glslang.l
++++ b/src/compiler/translator/glslang.l
+@@ -33,6 +33,11 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex.cpp).
+ #pragma warning(disable: 4505)
+ #pragma warning(disable: 4701)
+ #endif
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wunknown-pragmas"
++#pragma clang diagnostic ignored "-Wdeprecated-register"
++#endif
+ }
+ 
+ %{
+@@ -379,6 +384,10 @@ O           [0-7]
+ 
+ %%
+ 
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
++
+ yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner) {
+     pp::Token token;
+     yyget_extra(yyscanner)->preprocessor.lex(&token);
+diff --git a/src/compiler/translator/glslang_lex.cpp b/src/compiler/translator/glslang_lex.cpp
+index 5cfbba6..456491b 100644
+--- a/src/compiler/translator/glslang_lex.cpp
++++ b/src/compiler/translator/glslang_lex.cpp
+@@ -18,8 +18,11 @@
+ #pragma warning(disable: 4505)
+ #pragma warning(disable: 4701)
+ #endif
+-
+-
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wunknown-pragmas"
++#pragma clang diagnostic ignored "-Wdeprecated-register"
++#endif
+ 
+ #line 25 "./glslang_lex.cpp"
+ 
+@@ -3181,6 +3184,10 @@ void yyfree (void * ptr , yyscan_t yyscanner)
+ 
+ #define YYTABLES_NAME "yytables"
+ 
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
++
+ yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner) {
+     pp::Token token;
+     yyget_extra(yyscanner)->preprocessor.lex(&token);
+diff --git a/src/compiler/translator/glslang_tab.cpp b/src/compiler/translator/glslang_tab.cpp
+index 70d46d8..cba3cc4 100644
+--- a/src/compiler/translator/glslang_tab.cpp
++++ b/src/compiler/translator/glslang_tab.cpp
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 2.7.1.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison implementation for Yacc-like parsers in C
+    
+       Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+diff --git a/src/compiler/translator/glslang_tab.h b/src/compiler/translator/glslang_tab.h
+index c6a61dc..09a38d4 100644
+--- a/src/compiler/translator/glslang_tab.h
++++ b/src/compiler/translator/glslang_tab.h
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 2.7.1.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison interface for Yacc-like parsers in C
+    
+       Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.

@@ -15,9 +15,9 @@
 #include "libGLESv2/Renderbuffer.h"
 
 #include "libGLESv2/main.h"
-#include "libGLESv2/utilities.h"
+#include "common/utilities.h"
+#include "libGLESv2/renderer/d3d11/formatutils11.h"
 #include "libGLESv2/renderer/d3d11/renderer11_utils.h"
-#include "libGLESv2/renderer/generatemip.h"
 
 namespace rx
 {
@@ -31,10 +31,7 @@ Image11::Image11()
 
 Image11::~Image11()
 {
-    if (mStagingTexture)
-    {
-        mStagingTexture->Release();
-    }
+    SafeRelease(mStagingTexture);
 }
 
 Image11 *Image11::makeImage11(Image *img)
@@ -43,93 +40,77 @@ Image11 *Image11::makeImage11(Image *img)
     return static_cast<rx::Image11*>(img);
 }
 
-void Image11::generateMipmap(Image11 *dest, Image11 *src)
+void Image11::generateMipmap(GLuint clientVersion, Image11 *dest, Image11 *src)
 {
     ASSERT(src->getDXGIFormat() == dest->getDXGIFormat());
     ASSERT(src->getWidth() == 1 || src->getWidth() / 2 == dest->getWidth());
     ASSERT(src->getHeight() == 1 || src->getHeight() / 2 == dest->getHeight());
 
-    D3D11_MAPPED_SUBRESOURCE destMapped, srcMapped;
-    dest->map(D3D11_MAP_WRITE, &destMapped);
-    src->map(D3D11_MAP_READ, &srcMapped);
+    MipGenerationFunction mipFunction = d3d11::GetMipGenerationFunction(src->getDXGIFormat());
+    ASSERT(mipFunction != NULL);
+
+    D3D11_MAPPED_SUBRESOURCE destMapped;
+    HRESULT destMapResult = dest->map(D3D11_MAP_WRITE, &destMapped);
+    if (FAILED(destMapResult))
+    {
+        ERR("Failed to map destination image for mip map generation. HRESULT:0x%X", destMapResult);
+        return;
+    }
+
+    D3D11_MAPPED_SUBRESOURCE srcMapped;
+    HRESULT srcMapResult = src->map(D3D11_MAP_READ, &srcMapped);
+    if (FAILED(srcMapResult))
+    {
+        ERR("Failed to map source image for mip map generation. HRESULT:0x%X", srcMapResult);
+
+        dest->unmap();
+        return;
+    }
 
     const unsigned char *sourceData = reinterpret_cast<const unsigned char*>(srcMapped.pData);
     unsigned char *destData = reinterpret_cast<unsigned char*>(destMapped.pData);
 
-    if (sourceData && destData)
-    {
-        switch (src->getDXGIFormat())
-        {
-          case DXGI_FORMAT_R8G8B8A8_UNORM:
-          case DXGI_FORMAT_B8G8R8A8_UNORM:
-            GenerateMip<R8G8B8A8>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          case DXGI_FORMAT_A8_UNORM:
-            GenerateMip<A8>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          case DXGI_FORMAT_R8_UNORM:
-            GenerateMip<R8>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          case DXGI_FORMAT_R32G32B32A32_FLOAT:
-            GenerateMip<A32B32G32R32F>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          case DXGI_FORMAT_R32G32B32_FLOAT:
-            GenerateMip<R32G32B32F>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          case DXGI_FORMAT_R16G16B16A16_FLOAT:
-            GenerateMip<A16B16G16R16F>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          case DXGI_FORMAT_R8G8_UNORM:
-            GenerateMip<R8G8>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          case DXGI_FORMAT_R16_FLOAT:
-            GenerateMip<R16F>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          case DXGI_FORMAT_R16G16_FLOAT:
-            GenerateMip<R16G16F>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          case DXGI_FORMAT_R32_FLOAT:
-            GenerateMip<R32F>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          case DXGI_FORMAT_R32G32_FLOAT:
-            GenerateMip<R32G32F>(src->getWidth(), src->getHeight(), sourceData, srcMapped.RowPitch, destData, destMapped.RowPitch);
-            break;
-          default:
-            UNREACHABLE();
-            break;
-        }
+    mipFunction(src->getWidth(), src->getHeight(), src->getDepth(), sourceData, srcMapped.RowPitch, srcMapped.DepthPitch,
+                destData, destMapped.RowPitch, destMapped.DepthPitch);
 
-        dest->unmap();
-        src->unmap();
-    }
+    dest->unmap();
+    src->unmap();
 
     dest->markDirty();
 }
 
-static bool FormatRequiresInitialization(DXGI_FORMAT dxgiFormat, GLenum internalFormat)
-{
-    return (dxgiFormat == DXGI_FORMAT_R8G8B8A8_UNORM && gl::GetAlphaSize(internalFormat) == 0) ||
-           (dxgiFormat == DXGI_FORMAT_R32G32B32A32_FLOAT && gl::GetAlphaSize(internalFormat) == 0);
-}
-
 bool Image11::isDirty() const
 {
-    return ((mStagingTexture || FormatRequiresInitialization(mDXGIFormat, mInternalFormat)) && mDirty);
+    // Make sure that this image is marked as dirty even if the staging texture hasn't been created yet
+    // if initialization is required before use.
+    return (mDirty && (mStagingTexture || gl_d3d11::RequiresTextureDataInitialization(mInternalFormat)));
 }
 
-bool Image11::updateSurface(TextureStorageInterface2D *storage, int level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height)
+bool Image11::copyToStorage(TextureStorageInterface2D *storage, int level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height)
 {
     TextureStorage11_2D *storage11 = TextureStorage11_2D::makeTextureStorage11_2D(storage->getStorageInstance());
-    return storage11->updateSubresourceLevel(getStagingTexture(), getStagingSubresource(), level, 0, xoffset, yoffset, width, height);
+    return storage11->updateSubresourceLevel(getStagingTexture(), getStagingSubresource(), level, 0, xoffset, yoffset, 0, width, height, 1);
 }
 
-bool Image11::updateSurface(TextureStorageInterfaceCube *storage, int face, int level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height)
+bool Image11::copyToStorage(TextureStorageInterfaceCube *storage, int face, int level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height)
 {
     TextureStorage11_Cube *storage11 = TextureStorage11_Cube::makeTextureStorage11_Cube(storage->getStorageInstance());
-    return storage11->updateSubresourceLevel(getStagingTexture(), getStagingSubresource(), level, face, xoffset, yoffset, width, height);
+    return storage11->updateSubresourceLevel(getStagingTexture(), getStagingSubresource(), level, face, xoffset, yoffset, 0, width, height, 1);
 }
 
-bool Image11::redefine(Renderer *renderer, GLint internalformat, GLsizei width, GLsizei height, bool forceRelease)
+bool Image11::copyToStorage(TextureStorageInterface3D *storage, int level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth)
+{
+    TextureStorage11_3D *storage11 = TextureStorage11_3D::makeTextureStorage11_3D(storage->getStorageInstance());
+    return storage11->updateSubresourceLevel(getStagingTexture(), getStagingSubresource(), level, 0, xoffset, yoffset, zoffset, width, height, depth);
+}
+
+bool Image11::copyToStorage(TextureStorageInterface2DArray *storage, int level, GLint xoffset, GLint yoffset, GLint arrayLayer, GLsizei width, GLsizei height)
+{
+    TextureStorage11_2DArray *storage11 = TextureStorage11_2DArray::makeTextureStorage11_2DArray(storage->getStorageInstance());
+    return storage11->updateSubresourceLevel(getStagingTexture(), getStagingSubresource(), level, arrayLayer, xoffset, yoffset, 0, width, height, 1);
+}
+
+bool Image11::redefine(Renderer *renderer, GLenum target, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, bool forceRelease)
 {
     if (mWidth != width ||
         mHeight != height ||
@@ -137,29 +118,26 @@ bool Image11::redefine(Renderer *renderer, GLint internalformat, GLsizei width, 
         forceRelease)
     {
         mRenderer = Renderer11::makeRenderer11(renderer);
+        GLuint clientVersion = mRenderer->getCurrentClientVersion();
 
         mWidth = width;
         mHeight = height;
+        mDepth = depth;
         mInternalFormat = internalformat;
-        // compute the d3d format that will be used
-        mDXGIFormat = gl_d3d11::ConvertTextureFormat(internalformat);
-        mActualFormat = d3d11_gl::ConvertTextureInternalFormat(mDXGIFormat);
+        mTarget = target;
 
-        if (mStagingTexture)
-        {
-            mStagingTexture->Release();
-            mStagingTexture = NULL;
-        }
-        
+        // compute the d3d format that will be used
+        mDXGIFormat = gl_d3d11::GetTexFormat(internalformat, clientVersion);
+        mActualFormat = d3d11_gl::GetInternalFormat(mDXGIFormat, clientVersion);
+        mRenderable = gl_d3d11::GetRTVFormat(internalformat, clientVersion) != DXGI_FORMAT_UNKNOWN;
+
+        SafeRelease(mStagingTexture);
+        mDirty = gl_d3d11::RequiresTextureDataInitialization(mInternalFormat);
+
         return true;
     }
 
     return false;
-}
-
-bool Image11::isRenderableFormat() const
-{
-    return TextureStorage11::IsTextureFormatRenderable(mDXGIFormat);
 }
 
 DXGI_FORMAT Image11::getDXGIFormat() const
@@ -173,91 +151,16 @@ DXGI_FORMAT Image11::getDXGIFormat() const
 
 // Store the pixel rectangle designated by xoffset,yoffset,width,height with pixels stored as format/type at input
 // into the target pixel rectangle.
-void Image11::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-                       GLint unpackAlignment, const void *input)
+void Image11::loadData(GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth,
+                       GLint unpackAlignment, GLenum type, const void *input)
 {
-    D3D11_MAPPED_SUBRESOURCE mappedImage;
-    HRESULT result = map(D3D11_MAP_WRITE, &mappedImage);
-    if (FAILED(result))
-    {
-        ERR("Could not map image for loading.");
-        return;
-    }
-    
-    GLsizei inputPitch = gl::ComputePitch(width, mInternalFormat, unpackAlignment);
-    size_t pixelSize = d3d11::ComputePixelSizeBits(mDXGIFormat) / 8;
-    void* offsetMappedData = (void*)((BYTE *)mappedImage.pData + (yoffset * mappedImage.RowPitch + xoffset * pixelSize));
+    GLuint clientVersion = mRenderer->getCurrentClientVersion();
+    GLsizei inputRowPitch = gl::GetRowPitch(mInternalFormat, type, clientVersion, width, unpackAlignment);
+    GLsizei inputDepthPitch = gl::GetDepthPitch(mInternalFormat, type, clientVersion, width, height, unpackAlignment);
+    GLuint outputPixelSize = d3d11::GetFormatPixelBytes(mDXGIFormat);
 
-    switch (mInternalFormat)
-    {
-      case GL_ALPHA8_EXT:
-        loadAlphaDataToNative(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_LUMINANCE8_EXT:
-        loadLuminanceDataToNativeOrBGRA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData, false);
-        break;
-      case GL_ALPHA32F_EXT:
-        loadAlphaFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_LUMINANCE32F_EXT:
-        loadLuminanceFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_ALPHA16F_EXT:
-        loadAlphaHalfFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_LUMINANCE16F_EXT:
-        loadLuminanceHalfFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_LUMINANCE8_ALPHA8_EXT:
-        loadLuminanceAlphaDataToNativeOrBGRA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData, false);
-        break;
-      case GL_LUMINANCE_ALPHA32F_EXT:
-        loadLuminanceAlphaFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_LUMINANCE_ALPHA16F_EXT:
-        loadLuminanceAlphaHalfFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_RGB8_OES:
-        loadRGBUByteDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_RGB565:
-        loadRGB565DataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_RGBA8_OES:
-        loadRGBAUByteDataToNative(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_RGBA4:
-        loadRGBA4444DataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_RGB5_A1:
-        loadRGBA5551DataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_BGRA8_EXT:
-        loadBGRADataToBGRA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_RGB32F_EXT:
-        loadRGBFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_RGB16F_EXT:
-        loadRGBHalfFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_RGBA32F_EXT:
-        loadRGBAFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      case GL_RGBA16F_EXT:
-        loadRGBAHalfFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
-        break;
-      default: UNREACHABLE(); 
-    }
-
-    unmap();
-}
-
-void Image11::loadCompressedData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-                                const void *input)
-{
-    ASSERT(xoffset % 4 == 0);
-    ASSERT(yoffset % 4 == 0);
+    LoadImageFunction loadFunction = d3d11::GetImageLoadFunction(mInternalFormat, type, clientVersion);
+    ASSERT(loadFunction != NULL);
 
     D3D11_MAPPED_SUBRESOURCE mappedImage;
     HRESULT result = map(D3D11_MAP_WRITE, &mappedImage);
@@ -267,26 +170,52 @@ void Image11::loadCompressedData(GLint xoffset, GLint yoffset, GLsizei width, GL
         return;
     }
 
-    // Size computation assumes a 4x4 block compressed texture format
-    size_t blockSize = d3d11::ComputeBlockSizeBits(mDXGIFormat) / 8;
-    void* offsetMappedData = (void*)((BYTE *)mappedImage.pData + ((yoffset / 4) * mappedImage.RowPitch + (xoffset / 4) * blockSize));
-
-    GLsizei inputSize = gl::ComputeCompressedSize(width, height, mInternalFormat);
-    GLsizei inputPitch = gl::ComputeCompressedPitch(width, mInternalFormat);
-    int rows = inputSize / inputPitch;
-    for (int i = 0; i < rows; ++i)
-    {
-        memcpy((void*)((BYTE*)offsetMappedData + i * mappedImage.RowPitch), (void*)((BYTE*)input + i * inputPitch), inputPitch);
-    }
+    void* offsetMappedData = (void*)((BYTE *)mappedImage.pData + (yoffset * mappedImage.RowPitch + xoffset * outputPixelSize + zoffset * mappedImage.DepthPitch));
+    loadFunction(width, height, depth, input, inputRowPitch, inputDepthPitch, offsetMappedData, mappedImage.RowPitch, mappedImage.DepthPitch);
 
     unmap();
 }
 
-void Image11::copy(GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height, gl::Framebuffer *source)
+void Image11::loadCompressedData(GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth,
+                                 const void *input)
+{
+    GLuint clientVersion = mRenderer->getCurrentClientVersion();
+    GLsizei inputRowPitch = gl::GetRowPitch(mInternalFormat, GL_UNSIGNED_BYTE, clientVersion, width, 1);
+    GLsizei inputDepthPitch = gl::GetDepthPitch(mInternalFormat, GL_UNSIGNED_BYTE, clientVersion, width, height, 1);
+
+    GLuint outputPixelSize = d3d11::GetFormatPixelBytes(mDXGIFormat);
+    GLuint outputBlockWidth = d3d11::GetBlockWidth(mDXGIFormat);
+    GLuint outputBlockHeight = d3d11::GetBlockHeight(mDXGIFormat);
+
+    ASSERT(xoffset % outputBlockWidth == 0);
+    ASSERT(yoffset % outputBlockHeight == 0);
+
+    LoadImageFunction loadFunction = d3d11::GetImageLoadFunction(mInternalFormat, GL_UNSIGNED_BYTE, clientVersion);
+    ASSERT(loadFunction != NULL);
+
+    D3D11_MAPPED_SUBRESOURCE mappedImage;
+    HRESULT result = map(D3D11_MAP_WRITE, &mappedImage);
+    if (FAILED(result))
+    {
+        ERR("Could not map image for loading.");
+        return;
+    }
+
+    void* offsetMappedData = (void*)((BYTE*)mappedImage.pData + ((yoffset / outputBlockHeight) * mappedImage.RowPitch +
+                                                                 (xoffset / outputBlockWidth) * outputPixelSize +
+                                                                 zoffset * mappedImage.DepthPitch));
+
+    loadFunction(width, height, depth, input, inputRowPitch, inputDepthPitch,
+                 offsetMappedData, mappedImage.RowPitch, mappedImage.DepthPitch);
+
+    unmap();
+}
+
+void Image11::copy(GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height, gl::Framebuffer *source)
 {
     gl::Renderbuffer *colorbuffer = source->getReadColorbuffer();
 
-    if (colorbuffer && colorbuffer->getActualFormat() == (GLuint)mActualFormat)
+    if (colorbuffer && colorbuffer->getActualFormat() == mActualFormat)
     {
         // No conversion needed-- use copyback fastpath
         ID3D11Texture2D *colorBufferTexture = NULL;
@@ -340,10 +269,10 @@ void Image11::copy(GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width
             srcBox.front = 0;
             srcBox.back = 1;
 
-            deviceContext->CopySubresourceRegion(mStagingTexture, 0, xoffset, yoffset, 0, srcTex, subresourceIndex, &srcBox);
+            deviceContext->CopySubresourceRegion(mStagingTexture, 0, xoffset, yoffset, zoffset, srcTex, subresourceIndex, &srcBox);
 
-            srcTex->Release();
-            colorBufferTexture->Release();
+            SafeRelease(srcTex);
+            SafeRelease(colorBufferTexture);
         }
     }
     else
@@ -351,19 +280,27 @@ void Image11::copy(GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width
         // This format requires conversion, so we must copy the texture to staging and manually convert via readPixels
         D3D11_MAPPED_SUBRESOURCE mappedImage;
         HRESULT result = map(D3D11_MAP_WRITE, &mappedImage);
+        if (FAILED(result))
+        {
+            ERR("Failed to map texture for Image11::copy, HRESULT: 0x%X.", result);
+            return;
+        }
 
         // determine the offset coordinate into the destination buffer
-        GLsizei rowOffset = gl::ComputePixelSize(mActualFormat) * xoffset;
-        void *dataOffset = static_cast<unsigned char*>(mappedImage.pData) + mappedImage.RowPitch * yoffset + rowOffset;
+        GLuint clientVersion = mRenderer->getCurrentClientVersion();
+        GLsizei rowOffset = gl::GetPixelBytes(mActualFormat, clientVersion) * xoffset;
+        void *dataOffset = static_cast<unsigned char*>(mappedImage.pData) + mappedImage.RowPitch * yoffset + rowOffset + zoffset * mappedImage.DepthPitch;
 
-        mRenderer->readPixels(source, x, y, width, height, gl::ExtractFormat(mInternalFormat), 
-                              gl::ExtractType(mInternalFormat), mappedImage.RowPitch, false, 4, dataOffset);
+        GLenum format = gl::GetFormat(mInternalFormat, clientVersion);
+        GLenum type = gl::GetType(mInternalFormat, clientVersion);
+
+        mRenderer->readPixels(source, x, y, width, height, format, type, mappedImage.RowPitch, gl::PixelPackState(), dataOffset);
 
         unmap();
     }
 }
 
-ID3D11Texture2D *Image11::getStagingTexture()
+ID3D11Resource *Image11::getStagingTexture()
 {
     createStagingTexture();
 
@@ -377,27 +314,6 @@ unsigned int Image11::getStagingSubresource()
     return mStagingSubresource;
 }
 
-template <typename T, size_t N>
-static void setDefaultData(ID3D11DeviceContext *deviceContext, ID3D11Texture2D *texture, UINT subresource,
-                           GLsizei width, GLsizei height, const T (&defaultData)[N])
-{
-    D3D11_MAPPED_SUBRESOURCE map;
-    deviceContext->Map(texture, subresource, D3D11_MAP_WRITE, 0, &map);
-
-    unsigned char* ptr = reinterpret_cast<unsigned char*>(map.pData);
-    size_t pixelSize = sizeof(T) * N;
-
-    for (GLsizei y = 0; y < height; y++)
-    {
-        for (GLsizei x = 0; x < width; x++)
-        {
-            memcpy(ptr + (y * map.RowPitch) + (x * pixelSize), defaultData, pixelSize);
-        }
-    }
-
-    deviceContext->Unmap(texture, subresource);
-}
-
 void Image11::createStagingTexture()
 {
     if (mStagingTexture)
@@ -405,57 +321,107 @@ void Image11::createStagingTexture()
         return;
     }
 
-    ID3D11Texture2D *newTexture = NULL;
-    int lodOffset = 1;
     const DXGI_FORMAT dxgiFormat = getDXGIFormat();
-    ASSERT(!d3d11::IsDepthStencilFormat(dxgiFormat)); // We should never get here for depth textures
 
-    if (mWidth != 0 && mHeight != 0)
+    if (mWidth > 0 && mHeight > 0 && mDepth > 0)
     {
+        ID3D11Device *device = mRenderer->getDevice();
+        HRESULT result;
+
+        int lodOffset = 1;
         GLsizei width = mWidth;
         GLsizei height = mHeight;
 
         // adjust size if needed for compressed textures
-        gl::MakeValidSize(false, d3d11::IsCompressed(dxgiFormat), &width, &height, &lodOffset);
-        ID3D11Device *device = mRenderer->getDevice();
+        d3d11::MakeValidSize(false, dxgiFormat, &width, &height, &lodOffset);
 
-        D3D11_TEXTURE2D_DESC desc;
-        desc.Width = width;
-        desc.Height = height;
-        desc.MipLevels = lodOffset + 1;
-        desc.ArraySize = 1;
-        desc.Format = dxgiFormat;
-        desc.SampleDesc.Count = 1;
-        desc.SampleDesc.Quality = 0;
-        desc.Usage = D3D11_USAGE_STAGING;
-        desc.BindFlags = 0;
-        desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-        desc.MiscFlags = 0;
-
-        HRESULT result = device->CreateTexture2D(&desc, NULL, &newTexture);
-
-        if (FAILED(result))
+        if (mTarget == GL_TEXTURE_3D)
         {
-            ASSERT(result == E_OUTOFMEMORY);
-            ERR("Creating image failed.");
-            return gl::error(GL_OUT_OF_MEMORY);
+            ID3D11Texture3D *newTexture = NULL;
+
+            D3D11_TEXTURE3D_DESC desc;
+            desc.Width = width;
+            desc.Height = height;
+            desc.Depth = mDepth;
+            desc.MipLevels = lodOffset + 1;
+            desc.Format = dxgiFormat;
+            desc.Usage = D3D11_USAGE_STAGING;
+            desc.BindFlags = 0;
+            desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+            desc.MiscFlags = 0;
+
+            if (gl_d3d11::RequiresTextureDataInitialization(mInternalFormat))
+            {
+                std::vector<D3D11_SUBRESOURCE_DATA> initialData;
+                std::vector< std::vector<BYTE> > textureData;
+                d3d11::GenerateInitialTextureData(mInternalFormat, mRenderer->getCurrentClientVersion(), width, height,
+                                                  mDepth, lodOffset + 1, &initialData, &textureData);
+
+                result = device->CreateTexture3D(&desc, initialData.data(), &newTexture);
+            }
+            else
+            {
+                result = device->CreateTexture3D(&desc, NULL, &newTexture);
+            }
+
+            if (FAILED(result))
+            {
+                ASSERT(result == E_OUTOFMEMORY);
+                ERR("Creating image failed.");
+                return gl::error(GL_OUT_OF_MEMORY);
+            }
+
+            mStagingTexture = newTexture;
+            mStagingSubresource = D3D11CalcSubresource(lodOffset, 0, lodOffset + 1);
+        }
+        else if (mTarget == GL_TEXTURE_2D || mTarget == GL_TEXTURE_2D_ARRAY || mTarget == GL_TEXTURE_CUBE_MAP)
+        {
+            ID3D11Texture2D *newTexture = NULL;
+
+            D3D11_TEXTURE2D_DESC desc;
+            desc.Width = width;
+            desc.Height = height;
+            desc.MipLevels = lodOffset + 1;
+            desc.ArraySize = 1;
+            desc.Format = dxgiFormat;
+            desc.SampleDesc.Count = 1;
+            desc.SampleDesc.Quality = 0;
+            desc.Usage = D3D11_USAGE_STAGING;
+            desc.BindFlags = 0;
+            desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+            desc.MiscFlags = 0;
+
+            if (gl_d3d11::RequiresTextureDataInitialization(mInternalFormat))
+            {
+                std::vector<D3D11_SUBRESOURCE_DATA> initialData;
+                std::vector< std::vector<BYTE> > textureData;
+                d3d11::GenerateInitialTextureData(mInternalFormat, mRenderer->getCurrentClientVersion(), width, height,
+                                                  1, lodOffset + 1, &initialData, &textureData);
+
+                result = device->CreateTexture2D(&desc, initialData.data(), &newTexture);
+            }
+            else
+            {
+                result = device->CreateTexture2D(&desc, NULL, &newTexture);
+            }
+
+            if (FAILED(result))
+            {
+                ASSERT(result == E_OUTOFMEMORY);
+                ERR("Creating image failed.");
+                return gl::error(GL_OUT_OF_MEMORY);
+            }
+
+            mStagingTexture = newTexture;
+            mStagingSubresource = D3D11CalcSubresource(lodOffset, 0, lodOffset + 1);
+        }
+        else
+        {
+            UNREACHABLE();
         }
     }
 
-    mStagingTexture = newTexture;
-    mStagingSubresource = D3D11CalcSubresource(lodOffset, 0, lodOffset + 1);
     mDirty = false;
-
-    if (mDXGIFormat == DXGI_FORMAT_R8G8B8A8_UNORM && gl::GetAlphaSize(mInternalFormat) == 0)
-    {
-        unsigned char defaultPixel[4] = { 0, 0, 0, 255 };
-        setDefaultData(mRenderer->getDeviceContext(), mStagingTexture, mStagingSubresource, mWidth, mHeight, defaultPixel);
-    }
-    else if (mDXGIFormat == DXGI_FORMAT_R32G32B32A32_FLOAT && gl::GetAlphaSize(mInternalFormat) == 0)
-    {
-        float defaultPixel[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        setDefaultData(mRenderer->getDeviceContext(), mStagingTexture, mStagingSubresource, mWidth, mHeight, defaultPixel);
-    }
 }
 
 HRESULT Image11::map(D3D11_MAP mapType, D3D11_MAPPED_SUBRESOURCE *map)

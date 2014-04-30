@@ -8,6 +8,9 @@
 
 #include "common/debug.h"
 #include <stdarg.h>
+#include <vector>
+#include <fstream>
+#include <cstdio>
 
 #if defined(ANGLE_ENABLE_PERF)
 #include <d3d9.h>
@@ -23,25 +26,38 @@ typedef void (*PerfOutputFunction)(unsigned int, const wchar_t*);
 
 static void output(bool traceFileDebugOnly, PerfOutputFunction perfFunc, const char *format, va_list vararg)
 {
+#if defined(ANGLE_ENABLE_PERF) || defined(ANGLE_ENABLE_TRACE)
+    static std::vector<char> asciiMessageBuffer(512);
+
+    // Attempt to just print to the current buffer
+    int len = vsnprintf(&asciiMessageBuffer[0], asciiMessageBuffer.size(), format, vararg);
+    if (len < 0 || static_cast<size_t>(len) >= asciiMessageBuffer.size())
+    {
+        // Buffer was not large enough, calculate the required size and resize the buffer
+        len = vsnprintf(NULL, 0, format, vararg);
+        asciiMessageBuffer.resize(len + 1);
+
+        // Print again
+        vsnprintf(&asciiMessageBuffer[0], asciiMessageBuffer.size(), format, vararg);
+    }
+
+    // NULL terminate the buffer to be safe
+    asciiMessageBuffer[len] = '\0';
+#endif
+
 #if defined(ANGLE_ENABLE_PERF)
     if (perfActive())
     {
-        char message[32768];
-        int len = vsprintf_s(message, format, vararg);
-        if (len < 0)
+        // The perf function only accepts wide strings, widen the ascii message
+        static std::wstring wideMessage;
+        if (wideMessage.capacity() < asciiMessageBuffer.size())
         {
-            return;
+            wideMessage.reserve(asciiMessageBuffer.size());
         }
 
-        // There are no ASCII variants of these D3DPERF functions.
-        wchar_t wideMessage[32768];
-        for (int i = 0; i < len; ++i)
-        {
-            wideMessage[i] = message[i];
-        }
-        wideMessage[len] = 0;
+        wideMessage.assign(asciiMessageBuffer.begin(), asciiMessageBuffer.begin() + len);
 
-        perfFunc(0, wideMessage);
+        perfFunc(0, wideMessage.c_str());
     }
 #endif // ANGLE_ENABLE_PERF
 
@@ -53,12 +69,13 @@ static void output(bool traceFileDebugOnly, PerfOutputFunction perfFunc, const c
     }
 #endif // NDEBUG
 
-    FILE* file = fopen(TRACE_OUTPUT_FILE, "a");
+    static std::ofstream file(TRACE_OUTPUT_FILE, std::ofstream::app);
     if (file)
     {
-        vfprintf(file, format, vararg);
-        fclose(file);
+        file.write(&asciiMessageBuffer[0], len);
+        file.flush();
     }
+
 #endif // ANGLE_ENABLE_TRACE
 }
 

@@ -327,7 +327,7 @@ BuiltInFunctionEmulator::TBuiltInFunction
 BuiltInFunctionEmulator::IdentifyFunction(
     TOperator op, const TType& param)
 {
-    if (param.getNominalSize() > 4)
+    if (param.getNominalSize() > 4 || param.getSecondarySize() > 4)
         return TFunctionUnknown;
     unsigned int function = TFunctionUnknown;
     switch (op) {
@@ -356,9 +356,9 @@ BuiltInFunctionEmulator::IdentifyFunction(
 {
     // Right now for all the emulated functions with two parameters, the two
     // parameters have the same type.
-    if (param1.isVector() != param2.isVector() ||
-        param1.getNominalSize() != param2.getNominalSize() ||
-        param1.getNominalSize() > 4)
+    if (param1.getNominalSize()     != param2.getNominalSize()   ||
+        param1.getSecondarySize()   != param2.getSecondarySize() ||
+        param1.getNominalSize() > 4 || param1.getSecondarySize() > 4)
         return TFunctionUnknown;
 
     unsigned int function = TFunctionUnknown;

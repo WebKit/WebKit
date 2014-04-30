@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,26 +10,27 @@
 #ifndef LIBGLESV2_CONTEXT_H_
 #define LIBGLESV2_CONTEXT_H_
 
+#ifndef GL_APICALL
 #define GL_APICALL
+#endif
+#include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #define EGLAPI
 #include <EGL/egl.h>
 
 #include <string>
-#include <map>
 #include <set>
-#ifdef _MSC_VER
-#include <hash_map>
-#else
+#include <map>
 #include <unordered_map>
-#endif
 
 #include "common/angleutils.h"
 #include "common/RefCountObject.h"
 #include "libGLESv2/HandleAllocator.h"
 #include "libGLESv2/angletypes.h"
 #include "libGLESv2/Constants.h"
+#include "libGLESv2/VertexAttribute.h"
 
 namespace rx
 {
@@ -49,6 +50,8 @@ class ProgramBinary;
 class Texture;
 class Texture2D;
 class TextureCubeMap;
+class Texture3D;
+class Texture2DArray;
 class Framebuffer;
 class Renderbuffer;
 class RenderbufferStorage;
@@ -56,73 +59,20 @@ class Colorbuffer;
 class Depthbuffer;
 class Stencilbuffer;
 class DepthStencilbuffer;
-class Fence;
+class FenceNV;
+class FenceSync;
 class Query;
 class ResourceManager;
 class Buffer;
-
-enum QueryType
-{
-    QUERY_ANY_SAMPLES_PASSED,
-    QUERY_ANY_SAMPLES_PASSED_CONSERVATIVE,
-
-    QUERY_TYPE_COUNT
-};
-
-// Helper structure describing a single vertex attribute
-class VertexAttribute
-{
-  public:
-    VertexAttribute() : mType(GL_FLOAT), mSize(4), mNormalized(false), mStride(0), mPointer(NULL), mArrayEnabled(false), mDivisor(0)
-    {
-        mCurrentValue[0] = 0.0f;
-        mCurrentValue[1] = 0.0f;
-        mCurrentValue[2] = 0.0f;
-        mCurrentValue[3] = 1.0f;
-    }
-
-    int typeSize() const
-    {
-        switch (mType)
-        {
-          case GL_BYTE:           return mSize * sizeof(GLbyte);
-          case GL_UNSIGNED_BYTE:  return mSize * sizeof(GLubyte);
-          case GL_SHORT:          return mSize * sizeof(GLshort);
-          case GL_UNSIGNED_SHORT: return mSize * sizeof(GLushort);
-          case GL_FIXED:          return mSize * sizeof(GLfixed);
-          case GL_FLOAT:          return mSize * sizeof(GLfloat);
-          default: UNREACHABLE(); return mSize * sizeof(GLfloat);
-        }
-    }
-
-    GLsizei stride() const
-    {
-        return mStride ? mStride : typeSize();
-    }
-
-    // From glVertexAttribPointer
-    GLenum mType;
-    GLint mSize;
-    bool mNormalized;
-    GLsizei mStride;   // 0 means natural stride
-
-    union
-    {
-        const void *mPointer;
-        intptr_t mOffset;
-    };
-
-    BindingPointer<Buffer> mBoundBuffer;   // Captured when glVertexAttribPointer is called.
-
-    bool mArrayEnabled;   // From glEnable/DisableVertexAttribArray
-    float mCurrentValue[4];   // From glVertexAttrib
-    unsigned int mDivisor;
-};
+class VertexAttribute;
+class VertexArray;
+class Sampler;
+class TransformFeedback;
 
 // Helper structure to store all raw state
 struct State
 {
-    Color colorClearValue;
+    ColorF colorClearValue;
     GLclampf depthClearValue;
     int stencilClearValue;
 
@@ -131,7 +81,7 @@ struct State
     Rectangle scissor;
 
     BlendState blend;
-    Color blendColor;
+    ColorF blendColor;
     bool sampleCoverage;
     GLclampf sampleCoverageValue;
     bool sampleCoverageInvert;
@@ -151,27 +101,40 @@ struct State
 
     unsigned int activeSampler;   // Active texture unit selector - GL_TEXTURE0
     BindingPointer<Buffer> arrayBuffer;
-    BindingPointer<Buffer> elementArrayBuffer;
     GLuint readFramebuffer;
     GLuint drawFramebuffer;
     BindingPointer<Renderbuffer> renderbuffer;
     GLuint currentProgram;
 
-    VertexAttribute vertexAttribute[MAX_VERTEX_ATTRIBS];
-    BindingPointer<Texture> samplerTexture[TEXTURE_TYPE_COUNT][IMPLEMENTATION_MAX_COMBINED_TEXTURE_IMAGE_UNITS];
-    BindingPointer<Query> activeQuery[QUERY_TYPE_COUNT];
+    VertexAttribCurrentValueData vertexAttribCurrentValues[MAX_VERTEX_ATTRIBS]; // From glVertexAttrib
+    unsigned int vertexArray;
 
-    GLint unpackAlignment;
-    GLint packAlignment;
-    bool packReverseRowOrder;
+    BindingPointer<Texture> samplerTexture[TEXTURE_TYPE_COUNT][IMPLEMENTATION_MAX_COMBINED_TEXTURE_IMAGE_UNITS];
+    GLuint samplers[IMPLEMENTATION_MAX_COMBINED_TEXTURE_IMAGE_UNITS];
+
+    typedef std::map< GLenum, BindingPointer<Query> > ActiveQueryMap;
+    ActiveQueryMap activeQueries;
+
+    BindingPointer<Buffer> genericUniformBuffer;
+    OffsetBindingPointer<Buffer> uniformBuffers[IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS];
+
+    BindingPointer<TransformFeedback> transformFeedback;
+    BindingPointer<Buffer> genericTransformFeedbackBuffer;
+    OffsetBindingPointer<Buffer> transformFeedbackBuffers[IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS];
+
+    BindingPointer<Buffer> copyReadBuffer;
+    BindingPointer<Buffer> copyWriteBuffer;
+
+    PixelUnpackState unpack;
+    PixelPackState pack;
 };
 
 class Context
 {
   public:
-    Context(const gl::Context *shareContext, rx::Renderer *renderer, bool notifyResets, bool robustAccess);
+    Context(int clientVersion, const gl::Context *shareContext, rx::Renderer *renderer, bool notifyResets, bool robustAccess);
 
-    ~Context();
+    virtual ~Context();
 
     void makeCurrent(egl::Surface *surface);
 
@@ -179,11 +142,17 @@ class Context
     bool isContextLost();
 
     // State manipulation
+    void setCap(GLenum cap, bool enabled);
+    bool getCap(GLenum cap);
+
     void setClearColor(float red, float green, float blue, float alpha);
 
     void setClearDepth(float depth);
 
     void setClearStencil(int stencil);
+
+    void setRasterizerDiscard(bool enabled);
+    bool isRasterizerDiscardEnabled() const;
 
     void setCullFace(bool enabled);
     bool isCullFaceEnabled() const;
@@ -243,6 +212,7 @@ class Context
     void setViewportParams(GLint x, GLint y, GLsizei width, GLsizei height);
 
     void setScissorParams(GLint x, GLint y, GLsizei width, GLsizei height);
+    void getScissorParams(GLint *x, GLint *y, GLsizei *width, GLsizei *height);
 
     void setColorMask(bool red, bool green, bool blue, bool alpha);
     void setDepthMask(bool mask);
@@ -252,22 +222,27 @@ class Context
     GLuint getReadFramebufferHandle() const;
     GLuint getDrawFramebufferHandle() const;
     GLuint getRenderbufferHandle() const;
+    GLuint getVertexArrayHandle() const;
+    GLuint getSamplerHandle(GLuint textureUnit) const;
 
     GLuint getArrayBufferHandle() const;
 
     GLuint getActiveQuery(GLenum target) const;
 
     void setEnableVertexAttribArray(unsigned int attribNum, bool enabled);
-    const VertexAttribute &getVertexAttribState(unsigned int attribNum);
+    const VertexAttribute &getVertexAttribState(unsigned int attribNum) const;
+    const VertexAttribCurrentValueData &getVertexAttribCurrentValue(unsigned int attribNum) const;
     void setVertexAttribState(unsigned int attribNum, Buffer *boundBuffer, GLint size, GLenum type,
-                              bool normalized, GLsizei stride, const void *pointer);
+                              bool normalized, bool pureInteger, GLsizei stride, const void *pointer);
     const void *getVertexAttribPointer(unsigned int attribNum) const;
 
     void setUnpackAlignment(GLint alignment);
     GLint getUnpackAlignment() const;
+    const PixelUnpackState &getUnpackState() const;
 
     void setPackAlignment(GLint alignment);
     GLint getPackAlignment() const;
+    const PixelPackState &getPackState() const;
 
     void setPackReverseRowOrder(bool reverseRowOrder);
     bool getPackReverseRowOrder() const;
@@ -279,35 +254,58 @@ class Context
     GLuint createProgram();
     GLuint createTexture();
     GLuint createRenderbuffer();
+    GLuint createSampler();
+    GLuint createTransformFeedback();
+    GLsync createFenceSync(GLenum condition);
 
     void deleteBuffer(GLuint buffer);
     void deleteShader(GLuint shader);
     void deleteProgram(GLuint program);
     void deleteTexture(GLuint texture);
     void deleteRenderbuffer(GLuint renderbuffer);
+    void deleteSampler(GLuint sampler);
+    void deleteTransformFeedback(GLuint transformFeedback);
+    void deleteFenceSync(GLsync fenceSync);
 
     // Framebuffers are owned by the Context, so these methods do not pass through
     GLuint createFramebuffer();
     void deleteFramebuffer(GLuint framebuffer);
 
-    // Fences are owned by the Context.
-    GLuint createFence();
-    void deleteFence(GLuint fence);
+    // NV Fences are owned by the Context.
+    GLuint createFenceNV();
+    void deleteFenceNV(GLuint fence);
     
     // Queries are owned by the Context;
     GLuint createQuery();
     void deleteQuery(GLuint query);
 
+    // Vertex arrays are owned by the Context
+    GLuint createVertexArray();
+    void deleteVertexArray(GLuint vertexArray);
+
     void bindArrayBuffer(GLuint buffer);
     void bindElementArrayBuffer(GLuint buffer);
     void bindTexture2D(GLuint texture);
     void bindTextureCubeMap(GLuint texture);
+    void bindTexture3D(GLuint texture);
+    void bindTexture2DArray(GLuint texture);
     void bindReadFramebuffer(GLuint framebuffer);
     void bindDrawFramebuffer(GLuint framebuffer);
     void bindRenderbuffer(GLuint renderbuffer);
+    void bindVertexArray(GLuint vertexArray);
+    void bindSampler(GLuint textureUnit, GLuint sampler);
+    void bindGenericUniformBuffer(GLuint buffer);
+    void bindIndexedUniformBuffer(GLuint buffer, GLuint index, GLintptr offset, GLsizeiptr size);
+    void bindGenericTransformFeedbackBuffer(GLuint buffer);
+    void bindIndexedTransformFeedbackBuffer(GLuint buffer, GLuint index, GLintptr offset, GLsizeiptr size);
+    void bindCopyReadBuffer(GLuint buffer);
+    void bindCopyWriteBuffer(GLuint buffer);
+    void bindPixelPackBuffer(GLuint buffer);
+    void bindPixelUnpackBuffer(GLuint buffer);
     void useProgram(GLuint program);
     void linkProgram(GLuint program);
     void setProgramBinary(GLuint program, const void *binary, GLint length);
+    void bindTransformFeedback(GLuint transformFeedback);
 
     void beginQuery(GLenum target, GLuint query);
     void endQuery(GLenum target);
@@ -316,35 +314,75 @@ class Context
 
     void setRenderbufferStorage(GLsizei width, GLsizei height, GLenum internalformat, GLsizei samples);
 
-    void setVertexAttrib(GLuint index, const GLfloat *values);
+    void setVertexAttribf(GLuint index, const GLfloat values[4]);
+    void setVertexAttribu(GLuint index, const GLuint values[4]);
+    void setVertexAttribi(GLuint index, const GLint values[4]);
     void setVertexAttribDivisor(GLuint index, GLuint divisor);
 
-    Buffer *getBuffer(GLuint handle);
-    Fence *getFence(GLuint handle);
-    Shader *getShader(GLuint handle);
-    Program *getProgram(GLuint handle);
-    Texture *getTexture(GLuint handle);
-    Framebuffer *getFramebuffer(GLuint handle);
-    Renderbuffer *getRenderbuffer(GLuint handle);
-    Query *getQuery(GLuint handle, bool create, GLenum type);
+    void samplerParameteri(GLuint sampler, GLenum pname, GLint param);
+    void samplerParameterf(GLuint sampler, GLenum pname, GLfloat param);
+    GLint getSamplerParameteri(GLuint sampler, GLenum pname);
+    GLfloat getSamplerParameterf(GLuint sampler, GLenum pname);
 
+    Buffer *getBuffer(GLuint handle);
+    FenceNV *getFenceNV(GLuint handle);
+    FenceSync *getFenceSync(GLsync handle) const;
+    Shader *getShader(GLuint handle) const;
+    Program *getProgram(GLuint handle) const;
+    Texture *getTexture(GLuint handle);
+    Framebuffer *getFramebuffer(GLuint handle) const;
+    Renderbuffer *getRenderbuffer(GLuint handle);
+    VertexArray *getVertexArray(GLuint handle) const;
+    Sampler *getSampler(GLuint handle) const;
+    Query *getQuery(GLuint handle, bool create, GLenum type);
+    TransformFeedback *getTransformFeedback(GLuint handle) const;
+
+    Buffer *getTargetBuffer(GLenum target) const;
     Buffer *getArrayBuffer();
-    Buffer *getElementArrayBuffer();
+    Buffer *getElementArrayBuffer() const;
     ProgramBinary *getCurrentProgramBinary();
-    Texture2D *getTexture2D();
-    TextureCubeMap *getTextureCubeMap();
-    Texture *getSamplerTexture(unsigned int sampler, TextureType type);
+
+    Texture *getTargetTexture(GLenum target) const;
+    Texture2D *getTexture2D() const;
+    TextureCubeMap *getTextureCubeMap() const;
+    Texture3D *getTexture3D() const;
+    Texture2DArray *getTexture2DArray() const;
+
+    Buffer *getGenericUniformBuffer();
+    Buffer *getGenericTransformFeedbackBuffer();
+    Buffer *getCopyReadBuffer();
+    Buffer *getCopyWriteBuffer();
+    Buffer *getPixelPackBuffer();
+    Buffer *getPixelUnpackBuffer();
+    Texture *getSamplerTexture(unsigned int sampler, TextureType type) const;
+
+    Framebuffer *getTargetFramebuffer(GLenum target) const;
+    GLuint getTargetFramebufferHandle(GLenum target) const;
     Framebuffer *getReadFramebuffer();
     Framebuffer *getDrawFramebuffer();
+    VertexArray *getCurrentVertexArray() const;
+    TransformFeedback *getCurrentTransformFeedback() const;
 
+    bool isSampler(GLuint samplerName) const;
+
+    bool getBooleanv(GLenum pname, GLboolean *params);
     bool getFloatv(GLenum pname, GLfloat *params);
     bool getIntegerv(GLenum pname, GLint *params);
-    bool getBooleanv(GLenum pname, GLboolean *params);
+    bool getInteger64v(GLenum pname, GLint64 *params);
+
+    bool getIndexedIntegerv(GLenum target, GLuint index, GLint *data);
+    bool getIndexedInteger64v(GLenum target, GLuint index, GLint64 *data);
 
     bool getQueryParameterInfo(GLenum pname, GLenum *type, unsigned int *numParams);
+    bool getIndexedQueryParameterInfo(GLenum target, GLenum *type, unsigned int *numParams);
+
+    void clear(GLbitfield mask);
+    void clearBufferfv(GLenum buffer, int drawbuffer, const float *values);
+    void clearBufferuiv(GLenum buffer, int drawbuffer, const unsigned int *values);
+    void clearBufferiv(GLenum buffer, int drawbuffer, const int *values);
+    void clearBufferfi(GLenum buffer, int drawbuffer, float depth, int stencil);
 
     void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei *bufSize, void* pixels);
-    void clear(GLbitfield mask);
     void drawArrays(GLenum mode, GLint first, GLsizei count, GLsizei instances);
     void drawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei instances);
     void sync(bool block);   // flush/finish
@@ -359,16 +397,31 @@ class Context
     GLenum getResetStatus();
     virtual bool isResetNotificationEnabled();
 
+    virtual int getClientVersion() const;
+
     int getMajorShaderModel() const;
     float getMaximumPointSize() const;
     unsigned int getMaximumCombinedTextureImageUnits() const;
+    unsigned int getMaximumCombinedUniformBufferBindings() const;
     int getMaximumRenderbufferDimension() const;
-    int getMaximumTextureDimension() const;
+    int getMaximum2DTextureDimension() const;
     int getMaximumCubeTextureDimension() const;
-    int getMaximumTextureLevel() const;
+    int getMaximum3DTextureDimension() const;
+    int getMaximum2DArrayTextureLayers() const;
+    int getMaximum2DTextureLevel() const;
+    int getMaximumCubeTextureLevel() const;
+    int getMaximum3DTextureLevel() const;
+    int getMaximum2DArrayTextureLevel() const;
     unsigned int getMaximumRenderTargets() const;
     GLsizei getMaxSupportedSamples() const;
-    const char *getExtensionString() const;
+    GLsizei getMaxSupportedFormatSamples(GLenum internalFormat) const;
+    GLsizei getNumSampleCounts(GLenum internalFormat) const;
+    void getSampleCounts(GLenum internalFormat, GLsizei bufSize, GLint *params) const;
+    unsigned int getMaxTransformFeedbackBufferBindings() const;
+    GLintptr getUniformBufferOffsetAlignment() const;
+    const char *getCombinedExtensionsString() const;
+    const char *getExtensionString(const GLuint index) const;
+    unsigned int getNumExtensions() const;
     const char *getRendererString() const;
     bool supportsEventQueries() const;
     bool supportsOcclusionQueries() const;
@@ -384,19 +437,25 @@ class Context
     bool supportsFloat16RenderableTextures() const;
     bool supportsLuminanceTextures() const;
     bool supportsLuminanceAlphaTextures() const;
+    bool supportsRGTextures() const;
     bool supportsDepthTextures() const;
     bool supports32bitIndices() const;
     bool supportsNonPower2Texture() const;
     bool supportsInstancing() const;
     bool supportsTextureFilterAnisotropy() const;
+    bool supportsPBOs() const;
 
-    bool getCurrentReadFormatType(GLenum *format, GLenum *type);
+    bool getCurrentReadFormatType(GLenum *internalFormat, GLenum *format, GLenum *type);
 
     float getTextureMaxAnisotropy() const;
 
-    void blitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, 
-                         GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1,
-                         GLbitfield mask);
+    void blitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1,
+                         GLbitfield mask, GLenum filter);
+
+    void invalidateFrameBuffer(GLenum target, GLsizei numAttachments, const GLenum* attachments,
+                               GLint x, GLint y, GLsizei width, GLsizei height);
+
+    bool hasMappedBuffer(GLenum target) const;
 
     rx::Renderer *getRenderer() { return mRenderer; }
 
@@ -405,15 +464,25 @@ class Context
 
     bool applyRenderTarget(GLenum drawMode, bool ignoreViewport);
     void applyState(GLenum drawMode);
-    void applyShaders();
-    void applyTextures();
-    void applyTextures(SamplerType type);
+    void applyShaders(ProgramBinary *programBinary, bool transformFeedbackActive);
+    void applyTextures(ProgramBinary *programBinary);
+    void applyTextures(ProgramBinary *programBinary, SamplerType type);
+    bool applyUniformBuffers();
+    bool applyTransformFeedbackBuffers();
+    void markTransformFeedbackUsage();
 
     void detachBuffer(GLuint buffer);
     void detachTexture(GLuint texture);
     void detachFramebuffer(GLuint framebuffer);
     void detachRenderbuffer(GLuint renderbuffer);
+    void detachVertexArray(GLuint vertexArray);
+    void detachTransformFeedback(GLuint transformFeedback);
+    void detachSampler(GLuint sampler);
 
+    void generateSwizzles(ProgramBinary *programBinary);
+    void generateSwizzles(ProgramBinary *programBinary, SamplerType type);
+    bool getCurrentTextureAndSamplerState(ProgramBinary *programBinary, SamplerType type, int index, Texture **outTexture,
+                                   TextureType *outTextureType, SamplerState *outSampler);
     Texture *getIncompleteTexture(TextureType type);
 
     bool skipDraw(GLenum drawMode);
@@ -426,32 +495,38 @@ class Context
 
     rx::Renderer *const mRenderer;
 
+    int mClientVersion;
+
     State mState;
 
     BindingPointer<Texture2D> mTexture2DZero;
     BindingPointer<TextureCubeMap> mTextureCubeMapZero;
+    BindingPointer<Texture3D> mTexture3DZero;
+    BindingPointer<Texture2DArray> mTexture2DArrayZero;
 
-#ifndef HASH_MAP
-# ifdef _MSC_VER
-#  define HASH_MAP stdext::hash_map
-# else
-#  define HASH_MAP std::unordered_map
-# endif
-#endif
-
-    typedef HASH_MAP<GLuint, Framebuffer*> FramebufferMap;
+    typedef std::unordered_map<GLuint, Framebuffer*> FramebufferMap;
     FramebufferMap mFramebufferMap;
     HandleAllocator mFramebufferHandleAllocator;
 
-    typedef HASH_MAP<GLuint, Fence*> FenceMap;
-    FenceMap mFenceMap;
-    HandleAllocator mFenceHandleAllocator;
+    typedef std::unordered_map<GLuint, FenceNV*> FenceNVMap;
+    FenceNVMap mFenceNVMap;
+    HandleAllocator mFenceNVHandleAllocator;
 
-    typedef HASH_MAP<GLuint, Query*> QueryMap;
+    typedef std::unordered_map<GLuint, Query*> QueryMap;
     QueryMap mQueryMap;
     HandleAllocator mQueryHandleAllocator;
 
-    const char *mExtensionString;
+    typedef std::unordered_map<GLuint, VertexArray*> VertexArrayMap;
+    VertexArrayMap mVertexArrayMap;
+    HandleAllocator mVertexArrayHandleAllocator;
+
+    BindingPointer<TransformFeedback> mTransformFeedbackZero;
+    typedef std::unordered_map<GLuint, TransformFeedback*> TransformFeedbackMap;
+    TransformFeedbackMap mTransformFeedbackMap;
+    HandleAllocator mTransformFeedbackAllocator;
+
+    std::vector<std::string> mExtensionStringList;
+    const char *mCombinedExtensionsString;
     const char *mRendererString;
     
     BindingPointer<Texture> mIncompleteTextures[TEXTURE_TYPE_COUNT];
@@ -480,9 +555,14 @@ class Context
     bool mSupportsInstancing;
     int  mMaxViewportDimension;
     int  mMaxRenderbufferDimension;
-    int  mMaxTextureDimension;
+    int  mMax2DTextureDimension;
     int  mMaxCubeTextureDimension;
-    int  mMaxTextureLevel;
+    int  mMax3DTextureDimension;
+    int  mMax2DArrayTextureLayers;
+    int  mMax2DTextureLevel;
+    int  mMaxCubeTextureLevel;
+    int  mMax3DTextureLevel;
+    int  mMax2DArrayTextureLevel;
     float mMaxTextureAnisotropy;
     bool mSupportsEventQueries;
     bool mSupportsOcclusionQueries;
@@ -498,9 +578,11 @@ class Context
     bool mSupportsFloat16RenderableTextures;
     bool mSupportsLuminanceTextures;
     bool mSupportsLuminanceAlphaTextures;
+    bool mSupportsRGTextures;
     bool mSupportsDepthTextures;
     bool mSupports32bitIndices;
     bool mSupportsTextureFilterAnisotropy;
+    bool mSupportsPBOs;
     int mNumCompressedTextureFormats;
 
     ResourceManager *mResourceManager;

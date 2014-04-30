@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2012-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -26,9 +26,11 @@ static TBehavior getBehavior(const std::string& str)
 }
 
 TDirectiveHandler::TDirectiveHandler(TExtensionBehavior& extBehavior,
-                                     TDiagnostics& diagnostics)
+                                     TDiagnostics& diagnostics,
+                                     int& shaderVersion)
     : mExtensionBehavior(extBehavior),
-      mDiagnostics(diagnostics)
+      mDiagnostics(diagnostics),
+      mShaderVersion(shaderVersion)
 {
 }
 
@@ -148,9 +150,12 @@ void TDirectiveHandler::handleExtension(const pp::SourceLocation& loc,
 void TDirectiveHandler::handleVersion(const pp::SourceLocation& loc,
                                       int version)
 {
-    static const int kVersion = 100;
-
-    if (version != kVersion)
+    if (version == 100 ||
+        version == 300)
+    {
+        mShaderVersion = version;
+    }
+    else
     {
         std::stringstream stream;
         stream << version;

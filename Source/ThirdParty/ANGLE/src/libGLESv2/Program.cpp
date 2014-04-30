@@ -1,6 +1,6 @@
 #include "precompiled.h"
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -95,36 +95,42 @@ void InfoLog::append(const char *format, ...)
         return;
     }
 
-    char info[1024];
-
     va_list vararg;
     va_start(vararg, format);
-    vsnprintf(info, sizeof(info), format, vararg);
+    size_t infoLength = vsnprintf(NULL, 0, format, vararg);
     va_end(vararg);
 
-    size_t infoLength = strlen(info);
+    char *logPointer = NULL;
+    size_t logLength = 0;
 
     if (!mInfoLog)
     {
-        const size_t newInfoLogLength = infoLength + 2;
-        mInfoLog = new char[newInfoLogLength];
-        strncpy(mInfoLog, info, newInfoLogLength);
-        strncpy(mInfoLog + infoLength, "\n", newInfoLogLength - infoLength);
-        mInfoLog[newInfoLogLength - 1] = '\0';
+        mInfoLog = new char[infoLength + 2];
+        logPointer = mInfoLog;
+        logLength = infoLenfth + 2;
     }
     else
     {
-        size_t logLength = strlen(mInfoLog);
-        const size_t newInfoLogLength = logLength + infoLength + 2;
+        size_t currentlogLength = strlen(mInfoLog);
+        size_t newInfoLogLength = currentlogLength + infoLength + 2; 
         char *newLog = new char[newInfoLogLength];
         strncpy(newLog, mInfoLog, newInfoLogLength);
-        strncpy(newLog + logLength, info, newInfoLogLength - logLength);
-        strncpy(newLog + logLength + infoLength, "\n", newInfoLogLength - logLength - infoLength);
         newLog[newInfoLogLength - 1] = '\0';
 
         delete[] mInfoLog;
         mInfoLog = newLog;
+
+        logPointer = mInfoLog + currentlogLength;
+        logLength = newInfoLogLength - currentlogLength;
     }
+
+    va_start(vararg, format);
+    vsnprintf(logPointer, infoLength, format, vararg);
+    va_end(vararg);
+
+    logPointer[infoLength] = 0;
+    strncpy(logPointer + infoLength, "\n", logLength - infoLength);
+    logPointer[logLength - 1] = '\0';
 }
 
 void InfoLog::reset()
@@ -145,6 +151,8 @@ Program::Program(rx::Renderer *renderer, ResourceManager *manager, GLuint handle
     mLinked = false;
     mRefCount = 0;
     mRenderer = renderer;
+
+    resetUniformBlockBindings();
 }
 
 Program::~Program()
@@ -247,9 +255,11 @@ bool Program::link()
     unlink(false);
 
     mInfoLog.reset();
+    resetUniformBlockBindings();
 
     mProgramBinary.set(new ProgramBinary(mRenderer));
-    mLinked = mProgramBinary->link(mInfoLog, mAttributeBindings, mFragmentShader, mVertexShader);
+    mLinked = mProgramBinary->link(mInfoLog, mAttributeBindings, mFragmentShader, mVertexShader,
+                                   mTransformFeedbackVaryings, mTransformFeedbackBufferMode);
 
     return mLinked;
 }
@@ -294,7 +304,7 @@ bool Program::isLinked()
     return mLinked;
 }
 
-ProgramBinary* Program::getProgramBinary()
+ProgramBinary* Program::getProgramBinary() const
 {
     return mProgramBinary.get();
 }
@@ -523,6 +533,134 @@ bool Program::isValidated() const
     else
     {
         return false;
+    }
+}
+
+GLint Program::getActiveUniformBlockCount()
+{
+    ProgramBinary *programBinary = getProgramBinary();
+    if (programBinary)
+    {
+        return static_cast<GLint>(programBinary->getActiveUniformBlockCount());
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+GLint Program::getActiveUniformBlockMaxLength()
+{
+    ProgramBinary *programBinary = getProgramBinary();
+    if (programBinary)
+    {
+        return static_cast<GLint>(programBinary->getActiveUniformBlockMaxLength());
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+void Program::bindUniformBlock(GLuint uniformBlockIndex, GLuint uniformBlockBinding)
+{
+    mUniformBlockBindings[uniformBlockIndex] = uniformBlockBinding;
+}
+
+GLuint Program::getUniformBlockBinding(GLuint uniformBlockIndex) const
+{
+    return mUniformBlockBindings[uniformBlockIndex];
+}
+
+void Program::resetUniformBlockBindings()
+{
+    for (unsigned int blockId = 0; blockId < IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS; blockId++)
+    {
+        mUniformBlockBindings[blockId] = 0;
+    }
+}
+
+void Program::setTransformFeedbackVaryings(GLsizei count, const GLchar *const *varyings, GLenum bufferMode)
+{
+    mTransformFeedbackVaryings.resize(count);
+    for (GLsizei i = 0; i < count; i++)
+    {
+        mTransformFeedbackVaryings[i] = varyings[i];
+    }
+
+    mTransformFeedbackBufferMode = bufferMode;
+}
+
+void Program::getTransformFeedbackVarying(GLuint index, GLsizei bufSize, GLsizei *length, GLsizei *size, GLenum *type, GLchar *name) const
+{
+    ProgramBinary *programBinary = getProgramBinary();
+    if (programBinary && index < programBinary->getTransformFeedbackVaryingCount())
+    {
+        const LinkedVarying &varying = programBinary->getTransformFeedbackVarying(index);
+        GLsizei lastNameIdx = std::min(bufSize - 1, static_cast<GLsizei>(varying.name.length()));
+        if (length)
+        {
+            *length = lastNameIdx;
+        }
+        if (size)
+        {
+            *size = varying.size;
+        }
+        if (type)
+        {
+            *type = varying.type;
+        }
+        if (name)
+        {
+            memcpy(name, varying.name.c_str(), lastNameIdx);
+            name[lastNameIdx] = '\0';
+        }
+    }
+}
+
+GLsizei Program::getTransformFeedbackVaryingCount() const
+{
+    ProgramBinary *programBinary = getProgramBinary();
+    if (programBinary)
+    {
+        return static_cast<GLsizei>(programBinary->getTransformFeedbackVaryingCount());
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+GLsizei Program::getTransformFeedbackVaryingMaxLength() const
+{
+    ProgramBinary *programBinary = getProgramBinary();
+    if (programBinary)
+    {
+        GLsizei maxSize = 0;
+        for (size_t i = 0; i < programBinary->getTransformFeedbackVaryingCount(); i++)
+        {
+            const LinkedVarying &varying = programBinary->getTransformFeedbackVarying(i);
+            maxSize = std::max(maxSize, static_cast<GLsizei>(varying.name.length() + 1));
+        }
+
+        return maxSize;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+GLenum Program::getTransformFeedbackBufferMode() const
+{
+    ProgramBinary *programBinary = getProgramBinary();
+    if (programBinary)
+    {
+        return programBinary->getTransformFeedbackBufferMode();
+    }
+    else
+    {
+        return mTransformFeedbackBufferMode;
     }
 }
 

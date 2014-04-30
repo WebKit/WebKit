@@ -8,9 +8,10 @@
 // VertexDeclarationCache.cpp: Implements a helper class to construct and cache vertex declarations.
 
 #include "libGLESv2/ProgramBinary.h"
-#include "libGLESv2/Context.h"
+#include "libGLESv2/VertexAttribute.h"
 #include "libGLESv2/renderer/d3d9/VertexBuffer9.h"
 #include "libGLESv2/renderer/d3d9/VertexDeclarationCache.h"
+#include "libGLESv2/renderer/d3d9/formatutils9.h"
 
 namespace rx
 {
@@ -36,10 +37,7 @@ VertexDeclarationCache::~VertexDeclarationCache()
 {
     for (int i = 0; i < NUM_VERTEX_DECL_CACHE_ENTRIES; i++)
     {
-        if (mVertexDeclCache[i].vertexDeclaration)
-        {
-            mVertexDeclCache[i].vertexDeclaration->Release();
-        }
+        SafeRelease(mVertexDeclCache[i].vertexDeclaration);
     }
 }
 
@@ -134,9 +132,11 @@ GLenum VertexDeclarationCache::applyDeclaration(IDirect3DDevice9 *device, Transl
                 mAppliedVBs[stream].offset = attributes[i].offset;
             }
 
+            gl::VertexFormat vertexFormat(*attributes[i].attribute, GL_FLOAT);
+
             element->Stream = stream;
             element->Offset = 0;
-            element->Type = attributes[i].attribute->mArrayEnabled ? vertexBuffer->getDeclType(*attributes[i].attribute) : D3DDECLTYPE_FLOAT4;
+            element->Type = d3d9::GetNativeVertexFormat(vertexFormat);
             element->Method = D3DDECLMETHOD_DEFAULT;
             element->Usage = D3DDECLUSAGE_TEXCOORD;
             element->UsageIndex = programBinary->getSemanticIndex(i);
@@ -188,8 +188,7 @@ GLenum VertexDeclarationCache::applyDeclaration(IDirect3DDevice9 *device, Transl
 
     if (lastCache->vertexDeclaration != NULL)
     {
-        lastCache->vertexDeclaration->Release();
-        lastCache->vertexDeclaration = NULL;
+        SafeRelease(lastCache->vertexDeclaration);
         // mLastSetVDecl is set to the replacement, so we don't have to worry
         // about it.
     }

@@ -15,6 +15,7 @@
 namespace gl
 {
 class VertexAttribute;
+struct VertexAttribCurrentValueData;
 }
 
 namespace rx
@@ -29,14 +30,10 @@ class VertexBuffer
 
     virtual bool initialize(unsigned int size, bool dynamicUsage) = 0;
 
-    virtual bool storeVertexAttributes(const gl::VertexAttribute &attrib, GLint start, GLsizei count,
-                                       GLsizei instances, unsigned int offset) = 0;
-    virtual bool storeRawData(const void* data, unsigned int size, unsigned int offset) = 0;
-
+    virtual bool storeVertexAttributes(const gl::VertexAttribute &attrib, const gl::VertexAttribCurrentValueData &currentValue,
+                                       GLint start, GLsizei count, GLsizei instances, unsigned int offset) = 0;
     virtual bool getSpaceRequired(const gl::VertexAttribute &attrib, GLsizei count, GLsizei instances,
                                   unsigned int *outSpaceRequired) const = 0;
-
-    virtual bool requiresConversion(const gl::VertexAttribute &attrib) const = 0;
 
     virtual unsigned int getBufferSize() const = 0;
     virtual bool setBufferSize(unsigned int size) = 0;
@@ -61,15 +58,16 @@ class VertexBufferInterface
     virtual ~VertexBufferInterface();
 
     bool reserveVertexSpace(const gl::VertexAttribute &attribute, GLsizei count, GLsizei instances);
-    bool reserveRawDataSpace(unsigned int size);
 
     unsigned int getBufferSize() const;
 
     unsigned int getSerial() const;
 
-    virtual bool storeVertexAttributes(const gl::VertexAttribute &attrib, GLint start, GLsizei count, GLsizei instances,
-                                      unsigned int *outStreamOffset);
-    virtual bool storeRawData(const void* data, unsigned int size, unsigned int *outStreamOffset);
+    virtual bool storeVertexAttributes(const gl::VertexAttribute &attrib, const gl::VertexAttribCurrentValueData &currentValue,
+                                      GLint start, GLsizei count, GLsizei instances, unsigned int *outStreamOffset);
+
+    bool directStoragePossible(const gl::VertexAttribute &attrib,
+                               const gl::VertexAttribCurrentValueData &currentValue) const;
 
     VertexBuffer* getVertexBuffer() const;
 
@@ -111,10 +109,10 @@ class StaticVertexBufferInterface : public VertexBufferInterface
     explicit StaticVertexBufferInterface(rx::Renderer *renderer);
     ~StaticVertexBufferInterface();
 
-    bool storeVertexAttributes(const gl::VertexAttribute &attrib, GLint start, GLsizei count, GLsizei instances,
-                               unsigned int *outStreamOffset);
+    bool storeVertexAttributes(const gl::VertexAttribute &attrib, const gl::VertexAttribCurrentValueData &currentValue,
+                              GLint start, GLsizei count, GLsizei instances, unsigned int *outStreamOffset);
 
-    bool lookupAttribute(const gl::VertexAttribute &attribute, unsigned int* outStreamOffset);
+    bool lookupAttribute(const gl::VertexAttribute &attribute, unsigned int* outStreamFffset);
 
   protected:
     bool reserveSpace(unsigned int size);
@@ -126,6 +124,7 @@ class StaticVertexBufferInterface : public VertexBufferInterface
         GLint size;
         GLsizei stride;
         bool normalized;
+        bool pureInteger;
         int attributeOffset;
 
         unsigned int streamOffset;

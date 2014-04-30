@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2012-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -20,36 +20,36 @@ class Renderer9;
 class SwapChain9;
 class RenderTarget;
 class RenderTarget9;
-class Blit;
 
 class TextureStorage9 : public TextureStorage
 {
   public:
-    TextureStorage9(Renderer *renderer, DWORD usage);
     virtual ~TextureStorage9();
 
     static TextureStorage9 *makeTextureStorage9(TextureStorage *storage);
 
-    static DWORD GetTextureUsage(D3DFORMAT d3dfmt, GLenum glusage, bool forceRenderable);
-    static bool IsTextureFormatRenderable(D3DFORMAT format);
+    static DWORD GetTextureUsage(GLenum internalformat, Renderer9 *renderer, bool renderTarget);
 
     D3DPOOL getPool() const;
     DWORD getUsage() const;
 
     virtual IDirect3DBaseTexture9 *getBaseTexture() const = 0;
-    virtual RenderTarget *getRenderTarget() { return NULL; }
-    virtual RenderTarget *getRenderTarget(GLenum faceTarget) { return NULL; }
+    virtual RenderTarget *getRenderTarget(int level) { return NULL; }
+    virtual RenderTarget *getRenderTargetFace(GLenum faceTarget, int level) { return NULL; }
+    virtual RenderTarget *getRenderTargetLayer(int mipLevel, int layer) { return NULL; }
     virtual void generateMipmap(int level) {};
     virtual void generateMipmap(int face, int level) {};
 
-    virtual int getLodOffset() const;
+    virtual int getTopLevel() const;
     virtual bool isRenderTarget() const;
     virtual bool isManaged() const;
-    virtual int levelCount();
+    virtual int getLevelCount() const;
 
   protected:
-    int mLodOffset;
+    int mTopLevel;
     Renderer9 *mRenderer;
+
+    TextureStorage9(Renderer *renderer, DWORD usage);
 
   private:
     DISALLOW_COPY_AND_ASSIGN(TextureStorage9);
@@ -62,13 +62,13 @@ class TextureStorage9_2D : public TextureStorage9
 {
   public:
     TextureStorage9_2D(Renderer *renderer, SwapChain9 *swapchain);
-    TextureStorage9_2D(Renderer *renderer, int levels, GLenum internalformat, GLenum usage, bool forceRenderable, GLsizei width, GLsizei height);
+    TextureStorage9_2D(Renderer *renderer, GLenum internalformat, bool renderTarget, GLsizei width, GLsizei height, int levels);
     virtual ~TextureStorage9_2D();
 
     static TextureStorage9_2D *makeTextureStorage9_2D(TextureStorage *storage);
 
     IDirect3DSurface9 *getSurfaceLevel(int level, bool dirty);
-    virtual RenderTarget *getRenderTarget();
+    virtual RenderTarget *getRenderTarget(int level);
     virtual IDirect3DBaseTexture9 *getBaseTexture() const;
     virtual void generateMipmap(int level);
 
@@ -84,15 +84,15 @@ class TextureStorage9_2D : public TextureStorage9
 class TextureStorage9_Cube : public TextureStorage9
 {
   public:
-    TextureStorage9_Cube(Renderer *renderer, int levels, GLenum internalformat, GLenum usage, bool forceRenderable, int size);
+    TextureStorage9_Cube(Renderer *renderer, GLenum internalformat, bool renderTarget, int size, int levels);
     virtual ~TextureStorage9_Cube();
 
     static TextureStorage9_Cube *makeTextureStorage9_Cube(TextureStorage *storage);
 
     IDirect3DSurface9 *getCubeMapSurface(GLenum faceTarget, int level, bool dirty);
-    virtual RenderTarget *getRenderTarget(GLenum faceTarget);
+    virtual RenderTarget *getRenderTargetFace(GLenum faceTarget, int level);
     virtual IDirect3DBaseTexture9 *getBaseTexture() const;
-    virtual void generateMipmap(int face, int level);
+    virtual void generateMipmap(int faceIndex, int level);
 
   private:
     DISALLOW_COPY_AND_ASSIGN(TextureStorage9_Cube);

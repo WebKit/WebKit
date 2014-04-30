@@ -106,8 +106,8 @@ protected:
     bool m_supportsIMGMultisampledRenderToTexture;
     bool m_supportsANGLEinstancedArrays;
 
-    PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMG m_glFramebufferTexture2DMultisampleIMG;
-    PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMG m_glRenderbufferStorageMultisampleIMG;
+    PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMGPROC m_glFramebufferTexture2DMultisampleIMG;
+    PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMGPROC m_glRenderbufferStorageMultisampleIMG;
     PFNGLBINDVERTEXARRAYOESPROC m_glBindVertexArrayOES;
     PFNGLDELETEVERTEXARRAYSOESPROC m_glDeleteVertexArraysOES;
     PFNGLGENVERTEXARRAYSOESPROC m_glGenVertexArraysOES;

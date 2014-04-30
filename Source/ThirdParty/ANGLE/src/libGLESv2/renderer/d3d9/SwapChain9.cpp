@@ -9,6 +9,7 @@
 
 #include "libGLESv2/renderer/d3d9/SwapChain9.h"
 #include "libGLESv2/renderer/d3d9/renderer9_utils.h"
+#include "libGLESv2/renderer/d3d9/formatutils9.h"
 #include "libGLESv2/renderer/d3d9/Renderer9.h"
 
 namespace rx
@@ -35,38 +36,16 @@ SwapChain9::~SwapChain9()
 
 void SwapChain9::release()
 {
-    if (mSwapChain)
-    {
-        mSwapChain->Release();
-        mSwapChain = NULL;
-    }
-
-    if (mBackBuffer)
-    {
-        mBackBuffer->Release();
-        mBackBuffer = NULL;
-    }
-
-    if (mDepthStencil)
-    {
-        mDepthStencil->Release();
-        mDepthStencil = NULL;
-    }
-
-    if (mRenderTarget)
-    {
-        mRenderTarget->Release();
-        mRenderTarget = NULL;
-    }
-
-    if (mOffscreenTexture)
-    {
-        mOffscreenTexture->Release();
-        mOffscreenTexture = NULL;
-    }
+    SafeRelease(mSwapChain);
+    SafeRelease(mBackBuffer);
+    SafeRelease(mDepthStencil);
+    SafeRelease(mRenderTarget);
+    SafeRelease(mOffscreenTexture);
 
     if (mWindow)
+    {
         mShareHandle = NULL;
+    }
 }
 
 static DWORD convertInterval(EGLint interval)
@@ -111,29 +90,10 @@ EGLint SwapChain9::reset(int backbufferWidth, int backbufferHeight, EGLint swapI
 
     // Release specific resources to free up memory for the new render target, while the
     // old render target still exists for the purpose of preserving its contents.
-    if (mSwapChain)
-    {
-        mSwapChain->Release();
-        mSwapChain = NULL;
-    }
-
-    if (mBackBuffer)
-    {
-        mBackBuffer->Release();
-        mBackBuffer = NULL;
-    }
-
-    if (mOffscreenTexture)
-    {
-        mOffscreenTexture->Release();
-        mOffscreenTexture = NULL;
-    }
-
-    if (mDepthStencil)
-    {
-        mDepthStencil->Release();
-        mDepthStencil = NULL;
-    }
+    SafeRelease(mSwapChain);
+    SafeRelease(mBackBuffer);
+    SafeRelease(mOffscreenTexture);
+    SafeRelease(mDepthStencil);
 
     HANDLE *pShareHandle = NULL;
     if (!mWindow && mRenderer->getShareHandleSupport())
@@ -142,8 +102,8 @@ EGLint SwapChain9::reset(int backbufferWidth, int backbufferHeight, EGLint swapI
     }
 
     result = device->CreateTexture(backbufferWidth, backbufferHeight, 1, D3DUSAGE_RENDERTARGET,
-                                   gl_d3d9::ConvertRenderbufferFormat(mBackBufferFormat), D3DPOOL_DEFAULT,
-                                   &mOffscreenTexture, pShareHandle);
+                                   gl_d3d9::GetTextureFormat(mBackBufferFormat, mRenderer),
+                                   D3DPOOL_DEFAULT, &mOffscreenTexture, pShareHandle);
     if (FAILED(result))
     {
         ERR("Could not create offscreen texture: %08lX", result);
@@ -187,15 +147,15 @@ EGLint SwapChain9::reset(int backbufferWidth, int backbufferHeight, EGLint swapI
         result = device->StretchRect(oldRenderTarget, &rect, mRenderTarget, &rect, D3DTEXF_NONE);
         ASSERT(SUCCEEDED(result));
 
-        oldRenderTarget->Release();
+        SafeRelease(oldRenderTarget);
     }
 
     if (mWindow)
     {
         D3DPRESENT_PARAMETERS presentParameters = {0};
-        presentParameters.AutoDepthStencilFormat = gl_d3d9::ConvertRenderbufferFormat(mDepthBufferFormat);
+        presentParameters.AutoDepthStencilFormat = gl_d3d9::GetRenderFormat(mDepthBufferFormat, mRenderer);
         presentParameters.BackBufferCount = 1;
-        presentParameters.BackBufferFormat = gl_d3d9::ConvertRenderbufferFormat(mBackBufferFormat);
+        presentParameters.BackBufferFormat = gl_d3d9::GetRenderFormat(mBackBufferFormat, mRenderer);
         presentParameters.EnableAutoDepthStencil = FALSE;
         presentParameters.Flags = 0;
         presentParameters.hDeviceWindow = mWindow;
@@ -247,7 +207,7 @@ EGLint SwapChain9::reset(int backbufferWidth, int backbufferHeight, EGLint swapI
     if (mDepthBufferFormat != GL_NONE)
     {
         result = device->CreateDepthStencilSurface(backbufferWidth, backbufferHeight,
-                                                   gl_d3d9::ConvertRenderbufferFormat(mDepthBufferFormat),
+                                                   gl_d3d9::GetRenderFormat(mDepthBufferFormat, mRenderer),
                                                    D3DMULTISAMPLE_NONE, 0, FALSE, &mDepthStencil, NULL);
 
         if (FAILED(result))
@@ -356,6 +316,14 @@ EGLint SwapChain9::swapRect(EGLint x, EGLint y, EGLint width, EGLint height)
         return EGL_BAD_ALLOC;
     }
 
+    // On Windows 8 systems, IDirect3DSwapChain9::Present sometimes returns 0x88760873 when the windows is
+    // in the process of entering/exiting fullscreen. This code doesn't seem to have any documentation.  The
+    // device appears to be ok after emitting this error so simply return a failure to swap.
+    if (result == 0x88760873)
+    {
+        return EGL_BAD_MATCH;
+    }
+
     // http://crbug.com/313210
     // If our swap failed, trigger a device lost event. Resetting will work around an AMD-specific
     // device removed bug with lost contexts when reinstalling drivers.
@@ -370,6 +338,7 @@ EGLint SwapChain9::swapRect(EGLint x, EGLint y, EGLint width, EGLint height)
 
 // Increments refcount on surface.
 // caller must Release() the returned surface
+// TODO: remove the AddRef to match SwapChain11
 IDirect3DSurface9 *SwapChain9::getRenderTarget()
 {
     if (mRenderTarget)
@@ -382,6 +351,7 @@ IDirect3DSurface9 *SwapChain9::getRenderTarget()
 
 // Increments refcount on surface.
 // caller must Release() the returned surface
+// TODO: remove the AddRef to match SwapChain11
 IDirect3DSurface9 *SwapChain9::getDepthStencil()
 {
     if (mDepthStencil)
@@ -394,6 +364,7 @@ IDirect3DSurface9 *SwapChain9::getDepthStencil()
 
 // Increments refcount on texture.
 // caller must Release() the returned texture
+// TODO: remove the AddRef to match SwapChain11
 IDirect3DTexture9 *SwapChain9::getOffscreenTexture()
 {
     if (mOffscreenTexture)
@@ -434,10 +405,10 @@ void SwapChain9::recreate()
         return;
     }
 
-    mSwapChain->Release();
+    SafeRelease(mSwapChain);
     mSwapChain = newSwapChain;
 
-    mBackBuffer->Release();
+    SafeRelease(mBackBuffer);
     result = mSwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &mBackBuffer);
     ASSERT(SUCCEEDED(result));
 }

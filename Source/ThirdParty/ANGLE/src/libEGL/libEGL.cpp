@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -471,6 +471,9 @@ EGLBoolean __stdcall eglQuerySurface(EGLDisplay dpy, EGLSurface surface, EGLint 
           case EGL_POST_SUB_BUFFER_SUPPORTED_NV:
             *value = eglSurface->isPostSubBufferSupported();
             break;
+          case EGL_FIXED_SIZE_ANGLE:
+            *value = eglSurface->isFixedSize();
+            break;
           default:
             return egl::error(EGL_BAD_ATTRIBUTE, EGL_FALSE);
         }
@@ -779,7 +782,7 @@ EGLContext __stdcall eglCreateContext(EGLDisplay dpy, EGLConfig config, EGLConte
 
     try
     {
-        // Get the requested client version (default is 1) and check it is two.
+        // Get the requested client version (default is 1) and check it is 2 or 3.
         EGLint client_version = 1;
         bool reset_notification = false;
         bool robust_access = false;
@@ -814,24 +817,32 @@ EGLContext __stdcall eglCreateContext(EGLDisplay dpy, EGLConfig config, EGLConte
             }
         }
 
-        if (client_version != 2)
+        if (client_version != 2 && client_version != 3)
         {
             return egl::error(EGL_BAD_CONFIG, EGL_NO_CONTEXT);
         }
 
-        gl::Context *sharedContextPtr = (share_context != EGL_NO_CONTEXT ? static_cast<gl::Context*>(share_context) : NULL);
-
-        if (sharedContextPtr != NULL && sharedContextPtr->isResetNotificationEnabled() != reset_notification)
-        {
-            return egl::error(EGL_BAD_MATCH, EGL_NO_CONTEXT);
-        }
-
         egl::Display *display = static_cast<egl::Display*>(dpy);
 
-        // Can not share contexts between displays
-        if (sharedContextPtr != NULL && sharedContextPtr->getRenderer() != display->getRenderer())
+        if (share_context)
         {
-            return egl::error(EGL_BAD_MATCH, EGL_NO_CONTEXT);
+            gl::Context* sharedGLContext = static_cast<gl::Context*>(share_context);
+
+            if (sharedGLContext->isResetNotificationEnabled() != reset_notification)
+            {
+                return egl::error(EGL_BAD_MATCH, EGL_NO_CONTEXT);
+            }
+
+            if (sharedGLContext->getClientVersion() != client_version)
+            {
+                return egl::error(EGL_BAD_CONTEXT, EGL_NO_CONTEXT);
+            }
+
+            // Can not share contexts between displays
+            if (sharedGLContext->getRenderer() != display->getRenderer())
+            {
+                return egl::error(EGL_BAD_MATCH, EGL_NO_CONTEXT);
+            }
         }
 
         if (!validateConfig(display, config))
@@ -839,12 +850,7 @@ EGLContext __stdcall eglCreateContext(EGLDisplay dpy, EGLConfig config, EGLConte
             return EGL_NO_CONTEXT;
         }
 
-        EGLContext context = display->createContext(config, static_cast<gl::Context*>(share_context), reset_notification, robust_access);
-
-        if (context)
-            return egl::success(context);
-        else
-            return egl::error(EGL_CONTEXT_LOST, EGL_NO_CONTEXT);
+        return display->createContext(config, client_version, static_cast<gl::Context*>(share_context), reset_notification, robust_access);
     }
     catch(std::bad_alloc&)
     {
