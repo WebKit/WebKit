@@ -1,3 +1,14 @@
+2014-04-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Make it easier to run CMake for downstreams
+        https://bugs.webkit.org/show_bug.cgi?id=132370
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject): Pass -DDEVELOPER_MODE when building
+        the GTK+ port.
+
 2014-04-29  Stephanie Lewis  <slewis@apple.com>
 
         <rdar://problem/16765765> Use JSON::PP in perl scripts instead of JSON.

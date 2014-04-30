@@ -1,3 +1,12 @@
+2014-04-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Make it easier to run CMake for downstreams
+        https://bugs.webkit.org/show_bug.cgi?id=132370
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Turn PRODUCTION_MODE into DEVELOPER_MODE.
+
 2014-04-27  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Remove indexedDB's dependency on leveldb and disable indexedDB
