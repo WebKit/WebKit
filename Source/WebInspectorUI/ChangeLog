@@ -1,3 +1,61 @@
+2014-04-30  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: clean up and decompose InspectorBackend functionality
+        https://bugs.webkit.org/show_bug.cgi?id=132387
+
+        Reviewed by Joseph Pecoraro.
+
+        Aside from renaming variables and other minor cleanup, this patch
+        changes the following:
+
+        When calling a command, only store callback data when a callback is passed.
+        Use explicit model objects for the agent, event, enum, and commands.
+        Separate the agent models from encoding and decoding of JSON messages.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.registerCommand):
+        (InspectorBackendClass.prototype.registerEnum):
+        (InspectorBackendClass.prototype.registerEvent):
+        (InspectorBackendClass.prototype.registerDomainDispatcher):
+        (InspectorBackendClass.prototype.dispatch):
+        (InspectorBackendClass.prototype.runAfterPendingDispatches):
+        (InspectorBackendClass.prototype._agentForDomain):
+        (InspectorBackendClass.prototype._registerSentCommand):
+        (InspectorBackendClass.prototype._dispatchCallback):
+        (InspectorBackendClass.prototype._dispatchEvent):
+        (InspectorBackendClass.prototype._invokeCommand):
+        (InspectorBackendClass.prototype._reportProtocolError):
+        (InspectorBackend.Agent):
+        (InspectorBackend.Agent.prototype.get domainName):
+        (InspectorBackend.Agent.prototype.set dispatcher):
+        (InspectorBackend.Agent.prototype.addEnum):
+        (InspectorBackend.Agent.prototype.addCommand):
+        (InspectorBackend.Agent.prototype.addEvent):
+        (InspectorBackend.Agent.prototype.getEvent):
+        (InspectorBackend.Agent.prototype.dispatchEvent):
+        (InspectorBackend.Command):
+        (InspectorBackend.Command.create):
+        (InspectorBackend.Command.prototype.get qualifiedName):
+        (InspectorBackend.Command.prototype.get commandName):
+        (InspectorBackend.Command.prototype.get callSignature):
+        (InspectorBackend.Command.prototype.get replySignature):
+        (InspectorBackend.Command.prototype.invoke):
+        (InspectorBackend.Command.prototype.supports):
+        (InspectorBackend.Command.prototype._invokeWithArguments):
+        (InspectorBackend.Event):
+        (InspectorBackend.Enum):
+        (InspectorBackendClass.prototype.callback): Deleted.
+        (InspectorBackendClass.prototype._registerPendingResponse): Deleted.
+        (InspectorBackendClass.prototype._invokeMethod): Deleted.
+        (InspectorBackendClass.prototype._getAgent): Deleted.
+        (InspectorBackendClass.prototype.reportProtocolError): Deleted.
+        (InspectorBackendCommand): Deleted.
+        (InspectorBackendCommand.create): Deleted.
+        (InspectorBackendCommand.prototype.invoke): Deleted.
+        (InspectorBackendCommand.prototype.supports): Deleted.
+        (InspectorBackendCommand.prototype._invokeWithArguments): Deleted.
+
 2014-04-29  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: reduce per-protocol method function creation in InspectorBackend
