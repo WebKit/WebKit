@@ -420,6 +420,9 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
                     else
                         yValue = nextValue;
 
+                    if (!value->isPrimitiveValue() || !yValue->isPrimitiveValue())
+                        continue;
+
                     int xId = static_cast<CSSPrimitiveValue*>(value.get())->getIdent();
                     int yId = static_cast<CSSPrimitiveValue*>(yValue.get())->getIdent();
                     if (xId != yId) {
