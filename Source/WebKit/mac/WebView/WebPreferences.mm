@@ -482,11 +482,7 @@ public:
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSRegionsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSCompositingEnabledPreferenceKey,
-#if ENABLE(CSS_GRID_LAYOUT)
         [NSNumber numberWithBool:YES],  WebKitCSSGridLayoutEnabledPreferenceKey,
-#else
-        [NSNumber numberWithBool:NO],  WebKitCSSGridLayoutEnabledPreferenceKey,
-#endif
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
         [NSNumber numberWithBool:YES],  WebKitAcceleratedDrawingEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitCanvasUsesAcceleratedDrawingPreferenceKey,

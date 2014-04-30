@@ -1,3 +1,15 @@
+2014-04-30  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Enable runtime feature by default
+        https://bugs.webkit.org/show_bug.cgi?id=132189
+
+        Reviewed by Benjamin Poulain.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Remove unneeded changes that
+        enable/disable the runtime feature depending on the compilation flag.
+        And set it to true by default.
+
 2014-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         Use LLVM as a backend for the fourth-tier DFG JIT (a.k.a. the FTL JIT)
