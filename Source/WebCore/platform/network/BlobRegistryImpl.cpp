@@ -84,18 +84,6 @@ PassRefPtr<ResourceHandle> BlobRegistryImpl::createResourceHandle(const Resource
     return handle.release();
 }
 
-void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, const BlobDataItemList& items)
-{
-    for (BlobDataItemList::const_iterator iter = items.begin(); iter != items.end(); ++iter) {
-        if (iter->type == BlobDataItem::Data)
-            blobStorageData->m_data.appendData(iter->data, iter->offset, iter->length);
-        else {
-            ASSERT(iter->type == BlobDataItem::File);
-            blobStorageData->m_data.appendFile(iter->path, iter->offset, iter->length, iter->expectedModificationTime);
-        }
-    }
-}
-
 void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, const BlobDataItemList& items, long long offset, long long length)
 {
     ASSERT(length != BlobDataItem::toEndOfFile);

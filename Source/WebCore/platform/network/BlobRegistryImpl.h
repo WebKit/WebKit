@@ -55,7 +55,6 @@ public:
     PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
 
 private:
-    void appendStorageItems(BlobStorageData*, const BlobDataItemList&);
     void appendStorageItems(BlobStorageData*, const BlobDataItemList&, long long offset, long long length);
 
     virtual void registerBlobURL(const URL&, std::unique_ptr<BlobData>) override;
