@@ -473,6 +473,8 @@ public:
     bool allowsShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
 #endif
 
+    virtual bool canCollapseAnonymousBlockChild() const { return true; }
+
 protected:
     virtual void willBeDestroyed();
 
@@ -1151,8 +1153,6 @@ protected:
     virtual bool requiresColumns(int desiredColumnCount) const;
 
     virtual bool updateLogicalWidthAndColumnWidth();
-
-    virtual bool canCollapseAnonymousBlockChild() const { return true; }
 
 public:
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
