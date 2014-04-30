@@ -1,3 +1,24 @@
+2014-04-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] When pageScaleFactor * deviceScaleFactor = 1, the tile grid is completely messed up
+        https://bugs.webkit.org/show_bug.cgi?id=132368
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::PlatformCALayerRemote):
+        PlatformCALayerRemote always initialized the content scale to 1. Since contentsScale is supposed to reflect
+        zoomScale * deviceScaleFactor, the value should be 2.
+
+        This was causing bugs whenever the page scale factor was 1/2 on retina device (device scale factor = 2).
+
+        When the page is initialized, GraphicsLayerCA::updateContentsScale(0.5) computes a contentsScale of 1. There is an early
+        return on if (contentsScale == m_layer->contentsScale()). Since PlatformCALayerRemote->contentsScale() was incorreclty
+        returning one, we were leaving the tile backing unmodified.
+
+        Later, when the transaction is commited, the tile backing would still be default initialized and would render everything
+        at the wrong scale.
+
 2014-04-29  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] tag the video layers with descriptive name to aid debugging
