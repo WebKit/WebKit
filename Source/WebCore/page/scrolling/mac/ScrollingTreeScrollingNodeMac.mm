@@ -136,13 +136,13 @@ void ScrollingTreeScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& w
     if (!canHaveScrollbars())
         return;
 
+    if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseBegan) {
+        [m_verticalScrollbarPainter setUsePresentationValue:YES];
+        [m_horizontalScrollbarPainter setUsePresentationValue:YES];
+    }
     if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded || wheelEvent.momentumPhase() == PlatformWheelEventPhaseCancelled) {
-        // If the wheel event is ending or cancelled, then we can tell the ScrollbarPainter API that we won't
-        // be updating the position from our scrolling thread anymore for the time being.
-        if (m_verticalScrollbarPainter)
-            [m_verticalScrollbarPainter setUsePresentationValue:NO];
-        if (m_horizontalScrollbarPainter)
-            [m_horizontalScrollbarPainter setUsePresentationValue:NO];
+        [m_verticalScrollbarPainter setUsePresentationValue:NO];
+        [m_horizontalScrollbarPainter setUsePresentationValue:NO];
     }
 
     m_scrollElasticityController.handleWheelEvent(wheelEvent);
@@ -371,16 +371,14 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const FloatPoint& pos
         [CATransaction begin];
         [CATransaction lock];
 
-        if (m_verticalScrollbarPainter) {
-            [m_verticalScrollbarPainter setUsePresentationValue:YES];
+        if ([m_verticalScrollbarPainter shouldUsePresentationValue]) {
             float presentationValue;
             float overhangAmount;
             ScrollableArea::computeScrollbarValueAndOverhang(position.y(), totalContentsSize().height(), viewportRect.height(), presentationValue, overhangAmount);
             [m_verticalScrollbarPainter setPresentationValue:presentationValue];
         }
 
-        if (m_horizontalScrollbarPainter) {
-            [m_horizontalScrollbarPainter setUsePresentationValue:YES];
+        if ([m_horizontalScrollbarPainter shouldUsePresentationValue]) {
             float presentationValue;
             float overhangAmount;
             ScrollableArea::computeScrollbarValueAndOverhang(position.x(), totalContentsSize().width(), viewportRect.width(), presentationValue, overhangAmount);

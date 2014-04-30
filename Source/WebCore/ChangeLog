@@ -1,3 +1,23 @@
+2014-04-30  Beth Dakin  <bdakin@apple.com>
+
+        Always-visible scrollbars continuously repaint after non-momentum scrollling
+        https://bugs.webkit.org/show_bug.cgi?id=132403
+        -and corresponding-
+        <rdar://problem/16553878>
+
+        Reviewed by Simon Fraser.
+
+        No longer universally opt into presentation value mode whenever the scroll 
+        position changes on the scrolling thread. We really only want it for momentum 
+        scrolls, and this will ensure that we always set it to NO once we have set it to 
+        YES.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+
+        Expose shouldUsePresentationValue.
+        * platform/mac/NSScrollerImpDetails.h:
+
 2014-04-30  Anders Carlsson  <andersca@apple.com>
 
         Move the legacy WebKit API into WebKitLegacy.framework and move it inside WebKit.framework
