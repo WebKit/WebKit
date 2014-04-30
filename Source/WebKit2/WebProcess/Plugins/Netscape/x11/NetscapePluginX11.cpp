@@ -191,10 +191,11 @@ bool NetscapePlugin::platformPostInitializeWindowed(bool needsXEmbed, uint64_t w
     // containing a plug with the UI process socket embedded.
     m_platformPluginWidget = gtk_plug_new(static_cast<Window>(windowID));
     GtkWidget* socket = gtk_socket_new();
-    g_signal_connect(socket, "plug-removed", G_CALLBACK(socketPlugRemovedCallback), 0);
+    // Do not show the plug widget until the socket is connected.
+    g_signal_connect_swapped(socket, "plug-added", G_CALLBACK(gtk_widget_show), m_platformPluginWidget);
+    g_signal_connect(socket, "plug-removed", G_CALLBACK(socketPlugRemovedCallback), nullptr);
     gtk_container_add(GTK_CONTAINER(m_platformPluginWidget), socket);
     gtk_widget_show(socket);
-    gtk_widget_show(m_platformPluginWidget);
 
     m_npWindow.window = GINT_TO_POINTER(gtk_socket_get_id(GTK_SOCKET(socket)));
     GdkWindow* window = gtk_widget_get_window(socket);
