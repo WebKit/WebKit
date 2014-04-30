@@ -1,3 +1,12 @@
+2014-04-30  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Wrong units used in offset calculation from r167961.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+        I accidentally mixed and matches LayoutUnits with Ints in offset calculation here.
+        It should all just be in LayoutUnits.
+
 2014-04-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] When pageScaleFactor * deviceScaleFactor = 1, the tile grid is completely messed up

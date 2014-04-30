@@ -4395,9 +4395,9 @@ void WebPage::determinePrimarySnapshottedPlugIn()
 
             IntRect elementRectRelativeToView = element->clientRect();
             IntRect elementRectRelativeToTopDocument(elementRectRelativeToView.location() + scrollOffset, elementRectRelativeToView.size());
-            LayoutUnit xOffset = (plugInRectRelativeToTopDocument.width() * overlappingImageBoundsScale - plugInRectRelativeToTopDocument.width()) / LayoutUnit(2);
-            LayoutUnit yOffset = (plugInRectRelativeToTopDocument.height() * overlappingImageBoundsScale - plugInRectRelativeToTopDocument.height()) / LayoutUnit(2);
             LayoutRect inflatedPluginRect = plugInRectRelativeToTopDocument;
+            LayoutUnit xOffset = (inflatedPluginRect.width() * overlappingImageBoundsScale - inflatedPluginRect.width()) / LayoutUnit(2.0);
+            LayoutUnit yOffset = (inflatedPluginRect.height() * overlappingImageBoundsScale - inflatedPluginRect.height()) / LayoutUnit(2.0);
             inflatedPluginRect.inflateX(xOffset);
             inflatedPluginRect.inflateY(yOffset);
 
