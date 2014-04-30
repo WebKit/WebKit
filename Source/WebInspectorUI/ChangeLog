@@ -1,5 +1,43 @@
 2014-04-29  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: reduce per-protocol method function creation in InspectorBackend
+        https://bugs.webkit.org/show_bug.cgi?id=130701
+
+        Reviewed by Timothy Hatcher.
+
+        Instead of creating 4 bound functions for every backend method on startup, we
+        can share common functionality on the InspectorBackendCommand prototype. This
+        also splits the various client-facing protocol introspection mechanisms from
+        the message encoding/decoding code.
+
+        We use a workaround to make the command instances themselves callable as well
+        as having .invoke, .promise, and .supports. InspectorAgent.methodName returns a
+        trampoline function that performs the default method invocation. The trampoline's
+        __proto__ is patched to point to InspectorBackendClass.prototype, and the command
+        instance is saved in the closure and on the trampoline function itself.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype._registerPendingResponse):
+        (InspectorBackendClass.prototype._invokeMethod):
+        (InspectorBackendClass.prototype.registerCommand):
+        (InspectorBackendClass.prototype.registerEvent):
+        (InspectorBackendCommand):
+        (.callable):
+        (InspectorBackendCommand.create):
+        (InspectorBackendCommand.prototype.invoke):
+        (InspectorBackendCommand.prototype.promise):
+        (InspectorBackendCommand.prototype.supports):
+        (InspectorBackendCommand.prototype._invokeWithArguments):
+        (InspectorBackendClass.prototype._wrap): Deleted.
+        (InspectorBackendClass.prototype._invoke): Deleted.
+        (InspectorBackendClass.prototype._promise): Deleted.
+        (InspectorBackendClass.prototype._supports): Deleted.
+        (InspectorBackendClass.prototype._sendMessageToBackend): Deleted.
+        (InspectorBackendClass.prototype._wrapCallbackAndSendMessageObject): Deleted.
+        (InspectorBackendClass.prototype.sendMessageObjectToBackend): Deleted.
+
+2014-04-29  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: DataGrid columns should be objects not Maps
         https://bugs.webkit.org/show_bug.cgi?id=129383
 
