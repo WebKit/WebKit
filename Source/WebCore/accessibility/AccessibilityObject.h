@@ -843,6 +843,7 @@ public:
     virtual bool ariaLiveRegionBusy() const { return false; }
     static const String defaultLiveRegionStatusForRole(AccessibilityRole);
     static bool liveRegionStatusIsEnabled(const AtomicString&);
+    static bool contentEditableAttributeIsEnabled(Element*);
     
     bool supportsARIAAttributes() const;
     

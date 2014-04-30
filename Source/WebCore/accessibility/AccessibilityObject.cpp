@@ -1314,7 +1314,20 @@ AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const V
 
     return obj->document().axObjectCache()->getOrCreate(obj);
 }
-
+    
+bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
+{
+    if (!element)
+        return false;
+    
+    if (!element->hasAttribute(contenteditableAttr))
+        return false;
+    
+    const AtomicString& contentEditableValue = element->fastGetAttribute(contenteditableAttr);
+    // Both "true" (case-insensitive) and the empty string count as true.
+    return contentEditableValue.isEmpty() || equalIgnoringCase(contentEditableValue, "true");
+}
+    
 #if HAVE(ACCESSIBILITY)
 int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) const
 {

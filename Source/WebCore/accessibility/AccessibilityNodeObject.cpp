@@ -2012,11 +2012,7 @@ AccessibilityRole AccessibilityNodeObject::remapAriaRoleDueToParent(Accessibilit
 // This only returns true if this is the element that actually has the contentEditable attribute set.
 bool AccessibilityNodeObject::hasContentEditableAttributeSet() const
 {
-    if (!hasAttribute(contenteditableAttr))
-        return false;
-    const AtomicString& contentEditableValue = getAttribute(contenteditableAttr);
-    // Both "true" (case-insensitive) and the empty string count as true.
-    return contentEditableValue.isEmpty() || equalIgnoringCase(contentEditableValue, "true");
+    return contentEditableAttributeIsEnabled(element());
 }
 
 bool AccessibilityNodeObject::canSetSelectedAttribute() const

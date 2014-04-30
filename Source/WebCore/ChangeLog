@@ -1,3 +1,29 @@
+2014-04-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Make "contenteditable" regions into AXTextAreas
+        https://bugs.webkit.org/show_bug.cgi?id=132379
+
+        Reviewed by Mario Sanchez Prada.
+
+        Make contenteditable regions into AXTextAreas. This will allow for a more standardized
+        interface for interaction with assistive technologies.
+
+        Test: accessibility/content-editable-as-textarea.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::hasContentEditableAttributeSet):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::contentEditableAttributeIsEnabled):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::documentBasedSelectedTextRange):
+        (WebCore::AccessibilityRenderObject::selectedText):
+        (WebCore::AccessibilityRenderObject::selectedTextRange):
+        (WebCore::AccessibilityRenderObject::renderObjectIsObservable):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::ariaSelectedTextRange): Deleted.
+        * accessibility/AccessibilityRenderObject.h:
+
 2014-04-30  Brian J. Burg  <burg@cs.washington.edu>
 
         Clean up unnecessary methods in the BackForwardClient interface

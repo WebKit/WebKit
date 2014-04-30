@@ -233,7 +233,7 @@ private:
     bool isAllowedChildOfTree() const;
     bool hasTextAlternative() const;
     String positionalDescriptionForMSAA() const;
-    PlainTextRange ariaSelectedTextRange() const;
+    PlainTextRange documentBasedSelectedTextRange() const;
     Element* rootEditableElementForPosition(const Position&) const;
     bool nodeIsTextControl(const Node*) const;
     virtual void setNeedsToUpdateChildren() override { m_childrenDirty = true; }

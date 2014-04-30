@@ -1,3 +1,14 @@
+2014-04-30  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Make "contenteditable" regions into AXTextAreas
+        https://bugs.webkit.org/show_bug.cgi?id=132379
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/content-editable-as-textarea.html: Added.
+        * platform/mac-mountainlion/accessibility/content-editable-as-textarea-expected.txt: Added.
+        * platform/mac/accessibility/content-editable-as-textarea-expected.txt: Added.
+
 2014-04-30  David Kilzer  <ddkilzer@apple.com>
 
         Move iphone-simulator test results landed in r167402 to the correct directory

@@ -1420,7 +1420,7 @@ int AccessibilityRenderObject::textLength() const
     return text().length();
 }
 
-PlainTextRange AccessibilityRenderObject::ariaSelectedTextRange() const
+PlainTextRange AccessibilityRenderObject::documentBasedSelectedTextRange() const
 {
     Node* node = m_renderer->node();
     if (!node)
@@ -1449,10 +1449,7 @@ String AccessibilityRenderObject::selectedText() const
         return textControl.selectedText();
     }
     
-    if (ariaRoleAttribute() == UnknownRole)
-        return String();
-    
-    return doAXStringForRange(ariaSelectedTextRange());
+    return doAXStringForRange(documentBasedSelectedTextRange());
 }
 
 const AtomicString& AccessibilityRenderObject::accessKey() const
@@ -1483,10 +1480,7 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
         return PlainTextRange(textControl.selectionStart(), textControl.selectionEnd() - textControl.selectionStart());
     }
     
-    if (ariaRole == UnknownRole)
-        return PlainTextRange();
-    
-    return ariaSelectedTextRange();
+    return documentBasedSelectedTextRange();
 }
 
 void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range)
@@ -2394,11 +2388,14 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject* renderer)
     
     // AX clients will listen for AXSelectedChildrenChanged on listboxes.
     Node* node = renderer->node();
+    if (!node)
+        return false;
+    
     if (nodeHasRole(node, "listbox") || (renderer->isBoxModelObject() && toRenderBoxModelObject(renderer)->isListBox()))
         return true;
 
     // Textboxes should send out notifications.
-    if (nodeHasRole(node, "textbox"))
+    if (nodeHasRole(node, "textbox") || (node->isElementNode() && contentEditableAttributeIsEnabled(toElement(node))))
         return true;
     
     return false;
@@ -2510,7 +2507,10 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
             return ColorWellRole;
 #endif
     }
-
+    
+    if (hasContentEditableAttributeSet())
+        return TextAreaRole;
+    
     if (isFileUploadButton())
         return ButtonRole;
     
