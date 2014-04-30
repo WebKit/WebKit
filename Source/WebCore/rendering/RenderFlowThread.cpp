@@ -730,7 +730,7 @@ void RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle(const RenderBox* b
 void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, RenderRegion* startRegion, RenderRegion* endRegion)
 {
     ASSERT(hasRegions());
-    ASSERT(startRegion && endRegion);
+    ASSERT(startRegion && endRegion && startRegion->flowThread() == this && endRegion->flowThread() == this);
 
     auto it = m_regionRangeMap.find(box);
     if (it == m_regionRangeMap.end()) {

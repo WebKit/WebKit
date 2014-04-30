@@ -1,3 +1,45 @@
+2014-04-30  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] ASSERTs in fast/dynamic/continuation-detach-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=132392
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        Add ASSERTs in case we ever try to set regions from the wrong flow thread
+        as part of the box's region range.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantInserted):
+        Add a bunch of code that handles the discovery of a span from an outer flow thread
+        being inserted into an inner flow thread. This forces us to delete that placeholder
+        and shift the outer spanning content into the inner flow thread in order to get a new
+        mapping/placeholder created in the inner flow thread.
+
+        (WebCore::RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved):
+        Tighten this code to use the parent() just in case we change the invariant of
+        parent = containingBlock later.
+
+        * rendering/RenderMultiColumnFlowThread.h:
+        Add a static guard when shifting a spanner to prevent the outer flow thread from
+        thinking the spanner belongs to it when it gets punted out of the inner flow thread.
+        A better long-term solution might be to make the spanner map global instead of
+        per-flow thread.
+
+        * rendering/RenderMultiColumnSpannerPlaceholder.cpp:
+        (WebCore::RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder):
+        * rendering/RenderMultiColumnSpannerPlaceholder.h:
+        Cache the flow thread so that we can get back to it in order to detect if the
+        placeholder belongs to us or not.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::insertedIntoTree):
+        Notifications from insertedIntoTree are problematic, since this can be called during
+        the layout of the outer flow thread for content inside an inner flow thread that is
+        not getting a layout yet. This makes the currentFlowThread in the flow thread controller
+        inaccurate, so we have to add code to clear it out and put it back.
+
 2014-04-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Make "contenteditable" regions into AXTextAreas

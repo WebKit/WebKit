@@ -1925,10 +1925,16 @@ void RenderObject::insertedIntoTree()
     if (!isFloating() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(this);
     
+    // We have to unset the current layout RenderFlowThread here, since insertedIntoTree() can happen in
+    // the middle of layout but for objects inside a nested flow thread that is still being populated. This
+    // will cause an accurate crawl to happen in order to ensure that the right flow thread is notified.
+    RenderFlowThread* previousThread = view().flowThreadController().currentRenderFlowThread();
+    view().flowThreadController().setCurrentRenderFlowThread(nullptr);
     if (parent()->isRenderFlowThread())
         toRenderFlowThread(parent())->flowThreadDescendantInserted(this);
     else if (RenderFlowThread* flowThread = parent()->flowThreadContainingBlock())
         flowThread->flowThreadDescendantInserted(this);
+    view().flowThreadController().setCurrentRenderFlowThread(previousThread);
 }
 
 void RenderObject::willBeRemovedFromTree()

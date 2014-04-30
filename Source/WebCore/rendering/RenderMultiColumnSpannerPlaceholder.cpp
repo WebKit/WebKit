@@ -46,6 +46,7 @@ RenderMultiColumnSpannerPlaceholder* RenderMultiColumnSpannerPlaceholder::create
 RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlowThread* flowThread, RenderBox* spanner, PassRef<RenderStyle> style)
     : RenderBox(flowThread->document(), std::move(style), RenderBoxModelObjectFlag)
     , m_spanner(spanner)
+    , m_flowThread(flowThread)
 {
 }
 

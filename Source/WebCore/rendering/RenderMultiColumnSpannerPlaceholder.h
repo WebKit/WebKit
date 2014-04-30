@@ -42,6 +42,7 @@ public:
 
     virtual bool isRenderMultiColumnSpannerPlaceholder() const override { return true; }
     RenderBox* spanner() const { return m_spanner; }
+    RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }
 
 private:
     RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlowThread*, RenderBox* spanner, PassRef<RenderStyle>);
@@ -51,6 +52,7 @@ private:
     virtual const char* renderName() const override;
 
     RenderBox* m_spanner;
+    RenderMultiColumnFlowThread* m_flowThread;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderMultiColumnSpannerPlaceholder, isRenderMultiColumnSpannerPlaceholder())

@@ -149,6 +149,8 @@ private:
     bool m_progressionIsInline;
     bool m_progressionIsReversed;
     bool m_beingEvacuated;
+    
+    static bool gShiftingSpanner;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderMultiColumnFlowThread, isRenderMultiColumnFlowThread())
