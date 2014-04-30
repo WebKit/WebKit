@@ -54,6 +54,7 @@ class FilterOperations;
 class BitmapTexture : public RefCounted<BitmapTexture> {
 public:
     enum Flag {
+        NoFlag = 0,
         SupportsAlpha = 0x01
     };
 
@@ -163,7 +164,7 @@ public:
 
     virtual IntSize maxTextureSize() const = 0;
 
-    virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&);
+    virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&, const BitmapTexture::Flags = BitmapTexture::SupportsAlpha);
 
 #if ENABLE(CSS_SHADERS)
     virtual void removeCachedCustomFilterProgram(CustomFilterProgram*) { }
