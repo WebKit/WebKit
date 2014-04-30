@@ -1,3 +1,32 @@
+2014-04-30  Roger Fong  <roger_fong@apple.com>
+
+        Enable snapshot tests on mac wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=131871.
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/plugins/snapshotting/autoplay-dominant-expected.txt:
+        * platform/mac-wk2/plugins/snapshotting/autoplay-plugin-blocked-by-image-expected.txt:
+        * platform/mac-wk2/plugins/snapshotting/autoplay-plugin-blocked-by-image-expected.txt:
+        * platform/mac-wk2/plugins/snapshotting/autoplay-similar-to-dominant-after-delay-expected.txt:
+        * platform/mac-wk2/plugins/snapshotting/autoplay-similar-to-dominant-expected.txt:
+        * platform/mac-wk2/plugins/snapshotting/quicktime-plugin-snapshotted-expected.txt:
+        * platform/mac-wk2/plugins/snapshotting/restart-expected.txt:
+        * platform/mac-wk2/plugins/snapshotting/set-plugin-size-to-tiny-expected.txt:
+        * platform/mac-wk2/plugins/snapshotting/simple-expected.txt:
+        * platform/mac-wk2/plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image-expected.txt:
+        * plugins/snapshotting/autoplay-dominant.html:
+        * plugins/snapshotting/autoplay-plugin-blocked-by-image.html:
+        * plugins/snapshotting/autoplay-plugin-mostly-blocked-by-image.html:
+        * plugins/snapshotting/autoplay-similar-to-dominant-after-delay.html:
+        * plugins/snapshotting/autoplay-similar-to-dominant.html:
+        * plugins/snapshotting/quicktime-plugin-snapshotted.html:
+        * plugins/snapshotting/restart.html:
+        * plugins/snapshotting/set-plugin-size-to-tiny.html:
+        * plugins/snapshotting/simple.html:
+        * plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html:
+
 2014-04-30  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Enable new multi-column mode

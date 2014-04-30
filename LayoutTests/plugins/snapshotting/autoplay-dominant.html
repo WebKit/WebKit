@@ -1,12 +1,18 @@
 <p>This test's dominant plugin should play automatically</p>
+<div id="result">FAIL</div>
 <script>
 if (window.testRunner) {
-    window.internals.settings.setPlugInSnapshottingEnabled(true);
-    window.internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    internals.settings.setPlugInSnapshottingEnabled(true);
+    internals.settings.setMaximumPlugInSnapshotAttempts(0);
     testRunner.waitUntilDone();
+    //testRunner.dumpAsText();
     setTimeout(function () {
+        var result = document.getElementById("result");
+        var embed = document.getElementById("plugin");
+        if (!internals.isPluginSnapshotted(embed))
+            result.innerHTML = "PASS";
         testRunner.notifyDone();
-    }, 500);
+    }, 1000);
 }
 </script>
-<embed src="../resources/lines.swf" width="600" height="600"></embed>
+<embed id="plugin" src="../resources/lines.swf" width="600" height="600"></embed>

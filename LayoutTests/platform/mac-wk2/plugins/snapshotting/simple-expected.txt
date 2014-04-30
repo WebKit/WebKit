@@ -1,5 +1,4 @@
 This test forces a plugin to snapshot immediately
 
-FAIL
-
+PASS
 

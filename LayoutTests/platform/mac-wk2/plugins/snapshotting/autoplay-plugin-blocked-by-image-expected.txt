@@ -1,16 +1,4 @@
-layer at (0,0) size 785x1254
-  RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1254
-  RenderBlock {HTML} at (0,0) size 785x1254
-    RenderBody {BODY} at (8,8) size 769x1238
-      RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 623x18
-          text run at (0,0) width 623: "This tests that a dominant plugin should play automatically even if an image is on top of the plugin."
-      RenderBlock (anonymous) at (0,34) size 769x1204
-        RenderText {#text} at (600,586) size 4x18
-          text run at (600,586) width 4: " "
-        RenderText {#text} at (0,0) size 0x0
-layer at (8,42) size 600x600
-  RenderEmbeddedObject {EMBED} at (0,0) size 600x600
-layer at (8,46) size 600x600
-  RenderImage {IMG} at (0,604) size 600x600
+This tests that a dominant plugin should play automatically even if an image is on top of the plugin.
+
+PASS
+ 

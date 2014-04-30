@@ -1,13 +1,19 @@
 <p>This tests that a dominant plugin should play automatically if an image is mostly on top of the plugin.</p>
+<div id="result">FAIL</div>
 <script>
 if (window.testRunner) {
-    window.internals.settings.setPlugInSnapshottingEnabled(true);
-    window.internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    internals.settings.setPlugInSnapshottingEnabled(true);
+    internals.settings.setMaximumPlugInSnapshotAttempts(0);
     testRunner.waitUntilDone();
+    testRunner.dumpAsText();
     setTimeout(function () {
+        var result = document.getElementById("result");
+        var embed = document.getElementById("plugin");
+        if (!internals.isPluginSnapshotted(embed))
+            result.innerHTML = "PASS";
         testRunner.notifyDone();
     }, 1000);
 }
 </script>
-<embed src="../resources/lines.swf" width="600" height="600"></embed>
-<img src="../resources/apple.gif" width="600" height="600" style="position:absolute; top:20px; left:0px">
+<embed id="plugin" src="../resources/lines.swf" width="600" height="600"></embed>
+<img src="../resources/apple.gif" width="600" height="600" style="position:absolute; top:45px; left:0px">

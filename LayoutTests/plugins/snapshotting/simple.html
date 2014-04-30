@@ -1,18 +1,18 @@
 <p>This test forces a plugin to snapshot immediately</p>
-<p id="passStatus">PASS</p>
+<div id="result">FAIL</div>
 <script>
 if (window.testRunner) {
-    window.internals.settings.setPlugInSnapshottingEnabled(true);
-    window.internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    internals.settings.setPlugInSnapshottingEnabled(true);
+    internals.settings.setMaximumPlugInSnapshotAttempts(0);
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
     setTimeout(function () {
-        var plugin = document.getElementById("plugin");
-        var passStatus = document.getElementById("passStatus");
-        if (!window.internals.isPluginSnapshotted(plugin))
-            passStatus.innerHTML = "FAIL";
+        var result = document.getElementById("result");
+        var embed = document.getElementById("plugin");
+        if (internals.isPluginSnapshotted(embed))
+            result.innerHTML = "PASS";
         testRunner.notifyDone();
-    }, 500);
+    }, 1000);
 }
 </script>
 <embed id="plugin" src="../resources/lines.swf"></embed>
