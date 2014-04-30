@@ -102,13 +102,13 @@ JSValue JSStringJoiner::join(ExecState* exec)
     if (!m_strings.size())
         return jsEmptyString(exec);
 
-    Checked<size_t, RecordOverflow> separatorLength = m_separator.length();
+    Checked<unsigned, RecordOverflow> separatorLength = m_separator.length();
     // FIXME: add special cases of joinStrings() for (separatorLength == 0) and (separatorLength == 1).
     ASSERT(m_strings.size() > 0);
-    Checked<size_t, RecordOverflow> totalSeparactorsLength = separatorLength * (m_strings.size() - 1);
-    Checked<size_t, RecordOverflow> outputStringSize = totalSeparactorsLength + m_accumulatedStringsLength;
+    Checked<unsigned, RecordOverflow> totalSeparactorsLength = separatorLength * (m_strings.size() - 1);
+    Checked<unsigned, RecordOverflow> outputStringSize = totalSeparactorsLength + m_accumulatedStringsLength;
 
-    size_t finalSize;
+    unsigned finalSize;
     if (outputStringSize.safeGet(finalSize) == CheckedState::DidOverflow)
         return throwOutOfMemoryError(exec);
         

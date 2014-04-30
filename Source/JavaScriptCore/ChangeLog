@@ -1,3 +1,13 @@
+2014-03-12  Mark Lam  <mark.lam@apple.com>
+
+        Update type of local vars to match the type of String length.
+        <https://webkit.org/b/130077>
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSStringJoiner.cpp:
+        (JSC::JSStringJoiner::join):
+
 2013-09-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG AI assumes that ToThis can never return non-object if it is passed an object, and operationToThis will get the wrong value of isStrictMode() if there's inlining
