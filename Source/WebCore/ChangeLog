@@ -1,3 +1,13 @@
+2014-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Switch video from GStreamer to Media Foundation.
+        https://bugs.webkit.org/show_bug.cgi?id=132358
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        Removed dependencies on GStreamer.
+
 2014-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some PLATFORM(IOS) #ifdefs related to hasAcceleratedTouchScrolling()

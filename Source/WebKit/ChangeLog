@@ -1,3 +1,13 @@
+2014-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Switch video from GStreamer to Media Foundation.
+        https://bugs.webkit.org/show_bug.cgi?id=132358
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        Removed dependencies on GStreamer.
+
 2014-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Support Python 2.7 in Cygwin
