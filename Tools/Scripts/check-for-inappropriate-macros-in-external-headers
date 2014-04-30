@@ -29,7 +29,7 @@
 # clients include these headers they would not also need WTF's Platform.h.
 
 base_directory = ENV['TARGET_BUILD_DIR'] or throw "Unable to find TARGET_BUILD_DIR in the environment!"
-project_name = ENV['PROJECT_NAME'] or throw "Unable to find PROJECT_NAME in the environment!"
+product_name = ENV['PRODUCT_NAME'] or throw "Unable to find PRODUCT_NAME in the environment!"
 $is_shallow_bundle = (ENV['SHALLOW_BUNDLE'] || "NO").upcase == "YES"
 
 $error_printed = false
@@ -67,7 +67,7 @@ end
 
 Dir.chdir base_directory
 
-framework = "#{project_name}.framework"
+framework = "#{product_name}.framework"
 ARGV.each do |path|
   framework_headers_for_path(framework, path).each do |header|
     verify_macros_in_header(header)
