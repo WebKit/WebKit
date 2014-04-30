@@ -752,7 +752,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.allowUniversalAccessFromFileURLs = pageSettings.allowUniversalAccessFromFileURLs();
     priv->settings.allowFileAccessFromFileURLs = pageSettings.allowFileAccessFromFileURLs();
 
-    priv->history = ewk_history_new(static_cast<WebCore::BackForwardList*>(priv->page->backForward().client()));
+    priv->history = ewk_history_new(static_cast<WebCore::BackForwardList*>(&priv->page->backForward().client()));
 
 #ifdef HAVE_ECORE_X
     priv->isUsingEcoreX = WebCore::isUsingEcoreX(smartData->base.evas);
@@ -1653,14 +1653,14 @@ Eina_Bool ewk_view_history_enable_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-    return static_cast<WebCore::BackForwardList*>(priv->page->backForward().client())->enabled();
+    return static_cast<WebCore::BackForwardList&>(priv->page->backForward().client()).enabled();
 }
 
 Eina_Bool ewk_view_history_enable_set(Evas_Object* ewkView, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-    static_cast<WebCore::BackForwardList*>(priv->page->backForward().client())->setEnabled(enable);
+    static_cast<WebCore::BackForwardList&>(priv->page->backForward().client()).setEnabled(enable);
     return true;
 }
 
@@ -1668,7 +1668,7 @@ Ewk_History* ewk_view_history_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-    if (!static_cast<WebCore::BackForwardList*>(priv->page->backForward().client())->enabled()) {
+    if (!static_cast<WebCore::BackForwardList&>(priv->page->backForward().client()).enabled()) {
         ERR("asked history, but it's disabled! Returning 0!");
         return 0;
     }

@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-BackForwardController::BackForwardController(Page& page, PassRefPtr<BackForwardClient> client)
+BackForwardController::BackForwardController(Page& page, std::unique_ptr<BackForwardClient> client)
     : m_page(page)
-    , m_client(client)
+    , m_client(std::move(client))
 {
     if (!m_client)
-        m_client = BackForwardList::create(&page);
+        m_client = std::make_unique<BackForwardList>();
 }
 
 BackForwardController::~BackForwardController()

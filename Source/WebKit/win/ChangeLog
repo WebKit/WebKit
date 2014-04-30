@@ -1,3 +1,24 @@
+2014-04-30  Brian J. Burg  <burg@cs.washington.edu>
+
+        Clean up unnecessary methods in the BackForwardClient interface
+        https://bugs.webkit.org/show_bug.cgi?id=131637
+
+        Reviewed by Andreas Kling.
+
+        Remove uses of reference counting for BackForwardList.
+        Use BackForwardController instead of BackForwardClient where possible.
+
+        * WebBackForwardList.cpp:
+        (WebBackForwardList::WebBackForwardList):
+        (WebBackForwardList::~WebBackForwardList):
+        (WebBackForwardList::createInstance):
+        * WebBackForwardList.h:
+        * WebView.cpp:
+        (WebView::backForwardList):
+        (WebView::canGoBack):
+        (WebView::canGoForward):
+        (WebView::loadBackForwardListFromOtherView):
+
 2014-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         FontCache::fontCache() never returns nullptr so it can be made to return a reference instead

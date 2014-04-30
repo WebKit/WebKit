@@ -29,14 +29,13 @@
 #define BackForwardClient_h
 
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class HistoryItem;
 
-class BackForwardClient : public RefCounted<BackForwardClient> {
-public: 
+class BackForwardClient {
+public:
     virtual ~BackForwardClient()
     {
     }
@@ -44,27 +43,12 @@ public:
     virtual void addItem(PassRefPtr<HistoryItem>) = 0;
 
     virtual void goToItem(HistoryItem*) = 0;
-        
+
     virtual HistoryItem* itemAtIndex(int) = 0;
     virtual int backListCount() = 0;
     virtual int forwardListCount() = 0;
 
     virtual void close() = 0;
-
-#if PLATFORM(IOS)
-    // FIXME: These methods seem to violate the encapsulation of this class.
-    virtual unsigned current() = 0;
-    virtual void setCurrent(unsigned newCurrent) = 0;
-
-    // FIXME: Consider renaming this method once we upstream the iOS changes to WebView.mm.
-    virtual bool clearAllPageCaches() = 0;
-#endif
-
-    // FIXME: Delete these once all callers are using BackForwardController
-    // instead of calling this directly.
-    HistoryItem* backItem() { return itemAtIndex(-1); }
-    HistoryItem* currentItem() { return itemAtIndex(0); }
-    HistoryItem* forwardItem() { return itemAtIndex(1); }
 };
 
 } // namespace WebCore

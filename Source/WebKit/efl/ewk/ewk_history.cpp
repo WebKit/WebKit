@@ -92,11 +92,7 @@ static inline Eina_List* _ewk_history_item_list_get(const WebCore::HistoryItemVe
 
 Eina_Bool ewk_history_clear(Ewk_History* history)
 {
-    EWK_HISTORY_CORE_GET_OR_RETURN(history, core, false);
-
-    WebCore::Page* page = core->page();
-    if (page && page->groupPtr())
-        page->groupPtr()->removeVisitedLinks();
+    WebCore::PageGroup::removeAllVisitedLinks();
 
     const int limit = ewk_history_limit_get(history);
     ewk_history_limit_set(history, 0);
@@ -372,7 +368,6 @@ Ewk_History* ewk_history_new(WebCore::BackForwardList* core)
 
     history = new Ewk_History;
     history->core = core;
-    core->ref();
 
     return history;
 }
@@ -388,7 +383,6 @@ Ewk_History* ewk_history_new(WebCore::BackForwardList* core)
 void ewk_history_free(Ewk_History* history)
 {
     DBG("history=%p", history);
-    history->core->deref();
     delete history;
 }
 

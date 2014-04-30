@@ -32,7 +32,6 @@
 #include "FrameLoaderClient.h"
 #include "HistoryItem.h"
 #include "Logging.h"
-#include "Page.h"
 #include "PageCache.h"
 #include "SerializedScriptValue.h"
 
@@ -41,9 +40,8 @@ namespace WebCore {
 static const unsigned DefaultCapacity = 100;
 static const unsigned NoCurrentItemIndex = UINT_MAX;
 
-BackForwardList::BackForwardList(Page* page)
-    : m_page(page)
-    , m_current(NoCurrentItemIndex)
+BackForwardList::BackForwardList()
+    : m_current(NoCurrentItemIndex)
     , m_capacity(DefaultCapacity)
     , m_closed(true)
     , m_enabled(true)
@@ -261,7 +259,6 @@ void BackForwardList::close()
         pageCache()->remove(m_entries[i].get());
     m_entries.clear();
     m_entryHash.clear();
-    m_page = 0;
     m_closed = true;
 }
 

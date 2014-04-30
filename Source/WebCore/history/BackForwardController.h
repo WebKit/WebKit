@@ -28,7 +28,6 @@
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -39,10 +38,11 @@ class Page;
 class BackForwardController {
     WTF_MAKE_NONCOPYABLE(BackForwardController); WTF_MAKE_FAST_ALLOCATED;
 public:
-    BackForwardController(Page&, PassRefPtr<BackForwardClient>);
+    BackForwardController(Page&, std::unique_ptr<BackForwardClient>);
     ~BackForwardController();
 
-    BackForwardClient* client() const { return m_client.get(); }
+    // FIXME: Remove uses of this getter. <https://webkit.org/b/132027>
+    BackForwardClient& client() const { return *m_client; }
 
     bool canGoBackOrForward(int distance) const;
     void goBackOrForward(int distance);
@@ -52,7 +52,7 @@ public:
 
     void addItem(PassRefPtr<HistoryItem>);
     void setCurrentItem(HistoryItem*);
-        
+
     int count() const;
     int backCount() const;
     int forwardCount() const;
@@ -67,7 +67,7 @@ public:
 
 private:
     Page& m_page;
-    RefPtr<BackForwardClient> m_client;
+    std::unique_ptr<BackForwardClient> m_client;
 };
 
 } // namespace WebCore

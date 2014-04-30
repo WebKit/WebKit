@@ -40,9 +40,9 @@ namespace WebCore {
 class WebBackForwardList : public IWebBackForwardList, IWebBackForwardListPrivate
 {
 public:
-    static WebBackForwardList* createInstance(PassRefPtr<WebCore::BackForwardList>);
+    static WebBackForwardList* createInstance(WebCore::BackForwardList*);
 protected:
-    WebBackForwardList(PassRefPtr<WebCore::BackForwardList>);
+    WebBackForwardList(WebCore::BackForwardList*);
     ~WebBackForwardList();
 
 public:
@@ -109,7 +109,7 @@ public:
 
 protected:
     ULONG m_refCount;
-    RefPtr<WebCore::BackForwardList> m_backForwardList;
+    WebCore::BackForwardList* m_backForwardList;
 };
 
 #endif

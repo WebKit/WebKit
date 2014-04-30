@@ -1,3 +1,36 @@
+2014-04-30  Brian J. Burg  <burg@cs.washington.edu>
+
+        Clean up unnecessary methods in the BackForwardClient interface
+        https://bugs.webkit.org/show_bug.cgi?id=131637
+
+        Reviewed by Andreas Kling.
+
+        Remove stubs for iOS-specific methods in the BackForwardClient interface.
+
+        Construct a WebBackForwardListProxy directly, and make the WebCore page
+        own the BackForwardClient instance. Convert uses of backForward().client()
+        to accept references instead of raw pointers.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp:
+        (WebKit::InjectedBundleBackForwardList::clear):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp: Store a reference to
+        WebCore::Page instead of a pointer.
+        (WebKit::WebBackForwardListProxy::WebBackForwardListProxy):
+        (WebKit::WebBackForwardListProxy::create): Deleted.
+        (WebKit::WebBackForwardListProxy::addItem):
+        (WebKit::WebBackForwardListProxy::goToItem):
+        (WebKit::WebBackForwardListProxy::itemAtIndex):
+        (WebKit::WebBackForwardListProxy::backListCount):
+        (WebKit::WebBackForwardListProxy::forwardListCount):
+        (WebKit::WebBackForwardListProxy::close):
+        (WebKit::WebBackForwardListProxy::clear):
+        (WebKit::WebBackForwardListProxy::isActive):
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/ios/WebBackForwardListProxyIOS.mm: Removed.
+
 2014-04-30  Gavin Barraclough  <baraclough@apple.com>
 
         Fix PageVisibility on iOS

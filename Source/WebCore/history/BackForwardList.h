@@ -34,23 +34,19 @@
 
 namespace WebCore {
 
-class Page;
-
 typedef Vector<RefPtr<HistoryItem>> HistoryItemVector;
 typedef HashSet<RefPtr<HistoryItem>> HistoryItemHashSet;
 
 class BackForwardList : public BackForwardClient {
-public: 
-    static PassRefPtr<BackForwardList> create(Page* page) { return adoptRef(new BackForwardList(page)); }
+public:
+    BackForwardList();
     virtual ~BackForwardList();
-
-    Page* page() { return m_page; }
 
     virtual void addItem(PassRefPtr<HistoryItem>) override;
     void goBack();
     void goForward();
     virtual void goToItem(HistoryItem*) override;
-        
+
     HistoryItem* backItem();
     HistoryItem* currentItem();
     HistoryItem* forwardItem();
@@ -74,16 +70,13 @@ public:
     HistoryItemVector& entries();
 
 #if PLATFORM(IOS)
-    virtual unsigned current() override;
-    virtual void setCurrent(unsigned newCurrent) override;
+    unsigned current();
+    void setCurrent(unsigned newCurrent);
 
-    virtual bool clearAllPageCaches() override;
+    bool clearAllPageCaches();
 #endif
 
 private:
-    explicit BackForwardList(Page*);
-
-    Page* m_page;
     HistoryItemVector m_entries;
     HistoryItemHashSet m_entryHash;
     unsigned m_current;

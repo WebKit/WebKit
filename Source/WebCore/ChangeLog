@@ -1,3 +1,31 @@
+2014-04-30  Brian J. Burg  <burg@cs.washington.edu>
+
+        Clean up unnecessary methods in the BackForwardClient interface
+        https://bugs.webkit.org/show_bug.cgi?id=131637
+
+        Reviewed by Andreas Kling.
+
+        Demote back/current/forwardItem and iOS-specific methods from the
+        BackForwardClient interface. Convert the class to not be refcounted.
+
+        No new tests, no behavior was changed.
+
+        * WebCore.exp.in:
+        * history/BackForwardClient.h:
+        (WebCore::BackForwardClient::~BackForwardClient): Deleted.
+        (WebCore::BackForwardClient::backItem): Deleted.
+        (WebCore::BackForwardClient::currentItem): Deleted.
+        (WebCore::BackForwardClient::forwardItem): Deleted.
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::BackForwardController):
+        * history/BackForwardController.h: Take ownership of the passed BackForwardClient.
+        (WebCore::BackForwardController::client): Return a reference.
+        * history/BackForwardList.h: Remove the Page field, since it isn't used any more.
+        (WebCore::BackForwardList::create): Deleted.
+        * page/Page.h: Remove RefPtr from PageClient.
+        * page/Page.cpp:
+        (WebCore::PageClients::PageClients): Initialize client to nullptr.
+
 2014-04-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac, iOS] Support caption activation via JS webkitHasClosedCaptions method

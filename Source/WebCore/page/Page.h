@@ -134,7 +134,7 @@ public:
         InspectorClient* inspectorClient;
         PlugInClient* plugInClient;
         ProgressTrackerClient* progressTrackerClient;
-        RefPtr<BackForwardClient> backForwardClient;
+        std::unique_ptr<BackForwardClient> backForwardClient;
         ValidationMessageClient* validationMessageClient;
         FrameLoaderClient* loaderClientForMainFrame;
 
