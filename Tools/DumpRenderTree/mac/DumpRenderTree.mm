@@ -880,7 +880,9 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setCSSGridLayoutEnabled:NO];
     [preferences setUsePreHTML5ParserQuirks:NO];
     [preferences setAsynchronousSpellCheckingEnabled:NO];
+#if !PLATFORM(IOS)
     ASSERT([preferences mockScrollbarsEnabled]);
+#endif
 
 #if ENABLE(WEB_AUDIO)
     [preferences setWebAudioEnabled:YES];
@@ -1084,7 +1086,6 @@ static void prepareConsistentTestingEnvironment()
     [[WebPreferences standardPreferences] setAutosaves:NO];
 
 #if !PLATFORM(IOS)
-
     // FIXME: We'd like to start with a clean state for every test, but this function can't be used more than once yet.
     [WebPreferences _switchNetworkLoaderToNewTestingSession];
 

@@ -1,3 +1,13 @@
+2014-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix DRT assertion about mock scrollbars, which doesn't apply to iOS.
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        (prepareConsistentTestingEnvironment):
+
 2014-04-30  Anders Carlsson  <andersca@apple.com>
 
         check-for-inappropriate-macros-in-external-headers should get the product name, not the project name
