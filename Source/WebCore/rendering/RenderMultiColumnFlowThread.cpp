@@ -610,11 +610,12 @@ void RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint(MapCoordinatesFlags mo
     // Now walk through each region.
     const RenderMultiColumnSet* candidateColumnSet = nullptr;
     LayoutPoint candidatePoint;
+    LayoutSize candidateContainerOffset;
     
     for (const auto& columnSet : childrenOfType<RenderMultiColumnSet>(*parent())) {
-        LayoutSize containerOffset = columnSet.offsetFromContainer(parent(), LayoutPoint());
+        candidateContainerOffset = columnSet.offsetFromContainer(parent(), LayoutPoint());
         
-        candidatePoint = transformPoint - containerOffset;
+        candidatePoint = transformPoint - candidateContainerOffset;
         candidateColumnSet = &columnSet;
         
         // We really have no clue what to do with overflow. We'll just use the closest region to the point in that case.
@@ -626,7 +627,7 @@ void RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint(MapCoordinatesFlags mo
     
     // Once we have a good guess as to which region we hit tested through (and yes, this was just a heuristic, but it's
     // the best we could do), then we can map from the region into the flow thread.
-    LayoutSize translationOffset = physicalTranslationFromRegionToFlow(candidateColumnSet, candidatePoint);
+    LayoutSize translationOffset = physicalTranslationFromRegionToFlow(candidateColumnSet, candidatePoint) + candidateContainerOffset;
     bool preserve3D = mode & UseTransforms && (parent()->style().preserves3D() || style().preserves3D());
     if (mode & UseTransforms && shouldUseTransformFromContainer(parent())) {
         TransformationMatrix t;

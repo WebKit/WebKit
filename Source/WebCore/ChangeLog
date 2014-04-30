@@ -1,3 +1,16 @@
+2014-04-30  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Region offset not factored in when mapping to local coords
+        https://bugs.webkit.org/show_bug.cgi?id=132383
+
+        Reviewed by Anders Carlsson.
+
+        Make sure to cache the offset of the multicolumn set from its parent and then
+        add that in to the translation offset.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint):
+
 2014-04-30  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Move removeEquivalentProperties functions to EditingStyle
