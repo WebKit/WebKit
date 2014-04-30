@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WKPreferences_h
+#define WKPreferences_h
+
 #include <WebKit2/WKPreferencesRef.h>
 
 #ifdef __OBJC__
@@ -95,3 +98,5 @@ WK_API_CLASS
 #endif // WK_API_ENABLED
 
 #endif // defined(__OBJC__)
+
+#endif

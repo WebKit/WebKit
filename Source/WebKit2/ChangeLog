@@ -1,3 +1,21 @@
+2014-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Preemptive header fixes for when WebKit.framework is going to provide the modern API
+        https://bugs.webkit.org/show_bug.cgi?id=132394
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextPolicyDelegate.h:
+        (NS_ENUM):
+        Delete WKNavigationType for now. Ultimately the entire delegate should be removed.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        Add a header guard so we can avoid importing WKPreferences.h more than once.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        _WKScriptWorld.h should be private, not public.
+        WKScriptMessagePrivate.h and WKUserContentControllerPrivate.h should be private, not project.
+
 2014-04-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Ensure UIProcess checks in to webinspectord after spawning a WebProcess

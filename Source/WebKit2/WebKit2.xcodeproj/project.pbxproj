@@ -253,7 +253,7 @@
 		1A7C6CDA1378950800B9C04D /* EnvironmentVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C6CD81378950800B9C04D /* EnvironmentVariables.cpp */; };
 		1A7C6CDB1378950800B9C04D /* EnvironmentVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7C6CD91378950800B9C04D /* EnvironmentVariables.h */; };
 		1A7E376D18E3CA57003D0FFF /* _WKScriptWorld.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E376B18E3CA57003D0FFF /* _WKScriptWorld.mm */; };
-		1A7E376E18E3CA57003D0FFF /* _WKScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7E376C18E3CA57003D0FFF /* _WKScriptWorld.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A7E376E18E3CA57003D0FFF /* _WKScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7E376C18E3CA57003D0FFF /* _WKScriptWorld.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A7E377518E4A33A003D0FFF /* WKScriptMessageHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7E377418E4A33A003D0FFF /* WKScriptMessageHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A7E377818E4A4FE003D0FFF /* WKScriptMessage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E377618E4A4FE003D0FFF /* WKScriptMessage.mm */; };
 		1A7E377918E4A4FE003D0FFF /* WKScriptMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7E377718E4A4FE003D0FFF /* WKScriptMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -978,8 +978,8 @@
 		7CB16FF21724BA28007A0A95 /* com.macromedia.Flash Player.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE51724B9B5007A0A95 /* com.macromedia.Flash Player.plugin.sb */; };
 		7CB16FF31724BA2F007A0A95 /* com.microsoft.SilverlightPlugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */; };
 		7CB16FF41724BA30007A0A95 /* com.oracle.java.JavaAppletPlugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */; };
-		7CC99A3418EF7B120048C8B4 /* WKUserContentControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC99A3318EF7B120048C8B4 /* WKUserContentControllerPrivate.h */; };
-		7CC99A3618EF7CBC0048C8B4 /* WKScriptMessagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC99A3518EF7CBC0048C8B4 /* WKScriptMessagePrivate.h */; };
+		7CC99A3418EF7B120048C8B4 /* WKUserContentControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC99A3318EF7B120048C8B4 /* WKUserContentControllerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CC99A3618EF7CBC0048C8B4 /* WKScriptMessagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC99A3518EF7CBC0048C8B4 /* WKScriptMessagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD102DA1866770600ED429D /* AutoCorrectionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD102D91866770600ED429D /* AutoCorrectionCallback.h */; };
 		7CD5EBB81746A15B000C1C45 /* WKObjCTypeWrapperRef.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CD5EBB61746A15B000C1C45 /* WKObjCTypeWrapperRef.mm */; };
 		7CD5EBB91746A15B000C1C45 /* WKObjCTypeWrapperRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD5EBB71746A15B000C1C45 /* WKObjCTypeWrapperRef.h */; settings = {ATTRIBUTES = (Private, ); }; };

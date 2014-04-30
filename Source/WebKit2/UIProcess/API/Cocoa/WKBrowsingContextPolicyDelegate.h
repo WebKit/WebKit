@@ -30,7 +30,6 @@
 
 /* Constants for policy action dictionaries */
 WK_EXPORT extern NSString * const WKActionIsMainFrameKey;         // NSNumber (BOOL)
-WK_EXPORT extern NSString * const WKActionNavigationTypeKey;      // NSNumber (WKNavigationType)
 WK_EXPORT extern NSString * const WKActionMouseButtonKey;         // NSNumber (0 for left button, 1 for middle button, 2 for right button)
 WK_EXPORT extern NSString * const WKActionModifierFlagsKey;       // NSNumber (unsigned)
 WK_EXPORT extern NSString * const WKActionOriginalURLRequestKey;  // NSURLRequest
@@ -39,15 +38,6 @@ WK_EXPORT extern NSString * const WKActionURLResponseKey;         // NSURLRespon
 WK_EXPORT extern NSString * const WKActionFrameNameKey;           // NSString
 WK_EXPORT extern NSString * const WKActionOriginatingFrameURLKey; // NSURL
 WK_EXPORT extern NSString * const WKActionCanShowMIMETypeKey;     // NSNumber (BOOL)
-
-typedef NS_ENUM(NSUInteger, WKNavigationType) {
-    WKNavigationTypeLinkClicked,
-    WKNavigationTypeFormSubmitted,
-    WKNavigationTypeBackForward,
-    WKNavigationTypeReload,
-    WKNavigationTypeFormResubmitted,
-    WKNavigationTypeOther
-};
 
 typedef NS_ENUM(NSUInteger, WKPolicyDecision) {
     WKPolicyDecisionCancel,
