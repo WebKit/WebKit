@@ -1,3 +1,10 @@
+2014-04-30  David Kilzer  <ddkilzer@apple.com>
+
+        Move iphone-simulator test results landed in r167402 to the correct directory
+
+        * platform/ios-sim/media/media-document-controls-size-expected.txt: Renamed from LayoutTests/platform/iphone-simulator/media/media-document-controls-size-expected.txt.
+        * platform/ios-sim/media/media-document-controls-size.html: Renamed from LayoutTests/platform/iphone-simulator/media/media-document-controls-size.html.
+
 2014-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         compositing/repaint/repaint-on-layer-grouping-change.html is flaky
