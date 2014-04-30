@@ -22,6 +22,7 @@
 #define HTMLFrameOwnerElement_h
 
 #include "HTMLElement.h"
+#include <wtf/HashCountedSet.h>
 
 namespace WebCore {
 
@@ -93,9 +94,9 @@ public:
     static bool canLoadFrame(HTMLFrameOwnerElement*);
 
 private:
-    static HashSet<Node*>& disabledSubtreeRoots()
+    static HashCountedSet<Node*>& disabledSubtreeRoots()
     {
-        DEFINE_STATIC_LOCAL(HashSet<Node*>, nodes, ());
+        DEFINE_STATIC_LOCAL(HashCountedSet<Node*>, nodes, ());
         return nodes;
     }
 
