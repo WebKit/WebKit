@@ -1,3 +1,11 @@
+2014-04-30  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Unnecessary explicit initialization of LayoutUnit from r167985.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+        Darin points out that I can just use “/2” instead of “/LayoutUnit(2.0)”.
+
 2014-04-30 David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Enable new multi-column mode
