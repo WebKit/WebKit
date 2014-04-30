@@ -71,6 +71,8 @@ namespace WebCore {
         void setEnabled(bool);
 
         const NPPluginFuncs* pluginFuncs() const { return &m_pluginFuncs; }
+        const NPNetscapeFuncs* browserFuncs() const { return &m_browserFuncs; }
+
         int compareFileVersion(const PlatformModuleVersion&) const;
         int compare(const PluginPackage&) const;
         PluginQuirkSet quirks() const { return m_quirks; }
