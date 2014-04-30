@@ -1,3 +1,12 @@
+2014-04-30  Brady Eidson  <beidson@apple.com>
+
+        Followup to: Handle selection services menu.
+        <rdar://problem/16727798> and https://bugs.webkit.org/show_bug.cgi?id=132362
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu): Remove an ASSERT from previous version of the patch
+          that landed. I’d forgotten to add this stray change to my staging area.
+
 2014-04-30  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Enable runtime feature by default

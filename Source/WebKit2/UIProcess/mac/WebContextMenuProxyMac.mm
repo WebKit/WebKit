@@ -389,8 +389,6 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
         return;
     }
 
-    ASSERT(picker);
-
     picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items]);
     [picker setStyle:NSSharingServicePickerStyleRollover];
     [picker setDelegate:[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate]];
