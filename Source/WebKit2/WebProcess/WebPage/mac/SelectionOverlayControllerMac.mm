@@ -159,7 +159,7 @@ bool SelectionOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& e
 
 void SelectionOverlayController::handleClick(const WebCore::IntPoint& point)
 {
-    // FIXME: Handle the click here.
+    m_webPage->handleSelectionServiceClick(m_webPage->corePage()->mainFrame().selection(), point);
 }
     
 void SelectionOverlayController::clearHighlight()

@@ -304,7 +304,7 @@ messages -> WebPage LegacyReceiver {
     ReadSelectionFromPasteboard(String pasteboardName) -> (bool result)
 
 #if ENABLE(SERVICE_CONTROLS)
-    ReplaceSelectionWithPasteboardData(String type, IPC::DataReference data)
+    ReplaceSelectionWithPasteboardData(Vector<String> types, IPC::DataReference data)
 #endif
 
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result)

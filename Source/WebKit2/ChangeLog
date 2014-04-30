@@ -1,3 +1,51 @@
+2014-04-29  Brady Eidson  <beidson@apple.com>
+
+        Handle selection services menu.
+        <rdar://problem/16727798> and https://bugs.webkit.org/show_bug.cgi?id=132362
+
+        Reviewed by Tim Horton.
+
+        Add members for the relevant info for showing a service menu for a selection:
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::controlledDataIsEditable):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::controlledSelectionData):
+        (WebKit::ContextMenuContextData::needsServicesMenu):
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::replaceSelectionWithPasteboardData): Changed to allow for multiple types on the overridden pasteboard.
+        (WebKit::WebPageProxy::showSelectionServiceMenu):
+
+        Update the services menu code to know the difference between an image service and a selection service:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKSharingServicePickerDelegate sharingServicePicker:sharingServicesForItems:mask:proposedSharingServices:]):
+        (-[WKSharingServicePickerDelegate sharingService:willShareItems:]):
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]):
+        (WebKit::WebContextMenuProxyMac::contextMenuItemSelected):
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+        (WebKit::WebContextMenuProxyMac::clearServicesMenu):
+        (WebKit::WebContextMenuProxyMac::populate):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        (WebKit::WebContextMenuProxyMac::setupImageServicesMenu): Deleted.
+        (WebKit::WebContextMenuProxyMac::clearImageServicesMenu): Deleted.
+
+        * WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp:
+        (WebKit::WebPasteboardOverrides::getDataForOverride):
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::replaceSelectionWithPasteboardData): Changed to allow for multiple types on the overridden pasteboard.
+        (WebKit::WebPage::handleSelectionServiceClick): Pass the relevant selection data through to the UIProcess as RTFD data.
+
+        * WebProcess/WebPage/mac/SelectionOverlayControllerMac.mm:
+        (WebKit::SelectionOverlayController::handleClick): Notify the WebPage of the click.
+
 2014-04-29  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/16745596> [Cocoa] Crash when invoking a method with an unsigned parameter on a remote object

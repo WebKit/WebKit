@@ -54,7 +54,16 @@ public:
     const WebHitTestResult::Data& webHitTestResultData() const { return m_webHitTestResultData; }
 
 #if ENABLE(SERVICE_CONTROLS)
+    ContextMenuContextData(const Vector<uint8_t>& selectionData, bool isEditable)
+        : m_controlledSelectionData(selectionData)
+        , m_selectionIsEditable(isEditable)
+    { }
+
     const ShareableBitmap::Handle& controlledImageHandle() const { return m_controlledImageHandle; }
+    const Vector<uint8_t>& controlledSelectionData() const { return m_controlledSelectionData; }
+
+    bool controlledDataIsEditable() const;
+    bool needsServicesMenu() const { return !m_controlledImageHandle.isNull() || !m_controlledSelectionData.isEmpty(); }
 #endif
 
     void encode(IPC::ArgumentEncoder&) const;
@@ -66,6 +75,8 @@ private:
 
 #if ENABLE(SERVICE_CONTROLS)
     ShareableBitmap::Handle m_controlledImageHandle;
+    Vector<uint8_t> m_controlledSelectionData;
+    bool m_selectionIsEditable;
 #endif
 };
 

@@ -102,7 +102,7 @@ bool WebPasteboardOverrides::getDataForOverride(const String& pasteboardName, co
         return false;
 
     data.clear();
-    data.reserveCapacity(foundBuffer.size());
+    data.resize(foundBuffer.size());
     memcpy(data.data(), foundBuffer.data(), foundBuffer.size());
 
     return true;

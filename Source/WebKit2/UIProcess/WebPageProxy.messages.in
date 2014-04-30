@@ -369,6 +369,10 @@ messages -> WebPageProxy {
 #endif
 #endif
 
+#if ENABLE(SERVICE_CONTROLS)
+    ShowSelectionServiceMenu(IPC::DataReference selectionAsRTFD, bool isEditable, WebCore::IntPoint point)
+#endif
+
 #if USE(QUICK_LOOK)
     DidStartLoadForQuickLookDocumentInMainFrame(String fileName, String uti)
     DidFinishLoadForQuickLookDocumentInMainFrame(WebKit::QuickLookDocumentData data)

@@ -678,14 +678,16 @@ static String& replaceSelectionPasteboardName()
     return string;
 }
 
-void WebPage::replaceSelectionWithPasteboardData(const String& type, const IPC::DataReference& data)
+void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
 {
-    WebPasteboardOverrides::sharedPasteboardOverrides().addOverride(replaceSelectionPasteboardName(), type, data.vector());
+    for (auto& type : types)
+        WebPasteboardOverrides::sharedPasteboardOverrides().addOverride(replaceSelectionPasteboardName(), type, data.vector());
 
     bool result;
     readSelectionFromPasteboard(replaceSelectionPasteboardName(), result);
 
-    WebPasteboardOverrides::sharedPasteboardOverrides().removeOverride(replaceSelectionPasteboardName(), type);
+    for (auto& type : types)
+        WebPasteboardOverrides::sharedPasteboardOverrides().removeOverride(replaceSelectionPasteboardName(), type);
 }
 #endif
 
@@ -1019,6 +1021,25 @@ WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame* frame, cons
 void WebPage::handleTelephoneNumberClick(const String& number, const IntPoint& point)
 {
     send(Messages::WebPageProxy::ShowTelephoneNumberMenu(number, point));
+}
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+void WebPage::handleSelectionServiceClick(FrameSelection& selection, const IntPoint& point)
+{
+    RefPtr<Range> range = selection.selection().firstRange();
+    if (!range)
+        return;
+
+    NSAttributedString *attributedSelection = attributedStringFromRange(*range);
+    if (!attributedSelection)
+        return;
+
+    NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, [attributedSelection length]) documentAttributes:nil];
+    IPC::DataReference data = IPC::DataReference(reinterpret_cast<const uint8_t*>([selectionData bytes]), [selectionData length]);
+    bool isEditable = selection.selection().isContentRichlyEditable();
+
+    send(Messages::WebPageProxy::ShowSelectionServiceMenu(data, isEditable, point));
 }
 #endif
 

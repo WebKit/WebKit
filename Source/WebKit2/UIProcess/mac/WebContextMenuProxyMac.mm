@@ -208,7 +208,7 @@ using namespace WebCore;
 {
     if (_includeEditorServices)
         return proposedServices;
-        
+
     NSMutableArray *services = [[NSMutableArray alloc] initWithCapacity:[proposedServices count]];
     
     for (NSSharingService *service in proposedServices) {
@@ -226,20 +226,43 @@ using namespace WebCore;
 
 - (void)sharingService:(NSSharingService *)sharingService willShareItems:(NSArray *)items
 {
-    _menuProxy->clearImageServicesMenu();
+    _menuProxy->clearServicesMenu();
 }
 
 - (void)sharingService:(NSSharingService *)sharingService didShareItems:(NSArray *)items
 {
-    NSData *data = [items objectAtIndex:0];
-    RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData((CFDataRef)data, NULL));
-    RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(source.get(), 0, NULL));
-
-    if (!image)
+    // We only care about what item was shared if we were interested in editor services
+    // (i.e., if we plan on replacing the selection with the returned item)
+    if (!_includeEditorServices)
         return;
 
-    IPC::DataReference dataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
-    _menuProxy->page().replaceSelectionWithPasteboardData(NSPasteboardTypeTIFF, dataReference);
+    Vector<String> types;
+    IPC::DataReference dataReference;
+
+    id item = [items objectAtIndex:0];
+
+    if ([item isKindOfClass:[NSAttributedString class]]) {
+        NSData *data = [item RTFDFromRange:NSMakeRange(0, [item length]) documentAttributes:nil];
+        dataReference = IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+
+        types.append(NSPasteboardTypeRTFD);
+        types.append(NSRTFDPboardType);
+    } else if ([item isKindOfClass:[NSData class]]) {
+        NSData *data = (NSData *)item;
+        RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData((CFDataRef)data, NULL));
+        RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(source.get(), 0, NULL));
+
+        if (!image)
+            return;
+
+        dataReference = IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+        types.append(NSPasteboardTypeTIFF);
+    } else {
+        LOG_ERROR("sharingService:didShareItems: - Unknown item type returned\n");
+        return;
+    }
+
+    _menuProxy->page().replaceSelectionWithPasteboardData(types, dataReference);
 }
 
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
@@ -269,7 +292,7 @@ WebContextMenuProxyMac::~WebContextMenuProxyMac()
 void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemData& item)
 {
 #if ENABLE(SERVICE_CONTROLS)
-    clearImageServicesMenu();
+    clearServicesMenu();
 #endif
 
     m_page->contextMenuItemSelected(item);
@@ -342,12 +365,33 @@ static Vector<RetainPtr<NSMenuItem>> nsMenuItemVector(const Vector<WebContextMen
 }
 
 #if ENABLE(SERVICE_CONTROLS)
-void WebContextMenuProxyMac::setupImageServicesMenu(ShareableBitmap& image, bool includeEditorServices)
-{
-    RetainPtr<CGImageRef> cgImage = image.makeCGImage();
-    RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:image.size()]);
 
-    RetainPtr<NSSharingServicePicker> picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ nsImage.get() ]]);
+void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& context)
+{
+    RetainPtr<NSSharingServicePicker> picker;
+    bool includeEditorServices = context.controlledDataIsEditable();
+    NSArray *items = nil;
+    if (!context.controlledImageHandle().isNull()) {
+        RefPtr<ShareableBitmap> image = ShareableBitmap::create(context.controlledImageHandle());
+        if (!image)
+            return;
+
+        RetainPtr<CGImageRef> cgImage = image->makeCGImage();
+        RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:image->size()]);
+        items = @[ nsImage.get() ];
+    } else if (!context.controlledSelectionData().isEmpty()) {
+        RetainPtr<NSData> selectionData = adoptNS([[NSData alloc] initWithBytes:(void*)context.controlledSelectionData().data() length:context.controlledSelectionData().size()]);
+        RetainPtr<NSAttributedString> selection = adoptNS([[NSAttributedString alloc] initWithRTFD:selectionData.get() documentAttributes:nil]);
+
+        items = @[ selection.get() ];
+    } else {
+        LOG_ERROR("No service controlled item represented in the context");
+        return;
+    }
+
+    ASSERT(picker);
+
+    picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items]);
     [picker setStyle:NSSharingServicePickerStyleRollover];
     [picker setDelegate:[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate]];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:picker.get()];
@@ -356,7 +400,7 @@ void WebContextMenuProxyMac::setupImageServicesMenu(ShareableBitmap& image, bool
     m_servicesMenu = [picker menu];
 }
 
-void WebContextMenuProxyMac::clearImageServicesMenu()
+void WebContextMenuProxyMac::clearServicesMenu()
 {
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nullptr];
     m_servicesMenu = nullptr;
@@ -366,8 +410,8 @@ void WebContextMenuProxyMac::clearImageServicesMenu()
 void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItemData>& items, const ContextMenuContextData& context)
 {
 #if ENABLE(SERVICE_CONTROLS)
-    if (RefPtr<ShareableBitmap> image = ShareableBitmap::create(context.controlledImageHandle())) {
-        setupImageServicesMenu(*image, context.webHitTestResultData().isContentEditable);
+    if (context.needsServicesMenu()) {
+        setupServicesMenu(context);
         return;
     }
 #endif
@@ -387,7 +431,7 @@ void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItemData>& item
 void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const Vector<WebContextMenuItemData>& items, const ContextMenuContextData& context)
 {
 #if ENABLE(SERVICE_CONTROLS)
-    if (items.isEmpty() && context.controlledImageHandle().isNull())
+    if (items.isEmpty() && !context.needsServicesMenu())
         return;
 #else
     if (items.isEmpty())
@@ -401,7 +445,7 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
     NSRect menuRect = NSMakeRect(menuLocation.x(), menuLocation.y(), 0, 0);
 
 #if ENABLE(SERVICE_CONTROLS)
-    if (!context.controlledImageHandle().isNull())
+    if (context.needsServicesMenu())
         [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setMenuProxy:this];
 
     if (!m_servicesMenu)

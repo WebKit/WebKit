@@ -813,7 +813,7 @@ public:
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-    void replaceSelectionWithPasteboardData(const String& type, const IPC::DataReference&);
+    void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
 #endif
 
     void pageScaleFactorDidChange(double);
@@ -1253,6 +1253,10 @@ private:
 #if PLATFORM(MAC)
     void showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint&);
 #endif
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+    void showSelectionServiceMenu(const IPC::DataReference& selectionAsRTFD, bool isEditable, const WebCore::IntPoint&);
 #endif
 
     // Search popup results

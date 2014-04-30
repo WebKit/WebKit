@@ -38,11 +38,17 @@ using namespace WebCore;
 namespace WebKit {
 
 ContextMenuContextData::ContextMenuContextData()
+#if ENABLE(SERVICE_CONTROLS)
+    : m_selectionIsEditable(false)
+#endif
 {
 }
 
 ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context)
     : m_webHitTestResultData(WebHitTestResult::Data(context.hitTestResult()))
+#if ENABLE(SERVICE_CONTROLS)
+    , m_selectionIsEditable(false)
+#endif
 {
 #if ENABLE(SERVICE_CONTROLS)
     Image* image = context.controlledImage();
@@ -95,6 +101,19 @@ bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuCo
 
     return true;
 }
+
+#if ENABLE(SERVICE_CONTROLS)
+bool ContextMenuContextData::controlledDataIsEditable() const
+{
+    if (!m_controlledSelectionData.isEmpty())
+        return m_selectionIsEditable;
+
+    if (!m_controlledImageHandle.isNull())
+        return m_webHitTestResultData.isContentEditable;
+
+    return false;
+}
+#endif
 
 } // namespace WebKit
 

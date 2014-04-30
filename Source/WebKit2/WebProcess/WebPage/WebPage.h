@@ -589,7 +589,7 @@ public:
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
 
 #if ENABLE(SERVICE_CONTROLS)
-    void replaceSelectionWithPasteboardData(const String& type, const IPC::DataReference&);
+    void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
 #endif
 
 #elif PLATFORM(EFL)
@@ -789,6 +789,7 @@ public:
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     SelectionOverlayController& selectionOverlayController();
+    void handleSelectionServiceClick(WebCore::FrameSelection&, const WebCore::IntPoint&);
     bool serviceControlsEnabled() const { return m_serviceControlsEnabled; }
 #endif
 

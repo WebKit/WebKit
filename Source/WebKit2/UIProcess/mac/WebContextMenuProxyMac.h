@@ -54,7 +54,7 @@ public:
     void contextMenuItemSelected(const WebContextMenuItemData&);
 
 #if ENABLE(SERVICE_CONTROLS)
-    void clearImageServicesMenu();
+    void clearServicesMenu();
 #endif
 
     WebPageProxy& page() const { return *m_page; }
@@ -66,7 +66,7 @@ private:
     void populate(const Vector<WebContextMenuItemData>&, const ContextMenuContextData&);
 
 #if ENABLE(SERVICE_CONTROLS)
-    void setupImageServicesMenu(ShareableBitmap&, bool includeEditorServices);
+    void setupServicesMenu(const ContextMenuContextData&);
 #endif
 
     RetainPtr<NSPopUpButtonCell> m_popup;
