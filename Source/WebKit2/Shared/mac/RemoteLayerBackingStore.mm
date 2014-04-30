@@ -264,6 +264,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
         dirtyRects.append(dirtyBounds);
     }
 
+    // FIXME: find a consistent way to scale and snap dirty and CG clip rects.
     for (const auto& rect : dirtyRects) {
         FloatRect scaledRect(rect);
         scaledRect.scale(m_scale, m_scale);
@@ -276,7 +277,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     for (size_t i = 0, dirtyRectCount = m_paintingRects.size(); i < dirtyRectCount; ++i) {
         FloatRect scaledPaintingRect = m_paintingRects[i];
         scaledPaintingRect.scale(m_scale);
-        cgPaintingRects[i] = enclosingIntRect(scaledPaintingRect);
+        cgPaintingRects[i] = scaledPaintingRect;
     }
 
     if (backImage) {

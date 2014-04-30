@@ -1,3 +1,19 @@
+2014-04-30  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS]Subpixel rendering: Extra line of pixels next to the YouTube loading indicator.
+        https://bugs.webkit.org/show_bug.cgi?id=132391
+
+        Reviewed by Simon Fraser.
+
+        CG and GraphicsContext clipping should use the same coordinates. Snapping either one
+        while leaving the other unsnapped results in clipping mismatch and that may produce
+        unpainted areas.
+
+        Not testable.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+
 2014-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=132363
