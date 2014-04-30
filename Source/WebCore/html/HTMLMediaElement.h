@@ -721,8 +721,6 @@ private:
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);
 
-    void updateCaptionContainer();
-
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;

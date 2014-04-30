@@ -22,10 +22,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-.hidden {
-    display: none;
-}
-
 audio {
     width: 200px;
     height: 25px;

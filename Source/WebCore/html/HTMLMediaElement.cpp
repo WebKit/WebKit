@@ -3695,64 +3695,9 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
             m_webkitLegacyClosedCaptionOverride = true;
     }
 
-    updateCaptionContainer();
-
     m_processingPreferenceChange = false;
 }
 
-void HTMLMediaElement::updateCaptionContainer()
-{
-    LOG(Media, "HTMLMediaElement::updateCaptionContainer");
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    Page* page = document().page();
-    if (!page)
-        return;
-
-    DOMWrapperWorld& world = ensureIsolatedWorld();
-
-    if (!ensureMediaControlsInjectedScript())
-        return;
-
-    ensureUserAgentShadowRoot();
-
-    ASSERT(m_mediaControlsHost);
-
-    ScriptController& scriptController = page->mainFrame().script();
-    JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
-    JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
-
-    JSC::JSValue controllerValue = m_mediaControlsHost->controllerJSValue();
-    if (controllerValue.isUndefinedOrNull() || !controllerValue.isObject())
-        return;
-
-    JSC::JSObject* controllerObject = controllerValue.toObject(exec);
-
-    // The media controls script must provide a method on the Controller object with the following details.
-    // Name: updateCaptionContainer
-    // Parameters:
-    //     None
-    // Return value:
-    //     None
-    JSC::JSValue methodValue = controllerObject->get(exec, JSC::Identifier(exec, "updateCaptionContainer"));
-    if (methodValue.isUndefinedOrNull() || !methodValue.isObject())
-        return;
-
-    JSC::JSObject* methodObject = methodValue.toObject(exec);
-
-    JSC::CallData callData;
-    JSC::CallType callType = methodObject->methodTable()->getCallData(methodObject, callData);
-    if (callType == JSC::CallTypeNone)
-        return;
-
-    JSC::MarkedArgumentBuffer noArguments;
-    JSC::call(exec, methodObject, callType, callData, controllerObject, noArguments);
-
-    if (exec->hadException())
-        exec->clearException();
-#endif
-}
-    
 void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
 {
     TextTrackList* trackList = textTracks();
