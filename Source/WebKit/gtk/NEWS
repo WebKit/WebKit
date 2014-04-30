@@ -1,4 +1,18 @@
 =================
+WebKitGTK+  2.2.7
+=================
+
+What's new in WebKitGTK+ 2.2.7?
+
+  - Fix a crash when closing a page with windowed plugins.
+  - Fix a crash after getting web view context property with g_object_get.
+  - Fix wrong flags used in fcntl call that failed in FreeBSD.
+  - Fix a crash in the plugin process with some plugins that redefine
+    NPN functions.
+  - Fix acceletared video when the video format has an alpha component.
+  - Fix a crash in plugin process when loading GTK2 windowed plugins.
+
+=================
 WebKitGTK+  2.2.6
 =================
 
