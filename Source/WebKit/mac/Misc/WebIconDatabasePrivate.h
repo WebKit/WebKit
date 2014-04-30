@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebIconDatabase.h>
+#import <WebKitLegacy/WebIconDatabase.h>
 
 // FIXME: Some of the following is not API and should be moved
 // either inside WebIconDatabase.mm, or to WebIconDatabaseInternal.h.

@@ -43,13 +43,13 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/SoftLinking.h>
-#import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebJSPDFDoc.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPDFDocumentExtras.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKitLegacy/WebDataSourcePrivate.h>
+#import <WebKitLegacy/WebFramePrivate.h>
+#import <WebKitLegacy/WebJSPDFDoc.h>
+#import <WebKitLegacy/WebNSURLExtras.h>
+#import <WebKitLegacy/WebNSViewExtras.h>
+#import <WebKitLegacy/WebPDFDocumentExtras.h>
+#import <WebKitLegacy/WebViewPrivate.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/Vector.h>
 

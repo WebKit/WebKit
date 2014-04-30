@@ -1,3 +1,151 @@
+2014-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Move the legacy WebKit API into WebKitLegacy.framework and move it inside WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=132399
+        <rdar://problem/15920046>
+
+        Reviewed by Dan Bernstein.
+
+        * Carbon/CarbonUtils.h:
+        * Carbon/HIViewAdapter.h:
+        * Carbon/HIWebView.h:
+        Import WebKitLegacy headers instead of WebKit headers.
+
+        * Configurations/WebKit.xcconfig:
+        Move the definitions needed for building WebKitLegacy.framework to WebKitLegacy.xcconfig and
+        add the relevant definitions needed for re-exporting WebKitLegacy.framework.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        Add definitions needed for building the "old" WebKit API as WebKitLegacy.framework.
+
+        * DOM/WebDOMOperations.h:
+        * DOM/WebDOMOperations.mm:
+        * DOM/WebDOMOperationsInternal.h:
+        * DOM/WebDOMOperationsPrivate.h:
+        * DefaultDelegates/WebDefaultContextMenuDelegate.h:
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        * DefaultDelegates/WebDefaultEditingDelegate.m:
+        * History/WebBackForwardListInternal.h:
+        * History/WebBackForwardListPrivate.h:
+        * History/WebHistoryItemPrivate.h:
+        * History/WebHistoryPrivate.h:
+        * History/WebURLsWithTitles.m:
+        Import WebKitLegacy headers instead of WebKit headers.
+
+        * MigrateHeaders.make:
+        Update header paths now that all WebKitLegacy headers are private.
+        Remove migration of WebKit2 headers, that is done by MigrateHeadersFromWebKitLegacy.make now.
+        
+        * Misc/WebCoreStatistics.h:
+        * Misc/WebDownload.h:
+        * Misc/WebDownload.mm:
+        * Misc/WebDownloadInternal.h:
+        * Misc/WebElementDictionary.mm:
+        * Misc/WebIconDatabasePrivate.h:
+        * Misc/WebKit.h:
+        * Misc/WebKitErrors.m:
+        * Misc/WebKitErrorsPrivate.h:
+        * Misc/WebKitNSStringExtras.mm:
+        * Misc/WebLocalizableStrings.mm:
+        * Misc/WebNSDataExtras.m:
+        * Misc/WebNSDictionaryExtras.m:
+        * Misc/WebNSEventExtras.m:
+        * Misc/WebNSFileManagerExtras.mm:
+        * Misc/WebNSImageExtras.m:
+        * Misc/WebNSPasteboardExtras.mm:
+        * Misc/WebNSViewExtras.h:
+        * Misc/WebNSViewExtras.m:
+        * Panels/WebAuthenticationPanel.m:
+        * Panels/WebPanelAuthenticationHandler.m:
+        * Plugins/Hosted/HostedNetscapePluginStream.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/WebKitPluginAgent.defs:
+        * Plugins/Hosted/WebKitPluginAgentReply.defs:
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        * Plugins/Hosted/WebKitPluginHostTypes.defs:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapeContainerCheckPrivate.h:
+        * Plugins/WebNetscapePluginEventHandlerCocoa.h:
+        * Plugins/WebNetscapePluginStream.h:
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        * Plugins/WebPlugin.h:
+        * Plugins/WebPluginController.h:
+        * Plugins/WebPluginDatabase.h:
+        * Plugins/WebPluginPackage.h:
+        * Plugins/WebPluginPackage.mm:
+        * Plugins/WebPluginViewFactory.h:
+        * Plugins/WebPluginViewFactoryPrivate.h:
+        * Plugins/npapi.mm:
+        * Storage/WebDatabaseManagerPrivate.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        * WebCoreSupport/WebGeolocationClient.mm:
+        * WebCoreSupport/WebInspectorClient.mm:
+        * WebCoreSupport/WebJavaScriptTextInputPanel.m:
+        * WebCoreSupport/WebKeyGenerator.mm:
+        * WebInspector/WebInspectorPrivate.h:
+        * WebInspector/WebNodeHighlight.h:
+        * WebInspector/WebNodeHighlightView.h:
+        Import WebKitLegacy headers instead of WebKit headers.
+        
+        * WebKitLegacy/MigrateHeadersFromWebKitLegacy.make: Added.
+        New makefile that handles copying WebKitLegacy headers to the WebKit framework, rewriting WebKitLegacy
+        imports to WebKit imports. (On iOS the WebKit headers just forward to the relevant WebKitLegacy headers).
+        On OS X, this also handles copying WebKit2 headers to the WebKit framework, rewriting WebKit2 imports to WebKit imports
+        and getting rid of C SPI imports.
+        
+        * WebKitLegacy/MigrateHeadersToLegacy.make: Removed.
+        This is no longer needed.
+        
+        * WebKitLegacy/WebKit.h: Added.
+        New umbrella header that imports the modern API if available, as well as the legacy API (using WebKit/WebKitLegacy.h).
+
+        * WebKitLegacy/WebKit.m:
+        This is an empty file so we'll have something to link.
+
+        * WebKitLegacy/WebKitPrivate.h:
+        New SPI header that imports the private headers of the modern API.
+
+        * WebView/WebDataSource.h:
+        * WebView/WebDataSource.mm:
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebDocument.h:
+        * WebView/WebDocumentInternal.h:
+        * WebView/WebDocumentPrivate.h:
+        * WebView/WebEditingDelegate.h:
+        * WebView/WebEditingDelegatePrivate.h:
+        * WebView/WebFrameLoadDelegate.h:
+        * WebView/WebFrameLoadDelegatePrivate.h:
+        * WebView/WebFramePrivate.h:
+        * WebView/WebFrameView.h:
+        * WebView/WebFrameViewInternal.h:
+        * WebView/WebFrameViewPrivate.h:
+        * WebView/WebHTMLRepresentation.h:
+        * WebView/WebHTMLRepresentation.mm:
+        * WebView/WebHTMLRepresentationPrivate.h:
+        * WebView/WebHTMLView.h:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebHTMLViewPrivate.h:
+        * WebView/WebPDFView.h:
+        * WebView/WebPolicyDelegatePrivate.h:
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebResourcePrivate.h:
+        * WebView/WebUIDelegate.h:
+        * WebView/WebUIDelegatePrivate.h:
+        * WebView/WebView.h:
+        * WebView/WebView.mm:
+        * WebView/WebViewPrivate.h:
+        Import WebKitLegacy headers instead of WebKit headers.
+
+        * migrate-headers.sh:
+        Derived sources are put in DerivedSources/WebKitLegacy now.
+
 2014-04-30  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Enable new multi-column mode

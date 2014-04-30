@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
+// FIXME: Remove this __has_include check once the WebKit framework lives in the right place.
+#if defined(__has_include) && __has_include(<WebKit/WKWebView.h>)
+#import <WebKit/WKBackForwardList.h>
+#import <WebKit/WKBackForwardListItem.h>
+#import <WebKit/WKFoundation.h>
+#import <WebKit/WKFrameInfo.h>
+#import <WebKit/WKNavigation.h>
+#import <WebKit/WKNavigationAction.h>
+#import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKNavigationResponse.h>
+#import <WebKit/WKPreferences.h>
+#import <WebKit/WKProcessPool.h>
+#import <WebKit/WKScriptMessage.h>
+#import <WebKit/WKScriptMessageHandler.h>
+#import <WebKit/WKUIDelegate.h>
+#import <WebKit/WKUserContentController.h>
+#import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewConfiguration.h>
+#endif
 
-#import <WebKitLegacy/WebKeyGenerator.h>
-
-#import <WebKitSystemInterface.h>
-#import <wtf/Assertions.h>
-
-@implementation WebKeyGenerator
-
-+ (WebKeyGenerator *)sharedGenerator
-{
-    static WebKeyGenerator *sharedGenerator = [[WebKeyGenerator alloc] init];
-    return sharedGenerator;
-}
-
-static inline WebCertificateParseResult toWebCertificateParseResult(WKCertificateParseResult result)
-{
-    // FIXME: WebKeyGenerator is not used in WebKit, and this code should be moved to Safari.
-
-    switch (result) {
-    case WKCertificateParseResultSucceeded:
-        return WebCertificateParseResultSucceeded;
-    case WKCertificateParseResultFailed:
-        return WebCertificateParseResultFailed;
-    case WKCertificateParseResultPKCS7:
-        return WebCertificateParseResultPKCS7;
-    }
-
-    ASSERT_NOT_REACHED();
-    return WebCertificateParseResultFailed;
-}
-
-- (WebCertificateParseResult)addCertificatesToKeychainFromData:(NSData *)data
-{
-    return toWebCertificateParseResult(WKAddCertificatesToKeychainFromData([data bytes], [data length]));
-}
-
-@end
-
-#endif // !PLATFORM(IOS)
+#if defined(__has_include) && __has_include(<WebKit/WebKitLegacy.h>)
+#import <WebKit/WebKitLegacy.h>
+#endif

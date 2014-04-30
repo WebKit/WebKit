@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebFormDelegate.h>
+#import <WebKitLegacy/WebFormDelegate.h>
 
 @interface WebDefaultFormDelegate : NSObject <WebFormDelegate> {
 }

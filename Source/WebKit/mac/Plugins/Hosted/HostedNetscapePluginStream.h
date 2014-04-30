@@ -29,7 +29,7 @@
 #define HostedNetscapePluginStream_h
 
 #include <WebCore/NetscapePlugInStreamLoader.h>
-#include <WebKit/npapi.h>
+#include <WebKitLegacy/npapi.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

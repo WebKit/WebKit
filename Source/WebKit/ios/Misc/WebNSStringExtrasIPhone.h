@@ -23,4 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNSStringExtrasIOS.h>
+#import <WebKitLegacy/WebNSStringExtrasIOS.h>

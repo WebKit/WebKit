@@ -30,7 +30,7 @@
 #import <wtf/RetainPtr.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-#import <WebKit/npfunctions.h>
+#import <WebKitLegacy/npfunctions.h>
 #else
 typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 #endif

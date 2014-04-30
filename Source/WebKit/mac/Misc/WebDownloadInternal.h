@@ -26,7 +26,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
  
-#import <WebKit/WebDownload.h>
+#import <WebKitLegacy/WebDownload.h>
 
 #if USE(CFNETWORK)
 #import <CFNetwork/CFURLConnection.h>

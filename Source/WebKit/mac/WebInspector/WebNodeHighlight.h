@@ -28,8 +28,8 @@
 
 #if PLATFORM(IOS)
 #import <QuartzCore/CATiledLayer.h>
-#import <WebKit/WAKAppKitStubs.h>
-#import <WebKit/WAKView.h>
+#import <WebKitLegacy/WAKAppKitStubs.h>
+#import <WebKitLegacy/WAKView.h>
 #endif
 
 @class WebNodeHighlightView;

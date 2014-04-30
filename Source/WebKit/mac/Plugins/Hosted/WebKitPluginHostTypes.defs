@@ -26,7 +26,7 @@
 #include <mach/std_types.defs>
 #include <mach/mach_types.defs>
 
-import <WebKit/WebKitPluginHostTypes.h>;
+import <WebKitLegacy/WebKitPluginHostTypes.h>;
 
 type plist_bytes_t = ^array [] of uint8_t;
 type application_name_t = ^array [] of uint8_t;

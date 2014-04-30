@@ -58,8 +58,8 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
-#import <WebKit/DOMHTML.h>
-#import <WebKit/DOMPrivate.h>
+#import <WebKitLegacy/DOMHTML.h>
+#import <WebKitLegacy/DOMPrivate.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>

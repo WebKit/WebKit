@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#include <WebKit/WebKitPluginHostTypes.defs>
+#include <WebKitLegacy/WebKitPluginHostTypes.defs>
 
 subsystem WebKitPluginAgent 100;
 

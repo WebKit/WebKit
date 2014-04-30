@@ -24,7 +24,7 @@
  */
 
 #import <Foundation/NSObject.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKitLegacy/WebViewPrivate.h>
 
 @interface WebGeolocationProviderIOS : NSObject<WebGeolocationProvider>
 

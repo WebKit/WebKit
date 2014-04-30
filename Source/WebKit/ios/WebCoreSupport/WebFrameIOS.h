@@ -26,8 +26,8 @@
 #if TARGET_OS_IPHONE
 
 #import <CoreGraphics/CoreGraphics.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebVisiblePosition.h>
+#import <WebKitLegacy/WebFrame.h>
+#import <WebKitLegacy/WebVisiblePosition.h>
 
 @class DOMRange;
 @class DOMVisiblePosition;

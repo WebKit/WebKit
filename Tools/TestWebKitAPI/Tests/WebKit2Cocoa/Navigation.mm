@@ -25,9 +25,9 @@
 
 #include "config.h"
 
-#import <WebKit2/WKNavigation.h>
-#import <WebKit2/WKNavigationDelegate.h>
-#import <WebKit2/WKWebView.h>
+#import <WebKit/WKNavigation.h>
+#import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 #import "PlatformUtilities.h"
 #import "Test.h"

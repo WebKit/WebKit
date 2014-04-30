@@ -53,8 +53,8 @@
 #import <WebCore/ShadowRoot.h>
 #import <WebCore/WheelEvent.h>
 #import <WebCore/markup.h>
-#import <WebKit/DOMExtensions.h>
-#import <WebKit/DOMHTML.h>
+#import <WebKitLegacy/DOMExtensions.h>
+#import <WebKitLegacy/DOMHTML.h>
 #import <runtime/JSCJSValue.h>
 #import <runtime/JSLock.h>
 #import <wtf/Assertions.h>

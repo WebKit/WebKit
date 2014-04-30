@@ -28,7 +28,7 @@
 
 // This header contains the WebInspector SPI.
 
-#import <WebKit/WebInspector.h>
+#import <WebKitLegacy/WebInspector.h>
 
 @class WebInspectorFrontend;
 

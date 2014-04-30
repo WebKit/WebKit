@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDocumentPrivate.h>
-#import <WebKit/WebHTMLView.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKitLegacy/WebDocumentPrivate.h>
+#import <WebKitLegacy/WebHTMLView.h>
+#import <WebKitLegacy/WebViewPrivate.h>
 
 #if PLATFORM(IOS)
 #if !defined(IBAction)

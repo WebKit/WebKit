@@ -27,7 +27,7 @@
  */
 
 #if PLATFORM(IOS)
-#import <WebKit/WebDocumentInternal.h>
+#import <WebKitLegacy/WebDocumentInternal.h>
 
 @class WebDataSource;
 @class WebCoreTextDecoder;

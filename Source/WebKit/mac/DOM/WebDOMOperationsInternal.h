@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDOMOperations.h>
+#import <WebKitLegacy/WebDOMOperations.h>
 
 @interface DOMDocument (WebDOMDocumentOperationsInternal)
 - (DOMRange *)_documentRange;

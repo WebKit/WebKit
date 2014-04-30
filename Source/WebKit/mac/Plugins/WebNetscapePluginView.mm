@@ -74,8 +74,8 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <WebCore/npruntime_impl.h>
-#import <WebKit/DOMPrivate.h>
-#import <WebKit/WebUIDelegate.h>
+#import <WebKitLegacy/DOMPrivate.h>
+#import <WebKitLegacy/WebUIDelegate.h>
 #import <objc/runtime.h>
 #import <runtime/InitializeThreading.h>
 #import <runtime/JSLock.h>

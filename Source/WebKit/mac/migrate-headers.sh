@@ -25,7 +25,7 @@
 
 mkdir -p "${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}"
 mkdir -p "${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}"
-mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit"
+mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy"
 
 # If we didn't build WebCore, use the production copy of the headers
 if [ ! -d "${WEBCORE_PRIVATE_HEADERS_DIR}" ]; then

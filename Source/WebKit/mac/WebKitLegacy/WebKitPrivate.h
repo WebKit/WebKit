@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
-
-#import <WebKitLegacy/WebKeyGenerator.h>
-
-#import <WebKitSystemInterface.h>
-#import <wtf/Assertions.h>
-
-@implementation WebKeyGenerator
-
-+ (WebKeyGenerator *)sharedGenerator
-{
-    static WebKeyGenerator *sharedGenerator = [[WebKeyGenerator alloc] init];
-    return sharedGenerator;
-}
-
-static inline WebCertificateParseResult toWebCertificateParseResult(WKCertificateParseResult result)
-{
-    // FIXME: WebKeyGenerator is not used in WebKit, and this code should be moved to Safari.
-
-    switch (result) {
-    case WKCertificateParseResultSucceeded:
-        return WebCertificateParseResultSucceeded;
-    case WKCertificateParseResultFailed:
-        return WebCertificateParseResultFailed;
-    case WKCertificateParseResultPKCS7:
-        return WebCertificateParseResultPKCS7;
-    }
-
-    ASSERT_NOT_REACHED();
-    return WebCertificateParseResultFailed;
-}
-
-- (WebCertificateParseResult)addCertificatesToKeychainFromData:(NSData *)data
-{
-    return toWebCertificateParseResult(WKAddCertificatesToKeychainFromData([data bytes], [data length]));
-}
-
-@end
-
-#endif // !PLATFORM(IOS)
+#import <WebKit/WKBackForwardListPrivate.h>
+#import <WebKit/WKHistoryDelegatePrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKScriptMessagePrivate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKActivatedElementInfo.h>
+#import <WebKit/_WKElementAction.h>
+#import <WebKit/_WKFormDelegate.h>
+#import <WebKit/_WKFormInputSession.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKScriptWorld.h>
+#import <WebKit/_WKThumbnailView.h>
+#import <WebKit/_WKVisitedLinkProvider.h>

@@ -121,8 +121,8 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/Widget.h>
-#import <WebKit/DOMElement.h>
-#import <WebKit/DOMHTMLFormElement.h>
+#import <WebKitLegacy/DOMElement.h>
+#import <WebKitLegacy/DOMHTMLFormElement.h>
 #import <WebKitSystemInterface.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>

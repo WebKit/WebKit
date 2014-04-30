@@ -31,8 +31,8 @@
 #if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
 #else
-#import <WebKit/WAKAppKitStubs.h>
-#import <WebKit/WAKView.h>
+#import <WebKitLegacy/WAKAppKitStubs.h>
+#import <WebKitLegacy/WAKView.h>
 #if !defined(IBAction)
 #define IBAction void
 #endif

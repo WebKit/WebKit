@@ -33,17 +33,17 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/TextRun.h>
 #import <WebCore/WebCoreNSStringExtras.h>
-#import <WebKit/WebNSFileManagerExtras.h>
-#import <WebKit/WebNSObjectExtras.h>
+#import <WebKitLegacy/WebNSFileManagerExtras.h>
+#import <WebKitLegacy/WebNSObjectExtras.h>
 #import <unicode/uchar.h>
 #import <sys/param.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/WAKViewPrivate.h>
-#import <WebKit/DOM.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKitLegacy/DOM.h>
+#import <WebKitLegacy/WebFrame.h>
+#import <WebKitLegacy/WebFrameView.h>
+#import <WebKitLegacy/WebViewPrivate.h>
 #endif
 
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";

@@ -28,13 +28,13 @@
 
 #import <Foundation/Foundation.h>
 #import <Foundation/NSURLRequest.h>
-#import <WebKit/WebKitAvailability.h>
+#import <WebKitLegacy/WebKitAvailability.h>
 
 #if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
 #else
-#import <WebKit/WAKAppKitStubs.h>
-#import <WebKit/WAKView.h>
+#import <WebKitLegacy/WAKAppKitStubs.h>
+#import <WebKitLegacy/WAKView.h>
 #endif
 
 /*!

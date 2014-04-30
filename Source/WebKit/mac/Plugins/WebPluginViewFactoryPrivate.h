@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebPluginViewFactory.h>
+#import <WebKitLegacy/WebPluginViewFactory.h>
 
 typedef enum {
     WebPlugInModeEmbed = 0,

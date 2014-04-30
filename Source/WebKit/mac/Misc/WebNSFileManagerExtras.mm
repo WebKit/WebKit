@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNSFileManagerExtras.h>
+#import <WebKitLegacy/WebNSFileManagerExtras.h>
 
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"

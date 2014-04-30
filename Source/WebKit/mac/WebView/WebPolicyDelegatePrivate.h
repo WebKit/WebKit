@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebPolicyDelegate.h>
+#import <WebKitLegacy/WebPolicyDelegate.h>
 
 @class WebHistoryItem;
 @class WebPolicyDecisionListenerPrivate;

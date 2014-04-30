@@ -40,8 +40,8 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebKit/DOMCore.h>
-#import <WebKit/DOMExtensions.h>
+#import <WebKitLegacy/DOMCore.h>
+#import <WebKitLegacy/DOMExtensions.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>

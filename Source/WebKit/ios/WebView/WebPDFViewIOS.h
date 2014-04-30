@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDocumentPrivate.h>
+#import <WebKitLegacy/WebDocumentPrivate.h>
 
 @interface WebPDFView : WAKView <WebPDFDocumentView, WebPDFDocumentRepresentation> {
     BOOL dataSourceHasBeenSet;

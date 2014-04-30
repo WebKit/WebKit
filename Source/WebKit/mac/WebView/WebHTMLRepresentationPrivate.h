@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebHTMLRepresentation.h>
+#import <WebKitLegacy/WebHTMLRepresentation.h>
 
 @protocol WebPluginManualLoader;
 

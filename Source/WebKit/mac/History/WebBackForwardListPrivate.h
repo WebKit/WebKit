@@ -27,7 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WebBackForwardList.h>
+#import <WebKitLegacy/WebBackForwardList.h>
 
 @interface WebBackForwardList (WebBackForwardListPrivate)
 

@@ -28,9 +28,9 @@
 
 #if !PLATFORM(IOS)
 
-#import <WebKit/WebNSImageExtras.h>
+#import <WebKitLegacy/WebNSImageExtras.h>
 
-#import <WebKit/WebKitLogging.h>
+#import <WebKitLegacy/WebKitLogging.h>
 
 @implementation NSImage (WebExtras)
 

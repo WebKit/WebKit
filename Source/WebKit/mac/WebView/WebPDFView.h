@@ -28,7 +28,7 @@
 
 #if !PLATFORM(IOS)
 
-#import <WebKit/WebDocumentInternal.h>
+#import <WebKitLegacy/WebDocumentInternal.h>
 
 @class PDFDocument;
 @class PDFView;

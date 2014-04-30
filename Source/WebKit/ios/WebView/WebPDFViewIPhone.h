@@ -23,4 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebPDFViewIOS.h>
+#import <WebKitLegacy/WebPDFViewIOS.h>

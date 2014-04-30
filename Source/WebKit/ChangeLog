@@ -1,3 +1,17 @@
+2014-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Move the legacy WebKit API into WebKitLegacy.framework and move it inside WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=132399
+        <rdar://problem/15920046>
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add a new build target that builds the legacy WebKit API in WebKitLegacy.framework. This framework
+        is then re-exported by WebKit.framework, and its headers are copied to WebKit.framework. All the WebKitLegacy
+        headers are made private, and the MigrateHeadersFromWebKitLegacy.make Makefile will copy all the headers specified
+        in WEBKIT_PUBLIC_HEADERS to WebKit/Headers.
+
 2014-04-29  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Switch video from GStreamer to Media Foundation.

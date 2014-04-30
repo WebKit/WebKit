@@ -31,8 +31,8 @@
 #import "WebBaseNetscapePluginView.h"
 
 #import "WebNetscapeContainerCheckPrivate.h"
-#import <WebKit/npfunctions.h>
-#import <WebKit/npapi.h>
+#import <WebKitLegacy/npfunctions.h>
+#import <WebKitLegacy/npapi.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/OwnPtr.h>

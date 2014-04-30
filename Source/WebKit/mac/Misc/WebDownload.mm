@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDownload.h>
+#import <WebKitLegacy/WebDownload.h>
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLDownload.h>
@@ -35,7 +35,7 @@
 #import <WebCore/Credential.h>
 #import <WebCore/CredentialStorage.h>
 #import <WebCore/ProtectionSpace.h>
-#import <WebKit/WebPanelAuthenticationHandler.h>
+#import <WebKitLegacy/WebPanelAuthenticationHandler.h>
 #import <wtf/Assertions.h>
 
 #import "WebTypesInternal.h"

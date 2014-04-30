@@ -32,8 +32,8 @@
 
 #import <wtf/Assertions.h>
 
-#import <WebKit/WebNSControlExtras.h>
-#import <WebKit/WebNSWindowExtras.h>
+#import <WebKitLegacy/WebNSControlExtras.h>
+#import <WebKitLegacy/WebNSWindowExtras.h>
 
 @implementation WebJavaScriptTextInputPanel
 

@@ -26,11 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDocument.h>
+#import <WebKitLegacy/WebDocument.h>
 
 #if TARGET_OS_IPHONE
-#import <WebKit/WAKAppKitStubs.h>
-#import <WebKit/WAKView.h>
+#import <WebKitLegacy/WAKAppKitStubs.h>
+#import <WebKitLegacy/WAKView.h>
 #endif
 
 @class WebDataSource;

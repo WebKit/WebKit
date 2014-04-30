@@ -28,7 +28,7 @@
 
 // This header contains the WebFrame SPI.
 
-#import <WebKit/WebFrame.h>
+#import <WebKitLegacy/WebFrame.h>
 #import <JavaScriptCore/JSBase.h>
 
 #if !TARGET_OS_IPHONE
@@ -39,7 +39,7 @@
 
 #if TARGET_OS_IPHONE
 #include <CoreText/CoreText.h>
-#include <WebKit/WAKAppKitStubs.h>
+#include <WebKitLegacy/WAKAppKitStubs.h>
 #endif
 
 @class DOMDocumentFragment;

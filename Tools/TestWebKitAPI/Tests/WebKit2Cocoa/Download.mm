@@ -31,12 +31,12 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebCore/FileSystem.h>
-#import <WebKit2/_WKDownload.h>
-#import <WebKit2/_WKDownloadDelegate.h>
-#import <WebKit2/WKNavigationDelegatePrivate.h>
-#import <WebKit2/WKProcessPoolPrivate.h>
-#import <WebKit2/WKWebView.h>
-#import <WebKit2/WKWebViewConfiguration.h>
+#import <WebKit/_WKDownload.h>
+#import <WebKit/_WKDownloadDelegate.h>
+#import <WebKit/WKNavigationDelegatePrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 

@@ -26,14 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDOMOperations.h>
+#import <WebKitLegacy/WebDOMOperations.h>
 #import <JavaScriptCore/JSBase.h>
 
 #if TARGET_OS_IPHONE
 #import <Foundation/NSGeometry.h>
 #else
 #import <AppKit/NSEvent.h>
-#import <WebKit/DOMWheelEvent.h>
+#import <WebKitLegacy/DOMWheelEvent.h>
 #endif
 
 @interface DOMElement (WebDOMElementOperationsPrivate)

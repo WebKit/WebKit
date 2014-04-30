@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebHTMLView.h>
+#import <WebKitLegacy/WebHTMLView.h>
 
 #if !TARGET_OS_IPHONE
 #if !defined(ENABLE_NETSCAPE_PLUGIN_API)

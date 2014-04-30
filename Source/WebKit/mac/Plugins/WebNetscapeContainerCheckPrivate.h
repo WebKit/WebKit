@@ -29,7 +29,7 @@
 #ifndef WebNetscapeContainerCheckPrivate_h
 #define WebNetscapeContainerCheckPrivate_h
 
-#include <WebKit/npapi.h>
+#include <WebKitLegacy/npapi.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -27,7 +27,7 @@
  */
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-#import <WebKit/npapi.h>
+#import <WebKitLegacy/npapi.h>
 
 #import "WebNetscapePluginView.h"
 #import "WebKitLogging.h"

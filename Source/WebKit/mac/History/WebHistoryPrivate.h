@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebHistory.h>
+#import <WebKitLegacy/WebHistory.h>
 
 /*
     @constant WebHistoryItemsDiscardedWhileLoadingNotification Posted from loadFromURL:error:.  

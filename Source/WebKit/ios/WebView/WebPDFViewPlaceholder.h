@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDocumentPrivate.h>
+#import <WebKitLegacy/WebDocumentPrivate.h>
 
 #if TARGET_OS_IPHONE
 

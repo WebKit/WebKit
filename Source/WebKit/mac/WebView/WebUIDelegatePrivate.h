@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebAllowDenyPolicyListener.h>
-#import <WebKit/WebUIDelegate.h>
+#import <WebKitLegacy/WebAllowDenyPolicyListener.h>
+#import <WebKitLegacy/WebUIDelegate.h>
 
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
 #if !TARGET_OS_IPHONE

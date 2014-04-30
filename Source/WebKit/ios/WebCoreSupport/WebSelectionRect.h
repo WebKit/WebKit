@@ -27,7 +27,7 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
-#import <WebKit/WebFrameIOS.h>
+#import <WebKitLegacy/WebFrameIOS.h>
 
 @interface WebSelectionRect : NSObject <NSCopying> {
     CGRect m_rect;

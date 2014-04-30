@@ -26,11 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebKitErrors.h>
+#import <WebKitLegacy/WebKitErrors.h>
 
 #import "WebLocalizableStringsInternal.h"
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebNSURLExtras.h>
+#import <WebKitLegacy/WebKitErrorsPrivate.h>
+#import <WebKitLegacy/WebNSURLExtras.h>
 
 #import <pthread.h>
 

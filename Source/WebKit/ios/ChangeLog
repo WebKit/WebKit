@@ -1,3 +1,32 @@
+2014-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Move the legacy WebKit API into WebKitLegacy.framework and move it inside WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=132399
+        <rdar://problem/15920046>
+
+        Reviewed by Dan Bernstein.
+
+        Import WebKitLegacy headers instead of WebKit headers.
+        
+        * DefaultDelegates/WebDefaultFormDelegate.h:
+        * DefaultDelegates/WebDefaultFrameLoadDelegate.m:
+        * DefaultDelegates/WebDefaultResourceLoadDelegate.m:
+        * DefaultDelegates/WebDefaultUIKitDelegate.h:
+        * Misc/WebGeolocationProviderIOS.h:
+        * Misc/WebNSStringExtrasIPhone.h:
+        * WebCoreSupport/WebFrameIOS.h:
+        * WebCoreSupport/WebFrameIOS.mm:
+        * WebCoreSupport/WebFrameIPhone.h:
+        * WebCoreSupport/WebSelectionRect.h:
+        * WebCoreSupport/WebVisiblePosition.h:
+        * WebView/WebPDFViewIOS.h:
+        * WebView/WebPDFViewIOS.mm:
+        * WebView/WebPDFViewIPhone.h:
+        * WebView/WebPDFViewPlaceholder.h:
+        * WebView/WebPDFViewPlaceholder.mm:
+        * WebView/WebPlainWhiteView.h:
+        * WebView/WebUIKitDelegate.h:
+
 2014-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         FontCache::fontCache() never returns nullptr so it can be made to return a reference instead

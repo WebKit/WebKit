@@ -28,7 +28,7 @@
 
 #import <CoreGraphics/CGContext.h>
 #import <Foundation/Foundation.h>
-#import <WebKit/WebFrame.h>
+#import <WebKitLegacy/WebFrame.h>
 
 @class DOMElement;
 

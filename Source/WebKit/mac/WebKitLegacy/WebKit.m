@@ -23,4 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This file is only here so that WebKitLegacy.framework has something to link.
+// FIXME: This is only temporary; WebKit.framework is going to be provided by the WebKit2 project.
+
+// This file is only here so that WebKit.framework has something to link.

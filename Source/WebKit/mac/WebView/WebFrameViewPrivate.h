@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebFrameView.h>
+#import <WebKitLegacy/WebFrameView.h>
 
 @interface WebFrameView (WebPrivate)
 

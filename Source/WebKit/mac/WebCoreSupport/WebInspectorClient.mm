@@ -51,7 +51,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SoftLinking.h>
-#import <WebKit/DOMExtensions.h>
+#import <WebKitLegacy/DOMExtensions.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/text/Base64.h>
 

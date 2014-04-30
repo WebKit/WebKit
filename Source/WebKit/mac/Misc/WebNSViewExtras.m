@@ -26,18 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNSViewExtras.h>
+#import <WebKitLegacy/WebNSViewExtras.h>
 
-#import <WebKit/DOMExtensions.h>
-#import <WebKit/WebDataSource.h>
-#import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebFrameViewInternal.h>
-#import <WebKit/WebNSImageExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebView.h>
+#import <WebKitLegacy/DOMExtensions.h>
+#import <WebKitLegacy/WebDataSource.h>
+#import <WebKitLegacy/WebFramePrivate.h>
+#import <WebKitLegacy/WebFrameViewInternal.h>
+#import <WebKitLegacy/WebNSImageExtras.h>
+#import <WebKitLegacy/WebNSURLExtras.h>
+#import <WebKitLegacy/WebView.h>
 
 #if !PLATFORM(IOS)
-#import <WebKit/WebNSPasteboardExtras.h>
+#import <WebKitLegacy/WebNSPasteboardExtras.h>
 #endif
 
 #if PLATFORM(IOS)

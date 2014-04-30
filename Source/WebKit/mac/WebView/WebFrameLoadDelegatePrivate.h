@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebFrameLoadDelegate.h>
+#import <WebKitLegacy/WebFrameLoadDelegate.h>
 
 @class WebScriptWorld;
 @class WebSecurityOrigin;

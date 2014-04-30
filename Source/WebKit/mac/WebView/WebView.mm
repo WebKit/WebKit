@@ -175,9 +175,9 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
 #import <WebCore/Widget.h>
-#import <WebKit/DOM.h>
-#import <WebKit/DOMExtensions.h>
-#import <WebKit/DOMPrivate.h>
+#import <WebKitLegacy/DOM.h>
+#import <WebKitLegacy/DOMExtensions.h>
+#import <WebKitLegacy/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 #import <bindings/ScriptValue.h>
 #import <mach-o/dyld.h>
@@ -250,7 +250,7 @@
 #endif // !PLATFORM(IOS)
 
 #if ENABLE(DASHBOARD_SUPPORT)
-#import <WebKit/WebDashboardRegion.h>
+#import <WebKitLegacy/WebDashboardRegion.h>
 #endif
 
 #if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)

@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebEditingDelegate.h>
+#import <WebKitLegacy/WebEditingDelegate.h>
 
 @class DOMHTMLElement;
 

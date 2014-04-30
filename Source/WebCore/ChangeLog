@@ -1,3 +1,15 @@
+2014-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Move the legacy WebKit API into WebKitLegacy.framework and move it inside WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=132399
+        <rdar://problem/15920046>
+
+        Reviewed by Dan Bernstein.
+
+        Allow WebKitLegacy to link against WebCore.
+
+        * Configurations/WebCore.xcconfig:
+
 2014-04-30  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] ASSERTs in fast/dynamic/continuation-detach-crash.html

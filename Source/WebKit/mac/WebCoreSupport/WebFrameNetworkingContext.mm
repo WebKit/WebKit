@@ -37,7 +37,7 @@
 #if PLATFORM(IOS)
 #import <CFNetwork/CFHTTPCookiesPriv.h>
 #import <WebCore/WebCoreThread.h>
-#import <WebKit/WebFrameLoadDelegate.h>
+#import <WebKitLegacy/WebFrameLoadDelegate.h>
 #endif
 
 using namespace WebCore;

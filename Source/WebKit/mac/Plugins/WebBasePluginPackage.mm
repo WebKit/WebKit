@@ -26,13 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebBasePluginPackage.h>
+#import <WebKitLegacy/WebBasePluginPackage.h>
 
 #import <algorithm>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebPluginPackage.h>
+#import <WebKitLegacy/WebKitNSStringExtras.h>
+#import <WebKitLegacy/WebNetscapePluginPackage.h>
+#import <WebKitLegacy/WebPluginPackage.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>

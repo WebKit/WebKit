@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebResource.h>
+#import <WebKitLegacy/WebResource.h>
 
 @interface WebResource (WebResourcePrivate)
 

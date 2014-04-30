@@ -26,8 +26,8 @@
 #ifndef WebUIKitDelegate_h
 #define WebUIKitDelegate_h
 
-#import <WebKit/WAKAppKitStubs.h>
-#import <WebKit/WKContentObservation.h>
+#import <WebKitLegacy/WAKAppKitStubs.h>
+#import <WebKitLegacy/WKContentObservation.h>
 
 @class DOMNode;
 @class DOMDocumentFragment;

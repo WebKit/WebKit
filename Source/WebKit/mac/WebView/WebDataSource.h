@@ -27,7 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WebDocument.h>
+#import <WebKitLegacy/WebDocument.h>
 
 @class NSMutableURLRequest;
 @class NSURLConnection;

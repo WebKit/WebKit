@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebView.h>
-#import <WebKit/WebFramePrivate.h>
+#import <WebKitLegacy/WebView.h>
+#import <WebKitLegacy/WebFramePrivate.h>
 #import <JavaScriptCore/JSBase.h>
 
 #if TARGET_OS_IPHONE

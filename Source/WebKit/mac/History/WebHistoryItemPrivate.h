@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebHistoryItem.h>
+#import <WebKitLegacy/WebHistoryItem.h>
 
 #if TARGET_OS_IPHONE
 #import <Foundation/NSCalendarDate.h>

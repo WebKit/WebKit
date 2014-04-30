@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNSDataExtras.h>
-#import <WebKit/WebNSDataExtrasPrivate.h>
+#import <WebKitLegacy/WebNSDataExtras.h>
+#import <WebKitLegacy/WebNSDataExtrasPrivate.h>
 
 #import <wtf/Assertions.h>
 

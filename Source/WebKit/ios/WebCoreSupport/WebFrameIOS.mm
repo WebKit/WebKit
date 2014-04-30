@@ -47,11 +47,11 @@
 #import <WebCore/TextDirection.h>
 #import <WebCore/VisiblePosition.h>
 #import <WebCore/VisibleUnits.h>
-#import <WebKit/DOM.h>
-#import <WebKit/DOMRange.h>
-#import <WebKit/DOMUIKitExtensions.h>
-#import <WebKit/WebSelectionRect.h>
-#import <WebKit/WebVisiblePosition.h>
+#import <WebKitLegacy/DOM.h>
+#import <WebKitLegacy/DOMRange.h>
+#import <WebKitLegacy/DOMUIKitExtensions.h>
+#import <WebKitLegacy/WebSelectionRect.h>
+#import <WebKitLegacy/WebVisiblePosition.h>
 #import <unicode/uchar.h>
 
 #import "DOMNodeInternal.h"

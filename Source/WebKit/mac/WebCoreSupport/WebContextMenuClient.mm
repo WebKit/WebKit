@@ -53,7 +53,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebKit/DOMPrivate.h>
+#import <WebKitLegacy/DOMPrivate.h>
 
 using namespace WebCore;
 

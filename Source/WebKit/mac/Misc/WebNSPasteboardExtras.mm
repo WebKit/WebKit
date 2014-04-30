@@ -43,8 +43,8 @@
 #import <WebCore/Image.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/RenderImage.h>
-#import <WebKit/DOMExtensions.h>
-#import <WebKit/DOMPrivate.h>
+#import <WebKitLegacy/DOMExtensions.h>
+#import <WebKitLegacy/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
