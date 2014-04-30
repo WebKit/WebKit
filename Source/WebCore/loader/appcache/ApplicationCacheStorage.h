@@ -110,6 +110,7 @@ private:
     bool store(ApplicationCacheGroup*, GroupStorageIDJournal*);
     bool store(ApplicationCache*, ResourceStorageIDJournal*);
     bool store(ApplicationCacheResource*, unsigned cacheStorageID);
+    bool deleteCacheGroupRecord(const String& manifestURL);
 
     bool ensureOriginRecord(const SecurityOrigin*);
     bool shouldStoreResourceAsFlatFile(ApplicationCacheResource*);

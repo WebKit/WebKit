@@ -926,7 +926,9 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
             // a failure of the cache storage to save the newest cache due to hitting
             // the maximum size. In such a case, m_manifestResource may be 0, as
             // the manifest was already set on the newest cache object.
-            ASSERT(cacheStorage().isMaximumSizeReached() && m_calledReachedMaxAppCacheSize);
+            ASSERT(m_cacheBeingUpdated->manifestResource());
+            ASSERT(cacheStorage().isMaximumSizeReached());
+            ASSERT(m_calledReachedMaxAppCacheSize);
         }
 
         RefPtr<ApplicationCache> oldNewestCache = (m_newestCache == m_cacheBeingUpdated) ? RefPtr<ApplicationCache>() : m_newestCache;
