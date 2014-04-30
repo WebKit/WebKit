@@ -1,3 +1,10 @@
+2014-04-29  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after r167962.
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (.hidden): Use common '.hidden' class for controls.
+        (video::-webkit-media-text-track-container .hidden): Deleted.
+
 2014-04-29  Brady Eidson  <beidson@apple.com>
 
         Handle selection services menu.

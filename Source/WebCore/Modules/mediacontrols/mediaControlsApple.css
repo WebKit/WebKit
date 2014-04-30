@@ -22,6 +22,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+.hidden {
+    display: none;
+}
+
 audio {
     width: 200px;
     height: 25px;
@@ -707,10 +711,6 @@ video::-webkit-media-text-track-container {
     -webkit-flex: 1 1;
 
     -webkit-line-box-contain: block inline-box replaced;
-}
-
-video::-webkit-media-text-track-container .hidden {
-    display: none;
 }
 
 video::cue {
