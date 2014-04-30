@@ -41,8 +41,6 @@ class ArrayBufferView;
 
 namespace WebCore {
 
-// FIXME: Move this file to BlobBuilder.h
-
 class Blob;
 class TextEncoding;
 
@@ -64,10 +62,9 @@ public:
 private:
     void appendBytesData(const void*, size_t);
 
-    Vector<char>& getBuffer();
-
     long long m_size;
     BlobDataItemList m_items;
+    Vector<char> m_appendableData;
 };
 
 } // namespace WebCore

@@ -1,3 +1,35 @@
+2014-04-30  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=132363
+        Make Blob RawData immutable
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/websockets/WebSocket.cpp: (WebCore::WebSocket::didReceiveBinaryData):
+        Create RawData in one step.
+
+        * WebCore.exp.in: Don't export a constructor that we no longer have (and the new one is inline).
+
+        * fileapi/Blob.cpp: Removed entirely dead code.
+
+        * fileapi/WebKitBlobBuilder.cpp:
+        * fileapi/WebKitBlobBuilder.h:
+        Updated to collect data in a plain Vector, so that we don't have to modify RawData.
+        Removed FIXMEs about renaming - there used to be a BlobBuilder exposed to JS, but
+        now this is just a helper to implement JS Blob constructor. We should probably
+        still rename it, but not how the FIXME suggested.
+
+        * platform/network/BlobData.cpp:
+        (WebCore::BlobDataItem::detachFromCurrentThread): RawData::detachFromCurrentThread()
+        was a no-op.
+        (WebCore::BlobDataHandle::BlobDataHandle): Deleted. This was entirely dead code.
+        (WebCore::BlobDataHandle::~BlobDataHandle): Ditto.
+
+        * platform/network/BlobData.h: Made RawData immutable.
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::responseBlob):
+        Create RawData in one step.
+
 2014-04-30  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Region offset not factored in when mapping to local coords

@@ -288,26 +288,19 @@ Blob* XMLHttpRequest::responseBlob()
     ASSERT(doneWithoutErrors());
 
     if (!m_responseBlob) {
-        // FIXME: This causes two (or more) unnecessary copies of the data.
-        // Chromium stores blob data in the browser process, so we're pulling the data
-        // from the network only to copy it into the renderer to copy it back to the browser.
-        // Ideally we'd get the blob/file-handle from the ResourceResponse directly
-        // instead of copying the bytes. Embedders who store blob data in the
-        // same process as WebCore would at least to teach BlobData to take
-        // a SharedBuffer, even if they don't get the Blob from the network layer directly.
-        auto blobData = std::make_unique<BlobData>();
-        // If we errored out or got no data, we still return a blob, just an empty one.
-        size_t size = 0;
         if (m_binaryResponseBuilder) {
-            RefPtr<RawData> rawData = RawData::create();
-            size = m_binaryResponseBuilder->size();
-            rawData->mutableData()->append(m_binaryResponseBuilder->data(), size);
-            blobData->appendData(rawData, 0, BlobDataItem::toEndOfFile);
+            // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
+            unsigned size = m_binaryResponseBuilder->size();
+            auto blobData = std::make_unique<BlobData>();
+            blobData->appendData(RawData::create(m_binaryResponseBuilder->data(), size), 0, BlobDataItem::toEndOfFile);
             String normalizedContentType = Blob::normalizedContentType(responseMIMEType());
             blobData->setContentType(normalizedContentType); // responseMIMEType defaults to text/xml which may be incorrect.
             m_binaryResponseBuilder.clear();
+            m_responseBlob = Blob::create(std::move(blobData), size);
+        } else {
+            // If we errored out or got no data, we still return a blob, just an empty one.
+            m_responseBlob = Blob::create();
         }
-        m_responseBlob = Blob::create(std::move(blobData), size);
     }
 
     return m_responseBlob.get();

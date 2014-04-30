@@ -42,19 +42,26 @@ namespace WebCore {
 
 class RawData : public ThreadSafeRefCounted<RawData> {
 public:
-    static PassRefPtr<RawData> create()
+    static PassRefPtr<RawData> create(Vector<char>&& data)
     {
-        return adoptRef(new RawData());
+        return adoptRef(new RawData(std::move(data)));
     }
 
-    void detachFromCurrentThread();
+    static PassRefPtr<RawData> create(const char* data, size_t size)
+    {
+        Vector<char> dataVector(size);
+        memcpy(dataVector.data(), data, size);
+        return adoptRef(new RawData(std::move(dataVector)));
+    }
 
     const char* data() const { return m_data.data(); }
     size_t length() const { return m_data.size(); }
-    Vector<char>* mutableData() { return &m_data; }
 
 private:
-    RawData();
+    RawData(Vector<char>&& data)
+        : m_data(std::move(data))
+    {
+    }
 
     Vector<char> m_data;
 };
@@ -181,23 +188,6 @@ private:
     String m_contentType;
     String m_contentDisposition;
     BlobDataItemList m_items;
-};
-
-// FIXME: This class is mostly place holder until I get farther along with
-// https://bugs.webkit.org/show_bug.cgi?id=108733 and more specifically with landing
-// https://codereview.chromium.org/11192017/.
-class BlobDataHandle : public ThreadSafeRefCounted<BlobDataHandle> {
-public:
-    static PassRefPtr<BlobDataHandle> create(std::unique_ptr<BlobData> data, long long size)
-    {
-        return adoptRef(new BlobDataHandle(std::move(data), size));
-    }
-
-    ~BlobDataHandle();
-
-private:
-    BlobDataHandle(std::unique_ptr<BlobData>, long long size);
-    URL m_internalURL;
 };
 
 } // namespace WebCore

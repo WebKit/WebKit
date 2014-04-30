@@ -132,8 +132,7 @@ bool BlobRegistrationData::decode(IPC::ArgumentDecoder& decoder, BlobRegistratio
             IPC::DataReference data;
             if (!decoder.decode(data))
                 return false;
-            RefPtr<RawData> rawData = RawData::create();
-            rawData->mutableData()->append(data.data(), data.size());
+            RefPtr<RawData> rawData = RawData::create(reinterpret_cast<const char*>(data.data()), data.size());
             result.m_data->appendData(rawData.release(), 0, BlobDataItem::toEndOfFile);
             break;
         }

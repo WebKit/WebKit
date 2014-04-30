@@ -522,10 +522,8 @@ void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char>> binaryData)
     switch (m_binaryType) {
     case BinaryTypeBlob: {
         size_t size = binaryData->size();
-        RefPtr<RawData> rawData = RawData::create();
-        binaryData->swap(*rawData->mutableData());
         auto blobData = std::make_unique<BlobData>();
-        blobData->appendData(rawData.release(), 0, BlobDataItem::toEndOfFile);
+        blobData->appendData(RawData::create(std::move(*binaryData)), 0, BlobDataItem::toEndOfFile);
         RefPtr<Blob> blob = Blob::create(std::move(blobData), size);
         dispatchEvent(MessageEvent::create(blob.release(), SecurityOrigin::create(m_url)->toString()));
         break;

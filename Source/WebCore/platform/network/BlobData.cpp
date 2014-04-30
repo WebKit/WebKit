@@ -45,17 +45,8 @@ namespace WebCore {
 
 const long long BlobDataItem::toEndOfFile = -1;
 
-RawData::RawData()
-{
-}
-
-void RawData::detachFromCurrentThread()
-{
-}
-
 void BlobDataItem::detachFromCurrentThread()
 {
-    data->detachFromCurrentThread();
     path = path.isolatedCopy();
     url = url.copy();
 }
@@ -97,19 +88,6 @@ void BlobData::appendBlob(const URL& url, long long offset, long long length)
 void BlobData::swapItems(BlobDataItemList& items)
 {
     m_items.swap(items);
-}
-
-
-BlobDataHandle::BlobDataHandle(std::unique_ptr<BlobData> data, long long size)
-{
-    UNUSED_PARAM(size);
-    m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(data));
-}
-
-BlobDataHandle::~BlobDataHandle()
-{
-    ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
 }
 
 } // namespace WebCore

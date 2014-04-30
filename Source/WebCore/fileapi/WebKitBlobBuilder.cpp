@@ -48,8 +48,6 @@
 
 namespace WebCore {
 
-// FIXME: Move this file to BlobBuilder.cpp
-
 enum BlobConstructorArrayBufferOrView {
     BlobConstructorArrayBuffer,
     BlobConstructorArrayBufferView,
@@ -61,29 +59,19 @@ BlobBuilder::BlobBuilder()
 {
 }
 
-Vector<char>& BlobBuilder::getBuffer()
-{
-    // If the last item is not a data item, create one. Otherwise, we simply append the new string to the last data item.
-    if (m_items.isEmpty() || m_items[m_items.size() - 1].type != BlobDataItem::Data)
-        m_items.append(BlobDataItem(RawData::create()));
-
-    return *m_items[m_items.size() - 1].data->mutableData();
-}
-
 void BlobBuilder::append(const String& text, const String& endingType)
 {
     CString utf8Text = UTF8Encoding().encode(text, EntitiesForUnencodables);
 
-    Vector<char>& buffer = getBuffer();
-    size_t oldSize = buffer.size();
+    size_t oldSize = m_appendableData.size();
 
     if (endingType == "native")
-        normalizeLineEndingsToNative(utf8Text, buffer);
+        normalizeLineEndingsToNative(utf8Text, m_appendableData);
     else {
         ASSERT(endingType == "transparent");
-        buffer.append(utf8Text.data(), utf8Text.length());
+        m_appendableData.append(utf8Text.data(), utf8Text.length());
     }
-    m_size += buffer.size() - oldSize;
+    m_size += m_appendableData.size() - oldSize;
 }
 
 #if ENABLE(BLOB)
@@ -112,6 +100,8 @@ void BlobBuilder::append(Blob* blob)
 {
     if (!blob)
         return;
+    if (!m_appendableData.isEmpty())
+        m_items.append(BlobDataItem(RawData::create(std::move(m_appendableData))));
     if (blob->isFile()) {
         File* file = toFile(blob);
         // If the blob is file that is not snapshoted, capture the snapshot now.
@@ -131,14 +121,16 @@ void BlobBuilder::append(Blob* blob)
 
 void BlobBuilder::appendBytesData(const void* data, size_t length)
 {
-    Vector<char>& buffer = getBuffer();
-    size_t oldSize = buffer.size();
-    buffer.append(static_cast<const char*>(data), length);
-    m_size += buffer.size() - oldSize;
+    size_t oldSize = m_appendableData.size();
+    m_appendableData.append(static_cast<const char*>(data), length);
+    m_size += m_appendableData.size() - oldSize;
 }
 
 PassRefPtr<Blob> BlobBuilder::getBlob(const String& contentType)
 {
+    if (!m_appendableData.isEmpty())
+        m_items.append(BlobDataItem(RawData::create(std::move(m_appendableData))));
+
     auto blobData = std::make_unique<BlobData>();
     blobData->setContentType(Blob::normalizedContentType(contentType));
     blobData->swapItems(m_items);

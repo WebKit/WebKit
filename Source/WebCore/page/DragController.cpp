@@ -182,8 +182,8 @@ void DragController::dragExited(DragData& dragData)
 {
     if (RefPtr<FrameView> v = m_page.mainFrame().view()) {
 #if ENABLE(DASHBOARD_SUPPORT)
-        DataTransferAccessPolicy policy = (m_page.mainFrame().settings().usesDashboardBackwardCompatibilityMode() && (!m_documentUnderMouse || m_documentUnderMouse->securityOrigin()->isLocal())) ?
-        DataTransferAccessPolicy::Readable : DataTransferAccessPolicy::TypesReadable;
+        DataTransferAccessPolicy policy = (m_page.mainFrame().settings().usesDashboardBackwardCompatibilityMode() && (!m_documentUnderMouse || m_documentUnderMouse->securityOrigin()->isLocal()))
+            ? DataTransferAccessPolicy::Readable : DataTransferAccessPolicy::TypesReadable;
 #else
         DataTransferAccessPolicy policy = DataTransferAccessPolicy::TypesReadable;
 #endif

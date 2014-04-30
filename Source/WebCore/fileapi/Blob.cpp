@@ -40,17 +40,6 @@
 
 namespace WebCore {
 
-namespace {
-
-// Used in histograms to see when we can actually deprecate the prefixed slice.
-enum SliceHistogramEnum {
-    SliceWithoutPrefix,
-    SliceWithPrefix,
-    SliceHistogramEnumMax,
-};
-
-} // namespace
-
 class BlobURLRegistry final : public URLRegistry {
 public:
     virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) override;
