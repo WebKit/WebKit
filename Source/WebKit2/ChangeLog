@@ -1,3 +1,21 @@
+2014-04-30  Beth Dakin  <bdakin@apple.com>
+
+        Phone number data detection UI is offset for iframes, pages with topContentInset
+        https://bugs.webkit.org/show_bug.cgi?id=132372
+        -and corresponding-
+        <rdar://problem/16651235>
+
+        Reviewed by Tim Horton.
+
+        Make the overlay an OverlayType::Document, which will keep everything relative to 
+        the main Document’s coordinates. 
+        * WebProcess/WebPage/TelephoneNumberOverlayController.cpp:
+        (WebKit::TelephoneNumberOverlayController::createOverlayIfNeeded):
+
+        Make frames work by converting to the main  document’s coordinate space.
+        * WebProcess/WebPage/mac/TelephoneNumberOverlayControllerMac.mm:
+        (WebKit::TelephoneNumberOverlayController::drawRect):
+
 2014-04-30  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Unnecessary explicit initialization of LayoutUnit from r167985.

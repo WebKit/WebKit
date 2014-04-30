@@ -49,7 +49,7 @@ void TelephoneNumberOverlayController::createOverlayIfNeeded()
         return;
     }
     
-    RefPtr<PageOverlay> overlay = PageOverlay::create(this);
+    RefPtr<PageOverlay> overlay = PageOverlay::create(this, PageOverlay::OverlayType::Document);
     m_telephoneNumberOverlay = overlay.get();
     m_webPage->installPageOverlay(overlay.release(), PageOverlay::FadeMode::Fade);
     m_telephoneNumberOverlay->setNeedsDisplay();

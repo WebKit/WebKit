@@ -28,6 +28,7 @@
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
+#import <WebCore/Document.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/MainFrame.h>
@@ -67,6 +68,12 @@ void TelephoneNumberOverlayController::drawRect(PageOverlay* overlay, WebCore::G
         // FIXME: This will choke if the range wraps around the edge of the view.
         // What should we do in that case?
         IntRect rect = enclosingIntRect(range->boundingRect());
+
+        // Convert to the main document's coordinate space.
+        FrameView* viewForRange = range->ownerDocument().view();
+        FrameView& mainFrameView = *m_webPage->corePage()->mainFrame().view();
+        rect.setLocation(mainFrameView.convertChildToSelf(viewForRange, rect.location()));
+
         CGRect cgRects[] = { (CGRect)rect };
 
         RetainPtr<DDHighlightRef> highlight = adoptCF(DDHighlightCreateWithRectsInVisibleRect(nullptr, cgRects, 1, (CGRect)dirtyRect, true));
