@@ -513,7 +513,7 @@ public:
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSuppressesIncrementalRenderingKey,
-        [NSNumber numberWithBool:NO],   WebKitRegionBasedColumnsEnabledKey,
+        [NSNumber numberWithBool:YES],  WebKitRegionBasedColumnsEnabledKey,
         [NSNumber numberWithBool:YES],  WebKitBackspaceKeyNavigationEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplaySubtitlesPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayCaptionsPreferenceKey,

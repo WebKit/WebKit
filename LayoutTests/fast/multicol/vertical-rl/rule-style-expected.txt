@@ -20,25 +20,49 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (592,8) size 200x20
   RenderBlock {DIV} at (0,0) size 200x20
-    RenderBlock {DIV} at (0,0) size 400x2
+    RenderMultiColumnSet at (0,0) size 200x20
 layer at (592,32) size 200x20
   RenderBlock {DIV} at (0,24) size 200x20
-    RenderBlock {DIV} at (0,0) size 400x2
+    RenderMultiColumnSet at (0,0) size 200x20
 layer at (592,56) size 200x20
   RenderBlock {DIV} at (0,48) size 200x20
-    RenderBlock {DIV} at (0,0) size 400x2
+    RenderMultiColumnSet at (0,0) size 200x20
 layer at (592,80) size 200x20
   RenderBlock {DIV} at (0,72) size 200x20
-    RenderBlock {DIV} at (0,0) size 400x2
+    RenderMultiColumnSet at (0,0) size 200x20
 layer at (592,104) size 200x20
   RenderBlock {DIV} at (0,96) size 200x20
-    RenderBlock {DIV} at (0,0) size 400x2
+    RenderMultiColumnSet at (0,0) size 200x20
 layer at (592,128) size 200x20
   RenderBlock {DIV} at (0,120) size 200x20
-    RenderBlock {DIV} at (0,0) size 400x2
+    RenderMultiColumnSet at (0,0) size 200x20
 layer at (592,152) size 200x20
   RenderBlock {DIV} at (0,144) size 200x20
-    RenderBlock {DIV} at (0,0) size 400x2
+    RenderMultiColumnSet at (0,0) size 200x20
 layer at (592,176) size 200x20
   RenderBlock {DIV} at (0,168) size 200x20
+    RenderMultiColumnSet at (0,0) size 200x20
+layer at (392,8) size 400x2
+  RenderMultiColumnFlowThread at (0,0) size 400x2
+    RenderBlock {DIV} at (0,0) size 400x2
+layer at (392,32) size 400x2
+  RenderMultiColumnFlowThread at (0,0) size 400x2
+    RenderBlock {DIV} at (0,0) size 400x2
+layer at (392,56) size 400x2
+  RenderMultiColumnFlowThread at (0,0) size 400x2
+    RenderBlock {DIV} at (0,0) size 400x2
+layer at (392,80) size 400x2
+  RenderMultiColumnFlowThread at (0,0) size 400x2
+    RenderBlock {DIV} at (0,0) size 400x2
+layer at (392,104) size 400x2
+  RenderMultiColumnFlowThread at (0,0) size 400x2
+    RenderBlock {DIV} at (0,0) size 400x2
+layer at (392,128) size 400x2
+  RenderMultiColumnFlowThread at (0,0) size 400x2
+    RenderBlock {DIV} at (0,0) size 400x2
+layer at (392,152) size 400x2
+  RenderMultiColumnFlowThread at (0,0) size 400x2
+    RenderBlock {DIV} at (0,0) size 400x2
+layer at (392,176) size 400x2
+  RenderMultiColumnFlowThread at (0,0) size 400x2
     RenderBlock {DIV} at (0,0) size 400x2
