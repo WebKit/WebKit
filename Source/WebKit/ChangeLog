@@ -1,5 +1,12 @@
 2014-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix attempt.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Remove headers if it seems like the WKWebViewPrivate header imports itself.
+        
+2014-04-30  Anders Carlsson  <andersca@apple.com>
+
         Another build fix.
 
         * WebKit.xcodeproj/project.pbxproj:
