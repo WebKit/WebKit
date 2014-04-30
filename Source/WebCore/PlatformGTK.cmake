@@ -445,7 +445,7 @@ target_link_libraries(WebCorePlatformGTK
 )
 
 include_directories(
-    "${WebCore_INCLUDE_DIRECTORIES}"
+    ${WebCore_INCLUDE_DIRECTORIES}
     "${DERIVED_SOURCES_DIR}"
     "${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}"
 )
