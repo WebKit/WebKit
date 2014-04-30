@@ -1,0 +1,58 @@
+<style>
+.c0 { visibility: inherit; -webkit-column-span: all; }
+.c1 { visibility: hidden; float: right; }
+.c1 + .c14 { visibility: collapse; position: fixed; }
+.c4:nth-child(odd) { overflow: inherit; -webkit-column-count: 3; }
+.c4[class~="c4"] { float: none; }
+.c14 { display: compact; -webkit-column-span: all; }
+.c17:nth-of-type(-n+6) { visibility: collapse; -webkit-column-span: all;</style>
+<script>
+
+    /*
+        WebKit bug #110489, <https://bugs.webkit.org/show_bug.cgi?id=110489>. This test passes it if does not assert in a
+        debug build.
+    */
+
+    var nodes = Array();
+    var text = Array();
+    function loaded() {
+        if (window.testRunner) {
+            window.testRunner.dumpAsText();
+            window.testRunner.waitUntilDone();
+        }
+
+        nodes[0] = document.createElement('caption');
+        document.documentElement.appendChild(nodes[0]);
+        nodes[7] = document.createElement('legend');
+        document.documentElement.appendChild(nodes[7]);
+        nodes[11] = document.createElement('aside');
+        document.documentElement.appendChild(nodes[11]);
+        nodes[16] = document.createElement('kbd');
+        document.documentElement.appendChild(nodes[16]);
+        nodes[17] = document.createElement('colgroup');
+        nodes[17].setAttribute('class', 'c1');
+        nodes[18] = document.createElement('bdo');
+        document.documentElement.appendChild(nodes[18]);
+        nodes[37] = document.createElement('header');
+        nodes[37].setAttribute('class', 'c4');
+        document.documentElement.appendChild(nodes[37]);
+        nodes[52] = document.createElement('nav');
+        nodes[52].setAttribute('class', 'c0');
+        nodes[54] = document.createElement('base');
+        nodes[54].setAttribute('class', 'c14');
+        text[13] = document.createTextNode('PASS');
+        nodes[37].appendChild(text[13]);
+        nodes[37].appendChild(nodes[17]);
+        nodes[37].appendChild(nodes[54]);
+        nodes[37].appendChild(nodes[52]);
+        setTimeout('nodes[17].appendChild(nodes[11]);', 0);
+        setTimeout("nodes[17].setAttribute('class', 'c17');", 1);
+
+
+        setTimeout(function() {
+            if (window.testRunner)
+                window.testRunner.notifyDone();
+        }, 2);
+    }
+    window.onload = loaded;
+</script>
