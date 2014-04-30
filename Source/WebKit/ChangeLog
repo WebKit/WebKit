@@ -1,5 +1,12 @@
 2014-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Remove WK headers from WebKit.framework as well when WebKitLegacy WK headers are encountered.
+
+2014-04-30  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the build.
 
         * WebKit.xcodeproj/project.pbxproj:
