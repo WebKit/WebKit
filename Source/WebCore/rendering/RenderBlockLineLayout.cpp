@@ -2206,6 +2206,11 @@ void RenderBlock::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWithRe
     Vector<RenderBox*>* cleanLineFloats = line->floatsPtr();
     if (!cleanLineFloats)
         return;
+    
+    if (!floats.size()) {
+        encounteredNewFloat = true;
+        return;
+    }
 
     Vector<RenderBox*>::iterator end = cleanLineFloats->end();
     for (Vector<RenderBox*>::iterator it = cleanLineFloats->begin(); it != end; ++it) {

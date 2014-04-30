@@ -1,0 +1,48 @@
+<html>
+    <style>
+        html {
+         height:100%; 
+        }
+
+        .test { 
+            float:left; 
+        }
+    </style>
+
+    <body>
+        <a href="https://bugs.webkit.org/show_bug.cgi?id=122668">Bug 122668 - The test passes if it doesn't crash</a>
+        <br id="br">
+        <div class="test">1</div>
+        <div>A<div class="test">2</div><span id="span"></span></div>
+    </body>
+
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        var br = document.getElementById("br");
+        elem = document.getElementById("span");
+        document.body.parentNode.insertBefore(elem, document.body.nextSibling);
+        try
+        {
+            document.getElementById("br").lookupNamespacePrefix("text", document.getElementById("br"));
+        }
+        catch(e)
+        {
+        }
+
+        var canvas = document.createElement("canvas");
+        canvas.setAttribute("height", "1226");
+        canvas.setAttribute("width", "3391");
+        br.parentNode.insertBefore(canvas, br.nextSibling);
+        var ctx = canvas.getContext("2d");
+        ctx.strokeRect(br.appendChild(document.createElement("olist")).offsetLeft, 65535, 11111111111111111111111111111111, 9223372036);
+        head = document.getElementsByTagName("head")[0];
+        var style = document.createElement("style");
+        style.innerHTML=":first-of-type { \n\
+        position: fixed;\n\
+        } \n\
+        ";
+        head.appendChild(style);
+    </script>
+</html>
