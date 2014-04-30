@@ -1,3 +1,14 @@
+2014-04-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] tag the video layers with descriptive name to aid debugging
+        https://bugs.webkit.org/show_bug.cgi?id=132371
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::enterFullscreenForNode): Set the 
+            fullscreen host layer name in a debug build.
+
 2014-04-29  Brady Eidson  <beidson@apple.com>
 
         Handle selection services menu.

@@ -1,3 +1,14 @@
+2014-04-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] tag the video layers with descriptive name to aid debugging
+        https://bugs.webkit.org/show_bug.cgi?id=132371
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer): Set the AVPlayerLayer
+            name in a debug build.
+
 2014-04-29  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [GTK][cmake] CMake variable (non)expansion causing 'File name too long' build error.

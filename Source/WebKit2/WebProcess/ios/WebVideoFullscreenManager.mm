@@ -95,6 +95,9 @@ void WebVideoFullscreenManager::enterFullscreenForNode(Node* node)
     setMediaElement(toHTMLMediaElement(node));
 
     PlatformLayer* videoLayer = [CALayer layer];
+#ifndef NDEBUG
+    [videoLayer setName:@"Web video fullscreen manager layer"];
+#endif
     m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
     m_layerHostingContext->setRootLayer(videoLayer);
     setVideoFullscreenLayer(videoLayer);

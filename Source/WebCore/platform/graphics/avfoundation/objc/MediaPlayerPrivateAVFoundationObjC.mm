@@ -534,7 +534,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
         [m_videoLayer.get() setPlayer:m_avPlayer.get()];
         [m_videoLayer.get() setBackgroundColor:cachedCGColor(Color::black, ColorSpaceDeviceRGB)];
 #ifndef NDEBUG
-        [m_videoLayer.get() setName:@"Video layer"];
+        [m_videoLayer.get() setName:@"MediaPlayerPrivate AVPlayerLayer"];
 #endif
         updateVideoLayerGravity();
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
