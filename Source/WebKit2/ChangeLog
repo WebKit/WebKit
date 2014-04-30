@@ -1,3 +1,19 @@
+2014-04-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Ensure UIProcess checks in to webinspectord after spawning a WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=132389
+
+        Reviewed by Timothy Hatcher.
+
+        We aggregate WebProcess WebView's under the UIProcess. If the UIProcess
+        didn't connect to webinspectord these WebViews would have remained
+        hidden. Always have the UIProcess connect to webinspectord when it
+        spawns a WebProcess and may have a child process holding views that
+        it ultimately owns and should display under the UIProcess name.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+
 2014-04-30  Zalan Bujtas  <zalan@apple.com>
 
         [iOS]Subpixel rendering: Extra line of pixels next to the YouTube loading indicator.

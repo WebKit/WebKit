@@ -89,6 +89,10 @@
 #include "CustomProtocolManagerMessages.h"
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR)
+#include <JavaScriptCore/RemoteInspector.h>
+#endif
+
 #if USE(SOUP)
 #if ENABLE(CUSTOM_PROTOCOLS)
 #include "WebSoupCustomProtocolRequestManager.h"
@@ -642,6 +646,11 @@ WebProcessProxy& WebContext::createNewWebProcess()
         m_messagesToInjectedBundlePostedToEmptyContext.clear();
     } else
         ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
+
+#if ENABLE(REMOTE_INSPECTOR)
+    // Initialize remote inspector connection now that we have a sub-process that is hosting one of our web views.
+    Inspector::RemoteInspector::shared(); 
+#endif
 
     return *process;
 }
