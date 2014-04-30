@@ -1,5 +1,14 @@
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Make sure the "All" targets build WebKitLegacy, rather than WebKit.
+        
+        Reviewed by Dan Bernstein/Anders Carlsson.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme:
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
+2014-04-30  Simon Fraser  <simon.fraser@apple.com>
+
         Let Xcode have its way with the WebKit workspace.
 
         * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme:

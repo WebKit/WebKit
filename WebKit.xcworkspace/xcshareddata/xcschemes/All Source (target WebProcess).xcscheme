@@ -115,9 +115,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9398100A0824BF01008DF038"
-               BuildableName = "WebKitLegacy.framework"
-               BlueprintName = "WebKitLegacy"
+               BlueprintIdentifier = "1AD7451818D0D26C006F3A1E"
+               BuildableName = "WebKit.framework"
+               BlueprintName = "WebKit"
                ReferencedContainer = "container:Source/WebKit/WebKit.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
