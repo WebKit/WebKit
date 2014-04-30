@@ -1198,6 +1198,10 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
         _private->page->setRemoteInspectionAllowed(textFieldInspectionEnabled);
     }
 #endif
+    
+    [self _updateScreenScaleFromWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_wakWindowScreenScaleChanged:) name:WAKWindowScreenScaleDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_wakWindowVisibilityChanged:) name:WAKWindowVisibilityDidChangeNotification object:nil];
 
     [WebFrame _createMainFrameWithSimpleHTMLDocumentWithPage:_private->page frameView:frameView style:style];
     

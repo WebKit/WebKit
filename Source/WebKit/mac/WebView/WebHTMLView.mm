@@ -69,6 +69,7 @@
 #import "WebTypesInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <WebCore/BlockExceptions.h>
 #import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/CachedResourceClient.h>
@@ -145,6 +146,7 @@
 #import <WebCore/WAKScrollView.h>
 #import <WebCore/WAKViewPrivate.h>
 #import <WebCore/WAKWindow.h>
+#import <WebCore/WKGraphics.h>
 #import <WebCore/WebEvent.h>
 #endif
 
@@ -6555,6 +6557,85 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return self;
 }
 
+#if PLATFORM(IOS)
+static CGImageRef imageFromRect(Frame* frame, CGRect rect)
+{
+    Page* page = frame->page();
+    if (!page)
+        return nil;
+    WAKView* documentView = frame->view()->documentView();
+    if (!documentView)
+        return nil;
+    if (![documentView isKindOfClass:[WebHTMLView class]])
+        return nil;
+    
+    WebHTMLView *view = (WebHTMLView *)documentView;
+    
+    PaintBehavior oldPaintBehavior = frame->view()->paintBehavior();
+    frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    CGRect bounds = [view bounds];
+    
+    float scale = page->pageScaleFactor() * page->deviceScaleFactor();
+    
+    // Round image rect size in window coordinate space to avoid pixel cracks at HiDPI (4622794)
+    rect = [view convertRect:rect toView:nil];
+    rect.size.height = roundf(rect.size.height);
+    rect.size.width = roundf(rect.size.width);
+    rect = [view convertRect:rect fromView:nil];
+    if (rect.size.width == 0 || rect.size.height == 0)
+        return nil;
+    
+    size_t width = static_cast<size_t>(rect.size.width * scale);
+    size_t height = static_cast<size_t>(rect.size.height * scale);
+    size_t bitsPerComponent = 8;
+    size_t bitsPerPixel = 4 * bitsPerComponent;
+    size_t bytesPerRow = ((bitsPerPixel + 7) / 8) * width;
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(NULL, width, height, bitsPerComponent, bytesPerRow, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    if (!context)
+        return nil;
+    
+    CGContextRef oldContext = WKGetCurrentGraphicsContext();
+    CGContextRef contextRef = context.get();
+    WKSetCurrentGraphicsContext(contextRef);
+    
+    CGContextClearRect(contextRef, CGRectMake(0, 0, width, height));
+    CGContextSaveGState(contextRef);
+    CGContextScaleCTM(contextRef, scale, scale);
+    CGContextSetBaseCTM(contextRef, CGAffineTransformMakeScale(scale, scale));
+    CGContextTranslateCTM(contextRef, bounds.origin.x - rect.origin.x,  bounds.origin.y - rect.origin.y);
+    
+    [view drawSingleRect:rect];
+    
+    CGContextRestoreGState(contextRef);
+    
+    CGImageRef resultImage = CGBitmapContextCreateImage(contextRef);
+    
+    WKSetCurrentGraphicsContext(oldContext);
+    frame->view()->setPaintBehavior(oldPaintBehavior);
+    
+    return (CGImageRef)CFBridgingRelease(resultImage);
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    frame->view()->setPaintBehavior(oldPaintBehavior);
+    return nil;
+}
+
+static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
+{
+    ASSERT(!WebThreadIsEnabled() || WebThreadIsLocked());
+    frame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
+    frame->document()->updateLayout();
+    CGImageRef result = imageFromRect(frame, frame->selection().selectionBounds());
+    frame->view()->setPaintBehavior(PaintBehaviorNormal);
+    return result;
+}
+#endif
+
 #if !PLATFORM(IOS)
 - (NSImage *)selectionImageForcingBlackText:(BOOL)forceBlackText
 #else
@@ -6569,8 +6650,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return nil;
 
 #if PLATFORM(IOS)
-    CGImageRef dragImage = createDragImageForSelection(*coreFrame, forceBlackText).leakRef();
-    return dragImage ? (CGImageRef)CFAutorelease(dragImage) : nil;
+    return selectionImage(coreFrame, forceBlackText);
 #else
     return [createDragImageForSelection(*coreFrame, forceBlackText).leakRef() autorelease];
 #endif
