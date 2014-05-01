@@ -545,6 +545,7 @@
 		2DA944AE1884E9BA00ED86DB /* WebInspectorProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */; };
 		2DA944AF1884E9BA00ED86DB /* WebPageProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */; };
 		2DA944B01884E9BA00ED86DB /* WebProcessProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */; };
+		2DA944B91884EA3900ED86DB /* WebBackForwardListProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944B51884EA3500ED86DB /* WebBackForwardListProxyIOS.mm */; };
 		2DA944BA1884EA3C00ED86DB /* WebPageIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944B61884EA3500ED86DB /* WebPageIOS.mm */; };
 		2DA944BD188511E700ED86DB /* NetworkProcessIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944BC188511E700ED86DB /* NetworkProcessIOS.mm */; };
 		2DACE64E18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */; };
@@ -2374,6 +2375,7 @@
 		2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebInspectorProxyIOS.mm; path = ios/WebInspectorProxyIOS.mm; sourceTree = "<group>"; };
 		2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPageProxyIOS.mm; path = ios/WebPageProxyIOS.mm; sourceTree = "<group>"; };
 		2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebProcessProxyIOS.mm; path = ios/WebProcessProxyIOS.mm; sourceTree = "<group>"; };
+		2DA944B51884EA3500ED86DB /* WebBackForwardListProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebBackForwardListProxyIOS.mm; path = ios/WebBackForwardListProxyIOS.mm; sourceTree = "<group>"; };
 		2DA944B61884EA3500ED86DB /* WebPageIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPageIOS.mm; path = ios/WebPageIOS.mm; sourceTree = "<group>"; };
 		2DA944BC188511E700ED86DB /* NetworkProcessIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessIOS.mm; path = NetworkProcess/ios/NetworkProcessIOS.mm; sourceTree = "<group>"; };
 		2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKThumbnailViewInternal.h; sourceTree = "<group>"; };
@@ -4541,6 +4543,7 @@
 		2DA944B41884EA2A00ED86DB /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				2DA944B51884EA3500ED86DB /* WebBackForwardListProxyIOS.mm */,
 				2DA944B61884EA3500ED86DB /* WebPageIOS.mm */,
 				29232DF518B29DCE00D0596F /* WKAccessibilityWebPageObjectIOS.h */,
 				29232DF618B29DCE00D0596F /* WKAccessibilityWebPageObjectIOS.mm */,
@@ -8160,6 +8163,7 @@
 				2DA944A31884E4F000ED86DB /* WebTouchEventIOS.cpp in Sources */,
 				1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */,
 				5136183D163126DA00A99DDE /* ConnectionStack.cpp in Sources */,
+				2DA944B91884EA3900ED86DB /* WebBackForwardListProxyIOS.mm in Sources */,
 				515E773318402D510007203F /* UniqueIDBDatabaseIdentifier.cpp in Sources */,
 				2DA049B7180CCD0A00AAFA9E /* GraphicsLayerCARemote.cpp in Sources */,
 				378E1A4D18208D700031007A /* WKNSURL.mm in Sources */,

@@ -85,14 +85,14 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     return [[[WebBackForwardList alloc] initWithBackForwardList:backForwardList] autorelease];
 }
 
-- (id)initWithBackForwardList:(BackForwardList*)backForwardList
+- (id)initWithBackForwardList:(PassRefPtr<BackForwardList>)backForwardList
 {   
     WebCoreThreadViolationCheckRoundOne();
     self = [super init];
     if (!self)
         return nil;
 
-    _private = reinterpret_cast<WebBackForwardListPrivate*>(backForwardList);
+    _private = reinterpret_cast<WebBackForwardListPrivate*>(backForwardList.leakRef());
     backForwardLists().set(core(self), self);
     return self;
 }
@@ -113,7 +113,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (id)init
 {
-    return [self initWithBackForwardList:new BackForwardList];
+    return [self initWithBackForwardList:BackForwardList::create(0)];
 }
 
 - (void)dealloc
@@ -126,7 +126,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     if (backForwardList) {
         ASSERT(backForwardList->closed());
         backForwardLists().remove(backForwardList);
-        delete backForwardList;
+        backForwardList->deref();
     }
 
     [super dealloc];
@@ -140,9 +140,9 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     if (backForwardList) {
         ASSERT(backForwardList->closed());
         backForwardLists().remove(backForwardList);
-        delete backForwardList;
+        backForwardList->deref();
     }
-
+        
     [super finalize];
 }
 
@@ -346,6 +346,16 @@ static bool bumperCarBackForwardHackNeeded()
     [result appendString:@"\n--------------------------------------------\n"];    
 
     return result;
+}
+
+- (void)setPageCacheSize:(NSUInteger)size
+{
+    [kit(core(self)->page()) setUsesPageCache:size != 0];
+}
+
+- (NSUInteger)pageCacheSize
+{
+    return [kit(core(self)->page()) usesPageCache] ? pageCache()->capacity() : 0;
 }
 
 - (int)backListCount

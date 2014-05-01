@@ -3071,7 +3071,7 @@ HRESULT STDMETHODCALLTYPE WebView::backForwardList(
     if (!m_useBackForwardList)
         return E_FAIL;
  
-    *list = WebBackForwardList::createInstance(static_cast<WebCore::BackForwardList*>(&m_page->backForward().client()));
+    *list = WebBackForwardList::createInstance(static_cast<WebCore::BackForwardList*>(m_page->backForward().client()));
 
     return S_OK;
 }
@@ -3904,7 +3904,7 @@ HRESULT STDMETHODCALLTYPE WebView::canGoBack(
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    *result = !!(m_page->backForward().backItem() && !m_page->defersLoading());
+    *result = !!(m_page->backForward().client()->backItem() && !m_page->defersLoading());
     return S_OK;
 }
     
@@ -3919,7 +3919,7 @@ HRESULT STDMETHODCALLTYPE WebView::canGoForward(
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    *result = !!(m_page->backForward().forwardItem() && !m_page->defersLoading());
+    *result = !!(m_page->backForward().client()->forwardItem() && !m_page->defersLoading());
     return S_OK;
 }
     
@@ -5391,41 +5391,41 @@ HRESULT STDMETHODCALLTYPE WebView::addAdditionalPluginDirectory(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView(
+HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView( 
     /* [in] */ IWebView* otherView)
 {
     if (!m_page)
         return E_FAIL;
-
+    
     // It turns out the right combination of behavior is done with the back/forward load
-    // type. (See behavior matrix at the top of WebFramePrivate.) So we copy all the items
+    // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
-    BackForwardController& backForward = m_page->backForward();
-    ASSERT(!backForward.currentItem()); // Destination list should be empty.
+    BackForwardClient* backForwardClient = m_page->backForward().client();
+    ASSERT(!backForwardClient->currentItem()); // destination list should be empty
 
     COMPtr<WebView> otherWebView;
     if (FAILED(otherView->QueryInterface(&otherWebView)))
         return E_FAIL;
-    BackForwardController& otherBackForward = otherWebView->m_page->backForward();
-    if (!otherBackForward.currentItem())
-        return S_OK; // If the back forward list is empty, bail.
-
+    BackForwardClient* otherBackForwardClient = otherWebView->m_page->backForward().client();
+    if (!otherBackForwardClient->currentItem())
+        return S_OK; // empty back forward list, bail
+    
     HistoryItem* newItemToGoTo = 0;
 
-    int lastItemIndex = otherBackForward.forwardCount();
-    for (int i = -otherBackForward.backCount(); i <= lastItemIndex; ++i) {
+    int lastItemIndex = otherBackForwardClient->forwardListCount();
+    for (int i = -otherBackForwardClient->backListCount(); i <= lastItemIndex; ++i) {
         if (!i) {
-            // If this item is showing, save away its current scroll and form state,
+            // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
             otherWebView->m_page->mainFrame().loader().history().saveDocumentAndScrollState();
         }
-        RefPtr<HistoryItem> newItem = otherBackForward.itemAtIndex(i)->copy();
-        if (!i)
+        RefPtr<HistoryItem> newItem = otherBackForwardClient->itemAtIndex(i)->copy();
+        if (!i) 
             newItemToGoTo = newItem.get();
-        backForward.addItem(newItem.release());
+        backForwardClient->addItem(newItem.release());
     }
-
+    
     ASSERT(newItemToGoTo);
     m_page->goToItem(newItemToGoTo, FrameLoadTypeIndexedBackForward);
     return S_OK;

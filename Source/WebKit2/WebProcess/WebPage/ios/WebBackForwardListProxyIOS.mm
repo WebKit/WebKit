@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BackForwardController_h
-#define BackForwardController_h
+#import "config.h"
+#import "WebBackForwardListProxy.h"
 
-#include <wtf/Noncopyable.h>
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
+#if PLATFORM(IOS)
 
-namespace WebCore {
+#import <WebCore/NotImplemented.h>
 
-class BackForwardClient;
-class HistoryItem;
-class Page;
+namespace WebKit {
 
-class BackForwardController {
-    WTF_MAKE_NONCOPYABLE(BackForwardController); WTF_MAKE_FAST_ALLOCATED;
-public:
-    BackForwardController(Page&, PassRefPtr<BackForwardClient>);
-    ~BackForwardController();
+unsigned WebBackForwardListProxy::current()
+{
+    notImplemented();
+    return 0;
+}
 
-    BackForwardClient* client() const { return m_client.get(); }
+void WebBackForwardListProxy::setCurrent(unsigned)
+{
+    notImplemented();
+}
 
-    bool canGoBackOrForward(int distance) const;
-    void goBackOrForward(int distance);
+bool WebBackForwardListProxy::clearAllPageCaches()
+{
+    notImplemented();
+    return false;
+}
 
-    bool goBack();
-    bool goForward();
+} // namespace WebKit
 
-    void addItem(PassRefPtr<HistoryItem>);
-    void setCurrentItem(HistoryItem*);
-        
-    int count() const;
-    int backCount() const;
-    int forwardCount() const;
-
-    HistoryItem* itemAtIndex(int);
-
-    void close();
-
-    HistoryItem* backItem() { return itemAtIndex(-1); }
-    HistoryItem* currentItem() { return itemAtIndex(0); }
-    HistoryItem* forwardItem() { return itemAtIndex(1); }
-
-private:
-    Page& m_page;
-    RefPtr<BackForwardClient> m_client;
-};
-
-} // namespace WebCore
-
-#endif // BackForwardController_h
+#endif // PLATFORM(IOS)

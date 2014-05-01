@@ -132,7 +132,7 @@ void WebBackForwardListProxy::removeItem(uint64_t itemID)
     historyItemToIDMap().remove(item);
 }
 
-WebBackForwardListProxy::WebBackForwardListProxy(WebPage& page)
+WebBackForwardListProxy::WebBackForwardListProxy(WebPage* page)
     : m_page(page)
 {
     WebCore::notifyHistoryItemChanged = WK2NotifyHistoryItemChanged;
@@ -144,6 +144,9 @@ void WebBackForwardListProxy::addItem(PassRefPtr<HistoryItem> prpItem)
 
     ASSERT(!historyItemToIDMap().contains(item));
 
+    if (!m_page)
+        return;
+
     uint64_t itemID = generateHistoryItemID();
 
     ASSERT(!idToHistoryItemMap().contains(itemID));
@@ -154,32 +157,41 @@ void WebBackForwardListProxy::addItem(PassRefPtr<HistoryItem> prpItem)
     idToHistoryItemMap().set(itemID, item);
 
     updateBackForwardItem(itemID, item.get());
-    m_page.send(Messages::WebPageProxy::BackForwardAddItem(itemID));
+    m_page->send(Messages::WebPageProxy::BackForwardAddItem(itemID));
 }
 
 void WebBackForwardListProxy::goToItem(HistoryItem* item)
 {
+    if (!m_page)
+        return;
+
     SandboxExtension::Handle sandboxExtensionHandle;
-    m_page.sendSync(Messages::WebPageProxy::BackForwardGoToItem(historyItemToIDMap().get(item)), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle));
-    m_page.sandboxExtensionTracker().beginLoad(m_page.mainWebFrame(), sandboxExtensionHandle);
+    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(historyItemToIDMap().get(item)), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle));
+    m_page->sandboxExtensionTracker().beginLoad(m_page->mainWebFrame(), sandboxExtensionHandle);
 }
 
 HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
 {
+    if (!m_page)
+        return 0;
+
     uint64_t itemID = 0;
-    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page.pageID()))
-        return nullptr;
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->pageID()))
+        return 0;
 
     if (!itemID)
-        return nullptr;
+        return 0;
 
     return idToHistoryItemMap().get(itemID);
 }
 
 int WebBackForwardListProxy::backListCount()
 {
+    if (!m_page)
+        return 0;
+
     int backListCount = 0;
-    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardBackListCount(), Messages::WebPageProxy::BackForwardBackListCount::Reply(backListCount), m_page.pageID()))
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardBackListCount(), Messages::WebPageProxy::BackForwardBackListCount::Reply(backListCount), m_page->pageID()))
         return 0;
 
     return backListCount;
@@ -187,8 +199,11 @@ int WebBackForwardListProxy::backListCount()
 
 int WebBackForwardListProxy::forwardListCount()
 {
+    if (!m_page)
+        return 0;
+
     int forwardListCount = 0;
-    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardForwardListCount(), Messages::WebPageProxy::BackForwardForwardListCount::Reply(forwardListCount), m_page.pageID()))
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardForwardListCount(), Messages::WebPageProxy::BackForwardForwardListCount::Reply(forwardListCount), m_page->pageID()))
         return 0;
 
     return forwardListCount;
@@ -201,6 +216,8 @@ void WebBackForwardListProxy::close()
         WebCore::pageCache()->remove(itemForID(*i));
 
     m_associatedItemIDs.clear();
+
+    m_page = 0;
 }
 
 bool WebBackForwardListProxy::isActive()
@@ -211,7 +228,7 @@ bool WebBackForwardListProxy::isActive()
 
 void WebBackForwardListProxy::clear()
 {
-    m_page.send(Messages::WebPageProxy::BackForwardClear());
+    m_page->send(Messages::WebPageProxy::BackForwardClear());
 }
 
 } // namespace WebKit

@@ -1,3 +1,30 @@
+2014-04-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Roll out fix for https://bugs.webkit.org/show_bug.cgi?id=131637:
+        Clean up unnecessary methods in the BackForwardClient interface
+
+        It broke a regression test and an API test.
+
+        * WebCore.exp.in:
+        * history/BackForwardClient.h:
+        (WebCore::BackForwardClient::backItem):
+        (WebCore::BackForwardClient::currentItem):
+        (WebCore::BackForwardClient::forwardItem):
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::BackForwardController):
+        * history/BackForwardController.h:
+        (WebCore::BackForwardController::client):
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::BackForwardList):
+        (WebCore::BackForwardList::close):
+        * history/BackForwardList.h:
+        (WebCore::BackForwardList::create):
+        (WebCore::BackForwardList::page):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::PageClients::PageClients):
+        * page/Page.h:
+
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         More iOS build fixing. MediaPlayerPrivateIOS is defunct and can be removed.

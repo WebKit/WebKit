@@ -35,8 +35,8 @@ namespace WebKit {
 class WebPage;
 
 class WebBackForwardListProxy : public WebCore::BackForwardClient {
-public:
-    explicit WebBackForwardListProxy(WebPage&);
+public: 
+    static PassRefPtr<WebBackForwardListProxy> create(WebPage* page) { return adoptRef(new WebBackForwardListProxy(page)); }
 
     static WebCore::HistoryItem* itemForID(uint64_t);
     static uint64_t idForItem(WebCore::HistoryItem*);
@@ -44,15 +44,16 @@ public:
 
     static void addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem>);
     static void setHighestItemIDFromUIProcess(uint64_t itemID);
-
+    
     void clear();
 
 private:
+    WebBackForwardListProxy(WebPage*);
 
     virtual void addItem(PassRefPtr<WebCore::HistoryItem>);
 
     virtual void goToItem(WebCore::HistoryItem*);
-
+        
     virtual WebCore::HistoryItem* itemAtIndex(int);
     virtual int backListCount();
     virtual int forwardListCount();
@@ -61,7 +62,13 @@ private:
 
     virtual void close();
 
-    WebPage& m_page;
+#if PLATFORM(IOS)
+    virtual unsigned current() override;
+    virtual void setCurrent(unsigned newCurrent) override;
+    virtual bool clearAllPageCaches() override;
+#endif
+
+    WebPage* m_page;
     HashSet<uint64_t> m_associatedItemIDs;
 };
 

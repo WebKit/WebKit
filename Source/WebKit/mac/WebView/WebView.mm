@@ -2001,31 +2001,32 @@ static bool fastDocumentTeardownEnabled()
         return;
     
     // It turns out the right combination of behavior is done with the back/forward load
-    // type. (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
+    // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
-    BackForwardController& backForward = _private->page->backForward();
-    ASSERT(!backForward.currentItem()); // destination list should be empty
 
-    BackForwardController& otherBackForward = otherView->_private->page->backForward();
-    if (!otherBackForward.currentItem())
+    BackForwardClient* backForwardClient = _private->page->backForward().client();
+    ASSERT(!backForwardClient->currentItem()); // destination list should be empty
+
+    BackForwardClient* otherBackForwardClient = otherView->_private->page->backForward().client();
+    if (!otherBackForwardClient->currentItem())
         return; // empty back forward list, bail
-
+    
     HistoryItem* newItemToGoTo = 0;
 
-    int lastItemIndex = otherBackForward.forwardCount();
-    for (int i = -otherBackForward.backCount(); i <= lastItemIndex; ++i) {
+    int lastItemIndex = otherBackForwardClient->forwardListCount();
+    for (int i = -otherBackForwardClient->backListCount(); i <= lastItemIndex; ++i) {
         if (i == 0) {
-            // If this item is showing, save away its current scroll and form state,
+            // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
             otherView->_private->page->mainFrame().loader().history().saveDocumentAndScrollState();
         }
-        RefPtr<HistoryItem> newItem = otherBackForward.itemAtIndex(i)->copy();
-        if (i == 0)
+        RefPtr<HistoryItem> newItem = otherBackForwardClient->itemAtIndex(i)->copy();
+        if (i == 0) 
             newItemToGoTo = newItem.get();
-        backForward.addItem(newItem.release());
+        backForwardClient->addItem(newItem.release());
     }
-
+    
     ASSERT(newItemToGoTo);
     _private->page->goToItem(newItemToGoTo, FrameLoadTypeIndexedBackForward);
 }
@@ -5095,7 +5096,7 @@ static bool needsWebViewInitThreadWorkaround()
 
         LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
         [result _commonInitializationWithFrameName:frameName groupName:groupName];
-        static_cast<BackForwardList&>([result page]->backForward().client()).setEnabled(useBackForwardList);
+        static_cast<BackForwardList*>([result page]->backForward().client())->setEnabled(useBackForwardList);
         result->_private->allowsUndo = allowsUndo;
         if (preferences)
             [result setPreferences:preferences];
@@ -5119,7 +5120,7 @@ static bool needsWebViewInitThreadWorkaround()
     // Restore the subviews we set aside.
     _subviews = originalSubviews;
 
-    BOOL useBackForwardList = _private->page && static_cast<BackForwardList&>(_private->page->backForward().client()).enabled();
+    BOOL useBackForwardList = _private->page && static_cast<BackForwardList*>(_private->page->backForward().client())->enabled();
     if ([encoder allowsKeyedCoding]) {
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
@@ -5589,17 +5590,17 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     if (!_private->page)
         return nil;
-    BackForwardList& list = static_cast<BackForwardList&>(_private->page->backForward().client());
-    if (!list.enabled())
+    BackForwardList* list = static_cast<BackForwardList*>(_private->page->backForward().client());
+    if (!list->enabled())
         return nil;
-    return kit(&list);
+    return kit(list);
 }
 
 - (void)setMaintainsBackForwardList:(BOOL)flag
 {
     if (!_private->page)
         return;
-    static_cast<BackForwardList&>(_private->page->backForward().client()).setEnabled(flag);
+    static_cast<BackForwardList*>(_private->page->backForward().client())->setEnabled(flag);
 }
 
 - (BOOL)goBack

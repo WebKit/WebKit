@@ -328,7 +328,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(DRAG_SUPPORT)
     pageClients.dragClient = new WebDragClient(this);
 #endif
-    pageClients.backForwardClient = std::make_unique<WebBackForwardListProxy>(*this);
+    pageClients.backForwardClient = WebBackForwardListProxy::create(this);
 #if ENABLE(INSPECTOR)
     m_inspectorClient = new WebInspectorClient(this);
     pageClients.inspectorClient = m_inspectorClient;
