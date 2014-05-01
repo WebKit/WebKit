@@ -1,3 +1,13 @@
+2014-05-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Fix handling of attributes prior to compiling shader
+        https://bugs.webkit.org/show_bug.cgi?id=132430
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/gl-bind-attrib-location-before-compile-test-expected.txt: Added.
+        * fast/canvas/webgl/gl-bind-attrib-location-before-compile-test.html: Added.
+
 2014-05-01  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make selection gaps painting subpixel aware.

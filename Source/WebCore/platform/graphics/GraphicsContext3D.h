@@ -1091,7 +1091,10 @@ private:
     };
     typedef HashMap<Platform3DObject, ActiveShaderSymbolCounts> ShaderProgramSymbolCountMap;
     ShaderProgramSymbolCountMap m_shaderProgramSymbolCountMap;
-    
+
+    typedef HashMap<String, String> HashedSymbolMap;
+    HashedSymbolMap m_possiblyUnusedAttributeMap;
+
     String mappedSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
     String mappedSymbolName(Platform3DObject shaders[2], size_t count, const String& name);
     String originalSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);

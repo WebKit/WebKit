@@ -54,6 +54,7 @@
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
 #include <runtime/Uint8Array.h>
+#include <wtf/HexNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -76,7 +77,7 @@
 
 namespace WebCore {
 
-static ShaderNameHash* currentNameHashMapForShader;
+static ShaderNameHash* currentNameHashMapForShader = nullptr;
 
 // Hash function used by the ANGLE translator/compiler to do
 // symbol name mangling. Since this is a static method, before
@@ -789,10 +790,21 @@ void GraphicsContext3D::getAttachedShaders(Platform3DObject program, GC3Dsizei m
     ::glGetAttachedShaders(program, maxCount, count, shaders);
 }
 
+static String generateHashedName(const String& name)
+{
+    if (name.isEmpty())
+        return name;
+    uint64_t number = nameHashForShader(name.utf8().data(), name.length());
+    StringBuilder builder;
+    builder.append("webgl_");
+    appendUnsigned64AsHex(number, builder, Lowercase);
+    return builder.toString();
+}
+
 String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShaderSymbolType symbolType, const String& name)
 {
     GC3Dsizei count;
-    Platform3DObject shaders[2];
+    Platform3DObject shaders[2] = { };
     getAttachedShaders(program, 2, &count, shaders);
 
     for (GC3Dsizei i = 0; i < count; ++i) {
@@ -805,6 +817,23 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShader
         if (symbolEntry != symbolMap.end())
             return symbolEntry->value.mappedName;
     }
+
+    if (symbolType == SHADER_SYMBOL_TYPE_ATTRIBUTE && !name.isEmpty()) {
+        // Attributes are a special case: they may be requested before any shaders have been compiled,
+        // and aren't even required to be used in any shader program.
+        if (!nameHashMapForShaders)
+            nameHashMapForShaders = adoptPtr(new ShaderNameHash);
+        currentNameHashMapForShader = nameHashMapForShaders.get();
+
+        String generatedName = generateHashedName(name);
+
+        currentNameHashMapForShader = nullptr;
+
+        m_possiblyUnusedAttributeMap.set(generatedName, name);
+
+        return generatedName;
+    }
+
     return name;
 }
     
@@ -825,6 +854,16 @@ String GraphicsContext3D::originalSymbolName(Platform3DObject program, ANGLEShad
                 return symbolEntry.key;
         }
     }
+
+    if (symbolType == SHADER_SYMBOL_TYPE_ATTRIBUTE && !name.isEmpty()) {
+        // Attributes are a special case: they may be requested before any shaders have been compiled,
+        // and aren't even required to be used in any shader program.
+
+        const auto& cached = m_possiblyUnusedAttributeMap.find(name);
+        if (cached != m_possiblyUnusedAttributeMap.end())
+            return cached->value;
+    }
+
     return name;
 }
 

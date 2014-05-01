@@ -1,3 +1,29 @@
+2014-05-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Fix handling of attributes prior to compiling shader
+        https://bugs.webkit.org/show_bug.cgi?id=132430
+
+        Reviewed by Dean Jackson.
+
+        WebGL programs that called bindAttribLocations prior to compiling shader sources
+        would perform the bind using the non-hashed symbol name, but would later create
+        the attributes as hashed names. Consequently, the program would refer to
+        attributes that were never actually part of any shader, resulting in some amazing
+        display artifacts.
+
+        This patch adds a dictionary of hashed symbol names so that we can tell the WebGL
+        program the proper name that will be used when the shader is eventually compiled,
+        allowing the WebGL program to link against the proper symbol after compiling and
+        linking completes.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::generateHashedName): Function uses the ANGLE hashing
+        function to generate correct symbol.
+        (WebCore::GraphicsContext3D::mappedSymbolName): If we haven't compiled shaders yet, look
+        in our set of potentially unused attributes.
+        (WebCore::GraphicsContext3D::originalSymbolName): Ditto, for reverse lookup.
+
 2014-05-01  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make selection gaps painting subpixel aware.

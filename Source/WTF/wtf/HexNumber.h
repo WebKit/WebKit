@@ -78,6 +78,20 @@ inline void appendUnsignedAsHex(unsigned number, T& destination, HexConversionMo
     result.reverse();
     destination.append(result.data(), result.size());
 }
+    
+template<typename T>
+inline void appendUnsigned64AsHex(uint64_t number, T& destination, HexConversionMode mode = Uppercase)
+{
+    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
+    Vector<LChar, 8> result;
+    do {
+        result.append(hexDigits[number % 16]);
+        number >>= 4;
+    } while (number > 0);
+    
+    result.reverse();
+    destination.append(result.data(), result.size());
+}
 
 // Same as appendUnsignedAsHex, but using exactly 'desiredDigits' for the conversion.
 template<typename T>
