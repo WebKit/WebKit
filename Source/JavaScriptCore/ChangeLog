@@ -1,3 +1,17 @@
+2014-05-01  Geoffrey Garen  <ggaren@apple.com>
+
+        JavaScriptCore fails to build with some versions of clang
+        https://bugs.webkit.org/show_bug.cgi?id=132436
+
+        Reviewed by Anders Carlsson.
+
+        * runtime/ArgumentsIteratorConstructor.cpp: Since we call
+        putDirectWithoutTransition, and it calls putWillGrowOutOfLineStorage,
+        and both are marked inline, it's valid for the compiler to decide
+        to inline both and emit neither in the binary. Therefore, we need
+        both inline definitions to be available in the translation unit at
+        compile time, or we'll try to link against a function that doesn't exist.
+
 2014-05-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r167964.
