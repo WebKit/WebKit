@@ -48,7 +48,7 @@ NetworkBlobRegistry::NetworkBlobRegistry()
 {
 }
 
-void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, std::unique_ptr<BlobData> data, const Vector<RefPtr<SandboxExtension>>& newSandboxExtensions)
+uint64_t NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, std::unique_ptr<BlobData> data, const Vector<RefPtr<SandboxExtension>>& newSandboxExtensions)
 {
     ASSERT(!m_sandboxExtensions.contains(url.string()));
 
@@ -60,7 +60,7 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
             sandboxExtensions.appendVector(m_sandboxExtensions.get(items[i].url.string()));
     }
 
-    blobRegistry().registerBlobURL(url, std::move(data));
+    uint64_t resultSize = blobRegistry().registerBlobURL(url, std::move(data));
 
     if (!sandboxExtensions.isEmpty())
         m_sandboxExtensions.add(url.string(), sandboxExtensions);
@@ -70,6 +70,8 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
     if (mapIterator == m_blobsForConnection.end())
         mapIterator = m_blobsForConnection.add(connection, HashSet<URL>()).iterator;
     mapIterator->value.add(url);
+
+    return resultSize;
 }
 
 void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL)

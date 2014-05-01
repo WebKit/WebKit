@@ -296,7 +296,7 @@ Blob* XMLHttpRequest::responseBlob()
             String normalizedContentType = Blob::normalizedContentType(responseMIMEType());
             blobData->setContentType(normalizedContentType); // responseMIMEType defaults to text/xml which may be incorrect.
             m_binaryResponseBuilder.clear();
-            m_responseBlob = Blob::create(std::move(blobData), size);
+            m_responseBlob = Blob::create(std::move(blobData));
         } else {
             // If we errored out or got no data, we still return a blob, just an empty one.
             m_responseBlob = Blob::create();

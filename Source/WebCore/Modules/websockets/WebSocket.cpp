@@ -521,10 +521,10 @@ void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char>> binaryData)
     LOG(Network, "WebSocket %p didReceiveBinaryData() %lu byte binary message", this, static_cast<unsigned long>(binaryData->size()));
     switch (m_binaryType) {
     case BinaryTypeBlob: {
-        size_t size = binaryData->size();
+        // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
         auto blobData = std::make_unique<BlobData>();
         blobData->appendData(RawData::create(std::move(*binaryData)), 0, BlobDataItem::toEndOfFile);
-        RefPtr<Blob> blob = Blob::create(std::move(blobData), size);
+        RefPtr<Blob> blob = Blob::create(std::move(blobData));
         dispatchEvent(MessageEvent::create(blob.release(), SecurityOrigin::create(m_url)->toString()));
         break;
     }

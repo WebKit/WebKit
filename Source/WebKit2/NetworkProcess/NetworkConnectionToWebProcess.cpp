@@ -225,7 +225,7 @@ void NetworkConnectionToWebProcess::deleteCookie(SessionID sessionID, const URL&
 }
 
 #if ENABLE(BLOB)
-void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const BlobRegistrationData& data)
+void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const BlobRegistrationData& data, uint64_t& resultSize)
 {
     Vector<RefPtr<SandboxExtension>> extensions;
     for (size_t i = 0, count = data.sandboxExtensions().size(); i < count; ++i) {
@@ -233,7 +233,7 @@ void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const BlobRe
             extensions.append(extension);
     }
 
-    NetworkBlobRegistry::shared().registerBlobURL(this, url, data.releaseData(), extensions);
+    resultSize = NetworkBlobRegistry::shared().registerBlobURL(this, url, data.releaseData(), extensions);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const URL& srcURL)

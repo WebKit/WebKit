@@ -39,11 +39,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void BlobRegistryProxy::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
+unsigned long long BlobRegistryProxy::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
 {
     ASSERT(WebProcess::shared().usesNetworkProcess());
 
-    WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(url, BlobRegistrationData(std::move(blobData))), 0);
+    uint64_t resultSize;
+    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(url, BlobRegistrationData(std::move(blobData))), Messages::NetworkConnectionToWebProcess::RegisterBlobURL::Reply(resultSize), 0))
+        return 0;
+    return resultSize;
 }
 
 void BlobRegistryProxy::registerBlobURL(const URL& url, const URL& srcURL)

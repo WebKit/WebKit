@@ -50,9 +50,9 @@ public:
         return adoptRef(new Blob);
     }
 
-    static PassRefPtr<Blob> create(std::unique_ptr<BlobData> blobData, long long size)
+    static PassRefPtr<Blob> create(std::unique_ptr<BlobData> blobData)
     {
-        return adoptRef(new Blob(std::move(blobData), size));
+        return adoptRef(new Blob(std::move(blobData)));
     }
 
     // For deserialization.
@@ -90,7 +90,7 @@ public:
 
 protected:
     Blob();
-    Blob(std::unique_ptr<BlobData>, long long size);
+    Blob(std::unique_ptr<BlobData>);
 
     // For deserialization.
     Blob(const URL& srcURL, const String& type, long long size);

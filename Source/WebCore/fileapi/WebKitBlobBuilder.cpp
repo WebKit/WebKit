@@ -55,7 +55,6 @@ enum BlobConstructorArrayBufferOrView {
 };
 
 BlobBuilder::BlobBuilder()
-    : m_size(0)
 {
 }
 
@@ -63,15 +62,12 @@ void BlobBuilder::append(const String& text, const String& endingType)
 {
     CString utf8Text = UTF8Encoding().encode(text, EntitiesForUnencodables);
 
-    size_t oldSize = m_appendableData.size();
-
     if (endingType == "native")
         normalizeLineEndingsToNative(utf8Text, m_appendableData);
     else {
         ASSERT(endingType == "transparent");
         m_appendableData.append(utf8Text.data(), utf8Text.length());
     }
-    m_size += m_appendableData.size() - oldSize;
 }
 
 #if ENABLE(BLOB)
@@ -104,44 +100,23 @@ void BlobBuilder::append(Blob* blob)
         m_items.append(BlobDataItem(RawData::create(std::move(m_appendableData))));
     if (blob->isFile()) {
         File* file = toFile(blob);
-        // If the blob is file that is not snapshoted, capture the snapshot now.
-        // FIXME: This involves synchronous file operation. We need to figure out how to make it asynchronous.
-        long long snapshotSize;
-        double snapshotModificationTime;
-        file->captureSnapshot(snapshotSize, snapshotModificationTime);
-
-        m_size += snapshotSize;
-        m_items.append(BlobDataItem(file->path(), 0, snapshotSize, snapshotModificationTime));
+        m_items.append(BlobDataItem(file->path(), 0, BlobDataItem::toEndOfFile, invalidFileTime()));
     } else {
         long long blobSize = static_cast<long long>(blob->size());
-        m_size += blobSize;
         m_items.append(BlobDataItem(blob->url(), 0, blobSize));
     }
 }
 
 void BlobBuilder::appendBytesData(const void* data, size_t length)
 {
-    size_t oldSize = m_appendableData.size();
     m_appendableData.append(static_cast<const char*>(data), length);
-    m_size += m_appendableData.size() - oldSize;
 }
 
-PassRefPtr<Blob> BlobBuilder::getBlob(const String& contentType)
+BlobDataItemList BlobBuilder::finalize()
 {
     if (!m_appendableData.isEmpty())
         m_items.append(BlobDataItem(RawData::create(std::move(m_appendableData))));
-
-    auto blobData = std::make_unique<BlobData>();
-    blobData->setContentType(Blob::normalizedContentType(contentType));
-    blobData->swapItems(m_items);
-
-    RefPtr<Blob> blob = Blob::create(std::move(blobData), m_size);
-
-    // After creating a blob from the current blob data, we do not need to keep the data around any more. Instead, we only
-    // need to keep a reference to the URL of the blob just created.
-    m_items.append(BlobDataItem(blob->url(), 0, m_size));
-
-    return blob;
+    return std::move(m_items);
 }
 
 } // namespace WebCore

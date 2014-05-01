@@ -55,7 +55,7 @@ static std::unique_ptr<BlobData> createBlobDataForFileWithName(const String& pat
 }
 
 File::File(const String& path, ContentTypeLookupPolicy policy)
-    : Blob(createBlobDataForFile(path, policy), -1)
+    : Blob(createBlobDataForFile(path, policy))
     , m_path(path)
     , m_name(pathGetFileName(path))
 {
@@ -72,7 +72,7 @@ File::File(const String& path, const URL& url, const String& type)
 }
 
 File::File(const String& path, const String& name, ContentTypeLookupPolicy policy)
-    : Blob(createBlobDataForFileWithName(path, name, policy), -1)
+    : Blob(createBlobDataForFileWithName(path, name, policy))
     , m_path(path)
     , m_name(name)
 {
@@ -95,21 +95,6 @@ unsigned long long File::size() const
     if (!getFileSize(m_path, size))
         return 0;
     return static_cast<unsigned long long>(size);
-}
-
-void File::captureSnapshot(long long& snapshotSize, double& snapshotModificationTime) const
-{
-    // Obtains a snapshot of the file by capturing its current size and modification time. This is used when we slice a file for the first time.
-    // If we fail to retrieve the size or modification time, probably due to that the file has been deleted, 0 size is returned.
-    FileMetadata metadata;
-    if (!getFileMetadata(m_path, metadata)) {
-        snapshotSize = 0;
-        snapshotModificationTime = invalidFileTime();
-        return;
-    }
-
-    snapshotSize = metadata.length;
-    snapshotModificationTime = metadata.modificationTime;
 }
 
 String File::contentTypeFromFilePath(const String& name, File::ContentTypeLookupPolicy policy)

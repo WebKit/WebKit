@@ -77,15 +77,14 @@ Blob::Blob()
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobData));
 }
 
-Blob::Blob(std::unique_ptr<BlobData> blobData, long long size)
+Blob::Blob(std::unique_ptr<BlobData> blobData)
     : m_type(blobData->contentType())
-    , m_size(size)
 {
     ASSERT(blobData);
 
     // Create a new internal URL and register it with the provided blob data.
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobData));
+    m_size = ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobData));
 }
 
 Blob::Blob(const URL& srcURL, const String& type, long long size)

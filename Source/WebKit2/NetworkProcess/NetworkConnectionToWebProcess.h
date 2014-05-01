@@ -88,7 +88,7 @@ private:
     void deleteCookie(WebCore::SessionID, const WebCore::URL&, const String& cookieName);
 
 #if ENABLE(BLOB)
-    void registerBlobURL(const WebCore::URL&, const BlobRegistrationData&);
+    void registerBlobURL(const WebCore::URL&, const BlobRegistrationData&, uint64_t& resultSize);
     void registerBlobURLFromURL(const WebCore::URL&, const WebCore::URL& srcURL);
     void registerBlobURLForSlice(const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end, uint64_t& resultSize);
     void unregisterBlobURL(const WebCore::URL&);

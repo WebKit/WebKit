@@ -1,3 +1,24 @@
+2014-05-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Move size computation for Blob constructor into BlobRegistryImpl
+        https://bugs.webkit.org/show_bug.cgi?id=132439
+
+        Reviewed by Sam Weinig.
+
+        Plumbing to make this version of registerBlobURL synchronous for now.
+        I expect to make it async again when data structures on client side are simplified.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::registerBlobURL):
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURL):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerBlobURL):
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+
 2014-05-01  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION(168053): Repro crash navigating to another page after selecting phone 

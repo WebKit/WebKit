@@ -72,9 +72,6 @@ public:
     // This returns the current date and time if the file's last modifiecation date is not known (per spec: http://www.w3.org/TR/FileAPI/#dfn-lastModifiedDate).
     double lastModifiedDate() const;
 
-    // Note that this involves synchronous file operation. Think twice before calling this function.
-    void captureSnapshot(long long& snapshotSize, double& snapshotModificationTime) const;
-
     static String contentTypeFromFilePath(const String&, ContentTypeLookupPolicy);
 
 private:

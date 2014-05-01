@@ -134,7 +134,13 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         }
     }
 
-    RefPtr<Blob> blob = blobBuilder.getBlob(type);
+    BlobDataItemList items = blobBuilder.finalize();
+    auto blobData = std::make_unique<BlobData>();
+    blobData->setContentType(Blob::normalizedContentType(type));
+    blobData->swapItems(items);
+
+    RefPtr<Blob> blob = Blob::create(std::move(blobData));
+
     return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), Blob, blob.get()));
 }
 

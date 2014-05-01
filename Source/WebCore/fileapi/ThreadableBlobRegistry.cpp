@@ -88,18 +88,23 @@ static ThreadSpecific<BlobUrlOriginMap>& originMap()
     return *map;
 }
 
-void ThreadableBlobRegistry::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
+unsigned long long ThreadableBlobRegistry::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
 {
+    unsigned long long resultSize;
     if (isMainThread())
-        blobRegistry().registerBlobURL(url, std::move(blobData));
+        resultSize = blobRegistry().registerBlobURL(url, std::move(blobData));
     else {
         // BlobRegistryContext performs an isolated copy of data.
         BlobRegistryContext* context = new BlobRegistryContext(url, std::move(blobData));
-        callOnMainThread([context] {
+        BinarySemaphore semaphore;
+        callOnMainThread([context, &semaphore, &resultSize] {
             std::unique_ptr<BlobRegistryContext> blobRegistryContext(context);
-            blobRegistry().registerBlobURL(blobRegistryContext->url, std::move(blobRegistryContext->blobData));
+            resultSize = blobRegistry().registerBlobURL(blobRegistryContext->url, std::move(blobRegistryContext->blobData));
+            semaphore.signal();
         });
+        semaphore.wait(std::numeric_limits<double>::max());
     }
+    return resultSize;
 }
 
 void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const URL& url, const URL& srcURL)
@@ -163,11 +168,15 @@ PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& ur
 
 #else
 
-void ThreadableBlobRegistry::registerBlobURL(const URL&, std::unique_ptr<BlobData>)
+unsigned long long ThreadableBlobRegistry::registerBlobURL(const URL&, std::unique_ptr<BlobData>)
 {
 }
 
 void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin*, const URL&, const URL&)
+{
+}
+
+unsigned long long ThreadableBlobRegistry::registerBlobURLForSlice(const URL&, const URL&, long long, long long)
 {
 }
 

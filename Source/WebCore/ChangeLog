@@ -1,3 +1,56 @@
+2014-05-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Move size computation for Blob constructor into BlobRegistryImpl
+        https://bugs.webkit.org/show_bug.cgi?id=132439
+
+        Reviewed by Sam Weinig.
+
+        * Modules/websockets/WebSocket.cpp: (WebCore::WebSocket::didReceiveBinaryData):
+        Don't pass the size, anyone who cares can get it from BlobData.
+
+        * bindings/js/JSBlobCustom.cpp: (WebCore::JSBlobConstructor::constructJSBlob):
+        Updated for BlobBuilder changes.
+
+        * fileapi/Blob.cpp: (WebCore::Blob::Blob):
+        * fileapi/Blob.h: (WebCore::Blob::create):
+        No longer take a precomputed size with BlobData, BlobRegistry will compute it as
+        part of registration.
+
+        * fileapi/File.h:
+        * fileapi/File.cpp:
+        (WebCore::File::File): Don't pass a size (that's unknown anyway).
+        (WebCore::File::captureSnapshot): Deleted. Finally, only the registry is responsible
+        for snapshot tracking now (I doubt that either new or old code is particularly compliant).
+
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        * fileapi/ThreadableBlobRegistry.h:
+        Plumbing to make this version of registerBlobURL return a size. I may make size
+        calculation lazy and the function async later, but this is needed to move the behavior
+        to the right place first.
+
+        * fileapi/WebKitBlobBuilder.h:
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::BlobBuilder::BlobBuilder):
+        (WebCore::BlobBuilder::append):
+        (WebCore::BlobBuilder::appendBytesData):
+        (WebCore::BlobBuilder::finalize):
+        (WebCore::BlobBuilder::getBlob): Deleted.
+        Don't track sizes or modification times, registry will do that with appropriate laziness.
+        Cleaned up the API - now that BlobBuilder is not exposed to JS as an object, it
+        does not need to be reusable.
+
+        * platform/network/BlobRegistry.h: Made this version of registerBlobURL return a size.
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::appendStorageItems): Assert that length computations are accurate.
+        (WebCore::BlobRegistryImpl::registerBlobURL): Compute a size to return, and record
+        modification time as necessary.
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::responseBlob): Don't pass the
+        size, which can be computed from data. Soon, I want to add a constructor that doesn't
+        require wrapping a single Vector as BlobData to construct a Blob.
+
 2014-05-01  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] audio and video should automatically play to active external device

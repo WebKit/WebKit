@@ -113,9 +113,10 @@ void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, cons
         length -= newLength;
         offset = 0;
     }
+    ASSERT(!length);
 }
 
-void BlobRegistryImpl::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
+unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -128,22 +129,42 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, std::unique_ptr<BlobData>
     // 3) The URL item is denoted by the URL, the range and the expected modification time.
     // All the Blob items in the passing blob data are resolved and expanded into a set of Data and File items.
 
-    for (BlobDataItemList::const_iterator iter = blobData->items().begin(); iter != blobData->items().end(); ++iter) {
-        switch (iter->type) {
+    // FIXME: BlobDataItems contain a lot of information that we do not expect to be present when registering a new blob,
+    // these data members are only used inside the registry. Use a more appropriate type than BlobData.
+
+    unsigned long long size = 0;
+    for (const BlobDataItem& item : blobData->items()) {
+        switch (item.type) {
         case BlobDataItem::Data:
-            blobStorageData->m_data.appendData(iter->data, 0, iter->data->length());
+            blobStorageData->m_data.appendData(item.data, 0, item.data->length());
+            size += item.data->length();
             break;
-        case BlobDataItem::File:
-            blobStorageData->m_data.appendFile(iter->path, iter->offset, iter->length, iter->expectedModificationTime);
+        case BlobDataItem::File: {
+            ASSERT(!item.offset);
+            ASSERT(item.length == BlobDataItem::toEndOfFile);
+            ASSERT(!isValidFileTime(item.expectedModificationTime));
+
+            // FIXME: Factor out size and modification tracking for a cleaner implementation.
+            FileMetadata metadata;
+            if (!getFileMetadata(item.path, metadata))
+                return 0;
+
+            blobStorageData->m_data.appendFile(item.path, 0, metadata.length, metadata.modificationTime);
+            size += metadata.length;
             break;
+        }
         case BlobDataItem::Blob:
-            if (m_blobs.contains(iter->url.string()))
-                appendStorageItems(blobStorageData.get(), m_blobs.get(iter->url.string())->items(), iter->offset, iter->length);
+            if (!m_blobs.contains(item.url.string()))
+                return 0;
+            size += blobSize(item.url); // As a side effect, this calculates sizes of all files in the blob.
+            ASSERT(blobSize(item.url) == static_cast<unsigned long long>(item.length));
+            appendStorageItems(blobStorageData.get(), m_blobs.get(item.url.string())->items(), item.offset, item.length);
             break;
         }
     }
 
     m_blobs.set(url.string(), blobStorageData);
+    return size;
 }
 
 void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
@@ -152,7 +173,6 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
     registerBlobResourceHandleConstructor();
 
     RefPtr<BlobStorageData> src = m_blobs.get(srcURL.string());
-    ASSERT(src);
     if (!src)
         return;
 

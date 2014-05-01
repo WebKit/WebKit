@@ -41,7 +41,7 @@ class SecurityOrigin;
 
 class ThreadableBlobRegistry {
 public:
-    static void registerBlobURL(const URL&, std::unique_ptr<BlobData>);
+    static unsigned long long registerBlobURL(const URL&, std::unique_ptr<BlobData>);
     static void registerBlobURL(SecurityOrigin*, const URL&, const URL& srcURL);
     static void unregisterBlobURL(const URL&);
 

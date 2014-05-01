@@ -47,7 +47,7 @@ public:
     NetworkBlobRegistry();
     static NetworkBlobRegistry& shared();
 
-    void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, std::unique_ptr<WebCore::BlobData>, const Vector<RefPtr<SandboxExtension>>&);
+    uint64_t registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, std::unique_ptr<WebCore::BlobData>, const Vector<RefPtr<SandboxExtension>>&);
     void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL);
     uint64_t registerBlobURLForSlice(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end);
     void unregisterBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&);
