@@ -91,11 +91,6 @@ namespace WebCore {
         void seekTimerFired(Timer<MediaPlayerPrivate>*);
         float maxTimeLoaded() const;
         void sawUnsupportedTracks();
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        void setMediaPlayerProxy(WebMediaPlayerProxy*);
-        void setPoster(const String& url);
-        void deliverNotification(MediaPlayerProxyNotificationType);
-#endif
 
         // engine support
         static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
@@ -116,9 +111,6 @@ namespace WebCore {
         bool m_hasUnsupportedTracks;
         bool m_startedPlaying;
         bool m_isStreaming;
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        WebMediaPlayerProxy* m_proxy;
-#endif
     };
 
 }

@@ -1,3 +1,13 @@
+2014-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        Really remove ENABLE_PLUGIN_PROXY_FOR_VIDEO
+        <http://webkit.org/b/132432>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitperl/FeatureList.pm: Remove support for
+        --plugin-proxy-for-video switch.
+
 2014-04-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Kernel sysctl interface hw.activecpu don't exists on Linux.

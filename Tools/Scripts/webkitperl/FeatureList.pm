@@ -112,7 +112,6 @@ my (
     $notificationsSupport,
     $orientationEventsSupport,
     $pageVisibilityAPISupport,
-    $pluginProxyForVideo,
     $performanceTimelineSupport,
     $progressElementSupport,
     $promiseSupport,
@@ -355,9 +354,6 @@ my @features = (
 
     { option => "page-visibility-api", desc => "Toggle Page Visibility API support",
       define => "ENABLE_PAGE_VISIBILITY_API", default => (isEfl() || isGtk()), value => \$pageVisibilityAPISupport },
-
-    { option => "plugin-proxy-for-video", desc => "Toggle Plugin Proxy for Video support",
-      define => "ENABLE_PLUGIN_PROXY_FOR_VIDEO", default => isIOSWebKit(), value => \$pluginProxyForVideo },
 
     { option => "performance-timeline", desc => "Toggle Performance Timeline support",
       define => "ENABLE_PERFORMANCE_TIMELINE", default => isGtk(), value => \$performanceTimelineSupport },

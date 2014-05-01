@@ -1,3 +1,14 @@
+2014-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        Really remove ENABLE_PLUGIN_PROXY_FOR_VIDEO
+        <http://webkit.org/b/132432>
+
+        Reviewed by Tim Horton.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+        - Remove ENABLE_PLUGIN_PROXY_FOR_VIDEO as build option.
+
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Make sure the "All" targets build WebKitLegacy, rather than WebKit.

@@ -1,3 +1,13 @@
+2014-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        Really remove ENABLE_PLUGIN_PROXY_FOR_VIDEO
+        <http://webkit.org/b/132432>
+
+        Reviewed by Tim Horton.
+
+        * platform/graphics/wince/MediaPlayerPrivateWinCE.h: Remove
+        methods and ivar in ENABLE(PLUGIN_PROXY_FOR_VIDEO).
+
 2014-05-01  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Clamping the number of repetitions in repeat()
