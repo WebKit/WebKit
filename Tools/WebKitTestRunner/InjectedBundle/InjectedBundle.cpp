@@ -238,7 +238,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_textInputController = TextInputController::create();
     m_accessibilityController = AccessibilityController::create();
 
-    WKBundleSetShouldTrackVisitedLinks(m_bundle, false);
     WKBundleRemoveAllVisitedLinks(m_bundle);
     WKBundleSetAllowUniversalAccessFromFileURLs(m_bundle, m_pageGroup, true);
     WKBundleSetJavaScriptCanAccessClipboard(m_bundle, m_pageGroup, true);
@@ -378,6 +377,13 @@ void InjectedBundle::postSimulateWebNotificationClick(uint64_t notificationID)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SimulateWebNotificationClick"));
     WKRetainPtr<WKUInt64Ref> messageBody(AdoptWK, WKUInt64Create(notificationID));
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
+void InjectedBundle::postSetAddsVisitedLinks(bool addsVisitedLinks)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetAddsVisitedLinks"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(addsVisitedLinks));
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
 

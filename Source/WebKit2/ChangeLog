@@ -1,3 +1,15 @@
+2014-05-01  Anders Carlsson  <andersca@apple.com>
+
+        window.testRunner.keepWebHistory() should update the UI process state
+        https://bugs.webkit.org/show_bug.cgi?id=132440
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetAddsVisitedLinks):
+        (WKPageSetAddsVisitedLinks):
+        * UIProcess/API/C/WKPagePrivate.h:
+
 2014-05-01  Filip Pizlo  <fpizlo@apple.com>
 
         Roll out r60161.

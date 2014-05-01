@@ -1787,6 +1787,16 @@ void WKPageSetScrollPinningBehavior(WKPageRef page, WKScrollPinningBehavior pinn
     toImpl(page)->setScrollPinningBehavior(corePinning);
 }
 
+bool WKPageGetAddsVisitedLinks(WKPageRef page)
+{
+    return toImpl(page)->addsVisitedLinks();
+}
+
+void WKPageSetAddsVisitedLinks(WKPageRef page, bool addsVisitedLinks)
+{
+    toImpl(page)->setAddsVisitedLinks(addsVisitedLinks);
+}
+
 void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction)
 {
     // FIXME: Remove this function when doing so won't break WebKit nightlies.

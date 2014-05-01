@@ -111,6 +111,9 @@ typedef uint32_t WKScrollPinningBehavior;
 WK_EXPORT WKScrollPinningBehavior WKPageGetScrollPinningBehavior(WKPageRef page);
 WK_EXPORT void WKPageSetScrollPinningBehavior(WKPageRef page, WKScrollPinningBehavior pinning);
 
+WK_EXPORT bool WKPageGetAddsVisitedLinks(WKPageRef page);
+WK_EXPORT void WKPageSetAddsVisitedLinks(WKPageRef page, bool visitedLinks);
+
 #ifdef __cplusplus
 }
 #endif

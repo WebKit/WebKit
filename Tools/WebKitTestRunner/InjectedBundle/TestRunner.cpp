@@ -190,7 +190,7 @@ void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 
 void TestRunner::keepWebHistory()
 {
-    WKBundleSetShouldTrackVisitedLinks(InjectedBundle::shared().bundle(), true);
+    InjectedBundle::shared().postSetAddsVisitedLinks(true);
 }
 
 void TestRunner::execCommand(JSStringRef name, JSStringRef argument)

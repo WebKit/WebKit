@@ -36,6 +36,7 @@
 #include <WebKit2/WKData.h>
 #include <WebKit2/WKDictionary.h>
 #include <WebKit2/WKInspector.h>
+#include <WebKit2/WKPagePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -207,6 +208,8 @@ void TestInvocation::invoke()
     sizeWebViewForCurrentTest(m_pathOrURL.c_str());
     updateLayoutType(m_pathOrURL.c_str());
     updateThreadedScrollingForCurrentTest(m_pathOrURL.c_str());
+
+    WKPageSetAddsVisitedLinks(TestController::shared().mainWebView()->page(), false);
 
     m_textOutput.clear();
 
@@ -467,6 +470,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
         uint64_t notificationID = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
         TestController::shared().simulateWebNotificationClick(notificationID);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAddsVisitedLinks")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef enabledWK = static_cast<WKBooleanRef>(messageBody);
+        WKPageSetAddsVisitedLinks(TestController::shared().mainWebView()->page(), WKBooleanGetValue(enabledWK));
         return;
     }
 
