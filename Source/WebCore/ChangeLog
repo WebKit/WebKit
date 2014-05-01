@@ -1,3 +1,14 @@
+2014-04-30  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r168046): [New Multicolumn] LeftToRight-rl.html (and all the other reversed/block-axis pagination tests) fail
+        https://bugs.webkit.org/show_bug.cgi?id=132419
+
+        Reviewed by Andreas Kling.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::initialBlockOffsetForPainting):
+        Don't flip here. The old code needed to do that, but the new code doesn't.
+
 2014-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         Roll out fix for https://bugs.webkit.org/show_bug.cgi?id=131637:

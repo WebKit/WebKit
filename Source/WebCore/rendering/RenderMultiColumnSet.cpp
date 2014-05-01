@@ -674,8 +674,6 @@ LayoutUnit RenderMultiColumnSet::initialBlockOffsetForPainting() const
     if (!progressionIsInline && progressionReversed) {
         LayoutRect colRect = columnRectAt(0);
         result = isHorizontalWritingMode() ? colRect.y() : colRect.x();
-        if (style().isFlippedBlocksWritingMode())
-            result = -result;
     }
     return result;
 }
