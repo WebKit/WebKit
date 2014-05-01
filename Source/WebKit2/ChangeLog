@@ -1,3 +1,18 @@
+2014-04-30  Gavin Barraclough  <baraclough@apple.com>
+
+        Fix PageVisibility on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=132393
+
+        Rubber stamped by Tim Horton
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewVisibleOrOccluded):
+        (WebKit::PageClientImpl::isVisuallyIdle):
+            - m_contentView -> m_webView
+
 2014-04-30  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] Add a SPI to exclude the extended background from some areas of WKWebView

@@ -109,17 +109,17 @@ IntSize PageClientImpl::viewSize()
 
 bool PageClientImpl::isViewWindowActive()
 {
-    return [m_contentView window];
+    return [m_webView window];
 }
 
 bool PageClientImpl::isViewFocused()
 {
-    return [m_contentView window];
+    return [m_webView window];
 }
 
 bool PageClientImpl::isViewVisible()
 {
-    return [m_contentView window];
+    return [m_webView window];
 }
 
 bool PageClientImpl::isViewInWindow()
@@ -129,12 +129,12 @@ bool PageClientImpl::isViewInWindow()
 
 bool PageClientImpl::isViewVisibleOrOccluded()
 {
-    return [m_contentView window];
+    return [m_webView window];
 }
 
 bool PageClientImpl::isVisuallyIdle()
 {
-    return ![m_contentView window];
+    return ![m_webView window];
 }
 
 void PageClientImpl::processDidExit()
