@@ -248,7 +248,7 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
         return false;
     if (!decoder.decode(parameters.shouldEnableFTLJIT))
         return false;
-
+    
     bool hasBundleParameterData;
     if (!decoder.decode(hasBundleParameterData))
         return false;

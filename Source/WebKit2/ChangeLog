@@ -1,3 +1,17 @@
+2014-05-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Roll out r60161.
+
+        Rubber stamped by Mark Hahnenberg.
+        
+        This breaks our debugging workflow.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::decode):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebContext::platformInitializeWebProcess):
+
 2014-05-01  Anders Carlsson  <andersca@apple.com>
 
         WKWebView doesn't track visited links (for visited link coloring)
