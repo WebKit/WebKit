@@ -1,3 +1,23 @@
+2014-04-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] Animated resize incorrectly assumes the layout width is the same as the view width
+        https://bugs.webkit.org/show_bug.cgi?id=132373
+        <rdar://problem/16762178>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        Fix a couple of bugs when the left/right obscured insets change, and/or when the minimum layout size
+        is narrower than the view itself.
+
+        In order:
+        -We need to perfom and update if the insets change since the unobscuredRect will also change.
+        -The min/max zoom scale should be based on the minimum layout size, that's the definition of minimum layout size
+         in scrollview coordinate :)
+        -The old web view width in content coordinate could be narrower than the old view bounds if there are left or right
+         insets.
+
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ENABLE_PLUGIN_PROXY_FOR_VIDEO

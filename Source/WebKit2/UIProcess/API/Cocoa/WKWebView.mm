@@ -1349,6 +1349,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (_hasStaticMinimumLayoutSize)
         oldMinimumLayoutSize = _minimumLayoutSizeOverride;
     WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
+    UIEdgeInsets oldInsets = _obscuredInsets;
 
     updateBlock();
 
@@ -1360,19 +1361,20 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (_hasStaticMinimumLayoutSize)
         newMinimumLayoutSize = _minimumLayoutSizeOverride;
 
-    if (CGSizeEqualToSize(newMinimumLayoutSize, oldMinimumLayoutSize) && CGRectEqualToRect(newBounds, oldBounds))
+    if (CGSizeEqualToSize(newMinimumLayoutSize, oldMinimumLayoutSize)
+        && CGRectEqualToRect(newBounds, oldBounds)
+        && UIEdgeInsetsEqualToEdgeInsets(oldInsets, _obscuredInsets))
         return;
 
     CGSize contentSizeInContentViewCoordinates = [_contentView bounds].size;
-    [_scrollView setMinimumZoomScale:std::min(newBounds.size.width / contentSizeInContentViewCoordinates.width, [_scrollView minimumZoomScale])];
-    [_scrollView setMaximumZoomScale:std::max(newBounds.size.width / contentSizeInContentViewCoordinates.width, [_scrollView maximumZoomScale])];
+    [_scrollView setMinimumZoomScale:std::min(newMinimumLayoutSize.width / contentSizeInContentViewCoordinates.width, [_scrollView minimumZoomScale])];
+    [_scrollView setMaximumZoomScale:std::max(newMinimumLayoutSize.width / contentSizeInContentViewCoordinates.width, [_scrollView maximumZoomScale])];
 
     // Compute the new scale to keep the current content width in the scrollview.
-    CGFloat currentScale = contentZoomScale(self);
-    CGFloat oldWebViewWidthInContentViewCoordinates = oldBounds.size.width / currentScale;
+    CGFloat oldWebViewWidthInContentViewCoordinates = oldUnobscuredContentRect.width();
     CGFloat visibleContentViewWidthInContentCoordinates = std::min(contentSizeInContentViewCoordinates.width, oldWebViewWidthInContentViewCoordinates);
-    CGFloat targetScale = newBounds.size.width / visibleContentViewWidthInContentCoordinates;
-    CGFloat resizeAnimationViewAnimationScale = targetScale / currentScale;
+    CGFloat targetScale = newMinimumLayoutSize.width / visibleContentViewWidthInContentCoordinates;
+    CGFloat resizeAnimationViewAnimationScale = targetScale / contentZoomScale(self);
     [_resizeAnimationView setTransform:CGAffineTransformMakeScale(resizeAnimationViewAnimationScale, resizeAnimationViewAnimationScale)];
 
     // Compute a new position to keep the content centered.
@@ -1406,9 +1408,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     [_scrollView setContentOffset:contentOffset];
 
     CGRect visibleRectInContentCoordinates = [self convertRect:newBounds toView:_contentView.get()];
-
-    CGRect unobscuredRect = UIEdgeInsetsInsetRect(newBounds, _obscuredInsets);
-    CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
+    CGRect unobscuredRectInContentCoordinates = [self convertRect:futureUnobscuredRectInSelfCoordinates toView:_contentView.get()];
 
     _page->dynamicViewportSizeUpdate(WebCore::FloatSize(newMinimumLayoutSize.width, newMinimumLayoutSize.height), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, targetScale);
 }
