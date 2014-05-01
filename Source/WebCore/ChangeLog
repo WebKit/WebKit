@@ -1,3 +1,21 @@
+2014-05-01  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Clamping the number of repetitions in repeat()
+        https://bugs.webkit.org/show_bug.cgi?id=131023
+
+        Reviewed by Brent Fulgham.
+
+        The ED suggests now to be able to clamp the number of repetitions when
+        using the repeat() function, taking precautions about excessive memory
+        usage.
+
+        The implemented max repetitions is 10K.
+
+        Test: fast/css-grid-layout/grid-element-repeat-max-repetitions.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTrackRepeatFunction):
+
 2014-04-30  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Seeking between two buffered ranges enquues incorrect buffers.

@@ -150,6 +150,7 @@ namespace WebCore {
 
 static const unsigned INVALID_NUM_PARSED_PROPERTIES = UINT_MAX;
 static const double MAX_SCALE = 1000000;
+static const unsigned MAX_GRID_TRACK_REPETITIONS = 10000;
 
 template <unsigned N>
 static bool equal(const CSSParserString& a, const char (&b)[N])
@@ -5037,6 +5038,10 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
 
     ASSERT_WITH_SECURITY_IMPLICATION(arguments->valueAt(0)->fValue > 0);
     size_t repetitions = arguments->valueAt(0)->fValue;
+    // Clamp repetitions at MAX_GRID_TRACK_REPETITIONS.
+    // http://www.w3.org/TR/css-grid-1/#repeat-notation
+    if (repetitions > MAX_GRID_TRACK_REPETITIONS)
+        repetitions = MAX_GRID_TRACK_REPETITIONS;
     RefPtr<CSSValueList> repeatedValues = CSSValueList::createSpaceSeparated();
     arguments->next(); // Skip the repetition count.
     arguments->next(); // Skip the comma.
