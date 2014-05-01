@@ -1,5 +1,13 @@
 2014-05-01  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix for !ENABLE(BLOB) builds.
+
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURLForSlice):
+
+2014-05-01  Alexey Proskuryakov  <ap@apple.com>
+
         Move size computation for Blob constructor into BlobRegistryImpl
         https://bugs.webkit.org/show_bug.cgi?id=132439
 

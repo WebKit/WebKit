@@ -170,6 +170,7 @@ PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& ur
 
 unsigned long long ThreadableBlobRegistry::registerBlobURL(const URL&, std::unique_ptr<BlobData>)
 {
+    return 0;
 }
 
 void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin*, const URL&, const URL&)
@@ -178,6 +179,7 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin*, const URL&, const 
 
 unsigned long long ThreadableBlobRegistry::registerBlobURLForSlice(const URL&, const URL&, long long, long long)
 {
+    return 0;
 }
 
 void ThreadableBlobRegistry::unregisterBlobURL(const URL&)
