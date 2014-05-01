@@ -1,5 +1,22 @@
 2014-05-01  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r167480.
+
+    2014-04-17  Darin Adler  <darin@apple.com>
+    
+            hostname extraction from a URL should not decode percent-escape sequences
+            https://bugs.webkit.org/show_bug.cgi?id=131837
+            rdar://problem/15211936
+    
+            Reviewed by Anders Carlsson and Dave Hyatt.
+    
+            * fast/dom/DOMURL/parsing-expected.txt: Added.
+            * fast/dom/DOMURL/parsing.html: Added.
+            * fast/dom/HTMLAnchorElement/anchor-element-href-parsing-expected.txt: Added.
+            * fast/dom/HTMLAnchorElement/anchor-element-href-parsing.html: Added.
+    
+2014-05-01  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r167672.
 
     2014-04-22  Brent Fulgham  <bfulgham@apple.com>
