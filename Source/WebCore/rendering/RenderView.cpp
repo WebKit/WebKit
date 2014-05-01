@@ -44,6 +44,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnSet.h"
+#include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
@@ -53,6 +54,45 @@
 #include <wtf/StackStats.h>
 
 namespace WebCore {
+
+struct SelectionIterator {
+    RenderObject* m_current;
+    Vector<RenderMultiColumnSpannerPlaceholder*> m_spannerStack;
+    
+    SelectionIterator(RenderObject* o)
+    {
+        m_current = o;
+        checkForSpanner();
+    }
+    
+    void checkForSpanner()
+    {
+        if (!m_current || !m_current->isRenderMultiColumnSpannerPlaceholder())
+            return;
+        RenderMultiColumnSpannerPlaceholder* placeholder = toRenderMultiColumnSpannerPlaceholder(m_current);
+        m_spannerStack.append(placeholder);
+        m_current = placeholder->spanner();
+    }
+    
+    RenderObject* current()
+    {
+        return m_current;
+    }
+    
+    RenderObject* next()
+    {
+        RenderObject* currentSpan = m_spannerStack.isEmpty() ? 0 : m_spannerStack.last()->spanner();
+        m_current = m_current->nextInPreOrder(currentSpan);
+        checkForSpanner();
+        if (!m_current && currentSpan) {
+            RenderObject* placeholder = m_spannerStack.last();
+            m_spannerStack.removeLast();
+            m_current = placeholder->nextInPreOrder();
+            checkForSpanner();
+        }
+        return m_current;
+    }
+};
 
 RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
     : RenderBlockFlow(document, std::move(style))
@@ -684,6 +724,7 @@ LayoutRect RenderView::subtreeSelectionBounds(const SelectionSubtreeRoot& root, 
 
     RenderObject* os = root.selectionStart();
     RenderObject* stop = rendererAfterPosition(root.selectionEnd(), root.selectionEndPos());
+    SelectionIterator selectionIterator(os);
     while (os && os != stop) {
         if ((os->canBeSelectionLeaf() || os == root.selectionStart() || os == root.selectionEnd()) && os->selectionState() != SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
@@ -698,7 +739,7 @@ LayoutRect RenderView::subtreeSelectionBounds(const SelectionSubtreeRoot& root, 
             }
         }
 
-        os = os->nextInPreOrder();
+        os = selectionIterator.next();
     }
 
     // Now create a single bounding box rect that encloses the whole selection.
@@ -732,7 +773,8 @@ void RenderView::repaintSubtreeSelection(const SelectionSubtreeRoot& root) const
     HashSet<RenderBlock*> processedBlocks;
 
     RenderObject* end = rendererAfterPosition(root.selectionEnd(), root.selectionEndPos());
-    for (RenderObject* o = root.selectionStart(); o && o != end; o = o->nextInPreOrder()) {
+    SelectionIterator selectionIterator(root.selectionStart());
+    for (RenderObject* o = selectionIterator.current(); o && o != end; o = selectionIterator.next()) {
         if (!o->canBeSelectionLeaf() && o != root.selectionStart() && o != root.selectionEnd())
             continue;
         if (o->selectionState() == SelectionNone)
@@ -885,6 +927,7 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
 
     RenderObject* os = root.selectionStart();
     RenderObject* stop = rendererAfterPosition(root.selectionEnd(), root.selectionEndPos());
+    SelectionIterator selectionIterator(os);
     while (os && os != stop) {
         if ((os->canBeSelectionLeaf() || os == root.selectionStart() || os == root.selectionEnd())
             && os->selectionState() != SelectionNone) {
@@ -902,7 +945,7 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
             }
         }
 
-        os = os->nextInPreOrder();
+        os = selectionIterator.next();
     }
 
     // Now clear the selection.
@@ -928,11 +971,12 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
 
     RenderObject* o = start;
     stop = rendererAfterPosition(end, endPos);
-
+    selectionIterator = SelectionIterator(o);
+    
     while (o && o != stop) {
         if (o != start && o != end && o->canBeSelectionLeaf())
             o->setSelectionStateIfNeeded(SelectionInside);
-        o = o->nextInPreOrder();
+        o = selectionIterator.next();
     }
 
     if (blockRepaintMode != RepaintNothing)
@@ -941,6 +985,7 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
     // Now that the selection state has been updated for the new objects, walk them again and
     // put them in the new objects list.
     o = start;
+    selectionIterator = SelectionIterator(o);
     while (o && o != stop) {
         if ((o->canBeSelectionLeaf() || o == start || o == end) && o->selectionState() != SelectionNone) {
             std::unique_ptr<RenderSelectionInfo> selectionInfo = std::make_unique<RenderSelectionInfo>(o, true);
@@ -965,7 +1010,7 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
             }
         }
 
-        o = o->nextInPreOrder();
+        o = selectionIterator.next();
     }
 
     if (blockRepaintMode == RepaintNothing)

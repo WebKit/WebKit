@@ -1,3 +1,26 @@
+2014-05-01  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r168046): [New Multicolumn] Selection into and out of column-span elements doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=132066
+
+        Reviewed by Oliver Hunt.
+
+        Make a new SelectionIterator struct that knows how to drill into and out of
+        column span placeholders. Also change spans to be selection roots (in the painting
+        sense).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelectionRoot):
+        (WebCore::RenderBlock::selectionGaps):
+        * rendering/RenderView.cpp:
+        (WebCore::SelectionIterator::SelectionIterator):
+        (WebCore::SelectionIterator::checkForSpanner):
+        (WebCore::SelectionIterator::current):
+        (WebCore::SelectionIterator::next):
+        (WebCore::RenderView::subtreeSelectionBounds):
+        (WebCore::RenderView::repaintSubtreeSelection):
+        (WebCore::RenderView::setSubtreeSelection):
+
 2014-05-01  Simon Fraser  <simon.fraser@apple.com>
 
         Don't always make backing store for -webkit-backface-visibility:hidden
