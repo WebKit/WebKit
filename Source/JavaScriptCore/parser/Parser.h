@@ -409,7 +409,6 @@ template <typename LexerType>
 class Parser {
     WTF_MAKE_NONCOPYABLE(Parser);
     WTF_MAKE_FAST_ALLOCATED;
-    friend PassRefPtr<FunctionParameters> parseParameters(VM*, const SourceCode&, JSParserStrictness);
 
 public:
     Parser(VM*, const SourceCode&, FunctionParameters*, const Identifier&, JSParserStrictness, JSParserMode);
@@ -973,15 +972,12 @@ PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameter
         }
         return result.release();
     }
-    RELEASE_ASSERT(strictness != JSParseBuiltin);
     Parser<Lexer<UChar>> parser(vm, source, parameters, name, strictness, parserMode);
     RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error);
     if (positionBeforeLastNewline)
         *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     return result.release();
 }
-
-PassRefPtr<FunctionParameters> parseParameters(VM*, const SourceCode&, JSParserStrictness);
 
 } // namespace
 #endif

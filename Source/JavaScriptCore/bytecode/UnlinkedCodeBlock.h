@@ -95,7 +95,7 @@ public:
     static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionBodyNode* node, bool isFromGlobalCode, UnlinkedFunctionKind unlinkedFunctionKind)
     {
         UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap)) UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, node, isFromGlobalCode, unlinkedFunctionKind);
-        instance->finishCreation(*vm, source, node);
+        instance->finishCreation(*vm);
         return instance;
     }
 
@@ -106,7 +106,7 @@ public:
     {
         return (kind == CodeForCall) ? m_symbolTableForCall.get() : m_symbolTableForConstruct.get();
     }
-    size_t parameterCount() const { return m_parameterCount; }
+    size_t parameterCount() const;
     bool isInStrictContext() const { return m_isInStrictContext; }
     FunctionMode functionMode() const { return m_functionMode; }
     JSParserStrictness toStrictness() const
@@ -142,7 +142,7 @@ public:
         m_codeBlockForConstruct.clear();
     }
 
-    RefPtr<FunctionParameters> parameters(VM*);
+    FunctionParameters* parameters() { return m_parameters.get(); }
 
     void recordParse(CodeFeatures features, bool hasCapturedVariables)
     {
@@ -163,7 +163,6 @@ public:
 
 private:
     UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, FunctionBodyNode*, bool isFromGlobalCode, UnlinkedFunctionKind);
-
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
@@ -177,10 +176,9 @@ private:
     Identifier m_name;
     Identifier m_inferredName;
     WriteBarrier<JSString> m_nameValue;
-    WriteBarrier<JSString> m_parameterString;
     WriteBarrier<SymbolTable> m_symbolTableForCall;
     WriteBarrier<SymbolTable> m_symbolTableForConstruct;
-    unsigned m_parameterCount;
+    RefPtr<FunctionParameters> m_parameters;
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
     unsigned m_unlinkedFunctionNameStart;
@@ -194,7 +192,11 @@ private:
     FunctionMode m_functionMode;
 
 protected:
-    void finishCreation(VM&, const SourceCode&, FunctionBodyNode*);
+    void finishCreation(VM& vm)
+    {
+        Base::finishCreation(vm);
+        m_nameValue.set(vm, this, jsString(&vm, name().string()));
+    }
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

@@ -1,3 +1,17 @@
+2014-05-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r167964.
+        https://bugs.webkit.org/show_bug.cgi?id=132431
+
+        Memory improvements should not regress memory usage (Requested
+        by olliej on #webkit).
+
+        Reverted changeset:
+
+        "Don't hold on to parameter BindingNodes forever"
+        https://bugs.webkit.org/show_bug.cgi?id=132360
+        http://trac.webkit.org/changeset/167964
+
 2014-05-01  Filip Pizlo  <fpizlo@apple.com>
 
         Fix trivial debug-only race-that-crashes in CallLinkStatus and explain why the remaining races are totally awesome

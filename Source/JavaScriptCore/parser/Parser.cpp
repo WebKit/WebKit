@@ -1248,7 +1248,6 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         failDueToUnexpectedToken();
         return false;
     }
-    JSTokenLocation openParen = tokenLocation();
     if (!consume(OPENPAREN)) {
         semanticFailureDueToKeyword(stringForFunctionMode(mode), " name");
         failWithMessage("Expected an opening '(' before a ", stringForFunctionMode(mode), "'s parameter list");
@@ -1257,7 +1256,6 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         parameters = parseFormalParameters(context);
         failIfFalse(parameters, "Cannot parse parameters for this ", stringForFunctionMode(mode));
     }
-    JSTokenLocation endParen = m_token.m_location;
     consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
     matchOrFail(OPENBRACE, "Expected an opening '{' at the start of a ", stringForFunctionMode(mode), " body");
     
@@ -1283,7 +1281,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
             endLocation.startOffset - endLocation.lineStartOffset;
 
         body = context.createFunctionBody(startLocation, endLocation, bodyStartColumn, bodyEndColumn, cachedInfo->strictMode);
-        context.setFunctionBodyParameters(body, openParen, endParen);
+        
         functionScope->restoreFromSourceProviderCache(cachedInfo);
         failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo), "Parser error");
         
@@ -1303,7 +1301,6 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     body = parseFunctionBody(context);
     restoreState(oldState);
     failIfFalse(body, "Cannot parse the body of this ", stringForFunctionMode(mode));
-    context.setFunctionBodyParameters(body, openParen, endParen);
     if (functionScope->strictMode() && name) {
         RELEASE_ASSERT(mode == FunctionMode);
         semanticFailIfTrue(m_vm->propertyNames->arguments == *name, "'", name->impl(), "' is not a valid function name in strict mode");
@@ -2405,25 +2402,6 @@ template <typename LexerType> void Parser<LexerType>::printUnexpectedTokenText(W
     }
     
     out.print("Unexpected token '", getToken(), "'");
-}
-
-PassRefPtr<FunctionParameters> parseParameters(VM* vm, const SourceCode& source, JSParserStrictness strictness)
-{
-    SamplingRegion samplingRegion("Parsing parameters");
-    ParameterNode* parameters = 0;
-    ASSERT(!source.provider()->source().isNull());
-    if (source.provider()->source().is8Bit()) {
-        Parser<Lexer<LChar>> parser(vm, source, 0, Identifier(), strictness, JSParseFunctionCode);
-        ASTBuilder builder(vm, &source);
-        parameters = parser.parseFormalParameters(builder);
-    } else {
-        Parser<Lexer<UChar>> parser(vm, source, 0, Identifier(), strictness, JSParseFunctionCode);
-        ASTBuilder builder(vm, &source);
-        parameters = parser.parseFormalParameters(builder);
-    }
-    if (!parameters)
-        return nullptr;
-    return FunctionParameters::create(parameters);
 }
 
 // Instantiate the two flavors of Parser we need instead of putting most of this file in Parser.h
