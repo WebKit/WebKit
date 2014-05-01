@@ -1,3 +1,13 @@
+2014-05-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix trivial debug-only race-that-crashes in CallLinkStatus and explain why the remaining races are totally awesome
+        https://bugs.webkit.org/show_bug.cgi?id=132427
+
+        Reviewed by Mark Hahnenberg.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ENABLE_PLUGIN_PROXY_FOR_VIDEO

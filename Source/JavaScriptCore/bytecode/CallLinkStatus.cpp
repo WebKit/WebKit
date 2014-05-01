@@ -149,11 +149,24 @@ CallLinkStatus CallLinkStatus::computeFor(
 #if ENABLE(JIT)
 CallLinkStatus CallLinkStatus::computeFor(const ConcurrentJITLocker&, CallLinkInfo& callLinkInfo)
 {
+    // Note that despite requiring that the locker is held, this code is racy with respect
+    // to the CallLinkInfo: it may get cleared while this code runs! This is because
+    // CallLinkInfo::unlink() may be called from a different CodeBlock than the one that owns
+    // the CallLinkInfo and currently we save space by not having CallLinkInfos know who owns
+    // them. So, there is no way for either the caller of CallLinkInfo::unlock() or unlock()
+    // itself to figure out which lock to lock.
+    //
+    // Fortunately, that doesn't matter. The only things we ask of CallLinkInfo - the slow
+    // path count, the stub, and the target - can all be asked racily. Stubs and targets can
+    // only be deleted at next GC, so if we load a non-null one, then it must contain data
+    // that is still marginally valid (i.e. the pointers ain't stale). This kind of raciness
+    // is probably OK for now.
+    
     if (callLinkInfo.slowPathCount >= Options::couldTakeSlowCaseMinimumCount())
         return takesSlowPath();
     
-    if (callLinkInfo.stub)
-        return CallLinkStatus(callLinkInfo.stub->executable(), callLinkInfo.stub->structure());
+    if (ClosureCallStubRoutine* stub = callLinkInfo.stub.get())
+        return CallLinkStatus(stub->executable(), stub->structure());
     
     JSFunction* target = callLinkInfo.lastSeenCallee.get();
     if (!target)
