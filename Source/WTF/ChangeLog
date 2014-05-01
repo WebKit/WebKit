@@ -1,3 +1,15 @@
+2014-04-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Link against bmalloc in production builds
+        https://bugs.webkit.org/show_bug.cgi?id=132413
+
+        Reviewed by Sam Weinig.
+
+        Production builders have been configured to handle this, so let's build
+        it.
+
+        * Configurations/WTF.xcconfig:
+
 2014-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] There are many warnings with software backend
