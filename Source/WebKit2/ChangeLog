@@ -1,3 +1,32 @@
+2014-05-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Tweak the extended background exclusion for MobileSafari
+        https://bugs.webkit.org/show_bug.cgi?id=132449
+
+        Reviewed by Beth Dakin.
+
+        Some tweaks for Mobile:
+        -Use UIViews instead of CALayers to have the same animation timing as the top views.
+        -The left extended background insets should not exclude the top and bottom insets.
+
+        Since this code is in the middle of 2 hot paths, also added some performance tweaks.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        In the normal case, we do not have extended background exclusion. To avoid creating a background view, we use
+        the scrollview to render the background.
+        The separate background view is created lazily if needed.
+
+        (-[WKWebView _updateScrollViewBackground]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (updateTopAndBottomExtendedBackgroundExclusionIfNecessary):
+        This create the top and bottom extended background view as needed and update their frames for the current insets.
+
+        (-[WKWebView _setObscuredInsets:]):
+        (-[WKWebView _setExtendedBackgroundExclusionInsets:]):
+        When an exclusion inset is needed, create a view for it, transfer the color from the ScrollView, and reset the color
+        of the scrollview.
+
 2014-05-01  Alexey Proskuryakov  <ap@apple.com>
 
         Move size computation for Blob constructor into BlobRegistryImpl

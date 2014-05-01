@@ -105,7 +105,9 @@
     bool _isChangingObscuredInsetsInteractively;
 
     UIEdgeInsets _extendedBackgroundExclusionInsets;
-    CALayer *_extendedBackgroundLayer;
+    UIView *_mainExtendedBackgroundView;
+    UIView *_extendedBackgroundLayerTopInset;
+    UIView *_extendedBackgroundLayerBottomInset;
 
     BOOL _isAnimatingResize;
     CATransform3D _resizeAnimationTransformAdjustments;
@@ -185,14 +187,8 @@
     [_scrollView setBouncesZoom:YES];
 
     [self addSubview:_scrollView.get()];
-
-    {
-        RetainPtr<CALayer> backgroundLayer = [[CALayer alloc] init];
-        _extendedBackgroundLayer = backgroundLayer.get();
-        _extendedBackgroundLayer.frame = bounds;
-        _extendedBackgroundLayer.backgroundColor = cachedCGColor(WebCore::Color(WebCore::Color::white), WebCore::ColorSpaceDeviceRGB);
-        [[self layer] insertSublayer:_extendedBackgroundLayer below:[_scrollView layer]];
-    }
+    _mainExtendedBackgroundView = _scrollView.get();
+    _mainExtendedBackgroundView.backgroundColor = [UIColor whiteColor];
 
     _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration) webView:self]);
     _page = [_contentView page];
@@ -445,7 +441,10 @@ static CGFloat contentZoomScale(WKWebView* webView)
         CGFloat opacity = std::max(1 - slope * (minimumZoomScale - zoomScale), static_cast<CGFloat>(0));
         cgColor = adoptCF(CGColorCreateCopyWithAlpha(cgColor.get(), opacity));
     }
-    _extendedBackgroundLayer.backgroundColor = cgColor.get();
+    RetainPtr<UIColor*> uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cgColor.get()]);
+    _mainExtendedBackgroundView.backgroundColor = uiBackgroundColor.get();
+    _extendedBackgroundLayerTopInset.backgroundColor = uiBackgroundColor.get();
+    _extendedBackgroundLayerBottomInset.backgroundColor = uiBackgroundColor.get();
 }
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
@@ -720,7 +719,11 @@ static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProx
     CGRect bounds = self.bounds;
 
     CGRect backgroundLayerRect = UIEdgeInsetsInsetRect(bounds, _extendedBackgroundExclusionInsets);
-    _extendedBackgroundLayer.frame = backgroundLayerRect;
+    _mainExtendedBackgroundView.frame = backgroundLayerRect;
+    if (!_extendedBackgroundExclusionInsets.top && _obscuredInsets.top)
+        _extendedBackgroundLayerTopInset.frame = CGRectMake(0, 0, bounds.size.width, _obscuredInsets.top);
+    if (!_extendedBackgroundExclusionInsets.bottom && _obscuredInsets.bottom)
+        _extendedBackgroundLayerBottomInset.frame = CGRectMake(0, bounds.size.height - _obscuredInsets.bottom, bounds.size.width, _obscuredInsets.bottom);
 
     if (!_hasStaticMinimumLayoutSize && !_isAnimatingResize)
         setViewportConfigurationMinimumLayoutSize(*_page, bounds.size);
@@ -1293,6 +1296,32 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return _obscuredInsets;
 }
 
+static void updateTopAndBottomExtendedBackgroundExclusionIfNecessary(WKWebView* webView)
+{
+    if (!webView->_extendedBackgroundExclusionInsets.left)
+        return;
+
+    if (webView->_obscuredInsets.top && !webView->_extendedBackgroundExclusionInsets.top) {
+        if (!webView->_extendedBackgroundLayerTopInset) {
+            RetainPtr<UIView> backgroundView = adoptNS([[UIView alloc] init]);
+            [backgroundView setBackgroundColor:webView->_mainExtendedBackgroundView.backgroundColor];
+            [webView insertSubview:backgroundView.get() belowSubview:webView->_scrollView.get()];
+            webView->_extendedBackgroundLayerTopInset = backgroundView.get();
+        }
+
+        [webView->_extendedBackgroundLayerTopInset setFrame:CGRectMake(0, 0, webView->_extendedBackgroundExclusionInsets.left, webView->_obscuredInsets.top)];
+    }
+    if (webView->_obscuredInsets.bottom && !webView->_extendedBackgroundExclusionInsets.bottom) {
+        if (!webView->_extendedBackgroundLayerBottomInset) {
+            RetainPtr<UIView> backgroundView = adoptNS([[UIView alloc] init]);
+            [backgroundView setBackgroundColor:webView->_mainExtendedBackgroundView.backgroundColor];
+            [webView insertSubview:backgroundView.get() belowSubview:webView->_scrollView.get()];
+            webView->_extendedBackgroundLayerBottomInset = backgroundView.get();
+        }
+        [webView->_extendedBackgroundLayerBottomInset setFrame:CGRectMake(0, webView.bounds.size.height - webView->_obscuredInsets.bottom, webView->_extendedBackgroundExclusionInsets.left, webView->_obscuredInsets.bottom)];
+    }
+}
+
 - (void)_setObscuredInsets:(UIEdgeInsets)obscuredInsets
 {
     ASSERT(obscuredInsets.top >= 0);
@@ -1304,6 +1333,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return;
 
     _obscuredInsets = obscuredInsets;
+
+    updateTopAndBottomExtendedBackgroundExclusionIfNecessary(self);
+
     [self _updateVisibleContentRects];
 }
 
@@ -1322,8 +1354,19 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (UIEdgeInsetsEqualToEdgeInsets(extendedBackgroundExclusionInsets, _extendedBackgroundExclusionInsets))
         return;
 
+    if (_mainExtendedBackgroundView == _scrollView) {
+        RetainPtr<UIView> backgroundView = adoptNS([[UIView alloc] init]);
+        _mainExtendedBackgroundView = backgroundView.get();
+        _mainExtendedBackgroundView.backgroundColor = [_scrollView backgroundColor];
+        [self insertSubview:_mainExtendedBackgroundView belowSubview:_scrollView.get()];
+        [_scrollView setBackgroundColor:nil];
+    }
+
+    CGRect bounds = self.bounds;
     _extendedBackgroundExclusionInsets = extendedBackgroundExclusionInsets;
-    _extendedBackgroundLayer.frame = UIEdgeInsetsInsetRect(self.bounds, _extendedBackgroundExclusionInsets);
+    _mainExtendedBackgroundView.frame = UIEdgeInsetsInsetRect(bounds, _extendedBackgroundExclusionInsets);
+
+    updateTopAndBottomExtendedBackgroundExclusionIfNecessary(self);
 }
 
 - (UIEdgeInsets)_extendedBackgroundExclusionInsets
