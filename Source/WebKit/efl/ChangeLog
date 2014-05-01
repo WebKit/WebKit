@@ -1,3 +1,14 @@
+2014-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] There are many warnings with software backend
+        https://bugs.webkit.org/show_bug.cgi?id=132422
+
+        Reviewed by Gyuyoung Kim.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_cursor_set):
+
 2014-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         Roll out fix for https://bugs.webkit.org/show_bug.cgi?id=131637:

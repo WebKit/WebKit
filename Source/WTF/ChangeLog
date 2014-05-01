@@ -1,3 +1,12 @@
+2014-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] There are many warnings with software backend
+        https://bugs.webkit.org/show_bug.cgi?id=132422
+
+        Reviewed by Gyuyoung Kim.
+
+        * wtf/efl/EflTypedefs.h: Added Ecore_X_Window typedef
+
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ENABLE_PLUGIN_PROXY_FOR_VIDEO

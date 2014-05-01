@@ -454,8 +454,7 @@ void EwkView::updateCursor()
     if (!m_theme || !edje_object_file_set(cursorObject.get(), m_theme, group)) {
         ecore_evas_object_cursor_set(ecoreEvas, 0, 0, 0, 0);
 #ifdef HAVE_ECORE_X
-        if (WebCore::isUsingEcoreX(sd->base.evas))
-            WebCore::applyFallbackCursor(ecoreEvas, group);
+        WebCore::applyFallbackCursor(ecoreEvas, group);
 #endif
         return;
     }
@@ -535,11 +534,7 @@ AffineTransform EwkView::transformToScreen() const
 #ifdef HAVE_ECORE_X
     Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
 
-    Ecore_X_Window window;
-    window = ecore_evas_gl_x11_window_get(ecoreEvas);
-    // Fallback to software mode if necessary.
-    if (!window)
-        window = ecore_evas_software_x11_window_get(ecoreEvas); // Returns 0 if none.
+    Ecore_X_Window window = getEcoreXWindow(ecoreEvas);
 
     int x, y; // x, y are relative to parent (in a reparenting window manager).
     while (window) {

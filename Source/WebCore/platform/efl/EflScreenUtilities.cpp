@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012-2014 Samsung Electronics
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -106,6 +106,10 @@ int getEcoreCursor(const String& cursorString)
 void applyFallbackCursor(Ecore_Evas* ecoreEvas, const char* cursorString)
 {
 #ifdef HAVE_ECORE_X
+    Ecore_X_Window window = getEcoreXWindow(ecoreEvas);
+    if (!window)
+        return;
+
     int shape = getEcoreCursor(cursorString);
     if (shape < ECORE_X_CURSOR_X || shape > ECORE_X_CURSOR_XTERM) {
         LOG_ERROR("cannot map an equivalent X cursor for"
@@ -113,31 +117,22 @@ void applyFallbackCursor(Ecore_Evas* ecoreEvas, const char* cursorString)
         shape = ECORE_X_CURSOR_LEFT_PTR;
     }
 
-    Ecore_X_Window window;
-    window = ecore_evas_gl_x11_window_get(ecoreEvas);
-    // Fallback to software mode if necessary.
-    if (!window)
-        window = ecore_evas_software_x11_window_get(ecoreEvas);
-
     Ecore_X_Cursor cursor = ecore_x_cursor_shape_get(shape);
     ecore_x_window_cursor_set(window, cursor);
 #endif
 }
 
-bool isUsingEcoreX(const Evas* evas)
+Ecore_X_Window getEcoreXWindow(Ecore_Evas* ecoreEvas)
 {
-#ifdef HAVE_ECORE_X
-    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(evas);
     const char* engine = ecore_evas_engine_name_get(ecoreEvas);
-    return !strcmp(engine, "opengl_x11")
-        || !strcmp(engine, "software_x11")
-        || !strcmp(engine, "software_xcb")
-        || !strcmp(engine, "software_16_x11")
-        || !strncmp(engine, "xrender", sizeof("xrender") - 1);
-#else
-    UNUSED_PARAM(evas);
-    return false;
-#endif
+
+    if (!strcmp(engine, "opengl_x11"))
+        return ecore_evas_gl_x11_window_get(ecoreEvas);
+
+    if (!strcmp(engine, "software_x11"))
+        return ecore_evas_software_x11_window_get(ecoreEvas);
+
+    return 0;
 }
 
 } // namespace WebCore

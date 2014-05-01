@@ -31,6 +31,9 @@
 #ifdef __cplusplus
 
 #if PLATFORM(EFL)
+typedef unsigned Ecore_X_ID;
+typedef Ecore_X_ID Ecore_X_Window;
+
 typedef unsigned char Eina_Bool;
 typedef struct _Evas_Point Evas_Point;
 typedef struct _Evas_GL Evas_GL;

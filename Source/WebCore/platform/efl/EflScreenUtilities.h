@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012-2014 Samsung Electronics
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,8 @@
 namespace WebCore {
 
 void applyFallbackCursor(Ecore_Evas*, const char*);
-bool isUsingEcoreX(const Evas*);
+
+Ecore_X_Window getEcoreXWindow(Ecore_Evas*);
 
 } // namespace WebCore
 
