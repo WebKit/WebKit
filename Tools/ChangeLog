@@ -1,3 +1,13 @@
+2014-04-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Kernel sysctl interface hw.activecpu don't exists on Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=132286
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/run-jsc-stress-tests: Redirect stderr to null when
+        calling sysctl over hw.activecpu
+
 2014-04-30  Anders Carlsson  <andersca@apple.com>
 
         Move the legacy WebKit API into WebKitLegacy.framework and move it inside WebKit.framework

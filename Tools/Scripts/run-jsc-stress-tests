@@ -74,7 +74,7 @@ def mysys(*cmd)
 end
 
 begin
-    $numProcessors = `sysctl -n hw.activecpu`.to_i
+    $numProcessors = `sysctl -n hw.activecpu 2>/dev/null`.to_i
 rescue
     $numProcessors = 0
 end
