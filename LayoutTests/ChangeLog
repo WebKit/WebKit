@@ -1,5 +1,22 @@
 2014-05-01  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r167569 (committing on behalf of Dana Burkart.)
+
+    2014-04-19  Alexey Proskuryakov  <ap@apple.com>
+
+            Crashes in HTMLFormElement::submit.
+            https://bugs.webkit.org/show_bug.cgi?id=131910
+            <rdar://problem/15661790>
+
+            Reviewed by Anders Carlsson.
+
+            * fast/forms/form-submission-crash-2-expected.txt: Added.
+            * fast/forms/form-submission-crash-2.html: Added.
+            * fast/forms/form-submission-crash-expected.txt: Added.
+            * fast/forms/form-submission-crash.html: Added.
+
+2014-05-01  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r166650.
 
     2014-04-02  David Kilzer  <ddkilzer@apple.com>

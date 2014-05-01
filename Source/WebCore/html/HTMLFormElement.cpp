@@ -279,6 +279,7 @@ bool HTMLFormElement::prepareForSubmission(Event* event)
     RefPtr<FormState> formState = FormState::create(this, controlNamesAndValues, document(), NotSubmittedByJavaScript);
     frame->loader()->client()->dispatchWillSendSubmitEvent(formState.release());
 
+    RefPtr<HTMLFormElement> protect(this);
     if (dispatchEvent(Event::create(eventNames().submitEvent, true, true)))
         m_shouldSubmit = true;
 
@@ -354,6 +355,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
 
     bool lockHistory = !processingUserGesture;
+    RefPtr<HTMLFormElement> protect(this); // Form submission can execute arbitary JavaScript.
     frame->loader()->submitForm(FormSubmission::create(this, m_attributes, event, lockHistory, formSubmissionTrigger));
 
     if (needButtonActivation && firstSuccessfulSubmitButton)

@@ -346,6 +346,7 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
         if (!m_frame->document()->contentSecurityPolicy()->allowFormAction(KURL(submission->action())))
             return;
         m_isExecutingJavaScriptFormAction = true;
+        RefPtr<Frame> protect(m_frame);
         m_frame->script()->executeIfJavaScriptURL(submission->action(), DoNotReplaceDocumentIfJavaScriptURL);
         m_isExecutingJavaScriptFormAction = false;
         return;
