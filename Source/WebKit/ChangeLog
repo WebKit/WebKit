@@ -1,5 +1,11 @@
 2014-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix attempt.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2014-04-30  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the iOS build.
 
         * WebKit.xcodeproj/project.pbxproj:
