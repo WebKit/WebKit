@@ -34,12 +34,12 @@ namespace WebCore {
 
 class SampleIsLessThanMediaTimeComparator {
 public:
-    bool operator()(std::pair<MediaTime, RefPtr<MediaSample>> value, MediaTime time)
+    bool operator()(const SampleMap::MapType::value_type& value, const MediaTime& time)
     {
         MediaTime presentationEndTime = value.second->presentationTime() + value.second->duration();
         return presentationEndTime <= time;
     }
-    bool operator()(MediaTime time, std::pair<MediaTime, RefPtr<MediaSample>> value)
+    bool operator()(const MediaTime& time, const SampleMap::MapType::value_type& value)
     {
         MediaTime presentationStartTime = value.second->presentationTime();
         return time < presentationStartTime;
@@ -48,12 +48,12 @@ public:
 
 class SampleIsGreaterThanMediaTimeComparator {
 public:
-    bool operator()(std::pair<MediaTime, RefPtr<MediaSample>> value, MediaTime time)
+    bool operator()(const SampleMap::MapType::value_type& value, const MediaTime& time)
     {
         MediaTime presentationStartTime = value.second->presentationTime();
         return presentationStartTime > time;
     }
-    bool operator()(MediaTime time, std::pair<MediaTime, RefPtr<MediaSample>> value)
+    bool operator()(const MediaTime& time, const SampleMap::MapType::value_type& value)
     {
         MediaTime presentationEndTime = value.second->presentationTime() + value.second->duration();
         return time >= presentationEndTime;
@@ -97,7 +97,10 @@ void SampleMap::removeSample(MediaSample* sample)
 
 SampleMap::iterator SampleMap::findSampleContainingPresentationTime(const MediaTime& time)
 {
-    return std::equal_range(presentationBegin(), presentationEnd(), time, SampleIsLessThanMediaTimeComparator()).first;
+    auto range = std::equal_range(presentationBegin(), presentationEnd(), time, SampleIsLessThanMediaTimeComparator());
+    if (range.first == range.second)
+        return presentationEnd();
+    return range.first;
 }
 
 SampleMap::iterator SampleMap::findSampleAfterPresentationTime(const MediaTime& time)
@@ -112,7 +115,10 @@ SampleMap::iterator SampleMap::findSampleWithDecodeTime(const MediaTime& time)
 
 SampleMap::reverse_iterator SampleMap::reverseFindSampleContainingPresentationTime(const MediaTime& time)
 {
-    return std::equal_range(reversePresentationBegin(), reversePresentationEnd(), time, SampleIsGreaterThanMediaTimeComparator()).first;
+    auto range = std::equal_range(reversePresentationBegin(), reversePresentationEnd(), time, SampleIsGreaterThanMediaTimeComparator());
+    if (range.first == range.second)
+        return reversePresentationEnd();
+    return range.first;
 }
 
 SampleMap::reverse_iterator SampleMap::reverseFindSampleBeforePresentationTime(const MediaTime& time)

@@ -1,3 +1,25 @@
+2014-04-30  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Seeking between two buffered ranges enquues incorrect buffers.
+        https://bugs.webkit.org/show_bug.cgi?id=132416
+
+        Reviewed by Eric Carlson.
+
+        std::equal_range(begin, end, value) will return an empty range if equal values cannot
+        be found. But the range is not necessarily [end, end).  It may be some other value n,
+        such that the empty range is [n, n). Check to see if the returned range is empty in
+        findSampleContainingPresentationTime() and its reverse version, and if so, explicitly
+        return presentationEnd() or reversePresentationEnd() respectively.
+
+        Drive-by fix: make the comparator functions take const& arguments to minimize object
+        creation.
+
+        * Modules/mediasource/SampleMap.cpp:
+        (WebCore::SampleIsLessThanMediaTimeComparator::operator()):
+        (WebCore::SampleIsGreaterThanMediaTimeComparator::operator()):
+        (WebCore::SampleMap::findSampleContainingPresentationTime):
+        (WebCore::SampleMap::reverseFindSampleContainingPresentationTime):
+
 2014-05-01  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Inline text selection painting should not snap to integral CSS pixel position.
