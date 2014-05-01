@@ -1,3 +1,19 @@
+2014-05-01  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make selection gaps painting subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=132169
+
+        Reviewed by Simon Fraser.
+
+        Push selection gaps painting to device pixel boundaries instead of integral CSS pixel positions.
+
+        Test: fast/inline/hidpi-selection-gap-on-subpixel-position.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::blockSelectionGap):
+        (WebCore::RenderBlock::logicalLeftSelectionGap):
+        (WebCore::RenderBlock::logicalRightSelectionGap):
+
 2014-05-01  David Kilzer  <ddkilzer@apple.com>
 
         Really remove ENABLE_PLUGIN_PROXY_FOR_VIDEO

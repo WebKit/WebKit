@@ -2533,7 +2533,7 @@ LayoutRect RenderBlock::blockSelectionGap(RenderBlock& rootBlock, const LayoutPo
 
     LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(logicalLeft, logicalTop, logicalWidth, logicalHeight));
     if (paintInfo)
-        paintInfo->context->fillRect(pixelSnappedIntRect(gapRect), selectionBackgroundColor(), style().colorSpace());
+        paintInfo->context->fillRect(pixelSnappedForPainting(gapRect, document().deviceScaleFactor()), selectionBackgroundColor(), style().colorSpace());
     return gapRect;
 }
 
@@ -2550,7 +2550,7 @@ LayoutRect RenderBlock::logicalLeftSelectionGap(RenderBlock& rootBlock, const La
 
     LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
     if (paintInfo)
-        paintInfo->context->fillRect(pixelSnappedIntRect(gapRect), selObj->selectionBackgroundColor(), selObj->style().colorSpace());
+        paintInfo->context->fillRect(pixelSnappedForPainting(gapRect, document().deviceScaleFactor()), selObj->selectionBackgroundColor(), selObj->style().colorSpace());
     return gapRect;
 }
 
@@ -2567,7 +2567,7 @@ LayoutRect RenderBlock::logicalRightSelectionGap(RenderBlock& rootBlock, const L
 
     LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
     if (paintInfo)
-        paintInfo->context->fillRect(pixelSnappedIntRect(gapRect), selObj->selectionBackgroundColor(), selObj->style().colorSpace());
+        paintInfo->context->fillRect(pixelSnappedForPainting(gapRect, document().deviceScaleFactor()), selObj->selectionBackgroundColor(), selObj->style().colorSpace());
     return gapRect;
 }
 

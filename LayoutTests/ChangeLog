@@ -1,3 +1,17 @@
+2014-05-01  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make selection gaps painting subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=132169
+
+        Reviewed by Simon Fraser.
+
+        Push selection gaps painting to device pixel boundaries instead of integral CSS pixel positions.
+
+        * fast/inline/hidpi-selection-gap-on-subpixel-position-expected.html: Added.
+        * fast/inline/hidpi-selection-gap-on-subpixel-position.html: Added. : &nbsp is needed to make
+        this test pass on WK2. Font rendering reports differences. 0.9 transparency is added so that
+        text selection code does modify the color's alpha channel and I can properly match it.
+
 2014-05-01  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Clamping the number of repetitions in repeat()
