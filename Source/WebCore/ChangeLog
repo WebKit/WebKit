@@ -1,3 +1,14 @@
+2014-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] audio and video should automatically play to active external device
+        https://bugs.webkit.org/show_bug.cgi?id=132428
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Set 
+            AVPlayer.usesExternalPlaybackWhileExternalScreenIsActive.
+
 2014-05-01  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (r168046): [New Multicolumn] Selection into and out of column-span elements doesn't work
