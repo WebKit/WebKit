@@ -71,6 +71,8 @@ void TelephoneNumberOverlayController::drawRect(PageOverlay* overlay, WebCore::G
 
         // Convert to the main document's coordinate space.
         FrameView* viewForRange = range->ownerDocument().view();
+        if (!viewForRange)
+            return;
         FrameView& mainFrameView = *m_webPage->corePage()->mainFrame().view();
         rect.setLocation(mainFrameView.convertChildToSelf(viewForRange, rect.location()));
 
