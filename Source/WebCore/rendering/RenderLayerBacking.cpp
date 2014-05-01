@@ -743,6 +743,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (compAncestor && compAncestor->backing()->hasClippingLayer()) {
         // If the compositing ancestor has a layer to clip children, we parent in that, and therefore
         // position relative to it.
+        // FIXME: need to do some pixel snapping here.
         LayoutRect clippingBox = clipBox(toRenderBox(compAncestor->renderer()));
         graphicsLayerParentLocation = clippingBox.location();
     } else if (compAncestor)
@@ -757,18 +758,19 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
             renderBox->width() - renderBox->borderLeft() - renderBox->borderRight(),
             renderBox->height() - renderBox->borderTop() - renderBox->borderBottom());
 
-        LayoutSize scrollOffset = compAncestor->scrolledContentOffset();
+        IntSize scrollOffset = compAncestor->scrolledContentOffset();
+        // FIXME: pixel snap the padding box.
         graphicsLayerParentLocation = paddingBox.location() - scrollOffset;
     }
-#endif
-
+#else
     if (compAncestor && compAncestor->needsCompositedScrolling()) {
         RenderBox& renderBox = toRenderBox(compAncestor->renderer());
         LayoutSize scrollOffset = compAncestor->scrolledContentOffset();
         LayoutPoint scrollOrigin(renderBox.borderLeft(), renderBox.borderTop());
         graphicsLayerParentLocation = scrollOrigin - scrollOffset;
     }
-    
+#endif
+
     if (compAncestor && m_ancestorClippingLayer) {
         // Call calculateRects to get the backgroundRect which is what is used to clip the contents of this
         // layer. Note that we call it with temporaryClipRects = true because normally when computing clip rects
@@ -813,6 +815,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // If we have a layer that clips children, position it.
     LayoutRect clippingBox;
     if (GraphicsLayer* clipLayer = clippingLayer()) {
+        // FIXME: need to do some pixel snapping here.
         clippingBox = clipBox(toRenderBox(renderer()));
         clipLayer->setPosition(FloatPoint(clippingBox.location() - localCompositingBounds.location()));
         clipLayer->setSize(clippingBox.size());
@@ -909,9 +912,11 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         LayoutRect paddingBox(renderBox.borderLeft(), renderBox.borderTop(), renderBox.width() - renderBox.borderLeft() - renderBox.borderRight(), renderBox.height() - renderBox.borderTop() - renderBox.borderBottom());
         LayoutSize scrollOffset = m_owningLayer.scrollOffset();
 
+        // FIXME: need to do some pixel snapping here.
         m_scrollingLayer->setPosition(FloatPoint(paddingBox.location() - localCompositingBounds.location()));
 
-        m_scrollingLayer->setSize(paddingBox.size());
+        IntSize pixelSnappedClientSize(renderBox.pixelSnappedClientWidth(), renderBox.pixelSnappedClientHeight());
+        m_scrollingLayer->setSize(pixelSnappedClientSize);
 #if PLATFORM(IOS)
         FloatSize oldScrollingLayerOffset = m_scrollingLayer->offsetFromRenderer();
         m_scrollingLayer->setOffsetFromRenderer(FloatPoint() - paddingBox.location());

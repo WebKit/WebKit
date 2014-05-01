@@ -1,3 +1,27 @@
+2014-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Some accerated overflow-scroll doesn't scroll correctly
+        https://bugs.webkit.org/show_bug.cgi?id=132375
+
+        Reviewed by Tim Horton.
+        
+        We set the size of the scrolling layer (which becomes the bounds of
+        the UIScrollView) to a non-pixel-snapped padding box size, but the
+        size of the contents layer is an integral-snapped scroll size.
+        This would result in a fractional difference between the two, which
+        makes us thing that the element is scrollable when it really is not.
+        
+        Fix by setting the size of the scroll layer to pixel snapped client size,
+        which is what we also use for scrollability computation.
+        
+        Added some FIXMEs in code that requires pixel snapping.
+        
+        Also use #if PLATFORM(IOS)/#else to bracket some code that never runs on iOS
+        but tries to do something similar to iOS-only code.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2014-04-30  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (r168046): [New Multicolumn] Painting order is wrong for columns and fixed positioned elements

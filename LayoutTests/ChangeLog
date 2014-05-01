@@ -1,5 +1,23 @@
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Some accerated overflow-scroll doesn't scroll correctly
+        https://bugs.webkit.org/show_bug.cgi?id=132375
+
+        Reviewed by Tim Horton.
+        
+        New test that dumps compositing layers on iOS so we can see the sizes of the
+        scroll layers that get created.
+        
+        * compositing/overflow/subpixel-overflow-expected.txt: Added.
+        * compositing/overflow/subpixel-overflow.html: Added.
+        * platform/ios-sim/compositing/overflow/subpixel-overflow-expected.txt: Added.
+        * platform/mac/compositing/overflow/composited-scrolling-creates-a-stacking-container-expected.txt:
+        This is a progression; the old code failed to take the scrollbar width into
+        account, and the new code does.
+
+
+2014-04-30  Simon Fraser  <simon.fraser@apple.com>
+
         Rebaseline compositing/overflow tests for iOS.
 
         * platform/ios-sim/compositing/overflow/composited-scrolling-creates-a-stacking-container-expected.txt:
