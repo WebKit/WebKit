@@ -6,9 +6,6 @@ layer at (0,0) size 800x600
 layer at (8,8) size 784x160
   RenderBlock {P} at (0,0) size 784x160 [border: (10px solid #800000)]
     RenderMultiColumnSet at (30,30) size 724x100
-layer at (8,184) size 784x160
-  RenderBlock {P} at (0,176) size 784x160 [border: (10px solid #800000)]
-    RenderMultiColumnSet at (30,30) size 724x100
 layer at (38,38) size 231x254
   RenderMultiColumnFlowThread at (30,30) size 231x254
     RenderText {#text} at (0,0) size 161x18
@@ -50,6 +47,9 @@ layer at (38,38) size 231x254
     RenderText {#text} at (0,236) size 161x18
       text run at (0,236) width 161: "This is some column text."
     RenderBR {BR} at (161,250) size 0x0
+layer at (8,184) size 784x160
+  RenderBlock {P} at (0,176) size 784x160 [border: (10px solid #800000)]
+    RenderMultiColumnSet at (30,30) size 724x100
 layer at (531,214) size 231x254
   RenderMultiColumnFlowThread at (523,30) size 231x254
     RenderText {#text} at (69,0) size 161x18

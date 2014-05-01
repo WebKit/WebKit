@@ -1,3 +1,21 @@
+2014-04-30  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r168046): [New Multicolumn] Painting order is wrong for columns and fixed positioned elements
+        https://bugs.webkit.org/show_bug.cgi?id=132377
+
+        Reviewed by Simon Fraser.
+
+        Added fast/multicol/fixed-stack.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeSelfPaintingLayer):
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        Change the flow thread layer for multicolumn layout to be normal flow only and to
+        stay self-painting. This has the effect of keeping the flow thread layer grouped
+        with the enclosing multicolumn layer, and this keeps the paint order correct when
+        compositing kicks in (or when something would otherwise try to get between the
+        two layers).
+
 2014-04-30  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] do not pause video when entering background while playing to external device

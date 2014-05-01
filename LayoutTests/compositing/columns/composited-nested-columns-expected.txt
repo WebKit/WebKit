@@ -7,8 +7,8 @@
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
-          (anchor 0.50 0.18)
-          (bounds 784.00 1131.00)
+          (anchor 0.50 0.25)
+          (bounds 784.00 832.00)
           (drawsContent 1)
           (children 1
             (GraphicsLayer

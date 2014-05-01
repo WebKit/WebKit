@@ -6,15 +6,6 @@ layer at (0,0) size 785x1680
 layer at (8,8) size 769x404
   RenderBlock {DIV} at (0,0) size 769x404 [border: (2px solid #000000)]
     RenderMultiColumnSet at (2,2) size 765x400
-layer at (8,428) size 769x404
-  RenderBlock {DIV} at (0,420) size 769x404 [border: (2px solid #000000)]
-    RenderMultiColumnSet at (2,2) size 765x400
-layer at (8,848) size 769x404
-  RenderBlock {DIV} at (0,840) size 769x404 [border: (2px solid #000000)]
-    RenderMultiColumnSet at (2,2) size 765x400
-layer at (8,1268) size 769x404
-  RenderBlock {DIV} at (0,1260) size 769x404 [border: (2px solid #000000)]
-    RenderMultiColumnSet at (2,2) size 765x400
 layer at (10,10) size 375x888
   RenderMultiColumnFlowThread at (2,2) size 375x888
     RenderBlock (anonymous) at (0,0) size 375x252
@@ -142,6 +133,9 @@ layer at (10,10) size 375x888
       RenderText {#text} at (0,586) size 110x18
         text run at (0,586) width 110: "This is some text."
       RenderBR {BR} at (110,600) size 0x0
+layer at (8,428) size 769x404
+  RenderBlock {DIV} at (0,420) size 769x404 [border: (2px solid #000000)]
+    RenderMultiColumnSet at (2,2) size 765x400
 layer at (10,430) size 375x888
   RenderMultiColumnFlowThread at (2,2) size 375x888
     RenderBlock (anonymous) at (0,0) size 375x252
@@ -268,6 +262,9 @@ layer at (10,430) size 375x888
       RenderText {#text} at (0,586) size 110x18
         text run at (0,586) width 110: "This is some text."
       RenderBR {BR} at (110,600) size 0x0
+layer at (8,848) size 769x404
+  RenderBlock {DIV} at (0,840) size 769x404 [border: (2px solid #000000)]
+    RenderMultiColumnSet at (2,2) size 765x400
 layer at (10,850) size 375x436
   RenderMultiColumnFlowThread at (2,2) size 375x436
     RenderImage {IMG} at (0,0) size 300x390 [bgcolor=#008000]
@@ -296,6 +293,9 @@ layer at (10,850) size 375x436
       text run at (300,378) width 23: "and"
       text run at (0,400) width 360: "wrapping behavior. Longer text designed to test float and"
       text run at (0,418) width 123: "wrapping behavior."
+layer at (8,1268) size 769x404
+  RenderBlock {DIV} at (0,1260) size 769x404 [border: (2px solid #000000)]
+    RenderMultiColumnSet at (2,2) size 765x400
 layer at (10,1270) size 375x652 backgroundClip at (0,0) size 1166x1680 clip at (0,0) size 1166x1680 outlineClip at (0,0) size 1166x1680
   RenderMultiColumnFlowThread at (2,2) size 375x652
     RenderImage {IMG} at (0,0) size 375x380 [bgcolor=#0000FF]

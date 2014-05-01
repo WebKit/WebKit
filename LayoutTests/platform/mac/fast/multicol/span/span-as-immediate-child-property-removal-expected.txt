@@ -11,21 +11,6 @@ layer at (0,0) size 785x2396
 layer at (8,60) size 760x352
   RenderBlock {DIV} at (0,52) size 760x352 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x342
-layer at (8,428) size 760x352
-  RenderBlock {DIV} at (0,420) size 760x352 [border: (5px solid #800000)]
-    RenderMultiColumnSet at (5,5) size 750x342
-layer at (8,796) size 760x382
-  RenderBlock {DIV} at (0,788) size 760x382 [border: (5px solid #800000)]
-    RenderMultiColumnSet at (5,5) size 750x372
-layer at (8,1194) size 760x384
-  RenderBlock {DIV} at (0,1185) size 760x385 [border: (5px solid #800000)]
-    RenderMultiColumnSet at (5,5) size 750x374
-layer at (8,1594) size 760x370
-  RenderBlock {DIV} at (0,1585) size 760x371 [border: (5px solid #800000)]
-    RenderMultiColumnSet at (5,5) size 750x360
-layer at (8,1980) size 760x400
-  RenderBlock {DIV} at (0,1971) size 760x401 [border: (5px solid #800000)]
-    RenderMultiColumnSet at (5,5) size 750x390
 layer at (13,65) size 367x684
   RenderMultiColumnFlowThread at (5,5) size 367x684
     RenderBlock {H2} at (0,19) size 367x29 [bgcolor=#EEEEEE]
@@ -69,6 +54,9 @@ layer at (13,65) size 367x684
         text run at (0,562) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,580) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,598) width 154: "Nulla varius enim ac mi."
+layer at (8,428) size 760x352
+  RenderBlock {DIV} at (0,420) size 760x352 [border: (5px solid #800000)]
+    RenderMultiColumnSet at (5,5) size 750x342
 layer at (13,433) size 367x680
   RenderMultiColumnFlowThread at (5,5) size 367x680
     RenderBlock (anonymous) at (0,0) size 367x612
@@ -112,6 +100,9 @@ layer at (13,433) size 367x680
     RenderBlock {H2} at (0,631) size 367x29 [bgcolor=#EEEEEE]
       RenderText {#text} at (0,0) size 276x28
         text run at (0,0) width 276: "This is a spanning element."
+layer at (8,796) size 760x382
+  RenderBlock {DIV} at (0,788) size 760x382 [border: (5px solid #800000)]
+    RenderMultiColumnSet at (5,5) size 750x372
 layer at (13,801) size 367x730
   RenderMultiColumnFlowThread at (5,5) size 367x730
     RenderBlock {P} at (0,16) size 367x234
@@ -158,6 +149,9 @@ layer at (13,801) size 367x730
         text run at (0,342) width 345: "Suspendisse hendrerit quam nec felis. Sed varius turpis"
         text run at (0,360) width 331: "vitae pede. Lorem ipsum dolor sit amet, consectetuer"
         text run at (0,378) width 91: "adipiscing elit."
+layer at (8,1194) size 760x384
+  RenderBlock {DIV} at (0,1185) size 760x385 [border: (5px solid #800000)]
+    RenderMultiColumnSet at (5,5) size 750x374
 layer at (13,1199) size 367x730
   RenderMultiColumnFlowThread at (5,5) size 367x730
     RenderBlock (anonymous) at (0,0) size 367x234
@@ -208,6 +202,9 @@ layer at (13,1199) size 367x730
         text run at (0,144) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
         text run at (0,162) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
         text run at (0,180) width 229: "sit amet, consectetuer adipiscing elit."
+layer at (8,1594) size 760x370
+  RenderBlock {DIV} at (0,1585) size 760x371 [border: (5px solid #800000)]
+    RenderMultiColumnSet at (5,5) size 750x360
 layer at (13,1599) size 367x714
   RenderMultiColumnFlowThread at (5,5) size 367x714
     RenderBlock (anonymous) at (0,0) size 367x198
@@ -261,6 +258,9 @@ layer at (13,1599) size 367x714
         text run at (0,144) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
         text run at (0,162) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
         text run at (0,180) width 229: "sit amet, consectetuer adipiscing elit."
+layer at (8,1980) size 760x400
+  RenderBlock {DIV} at (0,1971) size 760x401 [border: (5px solid #800000)]
+    RenderMultiColumnSet at (5,5) size 750x390
 layer at (13,1985) size 367x764 backgroundClip at (0,0) size 785x2396 clip at (0,0) size 785x2396 outlineClip at (0,0) size 785x2396
   RenderMultiColumnFlowThread at (5,5) size 367x764
     RenderBlock {P} at (0,16) size 367x198
