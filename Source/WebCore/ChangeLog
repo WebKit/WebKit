@@ -1,3 +1,13 @@
+2014-05-01  Alex Christensen  <achristensen@webkit.org>
+
+        Finish updating ANGLE.
+        https://bugs.webkit.org/show_bug.cgi?id=132434
+
+        Reviewed by Dean Jackson.
+
+        * CMakeLists.txt:
+        Removed Uniform.cpp which is no longer in ANGLE.
+
 2014-05-01  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (new multi-column): WebKit2.ResizeReversePaginatedWebView fails on debug bots

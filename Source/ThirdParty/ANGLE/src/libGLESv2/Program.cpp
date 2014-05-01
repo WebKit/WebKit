@@ -112,7 +112,7 @@ void InfoLog::append(const char *format, ...)
     else
     {
         size_t currentlogLength = strlen(mInfoLog);
-        size_t newInfoLogLength = currentlogLength + infoLength + 2; 
+        size_t newInfoLogLength = currentlogLength + infoLength + 2;
         char *newLog = new char[newInfoLogLength];
         strncpy(newLog, mInfoLog, newInfoLogLength);
         newLog[newInfoLogLength - 1] = '\0';

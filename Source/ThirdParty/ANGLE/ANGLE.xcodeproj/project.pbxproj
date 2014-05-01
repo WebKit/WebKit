@@ -131,7 +131,6 @@
 		5C9FFF4F19102A000025B8FA /* FlagStd140Structs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9FFF4D19102A000025B8FA /* FlagStd140Structs.h */; };
 		5CC7D452191024E4000B8C1F /* LoopInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC7D44B191024E3000B8C1F /* LoopInfo.cpp */; };
 		5CC7D453191024E4000B8C1F /* LoopInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC7D44C191024E4000B8C1F /* LoopInfo.h */; };
-		5CC7D456191024E4000B8C1F /* Uniform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC7D44F191024E4000B8C1F /* Uniform.cpp */; };
 		5CC7D457191024E4000B8C1F /* ValidateOutputs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC7D450191024E4000B8C1F /* ValidateOutputs.cpp */; };
 		5CC7D458191024E4000B8C1F /* ValidateOutputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC7D451191024E4000B8C1F /* ValidateOutputs.h */; };
 		5CC7D46B19102620000B8C1F /* angleutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC7D45A19102620000B8C1F /* angleutils.h */; };
@@ -327,7 +326,6 @@
 		5C9FFF4D19102A000025B8FA /* FlagStd140Structs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlagStd140Structs.h; sourceTree = "<group>"; };
 		5CC7D44B191024E3000B8C1F /* LoopInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoopInfo.cpp; sourceTree = "<group>"; };
 		5CC7D44C191024E4000B8C1F /* LoopInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoopInfo.h; sourceTree = "<group>"; };
-		5CC7D44F191024E4000B8C1F /* Uniform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Uniform.cpp; sourceTree = "<group>"; };
 		5CC7D450191024E4000B8C1F /* ValidateOutputs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidateOutputs.cpp; sourceTree = "<group>"; };
 		5CC7D451191024E4000B8C1F /* ValidateOutputs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidateOutputs.h; sourceTree = "<group>"; };
 		5CC7D45A19102620000B8C1F /* angleutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = angleutils.h; path = src/common/angleutils.h; sourceTree = "<group>"; };
@@ -400,7 +398,6 @@
 				5C9FFF4D19102A000025B8FA /* FlagStd140Structs.h */,
 				5CC7D44B191024E3000B8C1F /* LoopInfo.cpp */,
 				5CC7D44C191024E4000B8C1F /* LoopInfo.h */,
-				5CC7D44F191024E4000B8C1F /* Uniform.cpp */,
 				5CC7D450191024E4000B8C1F /* ValidateOutputs.cpp */,
 				5CC7D451191024E4000B8C1F /* ValidateOutputs.h */,
 				31012DA918B97B9B0039062F /* depgraph */,
@@ -884,7 +881,6 @@
 				31012E5918B97B9B0039062F /* QualifierAlive.cpp in Sources */,
 				31012E7118B97B9B0039062F /* UnfoldShortCircuit.cpp in Sources */,
 				31012E6418B97B9B0039062F /* SymbolTable.cpp in Sources */,
-				5CC7D456191024E4000B8C1F /* Uniform.cpp in Sources */,
 				A264F8B416974DED006FAA5A /* Input.cpp in Sources */,
 				5CC7D47919102621000B8C1F /* utilities.cpp in Sources */,
 				A264F8B616974DED006FAA5A /* Lexer.cpp in Sources */,

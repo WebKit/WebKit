@@ -1,5 +1,5 @@
 diff --git a/include/GLSLANG/ShaderLang.h b/include/GLSLANG/ShaderLang.h
-index 7970bfa..9cdcc24 100644
+index 7970bfa..b716c6f 100644
 --- a/include/GLSLANG/ShaderLang.h
 +++ b/include/GLSLANG/ShaderLang.h
 @@ -23,7 +23,7 @@
@@ -11,6 +11,17 @@ index 7970bfa..9cdcc24 100644
  #include <stddef.h>
  
  //
+@@ -423,8 +423,8 @@ COMPILER_EXPORT void ShGetInfoLog(const ShHandle handle, char* infoLog);
+ // Returns null-terminated object code for a compiled shader.
+ // Parameters:
+ // handle: Specifies the compiler
+-// infoLog: Specifies an array of characters that is used to return
+-//          the object code. It is assumed that infoLog has enough memory to
++// objCode: Specifies an array of characters that is used to return
++//          the object code. It is assumed that objCode has enough memory to
+ //          accomodate the object code. The size of the buffer required to
+ //          store the returned object code can be obtained by calling
+ //          ShGetInfo with SH_OBJECT_CODE_LENGTH.
 diff --git a/src/common/mathutil.h b/src/common/mathutil.h
 index 9061bbd..0b4f384 100644
 --- a/src/common/mathutil.h
@@ -145,6 +156,117 @@ index ab9d99a..850c639 100644
  namespace pp {
  
  Tokenizer::Tokenizer(Diagnostics* diagnostics) : mHandle(0)
+diff --git a/src/compiler/translator/Compiler.cpp b/src/compiler/translator/Compiler.cpp
+index 1864cd8..c3111c1 100644
+--- a/src/compiler/translator/Compiler.cpp
++++ b/src/compiler/translator/Compiler.cpp
+@@ -96,6 +96,7 @@ TCompiler::TCompiler(ShShaderType type, ShShaderSpec spec)
+     : shaderType(type),
+       shaderSpec(spec),
+       maxUniformVectors(0),
++      maxVaryingVectors(0),
+       maxExpressionComplexity(0),
+       maxCallStackDepth(0),
+       fragmentPrecisionHigh(false),
+@@ -114,6 +115,7 @@ bool TCompiler::Init(const ShBuiltInResources& resources)
+     maxUniformVectors = (shaderType == SH_VERTEX_SHADER) ?
+         resources.MaxVertexUniformVectors :
+         resources.MaxFragmentUniformVectors;
++    maxVaryingVectors = resources.MaxVaryingVectors;
+     maxExpressionComplexity = resources.MaxExpressionComplexity;
+     maxCallStackDepth = resources.MaxCallStackDepth;
+ 
+@@ -238,14 +240,7 @@ bool TCompiler::compile(const char* const shaderStrings[],
+         {
+             collectVariables(root);
+             if (compileOptions & SH_ENFORCE_PACKING_RESTRICTIONS)
+-            {
+                 success = enforcePackingRestrictions();
+-                if (!success)
+-                {
+-                    infoSink.info.prefix(EPrefixError);
+-                    infoSink.info << "too many uniforms";
+-                }
+-            }
+             if (success && shaderType == SH_VERTEX_SHADER &&
+                 (compileOptions & SH_INIT_VARYINGS_WITHOUT_STATIC_USE))
+                 initializeVaryingsWithoutStaticUse(root);
+@@ -458,7 +453,21 @@ void TCompiler::collectVariables(TIntermNode* root)
+ bool TCompiler::enforcePackingRestrictions()
+ {
+     VariablePacker packer;
+-    return packer.CheckVariablesWithinPackingLimits(maxUniformVectors, uniforms);
++    bool success = packer.CheckVariablesWithinPackingLimits(maxUniformVectors, uniforms);
++    if (!success) {
++        infoSink.info.prefix(EPrefixError);
++        infoSink.info << "too many uniforms";
++        return false;
++    }
++
++    success = packer.CheckVariablesWithinPackingLimits(maxVaryingVectors, varyings);
++
++    if (!success) {
++        infoSink.info.prefix(EPrefixError);
++        infoSink.info << "too many varyings";
++        return false;
++    }
++    return true;
+ }
+ 
+ void TCompiler::initializeGLPosition(TIntermNode* root)
+diff --git a/src/compiler/translator/ShHandle.h b/src/compiler/translator/ShHandle.h
+index 50a8d58..687ff63 100644
+--- a/src/compiler/translator/ShHandle.h
++++ b/src/compiler/translator/ShHandle.h
+@@ -95,7 +95,7 @@ protected:
+     // Translate to object code.
+     virtual void translate(TIntermNode* root) = 0;
+     // Returns true if, after applying the packing rules in the GLSL 1.017 spec
+-    // Appendix A, section 7, the shader does not use too many uniforms.
++    // Appendix A, section 7, the shader does not use too many uniforms or varyings.
+     bool enforcePackingRestrictions();
+     // Insert statements to initialize varyings without static use in the beginning
+     // of main(). It is to work around a Mac driver where such varyings in a vertex
+@@ -130,6 +130,7 @@ private:
+     ShShaderSpec shaderSpec;
+ 
+     int maxUniformVectors;
++    int maxVaryingVectors;
+     int maxExpressionComplexity;
+     int maxCallStackDepth;
+ 
+diff --git a/src/compiler/translator/ShaderLang.cpp b/src/compiler/translator/ShaderLang.cpp
+index b98c371..dd26873 100644
+--- a/src/compiler/translator/ShaderLang.cpp
++++ b/src/compiler/translator/ShaderLang.cpp
+@@ -242,8 +242,12 @@ void ShGetInfoLog(const ShHandle handle, char* infoLog)
+     TCompiler* compiler = base->getAsCompiler();
+     if (!compiler) return;
+ 
++    size_t infoLogLength = 0;
++    ShGetInfo(compiler, SH_INFO_LOG_LENGTH, &infoLogLength);
++
+     TInfoSink& infoSink = compiler->getInfoSink();
+-    strcpy(infoLog, infoSink.info.c_str());
++    strncpy(infoLog, infoSink.info.c_str(), infoLogLength);
++    infoLog[infoLogLength - 1] = '\0';
+ }
+ 
+ //
+@@ -258,8 +262,12 @@ void ShGetObjectCode(const ShHandle handle, char* objCode)
+     TCompiler* compiler = base->getAsCompiler();
+     if (!compiler) return;
+ 
++    size_t objCodeLength = 0;
++    ShGetInfo(handle, SH_OBJECT_CODE_LENGTH, &objCodeLength);
++
+     TInfoSink& infoSink = compiler->getInfoSink();
+-    strcpy(objCode, infoSink.obj.c_str());
++    strncpy(objCode, infoSink.obj.c_str(), objCodeLength);
++    objCode[objCodeLength - 1] = '\0';
+ }
+ 
+ void ShGetVariableInfo(const ShHandle handle,
 diff --git a/src/compiler/translator/glslang.l b/src/compiler/translator/glslang.l
 index 518b78d..c8ff855 100644
 --- a/src/compiler/translator/glslang.l
@@ -225,3 +347,47 @@ index c6a61dc..09a38d4 100644
  /* Bison interface for Yacc-like parsers in C
     
        Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+diff --git a/src/libGLESv2/Program.cpp b/src/libGLESv2/Program.cpp
+index 8a9fb04..46db788 100644
+--- a/src/libGLESv2/Program.cpp
++++ b/src/libGLESv2/Program.cpp
+@@ -101,22 +101,27 @@ void InfoLog::append(const char *format, ...)
+     va_end(vararg);
+ 
+     char *logPointer = NULL;
++    size_t logLength = 0;
+ 
+     if (!mInfoLog)
+     {
+         mInfoLog = new char[infoLength + 2];
+         logPointer = mInfoLog;
++        logLength = infoLenfth + 2;
+     }
+     else
+     {
+         size_t currentlogLength = strlen(mInfoLog);
+-        char *newLog = new char[currentlogLength + infoLength + 2];
+-        strcpy(newLog, mInfoLog);
++        size_t newInfoLogLength = currentlogLength + infoLength + 2;
++        char *newLog = new char[newInfoLogLength];
++        strncpy(newLog, mInfoLog, newInfoLogLength);
++        newLog[newInfoLogLength - 1] = '\0';
+ 
+         delete[] mInfoLog;
+         mInfoLog = newLog;
+ 
+         logPointer = mInfoLog + currentlogLength;
++        logLength = newInfoLogLength - currentlogLength;
+     }
+ 
+     va_start(vararg, format);
+@@ -124,7 +129,8 @@ void InfoLog::append(const char *format, ...)
+     va_end(vararg);
+ 
+     logPointer[infoLength] = 0;
+-    strcpy(logPointer + infoLength, "\n");
++    strncpy(logPointer + infoLength, "\n", logLength - infoLength);
++    logPointer[logLength - 1] = '\0';
+ }
+ 
+ void InfoLog::reset()
