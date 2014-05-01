@@ -1,3 +1,26 @@
+2014-04-30  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Unreviewed, rolling out r167879 and r167942.
+        https://bugs.webkit.org/show_bug.cgi?id=132408
+
+        OrderIterator changes caused regressions in flexbox (Requested
+        by rego on #webkit).
+
+        We're keeping the new layout test introduced in r167942
+        (fast/flexbox/order-iterator-crash.html) to avoid similar
+        regressions in the future.
+
+        Reverted changesets:
+
+        "OrderIterator refactoring to avoid extra loops"
+        https://bugs.webkit.org/show_bug.cgi?id=119061
+        http://trac.webkit.org/changeset/167879
+
+        "REGRESSION (r167879): Heap-use-after-free in
+        WebCore::RenderFlexibleBox"
+        https://bugs.webkit.org/show_bug.cgi?id=132337
+        http://trac.webkit.org/changeset/167942
+
 2014-04-30  Enrica Casucci  <enrica@apple.com>
 
         Cursor gets thinner on empty lines.
