@@ -1987,6 +1987,7 @@
 				1AD7451518D0D26C006F3A1E /* Frameworks */,
 				1A27F2A3190F1BB700D2B661 /* Check For Framework Include Consistency */,
 				1A27F2A2190F1B8500D2B661 /* Check For Inappropriate Macros in External Headers */,
+				5DE6D18C0FCF231B002DE28C /* Symlink WebKitPluginHost in to place */,
 			);
 			buildRules = (
 			);
@@ -2013,7 +2014,6 @@
 				939811270824BF01008DF038 /* Frameworks */,
 				5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */,
 				3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */,
-				5DE6D18C0FCF231B002DE28C /* Symlink WebKitPluginHost in to place */,
 			);
 			buildRules = (
 			);
@@ -2238,11 +2238,11 @@
 			);
 			name = "Symlink WebKitPluginHost in to place";
 			outputPaths = (
-				"$(CONFIGURATION_BUILD_DIR)/WebKitLegacy.framework/WebKitPluginHost.app",
+				"$(CONFIGURATION_BUILD_DIR)/WebKit.framework/WebKitPluginHost.app",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\n    exit 0\nfi\n\nif [[ \"${CONFIGURATION}\" != \"Production\" && \"${ACTION}\" == \"build\" ]]; then\n    if [[ ! -e \"${CONFIGURATION_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\" ]]; then\n        if [[ -e \"/System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app\" ]]; then\n            ln -s /System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\"\n        else\n            ln -s /System/Library/Frameworks/WebKit.framework/Frameworks/WebKitLegacy.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\"\n        fi\n    fi\nfi\n";
+			shellScript = "if [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\n    exit 0\nfi\n\nif [[ \"${CONFIGURATION}\" != \"Production\" && \"${ACTION}\" == \"build\" ]]; then\n    if [[ ! -e \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\" ]]; then\n        if [[ -e \"/System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app\" ]]; then\n            ln -s /System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\"\n        else\n            ln -s /System/Library/Frameworks/WebKit.framework/Frameworks/WebKitLegacy.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\"\n        fi\n    fi\nfi\n";
 		};
 		939811300824BF01008DF038 /* Make Frameworks Symbolic Link */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -1,3 +1,10 @@
+2014-05-01  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/16780403> REGRESSION: Plugin tests failing on Mac/WebKit1.
+
+        * WebKit.xcodeproj/project.pbxproj: Keep the WebKitPluginHost.app symlink in
+        WebKit.framework for now.
+
 2014-04-30  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] do not pause video when entering background while playing to external device
