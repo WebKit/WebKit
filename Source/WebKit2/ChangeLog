@@ -1,5 +1,16 @@
 2014-04-30  Gavin Barraclough  <baraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=132415
+        Fix snapshotting on WebKit2
+
+        Reviewed by Geoff Garen
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+            - Use a VisibilityToken to keep the process runnable.
+
+2014-04-30  Gavin Barraclough  <baraclough@apple.com>
+
         Fix PageVisibility on iOS
         https://bugs.webkit.org/show_bug.cgi?id=132393
 

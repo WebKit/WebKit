@@ -64,6 +64,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
+#import "ProcessThrottler.h"
 #import "WKPDFView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
@@ -1456,9 +1457,18 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     CGRect snapshotRectInContentCoordinates = [self convertRect:rectInViewCoordinates toView:_contentView.get()];
     CGFloat imageHeight = imageWidth / snapshotRectInContentCoordinates.size.width * snapshotRectInContentCoordinates.size.height;
     CGSize imageSize = CGSizeMake(imageWidth, imageHeight);
-
+    
+#if PLATFORM(IOS)
+    WebKit::ProcessThrottler::VisibilityToken* visibilityToken = new WebKit::ProcessThrottler::VisibilityToken(_page->process().throttler(), WebKit::ProcessThrottler::Visibility::Hiding);
+#endif
+    
     void(^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
-    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [copiedCompletionHandler](bool, const WebKit::ShareableBitmap::Handle& imageHandle) {
+    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [=](bool, const WebKit::ShareableBitmap::Handle& imageHandle) {
+#if PLATFORM(IOS)
+        // Automatically delete when this goes out of scope.
+        auto uniqueVisibilityToken = std::unique_ptr<WebKit::ProcessThrottler::VisibilityToken>(visibilityToken);
+#endif
+        
         if (imageHandle.isNull()) {
             copiedCompletionHandler(nullptr);
             [copiedCompletionHandler release];
