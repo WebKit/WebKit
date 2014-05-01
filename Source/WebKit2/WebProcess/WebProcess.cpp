@@ -150,7 +150,6 @@ WebProcess::WebProcess()
     , m_viewUpdateDispatcher(ViewUpdateDispatcher::create())
 #endif // PLATFORM(IOS)
     , m_inDidClose(false)
-    , m_shouldTrackVisitedLinks(true)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
 #if PLATFORM(COCOA)
@@ -395,12 +394,6 @@ void WebProcess::ensureNetworkProcessConnection()
     m_networkProcessConnection = NetworkProcessConnection::create(connectionIdentifier);
 }
 #endif // ENABLE(NETWORK_PROCESS)
-
-void WebProcess::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
-{
-    m_shouldTrackVisitedLinks = shouldTrackVisitedLinks;
-    PageGroup::setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
-}
 
 void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 {

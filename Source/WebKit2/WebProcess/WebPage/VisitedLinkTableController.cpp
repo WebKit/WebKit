@@ -81,9 +81,6 @@ void VisitedLinkTableController::addVisitedLink(Page& page, LinkHash linkHash)
     if (m_visitedLinkTable.isLinkVisited(linkHash))
         return;
 
-    if (!WebProcess::shared().shouldTrackVisitedLinks())
-        return;
-
     WebPage* webPage = WebPage::fromCorePage(&page);
     if (!webPage)
         return;

@@ -100,7 +100,6 @@ public:
     WebConnection* webConnectionToUIProcess() const;
 
     // TestRunner only SPI
-    void setShouldTrackVisitedLinks(bool);
     void setAlwaysAcceptCookies(bool);
     void removeAllVisitedLinks();
     void setCacheModel(uint32_t);

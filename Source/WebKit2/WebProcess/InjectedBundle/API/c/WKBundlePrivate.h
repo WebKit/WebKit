@@ -41,7 +41,6 @@ extern "C" {
 #endif
 
 // TestRunner only SPI
-WK_EXPORT void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundle, bool shouldTrackVisitedLinks);
 WK_EXPORT void WKBundleSetAlwaysAcceptCookies(WKBundleRef bundle, bool);
 WK_EXPORT void WKBundleRemoveAllVisitedLinks(WKBundleRef bundle);
 WK_EXPORT void WKBundleActivateMacFontAscentHack(WKBundleRef bundle);

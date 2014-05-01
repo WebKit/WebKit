@@ -130,11 +130,6 @@ WebConnection* InjectedBundle::webConnectionToUIProcess() const
     return WebProcess::shared().webConnectionToUIProcess();
 }
 
-void InjectedBundle::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
-{
-    WebProcess::shared().setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
-}
-
 void InjectedBundle::setAlwaysAcceptCookies(bool accept)
 {
     WebProcess::shared().supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(accept ? HTTPCookieAcceptPolicyAlways : HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);

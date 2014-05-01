@@ -63,11 +63,6 @@ WKConnectionRef WKBundleGetApplicationConnection(WKBundleRef bundleRef)
     return toAPI(toImpl(bundleRef)->webConnectionToUIProcess());
 }
 
-void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundleRef, bool shouldTrackVisitedLinks)
-{
-    toImpl(bundleRef)->setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
-}
-
 void WKBundleRemoveAllVisitedLinks(WKBundleRef bundleRef)
 {
     toImpl(bundleRef)->removeAllVisitedLinks();

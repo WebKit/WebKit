@@ -1,5 +1,26 @@
 2014-05-01  Anders Carlsson  <andersca@apple.com>
 
+        Remove WKBundleSetShouldTrackVisitedLinks and associate code
+        https://bugs.webkit.org/show_bug.cgi?id=132441
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetShouldTrackVisitedLinks): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setShouldTrackVisitedLinks): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::addVisitedLink):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::setShouldTrackVisitedLinks): Deleted.
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::shouldTrackVisitedLinks): Deleted.
+
+2014-05-01  Anders Carlsson  <andersca@apple.com>
+
         window.testRunner.keepWebHistory() should update the UI process state
         https://bugs.webkit.org/show_bug.cgi?id=132440
 
