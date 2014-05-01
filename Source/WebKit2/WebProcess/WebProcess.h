@@ -183,6 +183,11 @@ public:
 
     RefPtr<API::Object> apiObjectByConvertingFromHandles(API::Object*);
 
+#if ENABLE(SERVICE_CONTROLS)
+    bool hasImageServices() const { return m_hasImageServices; }
+    bool hasSelectionServices() const { return m_hasSelectionServices; }
+#endif
+
 private:
     WebProcess();
 
@@ -241,6 +246,10 @@ private:
 #endif
 
     void setMemoryCacheDisabled(bool);
+
+#if ENABLE(SERVICE_CONTROLS)
+    void setEnabledServices(bool hasImageServices, bool hasSelectionServices);
+#endif
 
     void postInjectedBundleMessage(const IPC::DataReference& messageData);
     void setInjectedBundleParameter(const String& key, const IPC::DataReference&);
@@ -323,6 +332,11 @@ private:
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<PluginProcessConnectionManager> m_pluginProcessConnectionManager;
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+    bool m_hasImageServices;
+    bool m_hasSelectionServices;
 #endif
 
     HashSet<uint64_t> m_pagesInWindows;

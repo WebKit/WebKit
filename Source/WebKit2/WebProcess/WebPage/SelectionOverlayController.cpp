@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_CONTROLS)
 
 #include "WebPage.h"
+#include "WebProcess.h"
 #include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -91,10 +92,11 @@ void SelectionOverlayController::selectionRectsDidChange(const Vector<LayoutRect
 
     m_currentSelectionRects = rects;
 
-    if (m_currentSelectionRects.isEmpty())
-        destroyOverlay();
-    else
+    if (WebProcess::shared().hasSelectionServices() && !m_currentSelectionRects.isEmpty())
         createOverlayIfNeeded();
+    else
+        destroyOverlay();
+
 #else
     UNUSED_PARAM(rects);
 #endif

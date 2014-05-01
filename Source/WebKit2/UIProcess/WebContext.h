@@ -338,6 +338,10 @@ public:
 
     void setMemoryCacheDisabled(bool);
 
+#if ENABLE(SERVICE_CONTROLS)
+    void refreshExistingServices();
+#endif
+
 private:
     void platformInitialize();
 
@@ -386,7 +390,7 @@ private:
 #endif
 
     void didGetStatistics(const StatisticsData&, uint64_t callbackID);
-        
+
     // Implemented in generated WebContextMessageReceiver.cpp
     void didReceiveWebContextMessage(IPC::Connection*, IPC::MessageDecoder&);
     void didReceiveSyncWebContextMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);

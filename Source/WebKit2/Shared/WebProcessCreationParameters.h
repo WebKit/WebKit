@@ -155,6 +155,11 @@ struct WebProcessCreationParameters {
     Vector<String> plugInAutoStartOrigins;
 
     bool memoryCacheDisabled;
+
+#if ENABLE(SERVICE_CONTROLS)
+    bool hasImageServices;
+    bool hasSelectionServices;
+#endif
 };
 
 } // namespace WebKit

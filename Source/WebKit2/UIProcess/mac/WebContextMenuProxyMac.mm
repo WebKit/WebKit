@@ -32,7 +32,9 @@
 #import "PageClientImpl.h"
 #import "ShareableBitmap.h"
 #import "StringUtilities.h"
+#import "WebContext.h"
 #import "WebContextMenuItemData.h"
+#import "WebProcessProxy.h"
 #import "WKView.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IntRect.h>
@@ -396,6 +398,12 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setIncludeEditorServices:includeEditorServices];
 
     m_servicesMenu = [picker menu];
+
+    // If there is no services menu, then the existing services on the system have changed.
+    // Ask the UIProcess to refresh that list of services.
+    // If <rdar://problem/16776831> is resolved then we can more accurately keep the list up to date without this call.
+    if (!m_servicesMenu)
+        m_page->process().context().refreshExistingServices();
 }
 
 void WebContextMenuProxyMac::clearServicesMenu()

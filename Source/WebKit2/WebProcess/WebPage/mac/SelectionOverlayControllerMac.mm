@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_CONTROLS)
 
+#import "WebProcess.h"
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/MainFrame.h>
@@ -58,6 +59,11 @@ void SelectionOverlayController::drawRect(PageOverlay* overlay, WebCore::Graphic
 {
     if (m_currentSelectionRects.isEmpty())
         return;
+
+    if (!WebProcess::shared().hasSelectionServices()) {
+        destroyOverlay();
+        return;
+    }
 
     if (!m_currentHighlight) {
         Vector<CGRect> cgRects;

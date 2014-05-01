@@ -48,6 +48,10 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , usesNetworkProcess(false)
 #endif
     , memoryCacheDisabled(false)
+#if ENABLE(SERVICE_CONTROLS)
+    , hasImageServices(false)
+    , hasSelectionServices(false)
+#endif
 {
 }
 
@@ -129,6 +133,11 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << plugInAutoStartOriginHashes;
     encoder << plugInAutoStartOrigins;
     encoder << memoryCacheDisabled;
+
+#if ENABLE(SERVICE_CONTROLS)
+    encoder << hasImageServices;
+    encoder << hasSelectionServices;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProcessCreationParameters& parameters)
@@ -273,6 +282,13 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
         return false;
     if (!decoder.decode(parameters.memoryCacheDisabled))
         return false;
+
+#if ENABLE(SERVICE_CONTROLS)
+    if (!decoder.decode(parameters.hasImageServices))
+        return false;
+    if (!decoder.decode(parameters.hasSelectionServices))
+        return false;
+#endif
 
     return true;
 }

@@ -167,6 +167,10 @@ WebProcess::WebProcess()
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 #endif
+#if ENABLE(SERVICE_CONTROLS)
+    , m_hasImageServices(false)
+    , m_hasSelectionServices(false)
+#endif
     , m_nonVisibleProcessCleanupTimer(this, &WebProcess::nonVisibleProcessCleanupTimerFired)
 {
     // Initialize our platform strategies.
@@ -359,6 +363,10 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
         m_plugInAutoStartOrigins.add(parameters.plugInAutoStartOrigins[i]);
 
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
+
+#if ENABLE(SERVICE_CONTROLS)
+    setEnabledServices(parameters.hasImageServices, parameters.hasSelectionServices);
+#endif
 }
 
 #if ENABLE(NETWORK_PROCESS)
@@ -1172,5 +1180,13 @@ void WebProcess::setMemoryCacheDisabled(bool disabled)
     if (memoryCache()->disabled() != disabled)
         memoryCache()->setDisabled(disabled);
 }
+
+#if ENABLE(SERVICE_CONTROLS)
+void WebProcess::setEnabledServices(bool hasImageServices, bool hasSelectionServices)
+{
+    m_hasImageServices = hasImageServices;
+    m_hasSelectionServices = hasSelectionServices;
+}
+#endif
 
 } // namespace WebKit

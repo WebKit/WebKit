@@ -88,4 +88,8 @@ messages -> WebProcess LegacyReceiver {
 #endif
 
     SetMemoryCacheDisabled(bool disabled);
+
+#if ENABLE(SERVICE_CONTROLS)
+    SetEnabledServices(bool hasImageServices, bool hasSelectionServices)
+#endif
 }

@@ -790,6 +790,8 @@
 		513A164C1630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513A16491630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp */; };
 		513A164D1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 513A164A1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h */; };
 		514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 514BDED216C98EDD00E4E25E /* StatisticsRequest.h */; };
+		514D9F5719119D35000063A7 /* ServicesController.h in Headers */ = {isa = PBXBuildFile; fileRef = 514D9F5519119D35000063A7 /* ServicesController.h */; };
+		514D9F5819119D35000063A7 /* ServicesController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514D9F5619119D35000063A7 /* ServicesController.mm */; };
 		5153569C1291B1D2000749DC /* WebPageContextMenuClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5153569A1291B1D2000749DC /* WebPageContextMenuClient.cpp */; };
 		5153569D1291B1D2000749DC /* WebPageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5153569B1291B1D2000749DC /* WebPageContextMenuClient.h */; };
 		51578B831209ECEF00A37C4A /* APIData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* APIData.h */; };
@@ -2640,6 +2642,8 @@
 		513A164A1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionToWebProcess.h; path = NetworkProcess/NetworkConnectionToWebProcess.h; sourceTree = "<group>"; };
 		513A164B1630A9BF005D7D22 /* NetworkConnectionToWebProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NetworkConnectionToWebProcess.messages.in; path = NetworkProcess/NetworkConnectionToWebProcess.messages.in; sourceTree = "<group>"; };
 		514BDED216C98EDD00E4E25E /* StatisticsRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsRequest.h; sourceTree = "<group>"; };
+		514D9F5519119D35000063A7 /* ServicesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServicesController.h; sourceTree = "<group>"; };
+		514D9F5619119D35000063A7 /* ServicesController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServicesController.mm; sourceTree = "<group>"; };
 		5153569A1291B1D2000749DC /* WebPageContextMenuClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageContextMenuClient.cpp; sourceTree = "<group>"; };
 		5153569B1291B1D2000749DC /* WebPageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageContextMenuClient.h; sourceTree = "<group>"; };
 		51578B821209ECEF00A37C4A /* APIData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIData.h; sourceTree = "<group>"; };
@@ -6215,6 +6219,8 @@
 				E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */,
 				E18E690A169B563F009B6670 /* SecItemShimProxy.h */,
 				E18E690D169B57DF009B6670 /* SecItemShimProxy.messages.in */,
+				514D9F5519119D35000063A7 /* ServicesController.h */,
+				514D9F5619119D35000063A7 /* ServicesController.mm */,
 				1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */,
 				1AF05D8514688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h */,
 				1AF05D8414688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm */,
@@ -6708,6 +6714,7 @@
 				BC032DAB10F437D10058C15A /* Connection.h in Headers */,
 				5136183E163126DA00A99DDE /* ConnectionStack.h in Headers */,
 				1AC1415118AC47EE006C602C /* WKWebViewConfigurationPrivate.h in Headers */,
+				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				CDC3830C17212282008A2FC3 /* CookieStorageShimLibrary.h in Headers */,
 				515E7730184015800007203F /* UniqueIDBDatabase.h in Headers */,
 				B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */,
@@ -8500,6 +8507,7 @@
 				BC111A5D112F4FBB00337BAB /* WebDragClient.cpp in Sources */,
 				C574A37712E6099D002DFE98 /* WebDragClientMac.mm in Sources */,
 				BCA0EFA012332642007D3CFB /* WebEditCommandProxy.cpp in Sources */,
+				514D9F5819119D35000063A7 /* ServicesController.mm in Sources */,
 				BC111A5E112F4FBB00337BAB /* WebEditorClient.cpp in Sources */,
 				C5237F6012441CA300780472 /* WebEditorClientMac.mm in Sources */,
 				BC575613126E0138006F0F12 /* APIError.cpp in Sources */,

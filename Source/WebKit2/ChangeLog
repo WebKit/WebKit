@@ -1,3 +1,57 @@
+2014-04-30  Brady Eidson  <beidson@apple.com>
+
+        If there are no services available, do not show the service controls UI
+        <rdar://problem/16735665> and https://bugs.webkit.org/show_bug.cgi?id=132410
+
+        Reviewed by Tim Horton.
+
+        Add a lightweight class that lazily polls the appropriate APIs for whether or not appropriate services
+        are installed and usable on the system:
+        * UIProcess/mac/ServicesController.h: Added.
+        (WebKit::ServicesController::imageServicesExist):
+        (WebKit::ServicesController::selectionServicesExist):
+        * UIProcess/mac/ServicesController.mm: Added.
+        (WebKit::ServicesController::shared):
+        (WebKit::ServicesController::ServicesController):
+        (WebKit::ServicesController::refreshExistingServices):
+        (WebKit::ServicesController::refreshExistingServicesTimerFired):
+
+        Add "image services exist" and "selection services exist" parameters:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::refreshExistingServices): Called when the context menu proxy realizes that
+          services no longer exist.
+        * UIProcess/WebContext.h:
+
+        Each WebProcess hangs on to its own copy of the flags for whether or not the services exist:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::setEnabledServices):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::imageServicesExist):
+        (WebKit::WebProcess::selectionServicesExist):
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu): If the menu creation failed, the set of services
+          on the system must have changed. So ask the WebContext to refresh them.
+
+        * WebProcess/WebPage/SelectionOverlayController.cpp:
+        (WebKit::SelectionOverlayController::selectionRectsDidChange): If services don't exist, don't create an
+          overlay (and destroy any existing overlay!)
+
+        * WebProcess/WebPage/mac/SelectionOverlayControllerMac.mm:
+        (WebKit::SelectionOverlayController::drawRect): If services don't exist, don't draw, and destroy the overlay.
+
+        * WebProcess/WebProcess.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-04-30  Gavin Barraclough  <baraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=132415

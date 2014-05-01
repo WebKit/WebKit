@@ -85,6 +85,10 @@
 #include "NetworkProcessProxy.h"
 #endif
 
+#if ENABLE(SERVICE_CONTROLS)
+#include "ServicesController.h"
+#endif
+
 #if ENABLE(CUSTOM_PROTOCOLS)
 #include "CustomProtocolManagerMessages.h"
 #endif
@@ -615,6 +619,12 @@ WebProcessProxy& WebContext::createNewWebProcess()
     copyToVector(m_plugInAutoStartProvider.autoStartOrigins(), parameters.plugInAutoStartOrigins);
 
     parameters.memoryCacheDisabled = m_memoryCacheDisabled;
+
+#if ENABLE(SERVICE_CONTROLS)
+    parameters.hasImageServices = ServicesController::shared().hasImageServices();
+    parameters.hasSelectionServices = ServicesController::shared().hasSelectionServices();
+    ServicesController::shared().refreshExistingServices(this);
+#endif
 
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
@@ -1292,6 +1302,14 @@ void WebContext::didGetStatistics(const StatisticsData& statisticsData, uint64_t
 
     request->completedRequest(requestID, statisticsData);
 }
+
+#if ENABLE(SERVICE_CONTROLS)
+void WebContext::refreshExistingServices()
+{
+    ServicesController::shared().refreshExistingServices(this);
+}
+#endif
+
     
 void WebContext::garbageCollectJavaScriptObjects()
 {
