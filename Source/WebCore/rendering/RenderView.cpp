@@ -43,6 +43,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnSet.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
@@ -1362,8 +1363,8 @@ unsigned RenderView::pageCount() const
     
     if (hasColumns())
         return columnCount(columnInfo());
-    if (multiColumnFlowThread())
-        return multiColumnFlowThread()->columnCount();
+    if (multiColumnFlowThread() && multiColumnFlowThread()->firstMultiColumnSet())
+        return multiColumnFlowThread()->firstMultiColumnSet()->columnCount();
 
     return 0;
 }

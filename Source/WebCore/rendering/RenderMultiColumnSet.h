@@ -128,7 +128,8 @@ public:
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
     
     LayoutRect columnRectAt(unsigned index) const;
-    
+    unsigned columnCount() const;
+
 protected:
     void addOverflowFromChildren() override;
     
@@ -158,7 +159,6 @@ private:
 
     LayoutUnit calculateMaxColumnHeight() const;
     LayoutUnit columnGap() const;
-    unsigned columnCount() const;
 
     LayoutRect flowThreadPortionRectAt(unsigned index) const;
     LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, LayoutUnit colGap);

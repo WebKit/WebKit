@@ -1,3 +1,18 @@
+2014-05-01  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION (new multi-column): WebKit2.ResizeReversePaginatedWebView fails on debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=132429
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Make sure to get the column count directly from the column set.
+        I was returning the theoretical column count from the flow thread,
+        and that wasn't the right value.
+
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pageCount):
+
 2014-05-01  Brent Fulgham  <bfulgham@apple.com>
 
         Fix handling of attributes prior to compiling shader
