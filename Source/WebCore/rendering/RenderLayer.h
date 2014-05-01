@@ -499,7 +499,9 @@ public:
         NeedsFullRepaintInBacking = 1 << 1,
         IsCompositingUpdateRoot = 1 << 2,
         UpdateCompositingLayers = 1 << 3,
-        UpdatePagination = 1 << 4
+        UpdatePagination = 1 << 4,
+        SeenTransformedLayer = 1 << 5,
+        Seen3DTransformedLayer = 1 << 6
     };
     typedef unsigned UpdateLayerPositionsFlags;
     static const UpdateLayerPositionsFlags defaultFlags = CheckForRepaint | IsCompositingUpdateRoot | UpdateCompositingLayers;
@@ -1113,10 +1115,11 @@ private:
     void updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks = 0);
     bool checkIfDescendantClippingContextNeedsUpdate(bool isClipping);
 
-    // This flag is computed by RenderLayerCompositor, which knows more about 3d hierarchies than we do.
-    void setHas3DTransformedDescendant(bool b) { m_has3DTransformedDescendant = b; }
     bool has3DTransformedDescendant() const { return m_has3DTransformedDescendant; }
-    
+
+    bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
+    bool has3DTransformedAncestor() const { return m_has3DTransformedAncestor; }
+
     void dirty3DTransformedDescendantStatus();
     // Both updates the status, and returns true if descendants of this have 3d.
     bool update3DTransformedDescendantStatus();
@@ -1253,6 +1256,10 @@ private:
     bool m_has3DTransformedDescendant : 1;  // Set on a stacking context layer that has 3D descendants anywhere
                                             // in a preserves3D hierarchy. Hint to do 3D-aware hit testing.
     bool m_hasCompositingDescendant : 1; // In the z-order tree.
+
+    bool m_hasTransformedAncestor : 1;
+    bool m_has3DTransformedAncestor : 1;
+
     unsigned m_indirectCompositingReason : 3;
     unsigned m_viewportConstrainedNotCompositedReason : 2;
 

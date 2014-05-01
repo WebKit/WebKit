@@ -1,3 +1,35 @@
+2014-05-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't always make backing store for -webkit-backface-visibility:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=132420
+
+        Reviewed by Sam Weinig.
+        
+        Previously, -webkit-backface-visibility:hidden unconditionally created
+        compositing layers with backing store. This results in high memory use
+        on pages with this style applied to many elements (a cargo-cult "optimization").
+        
+        Fix by only having -webkit-backface-visibility:hidden create compositing layers
+        if some ancestor has a 3D transform. That's the only scenario in which the
+        element can be flipped around to reveal the back side, so the only time we need
+        to do compositing for this property. In future, we could be smarter, and only
+        consider 3D transforms in the current preserve-3d context.
+
+        Tests: compositing/backing/backface-visibility-in-3dtransformed.html
+               compositing/backing/backface-visibility-in-transformed.html
+               compositing/backing/backface-visibility.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::hitTestLayer):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore):
+        (WebCore::RenderLayerCompositor::requiresCompositingForBackfaceVisibility):
+        * rendering/RenderLayerCompositor.h:
+
 2014-05-01  Alex Christensen  <achristensen@webkit.org>
 
         Finish updating ANGLE.

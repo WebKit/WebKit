@@ -169,6 +169,8 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_3DTransformedDescendantStatusDirty(true)
     , m_has3DTransformedDescendant(false)
     , m_hasCompositingDescendant(false)
+    , m_hasTransformedAncestor(false)
+    , m_has3DTransformedAncestor(false)
     , m_indirectCompositingReason(NoIndirectCompositingReason)
     , m_viewportConstrainedNotCompositedReason(NoNotCompositedReason)
 #if PLATFORM(IOS)
@@ -449,6 +451,8 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
         clearRepaintRects();
 
     m_repaintStatus = NeedsNormalRepaint;
+    m_hasTransformedAncestor = flags & SeenTransformedLayer;
+    m_has3DTransformedAncestor = flags & Seen3DTransformedLayer;
 
     // Go ahead and update the reflection's position and size.
     if (m_reflection)
@@ -466,6 +470,12 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
     
     if (renderer().hasColumns())
         flags |= UpdatePagination;
+
+    if (transform()) {
+        flags |= SeenTransformedLayer;
+        if (!transform()->isAffine())
+            flags |= Seen3DTransformedLayer;
+    }
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositions(geometryMap, flags);
@@ -4931,7 +4941,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         // We computed the correct state in the caller (above code), so just reference it.
         ASSERT(transformState);
         localTransformState = const_cast<HitTestingTransformState*>(transformState);
-    } else if (transformState || m_has3DTransformedDescendant || preserves3D()) {
+    } else if (transformState || has3DTransformedDescendant() || preserves3D()) {
         // We need transform state for the first time, or to offset the container state, so create it here.
         localTransformState = createLocalTransformState(rootLayer, containerLayer, hitTestRect, hitTestLocation, transformState);
     }

@@ -1,3 +1,22 @@
+2014-05-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't always make backing store for -webkit-backface-visibility:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=132420
+
+        Reviewed by Sam Weinig.
+        
+        Dump layers for elements with backface-visibility: hidden with various types
+        of ancestors.
+
+        * compositing/backing/backface-visibility-expected.txt: Added.
+        * compositing/backing/backface-visibility-in-3dtransformed-expected.txt: Added.
+        * compositing/backing/backface-visibility-in-3dtransformed.html: Added.
+        * compositing/backing/backface-visibility-in-transformed-expected.txt: Added.
+        * compositing/backing/backface-visibility-in-transformed.html: Added.
+        * compositing/backing/backface-visibility.html: Added.
+        * inspector-protocol/layers/layers-anonymous.html: Don't use backface-visibility
+        for force a layer.
+
 2014-05-01  Brent Fulgham  <bfulgham@apple.com>
 
         Fix handling of attributes prior to compiling shader

@@ -2032,7 +2032,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
         || requiresCompositingForCanvas(*renderer)
         || requiresCompositingForPlugin(*renderer)
         || requiresCompositingForFrame(*renderer)
-        || (canRender3DTransforms() && renderer->style().backfaceVisibility() == BackfaceVisibilityHidden)
+        || requiresCompositingForBackfaceVisibility(*renderer)
         || clipsCompositingDescendants(*renderer->layer())
         || requiresCompositingForAnimation(*renderer)
         || requiresCompositingForFilters(*renderer)
@@ -2075,7 +2075,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || requiresCompositingForCanvas(renderer)
         || requiresCompositingForPlugin(renderer)
         || requiresCompositingForFrame(renderer)
-        || (canRender3DTransforms() && renderer.style().backfaceVisibility() == BackfaceVisibilityHidden)
+        || requiresCompositingForBackfaceVisibility(renderer)
         || requiresCompositingForAnimation(renderer)
         || requiresCompositingForFilters(renderer)
         || requiresCompositingForPosition(renderer, layer)
@@ -2340,6 +2340,14 @@ bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObje
     // Note that we ask the renderer if it has a transform, because the style may have transforms,
     // but the renderer may be an inline that doesn't suppport them.
     return renderer.hasTransform() && renderer.style().transform().has3DOperation();
+}
+
+bool RenderLayerCompositor::requiresCompositingForBackfaceVisibility(RenderLayerModelObject& renderer) const
+{
+    if (!(m_compositingTriggers & ChromeClient::ThreeDTransformTrigger))
+        return false;
+
+    return renderer.style().backfaceVisibility() == BackfaceVisibilityHidden && renderer.layer()->has3DTransformedAncestor();
 }
 
 bool RenderLayerCompositor::requiresCompositingForVideo(RenderLayerModelObject& renderer) const
