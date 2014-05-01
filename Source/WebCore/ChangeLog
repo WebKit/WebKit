@@ -1,5 +1,16 @@
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
+        More iOS build fixing. MediaPlayerPrivateIOS is defunct and can be removed.
+        Fix some build errors in other media files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/ios/MediaPlayerPrivateIOS.h: Removed.
+        * platform/graphics/ios/MediaPlayerPrivateIOS.mm: Removed.
+
+2014-04-30  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the iOS build, which no longer needs these calls
         to enter/exitFullscreen.
 

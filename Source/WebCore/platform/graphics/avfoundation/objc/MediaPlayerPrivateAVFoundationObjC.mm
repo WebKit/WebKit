@@ -71,6 +71,7 @@
 #include "TextTrack.h"
 #endif
 
+#import <Foundation/NSGeometry.h>
 #import <AVFoundation/AVFoundation.h>
 #if PLATFORM(IOS)
 #import <CoreImage/CoreImage.h>

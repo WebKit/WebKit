@@ -170,8 +170,6 @@
 		073BE34E17D180B2002BD431 /* RTCSessionDescriptionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221BAB17CF0AD400848E51 /* RTCSessionDescriptionDescriptor.cpp */; };
 		073BE34F17D18183002BD431 /* RTCIceCandidateDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221BA617CF0AD400848E51 /* RTCIceCandidateDescriptor.cpp */; };
 		073BE35017D181A6002BD431 /* RTCPeerConnectionHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221BA817CF0AD400848E51 /* RTCPeerConnectionHandler.cpp */; };
-		074300A50F4B8BCF008076CD /* MediaPlayerPrivateIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 074300A30F4B8BCF008076CD /* MediaPlayerPrivateIOS.mm */; };
-		074300A60F4B8BCF008076CD /* MediaPlayerPrivateIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 074300A40F4B8BCF008076CD /* MediaPlayerPrivateIOS.h */; };
 		074E82BA18A69F0E007EF54C /* PlatformTimeRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 074E82B818A69F0E007EF54C /* PlatformTimeRanges.cpp */; };
 		074E82BB18A69F0E007EF54C /* PlatformTimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 074E82B918A69F0E007EF54C /* PlatformTimeRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0753860014489E9800B78452 /* CachedTextTrack.cpp */; };
@@ -7064,8 +7062,6 @@
 		073BE34517D17E7A002BD431 /* JSNavigatorUserMediaErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMediaErrorCallback.h; sourceTree = "<group>"; };
 		073BE34617D17E7A002BD431 /* JSNavigatorUserMediaSuccessCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMediaSuccessCallback.cpp; sourceTree = "<group>"; };
 		073BE34717D17E7A002BD431 /* JSNavigatorUserMediaSuccessCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMediaSuccessCallback.h; sourceTree = "<group>"; };
-		074300A30F4B8BCF008076CD /* MediaPlayerPrivateIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateIOS.mm; sourceTree = "<group>"; };
-		074300A40F4B8BCF008076CD /* MediaPlayerPrivateIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateIOS.h; sourceTree = "<group>"; };
 		074E82B818A69F0E007EF54C /* PlatformTimeRanges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformTimeRanges.cpp; sourceTree = "<group>"; };
 		074E82B918A69F0E007EF54C /* PlatformTimeRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformTimeRanges.h; sourceTree = "<group>"; };
 		0753860014489E9800B78452 /* CachedTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedTextTrack.cpp; sourceTree = "<group>"; };
@@ -15485,8 +15481,6 @@
 				FED13D3F0CEA939400D89466 /* IconIOS.mm */,
 				07357C7616D2DF0D00ED99E7 /* InbandTextTrackPrivateAVFIOS.h */,
 				07357C7716D2DF0D00ED99E7 /* InbandTextTrackPrivateAVFIOS.mm */,
-				074300A40F4B8BCF008076CD /* MediaPlayerPrivateIOS.h */,
-				074300A30F4B8BCF008076CD /* MediaPlayerPrivateIOS.mm */,
 				37E6594F163B10C200EB4574 /* SimpleFontDataIOS.mm */,
 				CEEC6034187DD962003E43BB /* TextTrackRepresentationIOS.h */,
 				CDCA82941679100F00875714 /* TextTrackRepresentationIOS.mm */,
@@ -24974,7 +24968,6 @@
 				E44613E40CD681A200FADA75 /* MediaPlayer.h in Headers */,
 				076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */,
 				DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */,
-				074300A60F4B8BCF008076CD /* MediaPlayerPrivateIOS.h in Headers */,
 				CDC8B5A3180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.h in Headers */,
 				E44613E60CD681A900FADA75 /* MediaPlayerPrivateQTKit.h in Headers */,
 				0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */,
@@ -28472,7 +28465,6 @@
 				E44613E30CD6819F00FADA75 /* MediaPlayer.cpp in Sources */,
 				072C8B11131C518600A4FCE9 /* MediaPlayerPrivateAVFoundation.cpp in Sources */,
 				DF9AFD7313FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm in Sources */,
-				074300A50F4B8BCF008076CD /* MediaPlayerPrivateIOS.mm in Sources */,
 				CDC8B5A2180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.mm in Sources */,
 				E44613E50CD681A600FADA75 /* MediaPlayerPrivateQTKit.mm in Sources */,
 				4E1959290A39DACC00220FE5 /* MediaQuery.cpp in Sources */,

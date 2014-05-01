@@ -59,11 +59,7 @@
 #endif
 
 #if PLATFORM(COCOA)
-#if PLATFORM(IOS)
-#include "MediaPlayerPrivateIOS.h"
-#else
 #include "MediaPlayerPrivateQTKit.h"
-#endif
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationObjC.h"
 #if ENABLE(MEDIA_SOURCE)
