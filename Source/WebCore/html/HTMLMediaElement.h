@@ -35,12 +35,6 @@
 #include "MediaControllerInterface.h"
 #include "MediaPlayer.h"
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "HTMLFrameOwnerElement.h"
-#include "HTMLPlugInImageElement.h"
-#include "MediaPlayerProxy.h"
-#endif
-
 #if ENABLE(VIDEO_TRACK)
 #include "AudioTrack.h"
 #include "CaptionUserPreferences.h"
@@ -73,9 +67,6 @@ class MediaControlsHost;
 class MediaError;
 class PageActivityAssertionToken;
 class TimeRanges;
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-class Widget;
-#endif
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 class MediaKeys;
 #endif
@@ -98,11 +89,7 @@ typedef Vector<CueInterval> CueList;
 #endif
 
 class HTMLMediaElement
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    : public HTMLFrameOwnerElement
-#else
     : public HTMLElement
-#endif
     , private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface , public MediaSessionClient
 #if ENABLE(VIDEO_TRACK)
     , private AudioTrackClient
@@ -367,16 +354,6 @@ public:
     void setTextTrackRepresentation(TextTrackRepresentation*);
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    void ensureMediaPlayer();
-    void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
-    void deliverNotification(MediaPlayerProxyNotificationType notification);
-    void setMediaPlayerProxy(WebMediaPlayerProxy* proxy);
-    void getPluginProxyParams(URL& url, Vector<String>& names, Vector<String>& values);
-    void createMediaPlayerProxy();
-    void updateWidget(PluginCreationOption);
-#endif
-
 #if ENABLE(IOS_AIRPLAY)
     void webkitShowPlaybackTargetPicker();
     bool webkitCurrentPlaybackTargetIsWireless() const;
@@ -444,10 +421,6 @@ public:
 #endif
 
     void enteredOrExitedFullscreen() { configureMediaControls(); }
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    bool shouldUseVideoPluginProxy() const;
-#endif
 
     unsigned long long fileSize() const;
 
@@ -767,9 +740,6 @@ private:
 #endif
 
     OwnPtr<MediaPlayer> m_player;
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    RefPtr<Widget> m_proxyWidget;
-#endif
 
     MediaPlayer::Preload m_preload;
 
@@ -829,11 +799,6 @@ private:
     bool m_isFullscreen : 1;
     bool m_closedCaptionsVisible : 1;
     bool m_webkitLegacyClosedCaptionOverride : 1;
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    bool m_needWidgetUpdate : 1;
-#endif
-
     bool m_completelyLoaded : 1;
     bool m_havePreparedToPlay : 1;
     bool m_parsingInProgress : 1;

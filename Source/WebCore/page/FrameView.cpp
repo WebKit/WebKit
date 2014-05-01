@@ -104,10 +104,6 @@
 #include "SystemMemory.h"
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "HTMLMediaElement.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2664,14 +2660,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
         }
         if (pluginElement.needsWidgetUpdate())
             pluginElement.updateWidget(CreateAnyWidgetType);
-    }
-
-    // FIXME: It is not clear that Media elements need or want this updateWidget() call.
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    else if (element.isMediaElement())
-        toHTMLMediaElement(element).updateWidget(CreateAnyWidgetType);
-#endif
-    else
+    } else
         ASSERT_NOT_REACHED();
 
     // It's possible the renderer was destroyed below updateWidget() since loading a plugin may execute arbitrary JavaScript.

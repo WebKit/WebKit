@@ -72,9 +72,6 @@ namespace WebCore {
     class HTMLAppletElement;
     class HTMLFormElement;
     class HTMLFrameOwnerElement;
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    class HTMLMediaElement;
-#endif
     class HTMLPlugInElement;
     class IntSize;
     class URL;
@@ -274,11 +271,6 @@ namespace WebCore {
         virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) = 0;
 
         virtual void dispatchDidFailToStartPlugin(const PluginView*) const { }
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        virtual PassRefPtr<Widget> createMediaPlayerProxyPlugin(const IntSize&, HTMLMediaElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&) = 0;
-        virtual void hideMediaPlayerProxyPlugin(Widget*) = 0;
-        virtual void showMediaPlayerProxyPlugin(Widget*) = 0;
-#endif
 
         virtual ObjectContentType objectContentType(const URL&, const String& mimeType, bool shouldPreferPlugInsForImages) = 0;
         virtual String overrideMediaType() const = 0;

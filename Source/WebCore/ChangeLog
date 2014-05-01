@@ -1,5 +1,82 @@
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove ENABLE_PLUGIN_PROXY_FOR_VIDEO
+        https://bugs.webkit.org/show_bug.cgi?id=132396
+
+        Reviewed by Eric Carlson.
+
+        Remove ENABLE_PLUGIN_PROXY_FOR_VIDEO and related code.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.exp.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * editing/TextIterator.cpp:
+        (WebCore::isRendererReplacedElement):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::setNeedWidgetUpdate): Deleted.
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::showPlaybackTargetPicker):
+        (WebCore::HTMLMediaSession::hasWirelessPlaybackTargets):
+        (WebCore::HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::createElementRenderer):
+        (WebCore::HTMLVideoElement::didAttachRenderers):
+        (WebCore::HTMLVideoElement::parseAttribute):
+        (WebCore::HTMLVideoElement::setDisplayMode):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes):
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::createMediaPlayerProxyPlugin): Deleted.
+        * loader/EmptyClients.h:
+        * loader/FrameLoaderClient.h:
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadPlugin):
+        (WebCore::SubframeLoader::loadMediaPlayerProxyPlugin): Deleted.
+        * loader/SubframeLoader.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateEmbeddedObject):
+        * page/Settings.cpp:
+        (WebCore::Settings::setVideoPluginProxyEnabled): Deleted.
+        * page/Settings.h:
+        (WebCore::Settings::isVideoPluginProxyEnabled): Deleted.
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::mediaLayerMustBeUpdatedOnMainThread): Deleted.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines):
+        (WebCore::MediaPlayer::MediaPlayer):
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::NullMediaPlayerPrivate::deliverNotification): Deleted.
+        (WebCore::NullMediaPlayerPrivate::setMediaPlayerProxy): Deleted.
+        (WebCore::NullMediaPlayerPrivate::setControls): Deleted.
+        (WebCore::MediaPlayer::deliverNotification): Deleted.
+        (WebCore::MediaPlayer::setMediaPlayerProxy): Deleted.
+        (WebCore::MediaPlayer::setControls): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::deliverNotification): Deleted.
+        (WebCore::MediaPlayerPrivateInterface::setMediaPlayerProxy): Deleted.
+        (WebCore::MediaPlayerPrivateInterface::setControls): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateGeometry):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        (WebCore::GraphicsLayerCA::mediaLayerMustBeUpdatedOnMainThread): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::canHaveChildren):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::mediaLayerMustBeUpdatedOnMainThread): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForVideo):
+
+2014-04-30  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Some accerated overflow-scroll doesn't scroll correctly
         https://bugs.webkit.org/show_bug.cgi?id=132375
 

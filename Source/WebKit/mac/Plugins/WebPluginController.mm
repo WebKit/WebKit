@@ -118,26 +118,6 @@ static void initializeAudioSession()
 }
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-@interface NSView (WebPluginControllerAdditions)
-@property (nonatomic) BOOL isMediaPlugInProxyView;
-@end
-
-@implementation NSView (WebPluginControllerAdditions)
-
-- (BOOL)isMediaPlugInProxyView
-{
-    return [(NSNumber *)objc_getAssociatedObject(self, @selector(isMediaPlugInProxyView)) boolValue];
-}
-
-- (void)setIsMediaPlugInProxyView:(BOOL)isMediaPlugInProxyView
-{
-    objc_setAssociatedObject(self, @selector(isMediaPlugInProxyView), [NSNumber numberWithBool:isMediaPlugInProxyView], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-@end
-#endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-
 @implementation WebPluginController
 
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
@@ -234,9 +214,6 @@ static void initializeAudioSession()
 {
     [_views release];
     [_checksInProgress release];
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    [_viewsNotInDocument release];
-#endif
     [super dealloc];
 }
 
@@ -244,9 +221,6 @@ static void initializeAudioSession()
 - (BOOL)plugInsAreRunning
 {
     NSUInteger pluginViewCount = [_views count];
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    pluginViewCount += [_viewsNotInDocument count];
-#endif
     return _started && pluginViewCount;
 }
 
@@ -334,12 +308,6 @@ static void initializeAudioSession()
     for (int i = 0; i < viewsCount; i++)
         [self stopOnePlugin:[_views objectAtIndex:i]];
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    int viewsNotInDocumentCount = [_viewsNotInDocument count];
-    for (int i = 0; i < viewsNotInDocumentCount; i++)
-        [self stopOnePlugin:[_viewsNotInDocument objectAtIndex:i]];
-#endif
-
     _started = NO;
 }
 
@@ -356,12 +324,6 @@ static void initializeAudioSession()
     for (NSUInteger i = 0; i < viewsCount; ++i)
         [self stopOnePluginForPageCache:[_views objectAtIndex:i]];
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    NSUInteger viewsNotInDocumentCount = [_viewsNotInDocument count];
-    for (NSUInteger i = 0; i < viewsNotInDocumentCount; ++i)
-        [self stopOnePluginForPageCache:[_viewsNotInDocument objectAtIndex:i]];
-#endif
-
     _started = NO;
 }
 
@@ -375,30 +337,8 @@ static void initializeAudioSession()
 
     for (NSUInteger i = 0; i < viewsCount; ++i)
         [[webView _UIKitDelegateForwarder] webView:webView willAddPlugInView:[_views objectAtIndex:i]];
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    NSUInteger viewsNotInDocumentCount = [_viewsNotInDocument count];
-    for (NSUInteger i = 0; i < viewsNotInDocumentCount; ++i)
-        [[webView _UIKitDelegateForwarder] webView:webView willAddPlugInView:[_viewsNotInDocument objectAtIndex:i]];
-#endif
 }
 #endif // PLATFORM(IOS)
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-- (void)mediaPlugInProxyViewCreated:(NSView *)view
-{
-    view.isMediaPlugInProxyView = YES;
-    if (!_viewsNotInDocument)
-        _viewsNotInDocument= [[NSMutableArray alloc] init];
-    if (![_viewsNotInDocument containsObject:view])
-        [_viewsNotInDocument addObject:view];
-}
-
-+ (void)pluginViewHidden:(NSView *)view
-{
-    [pluginViews removeObject:view];
-}
-#endif
 
 - (void)addPlugin:(NSView *)view
 {
@@ -411,11 +351,6 @@ static void initializeAudioSession()
         [_views addObject:view];
 #if !PLATFORM(IOS)
         [[_documentView _webView] addPluginInstanceView:view];
-#endif
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        if ([_viewsNotInDocument containsObject:view])
-            [_viewsNotInDocument removeObject:view];
 #endif
 
 #if !PLATFORM(IOS)
@@ -461,20 +396,11 @@ static void initializeAudioSession()
 
 - (void)destroyPlugin:(NSView *)view
 {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    // destroyPlugin: is called when a plug-in view is removed from its parent
-    // view, but native media players continue to exist even when they aren't in
-    // the view hierarchy. So if this plug-in view is a proxy for a native media
-    // player, don't destroy it here.
-    if (view.isMediaPlugInProxyView)
-        return;
-#endif
-
     if ([_views containsObject:view]) {
         if (_started)
             [self stopOnePlugin:view];
         [self destroyOnePlugin:view];
-        
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
         if (Frame* frame = core([self webFrame]))
             frame->script().cleanupScriptObjectsForPlugin(self);
@@ -533,12 +459,6 @@ static void cancelOutstandingCheck(const void *item, void *context)
         [[_documentView _webView] removePluginInstanceView:aView];
 #endif
     }
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    int viewsNotInDocumentCount = [_viewsNotInDocument count];
-    for (int i = 0; i < viewsNotInDocumentCount; i++)
-        [self destroyOnePlugin:[_viewsNotInDocument objectAtIndex:i]];
-#endif
 
 #if !PLATFORM(IOS)
     [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
@@ -700,50 +620,6 @@ static void cancelOutstandingCheck(const void *item, void *context)
     if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidFinishLoading)])
         [pluginView webPlugInMainResourceDidFinishLoading];
 }
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-static WebCore::HTMLMediaElement* mediaProxyClient(DOMElement* element)
-{
-    if (!element) {
-        LOG_ERROR("nil element passed");
-        return nil;
-    }
-
-    Element* node = core(element);
-    if (!node || (!isHTMLVideoElement(node) && !isHTMLAudioElement(node))) {
-        LOG_ERROR("invalid media element passed");
-        return nil;
-    }
-
-    return static_cast<WebCore::HTMLMediaElement*>(node);
-}
-
-- (void)_webPluginContainerSetMediaPlayerProxy:(WebMediaPlayerProxy *)proxy forElement:(DOMElement *)element
-{
-#if PLATFORM(IOS)
-    WebThreadRun(^{
-#endif
-    WebCore::HTMLMediaElement* client = mediaProxyClient(element);
-    if (client)
-        client->setMediaPlayerProxy(proxy);
-#if PLATFORM(IOS)
-    });
-#endif
-}
-
-- (void)_webPluginContainerPostMediaPlayerNotification:(int)notification forElement:(DOMElement *)element
-{
-#if PLATFORM(IOS)
-    WebThreadRun(^{
-#endif
-    WebCore::HTMLMediaElement* client = mediaProxyClient(element);
-    if (client)
-        client->deliverNotification((MediaPlayerProxyNotificationType)notification);
-#if PLATFORM(IOS)
-    });
-#endif
-}
-#endif
 
 @end
 

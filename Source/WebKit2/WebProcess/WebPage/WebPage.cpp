@@ -2612,10 +2612,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setQTKitEnabled(store.getBoolValueForKey(WebPreferencesKey::isQTKitEnabledKey()));
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    settings.setVideoPluginProxyEnabled(false);
-#endif
-
 #if PLATFORM(IOS)
     settings.setAVKitEnabled(true);
 #endif

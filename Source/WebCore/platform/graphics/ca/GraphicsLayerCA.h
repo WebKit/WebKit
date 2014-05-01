@@ -275,10 +275,6 @@ private:
     void setupContentsLayer(PlatformCALayer*);
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    bool mediaLayerMustBeUpdatedOnMainThread() const;
-#endif
-
     virtual void setReplicatedByLayer(GraphicsLayer*) override;
 
     virtual void getDebugBorderInfo(Color&, float& width) const override;

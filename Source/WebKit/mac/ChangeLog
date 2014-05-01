@@ -1,3 +1,39 @@
+2014-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove ENABLE_PLUGIN_PROXY_FOR_VIDEO
+        https://bugs.webkit.org/show_bug.cgi?id=132396
+
+        Reviewed by Eric Carlson.
+
+        Remove ENABLE_PLUGIN_PROXY_FOR_VIDEO and related code.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Plugins/WebPluginContainerPrivate.h:
+        * Plugins/WebPluginController.h:
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController dealloc]):
+        (-[WebPluginController plugInsAreRunning]):
+        (-[WebPluginController stopAllPlugins]):
+        (-[WebPluginController stopPluginsForPageCache]):
+        (-[WebPluginController restorePluginsFromCache]):
+        (-[WebPluginController addPlugin:]):
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        (-[NSView isMediaPlugInProxyView]): Deleted.
+        (-[NSView setIsMediaPlugInProxyView:]): Deleted.
+        (-[WebPluginController mediaPlugInProxyViewCreated:]): Deleted.
+        (+[WebPluginController pluginViewHidden:]): Deleted.
+        (mediaProxyClient): Deleted.
+        (-[WebPluginController _webPluginContainerSetMediaPlayerProxy:forElement:]): Deleted.
+        (-[WebPluginController _webPluginContainerPostMediaPlayerNotification:forElement:]): Deleted.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (pluginView):
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        (-[WebView _videoProxyPluginForMIMEType:]): Deleted.
+        * WebView/WebViewInternal.h:
+
 2014-04-30  Anders Carlsson  <andersca@apple.com>
 
         Move the legacy WebKit API into WebKitLegacy.framework and move it inside WebKit.framework

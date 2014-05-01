@@ -55,10 +55,6 @@
 #include "TextTrackList.h"
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "RenderWidget.h"
-#endif
-
 #if ENABLE(WEBVTT_REGIONS)
 #include "VTTRegionList.h"
 #endif
@@ -1441,15 +1437,9 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
     if (m_textTrackRepresentation)
         videoBox = m_textTrackRepresentation->bounds();
     else {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        if (!mediaElement->renderer() || !mediaElement->renderer()->isWidget())
-            return;
-        videoBox = pixelSnappedIntRect(toRenderWidget(mediaElement->renderer())->contentBoxRect());
-#else
         if (!mediaElement->renderer() || !mediaElement->renderer()->isVideo())
             return;
         videoBox = toRenderVideo(*mediaElement->renderer()).videoBox();
-#endif
     }
 
     if (!forceUpdate && m_videoDisplaySize == videoBox)

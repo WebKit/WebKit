@@ -157,16 +157,8 @@
 #include "DashboardRegion.h"
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "HTMLAudioElement.h"
-#endif
-
 #if ENABLE(VIDEO_TRACK)
 #include "WebVTTElement.h"
-#endif
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "HTMLMediaElement.h"
 #endif
 
 namespace WebCore {
@@ -643,12 +635,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     // See comments in RenderObject::setStyle().
     if (element->hasTagName(iframeTag) || element->hasTagName(frameTag) || element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag) || element->hasTagName(canvasTag))
         return false;
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    // With proxying, the media elements are backed by a RenderEmbeddedObject.
-    if ((element->hasTagName(videoTag) || element->hasTagName(audioTag)) && toHTMLMediaElement(element)->shouldUseVideoPluginProxy())
-        return false;
-#endif
 
     if (elementHasDirectionAuto(element))
         return false;

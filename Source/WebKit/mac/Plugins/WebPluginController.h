@@ -45,9 +45,6 @@
     NSMutableArray *_views;
     BOOL _started;
     NSMutableSet *_checksInProgress;
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    NSMutableArray *_viewsNotInDocument;
-#endif
 }
 
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
@@ -63,10 +60,6 @@
 
 - (void)addPlugin:(NSView *)view;
 - (void)destroyPlugin:(NSView *)view;
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-- (void)mediaPlugInProxyViewCreated:(NSView *)view;
-+ (void)pluginViewHidden:(NSView *)view;
-#endif
 
 #if PLATFORM(IOS)
 + (void)addPlugInView:(NSView *)view;

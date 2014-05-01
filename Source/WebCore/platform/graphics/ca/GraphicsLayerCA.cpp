@@ -1553,20 +1553,9 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
         FloatPoint layerPosition(m_position.x() + m_anchorPoint.x() * m_size.width(), m_position.y() + m_anchorPoint.y() * m_size.height());
         FloatRect layerBounds(m_boundsOrigin, m_size);
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        // FIXME: Consider moving the main thread logic into PlatformCALayer.
-        if (mediaLayerMustBeUpdatedOnMainThread() && WebThreadIsCurrent()) {
-            m_structuralLayer->setPositionOnMainThread(layerPosition);
-            m_structuralLayer->setBoundsOnMainThread(layerBounds);
-            m_structuralLayer->setAnchorPointOnMainThread(m_anchorPoint);
-        } else {
-#endif
         m_structuralLayer->setPosition(layerPosition);
         m_structuralLayer->setBounds(layerBounds);
         m_structuralLayer->setAnchorPoint(m_anchorPoint);
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        }
-#endif
 
         if (LayerMap* layerCloneMap = m_structuralLayerClones.get()) {
             LayerMap::const_iterator end = layerCloneMap->end();
@@ -1591,20 +1580,9 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
         adjustedPosition = FloatPoint(scaledAnchorPoint.x() * scaledSize.width() - pixelAlignmentOffset.width(), scaledAnchorPoint.y() * scaledSize.height() - pixelAlignmentOffset.height());
     }
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    // FIXME: Consider moving the main thread logic into PlatformCALayer.
-    if (mediaLayerMustBeUpdatedOnMainThread() && WebThreadIsCurrent()) {
-        m_layer->setPositionOnMainThread(adjustedPosition);
-        m_layer->setBoundsOnMainThread(adjustedBounds);
-        m_layer->setAnchorPointOnMainThread(scaledAnchorPoint);
-    } else {
-#endif
     m_layer->setPosition(adjustedPosition);
     m_layer->setBounds(adjustedBounds);
     m_layer->setAnchorPoint(scaledAnchorPoint);
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    }
-#endif
 
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
@@ -2094,18 +2072,8 @@ void GraphicsLayerCA::updateContentsRects()
     if (gainedOrLostClippingLayer)
         noteSublayersChanged(DontScheduleFlush);
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    // FIXME: Consider moving the main thread logic into PlatformCALayer.
-    if (mediaLayerMustBeUpdatedOnMainThread() && WebThreadIsCurrent()) {
-        m_contentsLayer->setPositionOnMainThread(contentOrigin);
-        m_contentsLayer->setBoundsOnMainThread(contentBounds);
-    } else {
-#endif
     m_contentsLayer->setPosition(contentOrigin);
     m_contentsLayer->setBounds(contentBounds);
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO) 
-    }
-#endif
 
     if (m_contentsLayerClones) {
         LayerMap::const_iterator end = m_contentsLayerClones->end();
@@ -3222,16 +3190,6 @@ void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer)
         contentsLayer->setBorderWidth(4);
     }
 }
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-bool GraphicsLayerCA::mediaLayerMustBeUpdatedOnMainThread() const
-{
-    if (m_contentsLayerPurpose != ContentsLayerForMedia)
-        return false;
-
-    return m_client && m_client->mediaLayerMustBeUpdatedOnMainThread();
-}
-#endif
 
 PassRefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, PlatformCALayer *sourceLayer, LayerMap* clones, CloneLevel cloneLevel)
 {

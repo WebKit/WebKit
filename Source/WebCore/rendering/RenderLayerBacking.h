@@ -191,10 +191,6 @@ public:
     virtual bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;
     virtual bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    virtual bool mediaLayerMustBeUpdatedOnMainThread() const override;
-#endif
-
 #ifndef NDEBUG
     virtual void verifyNotPainting();
 #endif

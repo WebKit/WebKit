@@ -363,8 +363,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setQTKitEnabled:(BOOL)flag;
 - (BOOL)isQTKitEnabled;
 
-// VideoPluginProxy support is dependent on WebCore/WebKit being
-// compiled with ENABLE_PLUGIN_PROXY_FOR_VIDEO.
+// Deprecated, has no effect.
 - (void)setVideoPluginProxyEnabled:(BOOL)flag;
 - (BOOL)isVideoPluginProxyEnabled;
 

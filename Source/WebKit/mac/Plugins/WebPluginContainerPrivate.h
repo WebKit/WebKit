@@ -32,27 +32,11 @@
 #import <AppKit/AppKit.h>
 #endif
 
-#if !TARGET_OS_IPHONE
-#if !defined(ENABLE_PLUGIN_PROXY_FOR_VIDEO)
-#define ENABLE_PLUGIN_PROXY_FOR_VIDEO 0
-#endif
-#endif
-
-#if ENABLE_PLUGIN_PROXY_FOR_VIDEO
-@class WebMediaPlayerProxy;
-#endif
-
 @interface NSObject (WebPlugInContainerPrivate)
 
 - (id)_webPluginContainerCheckIfAllowedToLoadRequest:(NSURLRequest *)Request inFrame:(NSString *)target resultObject:(id)obj selector:(SEL)selector;
 
 - (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)checkIdentifier;
-
-#if ENABLE_PLUGIN_PROXY_FOR_VIDEO
-- (void)_webPluginContainerSetMediaPlayerProxy:(WebMediaPlayerProxy *)proxy forElement:(DOMElement *)element;
-
-- (void)_webPluginContainerPostMediaPlayerNotification:(int)notification forElement:(DOMElement *)element;
-#endif
 
 #if TARGET_OS_IPHONE
 // Call when the plug-in shows/hides its full-screen UI.

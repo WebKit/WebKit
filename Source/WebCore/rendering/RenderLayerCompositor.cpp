@@ -73,11 +73,6 @@
 #include "RenderScrollbar.h"
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "HTMLAudioElement.h"
-#include "HTMLMediaElement.h"
-#endif
-
 #ifndef NDEBUG
 #include "RenderTreeAsText.h"
 #endif
@@ -2356,19 +2351,6 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderLayerModelObject& 
         RenderVideo& video = toRenderVideo(renderer);
         return (video.requiresImmediateCompositing() || video.shouldDisplayVideo()) && canAccelerateVideoRendering(video);
     }
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (renderer.isWidget()) {
-        if (!m_hasAcceleratedCompositing)
-            return false;
-
-        Element* element = renderer.element();
-        if (!element || (!isHTMLVideoElement(element) && !isHTMLAudioElement(element)))
-            return false;
-
-        HTMLMediaElement* mediaElement = toHTMLMediaElement(element);
-        return mediaElement->player() ? mediaElement->player()->supportsAcceleratedRendering() : false;
-    }
-#endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #else
     UNUSED_PARAM(renderer);
 #endif

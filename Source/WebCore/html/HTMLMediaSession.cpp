@@ -181,17 +181,6 @@ void HTMLMediaSession::showPlaybackTargetPicker(const HTMLMediaElement& element)
     if (!showingPlaybackTargetPickerPermitted(element))
         return;
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (element.shouldUseVideoPluginProxy()) {
-        MediaPlayer* player = element.player();
-        if (!player)
-            return;
-
-        player->showPlaybackTargetPicker();
-        return;
-    }
-#endif
-
 #if PLATFORM(IOS)
     element.document().frame()->page()->chrome().client().showPlaybackTargetPicker(element.hasVideo());
 #endif
@@ -199,17 +188,7 @@ void HTMLMediaSession::showPlaybackTargetPicker(const HTMLMediaElement& element)
 
 bool HTMLMediaSession::hasWirelessPlaybackTargets(const HTMLMediaElement& element) const
 {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (element.shouldUseVideoPluginProxy()) {
-        MediaPlayer* player = element.player();
-        if (!player)
-            return false;
-
-        return player->hasWirelessPlaybackTargets();
-    }
-#else
     UNUSED_PARAM(element);
-#endif
 
     bool hasTargets = MediaSessionManager::sharedManager().hasWirelessTargetsAvailable();
     LOG(Media, "HTMLMediaSession::hasWirelessPlaybackTargets - returning %s", hasTargets ? "TRUE" : "FALSE");
@@ -266,19 +245,7 @@ void HTMLMediaSession::setWirelessVideoPlaybackDisabled(const HTMLMediaElement& 
 void HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners(const HTMLMediaElement& element, bool hasListeners)
 {
     LOG(Media, "HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners - hasListeners %s", hasListeners ? "TRUE" : "FALSE");
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (element.shouldUseVideoPluginProxy()) {
-        MediaPlayer* player = element.player();
-        if (!player)
-            return;
-        
-        player->setHasPlaybackTargetAvailabilityListeners(hasListeners);
-        return;
-    }
-#else
     UNUSED_PARAM(element);
-#endif
 
     if (hasListeners)
         MediaSessionManager::sharedManager().startMonitoringAirPlayRoutes();

@@ -63,10 +63,6 @@ public:
     bool requestObject(HTMLPlugInImageElement&, const String& url, const AtomicString& frameName,
         const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    PassRefPtr<Widget> loadMediaPlayerProxyPlugin(HTMLMediaElement&, const URL&, const Vector<String>& paramNames, const Vector<String>& paramValues);
-#endif
-
     PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
     bool allowPlugins(ReasonForCallingAllowPlugins);

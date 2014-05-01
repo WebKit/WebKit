@@ -158,13 +158,6 @@ PassRefPtr<Widget> EmptyFrameLoaderClient::createJavaAppletWidget(const IntSize&
     return 0;
 }
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-PassRefPtr<Widget> EmptyFrameLoaderClient::createMediaPlayerProxyPlugin(const IntSize&, HTMLMediaElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&)
-{
-    return 0;
-}
-#endif
-
 PassRefPtr<FrameNetworkingContext> EmptyFrameLoaderClient::createNetworkingContext()
 {
     return PassRefPtr<FrameNetworkingContext>();

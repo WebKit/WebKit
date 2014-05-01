@@ -82,10 +82,6 @@ bool Settings::gAVFoundationEnabled = false;
 bool Settings::gQTKitEnabled = true;
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-bool Settings::gVideoPluginProxyEnabled = true;
-#endif
-
 bool Settings::gMockScrollbarsEnabled = false;
 bool Settings::gUsesOverlayScrollbars = false;
 
@@ -596,17 +592,6 @@ void Settings::setQTKitEnabled(bool enabled)
         return;
 
     gQTKitEnabled = enabled;
-    HTMLMediaElement::resetMediaEngines();
-}
-#endif
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-void Settings::setVideoPluginProxyEnabled(bool enabled)
-{
-    if (gVideoPluginProxyEnabled == enabled)
-        return;
-
-    gVideoPluginProxyEnabled = enabled;
     HTMLMediaElement::resetMediaEngines();
 }
 #endif

@@ -58,10 +58,6 @@
 #include "TextRun.h"
 #include <wtf/StackStats.h>
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "HTMLMediaElement.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -653,11 +649,6 @@ CursorDirective RenderEmbeddedObject::getCursor(const LayoutPoint& point, Cursor
 
 bool RenderEmbeddedObject::canHaveChildren() const
 {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (frameOwnerElement().isMediaElement())
-        return true;
-#endif
-
     if (isSnapshottedPlugIn())
         return true;
 

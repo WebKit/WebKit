@@ -581,8 +581,6 @@ public:
         [NSNumber numberWithBool:NO], WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey,
         
         [NSNumber numberWithBool:NO], WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey,
-        
-        [NSNumber numberWithBool:NO],   WebKitVideoPluginProxyEnabledKey,
 #if ENABLE(MEDIA_SOURCE)
         [NSNumber numberWithBool:YES], WebKitMediaSourceEnabledPreferenceKey,
 #endif
@@ -2132,12 +2130,12 @@ static NSString *classIBCreatorID = nil;
 
 - (void)setVideoPluginProxyEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitVideoPluginProxyEnabledKey];
+    // No-op, left for SPI compatibility.
 }
 
 - (BOOL)isVideoPluginProxyEnabled
 {
-    return [self _boolValueForKey:WebKitVideoPluginProxyEnabledKey];
+    return NO;
 }
 
 - (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag

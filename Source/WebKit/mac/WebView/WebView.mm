@@ -2384,10 +2384,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setUseLegacyTextAlignPositionedElementBehavior([preferences useLegacyTextAlignPositionedElementBehavior]);
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    settings.setVideoPluginProxyEnabled([preferences isVideoPluginProxyEnabled]);
-#endif
-
 #if ENABLE(MEDIA_SOURCE)
     settings.setMediaSourceEnabled([preferences mediaSourceEnabled]);
 #endif
@@ -4858,22 +4854,6 @@ static Vector<String> toStringVector(NSArray* patterns)
     
     return nil;
 }
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-- (WebBasePluginPackage *)_videoProxyPluginForMIMEType:(NSString *)MIMEType
-{
-    WebBasePluginPackage *pluginPackage = [[WebPluginDatabase sharedDatabase] pluginForMIMEType:MIMEType];
-    if (pluginPackage)
-        return pluginPackage;
-
-#if !PLATFORM(IOS)
-    if (_private->pluginDatabase)
-        return [_private->pluginDatabase pluginForMIMEType:MIMEType];
-#endif
-
-    return nil;
-}
-#endif
 
 - (WebBasePluginPackage *)_pluginForExtension:(NSString *)extension
 {

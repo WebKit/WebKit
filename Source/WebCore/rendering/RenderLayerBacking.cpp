@@ -2605,11 +2605,4 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
     return backingMemory;
 }
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-bool RenderLayerBacking::mediaLayerMustBeUpdatedOnMainThread() const
-{
-    return renderer().frame().page() && renderer().frame().page()->settings().isVideoPluginProxyEnabled();
-}
-#endif
-
 } // namespace WebCore

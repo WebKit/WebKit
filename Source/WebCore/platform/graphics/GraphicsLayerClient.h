@@ -99,10 +99,6 @@ public:
     virtual bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const { return false; }
     virtual bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const { return true; }
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    virtual bool mediaLayerMustBeUpdatedOnMainThread() const { return false; }
-#endif
-
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not
     // currently painting contents. An ASSERT fails, if it is.

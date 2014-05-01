@@ -69,10 +69,6 @@ bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLVideoElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy())
-        return HTMLMediaElement::createElementRenderer(std::move(style));
-#endif
     return createRenderer<RenderVideo>(*this, std::move(style));
 }
 
@@ -80,20 +76,14 @@ void HTMLVideoElement::didAttachRenderers()
 {
     HTMLMediaElement::didAttachRenderers();
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (!shouldUseVideoPluginProxy()) {
-#endif
-        updateDisplayState();
-        if (shouldDisplayPosterImage()) {
-            if (!m_imageLoader)
-                m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
-            m_imageLoader->updateFromElement();
-            if (renderer())
-                toRenderImage(renderer())->imageResource().setCachedImage(m_imageLoader->image());
-        }
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    updateDisplayState();
+    if (shouldDisplayPosterImage()) {
+        if (!m_imageLoader)
+            m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
+        m_imageLoader->updateFromElement();
+        if (renderer())
+            toRenderImage(renderer())->imageResource().setCachedImage(m_imageLoader->image());
     }
-#endif
 }
 
 void HTMLVideoElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
@@ -119,10 +109,7 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
         // Force a poster recalc by setting m_displayMode to Unknown directly before calling updateDisplayState.
         HTMLMediaElement::setDisplayMode(Unknown);
         updateDisplayState();
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        if (shouldUseVideoPluginProxy())
-            return;
-#endif
+
         if (shouldDisplayPosterImage()) {
             if (!m_imageLoader)
                 m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
@@ -230,10 +217,6 @@ void HTMLVideoElement::setDisplayMode(DisplayMode mode)
             player()->setPoster(poster);
     }
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy())
-        return;
-#endif
     if (renderer() && displayMode() != oldMode)
         renderer()->updateFromElement();
 }

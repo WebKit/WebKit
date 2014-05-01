@@ -83,12 +83,6 @@
 #include <wtf/Ref.h>
 #include <wtf/text/CString.h>
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "RenderEmbeddedObject.h"
-#include "SubframeLoader.h"
-#include "Widget.h"
-#endif
-
 #if ENABLE(VIDEO_TRACK)
 #include "AudioTrackList.h"
 #include "HTMLTrackElement.h"
@@ -255,11 +249,7 @@ private:
 #endif
 
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    : HTMLFrameOwnerElement(tagName, document)
-#else
     : HTMLElement(tagName, document)
-#endif
     , ActiveDOMObject(&document)
     , m_loadTimer(this, &HTMLMediaElement::loadTimerFired)
     , m_progressEventTimer(this, &HTMLMediaElement::progressEventTimerFired)
@@ -282,9 +272,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_loadState(WaitingForSource)
 #if PLATFORM(IOS)
     , m_videoFullscreenGravity(MediaPlayer::VideoGravityResizeAspect)
-#endif
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    , m_proxyWidget(0)
 #endif
     , m_preload(MediaPlayer::Auto)
     , m_displayMode(Unknown)
@@ -318,9 +305,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_isFullscreen(false)
     , m_closedCaptionsVisible(false)
     , m_webkitLegacyClosedCaptionOverride(false)
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    , m_needWidgetUpdate(false)
-#endif
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
@@ -655,13 +639,6 @@ void HTMLMediaElement::finishParsingChildren()
 {
     HTMLElement::finishParsingChildren();
     m_parsingInProgress = false;
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy()) {
-        document().updateStyleIfNeeded();
-        createMediaPlayerProxy();
-    }
-#endif
     
 #if ENABLE(VIDEO_TRACK)
     if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
@@ -674,28 +651,11 @@ void HTMLMediaElement::finishParsingChildren()
 
 bool HTMLMediaElement::rendererIsNeeded(const RenderStyle& style)
 {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy())
-        return true;
-#endif
     return controls() && HTMLElement::rendererIsNeeded(style);
 }
 
 RenderPtr<RenderElement> HTMLMediaElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy()) {
-        // Setup the renderer if we already have a proxy widget.
-        auto mediaRenderer = createRenderer<RenderEmbeddedObject>(*this, std::move(style));
-        if (m_proxyWidget) {
-            mediaRenderer->setWidget(m_proxyWidget);
-
-            if (Frame* frame = document().frame())
-                frame->loader().client().showMediaPlayerProxyPlugin(m_proxyWidget.get());
-        }
-        return std::move(mediaRenderer);
-    }
-#endif
     return createRenderer<RenderMedia>(*this, std::move(style));
 }
 
@@ -772,23 +732,12 @@ void HTMLMediaElement::removedFrom(ContainerNode& insertionPoint)
 void HTMLMediaElement::willAttachRenderers()
 {
     ASSERT(!renderer());
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy())
-        m_needWidgetUpdate = true;
-#endif
 }
 
 void HTMLMediaElement::didAttachRenderers()
 {
     if (renderer())
         renderer()->updateFromElement();
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    else if (m_proxyWidget) {
-        if (Frame* frame = document().frame())
-            frame->loader().client().hideMediaPlayerProxyPlugin(m_proxyWidget.get());
-    }
-#endif
 }
 
 void HTMLMediaElement::didRecalcStyle(Style::Change)
@@ -802,11 +751,6 @@ void HTMLMediaElement::scheduleDelayedAction(DelayedActionType actionType)
     LOG(Media, "HTMLMediaElement::scheduleLoad");
 
     if ((actionType & LoadMediaResource) && !(m_pendingActionFlags & LoadMediaResource)) {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        if (shouldUseVideoPluginProxy())
-            createMediaPlayerProxy();
-#endif
-
         prepareForLoad();
         setFlags(m_pendingActionFlags, LoadMediaResource);
     }
@@ -981,14 +925,6 @@ void HTMLMediaElement::prepareForLoad()
     closeMediaSource();
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy()) {
-        if (m_player)
-            m_player->cancelLoad();
-        else
-            createMediaPlayerProxy();
-    } else
-#endif
     createMediaPlayer();
 
     // 4 - If the media element's networkState is not set to NETWORK_EMPTY, then run these substeps
@@ -1195,11 +1131,8 @@ void HTMLMediaElement::loadNextSourceChild()
         return;
     }
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (!shouldUseVideoPluginProxy())
-#endif
-        // Recreate the media player for the new url
-        createMediaPlayer();
+    // Recreate the media player for the new url
+    createMediaPlayer();
 
     m_loadState = LoadingFromSourceElement;
     loadResource(mediaURL, contentType, keySystem);
@@ -4505,16 +4438,7 @@ void HTMLMediaElement::updatePlayState()
     bool shouldBePlaying = potentiallyPlaying();
     bool playerPaused = m_player->paused();
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy()) {
-        if (shouldBePlaying && !m_requestingPlay && !m_player->readyForPlayback())
-            shouldBePlaying = false;
-        else if (!shouldBePlaying && m_requestingPlay && m_player->readyForPlayback())
-            shouldBePlaying = true;
-    }
-#endif
-
-    LOG(Media, "HTMLMediaElement::updatePlayState - shouldBePlaying = %s, playerPaused = %s", 
+    LOG(Media, "HTMLMediaElement::updatePlayState - shouldBePlaying = %s, playerPaused = %s",
         boolString(shouldBePlaying), boolString(playerPaused));
 
     if (shouldBePlaying) {
@@ -4655,9 +4579,6 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
     closeMediaSource();
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (!shouldUseVideoPluginProxy())
-#endif
     m_player.clear();
 
     stopPeriodicTimers();
@@ -4780,27 +4701,12 @@ void HTMLMediaElement::visibilityStateChanged()
 
 void HTMLMediaElement::defaultEventHandler(Event* event)
 {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy()) {
-        auto renderer = this->renderer();
-        if (!renderer || !renderer->isWidget())
-            return;
-
-        if (Widget* widget = toRenderWidget(renderer)->widget())
-            widget->handleEvent(event);
-        return;
-    }
-#endif
     HTMLElement::defaultEventHandler(event);
 }
 
 #if !PLATFORM(IOS)
 bool HTMLMediaElement::willRespondToMouseClickEvents()
 {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy())
-        return true;
-#endif
     return HTMLElement::willRespondToMouseClickEvents();
 }
 #endif // !PLATFORM(IOS)
@@ -4817,190 +4723,6 @@ void HTMLMediaElement::setTextTrackRepresentation(TextTrackRepresentation* repre
         m_player->setTextTrackRepresentation(representation);
 }
 #endif // ENABLE(VIDEO_TRACK)
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-
-void HTMLMediaElement::ensureMediaPlayer()
-{
-    if (!m_player)
-        createMediaPlayer();
-}
-
-void HTMLMediaElement::deliverNotification(MediaPlayerProxyNotificationType notification)
-{
-    if (notification == MediaPlayerNotificationPlayPauseButtonPressed) {
-#if PLATFORM(IOS)
-        removeBehaviorsRestrictionsAfterFirstUserGesture();
-#endif
-        togglePlayState();
-        return;
-    }
-#if PLATFORM(IOS)
-    else if (notification == MediaPlayerRequestBeginPlayback) {
-        if (m_paused)
-            playInternal();
-    } else if (notification == MediaPlayerRequestPausePlayback) {
-        if (!m_paused)
-            pauseInternal();
-    } else if (notification == MediaPlayerNotificationLoseFocus) {
-        if (!m_paused)
-            pauseInternal();
-    } else if (notification == MediaPlayerNotificationDidPlayToTheEnd) {
-        if (!m_paused && !loop())
-            pauseInternal();
-    } else if (notification == MediaPlayerNotificationMediaValidated || notification == MediaPlayerNotificationReadyForInspection) {
-        // The media player sometimes reports an apparently spurious error just as we request playback, and then follows almost
-        // immediately with ReadyForInspection and/or MediaValidated. The spec doesn't deal with a "fatal" error followed
-        // by ressurection, so if we have set an error clear it now.
-        m_error = 0;
-    } else if (notification == MediaPlayerNotificationEnteredFullscreen) {
-        scheduleEvent(eventNames().webkitbeginfullscreenEvent);
-        m_isFullscreen = true;
-    } else if (notification == MediaPlayerNotificationExitedFullscreen) {
-        scheduleEvent(eventNames().webkitendfullscreenEvent);
-        m_isFullscreen = false;
-    }
-#endif
-
-    if (m_player)
-        m_player->deliverNotification(notification);
-
-#if PLATFORM(IOS)
-    if (notification == MediaPlayerNotificationMediaValidated) {
-        // If the element is supposed to autoplay and we allow it, tell the media engine to begin loading
-        // data now. Playback will begin automatically when enough data has loaded.
-        if (m_autoplaying && m_paused && autoplay())
-            prepareToPlay();
-    } else if (notification == MediaPlayerNotificationEnteredFullscreen)
-        didBecomeFullscreenElement();
-    else if (notification == MediaPlayerNotificationExitedFullscreen)
-        willStopBeingFullscreenElement();
-#endif
-}
-
-void HTMLMediaElement::setMediaPlayerProxy(WebMediaPlayerProxy* proxy)
-{
-    ensureMediaPlayer();
-    m_player->setMediaPlayerProxy(proxy);
-}
-
-void HTMLMediaElement::getPluginProxyParams(URL& url, Vector<String>& names, Vector<String>& values)
-{
-    Ref<HTMLMediaElement> protect(*this); // selectNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
-
-    Frame* frame = document().frame();
-
-    if (isVideo()) {
-        HTMLVideoElement* video = toHTMLVideoElement(this);
-        URL posterURL = video->posterImageURL();
-        if (!posterURL.isEmpty() && frame && frame->loader().willLoadMediaElementURL(posterURL)) {
-            names.append(ASCIILiteral("_media_element_poster_"));
-            values.append(posterURL.string());
-        }
-    }
-
-    if (controls()) {
-        names.append(ASCIILiteral("_media_element_controls_"));
-        values.append(ASCIILiteral("true"));
-    }
-
-#if PLATFORM(IOS)
-    // Don't pass the URL to the plug-in as part of the initialization arguments, we always pass the URL
-    // in loadResource and calling selectNextSourceChild here can mess up the processing of <source>
-    // elements later.
-    UNUSED_PARAM(url);
-#else
-    url = getNonEmptyURLAttribute(srcAttr);
-    if (!isSafeToLoadURL(url, Complain))
-        url = selectNextSourceChild(0, 0, DoNothing);
-
-    m_currentSrc = url;
-    if (url.isValid() && frame && frame->loader().willLoadMediaElementURL(url)) {
-        names.append(ASCIILiteral("_media_element_src_"));
-        values.append(m_currentSrc.string());
-    }
-#endif
-
-#if PLATFORM(IOS)
-    Settings* settings = document().settings();
-    if (settings && settings->mediaPlaybackAllowsInline() && (applicationIsDumpRenderTree() || fastHasAttribute(webkit_playsinlineAttr))) {
-        names.append(ASCIILiteral("_media_element_allow_inline_"));
-        values.append(ASCIILiteral("true"));
-    }
-
-    String airplay = fastGetAttribute(webkitairplayAttr);
-    if (equalIgnoringCase(airplay, "allow") || equalIgnoringCase(airplay, "deny")) {
-        names.append(ASCIILiteral("_media_element_airplay_"));
-        values.append(airplay.lower());
-    }
-
-    if (fastHasAttribute(data_youtube_idAttr)) {
-        names.append(ASCIILiteral("_media_element_youtube_video_id_"));
-        values.append(fastGetAttribute(data_youtube_idAttr));
-    }
-
-    String interfaceName = settings ? settings->networkInterfaceName() : String();
-    if (!interfaceName.isEmpty()) {
-        names.append(ASCIILiteral("_media_element_network_interface_name"));
-        values.append(interfaceName);
-    }
-
-    if (fastHasAttribute(titleAttr)) {
-        names.append(titleAttr.toString());
-        values.append(fastGetAttribute(titleAttr));
-    }
-#endif
-
-#if ENABLE(IOS_AIRPLAY)
-    if (isVideo() && fastHasAttribute(webkitwirelessvideoplaybackdisabledAttr)) {
-        names.append(ASCIILiteral("_media_element_wireless_video_playback_disabled"));
-        values.append(ASCIILiteral("true"));
-    }
-#endif
-}
-
-void HTMLMediaElement::createMediaPlayerProxy()
-{
-    ensureMediaPlayer();
-
-    if (m_proxyWidget || (inDocument() && !m_needWidgetUpdate))
-        return;
-
-    Frame* frame = document().frame();
-    if (!frame)
-        return;
-
-    LOG(Media, "HTMLMediaElement::createMediaPlayerProxy");
-
-    URL url;
-    Vector<String> paramNames;
-    Vector<String> paramValues;
-
-    getPluginProxyParams(url, paramNames, paramValues);
-    
-    // Hang onto the proxy widget so it won't be destroyed if the plug-in is set to
-    // display:none
-    m_proxyWidget = frame->loader().subframeLoader().loadMediaPlayerProxyPlugin(*this, url, paramNames, paramValues);
-    if (m_proxyWidget)
-        m_needWidgetUpdate = false;
-}
-
-void HTMLMediaElement::updateWidget(PluginCreationOption)
-{
-    setNeedWidgetUpdate(false);
-
-    // FIXME: What if document().frame() is 0?
-
-    URL url;
-    Vector<String> paramNames;
-    Vector<String> paramValues;
-
-    getPluginProxyParams(url, paramNames, paramValues);
-    SubframeLoader& loader = document().frame()->loader().subframeLoader();
-    loader.loadMediaPlayerProxyPlugin(*this, url, paramNames, paramValues);
-}
-
-#endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 #if ENABLE(IOS_AIRPLAY)
 void HTMLMediaElement::webkitShowPlaybackTargetPicker()
@@ -5413,17 +5135,6 @@ bool HTMLMediaElement::createMediaControls()
 
 void HTMLMediaElement::configureMediaControls()
 {
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (shouldUseVideoPluginProxy()) {
-        if (m_player)
-            m_player->setControls(controls());
-
-        if (!hasMediaControls() && inDocument())
-            createMediaControls();
-        return;
-    }
-#endif
-
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (!controls() || !inDocument())
         return;
@@ -5939,13 +5650,6 @@ void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 #endif
 }
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-bool HTMLMediaElement::shouldUseVideoPluginProxy() const
-{
-    return document().settings() && document().settings()->isVideoPluginProxyEnabled();
-}
-#endif
-
 #if ENABLE(MEDIA_SOURCE)
 RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
 {
@@ -6023,11 +5727,6 @@ static void setPageScaleFactorProperty(JSC::ExecState* exec, JSC::JSValue contro
 void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
     LOG(Media, "HTMLMediaElement::didAddUserAgentShadowRoot");
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    // JavaScript controls are not enabled with the video plugin proxy.
-    if (shouldUseVideoPluginProxy())
-        return;
-#endif
     Page* page = document().page();
     if (!page)
         return;

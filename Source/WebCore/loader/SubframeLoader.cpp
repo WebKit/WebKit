@@ -56,11 +56,6 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "HTMLMediaElement.h"
-#include "RenderVideo.h"
-#endif
-
 namespace WebCore {
     
 using namespace HTMLNames;
@@ -232,46 +227,6 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement& ownerElement, const S
     // in the widget to be torn down.
     return loadOrRedirectSubframe(ownerElement, completedURL, frameName, LockHistory::Yes, LockBackForwardList::Yes);
 }
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(HTMLMediaElement& mediaElement, const URL& url, const Vector<String>& paramNames, const Vector<String>& paramValues)
-{
-    ASSERT(mediaElement.hasTagName(videoTag) || isHTMLAudioElement(mediaElement));
-
-    URL completedURL;
-    if (!url.isEmpty())
-        completedURL = completeURL(url);
-
-    if (!m_frame.document()->securityOrigin()->canDisplay(completedURL)) {
-        FrameLoader::reportLocalLoadFailed(&m_frame, completedURL.string());
-        return nullptr;
-    }
-
-    if (!m_frame.document()->contentSecurityPolicy()->allowMediaFromSource(completedURL))
-        return nullptr;
-
-    RenderWidget* renderer = toRenderWidget(mediaElement.renderer());
-    IntSize size;
-
-    if (renderer)
-        size = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
-    else if (mediaElement.isVideo())
-        size = RenderVideo::defaultSize();
-
-    if (!m_frame.loader().mixedContentChecker().canRunInsecureContent(m_frame.document()->securityOrigin(), completedURL))
-        return nullptr;
-
-    RefPtr<Widget> widget = m_frame.loader().client().createMediaPlayerProxyPlugin(size, &mediaElement, completedURL, paramNames, paramValues, "application/x-media-element-proxy-plugin");
-
-    if (widget && renderer) {
-        renderer->setWidget(widget);
-        renderer->frameOwnerElement().setNeedsStyleRecalc(SyntheticStyleChange);
-    }
-    m_containsPlugins = true;
-
-    return widget ? widget.release() : nullptr;
-}
-#endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletElement& element, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
@@ -457,10 +412,6 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginElement, const URL
     pluginElement.subframeLoaderDidCreatePlugIn(widget.get());
     renderer->setWidget(widget);
     m_containsPlugins = true;
- 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    pluginElement.setNeedsStyleRecalc(SyntheticStyleChange);
-#endif
     return true;
 }
 
