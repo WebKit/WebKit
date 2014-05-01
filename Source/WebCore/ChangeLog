@@ -1,3 +1,19 @@
+2014-04-30  Enrica Casucci  <enrica@apple.com>
+
+        Cursor gets thinner on empty lines.
+        https://bugs.webkit.org/show_bug.cgi?id=132411
+        <rdar://problem/15994556>
+
+        Reviewed by Benjamin Poulain.
+
+        RenderLineBreak::localCaretRect should not define
+        locally the constant caretWidth, but use the one from
+        RenderObject.h which knows about the differences between
+        iOS and the other platforms.
+
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::localCaretRect):
+
 2014-04-30  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GStreamer] Use GstMetaVideo

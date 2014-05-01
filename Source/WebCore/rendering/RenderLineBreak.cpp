@@ -142,7 +142,6 @@ LayoutRect RenderLineBreak::localCaretRect(InlineBox* inlineBox, int caretOffset
     if (!inlineBox)
         return LayoutRect();
 
-    static const unsigned caretWidth = 1;
     const RootInlineBox& rootBox = inlineBox->root();
     return rootBox.computeCaretRect(inlineBox->logicalLeft(), caretWidth, extraWidthToEndOfLine);
 }
