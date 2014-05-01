@@ -1,3 +1,14 @@
+2014-05-01  Rik Cabanier  <cabanier@adobe.com>
+
+        Calling createPattern with a broken image must throw an invalidstate error
+        https://bugs.webkit.org/show_bug.cgi?id=132407
+
+        Reviewed by Dirk Schulze.
+
+        * canvas/philip/tests/2d.imageData.create2.nonfinite.html:
+        * fast/canvas/canvas-2d-imageData-create-nonfinite-expected.txt:
+        * fast/canvas/resources/canvas-2d-imageData-create-nonfinite.js:
+
 2014-05-01  Andreas Kling  <akling@apple.com>
 
         Skip fast/multicol/fixed-stack.html

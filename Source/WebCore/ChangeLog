@@ -1,3 +1,20 @@
+2014-05-01  Rik Cabanier  <cabanier@adobe.com>
+
+        Calling createPattern with a broken image must throw an invalidstate error
+        https://bugs.webkit.org/show_bug.cgi?id=132407
+
+        Reviewed by Dirk Schulze.
+
+        Per the WebIDL spec, passing non-finite parameter to a method that
+        takes doubles, should generate a type error.
+
+        Tests:
+        * canvas/philip/tests/2d.imageData.create2.nonfinite.html:
+        * fast/canvas/canvas-2d-imageData-create-nonfinite.html:
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createImageData):
+
 2014-04-30  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (r168046): [New Multicolumn] LeftToRight-rl.html (and all the other reversed/block-axis pagination tests) fail
