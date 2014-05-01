@@ -4832,10 +4832,6 @@ void HTMLMediaElement::enterFullscreen()
             document().page()->chrome().client().enterFullscreenForNode(this);
             scheduleEvent(eventNames().webkitbeginfullscreenEvent);
         }
-#if PLATFORM(IOS)
-        else if (m_player)
-            m_player->enterFullscreen();
-#endif
     }
 }
 
@@ -4862,10 +4858,6 @@ void HTMLMediaElement::exitFullscreen()
             document().page()->chrome().client().exitFullscreenForNode(this);
             scheduleEvent(eventNames().webkitendfullscreenEvent);
         }
-#if PLATFORM(IOS)
-        else if (m_player)
-            m_player->exitFullscreen();
-#endif
     }
 }
 

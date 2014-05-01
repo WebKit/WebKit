@@ -1,5 +1,13 @@
 2014-04-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the iOS build, which no longer needs these calls
+        to enter/exitFullscreen.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
+2014-04-30  Simon Fraser  <simon.fraser@apple.com>
+
         Remove ENABLE_PLUGIN_PROXY_FOR_VIDEO
         https://bugs.webkit.org/show_bug.cgi?id=132396
 
