@@ -108,4 +108,4 @@ webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-
 webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
 
 # Reference expectation doesn't end up in compositing code path, leading to antialiasing differences.
-webkit.org/b/132421 fast/multicol/fixed-stack.html [ Skip ]
+webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
