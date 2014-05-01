@@ -33,6 +33,7 @@
 #import <AppKit/NSAttributedString.h>
 #endif
 
+#import "APIHistoryClient.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
@@ -3407,6 +3408,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data = [[WKViewData alloc] init];
     _data->_pageClient = std::make_unique<PageClientImpl>(self, webView);
     _data->_page = context.createWebPage(*_data->_pageClient, std::move(webPageConfiguration));
+    _data->_page->setAddsVisitedLinks(context.historyClient().addsVisitedLinks());
+
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
     _data->_page->initializeWebPage();
 

@@ -46,7 +46,6 @@ private:
     virtual void didPerformServerRedirect(WebContext*, WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebFrameProxy*) override;
     virtual void didUpdateHistoryTitle(WebContext*, WebPageProxy*, const WTF::String& title, const WTF::String& url, WebFrameProxy*) override;
     virtual void populateVisitedLinks(WebContext*) override;
-    virtual bool shouldTrackVisitedLinks() const override;
 };
 
 } // namespace WebKit

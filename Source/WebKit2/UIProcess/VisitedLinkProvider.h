@@ -59,6 +59,8 @@ private:
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
+    void addVisitedLinkHashFromPage(uint64_t pageID, WebCore::LinkHash);
+
     void pendingVisitedLinksTimerFired();
 
     void resizeTable(unsigned newTableSize);

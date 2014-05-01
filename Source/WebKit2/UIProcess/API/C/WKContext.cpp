@@ -146,13 +146,21 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             m_client.populateVisitedLinks(toAPI(context), m_client.base.clientInfo);
         }
 
-        virtual bool shouldTrackVisitedLinks() const
+        virtual bool addsVisitedLinks() const override
         {
             return m_client.populateVisitedLinks;
         }
     };
-    
-    toImpl(contextRef)->setHistoryClient(std::make_unique<HistoryClient>(wkClient));
+
+    WebKit::WebContext& context = *toImpl(contextRef);
+    context.setHistoryClient(std::make_unique<HistoryClient>(wkClient));
+
+    bool addsVisitedLinks = context.historyClient().addsVisitedLinks();
+
+    for (auto& process : context.processes()) {
+        for (auto& page : process->pages())
+            page->setAddsVisitedLinks(addsVisitedLinks);
+    }
 }
 
 void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownloadClientBase* wkClient)

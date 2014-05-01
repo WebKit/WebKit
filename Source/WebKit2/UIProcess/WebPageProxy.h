@@ -459,6 +459,9 @@ public:
 
     WebBackForwardList& backForwardList() { return m_backForwardList.get(); }
 
+    bool addsVisitedLinks() const { return m_addsVisitedLinks; }
+    void setAddsVisitedLinks(bool addsVisitedLinks) { m_addsVisitedLinks = addsVisitedLinks; }
+
 #if ENABLE(INSPECTOR)
     WebInspectorProxy* inspector();
 #endif
@@ -1597,6 +1600,7 @@ private:
     Ref<API::Session> m_session;
 
     bool m_isPageSuspended;
+    bool m_addsVisitedLinks;
 
 #if ENABLE(REMOTE_INSPECTOR)
     bool m_allowsRemoteInspection;

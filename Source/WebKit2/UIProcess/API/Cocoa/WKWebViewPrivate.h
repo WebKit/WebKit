@@ -90,6 +90,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 @property (nonatomic, setter=_setAllowsRemoteInspection:) BOOL _allowsRemoteInspection;
 
+@property (nonatomic, setter=_setAddsVisitedLinks:) BOOL _addsVisitedLinks;
+
 - (void)_close;
 
 #if TARGET_OS_IPHONE

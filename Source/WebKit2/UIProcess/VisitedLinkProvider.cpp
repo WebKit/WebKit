@@ -97,6 +97,16 @@ void VisitedLinkProvider::addVisitedLinkHash(LinkHash linkHash)
         m_pendingVisitedLinksTimer.startOneShot(0);
 }
 
+void VisitedLinkProvider::addVisitedLinkHashFromPage(uint64_t pageID, LinkHash linkHash)
+{
+    if (WebPageProxy* webPageProxy = WebProcessProxy::webPage(pageID)) {
+        if (!webPageProxy->addsVisitedLinks())
+            return;
+    }
+
+    addVisitedLinkHash(linkHash);
+}
+
 static unsigned nextPowerOf2(unsigned v)
 {
     // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html

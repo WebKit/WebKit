@@ -93,7 +93,6 @@
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
 
     WebKit::WeakObjCPtr<id <_WKFormDelegate>> _formDelegate;
-
 #if PLATFORM(IOS)
     RetainPtr<WKScrollView> _scrollView;
     RetainPtr<WKContentView> _contentView;
@@ -1004,6 +1003,16 @@ static void releaseNSData(unsigned char*, const void* data)
 #if ENABLE(REMOTE_INSPECTOR)
     _page->setAllowsRemoteInspection(allow);
 #endif
+}
+
+- (BOOL)_addsVisitedLinks
+{
+    return _page->addsVisitedLinks();
+}
+
+- (void)_setAddsVisitedLinks:(BOOL)addsVisitedLinks
+{
+    _page->setAddsVisitedLinks(addsVisitedLinks);
 }
 
 static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)

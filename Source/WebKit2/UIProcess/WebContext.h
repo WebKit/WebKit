@@ -139,6 +139,8 @@ public:
     void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.
     unsigned maximumNumberOfProcesses() const { return m_webProcessCountLimit; }
 
+    const Vector<RefPtr<WebProcessProxy>>& processes() const { return m_processes; }
+
     // WebProcess or NetworkProcess as approporiate for current process model. The connection must be non-null.
     IPC::Connection* networkingProcessConnection();
 

@@ -86,11 +86,6 @@ void HistoryClient::populateVisitedLinks(WebContext*)
 {
 }
 
-bool HistoryClient::shouldTrackVisitedLinks() const
-{
-    return false;
-}
-
 } // namespace webKit
 
 #endif // WK_API_ENABLED

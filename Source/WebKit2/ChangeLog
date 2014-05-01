@@ -1,3 +1,51 @@
+2014-05-01  Anders Carlsson  <andersca@apple.com>
+
+        WKWebView doesn't track visited links (for visited link coloring)
+        https://bugs.webkit.org/show_bug.cgi?id=132438
+        <rdar://problem/16704519>
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/APIHistoryClient.h:
+        (API::HistoryClient::addsVisitedLinks):
+        (API::HistoryClient::shouldTrackVisitedLinks): Deleted.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetHistoryClient):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _addsVisitedLinks]):
+        (-[WKWebView _setAddsVisitedLinks:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:context:configuration:webView:]):
+        * UIProcess/Cocoa/HistoryClient.h:
+        * UIProcess/Cocoa/HistoryClient.mm:
+        (WebKit::HistoryClient::shouldTrackVisitedLinks): Deleted.
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::addVisitedLinkHashFromPage):
+        * UIProcess/VisitedLinkProvider.h:
+        * UIProcess/VisitedLinkProvider.messages.in:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setHistoryClient):
+        (WebKit::WebContext::createNewWebProcess):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::processes):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::addsVisitedLinks):
+        (WebKit::WebPageProxy::setAddsVisitedLinks):
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::addVisitedLink):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2014-05-01  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] The highlight view needs to be in WKWebView coordinates

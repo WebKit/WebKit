@@ -46,7 +46,10 @@ public:
     virtual void didPerformServerRedirect(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*) { }
     virtual void didUpdateHistoryTitle(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*) { }
     virtual void populateVisitedLinks(WebKit::WebContext*) { }
-    virtual bool shouldTrackVisitedLinks() const { return false; }
+
+    // FIXME: This is only used by the legacy SPI. We should add an API::Context object that
+    // can hold these things so we won't have to get it through API::HistoryClient.
+    virtual bool addsVisitedLinks() const { return false; }
 };
 
 } // namespace API

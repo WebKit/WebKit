@@ -281,8 +281,6 @@ void WebContext::setHistoryClient(std::unique_ptr<API::HistoryClient> historyCli
         m_historyClient = std::make_unique<API::HistoryClient>();
     else
         m_historyClient = std::move(historyClient);
-
-    sendToAllProcesses(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient->shouldTrackVisitedLinks()));
 }
 
 void WebContext::setDownloadClient(std::unique_ptr<API::DownloadClient> downloadClient)
@@ -578,7 +576,6 @@ WebProcessProxy& WebContext::createNewWebProcess()
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
-    parameters.shouldTrackVisitedLinks = m_historyClient->shouldTrackVisitedLinks();
     parameters.cacheModel = m_cacheModel;
     parameters.languages = userPreferredLanguages();
 

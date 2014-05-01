@@ -28,6 +28,7 @@
 
 #include "VisitedLinkProviderMessages.h"
 #include "VisitedLinkTableControllerMessages.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/PageCache.h>
 #include <wtf/NeverDestroyed.h>
@@ -75,7 +76,7 @@ bool VisitedLinkTableController::isLinkVisited(Page&, LinkHash linkHash, const U
     return m_visitedLinkTable.isLinkVisited(linkHash);
 }
 
-void VisitedLinkTableController::addVisitedLink(Page&, LinkHash linkHash)
+void VisitedLinkTableController::addVisitedLink(Page& page, LinkHash linkHash)
 {
     if (m_visitedLinkTable.isLinkVisited(linkHash))
         return;
@@ -83,7 +84,11 @@ void VisitedLinkTableController::addVisitedLink(Page&, LinkHash linkHash)
     if (!WebProcess::shared().shouldTrackVisitedLinks())
         return;
 
-    WebProcess::shared().parentProcessConnection()->send(Messages::VisitedLinkProvider::AddVisitedLinkHash(linkHash), m_identifier);
+    WebPage* webPage = WebPage::fromCorePage(&page);
+    if (!webPage)
+        return;
+
+    WebProcess::shared().parentProcessConnection()->send(Messages::VisitedLinkProvider::AddVisitedLinkHashFromPage(webPage->pageID(), linkHash), m_identifier);
 }
 
 void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle& handle)

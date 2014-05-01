@@ -115,6 +115,8 @@ public:
     mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }
 #endif
 
+    // FIXME: This is only used by the injected bundle for layout tests.
+    // WebKitTestRunner should just post a message to change whether visited links should be added.
     bool shouldTrackVisitedLinks() const { return m_shouldTrackVisitedLinks; }
     void setShouldTrackVisitedLinks(bool);
 

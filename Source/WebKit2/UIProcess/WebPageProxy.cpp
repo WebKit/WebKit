@@ -313,6 +313,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_pageID(pageID)
     , m_session(*configuration.session)
     , m_isPageSuspended(false)
+    , m_addsVisitedLinks(true)
 #if ENABLE(REMOTE_INSPECTOR)
     , m_allowsRemoteInspection(true)
 #endif

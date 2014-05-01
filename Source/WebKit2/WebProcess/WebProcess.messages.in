@@ -28,7 +28,6 @@ messages -> WebProcess LegacyReceiver {
     CreateWebPage(uint64_t newPageID, WebKit::WebPageCreationParameters pageCreationParameters)
 
     # Global preferences.
-    SetShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
     SetCacheModel(uint32_t cacheModel)
     RegisterURLSchemeAsEmptyDocument(String scheme)
     RegisterURLSchemeAsSecure(String scheme)

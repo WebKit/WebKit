@@ -100,7 +100,6 @@ struct WebProcessCreationParameters {
 #endif
 
     CacheModel cacheModel;
-    bool shouldTrackVisitedLinks;
 
     bool shouldAlwaysUseComplexTextCodePath;
     bool shouldUseFontSmoothing;
