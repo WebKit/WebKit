@@ -1,8 +1,8 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
+layer at (0,0) size 834x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 800x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (8,8) size 784x569
       RenderBlock (anonymous) at (0,0) size 784x68
         RenderText {#text} at (0,0) size 768x68
           text run at (0,0) width 427: "This is capturing current behavior, but it's not clear that it is correct. "
@@ -15,33 +15,36 @@ layer at (0,0) size 800x600
           text run at (0,51) width 512: "(which matches Firefox) is to just overflow without changing from balance to fill."
 layer at (8,76) size 404x64
   RenderBlock {DIV} at (0,68) size 404x64 [border: (2px solid #000000)]
-    RenderText {#text} at (2,2) size 51x104
-      text run at (2,2) width 43: "This"
-      text run at (2,28) width 16: "is"
-      text run at (2,54) width 51: "some"
-      text run at (2,80) width 37: "text"
-    RenderBR {BR} at (39,101) size 0x0
-    RenderText {#text} at (2,106) size 51x104
-      text run at (2,106) width 43: "This"
-      text run at (2,132) width 16: "is"
-      text run at (2,158) width 51: "some"
-      text run at (2,184) width 37: "text"
-    RenderBR {BR} at (39,205) size 0x0
-    RenderText {#text} at (2,210) size 51x104
-      text run at (2,210) width 43: "This"
-      text run at (2,236) width 16: "is"
-      text run at (2,262) width 51: "some"
-      text run at (2,288) width 37: "text"
-    RenderBR {BR} at (39,309) size 0x0
-    RenderText {#text} at (2,314) size 51x104
-      text run at (2,314) width 43: "This"
-      text run at (2,340) width 16: "is"
-      text run at (2,366) width 51: "some"
-      text run at (2,392) width 37: "text"
-    RenderBR {BR} at (39,413) size 0x0
-    RenderText {#text} at (2,418) size 51x104
-      text run at (2,418) width 43: "This"
-      text run at (2,444) width 16: "is"
-      text run at (2,470) width 51: "some"
-      text run at (2,496) width 37: "text"
-    RenderBR {BR} at (39,517) size 0x0
+    RenderMultiColumnSet at (2,2) size 400x60
+layer at (10,78) size 61x592 backgroundClip at (0,0) size 834x585 clip at (0,0) size 834x585 outlineClip at (0,0) size 834x585
+  RenderMultiColumnFlowThread at (2,2) size 61x592
+    RenderText {#text} at (0,0) size 51x112
+      text run at (0,0) width 43: "This"
+      text run at (0,26) width 16: "is"
+      text run at (0,60) width 51: "some"
+      text run at (0,86) width 37: "text"
+    RenderBR {BR} at (37,107) size 0x0
+    RenderText {#text} at (0,120) size 51x112
+      text run at (0,120) width 43: "This"
+      text run at (0,146) width 16: "is"
+      text run at (0,180) width 51: "some"
+      text run at (0,206) width 37: "text"
+    RenderBR {BR} at (37,227) size 0x0
+    RenderText {#text} at (0,240) size 51x112
+      text run at (0,240) width 43: "This"
+      text run at (0,266) width 16: "is"
+      text run at (0,300) width 51: "some"
+      text run at (0,326) width 37: "text"
+    RenderBR {BR} at (37,347) size 0x0
+    RenderText {#text} at (0,360) size 51x112
+      text run at (0,360) width 43: "This"
+      text run at (0,386) width 16: "is"
+      text run at (0,420) width 51: "some"
+      text run at (0,446) width 37: "text"
+    RenderBR {BR} at (37,467) size 0x0
+    RenderText {#text} at (0,480) size 51x112
+      text run at (0,480) width 43: "This"
+      text run at (0,506) width 16: "is"
+      text run at (0,540) width 51: "some"
+      text run at (0,566) width 37: "text"
+    RenderBR {BR} at (37,587) size 0x0

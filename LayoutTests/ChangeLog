@@ -1,3 +1,161 @@
+2014-05-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+        Rebaseline affected tests by the new multi-column mode that was
+        enabled on r168046, and later modified on r168076 and r168088.
+
+
+        * platform/gtk/TestExpectations: Include two new flaky tests after
+        the new multi-colum mode and remove expectations for the ones that
+        now pass.
+
+        * platform/gtk/css3/unicode-bidi-isolate-basic-expected.txt:
+        * platform/gtk/fast/block/float/float-not-removed-from-next-sibling4-expected.png:
+        * platform/gtk/fast/block/float/float-not-removed-from-next-sibling4-expected.txt:
+        * platform/gtk/fast/borders/border-antialiasing-expected.txt:
+        * platform/gtk/fast/line-grid/line-grid-inside-columns-expected.txt:
+        * platform/gtk/fast/line-grid/line-grid-into-columns-expected.txt:
+        * platform/gtk/fast/multicol/block-axis-horizontal-bt-expected.txt:
+        * platform/gtk/fast/multicol/block-axis-horizontal-tb-expected.txt:
+        * platform/gtk/fast/multicol/block-axis-vertical-lr-expected.txt:
+        * platform/gtk/fast/multicol/block-axis-vertical-rl-expected.txt:
+        * platform/gtk/fast/multicol/border-padding-pagination-expected.png:
+        * platform/gtk/fast/multicol/border-padding-pagination-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-expected.png:
+        * platform/gtk/fast/multicol/client-rects-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-spanners-complex-expected.txt: Added.
+        * platform/gtk/fast/multicol/client-rects-spanners-expected.txt: Added.
+        * platform/gtk/fast/multicol/column-break-with-balancing-expected.txt:
+        * platform/gtk/fast/multicol/column-count-with-rules-expected.txt:
+        * platform/gtk/fast/multicol/column-rules-expected.png:
+        * platform/gtk/fast/multicol/column-rules-expected.txt:
+        * platform/gtk/fast/multicol/column-rules-stacking-expected.png:
+        * platform/gtk/fast/multicol/column-rules-stacking-expected.txt:
+        * platform/gtk/fast/multicol/columns-shorthand-parsing-expected.txt:
+        * platform/gtk/fast/multicol/float-avoidance-expected.txt:
+        * platform/gtk/fast/multicol/float-multicol-expected.png:
+        * platform/gtk/fast/multicol/float-multicol-expected.txt:
+        * platform/gtk/fast/multicol/float-paginate-complex-expected.txt:
+        * platform/gtk/fast/multicol/float-paginate-empty-lines-expected.txt:
+        * platform/gtk/fast/multicol/float-paginate-expected.txt:
+        * platform/gtk/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/gtk/fast/multicol/layers-split-across-columns-expected.txt:
+        * platform/gtk/fast/multicol/margin-collapse-expected.txt:
+        * platform/gtk/fast/multicol/max-height-columns-block-expected.png:
+        * platform/gtk/fast/multicol/max-height-columns-block-expected.txt:
+        * platform/gtk/fast/multicol/nested-columns-expected.png:
+        * platform/gtk/fast/multicol/nested-columns-expected.txt:
+        * platform/gtk/fast/multicol/newmulticol/client-rects-expected.png: Added.
+        * platform/gtk/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/gtk/fast/multicol/overflow-across-columns-expected.txt:
+        * platform/gtk/fast/multicol/overflow-across-columns-percent-height-expected.png:
+        * platform/gtk/fast/multicol/overflow-across-columns-percent-height-expected.txt:
+        * platform/gtk/fast/multicol/overflow-unsplittable-expected.png:
+        * platform/gtk/fast/multicol/overflow-unsplittable-expected.txt:
+        * platform/gtk/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/gtk/fast/multicol/pagination/BottomToTop-bt-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/BottomToTop-bt-expected.txt:
+        * platform/gtk/fast/multicol/pagination/BottomToTop-lr-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/BottomToTop-lr-expected.txt:
+        * platform/gtk/fast/multicol/pagination/BottomToTop-rl-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/BottomToTop-rl-expected.txt:
+        * platform/gtk/fast/multicol/pagination/BottomToTop-tb-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/BottomToTop-tb-expected.txt:
+        * platform/gtk/fast/multicol/pagination/LeftToRight-bt-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/LeftToRight-bt-expected.txt:
+        * platform/gtk/fast/multicol/pagination/LeftToRight-lr-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/LeftToRight-lr-expected.txt:
+        * platform/gtk/fast/multicol/pagination/LeftToRight-rl-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/LeftToRight-rl-expected.txt:
+        * platform/gtk/fast/multicol/pagination/LeftToRight-tb-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/LeftToRight-tb-expected.txt:
+        * platform/gtk/fast/multicol/pagination/RightToLeft-bt-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/RightToLeft-bt-expected.txt:
+        * platform/gtk/fast/multicol/pagination/RightToLeft-lr-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/RightToLeft-lr-expected.txt:
+        * platform/gtk/fast/multicol/pagination/RightToLeft-rl-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/RightToLeft-rl-expected.txt:
+        * platform/gtk/fast/multicol/pagination/RightToLeft-tb-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/RightToLeft-tb-expected.txt:
+        * platform/gtk/fast/multicol/pagination/TopToBottom-bt-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/TopToBottom-bt-expected.txt:
+        * platform/gtk/fast/multicol/pagination/TopToBottom-lr-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/TopToBottom-lr-expected.txt:
+        * platform/gtk/fast/multicol/pagination/TopToBottom-rl-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/TopToBottom-rl-expected.txt:
+        * platform/gtk/fast/multicol/pagination/TopToBottom-tb-expected.png: Added.
+        * platform/gtk/fast/multicol/pagination/TopToBottom-tb-expected.txt:
+        * platform/gtk/fast/multicol/positioned-split-expected.txt:
+        * platform/gtk/fast/multicol/positive-leading-expected.png:
+        * platform/gtk/fast/multicol/positive-leading-expected.txt:
+        * platform/gtk/fast/multicol/scrolling-overflow-expected.txt:
+        * platform/gtk/fast/multicol/shadow-breaking-expected.png:
+        * platform/gtk/fast/multicol/shadow-breaking-expected.txt:
+        * platform/gtk/fast/multicol/shrink-to-column-height-for-pagination-expected.png: Added.
+        * platform/gtk/fast/multicol/shrink-to-column-height-for-pagination-expected.txt:
+        * platform/gtk/fast/multicol/single-line-expected.txt:
+        * platform/gtk/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/gtk/fast/multicol/span/anonymous-before-child-parent-crash-expected.txt:
+        * platform/gtk/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/gtk/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/gtk/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/gtk/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/gtk/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/gtk/fast/multicol/span/clone-flexbox-expected.txt:
+        * platform/gtk/fast/multicol/span/clone-summary-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-nested-inline-block-child-expected.txt:
+        * platform/gtk/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/gtk/fast/multicol/table-margin-collapse-expected.txt:
+        * platform/gtk/fast/multicol/table-vertical-align-expected.txt:
+        * platform/gtk/fast/multicol/unsplittable-inline-block-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/border-padding-pagination-expected.png:
+        * platform/gtk/fast/multicol/vertical-lr/border-padding-pagination-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/column-count-with-rules-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/column-rules-expected.png:
+        * platform/gtk/fast/multicol/vertical-lr/column-rules-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/float-paginate-complex-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/float-paginate-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/gtk/fast/multicol/vertical-lr/nested-columns-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/unsplittable-inline-block-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/border-padding-pagination-expected.png:
+        * platform/gtk/fast/multicol/vertical-rl/border-padding-pagination-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/column-count-with-rules-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/column-rules-expected.png:
+        * platform/gtk/fast/multicol/vertical-rl/column-rules-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/float-avoidance-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/float-paginate-complex-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/float-paginate-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/gtk/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/rule-style-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/unsplittable-inline-block-expected.txt:
+        * platform/gtk/fast/overflow/paged-x-div-expected.txt:
+        * platform/gtk/fast/overflow/paged-x-div-with-column-gap-expected.txt:
+        * platform/gtk/fast/overflow/paged-x-on-root-expected.txt:
+        * platform/gtk/fast/overflow/paged-x-with-column-gap-expected.txt:
+        * platform/gtk/fast/overflow/paged-y-div-expected.txt:
+        * platform/gtk/fast/overflow/paged-y-on-root-expected.txt:
+        * platform/gtk/fast/repaint/multicol-repaint-expected.png:
+        * platform/gtk/fast/repaint/multicol-repaint-expected.txt:
+
 2014-05-01  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Inline text selection painting should not snap to integral CSS pixel position.

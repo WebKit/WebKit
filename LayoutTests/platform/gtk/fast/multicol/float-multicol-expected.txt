@@ -4,6 +4,9 @@ layer at (0,0) size 785x782
   RenderBlock {HTML} at (0,0) size 785x782
 layer at (8,8) size 769x766
   RenderBody {BODY} at (8,8) size 769x766
+    RenderMultiColumnSet at (0,0) size 769x766
+layer at (8,8) size 769x766
+  RenderMultiColumnFlowThread at (0,0) size 769x766
     RenderBlock {DIV} at (0,19) size 769x27 [bgcolor=#00FFFF]
       RenderBlock (floating) {DIV} at (4,4) size 386x465 [bgcolor=#FFFF00]
         RenderImage {IMG} at (0,0) size 133x70

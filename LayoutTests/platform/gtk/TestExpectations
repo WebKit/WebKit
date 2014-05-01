@@ -41,8 +41,6 @@
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/132275 fast/multicol/client-rects-spanners-complex.html [ Missing ]
-webkit.org/b/132275 fast/multicol/client-rects-spanners.html [ Missing ]
 webkit.org/b/132275 fast/multicol/scrolling-column-rules.html [ Missing ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -864,6 +862,9 @@ webkit.org/b/132280 platform/gtk/accessibility/text-for-range-table-cells.html [
 webkit.org/b/132280 platform/gtk/accessibility/text-for-range-with-link.html [ Failure Pass ]
 webkit.org/b/132280 platform/gtk/accessibility/text-for-table.html [ Failure Pass ]
 
+webkit.org/b/132425 fast/multicol/scrolling-overflow.html [ Failure Pass ]
+webkit.org/b/132425 fast/multicol/span/span-as-immediate-child-generated-content.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1576,9 +1577,6 @@ webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailur
 # This has always failed on Gtk/Efl - exposed by bug 89826
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
-webkit.org/b/77631 fast/multicol/span/span-as-immediate-child-property-removal.html [ Failure ]
-webkit.org/b/77631 fast/multicol/span/span-as-immediate-columns-child-removal.html [ Failure ]
-
 webkit.org/b/80129 fast/frames/flattening/frameset-flattening-advanced.html [ Failure ]
 webkit.org/b/131793 fast/frames/frame-programmatic-noresize.html [ Failure Pass ]
 webkit.org/b/131794 fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html [ Failure Pass ]
@@ -1787,7 +1785,6 @@ webkit.org/b/126619 http/tests/media/video-auth.html [ Failure ]
 
 # Subpixel rendering: borders are reporting float values.
 webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
-webkit.org/b/128061 fast/multicol/span/anonymous-style-inheritance.html [ Failure ]
 webkit.org/b/128061 fast/repaint/repaint-during-scroll-with-zoom.html [ Failure ]
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-initial-value-001.htm [ Failure ]
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm [ Failure ]

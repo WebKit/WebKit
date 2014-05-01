@@ -5,7 +5,10 @@ layer at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
 layer at (8,8) size 784x504
   RenderBlock {DIV} at (0,0) size 784x504 [border: (2px solid #FF0000)]
-    RenderBlock {DIV} at (2,2) size 382x1476
+    RenderMultiColumnSet at (2,2) size 780x500
+layer at (10,10) size 382x1476 backgroundClip at (0,0) size 1188x585 clip at (0,0) size 1188x585 outlineClip at (0,0) size 1188x585
+  RenderMultiColumnFlowThread at (2,2) size 382x1476
+    RenderBlock {DIV} at (0,0) size 382x1476
       RenderBlock {DIV} at (0,0) size 382x355
         RenderText {#text} at (0,18) size 352x97
           text run at (0,18) width 350: "All of this text even though it's smaller should be on the"

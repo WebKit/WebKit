@@ -5,7 +5,10 @@ layer at (-895,0) size 1680x585 backgroundClip at (0,0) size 1680x1208 clip at (
     RenderBody {BODY} at (8,8) size 1664x1200
 layer at (373,8) size 404x1200
   RenderBlock {DIV} at (0,0) size 404x1200 [border: (2px solid #000000)]
-    RenderBlock (anonymous) at (2,2) size 238x388
+    RenderMultiColumnSet at (2,2) size 400x1196
+layer at (53,10) size 722x388
+  RenderMultiColumnFlowThread at (2,2) size 722x388
+    RenderBlock (anonymous) at (0,0) size 238x388
       RenderText {#text} at (0,0) size 17x110
         text run at (0,0) width 110: "This is some text."
       RenderBR {BR} at (14,110) size 0x0
@@ -48,7 +51,7 @@ layer at (373,8) size 404x1200
       RenderText {#text} at (221,0) size 17x110
         text run at (221,0) width 110: "This is some text."
       RenderBR {BR} at (235,110) size 0x0
-    RenderBlock {P} at (256,2) size 452x388
+    RenderBlock {P} at (254,0) size 452x388
       RenderBlock (floating) {SPAN} at (0,0) size 142x78
         RenderText {#text} at (0,0) size 142x78
           text run at (0,0) width 78: "T"
@@ -132,7 +135,10 @@ layer at (373,8) size 404x1200
       RenderBR {BR} at (449,110) size 0x0
 layer at (-47,8) size 404x1200 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208 outlineClip at (0,0) size 1680x1208
   RenderBlock {DIV} at (420,0) size 404x1200 [border: (2px solid #000000)]
-    RenderBlock (anonymous) at (2,2) size 238x388
+    RenderMultiColumnSet at (2,2) size 400x1196
+layer at (-512,10) size 867x388 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208 outlineClip at (0,0) size 1680x1208
+  RenderMultiColumnFlowThread at (2,2) size 867x388
+    RenderBlock (anonymous) at (0,0) size 238x388
       RenderText {#text} at (0,0) size 17x110
         text run at (0,0) width 110: "This is some text."
       RenderBR {BR} at (14,110) size 0x0
@@ -175,7 +181,7 @@ layer at (-47,8) size 404x1200 backgroundClip at (0,0) size 1680x1208 clip at (0
       RenderText {#text} at (221,0) size 17x110
         text run at (221,0) width 110: "This is some text."
       RenderBR {BR} at (235,110) size 0x0
-    RenderBlock {P} at (256,2) size 597x388
+    RenderBlock {P} at (254,0) size 597x388
       RenderImage {IMG} at (146,0) size 100x100 [bgcolor=#008000]
       RenderImage {IMG} at (146,288) size 200x100 [bgcolor=#008000]
       RenderText {#text} at (146,100) size 17x106
