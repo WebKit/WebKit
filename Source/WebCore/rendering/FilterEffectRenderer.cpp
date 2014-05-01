@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,7 +104,8 @@ static PassRefPtr<FECustomFilter> createCustomFilterEffect(Filter* filter, Docum
 #endif
 
 FilterEffectRenderer::FilterEffectRenderer()
-    : m_graphicsBufferAttached(false)
+    : Filter(AffineTransform())
+    , m_graphicsBufferAttached(false)
     , m_hasFilterThatMovesPixels(false)
 #if ENABLE(CSS_SHADERS)
     , m_hasCustomShaderFilter(false)
