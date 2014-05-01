@@ -1,3 +1,10 @@
+2014-05-01  Andreas Kling  <akling@apple.com>
+
+        Skip fast/multicol/fixed-stack.html
+        <https://webkit.org/b/132421>
+
+        * TestExpectations:
+
 2014-04-30  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (r168046): [New Multicolumn] LeftToRight-rl.html (and all the other reversed/block-axis pagination tests) fail
