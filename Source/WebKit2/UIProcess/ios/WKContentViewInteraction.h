@@ -92,6 +92,7 @@ struct WKAutoCorrectionData {
 
     RetainPtr<UITextInputTraits> _traits;
     RetainPtr<UIWebFormAccessory> _formAccessoryView;
+    RetainPtr<UIView> _highlightRootView;
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<NSString> _markedText;
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;

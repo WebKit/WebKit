@@ -230,6 +230,8 @@ static const float tapAndHoldDelay  = 0.75;
     _actionSheetAssistant = nil;
     [_formInputSession invalidate];
     _formInputSession = nil;
+    [_highlightView removeFromSuperview];
+    [_highlightRootView removeFromSuperview];
     [_touchEventGestureRecognizer setDelegate:nil];
     [_singleTapGestureRecognizer setDelegate:nil];
     [_doubleTapGestureRecognizer setDelegate:nil];
@@ -353,15 +355,26 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
         return;
 
     const CGFloat UIWebViewMinimumHighlightRadius = 2.0;
-    if (!_highlightView) {
+
+    if (!_highlightRootView) {
+        _highlightRootView = adoptNS([[UIView alloc] init]);
+        [_highlightRootView setOpaque:NO];
+        [_highlightRootView layer].anchorPoint = CGPointMake(0, 0);
+
         _highlightView = adoptNS([[_UIHighlightView alloc] initWithFrame:CGRectZero]);
         [_highlightView setOpaque:NO];
         [_highlightView setCornerRadius:UIWebViewMinimumHighlightRadius];
+        [_highlightRootView addSubview:_highlightView.get()];
     }
-    [self addSubview:_highlightView.get()];
+    [self addSubview:_highlightRootView.get()];
+    CGFloat selfScale = [[self layer] transform].m11;
+    CGFloat highlightViewScale = 1 / selfScale;
+    [_highlightRootView setTransform:CGAffineTransformMakeScale(highlightViewScale, highlightViewScale)];
 
-    RetainPtr<UIColor> highlightUIKitColor = adoptNS([[UIColor alloc] initWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)]);
-    [_highlightView setColor:highlightUIKitColor.get()];
+    {
+        RetainPtr<UIColor> highlightUIKitColor = adoptNS([[UIColor alloc] initWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)]);
+        [_highlightView setColor:highlightUIKitColor.get()];
+    }
 
     bool allHighlightRectsAreRectilinear = true;
     const size_t quadCount = highlightedQuads.size();
@@ -369,7 +382,9 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
     for (size_t i = 0; i < quadCount; ++i) {
         const FloatQuad& quad = highlightedQuads[i];
         if (quad.isRectilinear()) {
-            CGRect rect = CGRectInset(quad.boundingBox(), -UIWebViewMinimumHighlightRadius, -UIWebViewMinimumHighlightRadius);
+            FloatRect boundingBox = quad.boundingBox();
+            boundingBox.scale(selfScale);
+            CGRect rect = CGRectInset(boundingBox, -UIWebViewMinimumHighlightRadius, -UIWebViewMinimumHighlightRadius);
             [rects addObject:[NSValue valueWithCGRect:rect]];
         } else {
             allHighlightRectsAreRectilinear = false;
@@ -383,7 +398,8 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
     else {
         RetainPtr<NSMutableArray> quads = adoptNS([[NSMutableArray alloc] initWithCapacity:static_cast<const NSUInteger>(quadCount)]);
         for (size_t i = 0; i < quadCount; ++i) {
-            const FloatQuad& quad = highlightedQuads[i];
+            FloatQuad quad = highlightedQuads[i];
+            quad.scale(selfScale, selfScale);
             FloatQuad extendedQuad = inflateQuad(quad, UIWebViewMinimumHighlightRadius);
             [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p1()]];
             [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p2()]];
@@ -600,7 +616,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (void)_cancelInteraction
 {
     _isTapHighlightIDValid = NO;
-    [_highlightView removeFromSuperview];
+    [_highlightRootView removeFromSuperview];
 }
 
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point
