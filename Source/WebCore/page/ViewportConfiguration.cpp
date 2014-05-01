@@ -124,7 +124,7 @@ double ViewportConfiguration::minimumScale() const
         return initialScale();
 
     // If not, we still need to sanity check our value.
-    double minimumScale = m_configuration.initialScale;
+    double minimumScale = m_configuration.minimumScale;
 
     double contentWidth = m_contentSize.width();
     if (contentWidth > 0 && contentWidth * minimumScale < m_minimumLayoutSize.width())

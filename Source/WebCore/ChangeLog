@@ -1,3 +1,16 @@
+2014-05-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        ViewportConfiguration::minimumScale() uses the initial scale as initial value
+        https://bugs.webkit.org/show_bug.cgi?id=132451
+        <rdar://problem/16780111>
+
+        Reviewed by Enrica Casucci.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::minimumScale):
+        The initial minimum scale was set to the initial scale, preventing some pages from zooming
+        out.
+
 2014-05-01  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix for !ENABLE(BLOB) builds.
