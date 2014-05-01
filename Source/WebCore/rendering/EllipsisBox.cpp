@@ -131,13 +131,13 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& pa
     const RootInlineBox& rootBox = root();
     LayoutUnit top = rootBox.selectionTop();
     LayoutUnit h = rootBox.selectionHeight();
-    FloatRect clipRect(x() + paintOffset.x(), top + paintOffset.y(), m_logicalWidth, h);
-    alignSelectionRectToDevicePixels(clipRect);
 
     GraphicsContextStateSaver stateSaver(*context);
-    context->clip(clipRect);
+    float deviceScaleFactor = renderer().document().deviceScaleFactor();
+    context->clip(pixelSnappedForPainting(x() + paintOffset.x(), top + paintOffset.y(), m_logicalWidth, h, renderer().document().deviceScaleFactor()));
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawHighlightForText(font, RenderBlock::constructTextRun(&blockFlow(), font, m_str, style, TextRun::AllowTrailingExpansion), roundedIntPoint(LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + top)), h, c, style.colorSpace());
+    FloatPoint localOrigin = roundedForPainting(LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + top), deviceScaleFactor);
+    context->drawHighlightForText(font, RenderBlock::constructTextRun(&blockFlow(), font, m_str, style, TextRun::AllowTrailingExpansion), localOrigin, h, c, style.colorSpace());
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom)

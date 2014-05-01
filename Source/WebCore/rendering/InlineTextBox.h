@@ -197,8 +197,6 @@ private:
 
 INLINE_BOX_OBJECT_TYPE_CASTS(InlineTextBox, isInlineTextBox())
 
-void alignSelectionRectToDevicePixels(FloatRect&);
-
 } // namespace WebCore
 
 #endif // InlineTextBox_h

@@ -1,3 +1,16 @@
+2014-05-01  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Inline text selection painting should not snap to integral CSS pixel position.
+        https://bugs.webkit.org/show_bug.cgi?id=132164
+
+        Reviewed by Darin Adler.
+
+        Inline text selection painting now snaps to device pixels. It uses the same rounding logic as
+        other painting functions.
+
+        * fast/inline/hidpi-select-inline-on-subpixel-position-expected.html: Added.
+        * fast/inline/hidpi-select-inline-on-subpixel-position.html: Added.
+
 2014-05-01  Rik Cabanier  <cabanier@adobe.com>
 
         Calling createPattern with a broken image must throw an invalidstate error

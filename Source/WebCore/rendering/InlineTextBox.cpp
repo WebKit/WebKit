@@ -712,13 +712,6 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
     ePos = std::min(endPos - m_start, (int)m_len);
 }
 
-void alignSelectionRectToDevicePixels(FloatRect& rect)
-{
-    float maxX = floorf(rect.maxX());
-    rect.setX(floorf(rect.x()));
-    rect.setWidth(roundf(maxX - rect.x()));
-}
-
 void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, Color textColor)
 {
 #if ENABLE(TEXT_SELECTION)
@@ -763,16 +756,13 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     LayoutUnit selectionBottom = rootBox.selectionBottom();
     LayoutUnit selectionTop = rootBox.selectionTopAdjustedForPrecedingBlock();
 
-    int deltaY = roundToInt(renderer().style().isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop);
-    int selHeight = std::max(0, roundToInt(selectionBottom - selectionTop));
+    LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop;
+    LayoutUnit selectionHeight = std::max<LayoutUnit>(0, selectionBottom - selectionTop);
 
-    FloatPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
-    FloatRect clipRect(localOrigin, FloatSize(m_logicalWidth, selHeight));
-    alignSelectionRectToDevicePixels(clipRect);
-
-    context->clip(clipRect);
-
-    context->drawHighlightForText(font, textRun, localOrigin, selHeight, c, style.colorSpace(), sPos, ePos);
+    float deviceScaleFactor = renderer().document().deviceScaleFactor();
+    FloatPoint localOrigin = roundedForPainting(LayoutPoint(boxOrigin.x(), boxOrigin.y() - deltaY), deviceScaleFactor);
+    context->clip(pixelSnappedForPainting(LayoutRect(LayoutPoint(localOrigin), LayoutSize(m_logicalWidth, selectionHeight)), deviceScaleFactor));
+    context->drawHighlightForText(font, textRun, localOrigin, selectionHeight, c, style.colorSpace(), sPos, ePos);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(boxOrigin);
