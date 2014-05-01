@@ -1,3 +1,28 @@
+2014-04-30  Brady Eidson  <beidson@apple.com>
+
+        Only reveal selection service UI after a short delay.
+        <rdar://problem/16777346> and https://bugs.webkit.org/show_bug.cgi?id=132418
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/SelectionOverlayController.cpp:
+        (WebKit::SelectionOverlayController::SelectionOverlayController):
+        (WebKit::SelectionOverlayController::destroyOverlay): Also stop the hover timer.
+        (WebKit::SelectionOverlayController::selectionRectsDidChange): Mark the highlight as dirty.
+        (WebKit::SelectionOverlayController::hoverTimerFired): If the mouse is still over the highlight,
+          set the visible flag and setNeedsDisplay().
+        * WebProcess/WebPage/SelectionOverlayController.h:
+
+        * WebProcess/WebPage/mac/SelectionOverlayControllerMac.mm:
+        (WebKit::SelectionOverlayController::drawRect): Recreate the highlight if it exists but
+          is marked as dirty. After doing that, possibly reset the hover timer.
+          Also, only performing the actual drawing if the visible flag is set.
+        (WebKit::SelectionOverlayController::mouseEvent): If the mouse moves on or off the highlight,
+          start or stop the hover timer accordingly.
+        (WebKit::SelectionOverlayController::mouseHoverStateChanged): Handle starting/stopping the
+          hover timer.
+        (WebKit::SelectionOverlayController::clearHighlight): Deleted.
+
 2014-04-30  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] Animated resize incorrectly assumes the layout width is the same as the view width

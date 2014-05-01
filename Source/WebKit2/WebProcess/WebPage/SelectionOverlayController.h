@@ -30,10 +30,9 @@
 #include "PageOverlay.h"
 #include "WebPage.h"
 #include <wtf/RefCounted.h>
+#include <wtf/RunLoop.h>
 
-#if PLATFORM(MAC)
 typedef void* DDHighlightRef;
-#endif
 
 namespace WebCore {
 class LayoutRect;
@@ -68,7 +67,8 @@ private:
     virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
     virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) override;
 
-    void clearHighlight();
+    void mouseHoverStateChanged();
+    void hoverTimerFired();
 
     RefPtr<WebPage> m_webPage;
     PageOverlay* m_selectionOverlay;
@@ -77,10 +77,12 @@ private:
     WebCore::IntPoint m_mousePosition;
     bool m_mouseIsDownOnButton;
     bool m_mouseIsOverHighlight;
+    bool m_visible;
 
-#if PLATFORM(MAC)
+    RunLoop::Timer<SelectionOverlayController> m_hoverTimer;
+
     RetainPtr<DDHighlightRef> m_currentHighlight;
-#endif
+    bool m_currentHighlightIsDirty;
 };
 
 } // namespace WebKit

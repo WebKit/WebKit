@@ -55,6 +55,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static double hoverTimerInterval = 2.0;
+
 void SelectionOverlayController::drawRect(PageOverlay* overlay, WebCore::GraphicsContext& graphicsContext, const WebCore::IntRect& dirtyRect)
 {
     if (m_currentSelectionRects.isEmpty())
@@ -65,7 +67,7 @@ void SelectionOverlayController::drawRect(PageOverlay* overlay, WebCore::Graphic
         return;
     }
 
-    if (!m_currentHighlight) {
+    if (!m_currentHighlight || m_currentHighlightIsDirty) {
         Vector<CGRect> cgRects;
         cgRects.reserveCapacity(m_currentSelectionRects.size());
 
@@ -73,13 +75,16 @@ void SelectionOverlayController::drawRect(PageOverlay* overlay, WebCore::Graphic
             cgRects.append((CGRect)pixelSnappedIntRect(rect));
 
         m_currentHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRect(nullptr, cgRects.begin(), cgRects.size(), (CGRect)dirtyRect, true));
+        m_currentHighlightIsDirty = false;
 
         Boolean onButton;
         m_mouseIsOverHighlight = DDHighlightPointIsOnHighlight(m_currentHighlight.get(), (CGPoint)m_mousePosition, &onButton);
+
+        mouseHoverStateChanged();
     }
 
-    // If the mouse is not over the DDHighlight we have no drawing to do.
-    if (!m_mouseIsOverHighlight)
+    // If the UI is not visibile or if the mouse is not over the DDHighlight we have no drawing to do.
+    if (!m_mouseIsOverHighlight || !m_visible)
         return;
 
     CGContextRef cgContext = graphicsContext.platformContext();
@@ -108,8 +113,10 @@ bool SelectionOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& e
     Boolean onButton = false;
     m_mouseIsOverHighlight = m_currentHighlight ? DDHighlightPointIsOnHighlight(m_currentHighlight.get(), (CGPoint)m_mousePosition, &onButton) : false;
 
-    if (mouseWasOverHighlight != m_mouseIsOverHighlight)
+    if (mouseWasOverHighlight != m_mouseIsOverHighlight) {
         m_selectionOverlay->setNeedsDisplay();
+        mouseHoverStateChanged();
+    }
 
     // If this event has nothing to do with the left button, it clears the current mouse down tracking and we're done processing it.
     if (event.button() != WebMouseEvent::LeftButton) {
@@ -167,11 +174,16 @@ void SelectionOverlayController::handleClick(const WebCore::IntPoint& point)
 {
     m_webPage->handleSelectionServiceClick(m_webPage->corePage()->mainFrame().selection(), point);
 }
-    
-void SelectionOverlayController::clearHighlight()
+
+void SelectionOverlayController::mouseHoverStateChanged()
 {
-    m_currentHighlight.clear();
-    m_mouseIsOverHighlight = false;
+    if (m_mouseIsOverHighlight) {
+        if (!m_hoverTimer.isActive())
+            m_hoverTimer.startOneShot(hoverTimerInterval);
+    } else {
+        m_visible = false;
+        m_hoverTimer.stop();
+    }
 }
     
 } // namespace WebKit
