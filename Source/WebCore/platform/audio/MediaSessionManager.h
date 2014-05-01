@@ -60,7 +60,7 @@ public:
     bool has(MediaSession::MediaType) const;
     int count(MediaSession::MediaType) const;
 
-    void beginInterruption();
+    void beginInterruption(MediaSession::InterruptionType);
     void endInterruption(MediaSession::EndInterruptionFlags);
 
     void applicationWillEnterForeground() const;

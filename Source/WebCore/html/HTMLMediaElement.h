@@ -717,6 +717,7 @@ private:
     virtual double mediaSessionCurrentTime() const override { return currentTime(); }
     virtual bool canReceiveRemoteControlCommands() const override { return true; }
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
+    virtual bool overrideBackgroundPlaybackRestriction() const override;
 
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);

@@ -282,7 +282,7 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
             return;
 
         if (type == AVAudioSessionInterruptionTypeBegan)
-            _callback->beginInterruption();
+            _callback->beginInterruption(MediaSession::SystemInterruption);
         else
             _callback->endInterruption(flags);
 

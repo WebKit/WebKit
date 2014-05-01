@@ -44,15 +44,6 @@ public:
     AudioDestinationMac(AudioIOCallback&, float sampleRate);
     virtual ~AudioDestinationMac();
 
-    virtual void start() override;
-    virtual void stop() override;
-    virtual bool isPlaying() override { return m_isPlaying; }
-
-    virtual void pausePlayback() override { stop(); }
-    virtual void resumePlayback() override { start(); }
-
-    virtual float sampleRate() const override { return m_sampleRate; }
-
 private:
     void configure();
 
@@ -61,9 +52,19 @@ private:
 
     OSStatus render(UInt32 numberOfFrames, AudioBufferList* ioData);
 
-    virtual MediaSession::MediaType mediaType() const { return MediaSession::WebAudio; }
-    virtual bool canReceiveRemoteControlCommands() const { return false; }
-    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) { }
+    virtual MediaSession::MediaType mediaType() const override { return MediaSession::WebAudio; }
+    virtual bool canReceiveRemoteControlCommands() const override { return false; }
+    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override { }
+    virtual bool overrideBackgroundPlaybackRestriction() const override { return false; }
+
+    virtual void start() override;
+    virtual void stop() override;
+    virtual bool isPlaying() override { return m_isPlaying; }
+
+    virtual void pausePlayback() override { stop(); }
+    virtual void resumePlayback() override { start(); }
+
+    virtual float sampleRate() const override { return m_sampleRate; }
 
     AudioUnit m_outputUnit;
     AudioIOCallback& m_callback;

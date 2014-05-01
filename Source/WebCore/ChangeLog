@@ -1,3 +1,36 @@
+2014-04-30  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] do not pause video when entering background while playing to external device
+        https://bugs.webkit.org/show_bug.cgi?id=132374
+
+        Reviewed by Jer Noble.
+
+        * WebCore.exp.in: Update beginInterruption signature.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canOverrideBackgroundPlaybackRestriction): New, return true when
+            playing to external device.
+        * html/HTMLMediaElement.h:
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::beginInterruption): Add interruption type to beginInterruption.
+        * platform/audio/MediaSession.h:
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::beginInterruption): Ditto.
+        (WebCore::MediaSessionManager::applicationWillEnterBackground): Ditto.
+        (WebCore::MediaSessionManager::systemWillSleep): Ditto.
+        * platform/audio/MediaSessionManager.h:
+
+        * platform/audio/ios/AudioDestinationIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper interruption:]): Ditto.
+
+        * platform/audio/mac/AudioDestinationMac.h: Make most methods private. Add 
+            canOverrideBackgroundPlaybackRestriction. Add missing overrides.
+        * testing/Internals.cpp:
+        (WebCore::Internals::beginMediaSessionInterruption): Pass interruption type.
+
 2014-04-30  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Unreviewed, rolling out r167879 and r167942.

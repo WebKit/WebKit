@@ -57,11 +57,16 @@ public:
     State state() const { return m_state; }
     void setState(State);
 
+    enum InterruptionType {
+        SystemSleep,
+        EnteringBackground,
+        SystemInterruption,
+    };
     enum EndInterruptionFlags {
         NoFlags = 0,
         MayResumePlaying = 1 << 0,
     };
-    void beginInterruption();
+    void beginInterruption(InterruptionType);
     void endInterruption(EndInterruptionFlags);
 
     void applicationWillEnterForeground() const;
@@ -126,6 +131,8 @@ public:
 
     virtual void setShouldBufferData(bool) { }
     virtual bool elementIsHidden() const { return false; }
+
+    virtual bool overrideBackgroundPlaybackRestriction() const = 0;
 
 protected:
     virtual ~MediaSessionClient() { }

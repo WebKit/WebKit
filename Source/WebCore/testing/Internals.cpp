@@ -2216,7 +2216,7 @@ void Internals::initializeMockMediaSource()
 #if ENABLE(VIDEO)
 void Internals::beginMediaSessionInterruption()
 {
-    MediaSessionManager::sharedManager().beginInterruption();
+    MediaSessionManager::sharedManager().beginInterruption(MediaSession::SystemInterruption);
 }
 
 void Internals::endMediaSessionInterruption(const String& flagsString)

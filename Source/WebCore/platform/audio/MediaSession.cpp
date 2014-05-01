@@ -76,9 +76,12 @@ void MediaSession::setState(State state)
     m_state = state;
 }
 
-void MediaSession::beginInterruption()
+void MediaSession::beginInterruption(InterruptionType type)
 {
     LOG(Media, "MediaSession::beginInterruption(%p), state = %s", this, stateName(m_state));
+
+    if (type == EnteringBackground && client().overrideBackgroundPlaybackRestriction())
+        return;
 
     m_stateToRestore = state();
     m_notifyingClient = true;

@@ -6181,6 +6181,15 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(MediaSession::RemoteContro
     }
 }
 
+bool HTMLMediaElement::overrideBackgroundPlaybackRestriction() const
+{
+#if ENABLE(IOS_AIRPLAY)
+    if (m_player && m_player->isCurrentPlaybackTargetWireless())
+        return true;
+#endif
+    return false;
+}
+
 bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicString* value) const
 {
     QualifiedName attributeName(nullAtom, attribute, nullAtom);

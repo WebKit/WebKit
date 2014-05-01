@@ -81,14 +81,14 @@ int MediaSessionManager::count(MediaSession::MediaType type) const
     return count;
 }
 
-void MediaSessionManager::beginInterruption()
+void MediaSessionManager::beginInterruption(MediaSession::InterruptionType type)
 {
     LOG(Media, "MediaSessionManager::beginInterruption");
 
     m_interrupted = true;
     Vector<MediaSession*> sessions = m_sessions;
     for (auto* session : sessions)
-        session->beginInterruption();
+        session->beginInterruption(type);
 }
 
 void MediaSessionManager::endInterruption(MediaSession::EndInterruptionFlags flags)
@@ -263,7 +263,7 @@ void MediaSessionManager::applicationWillEnterBackground() const
     Vector<MediaSession*> sessions = m_sessions;
     for (auto* session : sessions) {
         if (m_restrictions[session->mediaType()] & BackgroundPlaybackNotPermitted)
-            session->beginInterruption();
+            session->beginInterruption(MediaSession::EnteringBackground);
     }
 }
 
@@ -314,7 +314,7 @@ void MediaSessionManager::systemWillSleep()
         return;
 
     for (auto session : m_sessions)
-        session->beginInterruption();
+        session->beginInterruption(MediaSession::SystemSleep);
 }
 
 void MediaSessionManager::systemDidWake()
