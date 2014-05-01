@@ -9,7 +9,7 @@
           (bounds 100.00 100.00)
           (children 1
             (GraphicsLayer
-              (bounds 85.00 100.00)
+              (bounds 100.00 100.00)
               (children 1
                 (GraphicsLayer
                   (bounds 10.00 200.00)
@@ -23,7 +23,7 @@
           (bounds 100.00 100.00)
           (children 1
             (GraphicsLayer
-              (bounds 100.00 85.00)
+              (bounds 100.00 100.00)
               (children 1
                 (GraphicsLayer
                   (bounds 200.00 10.00)
@@ -37,7 +37,7 @@
           (bounds 100.00 100.00)
           (children 1
             (GraphicsLayer
-              (bounds 85.00 85.00)
+              (bounds 100.00 100.00)
               (children 1
                 (GraphicsLayer
                   (bounds 200.00 200.00)

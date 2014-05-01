@@ -22,8 +22,8 @@
               )
             )
             (GraphicsLayer
-              (position 190.00 1.00)
-              (bounds 15.00 124.00)
+              (position 205.00 1.00)
+              (bounds 0.00 124.00)
               (drawsContent 1)
             )
           )
@@ -46,8 +46,8 @@
               )
             )
             (GraphicsLayer
-              (position 190.00 1.00)
-              (bounds 15.00 124.00)
+              (position 205.00 1.00)
+              (bounds 0.00 124.00)
               (drawsContent 1)
             )
           )

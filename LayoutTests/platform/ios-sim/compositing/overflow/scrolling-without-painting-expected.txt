@@ -8,7 +8,7 @@
           (position 8.00 8.00)
           (bounds 202.00 202.00)
           (drawsContent 1)
-          (children 4
+          (children 3
             (GraphicsLayer
               (position 1.00 1.00)
               (bounds origin 0.00 25.00)
@@ -21,21 +21,13 @@
               )
             )
             (GraphicsLayer
-              (position 1.00 186.00)
-              (bounds 185.00 15.00)
+              (position 1.00 201.00)
+              (bounds 200.00 0.00)
               (drawsContent 1)
             )
             (GraphicsLayer
-              (position 186.00 1.00)
-              (bounds 15.00 185.00)
-              (drawsContent 1)
-              (repaint rects
-                (rect 0.00 0.00 15.00 185.00)
-              )
-            )
-            (GraphicsLayer
-              (position 186.00 186.00)
-              (bounds 15.00 15.00)
+              (position 201.00 1.00)
+              (bounds 0.00 200.00)
               (drawsContent 1)
             )
           )
