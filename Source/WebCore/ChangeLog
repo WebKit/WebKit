@@ -1,3 +1,18 @@
+2014-05-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r168192.
+        https://bugs.webkit.org/show_bug.cgi?id=132498
+
+        Was not the correct fix (blurry!) (Requested by bfulgham_ on
+        #webkit).
+
+        Reverted changeset:
+
+        "[iOS] deviceScaleFactor is being double-applied when
+        rendering captions in full screen mode"
+        https://bugs.webkit.org/show_bug.cgi?id=132481
+        http://trac.webkit.org/changeset/168192
+
 2014-05-02  Alexey Proskuryakov  <ap@apple.com>
 
         Remove Blob contentDisposition handling
