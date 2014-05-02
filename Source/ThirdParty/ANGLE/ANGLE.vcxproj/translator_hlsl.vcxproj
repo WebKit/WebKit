@@ -144,7 +144,6 @@
     <ClCompile Include="..\src\compiler\translator\SearchSymbol.cpp" />
     <ClCompile Include="..\src\compiler\translator\TranslatorHLSL.cpp" />
     <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuit.cpp" />
-    <ClCompile Include="..\src\compiler\translator\Uniform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\compiler\translator\DetectDiscontinuity.h" />
@@ -152,7 +151,6 @@
     <ClInclude Include="..\src\compiler\translator\SearchSymbol.h" />
     <ClInclude Include="..\src\compiler\translator\TranslatorHLSL.h" />
     <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuit.h" />
-    <ClInclude Include="..\src\compiler\translator\Uniform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

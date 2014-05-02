@@ -38,9 +38,6 @@
     <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\translator\Uniform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\compiler\translator\DetectDiscontinuity.h">
@@ -68,9 +65,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\compiler\translator\Uniform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

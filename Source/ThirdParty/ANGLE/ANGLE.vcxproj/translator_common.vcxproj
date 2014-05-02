@@ -139,6 +139,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
+    <ClCompile Include="..\src\common\blocklayout.cpp" />
+    <ClCompile Include="..\src\common\debug.cpp" />
+    <ClCompile Include="..\src\common\event_tracer.cpp" />
+    <ClCompile Include="..\src\common\mathutil.cpp" />
+    <ClCompile Include="..\src\common\RefCountObject.cpp" />
+    <ClCompile Include="..\src\common\shadervars.cpp" />
+    <ClCompile Include="..\src\common\utilities.cpp" />
     <ClCompile Include="..\src\compiler\translator\BuiltInFunctionEmulator.cpp" />
     <ClCompile Include="..\src\compiler\translator\CodeGen.cpp" />
     <ClCompile Include="..\src\compiler\translator\Compiler.cpp" />
@@ -146,6 +153,7 @@
     <ClCompile Include="..\src\compiler\translator\DetectCallDepth.cpp" />
     <ClCompile Include="..\src\compiler\translator\Diagnostics.cpp" />
     <ClCompile Include="..\src\compiler\translator\DirectiveHandler.cpp" />
+    <ClCompile Include="..\src\compiler\translator\FlagStd140Structs.cpp" />
     <ClCompile Include="..\src\compiler\translator\ForLoopUnroll.cpp" />
     <ClCompile Include="..\src\compiler\translator\InfoSink.cpp" />
     <ClCompile Include="..\src\compiler\translator\Initialize.cpp" />
@@ -155,7 +163,7 @@
     <ClCompile Include="..\src\compiler\translator\Intermediate.cpp" />
     <ClCompile Include="..\src\compiler\translator\intermOut.cpp" />
     <ClCompile Include="..\src\compiler\translator\IntermTraverse.cpp" />
-    <ClCompile Include="..\src\compiler\translator\MapLongVariableNames.cpp" />
+    <ClCompile Include="..\src\compiler\translator\LoopInfo.cpp" />
     <ClCompile Include="..\src\compiler\translator\ossource_win.cpp" />
     <ClCompile Include="..\src\compiler\translator\parseConst.cpp" />
     <ClCompile Include="..\src\compiler\translator\ParseContext.cpp" />
@@ -168,6 +176,7 @@
     <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuitAST.cpp" />
     <ClCompile Include="..\src\compiler\translator\util.cpp" />
     <ClCompile Include="..\src\compiler\translator\ValidateLimitations.cpp" />
+    <ClCompile Include="..\src\compiler\translator\ValidateOutputs.cpp" />
     <ClCompile Include="..\src\compiler\translator\VariableInfo.cpp" />
     <ClCompile Include="..\src\compiler\translator\VariablePacker.cpp" />
     <ClCompile Include="..\src\compiler\translator\glslang_lex.cpp" />
@@ -188,6 +197,15 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\common\angleutils.h" />
+    <ClInclude Include="..\src\common\blocklayout.h" />
+    <ClInclude Include="..\src\common\debug.h" />
+    <ClInclude Include="..\src\common\event_tracer.h" />
+    <ClInclude Include="..\src\common\mathutil.h" />
+    <ClInclude Include="..\src\common\RefCountObject.h" />
+    <ClInclude Include="..\src\common\shadervars.h" />
+    <ClInclude Include="..\src\common\utilities.h" />
+    <ClInclude Include="..\src\common\version.h" />
     <ClInclude Include="..\src\compiler\translator\BaseTypes.h" />
     <ClInclude Include="..\src\compiler\translator\BuiltInFunctionEmulator.h" />
     <ClInclude Include="..\src\compiler\translator\Common.h" />
@@ -196,6 +214,7 @@
     <ClInclude Include="..\src\compiler\translator\DetectCallDepth.h" />
     <ClInclude Include="..\src\compiler\translator\Diagnostics.h" />
     <ClInclude Include="..\src\compiler\translator\DirectiveHandler.h" />
+    <ClInclude Include="..\src\compiler\translator\FlagStd140Structs.h" />
     <ClInclude Include="..\src\compiler\translator\ForLoopUnroll.h" />
     <ClInclude Include="..\src\compiler\translator\HashNames.h" />
     <ClInclude Include="..\src\compiler\translator\InfoSink.h" />
@@ -206,7 +225,7 @@
     <ClInclude Include="..\src\compiler\translator\InitializeParseContext.h" />
     <ClInclude Include="..\src\compiler\translator\intermediate.h" />
     <ClInclude Include="..\src\compiler\translator\localintermediate.h" />
-    <ClInclude Include="..\src\compiler\translator\MapLongVariableNames.h" />
+    <ClInclude Include="..\src\compiler\translator\LoopInfo.h" />
     <ClInclude Include="..\src\compiler\translator\MMap.h" />
     <ClInclude Include="..\src\compiler\translator\osinclude.h" />
     <ClInclude Include="..\src\compiler\translator\ParseContext.h" />
@@ -222,6 +241,7 @@
     <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuitAST.h" />
     <ClInclude Include="..\src\compiler\translator\util.h" />
     <ClInclude Include="..\src\compiler\translator\ValidateLimitations.h" />
+    <ClInclude Include="..\src\compiler\translator\ValidateOutputs.h" />
     <ClInclude Include="..\src\compiler\translator\VariableInfo.h" />
     <ClInclude Include="..\src\compiler\translator\VariablePacker.h" />
     <ClInclude Include="..\src\compiler\translator\glslang_tab.h" />

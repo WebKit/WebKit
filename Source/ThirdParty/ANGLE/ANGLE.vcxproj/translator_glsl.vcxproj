@@ -147,7 +147,6 @@
     <ClCompile Include="..\src\compiler\translator\TranslatorESSL.cpp" />
     <ClCompile Include="..\src\compiler\translator\TranslatorGLSL.cpp" />
     <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuit.cpp" />
-    <ClCompile Include="..\src\compiler\translator\Uniform.cpp" />
     <ClCompile Include="..\src\compiler\translator\VersionGLSL.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,7 +158,6 @@
     <ClInclude Include="..\src\compiler\translator\TranslatorESSL.h" />
     <ClInclude Include="..\src\compiler\translator\TranslatorGLSL.h" />
     <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuit.h" />
-    <ClInclude Include="..\src\compiler\translator\Uniform.h" />
     <ClInclude Include="..\src\compiler\translator\VersionGLSL.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

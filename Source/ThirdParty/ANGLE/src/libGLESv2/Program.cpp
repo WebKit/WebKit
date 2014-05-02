@@ -107,7 +107,7 @@ void InfoLog::append(const char *format, ...)
     {
         mInfoLog = new char[infoLength + 2];
         logPointer = mInfoLog;
-        logLength = infoLenfth + 2;
+        logLength = infoLength + 2;
     }
     else
     {

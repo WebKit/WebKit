@@ -361,7 +361,7 @@ index 8a9fb04..46db788 100644
      {
          mInfoLog = new char[infoLength + 2];
          logPointer = mInfoLog;
-+        logLength = infoLenfth + 2;
++        logLength = infoLength + 2;
      }
      else
      {

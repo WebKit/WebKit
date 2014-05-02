@@ -27,6 +27,9 @@
     <Filter Include="Source Files\generated">
       <UniqueIdentifier>{eb8da157-b29c-43c3-880d-54679e176dc5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{69095c0a-dd27-4295-b89c-fe324ffa36ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\compiler\translator\glslang_lex.cpp">
@@ -104,7 +107,7 @@
     <ClCompile Include="..\src\compiler\translator\IntermTraverse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\translator\MapLongVariableNames.cpp">
+    <ClCompile Include="..\src\compiler\translator\LoopInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\compiler\translator\ossource_win.cpp">
@@ -150,6 +153,33 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\compiler\translator\RewriteElseBlocks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\blocklayout.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\debug.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\event_tracer.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\mathutil.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\RefCountObject.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\shadervars.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\utilities.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\FlagStd140Structs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\ValidateOutputs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -217,7 +247,7 @@
     <ClInclude Include="..\src\compiler\translator\MMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\compiler\translator\MapLongVariableNames.h">
+    <ClInclude Include="..\src\compiler\translator\LoopInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\compiler\translator\localintermediate.h">
@@ -285,6 +315,39 @@
     </ClInclude>
     <ClInclude Include="..\src\compiler\translator\RewriteElseBlocks.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\angleutils.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\blocklayout.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\debug.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\event_tracer.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\mathutil.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\RefCountObject.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\shadervars.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\utilities.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\version.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\FlagStd140Structs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\ValidateOutputs.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
