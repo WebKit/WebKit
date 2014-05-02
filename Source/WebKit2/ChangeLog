@@ -1,3 +1,23 @@
+2014-05-01  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (WebKit2) Need to support Learn button.
+        https://bugs.webkit.org/show_bug.cgi?id=132454
+        <rdar://problem/16778889>
+
+        Reviewed by Benjamin Poulain.
+
+        For traditional Chinese we support the ability to add shortcuts
+        for typing. This is done by pressing the Learn button on the system
+        menu. This patch adds the necessary code to canPerformAction to enable
+        the button when appropriate as well as the implementation of the action
+        itself.
+        It also adds a check for the Replace button not to be shown when the
+        selection only contains CJ characters.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _addShortcut:]):
+        (-[WKContentView canPerformAction:withSender:]):
+
 2014-05-01  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Tweak the extended background exclusion for MobileSafari

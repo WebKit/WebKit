@@ -43,11 +43,13 @@
 #import "_WKFormDelegate.h"
 #import "_WKFormInputSession.h"
 #import <DataDetectorsUI/DDDetectionController.h>
+#import <TextInput/TI_NSStringExtras.h>
 #import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UIWebHighlightLongPressGestureRecognizer.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIGestureRecognizer_Private.h>
 #import <UIKit/UIKeyboardImpl.h>
+#import <UIKit/UIKeyboardIntl.h>
 #import <UIKit/UILongPressGestureRecognizer_Private.h>
 #import <UIKit/UITapGestureRecognizer_Private.h>
 #import <UIKit/UITextInteractionAssistant_Private.h>
@@ -124,6 +126,7 @@ static const float tapAndHoldDelay  = 0.75;
 
 @interface UITextInteractionAssistant (StagingToRemove)
 - (void)scheduleReplacementsForText:(NSString *)text;
+- (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 @end
 
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
@@ -848,7 +851,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_addShortcut:(id)sender
 {
-    // FIXME: To be implemented.
+    if (_textSelectionAssistant && [_textSelectionAssistant respondsToSelector:@selector(showTextServiceFor:fromRect:)])
+        [_textSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().selectionRects[0].rect()];
 }
 
 - (NSString *)selectedText
@@ -923,12 +927,25 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (action == @selector(_addShortcut:)) {
         if (_page->editorState().isInPasswordField || !(hasWebSelection || _page->editorState().selectionIsRange))
             return NO;
-        // FIXME: need to implement, returning NO always for now.
-        return NO;
+
+        NSString *selectedText = [self selectedText];
+        if (![selectedText length])
+            return NO;
+
+        if (!UIKeyboardEnabledInputModesAllowOneToManyShortcuts())
+            return NO;
+        if (![selectedText _containsCJScripts])
+            return NO;
+        return YES;
     }
 
-    if (action == @selector(_promptForReplace:))
-        return _page->editorState().selectionIsRange && _page->editorState().isReplaceAllowed && [[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled];
+    if (action == @selector(_promptForReplace:)) {
+        if (!_page->editorState().selectionIsRange || !_page->editorState().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
+            return NO;
+        if ([[self selectedText] _containsCJScriptsOnly])
+            return NO;
+        return YES;
+    }
 
     if (action == @selector(select:)) {
         // Disable select in password fields so that you can't see word boundaries.
