@@ -761,6 +761,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
     else {
         unsigned pos;
         int len = s.length();
+        RELEASE_ASSERT(len >= 0);
         if (a1.isUInt32())
             pos = std::min<uint32_t>(a1.asUInt32(), len);
         else {
@@ -904,6 +905,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
     int len = s.length();
+    RELEASE_ASSERT(len >= 0);
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
@@ -1216,6 +1218,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
     int len = jsString->length();
+    RELEASE_ASSERT(len >= 0);
 
     double start = a0.toNumber(exec);
     double end;
@@ -1253,6 +1256,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
     int sSize = s.length();
     if (!sSize)
         return JSValue::encode(sVal);
+    RELEASE_ASSERT(sSize >= 0);
 
     StringImpl* ourImpl = s.impl();
     RefPtr<StringImpl> lower = ourImpl->lower();

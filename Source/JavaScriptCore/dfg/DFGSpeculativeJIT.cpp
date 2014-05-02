@@ -3198,12 +3198,28 @@ void SpeculativeJIT::compileMakeRope(Node* node)
         m_jit.storePtr(TrustedImmPtr(0), JITCompiler::Address(resultGPR, JSRopeString::offsetOfFibers() + sizeof(WriteBarrier<JSString>) * i));
     m_jit.load32(JITCompiler::Address(opGPRs[0], JSString::offsetOfFlags()), scratchGPR);
     m_jit.load32(JITCompiler::Address(opGPRs[0], JSString::offsetOfLength()), allocatorGPR);
+    if (!ASSERT_DISABLED) {
+        JITCompiler::Jump ok = m_jit.branch32(
+            JITCompiler::GreaterThanOrEqual, allocatorGPR, TrustedImm32(0));
+        m_jit.breakpoint();
+        ok.link(&m_jit);
+    }
     for (unsigned i = 1; i < numOpGPRs; ++i) {
         m_jit.and32(JITCompiler::Address(opGPRs[i], JSString::offsetOfFlags()), scratchGPR);
-        m_jit.add32(JITCompiler::Address(opGPRs[i], JSString::offsetOfLength()), allocatorGPR);
+        speculationCheck(
+            Uncountable, JSValueSource(), nullptr,
+            m_jit.branchAdd32(
+                JITCompiler::Overflow,
+                JITCompiler::Address(opGPRs[i], JSString::offsetOfLength()), allocatorGPR));
     }
     m_jit.and32(JITCompiler::TrustedImm32(JSString::Is8Bit), scratchGPR);
     m_jit.store32(scratchGPR, JITCompiler::Address(resultGPR, JSString::offsetOfFlags()));
+    if (!ASSERT_DISABLED) {
+        JITCompiler::Jump ok = m_jit.branch32(
+            JITCompiler::GreaterThanOrEqual, allocatorGPR, TrustedImm32(0));
+        m_jit.breakpoint();
+        ok.link(&m_jit);
+    }
     m_jit.store32(allocatorGPR, JITCompiler::Address(resultGPR, JSString::offsetOfLength()));
     
     switch (numOpGPRs) {

@@ -40,6 +40,7 @@ void JSRopeString::RopeBuilder::expand()
 {
     ASSERT(m_index == JSRopeString::s_maxInternalRopeLength);
     JSString* jsString = m_jsString;
+    RELEASE_ASSERT(jsString);
     m_jsString = jsStringBuilder(&m_vm);
     m_index = 0;
     append(jsString);
