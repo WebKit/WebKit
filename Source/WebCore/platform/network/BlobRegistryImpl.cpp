@@ -121,7 +121,7 @@ unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, std::unique
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
 
-    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create(blobData->contentType(), blobData->contentDisposition());
+    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create(blobData->contentType());
 
     // The blob data is stored in the "canonical" way. That is, it only contains a list of Data and File items.
     // 1) The Data item is denoted by the raw data and the range.
@@ -208,7 +208,7 @@ unsigned long long BlobRegistryImpl::registerBlobURLForSlice(const URL& url, con
         end = originalSize;
 
     unsigned long long newLength = end - start;
-    RefPtr<BlobStorageData> newStorageData = BlobStorageData::create(originalStorageData->contentType(), originalStorageData->contentDisposition());
+    RefPtr<BlobStorageData> newStorageData = BlobStorageData::create(originalStorageData->contentType());
 
     appendStorageItems(newStorageData.get(), originalStorageData->items(), start, newLength);
 

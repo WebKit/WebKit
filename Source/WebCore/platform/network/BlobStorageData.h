@@ -39,22 +39,20 @@ namespace WebCore {
 
 class BlobStorageData : public RefCounted<BlobStorageData> {
 public:
-    static PassRefPtr<BlobStorageData> create(const String& contentType, const String& contentDisposition)
+    static PassRefPtr<BlobStorageData> create(const String& contentType)
     {
-        return adoptRef(new BlobStorageData(contentType, contentDisposition));
+        return adoptRef(new BlobStorageData(contentType));
     }
 
     const String& contentType() const { return m_data.contentType(); }
-    const String& contentDisposition() const { return m_data.contentDisposition(); }    
     const BlobDataItemList& items() const { return m_data.items(); }
 
 private:
     friend class BlobRegistryImpl;
 
-    BlobStorageData(const String& contentType, const String& contentDisposition)
+    BlobStorageData(const String& contentType)
     {
         m_data.setContentType(contentType);
-        m_data.setContentDisposition(contentDisposition);
     }
 
     BlobData m_data;

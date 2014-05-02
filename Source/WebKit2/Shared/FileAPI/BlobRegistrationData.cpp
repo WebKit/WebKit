@@ -73,7 +73,6 @@ std::unique_ptr<BlobData> BlobRegistrationData::releaseData() const
 void BlobRegistrationData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_data->contentType();
-    encoder << m_data->contentDisposition();
 
     const BlobDataItemList& items = m_data->items();
     encoder << static_cast<uint64_t>(items.size());
@@ -113,11 +112,6 @@ bool BlobRegistrationData::decode(IPC::ArgumentDecoder& decoder, BlobRegistratio
     if (!decoder.decode(contentType))
         return false;
     result.m_data->setContentType(contentType);
-
-    String contentDisposition;
-    if (!decoder.decode(contentDisposition))
-        return false;
-    result.m_data->setContentDisposition(contentDisposition);
 
     uint64_t itemCount;
     if (!decoder.decode(itemCount))

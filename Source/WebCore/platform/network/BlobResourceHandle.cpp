@@ -582,8 +582,9 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     response.setExpectedContentLength(m_totalRemainingSize);
     response.setHTTPStatusCode(isRangeRequest ? httpPartialContent : httpOK);
     response.setHTTPStatusText(isRangeRequest ? httpPartialContentText : httpOKText);
-    if (!m_blobData->contentDisposition().isEmpty())
-        response.setHTTPHeaderField("Content-Disposition", m_blobData->contentDisposition());
+    // FIXME: If a resource identified with a blob: URL is a File object, user agents must use that file's name attribute,
+    // as if the response had a Content-Disposition header with the filename parameter set to the File's name attribute.
+    // Notably, this will affect a name suggested in "File Save As".
 
     // BlobResourceHandle cannot be used with downloading, and doesn't even wait for continueDidReceiveResponse.
     // It's currently client's responsibility to know that didReceiveResponseAsync cannot be used to convert a

@@ -1,3 +1,26 @@
+2014-05-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove Blob contentDisposition handling
+        https://bugs.webkit.org/show_bug.cgi?id=132490
+
+        Reviewed by Sam Weinig.
+
+        Dead code.
+
+        * platform/network/BlobData.h:
+        (WebCore::BlobData::contentDisposition): Deleted.
+        (WebCore::BlobData::setContentDisposition): Deleted.
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURLForSlice):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+        * platform/network/BlobStorageData.h:
+        (WebCore::BlobStorageData::create):
+        (WebCore::BlobStorageData::contentType):
+        (WebCore::BlobStorageData::BlobStorageData):
+        (WebCore::BlobStorageData::contentDisposition): Deleted.
+
 2014-05-02  Anders Carlsson  <andersca@apple.com>
 
         Implement FormData decoding using KeyedDecoder
