@@ -139,7 +139,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
     // Create the new stream.
     FormDataElement& nextInput = form->remainingElements.last();
 
-    if (nextInput.m_type == FormDataElement::data) {
+    if (nextInput.m_type == FormDataElement::Type::Data) {
         size_t size = nextInput.m_data.size();
         MallocPtr<char> data = nextInput.m_data.releaseBuffer();
         form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data.get()), size, kCFAllocatorNull);
@@ -378,7 +378,7 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> prpFormDat
     // Handle the common special case of one piece of form data, with no files.
     if (count == 1 && !formData->alwaysStream()) {
         const FormDataElement& element = formData->elements()[0];
-        if (element.m_type == FormDataElement::data) {
+        if (element.m_type == FormDataElement::Type::Data) {
             RetainPtr<CFDataRef> data = adoptCF(CFDataCreate(0, reinterpret_cast<const UInt8 *>(element.m_data.data()), element.m_data.size()));
             CFURLRequestSetHTTPRequestBody(request, data.get());
             return;
@@ -394,7 +394,7 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> prpFormDat
     unsigned long long length = 0;
     for (size_t i = 0; i < count; ++i) {
         const FormDataElement& element = formData->elements()[i];
-        if (element.m_type == FormDataElement::data)
+        if (element.m_type == FormDataElement::Type::Data)
             length += element.m_data.size();
         else {
 #if ENABLE(BLOB)

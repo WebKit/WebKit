@@ -1,3 +1,35 @@
+2014-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Clean up FormDataElement
+        https://bugs.webkit.org/show_bug.cgi?id=132483
+
+        Reviewed by Sam Weinig.
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::FormData):
+        (WebCore::FormData::deepCopy):
+        (WebCore::FormData::expandDataStore):
+        (WebCore::FormData::flatten):
+        (WebCore::FormData::resolveBlobReferences):
+        (WebCore::FormData::generateFiles):
+        (WebCore::FormData::hasGeneratedFiles):
+        (WebCore::FormData::hasOwnedGeneratedFiles):
+        (WebCore::FormData::removeGeneratedFilesIfNeeded):
+        (WebCore::encodeElement):
+        (WebCore::decodeElement):
+        * platform/network/FormData.h:
+        (WebCore::FormDataElement::FormDataElement):
+        (WebCore::operator==):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::advanceCurrentStream):
+        (WebCore::setHTTPBody):
+        * platform/network/curl/FormDataStreamCurl.cpp:
+        (WebCore::FormDataStream::read):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::setupFormData):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::addFormElementsToSoupMessage):
+
 2014-05-02  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Wireless playback button not blue when active

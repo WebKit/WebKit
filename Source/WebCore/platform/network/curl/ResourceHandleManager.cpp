@@ -782,7 +782,7 @@ static void setupFormData(ResourceHandle* job, CURLoption sizeOption, struct cur
     bool chunkedTransfer = false;
     for (size_t i = 0; i < numElements; i++) {
         FormDataElement element = elements[i];
-        if (element.m_type == FormDataElement::encodedFile) {
+        if (element.m_type == FormDataElement::Type::EncodedFile) {
             long long fileSizeResult;
             if (getFileSize(element.m_filename, fileSizeResult)) {
                 if (fileSizeResult > maxCurlOffT) {

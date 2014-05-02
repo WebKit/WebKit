@@ -814,14 +814,14 @@ static bool addFormElementsToSoupMessage(SoupMessage* message, const char*, Form
     for (size_t i = 0; i < numElements; i++) {
         const FormDataElement& element = httpBody->elements()[i];
 
-        if (element.m_type == FormDataElement::data) {
+        if (element.m_type == FormDataElement::Type::Data) {
             totalBodySize += element.m_data.size();
             soup_message_body_append(message->request_body, SOUP_MEMORY_TEMPORARY,
                                      element.m_data.data(), element.m_data.size());
             continue;
         }
 
-        if (element.m_type == FormDataElement::encodedFile) {
+        if (element.m_type == FormDataElement::Type::EncodedFile) {
             if (!addFileToSoupMessageBody(message ,
                                          element.m_filename,
                                          0 /* offset */,
@@ -832,7 +832,7 @@ static bool addFormElementsToSoupMessage(SoupMessage* message, const char*, Form
         }
 
 #if ENABLE(BLOB)
-        ASSERT(element.m_type == FormDataElement::encodedBlob);
+        ASSERT(element.m_type == FormDataElement::Type::EncodedBlob);
         addEncodedBlobToSoupMessageBody(message, element, totalBodySize);
 #endif
     }

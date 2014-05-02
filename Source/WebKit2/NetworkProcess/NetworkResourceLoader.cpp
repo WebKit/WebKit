@@ -85,7 +85,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     if (m_request.httpBody()) {
         const Vector<FormDataElement>& elements = m_request.httpBody()->elements();
         for (size_t i = 0, count = elements.size(); i < count; ++i) {
-            if (elements[i].m_type == FormDataElement::encodedBlob) {
+            if (elements[i].m_type == FormDataElement::Type::EncodedBlob) {
                 Vector<RefPtr<SandboxExtension>> blobElementExtensions = NetworkBlobRegistry::shared().sandboxExtensions(elements[i].m_url);
                 m_requestBodySandboxExtensions.appendVector(blobElementExtensions);
             }

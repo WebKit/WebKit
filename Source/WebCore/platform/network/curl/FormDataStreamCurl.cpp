@@ -64,7 +64,7 @@ size_t FormDataStream::read(void* ptr, size_t blockSize, size_t numberOfBlocks)
     size_t toSend = blockSize * numberOfBlocks;
     size_t sent;
 
-    if (element.m_type == FormDataElement::encodedFile) {
+    if (element.m_type == FormDataElement::Type::EncodedFile) {
         if (!m_file)
             m_file = fopen(element.m_filename.utf8().data(), "rb");
 

@@ -69,7 +69,7 @@ void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
         const Vector<FormDataElement>& elements = request.httpBody()->elements();
         size_t fileCount = 0;
         for (size_t i = 0, count = elements.size(); i < count; ++i) {
-            if (elements[i].m_type == FormDataElement::encodedFile)
+            if (elements[i].m_type == FormDataElement::Type::EncodedFile)
                 ++fileCount;
         }
 
@@ -78,7 +78,7 @@ void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
         size_t extensionIndex = 0;
         for (size_t i = 0, count = elements.size(); i < count; ++i) {
             const FormDataElement& element = elements[i];
-            if (element.m_type == FormDataElement::encodedFile) {
+            if (element.m_type == FormDataElement::Type::EncodedFile) {
                 const String& path = element.m_shouldGenerateFile ? element.m_generatedFilename : element.m_filename;
                 SandboxExtension::createHandle(path, SandboxExtension::ReadOnly, requestBodySandboxExtensions[extensionIndex++]);
             }

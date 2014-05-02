@@ -35,23 +35,53 @@ class TextEncoding;
 
 class FormDataElement {
 public:
-    FormDataElement() : m_type(data) { }
-    explicit FormDataElement(const Vector<char>& array) : m_type(data), m_data(array) { }
+    enum class Type {
+        Data,
+        EncodedFile,
+#if ENABLE(BLOB)
+        EncodedBlob,
+#endif
+    };
+
+    FormDataElement()
+        : m_type(Type::Data)
+    {
+    }
+
+    explicit FormDataElement(const Vector<char>& array)
+        : m_type(Type::Data)
+        , m_data(array)
+    {
+    }
 
 #if ENABLE(BLOB)
-    FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_fileStart(fileStart), m_fileLength(fileLength), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(shouldGenerateFile), m_ownsGeneratedFile(false) { }
-    explicit FormDataElement(const URL& blobURL) : m_type(encodedBlob), m_url(blobURL) { }
+    FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile)
+        : m_type(Type::EncodedFile)
+        , m_filename(filename)
+        , m_fileStart(fileStart)
+        , m_fileLength(fileLength)
+        , m_expectedFileModificationTime(expectedFileModificationTime)
+        , m_shouldGenerateFile(shouldGenerateFile)
+        , m_ownsGeneratedFile(false)
+    {
+    }
+
+    explicit FormDataElement(const URL& blobURL)
+        : m_type(Type::EncodedBlob)
+        , m_url(blobURL)
+    {
+    }
 #else
-    FormDataElement(const String& filename, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_shouldGenerateFile(shouldGenerateFile), m_ownsGeneratedFile(false) { }
+    FormDataElement(const String& filename, bool shouldGenerateFile)
+        : m_type(Type::EncodedFile)
+        , m_filename(filename)
+        , m_shouldGenerateFile(shouldGenerateFile)
+        , m_ownsGeneratedFile(false)
+    {
+    }
 #endif
 
-    enum Type {
-        data,
-        encodedFile
-#if ENABLE(BLOB)
-        , encodedBlob
-#endif
-    } m_type;
+    Type m_type;
     Vector<char> m_data;
     String m_filename;
 #if ENABLE(BLOB)
@@ -72,12 +102,12 @@ inline bool operator==(const FormDataElement& a, const FormDataElement& b)
 
     if (a.m_type != b.m_type)
         return false;
-    if (a.m_type == FormDataElement::data)
+    if (a.m_type == FormDataElement::Type::Data)
         return a.m_data == b.m_data;
-    if (a.m_type == FormDataElement::encodedFile)
+    if (a.m_type == FormDataElement::Type::EncodedFile)
 #if ENABLE(BLOB)
         return a.m_filename == b.m_filename && a.m_fileStart == b.m_fileStart && a.m_fileLength == b.m_fileLength && a.m_expectedFileModificationTime == b.m_expectedFileModificationTime;
-    if (a.m_type == FormDataElement::encodedBlob)
+    if (a.m_type == FormDataElement::Type::EncodedBlob)
         return a.m_url == b.m_url;
 #else
         return a.m_filename == b.m_filename;
