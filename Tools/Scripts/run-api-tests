@@ -65,6 +65,15 @@ Usage: $programName [options] [suite or test prefixes]
   -d|--dump-tests       Dump the names of testcases without running them
   --[no-]build          Build (or do not build) unit tests prior to running (default: $buildDefault)
   --root=               Path to the pre-built root containing TestWebKitAPI
+
+Examples
+
+The following command will run a single test:
+    $programName WebKit2.AboutBlank
+
+The following command will run all tests in suites that begin with 'WebKit2':
+    $programName WebKit2
+
 EOF
 
 GetOptions(
