@@ -1,3 +1,17 @@
+2014-05-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r168150.
+        https://bugs.webkit.org/show_bug.cgi?id=132471
+
+        This test is still broken (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION(r125251): It made svg/custom/use-instanceRoot-as-
+        event-target.xhtml assert and flakey"
+        https://bugs.webkit.org/show_bug.cgi?id=93812
+        http://trac.webkit.org/changeset/168150
+
 2014-05-02  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Remove support for non-separable blend modes from background-blend-mode
