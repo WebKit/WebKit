@@ -1,3 +1,10 @@
+2014-05-01  Tim Horton  <timothy_horton@apple.com>
+
+        Temporarily "fix" the 32-bit build.
+
+        * Misc/WebSharingServicePickerController.mm:
+        This will fail miserably at runtime, but we shouldn't ever get here in a 32-bit process.
+
 2014-05-01  Brady Eidson  <beidson@apple.com>
 
         Update service picker API usage.
