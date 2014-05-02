@@ -1,3 +1,18 @@
+2014-05-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct case of environment variables in auto-version.sh scripts
+        https://bugs.webkit.org/show_bug.cgi?id=132455
+
+        Reviewed by Dean Jackson.
+
+        Although we have historically used RC_PROJECTSOURCEVERSION in our scripts,
+        the actual environment variable is RC_ProjectSourceVersion. Old versions of
+        Cygwin converted this to all-caps by default, but this is no longer the case.
+        We need to use the proper case to avoid build failures.
+
+        * win/tools/scripts/auto-version.sh: Although we have historically coded
+        this as 'RC_PROJECTSOURCEVERSION', it is actually 'RC_ProjectSourceVersion'.
+
 2014-04-25  Dean Jackson  <dino@apple.com>
 
         Update WKSI for https://webkit.org/b/132195
