@@ -1,3 +1,17 @@
+2014-05-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r168118): [GTK] build broken due to shouldTrackVisitedLinks
+        https://bugs.webkit.org/show_bug.cgi?id=132447
+
+        Unreviewed GTK build fix.
+
+        shouldTrackVisitedLinks was removed on r168118.
+        Visited link coloring works as expected after this change.
+
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess): Remove
+        shouldTrackVisitedLinks parameter.
+
 2014-05-01  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WebKit2) Need to support Learn button.

@@ -106,8 +106,6 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
         parameters.ignoreTLSErrors = m_ignoreTLSErrors;
     }
-
-    parameters.shouldTrackVisitedLinks = true;
 }
 
 void WebContext::platformInvalidateContext()
