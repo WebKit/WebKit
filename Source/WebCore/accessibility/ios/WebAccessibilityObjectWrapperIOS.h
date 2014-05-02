@@ -61,6 +61,7 @@
 - (void)postChildrenChangedNotification;
 - (void)postInvalidStatusChangedNotification;
 - (void)postLiveRegionCreatedNotification;
+- (void)postScrollStatusChangeNotification;
 
 @end
 

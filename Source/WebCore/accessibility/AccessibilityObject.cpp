@@ -31,6 +31,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityRenderObject.h"
+#include "AccessibilityScrollView.h"
 #include "AccessibilityTable.h"
 #include "DOMTokenList.h"
 #include "Editor.h"
@@ -1408,7 +1409,17 @@ void AccessibilityObject::updateBackingStore()
     updateChildrenIfNecessary();
 }
 #endif
-
+    
+ScrollView* AccessibilityObject::scrollViewAncestor() const
+{
+    for (const AccessibilityObject* scrollParent = this; scrollParent; scrollParent = scrollParent->parentObject()) {
+        if (scrollParent->isAccessibilityScrollView())
+            return toAccessibilityScrollView(scrollParent)->scrollView();
+    }
+    
+    return nullptr;
+}
+    
 Document* AccessibilityObject::document() const
 {
     FrameView* frameView = documentFrameView();

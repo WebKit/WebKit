@@ -1,3 +1,27 @@
+2014-05-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WK2: iOS web page scrolling doesn't work with VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=132028
+
+        Reviewed by Mario Sanchez Prada.
+
+        With the AX tree residing in the WebProcess, scrolling needs to be implemented in
+        WebCore using accessibilityScroll: in order for accessibility clients to scroll through the AX API.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::scrollViewAncestor):
+        (WebCore::AccessibilityObject::scrollToMakeVisibleWithSubFocus):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityConvertPointToViewSpace:]):
+        (-[WebAccessibilityObjectWrapper _accessibilityScrollToVisible]):
+        (-[WebAccessibilityObjectWrapper accessibilityScroll:]):
+        (-[WebAccessibilityObjectWrapper postScrollStatusChangeNotification]):
+        (-[WebAccessibilityObjectWrapper _accessibilityScrollPosition]):
+        (-[WebAccessibilityObjectWrapper _accessibilityScrollSize]):
+        (-[WebAccessibilityObjectWrapper _accessibilityScrollVisibleRect]):
+
 2014-05-02  Jeremy Jones  <jeremyj@apple.com>
 
         Pause playback on exit fullscreen when inline playback not allowed.

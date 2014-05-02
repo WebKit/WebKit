@@ -86,6 +86,7 @@ class Page;
 class RenderObject;
 class RenderListItem;
 class ScrollableArea;
+class ScrollView;
 class Widget;
 
 typedef unsigned AXID;
@@ -709,6 +710,7 @@ public:
     Frame* frame() const;
     MainFrame* mainFrame() const;
     Document* topDocument() const;
+    ScrollView* scrollViewAncestor() const;
     String language() const;
     // 1-based, to match the aria-level spec.
     virtual unsigned hierarchicalLevel() const { return 0; }
