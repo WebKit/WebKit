@@ -1,3 +1,12 @@
+2014-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Remove unsuccessful build fix attempts
+        https://bugs.webkit.org/show_bug.cgi?id=132476
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2014-05-01  Anders Carlsson  <andersca@apple.com>
 
         Support OS-version-specific install paths for WebKit.framework
