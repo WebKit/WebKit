@@ -1,3 +1,9 @@
+2014-05-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fix cloop build after r168178
+
+        * bytecode/CodeBlock.cpp:
+
 2014-05-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add a DFG function whitelist

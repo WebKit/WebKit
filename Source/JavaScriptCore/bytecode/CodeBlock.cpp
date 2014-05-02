@@ -3594,11 +3594,13 @@ RareCaseProfile* CodeBlock::rareCaseProfileForBytecodeOffset(int bytecodeOffset)
         getRareCaseProfileBytecodeOffset);
 }
 
+#if ENABLE(JIT)
 DFG::CapabilityLevel CodeBlock::capabilityLevel()
 {
     DFG::CapabilityLevel result = capabilityLevelInternal();
     m_capabilityLevelState = result;
     return result;
 }
+#endif
 
 } // namespace JSC
