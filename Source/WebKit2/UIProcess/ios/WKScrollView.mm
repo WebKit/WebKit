@@ -28,6 +28,12 @@
 
 #if PLATFORM(IOS)
 
+#import <CoreGraphics/CGFloat.h>
+
+@interface UIScrollView (UIScrollViewInternalHack)
+- (CGFloat)_rubberBandOffsetForOffset:(CGFloat)newOffset maxOffset:(CGFloat)maxOffset minOffset:(CGFloat)minOffset range:(CGFloat)range outside:(BOOL *)outside;
+@end
+
 @interface WKScrollViewDelegateForwarder : NSObject <UIScrollViewDelegate>
 
 - (instancetype)initWithInternalDelegate:(id <UIScrollViewDelegate>)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate;
@@ -126,6 +132,44 @@
 {
     [_delegateForwarder release];
     [super dealloc];
+}
+
+static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
+{
+    return CGFAbs(a - b) < 1;
+}
+
+- (CGFloat)_rubberBandOffsetForOffset:(CGFloat)newOffset maxOffset:(CGFloat)maxOffset minOffset:(CGFloat)minOffset range:(CGFloat)range outside:(BOOL *)outside
+{
+    UIEdgeInsets contentInsets = self.contentInset;
+    CGSize contentSize = self.contentSize;
+    CGRect bounds = self.bounds;
+
+    CGFloat minimalHorizontalRange = bounds.size.width - contentInsets.left - contentInsets.right;
+    if (contentSize.width < minimalHorizontalRange) {
+        if (valuesAreWithinOnePixel(minOffset, -contentInsets.left)
+            && valuesAreWithinOnePixel(maxOffset, contentSize.width + contentInsets.right - bounds.size.width)
+            && valuesAreWithinOnePixel(range, bounds.size.width)) {
+
+            CGFloat emptyHorizontalMargin = (minimalHorizontalRange - contentSize.width) / 2;
+            minOffset -= emptyHorizontalMargin;
+            maxOffset = minOffset;
+        }
+    }
+
+    CGFloat minimalVerticalRange = bounds.size.height - contentInsets.top - contentInsets.bottom;
+    if (contentSize.height < minimalVerticalRange) {
+        if (valuesAreWithinOnePixel(minOffset, -contentInsets.top)
+            && valuesAreWithinOnePixel(maxOffset, contentSize.height + contentInsets.bottom - bounds.size.height)
+            && valuesAreWithinOnePixel(range, bounds.size.height)) {
+
+            CGFloat emptyVerticalMargin = (minimalVerticalRange - contentSize.height) / 2;
+            minOffset -= emptyVerticalMargin;
+            maxOffset = minOffset;
+        }
+    }
+
+    return [super _rubberBandOffsetForOffset:newOffset maxOffset:maxOffset minOffset:minOffset range:range outside:outside];
 }
 
 @end
