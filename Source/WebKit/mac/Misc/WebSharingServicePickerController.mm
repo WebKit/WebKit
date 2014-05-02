@@ -67,6 +67,9 @@ using namespace WebCore;
 
 - (instancetype)initWithData:(NSData *)data includeEditorServices:(BOOL)includeEditorServices menuClient:(WebContextMenuClient*)menuClient
 {
+#ifndef __LP64__
+    return nil;
+#else
     if (!(self = [super init]))
         return nil;
 
@@ -80,6 +83,7 @@ using namespace WebCore;
     _menuClient = menuClient;
 
     return self;
+#endif
 }
 
 - (void)clear
@@ -162,6 +166,7 @@ using namespace WebCore;
 
     if ([item isKindOfClass:[NSImage class]])
         [self didShareImageData:[item TIFFRepresentation] confirmDataIsValidTIFFData:NO];
+#ifdef __LP64__
     else if ([item isKindOfClass:[NSItemProvider class]]) {
         NSItemProvider *itemProvider = (NSItemProvider *)item;
         NSString *itemUTI = itemProvider.registeredTypeIdentifiers.firstObject;
@@ -182,7 +187,9 @@ using namespace WebCore;
             }];
 
         }];
-    } else
+    }
+#endif
+    else
         LOG_ERROR("sharingService:didShareItems: - Unknown item type returned");
 }
 

@@ -1,5 +1,12 @@
 2014-05-01  Tim Horton  <timothy_horton@apple.com>
 
+        More 32-bit build fixes.
+
+        * Misc/WebSharingServicePickerController.mm:
+        (-[WebSharingServicePickerController sharingService:didShareItems:]):
+
+2014-05-01  Tim Horton  <timothy_horton@apple.com>
+
         Temporarily "fix" the 32-bit build.
 
         * Misc/WebSharingServicePickerController.mm:
