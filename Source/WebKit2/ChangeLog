@@ -1,3 +1,27 @@
+2014-05-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] More animation madness for when the extendedBackground is modified in an animation block
+        https://bugs.webkit.org/show_bug.cgi?id=132497
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (updateTopAndBottomExtendedBackgroundExclusionIfNecessary):
+        Do not early return when _extendedBackgroundExclusionInsets.left is empty. That way, if executed in an animation block,
+        the top of bottom view will animate from their current size to an empty width.
+
+        When creating the layer, set up their height without animation. Otherwise it is possible to see the height animating
+        while the left inset is animating.
+
+        (-[WKWebView _setExtendedBackgroundExclusionInsets:]):
+        When replacing the scrollview, make sure the frame and color are not animated. Otherwise the transition between
+        scrollView and _mainExtendedBackgroundView can be visible if _setExtendedBackgroundExclusionInsets: is invoked
+        in an animation block.
+
+        (-[WKWebView _endAnimatedResize]):
+        Nuke the top and bottom insets when possible. [WKWebView _endAnimatedResize] is unfrequent, so it is a good opportunity
+        to free the memory.
+
 2014-05-02  Alexey Proskuryakov  <ap@apple.com>
 
         Remove Blob contentDisposition handling

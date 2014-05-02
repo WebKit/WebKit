@@ -1298,15 +1298,15 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 static void updateTopAndBottomExtendedBackgroundExclusionIfNecessary(WKWebView* webView)
 {
-    if (!webView->_extendedBackgroundExclusionInsets.left)
-        return;
-
     if (webView->_obscuredInsets.top && !webView->_extendedBackgroundExclusionInsets.top) {
         if (!webView->_extendedBackgroundLayerTopInset) {
             RetainPtr<UIView> backgroundView = adoptNS([[UIView alloc] init]);
             [backgroundView setBackgroundColor:webView->_mainExtendedBackgroundView.backgroundColor];
             [webView insertSubview:backgroundView.get() belowSubview:webView->_scrollView.get()];
             webView->_extendedBackgroundLayerTopInset = backgroundView.get();
+            [UIView performWithoutAnimation: ^{
+                [webView->_extendedBackgroundLayerTopInset setFrame:CGRectMake(0, 0, 0, webView->_obscuredInsets.top)];
+            }];
         }
 
         [webView->_extendedBackgroundLayerTopInset setFrame:CGRectMake(0, 0, webView->_extendedBackgroundExclusionInsets.left, webView->_obscuredInsets.top)];
@@ -1317,6 +1317,9 @@ static void updateTopAndBottomExtendedBackgroundExclusionIfNecessary(WKWebView* 
             [backgroundView setBackgroundColor:webView->_mainExtendedBackgroundView.backgroundColor];
             [webView insertSubview:backgroundView.get() belowSubview:webView->_scrollView.get()];
             webView->_extendedBackgroundLayerBottomInset = backgroundView.get();
+            [UIView performWithoutAnimation: ^{
+                [webView->_extendedBackgroundLayerBottomInset setFrame:CGRectMake(0, webView.bounds.size.height - webView->_obscuredInsets.bottom, 0, webView->_obscuredInsets.bottom)];
+            }];
         }
         [webView->_extendedBackgroundLayerBottomInset setFrame:CGRectMake(0, webView.bounds.size.height - webView->_obscuredInsets.bottom, webView->_extendedBackgroundExclusionInsets.left, webView->_obscuredInsets.bottom)];
     }
@@ -1354,15 +1357,17 @@ static void updateTopAndBottomExtendedBackgroundExclusionIfNecessary(WKWebView* 
     if (UIEdgeInsetsEqualToEdgeInsets(extendedBackgroundExclusionInsets, _extendedBackgroundExclusionInsets))
         return;
 
+    CGRect bounds = self.bounds;
     if (_mainExtendedBackgroundView == _scrollView) {
-        RetainPtr<UIView> backgroundView = adoptNS([[UIView alloc] init]);
-        _mainExtendedBackgroundView = backgroundView.get();
-        _mainExtendedBackgroundView.backgroundColor = [_scrollView backgroundColor];
-        [self insertSubview:_mainExtendedBackgroundView belowSubview:_scrollView.get()];
-        [_scrollView setBackgroundColor:nil];
+        [UIView performWithoutAnimation: ^{
+            RetainPtr<UIView> backgroundView = adoptNS([[UIView alloc] initWithFrame:bounds]);
+            _mainExtendedBackgroundView = backgroundView.get();
+            _mainExtendedBackgroundView.backgroundColor = [_scrollView backgroundColor];
+            [self insertSubview:_mainExtendedBackgroundView belowSubview:_scrollView.get()];
+            [_scrollView setBackgroundColor:nil];
+        }];
     }
 
-    CGRect bounds = self.bounds;
     _extendedBackgroundExclusionInsets = extendedBackgroundExclusionInsets;
     _mainExtendedBackgroundView.frame = UIEdgeInsetsInsetRect(bounds, _extendedBackgroundExclusionInsets);
 
@@ -1489,8 +1494,16 @@ static void updateTopAndBottomExtendedBackgroundExclusionIfNecessary(WKWebView* 
         _resizeAnimationView = nil;
     }
 
-    _resizeAnimationTransformAdjustments = CATransform3DIdentity;
     _isAnimatingResize = NO;
+    _resizeAnimationTransformAdjustments = CATransform3DIdentity;
+
+    if (!_extendedBackgroundExclusionInsets.left) {
+        [_extendedBackgroundLayerTopInset removeFromSuperview];
+        _extendedBackgroundLayerTopInset = nil;
+        [_extendedBackgroundLayerBottomInset removeFromSuperview];
+        _extendedBackgroundLayerBottomInset = nil;
+    }
+
     [self _updateVisibleContentRects];
 }
 
