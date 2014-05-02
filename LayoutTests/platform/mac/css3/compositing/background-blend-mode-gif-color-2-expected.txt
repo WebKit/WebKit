@@ -14,7 +14,3 @@ layer at (0,0) size 800x428
       RenderBlock (floating) {DIV} at (425,145) size 130x130 [bgcolor=#008000]
       RenderBlock (floating) {DIV} at (565,145) size 130x130 [bgcolor=#008000]
       RenderBlock (floating) {DIV} at (5,285) size 130x130 [bgcolor=#008000]
-      RenderBlock (floating) {DIV} at (145,285) size 130x130 [bgcolor=#008000]
-      RenderBlock (floating) {DIV} at (285,285) size 130x130 [bgcolor=#008000]
-      RenderBlock (floating) {DIV} at (425,285) size 130x130 [bgcolor=#008000]
-      RenderBlock (floating) {DIV} at (565,285) size 130x130 [bgcolor=#008000]

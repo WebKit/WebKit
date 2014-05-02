@@ -4307,8 +4307,7 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                         || val->id == CSSValueScreen || val->id == CSSValueOverlay || val->id == CSSValueDarken
                         || val->id == CSSValueLighten ||  val->id == CSSValueColorDodge || val->id == CSSValueColorBurn
                         || val->id == CSSValueHardLight || val->id == CSSValueSoftLight || val->id == CSSValueDifference
-                        || val->id == CSSValueExclusion || val->id == CSSValueHue || val->id == CSSValueSaturation
-                        || val->id == CSSValueColor || val->id == CSSValueLuminosity)) {
+                        || val->id == CSSValueExclusion)) {
                         currValue = cssValuePool().createIdentifierValue(val->id);
                         m_valueList->next();
                     }

@@ -1,3 +1,41 @@
+2014-05-02  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Remove support for non-separable blend modes from background-blend-mode
+        https://bugs.webkit.org/show_bug.cgi?id=132327
+
+        Reviewed by Dean Jackson.
+
+        * css3/compositing/background-blend-mode-gif-color-2.html:
+        * css3/compositing/background-blend-mode-gif-color.html:
+        * css3/compositing/background-blend-mode-gradient-color.html:
+        * css3/compositing/background-blend-mode-gradient-gradient.html:
+        * css3/compositing/background-blend-mode-gradient-image.html:
+        * css3/compositing/background-blend-mode-image-color.html:
+        * css3/compositing/background-blend-mode-image-image.html:
+        * css3/compositing/background-blend-mode-image-svg.html:
+        * css3/compositing/background-blend-mode-multiple-background-layers.html:
+        * css3/compositing/background-blend-mode-property-expected.txt:
+        * css3/compositing/background-blend-mode-property-parsing-expected.txt:
+        * css3/compositing/background-blend-mode-svg-color.html:
+        * css3/compositing/effect-background-blend-mode-tiled.html:
+        * css3/compositing/effect-background-blend-mode.html:
+        * css3/compositing/script-tests/background-blend-mode-property-parsing.js:
+        * css3/compositing/script-tests/background-blend-mode-property.js:
+        * platform/mac/css3/compositing/background-blend-mode-gif-color-2-expected.png:
+        * platform/mac/css3/compositing/background-blend-mode-gif-color-2-expected.txt:
+        * platform/mac/css3/compositing/background-blend-mode-gif-color-expected.png:
+        * platform/mac/css3/compositing/background-blend-mode-gif-color-expected.txt:
+        * platform/mac/css3/compositing/background-blend-mode-gradient-color-expected.png:
+        * platform/mac/css3/compositing/background-blend-mode-gradient-gradient-expected.png:
+        * platform/mac/css3/compositing/background-blend-mode-gradient-image-expected.png:
+        * platform/mac/css3/compositing/background-blend-mode-image-color-expected.png:
+        * platform/mac/css3/compositing/background-blend-mode-image-color-expected.txt:
+        * platform/mac/css3/compositing/background-blend-mode-image-image-expected.png:
+        * platform/mac/css3/compositing/background-blend-mode-image-image-expected.txt:
+        * platform/mac/css3/compositing/background-blend-mode-image-svg-expected.png:
+        * platform/mac/css3/compositing/background-blend-mode-multiple-background-layers-expected.png:
+        * platform/mac/css3/compositing/background-blend-mode-svg-color-expected.png:
+
 2014-05-01  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION(r125251): It made svg/custom/use-instanceRoot-as-event-target.xhtml assert and flakey

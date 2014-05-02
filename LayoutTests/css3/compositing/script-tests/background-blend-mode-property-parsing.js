@@ -46,7 +46,7 @@ function testBlendModeRule(description, rule, expectedLength, expectedValue, exp
 	    shouldBeType("blendModeRule", "CSSValueList");
 }
 
-var blendmodes = ["normal", "multiply, screen", "screen, hue", "overlay, normal", "darken, lighten, normal, luminosity", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
+var blendmodes = ["normal", "multiply, screen", "screen, multiply", "overlay, normal", "darken, lighten, normal, multiply", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion"];
 
 for(x in blendmodes)
    testBlendModeRule("Basic reference", blendmodes[x], 1, blendmodes[x]);

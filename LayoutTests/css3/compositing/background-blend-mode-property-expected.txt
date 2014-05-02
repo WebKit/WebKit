@@ -39,18 +39,6 @@ PASS declaration.getPropertyValue('background-blend-mode') is 'difference, diffe
 PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('background-blend-mode') is 'exclusion, exclusion'
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('background-blend-mode') is 'hue, hue'
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('background-blend-mode') is 'saturation, saturation'
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('background-blend-mode') is 'color, color'
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('background-blend-mode') is 'luminosity, luminosity'
 PASS successfullyParsed is true
 
 TEST COMPLETE
