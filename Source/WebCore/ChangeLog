@@ -1,3 +1,19 @@
+2014-05-01  Andreas Kling  <akling@apple.com>
+
+        HTMLMediaElement: Remove two unnecessary virtual overrides.
+        <https://webkit.org/b/132445>
+
+        Now that ENABLE_PLUGIN_PROXY_FOR_VIDEO is gone, we can remove
+        these overrides:
+
+            - defaultEventHandler()
+            - willRespondToMouseClickEvents()
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+
 2014-05-01  Benjamin Poulain  <bpoulain@apple.com>
 
         ViewportConfiguration::minimumScale() uses the initial scale as initial value

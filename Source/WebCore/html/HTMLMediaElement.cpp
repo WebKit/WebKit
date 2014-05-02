@@ -4699,18 +4699,6 @@ void HTMLMediaElement::visibilityStateChanged()
 }
 #endif
 
-void HTMLMediaElement::defaultEventHandler(Event* event)
-{
-    HTMLElement::defaultEventHandler(event);
-}
-
-#if !PLATFORM(IOS)
-bool HTMLMediaElement::willRespondToMouseClickEvents()
-{
-    return HTMLElement::willRespondToMouseClickEvents();
-}
-#endif // !PLATFORM(IOS)
-
 #if ENABLE(VIDEO_TRACK)
 bool HTMLMediaElement::requiresTextTrackRepresentation() const
 {

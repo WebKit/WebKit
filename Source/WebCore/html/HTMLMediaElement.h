@@ -416,10 +416,6 @@ public:
     MediaController* controller() const;
     void setController(PassRefPtr<MediaController>);
 
-#if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() override;
-#endif
-
     void enteredOrExitedFullscreen() { configureMediaControls(); }
 
     unsigned long long fileSize() const;
@@ -482,8 +478,6 @@ private:
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
     virtual void didRecalcStyle(Style::Change) override;
-
-    virtual void defaultEventHandler(Event*) override;
 
     virtual void didBecomeFullscreenElement() override;
     virtual void willStopBeingFullscreenElement() override;
