@@ -40,9 +40,8 @@ class Page;
 class DeviceOrientationController : public DeviceController {
     WTF_MAKE_NONCOPYABLE(DeviceOrientationController);
 public:
+    explicit DeviceOrientationController(DeviceOrientationClient*);
     ~DeviceOrientationController() { };
-
-    static PassOwnPtr<DeviceOrientationController> create(DeviceOrientationClient*);
 
     void didChangeDeviceOrientation(DeviceOrientationData*);
     DeviceOrientationClient* deviceOrientationClient();
@@ -60,9 +59,6 @@ public:
     static const char* supplementName();
     static DeviceOrientationController* from(Page*);
     static bool isActiveAt(Page*);
-
-private:
-    DeviceOrientationController(DeviceOrientationClient*);
 };
 
 } // namespace WebCore

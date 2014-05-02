@@ -38,9 +38,8 @@ class DeviceMotionData;
 class DeviceMotionController : public DeviceController {
     WTF_MAKE_NONCOPYABLE(DeviceMotionController);
 public:
+    explicit DeviceMotionController(DeviceMotionClient*);
     ~DeviceMotionController() { };
-
-    static PassOwnPtr<DeviceMotionController> create(DeviceMotionClient*);
 
 #if PLATFORM(IOS)
     // FIXME: We should look to reconcile the iOS and OpenSource differences with this class
@@ -58,9 +57,6 @@ public:
     static const char* supplementName();
     static DeviceMotionController* from(Page*);
     static bool isActiveAt(Page*);
-
-private:
-    explicit DeviceMotionController(DeviceMotionClient*);
 };
 
 } // namespace WebCore

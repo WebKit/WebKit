@@ -44,15 +44,10 @@ UserMediaController::~UserMediaController()
     m_client->pageDestroyed();
 }
 
-PassOwnPtr<UserMediaController> UserMediaController::create(UserMediaClient* client)
-{
-    return adoptPtr(new UserMediaController(client));
-}
-
 void provideUserMediaTo(Page* page, UserMediaClient* client)
 {
     if (!Supplement<Page>::from(page, UserMediaController::supplementName()))
-        UserMediaController::provideTo(page, UserMediaController::supplementName(), UserMediaController::create(client));
+        UserMediaController::provideTo(page, UserMediaController::supplementName(), std::make_unique<UserMediaController>(client));
 }
 
 } // namespace WebCore

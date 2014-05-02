@@ -44,11 +44,6 @@ NotificationController::~NotificationController()
         m_client->notificationControllerDestroyed();
 }
 
-PassOwnPtr<NotificationController> NotificationController::create(NotificationClient* client)
-{
-    return adoptPtr(new NotificationController(client));
-}
-
 NotificationClient* NotificationController::clientFrom(Page* page)
 {
     if (NotificationController* controller = NotificationController::from(page))
@@ -63,7 +58,7 @@ const char* NotificationController::supplementName()
 
 void provideNotification(Page* page, NotificationClient* client)
 {
-    NotificationController::provideTo(page, NotificationController::supplementName(), NotificationController::create(client));
+    NotificationController::provideTo(page, NotificationController::supplementName(), std::make_unique<NotificationController>(client));
 }
 
 } // namespace WebCore

@@ -43,11 +43,6 @@ Vibration::~Vibration()
     m_vibrationClient->vibrationDestroyed();
 }
 
-PassOwnPtr<Vibration> Vibration::create(VibrationClient* client)
-{
-    return adoptPtr(new Vibration(client));
-}
-
 bool Vibration::vibrate(const VibrationPattern& pattern)
 {
     VibrationPattern& sanitized = const_cast<VibrationPattern&>(pattern);
@@ -128,7 +123,7 @@ const char* Vibration::supplementName()
 
 void provideVibrationTo(Page* page, VibrationClient* client)
 {
-    Vibration::provideTo(page, Vibration::supplementName(), Vibration::create(client));
+    Vibration::provideTo(page, Vibration::supplementName(), std::make_unique<Vibration>(client));
 }
 
 } // namespace WebCore

@@ -54,8 +54,9 @@ WorkerGlobalScopeNotifications* WorkerGlobalScopeNotifications::from(WorkerGloba
 {
     WorkerGlobalScopeNotifications* supplement = static_cast<WorkerGlobalScopeNotifications*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
     if (!supplement) {
-        supplement = new WorkerGlobalScopeNotifications(context);
-        Supplement<ScriptExecutionContext>::provideTo(context, supplementName(), adoptPtr(supplement));
+        auto newSupplement = std::make_unique<WorkerGlobalScopeNotifications>(context);
+        supplement = newSupplement.get();
+        provideTo(context, supplementName(), std::move(newSupplement));
     }
     return supplement;
 }

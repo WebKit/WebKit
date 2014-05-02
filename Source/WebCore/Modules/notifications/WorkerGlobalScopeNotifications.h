@@ -39,14 +39,13 @@ class WorkerGlobalScope;
 
 class WorkerGlobalScopeNotifications : public Supplement<ScriptExecutionContext> {
 public:
+    explicit WorkerGlobalScopeNotifications(WorkerGlobalScope*);
     virtual ~WorkerGlobalScopeNotifications();
 
     static NotificationCenter* webkitNotifications(WorkerGlobalScope*);
     static WorkerGlobalScopeNotifications* from(WorkerGlobalScope*);
 
 private:
-    explicit WorkerGlobalScopeNotifications(WorkerGlobalScope*);
-
     NotificationCenter* webkitNotifications();
     static const char* supplementName();
 

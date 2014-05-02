@@ -33,6 +33,7 @@ class Navigator;
 
 class NavigatorGeolocation : public Supplement<Navigator>, public DOMWindowProperty {
 public:
+    explicit NavigatorGeolocation(Frame*);
     virtual ~NavigatorGeolocation();
     static NavigatorGeolocation* from(Navigator*);
 
@@ -44,7 +45,6 @@ public:
 #endif // PLATFORM(IOS)
 
 private:
-    NavigatorGeolocation(Frame*);
     static const char* supplementName();
 
     mutable RefPtr<Geolocation> m_geolocation;

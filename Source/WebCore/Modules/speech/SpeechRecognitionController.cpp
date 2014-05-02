@@ -47,7 +47,7 @@ SpeechRecognitionController::~SpeechRecognitionController()
 
 void provideSpeechRecognitionTo(Page* page, SpeechRecognitionClient* client)
 {
-    SpeechRecognitionController::provideTo(page, SpeechRecognitionController::supplementName(), SpeechRecognitionController::create(client));
+    SpeechRecognitionController::provideTo(page, SpeechRecognitionController::supplementName(), std::make_unique<SpeechRecognitionController>(client));
 }
 
 } // namespace WebCore

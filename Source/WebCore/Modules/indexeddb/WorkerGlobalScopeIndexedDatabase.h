@@ -40,14 +40,13 @@ class ScriptExecutionContext;
 
 class WorkerGlobalScopeIndexedDatabase : public Supplement<ScriptExecutionContext> {
 public:
+    explicit WorkerGlobalScopeIndexedDatabase(const String& databaseDirectoryIdentifier);
     virtual ~WorkerGlobalScopeIndexedDatabase();
     static WorkerGlobalScopeIndexedDatabase* from(ScriptExecutionContext*);
 
     static IDBFactory* indexedDB(ScriptExecutionContext*);
 
 private:
-    explicit WorkerGlobalScopeIndexedDatabase(const String& databaseDirectoryIdentifier);
-
     IDBFactory* indexedDB();
     static const char* supplementName();
 

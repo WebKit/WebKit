@@ -52,9 +52,9 @@ class SpeechInput : public SpeechInputListener,
                     public Supplement<Page> {
     WTF_MAKE_NONCOPYABLE(SpeechInput);
 public:
+    explicit SpeechInput(SpeechInputClient*);
     virtual ~SpeechInput();
 
-    static PassOwnPtr<SpeechInput> create(SpeechInputClient*);
     static const char* supplementName();
     static SpeechInput* from(Page* page) { return static_cast<SpeechInput*>(Supplement<Page>::from(page, supplementName())); }
 
@@ -77,8 +77,6 @@ public:
     virtual void setRecognitionResult(int, const SpeechInputResultArray&);
 
 private:
-    explicit SpeechInput(SpeechInputClient*);
-
     SpeechInputClient* m_client;
     HashMap<int, SpeechInputListener*> m_listeners;
     int m_nextListenerId;

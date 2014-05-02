@@ -49,11 +49,6 @@ DeviceOrientationController::DeviceOrientationController(DeviceOrientationClient
 #endif
 }
 
-PassOwnPtr<DeviceOrientationController> DeviceOrientationController::create(DeviceOrientationClient* client)
-{
-    return adoptPtr(new DeviceOrientationController(client));
-}
-
 void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientationData* orientation)
 {
     dispatchDeviceEvent(DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation));
@@ -109,7 +104,7 @@ bool DeviceOrientationController::isActiveAt(Page* page)
 
 void provideDeviceOrientationTo(Page* page, DeviceOrientationClient* client)
 {
-    DeviceOrientationController::provideTo(page, DeviceOrientationController::supplementName(), DeviceOrientationController::create(client));
+    DeviceOrientationController::provideTo(page, DeviceOrientationController::supplementName(), std::make_unique<DeviceOrientationController>(client));
 }
 
 } // namespace WebCore

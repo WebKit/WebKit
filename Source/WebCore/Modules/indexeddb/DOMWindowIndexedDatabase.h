@@ -38,7 +38,9 @@ class DOMWindow;
 
 class DOMWindowIndexedDatabase : public DOMWindowProperty, public Supplement<DOMWindow> {
 public:
+    explicit DOMWindowIndexedDatabase(DOMWindow*);
     virtual ~DOMWindowIndexedDatabase();
+
     static DOMWindowIndexedDatabase* from(DOMWindow*);
 
     static IDBFactory* indexedDB(DOMWindow*);
@@ -50,8 +52,6 @@ public:
     virtual void willDetachGlobalObjectFromFrame() override;
 
 private:
-    explicit DOMWindowIndexedDatabase(DOMWindow*);
-
     IDBFactory* indexedDB();
     static const char* supplementName();
 

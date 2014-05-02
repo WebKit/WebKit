@@ -56,8 +56,9 @@ NavigatorBattery* NavigatorBattery::from(Navigator* navigator)
 {
     NavigatorBattery* supplement = static_cast<NavigatorBattery*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        supplement = new NavigatorBattery();
-        provideTo(navigator, supplementName(), adoptPtr(supplement));
+        auto newSupplement = std::make_unique<NavigatorBattery>();
+        supplement = newSupplement.get();
+        provideTo(navigator, supplementName(), std::move(newSupplement));
     }
     return supplement;
 }

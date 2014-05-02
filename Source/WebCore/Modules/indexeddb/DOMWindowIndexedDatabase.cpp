@@ -56,8 +56,9 @@ DOMWindowIndexedDatabase* DOMWindowIndexedDatabase::from(DOMWindow* window)
 {
     DOMWindowIndexedDatabase* supplement = static_cast<DOMWindowIndexedDatabase*>(Supplement<DOMWindow>::from(window, supplementName()));
     if (!supplement) {
-        supplement = new DOMWindowIndexedDatabase(window);
-        provideTo(window, supplementName(), adoptPtr(supplement));
+        auto newSupplement = std::make_unique<DOMWindowIndexedDatabase>(window);
+        supplement = newSupplement.get();
+        provideTo(window, supplementName(), std::move(newSupplement));
     }
     return supplement;
 }

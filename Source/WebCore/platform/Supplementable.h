@@ -84,9 +84,9 @@ public:
     virtual bool isRefCountedWrapper() const { return false; }
 #endif
 
-    static void provideTo(Supplementable<T>* host, const char* key, PassOwnPtr<Supplement<T>> supplement)
+    static void provideTo(Supplementable<T>* host, const char* key, std::unique_ptr<Supplement<T>> supplement)
     {
-        host->provideSupplement(key, supplement);
+        host->provideSupplement(key, std::move(supplement));
     }
 
     static Supplement<T>* from(Supplementable<T>* host, const char* key)
@@ -98,11 +98,11 @@ public:
 template<typename T>
 class Supplementable {
 public:
-    void provideSupplement(const char* key, PassOwnPtr<Supplement<T>> supplement)
+    void provideSupplement(const char* key, std::unique_ptr<Supplement<T>> supplement)
     {
         ASSERT(canAccessThreadLocalDataForThread(m_threadId));
         ASSERT(!m_supplements.get(key));
-        m_supplements.set(key, supplement);
+        m_supplements.set(key, std::move(supplement));
     }
 
     void removeSupplement(const char* key)
@@ -123,7 +123,7 @@ protected:
 #endif
 
 private:
-    typedef HashMap<const char*, OwnPtr<Supplement<T>>, PtrHash<const char*>> SupplementMap;
+    typedef HashMap<const char*, std::unique_ptr<Supplement<T>>, PtrHash<const char*>> SupplementMap;
     SupplementMap m_supplements;
 #if !ASSERT_DISABLED
     ThreadIdentifier m_threadId;

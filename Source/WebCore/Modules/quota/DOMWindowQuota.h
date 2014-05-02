@@ -43,13 +43,13 @@ class StorageInfo;
 
 class DOMWindowQuota : public Supplement<DOMWindow>, public DOMWindowProperty {
 public:
+    explicit DOMWindowQuota(DOMWindow*);
     virtual ~DOMWindowQuota();
     static DOMWindowQuota* from(DOMWindow*);
     static StorageInfo* webkitStorageInfo(DOMWindow*);
     StorageInfo* webkitStorageInfo() const;
 
 private:
-    explicit DOMWindowQuota(DOMWindow*);
     static const char* supplementName();
 
     mutable RefPtr<StorageInfo> m_storageInfo;

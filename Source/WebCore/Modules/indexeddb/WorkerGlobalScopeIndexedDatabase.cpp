@@ -61,8 +61,9 @@ WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(ScriptE
         if (groupSettings)
             databaseDirectoryIdentifier = groupSettings->indexedDBDatabasePath();
 
-        supplement = new WorkerGlobalScopeIndexedDatabase(databaseDirectoryIdentifier);
-        provideTo(context, supplementName(), adoptPtr(supplement));
+        auto newSupplement = std::make_unique<WorkerGlobalScopeIndexedDatabase>(databaseDirectoryIdentifier);
+        supplement = newSupplement.get();
+        provideTo(context, supplementName(), std::move(newSupplement));
     }
     return supplement;
 }

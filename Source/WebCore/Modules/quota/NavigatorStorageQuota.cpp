@@ -57,8 +57,9 @@ NavigatorStorageQuota* NavigatorStorageQuota::from(Navigator* navigator)
 {
     NavigatorStorageQuota* supplement = static_cast<NavigatorStorageQuota*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        supplement = new NavigatorStorageQuota(navigator->frame());
-        provideTo(navigator, supplementName(), adoptPtr(supplement));
+        auto newSupplement = std::make_unique<NavigatorStorageQuota>(window);
+        supplement = newSupplement.get();
+        provideTo(navigator, supplementName(), std::move(newSupplement));
     }
     return supplement;
 }

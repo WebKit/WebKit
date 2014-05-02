@@ -44,6 +44,7 @@ class WorkerNavigator;
 
 class WorkerNavigatorStorageQuota : public Supplement<WorkerNavigator> {
 public:
+    explicit WorkerNavigatorStorageQuota();
     virtual ~WorkerNavigatorStorageQuota();
     static WorkerNavigatorStorageQuota* from(WorkerNavigator*);
 
@@ -53,7 +54,6 @@ public:
     StorageQuota* webkitPersistentStorage() const;
 
 private:
-    explicit WorkerNavigatorStorageQuota();
     static const char* supplementName();
 
     mutable RefPtr<StorageQuota> m_temporaryStorage;

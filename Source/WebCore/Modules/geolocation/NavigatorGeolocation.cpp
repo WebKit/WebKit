@@ -51,8 +51,9 @@ NavigatorGeolocation* NavigatorGeolocation::from(Navigator* navigator)
 {
     NavigatorGeolocation* supplement = static_cast<NavigatorGeolocation*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
-        supplement = new NavigatorGeolocation(navigator->frame());
-        provideTo(navigator, supplementName(), adoptPtr(supplement));
+        auto newSupplement = std::make_unique<NavigatorGeolocation>(navigator->frame());
+        supplement = newSupplement.get();
+        provideTo(navigator, supplementName(), std::move(newSupplement));
     }
     return supplement;
 }

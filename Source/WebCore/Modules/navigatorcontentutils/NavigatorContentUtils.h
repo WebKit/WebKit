@@ -43,6 +43,10 @@ typedef int ExceptionCode;
 
 class NavigatorContentUtils final : public Supplement<Page> {
 public:
+    explicit NavigatorContentUtils(std::unique_ptr<NavigatorContentUtilsClient> client)
+        : m_client(std::move(client))
+    { }
+
     virtual ~NavigatorContentUtils();
 
     static const char* supplementName();
@@ -55,13 +59,7 @@ public:
     static void unregisterProtocolHandler(Navigator*, const String& scheme, const String& url, ExceptionCode&);
 #endif
 
-    static PassOwnPtr<NavigatorContentUtils> create(std::unique_ptr<NavigatorContentUtilsClient>);
-
 private:
-    explicit NavigatorContentUtils(std::unique_ptr<NavigatorContentUtilsClient> client)
-        : m_client(std::move(client))
-    { }
-
     NavigatorContentUtilsClient* client() { return m_client.get(); }
 
     std::unique_ptr<NavigatorContentUtilsClient> m_client;

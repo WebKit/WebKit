@@ -31,13 +31,13 @@ class Navigator;
 
 class NavigatorBattery : public Supplement<Navigator> {
 public:
+    NavigatorBattery();
     virtual ~NavigatorBattery();
 
     static NavigatorBattery* from(Navigator*);
     static BatteryManager* webkitBattery(Navigator*);
 
  private:
-    NavigatorBattery();
     static const char* supplementName();
 
     RefPtr<BatteryManager> m_batteryManager;

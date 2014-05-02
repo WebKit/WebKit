@@ -44,6 +44,7 @@ class Navigator;
 
 class NavigatorStorageQuota : public Supplement<Navigator>, public DOMWindowProperty {
 public:
+    explicit NavigatorStorageQuota(Frame*);
     virtual ~NavigatorStorageQuota();
     static NavigatorStorageQuota* from(Navigator*);
 
@@ -53,7 +54,6 @@ public:
     StorageQuota* webkitPersistentStorage() const;
 
 private:
-    explicit NavigatorStorageQuota(Frame*);
     static const char* supplementName();
 
     mutable RefPtr<StorageQuota> m_temporaryStorage;

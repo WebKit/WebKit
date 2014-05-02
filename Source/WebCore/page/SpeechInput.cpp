@@ -52,11 +52,6 @@ SpeechInput::~SpeechInput()
     m_client->setListener(0);
 }
 
-PassOwnPtr<SpeechInput> SpeechInput::create(SpeechInputClient* client)
-{
-    return adoptPtr(new SpeechInput(client));
-}
-
 int SpeechInput::registerListener(SpeechInputListener* listener)
 {
 #if defined(DEBUG)
@@ -124,7 +119,7 @@ const char* SpeechInput::supplementName()
 
 void provideSpeechInputTo(Page* page, SpeechInputClient* client)
 {
-    SpeechInput::provideTo(page, SpeechInput::supplementName(), SpeechInput::create(client));
+    SpeechInput::provideTo(page, SpeechInput::supplementName(), std::make_unique<SpeechInput>(client));
 }
 
 } // namespace WebCore

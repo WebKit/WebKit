@@ -40,11 +40,6 @@ DeviceProximityController::DeviceProximityController(DeviceProximityClient* clie
     ASSERT(m_client);
 }
 
-PassOwnPtr<DeviceProximityController> DeviceProximityController::create(DeviceProximityClient* client)
-{
-    return adoptPtr(new DeviceProximityController(client));
-}
-
 void DeviceProximityController::didChangeDeviceProximity(const double value, const double min, const double max)
 {
     ASSERT(value >= min && value <= max);
@@ -86,7 +81,7 @@ bool DeviceProximityController::isActiveAt(Page* page)
 
 void provideDeviceProximityTo(Page* page, DeviceProximityClient* client)
 {
-    DeviceProximityController::provideTo(page, DeviceProximityController::supplementName(), DeviceProximityController::create(client));
+    DeviceProximityController::provideTo(page, DeviceProximityController::supplementName(), std::make_unique<DeviceProximityController>(client));
 }
 
 } // namespace WebCore

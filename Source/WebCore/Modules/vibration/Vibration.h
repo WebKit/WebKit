@@ -37,8 +37,6 @@ public:
     explicit Vibration(VibrationClient*);
     ~Vibration();
 
-    static PassOwnPtr<Vibration> create(VibrationClient*);
-
     bool vibrate(const VibrationPattern&);
     // FIXME: When a visibilitychange event is dispatched while vibrating, the vibration should be canceled.
     void cancelVibration();

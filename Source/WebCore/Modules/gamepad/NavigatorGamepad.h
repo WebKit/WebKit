@@ -37,7 +37,9 @@ class Navigator;
 
 class NavigatorGamepad : public Supplement<Navigator> {
 public:
+    NavigatorGamepad();
     virtual ~NavigatorGamepad();
+
     static NavigatorGamepad* from(Navigator*);
 
     static GamepadList* webkitGetGamepads(Navigator*);
@@ -45,7 +47,6 @@ public:
     GamepadList* gamepads();
 
 private:
-    NavigatorGamepad();
     static const char* supplementName();
 
     RefPtr<GamepadList> m_gamepads;

@@ -32,9 +32,8 @@ class BatteryClient;
 
 class BatteryController : public Supplement<Page> {
 public:
+    explicit BatteryController(BatteryClient*);
     ~BatteryController();
-
-    static PassOwnPtr<BatteryController> create(BatteryClient*);
 
     void addListener(BatteryManager*);
     void removeListener(BatteryManager*);
@@ -46,8 +45,6 @@ public:
 
 private:
     typedef Vector<BatteryManager*> ListenerVector;
-
-    explicit BatteryController(BatteryClient*);
 
     BatteryClient* m_client;
     ListenerVector m_listeners;

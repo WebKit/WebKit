@@ -38,14 +38,13 @@ class DOMWindow;
 
 class DOMWindowSpeechSynthesis : public Supplement<DOMWindow>, public DOMWindowProperty {
 public:
+    explicit DOMWindowSpeechSynthesis(DOMWindow*);
     virtual ~DOMWindowSpeechSynthesis();
     
     static SpeechSynthesis* speechSynthesis(DOMWindow*);
     static DOMWindowSpeechSynthesis* from(DOMWindow*);
     
 private:
-    explicit DOMWindowSpeechSynthesis(DOMWindow*);
-    
     SpeechSynthesis* speechSynthesis();
     static const char* supplementName();
     

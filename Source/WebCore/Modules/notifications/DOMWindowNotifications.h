@@ -40,6 +40,7 @@ class NotificationCenter;
 
 class DOMWindowNotifications : public Supplement<DOMWindow>, public DOMWindowProperty {
 public:
+    explicit DOMWindowNotifications(DOMWindow*);
     virtual ~DOMWindowNotifications();
 
     static NotificationCenter* webkitNotifications(DOMWindow*);
@@ -52,8 +53,6 @@ public:
     virtual void willDetachGlobalObjectFromFrame() override;
 
 private:
-    explicit DOMWindowNotifications(DOMWindow*);
-
     NotificationCenter* webkitNotifications();
     static const char* supplementName();
 

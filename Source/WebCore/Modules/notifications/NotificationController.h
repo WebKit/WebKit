@@ -39,9 +39,9 @@ class NotificationClient;
 class NotificationController : public Supplement<Page> {
     WTF_MAKE_NONCOPYABLE(NotificationController);
 public:
+    explicit NotificationController(NotificationClient*);
     ~NotificationController();
 
-    static PassOwnPtr<NotificationController> create(NotificationClient*);
     static const char* supplementName();
     static NotificationController* from(Page* page) { return static_cast<NotificationController*>(Supplement<Page>::from(page, supplementName())); }
     static NotificationClient* clientFrom(Page*);
@@ -49,8 +49,6 @@ public:
     NotificationClient* client() { return m_client; }
     
 private:
-    explicit NotificationController(NotificationClient*);
-
     NotificationClient* m_client;
 };
 

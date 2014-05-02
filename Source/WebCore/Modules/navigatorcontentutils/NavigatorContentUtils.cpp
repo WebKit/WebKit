@@ -126,11 +126,6 @@ NavigatorContentUtils::~NavigatorContentUtils()
 {
 }
 
-PassOwnPtr<NavigatorContentUtils> NavigatorContentUtils::create(std::unique_ptr<NavigatorContentUtilsClient> client)
-{
-    return adoptPtr(new NavigatorContentUtils(std::move(client)));
-}
-
 void NavigatorContentUtils::registerProtocolHandler(Navigator* navigator, const String& scheme, const String& url, const String& title, ExceptionCode& ec)
 {
     if (!navigator->frame())
@@ -209,7 +204,7 @@ const char* NavigatorContentUtils::supplementName()
 
 void provideNavigatorContentUtilsTo(Page* page, std::unique_ptr<NavigatorContentUtilsClient> client)
 {
-    NavigatorContentUtils::provideTo(page, NavigatorContentUtils::supplementName(), NavigatorContentUtils::create(std::move(client)));
+    NavigatorContentUtils::provideTo(page, NavigatorContentUtils::supplementName(), std::make_unique<NavigatorContentUtils>(std::move(client)));
 }
 
 } // namespace WebCore

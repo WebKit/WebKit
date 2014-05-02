@@ -56,8 +56,9 @@ DOMWindowNotifications* DOMWindowNotifications::from(DOMWindow* window)
 {
     DOMWindowNotifications* supplement = static_cast<DOMWindowNotifications*>(Supplement<DOMWindow>::from(window, supplementName()));
     if (!supplement) {
-        supplement = new DOMWindowNotifications(window);
-        Supplement<DOMWindow>::provideTo(window, supplementName(), adoptPtr(supplement));
+        auto newSupplement = std::make_unique<DOMWindowNotifications>(window);
+        supplement = newSupplement.get();
+        provideTo(window, supplementName(), std::move(newSupplement));
     }
     return supplement;
 }
