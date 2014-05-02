@@ -1,3 +1,13 @@
+2014-05-01  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r125251): It made svg/custom/use-instanceRoot-as-event-target.xhtml assert and flakey
+        https://bugs.webkit.org/show_bug.cgi?id=93812
+
+        This is most likely fixed, unmarking the test.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-05-01  Simon Fraser  <simon.fraser@apple.com>
 
         Don't always make backing store for -webkit-backface-visibility:hidden
