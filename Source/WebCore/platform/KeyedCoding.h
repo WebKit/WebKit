@@ -72,7 +72,7 @@ public:
         if (!decodeInt64(key, intValue))
             return false;
 
-        if (!isValidEnumFunction(intValue))
+        if (!isValidEnumFunction(static_cast<T>(intValue)))
             return false;
 
         value = static_cast<T>(intValue);

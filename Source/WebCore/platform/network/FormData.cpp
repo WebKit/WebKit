@@ -543,6 +543,75 @@ static bool decodeElement(Decoder& decoder, FormDataElement& element)
     return false;
 }
 
+static bool decodeElement(KeyedDecoder& decoder, FormDataElement& element)
+{
+    if (!decoder.decodeEnum("type", element.m_type, [](FormDataElement::Type type) {
+        switch (type) {
+        case FormDataElement::Type::Data:
+        case FormDataElement::Type::EncodedFile:
+#if ENABLE(BLOB)
+        case FormDataElement::Type::EncodedBlob:
+#endif
+            return true;
+        }
+
+        return false;
+    }))
+        return false;
+
+    switch (element.m_type) {
+    case FormDataElement::Type::Data:
+        if (!decoder.decodeBytes("data", element.m_data))
+            return false;
+        break;
+
+    case FormDataElement::Type::EncodedFile: {
+        if (!decoder.decodeString("filename", element.m_filename))
+            return false;
+        if (!decoder.decodeString("generatedFilename", element.m_generatedFilename))
+            return false;
+        if (!decoder.decodeBool("shouldGenerateFile", element.m_shouldGenerateFile))
+            return false;
+
+#if ENABLE(BLOB)
+        int64_t fileStart;
+        if (!decoder.decodeInt64("fileStart", fileStart))
+            return false;
+        if (fileStart < 0)
+            return false;
+
+        int64_t fileLength;
+        if (!decoder.decodeInt64("fileLength", fileLength))
+            return false;
+        if (fileLength != BlobDataItem::toEndOfFile && fileLength < fileStart)
+            return false;
+
+        double expectedFileModificationTime;
+        if (!decoder.decodeDouble("expectedFileModificationTime", expectedFileModificationTime))
+            return false;
+
+        element.m_fileStart = fileStart;
+        element.m_fileLength = fileLength;
+        element.m_expectedFileModificationTime = expectedFileModificationTime;
+#endif
+        break;
+    }
+
+#if ENABLE(BLOB)
+    case FormDataElement::Type::EncodedBlob: {
+        String blobURLString;
+        if (!decoder.decodeString("url", blobURLString))
+            return false;
+
+        element.m_url = URL(URL(), blobURLString);
+        break;
+    }
+#endif
+    }
+
+    return true;
+}
+
 void FormData::encode(Encoder& encoder) const
 {
     encoder.encodeBool(m_alwaysStream);
@@ -601,6 +670,27 @@ PassRefPtr<FormData> FormData::decode(Decoder& decoder)
 
     if (!decoder.decodeInt64(data->m_identifier))
         return 0;
+
+    return data.release();
+}
+
+PassRefPtr<FormData> FormData::decode(KeyedDecoder& decoder)
+{
+    RefPtr<FormData> data = FormData::create();
+
+    if (!decoder.decodeBool("alwaysStream", data->m_alwaysStream))
+        return nullptr;
+
+    if (!decoder.decodeBytes("boundary", data->m_boundary))
+        return nullptr;
+
+    if (!decoder.decodeObjects("elements", data->m_elements, [](KeyedDecoder& decoder, FormDataElement& element) {
+        return decodeElement(decoder, element);
+    }))
+        return nullptr;
+
+    if (!decoder.decodeInt64("identifier", data->m_identifier))
+        return nullptr;
 
     return data.release();
 }

@@ -1,3 +1,17 @@
+2014-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Implement FormData decoding using KeyedDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=132494
+
+        Reviewed by Tim Horton.
+
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedDecoder::decodeEnum):
+        * platform/network/FormData.cpp:
+        (WebCore::decodeElement):
+        (WebCore::FormData::decode):
+        * platform/network/FormData.h:
+
 2014-05-02  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] deviceScaleFactor is being double-applied when rendering captions in full screen mode
