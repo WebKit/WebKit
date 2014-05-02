@@ -1,3 +1,15 @@
+2014-05-02  Mark Rowe  <mrowe@apple.com>
+
+        -[_WKThumbnailView _requestSnapshotIfNeeded] assumes that taking a snapshot will always succeed
+        <https://webkit.org/b/132489> / <rdar://problem/16704660>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView _requestSnapshotIfNeeded]): Don't attempt to create a CGImageRef if we failed
+        to create a ShareableBitmap. This handles both the callback receiving a null Handle and a failure
+        within ShareableBitmap::create.
+
 2014-05-02  Anders Carlsson  <andersca@apple.com>
 
         Clean up FormDataElement
