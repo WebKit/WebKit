@@ -1,3 +1,21 @@
+2014-05-02  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (WebKit2) Need to support transliterate chinese button (简⇄繁) for Traditional Chinese.
+        https://bugs.webkit.org/show_bug.cgi?id=132500
+        <rdar://problem/16778870>
+
+        Reviewed by Benjamin Poulain.
+
+        For traditional Chinese we support the transliterate to simplified Chinese.
+        This is done by pressing the 简⇄繁 button on the system
+        menu. This patch adds the necessary code to canPerformAction to enable
+        the button when appropriate as well as the implementation of the action
+        itself.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _transliterateChinese:]):
+        (-[WKContentView canPerformAction:withSender:]):
+
 2014-05-02  Jeremy Jones  <jeremyj@apple.com>
 
         Fullscreen UI does not appear after WebProcess has crashed

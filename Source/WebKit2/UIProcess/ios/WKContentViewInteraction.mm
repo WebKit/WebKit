@@ -127,6 +127,7 @@ static const float tapAndHoldDelay  = 0.75;
 @interface UITextInteractionAssistant (StagingToRemove)
 - (void)scheduleReplacementsForText:(NSString *)text;
 - (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
+- (void)scheduleChineseTransliterationForText:(NSString *)text;
 @end
 
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
@@ -901,6 +902,12 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         [_textSelectionAssistant scheduleReplacementsForText:_page->editorState().wordAtSelection];
 }
 
+- (void)_transliterateChinese:(id)sender
+{
+    if ([_textSelectionAssistant respondsToSelector:@selector(scheduleChineseTransliterationForText:)])
+        [_textSelectionAssistant scheduleChineseTransliterationForText:_page->editorState().wordAtSelection];
+}
+
 - (void)replace:(id)sender
 {
     [[UIKeyboardImpl sharedInstance] replaceText:sender];
@@ -967,6 +974,12 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if ([[self selectedText] _containsCJScriptsOnly])
             return NO;
         return YES;
+    }
+
+    if (action == @selector(_transliterateChinese:)) {
+        if (!_page->editorState().selectionIsRange || !_page->editorState().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
+            return NO;
+        return UIKeyboardEnabledInputModesAllowChineseTransliterationForText([self selectedText]);
     }
 
     if (action == @selector(select:)) {
