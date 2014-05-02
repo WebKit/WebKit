@@ -1,3 +1,14 @@
+2014-05-02  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Wireless playback button not blue when active
+        https://bugs.webkit.org/show_bug.cgi?id=132473
+
+        Reviewed by Simon Fraser.
+
+        The playback button's class was being set to 'undefined', due to Controller.ClassNames.active being undefined.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+
 2014-05-02  Alexey Proskuryakov  <ap@apple.com>
 
         Don't abuse Blob deserialization constructor in WebSocket

@@ -68,6 +68,7 @@ Controller.prototype = {
     MaximumSeekRate: 8,
     SeekDelay: 1500,
     ClassNames: {
+        active: 'active',
         exit: 'exit',
         hidden: 'hidden',
         hiding: 'hiding',
