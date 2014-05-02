@@ -1,3 +1,20 @@
+2014-05-02  Jeremy Jones  <jeremyj@apple.com>
+
+        Pause playback on exit fullscreen when inline playback not allowed.
+        https://bugs.webkit.org/show_bug.cgi?id=132450
+
+        Reviewed by Jer Noble.
+
+        Use correct method of determining if inline playback is allowed.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        Use m_mediaSession->requiresFullscreenForVideoPlayback to detect if inline playback is allowed.
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        (WebVideoFullscreenModelMediaElement::requestExitFullscreen):
+        Prevent duplicate exit requests.
+
 2014-05-02  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Remove support for non-separable blend modes from background-blend-mode

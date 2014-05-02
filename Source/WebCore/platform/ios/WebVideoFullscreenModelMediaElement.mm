@@ -176,7 +176,8 @@ void WebVideoFullscreenModelMediaElement::requestExitFullscreen()
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->exitFullscreen();
+        if (m_mediaElement->isFullscreen())
+            m_mediaElement->exitFullscreen();
         protect.clear();
     });
 }

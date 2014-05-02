@@ -4839,7 +4839,7 @@ void HTMLMediaElement::exitFullscreen()
     if (hasMediaControls())
         mediaControls()->exitedFullscreen();
     if (document().page()) {
-        if (document().page()->chrome().requiresFullscreenForVideoPlayback())
+        if (m_mediaSession->requiresFullscreenForVideoPlayback(*this))
             pauseInternal();
 
         if (document().page()->chrome().client().supportsFullscreenForNode(this)) {
