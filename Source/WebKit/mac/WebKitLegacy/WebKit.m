@@ -23,6 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: This is only temporary; WebKit.framework is going to be provided by the WebKit2 project.
+#import <TargetConditionals.h>
 
-// This file is only here so that WebKit.framework has something to link.
+// FIXME: This file is only temporary; WebKit.framework is going to be provided by the WebKit2 project.
+
+#if TARGET_OS_IPHONE
+
+#define DEFINE_INSTALL_NAME(major, minor) \
+    extern __attribute__((visibility ("default"))) const char install_name_ ##major## _ ##minor __asm("$ld$install_name$os" #major "." #minor "$/System/Library/PrivateFrameworks/WebKit.framework/WebKit"); \
+    const char install_name_ ##major## _ ##minor = 0;
+
+DEFINE_INSTALL_NAME(4, 3);
+DEFINE_INSTALL_NAME(5, 0);
+DEFINE_INSTALL_NAME(5, 1);
+DEFINE_INSTALL_NAME(6, 0);
+DEFINE_INSTALL_NAME(6, 1);
+DEFINE_INSTALL_NAME(7, 0);
+DEFINE_INSTALL_NAME(7, 1);
+
+#endif

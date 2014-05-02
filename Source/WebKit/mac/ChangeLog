@@ -1,3 +1,14 @@
+2014-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Support OS-version-specific install paths for WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=132448
+        <rdar://problem/16784932>
+
+        Reviewed by Dan Bernstein.
+
+        * WebKitLegacy/WebKit.m:
+        Add version specific install names.
+
 2014-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         Roll out fix for https://bugs.webkit.org/show_bug.cgi?id=131637:
