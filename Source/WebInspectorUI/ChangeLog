@@ -1,3 +1,27 @@
+2014-05-02  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: CodeMirror 4 CSS mode new state data structure breaks helpers.
+        https://bugs.webkit.org/show_bug.cgi?id=132149
+
+        Reviewed by Joseph Pecoraro.
+
+        The update to CodeMirror 4 included dramatic changes to the CSS mode,
+        particularly the way it handles tokens. `state.stack` is gone, replaced
+        by `state.context`.
+
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js:
+        * Tools/PrettyPrinting/codemirror.js:
+        * UserInterface/External/CodeMirror/codemirror.js:
+        * UserInterface/External/CodeMirror/livescript.js:
+        * UserInterface/External/CodeMirror/runmode.js:
+        Updates from ToT CodeMirror.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController.prototype._generateCSSCompletions):
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        * UserInterface/Views/CodeMirrorFormatters.js: `lastToken` is null now for ":" characters.
+        Changes to match structural changes to the state object and changes to expected values of `lastToken`.
+
 2014-04-30  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: clean up and decompose InspectorBackend functionality

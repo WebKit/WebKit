@@ -187,10 +187,10 @@
         var style = this._token(stream, state);
 
         if (style) {
-            if (style === "string-2" && stream.current() === "url") {
+            if (style === "atom" && stream.current() === "url") {
                 // If the current text is "url" then we should expect the next string token to be a link.
                 state._expectLink = true;
-            } else if (state._expectLink && style === "string") {
+            } else if (state._expectLink && style === "atom") {
                 // We expected a string and got it. This is a link. Parse it the way we want it.
                 delete state._expectLink;
 

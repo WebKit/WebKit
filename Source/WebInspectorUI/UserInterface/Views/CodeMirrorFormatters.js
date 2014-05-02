@@ -316,12 +316,8 @@ CodeMirror.extendMode("css", {
         if (!lastToken) {
             if (lastContent === ",")
                 return true;
-            return false;
-        }
-
-        if (/\boperator\b/.test(lastToken)) {
             if (lastContent === ":") // Space in "prop: value" but not in a selectors "a:link" or "div::after" or media queries "(max-device-width:480px)".
-                return state.stack.lastValue === "propertyValue";
+                return state.state === "prop";
             return false;
         }
 
@@ -337,7 +333,7 @@ CodeMirror.extendMode("css", {
             if (content === ";")
                 return 1;
             if (content === ",") { // "a,b,c,...,z{}" rule list at top level or in @media top level and only if the line length will be large.
-                if ((!state.stack || !state.stack.length || state.stack.lastValue === "@media{") && state._cssPrettyPrint.lineLength > 60) {
+                if ((state.state === "top" || state.state === "media") && state._cssPrettyPrint.lineLength > 60) {
                     state._cssPrettyPrint.lineLength = 0;
                     return 1;
                 }
@@ -395,7 +391,7 @@ CodeMirror.extendMode("css", {
         // In order insert newlines in selector lists we need keep track of the length of the current line.
         // This isn't exact line length, only the builder knows that, but it is good enough to get an idea.
         // If we are at a top level, keep track of the current line length, otherwise we reset to 0.
-        if (!state.stack || !state.stack.length || state.stack.lastValue === "@media{")
+        if (state.state === "top" || state.state === "media")
             state._cssPrettyPrint.lineLength += content.length;
         else
             state._cssPrettyPrint.lineLength = 0;

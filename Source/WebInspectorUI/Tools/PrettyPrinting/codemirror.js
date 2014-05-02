@@ -230,6 +230,10 @@
 
     // True when shift is held down.
     d.shift = false;
+
+    // Used to track whether anything happened since the context menu
+    // was opened.
+    d.selForContextMenu = null;
   }
 
   // STATE UPDATES
@@ -1621,7 +1625,7 @@
         else
           rect = nullRect;
       } else {
-        rect = range(node, start, end).getBoundingClientRect();
+        rect = range(node, start, end).getBoundingClientRect() || nullRect;
       }
     } else { // If it is a widget, simply get the box for the whole widget.
       if (start > 0) collapse = bias = "right";
@@ -2246,6 +2250,8 @@
     if (withOp) startOperation(cm);
     cm.display.shift = false;
 
+    if (text.charCodeAt(0) == 0x200b && doc.sel == cm.display.selForContextMenu && !prevInput)
+      prevInput = "\u200b";
     // Find the part of the input that is actually new
     var same = 0, l = Math.min(prevInput.length, text.length);
     while (same < l && prevInput.charCodeAt(same) == text.charCodeAt(same)) ++same;
@@ -3110,7 +3116,7 @@
       // The prevInput test prevents this from firing when a context
       // menu is closed (since the resetInput would kill the
       // select-all detection hack)
-      if (!cm.curOp && cm.display.selForContextMenu == cm.doc.sel) {
+      if (!cm.curOp && cm.display.selForContextMenu != cm.doc.sel) {
         resetInput(cm);
         if (webkit) setTimeout(bind(resetInput, cm, true), 0); // Issue #1730
       }
@@ -3130,7 +3136,6 @@
 
   // CONTEXT MENU HANDLING
 
-  var detectingSelectAll;
   // To make the context menu work, we need to briefly unhide the
   // textarea (making it as unobtrusive as possible) to let the
   // right-click take effect on it.
@@ -3159,6 +3164,7 @@
     // Adds "Select all" to context menu in FF
     if (!cm.somethingSelected()) display.input.value = display.prevInput = " ";
     display.selForContextMenu = cm.doc.sel;
+    clearTimeout(display.detectingSelectAll);
 
     // Select-all will be greyed out if there's nothing to select, so
     // this adds a zero-width space so that we can later check whether
@@ -3180,14 +3186,13 @@
       // Try to detect the user choosing select-all
       if (display.input.selectionStart != null) {
         if (!ie || ie_upto8) prepareSelectAllHack();
-        clearTimeout(detectingSelectAll);
         var i = 0, poll = function() {
           if (display.selForContextMenu == cm.doc.sel && display.input.selectionStart == 0)
             operation(cm, commands.selectAll)(cm);
-          else if (i++ < 10) detectingSelectAll = setTimeout(poll, 500);
+          else if (i++ < 10) display.detectingSelectAll = setTimeout(poll, 500);
           else resetInput(cm);
         };
-        detectingSelectAll = setTimeout(poll, 200);
+        display.detectingSelectAll = setTimeout(poll, 200);
       }
     }
 
@@ -3383,7 +3388,7 @@
 
       var after = i ? computeSelAfterChange(doc, change, null) : lst(source);
       makeChangeSingleDoc(doc, change, after, mergeOldSpans(doc, change));
-      if (doc.cm) ensureCursorVisible(doc.cm);
+      if (!i && doc.cm) doc.cm.scrollIntoView(change);
       var rebased = [];
 
       // Propagate to the linked documents
@@ -3400,12 +3405,17 @@
   // Sub-views need their line numbers shifted when text is added
   // above or below them in the parent document.
   function shiftDoc(doc, distance) {
+    if (distance == 0) return;
     doc.first += distance;
     doc.sel = new Selection(map(doc.sel.ranges, function(range) {
       return new Range(Pos(range.anchor.line + distance, range.anchor.ch),
                        Pos(range.head.line + distance, range.head.ch));
     }), doc.sel.primIndex);
-    if (doc.cm) regChange(doc.cm, doc.first, doc.first - distance, distance);
+    if (doc.cm) {
+      regChange(doc.cm, doc.first, doc.first - distance, distance);
+      for (var d = doc.cm.display, l = d.viewFrom; l < d.viewTo; l++)
+        regLineChange(doc.cm, l, "gutter");
+    }
   }
 
   // More lower-level change function, handling only a single document
@@ -3497,6 +3507,7 @@
       if (changeHandler) signalLater(cm, "change", cm, obj);
       if (changesHandler) (cm.curOp.changeObjs || (cm.curOp.changeObjs = [])).push(obj);
     }
+    cm.display.selForContextMenu = null;
   }
 
   function replaceRange(doc, code, from, to, origin) {
@@ -7520,7 +7531,7 @@
 
   // THE END
 
-  CodeMirror.version = "4.1.0";
+  CodeMirror.version = "4.1.1";
 
   return CodeMirror;
 });

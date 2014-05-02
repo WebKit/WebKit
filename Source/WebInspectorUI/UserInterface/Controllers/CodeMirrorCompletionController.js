@@ -519,7 +519,7 @@ WebInspector.CodeMirrorCompletionController.prototype = {
     _generateCSSCompletions: function(mainToken, base, suffix)
     {
         // We only support completion inside CSS block context.
-        if (!mainToken.state || !mainToken.state.state || !mainToken.state.state === "block")
+        if (mainToken.state.state === "media" || mainToken.state.state === "top" || mainToken.state.state === "parens")
             return [];
 
         var token = mainToken;
