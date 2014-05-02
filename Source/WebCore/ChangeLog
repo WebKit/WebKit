@@ -1,3 +1,13 @@
+2014-05-02  Brady Eidson  <beidson@apple.com>
+
+        Stop flipping the ImageControlsButton
+        <rdar://problem/16773238> and https://bugs.webkit.org/show_bug.cgi?id=132502
+
+        Reviewed by Tim Horton.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintImageControlsButton):
+
 2014-05-02  Jeremy Jones  <jeremyj@apple.com>
 
         Fullscreen UI does not appear after WebProcess has crashed

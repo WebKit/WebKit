@@ -2037,8 +2037,7 @@ bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, cons
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    paintInfo.context->scale(FloatSize(1, -1));
-    paintInfo.context->translate(rect.x(), -rect.height() - rect.y());
+    paintInfo.context->translate(rect.x(), rect.y());
 
     IntRect innerFrame(IntPoint(), rect.size());
     [cell drawWithFrame:innerFrame inView:documentViewFor(renderer)];
