@@ -157,6 +157,8 @@ public:
 
     RemoteLayerTreeTransaction::LayerProperties& properties() { return m_properties; }
 
+    void didCommit();
+
     void clearContext() { m_context = nullptr; }
 
 protected:

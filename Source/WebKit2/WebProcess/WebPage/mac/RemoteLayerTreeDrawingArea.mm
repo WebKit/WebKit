@@ -278,7 +278,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     for (auto& layer : layerTransaction.changedLayers()) {
         if (layer->properties().changedProperties & RemoteLayerTreeTransaction::LayerChanges::BackingStoreChanged)
             hadAnyChangedBackingStore = true;
-        layer->properties().resetChangedProperties();
+        layer->didCommit();
     }
 
     if (hadAnyChangedBackingStore)

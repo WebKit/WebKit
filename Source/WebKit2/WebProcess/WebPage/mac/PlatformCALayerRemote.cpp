@@ -135,7 +135,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
 
         if (m_layerType == LayerTypeCustom) {
             RemoteLayerTreePropertyApplier::applyProperties(platformLayer(), nullptr, m_properties, RemoteLayerTreePropertyApplier::RelatedLayerMap());
-            m_properties.resetChangedProperties();
+            didCommit();
             return;
         }
 
@@ -150,6 +150,13 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
 
     if (m_maskLayer)
         m_maskLayer->recursiveBuildTransaction(transaction);
+}
+
+void PlatformCALayerRemote::didCommit()
+{
+    m_properties.addedAnimations.clear();
+    m_properties.keyPathsOfAnimationsToRemove.clear();
+    m_properties.resetChangedProperties();
 }
 
 void PlatformCALayerRemote::animationStarted(CFTimeInterval beginTime)
@@ -297,7 +304,7 @@ void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnim
 
 void PlatformCALayerRemote::removeAnimationForKey(const String& key)
 {
-    // FIXME: remove from m_properties.addedAnimations ?
+    m_properties.addedAnimations.remove(key);
     m_properties.keyPathsOfAnimationsToRemove.add(key);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);
 }

@@ -1,5 +1,37 @@
 2014-05-01  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Animations on vox.com look wrong
+        https://bugs.webkit.org/show_bug.cgi?id=132462
+        <rdar://problem/16731884>
+
+        Reviewed by Sam Weinig.
+        
+        PlatformCALayerRemote was managing animations incorrectly; aninations
+        would stick around in m_properties.addedAnimations and get added a second
+        time by mistake.
+        
+        Animations have to be managed a little differently to other properties,
+        since they are not steady-state things. A given commit has to send over
+        the added and removed animations, and then clear the layer properties.
+        
+        Do this by adding PlatformCALayerRemote::didCommit(), which is called
+        after the layer properties have been encoded, and have it clear the lists
+        of added and removed animations.
+        
+        removeAnimationForKey() also has to remove the animation from addedAnimations
+        so that an add/remove in the same commit doesn't send the animation to the
+        UI process.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+        (WebKit::PlatformCALayerRemote::didCommit):
+        (WebKit::PlatformCALayerRemote::removeAnimationForKey):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
+2014-05-01  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Can't scroll on gatesnotes.com 
         https://bugs.webkit.org/show_bug.cgi?id=132459
         <rdar://problem/16770909>
