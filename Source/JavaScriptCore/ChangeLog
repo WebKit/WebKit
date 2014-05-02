@@ -1,5 +1,16 @@
 2014-05-02  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r167354.
+
+    2014-04-16  Filip Pizlo  <fpizlo@apple.com>
+    
+            Unreviewed, ARMv7 build fix after r167336.
+    
+            * assembler/MacroAssemblerARMv7.h:
+            (JSC::MacroAssemblerARMv7::branchAdd32):
+    
+2014-05-02  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r167336.
 
     2014-04-15  Filip Pizlo  <fpizlo@apple.com>

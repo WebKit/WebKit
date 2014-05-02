@@ -1473,6 +1473,12 @@ public:
         return branchAdd32(cond, dest, src, dest);
     }
 
+    Jump branchAdd32(ResultCondition cond, Address src, RegisterID dest)
+    {
+        load32(src, dataTempRegister);
+        return branchAdd32(cond, dest, dataTempRegister, dest);
+    }
+
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
         return branchAdd32(cond, dest, imm, dest);
