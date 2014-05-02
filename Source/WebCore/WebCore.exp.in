@@ -3310,6 +3310,7 @@ __ZThn?_N7WebCore35WebVideoFullscreenModelMediaElement11handleEventEPNS_22Script
 #endif
 
 #if ENABLE(VIDEO) && PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
+__ZN7WebCore32WebVideoFullscreenInterfaceAVKit10invalidateEv
 __ZN7WebCore32WebVideoFullscreenInterfaceAVKit11setDurationEd
 __ZN7WebCore32WebVideoFullscreenInterfaceAVKit14exitFullscreenENS_7IntRectE
 __ZN7WebCore32WebVideoFullscreenInterfaceAVKit14setCurrentTimeEdd

@@ -55,7 +55,20 @@ WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy(WebPageProxy& pag
 
 WebVideoFullscreenManagerProxy::~WebVideoFullscreenManagerProxy()
 {
+    if (!m_page)
+        return;
     m_page->process().removeMessageReceiver(Messages::WebVideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID());
+}
+
+void WebVideoFullscreenManagerProxy::invalidate()
+{
+    WebVideoFullscreenInterfaceAVKit::invalidate();
+
+    m_page->process().removeMessageReceiver(Messages::WebVideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID());
+    m_page = nullptr;
+
+    [m_layerHost removeFromSuperlayer];
+    m_layerHost.clear();
 }
 
 void WebVideoFullscreenManagerProxy::enterFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect)

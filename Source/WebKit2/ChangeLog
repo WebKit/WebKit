@@ -1,3 +1,27 @@
+2014-05-02  Jeremy Jones  <jeremyj@apple.com>
+
+        Fullscreen UI does not appear after WebProcess has crashed
+        https://bugs.webkit.org/show_bug.cgi?id=132442
+
+        Reviewed by Darin Adler.
+
+        Cleanup WebVideoFullscreenManagerProxy after a WebProcess crash.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        recreate WebVideoFullscreenManagerProxy after a WebProcess crash.
+
+        (WebKit::WebPageProxy::resetState):
+        invalidate and release WebVideoFullscreenManagerProxy on crash.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::~WebVideoFullscreenManagerProxy):
+        don't assume m_page is valid.
+
+        (WebKit::WebVideoFullscreenManagerProxy::invalidate):
+        do cleanup invalidation in reponse to a WebProcess crash.
+
 2014-05-02  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] More animation madness for when the extendedBackground is modified in an animation block

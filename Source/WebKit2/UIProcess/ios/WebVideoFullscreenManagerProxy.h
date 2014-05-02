@@ -47,6 +47,8 @@ public:
     static PassRefPtr<WebVideoFullscreenManagerProxy> create(WebPageProxy&);
     virtual ~WebVideoFullscreenManagerProxy();
 
+    virtual void invalidate() override;
+
 private:
     explicit WebVideoFullscreenManagerProxy(WebPageProxy&);
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;

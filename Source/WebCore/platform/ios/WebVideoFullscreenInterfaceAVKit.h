@@ -86,6 +86,7 @@ public:
 
     virtual void enterFullscreen(PlatformLayer&, WebCore::IntRect initialRect);
     virtual void exitFullscreen(WebCore::IntRect finalRect);
+    virtual void invalidate();
 };
 
 }

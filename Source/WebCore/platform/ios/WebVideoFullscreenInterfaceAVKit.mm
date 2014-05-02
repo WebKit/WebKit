@@ -585,4 +585,20 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(WebCore::IntRect finalRect
     });
 }
 
+void WebVideoFullscreenInterfaceAVKit::invalidate()
+{
+    m_playerController.clear();
+    [m_window setHidden:YES];
+    [m_window setRootViewController:nil];
+    [m_playerViewController setDelegate:nil];
+    [m_playerViewController setPlayerController:nil];
+    m_playerViewController = nil;
+    m_viewController = nil;
+    m_window = nil;
+    [m_videoLayer removeFromSuperlayer];
+    m_videoLayer = nil;
+    [m_videoLayerContainer removeFromSuperlayer];
+    m_videoLayerContainer = nil;
+}
+
 #endif

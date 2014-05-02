@@ -539,6 +539,9 @@ void WebPageProxy::reattachToWebProcess()
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = WebFullScreenManagerProxy::create(*this, m_pageClient.fullScreenManagerProxyClient());
 #endif
+#if PLATFORM(IOS)
+    m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this);
+#endif
 
     initializeWebPage();
 
@@ -4124,6 +4127,13 @@ void WebPageProxy::resetState()
     if (m_fullScreenManager) {
         m_fullScreenManager->invalidate();
         m_fullScreenManager = nullptr;
+    }
+#endif
+
+#if PLATFORM(IOS)
+    if (m_videoFullscreenManager) {
+        m_videoFullscreenManager->invalidate();
+        m_videoFullscreenManager = nullptr;
     }
 #endif
 
