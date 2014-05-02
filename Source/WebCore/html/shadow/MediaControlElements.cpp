@@ -1358,9 +1358,6 @@ void MediaControlTextTrackContainerElement::updateDisplay()
                 m_textTrackRepresentation = TextTrackRepresentation::create(this);
             mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());
 
-            if (Page* page = document().page())
-                m_textTrackRepresentation->setContentScale(page->deviceScaleFactor());
-
             m_textTrackRepresentation->update();
             setInlineStyleProperty(CSSPropertyWidth, m_videoDisplaySize.size().width(), CSSPrimitiveValue::CSS_PX);
             setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSPrimitiveValue::CSS_PX);

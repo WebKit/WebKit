@@ -1,3 +1,14 @@
+2014-05-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] deviceScaleFactor is being double-applied when rendering captions in full screen mode
+        https://bugs.webkit.org/show_bug.cgi?id=132481
+
+        Reviewed by Jer Noble.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): Don't set the platform scale factor here. It is already
+        being accounted for in the createTextTrackRepresentationImage method.
+
 2014-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Don't create backing store for -webkit-overflow-scrolling:touch that can't scroll
