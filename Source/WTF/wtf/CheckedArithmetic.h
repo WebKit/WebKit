@@ -712,10 +712,31 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
     return Checked<U, OverflowHandler>(lhs) * rhs;
 }
 
+template<typename T, typename U>
+Checked<T, RecordOverflow> checkedSum(U value)
+{
+    return Checked<T, RecordOverflow>(value);
+}
+template<typename T, typename U, typename... Args>
+Checked<T, RecordOverflow> checkedSum(U value, Args... args)
+{
+    return Checked<T, RecordOverflow>(value) + checkedSum<T>(args...);
+}
+
+// Sometimes, you just want to check if some math would overflow - the code to do the math is
+// already in place, and you want to guard it.
+
+template<typename T, typename... Args> bool sumOverflows(Args... args)
+{
+    return checkedSum<T>(args...).hasOverflowed();
+}
+
 }
 
 using WTF::Checked;
 using WTF::CheckedState;
 using WTF::RecordOverflow;
+using WTF::checkedSum;
+using WTF::sumOverflows;
 
 #endif
