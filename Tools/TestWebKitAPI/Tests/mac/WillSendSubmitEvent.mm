@@ -62,7 +62,7 @@ TEST(WebKit1, WillSendSubmitEvent)
     @autoreleasepool {
         RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
 
-        RetainPtr<FormDelegate> formDelegate = [[FormDelegate alloc] init];
+        RetainPtr<FormDelegate> formDelegate = adoptNS([[FormDelegate alloc] init]);
         [webView _setFormDelegate:formDelegate.get()];
 
         [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"auto-submitting-form" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
