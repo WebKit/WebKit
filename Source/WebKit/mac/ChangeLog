@@ -1,5 +1,19 @@
 2014-05-02  Brady Eidson  <beidson@apple.com>
 
+        Implement new delegate method -sharingService:sourceFrameOnScreenForShareItem:.
+        <rdar://problem/16797425> and https://bugs.webkit.org/show_bug.cgi?id=132484
+
+        Reviewed by Tim Horton.
+
+        * Misc/WebSharingServicePickerController.mm:
+        (-[WebSharingServicePickerController sharingService:sourceFrameOnScreenForShareItem:]):
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::screenRectForHitTestNode):
+
+2014-05-02  Brady Eidson  <beidson@apple.com>
+
         Crash inside [WebSharingServicePickerController clear]
         <rdar://problem/16791944> and https://bugs.webkit.org/show_bug.cgi?id=132477
 

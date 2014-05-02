@@ -199,6 +199,14 @@ using namespace WebCore;
     [self clear];
 }
 
+- (NSRect)sharingService:(NSSharingService *)sharingService sourceFrameOnScreenForShareItem:(id <NSPasteboardWriting>)item
+{
+    if (!_menuClient)
+        return NSRect();
+
+    return (NSRect)_menuClient->screenRectForHitTestNode();
+}
+
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
 {
     return [_menuClient->webView() window];

@@ -27,6 +27,7 @@
  */
 
 #import <WebCore/ContextMenuClient.h>
+#import <WebCore/IntRect.h>
 
 @class WebSharingServicePickerController;
 @class WebView;
@@ -49,6 +50,8 @@ public:
     virtual void stopSpeaking() override;
     virtual void searchWithSpotlight() override;
     virtual void showContextMenu() override;
+
+    WebCore::IntRect screenRectForHitTestNode() const;
 
 #if ENABLE(SERVICE_CONTROLS)
     void clearSharingServicePickerController();

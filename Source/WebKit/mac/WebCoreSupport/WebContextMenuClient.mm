@@ -50,6 +50,7 @@
 #import <WebCore/URL.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
+#import <WebCore/RenderObject.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
@@ -361,6 +362,34 @@ void WebContextMenuClient::speak(const String& string)
 void WebContextMenuClient::stopSpeaking()
 {
     [NSApp stopSpeaking:nil];
+}
+
+IntRect WebContextMenuClient::screenRectForHitTestNode() const
+{
+    Page* page = [m_webView page];
+    if (!page)
+        return IntRect();
+
+    Node* node = page->contextMenuController().context().hitTestResult().innerNode();
+    if (!node)
+        return IntRect();
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer) {
+        // This method shouldn't be called in cases where the controlled node hasn't rendered.
+        ASSERT_NOT_REACHED();
+        return IntRect();
+    }
+
+    IntRect rect = renderer->absoluteBoundingBoxRect();
+    FrameView* frameView = node->document().view();
+    if (!frameView) {
+        // This method shouldn't be called in cases where the controlled node isn't in a rendered view.
+        ASSERT_NOT_REACHED();
+        return IntRect();
+    }
+
+    return frameView->contentsToScreen(rect);
 }
 
 NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view)
