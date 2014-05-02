@@ -42,10 +42,6 @@ namespace WebCore {
 
 class DeviceMotionClientIOS : public DeviceMotionClient {
 public:
-    static PassOwnPtr<DeviceMotionClientIOS> create()
-    {
-        return adoptPtr(new DeviceMotionClientIOS());
-    }
     DeviceMotionClientIOS();
     virtual ~DeviceMotionClientIOS() override;
     virtual void setController(DeviceMotionController*) override;

@@ -1613,11 +1613,10 @@ private:
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
-    // FIXME: Use std::unique_ptr instead of OwnPtr after we upstream DeviceMotionClientIOS.{h, mm}.
-    OwnPtr<DeviceMotionClient> m_deviceMotionClient;
-    OwnPtr<DeviceMotionController> m_deviceMotionController;
-    OwnPtr<DeviceOrientationClient> m_deviceOrientationClient;
-    OwnPtr<DeviceOrientationController> m_deviceOrientationController;
+    std::unique_ptr<DeviceMotionClient> m_deviceMotionClient;
+    std::unique_ptr<DeviceMotionController> m_deviceMotionController;
+    std::unique_ptr<DeviceOrientationClient> m_deviceOrientationClient;
+    std::unique_ptr<DeviceOrientationController> m_deviceOrientationController;
 #endif
 
 // FIXME: Find a better place for this functionality.

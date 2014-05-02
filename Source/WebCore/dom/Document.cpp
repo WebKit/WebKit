@@ -488,10 +488,10 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_lastHandledUserGestureTimestamp(0)
 #if PLATFORM(IOS)
 #if ENABLE(DEVICE_ORIENTATION)
-    , m_deviceMotionClient(DeviceMotionClientIOS::create())
-    , m_deviceMotionController(DeviceMotionController::create(m_deviceMotionClient.get()))
-    , m_deviceOrientationClient(DeviceOrientationClientIOS::create())
-    , m_deviceOrientationController(DeviceOrientationController::create(m_deviceOrientationClient.get()))
+    , m_deviceMotionClient(std::make_unique<DeviceMotionClientIOS>())
+    , m_deviceMotionController(std::make_unique<DeviceMotionController>(m_deviceMotionClient.get()))
+    , m_deviceOrientationClient(std::make_unique<DeviceOrientationClientIOS>())
+    , m_deviceOrientationController(std::make_unique<DeviceOrientationController>(m_deviceOrientationClient.get()))
 #endif
 #endif
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)

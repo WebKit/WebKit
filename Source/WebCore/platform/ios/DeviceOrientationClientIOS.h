@@ -42,10 +42,6 @@ namespace WebCore {
 
 class DeviceOrientationClientIOS : public DeviceOrientationClient {
 public:
-    static PassOwnPtr<DeviceOrientationClientIOS> create()
-    {
-        return adoptPtr(new DeviceOrientationClientIOS());
-    }
     DeviceOrientationClientIOS();
     virtual ~DeviceOrientationClientIOS() override;
     virtual void setController(DeviceOrientationController*) override;
