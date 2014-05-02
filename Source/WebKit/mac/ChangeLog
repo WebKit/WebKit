@@ -1,3 +1,20 @@
+2014-05-01  Brady Eidson  <beidson@apple.com>
+
+        Update service picker API usage.
+        <rdar://problem/16772674> and https://bugs.webkit.org/show_bug.cgi?id=132452
+
+        Reviewed by Tim Horton.
+
+        * Misc/WebSharingServicePickerController.h:
+        * Misc/WebSharingServicePickerController.mm:
+        (-[WebSharingServicePickerController didShareImageData:confirmDataIsValidTIFFData:]):
+          Factor out a common "didShare" handler that optionally validates whether the data represents an image.
+        (-[WebSharingServicePickerController sharingService:didShareItems:]): Update API usage, including marshalling
+          on off-main thread call back to the main thread.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::contextMenuForEvent): Update API usage.
+
 2014-05-01  Anders Carlsson  <andersca@apple.com>
 
         Support OS-version-specific install paths for WebKit.framework

@@ -39,8 +39,9 @@ class WebContextMenuClient;
     BOOL _includeEditorServices;
 }
 
-- (instancetype)initWithImage:(NSImage *)image includeEditorServices:(BOOL)includeEditorServices menuClient:(WebContextMenuClient*)menuClient;
+- (instancetype)initWithData:(NSData *)data includeEditorServices:(BOOL)includeEditorServices menuClient:(WebContextMenuClient*)menuClient;
 - (NSMenu *)menu;
+- (void)didShareImageData:(NSData *)data confirmDataIsValidTIFFData:(BOOL)confirmData;
 
 @end
 

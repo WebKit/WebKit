@@ -50,6 +50,7 @@
 #import <WebCore/URL.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -363,8 +364,13 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view)
 #if ENABLE(SERVICE_CONTROLS)
     if (Image* image = page->contextMenuController().context().controlledImage()) {
         ASSERT(page->contextMenuController().context().hitTestResult().innerNode());
+
+        RefPtr<SharedBuffer> data = image->data();
+        ASSERT(data);
+        RetainPtr<CFDataRef> cfData = data->createCFData();
+
         bool isContentEditable = page->contextMenuController().context().hitTestResult().innerNode()->isContentEditable();
-        m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithImage:image->getNSImage() includeEditorServices:isContentEditable menuClient:this]);
+        m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithData:(NSData *)cfData.get() includeEditorServices:isContentEditable menuClient:this]);
         
         return [m_sharingServicePickerController menu];
     }
