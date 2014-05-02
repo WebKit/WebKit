@@ -376,7 +376,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             }
-            forNode(node).setType(SpecInt52);
+            forNode(node).setType(SpecMachineInt);
             if (!forNode(node->child1()).isType(SpecInt32)
                 || !forNode(node->child2()).isType(SpecInt32))
                 node->setCanExit(true);
@@ -431,7 +431,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             }
-            forNode(node).setType(SpecInt52);
+            forNode(node).setType(SpecMachineInt);
             if (!forNode(node->child1()).isType(SpecInt32)
                 || !forNode(node->child2()).isType(SpecInt32))
                 node->setCanExit(true);
@@ -489,7 +489,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             }
-            forNode(node).setType(SpecInt52);
+            forNode(node).setType(SpecMachineInt);
             if (m_state.forNode(node->child1()).couldBeType(SpecInt52))
                 node->setCanExit(true);
             if (shouldCheckNegativeZero(node->arithMode()))
@@ -545,7 +545,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             }
-            forNode(node).setType(SpecInt52);
+            forNode(node).setType(SpecMachineInt);
             node->setCanExit(true);
             break;
         case DoubleRepUse:

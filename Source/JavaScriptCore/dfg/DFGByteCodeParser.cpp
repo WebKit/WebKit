@@ -925,6 +925,9 @@ private:
             break;
 
         case ArithMul:
+            // FIXME: We should detect cases where we only overflowed but never created
+            // negative zero.
+            // https://bugs.webkit.org/show_bug.cgi?id=132470
             if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
                 node->mergeFlags(NodeMayOverflow | NodeMayNegZero);

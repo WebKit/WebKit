@@ -77,7 +77,7 @@ my $runMozilla = 0;
 # https://bugs.webkit.org/show_bug.cgi?id=120809
 my $runJSCStress = !isAppleWinWebKit();
 
-my $enableFTL = 0;
+my $enableFTL = isAppleWebKit();
 
 my $createTarball = 0;
 my $remoteHost = 0;

@@ -1,3 +1,35 @@
+2014-05-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFGAbstractInterpreter should not claim Int52 arithmetic creates Int52s
+        https://bugs.webkit.org/show_bug.cgi?id=132446
+
+        Reviewed by Mark Hahnenberg.
+        
+        Basically any arithmetic operation can turn an Int52 into an Int32 or vice-versa, and
+        our modeling of Int52Rep nodes is such that they can have either Int32 or Int52 type
+        to indicate a bound on the value. This is useful for knowing, for example, that
+        Int52Rep(Int32:) returns a value that cannot be outside the Int32 range. Also,
+        ValueRep(Int52Rep:) uses this to determine whether it may return a double or an int.
+        But this means that all arithmetic operations must be careful to note that they may
+        turn Int32 inputs into an Int52 output or vice-versa, as these new tests show.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        * tests/stress/int52-ai-add-then-filter-int32.js: Added.
+        (foo):
+        * tests/stress/int52-ai-mul-and-clean-neg-zero-then-filter-int32.js: Added.
+        (foo):
+        * tests/stress/int52-ai-mul-then-filter-int32-directly.js: Added.
+        (foo):
+        * tests/stress/int52-ai-mul-then-filter-int32.js: Added.
+        (foo):
+        * tests/stress/int52-ai-neg-then-filter-int32.js: Added.
+        (foo):
+        * tests/stress/int52-ai-sub-then-filter-int32.js: Added.
+        (foo):
+
 2014-05-01  Geoffrey Garen  <ggaren@apple.com>
 
         JavaScriptCore fails to build with some versions of clang
