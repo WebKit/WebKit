@@ -38,6 +38,7 @@ public:
     virtual ~KeyedDecoder() override;
 
 private:
+    virtual bool decodeBytes(const String& key, const uint8_t*&, size_t&) override;
     virtual bool decodeBool(const String& key, bool&) override;
     virtual bool decodeUInt32(const String& key, uint32_t&) override;
     virtual bool decodeInt32(const String& key, int32_t&) override;

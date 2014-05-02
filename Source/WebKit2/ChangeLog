@@ -1,3 +1,14 @@
+2014-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Add and implement KeyedDecoder::decodeBytes
+        https://bugs.webkit.org/show_bug.cgi?id=132479
+
+        Reviewed by Tim Horton.
+
+        * Shared/cf/KeyedDecoder.cpp:
+        (WebKit::KeyedDecoder::decodeBytes):
+        * Shared/cf/KeyedDecoder.h:
+
 2014-05-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] WebKit2 File Upload Support

@@ -50,6 +50,17 @@ KeyedDecoder::~KeyedDecoder()
     ASSERT(m_arrayIndexStack.isEmpty());
 }
 
+bool KeyedDecoder::decodeBytes(const String& key, const uint8_t*& bytes, size_t& size)
+{
+    CFDataRef data = static_cast<CFDataRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
+    if (!data || CFGetTypeID(data) != CFDataGetTypeID())
+        return false;
+
+    bytes = CFDataGetBytePtr(data);
+    size = CFDataGetLength(data);
+    return true;
+}
+
 bool KeyedDecoder::decodeBool(const String& key, bool& result)
 {
     CFBooleanRef boolean = static_cast<CFBooleanRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
