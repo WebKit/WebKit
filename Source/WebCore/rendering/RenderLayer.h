@@ -460,6 +460,8 @@ public:
 
     // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
     bool hasAcceleratedTouchScrolling() const;
+    // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
+    bool hasTouchScrollableOverflow() const;
 #endif
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;

@@ -406,7 +406,7 @@ static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& 
     for (RenderLayer* curr = &layer; curr; curr = curr->parent()) {
         if (curr->hasTransform()
 #if PLATFORM(IOS)
-            || curr->hasAcceleratedTouchScrolling()
+            || curr->hasTouchScrollableOverflow()
 #else
             || curr->needsCompositedScrolling()
 #endif
@@ -536,27 +536,29 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
         layerConfigChanged = true;
     
     bool needsDescendentsClippingLayer = compositor().clipsCompositingDescendants(m_owningLayer);
-    bool usesCompositedScrolling;
-#if PLATFORM(IOS)
-    usesCompositedScrolling = m_owningLayer.hasAcceleratedTouchScrolling();
-#else
-    usesCompositedScrolling = m_owningLayer.needsCompositedScrolling();
-#endif
 
-    // Our scrolling layer will clip.
-    if (usesCompositedScrolling)
-        needsDescendentsClippingLayer = false;
+    if (!renderer().view().needsLayout()) {
+        bool usesCompositedScrolling;
+#if PLATFORM(IOS)
+        usesCompositedScrolling = m_owningLayer.hasTouchScrollableOverflow();
+#else
+        usesCompositedScrolling = m_owningLayer.needsCompositedScrolling();
+#endif
+        // Our scrolling layer will clip.
+        if (usesCompositedScrolling)
+            needsDescendentsClippingLayer = false;
+
+        if (updateScrollingLayers(usesCompositedScrolling))
+            layerConfigChanged = true;
+
+        if (updateDescendantClippingLayer(needsDescendentsClippingLayer))
+            layerConfigChanged = true;
+    }
 
     if (updateAncestorClippingLayer(compositor().clippedByAncestor(m_owningLayer)))
         layerConfigChanged = true;
 
-    if (updateDescendantClippingLayer(needsDescendentsClippingLayer))
-        layerConfigChanged = true;
-
     if (updateOverflowControlsLayers(requiresHorizontalScrollbarLayer(), requiresVerticalScrollbarLayer(), requiresScrollCornerLayer()))
-        layerConfigChanged = true;
-
-    if (updateScrollingLayers(usesCompositedScrolling))
         layerConfigChanged = true;
 
     if (layerConfigChanged)
@@ -752,7 +754,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         graphicsLayerParentLocation = renderer().view().documentRect().location();
 
 #if PLATFORM(IOS)
-    if (compAncestor && compAncestor->hasAcceleratedTouchScrolling()) {
+    if (compAncestor && compAncestor->hasTouchScrollableOverflow()) {
         RenderBox* renderBox = toRenderBox(&compAncestor->renderer());
         LayoutRect paddingBox(renderBox->borderLeft(), renderBox->borderTop(),
             renderBox->width() - renderBox->borderLeft() - renderBox->borderRight(),
@@ -1440,7 +1442,6 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         m_scrollingContentsLayer = nullptr;
     }
 
-    updateInternalHierarchy();
     m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
     m_graphicsLayer->setNeedsDisplay(); // Because painting phases changed.
 

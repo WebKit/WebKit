@@ -1,3 +1,39 @@
+2014-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Don't create backing store for -webkit-overflow-scrolling:touch that can't scroll
+        https://bugs.webkit.org/show_bug.cgi?id=132487
+        <rdar://problem/16758041>
+
+        Reviewed by Sam Weinig.
+
+        Previously, -webkit-overflow-scrolling:touch would cause us to make compositing
+        layers for any element that had overflow: auto or scroll on either axis. This
+        created lots of backing store when not required.
+        
+        Improve this to only create compositing for scrolling when there is actually
+        scrollable overflow. This makes things slightly more complex, because we can
+        only know when layout is up to date.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint): usesCompositedScrolling() tells
+        us if we're actually doing composited overflow.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hasTouchScrollableOverflow):
+        (WebCore::RenderLayer::handleTouchEvent):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::layerOrAncestorIsTransformedOrUsingCompositedScrolling):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): Only update
+        scrolling and clipping layers if layout is not pending.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::updateScrollingLayers): The caller calls
+        updateInternalHierarchy(), so no need to do it here.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrolling): We
+        can only determine that we're scrollable after layout.
+        (WebCore::isStickyInAcceleratedScrollingLayerOrViewport):
+        (WebCore::isMainFrameScrollingOrOverflowScrolling):
+
 2014-05-02  Anders Carlsson  <andersca@apple.com>
 
         Clean up FormDataElement

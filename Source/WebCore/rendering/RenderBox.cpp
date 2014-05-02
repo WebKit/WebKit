@@ -2176,7 +2176,7 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     if (o->hasOverflowClip()) {
         RenderBox* containerBox = toRenderBox(o);
 #if PLATFORM(IOS)
-        if (!containerBox->layer() || !containerBox->layer()->hasAcceleratedTouchScrolling()) {
+        if (!containerBox->layer() || !containerBox->layer()->usesCompositedScrolling()) {
 #endif
         containerBox->applyCachedClipAndScrollOffsetForRepaint(rect);
         if (rect.isEmpty())

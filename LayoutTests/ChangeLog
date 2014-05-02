@@ -1,3 +1,19 @@
+2014-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Don't create backing store for -webkit-overflow-scrolling:touch that can't scroll
+        https://bugs.webkit.org/show_bug.cgi?id=132487
+        <rdar://problem/16758041>
+
+        Reviewed by Sam Weinig.
+        
+        These are all progressions, and show that we make layers in fewer cases.
+
+        * platform/ios-sim/compositing/overflow/iframe-inside-overflow-clipping-expected.txt:
+        * platform/ios-sim/compositing/overflow/overflow-auto-with-touch-no-overflow-expected.txt:
+        * platform/ios-sim/compositing/overflow/overflow-overlay-with-touch-no-overflow-expected.txt:
+        * platform/ios-sim/compositing/overflow/overflow-scroll-with-touch-no-overflow-expected.txt:
+        * platform/ios-sim/compositing/overflow/subpixel-overflow-expected.txt:
+
 2014-05-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168150.

@@ -2476,7 +2476,15 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerMode
 #if PLATFORM(IOS)
 bool RenderLayerCompositor::requiresCompositingForScrolling(const RenderLayer& layer) const
 {
-    return layer.hasAcceleratedTouchScrolling();
+    if (!layer.hasAcceleratedTouchScrolling())
+        return false;
+
+    if (!m_inPostLayoutUpdate) {
+        m_reevaluateCompositingAfterLayout = true;
+        return layer.isComposited();
+    }
+
+    return layer.hasTouchScrollableOverflow();
 }
 #endif
 
@@ -2499,7 +2507,7 @@ static bool isStickyInAcceleratedScrollingLayerOrViewport(const RenderLayer& lay
     ASSERT(layer.renderer().isStickyPositioned());
 
     RenderLayer* enclosingOverflowLayer = layer.enclosingOverflowClipLayer(ExcludeSelf);
-    if (enclosingOverflowLayer && enclosingOverflowLayer->hasAcceleratedTouchScrolling()) {
+    if (enclosingOverflowLayer && enclosingOverflowLayer->hasTouchScrollableOverflow()) {
         if (enclosingAcceleratedOverflowLayer)
             *enclosingAcceleratedOverflowLayer = enclosingOverflowLayer;
         return true;
@@ -2537,7 +2545,7 @@ static bool isMainFrameScrollingOrOverflowScrolling(RenderView& view, const Rend
         return true;
 
 #if PLATFORM(IOS)
-    return layer.hasAcceleratedTouchScrolling();
+    return layer.hasTouchScrollableOverflow();
 #else
     return layer.needsCompositedScrolling();
 #endif

@@ -2115,11 +2115,16 @@ bool RenderLayer::hasAcceleratedTouchScrolling() const
 #endif
 }
 
-#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
+bool RenderLayer::hasTouchScrollableOverflow() const
+{
+    return hasAcceleratedTouchScrolling() && (hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
+}
+
+#if ENABLE(TOUCH_EVENTS)
 bool RenderLayer::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 {
     // If we have accelerated scrolling, let the scrolling be handled outside of WebKit.
-    if (hasAcceleratedTouchScrolling())
+    if (hasTouchScrollableOverflow())
         return false;
 
     return ScrollableArea::handleTouchEvent(touchEvent);
