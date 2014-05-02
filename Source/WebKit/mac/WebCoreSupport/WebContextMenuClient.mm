@@ -67,6 +67,14 @@ WebContextMenuClient::WebContextMenuClient(WebView *webView)
 {
 }
 
+WebContextMenuClient::~WebContextMenuClient()
+{
+#if ENABLE(SERVICE_CONTROLS)
+    if (m_sharingServicePickerController)
+        [m_sharingServicePickerController clear];
+#endif
+}
+
 void WebContextMenuClient::contextMenuDestroyed()
 {
     delete this;

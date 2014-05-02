@@ -34,7 +34,8 @@
 class WebContextMenuClient : public WebCore::ContextMenuClient {
 public:
     WebContextMenuClient(WebView *webView);
-    
+    ~WebContextMenuClient();
+
     virtual void contextMenuDestroyed() override;
     
     virtual NSMutableArray* getCustomMenuFromDefaultItems(WebCore::ContextMenu*) override;

@@ -88,7 +88,8 @@ using namespace WebCore;
 
 - (void)clear
 {
-    _menuClient->clearSharingServicePickerController();
+    if (_menuClient)
+        _menuClient->clearSharingServicePickerController();
 
     _picker = nullptr;
     _menuClient = nullptr;
