@@ -98,7 +98,7 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::send(co
     return m_bridge->send(binaryData, byteOffset, byteLength);
 }
 
-ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::send(const Blob& binaryData)
+ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::send(Blob& binaryData)
 {
     if (!m_bridge)
         return ThreadableWebSocketChannel::SendFail;
@@ -192,7 +192,7 @@ void WorkerThreadableWebSocketChannel::Peer::send(const ArrayBuffer& binaryData)
     m_loaderProxy.postTaskForModeToWorkerGlobalScope(createCallbackTask(&workerGlobalScopeDidSend, m_workerClientWrapper, sendRequestResult), m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::send(const Blob& binaryData)
+void WorkerThreadableWebSocketChannel::Peer::send(Blob& binaryData)
 {
     ASSERT(isMainThread());
     if (!m_mainWebSocketChannel || !m_workerClientWrapper)
@@ -438,7 +438,7 @@ void WorkerThreadableWebSocketChannel::mainThreadSendBlob(ScriptExecutionContext
     ASSERT_UNUSED(context, context->isDocument());
     ASSERT(peer);
 
-    RefPtr<Blob> blob = Blob::create(url, type, size);
+    RefPtr<Blob> blob = Blob::deserialize(url, type, size);
     peer->send(*blob);
 }
 
@@ -474,7 +474,7 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
     return clientWrapper->sendRequestResult();
 }
 
-ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge::send(const Blob& binaryData)
+ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge::send(Blob& binaryData)
 {
     if (!m_workerClientWrapper || !m_peer)
         return ThreadableWebSocketChannel::SendFail;

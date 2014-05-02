@@ -153,9 +153,9 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer&
     return ThreadableWebSocketChannel::SendSuccess;
 }
 
-ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const Blob& binaryData)
+ThreadableWebSocketChannel::SendResult WebSocketChannel::send(Blob& binaryData)
 {
-    LOG(Network, "WebSocketChannel %p send() Sending Blob '%s'", this, binaryData.url().stringCenterEllipsizedToLength().utf8().data());
+    LOG(Network, "WebSocketChannel %p send() Sending Blob '%s'", this, binaryData.url().string().utf8().data());
     enqueueBlobFrame(WebSocketFrame::OpCodeBinary, binaryData);
     processOutgoingFrameQueue();
     return ThreadableWebSocketChannel::SendSuccess;
@@ -695,13 +695,13 @@ void WebSocketChannel::enqueueRawFrame(WebSocketFrame::OpCode opCode, const char
     m_outgoingFrameQueue.append(frame.release());
 }
 
-void WebSocketChannel::enqueueBlobFrame(WebSocketFrame::OpCode opCode, const Blob& blob)
+void WebSocketChannel::enqueueBlobFrame(WebSocketFrame::OpCode opCode, Blob& blob)
 {
     ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
     OwnPtr<QueuedFrame> frame = adoptPtr(new QueuedFrame);
     frame->opCode = opCode;
     frame->frameType = QueuedFrameTypeBlob;
-    frame->blobData = Blob::create(blob.url(), blob.type(), blob.size());
+    frame->blobData = &blob;
     m_outgoingFrameQueue.append(frame.release());
 }
 

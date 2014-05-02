@@ -55,8 +55,7 @@ public:
         return adoptRef(new Blob(std::move(blobData)));
     }
 
-    // For deserialization.
-    static PassRefPtr<Blob> create(const URL& srcURL, const String& type, long long size)
+    static PassRefPtr<Blob> deserialize(const URL& srcURL, const String& type, long long size)
     {
         ASSERT(Blob::isNormalizedContentType(type));
         return adoptRef(new Blob(srcURL, type, size));

@@ -350,7 +350,6 @@ void WebSocket::send(ArrayBufferView* arrayBufferView, ExceptionCode& ec)
 void WebSocket::send(Blob* binaryData, ExceptionCode& ec)
 {
     LOG(Network, "WebSocket %p send() Sending Blob '%s'", this, binaryData->url().stringCenterEllipsizedToLength().utf8().data());
-    ASSERT(binaryData);
     if (m_state == CONNECTING) {
         ec = INVALID_STATE_ERR;
         return;

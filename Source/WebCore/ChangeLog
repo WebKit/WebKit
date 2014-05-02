@@ -1,3 +1,40 @@
+2014-05-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't abuse Blob deserialization constructor in WebSocket
+        https://bugs.webkit.org/show_bug.cgi?id=132478
+
+        Reviewed by Sam Weinig.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send):
+        (WebCore::WebSocketChannel::enqueueBlobFrame): This is the important change -
+        Blob::create was called for no reason. If the blob came from a worker, it was
+        already cloned for cross-thread messaging, otherwise there is no reason to make
+        a new one.
+
+        * fileapi/Blob.h:
+        (WebCore::Blob::deserialize):
+        (WebCore::Blob::create): Deleted.
+        * fileapi/File.h:
+        (WebCore::File::deserialize):
+        (WebCore::File::create): Deleted.
+        Renamed a special case of "create" function to avoid explaining what it is for.
+
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::send):
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::send): Print a full URL in LOG(),
+        not one shortened to 1024 characters.
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSendBlob):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readFile):
+        (WebCore::CloneDeserializer::readTerminal):
+
 2014-05-02  Anders Carlsson  <andersca@apple.com>
 
         Add and implement KeyedDecoder::decodeBytes

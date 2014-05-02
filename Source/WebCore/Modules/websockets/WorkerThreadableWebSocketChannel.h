@@ -67,7 +67,7 @@ public:
     virtual String extensions() override;
     virtual ThreadableWebSocketChannel::SendResult send(const String& message) override;
     virtual ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) override;
-    virtual ThreadableWebSocketChannel::SendResult send(const Blob&) override;
+    virtual ThreadableWebSocketChannel::SendResult send(Blob&) override;
     virtual unsigned long bufferedAmount() const override;
     virtual void close(int code, const String& reason) override;
     virtual void fail(const String& reason) override;
@@ -89,7 +89,7 @@ public:
         void connect(const URL&, const String& protocol);
         void send(const String& message);
         void send(const JSC::ArrayBuffer&);
-        void send(const Blob&);
+        void send(Blob&);
         void bufferedAmount();
         void close(int code, const String& reason);
         void fail(const String& reason);
@@ -135,7 +135,7 @@ private:
         void connect(const URL&, const String& protocol);
         ThreadableWebSocketChannel::SendResult send(const String& message);
         ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength);
-        ThreadableWebSocketChannel::SendResult send(const Blob&);
+        ThreadableWebSocketChannel::SendResult send(Blob&);
         unsigned long bufferedAmount();
         void close(int code, const String& reason);
         void fail(const String& reason);

@@ -1732,7 +1732,7 @@ private:
         if (!readStringData(type))
             return 0;
         if (m_isDOMGlobalObject)
-            file = File::create(path->string(), URL(URL(), url->string()), type->string());
+            file = File::deserialize(path->string(), URL(URL(), url->string()), type->string());
         return true;
     }
 
@@ -2231,7 +2231,7 @@ private:
                 return JSValue();
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return getJSValue(Blob::create(URL(URL(), url->string()), type->string(), size).get());
+            return getJSValue(Blob::deserialize(URL(URL(), url->string()), type->string(), size).get());
         }
         case StringTag: {
             CachedStringRef cachedString;

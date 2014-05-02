@@ -49,8 +49,7 @@ public:
         return adoptRef(new File(path, policy));
     }
 
-    // For deserialization.
-    static PassRefPtr<File> create(const String& path, const URL& srcURL, const String& type)
+    static PassRefPtr<File> deserialize(const String& path, const URL& srcURL, const String& type)
     {
         return adoptRef(new File(path, srcURL, type));
     }
@@ -76,10 +75,10 @@ public:
 
 private:
     File(const String& path, ContentTypeLookupPolicy);
+    File(const String& path, const String& name, ContentTypeLookupPolicy);
 
     // For deserialization.
     File(const String& path, const URL& srcURL, const String& type);
-    File(const String& path, const String& name, ContentTypeLookupPolicy);
 
     String m_path;
     String m_name;
