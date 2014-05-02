@@ -1,6 +1,7 @@
 2014-05-01  Dan Bernstein  <mitz@apple.com>
 
         Fixed production builds for the iOS Simulator.
+        <rdar://problem/16792221>
 
         * Configurations/bmalloc.xcconfig: Include INSTALL_PATH_PREFIX in
         PRIVATE_HEADERS_FOLDER_PATH when installing.
