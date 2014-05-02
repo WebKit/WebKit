@@ -3686,16 +3686,15 @@ sub NativeToJSValue
 
             my $selfIsTearOffType = $codeGenerator->IsSVGTypeNeedingTearOff($interfaceName);
             if ($selfIsTearOffType) {
-                AddToImplIncludes("SVGStaticPropertyWithParentTearOff.h", $conditional);
-                $tearOffType =~ s/SVGPropertyTearOff</SVGStaticPropertyWithParentTearOff<$interfaceName, /;
+                AddToImplIncludes("SVGMatrixTearOff.h", $conditional);
+                # FIXME: Blink: Don't create a new one everytime we access the matrix property. This means, e.g, === won't work. 
+                $value = "SVGMatrixTearOff::create(castedThis->impl(), $value)";
 
                 if ($value =~ /matrix/ and $interfaceName eq "SVGTransform") {
                     # SVGTransform offers a matrix() method for internal usage that returns an AffineTransform
                     # and a svgMatrix() method returning a SVGMatrix, used for the bindings.
                     $value =~ s/matrix/svgMatrix/;
                 }
-
-                $value = "${tearOffType}::create(castedThis->impl(), $value, $updateMethod)";
             } else {
                 AddToImplIncludes("SVGStaticPropertyTearOff.h", $conditional);
                 $tearOffType =~ s/SVGPropertyTearOff</SVGStaticPropertyTearOff<$interfaceName, /;
