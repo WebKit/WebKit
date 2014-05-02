@@ -1,3 +1,21 @@
+2014-05-01  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Can't scroll on gatesnotes.com 
+        https://bugs.webkit.org/show_bug.cgi?id=132459
+        <rdar://problem/16770909>
+
+        Reviewed by Benjamin Poulain.
+        
+        The custom UIView hit-testing code was finding views that were created by
+        the compositing code for clipping, above the UIScrollViews. We only ever
+        need to find UIScrollViews here for touch overflow-scrolling, so constrain
+        the hit-testing code to only return UIScrollViews.
+
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (-[UIView _recursiveFindDescendantScrollViewAtPoint:withEvent:]):
+        (-[UIView _findDescendantViewAtPoint:withEvent:]):
+        (-[UIView _recursiveFindDescendantViewAtPoint:withEvent:]): Deleted.
+
 2014-05-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r168118): [GTK] build broken due to shouldTrackVisitedLinks

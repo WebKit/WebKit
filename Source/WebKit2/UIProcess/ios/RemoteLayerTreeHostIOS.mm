@@ -49,7 +49,8 @@ using namespace WebCore;
 
 // UIView hit testing assumes that views should only hit test subviews that are entirely contained
 // in the view. This is not true of web content.
-- (UIView *)_recursiveFindDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event
+// We only want to find UIScrollViews here. Other views are ignored.
+- (UIView *)_recursiveFindDescendantScrollViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event
 {
     if (self.clipsToBounds && ![self pointInside:point withEvent:event])
         return nil;
@@ -58,13 +59,13 @@ using namespace WebCore;
     [[self subviews] enumerateObjectsUsingBlock:^(UIView *view, NSUInteger idx, BOOL *stop) {
         CGPoint subviewPoint = [view convertPoint:point fromView:self];
 
-        if ([view pointInside:subviewPoint withEvent:event])
+        if ([view pointInside:subviewPoint withEvent:event] && [view isKindOfClass:[UIScrollView class]])
             foundView = view;
 
         if (![view subviews])
             return;
 
-        if (UIView *hitView = [view _recursiveFindDescendantViewAtPoint:subviewPoint withEvent:event])
+        if (UIView *hitView = [view _recursiveFindDescendantScrollViewAtPoint:subviewPoint withEvent:event])
             foundView = hitView;
     }];
 
@@ -73,7 +74,7 @@ using namespace WebCore;
 
 - (UIView *)_findDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event
 {
-    return [self _recursiveFindDescendantViewAtPoint:point withEvent:event];
+    return [self _recursiveFindDescendantScrollViewAtPoint:point withEvent:event];
 }
 
 @end
