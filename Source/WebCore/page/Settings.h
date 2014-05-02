@@ -192,9 +192,6 @@ public:
     static bool shouldUseHighResolutionTimers() { return gShouldUseHighResolutionTimers; }
 #endif
 
-    void setTiledBackingStoreEnabled(bool);
-    bool tiledBackingStoreEnabled() const { return m_tiledBackingStoreEnabled; }
-
     void setBackgroundShouldExtendBeyondPage(bool);
     bool backgroundShouldExtendBeyondPage() const { return m_backgroundShouldExtendBeyondPage; }
 
@@ -302,7 +299,6 @@ private:
     bool m_usesPageCache : 1;
     unsigned m_fontRenderingMode : 1;
     bool m_showTiledScrollingIndicator : 1;
-    bool m_tiledBackingStoreEnabled : 1;
     bool m_backgroundShouldExtendBeyondPage : 1;
     bool m_dnsPrefetchingEnabled : 1;
 

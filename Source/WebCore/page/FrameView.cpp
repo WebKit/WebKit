@@ -2143,12 +2143,6 @@ void FrameView::repaintContentRectangle(const IntRect& r)
     if (!shouldUpdate())
         return;
 
-#if USE(TILED_BACKING_STORE)
-    if (frame().tiledBackingStore()) {
-        frame().tiledBackingStore()->invalidate(r);
-        return;
-    }
-#endif
     ScrollView::repaintContentRectangle(r);
 }
 

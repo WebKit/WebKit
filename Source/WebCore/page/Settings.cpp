@@ -175,7 +175,6 @@ Settings::Settings(Page* page)
     , m_usesPageCache(false)
     , m_fontRenderingMode(0)
     , m_showTiledScrollingIndicator(false)
-    , m_tiledBackingStoreEnabled(false)
     , m_backgroundShouldExtendBeyondPage(false)
     , m_dnsPrefetchingEnabled(false)
 #if ENABLE(TOUCH_EVENTS)
@@ -554,14 +553,6 @@ void Settings::setStorageBlockingPolicy(SecurityOrigin::StorageBlockingPolicy en
 
     m_storageBlockingPolicy = enabled;
     m_page->storageBlockingStateChanged();
-}
-
-void Settings::setTiledBackingStoreEnabled(bool enabled)
-{
-    m_tiledBackingStoreEnabled = enabled;
-#if USE(TILED_BACKING_STORE)
-    m_page->mainFrame().setTiledBackingStoreEnabled(enabled);
-#endif
 }
 
 void Settings::setBackgroundShouldExtendBeyondPage(bool shouldExtend)

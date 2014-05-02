@@ -47,10 +47,6 @@
 #include "FrameWin.h"
 #endif
 
-#if USE(TILED_BACKING_STORE)
-#include "TiledBackingStoreClient.h"
-#endif
-
 #if PLATFORM(IOS)
 OBJC_CLASS DOMCSSStyleDeclaration;
 OBJC_CLASS DOMNode;
@@ -91,7 +87,6 @@ namespace WebCore {
     class RenderWidget;
     class ScriptController;
     class Settings;
-    class TiledBackingStore;
     class VisiblePosition;
     class Widget;
 
@@ -108,10 +103,6 @@ namespace WebCore {
     typedef Node* (*NodeQualifier)(const HitTestResult&, Node* terminationNode, IntRect* nodeBounds);
 #endif
 
-#if !USE(TILED_BACKING_STORE)
-    class TiledBackingStoreClient { };
-#endif
-
     enum {
         LayerTreeFlagsIncludeDebugInfo = 1 << 0,
         LayerTreeFlagsIncludeVisibleRects = 1 << 1,
@@ -122,7 +113,7 @@ namespace WebCore {
     };
     typedef unsigned LayerTreeFlags;
 
-    class Frame : public RefCounted<Frame>, public TiledBackingStoreClient {
+    class Frame : public RefCounted<Frame> {
     public:
         static PassRefPtr<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
 
@@ -325,25 +316,6 @@ namespace WebCore {
 
 #if ENABLE(ORIENTATION_EVENTS)
         int m_orientation;
-#endif
-
-#if USE(TILED_BACKING_STORE)
-    // FIXME: The tiled backing store belongs in FrameView, not Frame.
-
-    public:
-        TiledBackingStore* tiledBackingStore() const { return m_tiledBackingStore.get(); }
-        void setTiledBackingStoreEnabled(bool);
-
-    private:
-        // TiledBackingStoreClient interface
-        virtual void tiledBackingStorePaintBegin() override final;
-        virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) override final;
-        virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) override final;
-        virtual IntRect tiledBackingStoreContentsRect() override final;
-        virtual IntRect tiledBackingStoreVisibleRect() override final;
-        virtual Color tiledBackingStoreBackgroundColor() const override final;
-
-        std::unique_ptr<TiledBackingStore> m_tiledBackingStore;
 #endif
 
         int m_activeDOMObjectsAndAnimationsSuspendedCount;

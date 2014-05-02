@@ -110,11 +110,6 @@
 #include <wtf/StdLibExtras.h>
 #include <yarr/RegularExpression.h>
 
-
-#if USE(TILED_BACKING_STORE)
-#include "TiledBackingStore.h"
-#endif
-
 #if PLATFORM(IOS)
 #include "WKContentObservation.h"
 #endif
@@ -188,12 +183,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     XMLNames::init();
     WebKitFontFamilyNames::init();
 
-    if (!ownerElement) {
-#if USE(TILED_BACKING_STORE)
-        // Top level frame only for now.
-        setTiledBackingStoreEnabled(settings().tiledBackingStoreEnabled());
-#endif
-    } else {
+    if (ownerElement) {
         m_mainFrame.selfOnlyRef();
         page.incrementSubframeCount();
         ownerElement->setContentFrame(this);
@@ -278,11 +268,6 @@ void Frame::setView(PassRefPtr<FrameView> view)
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
     loader().resetMultipleFormSubmissionProtection();
-    
-#if USE(TILED_BACKING_STORE)
-    if (m_view && tiledBackingStore())
-        m_view->setPaintsEntireContents(true);
-#endif
 }
 
 void Frame::setDocument(PassRefPtr<Document> newDocument)
@@ -928,67 +913,6 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
     if (HTMLFrameOwnerElement* owner = ownerElement())
         view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
 }
-
-#if USE(TILED_BACKING_STORE)
-void Frame::setTiledBackingStoreEnabled(bool enabled)
-{
-    if (!enabled) {
-        m_tiledBackingStore = nullptr;
-        return;
-    }
-    if (m_tiledBackingStore)
-        return;
-    m_tiledBackingStore = std::make_unique<TiledBackingStore>(this);
-    m_tiledBackingStore->setCommitTileUpdatesOnIdleEventLoop(true);
-    if (m_view)
-        m_view->setPaintsEntireContents(true);
-}
-
-void Frame::tiledBackingStorePaintBegin()
-{
-    if (!m_view)
-        return;
-    m_view->updateLayoutAndStyleIfNeededRecursive();
-}
-
-void Frame::tiledBackingStorePaint(GraphicsContext* context, const IntRect& rect)
-{
-    if (!m_view)
-        return;
-    m_view->paintContents(context, rect);
-}
-
-void Frame::tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea)
-{
-    if (!m_page || !m_view)
-        return;
-    unsigned size = paintedArea.size();
-    // Request repaint from the system
-    for (unsigned n = 0; n < size; ++n)
-        m_page->chrome().invalidateContentsAndRootView(m_view->contentsToRootView(paintedArea[n]));
-}
-
-IntRect Frame::tiledBackingStoreContentsRect()
-{
-    if (!m_view)
-        return IntRect();
-    return IntRect(IntPoint(), m_view->contentsSize());
-}
-
-IntRect Frame::tiledBackingStoreVisibleRect()
-{
-    if (!m_page)
-        return IntRect();
-    return m_page->chrome().client().visibleRectForTiledBackingStore();
-}
-
-Color Frame::tiledBackingStoreBackgroundColor() const
-{
-    if (!m_view)
-        return Color();
-    return m_view->baseBackgroundColor();
-}
-#endif
 
 String Frame::layerTreeAsText(LayerTreeFlags flags) const
 {
