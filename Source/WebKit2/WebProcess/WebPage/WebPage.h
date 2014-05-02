@@ -959,6 +959,9 @@ private:
     void failedToShowPopupMenu();
 #endif
 
+#if PLATFORM(IOS)
+    void didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, const IPC::DataReference& iconData);
+#endif
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 #if ENABLE(WEB_PROCESS_SANDBOX)

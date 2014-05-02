@@ -1,3 +1,114 @@
+2014-05-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] WebKit2 File Upload Support
+        https://bugs.webkit.org/show_bug.cgi?id=132024
+
+        Reviewed by Enrica Casucci.
+
+        * Configurations/WebKit2.xcconfig:
+        Include MobileCoreServices on iOS for kUTTypeImage/kUTTypeMovie.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * UIProcess/WebOpenPanelResultListenerProxy.h:
+        * UIProcess/WebOpenPanelResultListenerProxy.cpp:
+        (WebKit::filePathsFromFileURLs):
+        (WebKit::WebOpenPanelResultListenerProxy::chooseFiles):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runOpenPanel):
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+        * WebProcess/WebPage/WebOpenPanelResultListener.h:
+        * WebProcess/WebPage/WebOpenPanelResultListener.cpp:
+        (WebKit::WebOpenPanelResultListener::didChooseFilesWithDisplayStringAndIcon):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+        Message forwarding for choosing files and providing a display string and icon,
+        leading down to the existing WebCore FileChooser method.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleRunOpenPanel):
+        Add a default handler for file open panel on iOS.
+        Forwards to the content view.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView lastInteractionLocation]):
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (-[WKContentView _longPressRecognized:]):
+        (-[WKContentView _singleTapRecognized:]):
+        (-[WKContentView _doubleTapRecognized:]):
+        (-[WKContentView _twoFingerDoubleTapRecognized:]):
+        Keep track of the last interaction location. This matches previous behavior
+        of showing the file upload popover where the user tapped, to handle
+        cases where the <input> is hidden.
+
+        (-[WKContentView _showRunOpenPanel:resultListener:]):
+        (-[WKContentView fileUploadPanelDidDismiss:]):
+        Handle showing the cleaning up after the file upload panel.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.h:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm: Added.
+        (squareCropRectForSize):
+        (squareImage):
+        (thumbnailSizedImageForImage):
+        (-[_WKFileUploadItem isVideo]):
+        (-[_WKFileUploadItem fileURL]):
+        (-[_WKFileUploadItem displayImage]):
+        (-[_WKImageFileUploadItem initWithFilePath:originalImage:]):
+        (-[_WKImageFileUploadItem isVideo]):
+        (-[_WKImageFileUploadItem fileURL]):
+        (-[_WKImageFileUploadItem displayImage]):
+        (-[_WKVideoFileUploadItem initWithFilePath:mediaURL:]):
+        (-[_WKVideoFileUploadItem isVideo]):
+        (-[_WKVideoFileUploadItem fileURL]):
+        (-[_WKVideoFileUploadItem displayImage]):
+        Helper class for each image picker selection. Knows how to get
+        a file URL and thumbnail display image for the item.
+
+        (-[WKFileUploadPanel initWithView:]):
+        (-[WKFileUploadPanel dealloc]):
+        (-[WKFileUploadPanel _dispatchDidDismiss]):
+        (-[WKFileUploadPanel _cancel]):
+        (-[WKFileUploadPanel _chooseFiles:displayString:iconImage:]):
+        Lifetime of the upload panel requires that either cancel or choose
+        must happen as we go through the file picking process.
+
+        (-[WKFileUploadPanel presentWithParameters:WebKit::resultListener:WebKit::]):
+        (-[WKFileUploadPanel dismiss]):
+        API to show or dismiss the panel.
+
+        (-[WKFileUploadPanel _dismissDisplayAnimated:]):
+        Helper to clean up the UI as it progresses or completes no matter the device idiom.
+
+        (-[WKFileUploadPanel _presentPopoverWithContentViewController:animated:]):
+        (-[WKFileUploadPanel _presentFullscreenViewController:animated:]):
+        UI presentation for the appropriate idiom.
+
+        (-[WKFileUploadPanel _mediaTypesForPickerSourceType:]):
+        (-[WKFileUploadPanel _showMediaSourceSelectionSheet]):
+        (-[WKFileUploadPanel _showPhotoPickerWithSourceType:]):
+        Showing the action sheet or image picker.
+
+        (-[WKFileUploadPanel popoverControllerDidDismissPopover:]):
+        (-[WKFileUploadPanel _willMultipleSelectionDelegateBeCalled]):
+        (-[WKFileUploadPanel imagePickerController:didFinishPickingMediaWithInfo:]):
+        (-[WKFileUploadPanel imagePickerController:didFinishPickingMultipleMediaWithInfo:]):
+        (-[WKFileUploadPanel imagePickerControllerDidCancel:]):
+        Action sheet or image picker handlers.
+
+        (-[WKFileUploadPanel _processMediaInfoDictionaries:successBlock:failureBlock:]):
+        (-[WKFileUploadPanel _processMediaInfoDictionaries:atIndex:processedResults:processedImageCount:processedVideoCount:successBlock:failureBlock:]):
+        (-[WKFileUploadPanel _uploadItemFromMediaInfo:successBlock:failureBlock:]):
+        (-[WKFileUploadPanel _displayStringForPhotos:videos:]):
+        Processing selections from the image picker to FileUploadItems.
+
 2014-05-01  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Animations on vox.com look wrong

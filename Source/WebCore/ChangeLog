@@ -1,3 +1,13 @@
+2014-05-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] WebKit2 File Upload Support
+        https://bugs.webkit.org/show_bug.cgi?id=132024
+
+        Reviewed by Enrica Casucci.
+
+        * English.lproj/Localizable.strings:
+        New localized strings for <input type="file"> on iOS.
+
 2014-05-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WK2: iOS web page scrolling doesn't work with VoiceOver

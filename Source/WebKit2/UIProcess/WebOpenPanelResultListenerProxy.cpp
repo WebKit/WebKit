@@ -27,6 +27,7 @@
 #include "WebOpenPanelResultListenerProxy.h"
 
 #include "APIArray.h"
+#include "APIString.h"
 #include "WebPageProxy.h"
 #include <WebCore/URL.h>
 #include <wtf/Vector.h>
@@ -44,25 +45,38 @@ WebOpenPanelResultListenerProxy::~WebOpenPanelResultListenerProxy()
 {
 }
 
+static Vector<String> filePathsFromFileURLs(const API::Array& fileURLs)
+{
+    Vector<String> filePaths;
+
+    size_t size = fileURLs.size();
+    filePaths.reserveInitialCapacity(size);
+
+    for (size_t i = 0; i < size; ++i) {
+        API::URL* apiURL = fileURLs.at<API::URL>(i);
+        if (apiURL)
+            filePaths.uncheckedAppend(URL(URL(), apiURL->string()).fileSystemPath());
+    }
+
+    return filePaths;
+}
+
+#if PLATFORM(IOS)
+void WebOpenPanelResultListenerProxy::chooseFiles(API::Array* fileURLsArray, API::String* displayString, const API::Data* iconImageData)
+{
+    if (!m_page)
+        return;
+
+    m_page->didChooseFilesForOpenPanelWithDisplayStringAndIcon(filePathsFromFileURLs(*fileURLsArray), displayString ? displayString->string() : String(), iconImageData);
+}
+#endif
+
 void WebOpenPanelResultListenerProxy::chooseFiles(API::Array* fileURLsArray)
 {
     if (!m_page)
         return;
 
-    size_t size = fileURLsArray->size();
-
-    Vector<String> filePaths;
-    filePaths.reserveInitialCapacity(size);
-
-    for (size_t i = 0; i < size; ++i) {
-        API::URL* apiURL = fileURLsArray->at<API::URL>(i);
-        if (apiURL) {
-            URL url(URL(), apiURL->string());
-            filePaths.uncheckedAppend(url.fileSystemPath());
-        }
-    }
-
-    m_page->didChooseFilesForOpenPanel(filePaths);
+    m_page->didChooseFilesForOpenPanel(filePathsFromFileURLs(*fileURLsArray));
 }
 
 void WebOpenPanelResultListenerProxy::cancel()

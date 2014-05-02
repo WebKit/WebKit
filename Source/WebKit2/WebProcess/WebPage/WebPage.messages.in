@@ -225,6 +225,9 @@ messages -> WebPage LegacyReceiver {
 #endif
 
     # Open panel.
+#if PLATFORM(IOS)
+    DidChooseFilesForOpenPanelWithDisplayStringAndIcon(Vector<String> fileURLs, String displayString, IPC::DataReference iconData)
+#endif
     DidChooseFilesForOpenPanel(Vector<String> fileURLs)
     DidCancelForOpenPanel()
 #if ENABLE(WEB_PROCESS_SANDBOX)

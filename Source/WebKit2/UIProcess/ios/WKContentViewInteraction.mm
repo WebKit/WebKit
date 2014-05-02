@@ -32,20 +32,18 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
 #import "SmartMagnificationController.h"
-#import "WebEvent.h"
-#import "WebIOSEventFactory.h"
-#import "WebPageMessages.h"
-#import "WebProcessProxy.h"
 #import "WKActionSheetAssistant.h"
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
 #import "WKWebViewPrivate.h"
+#import "WebEvent.h"
+#import "WebIOSEventFactory.h"
+#import "WebPageMessages.h"
+#import "WebProcessProxy.h"
 #import "_WKFormDelegate.h"
 #import "_WKFormInputSession.h"
 #import <DataDetectorsUI/DDDetectionController.h>
 #import <TextInput/TI_NSStringExtras.h>
-#import <UIKit/_UIHighlightView.h>
-#import <UIKit/_UIWebHighlightLongPressGestureRecognizer.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIGestureRecognizer_Private.h>
 #import <UIKit/UIKeyboardImpl.h>
@@ -54,6 +52,8 @@
 #import <UIKit/UITapGestureRecognizer_Private.h>
 #import <UIKit/UITextInteractionAssistant_Private.h>
 #import <UIKit/UIWebDocumentView.h> // FIXME: should not include this header.
+#import <UIKit/_UIHighlightView.h>
+#import <UIKit/_UIWebHighlightLongPressGestureRecognizer.h>
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/NotImplemented.h>
@@ -240,6 +240,11 @@ static const float tapAndHoldDelay  = 0.75;
     [_doubleTapGestureRecognizer setDelegate:nil];
     [_highlightLongPressGestureRecognizer setDelegate:nil];
     [_longPressGestureRecognizer setDelegate:nil];
+
+    if (_fileUploadPanel) {
+        [_fileUploadPanel setDelegate:nil];
+        [_fileUploadPanel dismiss];
+    }
 }
 
 - (const InteractionInformationAtPosition&)positionInformation
@@ -255,6 +260,11 @@ static const float tapAndHoldDelay  = 0.75;
 - (id <UITextInputDelegate>)inputDelegate
 {
     return _inputDelegate;
+}
+
+- (CGPoint)lastInteractionLocation
+{
+    return _lastInteractionLocation;
 }
 
 - (BOOL)isEditable
@@ -287,6 +297,8 @@ static const float tapAndHoldDelay  = 0.75;
     NativeWebTouchEvent nativeWebTouchEvent(gestureRecognizer);
     if (nativeWebTouchEvent.type() == WebKit::WebEvent::TouchStart)
         _canSendTouchEventsAsynchronously = NO;
+
+    _lastInteractionLocation = gestureRecognizer.locationInWindow;
 
     if (_canSendTouchEventsAsynchronously)
         _page->handleTouchEventAsynchronously(nativeWebTouchEvent);
@@ -669,6 +681,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     ASSERT(gestureRecognizer == _highlightLongPressGestureRecognizer);
 
+    _lastInteractionLocation = gestureRecognizer.startPoint;
+
     switch ([gestureRecognizer state]) {
     case UIGestureRecognizerStateBegan:
         _page->tapHighlightAtPosition([gestureRecognizer startPoint], _latestTapHighlightID);
@@ -690,6 +704,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     ASSERT(gestureRecognizer == _longPressGestureRecognizer);
 
+    _lastInteractionLocation = gestureRecognizer.startPoint;
+
     if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
         SEL action = [self _actionForLongPress];
         if (action)
@@ -706,16 +722,22 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     [_webSelectionAssistant clearSelection];
 
-    [self _attemptClickAtLocation:[gestureRecognizer location]];
+    _lastInteractionLocation = gestureRecognizer.location;
+
+    [self _attemptClickAtLocation:gestureRecognizer.location];
 }
 
 - (void)_doubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
+    _lastInteractionLocation = gestureRecognizer.location;
+
     _smartMagnificationController->handleSmartMagnificationGesture(gestureRecognizer.location);
 }
 
 - (void)_twoFingerDoubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
+    _lastInteractionLocation = gestureRecognizer.location;
+
     _smartMagnificationController->handleResetMagnificationGesture(gestureRecognizer.location);
 }
 
@@ -2086,6 +2108,26 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     if (!_airPlayRoutePicker)
         _airPlayRoutePicker = adoptNS([[WKAirPlayRoutePicker alloc] initWithView:self]);
     [_airPlayRoutePicker show:hasVideo fromRect:elementRect];
+}
+
+- (void)_showRunOpenPanel:(WebOpenPanelParameters*)parameters resultListener:(WebOpenPanelResultListenerProxy*)listener
+{
+    ASSERT(!_fileUploadPanel);
+    if (_fileUploadPanel)
+        return;
+
+    _fileUploadPanel = adoptNS([[WKFileUploadPanel alloc] initWithView:self]);
+    [_fileUploadPanel setDelegate:self];
+    [_fileUploadPanel presentWithParameters:parameters resultListener:listener];
+}
+
+- (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel
+{
+    ASSERT(_fileUploadPanel.get() == fileUploadPanel);
+
+    [_fileUploadPanel setDelegate:nil];
+    [_fileUploadPanel release];
+    _fileUploadPanel = nil;
 }
 
 #pragma mark - Implementation of UIWebTouchEventsGestureRecognizerDelegate.

@@ -32,6 +32,8 @@
 
 namespace API {
 class Array;
+class Data;
+class String;
 }
 
 namespace WebKit {
@@ -47,6 +49,9 @@ public:
 
     virtual ~WebOpenPanelResultListenerProxy();
 
+#if PLATFORM(IOS)
+    void chooseFiles(API::Array*, API::String* displayString, const API::Data* iconImageData);
+#endif
     void chooseFiles(API::Array*);
     void cancel();
 

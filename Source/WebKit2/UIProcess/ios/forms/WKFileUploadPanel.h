@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebOpenPanelResultListener_h
-#define WebOpenPanelResultListener_h
+#if PLATFORM(IOS)
 
-#include <wtf/RefCounted.h>
-#include <WebCore/FileChooser.h>
+#import <UIKit/UIViewController.h>
 
-namespace WebCore {
-class Icon;
-}
+@class WKContentView;
+@protocol WKFileUploadPanelDelegate;
 
 namespace WebKit {
+class WebOpenPanelParameters;
+class WebOpenPanelResultListenerProxy;
+}
 
-class WebPage;
+@interface WKFileUploadPanel : UIViewController
+@property (nonatomic, assign) id <WKFileUploadPanelDelegate> delegate;
+- (instancetype)initWithView:(WKContentView *)view;
+- (void)presentWithParameters:(WebKit::WebOpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
+- (void)dismiss;
+@end
 
-class WebOpenPanelResultListener : public RefCounted<WebOpenPanelResultListener> {
-public:
-    static PassRefPtr<WebOpenPanelResultListener> create(WebPage*, PassRefPtr<WebCore::FileChooser>);
-    ~WebOpenPanelResultListener();
+@protocol WKFileUploadPanelDelegate <NSObject>
+@optional
+- (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel;
+@end
 
-    void disconnectFromPage() { m_page = 0; }
-    void didChooseFiles(const Vector<String>&);
-#if PLATFORM(IOS)
-    void didChooseFilesWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, WebCore::Icon*);
-#endif
-
-private:
-    WebOpenPanelResultListener(WebPage*, PassRefPtr<WebCore::FileChooser>);
-
-    WebPage* m_page;
-    RefPtr<WebCore::FileChooser> m_fileChooser;
-};
-
-} // namespace WebKit
-
-
-#endif // WebOpenPanelResultListener_h
+#endif // PLATFORM(IOS)

@@ -150,6 +150,8 @@ public:
 
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
 
+    virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
+
 #if PLATFORM(EFL)
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 #endif

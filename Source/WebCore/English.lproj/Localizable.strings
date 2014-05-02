@@ -1,3 +1,12 @@
+/* File Upload multiple photos label */
+"# Photos (file upload on page label for multiple photos)" = "%@ Photos";
+
+/* File Upload images and videos label */
+"# Photos and # Videos (file upload on page label for image and videos)" = "%@ and %@";
+
+/* File Upload multiple videos label */
+"# Videos (file upload on page label for multiple videos)" = "%@ Videos";
+
 /* accessibility help text for media controller time value >= 1 day */
 "%1$d days %2$d hours %3$d minutes %4$d seconds" = "%1$d days %2$d hours %3$d minutes %4$d seconds";
 
@@ -55,6 +64,12 @@
 /* Present the element <select multiple> when a single <option> is selected (iOS only) */
 "1 Item" = "1 Item";
 
+/* File Upload single photo label */
+"1 Photo (file upload on page label for one photo)" = "1 Photo";
+
+/* File Upload single video label */
+"1 Video (file upload on page label for one video)" = "1 Video";
+
 /* Menu item title for KEYGEN pop-up menu */
 "1024 (Medium Grade)" = "1024 (Medium Grade)";
 
@@ -93,6 +108,9 @@
 
 /* Undo action name */
 "Bold (Undo action name)" = "Bold";
+
+/* File Upload alert sheet button string to cancel */
+"Cancel (file upload action sheet)" = "Cancel";
 
 /* Title for Cancel button label in button bar */
 "Cancel button label in button bar" = "Cancel";
@@ -379,6 +397,9 @@
 /* Media Pause context menu item */
 "Pause" = "Pause";
 
+/* File Upload alert sheet button string for choosing an existing media item from the Photo Library */
+"Photo Library (file upload action sheet)" = "Photo Library";
+
 /* Media Play context menu item */
 "Play" = "Play";
 
@@ -525,6 +546,15 @@
 
 /* Undo action name */
 "Superscript (Undo action name)" = "Superscript";
+
+/* File Upload alert sheet camera button string for taking only photos */
+"Take Photo (file upload action sheet)" = "Take Photo";
+
+/* File Upload alert sheet camera button string for taking photos or videos */
+"Take Photo or Video (file upload action sheet)" = "Take Photo or Video";
+
+/* File Upload alert sheet camera button string for taking only videos */
+"Take Video (file upload action sheet)" = "Take Video";
 
 /* Text Replacement context menu item */
 "Text Replacement" = "Text Replacement";

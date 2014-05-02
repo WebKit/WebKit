@@ -1039,6 +1039,8 @@
 		A1C512C9190656E500448914 /* WebQuickLookHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C512C7190656E500448914 /* WebQuickLookHandleClient.h */; };
 		A1DF631218E0B7C8003A3E2A /* DownloadClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */; };
 		A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF631118E0B7C8003A3E2A /* DownloadClient.h */; };
+		A58B6F0818FCA733008CBA53 /* WKFileUploadPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */; };
+		A58B6F0918FCA733008CBA53 /* WKFileUploadPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */; };
 		A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D792D61767CB6E00881CBE /* ActivityAssertion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */; };
 		A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D792D41767CB0900881CBE /* ActivityAssertion.h */; };
@@ -2922,6 +2924,8 @@
 		A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginProcessShim.xcconfig; sourceTree = "<group>"; };
 		A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SecItemShim.xcconfig; sourceTree = "<group>"; };
 		A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebProcessShim.xcconfig; sourceTree = "<group>"; };
+		A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFileUploadPanel.h; path = ios/forms/WKFileUploadPanel.h; sourceTree = "<group>"; };
+		A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFileUploadPanel.mm; path = ios/forms/WKFileUploadPanel.mm; sourceTree = "<group>"; };
 		A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageVisibilityTypes.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSerializedScriptValue.h; sourceTree = "<group>"; };
 		A7D792D41767CB0900881CBE /* ActivityAssertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActivityAssertion.h; sourceTree = "<group>"; };
@@ -6526,6 +6530,8 @@
 			children = (
 				C5FA1ED118E1062200B3F402 /* WKAirPlayRoutePicker.h */,
 				C5FA1ED218E1062200B3F402 /* WKAirPlayRoutePicker.mm */,
+				A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */,
+				A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */,
 				C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */,
 				C54256B018BEC18B00DE4179 /* WKFormInputControl.mm */,
 				C54256B118BEC18B00DE4179 /* WKFormPeripheral.h */,
@@ -6739,6 +6745,7 @@
 				1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */,
 				373D122D18A4B6EB0066D9CC /* WKWebProcessPlugInFramePrivate.h in Headers */,
 				1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */,
+				A58B6F0818FCA733008CBA53 /* WKFileUploadPanel.h in Headers */,
 				1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */,
 				C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */,
 				BC8452A81162C80900CAB9B5 /* DrawingArea.h in Headers */,
@@ -8458,6 +8465,7 @@
 				BC111A5A112F4FBB00337BAB /* WebChromeClient.cpp in Sources */,
 				868160D0187645570021E79D /* WindowServerConnection.mm in Sources */,
 				3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */,
+				A58B6F0918FCA733008CBA53 /* WKFileUploadPanel.mm in Sources */,
 				F036978815F4BF0500C3A80E /* WebColorPicker.cpp in Sources */,
 				BC4A628F147312BE006C681A /* WebConnection.cpp in Sources */,
 				BC4A6291147312BE006C681A /* WebConnectionClient.cpp in Sources */,

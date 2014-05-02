@@ -3083,8 +3083,10 @@ void WebPageProxy::runOpenPanel(uint64_t frameID, const FileChooserSettings& set
     // Since runOpenPanel() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    if (!m_uiClient->runOpenPanel(this, frame, parameters.get(), m_openPanelResultListener.get()))
-        didCancelForOpenPanel();
+    if (!m_uiClient->runOpenPanel(this, frame, parameters.get(), m_openPanelResultListener.get())) {
+        if (!m_pageClient.handleRunOpenPanel(this, frame, parameters.get(), m_openPanelResultListener.get()))
+            didCancelForOpenPanel();
+    }
 }
 
 void WebPageProxy::printFrame(uint64_t frameID)
@@ -3591,6 +3593,19 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     m_process->send(Messages::WebPage::DidSelectItemFromActiveContextMenu(item), m_pageID);
 }
 #endif // ENABLE(CONTEXT_MENUS)
+
+#if PLATFORM(IOS)
+void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& fileURLs, const String& displayString, const API::Data* iconData)
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->dataReference() : IPC::DataReference()), m_pageID);
+
+    m_openPanelResultListener->invalidate();
+    m_openPanelResultListener = nullptr;
+}
+#endif
 
 void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
 {

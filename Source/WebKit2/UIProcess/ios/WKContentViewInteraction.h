@@ -31,6 +31,7 @@
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
 #import "WKAirPlayRoutePicker.h"
+#import "WKFileUploadPanel.h"
 #import "WKFormPeripheral.h"
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIView.h>
@@ -51,14 +52,16 @@ class IntSize;
 namespace WebKit {
 class NativeWebTouchEvent;
 class SmartMagnificationController;
+class WebOpenPanelParameters;
+class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 }
 
-@class _UIWebHighlightLongPressGestureRecognizer;
-@class _UIHighlightView;
-@class WebIOSEvent;
 @class WKActionSheetAssistant;
 @class WKFormInputSession;
+@class WebIOSEvent;
+@class _UIHighlightView;
+@class _UIWebHighlightLongPressGestureRecognizer;
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
 typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
@@ -98,6 +101,7 @@ struct WKAutoCorrectionData {
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
     RetainPtr<WKAirPlayRoutePicker> _airPlayRoutePicker;
     RetainPtr<WKFormInputSession> _formInputSession;
+    RetainPtr<WKFileUploadPanel> _fileUploadPanel;
 
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
 
@@ -110,6 +114,8 @@ struct WKAutoCorrectionData {
     WebKit::AssistedNodeInformation _assistedNodeInformation;
     RetainPtr<NSObject<WKFormPeripheral>> _inputPeripheral;
 
+    CGPoint _lastInteractionLocation;
+
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
     BOOL _hasValidPositionInformation;
@@ -120,8 +126,9 @@ struct WKAutoCorrectionData {
 
 @end
 
-@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol>
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol, WKFileUploadPanelDelegate>
 
+@property (nonatomic, readonly) CGPoint lastInteractionLocation;
 @property (nonatomic, readonly) BOOL isEditable;
 @property (nonatomic, readonly) const WebKit::InteractionInformationAtPosition& positionInformation;
 @property (nonatomic, readonly) const WebKit::WKAutoCorrectionData& autocorrectionData;
@@ -148,6 +155,7 @@ struct WKAutoCorrectionData {
 - (void)_didEndScrollingOrZooming;
 - (void)_didUpdateBlockSelectionWithTouch:(WebKit::SelectionTouch)touch withFlags:(WebKit::SelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold;
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect;
+- (void)_showRunOpenPanel:(WebKit::WebOpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 - (void)accessoryDone;
 - (Vector<WebKit::WKOptionItem>&) assistedNodeSelectOptions;
 @end

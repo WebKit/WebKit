@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebOpenPanelResultListener.h"
 
+#include <WebCore/Icon.h>
+
 namespace WebKit {
 
 PassRefPtr<WebOpenPanelResultListener> WebOpenPanelResultListener::create(WebPage* page, PassRefPtr<WebCore::FileChooser> fileChooser)
@@ -47,5 +49,12 @@ void WebOpenPanelResultListener::didChooseFiles(const Vector<String>& files)
 {
     m_fileChooser->chooseFiles(files);
 }
+
+#if PLATFORM(IOS)
+void WebOpenPanelResultListener::didChooseFilesWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, WebCore::Icon* displayIcon)
+{
+    m_fileChooser->chooseMediaFiles(files, displayString, displayIcon);
+}
+#endif
 
 } // namespace WebKit

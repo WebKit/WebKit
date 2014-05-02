@@ -120,6 +120,8 @@ private:
     virtual void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold) override;
     virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) override;
 
+    virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
+
 #if ENABLE(INSPECTOR)
     virtual void showInspectorIndication() override;
     virtual void hideInspectorIndication() override;

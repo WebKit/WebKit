@@ -946,6 +946,9 @@ public:
 #endif
 
     // Called by the WebOpenPanelResultListenerProxy.
+#if PLATFORM(IOS)
+    void didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, const API::Data* iconData);
+#endif
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 
