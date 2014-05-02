@@ -232,7 +232,7 @@ class JSRopeString : public JSString {
             if (m_index == JSRopeString::s_maxInternalRopeLength)
                 expand();
             if (static_cast<int32_t>(m_jsString->length() + jsString->length()) < 0) {
-                m_jsString = 0;
+                m_jsString = nullptr;
                 return false;
             }
             m_jsString->append(m_vm, m_index++, jsString);
