@@ -35,7 +35,6 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "File.h"
-#include "HistogramSupport.h"
 #include "LineEnding.h"
 #include "TextEncoding.h"
 #include <runtime/ArrayBuffer.h>
@@ -73,8 +72,6 @@ void BlobBuilder::append(const String& text, const String& endingType)
 #if ENABLE(BLOB)
 void BlobBuilder::append(ArrayBuffer* arrayBuffer)
 {
-    HistogramSupport::histogramEnumeration("WebCore.Blob.constructor.ArrayBufferOrView", BlobConstructorArrayBuffer, BlobConstructorArrayBufferOrViewMax);
-
     if (!arrayBuffer)
         return;
 
@@ -83,8 +80,6 @@ void BlobBuilder::append(ArrayBuffer* arrayBuffer)
 
 void BlobBuilder::append(PassRefPtr<ArrayBufferView> arrayBufferView)
 {
-    HistogramSupport::histogramEnumeration("WebCore.Blob.constructor.ArrayBufferOrView", BlobConstructorArrayBufferView, BlobConstructorArrayBufferOrViewMax);
-
     if (!arrayBufferView)
         return;
 

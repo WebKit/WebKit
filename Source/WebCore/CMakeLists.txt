@@ -1952,7 +1952,6 @@ set(WebCore_SOURCES
     platform/FileChooser.cpp
     platform/FileStream.cpp
     platform/FileSystem.cpp
-    platform/HistogramSupport.cpp
     platform/URL.cpp
     platform/KillRingNone.cpp
     platform/Language.cpp

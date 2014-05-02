@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#include "HistogramSupport.h"
 #include "IDBBackingStoreLevelDB.h"
 #include "Logging.h"
 #include <wtf/text/CString.h>

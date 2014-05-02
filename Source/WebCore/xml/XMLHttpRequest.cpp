@@ -35,7 +35,6 @@
 #include "File.h"
 #include "HTMLDocument.h"
 #include "HTTPParsers.h"
-#include "HistogramSupport.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
@@ -703,15 +702,11 @@ void XMLHttpRequest::send(ArrayBuffer* body, ExceptionCode& ec)
     String consoleMessage("ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.");
     scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
 
-    HistogramSupport::histogramEnumeration("WebCore.XHR.send.ArrayBufferOrView", XMLHttpRequestSendArrayBuffer, XMLHttpRequestSendArrayBufferOrViewMax);
-
     sendBytesData(body->data(), body->byteLength(), ec);
 }
 
 void XMLHttpRequest::send(ArrayBufferView* body, ExceptionCode& ec)
 {
-    HistogramSupport::histogramEnumeration("WebCore.XHR.send.ArrayBufferOrView", XMLHttpRequestSendArrayBufferView, XMLHttpRequestSendArrayBufferOrViewMax);
-
     sendBytesData(body->baseAddress(), body->byteLength(), ec);
 }
 

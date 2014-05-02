@@ -1,3 +1,51 @@
+2014-05-02  Andreas Kling  <akling@apple.com>
+
+        Remove HistogramSupport.
+        <https://webkit.org/b/132354>
+
+        Prune some leftover Chromium gunk that no other ports ever used.
+
+        Reviewed by Simon Fraser.
+
+        * CMakeLists.txt:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::deleteObjectStore):
+        (WebCore::IDBDatabase::transaction):
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/IDBHistograms.h: Removed.
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::open):
+        (WebCore::IDBBackingStoreLevelDB::openInMemory):
+        (WebCore::recordInternalError): Deleted.
+        * Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.cpp:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::cssPropertyID):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::histogramMutationEventUsage): Deleted.
+        * dom/ShadowRoot.cpp:
+        * fileapi/Blob.cpp:
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::BlobBuilder::append):
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::logCanCachePageDecision):
+        * platform/HistogramSupport.cpp: Removed.
+        * platform/HistogramSupport.h: Removed.
+        * platform/leveldb/LevelDBDatabase.cpp:
+        (WebCore::LevelDBDatabase::open):
+        (WebCore::histogramLevelDBError): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateNeedsCompositedScrolling):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2014-05-02  Brady Eidson  <beidson@apple.com>
 
         Stop flipping the ImageControlsButton

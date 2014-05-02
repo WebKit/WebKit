@@ -28,7 +28,6 @@
 #include "ShadowRoot.h"
 
 #include "ElementTraversal.h"
-#include "HistogramSupport.h"
 #include "InsertionPoint.h"
 #include "RenderElement.h"
 #include "RuntimeEnabledFeatures.h"

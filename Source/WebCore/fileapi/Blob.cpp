@@ -33,7 +33,6 @@
 
 #include "BlobURL.h"
 #include "File.h"
-#include "HistogramSupport.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableBlobRegistry.h"
 #include <wtf/text/CString.h>

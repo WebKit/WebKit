@@ -28,7 +28,6 @@
 
 #if USE(LEVELDB)
 
-#include "HistogramSupport.h"
 #include "LevelDBComparator.h"
 #include "LevelDBIterator.h"
 #include "LevelDBSlice.h"
@@ -136,26 +135,6 @@ bool LevelDBDatabase::destroy(const String& fileName)
     return s.ok();
 }
 
-static void histogramLevelDBError(const char* histogramName, const leveldb::Status& s)
-{
-    ASSERT(!s.ok());
-    enum {
-        LevelDBNotFound,
-        LevelDBCorruption,
-        LevelDBIOError,
-        LevelDBOther,
-        LevelDBMaxError
-    };
-    int levelDBError = LevelDBOther;
-    if (s.IsNotFound())
-        levelDBError = LevelDBNotFound;
-    else if (s.IsCorruption())
-        levelDBError = LevelDBCorruption;
-    else if (s.IsIOError())
-        levelDBError = LevelDBIOError;
-    HistogramSupport::histogramEnumeration(histogramName, levelDBError, LevelDBMaxError);
-}
-
 std::unique_ptr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const LevelDBComparator* comparator)
 {
     auto comparatorAdapter = std::make_unique<ComparatorAdapter>(comparator);
@@ -164,8 +143,6 @@ std::unique_ptr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, c
     const leveldb::Status s = openDB(comparatorAdapter.get(), leveldb::IDBEnv(), fileName, &db);
 
     if (!s.ok()) {
-        histogramLevelDBError("WebCore.IndexedDB.LevelDBOpenErrors", s);
-
         LOG_ERROR("Failed to open LevelDB database from %s: %s", fileName.ascii().data(), s.ToString().c_str());
         return nullptr;
     }

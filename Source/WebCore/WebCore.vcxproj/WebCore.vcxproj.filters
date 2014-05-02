@@ -1089,9 +1089,6 @@
     <ClCompile Include="..\platform\FileSystem.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\HistogramSupport.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\KillRingNone.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -8036,9 +8033,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\FloatConversion.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\HistogramSupport.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\HostWindow.h">

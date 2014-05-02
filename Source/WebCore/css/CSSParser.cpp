@@ -62,7 +62,6 @@
 #include "FloatConversion.h"
 #include "HTMLParserIdioms.h"
 #include "HashTools.h"
-#include "HistogramSupport.h"
 #include "MediaList.h"
 #include "MediaQueryExp.h"
 #include "Page.h"
@@ -11942,16 +11941,7 @@ static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned l
     }
 
     const Property* hashTableEntry = findProperty(name, length);
-    const CSSPropertyID propertyID = hashTableEntry ? static_cast<CSSPropertyID>(hashTableEntry->id) : CSSPropertyInvalid;
-
-    static const int cssPropertyHistogramSize = numCSSProperties;
-    if (hasPrefix(buffer, length, "-webkit-") && propertyID != CSSPropertyInvalid) {
-        int histogramValue = propertyID - firstCSSProperty;
-        ASSERT(0 <= histogramValue && histogramValue < cssPropertyHistogramSize);
-        HistogramSupport::histogramEnumeration("CSS.PrefixUsage", histogramValue, cssPropertyHistogramSize);
-    }
-
-    return propertyID;
+    return hashTableEntry ? static_cast<CSSPropertyID>(hashTableEntry->id) : CSSPropertyInvalid;
 }
 
 CSSPropertyID cssPropertyID(const String& string)

@@ -40,7 +40,6 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameView.h"
-#include "HistogramSupport.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "Logging.h"
@@ -181,16 +180,6 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         rejectReasons |= 1 << ClientDeniesCaching;
     }
 
-    HistogramSupport::histogramEnumeration("PageCache.FrameCacheable", !rejectReasons, 2);
-    int reasonCount = 0;
-    for (int i = 0; i < NumberOfReasonsFramesCannotBeInPageCache; ++i) {
-        if (rejectReasons & (1 << i)) {
-            ++reasonCount;
-            HistogramSupport::histogramEnumeration("PageCache.FrameRejectReason", i, NumberOfReasonsFramesCannotBeInPageCache);
-        }
-    }
-    HistogramSupport::histogramEnumeration("PageCache.FrameRejectReasonCount", reasonCount, 1 + NumberOfReasonsFramesCannotBeInPageCache);
-
     for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling())
         rejectReasons |= logCanCacheFrameDecision(child, indentLevel + 1);
     
@@ -267,31 +256,6 @@ static void logCanCachePageDecision(Page* page)
     }
     
     PCLOG(rejectReasons ? " Page CANNOT be cached\n--------" : " Page CAN be cached\n--------");
-
-    HistogramSupport::histogramEnumeration("PageCache.PageCacheable", !rejectReasons, 2);
-    int reasonCount = 0;
-    for (int i = 0; i < NumberOfReasonsPagesCannotBeInPageCache; ++i) {
-        if (rejectReasons & (1 << i)) {
-            ++reasonCount;
-            HistogramSupport::histogramEnumeration("PageCache.PageRejectReason", i, NumberOfReasonsPagesCannotBeInPageCache);
-        }
-    }
-    HistogramSupport::histogramEnumeration("PageCache.PageRejectReasonCount", reasonCount, 1 + NumberOfReasonsPagesCannotBeInPageCache);
-    const bool settingsDisabledPageCache = rejectReasons & (1 << DisabledPageCache);
-    HistogramSupport::histogramEnumeration("PageCache.PageRejectReasonCountExcludingSettings", reasonCount - settingsDisabledPageCache, NumberOfReasonsPagesCannotBeInPageCache);
-
-    // Report also on the frame reasons by page; this is distinct from the per frame statistics since it coalesces the
-    // causes from all subframes together.
-    HistogramSupport::histogramEnumeration("PageCache.FrameCacheableByPage", !frameRejectReasons, 2);
-    int frameReasonCount = 0;
-    for (int i = 0; i <= NumberOfReasonsFramesCannotBeInPageCache; ++i) {
-        if (frameRejectReasons & (1 << i)) {
-            ++frameReasonCount;
-            HistogramSupport::histogramEnumeration("PageCache.FrameRejectReasonByPage", i, NumberOfReasonsFramesCannotBeInPageCache);
-        }
-    }
-
-    HistogramSupport::histogramEnumeration("PageCache.FrameRejectReasonCountByPage", frameReasonCount, 1 + NumberOfReasonsFramesCannotBeInPageCache);
 }
 
 #endif // !defined(NDEBUG)

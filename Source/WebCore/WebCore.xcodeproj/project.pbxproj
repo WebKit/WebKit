@@ -1928,7 +1928,6 @@
 		51D719D3181106E00016DC51 /* IDBFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71989181106DF0016DC51 /* IDBFactory.h */; };
 		51D719D5181106E00016DC51 /* IDBFactoryBackendInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7198B181106DF0016DC51 /* IDBFactoryBackendInterface.cpp */; };
 		51D719D6181106E00016DC51 /* IDBFactoryBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7198C181106E00016DC51 /* IDBFactoryBackendInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51D719D7181106E00016DC51 /* IDBHistograms.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7198D181106E00016DC51 /* IDBHistograms.h */; };
 		51D719D8181106E00016DC51 /* IDBIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7198E181106E00016DC51 /* IDBIndex.cpp */; };
 		51D719D9181106E00016DC51 /* IDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7198F181106E00016DC51 /* IDBIndex.h */; };
 		51D719DB181106E00016DC51 /* IDBKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71991181106E00016DC51 /* IDBKey.cpp */; };
@@ -5752,7 +5751,6 @@
 		D6E528A3149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6E528A1149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp */; };
 		D6E528A4149A926D00EFE1F3 /* MutationObserverInterestGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = D6E528A2149A926D00EFE1F3 /* MutationObserverInterestGroup.h */; };
 		D6F7960D166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */; };
-		D6FDAEF3149C06190037B1E1 /* HistogramSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */; };
 		D70AD65713E1342B005B50B4 /* RenderRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D70AD65513E1342B005B50B4 /* RenderRegion.cpp */; };
 		D70AD65813E1342B005B50B4 /* RenderRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = D70AD65613E1342B005B50B4 /* RenderRegion.h */; };
 		D72F6D79153159A3001EE44E /* FlowThreadController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D72F6D77153159A3001EE44E /* FlowThreadController.cpp */; };
@@ -8931,7 +8929,6 @@
 		51D7198A181106DF0016DC51 /* IDBFactory.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBFactory.idl; sourceTree = "<group>"; };
 		51D7198B181106DF0016DC51 /* IDBFactoryBackendInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactoryBackendInterface.cpp; sourceTree = "<group>"; };
 		51D7198C181106E00016DC51 /* IDBFactoryBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactoryBackendInterface.h; sourceTree = "<group>"; };
-		51D7198D181106E00016DC51 /* IDBHistograms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBHistograms.h; sourceTree = "<group>"; };
 		51D7198E181106E00016DC51 /* IDBIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndex.cpp; sourceTree = "<group>"; };
 		51D7198F181106E00016DC51 /* IDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndex.h; sourceTree = "<group>"; };
 		51D71990181106E00016DC51 /* IDBIndex.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBIndex.idl; sourceTree = "<group>"; };
@@ -13128,7 +13125,6 @@
 		D3D4E971130C7CFE007BA540 /* HTMLSummaryElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSummaryElement.h; sourceTree = "<group>"; };
 		D619A305144E00BE004BC302 /* ChildListMutationScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildListMutationScope.cpp; sourceTree = "<group>"; };
 		D619A306144E00BE004BC302 /* ChildListMutationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildListMutationScope.h; sourceTree = "<group>"; };
-		D630E2AB149BF344005B2F93 /* HistogramSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistogramSupport.h; sourceTree = "<group>"; };
 		D6489D23166FFCF1007C031B /* JSHTMLTemplateElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTemplateElement.cpp; sourceTree = "<group>"; };
 		D6489D24166FFCF1007C031B /* JSHTMLTemplateElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLTemplateElement.h; sourceTree = "<group>"; };
 		D66B2D5B186830050073C4DD /* PlatformCAFiltersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCAFiltersMac.h; path = ca/mac/PlatformCAFiltersMac.h; sourceTree = "<group>"; };
@@ -13140,7 +13136,6 @@
 		D6EFC0BC1666DF7A003D291E /* HTMLTemplateElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTemplateElement.h; sourceTree = "<group>"; };
 		D6EFC0BD1666DF7A003D291E /* HTMLTemplateElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLTemplateElement.idl; sourceTree = "<group>"; };
 		D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTemplateElementCustom.cpp; sourceTree = "<group>"; };
-		D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistogramSupport.cpp; sourceTree = "<group>"; };
 		D70AD65513E1342B005B50B4 /* RenderRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRegion.cpp; sourceTree = "<group>"; };
 		D70AD65613E1342B005B50B4 /* RenderRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderRegion.h; sourceTree = "<group>"; };
 		D72F6D77153159A3001EE44E /* FlowThreadController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlowThreadController.cpp; sourceTree = "<group>"; };
@@ -17798,7 +17793,6 @@
 				51D7198B181106DF0016DC51 /* IDBFactoryBackendInterface.cpp */,
 				51D7198C181106E00016DC51 /* IDBFactoryBackendInterface.h */,
 				5123AF1C18918AE40031CDC9 /* IDBGetResult.h */,
-				51D7198D181106E00016DC51 /* IDBHistograms.h */,
 				51D7198E181106E00016DC51 /* IDBIndex.cpp */,
 				51D7198F181106E00016DC51 /* IDBIndex.h */,
 				51D71990181106E00016DC51 /* IDBIndex.idl */,
@@ -21022,8 +21016,6 @@
 				514B3F720C722047000530DF /* FileSystem.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
 				A8748BDF12CBF2DC001FBA41 /* HashTools.h */,
-				D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */,
-				D630E2AB149BF344005B2F93 /* HistogramSupport.h */,
 				BC3BC29B0E91AB0F00835588 /* HostWindow.h */,
 				862F129F18C1DCE4005C54AF /* HysteresisActivity.h */,
 				E15FF7D418C9553800FE4C87 /* KeypressCommand.h */,
@@ -24181,7 +24173,6 @@
 				51D719D6181106E00016DC51 /* IDBFactoryBackendInterface.h in Headers */,
 				51660AB91828BB8200074CAD /* IDBFactoryBackendLevelDB.h in Headers */,
 				5123AF1D18918AE40031CDC9 /* IDBGetResult.h in Headers */,
-				51D719D7181106E00016DC51 /* IDBHistograms.h in Headers */,
 				51D719D9181106E00016DC51 /* IDBIndex.h in Headers */,
 				51ABB5B8186D0ED1008391A1 /* IDBIndexMetadata.h in Headers */,
 				510194411836D20800925523 /* IDBIndexWriterLevelDB.h in Headers */,
@@ -27445,7 +27436,6 @@
 				B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */,
 				C50B561612119D23008B46E0 /* GroupSettings.cpp in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
-				D6FDAEF3149C06190037B1E1 /* HistogramSupport.cpp in Sources */,
 				BC94D1530C275C8B006BC617 /* History.cpp in Sources */,
 				97DCE20110807C750057D394 /* HistoryController.cpp in Sources */,
 				51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */,

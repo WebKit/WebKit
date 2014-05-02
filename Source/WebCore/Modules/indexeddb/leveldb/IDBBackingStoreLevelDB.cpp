@@ -29,7 +29,6 @@
 #if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 #include "FileSystem.h"
-#include "HistogramSupport.h"
 #include "IDBDatabaseMetadata.h"
 #include "IDBIndexWriterLevelDB.h"
 #include "IDBKey.h"
@@ -77,19 +76,12 @@ enum IDBBackingStoreLevelDBErrorSource {
     IDBLevelDBBackingStoreInternalErrorMax,
 };
 
-static void recordInternalError(const char* type, IDBBackingStoreLevelDBErrorSource location)
-{
-    String name = String::format("WebCore.IndexedDB.BackingStore.%sError", type);
-    HistogramSupport::histogramEnumeration(name.utf8().data(), location, IDBLevelDBBackingStoreInternalErrorMax);
-}
-
 // Use to signal conditions that usually indicate developer error, but could be caused by data corruption.
 // A macro is used instead of an inline function so that the assert and log report the line number.
 #define REPORT_ERROR(type, location) \
     do { \
         LOG_ERROR("IndexedDB %s Error: %s", type, #location); \
         ASSERT_NOT_REACHED(); \
-        recordInternalError(type, location); \
     } while (0)
 
 #define INTERNAL_READ_ERROR(location) REPORT_ERROR("Read", location)
@@ -351,21 +343,6 @@ IDBBackingStoreLevelDB::~IDBBackingStoreLevelDB()
     m_comparator = nullptr;
 }
 
-enum IDBLevelDBBackingStoreOpenResult {
-    IDBLevelDBBackingStoreOpenMemorySuccess,
-    IDBLevelDBBackingStoreOpenSuccess,
-    IDBLevelDBBackingStoreOpenFailedDirectory,
-    IDBLevelDBBackingStoreOpenFailedUnknownSchema,
-    IDBLevelDBBackingStoreOpenCleanupDestroyFailed,
-    IDBLevelDBBackingStoreOpenCleanupReopenFailed,
-    IDBLevelDBBackingStoreOpenCleanupReopenSuccess,
-    IDBLevelDBBackingStoreOpenFailedIOErrCheckingSchema,
-    IDBLevelDBBackingStoreOpenFailedUnknownErr,
-    IDBLevelDBBackingStoreOpenMemoryFailed,
-    IDBLevelDBBackingStoreOpenAttemptNonASCII,
-    IDBLevelDBBackingStoreOpenMax,
-};
-
 PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(const SecurityOrigin& securityOrigin, const String& pathBaseArg, const String& fileIdentifier)
 {
     DefaultLevelDBFactory levelDBFactory;
@@ -381,11 +358,8 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(const SecurityOr
     std::unique_ptr<LevelDBComparator> comparator = std::make_unique<Comparator>();
     std::unique_ptr<LevelDBDatabase> db;
 
-    if (!pathBase.containsOnlyASCII())
-            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenAttemptNonASCII, IDBLevelDBBackingStoreOpenMax);
     if (!makeAllDirectories(pathBase)) {
         LOG_ERROR("Unable to create IndexedDB database path %s", pathBase.utf8().data());
-        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedDirectory, IDBLevelDBBackingStoreOpenMax);
         return PassRefPtr<IDBBackingStoreLevelDB>();
     }
 
@@ -397,23 +371,18 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(const SecurityOr
         bool ok = isSchemaKnown(db.get(), known);
         if (!ok) {
             LOG_ERROR("IndexedDB had IO error checking schema, treating it as failure to open");
-            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedIOErrCheckingSchema, IDBLevelDBBackingStoreOpenMax);
             db = nullptr;
         } else if (!known) {
             LOG_ERROR("IndexedDB backing store had unknown schema, treating it as failure to open");
-            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedUnknownSchema, IDBLevelDBBackingStoreOpenMax);
             db = nullptr;
         }
     }
 
-    if (db)
-        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenSuccess, IDBLevelDBBackingStoreOpenMax);
-    else {
+    if (!db) {
         LOG_ERROR("IndexedDB backing store open failed, attempting cleanup");
         bool success = levelDBFactory->destroyLevelDB(path);
         if (!success) {
             LOG_ERROR("IndexedDB backing store cleanup failed");
-            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupDestroyFailed, IDBLevelDBBackingStoreOpenMax);
             return PassRefPtr<IDBBackingStoreLevelDB>();
         }
 
@@ -421,15 +390,12 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(const SecurityOr
         db = levelDBFactory->openLevelDB(path, comparator.get());
         if (!db) {
             LOG_ERROR("IndexedDB backing store reopen after recovery failed");
-            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupReopenFailed, IDBLevelDBBackingStoreOpenMax);
             return PassRefPtr<IDBBackingStoreLevelDB>();
         }
-        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupReopenSuccess, IDBLevelDBBackingStoreOpenMax);
     }
 
     if (!db) {
         ASSERT_NOT_REACHED();
-        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedUnknownErr, IDBLevelDBBackingStoreOpenMax);
         return PassRefPtr<IDBBackingStoreLevelDB>();
     }
 
@@ -450,10 +416,8 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::openInMemory(const St
     std::unique_ptr<LevelDBDatabase> db = LevelDBDatabase::openInMemory(comparator.get());
     if (!db) {
         LOG_ERROR("LevelDBDatabase::openInMemory failed.");
-        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemoryFailed, IDBLevelDBBackingStoreOpenMax);
         return PassRefPtr<IDBBackingStoreLevelDB>();
     }
-    HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemorySuccess, IDBLevelDBBackingStoreOpenMax);
 
     return create(identifier, std::move(db), std::move(comparator));
 }
