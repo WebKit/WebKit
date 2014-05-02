@@ -1,3 +1,10 @@
+2014-05-01  Dan Bernstein  <mitz@apple.com>
+
+        Fixed production builds for the iOS Simulator.
+
+        * Configurations/bmalloc.xcconfig: Include INSTALL_PATH_PREFIX in
+        PRIVATE_HEADERS_FOLDER_PATH when installing.
+
 2014-04-20  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Segregate pages by objects size
