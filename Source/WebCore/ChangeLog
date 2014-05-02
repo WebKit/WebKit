@@ -1,3 +1,31 @@
+2014-05-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Clean up #include <OwnPtr.h>|<PassOwnPtr.h> in Supplementable classes
+        https://bugs.webkit.org/show_bug.cgi?id=132466
+
+        Reviewed by Tim Horton.
+
+        Since r168144, Supplementable classes don't need to include OwnPtr.h or PassOwnPtr.h.
+        Clean up those inclusions.
+
+        No new tests, just clean up patch.
+
+        * Modules/encryptedmedia/CDMPrivate.h:
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::create): Deleted. Don't need to have a factory function.
+        * Modules/geolocation/GeolocationController.h:
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediastream/UserMediaController.h:
+        * Modules/notifications/NotificationCenter.h:
+        * Modules/notifications/NotificationController.cpp:
+        * Modules/quota/StorageErrorCallback.h:
+        * Modules/vibration/Vibration.h:
+        * Modules/webdatabase/Database.cpp:
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WebSocket.cpp:
+        * Modules/websockets/WebSocket.h:
+
 2014-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Remove TiledBackingStore stuff from Frame

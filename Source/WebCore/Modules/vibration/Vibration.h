@@ -24,7 +24,6 @@
 
 #include "Page.h"
 #include "Timer.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

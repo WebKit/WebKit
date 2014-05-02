@@ -47,8 +47,6 @@ public:
     explicit GeolocationController(GeolocationClient*);
     ~GeolocationController();
 
-    static PassOwnPtr<GeolocationController> create(GeolocationClient*);
-
     void addObserver(Geolocation*, bool enableHighAccuracy);
     void removeObserver(Geolocation*);
 

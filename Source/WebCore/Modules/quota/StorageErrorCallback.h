@@ -34,7 +34,6 @@
 #if ENABLE(QUOTA)
 
 #include "ScriptExecutionContext.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

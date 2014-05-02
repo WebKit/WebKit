@@ -28,7 +28,6 @@
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
-#include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

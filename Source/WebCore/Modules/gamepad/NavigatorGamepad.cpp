@@ -31,7 +31,6 @@
 #include "GamepadList.h"
 #include "Gamepads.h"
 #include "Navigator.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

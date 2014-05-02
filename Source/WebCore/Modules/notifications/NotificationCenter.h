@@ -37,7 +37,6 @@
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include "VoidCallback.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

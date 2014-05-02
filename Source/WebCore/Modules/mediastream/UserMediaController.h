@@ -30,7 +30,6 @@
 #include "Page.h"
 #include "UserMediaClient.h"
 #include "UserMediaRequest.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

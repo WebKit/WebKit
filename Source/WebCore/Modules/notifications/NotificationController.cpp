@@ -29,7 +29,6 @@
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "NotificationClient.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
