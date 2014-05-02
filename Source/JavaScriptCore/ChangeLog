@@ -1,3 +1,14 @@
+2014-05-02  Michael Saboff  <msaboff@apple.com>
+
+        "arm64 function not 4-byte aligned" warnings when building JSC
+        https://bugs.webkit.org/show_bug.cgi?id=132495
+
+        Reviewed by Geoffrey Garen.
+
+        Added ".align 4" for both ARM Thumb2 and ARM 64 to silence the linker.
+
+        * llint/LowLevelInterpreter.cpp:
+
 2014-05-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix cloop build after r168178
