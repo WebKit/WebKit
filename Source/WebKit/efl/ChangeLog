@@ -1,5 +1,22 @@
 2014-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        [EFL][WK1] Drop ewk_view_setting_tiled_backingstore APIs
+        https://bugs.webkit.org/show_bug.cgi?id=132240
+
+        Reviewed by Anders Carlsson.
+
+        Since we moved to use TextureMapper, this option is meaningless now.
+        Removed ewk_view_setting_tiled_backing_store_enabled_{get|set} and related codes.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_setting_tiled_backing_store_enabled_set): Deleted.
+        (ewk_view_setting_tiled_backing_store_enabled_get): Deleted.
+        * ewk/ewk_view.h:
+        * tests/test_ewk_view.cpp:
+        (TEST_F): Deleted.
+
+2014-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
         [EFL] There are many warnings with software backend
         https://bugs.webkit.org/show_bug.cgi?id=132422
 

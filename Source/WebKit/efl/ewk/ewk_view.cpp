@@ -4301,35 +4301,6 @@ Evas_Object* ewk_view_screenshot_contents_get(const Evas_Object* ewkView, const 
     return screenshotImage;
 }
 
-Eina_Bool ewk_view_setting_tiled_backing_store_enabled_set(Evas_Object* ewkView, Eina_Bool enable)
-{
-#if USE(TILED_BACKING_STORE)
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-
-    priv->page->settings().setTiledBackingStoreEnabled(enable);
-
-    return true;
-#else
-    UNUSED_PARAM(ewkView);
-    UNUSED_PARAM(enable);
-    return false;
-#endif
-}
-
-Eina_Bool ewk_view_setting_tiled_backing_store_enabled_get(Evas_Object* ewkView)
-{
-#if USE(TILED_BACKING_STORE)
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-
-    return priv->page->settings().tiledBackingStoreEnabled();
-#else
-    UNUSED_PARAM(ewkView);
-    return false;
-#endif
-}
-
 namespace EWKPrivate {
 
 WebCore::Page* corePage(const Evas_Object* ewkView)

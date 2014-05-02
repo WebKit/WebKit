@@ -1,3 +1,19 @@
+2014-05-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Drop ewk_view_setting_tiled_backingstore APIs
+        https://bugs.webkit.org/show_bug.cgi?id=132240
+
+        Reviewed by Anders Carlsson.
+
+        Removed ewk_view_setting_tiled_backingstore related code.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (shouldUseTiledBackingStore): Deleted.
+        * EWebLauncher/main.c:
+        (windowCreate):
+        (parseUserArguments):
+
 2014-05-01  Anders Carlsson  <andersca@apple.com>
 
         window.testRunner.keepWebHistory() should update the UI process state
