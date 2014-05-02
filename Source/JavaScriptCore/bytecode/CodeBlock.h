@@ -301,12 +301,7 @@ public:
     virtual CodeBlock* replacement() = 0;
 
     virtual DFG::CapabilityLevel capabilityLevelInternal() = 0;
-    DFG::CapabilityLevel capabilityLevel()
-    {
-        DFG::CapabilityLevel result = capabilityLevelInternal();
-        m_capabilityLevelState = result;
-        return result;
-    }
+    DFG::CapabilityLevel capabilityLevel();
     DFG::CapabilityLevel capabilityLevelState() { return m_capabilityLevelState; }
 
     bool hasOptimizedReplacement(JITCode::JITType typeToReplace);
@@ -466,12 +461,7 @@ public:
     }
     unsigned numberOfRareCaseProfiles() { return m_rareCaseProfiles.size(); }
     RareCaseProfile* rareCaseProfile(int index) { return &m_rareCaseProfiles[index]; }
-    RareCaseProfile* rareCaseProfileForBytecodeOffset(int bytecodeOffset)
-    {
-        return tryBinarySearch<RareCaseProfile, int>(
-            m_rareCaseProfiles, m_rareCaseProfiles.size(), bytecodeOffset,
-            getRareCaseProfileBytecodeOffset);
-    }
+    RareCaseProfile* rareCaseProfileForBytecodeOffset(int bytecodeOffset);
 
     bool likelyToTakeSlowCase(int bytecodeOffset)
     {

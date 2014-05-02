@@ -1089,6 +1089,9 @@
     <ClCompile Include="..\dfg\DFGFlushLivenessAnalysisPhase.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
+    <ClCompile Include="..\dfg\DFGFunctionWhitelist.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
     <ClCompile Include="..\dfg\DFGGraph.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -3040,6 +3043,9 @@
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGFPRInfo.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGFunctionWhitelist.h">
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGGenerationInfo.h">

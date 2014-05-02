@@ -3587,4 +3587,18 @@ void CodeBlock::setSteppingMode(CodeBlock::SteppingMode mode)
         jettison(Profiler::JettisonDueToDebuggerStepping);
 }
 
+RareCaseProfile* CodeBlock::rareCaseProfileForBytecodeOffset(int bytecodeOffset)
+{
+    return tryBinarySearch<RareCaseProfile, int>(
+        m_rareCaseProfiles, m_rareCaseProfiles.size(), bytecodeOffset,
+        getRareCaseProfileBytecodeOffset);
+}
+
+DFG::CapabilityLevel CodeBlock::capabilityLevel()
+{
+    DFG::CapabilityLevel result = capabilityLevelInternal();
+    m_capabilityLevelState = result;
+    return result;
+}
+
 } // namespace JSC

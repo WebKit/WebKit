@@ -76,6 +76,12 @@ static bool parse(const char* string, OptionRange& value)
     return value.init(string);
 }
 
+static bool parse(const char* string, const char*& value)
+{
+    value = string;
+    return true;
+}
+
 static bool parse(const char* string, GCLogging::Level& value)
 {
     if (!strcasecmp(string, "none") || !strcasecmp(string, "no") || !strcasecmp(string, "false") || !strcmp(string, "0")) {
@@ -350,9 +356,17 @@ void Options::dumpOption(OptionID id, FILE* stream, const char* header, const ch
     case optionRangeType:
         fprintf(stream, "%s", s_options[id].u.optionRangeVal.rangeString());
         break;
-    case gcLogLevelType:
+    case optionStringType: {
+        const char* option = s_options[id].u.optionStringVal;
+        if (!option)
+            option = "";
+        fprintf(stream, "%s", option);
+        break;
+    }
+    case gcLogLevelType: {
         fprintf(stream, "%s", GCLogging::levelAsString(s_options[id].u.gcLogLevelVal));
         break;
+    }
     }
     fprintf(stream, "%s", footer);
 }

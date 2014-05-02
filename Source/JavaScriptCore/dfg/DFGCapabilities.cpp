@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGCommon.h"
+#include "DFGFunctionWhitelist.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "Options.h"
@@ -40,7 +41,8 @@ bool isSupported(CodeBlock* codeBlock)
 {
     return Options::useDFGJIT()
         && MacroAssembler::supportsFloatingPoint()
-        && Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount());
+        && Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount())
+        && FunctionWhitelist::ensureGlobalWhitelist().contains(codeBlock);
 }
 
 bool mightCompileEval(CodeBlock* codeBlock)
@@ -66,22 +68,19 @@ bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 
 bool mightInlineFunctionForCall(CodeBlock* codeBlock)
 {
-    return isSupported(codeBlock) 
-        && codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount()
+    return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount()
         && !codeBlock->ownerExecutable()->needsActivation()
         && codeBlock->ownerExecutable()->isInliningCandidate();
 }
 bool mightInlineFunctionForClosureCall(CodeBlock* codeBlock)
 {
-    return isSupported(codeBlock) 
-        && codeBlock->instructionCount() <= Options::maximumFunctionForClosureCallInlineCandidateInstructionCount()
+    return codeBlock->instructionCount() <= Options::maximumFunctionForClosureCallInlineCandidateInstructionCount()
         && !codeBlock->ownerExecutable()->needsActivation()
         && codeBlock->ownerExecutable()->isInliningCandidate();
 }
 bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
-    return isSupported(codeBlock) 
-        && codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount()
+    return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount()
         && !codeBlock->ownerExecutable()->needsActivation()
         && codeBlock->ownerExecutable()->isInliningCandidate();
 }

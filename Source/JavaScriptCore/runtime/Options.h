@@ -89,6 +89,7 @@ private:
 };
 
 typedef OptionRange optionRange;
+typedef const char* optionString;
 
 #define JSC_OPTIONS(v) \
     v(bool, useLLInt,  true) \
@@ -117,6 +118,7 @@ typedef OptionRange optionRange;
     v(bool, showFTLDisassembly, false) \
     v(bool, showAllDFGNodes, false) \
     v(optionRange, bytecodeRangeToDFGCompile, 0) \
+    v(optionString, dfgFunctionWhitelistFile, nullptr) \
     v(bool, dumpBytecodeAtDFGTime, false) \
     v(bool, dumpGraphAtEachPhase, false) \
     v(bool, verboseDFGByteCodeParsing, false) \
@@ -308,6 +310,7 @@ private:
         doubleType,
         int32Type,
         optionRangeType,
+        optionStringType,
         gcLogLevelType,
     };
 
@@ -319,6 +322,7 @@ private:
             double doubleVal;
             int32 int32Val;
             OptionRange optionRangeVal;
+            const char* optionStringVal;
             GCLogging::Level gcLogLevelVal;
         } u;
         bool didOverride;

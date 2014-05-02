@@ -1,3 +1,34 @@
+2014-05-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add a DFG function whitelist
+        https://bugs.webkit.org/show_bug.cgi?id=132437
+
+        Reviewed by Geoffrey Garen.
+
+        Often times when debugging, using bytecode ranges isn't enough to narrow down to the 
+        particular DFG block that's causing issues. This patch adds the ability to whitelist 
+        specific functions specified in a file to enable further filtering without having to recompile.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::isSupported):
+        (JSC::DFG::mightInlineFunctionForCall):
+        (JSC::DFG::mightInlineFunctionForClosureCall):
+        (JSC::DFG::mightInlineFunctionForConstruct):
+        * dfg/DFGFunctionWhitelist.cpp: Added.
+        (JSC::DFG::FunctionWhitelist::ensureGlobalWhitelist):
+        (JSC::DFG::FunctionWhitelist::FunctionWhitelist):
+        (JSC::DFG::FunctionWhitelist::parseFunctionNamesInFile):
+        (JSC::DFG::FunctionWhitelist::contains):
+        * dfg/DFGFunctionWhitelist.h: Added.
+        * runtime/Options.cpp:
+        (JSC::parse):
+        (JSC::Options::dumpOption):
+        * runtime/Options.h:
+
 2014-05-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFGAbstractInterpreter should not claim Int52 arithmetic creates Int52s

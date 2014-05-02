@@ -79,20 +79,34 @@ inline CapabilityLevel programCapabilityLevel(CodeBlock* codeBlock)
     return capabilityLevel(codeBlock);
 }
 
+inline CapabilityLevel functionCapabilityLevel(bool mightCompile, bool mightInline, CapabilityLevel computedCapabilityLevel)
+{
+    if (mightCompile && mightInline)
+        return leastUpperBound(CanCompileAndInline, computedCapabilityLevel);
+    if (mightCompile && !mightInline)
+        return leastUpperBound(CanCompile, computedCapabilityLevel);
+    if (!mightCompile && mightInline)
+        return leastUpperBound(CanInline, computedCapabilityLevel);
+    if (!mightCompile && !mightInline)
+        return CannotCompile;
+    RELEASE_ASSERT_NOT_REACHED();
+    return CannotCompile;
+}
+
 inline CapabilityLevel functionForCallCapabilityLevel(CodeBlock* codeBlock)
 {
-    if (!mightCompileFunctionForCall(codeBlock))
-        return CannotCompile;
-    
-    return capabilityLevel(codeBlock);
+    return functionCapabilityLevel(
+        mightCompileFunctionForCall(codeBlock),
+        mightInlineFunctionForCall(codeBlock),
+        capabilityLevel(codeBlock));
 }
 
 inline CapabilityLevel functionForConstructCapabilityLevel(CodeBlock* codeBlock)
 {
-    if (!mightCompileFunctionForConstruct(codeBlock))
-        return CannotCompile;
-    
-    return capabilityLevel(codeBlock);
+    return functionCapabilityLevel(
+        mightCompileFunctionForConstruct(codeBlock),
+        mightInlineFunctionForConstruct(codeBlock),
+        capabilityLevel(codeBlock));
 }
 
 inline CapabilityLevel inlineFunctionForCallCapabilityLevel(CodeBlock* codeBlock)
