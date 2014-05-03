@@ -31,6 +31,7 @@
 #import "WKUserContentController.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WeakObjCPtr.h"
+#import "_WKWebsiteDataStore.h"
 #import <wtf/RetainPtr.h>
 
 @implementation WKWebViewConfiguration {
@@ -38,6 +39,7 @@
     RetainPtr<WKPreferences> _preferences;
     RetainPtr<WKUserContentController> _userContentController;
     RetainPtr<_WKVisitedLinkProvider> _visitedLinkProvider;
+    RetainPtr<_WKWebsiteDataStore> _websiteDataStore;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
     RetainPtr<NSString> _groupIdentifier;
 #if PLATFORM(IOS)
@@ -58,6 +60,7 @@
     configuration.preferences = _preferences.get();
     configuration.userContentController = _userContentController.get();
     configuration._visitedLinkProvider = _visitedLinkProvider.get();
+    configuration._websiteDataStore = _websiteDataStore.get();
     configuration._relatedWebView = _relatedWebView.get().get();
 #if PLATFORM(IOS)
     configuration._contentProviderRegistry = _contentProviderRegistry.get();
@@ -104,6 +107,16 @@
 - (void)_setVisitedLinkProvider:(_WKVisitedLinkProvider *)visitedLinkProvider
 {
     _visitedLinkProvider = visitedLinkProvider;
+}
+
+- (_WKWebsiteDataStore *)_websiteDataStore
+{
+    return _websiteDataStore.get();
+}
+
+- (void)_setWebsiteDataStore:(_WKWebsiteDataStore *)websiteDataStore
+{
+    _websiteDataStore = websiteDataStore;
 }
 
 #if PLATFORM(IOS)

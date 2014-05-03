@@ -23,23 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKWebViewConfiguration.h>
+#import "_WKWebsiteDataStore.h"
 
 #if WK_API_ENABLED
 
-@class WKWebView;
-@class _WKVisitedLinkProvider;
-@class _WKWebsiteDataStore;
+#import "WKObject.h"
+#import "APISession.h"
 
-@interface WKWebViewConfiguration (WKPrivate)
+namespace WebKit {
 
-@property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView;
-@property (nonatomic, copy, setter=_setGroupIdentifier:) NSString *_groupIdentifier;
+inline _WKWebsiteDataStore *wrapper(API::Session& session)
+{
+    ASSERT([session.wrapper() isKindOfClass:[_WKWebsiteDataStore class]]);
+    return (_WKWebsiteDataStore *)session.wrapper();
+}
 
-@property (nonatomic, strong, setter=_setVisitedLinkProvider:) _WKVisitedLinkProvider *_visitedLinkProvider;
+}
 
-@property (nonatomic, strong, setter=_setWebsiteDataStore:) _WKWebsiteDataStore *_websiteDataStore;
-
+@interface _WKWebsiteDataStore () <WKObject> {
+@package
+    API::ObjectStorage<API::Session> _session;
+}
 @end
 
-#endif
+#endif // WK_API_ENABLED

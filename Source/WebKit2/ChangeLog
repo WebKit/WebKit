@@ -1,3 +1,39 @@
+2014-05-03  Sam Weinig  <sam@webkit.org>
+
+        [Cocoa WebKit2] Add basic _WKWebsiteDataStore implementation
+        https://bugs.webkit.org/show_bug.cgi?id=132526
+
+        Reviewed by Anders Carlsson.
+
+        - Renames WKSession to _WKWebsiteDataStore to better reflect its intended use (renaming
+          the implementation object will come later).
+        - Makes _WKWebsiteDataStore work as a wrapped Objective-C object.
+        - Adds the ability to set a _WKWebsiteDataStore on the WKWebViewConfiguration.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/Cocoa/WKSession.h:
+        * UIProcess/API/Cocoa/WKSession.mm:
+        (-[WKSession dealloc]): Deleted.
+        (-[WKSession ephemeral]): Deleted.
+        (-[WKSession API::]): Deleted.
+        * UIProcess/API/Cocoa/WKSessionInternal.h:
+        (WebKit::wrapper): Deleted.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _websiteDataStore]):
+        (-[WKWebViewConfiguration _setWebsiteDataStore:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKSession.h.
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKSession.mm.
+        (+[_WKWebsiteDataStore nonPersistentDataStore]):
+        (-[_WKWebsiteDataStore isNonPersistentDataStore]):
+        (-[WKSession ephemeral]): Deleted.
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreInternal.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKSessionInternal.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-05-03  Simon Fraser  <simon.fraser@apple.com>
 
         [UI-side compositing] Assertion in PlatformCAFilters::setFiltersOnLayer with animated reference filter

@@ -28,13 +28,11 @@
 
 #if WK_API_ENABLED
 
-#import "_WKDownloadInternal.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupInternal.h"
 #import "WKConnectionInternal.h"
-#import "_WKFrameHandleInternal.h"
 #import "WKNSArray.h"
 #import "WKNSData.h"
 #import "WKNSDictionary.h"
@@ -52,6 +50,9 @@
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 #import "WKWebProcessPlugInPageGroupInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
+#import "_WKDownloadInternal.h"
+#import "_WKFrameHandleInternal.h"
+#import "_WKWebsiteDataStoreInternal.h"
 
 namespace API {
 
@@ -138,6 +139,10 @@ void* Object::newObject(size_t size, Type type)
         wrapper = NSAllocateObject([WKNSURLProtectionSpace class], size, nullptr);
         break;
 
+    case Type::Session:
+        wrapper = [_WKWebsiteDataStore alloc];
+        break;
+            
     case Type::String:
         wrapper = NSAllocateObject([WKNSString class], size, nullptr);
         break;

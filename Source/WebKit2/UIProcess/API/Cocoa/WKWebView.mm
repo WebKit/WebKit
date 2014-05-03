@@ -61,6 +61,7 @@
 #import "_WKFormDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
+#import "_WKWebsiteDataStoreInternal.h"
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -157,7 +158,10 @@
 
     if (![_configuration _visitedLinkProvider])
         [_configuration _setVisitedLinkProvider:adoptNS([[_WKVisitedLinkProvider alloc] init]).get()];
-
+    
+    if (![_configuration _websiteDataStore])
+        [_configuration _setWebsiteDataStore:[_WKWebsiteDataStore defaultDataStore]];
+    
 #if PLATFORM(IOS)
     if (![_configuration _contentProviderRegistry])
         [_configuration _setContentProviderRegistry:adoptNS([[WKWebViewContentProviderRegistry alloc] init]).get()];
@@ -173,7 +177,8 @@
         webPageConfiguration.relatedPage = relatedWebView->_page.get();
 
     webPageConfiguration.visitedLinkProvider = [_configuration _visitedLinkProvider]->_visitedLinkProvider.get();
-
+    webPageConfiguration.session = [_configuration _websiteDataStore]->_session.get();
+    
     RefPtr<WebKit::WebPageGroup> pageGroup;
     NSString *groupIdentifier = configuration._groupIdentifier;
     if (groupIdentifier.length) {
