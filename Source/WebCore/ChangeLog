@@ -1,3 +1,21 @@
+2014-05-03  Andreas Kling  <akling@apple.com>
+
+        Invalidate scrollbars when custom scrollbar style changes dynamically.
+        <https://webkit.org/b/132529>
+
+        Add a ScrollView::styleDidChange() and call that from RenderView::styleDidChange()
+        so that the scrollbars are sure to get repainted with potentially different style.
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/css/scrollbar-dynamic-style-change.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::styleDidChange):
+        * platform/ScrollView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::styleDidChange):
+
 2014-05-03  Simon Fraser  <simon.fraser@apple.com>
 
         Very fuzzy layers under non-decompasable matrices

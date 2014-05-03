@@ -1459,6 +1459,15 @@ void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAl
         updateScrollbars(scrollOffset());
 }
 
+void ScrollView::styleDidChange()
+{
+    if (m_horizontalScrollbar)
+        m_horizontalScrollbar->styleChanged();
+
+    if (m_verticalScrollbar)
+        m_verticalScrollbar->styleChanged();
+}
+
 #if !PLATFORM(COCOA)
 
 void ScrollView::platformAddChild(Widget*)

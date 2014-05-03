@@ -144,6 +144,8 @@ public:
     // Overridden by FrameView to create custom CSS scrollbars if applicable.
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation);
 
+    void styleDidChange();
+
     // If the prohibits scrolling flag is set, then all scrolling in the view (even programmatic scrolling) is turned off.
     void setProhibitsScrolling(bool b) { m_prohibitsScrolling = b; }
     bool prohibitsScrolling() const { return m_prohibitsScrolling; }

@@ -1260,6 +1260,8 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     RenderBlockFlow::styleDidChange(diff, oldStyle);
     if (hasRenderNamedFlowThreads())
         flowThreadController().styleDidChange();
+
+    frameView().styleDidChange();
 }
 
 bool RenderView::hasRenderNamedFlowThreads() const
