@@ -1,5 +1,29 @@
 2014-05-02  Jeremy Jones  <jeremyj@apple.com>
 
+        Use displayNameForTrack instead of textTrack->label() for captions.
+        https://bugs.webkit.org/show_bug.cgi?id=131311
+
+        Reviewed by Darin Adler.
+
+        Use the same mechanism as the desktop to build the captions list so it has the correct
+        names in the correct order including none and automatic.
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.h:
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        (WebVideoFullscreenModelMediaElement::setMediaElement):
+        move legible track code into updateLegibleOptions()
+
+        (WebVideoFullscreenModelMediaElement::handleEvent):
+        updateLegibleOptions on addTrack and removeTrack
+
+        (WebVideoFullscreenModelMediaElement::selectLegibleMediaOption):
+        select the corresponding TextTrack on HTMLMediaElement.
+
+        (WebVideoFullscreenModelMediaElement::updateLegibleOptions):
+        use the same mechanism as desktop to build the captions menu.
+
+2014-05-02  Jeremy Jones  <jeremyj@apple.com>
+
         CSS-based Media Controls Show Different times content longer than 1 hour.
         https://bugs.webkit.org/show_bug.cgi?id=132443
 

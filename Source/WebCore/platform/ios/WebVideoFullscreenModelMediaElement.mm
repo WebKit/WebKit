@@ -39,7 +39,10 @@
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/HTMLVideoElement.h>
+#import <WebCore/Page.h>
+#import <WebCore/PageGroup.h>
 #import <WebCore/SoftLinking.h>
+#import <WebCore/TextTrackList.h>
 #import <WebCore/TimeRanges.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <QuartzCore/CoreAnimation.h>
@@ -68,6 +71,8 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
         m_mediaElement->removeEventListener(eventNames().playEvent, this, false);
         m_mediaElement->removeEventListener(eventNames().ratechangeEvent, this, false);
         m_mediaElement->removeEventListener(eventNames().timeupdateEvent, this, false);
+        m_mediaElement->removeEventListener(eventNames().addtrackEvent, this, false);
+        m_mediaElement->removeEventListener(eventNames().removetrackEvent, this, false);
     }
     m_isListening = false;
 
@@ -81,19 +86,16 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
     m_mediaElement->addEventListener(eventNames().playEvent, this, false);
     m_mediaElement->addEventListener(eventNames().ratechangeEvent, this, false);
     m_mediaElement->addEventListener(eventNames().timeupdateEvent, this, false);
+    m_mediaElement->addEventListener(eventNames().addtrackEvent, this, false);
+    m_mediaElement->addEventListener(eventNames().removetrackEvent, this, false);
     m_isListening = true;
 
     m_videoFullscreenInterface->setDuration(m_mediaElement->duration());
     m_videoFullscreenInterface->setSeekableRanges(*m_mediaElement->seekable());
     m_videoFullscreenInterface->setRate(!m_mediaElement->paused(), m_mediaElement->playbackRate());
 
-    Vector<String> legibleOptions;
-    
-    for (auto& textTrack : m_mediaElement->platformTextTracks())
-        legibleOptions.append(textTrack->label());
-    
-    m_videoFullscreenInterface->setLegibleMediaSelectionOptions(legibleOptions, 0);
-    
+    updateLegibleOptions();
+
     m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
 
     if (isHTMLVideoElement(m_mediaElement.get())) {
@@ -120,7 +122,8 @@ void WebVideoFullscreenModelMediaElement::handleEvent(WebCore::ScriptExecutionCo
         m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
         // FIXME: 130788 - find a better event to update seekable ranges from.
         m_videoFullscreenInterface->setSeekableRanges(*m_mediaElement->seekable());
-    }
+    } else if (event->type() == eventNames().addtrackEvent || event->type() == eventNames().removetrackEvent)
+        updateLegibleOptions();
 }
 
 void WebVideoFullscreenModelMediaElement::setVideoFullscreenLayer(PlatformLayer* videoLayer)
@@ -211,12 +214,28 @@ void WebVideoFullscreenModelMediaElement::selectAudioMediaOption(uint64_t)
 
 void WebVideoFullscreenModelMediaElement::selectLegibleMediaOption(uint64_t index)
 {
-    RefPtr<PlatformTextTrack> platformTrack;
+    TextTrack* textTrack = nullptr;
     
-    if (index < m_mediaElement->platformTextTracks().size())
-        platformTrack = m_mediaElement->platformTextTracks()[static_cast<size_t>(index)];
+    if (index < m_legibleTracksForMenu.size())
+        textTrack = m_legibleTracksForMenu[static_cast<size_t>(index)].get();
     
-    m_mediaElement->setSelectedTextTrack(platformTrack);
+    m_mediaElement->setSelectedTextTrack(textTrack);
+}
+
+void WebVideoFullscreenModelMediaElement::updateLegibleOptions()
+{
+    TextTrackList* trackList = m_mediaElement->textTracks();
+    if (!trackList || !trackList->length() || !m_mediaElement->document().page())
+        return;
+
+    CaptionUserPreferences& captionPreferences = *m_mediaElement->document().page()->group().captionPreferences();
+    m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(trackList);
+
+    Vector<String> legibleOptions;
+    for (auto& track : m_legibleTracksForMenu)
+        legibleOptions.append(captionPreferences.displayNameForTrack(track.get()));
+
+    m_videoFullscreenInterface->setLegibleMediaSelectionOptions(legibleOptions, 0);
 }
 
 #endif
