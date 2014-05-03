@@ -1,3 +1,10 @@
+2014-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r168209.
+
+        * platform/leveldb/LevelDBDatabase.cpp:
+        (WebCore::LevelDBDatabase::write):
+
 2014-05-03  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Fieldset legend has a horizontal line through, when the fieldset is painted on odd device pixel position.

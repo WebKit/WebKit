@@ -232,7 +232,6 @@ bool LevelDBDatabase::write(LevelDBWriteBatch& writeBatch)
     const leveldb::Status s = m_db->Write(writeOptions, writeBatch.m_writeBatch.get());
     if (s.ok())
         return true;
-    histogramLevelDBError("WebCore.IndexedDB.LevelDBWriteErrors", s);
     LOG_ERROR("LevelDB write failed: %s", s.ToString().c_str());
     return false;
 }
