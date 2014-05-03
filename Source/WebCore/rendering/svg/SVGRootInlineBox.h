@@ -42,10 +42,10 @@ public:
 
     virtual bool isSVGRootInlineBox() const { return true; }
 
-    virtual float virtualLogicalHeight() const { return m_logicalHeight; }
+    virtual float virtualLogicalHeight() const final { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) final;
 
     void computePerCharacterLayoutInformation();
 

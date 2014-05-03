@@ -62,12 +62,22 @@ SVGInlineTextBox::SVGInlineTextBox(RenderObject* object)
 {
 }
 
-void SVGInlineTextBox::dirtyLineBoxes()
+void SVGInlineTextBox::dirtyOwnLineBoxes()
 {
     InlineTextBox::dirtyLineBoxes();
 
     // Clear the now stale text fragments
     clearTextFragments();
+}
+
+void SVGInlineTextBox::dirtyLineBoxes()
+{
+    dirtyOwnLineBoxes();
+
+    // And clear any following text fragments as the text on which they
+    // depend may now no longer exist, or glyph positions may be wrong
+    for (InlineTextBox* nextBox = nextTextBox(); nextBox; nextBox = nextBox->nextTextBox())
+        nextBox->dirtyOwnLineBoxes();
 }
 
 int SVGInlineTextBox::offsetForPosition(float, bool) const

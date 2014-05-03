@@ -97,6 +97,8 @@ public:
     LayoutUnit logicalLeftVisualOverflow() const { return logicalOverflowRect().x(); }
     LayoutUnit logicalRightVisualOverflow() const { return logicalOverflowRect().maxX(); }
 
+    virtual void dirtyOwnLineBoxes() { dirtyLineBoxes(); }
+
 #ifndef NDEBUG
     virtual void showBox(int = 0) const;
     virtual const char* boxName() const;
