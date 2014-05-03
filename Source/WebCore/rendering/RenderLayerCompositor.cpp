@@ -2781,12 +2781,6 @@ void RenderLayerCompositor::didCommitChangesForLayer(const GraphicsLayer*) const
     // Nothing to do here yet.
 }
 
-bool RenderLayerCompositor::keepLayersPixelAligned() const
-{
-    // When scaling, attempt to align compositing layers to pixel boundaries.
-    return true;
-}
-
 bool RenderLayerCompositor::mainFrameBackingIsTiled() const
 {
     RenderLayer* layer = m_renderView.layer();

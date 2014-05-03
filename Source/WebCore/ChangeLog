@@ -1,3 +1,28 @@
+2014-05-02  Zalan Bujtas  <zalan@apple.com>
+
+        CodeCleanup: Remove *MaintainsPixelAlignment from GraphicsLayer*.
+        https://bugs.webkit.org/show_bug.cgi?id=132501
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setMaintainsPixelAlignment): Deleted.
+        (WebCore::GraphicsLayer::maintainsPixelAlignment): Deleted.
+        (WebCore::GraphicsLayer::pixelAlignmentOffset): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateGeometry):
+        (WebCore::GraphicsLayerCA::computePixelAlignment):
+        (WebCore::GraphicsLayerCA::setMaintainsPixelAlignment): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::keepLayersPixelAligned): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2014-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Tiled layer content missing on pages with animated tiled layers

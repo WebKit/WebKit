@@ -146,10 +146,6 @@ public:
 
     virtual void layerDidDisplay(PlatformLayer*) override;
 
-    virtual void setMaintainsPixelAlignment(bool) override;
-#if PLATFORM(IOS)
-    virtual FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
-#endif
     virtual void deviceOrPageScaleFactorChanged() override;
 
     struct CommitState {
@@ -543,8 +539,7 @@ private:
     TransformsMap m_animationTransforms;
 
     Vector<FloatRect> m_dirtyRects;
-    FloatSize m_pixelAlignmentOffset;
-    
+
     LayerChangeFlags m_uncommittedChanges;
     bool m_isCommittingChanges;
 };

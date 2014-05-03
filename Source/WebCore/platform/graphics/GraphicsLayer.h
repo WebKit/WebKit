@@ -454,10 +454,7 @@ public:
     virtual void distributeOpacity(float);
     virtual float accumulatedOpacity() const;
 
-    virtual void setMaintainsPixelAlignment(bool maintainsAlignment) { m_maintainsPixelAlignment = maintainsAlignment; }
-    virtual bool maintainsPixelAlignment() const { return m_maintainsPixelAlignment; }
 #if PLATFORM(IOS)
-    virtual FloatSize pixelAlignmentOffset() const { return FloatSize(); }
     bool hasFlattenedPerspectiveTransform() const { return !preserves3D() && m_childrenTransform.hasPerspective(); }
 #endif
     
@@ -590,7 +587,6 @@ protected:
     bool m_drawsContent : 1;
     bool m_contentsVisible : 1;
     bool m_acceleratesDrawing : 1;
-    bool m_maintainsPixelAlignment : 1;
     bool m_appliesPageScale : 1; // Set for the layer which has the page scale applied to it.
     bool m_showDebugBorder : 1;
     bool m_showRepaintCounter : 1;
