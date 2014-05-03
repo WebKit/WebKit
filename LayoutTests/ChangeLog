@@ -1,3 +1,11 @@
+2014-05-02  Zalan Bujtas  <zalan@apple.com>
+
+        [Mac] Unreviewed gardening.
+
+        Cliprect does not cover textarea properly on certain subpixel positions.
+
+        * platform/mac/TestExpectations:
+
 2014-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Don't create backing store for -webkit-overflow-scrolling:touch that can't scroll
