@@ -41,6 +41,8 @@
 
 #if TARGET_OS_IPHONE
 - (void)_webView:(WKWebView *)webView accessoryViewCustomButtonTappedInFormInputSession:(id <_WKFormInputSession>)inputSession;
+- (BOOL)_webView:(WKWebView *)webView hasSuggestionsForCurrentStringInInputSession:(id <_WKFormInputSession>)inputSession;
+- (NSArray *)_webView:(WKWebView *)webView suggestionsForString:(NSString *)string inInputSession:(id <_WKFormInputSession>)inputSession;
 #endif
 
 @end

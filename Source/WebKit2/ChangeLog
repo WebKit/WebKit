@@ -1,3 +1,19 @@
+2014-05-02  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Remove unused WKErrorRecoveryAttempting
+        https://bugs.webkit.org/show_bug.cgi?id=132503
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didFailLoadWithErrorForFrame):
+        (createErrorWithRecoveryAttempter): Deleted.
+        (-[WKBrowsingContextController attemptRecoveryFromError:]): Deleted.
+        * UIProcess/API/Cocoa/WKErrorRecoveryAttempting.m: Removed.
+        * UIProcess/API/Cocoa/_WKFormDelegate.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-05-02  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WebKit2) Need to support reanalyze button for Chinese Traditional.

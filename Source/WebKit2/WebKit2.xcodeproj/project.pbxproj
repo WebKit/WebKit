@@ -693,8 +693,6 @@
 		37C4C0941814B3AF003688B9 /* WKNSArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C4C0921814B3AF003688B9 /* WKNSArray.h */; };
 		37C4C0951814B9E6003688B9 /* WKBackForwardListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C4C08E1814AF3A003688B9 /* WKBackForwardListInternal.h */; };
 		37C4E9F6131C6E7E0029BD5A /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = B396EA5512E0ED2D00F4FEB7 /* config.h */; };
-		37D0B5C61845218400F6CE7D /* WKErrorRecoveryAttempting.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D0B5C51845218400F6CE7D /* WKErrorRecoveryAttempting.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		37D0B5C81845232700F6CE7D /* WKErrorRecoveryAttempting.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0B5C71845232700F6CE7D /* WKErrorRecoveryAttempting.m */; };
 		37DFA7001810BB92001F4A9F /* WKFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 37DFA6FF1810BB92001F4A9F /* WKFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37E25D6E18FDE5D6005D3A00 /* APIFormClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E25D6D18FDE5D6005D3A00 /* APIFormClient.h */; };
 		37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F623B712A57B6200E3FDF6 /* WKFindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2531,8 +2529,6 @@
 		37C4C08E1814AF3A003688B9 /* WKBackForwardListInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardListInternal.h; sourceTree = "<group>"; };
 		37C4C0911814B3AF003688B9 /* WKNSArray.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSArray.mm; sourceTree = "<group>"; };
 		37C4C0921814B3AF003688B9 /* WKNSArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSArray.h; sourceTree = "<group>"; };
-		37D0B5C51845218400F6CE7D /* WKErrorRecoveryAttempting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKErrorRecoveryAttempting.h; sourceTree = "<group>"; };
-		37D0B5C71845232700F6CE7D /* WKErrorRecoveryAttempting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKErrorRecoveryAttempting.m; sourceTree = "<group>"; };
 		37DFA6FF1810BB92001F4A9F /* WKFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFoundation.h; sourceTree = "<group>"; };
 		37E25D6D18FDE5D6005D3A00 /* APIFormClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFormClient.h; sourceTree = "<group>"; };
 		37F623B712A57B6200E3FDF6 /* WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindOptions.h; sourceTree = "<group>"; };
@@ -3855,8 +3851,6 @@
 				BCA284D51492F2C7001F9042 /* WKConnection.h */,
 				BCA284D41492F2C7001F9042 /* WKConnection.mm */,
 				BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */,
-				37D0B5C51845218400F6CE7D /* WKErrorRecoveryAttempting.h */,
-				37D0B5C71845232700F6CE7D /* WKErrorRecoveryAttempting.m */,
 				370F34A11829BE1E009027C8 /* WKNavigationData.h */,
 				370F34A01829BE1E009027C8 /* WKNavigationData.mm */,
 				370F34A41829BEA3009027C8 /* WKNavigationDataInternal.h */,
@@ -6693,7 +6687,6 @@
 				1F7506B11859163700EC0FF7 /* WKWebProcessPlugInFrame.h in Headers */,
 				BC59548915C7868500FD1E3E /* WebKit2.h in Headers */,
 				37C4C08D1814AC5C003688B9 /* WKBackForwardList.h in Headers */,
-				37D0B5C61845218400F6CE7D /* WKErrorRecoveryAttempting.h in Headers */,
 				BCBAAC73144E619E0053F82F /* WKBrowsingContextController.h in Headers */,
 				BCBAACF41452324F0053F82F /* WKBrowsingContextGroup.h in Headers */,
 				BCBAAD0B14560A430053F82F /* WKBrowsingContextLoadDelegate.h in Headers */,
@@ -8246,7 +8239,6 @@
 				E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */,
 				BC14E109120B905E00826C0C /* InjectedBundlePageFormClient.cpp in Sources */,
 				0FCB4E6918BBE3D9000FCFC9 /* WKTextInputWindowController.mm in Sources */,
-				37D0B5C81845232700F6CE7D /* WKErrorRecoveryAttempting.m in Sources */,
 				CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */,
 				755422CB180650020046F6A8 /* WebOriginDataManager.cpp in Sources */,
 				2DA1E4FF18C02B6A00DBC929 /* WKPDFView.mm in Sources */,
