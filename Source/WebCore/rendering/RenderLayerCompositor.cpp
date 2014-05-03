@@ -579,9 +579,9 @@ void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*
     m_layerUpdater->scheduleUpdate();
 }
 
-void RenderLayerCompositor::flushLayers(GraphicsLayerUpdater*)
+void RenderLayerCompositor::flushLayersSoon(GraphicsLayerUpdater*)
 {
-    flushPendingLayerChanges(true); // FIXME: deal with iframes
+    scheduleLayerFlush(true);
 }
 
 void RenderLayerCompositor::layerTiledBackingUsageChanged(const GraphicsLayer*, bool usingTiledBacking)

@@ -36,7 +36,7 @@ class GraphicsLayerUpdater;
 class GraphicsLayerUpdaterClient {
 public:
     virtual ~GraphicsLayerUpdaterClient() { }
-    virtual void flushLayers(GraphicsLayerUpdater*) = 0;
+    virtual void flushLayersSoon(GraphicsLayerUpdater*) = 0;
 };
 
 class GraphicsLayerUpdater

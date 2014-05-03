@@ -1,3 +1,32 @@
+2014-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Tiled layer content missing on pages with animated tiled layers
+        https://bugs.webkit.org/show_bug.cgi?id=132507
+        <rdar://problem/16765740>
+
+        Reviewed by Tim Horton.
+
+        Updating the tiling area of content TileControllers while
+        CSS animations are running depends on GraphicsLayerUpdater
+        triggering repeated layer flushes. With UI-side compositing, those
+        flushes were happening, but nothing triggered RemoteLayerTreeDrawingArea
+        to flush changes to the UI process.
+        
+        Fix by having RenderLayerCompositor schedule a flush, rather
+        than just doing a flush, in response to GraphicsLayerUpdater.
+        
+        Also change the name of the GraphicsLayerUpdaterClient function
+        to indicate that it suggests that a flush is required soon, rather than
+        that the flushing has to be synchronous.
+
+        * platform/graphics/GraphicsLayerUpdater.cpp:
+        (WebCore::GraphicsLayerUpdater::displayRefreshFired):
+        * platform/graphics/GraphicsLayerUpdater.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushLayersSoon):
+        (WebCore::RenderLayerCompositor::flushLayers): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2014-05-02  Jeremy Jones  <jeremyj@apple.com>
 
         Use displayNameForTrack instead of textTrack->label() for captions.

@@ -75,7 +75,7 @@ void GraphicsLayerUpdater::displayRefreshFired(double timestamp)
     m_scheduled = false;
     
     if (m_client)
-        m_client->flushLayers(this);
+        m_client->flushLayersSoon(this);
 }
 
 } // namespace WebCore
