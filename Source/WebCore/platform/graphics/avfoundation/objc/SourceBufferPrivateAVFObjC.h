@@ -122,6 +122,7 @@ private:
     MediaSourcePrivateAVFObjC* m_mediaSource;
     SourceBufferPrivateClient* m_client;
 
+    FloatSize m_cachedSize;
     bool m_parsingSucceeded;
     int m_enabledVideoTrackID;
     int m_protectedTrackID;

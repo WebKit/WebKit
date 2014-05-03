@@ -86,10 +86,12 @@ SOFT_LINK(CoreMedia, CMSampleBufferCreateCopy, OSStatus, (CFAllocatorRef allocat
 SOFT_LINK(CoreMedia, CMSampleBufferCallForEachSample, OSStatus, (CMSampleBufferRef sbuf, OSStatus (*callback)( CMSampleBufferRef sampleBuffer, CMItemCount index, void *refcon), void *refcon), (sbuf, callback, refcon))
 SOFT_LINK(CoreMedia, CMSampleBufferGetDecodeTimeStamp, CMTime, (CMSampleBufferRef sbuf), (sbuf))
 SOFT_LINK(CoreMedia, CMSampleBufferGetDuration, CMTime, (CMSampleBufferRef sbuf), (sbuf))
+SOFT_LINK(CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf))
 SOFT_LINK(CoreMedia, CMSampleBufferGetPresentationTimeStamp, CMTime, (CMSampleBufferRef sbuf), (sbuf))
 SOFT_LINK(CoreMedia, CMSampleBufferGetSampleAttachmentsArray, CFArrayRef, (CMSampleBufferRef sbuf, Boolean createIfNecessary), (sbuf, createIfNecessary))
 SOFT_LINK(CoreMedia, CMFormatDescriptionGetMediaSubType, FourCharCode, (CMFormatDescriptionRef desc), (desc))
 SOFT_LINK(CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStringRef key, CFTypeRef value, CMAttachmentMode attachmentMode), (target, key, value, attachmentMode))
+SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, (CMVideoFormatDescriptionRef videoDesc, Boolean usePixelAspectRatio, Boolean useCleanAperture), (videoDesc, usePixelAspectRatio, useCleanAperture))
 
 #define AVMediaTypeVideo getAVMediaTypeVideo()
 #define AVMediaTypeAudio getAVMediaTypeAudio()
@@ -381,9 +383,6 @@ void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
         // FIXME(125161): Add TextTrack support
     }
 
-    if (!m_videoTracks.isEmpty())
-        m_mediaSource->player()->sizeChanged();
-
     if (m_client)
         m_client->sourceBufferPrivateDidReceiveInitializationSegment(this, segment);
 }
@@ -413,6 +412,15 @@ void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID(int trackID, CMSa
 
 bool SourceBufferPrivateAVFObjC::processCodedFrame(int trackID, CMSampleBufferRef sampleBuffer, const String&)
 {
+    if (trackID == m_enabledVideoTrackID) {
+        CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
+        FloatSize formatSize = FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
+        if (formatSize != m_cachedSize) {
+            LOG(Media, "SourceBufferPrivateAVFObjC::processCodedFrame(%p) - size change detected: {width=%lf, height=%lf", formatSize.width(), formatSize.height());
+            m_cachedSize = formatSize;
+            m_mediaSource->player()->sizeChanged();
+        }
+    }
     if (m_client)
         m_client->sourceBufferPrivateDidReceiveSample(this, MediaSampleAVFObjC::create(sampleBuffer, trackID));
 
@@ -695,12 +703,7 @@ void SourceBufferPrivateAVFObjC::seekToTime(MediaTime time)
 
 IntSize SourceBufferPrivateAVFObjC::naturalSize()
 {
-    for (auto& videoTrack : m_videoTracks) {
-        if (videoTrack->selected())
-            return videoTrack->naturalSize();
-    }
-
-    return IntSize();
+    return roundedIntSize(m_cachedSize);
 }
 
 void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(int trackID)

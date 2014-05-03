@@ -1,3 +1,16 @@
+2014-05-02  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] AVAssetTrack returns incorrect track size
+        https://bugs.webkit.org/show_bug.cgi?id=132469
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset):  Remove the sizeChanged() notification.
+        (WebCore::SourceBufferPrivateAVFObjC::processCodedFrame): Cache the last parsed video frame size.
+        (WebCore::SourceBufferPrivateAVFObjC::naturalSize): Return the cached value.
+
 2014-05-02  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering[iOS]: Use pixelSnappedRoundedRectForPainting() to clip text area rect.
