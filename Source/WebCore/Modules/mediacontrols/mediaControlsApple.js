@@ -72,6 +72,7 @@ Controller.prototype = {
         exit: 'exit',
         hidden: 'hidden',
         hiding: 'hiding',
+        hourLongTime: 'hour-long-time',
         list: 'list',
         muteBox: 'mute-box',
         muted: 'muted',
@@ -879,10 +880,14 @@ Controller.prototype = {
 
     updateDuration: function()
     {
+        var duration = this.video.duration;
         this.controls.timeline.min = 0;
-        this.controls.timeline.max = this.video.duration;
+        this.controls.timeline.max = duration;
 
-        this.setIsLive(this.video.duration === Number.POSITIVE_INFINITY);
+        this.setIsLive(duration === Number.POSITIVE_INFINITY);
+
+        this.controls.currentTime.classList.toggle(this.ClassNames.hourLongTime, duration >= 60*60);
+        this.controls.remainingTime.classList.toggle(this.ClassNames.hourLongTime, duration >= 60*60);
     },
 
     progressFillStyle: function(context)
@@ -921,8 +926,14 @@ Controller.prototype = {
             time = 0;
         var absTime = Math.abs(time);
         var intSeconds = Math.floor(absTime % 60).toFixed(0);
-        var intMinutes = Math.floor(absTime / 60).toFixed(0);
-        return (time < 0 ? '-' : String()) + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2)
+        var intMinutes = Math.floor((absTime / 60) % 60).toFixed(0);
+        var intHours = Math.floor(absTime / (60 * 60)).toFixed(0);
+        var sign = time < 0 ? '-' : String();
+
+        if (intHours > 0)
+            return sign + intHours + ':' + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2);
+
+        return sign + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2)
     },
 
     updatePlaying: function()

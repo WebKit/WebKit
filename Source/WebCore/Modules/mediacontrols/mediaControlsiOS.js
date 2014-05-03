@@ -242,8 +242,14 @@ ControllerIOS.prototype = {
             time = 0;
         var absTime = Math.abs(time);
         var intSeconds = Math.floor(absTime % 60).toFixed(0);
-        var intMinutes = Math.floor(absTime / 60).toFixed(0);
-        return (time < 0 ? '-' : String()) + String('0' + intMinutes).slice(-1) + ":" + String('00' + intSeconds).slice(-2)
+        var intMinutes = Math.floor((absTime / 60) % 60).toFixed(0);
+        var intHours = Math.floor(absTime / (60 * 60)).toFixed(0);
+        var sign = time < 0 ? '-' : String();
+
+        if (intHours > 0)
+            return sign + intHours + ':' + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2);
+
+        return sign + String('00' + intMinutes).slice(intMinutes >= 10 ? -2 : -1) + ":" + String('00' + intSeconds).slice(-2);
     },
 
     handleTimelineChange: function(event) {

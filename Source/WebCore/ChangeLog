@@ -1,3 +1,29 @@
+2014-05-02  Jeremy Jones  <jeremyj@apple.com>
+
+        CSS-based Media Controls Show Different times content longer than 1 hour.
+        https://bugs.webkit.org/show_bug.cgi?id=132443
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-timeline-container .hour-long-time):
+        This class has a wider width for longer duration times.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.updateDuration):
+        Apply .hour-long-time class as appropriate.
+
+        (Controller.prototype.formatTime):
+        More robust formatting to handle hours.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-timeline-container .hour-long-time):
+        This class has a wider width for longer duration times.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.formatTime):
+        More robust formatting to handle hours.
+
 2014-05-02  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] AVAssetTrack returns incorrect track size

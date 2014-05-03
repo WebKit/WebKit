@@ -476,6 +476,11 @@ audio::-webkit-media-controls-time-remaining-display {
     text-decoration: none;
 }
 
+video::-webkit-media-controls-timeline-container .hour-long-time,
+audio::-webkit-media-controls-timeline-container .hour-long-time {
+    min-width: 67px;
+}
+
 video::-webkit-media-controls-timeline-container,
 audio::-webkit-media-controls-timeline-container {
     display: -webkit-flex;
