@@ -174,15 +174,19 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
     // FIXME: We need to work with "rl" and "bt" block flow directions.  In those
     // cases the legend is embedded in the right and bottom borders respectively.
     // https://bugs.webkit.org/show_bug.cgi?id=47236
+    LayoutRect clipRect;
     if (style().isHorizontalWritingMode()) {
-        LayoutUnit clipTop = paintRect.y();
-        LayoutUnit clipHeight = std::max<LayoutUnit>(style().borderTopWidth(), legend->height() - ((legend->height() - borderTop()) / 2));
-        graphicsContext->clipOut(pixelSnappedIntRect(paintRect.x() + legend->x(), clipTop, legend->width(), clipHeight));
+        clipRect.setX(paintRect.x() + legend->x());
+        clipRect.setY(paintRect.y());
+        clipRect.setWidth(legend->width());
+        clipRect.setHeight(std::max<LayoutUnit>(style().borderTopWidth(), legend->height() - ((legend->height() - borderTop()) / 2)));
     } else {
-        LayoutUnit clipLeft = paintRect.x();
-        LayoutUnit clipWidth = std::max<LayoutUnit>(style().borderLeftWidth(), legend->width());
-        graphicsContext->clipOut(pixelSnappedIntRect(clipLeft, paintRect.y() + legend->y(), clipWidth, legend->height()));
+        clipRect.setX(paintRect.x());
+        clipRect.setY(paintRect.y() + legend->y());
+        clipRect.setWidth(std::max<LayoutUnit>(style().borderLeftWidth(), legend->width()));
+        clipRect.setHeight(legend->height());
     }
+    graphicsContext->clipOut(pixelSnappedForPainting(clipRect, document().deviceScaleFactor()));
 
     paintBorder(paintInfo, paintRect, style());
 }
