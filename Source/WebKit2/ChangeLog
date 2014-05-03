@@ -1,3 +1,26 @@
+2014-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Assertion in PlatformCAFilters::setFiltersOnLayer with animated reference filter
+        https://bugs.webkit.org/show_bug.cgi?id=132528
+        <rdar://problem/16671660>
+
+        Reviewed by Tim Horton.
+        
+        Allow PASSTHROUGH filters to be encoded and sent to the UI process; they can be set
+        on layers as the result of a filter animation using a reference filter, and just get
+        ignored anyway, but encoding them maintains consistency of the filters list.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FilterOperation>::encode): Assert during encoding if
+        we try to encode a NONE or REFERENCE filter (to match the decoding assertions).
+        (IPC::decodeFilterOperation): Allow decoding of PASSTHROUGH filters. Have
+        trying to decode a NONE or REFERENCE filter mark the message as invalid.
+        (IPC::ArgumentCoder<IDBKeyData>::decode): Mark the message invalid when receiving
+        unexpected key types.
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::operator<<): Have the logging not crash if
+        a filter is null (should never happen).
+
 2014-05-02  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Remove unused WKErrorRecoveryAttempting

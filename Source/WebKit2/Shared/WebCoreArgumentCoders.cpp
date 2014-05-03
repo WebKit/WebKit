@@ -1561,10 +1561,10 @@ void ArgumentCoder<FilterOperation>::encode(ArgumentEncoder& encoder, const Filt
     encoder.encodeEnum(filter.type());
 
     switch (filter.type()) {
-    case FilterOperation::REFERENCE: {
+    case FilterOperation::NONE:
+    case FilterOperation::REFERENCE:
         ASSERT_NOT_REACHED();
         break;
-    }
     case FilterOperation::GRAYSCALE:
     case FilterOperation::SEPIA:
     case FilterOperation::SATURATE:
@@ -1591,7 +1591,6 @@ void ArgumentCoder<FilterOperation>::encode(ArgumentEncoder& encoder, const Filt
         encoder.encodeEnum(toDefaultFilterOperation(filter).representedType());
         break;
     case FilterOperation::PASSTHROUGH:
-    case FilterOperation::NONE:
         break;
     }
 }
@@ -1603,11 +1602,11 @@ bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperation>& fi
         return false;
 
     switch (type) {
-    case FilterOperation::PASSTHROUGH:
     case FilterOperation::NONE:
     case FilterOperation::REFERENCE:
         ASSERT_NOT_REACHED();
-        break;
+        decoder.markInvalid();
+        return false;
     case FilterOperation::GRAYSCALE:
     case FilterOperation::SEPIA:
     case FilterOperation::SATURATE:
@@ -1655,6 +1654,9 @@ bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperation>& fi
         filter = DefaultFilterOperation::create(representedType);
         break;
     }
+    case FilterOperation::PASSTHROUGH:
+        filter = PassthroughFilterOperation::create();
+        break;
     }
             
     return true;
@@ -1835,6 +1837,7 @@ bool ArgumentCoder<IDBKeyData>::decode(ArgumentDecoder& decoder, IDBKeyData& key
         // MaxType and MinType are only used for comparison to other keys.
         // They should never be sent across the wire.
         ASSERT_NOT_REACHED();
+        decoder.markInvalid();
         return false;
     }
 

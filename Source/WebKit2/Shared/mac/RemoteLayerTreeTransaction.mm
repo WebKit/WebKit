@@ -646,7 +646,10 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOpe
     RemoteLayerTreeTextStream& ts = *this;
     for (size_t i = 0; i < filters.size(); ++i) {
         const auto filter = filters.at(i);
-        ts << *filter;
+        if (filter)
+            ts << *filter;
+        else
+            ts << "(null)";
         if (i < filters.size() - 1)
             ts << " ";
     }
