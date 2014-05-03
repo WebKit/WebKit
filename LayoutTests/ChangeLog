@@ -1,3 +1,16 @@
+2014-05-03  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Add hidpi fieldset/legend test case to check fieldset's cliprect when legend text is present.
+        https://bugs.webkit.org/show_bug.cgi?id=132524
+
+        Reviewed by Simon Fraser.
+
+        This is the hidpi test for r168221. (Fieldset legend has a horizontal line 
+        through, when the fieldset is painted on odd device pixel position.)
+
+        * fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present-expected.html: Added.
+        * fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present.html: Added.
+
 2014-05-02  Zalan Bujtas  <zalan@apple.com>
 
         [Mac] Unreviewed gardening.
