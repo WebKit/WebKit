@@ -40,6 +40,7 @@ my $preferSystemLLVMOverDrops = 0;
 my $llvmSubdirectoryName = "llvm";
 my $llvmPrefix = "/usr/local/LLVMForJavaScriptCore";
 my $sdkName = ""; # Ideally we only use this for build commands, rather than deciding policies about what needs to get copied or built and where it needs to be placed.
+my $osxVersion;
 my $force = 0;
 
 my $programName = basename($0);
@@ -55,6 +56,7 @@ Usage: $programName [options]
   --llvm-subdirectory=<name>    Set the name of the LLVM subdirectory to search for (default: $llvmSubdirectoryName)
   --llvm-prefix=<path>          Set the prefix into which LLVM is installed (default: $llvmPrefix)
   --sdk-name=<name>             Set the name of the Xcode SDK to use.
+  --osx-version=<version>       Set the OS X version to use when deciding what to copy.
   --[no-]force                  Toggle forcing the copy - i.e. ignoring timestamps (default: $force)
 EOF
 
@@ -69,6 +71,7 @@ GetOptions(
     'llvm-subdirectory=s' => \$llvmSubdirectoryName,
     'llvm-prefix=s' => \$llvmPrefix,
     'sdk-name=s' => \$sdkName,
+    'osx-version=s' => \$osxVersion,
     'force!' => \$force
 );
 
@@ -82,6 +85,11 @@ if ($productDir) {
     $productDir = File::Spec->rel2abs($productDir);
 } else {
     $productDir = $ENV{BUILT_PRODUCTS_DIR};
+}
+
+if (!$osxVersion) {
+    $osxVersion = `sw_vers -productVersion | cut -d. -f-2`;
+    chomp($osxVersion);
 }
 
 chdirWebKit();
@@ -151,7 +159,6 @@ if ($llvm) {
     (system("mkdir", "-p", $libraryDir) == 0) or die;
 
     # Determine where to get LLVM binaries and headers.
-    my $majorDarwinVersion = (split /\./, `uname -r`)[0];
     my $useOwnLLVM = 0;
     my $ownLLVMDirectory;
     if (defined($ENV{LLVM_SOURCE_PATH})) {
@@ -172,10 +179,10 @@ if ($llvm) {
     } elsif ($preferSystemLLVMOverDrops) {
         # Don't fall through to drop detection.
         print "Using system LLVM.\n";
-    } elsif ($majorDarwinVersion == 12) {
+    } elsif ($osxVersion eq "10.8") {
         $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMountainLion.tar.bz2";
         $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMountainLion.tar.bz2";
-    } elsif ($majorDarwinVersion == 13) {
+    } elsif ($osxVersion eq "10.9") {
         $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMavericks.tar.bz2";
         $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMavericks.tar.bz2";
     } else {

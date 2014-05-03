@@ -1,3 +1,12 @@
+2014-05-02  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/132505> Make it possible to tell copy-webkitlibraries-to-product-directory which OS X version to copy for
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/copy-webkitlibraries-to-product-directory: Add an --osx-version argument and use the passed value
+        when determining which LLVM archive to extract.
+
 2014-05-02  Jeremy Jones  <jeremyj@apple.com>
 
         Add Jeremy as a committer.
