@@ -1,3 +1,14 @@
+2014-05-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [CMake] Define SHOULD_INSTALL_JS_SHELL before including ports Options files.
+        https://bugs.webkit.org/show_bug.cgi?id=132525
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt: If OPTION() is called after Options${PORT}.cmake is included, it will
+        override whatever value a port may have set for it. The GTK+ port, for example, tries to set
+        it to SHOULD_INSTALL_JS_SHELL to ON by default, even though it did not happen before.
+
 2014-05-01  David Kilzer  <ddkilzer@apple.com>
 
         Really remove ENABLE_PLUGIN_PROXY_FOR_VIDEO

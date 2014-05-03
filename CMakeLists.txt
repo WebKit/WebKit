@@ -129,6 +129,11 @@ set(WebKit2_LIBRARY_TYPE SHARED)
 set(WebCoreTestSupport_LIBRARY_TYPE STATIC)
 
 # -----------------------------------------------------------------------------
+# Install JavaScript shell
+# -----------------------------------------------------------------------------
+option(SHOULD_INSTALL_JS_SHELL "generate an installation rule to install the built JavaScript shell")
+
+# -----------------------------------------------------------------------------
 # Common options
 #------------------------------------------------------------------------------
 include(OptionsCommon)
@@ -147,11 +152,6 @@ include(Options${PORT})
 if (ENABLE_API_TESTS)
     enable_testing()
 endif ()
-
-# -----------------------------------------------------------------------------
-# Install JavaScript shell
-# -----------------------------------------------------------------------------
-option(SHOULD_INSTALL_JS_SHELL "generate an installation rule to install the built JavaScript shell")
 
 # -----------------------------------------------------------------------------
 # Define packaging
