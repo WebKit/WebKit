@@ -481,7 +481,7 @@ bool RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const Pa
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    paintInfo.context->clipRoundedRect(FloatRoundedRect(style.getRoundedBorderFor(LayoutRect(rect))));
+    paintInfo.context->clipRoundedRect(style.getRoundedBorderFor(LayoutRect(rect)).pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()));
 
     // This gradient gets drawn black when printing.
     // Do not draw the gradient if there is no visible top border.
