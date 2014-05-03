@@ -90,7 +90,7 @@ using namespace WebCore;
 
 - (BOOL)isOpaque
 {
-    return _tileController->tilesAreOpaque();
+    return _tileController ? _tileController->tilesAreOpaque() : NO;
 }
 
 - (void)setNeedsDisplay
@@ -110,7 +110,7 @@ using namespace WebCore;
 
 - (BOOL)acceleratesDrawing
 {
-    return _tileController->acceleratesDrawing();
+    return _tileController ? _tileController->acceleratesDrawing() : NO;
 }
 
 - (void)setContentsScale:(CGFloat)contentsScale
@@ -120,7 +120,7 @@ using namespace WebCore;
 
 - (CGFloat)contentsScale
 {
-    return _tileController->contentsScale();
+    return _tileController ? _tileController->contentsScale() : 1;
 }
 
 - (WebCore::TiledBacking*)tiledBacking

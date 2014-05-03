@@ -1,3 +1,20 @@
+2014-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix crash in WebKit client app when zooming
+        https://bugs.webkit.org/show_bug.cgi?id=132475
+        <rdar://problem/16703405>
+
+        Reviewed by Tim Horton.
+
+        It's possible for a WebTiledBackingLayer CALayer to remain in the CALayer
+        hierarchy after we've called -invalidate on it, which clears the _tileController.
+        Project the getters against null derefs to handle this.
+
+        * platform/graphics/ca/mac/WebTiledBackingLayer.mm:
+        (-[WebTiledBackingLayer isOpaque]):
+        (-[WebTiledBackingLayer acceleratesDrawing]):
+        (-[WebTiledBackingLayer contentsScale]):
+
 2014-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r168209.
