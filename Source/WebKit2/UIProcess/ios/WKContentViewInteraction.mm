@@ -122,6 +122,7 @@ static const float tapAndHoldDelay  = 0.75;
 // FIXME: this needs to be moved from the internal header to the private.
 - (id)initWithView:(UIResponder <UITextInput> *)view;
 - (void)selectWord;
+- (void)scheduleReanalysis;
 @end
 
 @interface UITextInteractionAssistant (StagingToRemove)
@@ -908,6 +909,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         [_textSelectionAssistant scheduleChineseTransliterationForText:_page->editorState().wordAtSelection];
 }
 
+- (void)_reanalyze:(id)sender
+{
+    [_textSelectionAssistant scheduleReanalysis];
+}
+
 - (void)replace:(id)sender
 {
     [[UIKeyboardImpl sharedInstance] replaceText:sender];
@@ -980,6 +986,12 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (!_page->editorState().selectionIsRange || !_page->editorState().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
             return NO;
         return UIKeyboardEnabledInputModesAllowChineseTransliterationForText([self selectedText]);
+    }
+
+    if (action == @selector(_reanalyze:)) {
+        if (!_page->editorState().selectionIsRange || !_page->editorState().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
+            return NO;
+        return UIKeyboardCurrentInputModeAllowsChineseOrJapaneseReanalysisForText([self selectedText]);
     }
 
     if (action == @selector(select:)) {

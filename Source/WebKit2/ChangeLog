@@ -1,5 +1,24 @@
 2014-05-02  Enrica Casucci  <enrica@apple.com>
 
+        REGRESSION (WebKit2) Need to support reanalyze button for Chinese Traditional.
+        https://bugs.webkit.org/show_bug.cgi?id=132504
+        <rdar://problem/16778862>
+
+        Reviewed by Benjamin Poulain.
+
+        For traditional Chinese we support reanalyzing of the text to perform
+        transformations on the text based on the selected language and keyboard.
+        This is done by pressing the Reanalyze button on the system
+        menu. This patch adds the necessary code to canPerformAction to enable
+        the button when appropriate as well as the implementation of the action
+        itself.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _reanalyze:]):
+        (-[WKContentView canPerformAction:withSender:]):
+
+2014-05-02  Enrica Casucci  <enrica@apple.com>
+
         REGRESSION (WebKit2) Need to support transliterate chinese button (简⇄繁) for Traditional Chinese.
         https://bugs.webkit.org/show_bug.cgi?id=132500
         <rdar://problem/16778870>
