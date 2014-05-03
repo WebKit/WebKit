@@ -126,13 +126,13 @@ public:
                m_matrix[3][0] == 0 && m_matrix[3][1] == 0 && m_matrix[3][2] == 0 && m_matrix[3][3] == 1;
     }
 
-    // This form preserves the double math from input to output
+    // This form preserves the double math from input to output.
     void map(double x, double y, double& x2, double& y2) const { multVecMatrix(x, y, x2, y2); }
 
-    // Map a 3D point through the transform, returning a 3D point.
+    // Maps a 3D point through the transform, returning a 3D point.
     FloatPoint3D mapPoint(const FloatPoint3D&) const;
 
-    // Map a 2D point through the transform, returning a 2D point.
+    // Maps a 2D point through the transform, returning a 2D point.
     // Note that this ignores the z component, effectively projecting the point into the z=0 plane.
     FloatPoint mapPoint(const FloatPoint&) const;
 
@@ -143,7 +143,7 @@ public:
     }
 
     // If the matrix has 3D components, the z component of the result is
-    // dropped, effectively projecting the rect into the z=0 plane
+    // dropped, effectively projecting the rect into the z=0 plane.
     FloatRect mapRect(const FloatRect&) const;
 
     // Rounds the resulting mapped rectangle out. This is helpful for bounding
@@ -152,16 +152,14 @@ public:
     LayoutRect mapRect(const LayoutRect&) const;
 
     // If the matrix has 3D components, the z component of the result is
-    // dropped, effectively projecting the quad into the z=0 plane
+    // dropped, effectively projecting the quad into the z=0 plane.
     FloatQuad mapQuad(const FloatQuad&) const;
 
-    // Map a point on the z=0 plane into a point on
-    // the plane with with the transform applied, by extending
-    // a ray perpendicular to the source plane and computing
-    // the local x,y position of the point where that ray intersects
-    // with the destination plane.
+    // Maps a point on the z=0 plane into a point on the plane with with the transform applied, by
+    // extending a ray perpendicular to the source plane and computing the local x,y position of
+    // the point where that ray intersects with the destination plane.
     FloatPoint projectPoint(const FloatPoint&, bool* clamped = 0) const;
-    // Projects the four corners of the quad
+    // Projects the four corners of the quad.
     FloatQuad projectQuad(const FloatQuad&,  bool* clamped = 0) const;
     // Projects the four corners of the quad and takes a bounding box,
     // while sanitizing values created when the w component is negative.
@@ -230,8 +228,7 @@ public:
     TransformationMatrix& rotateFromVector(double x, double y);
     TransformationMatrix& rotate3d(double rx, double ry, double rz);
     
-    // The vector (x,y,z) is normalized if it's not already. A vector of
-    // (0,0,0) uses a vector of (0,0,1).
+    // The vector (x,y,z) is normalized if it's not already. A vector of (0,0,0) uses a vector of (0,0,1).
     TransformationMatrix& rotate3d(double x, double y, double z, double angle);
     
     TransformationMatrix& translate(double tx, double ty);
@@ -250,30 +247,47 @@ public:
     TransformationMatrix& applyPerspective(double p);
     bool hasPerspective() const { return m_matrix[2][3] != 0.0f; }
 
-    // returns a transformation that maps a rect to a rect
+    // Returns a transformation that maps a rect to a rect.
     static TransformationMatrix rectToRect(const FloatRect&, const FloatRect&);
 
     bool isInvertible() const;
 
-    // This method returns the identity matrix if it is not invertible.
+    // Returns the identity matrix if it is not invertible.
     // Use isInvertible() before calling this if you need to know.
     TransformationMatrix inverse() const;
 
-    // decompose the matrix into its component parts
-    typedef struct {
+    // Decompose the matrix into its component parts.
+    struct Decomposed2Type {
         double scaleX, scaleY;
         double translateX, translateY;
         double angle;
         double m11, m12, m21, m22;
-    } Decomposed2Type;
+        
+        bool operator==(const Decomposed2Type& other) const
+        {
+            return scaleX == other.scaleX && scaleY == other.scaleY
+                && translateX == other.translateX && translateY == other.translateY
+                && angle == other.angle
+                && m11 == other.m11 && m12 == other.m12 && m21 == other.m21 && m22 == other.m22;
+        }
+    };
 
-    typedef struct {
+    struct Decomposed4Type {
         double scaleX, scaleY, scaleZ;
         double skewXY, skewXZ, skewYZ;
         double quaternionX, quaternionY, quaternionZ, quaternionW;
         double translateX, translateY, translateZ;
         double perspectiveX, perspectiveY, perspectiveZ, perspectiveW;
-    } Decomposed4Type;
+
+        bool operator==(const Decomposed4Type& other) const
+        {
+            return scaleX == other.scaleX && scaleY == other.scaleY && scaleZ == other.scaleZ
+                && skewXY == other.skewXY && skewXZ == other.skewXZ && skewYZ == other.skewYZ
+                && quaternionX == other.quaternionX && quaternionY == other.quaternionY && quaternionZ == other.quaternionZ && quaternionW == other.quaternionW
+                && translateX == other.translateX && translateY == other.translateY && translateZ == other.translateZ
+                && perspectiveX == other.perspectiveX && perspectiveY == other.perspectiveY && perspectiveZ == other.perspectiveZ && perspectiveW == other.perspectiveW;
+        }
+    };
     
     bool decompose2(Decomposed2Type&) const;
     void recompose2(const Decomposed2Type&);
@@ -291,7 +305,7 @@ public:
                 m31() == 0 && m32() == 0 && m33() == 1 && m34() == 0 && m43() == 0 && m44() == 1);
     }
 
-    // Throw away the non-affine parts of the matrix (lossy!)
+    // Throw away the non-affine parts of the matrix (lossy!).
     void makeAffine();
 
     AffineTransform toAffineTransform() const;
@@ -357,7 +371,7 @@ public:
 
     bool isIntegerTranslation() const;
 
-    // This method returns the matrix without 3D components.
+    // Returns the matrix without 3D components.
     TransformationMatrix to2dTransform() const;
     
     typedef float FloatMatrix4[16];
@@ -380,7 +394,6 @@ private:
         return FloatPoint(static_cast<float>(resultX), static_cast<float>(resultY));
     }
 
-    // multiply passed 3D point by matrix
     void multVecMatrix(double x, double y, double z, double& dstX, double& dstY, double& dstZ) const;
     FloatPoint3D internalMapPoint(const FloatPoint3D& sourcePoint) const
     {

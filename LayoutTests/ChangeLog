@@ -1,3 +1,16 @@
+2014-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Very fuzzy layers under non-decompasable matrices
+        https://bugs.webkit.org/show_bug.cgi?id=132516
+        <rdar://problem/16717478>
+
+        Reviewed by Sam Weinig.
+        
+        Compare scaling under non-decomposable and decomposable matrices.
+
+        * compositing/contents-scale/non-decomposable-matrix-expected.html: Added.
+        * compositing/contents-scale/non-decomposable-matrix.html: Added.
+
 2014-05-03  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Add hidpi fieldset/legend test case to check fieldset's cliprect when legend text is present.

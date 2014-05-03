@@ -1,5 +1,35 @@
 2014-05-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Very fuzzy layers under non-decompasable matrices
+        https://bugs.webkit.org/show_bug.cgi?id=132516
+        <rdar://problem/16717478>
+
+        Reviewed by Sam Weinig.
+        
+        r155977 added code to modify layer contentsScale based on a root-relative
+        scale, so that scaled-up layers remained sharp. It does this by decomposing
+        an accumulated matrix, but failed to test whether the decomposition
+        succeeded. This would result in contentsScale of 0, which is clamped to 0.1,
+        resulting in very fuzzy layers.
+        
+        Fix by testing for success of decomposition.
+
+        Test: compositing/contents-scale/non-decomposable-matrix.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::maxScaleFromTransform):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::decompose2): Return early for identity matrices,
+        with fix for m11 and m22.
+        (WebCore::TransformationMatrix::decompose4): Return early for identity matrices.
+        * platform/graphics/transforms/TransformationMatrix.h:
+        Make Decomposed2Type and Decomposed4Type into C++ structs.
+        (WebCore::TransformationMatrix::Decomposed2Type::operator==): Added to make it easier
+        to write code that asserts that decomposition is correct.
+        (WebCore::TransformationMatrix::Decomposed4Type::operator==): Ditto.
+
+2014-05-03  Simon Fraser  <simon.fraser@apple.com>
+
         Fix crash in WebKit client app when zooming
         https://bugs.webkit.org/show_bug.cgi?id=132475
         <rdar://problem/16703405>

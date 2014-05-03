@@ -1579,6 +1579,9 @@ bool TransformationMatrix::decompose2(Decomposed2Type& decomp) const
         memset(&decomp, 0, sizeof(decomp));
         decomp.scaleX = 1;
         decomp.scaleY = 1;
+        decomp.m11 = 1;
+        decomp.m22 = 1;
+        return true;
     }
 
     return WebCore::decompose2(m_matrix, decomp);
@@ -1592,6 +1595,7 @@ bool TransformationMatrix::decompose4(Decomposed4Type& decomp) const
         decomp.scaleX = 1;
         decomp.scaleY = 1;
         decomp.scaleZ = 1;
+        return true;
     }
 
     return WebCore::decompose4(m_matrix, decomp);
