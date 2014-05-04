@@ -310,6 +310,7 @@ public:
     HTMLImageElement* imageElementByLowercasedUsemap(const AtomicStringImpl&) const;
 
     SelectorQuery* selectorQueryForString(const String&, ExceptionCode&);
+    void clearSelectorQueryCache();
 
     // DOM methods & attributes for Document
 

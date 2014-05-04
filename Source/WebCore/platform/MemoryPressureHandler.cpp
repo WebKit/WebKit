@@ -102,6 +102,12 @@ void MemoryPressureHandler::releaseMemory(bool critical)
     }
 
     {
+        ReliefLogger log("Discard Selector Query Cache");
+        for (auto* document : Document::allDocuments())
+            document->clearSelectorQueryCache();
+    }
+
+    {
         ReliefLogger log("Discard all JIT-compiled code");
         gcController().discardAllCompiledCode();
     }

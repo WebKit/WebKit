@@ -113,7 +113,6 @@ class SelectorQueryCache {
 
 public:
     SelectorQuery* add(const String&, Document&, ExceptionCode&);
-    void invalidate();
 
 private:
     HashMap<String, std::unique_ptr<SelectorQuery>> m_entries;

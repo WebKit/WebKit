@@ -494,9 +494,4 @@ SelectorQuery* SelectorQueryCache::add(const String& selectors, Document& docume
     return m_entries.add(selectors, std::make_unique<SelectorQuery>(std::move(selectorList))).iterator->value.get();
 }
 
-void SelectorQueryCache::invalidate()
-{
-    m_entries.clear();
-}
-
 }

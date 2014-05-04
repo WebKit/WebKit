@@ -753,6 +753,11 @@ SelectorQuery* Document::selectorQueryForString(const String& selectorString, Ex
     return m_selectorQueryCache->add(selectorString, *this, ec);
 }
 
+void Document::clearSelectorQueryCache()
+{
+    m_selectorQueryCache = nullptr;
+}
+
 MediaQueryMatcher& Document::mediaQueryMatcher()
 {
     if (!m_mediaQueryMatcher)
@@ -767,8 +772,7 @@ void Document::setCompatibilityMode(CompatibilityMode mode)
     bool wasInQuirksMode = inQuirksMode();
     m_compatibilityMode = mode;
 
-    if (m_selectorQueryCache)
-        m_selectorQueryCache->invalidate();
+    clearSelectorQueryCache();
 
     if (inQuirksMode() != wasInQuirksMode) {
         // All user stylesheets have to reparse using the different mode.
@@ -2614,8 +2618,7 @@ void Document::updateBaseURL()
         m_baseURL = URL(ParsedURLString, documentURI());
     }
 
-    if (m_selectorQueryCache)
-        m_selectorQueryCache->invalidate();
+    clearSelectorQueryCache();
 
     if (!m_baseURL.isValid())
         m_baseURL = URL();

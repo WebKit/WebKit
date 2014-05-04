@@ -1,3 +1,25 @@
+2014-05-04  Benjamin Poulain  <benjamin@webkit.org>
+
+        Clear the Selector Query caches on memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=132545
+
+        Reviewed by Andreas Kling.
+
+        The Selector Query Cache can use quite a bit of memory if many
+        complex selectors are compiled. This patch makes sure the cache gets
+        cleared on memory pressure.
+
+        * dom/Document.cpp:
+        (WebCore::Document::clearSelectorQueryCache):
+        (WebCore::Document::setCompatibilityMode):
+        (WebCore::Document::updateBaseURL):
+        * dom/Document.h:
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQueryCache::invalidate): Deleted.
+        * dom/SelectorQuery.h:
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+
 2014-05-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert OwnPtr to std::unique_ptr in CDM
