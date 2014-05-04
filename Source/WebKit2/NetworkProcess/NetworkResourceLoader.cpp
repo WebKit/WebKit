@@ -317,13 +317,6 @@ bool NetworkResourceLoader::shouldUseCredentialStorage(ResourceHandle* handle)
     return m_allowStoredCredentials == AllowStoredCredentials;
 }
 
-void NetworkResourceLoader::shouldUseCredentialStorageAsync(ResourceHandle* handle)
-{
-    ASSERT_UNUSED(handle, handle == m_handle);
-
-    handle->continueShouldUseCredentialStorage(shouldUseCredentialStorage(handle));
-}
-
 void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle* handle, const AuthenticationChallenge& challenge)
 {
     ASSERT_UNUSED(handle, handle == m_handle);

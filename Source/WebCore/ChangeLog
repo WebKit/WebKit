@@ -1,3 +1,44 @@
+2014-05-04  Pratik Solanki  <psolanki@apple.com>
+
+        Shortcircuit shouldUseCredentialStorage callback
+        https://bugs.webkit.org/show_bug.cgi?id=132308
+        <rdar://problem/16806708>
+
+        Reviewed by Alexey Proskuryakov.
+
+        If we are going to return true from the shouldUseCredentialStorage callback then we don't
+        really need to have CFNetwork/Foundation call us. We can just disable the callback and
+        CFNetwork will assume true. Add a separate subclass that implements this callback when we
+        need to return false. We can also eliminate the corresponding async callbacks. This avoids
+        pingponging between dispatch queue and main thread in the common case.
+
+        No new tests because no change in functionality.
+
+        * WebCore.exp.in:
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.cpp:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+        (WebCore::ResourceHandle::shouldUseCredentialStorage):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::shouldUseCredentialStorage):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.h:
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::makeDelegate):
+        (WebCore::ResourceHandle::delegate):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandle::shouldUseCredentialStorage):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate connectionShouldUseCredentialStorage:]):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+
 2014-05-04  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] deviceScaleFactor is being double-applied when rendering captions in full screen mode 

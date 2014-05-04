@@ -164,11 +164,6 @@ void ResourceHandle::continueDidReceiveResponse()
     notImplemented();
 }
 
-void ResourceHandle::continueShouldUseCredentialStorage(bool)
-{
-    notImplemented();
-}
-
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool)
 {

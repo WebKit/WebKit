@@ -228,6 +228,8 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     d->m_connectionDelegate->setupRequest(request.get());
 
     CFURLConnectionClient_V6 client = d->m_connectionDelegate->makeConnectionClient();
+    if (shouldUseCredentialStorage)
+        client.shouldUseCredentialStorage = 0;
 
     d->m_connection = adoptCF(CFURLConnectionCreateWithProperties(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client), propertiesDictionary.get()));
 }
@@ -309,10 +311,8 @@ bool ResourceHandle::shouldUseCredentialStorage()
 {
     LOG(Network, "CFNet - shouldUseCredentialStorage()");
     if (ResourceHandleClient* client = this->client()) {
-        if (client->usesAsyncCallbacks())
-            client->shouldUseCredentialStorageAsync(this);
-        else
-            return client->shouldUseCredentialStorage(this);
+        ASSERT(!client->usesAsyncCallbacks());
+        return client->shouldUseCredentialStorage(this);
     }
     return false;
 }
@@ -586,11 +586,6 @@ void ResourceHandle::continueWillSendRequest(const ResourceRequest& request)
 void ResourceHandle::continueDidReceiveResponse()
 {
     d->m_connectionDelegate->continueDidReceiveResponse();
-}
-
-void ResourceHandle::continueShouldUseCredentialStorage(bool useCredentialStorage)
-{
-    d->m_connectionDelegate->continueShouldUseCredentialStorage(useCredentialStorage);
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

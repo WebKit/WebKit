@@ -1,3 +1,22 @@
+2014-05-04  Pratik Solanki  <psolanki@apple.com>
+
+        Shortcircuit shouldUseCredentialStorage callback
+        https://bugs.webkit.org/show_bug.cgi?id=132308
+        <rdar://problem/16806708>
+
+        Reviewed by Alexey Proskuryakov.
+
+        If we are going to return true from the shouldUseCredentialStorage callback then we don't
+        really need to have CFNetwork/Foundation call us. We can just disable the callback and
+        CFNetwork will assume true. Add a separate subclass that implements this callback when we
+        need to return false. We can also eliminate the corresponding async callbacks. This avoids
+        pingponging between dispatch queue and main thread in the common case.
+
+        No new tests because no change in functionality.
+
+        * NetworkProcess/NetworkResourceLoader.cpp: Remove shouldUseCredentialStorageAsync() callbacks.
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2014-05-04  Beth Dakin  <bdakin@apple.com>
 
         Top content inset: Margin tiles should not display in the inset area when pinned 

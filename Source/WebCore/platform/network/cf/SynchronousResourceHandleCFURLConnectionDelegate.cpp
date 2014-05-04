@@ -282,11 +282,6 @@ void SynchronousResourceHandleCFURLConnectionDelegate::continueDidReceiveRespons
     ASSERT_NOT_REACHED();
 }
 
-void SynchronousResourceHandleCFURLConnectionDelegate::continueShouldUseCredentialStorage(bool)
-{
-    ASSERT_NOT_REACHED();
-}
-
 void SynchronousResourceHandleCFURLConnectionDelegate::continueWillCacheResponse(CFCachedURLResponseRef)
 {
     ASSERT_NOT_REACHED();

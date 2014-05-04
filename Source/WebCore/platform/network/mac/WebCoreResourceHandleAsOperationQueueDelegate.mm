@@ -86,12 +86,6 @@ using namespace WebCore;
     dispatch_semaphore_signal(m_semaphore);
 }
 
-- (void)continueShouldUseCredentialStorage:(BOOL)useCredentialStorage
-{
-    m_boolResult = useCredentialStorage;
-    dispatch_semaphore_signal(m_semaphore);
-}
-
 - (void)continueCanAuthenticateAgainstProtectionSpace:(BOOL)canAuthenticate
 {
     m_boolResult = canAuthenticate;
@@ -138,28 +132,6 @@ using namespace WebCore;
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
     return [m_requestResult.leakRef() autorelease];
-}
-
-- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection
-{
-    ASSERT(!isMainThread());
-    UNUSED_PARAM(connection);
-
-    LOG(Network, "Handle %p delegate connectionShouldUseCredentialStorage:%p", m_handle, connection);
-
-    RetainPtr<id> protector(self);
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_handle) {
-            m_boolResult = NO;
-            dispatch_semaphore_signal(m_semaphore);
-            return;
-        }
-        m_handle->shouldUseCredentialStorage();
-    });
-
-    dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
-    return m_boolResult;
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -357,6 +329,17 @@ using namespace WebCore;
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
     return [m_cachedResponseResult.leakRef() autorelease];
+}
+
+@end
+
+@implementation WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate
+
+- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection
+{
+    ASSERT(!isMainThread());
+    UNUSED_PARAM(connection);
+    return NO;
 }
 
 @end

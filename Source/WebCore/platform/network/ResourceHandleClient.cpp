@@ -49,11 +49,6 @@ void ResourceHandleClient::didReceiveResponseAsync(ResourceHandle* handle, const
     handle->continueDidReceiveResponse();
 }
 
-void ResourceHandleClient::shouldUseCredentialStorageAsync(ResourceHandle* handle)
-{
-    handle->continueShouldUseCredentialStorage(false);
-}
-
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void ResourceHandleClient::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* handle, const ProtectionSpace&)
 {
