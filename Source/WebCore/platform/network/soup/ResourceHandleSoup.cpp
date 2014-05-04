@@ -1379,6 +1379,13 @@ void ResourceHandle::continueDidReceiveResponse()
     continueAfterDidReceiveResponse(this);
 }
 
+void ResourceHandle::continueShouldUseCredentialStorage(bool)
+{
+    ASSERT(client());
+    ASSERT(client()->usesAsyncCallbacks());
+    // FIXME: Implement this method if needed: https://bugs.webkit.org/show_bug.cgi?id=126114.
+}
+
 static gboolean requestTimeoutCallback(gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);

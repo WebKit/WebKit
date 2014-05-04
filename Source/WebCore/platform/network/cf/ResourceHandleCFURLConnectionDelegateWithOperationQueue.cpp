@@ -229,7 +229,20 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData(CF
 
 Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::shouldUseCredentialStorage()
 {
-    return NO;
+    RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!protector->hasHandle()) {
+            continueShouldUseCredentialStorage(false);
+            return;
+        }
+
+        LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::shouldUseCredentialStorage(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
+
+        m_handle->shouldUseCredentialStorage();
+    });
+    dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
+    return m_boolResult;
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
@@ -284,6 +297,12 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueWillSendRe
 
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueDidReceiveResponse()
 {
+    dispatch_semaphore_signal(m_semaphore);
+}
+
+void ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueShouldUseCredentialStorage(bool shouldUseCredentialStorage)
+{
+    m_boolResult = shouldUseCredentialStorage;
     dispatch_semaphore_signal(m_semaphore);
 }
 

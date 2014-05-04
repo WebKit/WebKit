@@ -130,7 +130,6 @@ public:
 #if PLATFORM(COCOA) && !USE(CFNETWORK)
     void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
     NSURLConnection *connection() const;
-    id makeDelegate(bool);
     id delegate();
     void releaseDelegate();
 #endif
@@ -208,6 +207,9 @@ public:
 
     // Called in response to ResourceHandleClient::didReceiveResponseAsync().
     void continueDidReceiveResponse();
+
+    // Called in response to ResourceHandleClient::shouldUseCredentialStorageAsync().
+    void continueShouldUseCredentialStorage(bool);
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     // Called in response to ResourceHandleClient::canAuthenticateAgainstProtectionSpaceAsync().

@@ -49,6 +49,7 @@ public:
 
     virtual void continueWillSendRequest(CFURLRequestRef) = 0;
     virtual void continueDidReceiveResponse() = 0;
+    virtual void continueShouldUseCredentialStorage(bool) = 0;
     virtual void continueWillCacheResponse(CFCachedURLResponseRef) = 0;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual void continueCanAuthenticateAgainstProtectionSpace(bool) = 0;
