@@ -1,3 +1,12 @@
+2014-05-03  Babak Shafiei  <bshafiei@apple.com>
+
+        Follow-up fix for the merge of r167480.
+        
+        Rubber stamped by Tim Horton.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::host): Return empty string instead of null string.
+
 2014-05-02  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r166420.

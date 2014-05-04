@@ -579,7 +579,8 @@ String KURL::protocol() const
 String KURL::host() const
 {
     int start = hostStart();
-    return m_string.substring(start, m_hostEnd - start);
+    String substring = m_string.substring(start, m_hostEnd - start);
+    return substring.isNull() ? emptyString() : substring;
 }
 
 unsigned short KURL::port() const
