@@ -129,6 +129,9 @@ public:
     IntRect customFixedPositionLayoutRect() const { return m_customFixedPositionLayoutRect; }
     void setCustomFixedPositionLayoutRect(const IntRect&);
     bool updateFixedPositionLayoutRect();
+
+    void setScrollVelocity(double horizontalVelocity, double verticalVelocity, double scaleChangeRate, double timestamp);
+    FloatRect computeCoverageRect(double horizontalMargin, double verticalMargin) const;
 #else
     bool useCustomFixedPositionLayoutRect() const { return false; }
 #endif
@@ -684,6 +687,11 @@ private:
 #if PLATFORM(IOS)
     bool m_useCustomFixedPositionLayoutRect;
     IntRect m_customFixedPositionLayoutRect;
+
+    double m_horizontalVelocity;
+    double m_verticalVelocity;
+    double m_scaleChangeRate;
+    double m_lastVelocityUpdateTime;
 #endif
 
     IntSize m_overrideViewportSize;
