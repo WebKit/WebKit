@@ -1,3 +1,17 @@
+2014-05-03  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] REGRESSION (WebKit2): Page isn't clipped properly during back/forward swipe
+        https://bugs.webkit.org/show_bug.cgi?id=132538
+        <rdar://problem/16266027>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/mac/ViewGestureController.h:
+        Add a clipping layer above the live swipe layer, which explicitly clips to bounds.
+
 2014-05-02  Pratik Solanki  <psolanki@apple.com>
 
         Shortcircuit shouldUseCredentialStorage callback

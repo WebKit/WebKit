@@ -178,6 +178,7 @@ private:
     bool m_shouldIgnorePinnedState;
 #else    
     UIView *m_liveSwipeView;
+    RetainPtr<UIView> m_liveSwipeViewClippingView;
     RetainPtr<UIView> m_snapshotView;
     RetainPtr<UIView> m_transitionContainerView;
     RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
