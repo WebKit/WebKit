@@ -1,3 +1,35 @@
+2014-05-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] deviceScaleFactor is being double-applied when rendering captions in full screen mode 
+        https://bugs.webkit.org/show_bug.cgi?id=132481
+        <rdar://problem/16507482>
+
+        Reviewed by Jer Noble.
+
+        Add a new 'syncTextTrackBounds' method (and relaying functions) to keep the text track container in sync
+        with changes to the video player's display layer.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::syncTextTrackBounds: Added.
+        * html/HTMLMediaElement.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): Don't set the platform scale factor here. It is already
+        being accounted for in the createTextTrackRepresentationImage method.
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes): Synchronize the text track representation
+        with any new video layer changes.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::syncTextTrackBounds): Added.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::syncTextTrackBounds): Added.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer): Use new sync function.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::syncTextTrackBounds): Added. Keep the text track layer size in sync with
+        the current video layer size. This may change during animations, rotations, etc.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation): Use new sync function.
+
 2014-05-04  Beth Dakin  <bdakin@apple.com>
 
         Top content inset: Margin tiles should not display in the inset area when pinned 

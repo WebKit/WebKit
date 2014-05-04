@@ -352,6 +352,7 @@ public:
 
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);
+    void syncTextTrackBounds();
 #endif
 
 #if ENABLE(IOS_AIRPLAY)

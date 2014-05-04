@@ -223,6 +223,7 @@ public:
 #if ENABLE(VIDEO_TRACK)
     virtual bool requiresTextTrackRepresentation() const { return false; }
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) { }
+    virtual void syncTextTrackBounds() { };
 #endif
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)

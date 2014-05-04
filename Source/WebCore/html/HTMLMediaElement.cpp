@@ -4710,6 +4710,12 @@ void HTMLMediaElement::setTextTrackRepresentation(TextTrackRepresentation* repre
     if (m_player)
         m_player->setTextTrackRepresentation(representation);
 }
+
+void HTMLMediaElement::syncTextTrackBounds()
+{
+    if (m_player)
+        m_player->syncTextTrackBounds();
+}
 #endif // ENABLE(VIDEO_TRACK)
 
 #if ENABLE(IOS_AIRPLAY)

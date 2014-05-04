@@ -203,6 +203,7 @@ private:
 #if ENABLE(VIDEO_TRACK)
     virtual bool requiresTextTrackRepresentation() const override;
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) override;
+    virtual void syncTextTrackBounds() override;
 #endif
 
     void createImageGenerator();

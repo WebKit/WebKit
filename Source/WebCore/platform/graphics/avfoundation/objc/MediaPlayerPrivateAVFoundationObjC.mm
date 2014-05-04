@@ -861,16 +861,14 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
 
     m_videoFullscreenLayer = videoFullscreenLayer;
 
-    CGRect frame = CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height());
-
     if (m_videoFullscreenLayer && m_videoLayer) {
+        CGRect frame = CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height());
         [m_videoLayer setFrame:frame];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
     }
 
     if (m_videoFullscreenLayer && m_textTrackRepresentationLayer) {
-        CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : frame;
-        [m_textTrackRepresentationLayer setFrame:textFrame];
+        syncTextTrackBounds();
         [m_videoFullscreenLayer addSublayer:m_textTrackRepresentationLayer.get()];
     }
 }
@@ -884,10 +882,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame
     if (m_videoLayer)
         [m_videoLayer setFrame:CGRectMake(0, 0, frame.width(), frame.height())];
 
-    if (m_textTrackRepresentationLayer) {
-        CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : static_cast<CGRect>(frame);
-        [m_textTrackRepresentationLayer setFrame:textFrame];
-    }
+    syncTextTrackBounds();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::VideoGravity gravity)
@@ -1593,12 +1588,25 @@ bool MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation() const
     return false;
 }
 
+void MediaPlayerPrivateAVFoundationObjC::syncTextTrackBounds()
+{
+#if PLATFORM(IOS)
+    if (!m_videoFullscreenLayer || !m_textTrackRepresentationLayer)
+        return;
+    
+    CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height());
+    [m_textTrackRepresentationLayer setFrame:textFrame];
+#endif
+}
+
 void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
 {
 #if PLATFORM(IOS)
     PlatformLayer* representationLayer = representation ? representation->platformLayer() : nil;
-    if (representationLayer == m_textTrackRepresentationLayer)
+    if (representationLayer == m_textTrackRepresentationLayer) {
+        syncTextTrackBounds();
         return;
+    }
 
     if (m_textTrackRepresentationLayer)
         [m_textTrackRepresentationLayer removeFromSuperlayer];
@@ -1606,9 +1614,7 @@ void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRep
     m_textTrackRepresentationLayer = representationLayer;
 
     if (m_videoFullscreenLayer && m_textTrackRepresentationLayer) {
-        CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height());
-
-        [m_textTrackRepresentationLayer setFrame:textFrame];
+        syncTextTrackBounds();
         [m_videoFullscreenLayer addSublayer:m_textTrackRepresentationLayer.get()];
     }
 
