@@ -1,6 +1,7 @@
 This layer should not have backing store.
 This layer should have backing store.
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 800.00 600.00)
   (children 1
     (GraphicsLayer

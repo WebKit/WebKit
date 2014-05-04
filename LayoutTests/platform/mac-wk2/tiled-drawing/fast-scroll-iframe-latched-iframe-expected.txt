@@ -14,6 +14,7 @@ Page before: 0, IFrame before: 416
 Page after:  0, IFrame after: 496
 PASS Page did not receive wheel events.
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 2326.00)
   (visible rect 0.00, 0.00 785.00 x 600.00)
   (contentsScale 1.00)

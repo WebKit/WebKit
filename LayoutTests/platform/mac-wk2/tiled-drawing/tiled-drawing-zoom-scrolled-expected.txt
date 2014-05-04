@@ -1,4 +1,5 @@
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 2778.00 4648.00)
   (visible rect 1840.00, 2300.00 785.00 x 585.00)
   (contentsScale 1.00)

@@ -58,6 +58,7 @@ Page before: 0, div before: 451
 Page after:  0, div after: 451
 PASS Page did not receive wheel events.
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 2008.00 2326.00)
   (visible rect 0.00, 0.00 785.00 x 585.00)
   (contentsScale 1.00)

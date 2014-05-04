@@ -1,5 +1,6 @@
 
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 800.00 600.00)
   (children 1
     (GraphicsLayer
@@ -15,11 +16,13 @@
               (position 2.00 2.00)
               (children 1
                 (GraphicsLayer
+                  (anchor 0.00 0.00)
                   (bounds 285.00 150.00)
                   (children 1
                     (GraphicsLayer
                       (children 1
                         (GraphicsLayer
+                          (anchor 0.00 0.00)
                           (bounds 285.00 230.00)
                           (children 1
                             (GraphicsLayer

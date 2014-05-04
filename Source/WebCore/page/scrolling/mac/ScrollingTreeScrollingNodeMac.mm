@@ -84,6 +84,9 @@ void ScrollingTreeScrollingNodeMac::updateBeforeChildren(const ScrollingStateNod
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
         m_counterScrollingLayer = scrollingStateNode.counterScrollingLayer();
 
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::InsetClipLayer))
+        m_insetClipLayer = scrollingStateNode.insetClipLayer();
+
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::HeaderLayer))
         m_headerLayer = scrollingStateNode.headerLayer();
 
@@ -351,6 +354,13 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const FloatPoint& pos
     
     if (m_counterScrollingLayer)
         m_counterScrollingLayer.get().position = FloatPoint(scrollOffsetForFixedChildren);
+
+    float topContentInset = this->topContentInset();
+    if (m_insetClipLayer && m_scrolledContentsLayer && topContentInset) {
+        m_insetClipLayer.get().position = FloatPoint(0, FrameView::yPositionForInsetClipLayer(position, topContentInset));
+        m_scrolledContentsLayer.get().position = FloatPoint(m_scrolledContentsLayer.get().position.x,
+            FrameView::yPositionForRootContentLayer(position, topContentInset));
+    }
 
     if (m_headerLayer || m_footerLayer) {
         // Generally the banners should have the same horizontal-position computation as a fixed element. However,

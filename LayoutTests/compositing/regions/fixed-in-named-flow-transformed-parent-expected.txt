@@ -3,6 +3,7 @@ Test that a fixed positioned element with a transformed parent is positioned rel
 On success you should not see red below.
 
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 800.00 600.00)
   (children 1
     (GraphicsLayer

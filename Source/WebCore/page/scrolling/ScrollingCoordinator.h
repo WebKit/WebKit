@@ -164,7 +164,7 @@ public:
         IntPoint scrollOrigin;
     };
 
-    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, GraphicsLayer* /*counterScrollingLayer*/, const ScrollingGeometry* = nullptr) { }
+    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, GraphicsLayer* /*counterScrollingLayer*/, GraphicsLayer* /*insetClipLayer*/, const ScrollingGeometry* = nullptr) { }
     virtual void syncChildPositions(const LayoutRect&) { }
     virtual String scrollingStateTreeAsText() const;
     virtual bool isRubberBandInProgress() const { return false; }
@@ -203,6 +203,8 @@ protected:
     unsigned computeCurrentWheelEventHandlerCount();
     GraphicsLayer* scrollLayerForFrameView(FrameView*);
     GraphicsLayer* counterScrollingLayerForFrameView(FrameView*);
+    GraphicsLayer* insetClipLayerForFrameView(FrameView*);
+    GraphicsLayer* rootContentLayerForFrameView(FrameView*);
     GraphicsLayer* headerLayerForFrameView(FrameView*);
     GraphicsLayer* footerLayerForFrameView(FrameView*);
 

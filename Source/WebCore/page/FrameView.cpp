@@ -1603,6 +1603,34 @@ LayoutSize FrameView::scrollOffsetForFixedPosition() const
     ScrollBehaviorForFixedElements behaviorForFixed = scrollBehaviorForFixedElements();
     return scrollOffsetForFixedPosition(visibleContentRect, totalContentsSize, scrollPosition, scrollOrigin, frameScaleFactor, fixedElementsLayoutRelativeToFrame(), behaviorForFixed, headerHeight(), footerHeight());
 }
+
+float FrameView::yPositionForInsetClipLayer(const FloatPoint& scrollPosition, float topContentInset)
+{
+    if (!topContentInset)
+        return 0;
+
+    // The insetClipLayer should not move for negative scroll values.
+    float scrollY = std::max<float>(0, scrollPosition.y());
+
+    if (scrollY >= topContentInset)
+        return 0;
+
+    return topContentInset - scrollY;
+}
+
+float FrameView::yPositionForRootContentLayer(const FloatPoint& scrollPosition, float topContentInset)
+{
+    if (!topContentInset)
+        return 0;
+
+    // The rootContentLayer should not move for negative scroll values.
+    float scrollY = std::max<float>(0, scrollPosition.y());
+
+    if (scrollY >= topContentInset)
+        return topContentInset;
+
+    return scrollY;
+}
     
 #if PLATFORM(IOS)
 LayoutRect FrameView::rectForViewportConstrainedObjects(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements scrollBehavior)

@@ -1,6 +1,7 @@
 Test CSS clip with composited layers. Left and right sides should look the same.
 
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 800.00 600.00)
   (children 1
     (GraphicsLayer

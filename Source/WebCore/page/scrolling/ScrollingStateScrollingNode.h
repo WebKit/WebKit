@@ -62,12 +62,14 @@ public:
         RequestedScrollPosition,
         ScrolledContentsLayer,
         CounterScrollingLayer,
+        InsetClipLayer,
         HeaderHeight,
         FooterHeight,
         HeaderLayer,
         FooterLayer,
         PainterForScrollbar,
-        BehaviorForFixedElements
+        BehaviorForFixedElements,
+        TopContentInset
     };
 
     const FloatSize& viewportSize() const { return m_viewportSize; }
@@ -110,13 +112,23 @@ public:
     int footerHeight() const { return m_footerHeight; }
     void setFooterHeight(int);
 
-    // This is a layer with the contents that move (only used for overflow:scroll).
+    float topContentInset() const { return m_topContentInset; }
+    void setTopContentInset(float);
+
+    // This is a layer with the contents that move.
     const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
     void setScrolledContentsLayer(const LayerRepresentation&);
 
     // This is a layer moved in the opposite direction to scrolling, for example for background-attachment:fixed
     const LayerRepresentation& counterScrollingLayer() const { return m_counterScrollingLayer; }
     void setCounterScrollingLayer(const LayerRepresentation&);
+
+    // This is a clipping layer that will scroll with the page for all y-delta scroll values between 0
+    // and topContentInset(). Once the y-deltas get beyond the content inset point, this layer no longer
+    // needs to move. If the topContentInset() is 0, this layer does not need to move at all. This is
+    // only used on the Mac.
+    const LayerRepresentation& insetClipLayer() const { return m_insetClipLayer; }
+    void setInsetClipLayer(const LayerRepresentation&);
 
     // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
     const LayerRepresentation& headerLayer() const { return m_headerLayer; }
@@ -140,6 +152,7 @@ private:
 
     LayerRepresentation m_scrolledContentsLayer;
     LayerRepresentation m_counterScrollingLayer;
+    LayerRepresentation m_insetClipLayer;
     LayerRepresentation m_headerLayer;
     LayerRepresentation m_footerLayer;
 
@@ -163,6 +176,7 @@ private:
     int m_footerHeight;
     FloatPoint m_requestedScrollPosition;
     bool m_requestedScrollPositionRepresentsProgrammaticScroll;
+    float m_topContentInset;
 };
 
 SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateScrollingNode, isScrollingNode());

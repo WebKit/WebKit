@@ -1,5 +1,6 @@
 
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 1508.00 1516.00)
   (visible rect 0.00, 0.00 785.00 x 585.00)
   (contentsScale 1.00)
@@ -23,6 +24,7 @@
               (contentsScale 1.00)
               (children 1
                 (GraphicsLayer
+                  (anchor 0.00 0.00)
                   (bounds 285.00 135.00)
                   (visible rect 0.00, 0.00 285.00 x 135.00)
                   (contentsScale 1.00)
@@ -32,6 +34,7 @@
                       (contentsScale 1.00)
                       (children 1
                         (GraphicsLayer
+                          (anchor 0.00 0.00)
                           (bounds 1508.00 1516.00)
                           (visible rect 0.00, 0.00 285.00 x 135.00)
                           (contentsScale 1.00)

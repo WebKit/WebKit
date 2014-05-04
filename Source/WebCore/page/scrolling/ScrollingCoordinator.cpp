@@ -248,6 +248,20 @@ GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(FrameView
     return 0;
 }
 
+GraphicsLayer* ScrollingCoordinator::insetClipLayerForFrameView(FrameView* frameView)
+{
+    if (RenderView* renderView = frameView->frame().contentRenderer())
+        return renderView->compositor().clipLayer();
+    return 0;
+}
+
+GraphicsLayer* ScrollingCoordinator::rootContentLayerForFrameView(FrameView* frameView)
+{
+    if (RenderView* renderView = frameView->frame().contentRenderer())
+        return renderView->compositor().rootContentLayer();
+    return 0;
+}
+
 void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
 {
     ASSERT(isMainThread());

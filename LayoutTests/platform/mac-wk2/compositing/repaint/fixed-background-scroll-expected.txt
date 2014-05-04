@@ -2,6 +2,7 @@
   (rect 0 0 785 600)
 )
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 2021.00)
   (children 1
     (GraphicsLayer

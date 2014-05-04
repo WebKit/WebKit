@@ -185,6 +185,8 @@ public:
     RenderLayer& rootRenderLayer() const;
     GraphicsLayer* rootGraphicsLayer() const;
     GraphicsLayer* scrollLayer() const;
+    GraphicsLayer* clipLayer() const;
+    GraphicsLayer* rootContentLayer() const;
 
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* headerLayer() const;
@@ -376,6 +378,8 @@ private:
     void updateOverflowControlsLayers();
 
     void updateScrollLayerPosition();
+
+    FloatPoint positionForClipLayer() const;
 
     void notifyIFramesOfCompositingChange();
 

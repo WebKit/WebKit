@@ -14,6 +14,7 @@ Page after:  70, IFrame after: 0
 PASS IFrame did not receive wheel events.
 Document was initial target for 4 of the wheel events.
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 2326.00)
   (visible rect 0.00, 70.00 785.00 x 600.00)
   (contentsScale 1.00)

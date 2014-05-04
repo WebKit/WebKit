@@ -1,6 +1,7 @@
 document.body.scrollTop = 1000
 
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 5008.00 5016.00)
   (visible rect 1000.00, 1000.00 785.00 x 585.00)
   (contentsScale 1.00)

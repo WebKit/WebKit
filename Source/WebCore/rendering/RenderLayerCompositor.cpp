@@ -1543,6 +1543,7 @@ void RenderLayerCompositor::frameViewDidChangeSize()
     if (m_clipLayer) {
         const FrameView& frameView = m_renderView.frameView();
         m_clipLayer->setSize(frameView.unscaledTotalVisibleContentSize());
+        m_clipLayer->setPosition(positionForClipLayer());
 
         frameViewDidScroll();
         updateOverflowControlsLayers();
@@ -1571,6 +1572,11 @@ void RenderLayerCompositor::updateScrollLayerPosition()
 
     if (GraphicsLayer* fixedBackgroundLayer = fixedRootBackgroundLayer())
         fixedBackgroundLayer->setPosition(toLayoutPoint(frameView.scrollOffsetForFixedPosition()));
+}
+
+FloatPoint RenderLayerCompositor::positionForClipLayer() const
+{
+    return FloatPoint(0, FrameView::yPositionForInsetClipLayer(m_renderView.frameView().scrollPosition(), m_renderView.frameView().topContentInset()));
 }
 
 void RenderLayerCompositor::frameViewDidScroll()
@@ -1868,6 +1874,16 @@ GraphicsLayer* RenderLayerCompositor::scrollLayer() const
     return m_scrollLayer.get();
 }
 
+GraphicsLayer* RenderLayerCompositor::clipLayer() const
+{
+    return m_clipLayer.get();
+}
+
+GraphicsLayer* RenderLayerCompositor::rootContentLayer() const
+{
+    return m_rootContentLayer.get();
+}
+
 #if ENABLE(RUBBER_BANDING)
 GraphicsLayer* RenderLayerCompositor::headerLayer() const
 {
@@ -1938,10 +1954,13 @@ void RenderLayerCompositor::updateRootLayerPosition()
         const IntRect& documentRect = m_renderView.documentRect();
         m_rootContentLayer->setSize(documentRect.size());        
         m_rootContentLayer->setPosition(FloatPoint(documentRect.x(), documentRect.y() + m_renderView.frameView().headerHeight()
-            + m_renderView.frameView().topContentInset()));
+            + FrameView::yPositionForRootContentLayer(m_renderView.frameView().scrollPosition(), m_renderView.frameView().topContentInset())));
+        m_rootContentLayer->setAnchorPoint(FloatPoint3D());
     }
-    if (m_clipLayer)
+    if (m_clipLayer) {
         m_clipLayer->setSize(m_renderView.frameView().unscaledTotalVisibleContentSize());
+        m_clipLayer->setPosition(positionForClipLayer());
+    }
 
 #if ENABLE(RUBBER_BANDING)
     if (m_contentShadowLayer) {
@@ -3043,7 +3062,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForOverhangAreas->setName("overhang areas");
 #endif
             m_layerForOverhangAreas->setDrawsContent(false);
-            
+
             float topContentInset = m_renderView.frameView().topContentInset();
             IntSize overhangAreaSize = m_renderView.frameView().frameRect().size();
             overhangAreaSize.setHeight(overhangAreaSize.height() - topContentInset);
@@ -3203,6 +3222,8 @@ void RenderLayerCompositor::ensureRootLayer()
             m_scrollLayer->addChild(m_rootContentLayer.get());
 
             m_clipLayer->setSize(m_renderView.frameView().unscaledTotalVisibleContentSize());
+            m_clipLayer->setPosition(positionForClipLayer());
+            m_clipLayer->setAnchorPoint(FloatPoint3D());
 
             updateOverflowControlsLayers();
 
@@ -3603,18 +3624,20 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
         GraphicsLayer* scrollingLayer = backing->scrollingLayer();
         GraphicsLayer* scrolledContentsLayer = backing->scrollingContentsLayer();
         GraphicsLayer* counterScrollingLayer = nullptr;
+        GraphicsLayer* insetClipLayer = nullptr;
 
         if (isRootLayer) {
             scrollingLayer = m_scrollLayer.get();
-            scrolledContentsLayer = nullptr;
+            scrolledContentsLayer = m_rootContentLayer.get();
             counterScrollingLayer = fixedRootBackgroundLayer();
-            scrollingCoordinator->updateScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, counterScrollingLayer);
+            insetClipLayer = clipLayer();
+            scrollingCoordinator->updateScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, counterScrollingLayer, insetClipLayer);
         } else {
             ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
             scrollingGeometry.scrollOrigin = layer.scrollOrigin();
             scrollingGeometry.scrollPosition = layer.scrollPosition();
             scrollingGeometry.contentSize = layer.contentsSize();
-            scrollingCoordinator->updateScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, counterScrollingLayer, &scrollingGeometry);
+            scrollingCoordinator->updateScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, counterScrollingLayer, insetClipLayer, &scrollingGeometry);
         }
     }
 }

@@ -15,6 +15,7 @@ Page after:  0, IFrame after: 496
 PASS Page did not receive wheel events.
 Document was initial target for 0 of the wheel events.
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 2341.00)
   (visible rect 0.00, 0.00 785.00 x 600.00)
   (contentsScale 1.00)

@@ -1,3 +1,95 @@
+2014-05-04  Beth Dakin  <bdakin@apple.com>
+
+        Top content inset: Margin tiles should not display in the inset area when pinned 
+        to the top of the page
+        https://bugs.webkit.org/show_bug.cgi?id=132535
+        -and corresponding-
+        <rdar://problem/16613039>
+
+        Reviewed by Simon Fraser.
+
+        Prior to this change, topContentInset was implemented by positioning 
+        RenderLayerCompositor’s m_rootContentLayer based on the inset value. In order to 
+        ensure that no content is displayed in the inset area when we are pinned to the 
+        top of the page, we’ll have to take a different approach. In this patch, when you 
+        are pinned to the top of the page, the m_rootContentLayer is positioned at (0,0), 
+        much like it would be without an inset, but the m_clip layer IS positioned at (0, 
+        topContentInset). Then for all y-scroll values between 0 and topContentInset, the 
+        positions of the clip layer and the contents layer are adjusted so that the clip 
+        layer approaches a position of (0,0), and the root layer approaches a position of 
+        (0, topContentInset). This makes sure that any content above the top the document 
+        is aways clipped out of the inset area.
+
+        In order to achieve this, the scrolling thread needs to know about the 
+        topContentInset, the clip layer, and the root contents layer.
+
+        AsyncScrollingCoordinator::updateScrollingNode() now takes an additional parameter 
+        for the clip layer. Also export the topContentInset symbol for UI-side 
+        compositing.
+        * WebCore.exp.in:
+
+        Here is the new computation. Implemented in one spot that can be called from the 
+        scrolling thread, AsyncScrollingCoordinator and RenderLayerCompositor.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::yPositionForInsetClipLayer):
+        (WebCore::FrameView::yPositionForRootContentLayer):
+        * page/FrameView.h:
+
+        Set the topContentInset, the insetClipLayer, and the scrolledContentsLayer when 
+        appropriate.
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
+
+        Set or sync the positions for the inset layer and the contents layer.
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::updateScrollingNode):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+
+        Convenience functions for getting the clipLayer() and the rootContentLayer() from 
+        the RenderLayerCompositor.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::insetClipLayerForFrameView):
+        (WebCore::ScrollingCoordinator::rootContentLayerForFrameView):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::updateScrollingNode):
+
+        ScrollingStateScrolling nodes have two new members now. m_insetClipLayer and 
+        m_topContentInset. We can use m_scrolledContentsLayer for the rootContentsLayer 
+        since previously that member was not used for FrameViews; it was only used for 
+        accelerated overflow:scroll nodes.
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setTopContentInset):
+        (WebCore::ScrollingStateScrollingNode::setInsetClipLayer):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+
+        Similarly, ScrollingTreeScrollingNode has two new members for m_topContentInset 
+        and m_clipLayer.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::ScrollingTreeScrollingNode):
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::topContentInset):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateBeforeChildren):
+
+        Compute positions for the two new layers.
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+
+        Now use the static FrameView functions to compute the positions for these layers.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        (WebCore::RenderLayerCompositor::positionForClipLayer):
+        (WebCore::RenderLayerCompositor::clipLayer):
+        (WebCore::RenderLayerCompositor::rootContentLayer):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        * rendering/RenderLayerCompositor.h:
+
 2014-05-04  Benjamin Poulain  <benjamin@webkit.org>
 
         Clear the Selector Query caches on memory pressure

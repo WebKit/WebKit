@@ -122,6 +122,7 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(ArgumentEncoder& encoder
     SCROLLING_NODE_ENCODE(RequestedScrollPosition, requestedScrollPositionRepresentsProgrammaticScroll)
     SCROLLING_NODE_ENCODE(HeaderHeight, headerHeight)
     SCROLLING_NODE_ENCODE(FooterHeight, footerHeight)
+    SCROLLING_NODE_ENCODE(TopContentInset, topContentInset)
 
     if (node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer());
@@ -176,6 +177,7 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(ArgumentDecoder& decoder
 
     SCROLLING_NODE_DECODE(HeaderHeight, int, setHeaderHeight);
     SCROLLING_NODE_DECODE(FooterHeight, int, setFooterHeight);
+    SCROLLING_NODE_DECODE(TopContentInset, float, setTopContentInset);
 
     if (node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)) {
         GraphicsLayer::PlatformLayerID layerID;

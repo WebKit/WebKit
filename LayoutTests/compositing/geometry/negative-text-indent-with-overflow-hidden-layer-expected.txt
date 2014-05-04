@@ -2,6 +2,7 @@ CONSOLE MESSAGE: line 38: ReferenceError: Can't find variable: runRepaintTest
 Hidden Text
 Hidden Text
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 800.00 600.00)
   (children 1
     (GraphicsLayer

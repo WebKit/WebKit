@@ -2,6 +2,7 @@ The yellow box should be 500 x 500 on startup. Then it should stretch to be 500 
 
 First (small layer):
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 611.00)
   (children 1
     (GraphicsLayer
@@ -34,6 +35,7 @@ First (small layer):
 
 Second (huge layer):
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 5111.00)
   (children 1
     (GraphicsLayer
@@ -67,6 +69,7 @@ Second (huge layer):
 
 Third (small layer):
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 611.00)
   (children 1
     (GraphicsLayer

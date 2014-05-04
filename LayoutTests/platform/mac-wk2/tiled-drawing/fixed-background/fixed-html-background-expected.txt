@@ -1,4 +1,5 @@
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 1516.00)
   (children 1
     (GraphicsLayer

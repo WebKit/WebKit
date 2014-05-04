@@ -52,6 +52,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree& sta
     , m_headerHeight(0)
     , m_footerHeight(0)
     , m_requestedScrollPositionRepresentsProgrammaticScroll(false)
+    , m_topContentInset(0)
 {
 }
 
@@ -75,12 +76,16 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_footerHeight(stateNode.footerHeight())
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
+    , m_topContentInset(stateNode.topContentInset())
 {
     if (hasChangedProperty(ScrolledContentsLayer))
         setScrolledContentsLayer(stateNode.scrolledContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
     if (hasChangedProperty(CounterScrollingLayer))
         setCounterScrollingLayer(stateNode.counterScrollingLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
+
+    if (hasChangedProperty(InsetClipLayer))
+        setInsetClipLayer(stateNode.insetClipLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
     if (hasChangedProperty(HeaderLayer))
         setHeaderLayer(stateNode.headerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -214,6 +219,15 @@ void ScrollingStateScrollingNode::setFooterHeight(int footerHeight)
     setPropertyChanged(FooterHeight);
 }
 
+void ScrollingStateScrollingNode::setTopContentInset(float topContentInset)
+{
+    if (m_topContentInset == topContentInset)
+        return;
+
+    m_topContentInset = topContentInset;
+    setPropertyChanged(TopContentInset);
+}
+
 void ScrollingStateScrollingNode::setScrolledContentsLayer(const LayerRepresentation& layerRepresentation)
 {
     if (layerRepresentation == m_scrolledContentsLayer)
@@ -230,6 +244,15 @@ void ScrollingStateScrollingNode::setCounterScrollingLayer(const LayerRepresenta
     
     m_counterScrollingLayer = layerRepresentation;
     setPropertyChanged(CounterScrollingLayer);
+}
+
+void ScrollingStateScrollingNode::setInsetClipLayer(const LayerRepresentation& layerRepresentation)
+{
+    if (layerRepresentation == m_insetClipLayer)
+        return;
+    
+    m_insetClipLayer = layerRepresentation;
+    setPropertyChanged(InsetClipLayer);
 }
 
 void ScrollingStateScrollingNode::setHeaderLayer(const LayerRepresentation& layerRepresentation)

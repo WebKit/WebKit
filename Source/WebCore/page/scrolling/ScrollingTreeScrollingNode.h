@@ -89,6 +89,8 @@ protected:
 
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
 
+    float topContentInset() const { return m_topContentInset; }
+
 private:
     FloatSize m_viewportSize;
     IntSize m_totalContentsSize;
@@ -105,6 +107,8 @@ private:
 
     SynchronousScrollingReasons m_synchronousScrollingReasons;
     ScrollBehaviorForFixedElements m_behaviorForFixed;
+
+    float m_topContentInset;
 };
 
 SCROLLING_NODE_TYPE_CASTS(ScrollingTreeScrollingNode, isScrollingNode());

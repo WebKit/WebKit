@@ -1,5 +1,6 @@
 Not scaled:
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 1016.00)
   (children 1
     (GraphicsLayer
@@ -21,6 +22,7 @@ Not scaled:
 )
 Scale=0.5:
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 400.00 508.00)
   (children 1
     (GraphicsLayer
@@ -44,6 +46,7 @@ Scale=0.5:
 )
 Scale=1.5:
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 1272.00 1524.00)
   (children 1
     (GraphicsLayer

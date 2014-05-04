@@ -1,5 +1,6 @@
 Before:
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 802.00)
   (children 1
     (GraphicsLayer
@@ -34,6 +35,7 @@ Before:
 
 After:
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 802.00)
   (children 1
     (GraphicsLayer

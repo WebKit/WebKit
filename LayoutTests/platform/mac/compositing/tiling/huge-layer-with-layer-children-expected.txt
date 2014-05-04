@@ -2,6 +2,7 @@ The yellow box should be large enough to scroll off the bottom. There should be 
 
 This is some text
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 5129.00)
   (children 1
     (GraphicsLayer

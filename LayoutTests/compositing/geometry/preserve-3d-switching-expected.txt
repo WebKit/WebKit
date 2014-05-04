@@ -2,6 +2,7 @@ The green box appear angled out from the yellow box and embedded in it.
 
 -webkit-transform: translateZ(-100px) rotateY(45deg);
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 800.00 600.00)
   (children 1
     (GraphicsLayer

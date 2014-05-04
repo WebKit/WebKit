@@ -5,6 +5,7 @@ top
 
 middlebottom
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 2618.00)
   (children 1
     (GraphicsLayer

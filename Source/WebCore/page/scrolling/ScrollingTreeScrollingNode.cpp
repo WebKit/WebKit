@@ -40,6 +40,7 @@ ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree& scrollingT
     , m_footerHeight(0)
     , m_synchronousScrollingReasons(0)
     , m_behaviorForFixed(StickToDocumentBounds)
+    , m_topContentInset(0)
 {
 }
 
@@ -85,6 +86,9 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& 
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::BehaviorForFixedElements))
         m_behaviorForFixed = state.scrollBehaviorForFixedElements();
+
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::TopContentInset))
+        m_topContentInset = state.topContentInset();
 }
 
 void ScrollingTreeScrollingNode::updateAfterChildren(const ScrollingStateNode& stateNode)

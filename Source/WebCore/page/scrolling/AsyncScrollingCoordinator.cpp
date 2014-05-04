@@ -87,6 +87,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     node->setFrameScaleFactor(frameView->frame().frameScaleFactor());
     node->setHeaderHeight(frameView->headerHeight());
     node->setFooterHeight(frameView->footerHeight());
+    node->setTopContentInset(frameView->topContentInset());
 
     node->setScrollOrigin(frameView->scrollOrigin());
     node->setViewportSize(frameView->visibleContentRect().size());
@@ -128,6 +129,7 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView
     ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
     node->setLayer(scrollLayerForFrameView(frameView));
     node->setCounterScrollingLayer(counterScrollingLayerForFrameView(frameView));
+    node->setInsetClipLayer(insetClipLayerForFrameView(frameView));
     node->setHeaderLayer(headerLayerForFrameView(frameView));
     node->setFooterLayer(footerLayerForFrameView(frameView));
     node->setScrollBehaviorForFixedElements(frameView->scrollBehaviorForFixedElements());
@@ -207,14 +209,25 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
 
         if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView)) {
             GraphicsLayer* counterScrollingLayer = counterScrollingLayerForFrameView(frameView);
+            GraphicsLayer* insetClipLayer = insetClipLayerForFrameView(frameView);
+            GraphicsLayer* scrolledContentsLayer = rootContentLayerForFrameView(frameView);
             GraphicsLayer* headerLayer = headerLayerForFrameView(frameView);
             GraphicsLayer* footerLayer = footerLayerForFrameView(frameView);
             LayoutSize scrollOffsetForFixed = frameView->scrollOffsetForFixedPosition();
+
+            float topContentInset = frameView->topContentInset();
+            FloatPoint positionForInsetClipLayer = FloatPoint(0, FrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset));
+            FloatPoint positionForContentsLayer = FloatPoint(scrolledContentsLayer->position().x(),
+                FrameView::yPositionForRootContentLayer(scrollPosition, topContentInset));
 
             if (programmaticScroll || scrollingLayerPositionAction == SetScrollingLayerPosition) {
                 scrollLayer->setPosition(-frameView->scrollPosition());
                 if (counterScrollingLayer)
                     counterScrollingLayer->setPosition(toLayoutPoint(scrollOffsetForFixed));
+                if (insetClipLayer)
+                    insetClipLayer->setPosition(positionForInsetClipLayer);
+                if (scrolledContentsLayer)
+                    scrolledContentsLayer->setPosition(positionForContentsLayer);
                 if (headerLayer)
                     headerLayer->setPosition(FloatPoint(scrollOffsetForFixed.width(), 0));
                 if (footerLayer)
@@ -223,6 +236,10 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
                 scrollLayer->syncPosition(-frameView->scrollPosition());
                 if (counterScrollingLayer)
                     counterScrollingLayer->syncPosition(toLayoutPoint(scrollOffsetForFixed));
+                if (insetClipLayer)
+                    insetClipLayer->syncPosition(positionForInsetClipLayer);
+                if (scrolledContentsLayer)
+                    scrolledContentsLayer->syncPosition(positionForContentsLayer);
                 if (headerLayer)
                     headerLayer->syncPosition(FloatPoint(scrollOffsetForFixed.width(), 0));
                 if (footerLayer)
@@ -293,7 +310,7 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView* frame
     attachToStateTree(FrameScrollingNode, frameView->scrollLayerID(), 0);
 }
 
-void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, const ScrollingGeometry* scrollingGeometry)
+void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, const ScrollingGeometry* scrollingGeometry)
 {
     ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(nodeID));
     ASSERT(node);
@@ -302,6 +319,7 @@ void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, Grap
 
     node->setLayer(layer);
     node->setScrolledContentsLayer(scrolledContentsLayer);
+    node->setInsetClipLayer(insetClipLayer);
     node->setCounterScrollingLayer(counterScrollingLayer);
 
     if (scrollingGeometry) {

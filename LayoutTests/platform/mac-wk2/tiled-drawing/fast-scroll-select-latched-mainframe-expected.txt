@@ -15,6 +15,7 @@ Page before: 0, select before: 0
 Page after:  70, select after: 0
 PASS Select did not receive wheel events.
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 2008.00 2311.00)
   (visible rect 0.00, 70.00 785.00 x 585.00)
   (contentsScale 1.00)
