@@ -1,3 +1,20 @@
+2014-05-02  Pratik Solanki  <psolanki@apple.com>
+
+        Reduce calls to CFURLCacheCopySharedURLCache
+        https://bugs.webkit.org/show_bug.cgi?id=132464
+        <rdar://problem/16806694>
+
+        Reviewed by Alexey Proskuryakov.
+
+        CFURLCacheCopySharedURLCache grabs a mutex and can sometimes block. Avoid that by stashing
+        the cache reference in a static.
+
+        * NetworkProcess/NetworkResourceLoader.h: Coalesce ifdef'd code.
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer):
+        (WebKit::NetworkResourceLoader::willCacheResponseAsync): Use more correct ifdef for
+        Foundation based callback.
+
 2014-05-03  Sam Weinig  <sam@webkit.org>
 
         [Cocoa WebKit2] Add basic _WKWebsiteDataStore implementation

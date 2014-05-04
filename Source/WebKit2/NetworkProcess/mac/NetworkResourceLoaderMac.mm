@@ -86,12 +86,18 @@ void NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse(Shareab
 
 void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle& handle, SharedBuffer* buffer)
 {
-    RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
+    static CFURLCacheRef cache = CFURLCacheCopySharedURLCache();
+#if !ASSERT_DISABLED
+    ASSERT(isMainThread());
+    RetainPtr<CFURLCacheRef> currentCache = adoptCF(CFURLCacheCopySharedURLCache());
+    ASSERT(cache == currentCache.get());
+#endif
+
     if (!cache)
         return;
 
     RetainPtr<CFDataRef> data = buffer->createCFData();
-    if (_CFURLCacheIsResponseDataMemMapped(cache.get(), data.get()) == kCFBooleanFalse)
+    if (_CFURLCacheIsResponseDataMemMapped(cache, data.get()) == kCFBooleanFalse)
         return;
 
     tryGetShareableHandleFromCFData(handle, data.get());
@@ -113,9 +119,9 @@ void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, CFCac
 
     m_handle->continueWillCacheResponse(cfResponse);
 }
-#endif
 
-#if !PLATFORM(IOS)
+#else
+
 void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *nsResponse)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
@@ -127,7 +133,7 @@ void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCac
 
     m_handle->continueWillCacheResponse(nsResponse);
 }
-#endif // !PLATFORM(IOS)
+#endif // !USE(CFNETWORK)
 
 } // namespace WebKit
 
