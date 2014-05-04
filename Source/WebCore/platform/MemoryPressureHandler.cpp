@@ -31,6 +31,7 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "GCController.h"
+#include "JSDOMWindow.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -103,6 +104,11 @@ void MemoryPressureHandler::releaseMemory(bool critical)
     {
         ReliefLogger log("Discard all JIT-compiled code");
         gcController().discardAllCompiledCode();
+    }
+
+    {
+        ReliefLogger log("Clearing JS string cache");
+        JSDOMWindow::commonVM().stringCache.clear();
     }
 
     platformReleaseMemory(critical);
