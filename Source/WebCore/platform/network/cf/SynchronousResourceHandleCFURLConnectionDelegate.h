@@ -59,7 +59,6 @@ private:
 
     virtual void continueWillSendRequest(CFURLRequestRef) override;
     virtual void continueDidReceiveResponse() override;
-    virtual void continueShouldUseCredentialStorage(bool) override;
     virtual void continueWillCacheResponse(CFCachedURLResponseRef) override;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual void continueCanAuthenticateAgainstProtectionSpace(bool) override;

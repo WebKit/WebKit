@@ -223,7 +223,7 @@ bool ResourceHandle::start()
 
 #if !PLATFORM(IOS)
     createNSURLConnection(
-        ResourceHandle::delegate(),
+        ResourceHandle::makeDelegate(shouldUseCredentialStorage),
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
         SchedulingBehavior::Asynchronous);
@@ -319,15 +319,29 @@ void ResourceHandle::unschedule(SchedulePair& pair)
 
 #endif
 
+id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage)
+{
+    ASSERT(!d->m_delegate);
+
+    id <NSURLConnectionDelegate> delegate;
+    if (client() && client()->usesAsyncCallbacks()) {
+        if (shouldUseCredentialStorage)
+            delegate = [[WebCoreResourceHandleAsOperationQueueDelegate alloc] initWithHandle:this];
+        else
+            delegate = [[WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate alloc] initWithHandle:this];
+
+    } else
+        delegate = [[WebCoreResourceHandleAsDelegate alloc] initWithHandle:this];
+
+    d->m_delegate = delegate;
+    [delegate release];
+
+    return d->m_delegate.get();
+}
+
 id ResourceHandle::delegate()
 {
-    if (!d->m_delegate) {
-        id <NSURLConnectionDelegate> delegate = (client() && client()->usesAsyncCallbacks()) ?
-            [[WebCoreResourceHandleAsOperationQueueDelegate alloc] initWithHandle:this]
-          : [[WebCoreResourceHandleAsDelegate alloc] initWithHandle:this];
-        d->m_delegate = delegate;
-        [delegate release];
-    }
+    ASSERT(d->m_delegate);
     return d->m_delegate.get();
 }
 
@@ -373,9 +387,10 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     }
 
 #if !PLATFORM(IOS)
+    bool shouldUseCredentialStorage = storedCredentials == AllowStoredCredentials;
     handle->createNSURLConnection(
-        handle->delegate(),
-        storedCredentials == AllowStoredCredentials,
+        handle->makeDelegate(shouldUseCredentialStorage),
+        shouldUseCredentialStorage,
         handle->shouldContentSniff() || context->localFileContentSniffingEnabled(),
         SchedulingBehavior::Synchronous);
 #else
@@ -504,22 +519,8 @@ void ResourceHandle::continueDidReceiveResponse()
 
 bool ResourceHandle::shouldUseCredentialStorage()
 {
-    if (client()->usesAsyncCallbacks()) {
-        if (client())
-            client()->shouldUseCredentialStorageAsync(this);
-        else
-            continueShouldUseCredentialStorage(false);
-        return false; // Ignored by caller.
-    } else
-        return client() && client()->shouldUseCredentialStorage(this);
-}
-
-void ResourceHandle::continueShouldUseCredentialStorage(bool useCredentialStorage)
-{
-    ASSERT(client());
-    ASSERT(client()->usesAsyncCallbacks());
-
-    [(id)delegate() continueShouldUseCredentialStorage:useCredentialStorage];
+    ASSERT(!client()->usesAsyncCallbacks());
+    return client() && client()->shouldUseCredentialStorage(this);
 }
 
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)

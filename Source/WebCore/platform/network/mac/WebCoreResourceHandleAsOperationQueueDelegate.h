@@ -49,11 +49,14 @@ class ResourceHandle;
 - (void)detachHandle;
 - (void)continueWillSendRequest:(NSURLRequest *)newRequest;
 - (void)continueDidReceiveResponse;
-- (void)continueShouldUseCredentialStorage:(BOOL)useCredentialStorage;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 - (void)continueCanAuthenticateAgainstProtectionSpace:(BOOL)canAuthenticate;
 #endif
 - (void)continueWillCacheResponse:(NSCachedURLResponse *)response;
+@end
+
+@interface WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate : WebCoreResourceHandleAsOperationQueueDelegate
+
 @end
 
 #endif // !USE(CFNETWORK)

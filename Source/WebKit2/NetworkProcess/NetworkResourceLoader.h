@@ -94,7 +94,6 @@ public:
     virtual void wasBlocked(WebCore::ResourceHandle*) override;
     virtual void cannotShowURL(WebCore::ResourceHandle*) override;
     virtual bool shouldUseCredentialStorage(WebCore::ResourceHandle*) override;
-    virtual void shouldUseCredentialStorageAsync(WebCore::ResourceHandle*) override;
     virtual void didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
     virtual void didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
     virtual void receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;

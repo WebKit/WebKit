@@ -87,8 +87,6 @@ namespace WebCore {
         // Client will call ResourceHandle::continueDidReceiveResponse() when ready.
         virtual void didReceiveResponseAsync(ResourceHandle*, const ResourceResponse&);
 
-        // Client will pass an updated request using ResourceHandle::continueShouldUseCredentialStorage() when ready.
-        virtual void shouldUseCredentialStorageAsync(ResourceHandle*);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
         // Client will pass an updated request using ResourceHandle::continueCanAuthenticateAgainstProtectionSpace() when ready.
         virtual void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&);
