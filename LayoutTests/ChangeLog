@@ -1,3 +1,13 @@
+2014-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: optimize direct / indirect adjacent's traversal backtracking
+        https://bugs.webkit.org/show_bug.cgi?id=132319
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/selectors/backtracking-adjacent-expected.txt: Added.
+        * fast/selectors/backtracking-adjacent.html: Added.
+
 2014-05-03  Andreas Kling  <akling@apple.com>
 
         Invalidate scrollbars when custom scrollbar style changes dynamically.

@@ -65,8 +65,7 @@ enum class BacktrackingAction {
     JumpToIndirectAdjacentEntryPoint,
     JumpToDescendantTreeWalkerEntryPoint,
     JumpToDescendantTail,
-    JumpToDirectAdjacentTail,
-    JumpToClearAdjacentTail
+    JumpToDirectAdjacentTail
 };
 
 struct BacktrackingFlag {
@@ -241,7 +240,6 @@ private:
     Assembler::JumpList m_descendantBacktrackingFailureCases;
     StackAllocator::StackReference m_adjacentBacktrackingStart;
     Assembler::JumpList m_adjacentBacktrackingFailureCases;
-    Assembler::JumpList m_clearAdjacentBacktrackingFailureCases;
 
 #if CSS_SELECTOR_JIT_DEBUGGING
     const CSSSelector* m_originalSelector;
@@ -592,12 +590,7 @@ static inline bool isFirstAdjacent(unsigned adjacentPositionSinceIndirectAdjacen
     return adjacentPositionSinceIndirectAdjacentTreeWalk == 1;
 }
 
-static inline bool isAfterChildRelation(unsigned ancestorPositionSinceDescendantRelation)
-{
-    return ancestorPositionSinceDescendantRelation > 0;
-}
-
-static BacktrackingAction solveDescendantBacktrackingActionForChild(const SelectorFragment& fragment, unsigned backtrackingStartHeightFromDescendant)
+static inline BacktrackingAction solveDescendantBacktrackingActionForChild(const SelectorFragment& fragment, unsigned backtrackingStartHeightFromDescendant)
 {
     // If height is invalid (e.g. There's no tag name).
     if (backtrackingStartHeightFromDescendant == invalidHeight)
@@ -614,7 +607,18 @@ static BacktrackingAction solveDescendantBacktrackingActionForChild(const Select
     return BacktrackingAction::JumpToDescendantTail;
 }
 
-static inline void solveBacktrackingAction(SelectorFragment& fragment, bool hasDescendantRelationOnTheRight, unsigned ancestorPositionSinceDescendantRelation, bool hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain, unsigned adjacentPositionSinceIndirectAdjacentTreeWalk)
+static inline BacktrackingAction solveAdjacentTraversalBacktrackingAction(const SelectorFragment& fragment, bool hasDescendantRelationOnTheRight)
+{
+    if (!hasDescendantRelationOnTheRight)
+        return BacktrackingAction::NoBacktracking;
+
+    if (fragment.tagNameMatchedBacktrackingStartHeightFromDescendant == (fragment.heightFromDescendant + 1))
+        return BacktrackingAction::JumpToDescendantTreeWalkerEntryPoint;
+
+    return BacktrackingAction::JumpToDescendantTail;
+}
+
+static inline void solveBacktrackingAction(SelectorFragment& fragment, bool hasDescendantRelationOnTheRight, bool hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain, unsigned adjacentPositionSinceIndirectAdjacentTreeWalk)
 {
     switch (fragment.relationToRightFragment) {
     case FragmentRelation::Rightmost:
@@ -630,20 +634,7 @@ static inline void solveBacktrackingAction(SelectorFragment& fragment, bool hasD
     case FragmentRelation::DirectAdjacent:
         // Failure on traversal implies no other sibling traversal can match. Matching should resume at the
         // nearest ancestor/descendant traversal.
-        if (hasDescendantRelationOnTheRight) {
-            if (!isAfterChildRelation(ancestorPositionSinceDescendantRelation))
-                fragment.traversalBacktrackingAction = BacktrackingAction::JumpToDescendantTreeWalkerEntryPoint;
-            else {
-                if (!hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain || isFirstAdjacent(adjacentPositionSinceIndirectAdjacentTreeWalk))
-                    fragment.traversalBacktrackingAction = BacktrackingAction::JumpToDescendantTail;
-                else
-                    fragment.traversalBacktrackingAction = BacktrackingAction::JumpToClearAdjacentTail;
-            }
-        } else {
-            // If we are in a direct adjacent chain with backtracking, we need to clear the backtracking register on the stack.
-            if (hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain && !isFirstAdjacent(adjacentPositionSinceIndirectAdjacentTreeWalk))
-                fragment.traversalBacktrackingAction = BacktrackingAction::JumpToClearAdjacentTail;
-        }
+        fragment.traversalBacktrackingAction = solveAdjacentTraversalBacktrackingAction(fragment, hasDescendantRelationOnTheRight);
 
         // If the rightmost relation is a indirect adjacent, matching sould resume from there.
         // Otherwise, we resume from the latest ancestor/descendant if any.
@@ -656,24 +647,15 @@ static inline void solveBacktrackingAction(SelectorFragment& fragment, bool hasD
                 fragment.matchingPostTagNameBacktrackingAction = BacktrackingAction::JumpToDirectAdjacentTail;
             }
         } else if (hasDescendantRelationOnTheRight) {
-            if (isAfterChildRelation(ancestorPositionSinceDescendantRelation)) {
-                fragment.matchingTagNameBacktrackingAction = BacktrackingAction::JumpToDescendantTail;
-                fragment.matchingPostTagNameBacktrackingAction = BacktrackingAction::JumpToDescendantTail;
-            } else {
-                fragment.matchingTagNameBacktrackingAction = BacktrackingAction::JumpToDescendantTreeWalkerEntryPoint;
-                fragment.matchingPostTagNameBacktrackingAction = BacktrackingAction::JumpToDescendantTreeWalkerEntryPoint;
-            }
+            // Since we resume from the latest ancestor/descendant, the action is the same as the traversal action.
+            fragment.matchingTagNameBacktrackingAction = fragment.traversalBacktrackingAction;
+            fragment.matchingPostTagNameBacktrackingAction = fragment.traversalBacktrackingAction;
         }
         break;
     case FragmentRelation::IndirectAdjacent:
         // Failure on traversal implies no other sibling matching will succeed. Matching can resume
         // from the latest ancestor/descendant.
-        if (hasDescendantRelationOnTheRight) {
-            if (isAfterChildRelation(ancestorPositionSinceDescendantRelation))
-                fragment.traversalBacktrackingAction = BacktrackingAction::JumpToDescendantTail;
-            else
-                fragment.traversalBacktrackingAction = BacktrackingAction::JumpToDescendantTreeWalkerEntryPoint;
-        }
+        fragment.traversalBacktrackingAction = solveAdjacentTraversalBacktrackingAction(fragment, hasDescendantRelationOnTheRight);
         break;
     }
 }
@@ -830,7 +812,7 @@ void SelectorCodeGenerator::computeBacktrackingInformation()
         dataLogF("Computing fragment[%d] backtracking height %u. NotMatched %u / Matched %u\n", i, fragment.heightFromDescendant, fragment.tagNameNotMatchedBacktrackingStartHeightFromDescendant, fragment.tagNameMatchedBacktrackingStartHeightFromDescendant);
 #endif
 
-        solveBacktrackingAction(fragment, hasDescendantRelationOnTheRight, ancestorPositionSinceDescendantRelation, hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain, adjacentPositionSinceIndirectAdjacentTreeWalk);
+        solveBacktrackingAction(fragment, hasDescendantRelationOnTheRight, hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain, adjacentPositionSinceIndirectAdjacentTreeWalk);
 
         needsAdjacentTail |= requiresAdjacentTail(fragment);
         needsDescendantTail |= requiresDescendantTail(fragment);
@@ -1303,9 +1285,6 @@ void SelectorCodeGenerator::linkFailures(Assembler::JumpList& globalFailureCases
     case BacktrackingAction::JumpToDirectAdjacentTail:
         m_adjacentBacktrackingFailureCases.append(localFailureCases);
         break;
-    case BacktrackingAction::JumpToClearAdjacentTail:
-        m_clearAdjacentBacktrackingFailureCases.append(localFailureCases);
-        break;
     }
 }
 
@@ -1317,9 +1296,6 @@ void SelectorCodeGenerator::generateAdjacentBacktrackingTail()
     unsigned offsetToAdjacentBacktrackingStart = m_stackAllocator.offsetToStackReference(m_adjacentBacktrackingStart);
     m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToAdjacentBacktrackingStart), elementAddressRegister);
     m_assembler.jump(m_indirectAdjacentEntryPoint);
-
-    // Total failure tail.
-    m_clearAdjacentBacktrackingFailureCases.link(&m_assembler);
 }
 
 void SelectorCodeGenerator::generateDescendantBacktrackingTail()

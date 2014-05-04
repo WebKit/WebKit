@@ -1,3 +1,52 @@
+2014-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: optimize direct / indirect adjacent's traversal backtracking
+        https://bugs.webkit.org/show_bug.cgi?id=132319
+
+        Reviewed by Benjamin Poulain.
+
+        Since adjacent backtracking stack reference is pre-allocated
+        in prologue in http://trac.webkit.org/changeset/166834,
+        clearing stack phase is not needed. So we can drop
+        JumpToClearAdjacentTail from backtracking action and simplify
+        backtracking handling.
+        And optimize direct / indirect adjacent's traversal backtracking by
+        using appropriate backtracking height.
+
+        When solving adjacent traversal backtracking action,
+        1) When there's no descendant relation on the right, traversal
+        failure becomes global failure.
+        2) When `tagNameMatchedBacktrackingStartHeightFromDescendant` ==
+        `heightFromDescendant` + 1, the descendant backtracking starts with
+        the parent of the current element. So we can use the current element
+        and the backtracking action is JumpToDescendantTreeWalkerEntryPoint.
+        3) Otherwise, currently we take the conservative approach,
+        JumpToDescendantTail.
+
+        NOTE:
+        And if `hasDescendantRelationOnTheRight` is true and there's no child
+        fragment on the right, the backtracking element register is not
+        effective. So we should ensure that fragment doesn't use the
+        backtracking element register. Such a fragment fulfills the following
+        conditions. 1. tagNameMatchedBacktrackingStartHeightFromDescendant is
+        always 1 (tagNames.size(), that contains only descendant fragment) 2.
+        heightFromDescendant is always 0 (-- See
+        computeBacktrackingHeightFromDescendant implementation) Therefore such
+        a fragment's action always becomes
+        JumpToDescendantTreeWalkerEntryPoint. So we can ensure that the
+        backtracking element register is not used.
+
+        Test: fast/selectors/backtracking-adjacent.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::solveDescendantBacktrackingActionForChild):
+        (WebCore::SelectorCompiler::solveAdjacentTraversalBacktrackingAction):
+        (WebCore::SelectorCompiler::solveBacktrackingAction):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::computeBacktrackingInformation):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::linkFailures):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAdjacentBacktrackingTail):
+        (WebCore::SelectorCompiler::isAfterChildRelation): Deleted.
+
 2014-05-03  Andreas Kling  <akling@apple.com>
 
         Clear the JSString cache when under memory pressure.
