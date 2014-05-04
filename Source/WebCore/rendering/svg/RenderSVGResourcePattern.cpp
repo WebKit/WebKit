@@ -56,9 +56,9 @@ void RenderSVGResourcePattern::removeClientFromCache(RenderElement& client, bool
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
-PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsigned short resourceMode)
+PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, unsigned short resourceMode)
 {
-    PatternData* currentData = m_patternMap.get(object);
+    PatternData* currentData = m_patternMap.get(&renderer);
     if (currentData && currentData->pattern)
         return currentData;
 
@@ -81,11 +81,11 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
     // Compute all necessary transformations to build the tile image & the pattern.
     FloatRect tileBoundaries;
     AffineTransform tileImageTransform;
-    if (!buildTileImageTransform(object, m_attributes, patternElement(), tileBoundaries, tileImageTransform))
+    if (!buildTileImageTransform(renderer, m_attributes, patternElement(), tileBoundaries, tileImageTransform))
         return 0;
 
     AffineTransform absoluteTransformIgnoringRotation;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*object, absoluteTransformIgnoringRotation);
+    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer, absoluteTransformIgnoringRotation);
 
     // Ignore 2D rotation, as it doesn't affect the size of the tile.
     SVGRenderingContext::clear2DRotation(absoluteTransformIgnoringRotation);
@@ -121,7 +121,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
     // Account for text drawing resetting the context to non-scaled, see SVGInlineTextBox::paintTextWithShadows.
     if (resourceMode & ApplyToTextMode) {
         AffineTransform additionalTextTransformation;
-        if (shouldTransformOnTextPainting(object, additionalTextTransformation))
+        if (shouldTransformOnTextPainting(renderer, additionalTextTransformation))
             patternData->transform *= additionalTextTransformation;
     }
     patternData->pattern->setPatternSpaceTransform(patternData->transform);
@@ -129,7 +129,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
     // Various calls above may trigger invalidations in some fringe cases (ImageBuffer allocation
     // failures in the SVG image cache for example). To avoid having our PatternData deleted by
     // removeAllClientsFromCache(), we only make it visible in the cache at the very end.
-    return m_patternMap.set(object, std::move(patternData)).iterator->value.get();
+    return m_patternMap.set(&renderer, std::move(patternData)).iterator->value.get();
 }
 
 bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, unsigned short resourceMode)
@@ -143,7 +143,7 @@ bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const Rend
     if (m_attributes.patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return false;
 
-    PatternData* patternData = buildPattern(&renderer, resourceMode);
+    PatternData* patternData = buildPattern(renderer, resourceMode);
     if (!patternData)
         return false;
 
@@ -211,15 +211,13 @@ static inline FloatRect calculatePatternBoundaries(const PatternAttributes& attr
     return SVGLengthContext::resolveRectangle(&patternElement, attributes.patternUnits(), objectBoundingBox, attributes.x(), attributes.y(), attributes.width(), attributes.height());
 }
 
-bool RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
+bool RenderSVGResourcePattern::buildTileImageTransform(RenderElement& renderer,
                                                        const PatternAttributes& attributes,
                                                        const SVGPatternElement& patternElement,
                                                        FloatRect& patternBoundaries,
                                                        AffineTransform& tileImageTransform) const
 {
-    ASSERT(renderer);
-
-    FloatRect objectBoundingBox = renderer->objectBoundingBox();
+    FloatRect objectBoundingBox = renderer.objectBoundingBox();
     patternBoundaries = calculatePatternBoundaries(attributes, objectBoundingBox, patternElement); 
     if (patternBoundaries.width() <= 0 || patternBoundaries.height() <= 0)
         return false;

@@ -150,7 +150,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
             // Depending on font scaling factor, we may need to rescale the gradient here since
             // text painting removes the scale factor from the context.
             AffineTransform additionalTextTransform;
-            if (shouldTransformOnTextPainting(&renderer, additionalTextTransform))
+            if (shouldTransformOnTextPainting(renderer, additionalTextTransform))
                 gradientData->userspaceTransform *= additionalTextTransform;
         }
         gradientData->gradient->setGradientSpaceTransform(gradientData->userspaceTransform);

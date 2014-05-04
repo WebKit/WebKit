@@ -58,15 +58,15 @@ private:
     void element() const = delete;
     virtual const char* renderName() const override { return "RenderSVGResourcePattern"; }
 
-    bool buildTileImageTransform(RenderObject*, const PatternAttributes&, const SVGPatternElement&, FloatRect& patternBoundaries, AffineTransform& tileImageTransform) const;
+    bool buildTileImageTransform(RenderElement&, const PatternAttributes&, const SVGPatternElement&, FloatRect& patternBoundaries, AffineTransform& tileImageTransform) const;
 
     std::unique_ptr<ImageBuffer> createTileImage(const PatternAttributes&, const FloatRect& tileBoundaries, const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform, FloatRect& clampedAbsoluteTileBoundaries) const;
 
-    PatternData* buildPattern(RenderObject*, unsigned short resourceMode);
+    PatternData* buildPattern(RenderElement&, unsigned short resourceMode);
 
     bool m_shouldCollectPatternAttributes : 1;
     PatternAttributes m_attributes;
-    HashMap<RenderObject*, std::unique_ptr<PatternData>> m_patternMap;
+    HashMap<RenderElement*, std::unique_ptr<PatternData>> m_patternMap;
 };
 
 }

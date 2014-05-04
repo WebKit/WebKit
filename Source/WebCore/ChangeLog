@@ -1,3 +1,25 @@
+2014-05-03  Andreas Kling  <akling@apple.com>
+
+        RenderSVGResourcePattern should deal in RenderElement&.
+        <https://webkit.org/b/132536>
+
+        Tweak buildPattern() and buildTileImageTransform() to take RenderElement&
+        instead of RenderObject* since we know that these functions will always
+        be called with non-null RenderElement subclasses.
+
+        Reviewed by Sam Weinig.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::shouldTransformOnTextPainting):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        (WebCore::RenderSVGResourcePattern::buildTileImageTransform):
+        * rendering/svg/RenderSVGResourcePattern.h:
+
 2014-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: optimize direct / indirect adjacent's traversal backtracking

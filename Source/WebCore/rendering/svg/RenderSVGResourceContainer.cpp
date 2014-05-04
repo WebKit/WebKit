@@ -187,20 +187,20 @@ void RenderSVGResourceContainer::registerResource()
     }
 }
 
-bool RenderSVGResourceContainer::shouldTransformOnTextPainting(RenderObject* object, AffineTransform& resourceTransform)
+bool RenderSVGResourceContainer::shouldTransformOnTextPainting(const RenderElement& renderer, AffineTransform& resourceTransform)
 {
-    ASSERT_UNUSED(object, object);
 #if USE(CG)
+    UNUSED_PARAM(renderer);
     UNUSED_PARAM(resourceTransform);
     return false;
 #else
     // This method should only be called for RenderObjects that deal with text rendering. Cmp. RenderObject.h's is*() methods.
-    ASSERT(object->isSVGText() || object->isSVGTextPath() || object->isSVGInline());
+    ASSERT(renderer.isSVGText() || renderer.isSVGTextPath() || renderer.isSVGInline());
 
     // In text drawing, the scaling part of the graphics context CTM is removed, compare SVGInlineTextBox::paintTextWithShadows.
     // So, we use that scaling factor here, too, and then push it down to pattern or gradient space
     // in order to keep the pattern or gradient correctly scaled.
-    float scalingFactor = SVGRenderingContext::calculateScreenFontSizeScalingFactor(*object);
+    float scalingFactor = SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
     if (scalingFactor == 1)
         return false;
     resourceTransform.scale(scalingFactor);
