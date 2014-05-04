@@ -94,19 +94,19 @@ bool CDM::keySystemSupportsMimeType(const String& keySystem, const String& mimeT
     return false;
 }
 
-PassOwnPtr<CDM> CDM::create(const String& keySystem)
+std::unique_ptr<CDM> CDM::create(const String& keySystem)
 {
     if (!supportsKeySystem(keySystem))
         return nullptr;
 
-    return adoptPtr(new CDM(keySystem));
+    return std::make_unique<CDM>(keySystem);
 }
 
 CDM::CDM(const String& keySystem)
     : m_keySystem(keySystem)
     , m_client(0)
 {
-    m_private = CDMFactoryForKeySystem(keySystem)->constructor(this);
+    m_private = std::move(CDMFactoryForKeySystem(keySystem)->constructor(this));
 }
 
 CDM::~CDM()

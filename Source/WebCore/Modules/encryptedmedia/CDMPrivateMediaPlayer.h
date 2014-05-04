@@ -38,7 +38,11 @@ class CDM;
 
 class CDMPrivateMediaPlayer : public CDMPrivateInterface {
 public:
-    static PassOwnPtr<CDMPrivateInterface> create(CDM* cdm) { return adoptPtr(new CDMPrivateMediaPlayer(cdm)); }
+    explicit CDMPrivateMediaPlayer(CDM* cdm)
+        : m_cdm(cdm)
+    { }
+
+    static std::unique_ptr<CDMPrivateInterface> create(CDM* cdm) { return std::make_unique<CDMPrivateMediaPlayer>(cdm); }
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
@@ -50,7 +54,6 @@ public:
     CDM* cdm() const { return m_cdm; }
 
 protected:
-    CDMPrivateMediaPlayer(CDM* cdm) : m_cdm(cdm) { }
     CDM* m_cdm;
 };
 

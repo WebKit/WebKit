@@ -40,7 +40,7 @@ class CDM;
 class CDMPrivateInterface;
 class MediaPlayer;
 
-typedef PassOwnPtr<CDMPrivateInterface> (*CreateCDM)(CDM*);
+typedef std::unique_ptr<CDMPrivateInterface> (*CreateCDM)(CDM*);
 typedef bool (*CDMSupportsKeySystem)(const String&);
 typedef bool (*CDMSupportsKeySystemAndMimeType)(const String&, const String&);
 
@@ -53,11 +53,12 @@ public:
 
 class CDM {
 public:
+    explicit CDM(const String& keySystem);
 
     enum CDMErrorCode { UnknownError = 1, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
     static bool supportsKeySystem(const String&);
     static bool keySystemSupportsMimeType(const String& keySystem, const String& mimeType);
-    static PassOwnPtr<CDM> create(const String& keySystem);
+    static std::unique_ptr<CDM> create(const String& keySystem);
     static void registerCDMFactory(CreateCDM, CDMSupportsKeySystem, CDMSupportsKeySystemAndMimeType);
     ~CDM();
 
@@ -72,10 +73,8 @@ public:
     MediaPlayer* mediaPlayer() const;
 
 private:
-    CDM(const String& keySystem);
-
     String m_keySystem;
-    OwnPtr<CDMPrivateInterface> m_private;
+    std::unique_ptr<CDMPrivateInterface> m_private;
     CDMClient* m_client;
 };
 

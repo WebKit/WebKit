@@ -57,18 +57,18 @@ PassRefPtr<MediaKeys> MediaKeys::create(const String& keySystem, ExceptionCode& 
 
     // 3. Let cdm be the content decryption module corresponding to keySystem.
     // 4. Load cdm if necessary.
-    OwnPtr<CDM> cdm = CDM::create(keySystem);
+    std::unique_ptr<CDM> cdm = CDM::create(keySystem);
 
     // 5. Create a new MediaKeys object.
     // 5.1 Let the keySystem attribute be keySystem.
     // 6. Return the new object to the caller.
-    return adoptRef(new MediaKeys(keySystem, cdm.release()));
+    return adoptRef(new MediaKeys(keySystem, std::move(cdm)));
 }
 
-MediaKeys::MediaKeys(const String& keySystem, PassOwnPtr<CDM> cdm)
+MediaKeys::MediaKeys(const String& keySystem, std::unique_ptr<CDM> cdm)
     : m_mediaElement(0)
     , m_keySystem(keySystem)
-    , m_cdm(cdm)
+    , m_cdm(std::move(cdm))
 {
     m_cdm->setClient(this);
 }

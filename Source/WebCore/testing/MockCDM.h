@@ -29,7 +29,6 @@
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
 #include "CDMPrivate.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -37,8 +36,12 @@ class CDM;
 
 class MockCDM : public CDMPrivateInterface {
 public:
+    explicit MockCDM(CDM* cdm)
+        : m_cdm(cdm)
+    { }
+
     // CDMFactory support:
-    static PassOwnPtr<CDMPrivateInterface> create(CDM* cdm) { return adoptPtr(new MockCDM(cdm)); }
+    static std::unique_ptr<CDMPrivateInterface> create(CDM* cdm) { return std::make_unique<MockCDM>(cdm); }
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
@@ -48,7 +51,6 @@ public:
     virtual std::unique_ptr<CDMSession> createSession() override;
 
 protected:
-    MockCDM(CDM* cdm) : m_cdm(cdm) { }
     CDM* m_cdm;
 };
 

@@ -32,7 +32,6 @@
 #include "EventTarget.h"
 #include "ExceptionCode.h"
 #include <runtime/Uint8Array.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -62,13 +61,13 @@ protected:
     // CDMClient:
     virtual MediaPlayer* cdmMediaPlayer(const CDM*) const override;
 
-    MediaKeys(const String& keySystem, PassOwnPtr<CDM>);
+    MediaKeys(const String& keySystem, std::unique_ptr<CDM>);
 
     Vector<RefPtr<MediaKeySession>> m_sessions;
 
     HTMLMediaElement* m_mediaElement;
     String m_keySystem;
-    OwnPtr<CDM> m_cdm;
+    std::unique_ptr<CDM> m_cdm;
 };
 
 }

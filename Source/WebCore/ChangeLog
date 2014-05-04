@@ -1,3 +1,27 @@
+2014-05-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Convert OwnPtr to std::unique_ptr in CDM
+        https://bugs.webkit.org/show_bug.cgi?id=132467
+
+        Reviewed by Andreas Kling.
+
+        Use std::unique_ptr in CDM class.
+
+        No new tests, no behavior change.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::create):
+        (WebCore::CDM::CDM):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMPrivateMediaPlayer.h:
+        (WebCore::CDMPrivateMediaPlayer::CDMPrivateMediaPlayer):
+        (WebCore::CDMPrivateMediaPlayer::create):
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::create):
+        (WebCore::MediaKeys::MediaKeys):
+        * Modules/encryptedmedia/MediaKeys.h:
+        * WebCore.exp.in:
+
 2014-05-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168232.
