@@ -92,4 +92,8 @@ messages -> WebProcess LegacyReceiver {
 #if ENABLE(SERVICE_CONTROLS)
     SetEnabledServices(bool hasImageServices, bool hasSelectionServices)
 #endif
+
+#if PLATFORM(IOS)
+    ProcessWillSuspend()
+#endif
 }

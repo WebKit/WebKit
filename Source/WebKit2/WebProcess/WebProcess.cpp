@@ -1153,6 +1153,12 @@ void WebProcess::resetAllGeolocationPermissions()
             mainFrame->resetAllGeolocationPermission();
     }
 }
+    
+void WebProcess::processWillSuspend()
+{
+    parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
+}
+    
 #endif // PLATFORM(IOS)
 
 void WebProcess::pageDidEnterWindow(uint64_t pageID)

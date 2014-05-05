@@ -251,7 +251,7 @@ private:
 {
     if (self.window)
         [self _updateForScreen:self.window.screen];
-    _page->viewStateDidChange(ViewState::AllFlags, self.window ? WebPageProxy::WantsReplyOrNot::DoesNotWantReply : WebPageProxy::WantsReplyOrNot::DoesWantReply);
+    _page->viewStateDidChange(ViewState::AllFlags);
 }
 
 - (WKBrowsingContextController *)browsingContextController

@@ -98,7 +98,7 @@ WebProcessProxy::WebProcessProxy(WebContext& context)
 #endif
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
 #if PLATFORM(IOS)
-    , m_throttler(std::make_unique<ProcessThrottler>())
+    , m_throttler(std::make_unique<ProcessThrottler>(this))
 #endif
 {
     connect();

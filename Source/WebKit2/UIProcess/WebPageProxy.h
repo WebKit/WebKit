@@ -764,7 +764,7 @@ public:
 
     void listenForLayoutMilestones(WebCore::LayoutMilestones);
 
-    void didUpdateViewState();
+    void didUpdateViewState() { m_waitingForDidUpdateViewState = false; }
 
     bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
     bool hasVerticalScrollbar() const { return m_mainFrameHasVerticalScrollbar; }
@@ -1084,7 +1084,7 @@ private:
     void platformInitialize();
 
     void updateViewState(WebCore::ViewState::Flags flagsToUpdate = WebCore::ViewState::AllFlags);
-    void updateVisibilityToken();
+    void updateActivityToken();
         
     void resetState();
     void resetStateAfterProcessExited();
@@ -1514,7 +1514,7 @@ private:
     WebCore::ViewState::Flags m_viewState;
 
 #if PLATFORM(IOS)
-    std::unique_ptr<ProcessThrottler::VisibilityToken> m_visibilityToken;
+    std::unique_ptr<ProcessThrottler::ForegroundActivityToken> m_activityToken;
 #endif
         
     bool m_canGoBack;
@@ -1676,7 +1676,6 @@ private:
     bool m_mayStartMediaWhenInWindow;
 
     bool m_waitingForDidUpdateViewState;
-    unsigned m_pendingViewStateUpdates;
         
 #if PLATFORM(COCOA)
     HashMap<String, String> m_temporaryPDFFiles;

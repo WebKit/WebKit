@@ -270,7 +270,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_notificationPermissionRequestManager(*this)
     , m_viewState(ViewState::NoFlags)
 #if PLATFORM(IOS)
-    , m_visibilityToken(process.throttler().visibilityToken(ProcessThrottler::Visibility::Hidden))
+    , m_activityToken(nullptr)
 #endif
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_loadStateAtProcessExit(FrameLoadState::State::Finished)
@@ -355,7 +355,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
     , m_waitingForDidUpdateViewState(false)
-    , m_pendingViewStateUpdates(0)
     , m_scrollPinningBehavior(DoNotPin)
     , m_navigationID(0)
 {
@@ -363,7 +362,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
         m_visitedLinkProvider->addProcess(m_process.get());
 
     updateViewState();
-    updateVisibilityToken();
+    updateActivityToken();
     
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     m_layerHostingMode = m_viewState & ViewState::IsInWindow ? m_pageClient.viewLayerHostingMode() : LayerHostingMode::OutOfProcess;
@@ -522,7 +521,7 @@ void WebPageProxy::reattachToWebProcess()
     ASSERT(m_process->state() == WebProcessProxy::State::Terminated);
 
     updateViewState();
-    updateVisibilityToken();
+    updateActivityToken();
     
     m_isValid = true;
 
@@ -1062,16 +1061,12 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     updateViewState(mayHaveChanged);
     ViewState::Flags changed = m_viewState ^ previousViewState;
 
-    if (changed) {
-        bool requestReply = wantsReply == WantsReplyOrNot::DoesWantReply;
-        if (requestReply)
-            ++m_pendingViewStateUpdates;
+    if (changed)
+        m_process->send(Messages::WebPage::SetViewState(m_viewState, wantsReply == WantsReplyOrNot::DoesWantReply), m_pageID);
     
-        updateVisibilityToken();
-        
-        m_process->send(Messages::WebPage::SetViewState(m_viewState, requestReply), m_pageID);
-    }
-
+    // This must happen after the SetViewState message is sent, to ensure the page visibility event can fire.
+    updateActivityToken();
+    
     if (changed & ViewState::IsVisuallyIdle)
         m_process->pageSuppressibilityChanged(this);
 
@@ -1100,25 +1095,16 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     updateBackingStoreDiscardableState();
 }
     
-void WebPageProxy::updateVisibilityToken()
+void WebPageProxy::updateActivityToken()
 {
 #if PLATFORM(IOS)
-    if (isViewVisible())
-        m_visibilityToken->setVisibility(ProcessThrottler::Visibility::Visible);
-    else if (m_visibilityToken->visibility() != ProcessThrottler::Visibility::Hidden && m_pendingViewStateUpdates)
-        m_visibilityToken->setVisibility(ProcessThrottler::Visibility::Hiding);
-    else
-        m_visibilityToken->setVisibility(ProcessThrottler::Visibility::Hidden);
+    if (!isViewVisible())
+        m_activityToken = nullptr;
+    else if (!m_activityToken)
+        m_activityToken = std::make_unique<ProcessThrottler::ForegroundActivityToken>(m_process->throttler());
 #endif
 }
 
-void WebPageProxy::didUpdateViewState()
-{
-    m_waitingForDidUpdateViewState = false;
-    --m_pendingViewStateUpdates;
-    updateVisibilityToken();
-}
-    
 void WebPageProxy::layerHostingModeDidChange()
 {
     if (!isValid())

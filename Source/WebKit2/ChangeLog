@@ -1,3 +1,108 @@
+2014-05-02  Gavin Barraclough  <baraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=132522
+        Clean up ProcessThrottler
+
+        Reviewed by Geoffrey Garen.
+
+        The initial implementation of ProcessThrottler relied on the reply from the
+        SetViewState message to ensure the page visibility notifications have a chance
+        to be delivered. This resulted in:
+            - unnecessarily complicated interface to ProcessThrottler (in VisibilityState class)
+            - complexity bleeding out into WebPageProxy (handling 'hiding' state).
+            - for cases other than view hiding, no suspension notification in the WebContent.
+
+        To fix these issues add an explicit handshake from the ProcessThrottler to the WebPage.
+        This gives us two things:
+            - All previously posted messages (e.g. SetViewState) will be processed before suspension.
+            - WebContent is always (bar timeout) notified before suspension.
+
+        Since this interlock ensures the SetViewState message will be processed, the WKContentView no
+        longer needs to request a reply from SetViewState, and WebPageProxy can lose all the 'hiding'
+        state tracking. In turn, we can simplify VisibilityToken to a couple of simpler types, without
+        the interface to change state - just acquire/release to keep the process runnable or permit
+        suspension.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+            - VisibilityToken -> BackgroundActivityToken
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+            - m_visibilityToken -> m_activityToken, remove m_pendingViewStateUpdates
+              updateVisibilityToken -> updateActivityToken
+        (WebKit::WebPageProxy::reattachToWebProcess):
+            - updateVisibilityToken -> updateActivityToken
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - remove m_pendingViewStateUpdates, updateActivityToken after sending SetViewState
+        (WebKit::WebPageProxy::updateActivityToken):
+            - m_visibilityToken -> m_activityToken, no need to handle 'hiding' state.
+        (WebKit::WebPageProxy::updateVisibilityToken): Deleted.
+            - renamed to updateActivityToken
+        (WebKit::WebPageProxy::didUpdateViewState): Deleted.
+            - implementation moved back into header.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::didUpdateViewState):
+            - implementation moved back into header.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+            - ProcessThrottler constructor now passed WebProcessProxy.
+        * UIProcess/WebProcessProxy.h:
+            - added ProcessWillSuspend/ProcessReadyToSuspend
+        * UIProcess/WebProcessProxy.messages.in:
+            - added ProcessWillSuspend/ProcessReadyToSuspend
+        * UIProcess/ios/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::state):
+            - accessor
+        * UIProcess/ios/ProcessThrottler.h:
+        (WebKit::ProcessThrottler::VisibilityToken::visibility): Deleted.
+        (WebKit::ProcessThrottler::VisibilityToken::setVisibility): Deleted.
+            - removed VisibilityToken class, replaced with ForegroundActivityToken/BackgroundActivityToken.
+        (WebKit::ProcessThrottler::ProcessThrottler): Deleted.
+        (WebKit::ProcessThrottler::visibilityToken): Deleted.
+        (WebKit::ProcessThrottler::didConnnectToProcess): Deleted.
+        (WebKit::ProcessThrottler::assertionState): Deleted.
+        (WebKit::ProcessThrottler::updateAssertion): Deleted.
+            - moved implementations to .mm.
+        * UIProcess/ios/ProcessThrottler.mm:
+        (WebKit::ProcessThrottler::ForegroundActivityToken::ForegroundActivityToken):
+        (WebKit::ProcessThrottler::ForegroundActivityToken::~ForegroundActivityToken):
+        (WebKit::ProcessThrottler::BackgroundActivityToken::BackgroundActivityToken):
+        (WebKit::ProcessThrottler::BackgroundActivityToken::~BackgroundActivityToken):
+            - new, simpler replacement for VisibilityToken. Instantiate to keep a processes running, release to suspend.
+        (WebKit::ProcessThrottler::ProcessThrottler):
+            - constructor, now initializes WebProcessProxy pointer & timer mechanism
+        (WebKit::ProcessThrottler::assertionState):
+            - select the appropriate AssertionState give current ActivityTokens.
+        (WebKit::ProcessThrottler::updateAssertionNow):
+            - update the current ProcessAssertion.
+        (WebKit::ProcessThrottler::updateAssertion):
+            - update the current ProcessAssertion, delay running->suspended transitions to give the process a chance to clean up.
+        (WebKit::ProcessThrottler::didConnnectToProcess):
+            - moved from header.
+        (WebKit::ProcessThrottler::suspendTimerFired):
+            - timeout to prevent processes from running in the background for too long.
+        (WebKit::ProcessThrottler::processReadyToSuspend):
+            - handshake from the WebContent process to acknowledge it is ready to suspend.
+        (WebKit::ProcessThrottler::VisibilityToken::VisibilityToken): Deleted.
+        (WebKit::ProcessThrottler::VisibilityToken::~VisibilityToken): Deleted.
+        (WebKit::ProcessThrottler::VisibilityToken::hideTimerFired): Deleted.
+        (WebKit::ProcessThrottler::VisibilityToken::setVisibilityInternal): Deleted.
+            - removed VisibilityToken class, replaced with ForegroundActivityToken/BackgroundActivityToken.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didMoveToWindow]):
+            - no longer necessary to request a response from SetViewState; this interlock is now managed by the ProcessThrottler.
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::sendProcessWillSuspend):
+        (WebKit::WebProcessProxy::processReadyToSuspend):
+            - added ProcessWillSuspend/ProcessReadyToSuspend
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::processWillSuspend):
+            - notification from the WebContent process that we will be suspended; for now just send back an ack.
+        * WebProcess/WebProcess.h:
+            - added ProcessWillSuspend/ProcessReadyToSuspend
+        * WebProcess/WebProcess.messages.in:
+            - added ProcessWillSuspend/ProcessReadyToSuspend
+
 2014-05-05  Jeremy Jones  <jeremyj@apple.com>
 
         Implement beginScrubbing and endScrubbing for video fullscreen.

@@ -1541,14 +1541,14 @@ static void updateTopAndBottomExtendedBackgroundExclusionIfNecessary(WKWebView* 
     CGSize imageSize = CGSizeMake(imageWidth, imageHeight);
     
 #if PLATFORM(IOS)
-    WebKit::ProcessThrottler::VisibilityToken* visibilityToken = new WebKit::ProcessThrottler::VisibilityToken(_page->process().throttler(), WebKit::ProcessThrottler::Visibility::Hiding);
+    WebKit::ProcessThrottler::BackgroundActivityToken* activityToken = new WebKit::ProcessThrottler::BackgroundActivityToken(_page->process().throttler());
 #endif
     
     void(^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
     _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [=](bool, const WebKit::ShareableBitmap::Handle& imageHandle) {
 #if PLATFORM(IOS)
         // Automatically delete when this goes out of scope.
-        auto uniqueVisibilityToken = std::unique_ptr<WebKit::ProcessThrottler::VisibilityToken>(visibilityToken);
+        auto uniqueActivityToken = std::unique_ptr<WebKit::ProcessThrottler::BackgroundActivityToken>(activityToken);
 #endif
         
         if (imageHandle.isNull()) {

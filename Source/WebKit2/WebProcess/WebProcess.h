@@ -176,6 +176,7 @@ public:
 
 #if PLATFORM(IOS)
     void resetAllGeolocationPermissions();
+    void processWillSuspend();
 #endif // PLATFORM(IOS)
 
     RefPtr<API::Object> apiObjectByConvertingFromHandles(API::Object*);

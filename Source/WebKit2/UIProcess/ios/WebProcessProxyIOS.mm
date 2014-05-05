@@ -30,6 +30,8 @@
 
 #import <WebCore/NotImplemented.h>
 
+#import "WebProcessMessages.h"
+
 namespace WebKit {
 
 bool WebProcessProxy::fullKeyboardAccessEnabled()
@@ -68,6 +70,17 @@ bool WebProcessProxy::allPagesAreProcessSuppressible() const
 void WebProcessProxy::updateProcessSuppressionState()
 {
     notImplemented();
+}
+    
+void WebProcessProxy::sendProcessWillSuspend()
+{
+    if (canSendMessage())
+        send(Messages::WebProcess::ProcessWillSuspend(), 0);
+}
+    
+void WebProcessProxy::processReadyToSuspend()
+{
+    m_throttler->processReadyToSuspend();
 }
     
 } // namespace WebKit

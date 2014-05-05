@@ -44,6 +44,8 @@ class ProcessAssertion {
 public:
     ProcessAssertion(pid_t, AssertionState);
     
+    AssertionState state() const { return m_assertionState; }
+    
     void setState(AssertionState);
     
 private:

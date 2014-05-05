@@ -35,84 +35,50 @@
 
 namespace WebKit {
     
+class WebProcessProxy;
+    
 class ProcessThrottler {
 public:
-    enum class Visibility {
-        Visible,
-        Hiding,
-        Hidden
-    };
-    
-    class VisibilityToken {
+    class ForegroundActivityToken {
     public:
-        VisibilityToken(ProcessThrottler&, Visibility);
-        ~VisibilityToken();
-        
-        Visibility visibility() const
-        {
-            return m_visibility;
-        }
-        
-        void setVisibility(Visibility visibility)
-        {
-            if (m_visibility != visibility)
-                setVisibilityInternal(visibility);
-            
-            if (visibility == Visibility::Hiding)
-                m_hideTimer.startOneShot(30);
-            else
-                m_hideTimer.stop();
-        }
+        ForegroundActivityToken(ProcessThrottler&);
+        ~ForegroundActivityToken();
         
     private:
-        void hideTimerFired(WebCore::Timer<VisibilityToken>*);
-        void setVisibilityInternal(Visibility);
-        
         WeakPtr<ProcessThrottler> m_throttler;
-        Visibility m_visibility;
-        WebCore::Timer<VisibilityToken> m_hideTimer;
     };
     
-    ProcessThrottler()
-        : m_weakPtrFactory(this)
-        , m_visibleCount(0)
-        , m_hidingCount(0)
-    {
-    }
+    class BackgroundActivityToken {
+    public:
+        BackgroundActivityToken(ProcessThrottler&);
+        ~BackgroundActivityToken();
+        
+    private:
+        WeakPtr<ProcessThrottler> m_throttler;
+    };
     
-    std::unique_ptr<VisibilityToken> visibilityToken(Visibility visibility)
-    {
-        return std::make_unique<VisibilityToken>(*this, visibility);
-    }
+    ProcessThrottler(WebProcessProxy*);
     
-    void didConnnectToProcess(pid_t pid)
-    {
-        m_assertion = std::make_unique<ProcessAssertion>(pid, assertionState());
-    }
+    void didConnnectToProcess(pid_t);
+    void processReadyToSuspend();
     
 private:
-    friend class VisibilityToken;
+    friend class ForegroundActivityToken;
+    friend class BackgroundActivityToken;
     WeakPtr<ProcessThrottler> weakPtr() { return m_weakPtrFactory.createWeakPtr(); }
     
-    AssertionState assertionState()
-    {
-        if (m_visibleCount)
-            return AssertionState::Foreground;
-        if (m_hidingCount)
-            return AssertionState::Background;
-        return AssertionState::Suspended;
-    }
+    AssertionState assertionState();
+    void updateAssertion();
+    void updateAssertionNow();
+    void suspendTimerFired(WebCore::Timer<ProcessThrottler>*);
     
-    void updateAssertion()
-    {
-        if (m_assertion)
-            m_assertion->setState(assertionState());
-    }
-    
+    WebProcessProxy* m_process;
     WeakPtrFactory<ProcessThrottler> m_weakPtrFactory;
     std::unique_ptr<ProcessAssertion> m_assertion;
-    unsigned m_visibleCount;
-    unsigned m_hidingCount;
+    WebCore::Timer<ProcessThrottler> m_suspendTimer;
+    unsigned m_foregroundCount;
+    unsigned m_backgroundCount;
+    unsigned m_suspendMessageCount;
 };
     
 }

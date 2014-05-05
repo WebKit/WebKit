@@ -136,6 +136,9 @@ public:
     void windowServerConnectionStateChanged();
 
 #if PLATFORM(IOS)
+    void sendProcessWillSuspend();
+    void processReadyToSuspend();
+    
     ProcessThrottler& throttler() { return *m_throttler; }
 #endif
     

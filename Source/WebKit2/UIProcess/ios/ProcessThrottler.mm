@@ -28,50 +28,101 @@
 
 #if PLATFORM(IOS)
 
+#import "WebProcessProxy.h"
+
 namespace WebKit {
-
-ProcessThrottler::VisibilityToken::VisibilityToken(ProcessThrottler& throttler, Visibility visibility)
+    
+static const unsigned processSuspensionTimeout = 30;
+    
+ProcessThrottler::ForegroundActivityToken::ForegroundActivityToken(ProcessThrottler& throttler)
     : m_throttler(throttler.weakPtr())
-    , m_visibility(Visibility::Hidden)
-    , m_hideTimer(this, &VisibilityToken::hideTimerFired)
 {
-    setVisibility(visibility);
+    throttler.m_foregroundCount++;
+    throttler.updateAssertion();
 }
 
-ProcessThrottler::VisibilityToken::~VisibilityToken()
+ProcessThrottler::ForegroundActivityToken::~ForegroundActivityToken()
 {
-    setVisibility(Visibility::Hidden);
-}
-
-void ProcessThrottler::VisibilityToken::hideTimerFired(WebCore::Timer<VisibilityToken>*)
-{
-    ASSERT(m_visibility == Visibility::Hiding);
-    m_visibility = Visibility::Hidden;
-}
-
-void ProcessThrottler::VisibilityToken::setVisibilityInternal(Visibility visibility)
-{
-    ProcessThrottler* throttler = m_throttler.get();
-    if (!throttler) {
-        m_visibility = visibility;
-        return;
+    if (ProcessThrottler* throttler = m_throttler.get()) {
+        throttler->m_foregroundCount--;
+        throttler->updateAssertion();
     }
-    
-    if (m_visibility == Visibility::Visible)
-        throttler->m_visibleCount--;
-    else if (m_visibility == Visibility::Hiding)
-        throttler->m_hidingCount--;
-    
-    m_visibility = visibility;
-    
-    if (m_visibility == Visibility::Visible)
-        throttler->m_visibleCount++;
-    else if (m_visibility == Visibility::Hiding)
-        throttler->m_hidingCount++;
-    
-    throttler->updateAssertion();
+}
+
+ProcessThrottler::BackgroundActivityToken::BackgroundActivityToken(ProcessThrottler& throttler)
+    : m_throttler(throttler.weakPtr())
+{
+    throttler.m_backgroundCount++;
+    throttler.updateAssertion();
+}
+
+ProcessThrottler::BackgroundActivityToken::~BackgroundActivityToken()
+{
+    if (ProcessThrottler* throttler = m_throttler.get()) {
+        throttler->m_backgroundCount--;
+        throttler->updateAssertion();
+    }
+}
+
+ProcessThrottler::ProcessThrottler(WebProcessProxy* process)
+    : m_process(process)
+    , m_weakPtrFactory(this)
+    , m_suspendTimer(this, &ProcessThrottler::suspendTimerFired)
+    , m_foregroundCount(0)
+    , m_backgroundCount(0)
+    , m_suspendMessageCount(0)
+{
 }
     
+AssertionState ProcessThrottler::assertionState()
+{
+    ASSERT(!m_suspendTimer.isActive());
+    
+    if (m_foregroundCount)
+        return AssertionState::Foreground;
+    if (m_backgroundCount)
+        return AssertionState::Background;
+    return AssertionState::Suspended;
+}
+    
+void ProcessThrottler::updateAssertionNow()
+{
+    m_suspendTimer.stop();
+    if (m_assertion)
+        m_assertion->setState(assertionState());
+}
+    
+void ProcessThrottler::updateAssertion()
+{
+    // If the process is currently runnable but will be suspended then first give it a chance to complete what it was doing
+    // and clean up - move it to the background and send it a message to notify. Schedule a timeout so it can't stay running
+    // in the background for too long.
+    if (m_assertion && m_assertion->state() != AssertionState::Suspended && !m_foregroundCount && !m_backgroundCount) {
+        ++m_suspendMessageCount;
+        m_process->sendProcessWillSuspend();
+        m_suspendTimer.startOneShot(processSuspensionTimeout);
+        m_assertion->setState(AssertionState::Background);
+    } else
+        updateAssertionNow();
+}
+
+void ProcessThrottler::didConnnectToProcess(pid_t pid)
+{
+    m_suspendTimer.stop();
+    m_assertion = std::make_unique<ProcessAssertion>(pid, assertionState());
+}
+    
+void ProcessThrottler::suspendTimerFired(WebCore::Timer<ProcessThrottler>*)
+{
+    updateAssertionNow();
+}
+    
+void ProcessThrottler::processReadyToSuspend()
+{
+    if (!--m_suspendMessageCount)
+        updateAssertionNow();
+}
+
 }
 
 #endif // PLATFORM(IOS)
