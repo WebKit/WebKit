@@ -1,5 +1,22 @@
 2014-05-05  Andreas Kling  <akling@apple.com>
 
+        Optimize PutByVal when subscript is a rope string.
+        <https://webkit.org/b/132572>
+
+        Add a JSString::toIdentifier() that is smarter when the JSString is
+        really a rope string. Use this in baseline & DFG's PutByVal to avoid
+        allocating new StringImpls that we immediately deduplicate anyway.
+
+        Reviewed by Antti Koivisto.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * jit/JITOperations.cpp:
+        * runtime/JSString.h:
+        (JSC::JSString::toIdentifier):
+
+2014-05-05  Andreas Kling  <akling@apple.com>
+
         Remove two now-incorrect assertions after r168256.
 
         * runtime/JSString.cpp:

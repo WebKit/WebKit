@@ -462,7 +462,7 @@ static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript,
         PutPropertySlot slot(baseValue, callFrame->codeBlock()->isStrictMode());
         baseValue.put(callFrame, jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
     } else {
-        Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
+        Identifier property = subscript.toString(callFrame)->toIdentifier(callFrame);
         if (!callFrame->vm().exception()) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot(baseValue, callFrame->codeBlock()->isStrictMode());
             baseValue.put(callFrame, property, value, slot);

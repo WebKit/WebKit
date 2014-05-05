@@ -139,6 +139,7 @@ namespace JSC {
             return newString;
         }
 
+        Identifier toIdentifier(ExecState*) const;
         const AtomicString& toAtomicString(ExecState*) const;
         AtomicStringImpl* toExistingAtomicString(ExecState*) const;
         const String& value(ExecState*) const;
@@ -385,6 +386,11 @@ namespace JSC {
     {
         ASSERT(s.length() > 1);
         return JSString::create(*vm, s.impl());
+    }
+
+    ALWAYS_INLINE Identifier JSString::toIdentifier(ExecState* exec) const
+    {
+        return Identifier(exec, toAtomicString(exec));
     }
 
     ALWAYS_INLINE const AtomicString& JSString::toAtomicString(ExecState* exec) const

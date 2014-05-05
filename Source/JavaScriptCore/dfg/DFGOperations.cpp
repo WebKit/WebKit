@@ -120,7 +120,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
     }
 
     // Don't put to an object if toString throws an exception.
-    Identifier ident(exec, property.toString(exec)->value(exec));
+    Identifier ident = property.toString(exec)->toIdentifier(exec);
     if (!vm->exception()) {
         PutPropertySlot slot(baseValue, strict);
         if (direct) {
