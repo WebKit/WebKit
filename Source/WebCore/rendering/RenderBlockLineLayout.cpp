@@ -1730,6 +1730,11 @@ void RenderBlockFlow::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWi
     Vector<RenderBox*>* cleanLineFloats = line->floatsPtr();
     if (!cleanLineFloats)
         return;
+    
+    if (!floats.size()) {
+        encounteredNewFloat = true;
+        return;
+    }
 
     for (auto it = cleanLineFloats->begin(), end = cleanLineFloats->end(); it != end; ++it) {
         RenderBox* floatingBox = *it;
