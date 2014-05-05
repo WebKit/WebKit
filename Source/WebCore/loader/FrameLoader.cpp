@@ -681,7 +681,12 @@ void FrameLoader::receivedFirstData()
     else
         url = m_frame.document()->completeURL(url).string();
 
-    m_frame.navigationScheduler().scheduleRedirect(delay, url);
+    if (!protocolIsJavaScript(url))
+        m_frame.navigationScheduler().scheduleRedirect(delay, url);
+    else {
+        String message = "Refused to refresh " + m_frame.document()->url().stringCenterEllipsizedToLength() + " to a javascript: URL";
+        m_frame.document()->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, message);
+    }
 }
 
 void FrameLoader::setOutgoingReferrer(const URL& url)
