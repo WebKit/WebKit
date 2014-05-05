@@ -1,3 +1,12 @@
+2014-05-05  Gavin Barraclough  <baraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=132522
+        Clean up ProcessThrottler
+
+        Unreviewed: bad build fix. Will work out what the right include is asap.
+
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+
 2014-05-05  Sam Weinig  <sam@webkit.org>
 
         [Cocoa WebKit2] Add SPI to clear all visited links in a VisitedLinkProvider
