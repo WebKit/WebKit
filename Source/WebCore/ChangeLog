@@ -1,3 +1,30 @@
+2014-05-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Clean up Image Document and tweak the layout and viewport
+        https://bugs.webkit.org/show_bug.cgi?id=132552
+
+        Reviewed by Sam Weinig.
+
+        The #ifdef in every function was making quite a mess. A lot of that code does
+        not make sense on iOS.
+
+        This patch make a clean split between mouse related stuff and iOS.
+
+        Also:
+        -Change the viewport to be only width based, and avoid scaling in portrait.
+        -Center the image horizontally in the view.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::ImageDocument):
+        (WebCore::ImageDocument::createDocumentStructure):
+        (WebCore::ImageDocument::imageUpdated):
+        (WebCore::ImageDocument::scale):
+        (WebCore::ImageDocument::resizeImageToFit):
+        (WebCore::ImageDocument::imageFitsInWindow):
+        (WebCore::ImageDocument::windowSizeChanged):
+        (WebCore::ImageDocument::imageClicked):
+        * html/ImageDocument.h:
+
 2014-05-05  Beth Dakin  <bdakin@apple.com>
 
         Need a delegate that informs the UI process when the page's pin state changes

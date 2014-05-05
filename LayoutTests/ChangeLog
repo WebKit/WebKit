@@ -1,3 +1,12 @@
+2014-05-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Clean up Image Document and tweak the layout and viewport
+        https://bugs.webkit.org/show_bug.cgi?id=132552
+
+        Reviewed by Anders Carlsson.
+
+        * svg/custom/anchor-on-use-expected.svg:
+
 2014-05-05  Christophe Dumez  <ch.dumez@samsung.com>
 
         Named element cache can become invalid during HTMLCollection::updateNamedElementCache()

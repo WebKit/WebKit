@@ -839,6 +839,7 @@ static void resetWebPreferencesToConsistentValues()
 
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];
+    [preferences setShrinksStandaloneImagesToFit:YES];
     [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
     [preferences setJavaScriptCanAccessClipboard:YES];
     [preferences setOfflineWebApplicationCacheEnabled:YES];

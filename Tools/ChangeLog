@@ -1,3 +1,14 @@
+2014-05-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Clean up Image Document and tweak the layout and viewport
+        https://bugs.webkit.org/show_bug.cgi?id=132552
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        Update the default settings to have something consistent with WebKit2.
+
 2014-05-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Unable to do make install
