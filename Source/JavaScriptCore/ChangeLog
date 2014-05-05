@@ -7880,44 +7880,6 @@
         (JSC::SymbolTable::SymbolTable):
         * runtime/SymbolTable.h:
 
-2013-11-27  Filip Pizlo  <fpizlo@apple.com>
-
-        Finally fix some obvious Bartlett bugs
-        https://bugs.webkit.org/show_bug.cgi?id=124951
-
-        Reviewed by Mark Hahnenberg.
-        
-        Sanitize the stack (i.e. zero parts of it known to be dead) at three key points:
-        
-        - GC.
-        
-        - At beginning of OSR entry.
-        
-        - Just as we finish preparing OSR entry. This clears those slots on the stack that
-          could have been live in baseline but that are known to be dead in DFG.
-        
-        This is as much as a 2x speed-up on splay if you run it in certain modes, and run it
-        for a long enough interval. It appears to fix all instances of the dreaded exponential
-        heap growth that splay gets into when some stale pointer stays around.
-        
-        This doesn't have much of an effect on real-world programs. This bug has only ever
-        manifested in splay and for that reason we thus far opted against fixing it. But splay
-        is, for what it's worth, the premiere GC stress test in JavaScript - so making sure we
-        can run it without pathologies - even when you tweak its configuration - is probably
-        fairly important.
-
-        * dfg/DFGJITCompiler.h:
-        (JSC::DFG::JITCompiler::noticeOSREntry):
-        * dfg/DFGOSREntry.cpp:
-        (JSC::DFG::prepareOSREntry):
-        * dfg/DFGOSREntry.h:
-        * heap/Heap.cpp:
-        (JSC::Heap::markRoots):
-        * interpreter/JSStack.cpp:
-        (JSC::JSStack::JSStack):
-        (JSC::JSStack::sanitizeStack):
-        * interpreter/JSStack.h:
-
 2013-11-26  Filip Pizlo  <fpizlo@apple.com>
 
         Do bytecode validation as part of testing

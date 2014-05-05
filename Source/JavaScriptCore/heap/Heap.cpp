@@ -467,7 +467,6 @@ void Heap::markRoots()
     {
         GCPHASE(GatherStackRoots);
         stack().gatherConservativeRoots(stackRoots, m_jitStubRoutines, m_codeBlocks);
-        stack().sanitizeStack();
     }
 
 #if ENABLE(DFG_JIT)

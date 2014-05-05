@@ -52,8 +52,6 @@ JSStack::JSStack(VM& vm, size_t capacity)
     m_reservation = PageReservation::reserve(roundUpAllocationSize(capacity * sizeof(Register), commitSize), OSAllocator::JSVMStackPages);
     updateStackLimit(highAddress());
     m_commitEnd = highAddress();
-    
-    m_lastStackTop = getBaseOfStack();
 
     disableErrorStackReserve();
 
@@ -101,19 +99,6 @@ void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
 void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
 {
     conservativeRoots.add(getBaseOfStack(), getTopOfStack(), jitStubRoutines, codeBlocks);
-}
-
-void JSStack::sanitizeStack()
-{
-    ASSERT(getTopOfStack() <= getBaseOfStack());
-    
-    if (m_lastStackTop < getTopOfStack()) {
-        char* begin = reinterpret_cast<char*>(m_lastStackTop);
-        char* end = reinterpret_cast<char*>(getTopOfStack());
-        memset(begin, 0, end - begin);
-    }
-    
-    m_lastStackTop = getTopOfStack();
 }
 
 void JSStack::releaseExcessCapacity()

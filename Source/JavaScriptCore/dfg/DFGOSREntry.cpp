@@ -52,9 +52,6 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     }
     
     VM* vm = &exec->vm();
-    
-    vm->interpreter->stack().sanitizeStack();
-    
     if (codeBlock->jitType() != JITCode::DFGJIT) {
         RELEASE_ASSERT(codeBlock->jitType() == JITCode::FTLJIT);
         
@@ -184,8 +181,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     //    it seems silly: you'd be diverting the program to error handling when it
     //    would have otherwise just kept running albeit less quickly.
     
-    unsigned frameSize = jitCode->common.requiredRegisterCountForExecutionAndExit();
-    if (!vm->interpreter->stack().grow(&exec->registers()[virtualRegisterForLocal(frameSize).offset()])) {
+    if (!vm->interpreter->stack().grow(&exec->registers()[virtualRegisterForLocal(jitCode->common.requiredRegisterCountForExecutionAndExit()).offset()])) {
         if (Options::verboseOSR())
             dataLogF("    OSR failed because stack growth failed.\n");
         return 0;
@@ -211,20 +207,11 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     for (unsigned i = entry->m_reshufflings.size(); i--;)
         registers[entry->m_reshufflings[i].toOffset] = temporaryLocals[i];
     
-    // 5) Clear those parts of the call frame that the DFG ain't using. This helps GC on some
-    //    programs by eliminating some stale pointer pathologies.
-    
-    for (unsigned i = frameSize; i--;) {
-        if (entry->m_machineStackUsed.get(i))
-            continue;
-        registers[virtualRegisterForLocal(i).offset()] = JSValue::encode(JSValue());
-    }
-    
-    // 6) Fix the call frame.
+    // 5) Fix the call frame.
     
     exec->setCodeBlock(codeBlock);
     
-    // 7) Find and return the destination machine code address.
+    // 6) Find and return the destination machine code address.
     
     void* result = codeBlock->jitCode()->executableAddressAtOffset(entry->m_machineCodeOffset);
     

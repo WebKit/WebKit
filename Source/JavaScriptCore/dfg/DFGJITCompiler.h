@@ -270,8 +270,6 @@ public:
                 entry->m_expectedValues.local(local).makeHeapTop();
             else {
                 VariableAccessData* variable = node->variableAccessData();
-                entry->m_machineStackUsed.set(variable->machineLocal().toLocal());
-                
                 switch (variable->flushFormat()) {
                 case FlushedDouble:
                     entry->m_localsForcedDouble.set(local);
