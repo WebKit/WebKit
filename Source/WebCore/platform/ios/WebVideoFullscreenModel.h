@@ -39,6 +39,8 @@ public:
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void togglePlayState() = 0;
+    virtual void beginScrubbing() = 0;
+    virtual void endScrubbing() = 0;
     virtual void seekToTime(double time) = 0;
     virtual void requestExitFullscreen() = 0;
     virtual void setVideoLayerFrame(FloatRect) = 0;

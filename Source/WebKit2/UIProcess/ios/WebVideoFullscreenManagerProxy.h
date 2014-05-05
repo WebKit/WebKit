@@ -66,6 +66,8 @@ private:
     virtual void play() override;
     virtual void pause() override;
     virtual void togglePlayState() override;
+    virtual void beginScrubbing() override;
+    virtual void endScrubbing() override;
     virtual void seekToTime(double) override;
     virtual void setVideoLayerFrame(WebCore::FloatRect) override;
     virtual void setVideoLayerGravity(WebCore::WebVideoFullscreenModel::VideoGravity) override;

@@ -57,6 +57,8 @@ public:
     virtual void play() override;
     virtual void pause() override;
     virtual void togglePlayState() override;
+    virtual void beginScrubbing() override;
+    virtual void endScrubbing() override;
     virtual void seekToTime(double time) override;
     virtual void requestExitFullscreen() override;
     virtual void setVideoLayerFrame(FloatRect) override;

@@ -166,6 +166,24 @@ void WebVideoFullscreenModelMediaElement::togglePlayState()
     });
 }
 
+void WebVideoFullscreenModelMediaElement::beginScrubbing()
+{
+    __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
+    WebThreadRun(^{
+        m_mediaElement->beginScrubbing();
+        protect.clear();
+    });
+}
+
+void WebVideoFullscreenModelMediaElement::endScrubbing()
+{
+    __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
+    WebThreadRun(^{
+        m_mediaElement->endScrubbing();
+        protect.clear();
+    });
+}
+
 void WebVideoFullscreenModelMediaElement::seekToTime(double time)
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);

@@ -25,6 +25,8 @@ messages -> WebVideoFullscreenManager {
     Play()
     Pause()
     TogglePlayState()
+    BeginScrubbing()
+    EndScrubbing()
     SeekToTime(double time)
     RequestExitFullscreen()
     DidExitFullscreen()

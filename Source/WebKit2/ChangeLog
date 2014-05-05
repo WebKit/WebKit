@@ -1,3 +1,18 @@
+2014-05-05  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement beginScrubbing and endScrubbing for video fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=132520
+
+        Reviewed by Eric Carlson.
+
+        Plumb through beginScrubbing and endScrubbing.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::beginScrubbing):
+        (WebKit::WebVideoFullscreenManagerProxy::endScrubbing):
+        * WebProcess/ios/WebVideoFullscreenManager.messages.in:
+
 2014-05-05  Tim Horton  <timothy_horton@apple.com>
 
         Use a layer delegate instead of web_disableAllActions wherever possible

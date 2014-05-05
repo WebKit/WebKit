@@ -124,6 +124,16 @@ void WebVideoFullscreenManagerProxy::togglePlayState()
     m_page->send(Messages::WebVideoFullscreenManager::TogglePlayState(), m_page->pageID());
 }
     
+void WebVideoFullscreenManagerProxy::beginScrubbing()
+{
+    m_page->send(Messages::WebVideoFullscreenManager::BeginScrubbing(), m_page->pageID());
+}
+
+void WebVideoFullscreenManagerProxy::endScrubbing()
+{
+    m_page->send(Messages::WebVideoFullscreenManager::EndScrubbing(), m_page->pageID());
+}
+
 void WebVideoFullscreenManagerProxy::seekToTime(double time)
 {
     m_page->send(Messages::WebVideoFullscreenManager::SeekToTime(time), m_page->pageID());

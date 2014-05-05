@@ -195,6 +195,20 @@ SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend)
     return [NSSet setWithObject:@"rate"];
 }
 
+- (void)beginScrubbing:(id)sender
+{
+    UNUSED_PARAM(sender);
+    ASSERT(self.delegate);
+    self.delegate->beginScrubbing();
+}
+
+- (void)endScrubbing:(id)sender
+{
+    UNUSED_PARAM(sender);
+    ASSERT(self.delegate);
+    self.delegate->endScrubbing();
+}
+
 - (void)seekToTime:(NSTimeInterval)time
 {
     ASSERT(self.delegate);
