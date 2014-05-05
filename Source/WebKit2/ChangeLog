@@ -1,5 +1,16 @@
 2014-05-04  Pratik Solanki  <psolanki@apple.com>
 
+        Reduce calls to CFURLCacheCopySharedURLCache
+        https://bugs.webkit.org/show_bug.cgi?id=132464
+        <rdar://problem/16806694>
+
+        Address review comments by collapsing multi-line code into a single ASSERT.
+
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer):
+
+2014-05-04  Pratik Solanki  <psolanki@apple.com>
+
         Shortcircuit shouldUseCredentialStorage callback
         https://bugs.webkit.org/show_bug.cgi?id=132308
         <rdar://problem/16806708>

@@ -87,11 +87,8 @@ void NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse(Shareab
 void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle& handle, SharedBuffer* buffer)
 {
     static CFURLCacheRef cache = CFURLCacheCopySharedURLCache();
-#if !ASSERT_DISABLED
     ASSERT(isMainThread());
-    RetainPtr<CFURLCacheRef> currentCache = adoptCF(CFURLCacheCopySharedURLCache());
-    ASSERT(cache == currentCache.get());
-#endif
+    ASSERT(cache == adoptCF(CFURLCacheCopySharedURLCache()));
 
     if (!cache)
         return;
