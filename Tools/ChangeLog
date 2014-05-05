@@ -1,3 +1,18 @@
+2014-05-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Refactor favicon database APIs
+        https://bugs.webkit.org/show_bug.cgi?id=132519
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c: Use ewk_favicon_database_icon_get instead of ewk_view_favicon_get.
+        (update_view_favicon):
+        (on_icon_changed_cb):
+        (window_free):
+        (on_url_changed):
+        (window_create):
+        (on_view_favicon_changed): Deleted.
+
 2014-05-02  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/132505> Make it possible to tell copy-webkitlibraries-to-product-directory which OS X version to copy for

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
- * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2013-2014 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,19 +45,24 @@ typedef struct EwkFaviconDatabase Ewk_Favicon_Database;
  * @typedef Ewk_Favicon_Database_Icon_Change_Cb Ewk_Favicon_Database_Icon_Change_Cb
  * @brief Callback type for use with ewk_favicon_database_icon_change_callback_add and ewk_favicon_database_icon_change_callback_del
  */
-typedef void (*Ewk_Favicon_Database_Icon_Change_Cb)(const char *page_url, void *event_info);
+typedef void (*Ewk_Favicon_Database_Icon_Change_Cb)(Ewk_Favicon_Database *database, const char *url, void *data);
 
 /**
- * Retrieves from the database the favicon for the given @a page_url
+ * Retrieves from the database the favicon for the given @a url
  *
  * @param database database object to query
- * @param page_url URL of the page to get the favicon for
+ * @param url URL of the page to get the favicon for
  * @param evas The canvas to add the favicon to
  *
  * @return The favicon as an Evas_Object if successful, @c NULL otherwise.
  * The returned Evas_Object needs to be freed after use.
+ *
+ * @note In order to enable the favicons database, ewk_context_favicon_database_direct_set must be called.
+ *
+ * @see ewk_context_favicon_database_directory_set
+ * @see ewk_context_favicon_database_get
  */
-EAPI Evas_Object *ewk_favicon_database_icon_get(Ewk_Favicon_Database *database, const char *page_url, Evas *evas);
+EAPI Evas_Object *ewk_favicon_database_icon_get(Ewk_Favicon_Database *database, const char *url, Evas *evas);
 
 /**
  * Add (register) a callback function to a icon change event
@@ -65,6 +70,11 @@ EAPI Evas_Object *ewk_favicon_database_icon_get(Ewk_Favicon_Database *database, 
  * @param database database object to register the callback
  * @param callback callback function to be called when an icon changes
  * @param data the data pointer that was to be passed to the callback
+ *
+ * @note In order to enable the favicons database, ewk_context_favicon_database_direct_set must be called.
+ *
+ * @see ewk_context_favicon_database_directory_set
+ * @see ewk_context_favicon_database_get
  */
 EAPI void ewk_favicon_database_icon_change_callback_add(Ewk_Favicon_Database *database, Ewk_Favicon_Database_Icon_Change_Cb callback, void *data);
 
@@ -73,6 +83,10 @@ EAPI void ewk_favicon_database_icon_change_callback_add(Ewk_Favicon_Database *da
  *
  * @param database database object to unregister the callback.
  * @param callback callback function to unregister
+ *
+ * @see ewk_favicon_database_icon_change_callback_add
+ * @see ewk_context_favicon_database_directory_set
+ * @see ewk_context_favicon_database_get
  */
 EAPI void ewk_favicon_database_icon_change_callback_del(Ewk_Favicon_Database *database, Ewk_Favicon_Database_Icon_Change_Cb callback);
 

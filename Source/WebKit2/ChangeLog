@@ -1,3 +1,41 @@
+2014-05-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Refactor favicon database APIs
+        https://bugs.webkit.org/show_bug.cgi?id=132519
+
+        Reviewed by Gyuyoung Kim.
+
+        ewebkit2 has two options to get favicon.
+
+        The first option is ewk_view_favicon_get with "favicon,changed" signal.
+        It's simple to use but it always adds the callback to EwkView although applications does not use favicon.
+
+        The other option is ewk_favicon_database_icon_get with ewk_favicon_database_icon_change_callback_add API.
+        But the callback doesn't have information about Ewk_Favicon_Database to call ewk_favicon_database_icon_get.
+
+        This patch removed ewk_view_favicon_get and "favicon,changed" signal.
+        In addition, improved ewk_favicon_database_icon_change_callback.
+
+        * UIProcess/API/efl/EwkView.cpp: Remove ewk_favicon_database related code.
+        (EwkView::EwkView):
+        (EwkView::~EwkView):
+        (EwkView::informURLChange):
+        (EwkView::handleFaviconChanged):
+        (EwkView::createFavicon): Deleted.
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (EwkFaviconDatabase::iconDataReadyForPageURL):
+        (EwkFaviconDatabase::didChangeIconForPageURL): Deleted. dead code.
+        * UIProcess/API/efl/ewk_favicon_database.h:
+        Refactor Ewk_Favicon_Database_Icon_Change_Cb and improve doxygen.
+        * UIProcess/API/efl/ewk_favicon_database_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_favicon_get): Deleted.
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_favicon_database.cpp:
+        (EWK2FaviconDatabaseTest::requestFaviconData):
+        (TEST_F):
+
 2014-05-05  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] Swipe snapshots should be taken asynchronously

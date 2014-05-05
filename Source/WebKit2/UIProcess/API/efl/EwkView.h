@@ -111,7 +111,6 @@ public:
     WebCore::AffineTransform transformToScreen() const;
 
     const char* url() const { return m_url; }
-    Evas_Object* createFavicon() const;
     const char* title() const;
     WebKit::InputMethodContextEfl* inputMethodContext();
 

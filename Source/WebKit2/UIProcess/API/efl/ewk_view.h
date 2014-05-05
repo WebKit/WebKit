@@ -48,8 +48,6 @@
  *   when done to continue with the form submission. If the last reference is removed on a
  *   #Ewk_Form_Submission_Request and the form has not been submitted yet,
  *   ewk_form_submission_request_submit() will be called automatically.
- * - "favicon,changed", void: reports that the view's favicon has changed.
- *   The favicon can be queried using ewk_view_favicon_get().
  * - "load,error", const Ewk_Error*: reports main frame load failed.
  * - "load,finished", void: reports load finished.
  * - "load,progress", double*: load progress has changed (value from 0.0 to 1.0).
@@ -391,16 +389,6 @@ EAPI Eina_Bool ewk_view_url_set(Evas_Object *o, const char *url);
  * @return current URL on success or @c NULL on failure
  */
 EAPI const char *ewk_view_url_get(const Evas_Object *o);
-
-/**
- * Returns the current favicon of view object.
- *
- * @param o view object to get current icon URL
- *
- * @return current favicon on success or @c NULL if unavailable or on failure.
- * The returned Evas_Object needs to be freed after use.
- */
-EAPI Evas_Object *ewk_view_favicon_get(const Evas_Object *o);
 
 /**
  * Asks the main frame to reload the current document.

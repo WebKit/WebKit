@@ -293,6 +293,44 @@ on_window_resize(void *user_data, Evas *e, Evas_Object *elm_window, void *event_
         elm_menu_close(window->popup.elm_menu);
 }
 
+static void
+update_view_favicon(Browser_Window *window, Evas_Object *icon)
+{
+    /* Remove previous icon from URL bar */
+    Evas_Object *old_icon = elm_object_part_content_unset(window->url_bar, "icon");
+    if (old_icon) {
+        evas_object_unref(old_icon);
+        evas_object_del(old_icon);
+    }
+
+    /* Show new icon in URL bar */
+    if (icon) {
+        /* Workaround for icon display bug:
+         * http://trac.enlightenment.org/e/ticket/1616 */
+        evas_object_size_hint_min_set(icon, 48, 24);
+        evas_object_image_filled_set(icon, EINA_FALSE);
+        evas_object_image_fill_set(icon, 24, 0, 24, 24);
+        elm_object_part_content_set(window->url_bar, "icon", icon);
+        evas_object_ref(icon);
+    }
+}
+
+static void
+on_icon_changed_cb(Ewk_Favicon_Database *database, const char *url, void *user_data)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+    Evas_Object *ewk_view = window->ewk_view;
+
+    if (strcmp(url, ewk_view_url_get(ewk_view)))
+        return;
+
+    Evas_Object *favicon = ewk_favicon_database_icon_get(database, url, evas_object_evas_get(ewk_view));
+    update_view_favicon(window, favicon);
+
+    if (favicon)
+        evas_object_unref(favicon);
+}
+
 static void window_free(Browser_Window *window)
 {
     evas_object_event_callback_del(window->ewk_view, EVAS_CALLBACK_MOUSE_IN, on_mouse_in);
@@ -300,6 +338,8 @@ static void window_free(Browser_Window *window)
     evas_object_event_callback_del(window->ewk_view, EVAS_CALLBACK_MOUSE_MOVE, on_mouse_move);
 
     evas_object_event_callback_del(window->elm_window, EVAS_CALLBACK_RESIZE, on_window_resize);
+
+    ewk_favicon_database_icon_change_callback_del(ewk_context_favicon_database_get(ewk_view_context_get(window->ewk_view)), on_icon_changed_cb);
 
     evas_object_del(window->ewk_view);
     /* The elm_win will take care of freeing its children */
@@ -544,6 +584,8 @@ on_url_changed(void *user_data, Evas_Object *ewk_view, void *event_info)
 
     char *url = elm_entry_utf8_to_markup(ewk_view_url_get(window->ewk_view));
     elm_entry_entry_set(window->url_bar, url);
+
+    on_icon_changed_cb(ewk_context_favicon_database_get(ewk_view_context_get(ewk_view)), url, user_data);
 
     free(url);
 
@@ -824,40 +866,6 @@ on_color_picker_request(Ewk_View_Smart_Data *sd, Ewk_Color_Picker *color_picker)
     evas_object_show(window->color_selector.elm_selector_window);
 
     return EINA_TRUE;
-}
-
-static void
-update_view_favicon(Browser_Window *window, Evas_Object *icon)
-{
-    /* Remove previous icon from URL bar */
-    Evas_Object *old_icon = elm_object_part_content_unset(window->url_bar, "icon");
-    if (old_icon) {
-        evas_object_unref(old_icon);
-        evas_object_del(old_icon);
-    }
-
-    /* Show new icon in URL bar */
-    if (icon) {
-        /* Workaround for icon display bug:
-         * http://trac.enlightenment.org/e/ticket/1616 */
-        evas_object_size_hint_min_set(icon, 48, 24);
-        evas_object_image_filled_set(icon, EINA_FALSE);
-        evas_object_image_fill_set(icon, 24, 0, 24, 24);
-        elm_object_part_content_set(window->url_bar, "icon", icon);
-        evas_object_ref(icon);
-    }
-}
-
-static void
-on_view_favicon_changed(void *user_data, Evas_Object *ewk_view, void *event_info)
-{
-    Browser_Window *window = (Browser_Window *)user_data;
-
-    Evas_Object* favicon = ewk_view_favicon_get(ewk_view);
-    update_view_favicon(window, favicon);
-
-    if (favicon)
-        evas_object_unref(favicon);
 }
 
 static int
@@ -1823,6 +1831,8 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     Ewk_Page_Group *pageGroup = opener ? ewk_view_page_group_get(opener) : ewk_page_group_create("");
     window->ewk_view = ewk_view_smart_add(evas, smart, context, pageGroup);
 
+    ewk_favicon_database_icon_change_callback_add(ewk_context_favicon_database_get(context), on_icon_changed_cb, window);
+
     ewk_view_theme_set(window->ewk_view, TEST_THEME_DIR "/default.edj");
     if (device_pixel_ratio)
         ewk_view_device_pixel_ratio_set(window->ewk_view, (float)device_pixel_ratio);
@@ -1860,7 +1870,6 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_smart_callback_add(window->ewk_view, "download,finished", on_download_finished, window);
     evas_object_smart_callback_add(window->ewk_view, "download,request", on_download_request, window);
     evas_object_smart_callback_add(window->ewk_view, "file,chooser,request", on_file_chooser_request, window);
-    evas_object_smart_callback_add(window->ewk_view, "favicon,changed", on_view_favicon_changed, window);
     evas_object_smart_callback_add(window->ewk_view, "load,error", on_error, window);
     evas_object_smart_callback_add(window->ewk_view, "load,provisional,failed", on_error, window);
     evas_object_smart_callback_add(window->ewk_view, "load,progress", on_progress, window);

@@ -25,7 +25,6 @@
 #include "EwkView.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_context_private.h"
-#include "ewk_favicon_database_private.h"
 #include "ewk_page_group_private.h"
 #include "ewk_private.h"
 #include "ewk_settings_private.h"
@@ -153,13 +152,6 @@ const char* ewk_view_url_get(const Evas_Object* ewkView)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, nullptr);
 
     return impl->url();
-}
-
-Evas_Object* ewk_view_favicon_get(const Evas_Object* ewkView)
-{
-    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, nullptr);
-
-    return impl->createFavicon();
 }
 
 Eina_Bool ewk_view_reload(Evas_Object* ewkView)

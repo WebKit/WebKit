@@ -56,7 +56,6 @@
 #include "ewk_context_menu_item_private.h"
 #include "ewk_context_menu_private.h"
 #include "ewk_context_private.h"
-#include "ewk_favicon_database_private.h"
 #include "ewk_page_group_private.h"
 #include "ewk_popup_menu_item_private.h"
 #include "ewk_popup_menu_private.h"
@@ -327,24 +326,12 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     // Enable mouse events by default
     setMouseEventsEnabled(true);
 
-    // Listen for favicon changes.
-    EwkFaviconDatabase* iconDatabase = m_context->faviconDatabase();
-    ASSERT(iconDatabase);
-
-    iconDatabase->watchChanges(IconChangeCallbackData(EwkView::handleFaviconChanged, this));
-
     WKPageToEvasObjectMap::AddResult result = wkPageToEvasObjectMap().add(wkPage(), m_evasObject);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 EwkView::~EwkView()
 {
-    // Unregister icon change callback.
-    EwkFaviconDatabase* iconDatabase = m_context->faviconDatabase();
-    ASSERT(iconDatabase);
-
-    iconDatabase->unwatchChanges(EwkView::handleFaviconChanged);
-
     ASSERT(wkPageToEvasObjectMap().get(wkPage()) == m_evasObject);
     wkPageToEvasObjectMap().remove(wkPage());
 }
@@ -1071,17 +1058,6 @@ void EwkView::informURLChange()
 
     m_url = WKEinaSharedString(wkURLString.get());
     smartCallback<URLChanged>().call(m_url);
-
-    // Update the view's favicon.
-    smartCallback<FaviconChanged>().call();
-}
-
-Evas_Object* EwkView::createFavicon() const
-{
-    EwkFaviconDatabase* iconDatabase = m_context->faviconDatabase();
-    ASSERT(iconDatabase);
-
-    return ewk_favicon_database_icon_get(iconDatabase, m_url, smartData()->base.evas);
 }
 
 EwkWindowFeatures* EwkView::windowFeatures()
@@ -1378,8 +1354,6 @@ void EwkView::handleFaviconChanged(const char* pageURL, void* eventInfo)
 
     if (!view->url() || strcasecmp(view->url(), pageURL))
         return;
-
-    view->smartCallback<FaviconChanged>().call();
 }
 
 PassRefPtr<cairo_surface_t> EwkView::takeSnapshot()
