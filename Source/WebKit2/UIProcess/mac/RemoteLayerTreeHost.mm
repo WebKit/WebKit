@@ -33,7 +33,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <WebCore/PlatformLayer.h>
-#import <WebCore/WebCoreCALayerExtras.h>
+#import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <WebKitSystemInterface.h>
 
 #import <QuartzCore/QuartzCore.h>
@@ -160,7 +160,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         ASSERT_NOT_REACHED();
     }
 
-    [layer web_disableAllActions];
+    [layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
     setLayerID(layer.get(), properties.layerID);
 
     return layer.get();

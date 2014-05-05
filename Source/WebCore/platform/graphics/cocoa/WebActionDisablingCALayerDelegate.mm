@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 
-#import "WebCoreCALayerExtras.h"
+#import "WebActionDisablingCALayerDelegate.h"
+#import <QuartzCore/QuartzCore.h>
 
-@implementation CALayer (WebCoreCALayerExtras)
+@implementation WebActionDisablingCALayerDelegate
 
-- (void)web_disableAllActions
++ (instancetype)shared
 {
-    NSNull *nullValue = [NSNull null];
-    self.style = @{
-        @"actions" : @{
-            @"anchorPoint" : nullValue,
-            @"anchorPointZ" : nullValue,
-            @"backgroundColor" : nullValue,
-            @"borderColor" : nullValue,
-            @"borderWidth" : nullValue,
-            @"bounds" : nullValue,
-            @"contents" : nullValue,
-            @"contentsRect" : nullValue,
-            @"contentsScale" : nullValue,
-            @"cornerRadius" : nullValue,
-            @"opacity" : nullValue,
-            @"position" : nullValue,
-            @"shadowColor" : nullValue,
-            @"sublayerTransform" : nullValue,
-            @"sublayers" : nullValue,
-            @"transform" : nullValue,
-            @"zPosition" : nullValue
-        }
-    };
+    static WebActionDisablingCALayerDelegate *controller;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        controller = [[WebActionDisablingCALayerDelegate alloc] init];
+    });
+    return controller;
+}
+
+- (id<CAAction>)actionForLayer:(CALayer *)layer forKey:(NSString *)event
+{
+    UNUSED_PARAM(layer);
+    UNUSED_PARAM(event);
+    return (id<CAAction>)[NSNull null];
 }
 
 @end

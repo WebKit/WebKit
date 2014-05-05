@@ -35,6 +35,7 @@
 .objc_class_name_DOMTextEvent
 .objc_class_name_DOMUIEvent
 .objc_class_name_DOMWheelEvent
+.objc_class_name_WebActionDisablingCALayerDelegate
 .objc_class_name_WebScriptObject
 .objc_class_name_WebScriptObjectPrivate
 .objc_class_name_WebUndefined

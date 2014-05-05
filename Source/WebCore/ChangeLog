@@ -1,3 +1,29 @@
+2014-05-05  Tim Horton  <timothy_horton@apple.com>
+
+        Use a layer delegate instead of web_disableAllActions wherever possible
+        https://bugs.webkit.org/show_bug.cgi?id=132560
+        <rdar://problem/16459284>
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::commonInit):
+        If we own the platform layer, set its delegate to the action-disabling WebActionDisablingCALayerDelegate.
+        If we don't, its actual owner might want to control the delegate, so continue using web_disableAllActions.
+
+        * platform/graphics/cocoa/WebActionDisablingCALayerDelegate.h: Added.
+        * platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm: Added.
+        (+[WebActionDisablingCALayerDelegate shared]):
+        (-[WebActionDisablingCALayerDelegate actionForLayer:forKey:]):
+        Add a class that can act as the delegate of a CALayer, and disables all actions.
+
+        * platform/graphics/cocoa/WebCoreCALayerExtras.h: Renamed from Source/WebCore/platform/graphics/mac/WebCoreCALayerExtras.h.
+        * platform/graphics/cocoa/WebCoreCALayerExtras.mm: Renamed from Source/WebCore/platform/graphics/mac/WebCoreCALayerExtras.mm.
+        (-[CALayer web_disableAllActions]):
+        Move WebCoreCALayerExtras from mac/ to cocoa/.
+
 2014-05-05  Martin Hock  <mhock@apple.com>
 
         Session-aware plugin autostart data

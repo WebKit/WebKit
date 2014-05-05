@@ -41,7 +41,7 @@
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/IOSurface.h>
-#import <WebCore/WebCoreCALayerExtras.h>
+#import <WebCore/WebActionDisablingCALayerDelegate.h>
 
 #if defined(__has_include) && __has_include(<QuartzCore/QuartzCorePrivate.h>)
 #import <QuartzCore/QuartzCorePrivate.h>
@@ -546,14 +546,14 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     [m_swipeLayer setFrame:swipeArea];
     [m_swipeLayer setName:@"Gesture Swipe Root Layer"];
     [m_swipeLayer setGeometryFlipped:geometryIsFlippedToRoot];
-    [m_swipeLayer web_disableAllActions];
+    [m_swipeLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
     [m_swipeSnapshotLayer setContentsGravity:kCAGravityTopLeft];
     [m_swipeSnapshotLayer setContentsScale:m_webPageProxy.deviceScaleFactor()];
     [m_swipeSnapshotLayer setAnchorPoint:CGPointZero];
     [m_swipeSnapshotLayer setFrame:CGRectMake(0, 0, swipeArea.width(), swipeArea.height() - topContentInset)];
     [m_swipeSnapshotLayer setName:@"Gesture Swipe Snapshot Layer"];
-    [m_swipeSnapshotLayer web_disableAllActions];
+    [m_swipeSnapshotLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
     [m_swipeLayer addSublayer:m_swipeSnapshotLayer.get()];
 

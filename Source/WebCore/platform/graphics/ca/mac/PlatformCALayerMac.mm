@@ -39,6 +39,7 @@
 #import "SoftLinking.h"
 #import "TiledBacking.h"
 #import "TileController.h"
+#import "WebActionDisablingCALayerDelegate.h"
 #import "WebCoreCALayerExtras.h"
 #import "WebLayer.h"
 #import "WebTiledBackingLayer.h"
@@ -217,10 +218,13 @@ void PlatformCALayerMac::commonInit()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     // Save a pointer to 'this' in the CALayer
-    [m_layer.get() setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
+    [m_layer setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
     
     // Clear all the implicit animations on the CALayer
-    [m_layer web_disableAllActions];
+    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeCustom)
+        [m_layer web_disableAllActions];
+    else
+        [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
     // So that the scrolling thread's performance logging code can find all the tiles, mark this as being a tile.
     if (m_layerType == LayerTypeTiledBackingTileLayer)

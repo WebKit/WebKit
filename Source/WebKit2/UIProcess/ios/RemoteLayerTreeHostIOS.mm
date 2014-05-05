@@ -28,12 +28,9 @@
 #if PLATFORM(IOS)
 
 #import "RemoteLayerTreeHost.h"
-
-#import <WebCore/WebCoreCALayerExtras.h>
-#import <WebKitSystemInterface.h>
-
-#import <UIKit/UIScrollView.h>
 #import <QuartzCore/QuartzCore.h>
+#import <UIKit/UIScrollView.h>
+#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
@@ -133,9 +130,9 @@ namespace WebKit {
 
 LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties* layerProperties)
 {
-    RetainPtr<LayerOrView>& layerOrView = m_layers.add(properties.layerID, nullptr).iterator->value;
+    RetainPtr<LayerOrView>& view = m_layers.add(properties.layerID, nullptr).iterator->value;
 
-    ASSERT(!layerOrView);
+    ASSERT(!view);
 
     switch (properties.type) {
     case PlatformCALayer::LayerTypeLayer:
@@ -146,28 +143,26 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
         if (layerProperties && layerProperties->customBehavior == GraphicsLayer::CustomScrollingBehavior)
-            layerOrView = adoptNS([[UIScrollView alloc] init]);
+            view = adoptNS([[UIScrollView alloc] init]);
         else
-            layerOrView = adoptNS([[WKCompositingView alloc] init]);
+            view = adoptNS([[WKCompositingView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeTransformLayer:
-        layerOrView = adoptNS([[WKTransformView alloc] init]);
+        view = adoptNS([[WKTransformView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeCustom:
         if (!m_isDebugLayerTreeHost)
-            layerOrView = adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:properties.hostingContextID]);
+            view = adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:properties.hostingContextID]);
         else
-            layerOrView = adoptNS([[WKCompositingView alloc] init]);
+            view = adoptNS([[WKCompositingView alloc] init]);
         break;
     default:
         ASSERT_NOT_REACHED();
     }
 
-    // FIXME: Do through the view.
-    [[layerOrView layer] web_disableAllActions];
-    setLayerID([layerOrView layer], properties.layerID);
+    setLayerID([view layer], properties.layerID);
 
-    return layerOrView.get();
+    return view.get();
 }
 
 } // namespace WebKit

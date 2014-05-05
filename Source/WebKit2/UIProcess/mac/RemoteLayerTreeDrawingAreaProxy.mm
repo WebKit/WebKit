@@ -32,8 +32,9 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <QuartzCore/QuartzCore.h>
 #import <WebCore/IOSurfacePool.h>
-#import <WebCore/WebCoreCALayerExtras.h>
+#import <WebCore/WebActionDisablingCALayerDelegate.h>
 
 static const CFIndex CoreAnimationCommitRunLoopOrder = 2000000;
 static const CFIndex DidCommitLayersRunLoopOrder = CoreAnimationCommitRunLoopOrder + 1;
@@ -264,7 +265,7 @@ void RemoteLayerTreeDrawingAreaProxy::showDebugIndicator(bool show)
 
     m_tileMapHostLayer = adoptNS([[CALayer alloc] init]);
     [m_tileMapHostLayer setName:@"Tile map host"];
-    [m_tileMapHostLayer web_disableAllActions];
+    [m_tileMapHostLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
     [m_tileMapHostLayer setAnchorPoint:CGPointZero];
     [m_tileMapHostLayer setOpacity:0.8];
     [m_tileMapHostLayer setMasksToBounds:YES];
@@ -282,7 +283,7 @@ void RemoteLayerTreeDrawingAreaProxy::showDebugIndicator(bool show)
     }
     
     m_exposedRectIndicatorLayer = adoptNS([[CALayer alloc] init]);
-    [m_exposedRectIndicatorLayer web_disableAllActions];
+    [m_exposedRectIndicatorLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
     [m_exposedRectIndicatorLayer setAnchorPoint:CGPointZero];
 
     {
