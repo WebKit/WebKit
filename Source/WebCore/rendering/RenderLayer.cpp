@@ -5643,6 +5643,18 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
             bounds.moveBy(offset);
             if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)
                 backgroundRect.intersect(bounds);
+            
+            // Boxes inside flow threads don't have their logical left computed to avoid
+            // floats. Instead, that information is kept in their RenderBoxRegionInfo structure.
+            // As such, the layer bounds must be enlarged to encompass their background rect
+            // to ensure intersecting them won't result in an empty rect, which would eventually
+            // cause paint rejection.
+            if (flowThread && flowThread->isRenderNamedFlowThread()) {
+                if (flowThread->style().isHorizontalWritingMode())
+                    layerBounds.shiftMaxXEdgeTo(std::max(layerBounds.maxX(), backgroundRect.rect().maxX()));
+                else
+                    layerBounds.shiftMaxYEdgeTo(std::max(layerBounds.maxY(), backgroundRect.rect().maxY()));
+            }
         }
     }
 }

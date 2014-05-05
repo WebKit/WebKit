@@ -1,3 +1,21 @@
+2014-05-05  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Elements with overflow:auto are not painted inside regions when following a float
+        https://bugs.webkit.org/show_bug.cgi?id=131161
+
+        Reviewed by David Hyatt.
+
+        When a float-avoiding element (such as overflow:auto) is flowed into a flow thread after a float, its 
+        logical left is not set on its frameRect or its layer's topLeft, but is instead kept in its RenderBoxRegionInfo
+        structure. In some situation, this causes paint rejection to kick-in because intersecting the layer's rect
+        (which DOESN'T contain the logical left from the region info object) with the computed background rect 
+        (which contains the logical left from the region info object) results in an empty rect.
+
+        Test: fast/regions/overflow-auto-after-float.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
 2014-05-05  Andrei Bucur  <abucur@adobe.com>
 
         [CSSRegions] Slider displayed wrong in regions
