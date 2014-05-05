@@ -47,6 +47,11 @@ mkdir -p "$(dirname "$OUTPUT_FILE")"
 # Take the initial version number from RC_ProjectSourceVersion if it
 # exists, otherwise fall back to the version number stored in the source.
 ENVIRONMENT_VERSION="$RC_ProjectSourceVersion";
+if [[ -z "$ENVIRONMENT_VERSION" ]]; then
+    # Try the original all-caps version of the environment variable
+    ENVIRONMENT_VERSION="$RC_PROJECTSOURCEVERSION";
+fi
+
 PROPOSED_VERSION=${ENVIRONMENT_VERSION:-$FALLBACK_VERSION}
 chomp PROPOSED_VERSION
 
