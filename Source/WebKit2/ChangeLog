@@ -1,5 +1,30 @@
 2014-04-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WK2][X11] NetscapePluginModule::scanPlugin() should write UTF-8 strings to stdout
+        https://bugs.webkit.org/show_bug.cgi?id=132245
+
+        Reviewed by Carlos Garcia Campos.
+
+        NetscapePluginModule::scanPlugin(), in the helper writeLine function, takes each character
+        of the given string and writes it out as a UChar, doing two fputc calls for each byte of the
+        16-bit type.
+
+        This fails badly with characters with integer value less than 256 as the most significant byte
+        of the UChar is written out as a null character. This effectively chops the output that's gathered
+        in the UIProcess and is parsed in PluginProcessProxy::scanPlugin().
+
+        To avoid all this, the UTF-8 encoding of the string is written out in the PluginProcess, and
+        String::fromUTF8() is called in the UIProcess to properly decode the received string.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::writeCharacter):
+        (WebKit::writeLine):
+        (WebKit::writeByte): Deleted.
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+
+2014-04-28  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK][WK2] Missing return statement in webkit_plugin_get_description()
         https://bugs.webkit.org/show_bug.cgi?id=132263
 

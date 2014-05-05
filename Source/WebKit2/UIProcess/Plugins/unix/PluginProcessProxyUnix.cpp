@@ -96,7 +96,7 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS || !stdOut)
         return false;
 
-    String stdOutString(reinterpret_cast<const UChar*>(stdOut.get()));
+    String stdOutString = String::fromUTF8(stdOut.get());
 
     Vector<String> lines;
     stdOutString.split(UChar('\n'), true, lines);
