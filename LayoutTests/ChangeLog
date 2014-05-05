@@ -1,5 +1,13 @@
 2014-05-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Rebaseline fast/dom/MutationObserver/parser-mutations-actual.txt
+        
+        Unreviewed.
+
+        * fast/dom/MutationObserver/parser-mutations-expected.txt: Remove newline.
+
+2014-05-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Copy js-test-pre and js-test-post from LayoutTests/fast/js/resources/ to LayoutTests/resources.
 
         Merged tests (such as <rdar://problem/16433711>) expect these files
