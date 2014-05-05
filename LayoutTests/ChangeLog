@@ -1,3 +1,25 @@
+2014-05-05  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r168244): compositing/visibility/visibility-image-layers-dynamic.html 
+        failing.
+        https://bugs.webkit.org/show_bug.cgi?id=132551
+
+        Reviewed by Tim Horton.
+
+        This just needed a re-baseline after all. The bounds have increased in size 
+        because the size of the layer tree dump effects the bounds! So now that we are 
+        printing out anchor points, the bound increase by 15 pixels for every new anchor 
+        point print-out.
+
+        Should not longer be marked failing.
+        * TestExpectations:
+
+        Added comment to the test.
+        * compositing/visibility/visibility-image-layers-dynamic.html:
+
+        Re-baseline.
+        * platform/mac/compositing/visibility/visibility-image-layers-dynamic-expected.txt:
+
 2014-05-05  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Move fast/repaint tests to css3/compositing/repaint

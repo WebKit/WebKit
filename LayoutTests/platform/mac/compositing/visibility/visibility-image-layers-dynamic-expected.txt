@@ -4,6 +4,7 @@
 Initial
 
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 626.00)
   (children 1
     (GraphicsLayer
@@ -54,10 +55,11 @@ Initial
 After step 1
 
 (GraphicsLayer
-  (bounds 785.00 1366.00)
+  (anchor 0.00 0.00)
+  (bounds 785.00 1381.00)
   (children 1
     (GraphicsLayer
-      (bounds 785.00 1366.00)
+      (bounds 785.00 1381.00)
       (contentsOpaque 1)
       (children 3
         (GraphicsLayer
@@ -103,10 +105,11 @@ After step 1
 After step 2
 
 (GraphicsLayer
-  (bounds 785.00 2090.00)
+  (anchor 0.00 0.00)
+  (bounds 785.00 2120.00)
   (children 1
     (GraphicsLayer
-      (bounds 785.00 2090.00)
+      (bounds 785.00 2120.00)
       (contentsOpaque 1)
       (children 3
         (GraphicsLayer

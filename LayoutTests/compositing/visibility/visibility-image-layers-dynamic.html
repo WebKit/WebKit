@@ -79,6 +79,8 @@
 </head>
 <body>
     <!-- Tests dynamic changes of visibility, using directly composited images. -->
+    <!-- FIXME: The size of the layer tree dumps effect the size of the layer bounds in this test. So if more
+         or less information is added to or removed from the dump, the bounds will also change. -->
     <div class="composited container"><img src="../resources/thiswayup.png" class="hidden composited box"></div>
     <div class="composited hidden container"><img src="../resources/thiswayup.png" class="composited box"></div>
     <div class="composited hidden container"><img src="../resources/thiswayup.png" class="visible composited box"></div>
