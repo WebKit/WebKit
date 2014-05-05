@@ -74,6 +74,8 @@ void RegExpMatchesArray::reifyAllProperties(ExecState* exec)
     ASSERT(m_state != ReifiedAll);
     ASSERT(m_result);
  
+    SamplingRegion samplingRegion("Reifying substring properties");
+    
     reifyMatchPropertyIfNecessary(exec);
 
     if (unsigned numSubpatterns = m_regExp->numSubpatterns()) {

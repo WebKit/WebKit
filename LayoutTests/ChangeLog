@@ -1,3 +1,25 @@
+2014-05-04  Filip Pizlo  <fpizlo@apple.com>
+
+        jsSubstring() should be lazy
+        https://bugs.webkit.org/show_bug.cgi?id=132556
+
+        Reviewed by Andreas Kling.
+        
+        These tests get 35-50% faster.
+
+        * js/regress/script-tests/substring-concat-weird.js: Added.
+        (foo):
+        * js/regress/script-tests/substring-concat.js: Added.
+        (foo):
+        * js/regress/script-tests/substring.js: Added.
+        (foo):
+        * js/regress/substring-concat-expected.txt: Added.
+        * js/regress/substring-concat-weird-expected.txt: Added.
+        * js/regress/substring-concat-weird.html: Added.
+        * js/regress/substring-concat.html: Added.
+        * js/regress/substring-expected.txt: Added.
+        * js/regress/substring.html: Added.
+
 2014-05-04  Andreas Kling  <akling@apple.com>
 
         Mark compositing/visibility/visibility-image-layers-dynamic.html as failing after r168244.

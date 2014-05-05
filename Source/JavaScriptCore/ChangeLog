@@ -1,3 +1,42 @@
+2014-05-04  Filip Pizlo  <fpizlo@apple.com>
+
+        jsSubstring() should be lazy
+        https://bugs.webkit.org/show_bug.cgi?id=132556
+
+        Reviewed by Andreas Kling.
+        
+        jsSubstring() is now lazy by using a special rope that is a substring instead of a
+        concatenation. To make this patch super simple, we require that a substring's base is
+        never a rope. Hence, when resolving a rope, we either go down a non-recursive substring
+        path, or we go down a concatenation path which may see exactly one level of substrings in
+        its fibers.
+        
+        This is up to a 50% speed-up on microbenchmarks and a 10% speed-up on Octane/regexp.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::specializedSweep):
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::visitFibers):
+        (JSC::JSRopeString::resolveRope):
+        (JSC::JSRopeString::resolveRopeSlowCase8):
+        (JSC::JSRopeString::resolveRopeSlowCase):
+        (JSC::JSRopeString::outOfMemory):
+        * runtime/JSString.h:
+        (JSC::JSRopeString::finishCreation):
+        (JSC::JSRopeString::append):
+        (JSC::JSRopeString::create):
+        (JSC::JSRopeString::offsetOfFibers):
+        (JSC::JSRopeString::fiber):
+        (JSC::JSRopeString::substringBase):
+        (JSC::JSRopeString::substringOffset):
+        (JSC::JSRopeString::substringSentinel):
+        (JSC::JSRopeString::isSubstring):
+        (JSC::jsSubstring):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::RegExpMatchesArray::reifyAllProperties):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSubstring):
+
 2014-05-02  Michael Saboff  <msaboff@apple.com>
 
         "arm64 function not 4-byte aligned" warnings when building JSC
