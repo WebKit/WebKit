@@ -241,11 +241,11 @@ void IOSurfacePool::evict(size_t additionalSize)
     while (m_bytesCached > targetSize) {
         tryEvictOldestCachedSurface();
 
-        if (m_inUseBytesCached > maximumInUseBytes)
+        if (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
             tryEvictInUseSurface();
     }
 
-    while (m_inUseBytesCached > maximumInUseBytes)
+    while (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
         tryEvictInUseSurface();
 }
 
