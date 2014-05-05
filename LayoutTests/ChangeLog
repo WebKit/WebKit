@@ -1,3 +1,12 @@
+2014-05-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed. New GTK baseline for media/media-controls-clone.html.
+
+        * platform/gtk/TestExpectations: Removed from the expectations.
+        * platform/gtk/media/media-controls-clone-expected.png:
+        * platform/gtk/media/media-controls-clone-expected.txt: New
+        baseline.
+
 2014-05-05  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] ASSERT when hovering over region

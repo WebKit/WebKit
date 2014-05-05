@@ -1890,7 +1890,6 @@ webkit.org/b/107818 media/controls-styling.html [ Failure ]
 webkit.org/b/107825 media/audio-delete-while-step-button-clicked.html [ Failure ]
 webkit.org/b/107825 media/nodesFromRect-shadowContent.html [ Failure ]
 webkit.org/b/107825 media/video-controls-fullscreen-volume.html [ Failure ]
-webkit.org/b/107825 media/media-controls-clone.html [ Failure ]
 
 # IndexedDB code is going through refactoring/refreshing, so the tests are quite unstable at this point.
 webkit.org/b/107194 storage/indexeddb [ Skip ]
