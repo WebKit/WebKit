@@ -24,4 +24,5 @@ messages -> VisitedLinkTableController {
     SetVisitedLinkTable(WebKit::SharedMemory::Handle handle)
     VisitedLinkStateChanged(Vector<WebCore::LinkHash> linkHashes)
     AllVisitedLinkStateChanged()
+    RemoveAllVisitedLinks()
 }

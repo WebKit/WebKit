@@ -52,6 +52,7 @@ public:
     void removeProcess(WebProcessProxy&);
 
     void addVisitedLinkHash(WebCore::LinkHash);
+    void removeAll();
 
 private:
     VisitedLinkProvider();

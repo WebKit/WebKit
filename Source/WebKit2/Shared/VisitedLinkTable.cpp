@@ -34,7 +34,8 @@ namespace WebKit {
 
 VisitedLinkTable::VisitedLinkTable()
     : m_tableSize(0)
-    , m_table(0)
+    , m_tableSizeMask(0)
+    , m_table(nullptr)
 {
 }
 
@@ -134,6 +135,13 @@ bool VisitedLinkTable::isLinkVisited(LinkHash linkHash) const
     }
 
     return false;
+}
+
+void VisitedLinkTable::clear()
+{
+    m_tableSize = 0;
+    m_tableSizeMask = 0;
+    m_sharedMemory = nullptr;
 }
 
 } // namespace WebKit

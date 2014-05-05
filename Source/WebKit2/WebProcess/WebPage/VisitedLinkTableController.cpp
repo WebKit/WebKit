@@ -113,4 +113,12 @@ void VisitedLinkTableController::allVisitedLinkStateChanged()
     pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 
+void VisitedLinkTableController::removeAllVisitedLinks()
+{
+    m_visitedLinkTable.clear();
+
+    invalidateStylesForAllLinks();
+    pageCache()->markPagesForVistedLinkStyleRecalc();
+}
+
 } // namespace WebKit

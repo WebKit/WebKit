@@ -51,6 +51,7 @@ private:
     void setVisitedLinkTable(const SharedMemory::Handle&);
     void visitedLinkStateChanged(const Vector<WebCore::LinkHash>&);
     void allVisitedLinkStateChanged();
+    void removeAllVisitedLinks();
 
     uint64_t m_identifier;
     VisitedLinkTable m_visitedLinkTable;

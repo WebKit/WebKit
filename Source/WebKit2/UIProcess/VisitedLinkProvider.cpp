@@ -89,6 +89,18 @@ void VisitedLinkProvider::removeProcess(WebProcessProxy& process)
         process.removeMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier);
 }
 
+void VisitedLinkProvider::removeAll()
+{
+    m_pendingVisitedLinksTimer.stop();
+    m_pendingVisitedLinks.clear();
+    m_keyCount = 0;
+    m_tableSize = 0;
+    m_table.clear();
+
+    for (auto& processAndCount : m_processes)
+        processAndCount.key->connection()->send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), m_identifier);
+}
+
 void VisitedLinkProvider::addVisitedLinkHash(LinkHash linkHash)
 {
     m_pendingVisitedLinks.add(linkHash);

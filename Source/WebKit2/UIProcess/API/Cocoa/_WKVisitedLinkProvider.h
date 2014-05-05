@@ -32,6 +32,7 @@ WK_API_CLASS
 @interface _WKVisitedLinkProvider : NSObject
 
 - (void)addVisitedLinkWithURL:(NSURL *)URL;
+- (void)removeAll;
 
 @end
 

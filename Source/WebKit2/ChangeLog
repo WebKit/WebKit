@@ -1,3 +1,32 @@
+2014-05-05  Sam Weinig  <sam@webkit.org>
+
+        [Cocoa WebKit2] Add SPI to clear all visited links in a VisitedLinkProvider
+        https://bugs.webkit.org/show_bug.cgi?id=132573
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/VisitedLinkTable.cpp:
+        (WebKit::VisitedLinkTable::VisitedLinkTable):
+        (WebKit::VisitedLinkTable::clear):
+        * Shared/VisitedLinkTable.h:
+        Add functions to clear the visited link table.
+
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm:
+        (-[_WKVisitedLinkProvider removeAll]):
+        Add SPI.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::removeAll):
+        * UIProcess/VisitedLinkProvider.h:
+        A remove all resets the provider and notifies all the attached processes.
+
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::removeAllVisitedLinks):
+        * WebProcess/WebPage/VisitedLinkTableController.h:
+        * WebProcess/WebPage/VisitedLinkTableController.messages.in:
+        Add message to clear the visited links for a process.
+
 2014-05-05  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] Special case ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture() for image documents

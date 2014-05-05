@@ -50,6 +50,11 @@
     _visitedLinkProvider->addVisitedLinkHash(linkHash);
 }
 
+- (void)removeAll
+{
+    _visitedLinkProvider->removeAll();
+}
+
 @end
 
 #endif

@@ -47,6 +47,7 @@ public:
     bool isLinkVisited(WebCore::LinkHash) const;
 
     SharedMemory* sharedMemory() const { return m_sharedMemory.get(); }
+    void clear();
 
 private:
     RefPtr<SharedMemory> m_sharedMemory;
