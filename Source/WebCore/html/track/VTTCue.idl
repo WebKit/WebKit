@@ -24,16 +24,16 @@
  */
 [
     Conditional=VIDEO_TRACK,
-    Constructor(double startTime, double endTime, DOMString text),
+    Constructor(unrestricted double startTime, unrestricted double endTime, DOMString text),
     ConstructorCallWith=ScriptExecutionContext,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface VTTCue : TextTrackCue {
     [SetterRaisesException] attribute DOMString vertical;
     attribute boolean snapToLines;
-    [SetterRaisesException] attribute double line;
-    [SetterRaisesException] attribute double position;
-    [SetterRaisesException] attribute double size;
+    [SetterRaisesException] attribute unrestricted double line;
+    [SetterRaisesException] attribute unrestricted double position;
+    [SetterRaisesException] attribute unrestricted double size;
     [SetterRaisesException] attribute DOMString align;
     attribute DOMString text;
     DocumentFragment getCueAsHTML();

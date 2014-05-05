@@ -31,13 +31,13 @@ interface SVGTransform {
 
     readonly attribute unsigned short type;
     [ImplementedAs=svgMatrix] readonly attribute SVGMatrix matrix;
-    readonly attribute float angle;
+    readonly attribute unrestricted float angle;
 
     [StrictTypeChecking] void setMatrix(SVGMatrix matrix);
-    [StrictTypeChecking] void setTranslate(float tx, float ty);
-    [StrictTypeChecking] void setScale(float sx, float sy);
-    [StrictTypeChecking] void setRotate(float angle, float cx, float cy);
-    [StrictTypeChecking] void setSkewX(float angle);
-    [StrictTypeChecking] void setSkewY(float angle);
+    [StrictTypeChecking] void setTranslate(unrestricted float tx, unrestricted float ty);
+    [StrictTypeChecking] void setScale(unrestricted float sx, unrestricted float sy);
+    [StrictTypeChecking] void setRotate(unrestricted float angle, unrestricted float cx, unrestricted float cy);
+    [StrictTypeChecking] void setSkewX(unrestricted float angle);
+    [StrictTypeChecking] void setSkewY(unrestricted float angle);
 };
 

@@ -33,13 +33,13 @@ interface SVGTextContentElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedEnumeration lengthAdjust;
 
     long getNumberOfChars();
-    float getComputedTextLength();
-    [RaisesException] float getSubStringLength([Default=Undefined,IsIndex] optional unsigned long offset, 
+    unrestricted float getComputedTextLength();
+    [RaisesException] unrestricted float getSubStringLength([Default=Undefined,IsIndex] optional unsigned long offset, 
                              [Default=Undefined,IsIndex] optional unsigned long length);
     [RaisesException] SVGPoint getStartPositionOfChar([Default=Undefined,IsIndex] optional unsigned long offset);
     [RaisesException] SVGPoint getEndPositionOfChar([Default=Undefined,IsIndex] optional unsigned long offset);
     [RaisesException] SVGRect getExtentOfChar([Default=Undefined,IsIndex] optional unsigned long offset);
-    [RaisesException] float getRotationOfChar([Default=Undefined,IsIndex] optional unsigned long offset);
+    [RaisesException] unrestricted float getRotationOfChar([Default=Undefined,IsIndex] optional unsigned long offset);
     long getCharNumAtPosition([Default=Undefined] optional SVGPoint point);
     [RaisesException] void selectSubString([Default=Undefined,IsIndex] optional unsigned long offset, 
                          [Default=Undefined,IsIndex] optional unsigned long length);

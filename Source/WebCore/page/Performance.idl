@@ -60,6 +60,6 @@
 #endif
 
     // See http://www.w3.org/TR/hr-time/ for details.
-    double now();
+    unrestricted double now();
 };
 

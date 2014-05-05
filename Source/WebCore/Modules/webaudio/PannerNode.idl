@@ -41,19 +41,19 @@
     [CustomSetter] attribute DOMString panningModel;
 
     // Uses a 3D cartesian coordinate system 
-    void setPosition(float x, float y, float z);
-    void setOrientation(float x, float y, float z);
-    void setVelocity(float x, float y, float z);
+    void setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
+    void setOrientation(unrestricted float x, unrestricted float y, unrestricted float z);
+    void setVelocity(unrestricted float x, unrestricted float y, unrestricted float z);
 
     // Distance model
     [CustomSetter] attribute DOMString distanceModel;
 
-    attribute double refDistance;
-    attribute double maxDistance;
-    attribute double rolloffFactor;
+    attribute unrestricted double refDistance;
+    attribute unrestricted double maxDistance;
+    attribute unrestricted double rolloffFactor;
 
     // Directional sound cone
-    attribute double coneInnerAngle;
-    attribute double coneOuterAngle;
-    attribute double coneOuterGain;
+    attribute unrestricted double coneInnerAngle;
+    attribute unrestricted double coneOuterAngle;
+    attribute unrestricted double coneOuterGain;
 };

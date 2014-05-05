@@ -25,7 +25,7 @@
  */
 
 interface SVGPathSegMovetoAbs : SVGPathSeg {
-    [StrictTypeChecking] attribute float x;
-    [StrictTypeChecking] attribute float y;
+    [StrictTypeChecking] attribute unrestricted float x;
+    [StrictTypeChecking] attribute unrestricted float y;
 };
 

@@ -34,15 +34,15 @@
 ] interface PerformanceResourceTiming : PerformanceEntry {
     readonly attribute DOMString initiatorType;
 
-    readonly attribute double redirectStart;
-    readonly attribute double redirectEnd;
-    readonly attribute double fetchStart;
-    readonly attribute double domainLookupStart;
-    readonly attribute double domainLookupEnd;
-    readonly attribute double connectStart;
-    readonly attribute double connectEnd;
-    readonly attribute double secureConnectionStart;
-    readonly attribute double requestStart;
-    readonly attribute double responseStart;
-    readonly attribute double responseEnd;
+    readonly attribute unrestricted double redirectStart;
+    readonly attribute unrestricted double redirectEnd;
+    readonly attribute unrestricted double fetchStart;
+    readonly attribute unrestricted double domainLookupStart;
+    readonly attribute unrestricted double domainLookupEnd;
+    readonly attribute unrestricted double connectStart;
+    readonly attribute unrestricted double connectEnd;
+    readonly attribute unrestricted double secureConnectionStart;
+    readonly attribute unrestricted double requestStart;
+    readonly attribute unrestricted double responseStart;
+    readonly attribute unrestricted double responseEnd;
 };

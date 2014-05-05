@@ -30,49 +30,54 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void save();
     void restore();
 
-    void scale(float sx, float sy);
-    void rotate(float angle);
-    void translate(float tx, float ty);
-    void transform(float m11, float m12, float m21, float m22, float dx, float dy);
-    void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
+    void scale(unrestricted float sx, unrestricted float sy);
+    void rotate(unrestricted float angle);
+    void translate(unrestricted float tx, unrestricted float ty);
+    void transform(unrestricted float m11, unrestricted float m12, unrestricted float m21, unrestricted float m22, 
+        unrestricted float dx, unrestricted float dy);
+    void setTransform(unrestricted float m11, unrestricted float m12, unrestricted float m21, unrestricted float m22, 
+        unrestricted float dx, unrestricted float dy);
 
-    attribute float globalAlpha;
+    attribute unrestricted float globalAlpha;
     [TreatNullAs=NullString] attribute DOMString globalCompositeOperation;
 
     [RaisesException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
     [RaisesException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
 
-    attribute float lineWidth;
+    attribute unrestricted float lineWidth;
     [TreatNullAs=NullString] attribute DOMString lineCap;
     [TreatNullAs=NullString] attribute DOMString lineJoin;
-    attribute float miterLimit;
+    attribute unrestricted float miterLimit;
 
-    attribute float shadowOffsetX;
-    attribute float shadowOffsetY;
-    attribute float shadowBlur;
+    attribute unrestricted float shadowOffsetX;
+    attribute unrestricted float shadowOffsetY;
+    attribute unrestricted float shadowBlur;
     [TreatNullAs=NullString] attribute DOMString shadowColor;
 
-    void setLineDash(sequence<float> dash);
-    sequence<float> getLineDash();
-    attribute float lineDashOffset;
+    void setLineDash(sequence<unrestricted float> dash);
+    sequence<unrestricted float> getLineDash();
+    attribute unrestricted float lineDashOffset;
 
     [Custom] attribute Array webkitLineDash;
-    attribute float webkitLineDashOffset;
+    attribute unrestricted float webkitLineDashOffset;
 
-    void clearRect(float x, float y, float width, float height);
-    void fillRect(float x, float y, float width, float height);
+    void clearRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
+    void fillRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
 
     void beginPath();
 
     // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
     void closePath();
-    void moveTo(float x, float y);
-    void lineTo(float x, float y);
-    void quadraticCurveTo(float cpx, float cpy, float x, float y);
-    void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y);
-    [RaisesException] void arcTo(float x1, float y1, float x2, float y2, float radius);
-    void rect(float x, float y, float width, float height);
-    [RaisesException] void arc(float x, float y, float radius, float startAngle, float endAngle, [Default=Undefined] optional boolean anticlockwise);
+    void moveTo(unrestricted float x, unrestricted float y);
+    void lineTo(unrestricted float x, unrestricted float y);
+    void quadraticCurveTo(unrestricted float cpx, unrestricted float cpy, unrestricted float x, unrestricted float y);
+    void bezierCurveTo(unrestricted float cp1x, unrestricted float cp1y, unrestricted float cp2x, unrestricted float cp2y, 
+        unrestricted float x, unrestricted float y);
+    [RaisesException] void arcTo(unrestricted float x1, unrestricted float y1, unrestricted float x2, unrestricted float y2,
+        unrestricted float radius);
+    void rect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
+    [RaisesException] void arc(unrestricted float x, unrestricted float y, unrestricted float radius, unrestricted float startAngle,
+        unrestricted float endAngle, [Default=Undefined] optional boolean anticlockwise);
 
     void fill(DOMPath path, optional CanvasWindingRule winding);
     void stroke(DOMPath path);
@@ -82,11 +87,11 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void stroke();
     void clip(optional CanvasWindingRule winding);
 
-    boolean isPointInPath(DOMPath path, float x, float y, optional CanvasWindingRule winding);
-    boolean isPointInStroke(DOMPath path, float x, float y);
+    boolean isPointInPath(DOMPath path, unrestricted float x, unrestricted float y, optional CanvasWindingRule winding);
+    boolean isPointInStroke(DOMPath path, unrestricted float x, unrestricted float y);
 
-    boolean isPointInPath(float x, float y, optional CanvasWindingRule winding);
-    boolean isPointInStroke(float x, float y);
+    boolean isPointInPath(unrestricted float x, unrestricted float y, optional CanvasWindingRule winding);
+    boolean isPointInStroke(unrestricted float x, unrestricted float y);
 
     // text
     attribute DOMString font;
@@ -97,52 +102,62 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     // other
 
-    void setAlpha([Default=Undefined] optional float alpha);
+    void setAlpha([Default=Undefined] optional unrestricted float alpha);
     void setCompositeOperation([Default=Undefined] optional DOMString compositeOperation);
 
-    void setLineWidth([Default=Undefined] optional float width);
+    void setLineWidth([Default=Undefined] optional unrestricted float width);
     void setLineCap([Default=Undefined] optional DOMString cap);
     void setLineJoin([Default=Undefined] optional DOMString join);
-    void setMiterLimit([Default=Undefined] optional float limit);
+    void setMiterLimit([Default=Undefined] optional unrestricted float limit);
 
     void clearShadow();
 
-    void fillText(DOMString text, float x, float y, optional float maxWidth);
-    void strokeText(DOMString text, float x, float y, optional float maxWidth);
+    void fillText(DOMString text, unrestricted float x, unrestricted float y, optional unrestricted float maxWidth);
+    void strokeText(DOMString text, unrestricted float x, unrestricted float y, optional unrestricted float maxWidth);
 
-    void setStrokeColor([StrictTypeChecking] DOMString color, optional float alpha);
-    void setStrokeColor(float grayLevel, optional float alpha);
-    void setStrokeColor(float r, float g, float b, float a);
-    void setStrokeColor(float c, float m, float y, float k, float a);
+    void setStrokeColor([StrictTypeChecking] DOMString color, optional unrestricted float alpha);
+    void setStrokeColor(unrestricted float grayLevel, optional float alpha);
+    void setStrokeColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
+    void setStrokeColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
 
-    void setFillColor([StrictTypeChecking] DOMString color, optional float alpha);
-    void setFillColor(float grayLevel, optional float alpha);
-    void setFillColor(float r, float g, float b, float a);
-    void setFillColor(float c, float m, float y, float k, float a);
+    void setFillColor([StrictTypeChecking] DOMString color, optional unrestricted float alpha);
+    void setFillColor(unrestricted float grayLevel, optional unrestricted float alpha);
+    void setFillColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
+    void setFillColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
 
-    void strokeRect(float x, float y, float width, float height);
+    void strokeRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
 
-    [RaisesException] void drawImage(HTMLImageElement? image, float x, float y);
-    [RaisesException] void drawImage(HTMLImageElement? image, float x, float y, float width, float height);
-    [RaisesException] void drawImage(HTMLImageElement? image, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
-    [RaisesException] void drawImage(HTMLCanvasElement? canvas, float x, float y);
-    [RaisesException] void drawImage(HTMLCanvasElement? canvas, float x, float y, float width, float height);
-    [RaisesException] void drawImage(HTMLCanvasElement? canvas, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
+    [RaisesException] void drawImage(HTMLImageElement? image, unrestricted float x, unrestricted float y);
+    [RaisesException] void drawImage(HTMLImageElement? image, unrestricted float x, unrestricted float y, 
+        unrestricted float width, unrestricted float height);
+    [RaisesException] void drawImage(HTMLImageElement? image, unrestricted float sx, unrestricted float sy, unrestricted float sw, 
+        unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
+    [RaisesException] void drawImage(HTMLCanvasElement? canvas, unrestricted float x, unrestricted float y);
+    [RaisesException] void drawImage(HTMLCanvasElement? canvas, unrestricted float x, unrestricted float y, 
+        unrestricted float width, unrestricted float height);
+    [RaisesException] void drawImage(HTMLCanvasElement? canvas, unrestricted float sx, unrestricted float sy, unrestricted float sw, 
+        unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    [RaisesException] void drawImage(HTMLVideoElement? video, float x, float y);
-    [RaisesException] void drawImage(HTMLVideoElement? video, float x, float y, float width, float height);
-    [RaisesException] void drawImage(HTMLVideoElement? video, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
+    [RaisesException] void drawImage(HTMLVideoElement? video, unrestricted float x, unrestricted float y);
+    [RaisesException] void drawImage(HTMLVideoElement? video, unrestricted float x, unrestricted float y, 
+        unrestricted float width, unrestricted float height);
+    [RaisesException] void drawImage(HTMLVideoElement? video, unrestricted float sx, unrestricted float sy, unrestricted float sw, 
+        unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
 #endif
 
     void drawImageFromRect(HTMLImageElement image,
-                           optional float sx, optional float sy, optional float sw, optional float sh,
-                           optional float dx, optional float dy, optional float dw, optional float dh,
-                           optional DOMString compositeOperation);
+        optional unrestricted float sx, optional unrestricted float sy, optional unrestricted float sw, optional unrestricted float sh,
+        optional unrestricted float dx, optional unrestricted float dy, optional unrestricted float dw, optional unrestricted float dh,
+        optional DOMString compositeOperation);
 
-    void setShadow(float width, float height, float blur, [StrictTypeChecking] optional DOMString color, optional float alpha);
-    void setShadow(float width, float height, float blur, float grayLevel, optional float alpha);
-    void setShadow(float width, float height, float blur, float r, float g, float b, float a);
-    void setShadow(float width, float height, float blur, float c, float m, float y, float k, float a);
+    void setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, 
+        [StrictTypeChecking] optional DOMString color, optional unrestricted float alpha);
+    void setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float grayLevel, 
+        optional unrestricted float alpha);
+    void setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float r, 
+        unrestricted float g, unrestricted float b, unrestricted float a);
+    void setShadow(float width, unrestricted float height, unrestricted float blur, unrestricted float c, unrestricted float m, 
+        unrestricted float y, unrestricted float k, unrestricted float a);
 
     [RaisesException] void putImageData(ImageData? imagedata, float dx, float dy);
     [RaisesException] void putImageData(ImageData? imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);

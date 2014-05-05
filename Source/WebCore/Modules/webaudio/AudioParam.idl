@@ -29,10 +29,10 @@
 [
     Conditional=WEB_AUDIO,
 ] interface AudioParam {
-    attribute float value;
-    readonly attribute float minValue;
-    readonly attribute float maxValue;
-    readonly attribute float defaultValue;
+    attribute unrestricted float value;
+    readonly attribute unrestricted float minValue;
+    readonly attribute unrestricted float maxValue;
+    readonly attribute unrestricted float defaultValue;
 
     readonly attribute DOMString name;
 
@@ -40,20 +40,20 @@
     readonly attribute unsigned short units;
 
     // Parameter automation.
-    void setValueAtTime(float value, float time);
-    void linearRampToValueAtTime(float value, float time);
-    void exponentialRampToValueAtTime(float value, float time);
+    void setValueAtTime(unrestricted float value, unrestricted float time);
+    void linearRampToValueAtTime(unrestricted float value, unrestricted float time);
+    void exponentialRampToValueAtTime(unrestricted float value, unrestricted float time);
 
     // Exponentially approach the target with a rate having the given time constant.
-    void setTargetAtTime(float target, float time, float timeConstant);
+    void setTargetAtTime(unrestricted float target, unrestricted float time, unrestricted float timeConstant);
 
     // Sets an array of arbitrary parameter values starting at time for the given duration.
     // The number of values will be scaled to fit into the desired duration.
-    void setValueCurveAtTime(Float32Array values, float time, float duration);
+    void setValueCurveAtTime(Float32Array values, unrestricted float time, unrestricted float duration);
 
     // Cancels all scheduled parameter changes with times greater than or equal to startTime.
-    void cancelScheduledValues(float startTime);
+    void cancelScheduledValues(unrestricted float startTime);
 
-    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=setTargetAtTime] void setTargetValueAtTime(float targetValue, float time, float timeConstant);
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=setTargetAtTime] void setTargetValueAtTime(unrestricted float targetValue, unrestricted float time, unrestricted float timeConstant);
 
 };

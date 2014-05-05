@@ -63,11 +63,11 @@
     readonly attribute boolean seeking;
 
     // playback state
-    [SetterRaisesException] attribute double currentTime;
-    readonly attribute double duration;
+    [SetterRaisesException] attribute unrestricted double currentTime;
+    readonly attribute unrestricted double duration;
     readonly attribute boolean paused;
-    attribute double defaultPlaybackRate;
-    attribute double playbackRate;
+    attribute unrestricted double defaultPlaybackRate;
+    attribute unrestricted double playbackRate;
     readonly attribute TimeRanges played;
     readonly attribute TimeRanges seekable;
     readonly attribute boolean ended;
@@ -75,11 +75,11 @@
     [Reflect] attribute boolean loop;
     void play();
     void pause();
-    void fastSeek(double time);
+    void fastSeek(unrestricted double time);
 
     // controls
     attribute boolean controls;
-    [SetterRaisesException] attribute double volume;
+    [SetterRaisesException] attribute unrestricted double volume;
     attribute boolean muted;
     [Reflect=muted] attribute boolean defaultMuted;
 

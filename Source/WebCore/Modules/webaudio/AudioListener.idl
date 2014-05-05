@@ -30,10 +30,10 @@
     Conditional=WEB_AUDIO,
     ImplementationLacksVTable,
 ] interface AudioListener {
-    attribute float dopplerFactor;  // same as OpenAL (default 1.0)
-    attribute float speedOfSound;   // in meters / second (default 343.3)
+    attribute unrestricted float dopplerFactor;  // same as OpenAL (default 1.0)
+    attribute unrestricted float speedOfSound;   // in meters / second (default 343.3)
 
-    void setPosition(float x, float y, float z);
-    void setOrientation(float x, float y, float z, float xUp, float yUp, float zUp);
-    void setVelocity(float x, float y, float z);
+    void setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
+    void setOrientation(unrestricted float x, unrestricted float y, unrestricted float z, unrestricted float xUp, unrestricted float yUp, unrestricted float zUp);
+    void setVelocity(unrestricted float x, unrestricted float y, unrestricted float z);
 };

@@ -27,14 +27,14 @@
 interface SVGAnimationElement : SVGElement {
     readonly attribute SVGElement targetElement;
 
-    float getStartTime();
-    float getCurrentTime();
-    [RaisesException] float getSimpleDuration();
+    unrestricted float getStartTime();
+    unrestricted float getCurrentTime();
+    [RaisesException] unrestricted float getSimpleDuration();
 
     void beginElement();
-    void beginElementAt([Default=Undefined] optional float offset);
+    void beginElementAt([Default=Undefined] optional unrestricted float offset);
     void endElement();
-    void endElementAt([Default=Undefined] optional float offset);
+    void endElementAt([Default=Undefined] optional unrestricted float offset);
 };
 
 SVGAnimationElement implements SVGExternalResourcesRequired;

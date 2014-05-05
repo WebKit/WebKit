@@ -32,10 +32,10 @@
     ReportExtraMemoryCost,
 ] interface AudioBuffer {
     readonly attribute long length; // in sample-frames
-    readonly attribute float duration; // in seconds
-    readonly attribute float sampleRate; // in sample-frames per second
+    readonly attribute unrestricted float duration; // in seconds
+    readonly attribute unrestricted float sampleRate; // in sample-frames per second
 
-    attribute float gain; // linear gain (default 1.0)
+    attribute unrestricted float gain; // linear gain (default 1.0)
 
     // Channel access
     readonly attribute unsigned long numberOfChannels;

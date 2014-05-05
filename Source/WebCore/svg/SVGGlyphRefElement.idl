@@ -23,10 +23,10 @@
     // FIXME: Use [Reflect] after https://bugs.webkit.org/show_bug.cgi?id=64843 is fixed.
     [SetterRaisesException] attribute DOMString glyphRef;
     [Reflect] attribute DOMString format;
-    [SetterRaisesException] attribute float x;
-    [SetterRaisesException] attribute float y;
-    [SetterRaisesException] attribute float dx;
-    [SetterRaisesException] attribute float dy;
+    [SetterRaisesException] attribute unrestricted float x;
+    [SetterRaisesException] attribute unrestricted float y;
+    [SetterRaisesException] attribute unrestricted float dx;
+    [SetterRaisesException] attribute unrestricted float dy;
 };
 
 SVGGlyphRefElement implements SVGURIReference;

@@ -23,23 +23,23 @@
 interface SVGMatrix {
     // FIXME: these attributes should all be floats but since we implement
     // AffineTransform with doubles setting these as doubles makes more sense.
-    [StrictTypeChecking] attribute double a;
-    [StrictTypeChecking] attribute double b;
-    [StrictTypeChecking] attribute double c;
-    [StrictTypeChecking] attribute double d;
-    [StrictTypeChecking] attribute double e;
-    [StrictTypeChecking] attribute double f;
+    [StrictTypeChecking] attribute unrestricted double a;
+    [StrictTypeChecking] attribute unrestricted double b;
+    [StrictTypeChecking] attribute unrestricted double c;
+    [StrictTypeChecking] attribute unrestricted double d;
+    [StrictTypeChecking] attribute unrestricted double e;
+    [StrictTypeChecking] attribute unrestricted double f;
 
     [StrictTypeChecking] SVGMatrix multiply(SVGMatrix secondMatrix);
     [RaisesException] SVGMatrix inverse();
-    [Immutable, StrictTypeChecking] SVGMatrix translate(float x, float y);
-    [Immutable, StrictTypeChecking] SVGMatrix scale(float scaleFactor);
-    [Immutable, StrictTypeChecking] SVGMatrix scaleNonUniform(float scaleFactorX, float scaleFactorY);
-    [Immutable, StrictTypeChecking] SVGMatrix rotate(float angle);
-    [StrictTypeChecking, RaisesException] SVGMatrix rotateFromVector(float x, float y);
+    [Immutable, StrictTypeChecking] SVGMatrix translate(unrestricted float x, unrestricted float y);
+    [Immutable, StrictTypeChecking] SVGMatrix scale(unrestricted float scaleFactor);
+    [Immutable, StrictTypeChecking] SVGMatrix scaleNonUniform(unrestricted float scaleFactorX, unrestricted float scaleFactorY);
+    [Immutable, StrictTypeChecking] SVGMatrix rotate(unrestricted float angle);
+    [StrictTypeChecking, RaisesException] SVGMatrix rotateFromVector(unrestricted float x, unrestricted float y);
     [Immutable] SVGMatrix flipX();
     [Immutable] SVGMatrix flipY();
-    [Immutable, StrictTypeChecking] SVGMatrix skewX(float angle);
-    [Immutable, StrictTypeChecking] SVGMatrix skewY(float angle);
+    [Immutable, StrictTypeChecking] SVGMatrix skewX(unrestricted float angle);
+    [Immutable, StrictTypeChecking] SVGMatrix skewY(unrestricted float angle);
 };
 

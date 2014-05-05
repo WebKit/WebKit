@@ -25,9 +25,9 @@
  */
 
 interface SVGPathSegCurvetoQuadraticRel : SVGPathSeg {
-    [StrictTypeChecking] attribute float x;
-    [StrictTypeChecking] attribute float y;
-    [StrictTypeChecking] attribute float x1;
-    [StrictTypeChecking] attribute float y1;
+    [StrictTypeChecking] attribute unrestricted float x;
+    [StrictTypeChecking] attribute unrestricted float y;
+    [StrictTypeChecking] attribute unrestricted float x1;
+    [StrictTypeChecking] attribute unrestricted float y1;
 };
 

@@ -38,8 +38,8 @@
     readonly attribute SVGAnimatedNumber stdDeviationY;
     readonly attribute SVGAnimatedEnumeration edgeMode;
 
-    void setStdDeviation([Default=Undefined] optional float stdDeviationX, 
-                         [Default=Undefined] optional float stdDeviationY);
+    void setStdDeviation([Default=Undefined] optional unrestricted float stdDeviationX, 
+                         [Default=Undefined] optional unrestricted float stdDeviationY);
 };
 
 SVGFEGaussianBlurElement implements SVGFilterPrimitiveStandardAttributes;

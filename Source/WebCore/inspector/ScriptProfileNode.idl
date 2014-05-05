@@ -36,8 +36,8 @@
     readonly attribute unsigned long lineNumber;
     readonly attribute unsigned long columnNumber;
 
-    readonly attribute double totalTime;
-    readonly attribute double selfTime;
+    readonly attribute unrestricted double totalTime;
+    readonly attribute unrestricted double selfTime;
 
     readonly attribute unsigned long numberOfCalls;
 

@@ -27,6 +27,6 @@
     ConstructorTemplate=Event
 ] interface WebKitAnimationEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString animationName;
-    [InitializedByEventConstructor] readonly attribute double elapsedTime;
+    [InitializedByEventConstructor] readonly attribute unrestricted double elapsedTime;
 };
 

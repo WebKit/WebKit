@@ -29,9 +29,9 @@
     const unsigned long              DOM_DELTA_LINE  = 0x01;
     const unsigned long              DOM_DELTA_PAGE  = 0x02;
 
-    [InitializedByEventConstructor] readonly attribute double deltaX;
-    [InitializedByEventConstructor] readonly attribute double deltaY;
-    [InitializedByEventConstructor] readonly attribute double deltaZ;
+    [InitializedByEventConstructor] readonly attribute unrestricted double deltaX;
+    [InitializedByEventConstructor] readonly attribute unrestricted double deltaY;
+    [InitializedByEventConstructor] readonly attribute unrestricted double deltaZ;
     [InitializedByEventConstructor] readonly attribute unsigned long deltaMode;
 
     // Legacy MouseWheelEvent API replaced by standard WheelEvent API.

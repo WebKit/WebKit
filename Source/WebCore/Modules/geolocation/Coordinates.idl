@@ -28,11 +28,11 @@
     Conditional=GEOLOCATION,
     ImplementationLacksVTable
 ] interface Coordinates {
-    readonly attribute double latitude;
-    readonly attribute double longitude;
-    readonly attribute double? altitude;
-    readonly attribute double accuracy;
-    readonly attribute double? altitudeAccuracy;
-    readonly attribute double? heading;
-    readonly attribute double? speed;
+    readonly attribute unrestricted double latitude;
+    readonly attribute unrestricted double longitude;
+    readonly attribute unrestricted double? altitude;
+    readonly attribute unrestricted double accuracy;
+    readonly attribute unrestricted double? altitudeAccuracy;
+    readonly attribute unrestricted double? heading;
+    readonly attribute unrestricted double? speed;
 };

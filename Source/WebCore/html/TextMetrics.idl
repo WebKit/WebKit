@@ -25,6 +25,6 @@
 [
     ImplementationLacksVTable,
 ] interface TextMetrics {
-    readonly attribute float width;
+    readonly attribute unrestricted float width;
 };
 

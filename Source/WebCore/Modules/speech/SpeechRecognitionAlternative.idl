@@ -29,5 +29,5 @@
     ImplementationLacksVTable
 ] interface SpeechRecognitionAlternative {
     readonly attribute DOMString transcript;
-    readonly attribute float confidence;
+    readonly attribute unrestricted float confidence;
 };

@@ -33,8 +33,8 @@
     readonly attribute TimeRanges buffered;
     readonly attribute TimeRanges seekable;
 
-    readonly attribute double duration;
-    attribute double currentTime;
+    readonly attribute unrestricted double duration;
+    attribute unrestricted double currentTime;
 
     readonly attribute boolean paused;
     readonly attribute TimeRanges played;
@@ -43,10 +43,10 @@
     void pause();
     void unpause();
 
-    attribute double defaultPlaybackRate;
-    attribute double playbackRate;
+    attribute unrestricted double defaultPlaybackRate;
+    attribute unrestricted double playbackRate;
 
-    [SetterRaisesException] attribute double volume;
+    [SetterRaisesException] attribute unrestricted double volume;
     attribute boolean muted;
 
     // EventTarget interface

@@ -25,10 +25,10 @@
 
 [
     CustomConstructor,
-    CustomConstructor(float x, float y),
+    CustomConstructor(unrestricted float x, unrestricted float y),
     ImplementationLacksVTable
 ] interface WebKitPoint {
-    attribute float x;
-    attribute float y;
+    attribute unrestricted float x;
+    attribute unrestricted float y;
 };
 

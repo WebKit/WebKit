@@ -341,8 +341,8 @@
                                                      [Default=Undefined] optional long screenY,
                                                      [Default=Undefined] optional long webkitRadiusX,
                                                      [Default=Undefined] optional long webkitRadiusY,
-                                                     [Default=Undefined] optional float webkitRotationAngle,
-                                                     [Default=Undefined] optional float webkitForce);
+                                                     [Default=Undefined] optional unrestricted float webkitRotationAngle,
+                                                     [Default=Undefined] optional unrestricted float webkitForce);
     [ReturnNewObject, Custom, RaisesException] TouchList createTouchList();
 #endif // defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
 #endif

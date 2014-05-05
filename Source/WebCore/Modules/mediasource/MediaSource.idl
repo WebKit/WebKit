@@ -44,7 +44,7 @@
     // Subset of sourceBuffers that provide data for the selected/enabled tracks.
     readonly attribute SourceBufferList activeSourceBuffers;
 
-    [SetterRaisesException] attribute double duration;
+    [SetterRaisesException] attribute unrestricted double duration;
 
     [RaisesException] SourceBuffer addSourceBuffer(DOMString type);
     [RaisesException] void removeSourceBuffer(SourceBuffer buffer);

@@ -1,2 +1,1 @@
-Failed assertion: expected exception of type TypeError, got: Error: IndexSizeError: DOM Exception 1
-Failed assertion: expected exception of type TypeError, got: Error: SyntaxError: DOM Exception 12
+Passed

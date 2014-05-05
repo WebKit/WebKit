@@ -41,19 +41,19 @@
 
     attribute boolean loop; // This is the proper attribute name from the specification.
 
-    attribute double loopStart;
-    attribute double loopEnd;
+    attribute unrestricted double loopStart;
+    attribute unrestricted double loopEnd;
 
-    [RaisesException] void start(double when);
-    [ImplementedAs=startGrain, RaisesException] void start(double when, double grainOffset);
-    [ImplementedAs=startGrain, RaisesException] void start(double when, double grainOffset, double grainDuration);
-    [RaisesException] void stop(double when);
+    [RaisesException] void start(unrestricted double when);
+    [ImplementedAs=startGrain, RaisesException] void start(unrestricted double when, unrestricted double grainOffset);
+    [ImplementedAs=startGrain, RaisesException] void start(unrestricted double when, unrestricted double grainOffset, unrestricted double grainDuration);
+    [RaisesException] void stop(unrestricted double when);
 
     [Conditional=LEGACY_WEB_AUDIO] attribute boolean looping; // This is an alias for the .loop attribute for backwards compatibility.
 
-    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOn(double when);
-    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteGrainOn(double when, double grainOffset, double grainDuration);
-    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOff(double when);
+    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOn(unrestricted double when);
+    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteGrainOn(unrestricted double when, unrestricted double grainOffset, unrestricted double grainDuration);
+    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOff(unrestricted double when);
     
     attribute EventListener onended;
 };

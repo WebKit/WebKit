@@ -30,5 +30,5 @@
     InterfaceName=webkitSpeechGrammar
 ] interface SpeechGrammar {
     [URL,CallWith=ScriptExecutionContext] attribute DOMString src;
-    attribute float weight;
+    attribute unrestricted float weight;
 };

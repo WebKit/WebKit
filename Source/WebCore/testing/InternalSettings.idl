@@ -37,7 +37,7 @@
     [RaisesException] void setPictographFontFamily(DOMString family, DOMString script);
     [RaisesException] void setTextAutosizingEnabled(boolean enabled);
     [RaisesException] void setTextAutosizingWindowSizeOverride(long width, long height);
-    [RaisesException] void setTextAutosizingFontScaleFactor(float fontScaleFactor);
+    [RaisesException] void setTextAutosizingFontScaleFactor(unrestricted float fontScaleFactor);
     [RaisesException] void setMediaTypeOverride(DOMString mediaTypeOverride);
     [RaisesException] void setCSSExclusionsEnabled(boolean enabled);
     [RaisesException] void setCSSShapesEnabled(boolean enabled);
@@ -49,9 +49,9 @@
     [Conditional=VIDEO_TRACK, RaisesException] boolean shouldDisplayTrackKind(DOMString trackKind);
     [RaisesException] void setStorageBlockingPolicy(DOMString policy);
     [RaisesException] void setImagesEnabled(boolean enabled);
-    [RaisesException] void setMinimumTimerInterval(double intervalInSeconds);
+    [RaisesException] void setMinimumTimerInterval(unrestricted double intervalInSeconds);
     [RaisesException] void setDefaultVideoPosterURL(DOMString poster);
-    [RaisesException] void setTimeWithoutMouseMovementBeforeHidingControls(double time);
+    [RaisesException] void setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double time);
     [RaisesException] void setUseLegacyBackgroundSizeShorthandBehavior(boolean enabled);
     [RaisesException] void setAutoscrollForDragAndDropEnabled(boolean enabled);
     [RaisesException] void setFontFallbackPrefersPictographs(boolean preferPictographs);

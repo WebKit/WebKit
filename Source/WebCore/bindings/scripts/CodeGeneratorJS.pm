@@ -2563,6 +2563,13 @@ sub GenerateImplementation
                         push (@implContent, "        return;\n");
                     }
 
+                    if ($attribute->signature->type eq "double" or $attribute->signature->type eq "float") {
+                        push(@implContent, "    if (!std::isfinite(nativeValue)) {\n");
+                        push(@implContent, "        setDOMException(exec, TypeError);\n");
+                        push(@implContent, "        return;\n");
+                        push(@implContent, "    }\n");
+                    }
+
                     if ($svgPropertyOrListPropertyType) {
                         if ($svgPropertyType) {
                             push(@implContent, "    if (impl.isReadOnly()) {\n");
@@ -3312,6 +3319,13 @@ sub GenerateParametersCheck
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
                 push(@$outputArray, "    }\n");
             }
+
+            if ($parameter->type eq "double" or $parameter->type eq "float") {
+                push(@$outputArray, "    if (!std::isfinite($name)) {\n");
+                push(@$outputArray, "        setDOMException(exec, TypeError);\n");
+                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+                push(@$outputArray, "    }\n");
+            }
         }
 
         if ($argType eq "NodeFilter" || ($codeGenerator->IsTypedArrayType($argType) and not $argType eq "ArrayBuffer")) {
@@ -3630,6 +3644,8 @@ my %nativeType = (
     "boolean" => "bool",
     "double" => "double",
     "float" => "float",
+    "unrestricted double" => "double",
+    "unrestricted float" => "float",
     "short" => "int16_t",
     "long" => "int",
     "unsigned long" => "unsigned",
@@ -3743,8 +3759,8 @@ sub JSValueToNative
     my $type = $signature->type;
 
     return "$value.toBoolean(exec)" if $type eq "boolean";
-    return "$value.toNumber(exec)" if $type eq "double";
-    return "$value.toFloat(exec)" if $type eq "float";
+    return "$value.toNumber(exec)" if $type eq "double" or $type eq "unrestricted double" ;
+    return "$value.toFloat(exec)" if $type eq "float" or $type eq "unrestricted float" ;
 
     my $intConversion = $signature->extendedAttributes->{"EnforceRange"} ? "EnforceRange" : "NormalConversion";
     return "toInt8(exec, $value, $intConversion)" if $type eq "byte";

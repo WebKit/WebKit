@@ -33,5 +33,5 @@
 ] callback interface RequestAnimationFrameCallback{
     // highResTime is passed as high resolution timestamp, see
     // http://www.w3.org/TR/hr-time/ for details.
-    [Custom] boolean handleEvent(double highResTime);
+    [Custom] boolean handleEvent(unrestricted double highResTime);
 };

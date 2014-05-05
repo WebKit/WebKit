@@ -1,3 +1,27 @@
+2014-05-05  Rik Cabanier  <cabanier@adobe.com>
+
+        Enhance IDL compiler so it supports unrestricted float and double
+        https://bugs.webkit.org/show_bug.cgi?id=132460
+
+        Reviewed by Dirk Schulze.
+
+        * canvas/philip/tests/2d.gradient.linear.nonfinite.html:
+        * canvas/philip/tests/2d.gradient.object.invalidoffset.html:
+        * canvas/philip/tests/2d.gradient.radial.nonfinite.html:
+        * canvas/philip/tests/2d.imageData.get.nonfinite.html:
+        * canvas/philip/tests/2d.imageData.put.nonfinite.html:
+        * canvas/philip/tests/2d.missingargs-expected.txt:
+        * canvas/philip/tests/2d.missingargs.html:
+        * fast/canvas/canvas-getImageData-invalid-expected.txt:
+        * fast/canvas/canvas-putImageData-expected.txt:
+        * fast/canvas/canvas-putImageData.js:
+        * fast/canvas/linearGradient-infinite-values-expected.txt:
+        * fast/canvas/radialGradient-infinite-values-expected.txt:
+        * fast/canvas/script-tests/canvas-getImageData-invalid.js:
+        * fast/canvas/script-tests/linearGradient-infinite-values.js:
+        * fast/canvas/script-tests/radialGradient-infinite-values.js:
+        * platform/mac/canvas/philip/tests/2d.missingargs-expected.txt:
+
 2014-05-05  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Elements with overflow:auto are not painted inside regions when following a float

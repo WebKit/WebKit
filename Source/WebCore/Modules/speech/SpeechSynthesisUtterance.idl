@@ -32,9 +32,9 @@
     attribute DOMString text;
     attribute DOMString lang;
     attribute SpeechSynthesisVoice voice;
-    attribute float volume;
-    attribute float rate;
-    attribute float pitch;
+    attribute unrestricted float volume;
+    attribute unrestricted float rate;
+    attribute unrestricted float pitch;
 
     attribute EventListener onstart;
     attribute EventListener onend;

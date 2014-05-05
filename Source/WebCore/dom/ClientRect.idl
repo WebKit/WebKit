@@ -27,11 +27,11 @@
 [
     ImplementationLacksVTable
 ] interface ClientRect {
-    readonly attribute float top;
-    readonly attribute float right;
-    readonly attribute float bottom;
-    readonly attribute float left;
-    readonly attribute float width;
-    readonly attribute float height;
+    readonly attribute unrestricted float top;
+    readonly attribute unrestricted float right;
+    readonly attribute unrestricted float bottom;
+    readonly attribute unrestricted float left;
+    readonly attribute unrestricted float width;
+    readonly attribute unrestricted float height;
 };
 

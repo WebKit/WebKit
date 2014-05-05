@@ -27,6 +27,6 @@
     Conditional=SPEECH_SYNTHESIS
 ] interface SpeechSynthesisEvent : Event {
     readonly attribute unsigned long charIndex;
-    readonly attribute float elapsedTime;
+    readonly attribute unrestricted float elapsedTime;
     readonly attribute DOMString name;
 };

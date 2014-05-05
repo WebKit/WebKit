@@ -63,7 +63,7 @@ interface HTMLInputElement : HTMLElement {
     [TreatNullAs=NullString] attribute DOMString value;
 #endif
     [SetterRaisesException] attribute Date valueAsDate;
-    [SetterRaisesException] attribute double valueAsNumber;
+    [SetterRaisesException] attribute unrestricted double valueAsNumber;
 
     [RaisesException] void stepUp(optional long n);
     [RaisesException] void stepDown(optional long n);

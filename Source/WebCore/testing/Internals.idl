@@ -54,12 +54,12 @@
     [RaisesException] void suspendAnimations();
     [RaisesException] void resumeAnimations();
     [RaisesException] boolean animationsAreSuspended();
-    [RaisesException] boolean pauseAnimationAtTimeOnElement(DOMString animationName, double pauseTime, Element element);
-    [RaisesException] boolean pauseAnimationAtTimeOnPseudoElement(DOMString animationName, double pauseTime, Element element, DOMString pseudoId);
+    [RaisesException] boolean pauseAnimationAtTimeOnElement(DOMString animationName, unrestricted double pauseTime, Element element);
+    [RaisesException] boolean pauseAnimationAtTimeOnPseudoElement(DOMString animationName, unrestricted double pauseTime, Element element, DOMString pseudoId);
 
     // CSS Transition testing.
-    [RaisesException] boolean pauseTransitionAtTimeOnElement(DOMString propertyName, double pauseTime, Element element);
-    [RaisesException] boolean pauseTransitionAtTimeOnPseudoElement(DOMString property, double pauseTime, Element element, DOMString pseudoId);
+    [RaisesException] boolean pauseTransitionAtTimeOnElement(DOMString propertyName, unrestricted double pauseTime, Element element);
+    [RaisesException] boolean pauseTransitionAtTimeOnPseudoElement(DOMString property, unrestricted double pauseTime, Element element, DOMString pseudoId);
 
     [RaisesException] boolean attached(Node node);
 
@@ -86,7 +86,7 @@
 
     [RaisesException] void setPagination(DOMString mode, long gap, optional long pageLength);
 
-    [RaisesException] DOMString configurationForViewport(float devicePixelRatio,
+    [RaisesException] DOMString configurationForViewport(unrestricted float devicePixelRatio,
                                        long deviceWidth,
                                        long deviceHeight,
                                        long availableWidth,
@@ -173,11 +173,11 @@
     [RaisesException] void insertUserCSS(DOMString css);
 
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS
-    [RaisesException] void setBatteryStatus(DOMString eventType, boolean charging, double chargingTime, double dischargingTime, double level);
+    [RaisesException] void setBatteryStatus(DOMString eventType, boolean charging, unrestricted double chargingTime, unrestricted double dischargingTime, unrestricted double level);
 #endif
 
 #if defined(ENABLE_PROXIMITY_EVENTS) && ENABLE_PROXIMITY_EVENTS
-    [RaisesException] void setDeviceProximity(DOMString eventType, double value, double min, double max);
+    [RaisesException] void setDeviceProximity(DOMString eventType, unrestricted double value, unrestricted double min, unrestricted double max);
 #endif
 
     // As per spec: http://www.w3.org/TR/WebIDL/#idl-sequence
@@ -194,19 +194,19 @@
     [Conditional=INSPECTOR, RaisesException] void setInspectorIsUnderTest(boolean isUnderTest);
 
     DOMString counterValue(Element element);
-    long pageNumber(Element element, optional float pageWidth, optional float pageHeight);
+    long pageNumber(Element element, optional unrestricted float pageWidth, optional unrestricted float pageHeight);
     DOMString[] shortcutIconURLs();
     DOMString[] allIconURLs();
-    long numberOfPages(optional double pageWidthInPixels, optional double pageHeightInPixels);
+    long numberOfPages(optional unrestricted double pageWidthInPixels, optional unrestricted double pageHeightInPixels);
     [RaisesException] DOMString pageProperty(DOMString propertyName, long pageNumber);
     [RaisesException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
 
-    [RaisesException] void setPageScaleFactor(float scaleFactor, long x, long y);
+    [RaisesException] void setPageScaleFactor(unrestricted float scaleFactor, long x, long y);
 
-    void setHeaderHeight(float height);
-    void setFooterHeight(float height);
+    void setHeaderHeight(unrestricted float height);
+    void setFooterHeight(unrestricted float height);
 
-    void setTopContentInset(float contentInset);
+    void setTopContentInset(unrestricted float contentInset);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
     void webkitWillEnterFullScreenForElement(Element element);
@@ -258,7 +258,7 @@
 
     [Conditional=VIDEO] TimeRanges createTimeRanges(Float32Array startTimes, Float32Array
      endTimes);
-    [Conditional=VIDEO] double closestTimeToTimeRanges(double time, TimeRanges ranges);
+    [Conditional=VIDEO] unrestricted double closestTimeToTimeRanges(unrestricted double time, TimeRanges ranges);
 
     boolean isSelectPopupVisible(Node node);
 

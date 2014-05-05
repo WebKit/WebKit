@@ -27,16 +27,16 @@
     Conditional=TOUCH_EVENTS,
     ImplementationLacksVTable
 ] interface Touch {
-    readonly attribute long             clientX;
-    readonly attribute long             clientY;
-    readonly attribute long             screenX;
-    readonly attribute long             screenY;
-    readonly attribute long             pageX;
-    readonly attribute long             pageY;
-    readonly attribute EventTarget      target;
-    readonly attribute unsigned long    identifier;
-    readonly attribute long             webkitRadiusX;
-    readonly attribute long             webkitRadiusY;
-    readonly attribute float            webkitRotationAngle;
-    readonly attribute float            webkitForce;
+    readonly attribute long                clientX;
+    readonly attribute long                clientY;
+    readonly attribute long                screenX;
+    readonly attribute long                screenY;
+    readonly attribute long                pageX;
+    readonly attribute long                pageY;
+    readonly attribute EventTarget         target;
+    readonly attribute unsigned long       identifier;
+    readonly attribute long                webkitRadiusX;
+    readonly attribute long               webkitRadiusY;
+    readonly attribute unrestricted float webkitRotationAngle;
+    readonly attribute unrestricted float webkitForce;
 };

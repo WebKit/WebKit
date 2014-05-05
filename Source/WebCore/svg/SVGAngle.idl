@@ -29,12 +29,12 @@ interface SVGAngle {
     const unsigned short SVG_ANGLETYPE_GRAD = 4;
 
     readonly attribute unsigned short unitType;
-    [StrictTypeChecking] attribute float value;
-    [StrictTypeChecking] attribute float valueInSpecifiedUnits;
+    [StrictTypeChecking] attribute unrestricted float value;
+    [StrictTypeChecking] attribute unrestricted float valueInSpecifiedUnits;
 
     [TreatNullAs=NullString, SetterRaisesException] attribute DOMString valueAsString;
 
-    [StrictTypeChecking, RaisesException] void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
+    [StrictTypeChecking, RaisesException] void newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
 
     [StrictTypeChecking, RaisesException] void convertToSpecifiedUnits(unsigned short unitType);
 };

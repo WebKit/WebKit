@@ -21,8 +21,8 @@
     Conditional=PROXIMITY_EVENTS,
     ConstructorTemplate=Event,
 ] interface DeviceProximityEvent : Event {
-    [InitializedByEventConstructor] readonly attribute double value;
-    [InitializedByEventConstructor] readonly attribute double min;
-    [InitializedByEventConstructor] readonly attribute double max;
+    [InitializedByEventConstructor] readonly attribute unrestricted double value;
+    [InitializedByEventConstructor] readonly attribute unrestricted double min;
+    [InitializedByEventConstructor] readonly attribute unrestricted double max;
 };
 

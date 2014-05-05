@@ -27,10 +27,10 @@
     Conditional=VIDEO_TRACK,
     CustomConstructor,
 #if defined(ENABLE_DATACUE_VALUE) && ENABLE_DATACUE_VALUE
-    CustomConstructor(double startTime, double endTime, any value, optional DOMString type),
+    CustomConstructor(unrestricted double startTime, unrestricted double endTime, any value, optional DOMString type),
     InterfaceName=WebKitDataCue,
 #else
-    CustomConstructor(double startTime, double endTime, ArrayBuffer data),
+    CustomConstructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data),
 #endif
     ConstructorRaisesException,
 ] interface DataCue : TextTrackCue {

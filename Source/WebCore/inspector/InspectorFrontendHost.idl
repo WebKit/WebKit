@@ -38,16 +38,16 @@
     void loaded();
     void closeWindow();
     void bringToFront();
-    void setZoomFactor(float zoom);
+    void setZoomFactor(unrestricted float zoom);
     void inspectedURLChanged(DOMString newURL);
 
     void requestSetDockSide(DOMString side);
 
     void setAttachedWindowHeight(unsigned long height);
     void setAttachedWindowWidth(unsigned long width);
-    void setToolbarHeight(float height);
+    void setToolbarHeight(unrestricted float height);
 
-    void moveWindowBy(float x, float y);
+    void moveWindowBy(unrestricted float x, unrestricted float y);
 
     DOMString localizedStringsURL();
     DOMString debuggableType();

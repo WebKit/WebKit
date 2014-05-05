@@ -225,8 +225,8 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [ImplementedAs=banana] void orange();
     [ImplementedAs=blueberry] attribute long strawberry;
 
-    [StrictTypeChecking] attribute float strictFloat;
-    [StrictTypeChecking, RaisesException] bool strictFunction(DOMString str, float a, long b);
+    [StrictTypeChecking] attribute unrestricted float strictFloat;
+    [StrictTypeChecking, RaisesException] bool strictFunction(DOMString str, unrestricted float a, long b);
 
 #if defined(TESTING_JS)
     [StrictTypeChecking, RaisesException] bool strictFunctionWithSequence(TestObj objArg, sequence<unsigned long> a);
@@ -255,11 +255,11 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [Replaceable] readonly attribute long replaceableAttribute;
 
     void variadicStringMethod(DOMString head, DOMString... tail);
-    void variadicDoubleMethod(double head, double... tail);
+    void variadicDoubleMethod(unrestricted double head, unrestricted double... tail);
     void variadicNodeMethod(Node head, Node... tail);
 
     // Nullable attributes.
-    readonly attribute double? nullableDoubleAttribute;
+    readonly attribute unrestricted double? nullableDoubleAttribute;
     readonly attribute long? nullableLongAttribute;
     readonly attribute boolean? nullableBooleanAttribute;
     readonly attribute DOMString? nullableStringAttribute;
@@ -272,7 +272,7 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     const unsigned short               _readonly = 0;
     readonly attribute DOMString       _attribute;
     attribute _optional                attributeWithReservedEnumType;
-    void _any(float a, long b);
+    void _any(unrestricted float a, long b);
 };
 
 // The following comment should not generate any code.

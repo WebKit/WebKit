@@ -105,10 +105,10 @@
     void scrollBy([Default=Undefined] optional long x, [Default=Undefined] optional long y);
     void scrollTo([Default=Undefined] optional long x, [Default=Undefined] optional long y);
     void scroll([Default=Undefined] optional long x, [Default=Undefined] optional long y);
-    void moveBy([Default=Undefined] optional float x, [Default=Undefined] optional float y); // FIXME: this should take longs not floats.
-    void moveTo([Default=Undefined] optional float x, [Default=Undefined] optional float y); // FIXME: this should take longs not floats.
-    void resizeBy([Default=Undefined] optional float x, [Default=Undefined] optional float y); // FIXME: this should take longs not floats.
-    void resizeTo([Default=Undefined] optional float width, [Default=Undefined] optional float height); // FIXME: this should take longs not floats.
+    void moveBy([Default=Undefined] optional unrestricted float x, [Default=Undefined] optional unrestricted float y); // FIXME: this should take longs not floats.
+    void moveTo([Default=Undefined] optional unrestricted float x, [Default=Undefined] optional unrestricted float y); // FIXME: this should take longs not floats.
+    void resizeBy([Default=Undefined] optional unrestricted float x, [Default=Undefined] optional unrestricted float y); // FIXME: this should take longs not floats.
+    void resizeTo([Default=Undefined] optional unrestricted float width, [Default=Undefined] optional unrestricted float height); // FIXME: this should take longs not floats.
 
     [DoNotCheckSecurity] readonly attribute boolean closed;
 
@@ -151,7 +151,7 @@
                                    [TreatNullAs=NullString, TreatUndefinedAs=NullString,Default=Undefined] optional DOMString pseudoElement);
 #endif
 
-    [Replaceable] readonly attribute double devicePixelRatio;
+    [Replaceable] readonly attribute unrestricted double devicePixelRatio;
     
     WebKitPoint webkitConvertPointFromPageToNode([Default=Undefined] optional Node node, 
                                                  [Default=Undefined] optional WebKitPoint p);

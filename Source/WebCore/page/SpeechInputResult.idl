@@ -29,6 +29,6 @@
     ImplementationLacksVTable
 ] interface SpeechInputResult {
     readonly attribute DOMString utterance;
-    readonly attribute float confidence;
+    readonly attribute unrestricted float confidence;
 };
 

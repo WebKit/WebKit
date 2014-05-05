@@ -25,11 +25,11 @@
  */ 
 
 interface SVGPathSegCurvetoCubicRel : SVGPathSeg {
-    [StrictTypeChecking] attribute float x;
-    [StrictTypeChecking] attribute float y;
-    [StrictTypeChecking] attribute float x1;
-    [StrictTypeChecking] attribute float y1;
-    [StrictTypeChecking] attribute float x2;
-    [StrictTypeChecking] attribute float y2;
+    [StrictTypeChecking] attribute unrestricted float x;
+    [StrictTypeChecking] attribute unrestricted float y;
+    [StrictTypeChecking] attribute unrestricted float x1;
+    [StrictTypeChecking] attribute unrestricted float y1;
+    [StrictTypeChecking] attribute unrestricted float x2;
+    [StrictTypeChecking] attribute unrestricted float y2;
 };
 

@@ -565,6 +565,8 @@ sub GetObjCType
     my $type = shift;
     my $name = GetClassName($type);
 
+    return "double" if $type eq "unrestricted double";
+    return "float" if $type eq "unrestricted float";
     return "id <$name>" if IsProtocolType($type);
     return $name if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp";
     return "unsigned short" if $type eq "CompareHow";
@@ -856,6 +858,7 @@ sub GenerateHeader
 
             my $attributeType = GetObjCType($attribute->signature->type);
             my $property = "\@property" . GetPropertyAttributes($attribute->signature->type, $attribute->isReadOnly);
+
             $property .= " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName;
 
             my $publicInterfaceKey = $property . ";";

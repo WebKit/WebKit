@@ -25,9 +25,9 @@
     EventTarget,
 ] interface BatteryManager {
     readonly attribute boolean charging;
-    readonly attribute double chargingTime;
-    readonly attribute double dischargingTime;
-    readonly attribute double level;
+    readonly attribute unrestricted double chargingTime;
+    readonly attribute unrestricted double dischargingTime;
+    readonly attribute unrestricted double level;
 
     attribute EventListener onchargingchange;
     attribute EventListener onchargingtimechange;

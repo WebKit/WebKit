@@ -48,8 +48,9 @@ my $verbose = 0;
 my %numericTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1,
                        "unsigned int" => 1, "unsigned short" => 1,
                        "unsigned long" => 1, "unsigned long long" => 1,
-                       "float" => 1, "double" => 1, "byte" => 1,
-                       "octet" => 1);
+                       "float" => 1, "double" => 1, 
+                       "unrestricted float" => 1, "unrestricted double" => 1,
+                       "byte" => 1, "octet" => 1);
 
 my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1);
 

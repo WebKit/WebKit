@@ -35,8 +35,8 @@ typedef long long      GLsizeiptr;
 typedef octet          GLubyte;        /* 'octet' should be an unsigned 8 bit type. */
 typedef unsigned short GLushort;
 typedef unsigned long  GLuint;
-typedef /*unrestricted*/ float GLfloat;
-typedef /*unrestricted*/ float GLclampf;
+typedef unrestricted float GLfloat;
+typedef unrestricted float GLclampf;
 
 [
     Conditional=WEBGL,

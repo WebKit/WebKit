@@ -36,6 +36,6 @@
 ] interface PerformanceEntry {
     readonly attribute DOMString name;
     readonly attribute DOMString entryType;
-    readonly attribute double startTime;
-    readonly attribute double duration;
+    readonly attribute unrestricted double startTime;
+    readonly attribute unrestricted double duration;
 };

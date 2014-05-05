@@ -26,7 +26,7 @@
 [
     Conditional=VIDEO_TRACK,
     JSGenerateToNativeObject,
-    Constructor(double startTime, double endTime, DOMString text),
+    Constructor(unrestricted double startTime, unrestricted double endTime, DOMString text),
     ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
     JSCustomMarkFunction,
@@ -37,8 +37,8 @@
     readonly attribute TextTrack track;
 
     attribute DOMString id;
-    [SetterRaisesException] attribute double startTime;
-    [SetterRaisesException] attribute double endTime;
+    [SetterRaisesException] attribute unrestricted double startTime;
+    [SetterRaisesException] attribute unrestricted double endTime;
     attribute boolean pauseOnExit;
 
     attribute EventListener onenter;
