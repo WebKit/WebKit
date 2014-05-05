@@ -84,7 +84,7 @@ Notification::Notification(ScriptExecutionContext& context, const String& title)
     : ActiveDOMObject(&context)
     , m_title(title)
     , m_state(Idle)
-    , m_taskTimer(adoptPtr(new Timer<Notification>(this, &Notification::taskTimerFired)))
+    , m_taskTimer(std::make_unique<Timer<Notification>>(this, &Notification::taskTimerFired))
 {
     m_notificationCenter = DOMWindowNotifications::webkitNotifications(toDocument(context).domWindow());
     

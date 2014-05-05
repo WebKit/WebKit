@@ -40,7 +40,6 @@
 #include "SharedBuffer.h"
 #include "TextDirection.h"
 #include "ThreadableLoaderClient.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -181,7 +180,7 @@ private:
     RefPtr<NotificationCenter> m_notificationCenter;
 
 #if ENABLE(NOTIFICATIONS)
-    OwnPtr<Timer<Notification>> m_taskTimer;
+    std::unique_ptr<Timer<Notification>> m_taskTimer;
 #endif
 };
 

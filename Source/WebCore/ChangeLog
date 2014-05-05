@@ -1,3 +1,16 @@
+2014-05-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr in m_taskTimer of Notification class
+        https://bugs.webkit.org/show_bug.cgi?id=132544
+
+        Reviewed by Andreas Kling.
+
+        No new tests, no behavior change.
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::Notification):
+        * Modules/notifications/Notification.h: Use std::unique_ptr instead of OwnPtr.
+
 2014-05-04  Tim Horton  <timothy_horton@apple.com>
 
         Long hangs under IOSurfacePool::evict
