@@ -1,5 +1,30 @@
 2014-05-05  Andrei Bucur  <abucur@adobe.com>
 
+        [CSSRegions] Slider displayed wrong in regions
+        https://bugs.webkit.org/show_bug.cgi?id=132243
+
+        Reviewed by Mihnea Ovidenie.
+
+        In case a box didn't have a range, getRegionRangeForBox was searching for
+        the top-most unplittable ancestor. This is not correct in every case. It's
+        possible to have a box with range that has children without ranges (e.g. an
+        absolutely positioned inline box with shadow descendants).
+
+        I've modified getRegionRangeForBox to search for the first ancestor that
+        has a cached range and use that instead of looking for an unsplittable box.
+        The range of the box is the region at the top of the box, clamped by the
+        range of the ancestor. This will be correct all the time once all the layout
+        systems are region range aware and are able to cache it.
+
+        Test: fast/regions/positioned-slider-in-regions.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::hasRegionRangeForBox):
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+        * rendering/RenderFlowThread.h:
+
+2014-05-05  Andrei Bucur  <abucur@adobe.com>
+
         [CSS Regions] ASSERT when hovering over region
         https://bugs.webkit.org/show_bug.cgi?id=128809
 

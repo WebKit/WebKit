@@ -1,3 +1,15 @@
+2014-05-05  Andrei Bucur  <abucur@adobe.com>
+
+        [CSSRegions] Slider displayed wrong in regions
+        https://bugs.webkit.org/show_bug.cgi?id=132243
+
+        Reviewed by Mihnea Ovidenie.
+
+        Tests that the thumb of positioned slider inside regions is correctly painted.
+
+        * fast/regions/positioned-slider-in-regions-expected.html: Added.
+        * fast/regions/positioned-slider-in-regions.html: Added.
+
 2014-05-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed. New GTK baseline for media/media-controls-clone.html.

@@ -747,6 +747,20 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, RenderRegion* 
     range.setRange(startRegion, endRegion);
 }
 
+bool RenderFlowThread::hasRegionRangeForBox(const RenderBox* box) const
+{
+    ASSERT(box);
+
+    if (m_regionRangeMap.contains(box))
+        return true;
+
+    InlineElementBox* boxWrapper = box->inlineBoxWrapper();
+    if (boxWrapper && boxWrapper->root().containingRegion())
+        return true;
+
+    return false;
+}
+
 bool RenderFlowThread::getRegionRangeForBoxFromCachedInfo(const RenderBox* box, RenderRegion*& startRegion, RenderRegion*& endRegion) const
 {
     ASSERT(box);
@@ -786,21 +800,25 @@ bool RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
     // Check if the box is contained in an unsplittable box.
     // If the unsplittable box has region range, then the start and end region for the box
     // should be equal with the region for the unsplittable box if any.
-    RenderBox* topMostUnsplittable = nullptr;
     RenderBox* cb = const_cast<RenderBox*>(box);
-    while (!cb->isRenderFlowThread()) {
-        if (cb->isUnsplittableForPagination())
-            topMostUnsplittable = cb;
+    RenderBox* cbToUse = nullptr;
+    while (!cb->isRenderFlowThread() && !cbToUse) {
+        // FIXME: Use the containingBlock() value once we patch all the layout systems to be region range aware
+        // (e.g. if we use containingBlock() the shadow controls of a video element won't get the range from the
+        // video box because it's not a block; they need to be patched separately).
         ASSERT(cb->parent());
         cb = cb->parent()->enclosingBox();
         ASSERT(cb);
+
+        if (hasRegionRangeForBox(cb))
+            cbToUse = cb;
     }
 
-    if (topMostUnsplittable) {
-        if (getRegionRangeForBoxFromCachedInfo(topMostUnsplittable, startRegion, endRegion)) {
-            ASSERT(endRegion == startRegion);
-            return true;
-        }
+    // If a box doesn't have a cached region range it usually means the box belongs to a line so startRegion should be equal with endRegion.
+    // FIXME: Find the cases when this startRegion should not be equal with endRegion and make sure these boxes have cached region ranges.
+    if (cbToUse) {
+        startRegion = endRegion = const_cast<RenderFlowThread*>(this)->regionAtBlockOffset(cbToUse, box->offsetFromLogicalTopOfFirstPage(), true, DisallowRegionAutoGeneration);
+        return true;
     }
 
     return false;
