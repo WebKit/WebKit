@@ -383,8 +383,16 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
 
 bool Plan::isStillValid()
 {
-    return watchpoints.areStillValid()
-        && chains.areStillValid();
+    CodeBlock* replacement = codeBlock->replacement();
+    if (!replacement)
+        return false;
+    if (codeBlock->alternative() != replacement->baselineVersion())
+        return false;
+    if (!watchpoints.areStillValid())
+        return false;
+    if (!chains.areStillValid())
+        return false;
+    return true;
 }
 
 void Plan::reallyAdd(CommonData* commonData)

@@ -1,3 +1,15 @@
+2014-05-05  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION: RELEASE_ASSERT in CodeBlock::baselineVersion @ cnn.com
+        https://bugs.webkit.org/show_bug.cgi?id=132581
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::isStillValid): Check that the alternative codeBlock we
+        started compiling for is still the same at the end of compilation.
+        Also did some minor restructuring.
+
 2014-05-05  Andreas Kling  <akling@apple.com>
 
         Optimize PutByVal when subscript is a rope string.
