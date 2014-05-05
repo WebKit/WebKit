@@ -1,3 +1,9 @@
+2014-05-05  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the iOS build.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+
 2014-05-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Refactor favicon database APIs

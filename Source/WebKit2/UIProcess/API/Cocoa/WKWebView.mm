@@ -499,7 +499,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
 - (WebKit::ViewSnapshot)_takeViewSnapshot
 {
-    float deviceScale = wkGetScreenScaleFactor();
+    float deviceScale = WKGetScreenScaleFactor();
     CGSize snapshotSize = self.bounds.size;
     snapshotSize.width *= deviceScale;
     snapshotSize.height *= deviceScale;
