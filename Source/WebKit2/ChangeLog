@@ -1,3 +1,32 @@
+2014-05-05  Beth Dakin  <bdakin@apple.com>
+
+        Need a delegate that informs the UI process when the page's pin state changes
+        https://bugs.webkit.org/show_bug.cgi?id=132583
+        -and corresponding-
+        <rdar://problem/16806231>
+
+        Reviewed by Anders Carlsson.
+
+        New UIClient function pinnedStateDidChange. 
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::pinnedStateDidChange):
+
+        Create WKPageUIClientV3 to add this function.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+
+        Change default initialization to true instead of false, which makes more sense for 
+        this API.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::didChangeScrollOffsetPinningForMainFrame):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2014-05-05  Anders Carlsson  <andersca@apple.com>
 
         Add SPI to provide the WebCrypto master key

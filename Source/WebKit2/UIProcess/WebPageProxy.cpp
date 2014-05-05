@@ -334,10 +334,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_mainFrameHasHorizontalScrollbar(false)
     , m_mainFrameHasVerticalScrollbar(false)
     , m_canShortCircuitHorizontalWheelEvents(true)
-    , m_mainFrameIsPinnedToLeftSide(false)
-    , m_mainFrameIsPinnedToRightSide(false)
-    , m_mainFrameIsPinnedToTopSide(false)
-    , m_mainFrameIsPinnedToBottomSide(false)
+    , m_mainFrameIsPinnedToLeftSide(true)
+    , m_mainFrameIsPinnedToRightSide(true)
+    , m_mainFrameIsPinnedToTopSide(true)
+    , m_mainFrameIsPinnedToBottomSide(true)
     , m_shouldUseImplicitRubberBandControl(false)
     , m_rubberBandsAtLeft(true)
     , m_rubberBandsAtRight(true)
@@ -2457,6 +2457,8 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
             m_mainFrameIsPinnedToRightSide = true;
             m_mainFrameIsPinnedToTopSide = true;
             m_mainFrameIsPinnedToBottomSide = true;
+
+            m_uiClient->pinnedStateDidChange(*this);
         }
         m_pageClient.didCommitLoadForMainFrame(mimeType, frameHasCustomContentProvider);
     }
@@ -4150,10 +4152,10 @@ void WebPageProxy::resetState()
     m_mainFrameHasHorizontalScrollbar = false;
     m_mainFrameHasVerticalScrollbar = false;
 
-    m_mainFrameIsPinnedToLeftSide = false;
-    m_mainFrameIsPinnedToRightSide = false;
-    m_mainFrameIsPinnedToTopSide = false;
-    m_mainFrameIsPinnedToBottomSide = false;
+    m_mainFrameIsPinnedToLeftSide = true;
+    m_mainFrameIsPinnedToRightSide = true;
+    m_mainFrameIsPinnedToTopSide = true;
+    m_mainFrameIsPinnedToBottomSide = true;
 
     m_visibleScrollerThumbRect = IntRect();
 
@@ -4486,6 +4488,8 @@ void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSid
     m_mainFrameIsPinnedToRightSide = pinnedToRightSide;
     m_mainFrameIsPinnedToTopSide = pinnedToTopSide;
     m_mainFrameIsPinnedToBottomSide = pinnedToBottomSide;
+
+    m_uiClient->pinnedStateDidChange(*this);
 }
 
 void WebPageProxy::didChangePageCount(unsigned pageCount)

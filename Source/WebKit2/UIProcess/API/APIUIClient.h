@@ -133,6 +133,8 @@ public:
 
     virtual bool shouldInterruptJavaScript(WebKit::WebPageProxy*) { return false; }
 
+    virtual void pinnedStateDidChange(WebKit::WebPageProxy&) { }
+
 #if PLATFORM(IOS)
     virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return std::move(defaultActions); }
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) { }

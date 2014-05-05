@@ -1,3 +1,16 @@
+2014-05-05  Beth Dakin  <bdakin@apple.com>
+
+        Need a delegate that informs the UI process when the page's pin state changes
+        https://bugs.webkit.org/show_bug.cgi?id=132583
+        -and corresponding-
+        <rdar://problem/16806231>
+
+        Reviewed by Anders Carlsson.
+
+        We should default all of these pin-state value to true.
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+
 2014-05-05  Christophe Dumez  <ch.dumez@samsung.com>
 
         Named element cache can become invalid during HTMLCollection::updateNamedElementCache()

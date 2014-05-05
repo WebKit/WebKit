@@ -72,7 +72,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3> Versions;
 };
 
 }
@@ -1537,6 +1537,14 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 return false;
 
             return m_client.shouldInterruptJavaScript(toAPI(page), m_client.base.clientInfo);
+        }
+
+        virtual void pinnedStateDidChange(WebPageProxy& page) override
+        {
+            if (!m_client.pinnedStateDidChange)
+                return;
+
+            m_client.pinnedStateDidChange(toAPI(&page), m_client.base.clientInfo);
         }
     };
 
