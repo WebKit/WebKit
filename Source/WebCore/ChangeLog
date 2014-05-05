@@ -1,3 +1,19 @@
+2014-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Compositing layers in iframes are misplaced
+        https://bugs.webkit.org/show_bug.cgi?id=132554
+        <rdar://problem/16203027>
+
+        Reviewed by Benjamin Poulain.
+
+        Have requiresScrollLayer() only consider frameView.delegatesScrolling()
+        for the main frame, so that iframes get scroll layers (even though they
+        will never scroll), so that the rest of geometry code works as on other
+        platforms.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresScrollLayer):
+
 2014-05-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use std::unique_ptr in m_taskTimer of Notification class
