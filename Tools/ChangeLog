@@ -1,3 +1,12 @@
+2014-05-05  Pratik Solanki  <psolanki@apple.com>
+
+        Update framework locations in package-root
+        https://bugs.webkit.org/show_bug.cgi?id=132571
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/package-root:
+
 2014-05-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Refactor favicon database APIs
