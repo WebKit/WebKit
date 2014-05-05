@@ -1,3 +1,26 @@
+2014-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash in debug build with removing windowed plugin child widgets from the view
+        https://bugs.webkit.org/show_bug.cgi?id=132252
+
+        Reviewed by Philippe Normand.
+
+        It crashes due to an assert in HashTable that checks the iterators
+        validity. The problem is that we are iterating the children map
+        and the callback called on every iteration might modify the map,
+        making the iterators invalid. This happens when the WebView is
+        destroyed, GtkContainer calls gtk_container_foreach() with
+        gtk_widget_destroy as callback. When a widget inside a container
+        is destroyed, it's removed from the container, and in our case,
+        the child widget is removed from the map. This fixes several
+        crashes when running layout tests in debug bot.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseContainerForall): Use copyKeysToVector() instead
+        of using a range iterator for the map keys and check in every
+        iteration that the child widget from the keys vector is still
+        present in the map before calling the callback.
+
 2014-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash after getting web view context property with g_object_get

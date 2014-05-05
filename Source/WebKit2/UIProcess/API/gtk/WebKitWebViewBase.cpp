@@ -362,8 +362,12 @@ static void webkitWebViewBaseContainerForall(GtkContainer* container, gboolean i
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(container);
     WebKitWebViewBasePrivate* priv = webView->priv;
 
-    for (const auto& widget : priv->children.keys())
-        (*callback)(widget, callbackData);
+    Vector<GtkWidget*> children;
+    copyKeysToVector(priv->children, children);
+    for (const auto& child : children) {
+        if (priv->children.contains(child))
+            (*callback)(child, callbackData);
+    }
 
     if (includeInternals && priv->inspectorView)
         (*callback)(priv->inspectorView, callbackData);
