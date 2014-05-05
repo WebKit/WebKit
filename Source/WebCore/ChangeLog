@@ -1,3 +1,20 @@
+2014-05-04  Tim Horton  <timothy_horton@apple.com>
+
+        Long hangs under IOSurfacePool::evict
+        https://bugs.webkit.org/show_bug.cgi?id=132549
+        <rdar://problem/16769469>
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::willAddSurface):
+        Run eviction before adding the new surface to m_bytesCached/m_inUseBytesCached.
+        We use the additionalSize parameter to make space for the new surface.
+
+        (WebCore::IOSurfacePool::evict):
+        If we want to free up the entire pool, we can do so by throwing away everything.
+        This also avoids an underflow if additionalSize is larger than the maximum pool size.
+
 2014-05-04  Pratik Solanki  <psolanki@apple.com>
 
         Shortcircuit shouldUseCredentialStorage callback
