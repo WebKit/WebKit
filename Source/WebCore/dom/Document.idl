@@ -51,7 +51,7 @@
                                                                           [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
     [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                                                    [Default=Undefined] optional DOMString localName);
-    Element getElementById([Default=Undefined,ObjCExplicitAtomicString] optional DOMString elementId);
+    Element getElementById([Default=Undefined,ObjCExplicitAtomicString,RequiresExistingAtomicString] optional DOMString elementId);
 
     // DOM Level 3 Core
 
@@ -156,7 +156,7 @@
     readonly attribute HTMLCollection anchors;
     readonly attribute DOMString lastModified;
 
-    NodeList getElementsByName([Default=Undefined] optional DOMString elementName);
+    NodeList getElementsByName([Default=Undefined,AtomicString] optional DOMString elementName);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
              [Custom] attribute Location location;

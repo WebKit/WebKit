@@ -3283,7 +3283,14 @@ sub GenerateParametersCheck
                 }
             }
 
-            push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, $optional && $defaultAttribute && $defaultAttribute eq "NullString" ? "argumentOrNull(exec, $argsIndex)" : "exec->argument($argsIndex)") . ");\n");
+            if ($parameter->extendedAttributes->{"RequiresExistingAtomicString"}) {
+                push(@$outputArray, "    AtomicStringImpl* existing_$name = exec->argument($argsIndex).isEmpty() ? nullptr : exec->argument($argsIndex).toString(exec)->toExistingAtomicString(exec);\n");
+                push(@$outputArray, "    if (!existing_$name)\n");
+                push(@$outputArray, "        return JSValue::encode(jsNull());\n");
+                push(@$outputArray, "    const AtomicString& $name(existing_$name);\n");
+            } else {
+                push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, $optional && $defaultAttribute && $defaultAttribute eq "NullString" ? "argumentOrNull(exec, $argsIndex)" : "exec->argument($argsIndex)") . ");\n");
+            }
 
             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
             # But this needs to be done in the bindings, because the type is unsigned and the fact that it
@@ -3760,6 +3767,9 @@ sub JSValueToNative
         }
         if (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") or $signature->extendedAttributes->{"Reflect"}) {
             return "valueToStringWithNullCheck(exec, $value)"
+        }
+        if ($signature->extendedAttributes->{"AtomicString"}) {
+            return "$value.isEmpty() ? AtomicString() : $value.toString(exec)->toAtomicString(exec)";
         }
         # FIXME: Add the case for 'if ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString"))'.
         return "$value.isEmpty() ? String() : $value.toString(exec)->value(exec)";

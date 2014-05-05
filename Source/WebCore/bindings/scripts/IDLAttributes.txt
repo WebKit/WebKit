@@ -19,6 +19,7 @@
 #
 
 ActiveDOMObject
+AtomicString
 CPPPureInterface
 CachedAttribute
 CallbackNeedsOperatorEqual
@@ -101,6 +102,7 @@ Reflect=*
 Replaceable
 ReplaceableConstructor
 ReportExtraMemoryCost
+RequiresExistingAtomicString
 ReturnNewObject
 SetterRaisesException
 SkipVTableValidation

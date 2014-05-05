@@ -1,5 +1,44 @@
 2014-05-04  Andreas Kling  <akling@apple.com>
 
+        Optimize JSRopeString for resolving directly to AtomicString.
+        <https://webkit.org/b/132548>
+
+        If we know that the JSRopeString we are resolving is going to be used
+        as an AtomicString, we can try to avoid creating a new string.
+
+        We do this by first resolving the rope into a stack buffer, and using
+        that buffer as a key into the AtomicString table. If there is already
+        an AtomicString with the same characters, we reuse that instead of
+        constructing a new StringImpl.
+
+        JSString gains these two public functions:
+
+        - AtomicString toAtomicString()
+
+            Returns an AtomicString, tries to avoid allocating a new string
+            if possible.
+
+        - AtomicStringImpl* toExistingAtomicString()
+
+            Returns a non-null AtomicStringImpl* if one already exists in the
+            AtomicString table. If none is found, the rope is left unresolved.
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRopeInternal8):
+        (JSC::JSRopeString::resolveRopeInternal16):
+        (JSC::JSRopeString::resolveRopeToAtomicString):
+        (JSC::JSRopeString::clearFibers):
+        (JSC::JSRopeString::resolveRopeToExistingAtomicString):
+        (JSC::JSRopeString::resolveRope):
+        (JSC::JSRopeString::outOfMemory):
+        * runtime/JSString.h:
+        (JSC::JSString::toAtomicString):
+        (JSC::JSString::toExistingAtomicString):
+
+2014-05-04  Andreas Kling  <akling@apple.com>
+
         Unreviewed, rolling out r168254.
 
         Very crashy on debug JSC tests.

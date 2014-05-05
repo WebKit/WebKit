@@ -87,6 +87,8 @@ public:
     bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
 
     WTF_EXPORT_STRING_API static AtomicStringImpl* findStringWithHash(const StringImpl&);
+    WTF_EXPORT_STRING_API static AtomicStringImpl* find(LChar*, unsigned length);
+    WTF_EXPORT_STRING_API static AtomicStringImpl* find(UChar*, unsigned length);
     static AtomicStringImpl* find(StringImpl* string)
     {
         if (!string || string->isAtomic())

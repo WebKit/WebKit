@@ -1,3 +1,31 @@
+2014-05-04  Andreas Kling  <akling@apple.com>
+
+        Optimize JSRopeString for resolving directly to AtomicString.
+        <https://webkit.org/b/132548>
+
+        Add two bindings generator attributes for parameters to influence
+        the way that JS rope strings are resolved:
+
+        - AtomicString
+
+            Generates code that avoids allocating a new StringImpl if there
+            is already an existing AtomicString we can reuse.
+
+        - RequiresExistingAtomicString
+
+            Generates code that fails immediately if the provided string
+            is not found in the AtomicString table. This is now used for
+            document.getElementById(), and works because any existing ID
+            is guaranteed to be in the table.
+
+        Reviewed by Filip Pizlo.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        (JSValueToNative):
+        * bindings/scripts/IDLAttributes.txt:
+        * dom/Document.idl:
+
 2014-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Compositing layers in iframes are misplaced

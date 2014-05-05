@@ -139,6 +139,8 @@ namespace JSC {
             return newString;
         }
 
+        const AtomicString& toAtomicString(ExecState*) const;
+        AtomicStringImpl* toExistingAtomicString(ExecState*) const;
         const String& value(ExecState*) const;
         const String& tryGetValue() const;
         const StringImpl* tryGetValueImpl() const;
@@ -329,9 +331,14 @@ namespace JSC {
         friend JSValue jsStringFromArguments(ExecState*, JSValue);
 
         JS_EXPORT_PRIVATE void resolveRope(ExecState*) const;
+        JS_EXPORT_PRIVATE void resolveRopeToAtomicString(ExecState*) const;
+        JS_EXPORT_PRIVATE AtomicStringImpl* resolveRopeToExistingAtomicString(ExecState*) const;
         void resolveRopeSlowCase8(LChar*) const;
         void resolveRopeSlowCase(UChar*) const;
         void outOfMemory(ExecState*) const;
+        void resolveRopeInternal8(LChar*) const;
+        void resolveRopeInternal16(UChar*) const;
+        void clearFibers() const;
             
         JS_EXPORT_PRIVATE JSString* getIndexSlowCase(ExecState*, unsigned);
 
@@ -378,6 +385,28 @@ namespace JSC {
     {
         ASSERT(s.length() > 1);
         return JSString::create(*vm, s.impl());
+    }
+
+    ALWAYS_INLINE const AtomicString& JSString::toAtomicString(ExecState* exec) const
+    {
+        if (isRope())
+            static_cast<const JSRopeString*>(this)->resolveRopeToAtomicString(exec);
+        else if (!m_value.impl()->isAtomic())
+            m_value = AtomicString(m_value);
+        return *reinterpret_cast<const AtomicString*>(&m_value);
+    }
+
+    ALWAYS_INLINE AtomicStringImpl* JSString::toExistingAtomicString(ExecState* exec) const
+    {
+        if (isRope())
+            return static_cast<const JSRopeString*>(this)->resolveRopeToExistingAtomicString(exec);
+        if (m_value.impl()->isAtomic())
+            return static_cast<AtomicStringImpl*>(m_value.impl());
+        if (AtomicStringImpl* existingAtomicString = AtomicString::find(m_value.impl())) {
+            m_value = *existingAtomicString;
+            return existingAtomicString;
+        }
+        return nullptr;
     }
 
     inline const String& JSString::value(ExecState* exec) const

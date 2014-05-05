@@ -525,6 +525,30 @@ AtomicString AtomicString::number(double number)
     return String(numberToFixedPrecisionString(number, 6, buffer, true));
 }
 
+AtomicStringImpl* AtomicString::find(LChar* characters, unsigned length)
+{
+    AtomicStringTableLocker locker;
+    auto& table = stringTable();
+
+    LCharBuffer buffer = { characters, length };
+    auto iterator = table.find<LCharBufferTranslator>(buffer);
+    if (iterator != table.end())
+        return static_cast<AtomicStringImpl*>(*iterator);
+    return nullptr;
+}
+
+AtomicStringImpl* AtomicString::find(UChar* characters, unsigned length)
+{
+    AtomicStringTableLocker locker;
+    auto& table = stringTable();
+
+    UCharBuffer buffer = { characters, length };
+    auto iterator = table.find<UCharBufferTranslator>(buffer);
+    if (iterator != table.end())
+        return static_cast<AtomicStringImpl*>(*iterator);
+    return nullptr;
+}
+
 #if !ASSERT_DISABLED
 bool AtomicString::isInAtomicStringTable(StringImpl* string)
 {
