@@ -47,7 +47,6 @@ public:
     virtual String title() const override final;
 
     virtual short tabIndex() const override;
-    void setTabIndex(int);
 
     String innerHTML() const;
     String outerHTML() const;

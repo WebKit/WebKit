@@ -1,3 +1,60 @@
+2014-05-05  Dirk Schulze  <krit@webkit.org>
+
+        AX: tabindex support in SVG2
+        https://bugs.webkit.org/show_bug.cgi?id=130212
+
+        Reviewed by Chris Fleizach.
+
+        The patch is mainly based on a patch for Blink by Erik Dahlström.
+        https://src.chromium.org/viewvc/blink?revision=172964&view=revision
+
+        It adds support for tabindex to SVG by reusing the HTML code.
+
+        Spec: https://svgwg.org/svg2-draft/interact.html#sequential-focus-navigation-and-the-tabindex-attribute
+        IDL attribute: https://svgwg.org/svg2-draft/types.html#__svg__SVGElement__tabIndex
+
+        Test: svg/custom/tabindex-order.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setTabIndex): Moved from HTMLElement and shared with all elements.
+        * dom/Element.h:
+        * html/HTMLAnchorElement.cpp: Remove outdated comment.
+        (WebCore::HTMLAnchorElement::canStartSelection):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setTabIndex): Deleted.
+        * html/HTMLElement.h:
+        * svg/SVGAElement.cpp: Uses the same logic as HTMLAnchorElement now.
+        (WebCore::SVGAElement::tabIndex):
+        (WebCore::SVGAElement::supportsFocus):
+        (WebCore::SVGAElement::isMouseFocusable):
+        (WebCore::SVGAElement::isKeyboardFocusable):
+        (WebCore::SVGAElement::canStartSelection):
+        * svg/SVGAElement.h:
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.h:
+        * svg/SVGDefsElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::tabIndex): Return -1 if element can not be focused.
+        (WebCore::SVGElement::parseAttribute):
+        (WebCore::SVGElement::isMouseFocusable):
+        (WebCore::SVGElement::isKeyboardFocusable): Deleted. Use function on Element.
+        * svg/SVGElement.h:
+        * svg/SVGElement.idl:
+        * svg/SVGEllipseElement.h:
+        * svg/SVGGElement.h:
+        * svg/SVGGraphicsElement.h: Remove supportsFocus() from inheriting functions.
+            Don't just return true. SVG elements should not be focusable by default.
+            Instead check if tabindex was set explicitly.
+        * svg/SVGImageElement.h:
+        * svg/SVGLineElement.h:
+        * svg/SVGPathElement.h:
+        * svg/SVGPolyElement.h:
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.h:
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTextElement.h:
+
 2014-05-05  Jeremy Jones  <jeremyj@apple.com>
 
         Implement beginScrubbing and endScrubbing for video fullscreen.

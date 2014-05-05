@@ -1,3 +1,21 @@
+2014-05-05  Dirk Schulze  <krit@webkit.org>
+
+        AX: tabindex support in SVG2
+        https://bugs.webkit.org/show_bug.cgi?id=130212
+
+        Reviewed by Chris Fleizach.
+
+        Add test for tabindex on various SVG elements. Negative tests included.
+
+        Test is based upon a test from Erik Dahlström. Modified to test all SVGGraphicsElements.
+
+        * svg/custom/tabindex-order-expected.txt: Added.
+        * svg/custom/tabindex-order.html: Added.
+        * accessibility/svg-group-element-with-title.html: Give group element a role.
+        * platform/gtk/svg/custom/linking-uri-01-b-expected.txt:
+        * platform/ios-sim/svg/custom/linking-uri-01-b-expected.txt:
+        * platform/mac/svg/custom/linking-uri-01-b-expected.txt:
+
 2014-05-05  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r168244): compositing/visibility/visibility-image-layers-dynamic.html 

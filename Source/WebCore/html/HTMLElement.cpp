@@ -754,11 +754,6 @@ short HTMLElement::tabIndex() const
     return -1;
 }
 
-void HTMLElement::setTabIndex(int value)
-{
-    setIntegralAttribute(tabindexAttr, value);
-}
-
 TranslateAttributeMode HTMLElement::translateAttributeMode() const
 {
     const AtomicString& value = fastGetAttribute(translateAttr);

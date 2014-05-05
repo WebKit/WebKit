@@ -349,6 +349,7 @@ public:
     virtual bool shouldUseInputMethod();
 
     virtual short tabIndex() const;
+    void setTabIndex(int);
     virtual Element* focusDelegate();
 
     virtual RenderStyle* computedStyle(PseudoId = NOPSEUDO) override;

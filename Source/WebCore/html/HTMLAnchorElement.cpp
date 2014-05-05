@@ -276,7 +276,6 @@ bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const
 
 bool HTMLAnchorElement::canStartSelection() const
 {
-    // FIXME: We probably want this same behavior in SVGAElement too
     if (!isLink())
         return HTMLElement::canStartSelection();
     return hasEditableStyle();

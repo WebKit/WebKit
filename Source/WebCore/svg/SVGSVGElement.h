@@ -50,7 +50,6 @@ public:
     using SVGGraphicsElement::deref;
 
     virtual bool isValid() const override { return SVGTests::isValid(); }
-    virtual bool supportsFocus() const override { return true; }
 
     // 'SVGSVGElement' functions
     const AtomicString& contentScriptType() const;

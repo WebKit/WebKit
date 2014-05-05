@@ -38,7 +38,6 @@ private:
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
     virtual bool isValid() const override { return SVGTests::isValid(); }
-    virtual bool supportsFocus() const override { return true; }
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;

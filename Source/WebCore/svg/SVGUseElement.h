@@ -55,7 +55,6 @@ private:
     SVGUseElement(const QualifiedName&, Document&, bool wasInsertedByParser);
 
     virtual bool isValid() const override { return SVGTests::isValid(); }
-    virtual bool supportsFocus() const override { return true; }
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;

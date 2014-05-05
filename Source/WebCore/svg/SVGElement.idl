@@ -33,6 +33,8 @@
     readonly attribute SVGAnimatedString className;
     readonly attribute CSSStyleDeclaration style;
 
+    attribute long tabIndex;
+
     CSSValue getPresentationAttribute([Default=Undefined] optional DOMString name);
 };
 

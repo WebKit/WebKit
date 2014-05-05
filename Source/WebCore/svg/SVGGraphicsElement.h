@@ -57,6 +57,9 @@ protected:
     SVGGraphicsElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
+
+    virtual bool supportsFocus() const override { return Element::supportsFocus() || hasFocusEventListeners(); }
+
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;
 

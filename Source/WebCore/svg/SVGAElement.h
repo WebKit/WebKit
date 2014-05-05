@@ -57,6 +57,8 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
     virtual bool isFocusable() const override;
     virtual bool isURLAttribute(const Attribute&) const override;
+    virtual bool canStartSelection() const override;
+    virtual short tabIndex() const override;
 
     virtual bool willRespondToMouseClickEvents() override;
 

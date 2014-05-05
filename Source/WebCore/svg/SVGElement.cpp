@@ -34,6 +34,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceClipper.h"
@@ -250,6 +251,13 @@ SVGElement::~SVGElement()
     document().accessSVGExtensions()->removeAllElementReferencesForTarget(this);
 }
 
+short SVGElement::tabIndex() const
+{
+    if (supportsFocus())
+        return Element::tabIndex();
+    return -1;
+}
+
 bool SVGElement::willRecalcStyle(Style::Change change)
 {
     if (!m_svgRareData || styleChangeType() == SyntheticStyleChange)
@@ -311,7 +319,6 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
 
     ASSERT_NOT_REACHED();
 }
-
 
 bool SVGElement::isSupported(StringImpl* feature, StringImpl* version) const
 {
@@ -509,7 +516,15 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
     else if (name == ongestureendAttr)
         setAttributeEventListener(eventNames().gestureendEvent, name, value);
 #endif
-    else if (SVGLangSpace::parseAttribute(name, value)) {
+    else if (name == tabindexAttr) {
+        int tabindex = 0;
+        if (value.isEmpty())
+            clearTabIndexExplicitlyIfNeeded();
+        else if (parseHTMLInteger(value, tabindex)) {
+            // Clamp tabindex to the range of 'short' to match Firefox's behavior.
+            setTabIndexExplicitly(std::max(static_cast<int>(std::numeric_limits<short>::min()), std::min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
+        }
+    } else if (SVGLangSpace::parseAttribute(name, value)) {
     } else
         StyledElement::parseAttribute(name, value);
 }
@@ -1137,17 +1152,24 @@ void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGEl
     }
 }
 
+bool SVGElement::hasFocusEventListeners() const
+{
+    Element* eventTarget = const_cast<SVGElement*>(this);
+    return eventTarget->hasEventListeners(eventNames().focusinEvent)
+        || eventTarget->hasEventListeners(eventNames().focusoutEvent)
+        || eventTarget->hasEventListeners(eventNames().focusEvent)
+        || eventTarget->hasEventListeners(eventNames().blurEvent);
+}
+
 bool SVGElement::isMouseFocusable() const
 {
     if (!isFocusable())
         return false;
     Element* eventTarget = const_cast<SVGElement*>(this);
-    return eventTarget->hasEventListeners(eventNames().focusinEvent) || eventTarget->hasEventListeners(eventNames().focusoutEvent);
-}
-
-bool SVGElement::isKeyboardFocusable(KeyboardEvent*) const
-{
-    return isMouseFocusable();
+    return hasFocusEventListeners()
+        || eventTarget->hasEventListeners(eventNames().keydownEvent)
+        || eventTarget->hasEventListeners(eventNames().keyupEvent)
+        || eventTarget->hasEventListeners(eventNames().keypressEvent);
 }
     
 void SVGElement::accessKeyAction(bool sendMouseEvents)

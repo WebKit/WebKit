@@ -75,4 +75,3 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 249x37
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 248.06: "$Revision: 1.12 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-caret: position 0 of child 0 {#text} of child 1 {text} of child 5 {a} of child 1 {g} of child 3 {g} of child 25 {g} of child 0 {svg} of document
