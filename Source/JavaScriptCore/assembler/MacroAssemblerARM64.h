@@ -1809,6 +1809,12 @@ public:
         return branchAdd32(cond, op1, dataTempRegister, dest);
     }
 
+    Jump branchAdd32(ResultCondition cond, Address src, RegisterID dest)
+    {
+        load32(src, getCachedDataTempRegisterIDAndInvalidate());
+        return branchAdd32(cond, dest, dataTempRegister, dest);
+    }
+
     Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         return branchAdd32(cond, dest, src, dest);
