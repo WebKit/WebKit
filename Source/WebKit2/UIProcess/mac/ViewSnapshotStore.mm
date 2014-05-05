@@ -32,20 +32,30 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/UUID.h>
 
+#if PLATFORM(IOS)
+#import <QuartzCore/QuartzCorePrivate.h>
+#endif
+
 using namespace WebCore;
 
-static const int maximumSnapshotCount = 20;
+#if PLATFORM(MAC)
+static const size_t maximumSnapshotCacheSize = 400 * (1024 * 1024);
+#elif PLATFORM(IOS)
+// Because snapshots are not purgeable, we should keep fewer around.
+static const size_t maximumSnapshotCacheSize = 50 * (1024 * 1024);
+#endif
 
 namespace WebKit {
 
 ViewSnapshotStore::ViewSnapshotStore()
     : m_enabled(true)
-    , m_snapshotsWithImagesCount(0)
+    , m_snapshotCacheSize(0)
 {
 }
 
 ViewSnapshotStore::~ViewSnapshotStore()
 {
+    discardSnapshots();
 }
 
 ViewSnapshotStore& ViewSnapshotStore::shared()
@@ -54,9 +64,36 @@ ViewSnapshotStore& ViewSnapshotStore::shared()
     return store;
 }
 
+#if PLATFORM(IOS)
+CAContext *ViewSnapshotStore::snapshottingContext()
+{
+    static CAContext *context;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSDictionary *options = @{
+            kCAContextDisplayName: @"WebKitSnapshotting",
+            kCAContextIgnoresHitTest: @YES,
+            kCAContextDisplayId : @20000
+        };
+        context = [[CAContext remoteContextWithOptions:options] retain];
+    });
+
+    return context;
+}
+#endif
+
+void ViewSnapshotStore::removeSnapshotImage(ViewSnapshot& snapshot)
+{
+    if (!snapshot.hasImage())
+        return;
+
+    m_snapshotCacheSize -= snapshot.imageSizeInBytes;
+    snapshot.clearImage();
+}
+
 void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
 {
-    if (m_snapshotsWithImagesCount <= maximumSnapshotCount)
+    if (m_snapshotCacheSize <= maximumSnapshotCacheSize)
         return;
 
     uint32_t currentIndex = webPageProxy.backForwardList().currentIndex();
@@ -89,8 +126,7 @@ void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
     }
 
     if (mostDistantSnapshotIter != m_snapshotMap.end()) {
-        mostDistantSnapshotIter->value.clearImage();
-        m_snapshotsWithImagesCount--;
+        removeSnapshotImage(mostDistantSnapshotIter->value);
         return;
     }
 
@@ -107,24 +143,8 @@ void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
     }
 
     const auto& snapshotIter = m_snapshotMap.find(oldestSnapshotUUID);
-    snapshotIter->value.clearImage();
-    m_snapshotsWithImagesCount--;
+    removeSnapshotImage(snapshotIter->value);
 }
-
-#if USE(IOSURFACE)
-static RefPtr<IOSurface> createIOSurfaceFromImage(CGImageRef image)
-{
-    size_t width = CGImageGetWidth(image);
-    size_t height = CGImageGetHeight(image);
-
-    RefPtr<IOSurface> surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
-    RetainPtr<CGContextRef> surfaceContext = surface->ensurePlatformContext();
-    CGContextDrawImage(surfaceContext.get(), CGRectMake(0, 0, width, height), image);
-    CGContextFlush(surfaceContext.get());
-
-    return surface;
-}
-#endif
 
 void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
 {
@@ -136,43 +156,29 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
     if (!item)
         return;
 
-    RetainPtr<CGImageRef> snapshotImage = webPageProxy.takeViewSnapshot();
-    if (!snapshotImage)
-        return;
-
     pruneSnapshots(webPageProxy);
 
     String oldSnapshotUUID = item->snapshotUUID();
     if (!oldSnapshotUUID.isEmpty()) {
         const auto& oldSnapshotIter = m_snapshotMap.find(oldSnapshotUUID);
         if (oldSnapshotIter != m_snapshotMap.end()) {
-            if (oldSnapshotIter->value.hasImage())
-                m_snapshotsWithImagesCount--;
+            removeSnapshotImage(oldSnapshotIter->value);
             m_snapshotMap.remove(oldSnapshotIter);
         }
     }
 
     item->setSnapshotUUID(createCanonicalUUIDString());
-    
-    Snapshot snapshot;
+
+    ViewSnapshot snapshot = webPageProxy.takeViewSnapshot();
     snapshot.creationTime = std::chrono::steady_clock::now();
     snapshot.renderTreeSize = webPageProxy.renderTreeSize();
     snapshot.deviceScaleFactor = webPageProxy.deviceScaleFactor();
 
-#if USE(IOSURFACE)
-    snapshot.surface = createIOSurfaceFromImage(snapshotImage.get());
-    snapshot.surface->setIsVolatile(true);
-#else
-    snapshot.image = snapshotImage;
-#endif
-
     m_snapshotMap.add(item->snapshotUUID(), snapshot);
-
-    if (snapshot.hasImage())
-        m_snapshotsWithImagesCount++;
+    m_snapshotCacheSize += snapshot.imageSizeInBytes;
 }
 
-bool ViewSnapshotStore::getSnapshot(WebBackForwardListItem* item, ViewSnapshotStore::Snapshot& snapshot)
+bool ViewSnapshotStore::getSnapshot(WebBackForwardListItem* item, ViewSnapshot& snapshot)
 {
     if (item->snapshotUUID().isEmpty())
         return false;
@@ -184,22 +190,27 @@ bool ViewSnapshotStore::getSnapshot(WebBackForwardListItem* item, ViewSnapshotSt
     return true;
 }
 
-void ViewSnapshotStore::Snapshot::clearImage()
+void ViewSnapshotStore::discardSnapshots()
 {
-#if USE(IOSURFACE)
-    surface = nullptr;
-#else
-    image = nullptr;
-#endif
+    for (auto& snapshot : m_snapshotMap.values())
+        removeSnapshotImage(snapshot);
 }
 
-bool ViewSnapshotStore::Snapshot::hasImage() const
+bool ViewSnapshot::hasImage() const
 {
-#if USE(IOSURFACE)
-    return surface;
-#else
-    return image;
+    return imageSizeInBytes;
+}
+
+void ViewSnapshot::clearImage()
+{
+#if PLATFORM(MAC)
+    surface = nullptr;
+#elif PLATFORM(IOS)
+    if (slotID)
+        [ViewSnapshotStore::snapshottingContext() deleteSlot:slotID];
+    slotID = 0;
 #endif
+    imageSizeInBytes = 0;
 }
 
 } // namespace WebKit

@@ -36,6 +36,7 @@
 #import "RemoteObjectRegistryMessages.h"
 #import "UIDelegate.h"
 #import "ViewGestureController.h"
+#import "ViewSnapshotStore.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
@@ -54,6 +55,7 @@
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebFormSubmissionListenerProxy.h"
+#import "WebKitSystemInterface.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
@@ -71,6 +73,8 @@
 #import "WKWebViewContentProviderRegistry.h"
 #import <CoreGraphics/CGFloat.h>
 #import <UIKit/UIPeripheralHost_Private.h>
+#import <QuartzCore/CARenderServer.h>
+#import <QuartzCore/QuartzCorePrivate.h>
 
 @interface UIScrollView (UIScrollViewInternal)
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary*)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
@@ -493,14 +497,22 @@ static CGFloat contentZoomScale(WKWebView* webView)
     }
 }
 
-- (RetainPtr<CGImageRef>)_takeViewSnapshot
+- (WebKit::ViewSnapshot)_takeViewSnapshot
 {
-    // FIXME: We should be able to use acquire an IOSurface directly, instead of going to CGImage here and back in ViewSnapshotStore.
-    UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
-    [self drawViewHierarchyInRect:[self bounds] afterScreenUpdates:NO];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return image.CGImage;
+    float deviceScale = wkGetScreenScaleFactor();
+    CGSize snapshotSize = self.bounds.size;
+    snapshotSize.width *= deviceScale;
+    snapshotSize.height *= deviceScale;
+
+    WebKit::ViewSnapshot snapshot;
+    snapshot.slotID = [WebKit::ViewSnapshotStore::snapshottingContext() createImageSlot:snapshotSize hasAlpha:YES];
+
+    CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
+    CARenderServerCaptureLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, (uint64_t)self.layer, snapshot.slotID, 0, 0, &transform);
+
+    snapshot.imageSizeInBytes = snapshotSize.width * snapshotSize.height * 4;
+
+    return snapshot;
 }
 
 - (void)_zoomToPoint:(WebCore::FloatPoint)point atScale:(double)scale

@@ -78,7 +78,6 @@ struct WebPageConfiguration;
 
 - (void)_decidePolicyForGeolocationRequestFromOrigin:(WebKit::WebSecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame request:(WebKit::GeolocationPermissionRequestProxy&)permissionRequest;
 
-- (RetainPtr<CGImageRef>)_takeViewSnapshot;
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;
 
 - (BOOL)_scrollToRect:(CGRect)targetRect withOrigin:(CGPoint)origin minimumScrollDistance:(CGFloat)minimumScrollDistance;

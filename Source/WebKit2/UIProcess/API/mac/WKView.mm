@@ -3025,12 +3025,27 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     return _data->_rootLayer.get();
 }
 
-- (RetainPtr<CGImageRef>)_takeViewSnapshot
+static RefPtr<IOSurface> createIOSurfaceFromImage(CGImageRef image)
+{
+    size_t width = CGImageGetWidth(image);
+    size_t height = CGImageGetHeight(image);
+
+    RefPtr<IOSurface> surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
+    RetainPtr<CGContextRef> surfaceContext = surface->ensurePlatformContext();
+    CGContextDrawImage(surfaceContext.get(), CGRectMake(0, 0, width, height), image);
+    CGContextFlush(surfaceContext.get());
+
+    return surface;
+}
+
+- (ViewSnapshot)_takeViewSnapshot
 {
     NSWindow *window = self.window;
 
+    ViewSnapshot snapshot;
+
     if (![window windowNumber])
-        return nullptr;
+        return snapshot;
 
     // FIXME: This should use CGWindowListCreateImage once <rdar://problem/15709646> is resolved.
     CGSWindowID windowID = [window windowNumber];
@@ -3059,7 +3074,11 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     NSRect croppedImageRect = windowCaptureRect;
     croppedImageRect.origin.y = windowScreenRect.size.height - windowCaptureScreenRect.size.height - NSMinY(windowCaptureRect);
 
-    return adoptCF(CGImageCreateWithImageInRect(windowSnapshotImage.get(), NSRectToCGRect([window convertRectToBacking:croppedImageRect])));
+    auto croppedSnapshotImage = adoptCF(CGImageCreateWithImageInRect(windowSnapshotImage.get(), NSRectToCGRect([window convertRectToBacking:croppedImageRect])));
+
+    snapshot.surface = createIOSurfaceFromImage(croppedSnapshotImage.get());
+    snapshot.imageSizeInBytes = snapshot.surface->totalBytes();
+    return snapshot;
 }
 
 - (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event

@@ -1,3 +1,92 @@
+2014-05-05  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Swipe snapshots should be taken asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=132417
+        <rdar://problem/16535921>
+
+        Reviewed by Anders Carlsson.
+
+        Reorganize takeViewSnapshot to return a ViewSnaphot with the image
+        filled in (the other properties are filled in by ViewSnapshotStore).
+
+        Make ViewSnapshotStore use a fixed size instead of count for the snapshot cache.
+        iOS doesn't use purgeable snapshots, so make the cache much smaller there.
+
+        Use CARenderServerCaptureLayerWithTransform to achieve async snapshotting.
+
+        Rename WebKit::ViewSnapshotStore::Snapshot to WebKit::ViewSnapshot so that
+        it can be forward-declared in a bunch of places.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot:]):
+        Use CARenderServerCaptureLayerWithTransform.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/mac/WKView.mm:
+        (createIOSurfaceFromImage):
+        (-[WKView _takeViewSnapshot:]):
+        Adjust to the new push model.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::takeViewSnapshot):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        Plumbing.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        Realize an object that can be used as the layer contents from the slot ID.
+
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.cpp:
+        (WebKit::WebMemoryPressureHandler::sharedHandler):
+        (WebKit::WebMemoryPressureHandler::WebMemoryPressureHandler):
+        * UIProcess/WebMemoryPressureHandlerIOS.h:
+        Add a memory pressure handler for the UI process. This does not use
+        WebCore's platform independent memory pressure handler because that
+        mechanism only allows for one handler per process, and we don't want to
+        stomp on any handlers installed by WebKit1 in a process where the WebKits coexist.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _takeViewSnapshot]): Deleted.
+        Get rid of an unnecessary bounce through WKContentView.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::retrieveSnapshotForItem):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        Use the new name, ViewSnapshot.
+
+        * UIProcess/mac/ViewSnapshotStore.h:
+        (WebKit::ViewSnapshot::ViewSnapshot):
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::ViewSnapshotStore):
+        (WebKit::ViewSnapshotStore::~ViewSnapshotStore):
+        (WebKit::ViewSnapshotStore::snapshottingContext):
+        Use a custom CAContext for snapshotting so that snapshots don't
+        disappear when the main context is destroyed on hibernation.
+
+        (WebKit::ViewSnapshotStore::removeSnapshotImage):
+        (WebKit::ViewSnapshotStore::pruneSnapshots):
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        (WebKit::ViewSnapshotStore::getSnapshot):
+        (WebKit::ViewSnapshotStore::discardSnapshots):
+        (WebKit::ViewSnapshot::clearImage):
+        (WebKit::ViewSnapshot::hasImage):
+        (WebKit::createIOSurfaceFromImage): Deleted.
+        (WebKit::ViewSnapshotStore::Snapshot::clearImage): Deleted.
+        (WebKit::ViewSnapshotStore::Snapshot::hasImage): Deleted.
+        Cache by image size instead of counts.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-05-04  Pratik Solanki  <psolanki@apple.com>
 
         Reduce calls to CFURLCacheCopySharedURLCache

@@ -23,70 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewSnapshotStore_h
-#define ViewSnapshotStore_h
+#ifndef WebMemoryPressureHandler_h
+#define WebMemoryPressureHandler_h
 
-#include <WebCore/IOSurface.h>
-#include <chrono>
-#include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
+#if PLATFORM(IOS)
 
-OBJC_CLASS CAContext;
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
-class WebBackForwardListItem;
-class WebPageProxy;
-
-struct ViewSnapshot {
-#if PLATFORM(MAC)
-    RefPtr<WebCore::IOSurface> surface;
-#endif
-#if PLATFORM(IOS)
-    uint32_t slotID = 0;
-#endif
-
-    std::chrono::steady_clock::time_point creationTime;
-    uint64_t renderTreeSize;
-    float deviceScaleFactor;
-    size_t imageSizeInBytes = 0;
-
-    void clearImage();
-    bool hasImage() const;
-};
-
-class ViewSnapshotStore {
-    WTF_MAKE_NONCOPYABLE(ViewSnapshotStore);
+class WebMemoryPressureHandler {
+    friend class NeverDestroyed<WebMemoryPressureHandler>;
 public:
-    ViewSnapshotStore();
-    ~ViewSnapshotStore();
-
-    static ViewSnapshotStore& shared();
-
-    void recordSnapshot(WebPageProxy&);
-    bool getSnapshot(WebBackForwardListItem*, ViewSnapshot&);
-
-    void disableSnapshotting() { m_enabled = false; }
-    void enableSnapshotting() { m_enabled = true; }
-
-    void discardSnapshots();
-
-#if PLATFORM(IOS)
-    static CAContext *snapshottingContext();
-#endif
+    static WebMemoryPressureHandler& shared();
 
 private:
-    void pruneSnapshots(WebPageProxy&);
-    void removeSnapshotImage(ViewSnapshot&);
-
-    HashMap<String, ViewSnapshot> m_snapshotMap;
-
-    bool m_enabled;
-    size_t m_snapshotCacheSize;
+    WebMemoryPressureHandler();
 };
 
 } // namespace WebKit
 
-#endif // ViewSnapshotStore_h
+#endif // PLATFORM(IOS)
+
+#endif // WebMemoryPressureHandler_h

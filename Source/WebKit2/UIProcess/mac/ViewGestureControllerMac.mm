@@ -453,7 +453,7 @@ CALayer *ViewGestureController::determineLayerAdjacentToSnapshotForParent(SwipeD
 
 IOSurface* ViewGestureController::retrieveSnapshotForItem(WebBackForwardListItem* targetItem, FloatSize swipeLayerSize, float topContentInset)
 {
-    ViewSnapshotStore::Snapshot snapshot;
+    ViewSnapshot snapshot;
     if (!ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
         return nullptr;
 
@@ -632,7 +632,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    ViewSnapshotStore::Snapshot snapshot;
+    ViewSnapshot snapshot;
     uint64_t renderTreeSize = 0;
     if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
         renderTreeSize = snapshot.renderTreeSize;

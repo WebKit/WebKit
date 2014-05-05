@@ -38,6 +38,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "StringUtilities.h"
+#import "ViewSnapshotStore.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKStringCF.h"
@@ -498,7 +499,7 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
     return m_wkView._acceleratedCompositingModeRootLayer;
 }
 
-RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()
+ViewSnapshot PageClientImpl::takeViewSnapshot()
 {
     return [m_wkView _takeViewSnapshot];
 }

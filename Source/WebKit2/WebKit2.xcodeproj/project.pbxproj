@@ -509,6 +509,8 @@
 		2D2ADF0916362DD500197E47 /* PDFPluginTextAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */; };
 		2D2ADF0B16362DDB00197E47 /* PDFPluginAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */; };
 		2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */; };
+		2D3EF4421917646300034184 /* WebMemoryPressureHandlerIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D3EF4401917646300034184 /* WebMemoryPressureHandlerIOS.cpp */; };
+		2D3EF4431917646300034184 /* WebMemoryPressureHandlerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3EF4411917646300034184 /* WebMemoryPressureHandlerIOS.h */; };
 		2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */; };
 		2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */; };
 		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
@@ -2332,6 +2334,8 @@
 		2D2ADF0C16363DEC00197E47 /* PDFLayerControllerDetails.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFLayerControllerDetails.h; path = PDF/PDFLayerControllerDetails.h; sourceTree = "<group>"; };
 		2D2ADF0D16364D8200197E47 /* PDFPluginChoiceAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginChoiceAnnotation.h; path = PDF/PDFPluginChoiceAnnotation.h; sourceTree = "<group>"; };
 		2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginChoiceAnnotation.mm; path = PDF/PDFPluginChoiceAnnotation.mm; sourceTree = "<group>"; };
+		2D3EF4401917646300034184 /* WebMemoryPressureHandlerIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebMemoryPressureHandlerIOS.cpp; path = ios/WebMemoryPressureHandlerIOS.cpp; sourceTree = "<group>"; };
+		2D3EF4411917646300034184 /* WebMemoryPressureHandlerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMemoryPressureHandlerIOS.h; path = ios/WebMemoryPressureHandlerIOS.h; sourceTree = "<group>"; };
 		2D429BFA1721E2BA00EC681F /* PDFPluginPasswordField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginPasswordField.h; path = PDF/PDFPluginPasswordField.h; sourceTree = "<group>"; };
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStore.mm; sourceTree = "<group>"; };
@@ -4503,6 +4507,8 @@
 				2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */,
 				2DAF06D818BD23BA0081CEB1 /* SmartMagnificationController.messages.in */,
 				2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */,
+				2D3EF4401917646300034184 /* WebMemoryPressureHandlerIOS.cpp */,
+				2D3EF4411917646300034184 /* WebMemoryPressureHandlerIOS.h */,
 				2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */,
 				2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */,
 				3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.mm */,
@@ -6719,6 +6725,7 @@
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				CDC3830C17212282008A2FC3 /* CookieStorageShimLibrary.h in Headers */,
 				515E7730184015800007203F /* UniqueIDBDatabase.h in Headers */,
+				2D3EF4431917646300034184 /* WebMemoryPressureHandlerIOS.h in Headers */,
 				B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */,
 				2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */,
 				371B32DE184D67490013E2B2 /* WKNSURLProtectionSpace.h in Headers */,
@@ -8552,6 +8559,7 @@
 				BC1BE1F312D54DBD0004A228 /* WebGeolocationProvider.cpp in Sources */,
 				7801C099142290C400FAF9AF /* WebHitTestResult.cpp in Sources */,
 				2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */,
+				2D3EF4421917646300034184 /* WebMemoryPressureHandlerIOS.cpp in Sources */,
 				511B24AA132E097200065A0C /* WebIconDatabase.cpp in Sources */,
 				51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */,
 				51D02F64132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp in Sources */,

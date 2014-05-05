@@ -34,13 +34,13 @@
 @class WKWebViewConfiguration;
 
 namespace IPC {
-    class DataReference;
+class DataReference;
 }
 
 namespace WebCore {
-    struct KeypressCommand;
-    class Image;
-    class SharedBuffer;
+class Image;
+class SharedBuffer;
+struct KeypressCommand;
 }
 
 namespace WebKit {
@@ -50,6 +50,7 @@ class LayerTreeContext;
 class WebContext;
 struct ColorSpaceData;
 struct EditorState;
+struct ViewSnapshot;
 struct WebPageConfiguration;
 }
 
@@ -82,7 +83,7 @@ struct WebPageConfiguration;
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer;
 - (CALayer *)_acceleratedCompositingModeRootLayer;
 
-- (RetainPtr<CGImageRef>)_takeViewSnapshot;
+- (WebKit::ViewSnapshot)_takeViewSnapshot;
 - (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event;
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;

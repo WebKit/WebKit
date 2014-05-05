@@ -46,8 +46,8 @@ OBJC_CLASS NSTextAlternatives;
 #endif
 
 namespace WebCore {
-    class Cursor;
-    struct ViewportAttributes;
+class Cursor;
+struct ViewportAttributes;
 }
 
 namespace WebKit {
@@ -59,6 +59,7 @@ class RemoteLayerTreeTransaction;
 class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebPopupMenuProxy;
+struct ViewSnapshot;
 
 #if ENABLE(TOUCH_EVENTS)
 class NativeWebTouchEvent;
@@ -178,7 +179,7 @@ public:
     virtual void makeFirstResponder() = 0;
     virtual void setAcceleratedCompositingRootLayer(LayerOrView *) = 0;
     virtual LayerOrView *acceleratedCompositingRootLayer() const = 0;
-    virtual RetainPtr<CGImageRef> takeViewSnapshot() = 0;
+    virtual ViewSnapshot takeViewSnapshot() = 0;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) = 0;
     virtual void clearCustomSwipeViews() = 0;
 #endif

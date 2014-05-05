@@ -23,70 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewSnapshotStore_h
-#define ViewSnapshotStore_h
+#include "config.h"
+#include "WebMemoryPressureHandlerIOS.h"
 
-#include <WebCore/IOSurface.h>
-#include <chrono>
-#include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
+#if PLATFORM(IOS)
 
-OBJC_CLASS CAContext;
+#include "ViewSnapshotStore.h"
+#include <dispatch/private.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebBackForwardListItem;
-class WebPageProxy;
+WebMemoryPressureHandler& WebMemoryPressureHandler::shared()
+{
+    static NeverDestroyed<WebMemoryPressureHandler> memoryPressureHandler;
+    return memoryPressureHandler;
+}
 
-struct ViewSnapshot {
-#if PLATFORM(MAC)
-    RefPtr<WebCore::IOSurface> surface;
-#endif
-#if PLATFORM(IOS)
-    uint32_t slotID = 0;
-#endif
+WebMemoryPressureHandler::WebMemoryPressureHandler()
+{
+    // FIXME: This should be able to share code with WebCore's MemoryPressureHandler (and be platform independent).
+    // Right now it cannot because WebKit1 and WebKit2 need to be able to coexist in the UI process,
+    // and you can only have one WebCore::MemoryPressureHandler.
 
-    std::chrono::steady_clock::time_point creationTime;
-    uint64_t renderTreeSize;
-    float deviceScaleFactor;
-    size_t imageSizeInBytes = 0;
-
-    void clearImage();
-    bool hasImage() const;
-};
-
-class ViewSnapshotStore {
-    WTF_MAKE_NONCOPYABLE(ViewSnapshotStore);
-public:
-    ViewSnapshotStore();
-    ~ViewSnapshotStore();
-
-    static ViewSnapshotStore& shared();
-
-    void recordSnapshot(WebPageProxy&);
-    bool getSnapshot(WebBackForwardListItem*, ViewSnapshot&);
-
-    void disableSnapshotting() { m_enabled = false; }
-    void enableSnapshotting() { m_enabled = true; }
-
-    void discardSnapshots();
-
-#if PLATFORM(IOS)
-    static CAContext *snapshottingContext();
-#endif
-
-private:
-    void pruneSnapshots(WebPageProxy&);
-    void removeSnapshotImage(ViewSnapshot&);
-
-    HashMap<String, ViewSnapshot> m_snapshotMap;
-
-    bool m_enabled;
-    size_t m_snapshotCacheSize;
-};
+    dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYSTATUS, 0, DISPATCH_MEMORYSTATUS_PRESSURE_WARN, dispatch_get_main_queue());
+    dispatch_set_context(source, this);
+    dispatch_source_set_event_handler(source, ^{
+        ViewSnapshotStore::shared().discardSnapshots();
+    });
+    dispatch_resume(source);
+}
 
 } // namespace WebKit
 
-#endif // ViewSnapshotStore_h
+#endif

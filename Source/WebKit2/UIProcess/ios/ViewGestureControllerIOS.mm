@@ -37,7 +37,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <WebCore/IOSurface.h>
-#import <QuartzCore/QuartzCore.h>
+#import <QuartzCore/QuartzCorePrivate.h>
 #import <UIKit/UIScreenEdgePanGestureRecognizer.h>
 #import <UIKit/UIViewControllerTransitioning_Private.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
@@ -156,19 +156,12 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     RetainPtr<UIViewController> snapshotViewController = adoptNS([[UIViewController alloc] init]);
     m_snapshotView = adoptNS([[UIView alloc] initWithFrame:liveSwipeViewFrame]);
 
-    ViewSnapshotStore::Snapshot snapshot;
-    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot)) {
-#if USE(IOSURFACE)
-        if (snapshot.surface->setIsVolatile(false) == IOSurface::SurfaceState::Valid) {
-            [m_snapshotView layer].contents = (id)snapshot.surface->surface();
-            m_currentSwipeSnapshotSurface = snapshot.surface;
-        }
-#else
-        [m_snapshotView layer].contents = (id)snapshot.image.get();
-#endif
-    }
+    ViewSnapshot snapshot;
+    if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot) && snapshot.hasImage())
+        [m_snapshotView layer].contents = [CAContext objectForSlot:snapshot.slotID];
+
     [m_snapshotView setBackgroundColor:[UIColor whiteColor]];
-    [m_snapshotView layer].contentsGravity = @"topLeft";
+    [m_snapshotView layer].contentsGravity = kCAGravityTopLeft;
     [m_snapshotView layer].contentsScale = m_liveSwipeView.window.screen.scale;
     [snapshotViewController setView:m_snapshotView.get()];
 
@@ -231,7 +224,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    ViewSnapshotStore::Snapshot snapshot;
+    ViewSnapshot snapshot;
     m_targetRenderTreeSize = 0;
     if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
         m_targetRenderTreeSize = snapshot.renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;

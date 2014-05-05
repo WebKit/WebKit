@@ -34,6 +34,7 @@
 #import "FindIndicator.h"
 #import "NativeWebKeyboardEvent.h"
 #import "InteractionInformationAtPosition.h"
+#import "ViewSnapshotStore.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKWebViewInternal.h"
@@ -350,9 +351,9 @@ LayerOrView *PageClientImpl::acceleratedCompositingRootLayer() const
     return nullptr;
 }
 
-RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()
+ViewSnapshot PageClientImpl::takeViewSnapshot()
 {
-    return [m_contentView _takeViewSnapshot];
+    return [m_webView _takeViewSnapshot];
 }
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)

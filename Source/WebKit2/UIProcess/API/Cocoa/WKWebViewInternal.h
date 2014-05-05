@@ -46,6 +46,7 @@
 
 namespace WebKit {
 class WebPageProxy;
+struct ViewSnapshot;
 }
 
 @interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
@@ -61,7 +62,7 @@ class WebPageProxy;
 
 - (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition;
 
-- (RetainPtr<CGImageRef>)_takeViewSnapshot;
+- (WebKit::ViewSnapshot)_takeViewSnapshot;
 
 - (void)_scrollToContentOffset:(WebCore::FloatPoint)contentOffset;
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance;

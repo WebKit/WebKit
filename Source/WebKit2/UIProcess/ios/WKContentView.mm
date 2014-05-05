@@ -440,11 +440,6 @@ static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, 
     [[wrapper(_page->process().context()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:toAPI(&origin) frame:toAPI(&frame) request:toAPI(&permissionRequest) window:[self window]];
 }
 
-- (RetainPtr<CGImageRef>)_takeViewSnapshot
-{
-    return [_webView _takeViewSnapshot];
-}
-
 - (BOOL)_scrollToRect:(CGRect)targetRect withOrigin:(CGPoint)origin minimumScrollDistance:(CGFloat)minimumScrollDistance
 {
     return [_webView _scrollToRect:targetRect origin:origin minimumScrollDistance:minimumScrollDistance];
