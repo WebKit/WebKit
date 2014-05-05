@@ -1318,14 +1318,14 @@ void WebContext::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
     sendToAllProcesses(Messages::WebProcess::SetJavaScriptGarbageCollectorTimerEnabled(flag));
 }
 
-void WebContext::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash)
+void WebContext::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, SessionID sessionID)
 {
-    m_plugInAutoStartProvider.addAutoStartOriginHash(pageOrigin, plugInOriginHash);
+    m_plugInAutoStartProvider.addAutoStartOriginHash(pageOrigin, plugInOriginHash, sessionID);
 }
 
-void WebContext::plugInDidReceiveUserInteraction(unsigned plugInOriginHash)
+void WebContext::plugInDidReceiveUserInteraction(unsigned plugInOriginHash, SessionID sessionID)
 {
-    m_plugInAutoStartProvider.didReceiveUserInteraction(plugInOriginHash);
+    m_plugInAutoStartProvider.didReceiveUserInteraction(plugInOriginHash, sessionID);
 }
 
 PassRefPtr<ImmutableDictionary> WebContext::plugInAutoStartOriginHashes() const

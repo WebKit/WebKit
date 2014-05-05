@@ -422,8 +422,8 @@ private:
     void unregisterNotificationObservers();
 #endif
 
-    void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash);
-    void plugInDidReceiveUserInteraction(unsigned plugInOriginHash);
+    void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, WebCore::SessionID);
+    void plugInDidReceiveUserInteraction(unsigned plugInOriginHash, WebCore::SessionID);
 
     void setAnyPageGroupMightHavePrivateBrowsingEnabled(bool);
 

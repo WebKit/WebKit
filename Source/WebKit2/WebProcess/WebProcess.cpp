@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -200,6 +200,7 @@ WebProcess::WebProcess()
 #if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
     addSupplement<WebSoupRequestManager>();
 #endif
+    m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
 }
 
 void WebProcess::initializeProcess(const ChildProcessInitializationParameters& parameters)
@@ -726,11 +727,22 @@ static unsigned hashForPlugInOrigin(const String& pageOrigin, const String& plug
     return hasher.hash();
 }
 
-bool WebProcess::isPlugInAutoStartOriginHash(unsigned plugInOriginHash)
+bool WebProcess::isPlugInAutoStartOriginHash(unsigned plugInOriginHash, SessionID sessionID)
 {
-    HashMap<unsigned, double>::const_iterator it = m_plugInAutoStartOriginHashes.find(plugInOriginHash);
-    if (it == m_plugInAutoStartOriginHashes.end())
-        return false;
+    HashMap<WebCore::SessionID, HashMap<unsigned, double>>::const_iterator sessionIterator = m_plugInAutoStartOriginHashes.find(sessionID);
+    HashMap<unsigned, double>::const_iterator it;
+    bool contains = false;
+
+    if (sessionIterator != m_plugInAutoStartOriginHashes.end()) {
+        it = sessionIterator->value.find(plugInOriginHash);
+        contains = it != sessionIterator->value.end();
+    }
+    if (!contains) {
+        sessionIterator = m_plugInAutoStartOriginHashes.find(SessionID::defaultSessionID());
+        it = sessionIterator->value.find(plugInOriginHash);
+        if (it == sessionIterator->value.end())
+            return false;
+    }
     return currentTime() < it->value;
 }
 
@@ -748,10 +760,10 @@ bool WebProcess::shouldPlugInAutoStartFromOrigin(const WebPage* page, const Stri
 #endif
 
     // Lastly check against the more explicit hash list.
-    return isPlugInAutoStartOriginHash(hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType));
+    return isPlugInAutoStartOriginHash(hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType), page->sessionID());
 }
 
-void WebProcess::plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
+void WebProcess::plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, SessionID sessionID)
 {
     if (pageOrigin.isEmpty()) {
         LOG(Plugins, "Not adding empty page origin");
@@ -759,7 +771,7 @@ void WebProcess::plugInDidStartFromOrigin(const String& pageOrigin, const String
     }
 
     unsigned plugInOriginHash = hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType);
-    if (isPlugInAutoStartOriginHash(plugInOriginHash)) {
+    if (isPlugInAutoStartOriginHash(plugInOriginHash, sessionID)) {
         LOG(Plugins, "Hash %x already exists as auto-start origin (request for %s)", plugInOriginHash, pageOrigin.utf8().data());
         return;
     }
@@ -768,25 +780,31 @@ void WebProcess::plugInDidStartFromOrigin(const String& pageOrigin, const String
     // comes back from the parent process. Temporarily add this hash to the list with a thirty
     // second timeout. That way, even if the parent decides not to add it, we'll only be
     // incorrect for a little while.
-    m_plugInAutoStartOriginHashes.set(plugInOriginHash, currentTime() + 30 * 1000);
+    m_plugInAutoStartOriginHashes.add(sessionID, HashMap<unsigned, double>()).iterator->value.set(plugInOriginHash, currentTime() + 30 * 1000);
 
-    parentProcessConnection()->send(Messages::WebContext::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash), 0);
+    parentProcessConnection()->send(Messages::WebContext::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash, sessionID), 0);
 }
 
-void WebProcess::didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime)
+void WebProcess::didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime, SessionID sessionID)
 {
     // When called, some web process (which also might be this one) added the origin for auto-starting,
     // or received user interaction.
     // Set the bit to avoid having redundantly call into the UI process upon user interaction.
-    m_plugInAutoStartOriginHashes.set(plugInOriginHash, expirationTime);
+    m_plugInAutoStartOriginHashes.add(sessionID, HashMap<unsigned, double>()).iterator->value.set(plugInOriginHash, expirationTime);
 }
 
-void WebProcess::resetPlugInAutoStartOriginHashes(const HashMap<unsigned, double>& hashes)
+void WebProcess::resetPlugInAutoStartOriginDefaultHashes(const HashMap<unsigned, double>& hashes)
 {
-    m_plugInAutoStartOriginHashes.swap(const_cast<HashMap<unsigned, double>&>(hashes));
+    m_plugInAutoStartOriginHashes.clear();
+    m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>()).iterator->value.swap(const_cast<HashMap<unsigned, double>&>(hashes));
 }
 
-void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
+void WebProcess::resetPlugInAutoStartOriginHashes(const HashMap<SessionID, HashMap<unsigned, double>>& hashes)
+{
+    m_plugInAutoStartOriginHashes.swap(const_cast<HashMap<SessionID, HashMap<unsigned, double>>&>(hashes));
+}
+
+void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, SessionID sessionID)
 {
     if (pageOrigin.isEmpty())
         return;
@@ -795,13 +813,24 @@ void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const
     if (!plugInOriginHash)
         return;
 
-    HashMap<unsigned, double>::iterator it = m_plugInAutoStartOriginHashes.find(plugInOriginHash);
-    if (it == m_plugInAutoStartOriginHashes.end())
-        return;
+    HashMap<WebCore::SessionID, HashMap<unsigned, double>>::const_iterator sessionIterator = m_plugInAutoStartOriginHashes.find(sessionID);
+    HashMap<unsigned, double>::const_iterator it;
+    bool contains = false;
+    if (sessionIterator != m_plugInAutoStartOriginHashes.end()) {
+        it = sessionIterator->value.find(plugInOriginHash);
+        contains = it != sessionIterator->value.end();
+    }
+    if (!contains) {
+        sessionIterator = m_plugInAutoStartOriginHashes.find(SessionID::defaultSessionID());
+        it = sessionIterator->value.find(plugInOriginHash);
+        if (it == sessionIterator->value.end())
+            return;
+    }
+
     if (it->value - currentTime() > plugInAutoStartExpirationTimeUpdateThreshold)
         return;
 
-    parentProcessConnection()->send(Messages::WebContext::PlugInDidReceiveUserInteraction(plugInOriginHash), 0);
+    parentProcessConnection()->send(Messages::WebContext::PlugInDidReceiveUserInteraction(plugInOriginHash, sessionID), 0);
 }
 
 static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, uint64_t>& map)

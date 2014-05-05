@@ -1,3 +1,44 @@
+2014-05-05  Martin Hock  <mhock@apple.com>
+
+        Session-aware plugin autostart data
+        https://bugs.webkit.org/show_bug.cgi?id=131758
+        <rdar://problem/15906540>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::PlugInAutoStartProvider::PlugInAutoStartProvider):
+        (WebKit::PlugInAutoStartProvider::addAutoStartOriginHash):
+        (WebKit::PlugInAutoStartProvider::autoStartOriginHashesCopy):
+        (WebKit::PlugInAutoStartProvider::autoStartOriginsTableCopy):
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsTableWithItemsPassingTest):
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsArray):
+        (WebKit::PlugInAutoStartProvider::didReceiveUserInteraction):
+        * UIProcess/Plugins/PlugInAutoStartProvider.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::addPlugInAutoStartOriginHash):
+        (WebKit::WebContext::plugInDidReceiveUserInteraction):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.messages.in:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginDidReceiveUserInteraction):
+        * WebProcess/WebCoreSupport/WebPlugInClient.cpp:
+        (WebKit::WebPlugInClient::didStartFromOrigin):
+        * WebProcess/WebCoreSupport/WebPlugInClient.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::isPlugInAutoStartOriginHash):
+        (WebKit::WebProcess::shouldPlugInAutoStartFromOrigin):
+        (WebKit::WebProcess::plugInDidStartFromOrigin):
+        (WebKit::WebProcess::didAddPlugInAutoStartOriginHash):
+        (WebKit::WebProcess::resetPlugInAutoStartOriginDefaultHashes):
+        (WebKit::WebProcess::resetPlugInAutoStartOriginHashes):
+        (WebKit::WebProcess::plugInDidReceiveUserInteraction):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2014-05-05  Andy Estes  <aestes@apple.com>
 
         Another iOS build fix after r168260.

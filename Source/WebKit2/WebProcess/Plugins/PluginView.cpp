@@ -1736,7 +1736,7 @@ void PluginView::pluginDidReceiveUserInteraction()
     String pluginOrigin = plugInImageElement->loadedUrl().host();
     String mimeType = plugInImageElement->loadedMimeType();
 
-    WebProcess::shared().plugInDidReceiveUserInteraction(pageOrigin, pluginOrigin, mimeType);
+    WebProcess::shared().plugInDidReceiveUserInteraction(pageOrigin, pluginOrigin, mimeType, plugInImageElement->document().page()->sessionID());
 }
 
 bool PluginView::shouldCreateTransientPaintingSnapshot() const

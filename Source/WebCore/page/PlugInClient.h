@@ -26,6 +26,7 @@
 #ifndef PlugInClient_h
 #define PlugInClient_h
 
+#include "SessionID.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -34,7 +35,7 @@ class PlugInClient {
 public:
     virtual void pageDestroyed() = 0;
     virtual bool shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) = 0;
-    virtual void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) = 0;
+    virtual void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, SessionID) = 0;
 
 protected:
     virtual ~PlugInClient() { }

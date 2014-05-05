@@ -36,7 +36,7 @@
 #include "TextCheckerState.h"
 #include "ViewUpdateDispatcher.h"
 #include "VisitedLinkTable.h"
-#include <WebCore/SessionID.h>
+#include <WebCore/SessionIDHash.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -116,8 +116,8 @@ public:
 #endif
 
     bool shouldPlugInAutoStartFromOrigin(const WebPage*, const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
-    void plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
-    void plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
+    void plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID);
+    void plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID);
 
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
@@ -214,9 +214,10 @@ private:
     void userPreferredLanguagesChanged(const Vector<String>&) const;
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 
-    bool isPlugInAutoStartOriginHash(unsigned plugInOriginHash);
-    void didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime);
-    void resetPlugInAutoStartOriginHashes(const HashMap<unsigned, double>& hashes);
+    bool isPlugInAutoStartOriginHash(unsigned plugInOriginHash, WebCore::SessionID);
+    void didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime, WebCore::SessionID);
+    void resetPlugInAutoStartOriginDefaultHashes(const HashMap<unsigned, double>& hashes);
+    void resetPlugInAutoStartOriginHashes(const HashMap<WebCore::SessionID, HashMap<unsigned, double>>& hashes);
 
     void platformSetCacheModel(CacheModel);
     void platformClearResourceCaches(ResourceCachesToClear);
@@ -288,7 +289,7 @@ private:
 
     bool m_inDidClose;
 
-    HashMap<unsigned, double> m_plugInAutoStartOriginHashes;
+    HashMap<WebCore::SessionID, HashMap<unsigned, double>> m_plugInAutoStartOriginHashes;
     HashSet<String> m_plugInAutoStartOrigins;
 
     bool m_hasSetCacheModel;

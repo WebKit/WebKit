@@ -52,9 +52,9 @@ bool WebPlugInClient::shouldAutoStartFromOrigin(const String& pageOrigin, const 
     return WebProcess::shared().shouldPlugInAutoStartFromOrigin(m_page, pageOrigin, pluginOrigin, mimeType);
 }
 
-void WebPlugInClient::didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
+void WebPlugInClient::didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID sessionID)
 {
-    WebProcess::shared().plugInDidStartFromOrigin(pageOrigin, pluginOrigin, mimeType);
+    WebProcess::shared().plugInDidStartFromOrigin(pageOrigin, pluginOrigin, mimeType, sessionID);
 }
 
 } // namespace WebKit

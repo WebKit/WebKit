@@ -29,6 +29,7 @@
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
+#include <WebCore/SessionIDHash.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
@@ -150,7 +151,7 @@ struct WebProcessCreationParameters {
     bool usesNetworkProcess;
 #endif
 
-    HashMap<unsigned, double> plugInAutoStartOriginHashes;
+    HashMap<WebCore::SessionID, HashMap<unsigned, double>> plugInAutoStartOriginHashes;
     Vector<String> plugInAutoStartOrigins;
 
     bool memoryCacheDisabled;

@@ -59,6 +59,6 @@ messages -> WebContext LegacyReceiver {
 #endif
 
     # Plug-in messages.
-    void AddPlugInAutoStartOriginHash(String pageOrigin, uint32_t hash)
-    void PlugInDidReceiveUserInteraction(uint32_t hash)
+    void AddPlugInAutoStartOriginHash(String pageOrigin, uint32_t hash, WebCore::SessionID sessionID)
+    void PlugInDidReceiveUserInteraction(uint32_t hash, WebCore::SessionID sessionID)
 }

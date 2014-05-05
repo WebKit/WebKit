@@ -53,8 +53,9 @@ messages -> WebProcess LegacyReceiver {
     DestroyPrivateBrowsingSession(WebCore::SessionID sessionID)
 
     # Plug-ins.
-    DidAddPlugInAutoStartOriginHash(uint32_t hash, double expirationTime)
-    ResetPlugInAutoStartOriginHashes(HashMap<uint32_t,double> hashes)
+    DidAddPlugInAutoStartOriginHash(uint32_t hash, double expirationTime, WebCore::SessionID sessionID)
+    ResetPlugInAutoStartOriginDefaultHashes(HashMap<uint32_t,double> hashes)
+    ResetPlugInAutoStartOriginHashes(HashMap<WebCore::SessionID, HashMap<uint32_t,double>> hashes)
 
     void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, String sampleLogFilePath, double interval);
     void StopMemorySampler();
