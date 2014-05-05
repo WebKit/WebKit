@@ -1,3 +1,19 @@
+2014-05-05  Andreas Kling  <akling@apple.com>
+
+        REGRESSION (r168256): ASSERTION FAILED: (buffer + m_length) == position loading vanityfair.com article.
+        <https://webkit.org/b/168256>
+        <rdar://problem/16816316>
+
+        Make resolveRopeSlowCase8() behave like its 16-bit counterpart and not
+        clear the fibers. The caller takes care of this.
+
+        Test: fast/dom/getElementById-with-rope-string-arg.html
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRopeSlowCase8):
+
 2014-05-05  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION: RELEASE_ASSERT in CodeBlock::baselineVersion @ cnn.com
