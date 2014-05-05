@@ -1,3 +1,23 @@
+2014-04-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Assertion failure in WebCore::FlexBoxIterator::next()
+        <https://bugs.webkit.org/show_bug.cgi?id=117176>
+        <rdar://problem/14054549>
+
+        Code added in r115687 began removing anonymous wrappers when children
+        become inline. However, there are some objects, like
+        RenderDeprecatedFlexBox, whose children should always be blocks.
+
+        Reviewed by Tim Horton.
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::canCollapseAnonymousBlockChild):
+        Made public.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::removeAnonymousWrappersForInlinesIfNecessary):
+        Return early if we can't collapse anonymous block children.
+
 2014-04-07  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Assertion failure, !node || node->isElementNode(), in

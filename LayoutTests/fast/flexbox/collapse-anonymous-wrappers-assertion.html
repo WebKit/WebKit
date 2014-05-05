@@ -1,0 +1,21 @@
+<style>
+div {
+  display: -webkit-box;
+}
+</style>
+
+<div><div></div>PASS</div>
+
+<br><br>
+
+<span>
+    WebKit Bug #<a href="https://bugs.webkit.org/show_bug.cgi?id=117176">117176</a>: Assertion below WebCore::FlexBoxIterator::next(). This test passes if it does not assert in a debug build.
+</span>
+
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    style = document.getElementsByTagName("style")[0];
+    style.innerText += "div:last-child { position: absolute; }";
+</script>
