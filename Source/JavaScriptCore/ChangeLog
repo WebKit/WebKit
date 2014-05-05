@@ -1,3 +1,11 @@
+2014-05-05  Andreas Kling  <akling@apple.com>
+
+        Remove two now-incorrect assertions after r168256.
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRopeSlowCase8):
+        (JSC::JSRopeString::resolveRopeSlowCase):
+
 2014-05-04  Andreas Kling  <akling@apple.com>
 
         Optimize JSRopeString for resolving directly to AtomicString.

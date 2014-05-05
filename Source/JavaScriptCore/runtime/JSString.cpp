@@ -265,7 +265,6 @@ void JSRopeString::resolveRopeSlowCase8(LChar* buffer) const
     }
 
     ASSERT(buffer == position);
-    ASSERT(!isRope());
 }
 
 void JSRopeString::resolveRopeSlowCase(UChar* buffer) const
@@ -297,7 +296,6 @@ void JSRopeString::resolveRopeSlowCase(UChar* buffer) const
     }
 
     ASSERT(buffer == position);
-    ASSERT(!isRope());
 }
 
 void JSRopeString::outOfMemory(ExecState* exec) const
