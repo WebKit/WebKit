@@ -1,3 +1,18 @@
+2014-05-05  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] ASSERT when hovering over region
+        https://bugs.webkit.org/show_bug.cgi?id=128809
+
+        Reviewed by Mihnea Ovidenie.
+
+        There's no point in hit-testing a box for a region if it's not contained inside
+        that region.
+
+        Test: fast/regions/hit-test-box-non-containing-region.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+
 2014-05-04  Andreas Kling  <akling@apple.com>
 
         Optimize JSRopeString for resolving directly to AtomicString.

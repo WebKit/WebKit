@@ -1127,9 +1127,18 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
         }
     }
 
+    RenderRegion* regionToUse = locationInContainer.region();
+    if (regionToUse) {
+        RenderFlowThread* flowThread = regionToUse->flowThread();
+
+        // If the box is not contained by this region there's no point in going further.
+        if (!flowThread->objectShouldFragmentInFlowRegion(this, regionToUse))
+            return false;
+    }
+
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
-    LayoutRect boundsRect = borderBoxRectInRegion(locationInContainer.region());
+    LayoutRect boundsRect = borderBoxRectInRegion(regionToUse);
     boundsRect.moveBy(adjustedLocation);
     if (visibleToHitTesting() && action == HitTestForeground && locationInContainer.intersects(boundsRect)) {
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));

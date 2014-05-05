@@ -1,3 +1,16 @@
+2014-05-05  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] ASSERT when hovering over region
+        https://bugs.webkit.org/show_bug.cgi?id=128809
+
+        Reviewed by Mihnea Ovidenie.
+
+        Add a test verifying we're not trying to hit-test a box inside a region
+        where it's not contained.
+
+        * fast/regions/hit-test-box-non-containing-region-expected.txt: Added.
+        * fast/regions/hit-test-box-non-containing-region.html: Added.
+
 2014-05-04  Andreas Kling  <akling@apple.com>
 
         Unreviewed, rolling out r168254.
