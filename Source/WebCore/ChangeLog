@@ -1,3 +1,16 @@
+2014-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Check (rather than assume) element is a RenderTableSection before using it
+        https://bugs.webkit.org/show_bug.cgi?id=121858
+
+        Reviewed by David Kilzer.
+
+        Test: fast/table/table-insert-object-before-td-crash.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): Check that lastBox is a table section before
+        using the node as if it was one.
+
 2014-04-19  Alexey Proskuryakov  <ap@apple.com>
 
         Crashes in HTMLFormElement::submit.
