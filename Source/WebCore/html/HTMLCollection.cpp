@@ -434,7 +434,7 @@ void HTMLCollection::updateNamedElementCache() const
         return;
 
 
-    CollectionNamedElementCache& cache = createNameItemCache();
+    auto cache = std::make_unique<CollectionNamedElementCache>();
 
     unsigned size = m_indexCache.nodeCount(*this);
     for (unsigned i = 0; i < size; i++) {
@@ -442,15 +442,16 @@ void HTMLCollection::updateNamedElementCache() const
         ASSERT(element);
         const AtomicString& idAttrVal = element->getIdAttribute();
         if (!idAttrVal.isEmpty())
-            cache.appendIdCache(idAttrVal, element);
+            cache->appendIdCache(idAttrVal, element);
         if (!element->isHTMLElement())
             continue;
         const AtomicString& nameAttrVal = element->getNameAttribute();
         if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (type() != DocAll || nameShouldBeVisibleInDocumentAll(toHTMLElement(*element))))
-            cache.appendNameCache(nameAttrVal, element);
+            cache->appendNameCache(nameAttrVal, element);
     }
 
-    cache.didPopulate();
+    cache->didPopulate();
+    setNameItemCache(std::move(cache));
 }
 
 bool HTMLCollection::hasNamedItem(const AtomicString& name) const

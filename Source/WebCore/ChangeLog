@@ -1,3 +1,36 @@
+2014-05-05  Christophe Dumez  <ch.dumez@samsung.com>
+
+        Named element cache can become invalid during HTMLCollection::updateNamedElementCache()
+        https://bugs.webkit.org/show_bug.cgi?id=132575
+
+        Reviewed by Ryosuke Niwa.
+
+        Make sure the named element cache object stays valid in
+        HTMLCollection::updateNamedElementCache() while it is populating it.
+
+        The method was previously creating and setting the cache first, and then start
+        traversing the DOM tree to populate it. As a consequence, hasNamedElementCache()
+        would start returning true before the cache is actually populated.
+        The issue is that finding matches in the DOM tree can cause
+        HTMLCollection::invalidateCache() to be called under certain circumstances and
+        thus the named element cache object can become invalid while
+        updateNamedElementCache() is populating it.
+
+        To avoid the issue, this patch updates updateNamedElementCache() so that the
+        named element cache map is set *after* traversing the DOM tree. This way,
+        hasNamedElementCache() returns false while the cache is being populated and
+        there is no chance of it being invalidated too early.
+
+        Test: fast/dom/htmlcollection-selectedOptions-namedItem-crash.html
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::updateNamedElementCache):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::setNameItemCache):
+        (WebCore::HTMLCollection::createNameItemCache): Deleted.
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::updateNamedElementCache):
+
 2014-05-05  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] Special case ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture() for image documents

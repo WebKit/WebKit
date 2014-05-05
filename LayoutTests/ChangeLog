@@ -1,3 +1,16 @@
+2014-05-05  Christophe Dumez  <ch.dumez@samsung.com>
+
+        Named element cache can become invalid during HTMLCollection::updateNamedElementCache()
+        https://bugs.webkit.org/show_bug.cgi?id=132575
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test to verify that HTMLCollection::updateNamedElementCache() is no longer
+        crashing for collections of selected options.
+
+        * fast/dom/htmlcollection-selectedOptions-namedItem-crash-expected.txt: Added.
+        * fast/dom/htmlcollection-selectedOptions-namedItem-crash.html: Added.
+
 2014-05-05  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Webkit-blend-mode fails for accelerated parent with overflow:hidden

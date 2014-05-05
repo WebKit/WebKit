@@ -140,7 +140,7 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
     if (hasNamedElementCache())
         return;
 
-    CollectionNamedElementCache& cache = createNameItemCache();
+    auto cache = std::make_unique<CollectionNamedElementCache>();
     HashSet<AtomicStringImpl*> foundInputElements;
     const Vector<FormAssociatedElement*>& elementsArray = formControlElements();
 
@@ -151,11 +151,11 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
             const AtomicString& idAttrVal = element.getIdAttribute();
             const AtomicString& nameAttrVal = element.getNameAttribute();
             if (!idAttrVal.isEmpty()) {
-                cache.appendIdCache(idAttrVal, &element);
+                cache->appendIdCache(idAttrVal, &element);
                 foundInputElements.add(idAttrVal.impl());
             }
             if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal) {
-                cache.appendNameCache(nameAttrVal, &element);
+                cache->appendNameCache(nameAttrVal, &element);
                 foundInputElements.add(nameAttrVal.impl());
             }
         }
@@ -168,13 +168,14 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
             const AtomicString& idAttrVal = element.getIdAttribute();
             const AtomicString& nameAttrVal = element.getNameAttribute();
             if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl()))
-                cache.appendIdCache(idAttrVal, &element);
+                cache->appendIdCache(idAttrVal, &element);
             if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl()))
-                cache.appendNameCache(nameAttrVal, &element);
+                cache->appendNameCache(nameAttrVal, &element);
         }
     }
 
-    cache.didPopulate();
+    cache->didPopulate();
+    setNameItemCache(std::move(cache));
 }
 
 void HTMLFormControlsCollection::invalidateCache(Document& document) const

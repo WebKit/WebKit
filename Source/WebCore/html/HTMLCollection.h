@@ -141,12 +141,11 @@ protected:
 
     RootType rootType() const { return static_cast<RootType>(m_rootType); }
 
-    CollectionNamedElementCache& createNameItemCache() const
+    void setNameItemCache(std::unique_ptr<CollectionNamedElementCache> cache) const
     {
         ASSERT(!m_namedElementCache);
-        m_namedElementCache = std::make_unique<CollectionNamedElementCache>();
+        m_namedElementCache = std::move(cache);
         document().collectionCachedIdNameMap(*this);
-        return *m_namedElementCache;
     }
 
     const CollectionNamedElementCache& namedItemCaches() const
