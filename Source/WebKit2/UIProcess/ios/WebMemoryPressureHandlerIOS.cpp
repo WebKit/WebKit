@@ -31,8 +31,6 @@
 #include "ViewSnapshotStore.h"
 #include <dispatch/private.h>
 
-using namespace WebCore;
-
 namespace WebKit {
 
 WebMemoryPressureHandler& WebMemoryPressureHandler::shared()

@@ -1,3 +1,11 @@
+2014-05-05  Andy Estes  <aestes@apple.com>
+
+        Another iOS build fix after r168260.
+
+        Removed an unnecessary 'using namespace WebCore'.
+
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.cpp:
+
 2014-05-05  Tim Horton  <timothy_horton@apple.com>
 
         Fix the iOS build.
