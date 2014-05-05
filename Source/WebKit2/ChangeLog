@@ -1,3 +1,23 @@
+2014-05-05  Anders Carlsson  <andersca@apple.com>
+
+        Add SPI to provide the WebCrypto master key
+        https://bugs.webkit.org/show_bug.cgi?id=132586
+        <rdar://problem/16091460>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::webCryptoMasterKey):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::LoaderClient::webCryptoMasterKey):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::wrapCryptoKey):
+
 2014-05-05  Gavin Barraclough  <baraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=132522

@@ -4804,8 +4804,8 @@ void WebPageProxy::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, bool& succeeded, Vector<uint8_t>& wrappedKey)
 {
     Vector<uint8_t> masterKey;
-    RefPtr<API::Data> keyData = m_process->context().client().copyWebCryptoMasterKey(&m_process->context());
-    if (keyData)
+
+    if (RefPtr<API::Data> keyData = m_loaderClient->webCryptoMasterKey(*this))
         masterKey = keyData->dataReference().vector();
     else if (!getDefaultWebCryptoMasterKey(masterKey)) {
         succeeded = false;

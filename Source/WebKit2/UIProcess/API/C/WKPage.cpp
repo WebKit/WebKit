@@ -43,6 +43,7 @@
 #include "WKPagePolicyClientInternal.h"
 #include "WKPluginInformation.h"
 #include "WebBackForwardList.h"
+#include "WebContext.h"
 #include "WebFormClient.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -971,6 +972,11 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
         {
             if (m_client.willGoToBackForwardListItem)
                 m_client.willGoToBackForwardListItem(toAPI(page), toAPI(item), toAPI(userData), m_client.base.clientInfo);
+        }
+
+        virtual PassRefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override
+        {
+            return page.process().context().client().copyWebCryptoMasterKey(&page.process().context());
         }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

@@ -26,6 +26,7 @@
 #ifndef APILoaderClient_h
 #define APILoaderClient_h
 
+#include "APIData.h"
 #include "PluginModuleInfo.h"
 #include "SameDocumentNavigationType.h"
 #include <WebCore/FrameLoaderTypes.h>
@@ -90,6 +91,8 @@ public:
 
     virtual void didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem*, Vector<RefPtr<WebKit::WebBackForwardListItem>>) { }
     virtual void willGoToBackForwardListItem(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem*, API::Object*) { }
+
+    virtual PassRefPtr<Data> webCryptoMasterKey(WebKit::WebPageProxy&) { return nullptr; }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     virtual WebKit::PluginModuleLoadPolicy pluginLoadPolicy(WebKit::WebPageProxy*, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, WebKit::ImmutableDictionary*, WTF::String& /* unavailabilityDescription */) { return currentPluginLoadPolicy; }
