@@ -558,6 +558,4 @@ webkit.org/b/129733 fast/borders/hidpi-simple-hairline-border-painting.html [ Im
 webkit.org/b/131987 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 
-webkit.org/b/131377 fast/repaint/blend-mode-isolate-stacking-context.html [ Failure Timeout ]
-
 webkit.org/b/132049 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]

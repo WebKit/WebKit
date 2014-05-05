@@ -1907,8 +1907,6 @@ webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
 # Test globally skipped, passing on GTK port
 webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ]
 
-webkit.org/b/131377 fast/repaint/blend-mode-isolate-stacking-context.html [ Failure Timeout ]
-
 webkit.org/b/131496 accessibility/help-text.html [ Failure ]
 
 webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
