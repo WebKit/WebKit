@@ -110,6 +110,11 @@ inline PassRefPtr<ImageDocumentElement> ImageDocumentElement::create(ImageDocume
 
 // --------
 
+HTMLImageElement* ImageDocument::imageElement() const
+{
+    return m_imageElement;
+}
+
 LayoutSize ImageDocument::imageSize()
 {
     ASSERT(m_imageElement);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,9 @@
 #include "WebProcess.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/HTMLImageElement.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/ImageDocument.h>
 #include <WebCore/RenderView.h>
 
 #if PLATFORM(IOS)
@@ -89,6 +91,14 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     if (Node* node = hitTestResult.innerNode()) {
         bool isReplaced;
         FloatRect renderRect = node->renderRect(&isReplaced);
+
+        if (node->document().isImageDocument()) {
+            if (HTMLImageElement* imageElement = static_cast<ImageDocument&>(node->document()).imageElement()) {
+                renderRect = imageElement->renderRect(&isReplaced);
+                origin = renderRect.center();
+                isReplaced = true;
+            }
+        }
 
 #if PLATFORM(MAC)
         double viewportMinimumScale = 0;

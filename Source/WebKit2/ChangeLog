@@ -1,3 +1,16 @@
+2014-05-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] Special case ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture() for image documents
+        https://bugs.webkit.org/show_bug.cgi?id=132553
+
+        Reviewed by Tim Horton.
+
+        When collecting the geometry for the smart magnification gesture, always return the image of an image document
+        on iOS. On iOS, it does not make much sense to return the whole document rect when the gesture is not over the image.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture):
+
 2014-05-02  Gavin Barraclough  <baraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=132522

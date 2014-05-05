@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class ImageDocumentElement;
+class HTMLImageElement;
 
 class ImageDocument final : public HTMLDocument {
 public:
@@ -37,6 +38,8 @@ public:
     {
         return adoptRef(new ImageDocument(frame, url));
     }
+
+    HTMLImageElement* imageElement() const;
 
     void updateDuringParsing();
     void finishedParsing();

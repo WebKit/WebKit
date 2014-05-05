@@ -1,3 +1,16 @@
+2014-05-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS][WK2] Special case ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture() for image documents
+        https://bugs.webkit.org/show_bug.cgi?id=132553
+
+        Reviewed by Tim Horton.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::imageElement):
+        * html/ImageDocument.h:
+
 2014-05-05  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Webkit-blend-mode fails for accelerated parent with overflow:hidden
