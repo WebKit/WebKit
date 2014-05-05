@@ -270,9 +270,8 @@ namespace JSC {
             Base::finishCreation(vm);
             m_length = s1->length() + s2->length();
             setIs8Bit(s1->is8Bit() && s2->is8Bit());
-            fiber(0).set(vm, this, s1);
-            fiber(1).set(vm, this, s2);
-            fiber(2).clear();
+            m_fibers[0].set(vm, this, s1);
+            m_fibers[1].set(vm, this, s2);
         }
             
         void finishCreation(VM& vm, JSString* s1, JSString* s2, JSString* s3)
@@ -280,35 +279,19 @@ namespace JSC {
             Base::finishCreation(vm);
             m_length = s1->length() + s2->length() + s3->length();
             setIs8Bit(s1->is8Bit() && s2->is8Bit() &&  s3->is8Bit());
-            fiber(0).set(vm, this, s1);
-            fiber(1).set(vm, this, s2);
-            fiber(2).set(vm, this, s3);
-        }
-        
-        void finishCreation(VM& vm, JSString* base, unsigned offset, unsigned length)
-        {
-            Base::finishCreation(vm);
-            ASSERT(!base->isRope());
-            ASSERT(!sumOverflows<int32_t>(offset, length));
-            ASSERT(offset + length <= base->length());
-            m_length = length;
-            setIs8Bit(base->is8Bit());
-            u[0].string.setWithoutWriteBarrier(substringSentinel());
-            substringBase().set(vm, this, base);
-            substringOffset() = offset;
+            m_fibers[0].set(vm, this, s1);
+            m_fibers[1].set(vm, this, s2);
+            m_fibers[2].set(vm, this, s3);
         }
 
         void finishCreation(VM& vm)
         {
             JSString::finishCreation(vm);
-            fiber(0).clear();
-            fiber(1).clear();
-            fiber(2).clear();
         }
 
         void append(VM& vm, size_t index, JSString* jsString)
         {
-            fiber(index).set(vm, this, jsString);
+            m_fibers[index].set(vm, this, jsString);
             m_length += jsString->m_length;
             RELEASE_ASSERT(static_cast<int32_t>(m_length) >= 0);
             setIs8Bit(is8Bit() && jsString->is8Bit());
@@ -334,17 +317,10 @@ namespace JSC {
             newString->finishCreation(vm, s1, s2, s3);
             return newString;
         }
-        
-        static JSString* create(VM& vm, JSString* base, unsigned offset, unsigned length)
-        {
-            JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
-            newString->finishCreation(vm, base, offset, length);
-            return newString;
-        }
 
         void visitFibers(SlotVisitor&);
             
-        static ptrdiff_t offsetOfFibers() { return OBJECT_OFFSETOF(JSRopeString, u); }
+        static ptrdiff_t offsetOfFibers() { return OBJECT_OFFSETOF(JSRopeString, m_fibers); }
 
         static const unsigned s_maxInternalRopeLength = 3;
             
@@ -358,38 +334,8 @@ namespace JSC {
         void outOfMemory(ExecState*) const;
             
         JS_EXPORT_PRIVATE JSString* getIndexSlowCase(ExecState*, unsigned);
-        
-        WriteBarrierBase<JSString>& fiber(unsigned i) const
-        {
-            ASSERT(!isSubstring());
-            ASSERT(i < s_maxInternalRopeLength);
-            return u[i].string;
-        }
-        
-        WriteBarrierBase<JSString>& substringBase() const
-        {
-            return u[1].string;
-        }
-        
-        unsigned& substringOffset() const
-        {
-            return u[2].number;
-        }
-        
-        static JSString* substringSentinel()
-        {
-            return bitwise_cast<JSString*>(static_cast<uintptr_t>(1));
-        }
-        
-        bool isSubstring() const
-        {
-            return u[0].string.get() == substringSentinel();
-        }
 
-        mutable union {
-            unsigned number;
-            WriteBarrierBase<JSString> string;
-        } u[s_maxInternalRopeLength];
+        mutable std::array<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
     };
 
 
@@ -475,11 +421,10 @@ namespace JSC {
         ASSERT(offset <= static_cast<unsigned>(s->length()));
         ASSERT(length <= static_cast<unsigned>(s->length()));
         ASSERT(offset + length <= static_cast<unsigned>(s->length()));
-        VM& vm = exec->vm();
+        VM* vm = &exec->vm();
         if (!length)
-            return vm.smallStrings.emptyString();
-        s->value(exec); // For effect. We need to ensure that any string that is used as a substring base is not a rope.
-        return JSRopeString::create(vm, s, offset, length);
+            return vm->smallStrings.emptyString();
+        return jsSubstring(vm, s->value(exec), offset, length);
     }
 
     inline JSString* jsSubstring8(VM* vm, const String& s, unsigned offset, unsigned length)
