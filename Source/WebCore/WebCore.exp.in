@@ -768,7 +768,7 @@ __ZN7WebCore23MutableStylePropertySetD1Ev
 __ZN7WebCore23SynchronousLoaderClient24platformBadResponseErrorEv
 __ZN7WebCore23createFragmentFromNodesEPNS_8DocumentERKN3WTF6VectorIPNS_4NodeELm0ENS2_15CrashOnOverflowEEE
 
-#if defined(__clang__) && __clang_major__ < 5
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070 || __cplusplus < 201103L
 __ZN7WebCore23dataForURLComponentTypeEP5NSURLl
 #else
 __ZN7WebCore23dataForURLComponentTypeEP5NSURL18CFURLComponentType
@@ -835,7 +835,7 @@ __ZN7WebCore3macERKNS_10CredentialE
 __ZN7WebCore3macERKNS_23AuthenticationChallengeE
 __ZN7WebCore40restrictMinimumScaleFactorToViewportSizeERNS_18ViewportAttributesENS_7IntSizeEf
 
-#if defined(__clang__) && __clang_major__ < 5
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070 || __cplusplus < 201103L
 __ZN7WebCore42URLByTruncatingOneCharacterBeforeComponentEP5NSURLl
 #else
 __ZN7WebCore42URLByTruncatingOneCharacterBeforeComponentEP5NSURL18CFURLComponentType

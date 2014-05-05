@@ -1,3 +1,14 @@
+2014-05-05  Andy Estes  <aestes@apple.com>
+
+        Fix the Mountain Lion build.
+
+        Some versions of Clang on Mountain Lion do not set __cplusplus to 201103L when compiling with -std=gnu++11,
+        which causes CF_ENUMs to be weakly-typed. Detect this case and export the correct symbols.
+
+        On Lion, CFURLComponentType is not defined using CF_ENUM, so it will always be a weakly-typed enum.
+
+        * WebCore.exp.in:
+
 2014-05-03  Babak Shafiei  <bshafiei@apple.com>
 
         Follow-up fix for the merge of r167480.
