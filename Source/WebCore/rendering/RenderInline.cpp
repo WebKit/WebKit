@@ -119,9 +119,13 @@ void RenderInline::willBeDestroyed()
 RenderInline* RenderInline::inlineElementContinuation() const
 {
     RenderBoxModelObject* continuation = this->continuation();
-    if (!continuation || continuation->isRenderInline())
+    if (!continuation)
+        return nullptr;
+
+    if (continuation->isRenderInline())
         return toRenderInline(continuation);
-    return toRenderBlock(continuation)->inlineElementContinuation();
+
+    return continuation->isRenderBlock() ? toRenderBlock(continuation)->inlineElementContinuation() : nullptr;
 }
 
 void RenderInline::updateFromStyle()
