@@ -220,12 +220,6 @@ void InspectorInstrumentation::willRemoveNamedFlowImpl(InstrumentingAgents* inst
         cssAgent->willRemoveNamedFlow(document, namedFlow);
 }
 
-void InspectorInstrumentation::didUpdateRegionLayoutImpl(InstrumentingAgents* instrumentingAgents, Document* document, WebKitNamedFlow* namedFlow)
-{
-    if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
-        cssAgent->didUpdateRegionLayout(document, namedFlow);
-}
-
 void InspectorInstrumentation::didChangeRegionOversetImpl(InstrumentingAgents* instrumentingAgents, Document* document, WebKitNamedFlow* namedFlow)
 {
     if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())

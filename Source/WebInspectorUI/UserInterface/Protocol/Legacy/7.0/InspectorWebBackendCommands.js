@@ -203,7 +203,6 @@ InspectorBackend.registerEvent("CSS.mediaQueryResultChanged", []);
 InspectorBackend.registerEvent("CSS.styleSheetChanged", ["styleSheetId"]);
 InspectorBackend.registerEvent("CSS.namedFlowCreated", ["namedFlow"]);
 InspectorBackend.registerEvent("CSS.namedFlowRemoved", ["documentNodeId", "flowName"]);
-InspectorBackend.registerEvent("CSS.regionLayoutUpdated", ["namedFlow"]);
 InspectorBackend.registerCommand("CSS.enable", [], []);
 InspectorBackend.registerCommand("CSS.disable", [], []);
 InspectorBackend.registerCommand("CSS.getMatchedStylesForNode", [{"name": "nodeId", "type": "number", "optional": false}, {"name": "includePseudo", "type": "boolean", "optional": true}, {"name": "includeInherited", "type": "boolean", "optional": true}], ["matchedCSSRules", "pseudoElements", "inherited"]);

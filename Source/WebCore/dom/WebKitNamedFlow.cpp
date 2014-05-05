@@ -208,17 +208,6 @@ void WebKitNamedFlow::setRenderer(RenderNamedFlowThread* parentFlowThread)
     m_parentFlowThread = parentFlowThread;
 }
 
-void WebKitNamedFlow::dispatchRegionLayoutUpdateEvent()
-{
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-
-    // If the flow is in the "NULL" state the event should not be dispatched any more.
-    if (flowState() == FlowStateNull)
-        return;
-
-    dispatchEvent(UIEvent::create(eventNames().webkitregionlayoutupdateEvent, false, false, m_flowManager->document()->defaultView(), 0));
-}
-    
 void WebKitNamedFlow::dispatchRegionOversetChangeEvent()
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());

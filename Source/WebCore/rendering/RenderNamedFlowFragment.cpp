@@ -323,12 +323,7 @@ void RenderNamedFlowFragment::updateOversetState()
     
     setRegionOversetState(state);
 
-    // Determine whether the NamedFlow object should dispatch a regionLayoutUpdate event
-    if (previousState != state
-        || state == RegionFit
-        || state == RegionOverset)
-        flowThread->setDispatchRegionLayoutUpdateEvent(true);
-    
+    // Determine whether the NamedFlow object should dispatch a regionOversetChange event
     if (previousState != state)
         flowThread->setDispatchRegionOversetChangeEvent(true);
 }

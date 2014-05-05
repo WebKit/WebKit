@@ -1,3 +1,45 @@
+2014-05-05  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Remove regionLayoutUpdate event
+        https://bugs.webkit.org/show_bug.cgi?id=132564
+
+        Reviewed by Simon Fraser.
+
+        The regionLayoutUpdate event was removed from the regions spec and was replaced by two other events: 
+        regionOversetChange and regionFragmentChange.
+
+        No new tests needed, this patch removes a feature.
+
+        * dom/EventNames.h:
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::dispatchRegionLayoutUpdateEvent): Deleted.
+        * dom/WebKitNamedFlow.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::resetNonPersistentData):
+        (WebCore::InspectorCSSAgent::willRemoveNamedFlow):
+        (WebCore::UpdateRegionLayoutTask::UpdateRegionLayoutTask): Deleted.
+        (WebCore::UpdateRegionLayoutTask::scheduleFor): Deleted.
+        (WebCore::UpdateRegionLayoutTask::unschedule): Deleted.
+        (WebCore::UpdateRegionLayoutTask::reset): Deleted.
+        (WebCore::UpdateRegionLayoutTask::timerFired): Deleted.
+        (WebCore::InspectorCSSAgent::didUpdateRegionLayout): Deleted.
+        (WebCore::InspectorCSSAgent::regionLayoutUpdated): Deleted.
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didUpdateRegionLayoutImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didUpdateRegionLayout): Deleted.
+        * inspector/protocol/CSS.json:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::updateOversetState):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::removeRegionFromThread):
+        (WebCore::RenderNamedFlowThread::layout):
+        (WebCore::RenderNamedFlowThread::dispatchRegionLayoutUpdateEventIfNeeded): Deleted.
+        (WebCore::RenderNamedFlowThread::regionLayoutUpdateEventTimerFired): Deleted.
+        * rendering/RenderNamedFlowThread.h:
+
 2014-05-05  Rik Cabanier  <cabanier@adobe.com>
 
         Enhance IDL compiler so it supports unrestricted float and double

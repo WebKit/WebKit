@@ -105,67 +105,6 @@ static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
     return result;
 }
 
-class UpdateRegionLayoutTask {
-public:
-    UpdateRegionLayoutTask(InspectorCSSAgent*);
-    void scheduleFor(WebKitNamedFlow*, int documentNodeId);
-    void unschedule(WebKitNamedFlow*);
-    void reset();
-    void timerFired(Timer<UpdateRegionLayoutTask>&);
-
-private:
-    InspectorCSSAgent* m_cssAgent;
-    Timer<UpdateRegionLayoutTask> m_timer;
-    HashMap<WebKitNamedFlow*, int> m_namedFlows;
-};
-
-UpdateRegionLayoutTask::UpdateRegionLayoutTask(InspectorCSSAgent* cssAgent)
-    : m_cssAgent(cssAgent)
-    , m_timer(this, &UpdateRegionLayoutTask::timerFired)
-{
-}
-
-void UpdateRegionLayoutTask::scheduleFor(WebKitNamedFlow* namedFlow, int documentNodeId)
-{
-    m_namedFlows.add(namedFlow, documentNodeId);
-
-    if (!m_timer.isActive())
-        m_timer.startOneShot(0);
-}
-
-void UpdateRegionLayoutTask::unschedule(WebKitNamedFlow* namedFlow)
-{
-    m_namedFlows.remove(namedFlow);
-}
-
-void UpdateRegionLayoutTask::reset()
-{
-    m_timer.stop();
-    m_namedFlows.clear();
-}
-
-void UpdateRegionLayoutTask::timerFired(Timer<UpdateRegionLayoutTask>&)
-{
-    // The timer is stopped on m_cssAgent destruction, so this method will never be called after m_cssAgent has been destroyed.
-    Vector<std::pair<WebKitNamedFlow*, int>> namedFlows;
-
-    for (HashMap<WebKitNamedFlow*, int>::iterator it = m_namedFlows.begin(), end = m_namedFlows.end(); it != end; ++it)
-        namedFlows.append(std::make_pair(it->key, it->value));
-
-    for (unsigned i = 0, size = namedFlows.size(); i < size; ++i) {
-        WebKitNamedFlow* namedFlow = namedFlows.at(i).first;
-        int documentNodeId = namedFlows.at(i).second;
-
-        if (m_namedFlows.contains(namedFlow)) {
-            m_cssAgent->regionLayoutUpdated(namedFlow, documentNodeId);
-            m_namedFlows.remove(namedFlow);
-        }
-    }
-
-    if (!m_namedFlows.isEmpty() && !m_timer.isActive())
-        m_timer.startOneShot(0);
-}
-
 class ChangeRegionOversetTask {
 public:
     ChangeRegionOversetTask(InspectorCSSAgent*);
@@ -541,8 +480,6 @@ void InspectorCSSAgent::reset()
 void InspectorCSSAgent::resetNonPersistentData()
 {
     m_namedFlowCollectionsRequested.clear();
-    if (m_updateRegionLayoutTask)
-        m_updateRegionLayoutTask->reset();
     if (m_changeRegionOversetTask)
         m_changeRegionOversetTask->reset();
     resetPseudoStates();
@@ -580,35 +517,10 @@ void InspectorCSSAgent::willRemoveNamedFlow(Document* document, WebKitNamedFlow*
     if (!documentNodeId)
         return;
 
-    if (m_updateRegionLayoutTask)
-        m_updateRegionLayoutTask->unschedule(namedFlow);
-
     if (m_changeRegionOversetTask)
         m_changeRegionOversetTask->unschedule(namedFlow);
 
     m_frontendDispatcher->namedFlowRemoved(documentNodeId, namedFlow->name().string());
-}
-
-void InspectorCSSAgent::didUpdateRegionLayout(Document* document, WebKitNamedFlow* namedFlow)
-{
-    int documentNodeId = documentNodeWithRequestedFlowsId(document);
-    if (!documentNodeId)
-        return;
-
-    if (!m_updateRegionLayoutTask)
-        m_updateRegionLayoutTask = std::make_unique<UpdateRegionLayoutTask>(this);
-    m_updateRegionLayoutTask->scheduleFor(namedFlow, documentNodeId);
-}
-
-void InspectorCSSAgent::regionLayoutUpdated(WebKitNamedFlow* namedFlow, int documentNodeId)
-{
-    if (namedFlow->flowState() == WebKitNamedFlow::FlowStateNull)
-        return;
-
-    ErrorString errorString;
-    Ref<WebKitNamedFlow> protect(*namedFlow);
-
-    m_frontendDispatcher->regionLayoutUpdated(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
 }
 
 void InspectorCSSAgent::didChangeRegionOverset(Document* document, WebKitNamedFlow* namedFlow)

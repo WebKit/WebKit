@@ -60,7 +60,6 @@ class Node;
 class NodeList;
 class StyleResolver;
 class StyleRule;
-class UpdateRegionLayoutTask;
 class ChangeRegionOversetTask;
 
 #if ENABLE(INSPECTOR)
@@ -105,8 +104,6 @@ public:
     void mediaQueryResultChanged();
     void didCreateNamedFlow(Document*, WebKitNamedFlow*);
     void willRemoveNamedFlow(Document*, WebKitNamedFlow*);
-    void didUpdateRegionLayout(Document*, WebKitNamedFlow*);
-    void regionLayoutUpdated(WebKitNamedFlow*, int documentNodeId);
     void didChangeRegionOverset(Document*, WebKitNamedFlow*);
     void regionOversetChanged(WebKitNamedFlow*, int documentNodeId);
     void didRegisterNamedFlowContentElement(Document*, WebKitNamedFlow*, Node* contentElement, Node* nextContentElement = nullptr);
@@ -182,7 +179,6 @@ private:
     DocumentToViaInspectorStyleSheet m_documentToInspectorStyleSheet;
     NodeIdToForcedPseudoState m_nodeIdToForcedPseudoState;
     HashSet<int> m_namedFlowCollectionsRequested;
-    std::unique_ptr<UpdateRegionLayoutTask> m_updateRegionLayoutTask;
     std::unique_ptr<ChangeRegionOversetTask> m_changeRegionOversetTask;
 
     int m_lastStyleSheetId;

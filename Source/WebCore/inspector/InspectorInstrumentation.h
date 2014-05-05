@@ -127,7 +127,6 @@ public:
     static void willPopShadowRoot(Element* host, ShadowRoot*);
     static void didCreateNamedFlow(Document*, WebKitNamedFlow*);
     static void willRemoveNamedFlow(Document*, WebKitNamedFlow*);
-    static void didUpdateRegionLayout(Document*, WebKitNamedFlow*);
     static void didChangeRegionOverset(Document*, WebKitNamedFlow*);
     static void didRegisterNamedFlowContentElement(Document*, WebKitNamedFlow*, Node* contentElement, Node* nextContentElement = nullptr);
     static void didUnregisterNamedFlowContentElement(Document*, WebKitNamedFlow*, Node* contentElement);
@@ -326,7 +325,6 @@ private:
     static void willPopShadowRootImpl(InstrumentingAgents*, Element* host, ShadowRoot*);
     static void didCreateNamedFlowImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
     static void willRemoveNamedFlowImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
-    static void didUpdateRegionLayoutImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
     static void didChangeRegionOversetImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
     static void didRegisterNamedFlowContentElementImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*, Node* contentElement, Node* nextContentElement = nullptr);
     static void didUnregisterNamedFlowContentElementImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*, Node* contentElement);
@@ -684,18 +682,6 @@ inline void InspectorInstrumentation::willRemoveNamedFlow(Document* document, We
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         willRemoveNamedFlowImpl(instrumentingAgents, document, namedFlow);
-#else
-    UNUSED_PARAM(document);
-    UNUSED_PARAM(namedFlow);
-#endif
-}
-
-inline void InspectorInstrumentation::didUpdateRegionLayout(Document* document, WebKitNamedFlow* namedFlow)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didUpdateRegionLayoutImpl(instrumentingAgents, document, namedFlow);
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(namedFlow);

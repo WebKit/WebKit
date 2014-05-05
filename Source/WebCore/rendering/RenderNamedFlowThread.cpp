@@ -48,10 +48,8 @@ namespace WebCore {
 RenderNamedFlowThread::RenderNamedFlowThread(Document& document, PassRef<RenderStyle> style, PassRef<WebKitNamedFlow> namedFlow)
     : RenderFlowThread(document, std::move(style))
     , m_hasRegionsWithStyling(false)
-    , m_dispatchRegionLayoutUpdateEvent(false)
     , m_dispatchRegionOversetChangeEvent(false)
     , m_namedFlow(std::move(namedFlow))
-    , m_regionLayoutUpdateEventTimer(this, &RenderNamedFlowThread::regionLayoutUpdateEventTimerFired)
     , m_regionOversetChangeEventTimer(this, &RenderNamedFlowThread::regionOversetChangeEventTimerFired)
 {
 }
@@ -271,10 +269,7 @@ void RenderNamedFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
     if (canBeDestroyed())
         setMarkForDestruction();
 
-    // After removing all the regions in the flow the following layout needs to dispatch the regionLayoutUpdate event
-    if (m_regionList.isEmpty())
-        setDispatchRegionLayoutUpdateEvent(true);
-    else if (wasFirst)
+    if (!m_regionList.isEmpty() && wasFirst)
         updateWritingMode();
 
     invalidateRegions();
@@ -416,8 +411,6 @@ void RenderNamedFlowThread::layout()
         setDispatchRegionOversetChangeEvent(true);
         updatePreviousRegionCount();
     }
-
-    dispatchRegionLayoutUpdateEventIfNeeded();
 }
 
 void RenderNamedFlowThread::dispatchNamedFlowEvents()
@@ -555,18 +548,6 @@ bool RenderNamedFlowThread::isChildAllowed(const RenderObject& child, const Rend
     return toElement(originalParent)->renderer()->isChildAllowed(child, style);
 }
 
-void RenderNamedFlowThread::dispatchRegionLayoutUpdateEventIfNeeded()
-{
-    if (!m_dispatchRegionLayoutUpdateEvent)
-        return;
-
-    m_dispatchRegionLayoutUpdateEvent = false;
-    InspectorInstrumentation::didUpdateRegionLayout(&document(), &namedFlow());
-
-    if (!m_regionLayoutUpdateEventTimer.isActive() && namedFlow().hasEventListeners())
-        m_regionLayoutUpdateEventTimer.startOneShot(0);
-}
-
 void RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded()
 {
     if (!m_dispatchRegionOversetChangeEvent)
@@ -577,11 +558,6 @@ void RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded()
     
     if (!m_regionOversetChangeEventTimer.isActive() && namedFlow().hasEventListeners())
         m_regionOversetChangeEventTimer.startOneShot(0);
-}
-
-void RenderNamedFlowThread::regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>&)
-{
-    namedFlow().dispatchRegionLayoutUpdateEvent();
 }
 
 void RenderNamedFlowThread::regionOversetChangeEventTimerFired(Timer<RenderNamedFlowThread>&)

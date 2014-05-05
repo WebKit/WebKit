@@ -58,7 +58,6 @@ WebInspector.DOMTreeManager.Event = {
     ContentFlowListWasUpdated: "dom-tree-manager-content-flow-list-was-updated",
     ContentFlowWasAdded: "dom-tree-manager-content-flow-was-added",
     ContentFlowWasRemoved: "dom-tree-manager-content-flow-was-removed",
-    RegionLayoutUpdated: "dom-tree-manager-region-layout-updated",
     RegionOversetChanged: "dom-tree-manager-region-overset-changed"
 };
 
@@ -615,11 +614,6 @@ WebInspector.DOMTreeManager.prototype = {
         var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey(flowPayload);
         console.assert(this._flows.has(flowKey));
         this._updateContentFlowFromPayload(this._flows.get(flowKey), flowPayload);
-    },
-
-    regionLayoutUpdated: function(flowPayload)
-    {
-        this._sendNamedFlowUpdateEvents(flowPayload);
     },
 
     regionOversetChanged: function(flowPayload)

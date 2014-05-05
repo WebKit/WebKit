@@ -63,11 +63,6 @@ WebInspector.CSSObserver.prototype = {
         WebInspector.domTreeManager.namedFlowRemoved(documentNodeId, flowName);
     },
 
-    regionLayoutUpdated: function(namedFlow)
-    {
-        WebInspector.domTreeManager.regionLayoutUpdated(namedFlow);
-    },
-
     regionOversetChanged: function(namedFlow)
     {
         WebInspector.domTreeManager.regionOversetChanged(namedFlow);

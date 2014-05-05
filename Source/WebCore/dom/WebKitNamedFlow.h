@@ -78,7 +78,6 @@ public:
 
     FlowState flowState() const { return m_parentFlowThread ? FlowStateCreated : FlowStateNull; }
 
-    void dispatchRegionLayoutUpdateEvent();
     void dispatchRegionOversetChangeEvent();
 
 private:

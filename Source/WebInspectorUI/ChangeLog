@@ -1,3 +1,21 @@
+2014-05-05  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Remove regionLayoutUpdate event
+        https://bugs.webkit.org/show_bug.cgi?id=132564
+
+        Reviewed by Simon Fraser.
+
+        The regionLayoutUpdate event was removed from the regions spec and was replaced by two other events: 
+        regionOversetChange and regionFragmentChange.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype.get regionLayoutUpdated): Deleted.
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        * UserInterface/Protocol/CSSObserver.js:
+        (WebInspector.CSSObserver.prototype.regionLayoutUpdated): Deleted.
+        * UserInterface/Protocol/Legacy/7.0/InspectorWebBackendCommands.js:
+        * Versions/Inspector-iOS-7.0.json:
+
 2014-05-02  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: CodeMirror 4 CSS mode new state data structure breaks helpers.

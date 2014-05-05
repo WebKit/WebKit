@@ -401,13 +401,6 @@
             "description": "Fires when a Named Flow is removed: has no associated content nodes and regions."
         },
         {
-            "name": "regionLayoutUpdated",
-            "parameters": [
-                { "name": "namedFlow", "$ref": "NamedFlow", "description": "The Named Flow whose layout may have changed." }
-            ],
-            "description": "Fires when a Named Flow's layout may have changed."
-        },
-        {
             "name": "regionOversetChanged",
             "parameters": [
                 { "name": "namedFlow", "$ref": "NamedFlow", "description": "The Named Flow containing the regions whose regionOverset values changed." }

@@ -96,7 +96,6 @@ public:
     LayoutUnit flowContentBottom() const { return m_flowContentBottom; }
     void dispatchNamedFlowEvents();
 
-    void setDispatchRegionLayoutUpdateEvent(bool value) { m_dispatchRegionLayoutUpdateEvent = value; }
     void setDispatchRegionOversetChangeEvent(bool value) { m_dispatchRegionOversetChangeEvent = value; }
 
     virtual bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) const override;
@@ -112,7 +111,6 @@ private:
     virtual void computeOverflow(LayoutUnit, bool = false) override;
     virtual void layout() override final;
 
-    void dispatchRegionLayoutUpdateEventIfNeeded();
     void dispatchRegionOversetChangeEventIfNeeded();
 
     bool dependsOn(RenderNamedFlowThread* otherRenderFlowThread) const;
@@ -124,7 +122,6 @@ private:
     void checkInvalidRegions();
 
     bool canBeDestroyed() const { return m_invalidRegionList.isEmpty() && m_regionList.isEmpty() && m_contentElements.isEmpty(); }
-    void regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>&);
     void regionOversetChangeEventTimerFired(Timer<RenderNamedFlowThread>&);
     void clearContentElements();
     void updateWritingMode();
@@ -150,13 +147,11 @@ private:
     RenderRegionList m_invalidRegionList;
 
     bool m_hasRegionsWithStyling : 1;
-    bool m_dispatchRegionLayoutUpdateEvent : 1;
     bool m_dispatchRegionOversetChangeEvent : 1;
 
     // The DOM Object that represents a named flow.
     Ref<WebKitNamedFlow> m_namedFlow;
 
-    Timer<RenderNamedFlowThread> m_regionLayoutUpdateEventTimer;
     Timer<RenderNamedFlowThread> m_regionOversetChangeEventTimer;
 
     LayoutUnit m_flowContentBottom;
