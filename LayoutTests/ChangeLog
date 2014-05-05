@@ -1,3 +1,26 @@
+2014-05-05  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Webkit-blend-mode fails for accelerated parent with overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=126160
+
+        Reviewed by Dean Jackson.
+
+        * css3/compositing/blend-mode-accelerated-parent-overflow-hidden-expected.html: Added.
+        * css3/compositing/blend-mode-accelerated-parent-overflow-hidden.html: Added.
+        * css3/compositing/blend-mode-clip-accelerated-blending-canvas-expected.txt: Added.
+        * css3/compositing/blend-mode-clip-accelerated-blending-canvas.html: Added.
+        * css3/compositing/blend-mode-clip-accelerated-blending-child-expected.html: Added.
+        * css3/compositing/blend-mode-clip-accelerated-blending-child.html: Added.
+        * css3/compositing/blend-mode-clip-accelerated-blending-double-expected.html: Added.
+        * css3/compositing/blend-mode-clip-accelerated-blending-double.html: Added.
+        * css3/compositing/blend-mode-clip-accelerated-blending-with-siblings-expected.html: Added.
+        * css3/compositing/blend-mode-clip-accelerated-blending-with-siblings.html: Added.
+        * css3/compositing/blend-mode-clip-accelerated-transformed-blending-expected.html: Added.
+        * css3/compositing/blend-mode-clip-accelerated-transformed-blending.html: Added.
+        * css3/compositing/blend-mode-clip-rect-accelerated-blending.html: Added.
+        * css3/compositing/blend-mode-clip-rect-accelerated-blending-expected.html: Added.
+        * css3/compositing/blend-mode-isolation-accelerated-overflow-hidden-expected.txt:
+
 2014-05-05  Dirk Schulze  <krit@webkit.org>
 
         AX: tabindex support in SVG2

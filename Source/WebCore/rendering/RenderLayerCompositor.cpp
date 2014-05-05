@@ -2311,20 +2311,25 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer& layer) const
 
     // If the compositingAncestor clips, that will be taken care of by clipsCompositingDescendants(),
     // so we only care about clipping between its first child that is our ancestor (the computeClipRoot),
-    // and layer.
-    RenderLayer* computeClipRoot = nullptr;
-    RenderLayer* parent = &layer;
-    while (parent) {
-        RenderLayer* next = parent->parent();
-        if (next == compositingAncestor) {
-            computeClipRoot = parent;
-            break;
+    // and layer. The exception is when the compositingAncestor isolates composited blending children,
+    // in this case it is not allowed to clipsCompositingDescendants() and each of its children
+    // will be clippedByAncestor()s, including the compositingAncestor.
+    RenderLayer* computeClipRoot = compositingAncestor;
+    if (!compositingAncestor->isolatesCompositedBlending()) {
+        computeClipRoot = nullptr;
+        RenderLayer* parent = &layer;
+        while (parent) {
+            RenderLayer* next = parent->parent();
+            if (next == compositingAncestor) {
+                computeClipRoot = parent;
+                break;
+            }
+            parent = next;
         }
-        parent = next;
+
+        if (!computeClipRoot || computeClipRoot == &layer)
+            return false;
     }
-    
-    if (!computeClipRoot || computeClipRoot == &layer)
-        return false;
 
     return layer.backgroundClipRect(RenderLayer::ClipRectsContext(computeClipRoot, 0, TemporaryClipRects)).rect() != LayoutRect::infiniteRect(); // FIXME: Incorrect for CSS regions.
 }
@@ -2334,7 +2339,7 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer& layer) const
 // into the hierarchy between this layer and its children in the z-order hierarchy.
 bool RenderLayerCompositor::clipsCompositingDescendants(const RenderLayer& layer) const
 {
-    return layer.hasCompositingDescendant() && layer.renderer().hasClipOrOverflowClip();
+    return layer.hasCompositingDescendant() && layer.renderer().hasClipOrOverflowClip() && !layer.isolatesCompositedBlending();
 }
 
 bool RenderLayerCompositor::requiresCompositingForScrollableFrame() const

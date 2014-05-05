@@ -1,3 +1,37 @@
+2014-05-05  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Webkit-blend-mode fails for accelerated parent with overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=126160
+
+        When the isolating layer has overflow:hidden, it will create a descendant clipping layer
+        (m_childContainmentLayer), which will restrict the bleding layer to reading the backdrop
+        from the isolating layer.
+        The solution in this patch is to forbid the isolating layer to create a descendant clipping
+        layer and make all the children to get their own ancestor clipping layers instead.
+
+        Reviewed by Dean Jackson.
+
+        Tests: css3/compositing/blend-mode-accelerated-parent-overflow-hidden.html
+               css3/compositing/blend-mode-clip-accelerated-blending-canvas.html
+               css3/compositing/blend-mode-clip-accelerated-blending-child.html
+               css3/compositing/blend-mode-clip-accelerated-blending-double.html
+               css3/compositing/blend-mode-clip-accelerated-blending-with-siblings.html
+               css3/compositing/blend-mode-clip-accelerated-transformed-blending.html
+               css3/compositing/blend-mode-clip-rect-accelerated-blending.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        when the compositing ancestor isolates blending we take it into account for computing
+        the clipping rect for this layer, because it was not allowed to create the descendant
+        clipping layer. 
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::clippedByAncestor):
+        when the compositing ancestor isolates blending we decide if a layer is clipped by ancestor
+        by computing the clipping rect taking into account all the ancestors up to and including
+        the compositing ancestor.
+        (WebCore::RenderLayerCompositor::clipsCompositingDescendants):
+        if a layer isolates blending, it is not allowed to create a descendant clipping layer.
+
 2014-05-05  Dirk Schulze  <krit@webkit.org>
 
         AX: tabindex support in SVG2
