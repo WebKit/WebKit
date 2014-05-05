@@ -109,3 +109,8 @@ webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
 
 # Reference expectation doesn't end up in compositing code path, leading to antialiasing differences.
 webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
+
+# Regression from r168244:
+# Top content inset: Margin tiles should not display in the inset area when pinned
+# to the top of the page.
+webkit.org/b/132551 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]

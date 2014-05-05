@@ -1,3 +1,9 @@
+2014-05-04  Andreas Kling  <akling@apple.com>
+
+        Mark compositing/visibility/visibility-image-layers-dynamic.html as failing after r168244.
+
+        * TestExpectations:
+
 2014-05-04  Beth Dakin  <bdakin@apple.com>
 
         Even more re-baselining for anchor point after 
