@@ -1875,7 +1875,9 @@ sub buildCMakeGeneratedProject($)
     if (isGtk()) {
         chdir "$buildPath" or die;
         $command = "$buildPath/build.sh";
-        @args = ($makeArgs);
+
+        # We always try to generate gtkdoc for GTK+, so that we see errors as early as possible.
+        @args = ($makeArgs, 'gtkdoc-no-html');
     }
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
