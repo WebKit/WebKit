@@ -1,6 +1,16 @@
 2014-05-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rebaseline fast/dom/MutationObserver/parser-mutations-actual.txt
+
+        Unreviewed.
+
+        A newline should have been added by r168318, not removed.
+
+        * fast/dom/MutationObserver/parser-mutations-expected.txt:
+
+2014-05-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Rebaseline fast/dom/MutationObserver/parser-mutations-actual.txt
         
         Unreviewed.
 
