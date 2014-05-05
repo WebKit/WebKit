@@ -1,3 +1,14 @@
+2014-04-03  David Hyatt  <hyatt@apple.com>
+
+        Continuations casting issue.
+        https://bugs.webkit.org/show_bug.cgi?id=130057
+        <rdar://problem/16283406>
+
+        Reviewed by Simon Fraser.
+
+        * fast/block/continuation-crash-expected.txt: Added.
+        * fast/block/continuation-crash.html: Added.
+
 2014-04-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Assertion failure under FEImage::determineAbsolutePaintRect()
@@ -2333,7 +2344,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=127289
 
         * platform/mac/accessibility/iframe-aria-hidden.html: 
-        
+
             Try to keep this non-flaky by forcing layout. Real fix would probably be in the
             accessibility test framework.
 
