@@ -1,3 +1,20 @@
+2014-05-06  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Rename layout tests css3/compositing to css3/blending
+        https://bugs.webkit.org/show_bug.cgi?id=132578
+
+        Reviewed by Andrei Bucur.
+
+        * css3/blending: Renamed from css3/compositing.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-sim/css3/blending: Renamed from platform/ios-sim/css3/compositing
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/css3/blending: Renamed from platform/mac/css3/compositing.
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2014-05-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Share mac/editing/spelling/delete-into-misspelled-word.html with other platforms

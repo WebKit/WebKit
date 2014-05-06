@@ -1832,7 +1832,7 @@ mhtml [ Skip ]
 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 
 # CSS_COMPOSITING is disabled (CIFilters don't work on Windows)
-css3/compositing/ [ Skip ]
+css3/blending/ [ Skip ]
 transitions/blendmode-transitions.html [ Skip ]
 
 webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]

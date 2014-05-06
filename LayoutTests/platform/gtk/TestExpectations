@@ -248,7 +248,7 @@ webkit.org/b/99028 fast/autoresize [ Failure ]
 
 # The GTK+ build bots don't yet have the muscle to run WebGL, 3D and compositing tests.
 webkit.org/b/71849 compositing [ Skip ]
-webkit.org/b/71849 css3/compositing [ Skip ]
+webkit.org/b/71849 css3/blending [ Skip ]
 webkit.org/b/71849 fast/canvas/webgl [ Skip ]
 webkit.org/b/71849 fast/images/webgl-teximage2d.html [ Skip ]
 webkit.org/b/71849 fast/transforms/selection-bounds-in-transformed-view.html [ Skip ]

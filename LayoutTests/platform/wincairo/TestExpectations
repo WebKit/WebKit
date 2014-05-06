@@ -2752,7 +2752,7 @@ webkit.org/b/11645 fast/table/025.html [ Failure ]
 fast/dom/timer-throttling-hidden-page.html
 
 # CSS_COMPOSITING is disabled (CIFilters don't work on Windows)
-css3/compositing/
+css3/blending/
 transitions/blendmode-transitions.html
 
 # User Timing is not enabled

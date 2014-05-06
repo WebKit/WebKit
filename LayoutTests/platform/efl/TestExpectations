@@ -1046,7 +1046,7 @@ webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailur
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
 # Requires CSS_COMPOSITING to be turned on
-webkit.org/b/94024 css3/compositing [ Skip ]
+webkit.org/b/94024 css3/blending [ Skip ]
 
 # Fails because Blend Mode is not enabled yet.
 webkit.org/b/91908 transitions/blendmode-transitions.html [ Skip ]

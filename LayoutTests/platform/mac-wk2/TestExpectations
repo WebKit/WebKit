@@ -419,7 +419,7 @@ webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ P
 
 webkit.org/b/128315 editing/caret/caret-color.html [ Pass Failure ]
 
-webkit.org/b/129468 [ MountainLion Debug ] css3/compositing/isolation-isolate-blended-child.html [ ImageOnlyFailure ]
+webkit.org/b/129468 [ MountainLion Debug ] css3/blending/isolation-isolate-blended-child.html [ ImageOnlyFailure ]
 
 ### END OF (3) Unclassified failures
 ########################################
