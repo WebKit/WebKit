@@ -28,40 +28,40 @@
 
 #include "APIArray.h"
 #include "APIData.h"
+#include "APIWebArchive.h"
+#include "APIWebArchiveResource.h"
 #include "InjectedBundleRangeHandle.h"
 #include "WKBundleAPICast.h"
 #include "WKSharedAPICast.h"
-#include "WebArchive.h"
-#include "WebArchiveResource.h"
 
 using namespace WebKit;
 
 WKTypeID WKWebArchiveGetTypeID()
 {
-    return toAPI(WebArchive::APIType);
+    return toAPI(API::WebArchive::APIType);
 }
 
 WKWebArchiveRef WKWebArchiveCreate(WKWebArchiveResourceRef mainResourceRef, WKArrayRef subresourcesRef, WKArrayRef subframeArchivesRef)
 {
-    RefPtr<WebArchive> webArchive = WebArchive::create(toImpl(mainResourceRef), toImpl(subresourcesRef), toImpl(subframeArchivesRef));
+    RefPtr<API::WebArchive> webArchive = API::WebArchive::create(toImpl(mainResourceRef), toImpl(subresourcesRef), toImpl(subframeArchivesRef));
     return toAPI(webArchive.release().leakRef());
 }
 
 WKWebArchiveRef WKWebArchiveCreateWithData(WKDataRef dataRef)
 {
-    RefPtr<WebArchive> webArchive = WebArchive::create(toImpl(dataRef));
+    RefPtr<API::WebArchive> webArchive = API::WebArchive::create(toImpl(dataRef));
     return toAPI(webArchive.release().leakRef());
 }
 
 WKWebArchiveRef WKWebArchiveCreateFromRange(WKBundleRangeHandleRef rangeHandleRef)
 {
-    RefPtr<WebArchive> webArchive = WebArchive::create(toImpl(rangeHandleRef)->coreRange());
+    RefPtr<API::WebArchive> webArchive = API::WebArchive::create(toImpl(rangeHandleRef)->coreRange());
     return toAPI(webArchive.release().leakRef());
 }
 
 WKWebArchiveResourceRef WKWebArchiveCopyMainResource(WKWebArchiveRef webArchiveRef)
 {
-    RefPtr<WebArchiveResource> mainResource = toImpl(webArchiveRef)->mainResource();
+    RefPtr<API::WebArchiveResource> mainResource = toImpl(webArchiveRef)->mainResource();
     return toAPI(mainResource.release().leakRef());
 }
 

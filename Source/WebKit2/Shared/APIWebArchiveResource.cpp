@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebArchiveResource.h"
+#include "APIWebArchiveResource.h"
 
 #if PLATFORM(COCOA)
 
@@ -35,7 +35,7 @@
 
 using namespace WebCore;
 
-namespace WebKit {
+namespace API {
 
 PassRefPtr<WebArchiveResource> WebArchiveResource::create(API::Data* data, const String& URL, const String& MIMEType, const String& textEncoding)
 {

@@ -65,6 +65,8 @@ class Data;
 class Point;
 class Rect;
 class Size;
+class WebArchive;
+class WebArchiveResource;
 }
 
 namespace WebKit {
@@ -72,8 +74,6 @@ namespace WebKit {
 class ImmutableDictionary;
 class MutableDictionary;
 class ObjCObjectGraph;
-class WebArchive;
-class WebArchiveResource;
 class WebCertificateInfo;
 class WebConnection;
 class WebContextMenuItem;
@@ -119,8 +119,8 @@ WK_ADD_API_MAPPING(WKSessionRef, API::Session)
 template<> struct APITypeInfo<WKMutableArrayRef> { typedef API::Array* ImplType; };
 
 #if PLATFORM(COCOA)
-WK_ADD_API_MAPPING(WKWebArchiveRef, WebArchive)
-WK_ADD_API_MAPPING(WKWebArchiveResourceRef, WebArchiveResource)
+WK_ADD_API_MAPPING(WKWebArchiveRef, API::WebArchive)
+WK_ADD_API_MAPPING(WKWebArchiveResourceRef, API::WebArchiveResource)
 WK_ADD_API_MAPPING(WKObjCTypeWrapperRef, ObjCObjectGraph)
 #endif
 

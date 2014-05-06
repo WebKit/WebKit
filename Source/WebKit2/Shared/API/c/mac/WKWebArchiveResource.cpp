@@ -27,19 +27,19 @@
 #include "WKWebArchiveResource.h"
 
 #include "APIData.h"
+#include "APIWebArchiveResource.h"
 #include "WKSharedAPICast.h"
-#include "WebArchiveResource.h"
 
 using namespace WebKit;
 
 WKTypeID WKWebArchiveResourceGetTypeID()
 {
-    return toAPI(WebArchiveResource::APIType);
+    return toAPI(API::WebArchiveResource::APIType);
 }
 
 WKWebArchiveResourceRef WKWebArchiveResourceCreate(WKDataRef dataRef, WKURLRef URLRef, WKStringRef MIMETypeRef, WKStringRef textEncodingRef)
 {
-    RefPtr<WebArchiveResource> webArchiveResource = WebArchiveResource::create(toImpl(dataRef), toWTFString(URLRef), toWTFString(MIMETypeRef), toWTFString(textEncodingRef));
+    RefPtr<API::WebArchiveResource> webArchiveResource = API::WebArchiveResource::create(toImpl(dataRef), toWTFString(URLRef), toWTFString(MIMETypeRef), toWTFString(textEncodingRef));
     return toAPI(webArchiveResource.release().leakRef());
 }
 

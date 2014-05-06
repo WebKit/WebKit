@@ -23,50 +23,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebArchiveResource_h
-#define WebArchiveResource_h
+#ifndef WebArchive_h
+#define WebArchive_h
 
 #if PLATFORM(COCOA)
 
 #include "APIObject.h"
-#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace API {
+class Array;
 class Data;
-class URL;
 }
 
 namespace WebCore {
-class ArchiveResource;
+class LegacyWebArchive;
+class Range;
 }
 
-namespace WebKit {
+namespace API {
 
-class WebArchiveResource : public API::ObjectImpl<API::Object::Type::WebArchiveResource> {
+class WebArchiveResource;
+
+class WebArchive : public API::ObjectImpl<API::Object::Type::WebArchive> {
 public:
-    virtual ~WebArchiveResource();
+    virtual ~WebArchive();
 
-    static PassRefPtr<WebArchiveResource> create(API::Data*, const String& URL, const String& MIMEType, const String& textEncoding);
-    static PassRefPtr<WebArchiveResource> create(PassRefPtr<WebCore::ArchiveResource>);
+    static PassRefPtr<WebArchive> create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives);
+    static PassRefPtr<WebArchive> create(API::Data*);
+    static PassRefPtr<WebArchive> create(PassRefPtr<WebCore::LegacyWebArchive>);
+    static PassRefPtr<WebArchive> create(WebCore::Range*);
+
+    WebArchiveResource* mainResource();
+    API::Array* subresources();
+    API::Array* subframeArchives();
 
     PassRefPtr<API::Data> data();
-    String URL();
-    String MIMEType();
-    String textEncoding();
 
-    WebCore::ArchiveResource* coreArchiveResource();
+    WebCore::LegacyWebArchive* coreLegacyWebArchive();
 
 private:
-    WebArchiveResource(API::Data*, const String& URL, const String& MIMEType, const String& textEncoding);
-    WebArchiveResource(PassRefPtr<WebCore::ArchiveResource>);
+    WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives);
+    WebArchive(API::Data*);
+    WebArchive(PassRefPtr<WebCore::LegacyWebArchive>);
 
-    RefPtr<WebCore::ArchiveResource> m_archiveResource;
+    RefPtr<WebCore::LegacyWebArchive> m_legacyWebArchive;
+    RefPtr<WebArchiveResource> m_cachedMainResource;
+    RefPtr<API::Array> m_cachedSubresources;
+    RefPtr<API::Array> m_cachedSubframeArchives;
 };
 
-} // namespace WebKit
+} // namespace API
 
 #endif // PLATFORM(COCOA)
 
-#endif // WebArchiveResource_h
+#endif // WebArchive_h

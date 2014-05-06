@@ -24,19 +24,19 @@
  */
 
 #include "config.h"
-#include "WebArchive.h"
+#include "APIWebArchive.h"
 
 #if PLATFORM(COCOA)
 
 #include "APIArray.h"
 #include "APIData.h"
-#include "WebArchiveResource.h"
+#include "APIWebArchiveResource.h"
 #include <WebCore/LegacyWebArchive.h>
 #include <wtf/RetainPtr.h>
 
 using namespace WebCore;
 
-namespace WebKit {
+namespace API {
 
 PassRefPtr<WebArchive> WebArchive::create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives)
 {

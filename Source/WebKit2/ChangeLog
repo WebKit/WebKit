@@ -1,3 +1,43 @@
+2014-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Put WebArchive and WebArchiveResource in the API namespace.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/API/c/mac/WKWebArchive.cpp:
+        (WKWebArchiveGetTypeID):
+        (WKWebArchiveCreate):
+        (WKWebArchiveCreateWithData):
+        (WKWebArchiveCreateFromRange):
+        (WKWebArchiveCopyMainResource):
+        * Shared/API/c/mac/WKWebArchiveResource.cpp:
+        (WKWebArchiveResourceGetTypeID):
+        (WKWebArchiveResourceCreate):
+        * Shared/APIWebArchive.cpp: Renamed from Source/WebKit2/Shared/WebArchive.cpp.
+        (API::WebArchive::create):
+        (API::WebArchive::WebArchive):
+        (API::WebArchive::~WebArchive):
+        (API::WebArchive::mainResource):
+        (API::WebArchive::subresources):
+        (API::WebArchive::subframeArchives):
+        (API::releaseCFData):
+        (API::WebArchive::data):
+        (API::WebArchive::coreLegacyWebArchive):
+        * Shared/APIWebArchive.h: Renamed from Source/WebKit2/Shared/WebArchive.h.
+        * Shared/APIWebArchiveResource.cpp: Renamed from Source/WebKit2/Shared/WebArchiveResource.cpp.
+        (API::WebArchiveResource::create):
+        (API::WebArchiveResource::WebArchiveResource):
+        (API::WebArchiveResource::~WebArchiveResource):
+        (API::releaseCFData):
+        (API::WebArchiveResource::data):
+        (API::WebArchiveResource::URL):
+        (API::WebArchiveResource::MIMEType):
+        (API::WebArchiveResource::textEncoding):
+        (API::WebArchiveResource::coreArchiveResource):
+        * Shared/APIWebArchiveResource.h: Renamed from Source/WebKit2/Shared/WebArchiveResource.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-05-06  Alex Christensen  <achristensen@webkit.org>
 
         Removed unnecessary notImplemented.h includes.
