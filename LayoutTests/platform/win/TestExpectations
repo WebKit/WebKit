@@ -1932,6 +1932,7 @@ svg/css/shadow-changes.svg [ Failure ]
 # End temporary skips
 
 # Spellchecker behavior tests.
+webkit.org/b/108370 editing/spelling/delete-into-misspelled-word.html [ Failure ]
 webkit.org/b/108370 editing/spelling/design-mode-spellcheck-off.html [ Failure ]
 webkit.org/b/108370 editing/spelling/context-menu-suggestions-multiword-selection.html [ Failure ]
 webkit.org/b/108370 editing/spelling/context-menu-suggestions-subword-selection.html [ Failure ]
