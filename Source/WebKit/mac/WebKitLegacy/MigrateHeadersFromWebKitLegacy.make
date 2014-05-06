@@ -284,6 +284,8 @@ $(PRIVATE_HEADERS_DIR)/% : $(BUILT_PRODUCTS_DIR)/WebKitLegacy.framework/PrivateH
 	$(WEBKIT_HEADER_MIGRATE_CMD)
 
 $(PRIVATE_HEADERS_DIR)/WebKitLegacy.h : $(BUILT_PRODUCTS_DIR)/WebKitLegacy.framework/PrivateHeaders/WebKit.h MigrateHeadersFromWebKitLegacy.make
-	$(WEBKIT_HEADER_MIGRATE_CMD)
+	echo "#if defined(__has_include) && __has_include(<WebKitLegacy/WebKit.h>)" > $@
+	echo "#import <WebKitLegacy/"`basename $<`">" >> $@
+	echo "#endif" >> $@
 
 endif

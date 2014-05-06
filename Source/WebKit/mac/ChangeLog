@@ -1,5 +1,16 @@
 2014-05-06  Anders Carlsson  <andersca@apple.com>
 
+        Move the WebKitLegacy header check to the right file
+        https://bugs.webkit.org/show_bug.cgi?id=132620
+        <rdar://problem/16815716>
+
+        Reviewed by Dan Bernstein.
+
+        * WebKitLegacy/MigrateHeadersFromWebKitLegacy.make:
+        * WebKitLegacy/WebKit.h:
+
+2014-05-06  Anders Carlsson  <andersca@apple.com>
+
         Put WebKitPluginHost.app in WebKitLegacy.framework
         https://bugs.webkit.org/show_bug.cgi?id=132592
         <rdar://problem/15920046>

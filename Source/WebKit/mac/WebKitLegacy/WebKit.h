@@ -43,6 +43,4 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #endif
 
-#if defined(__has_include) && __has_include(<WebKit/WebKitLegacy.h>)
 #import <WebKit/WebKitLegacy.h>
-#endif
