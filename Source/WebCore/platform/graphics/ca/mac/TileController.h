@@ -97,6 +97,8 @@ public:
     virtual IntSize tileSize() const override { return m_tileSize; }
     virtual IntRect bounds() const override;
     virtual bool hasMargins() const override;
+    virtual bool hasHorizontalMargins() const override;
+    virtual bool hasVerticalMargins() const override;
     virtual int topMarginHeight() const override;
     virtual int bottomMarginHeight() const override;
     virtual int leftMarginWidth() const override;

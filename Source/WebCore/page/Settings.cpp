@@ -562,7 +562,7 @@ void Settings::setBackgroundShouldExtendBeyondPage(bool shouldExtend)
 
     m_backgroundShouldExtendBeyondPage = shouldExtend;
 
-    m_page->mainFrame().view()->setBackgroundExtendsBeyondPage(shouldExtend);
+    m_page->mainFrame().view()->updateExtendBackgroundIfNecessary();
 }
 
 #if USE(AVFOUNDATION)

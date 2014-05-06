@@ -82,6 +82,8 @@ public:
 
     virtual void setTileMargins(int marginTop, int marginBottom, int marginLeft, int marginRight) = 0;
     virtual bool hasMargins() const = 0;
+    virtual bool hasHorizontalMargins() const = 0;
+    virtual bool hasVerticalMargins() const = 0;
 
     virtual int topMarginHeight() const = 0;
     virtual int bottomMarginHeight() const = 0;

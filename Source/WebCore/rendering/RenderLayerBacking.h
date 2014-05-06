@@ -161,7 +161,7 @@ public:
     bool usingTiledBacking() const { return m_usingTiledCacheLayer; }
     TiledBacking* tiledBacking() const;
     void adjustTiledBackingCoverage();
-    void setTiledBackingHasMargins(bool);
+    void setTiledBackingHasMargins(bool hasExtendedBackgroundOnLeftAndRight, bool hasExtendedBackgroundOnTopAndBottom);
     
     void updateDebugIndicators(bool showBorder, bool showRepaintCounter);
 

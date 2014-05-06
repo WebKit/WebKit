@@ -451,6 +451,16 @@ bool TileController::hasMargins() const
     return m_marginTop || m_marginBottom || m_marginLeft || m_marginRight;
 }
 
+bool TileController::hasHorizontalMargins() const
+{
+    return m_marginLeft || m_marginRight;
+}
+
+bool TileController::hasVerticalMargins() const
+{
+    return m_marginTop || m_marginBottom;
+}
+
 int TileController::topMarginHeight() const
 {
     return m_marginTop;

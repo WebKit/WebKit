@@ -2523,16 +2523,6 @@ void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool t
     }
 }
 
-void FrameView::setBackgroundExtendsBeyondPage(bool extendBackground)
-{
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return;
-
-    renderView->compositor().setRootExtendedBackgroundColor(extendBackground ? documentBackgroundColor() : Color());
-    setHasExtendedBackgroundRectForPainting(needsExtendedBackgroundRectForPainting());
-}
-
 bool FrameView::hasExtendedBackgroundRectForPainting() const
 {
     if (!frame().settings().backgroundShouldExtendBeyondPage())
@@ -2545,7 +2535,16 @@ bool FrameView::hasExtendedBackgroundRectForPainting() const
     return tiledBacking->hasMargins();
 }
 
-bool FrameView::needsExtendedBackgroundRectForPainting() const
+void FrameView::updateExtendBackgroundIfNecessary()
+{
+    ExtendedBackgroundMode mode = calculateExtendedBackgroundMode();
+    if (mode == ExtendedBackgroundModeNone)
+        return;
+
+    updateTilesForExtendedBackgroundMode(mode);
+}
+
+FrameView::ExtendedBackgroundMode FrameView::calculateExtendedBackgroundMode() const
 {
     // Just because Settings::backgroundShouldExtendBeyondPage() is true does not necessarily mean
     // that the background rect needs to be extended for painting. Simple backgrounds can be extended
@@ -2555,32 +2554,41 @@ bool FrameView::needsExtendedBackgroundRectForPainting() const
 
 #if PLATFORM(IOS)
     // <rdar://problem/16201373>
-    return false;
+    return ExtendedBackgroundModeNone;
 #endif
 
     if (!frame().settings().backgroundShouldExtendBeyondPage())
-        return false;
+        return ExtendedBackgroundModeNone;
 
     if (!frame().isMainFrame())
-        return false;
+        return ExtendedBackgroundModeNone;
 
     Document* document = frame().document();
     if (!document)
-        return false;
+        return ExtendedBackgroundModeNone;
 
     auto documentElement = document->documentElement();
-    auto bodyElement = document->body();
     auto documentElementRenderer = documentElement ? documentElement->renderer() : nullptr;
-    auto bodyRenderer = bodyElement ? bodyElement->renderer() : nullptr;
-    bool rootBackgroundHasImage = (documentElementRenderer && documentElementRenderer->style().hasBackgroundImage())
-        || (bodyRenderer && bodyRenderer->style().hasBackgroundImage());
+    if (!documentElementRenderer)
+        return ExtendedBackgroundModeNone;
 
-    return rootBackgroundHasImage;
+    auto& renderer = documentElementRenderer->rendererForRootBackground();
+    if (!renderer.style().hasBackgroundImage())
+        return ExtendedBackgroundModeNone;
+
+    ExtendedBackgroundMode mode = ExtendedBackgroundModeNone;
+
+    if (renderer.style().backgroundRepeatX() == RepeatFill)
+        mode |= ExtendedBackgroundModeHorizontal;
+    if (renderer.style().backgroundRepeatY() == RepeatFill)
+        mode |= ExtendedBackgroundModeVertical;
+
+    return mode;
 }
 
-void FrameView::setHasExtendedBackgroundRectForPainting(bool shouldHaveExtendedBackgroundRect)
+void FrameView::updateTilesForExtendedBackgroundMode(ExtendedBackgroundMode mode)
 {
-    if (shouldHaveExtendedBackgroundRect == hasExtendedBackgroundRectForPainting())
+    if (!frame().settings().backgroundShouldExtendBeyondPage())
         return;
 
     RenderView* renderView = this->renderView();
@@ -2591,7 +2599,21 @@ void FrameView::setHasExtendedBackgroundRectForPainting(bool shouldHaveExtendedB
     if (!backing)
         return;
 
-    backing->setTiledBackingHasMargins(frame().settings().backgroundShouldExtendBeyondPage() && shouldHaveExtendedBackgroundRect);
+    TiledBacking* tiledBacking = backing->graphicsLayer()->tiledBacking();
+    if (!tiledBacking)
+        return;
+
+    ExtendedBackgroundMode existingMode = ExtendedBackgroundModeNone;
+    if (tiledBacking->hasVerticalMargins())
+        existingMode |= ExtendedBackgroundModeVertical;
+    if (tiledBacking->hasHorizontalMargins())
+        existingMode |= ExtendedBackgroundModeHorizontal;
+
+    if (existingMode == mode)
+        return;
+
+    renderView->compositor().setRootExtendedBackgroundColor(mode == ExtendedBackgroundModeAll ? Color() : documentBackgroundColor());
+    backing->setTiledBackingHasMargins(mode & ExtendedBackgroundModeHorizontal, mode & ExtendedBackgroundModeVertical);
 }
 
 IntRect FrameView::extendedBackgroundRectForPainting() const

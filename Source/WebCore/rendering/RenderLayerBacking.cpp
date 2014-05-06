@@ -225,13 +225,13 @@ void RenderLayerBacking::adjustTiledBackingCoverage()
     tiledBacking()->setTileCoverage(tileCoverage);
 }
 
-void RenderLayerBacking::setTiledBackingHasMargins(bool hasExtendedBackgroundRect)
+void RenderLayerBacking::setTiledBackingHasMargins(bool hasExtendedBackgroundOnLeftAndRight, bool hasExtendedBackgroundOnTopAndBottom)
 {
     if (!m_usingTiledCacheLayer)
         return;
 
-    int marginLeftAndRightSize = hasExtendedBackgroundRect ? defaultTileWidth : 0;
-    int marginTopAndBottomSize = hasExtendedBackgroundRect ? defaultTileHeight : 0;
+    int marginLeftAndRightSize = hasExtendedBackgroundOnLeftAndRight ? defaultTileWidth : 0;
+    int marginTopAndBottomSize = hasExtendedBackgroundOnTopAndBottom ? defaultTileHeight : 0;
     tiledBacking()->setTileMargins(marginTopAndBottomSize, marginTopAndBottomSize, marginLeftAndRightSize, marginLeftAndRightSize);
 }
 
