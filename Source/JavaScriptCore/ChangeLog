@@ -1,5 +1,31 @@
 2014-05-05  Andreas Kling  <akling@apple.com>
 
+        Optimize GetByVal when subscript is a rope string.
+        <https://webkit.org/b/132590>
+
+        Use JSString::toIdentifier() in the various GetByVal implementations
+        to try and avoid allocating extra strings.
+
+        Added canUseFastGetOwnProperty() and wrap calls to fastGetOwnProperty()
+        in that, to avoid calling JSString::value() which always resolves ropes
+        into new strings and de-optimizes subsequent toIdentifier() calls.
+
+        My iMac says ~9% progression on Dromaeo/dom-attr.html
+
+        Reviewed by Phil Pizlo.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::fastGetOwnProperty):
+        (JSC::JSCell::canUseFastGetOwnProperty):
+
+2014-05-05  Andreas Kling  <akling@apple.com>
+
         REGRESSION (r168256): ASSERTION FAILED: (buffer + m_length) == position loading vanityfair.com article.
         <https://webkit.org/b/168256>
         <rdar://problem/16816316>

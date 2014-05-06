@@ -715,8 +715,12 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_id)
 inline JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript)
 {
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
-        if (JSValue result = baseValue.asCell()->fastGetOwnProperty(exec->vm(), asString(subscript)->value(exec)))
-            return result;
+        VM& vm = exec->vm();
+        Structure& structure = *baseValue.asCell()->structure(vm);
+        if (JSCell::canUseFastGetOwnProperty(structure)) {
+            if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, asString(subscript)->value(exec)))
+                return result;
+        }
     }
     
     if (subscript.isUInt32()) {
@@ -730,7 +734,7 @@ inline JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript)
     if (isName(subscript))
         return baseValue.get(exec, jsCast<NameInstance*>(subscript.asCell())->privateName());
     
-    Identifier property(exec, subscript.toString(exec)->value(exec));
+    Identifier property = subscript.toString(exec)->toIdentifier(exec);
     return baseValue.get(exec, property);
 }
 

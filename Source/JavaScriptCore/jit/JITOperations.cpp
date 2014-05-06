@@ -1420,8 +1420,12 @@ EncodedJSValue JIT_OPERATION operationGetArgumentsLength(ExecState* exec, int32_
 static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, ReturnAddressPtr returnAddress)
 {
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
-        if (JSValue result = baseValue.asCell()->fastGetOwnProperty(exec->vm(), asString(subscript)->value(exec)))
-            return result;
+        VM& vm = exec->vm();
+        Structure& structure = *baseValue.asCell()->structure(vm);
+        if (JSCell::canUseFastGetOwnProperty(structure)) {
+            if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, asString(subscript)->value(exec)))
+                return result;
+        }
     }
 
     if (subscript.isUInt32()) {
@@ -1436,7 +1440,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, R
     if (isName(subscript))
         return baseValue.get(exec, jsCast<NameInstance*>(subscript.asCell())->privateName());
 
-    Identifier property(exec, subscript.toString(exec)->value(exec));
+    Identifier property = subscript.toString(exec)->toIdentifier(exec);
     return baseValue.get(exec, property);
 }
 
@@ -1518,7 +1522,7 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
     } else if (isName(subscript))
         result = baseValue.get(exec, jsCast<NameInstance*>(subscript.asCell())->privateName());
     else {
-        Identifier property(exec, subscript.toString(exec)->value(exec));
+        Identifier property = subscript.toString(exec)->toIdentifier(exec);
         result = baseValue.get(exec, property);
     }
 

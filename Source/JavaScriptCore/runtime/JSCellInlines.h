@@ -213,17 +213,20 @@ inline bool JSCell::inherits(const ClassInfo* info) const
 // identifier. The first time we perform a property access with a given string, try
 // performing the property map lookup without forming an identifier. We detect this
 // case by checking whether the hash has yet been set for this string.
-ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(VM& vm, const String& name)
+ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(VM& vm, Structure& structure, const String& name)
 {
-    Structure& structure = *this->structure(vm);
-    if (!structure.typeInfo().overridesGetOwnPropertySlot() && !structure.hasGetterSetterProperties()) {
-        PropertyOffset offset = name.impl()->hasHash()
-            ? structure.get(vm, Identifier(&vm, name))
-            : structure.get(vm, name);
-        if (offset != invalidOffset)
-            return asObject(this)->locationForOffset(offset)->get();
-    }
+    ASSERT(canUseFastGetOwnProperty(vm));
+    PropertyOffset offset = name.impl()->hasHash()
+        ? structure.get(vm, Identifier(&vm, name))
+        : structure.get(vm, name);
+    if (offset != invalidOffset)
+        return asObject(this)->locationForOffset(offset)->get();
     return JSValue();
+}
+
+inline bool JSCell::canUseFastGetOwnProperty(const Structure& structure)
+{
+    return !structure.hasGetterSetterProperties() && !structure.typeInfo().overridesGetOwnPropertySlot();
 }
 
 inline bool JSCell::toBoolean(ExecState* exec) const

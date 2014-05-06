@@ -144,7 +144,8 @@ public:
     void zap() { *reinterpret_cast<uintptr_t**>(this) = 0; }
     bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }
 
-    JSValue fastGetOwnProperty(VM&, const String&);
+    static bool canUseFastGetOwnProperty(const Structure&);
+    JSValue fastGetOwnProperty(VM&, Structure&, const String&);
 
     enum GCData : uint8_t {
         Marked = 0,

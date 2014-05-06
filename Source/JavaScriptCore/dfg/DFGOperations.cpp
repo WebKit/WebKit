@@ -295,15 +295,18 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
             if (propertyAsUInt32 == propertyAsDouble)
                 return getByVal(exec, base, propertyAsUInt32);
         } else if (property.isString()) {
-            if (JSValue result = base->fastGetOwnProperty(vm, asString(property)->value(exec)))
-                return JSValue::encode(result);
+            Structure& structure = *base->structure(vm);
+            if (JSCell::canUseFastGetOwnProperty(structure)) {
+                if (JSValue result = base->fastGetOwnProperty(vm, structure, asString(property)->value(exec)))
+                    return JSValue::encode(result);
+            }
         }
     }
 
     if (isName(property))
         return JSValue::encode(baseValue.get(exec, jsCast<NameInstance*>(property.asCell())->privateName()));
 
-    Identifier ident(exec, property.toString(exec)->value(exec));
+    Identifier ident = property.toString(exec)->toIdentifier(exec);
     return JSValue::encode(baseValue.get(exec, ident));
 }
 
@@ -322,14 +325,17 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
         if (propertyAsUInt32 == propertyAsDouble)
             return getByVal(exec, base, propertyAsUInt32);
     } else if (property.isString()) {
-        if (JSValue result = base->fastGetOwnProperty(vm, asString(property)->value(exec)))
-            return JSValue::encode(result);
+        Structure& structure = *base->structure(vm);
+        if (JSCell::canUseFastGetOwnProperty(structure)) {
+            if (JSValue result = base->fastGetOwnProperty(vm, structure, asString(property)->value(exec)))
+                return JSValue::encode(result);
+        }
     }
 
     if (isName(property))
         return JSValue::encode(JSValue(base).get(exec, jsCast<NameInstance*>(property.asCell())->privateName()));
 
-    Identifier ident(exec, property.toString(exec)->value(exec));
+    Identifier ident = property.toString(exec)->toIdentifier(exec);
     return JSValue::encode(JSValue(base).get(exec, ident));
 }
 
