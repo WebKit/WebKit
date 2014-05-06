@@ -47,6 +47,9 @@ public:
     void ignoreWhenUnarchiving() { m_shouldIgnoreWhenUnarchiving = true; }
     bool shouldIgnoreWhenUnarchiving() const { return m_shouldIgnoreWhenUnarchiving; }
 
+    void setShouldLoadImmediately(bool shouldLoadImmediately) { m_shouldLoadImmediately = shouldLoadImmediately; }
+    bool shouldLoadImmediately() const { return m_shouldLoadImmediately; }
+
 private:
     ArchiveResource(PassRefPtr<SharedBuffer>, const URL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse&);
 
@@ -55,6 +58,7 @@ private:
     String m_frameName;
 
     bool m_shouldIgnoreWhenUnarchiving;
+    bool m_shouldLoadImmediately;
 };
 
 }
