@@ -1,5 +1,12 @@
 2014-05-05  Andreas Kling  <akling@apple.com>
 
+        Fix debug build.
+
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::fastGetOwnProperty):
+
+2014-05-05  Andreas Kling  <akling@apple.com>
+
         Optimize GetByVal when subscript is a rope string.
         <https://webkit.org/b/132590>
 
