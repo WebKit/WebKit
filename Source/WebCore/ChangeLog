@@ -1,3 +1,16 @@
+2014-05-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] make metadata cue attributes consistent
+        https://bugs.webkit.org/show_bug.cgi?id=132610
+
+        Reviewed by Jer Noble.
+
+        No new tests, updated http/tests/media/track-in-band-hls-metadata.html.
+
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        (WebCore::jsValueWithAVMetadataItemInContext): Don't include keys @dataTypeNamespace
+            or @pictureType, @dataType -> @type.
+
 2014-05-06  Brady Eidson  <beidson@apple.com>
 
         "Flash of content without image" when pasting a raw image from the pasteboard

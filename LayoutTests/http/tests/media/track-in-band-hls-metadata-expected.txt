@@ -3,6 +3,8 @@ Test for metadata tracks from Apple HLS stream.
 
 
 ** Set video.src, wait for media data to load
+RUN(video.src = 'http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m3u8')
+
 EVENT(addtrack)
 EXPECTED (tracks.length == '1') OK
 RUN(track = video.textTracks[0])
@@ -12,6 +14,7 @@ RUN(track.mode = 'hidden')
 EVENT(canplaythrough)
 
 ** Start playback, wait for all cues to load
+RUN(video.play())
 EVENT(cuechange)
 EVENT(cuechange)
 EVENT(cuechange)
@@ -20,34 +23,50 @@ EVENT(cuechange)
 EVENT(cuechange)
 
 ** Validate cue data
+* 1
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
-EXPECTED ('{"value":{"key":"TIT2","data":"Stream Counting"}}' == '{"value":{"key":"TIT2","data":"Stream Counting"}}') OK
+EXPECTED (cue.value.key == '"TIT2"') OK
+EXPECTED (cue.value.data == '"Stream Counting"') OK
 
+* 2
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
-EXPECTED ('{"value":{"key":"TPE1","data":"Andy"}}' == '{"value":{"key":"TPE1","data":"Andy"}}') OK
+EXPECTED (cue.value.key == '"TPE1"') OK
+EXPECTED (cue.value.data == '"Andy"') OK
 
+* 3
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
-EXPECTED ('{"value":{"key":"TALB","data":"Greatest Hits"}}' == '{"value":{"key":"TALB","data":"Greatest Hits"}}') OK
+EXPECTED (cue.value.key == '"TALB"') OK
+EXPECTED (cue.value.data == '"Greatest Hits"') OK
 
+* 4
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
-EXPECTED ('{"value":{"data":{},"info":"Our Hero","key":"GEOB","name":"abe.png","type":"image/png"}}' == '{"value":{"data":{},"info":"Our Hero","key":"GEOB","name":"abe.png","type":"image/png"}}') OK
+EXPECTED (cue.value.key == '"GEOB"') OK
+EXPECTED (cue.value.data == '{}') OK
+EXPECTED (cue.value.type == '"image/png"') OK
+EXPECTED (cue.value.info == '"Our Hero"') OK
+EXPECTED (cue.value.name == '"abe.png"') OK
 
+* 5
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
-EXPECTED ('{"value":{"data":{},"key":"APIC","type":"image/png","dataType":"Movie/video screen capture"}}' == '{"value":{"data":{},"key":"APIC","type":"image/png","dataType":"Movie/video screen capture"}}') OK
+EXPECTED (cue.value.key == '"APIC"') OK
+EXPECTED (cue.value.data == '{}') OK
+EXPECTED (cue.value.type == '"image/png"') OK
 
+* 6
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
-EXPECTED ('{"value":{"key":"TXXX","data":"Text Blob"}}' == '{"value":{"key":"TXXX","data":"Text Blob"}}') OK
+EXPECTED (cue.value.key == '"TXXX"') OK
+EXPECTED (cue.value.data == '"Text Blob"') OK
 
 ** Extract images from cue data, validate by setting img.src
 RUN(cueImageData = track.cues[3].value.data)
 EXPECTED (cueImageData instanceof ArrayBuffer == 'true') OK
-RUN(blobUrl = URL.createObjectURL(new Blob([cueImageData], { type: 'image/png' } )))
+RUN(blobUrl = URL.createObjectURL(new Blob([cueImageData], { type: 'image/png' })))
 RUN(imageElement.src = blobUrl)
 EVENT(load)
 EXPECTED (imageElement.width == '76') OK
@@ -55,7 +74,7 @@ EXPECTED (imageElement.height == '103') OK
 
 RUN(cueImageData = track.cues[4].value.data)
 EXPECTED (cueImageData instanceof ArrayBuffer == 'true') OK
-RUN(blobUrl = URL.createObjectURL(new Blob([cueImageData], { type: 'image/png' } )))
+RUN(blobUrl = URL.createObjectURL(new Blob([cueImageData], { type: 'image/png' })))
 RUN(imageElement.src = blobUrl)
 EVENT(load)
 EXPECTED (imageElement.width == '100') OK

@@ -216,9 +216,17 @@ static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItemType *item, JSC
 
         if ([key isEqualToString:@"MIMEtype"])
             keyString = @"type";
-        else if ([key isEqualToString:@"info"] && [value isKindOfClass:[NSString class]] && ![value length]) {
-            // An "info" key is added to all TXXX, GEOB, and APIC items but the value may be empty.
+        else if ([key isEqualToString:@"dataTypeNamespace"] || [key isEqualToString:@"pictureType"])
             continue;
+        else if ([key isEqualToString:@"dataType"]) {
+            id dataTypeNamespace = [extras objectForKey:@"dataTypeNamespace"];
+            if (!dataTypeNamespace || ![dataTypeNamespace isKindOfClass:[NSString class]] || ![dataTypeNamespace isEqualToString:@"org.iana.media-type"])
+                continue;
+            keyString = @"type";
+        } else if ([value isKindOfClass:[NSString class]]) {
+            if (![value length])
+                continue;
+            keyString = [key lowercaseString];
         }
 
         [dictionary setObject:value forKey:keyString];
