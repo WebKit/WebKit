@@ -77,6 +77,7 @@
 #include "TextIterator.h"
 #include "VoidCallback.h"
 #include "WheelEvent.h"
+#include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
@@ -1166,6 +1167,23 @@ void Element::classAttributeChanged(const AtomicString& newClassString)
 
     if (shouldInvalidateStyle)
         setNeedsStyleRecalc();
+}
+
+URL Element::absoluteLinkURL() const
+{
+    if (!isLink())
+        return URL();
+
+    AtomicString linkAttribute;
+    if (hasTagName(SVGNames::aTag))
+        linkAttribute = getAttribute(XLinkNames::hrefAttr);
+    else
+        linkAttribute = getAttribute(HTMLNames::hrefAttr);
+
+    if (linkAttribute.isEmpty())
+        return URL();
+
+    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkAttribute));
 }
 
 // Returns true is the given attribute is an event handler.

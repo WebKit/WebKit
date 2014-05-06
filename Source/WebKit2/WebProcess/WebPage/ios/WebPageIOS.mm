@@ -48,6 +48,7 @@
 #import "WebProcess.h"
 #import <CoreText/CTFont.h>
 #import <WebCore/Chrome.h>
+#import <WebCore/DNS.h>
 #import <WebCore/Element.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FloatQuad.h>
@@ -366,10 +367,11 @@ void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& posit
     if (!node)
         return;
 
-    RenderObject *renderer = node->renderer();
+    if (isElement(*node))
+        prefetchDNS(toElement(*node).absoluteLinkURL().host());
 
     Vector<FloatQuad> quads;
-    if (renderer) {
+    if (RenderObject *renderer = node->renderer()) {
         renderer->absoluteQuads(quads);
         Color highlightColor = renderer->style().tapHighlightColor();
         if (!node->document().frame()->isMainFrame()) {

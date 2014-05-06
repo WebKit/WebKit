@@ -507,18 +507,9 @@ void HitTestResult::toggleMediaMuteState() const
 
 URL HitTestResult::absoluteLinkURL() const
 {
-    if (!m_innerURLElement)
-        return URL();
-
-    AtomicString urlString;
-    if (isHTMLAnchorElement(m_innerURLElement.get()) || isHTMLAreaElement(m_innerURLElement.get()) || m_innerURLElement->hasTagName(linkTag))
-        urlString = m_innerURLElement->getAttribute(hrefAttr);
-    else if (m_innerURLElement->hasTagName(SVGNames::aTag))
-        urlString = m_innerURLElement->getAttribute(XLinkNames::hrefAttr);
-    else
-        return URL();
-
-    return m_innerURLElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
+    if (m_innerURLElement)
+        return m_innerURLElement->absoluteLinkURL();
+    return URL();
 }
 
 bool HitTestResult::isLiveLink() const

@@ -566,6 +566,8 @@ public:
     void clearStyleDerivedDataBeforeDetachingRenderer();
     void clearHoverAndActiveStatusBeforeDetachingRenderer();
 
+    URL absoluteLinkURL() const;
+
 protected:
     Element(const QualifiedName& tagName, Document& document, ConstructionType type)
         : ContainerNode(document, type)

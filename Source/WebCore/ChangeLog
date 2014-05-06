@@ -1,3 +1,15 @@
+2014-05-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Prefetch DNS hostnames on tap highlight
+        https://bugs.webkit.org/show_bug.cgi?id=132509
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.exp.in:
+        * dom/Element.cpp:
+        * dom/Element.h:
+        (WebCore::Element::absoluteLinkURL()):
+
 2014-05-05  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Flickery scrolling inside overflow-scrolling: touch
