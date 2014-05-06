@@ -1,3 +1,14 @@
+2014-05-06  Radu Stavila  <stavila@adobe.com>
+
+        [CSSRegions] Enabled regions performance tests by default
+        https://bugs.webkit.org/show_bug.cgi?id=128244
+
+        Reviewed by Andreas Kling.
+
+        Enabled regions performance tests.
+
+        * Skipped:
+
 2014-04-25  Andreas Kling  <akling@apple.com>
 
         Bump jQuery to same version that dromaeo.com uses.

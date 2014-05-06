@@ -77,15 +77,6 @@ Canvas/drawimage.html
 # but is still useful for testing the threaded parser.
 Parser/html-parser-threaded.html
 
-# Skip the regions performance tests for now.
-Layout/RegionsAuto.html
-Layout/RegionsAutoMaxHeight.html
-Layout/RegionsFixed.html
-Layout/RegionsFixedShort.html
-Layout/RegionsSelection.html
-Layout/RegionsSelectionMixedContent.html
-Layout/RegionsSelectAllMixedContent.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=113811#c2
 Layout/LineLayoutJapanese.html
 
