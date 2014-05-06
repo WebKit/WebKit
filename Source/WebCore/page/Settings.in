@@ -84,7 +84,7 @@ allowScriptsToCloseWindows initial=false
 canvasUsesAcceleratedDrawing initial=false
 acceleratedDrawingEnabled initial=false
 acceleratedFiltersEnabled initial=false
-regionBasedColumnsEnabled initial=false
+regionBasedColumnsEnabled initial=true
 cssGridLayoutEnabled initial=true
 useLegacyTextAlignPositionedElementBehavior initial=false
 

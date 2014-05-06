@@ -21,7 +21,6 @@
 #include "config.h"
 #include "RenderView.h"
 
-#include "ColumnInfo.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
@@ -174,9 +173,8 @@ void RenderView::updateLogicalWidth()
 
 LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
 {
-    // If we have columns, then the available logical height is reduced to the column height.
-    if (hasColumns())
-        return columnInfo()->columnHeight();
+    // FIXME: Need to patch for new columns?
+
 #if PLATFORM(IOS)
     // Workaround for <rdar://problem/7166808>.
     if (document().isPluginDocument() && frameView().useFixedLayout())
@@ -340,7 +338,7 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
     if (document().printing())
         return pageLogicalHeight();
     
-    if ((hasColumns() || multiColumnFlowThread()) && !style().hasInlineColumnAxis()) {
+    if (multiColumnFlowThread() && !style().hasInlineColumnAxis()) {
         if (int pageLength = frameView().pagination().pageLength)
             return pageLength;
     }
@@ -455,11 +453,6 @@ void RenderView::computeColumnCountAndWidth()
             columnWidth = pageLength;
     }
     setComputedColumnCountAndWidth(1, columnWidth);
-}
-
-ColumnInfo::PaginationUnit RenderView::paginationUnit() const
-{
-    return frameView().pagination().behavesLikeColumns ? ColumnInfo::Column : ColumnInfo::Page;
 }
 
 void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -1107,23 +1100,16 @@ bool RenderView::rootBackgroundIsEntirelyFixed() const
     return rootObject->rendererForRootBackground().hasEntirelyFixedBackground();
 }
     
-LayoutRect RenderView::unextendedBackgroundRect(RenderBox* backgroundRenderer) const
+LayoutRect RenderView::unextendedBackgroundRect(RenderBox*) const
 {
-    if (!hasColumns())
-        return unscaledDocumentRect();
-
-    ColumnInfo* columnInfo = this->columnInfo();
-    LayoutRect backgroundRect(0, 0, columnInfo->desiredColumnWidth(), columnInfo->columnHeight() * columnInfo->columnCount());
-    if (!isHorizontalWritingMode())
-        backgroundRect = backgroundRect.transposedRect();
-    backgroundRenderer->flipForWritingMode(backgroundRect);
-
-    return backgroundRect;
+    // FIXME: What is this? Need to patch for new columns?
+    return unscaledDocumentRect();
 }
     
 LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const
 {
-    if (!hasColumns() && frameView().hasExtendedBackgroundRectForPainting())
+    // FIXME: New columns care about this?
+    if (frameView().hasExtendedBackgroundRectForPainting())
         return frameView().extendedBackgroundRectForPainting();
 
     return unextendedBackgroundRect(backgroundRenderer);
@@ -1181,7 +1167,7 @@ bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) cons
 {
     RenderObject* o = renderer;
     while (o) {
-        if (o->hasColumns() || o->hasTransform() || o->hasReflection())
+        if (o->hasTransform() || o->hasReflection())
             return true;
         o = o->container();
     }
@@ -1380,13 +1366,7 @@ unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const
     bool progressionIsInline = false;
     bool progressionIsReversed = false;
     
-    if (hasColumns()) {
-        ColumnInfo* colInfo = columnInfo();
-        if (!colInfo)
-            return columnNumber;
-        progressionIsInline = colInfo->progressionIsInline();
-        progressionIsReversed = colInfo->progressionIsReversed();
-    } else if (multiColumnFlowThread()) {
+    if (multiColumnFlowThread()) {
         progressionIsInline = multiColumnFlowThread()->progressionIsInline();
         progressionIsReversed = multiColumnFlowThread()->progressionIsReversed();
     } else
@@ -1408,8 +1388,6 @@ unsigned RenderView::pageCount() const
     if (pagination.mode == Pagination::Unpaginated)
         return 0;
     
-    if (hasColumns())
-        return columnCount(columnInfo());
     if (multiColumnFlowThread() && multiColumnFlowThread()->firstMultiColumnSet())
         return multiColumnFlowThread()->firstMultiColumnSet()->columnCount();
 

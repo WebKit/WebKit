@@ -384,9 +384,11 @@ public:
     void createMultiColumnFlowThread();
     void destroyMultiColumnFlowThread();
     
-    virtual void updateColumnProgressionFromStyle(RenderStyle*) override;
+    void updateColumnProgressionFromStyle(RenderStyle*);
 
 protected:
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    
     // A page break is required at some offset due to space shortage in the current fragmentainer.
     void setPageBreak(LayoutUnit offset, LayoutUnit spaceShortage);
 
@@ -442,22 +444,28 @@ protected:
 
     virtual bool isMultiColumnBlockFlow() const override { return multiColumnFlowThread(); }
     
-    virtual void setComputedColumnCountAndWidth(int, LayoutUnit) override;
+    void setComputedColumnCountAndWidth(int, LayoutUnit);
 
-    virtual LayoutUnit computedColumnWidth() const override;
-    virtual unsigned computedColumnCount() const override;
+    LayoutUnit computedColumnWidth() const;
+    unsigned computedColumnCount() const;
     
     bool isTopLayoutOverflowAllowed() const override;
     bool isLeftLayoutOverflowAllowed() const override;
 
     void moveFloatsTo(RenderBlockFlow* toBlock);
+    
+    virtual void computeColumnCountAndWidth();
+    virtual bool requiresColumns(int) const;
 
 private:
+    bool recomputeLogicalWidthAndColumnWidth();
+    LayoutUnit columnGap() const;
+    
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
     // the flow thread child.
     virtual RenderObject* layoutSpecialExcludedChild(bool /*relayoutChildren*/);
 
-    void checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
+    void checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged);
     
     virtual void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
     virtual void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
@@ -490,7 +498,7 @@ private:
     LayoutUnit addOverhangingFloats(RenderBlockFlow& child, bool makeChildPaintOtherFloats);
     bool hasOverhangingFloat(RenderBox&);
     void addIntrudingFloats(RenderBlockFlow* prev, LayoutUnit xoffset, LayoutUnit yoffset);
-    bool hasOverhangingFloats() { return parent() && !hasColumns() && containsFloats() && lowestFloatLogicalBottom() > logicalHeight(); }
+    bool hasOverhangingFloats() { return parent() && containsFloats() && lowestFloatLogicalBottom() > logicalHeight(); }
     LayoutUnit getClearDelta(RenderBox& child, LayoutUnit yPos);
 
     void determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
@@ -527,7 +535,9 @@ public:
     virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
     virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
 
-private:
+private:        
+    void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
+
     void layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     void layoutSimpleLines(LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
@@ -581,7 +591,7 @@ public:
     void createRenderNamedFlowFragmentIfNeeded();
 
     // Pagination routines.
-    virtual bool relayoutForPagination(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer&);
+    bool relayoutForPagination(LayoutStateMaintainer&);
 
     bool hasRareBlockFlowData() const { return m_rareBlockFlowData.get(); }
     RenderBlockFlowRareData* rareBlockFlowData() const { ASSERT_WITH_SECURITY_IMPLICATION(hasRareBlockFlowData()); return m_rareBlockFlowData.get(); }

@@ -446,7 +446,6 @@ public:
     static bool percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* containingBlock, bool outOfFlowPositioned);
     LayoutUnit computePercentageLogicalHeight(const Length& height) const;
 
-    // Block flows subclass availableWidth/Height to handle multi column layout (shrinking the width/height available to children when laying out.)
     virtual LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
     virtual LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const;
     LayoutUnit availableLogicalHeightUsing(const Length&, AvailableLogicalHeightType) const;
@@ -544,7 +543,6 @@ public:
     LayoutPoint flipForWritingModeForChild(const RenderBox* child, const LayoutPoint&) const;
     LayoutUnit flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
     LayoutPoint flipForWritingMode(const LayoutPoint&) const;
-    LayoutPoint flipForWritingModeIncludingColumns(const LayoutPoint&) const;
     LayoutSize flipForWritingMode(const LayoutSize&) const;
     void flipForWritingMode(LayoutRect&) const;
     FloatPoint flipForWritingMode(const FloatPoint&) const;

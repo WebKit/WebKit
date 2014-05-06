@@ -89,7 +89,7 @@ public:
 
     virtual void updateFromStyle() override;
 
-    virtual bool requiresLayer() const override { return isRoot() || isPositioned() || createsGroup() || hasClipPath() || hasTransform() || hasHiddenBackface() || hasReflection() || style().specifiesColumns(); }
+    virtual bool requiresLayer() const override { return isRoot() || isPositioned() || createsGroup() || hasClipPath() || hasTransform() || hasHiddenBackface() || hasReflection(); }
 
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
     virtual IntRect borderBoundingBox() const = 0;
@@ -181,7 +181,7 @@ public:
 
     virtual void setSelectionState(SelectionState) override;
 
-    bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !hasColumns() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
+    bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
 
     void getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, FloatRect& destRect, FloatPoint& phase, FloatSize& tileSize) const;
     void contentChanged(ContentChangeType);
@@ -275,8 +275,7 @@ public:
     void setFirstLetterRemainingText(RenderTextFragment*);
 
     // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
-    // Since they are typically called only to move objects around within anonymous blocks (which only have layers in
-    // the case of column spans), the default for fullRemoveInsert is false rather than true.
+    // Since they are typically called only to move objects around within anonymous blocks, the default for fullRemoveInsert is false rather than true.
     void moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert = false);
     void moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, bool fullRemoveInsert = false)
     {

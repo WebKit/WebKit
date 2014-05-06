@@ -1099,11 +1099,6 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& name, bool crea
     return element.release();
 }
 
-bool Document::regionBasedColumnsEnabled() const
-{
-    return settings() && settings()->regionBasedColumnsEnabled(); 
-}
-
 bool Document::cssRegionsEnabled() const
 {
     return RuntimeEnabledFeatures::sharedFeatures().cssRegionsEnabled(); 

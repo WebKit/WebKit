@@ -1,3 +1,19 @@
+2014-05-06  David Hyatt  <hyatt@apple.com>
+
+        Begin Removal of Old Multi-Column Code.
+        https://bugs.webkit.org/show_bug.cgi?id=132480
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/fast/multicol/client-rects-expected.png:
+        * platform/mac/fast/multicol/client-rects-expected.txt:
+        * platform/mac/fast/multicol/client-rects-spanners-complex-expected.png:
+        * platform/mac/fast/multicol/client-rects-spanners-complex-expected.txt:
+        * platform/mac/fast/multicol/client-rects-spanners-expected.png:
+        * platform/mac/fast/multicol/client-rects-spanners-expected.txt:
+        * platform/mac/fast/multicol/newmulticol/client-rects-expected.png:
+        * platform/mac/fast/multicol/newmulticol/client-rects-expected.txt:
+
 2014-05-06  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] make metadata cue attributes consistent

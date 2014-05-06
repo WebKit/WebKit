@@ -166,7 +166,7 @@ static bool canMapBetweenRenderers(const RenderObject& renderer, const RenderObj
         if (style.position() == FixedPosition || style.isFlippedBlocksWritingMode())
             return false;
 
-        if (current->hasColumns() || current->hasTransform() || current->isRenderFlowThread())
+        if (current->hasTransform() || current->isRenderFlowThread())
             return false;
 
         if (current->isSVGRoot())

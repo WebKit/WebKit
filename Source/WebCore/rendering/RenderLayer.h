@@ -515,7 +515,6 @@ public:
 
     void positionNewlyCreatedOverflowControls();
     
-    bool isPaginated() const { return m_isPaginated; }
     RenderLayer* enclosingPaginationLayer() const { return m_enclosingPaginationLayer; }
 
     void updateTransform();
@@ -633,7 +632,7 @@ public:
     bool canUseConvertToLayerCoords() const
     {
         // These RenderObject have an impact on their layers' without them knowing about it.
-        return !renderer().hasColumns() && !renderer().hasTransform() && !renderer().isSVGRoot();
+        return !renderer().hasTransform() && !renderer().isSVGRoot();
     }
 
     // FIXME: adjustForColumns allows us to position compositing layers in columns correctly, but eventually they need to be split across columns too.
@@ -999,8 +998,6 @@ private:
     void paintLayerByApplyingTransform(GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags, const LayoutPoint& translationOffset = LayoutPoint());
     void paintLayerContents(GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
     void paintList(Vector<RenderLayer*>*, GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
-    void paintPaginatedChildLayer(RenderLayer* childLayer, GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
-    void paintChildLayerIntoColumns(RenderLayer* childLayer, GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags, const Vector<RenderLayer*>& columnLayers, size_t columnIndex);
 
     void collectFragments(LayerFragments&, const RenderLayer* rootLayer, RenderRegion*, const LayoutRect& dirtyRect,
         ClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize,
@@ -1027,13 +1024,6 @@ private:
                              const LayoutRect& hitTestRect, const HitTestLocation&,
                              const HitTestingTransformState* transformState, double* zOffsetForDescendants, double* zOffset,
                              const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants);
-    RenderLayer* hitTestPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                            const LayoutRect& hitTestRect, const HitTestLocation&,
-                                            const HitTestingTransformState* transformState, double* zOffset);
-    RenderLayer* hitTestChildLayerColumns(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                          const LayoutRect& hitTestRect, const HitTestLocation&,
-                                          const HitTestingTransformState* transformState, double* zOffset,
-                                          const Vector<RenderLayer*>& columnLayers, size_t columnIndex);
 
     RenderLayer* hitTestFixedLayersInNamedFlows(RenderLayer* rootLayer,
         const HitTestRequest&, HitTestResult&,
@@ -1160,9 +1150,6 @@ private:
     void drawPlatformResizerImage(GraphicsContext*, const LayoutRect& resizerCornerRect);
 
     void updatePagination();
-    
-    // FIXME: Temporary. Remove when new columns come online.
-    bool useRegionBasedColumns() const;
 
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
     
@@ -1251,8 +1238,6 @@ private:
     bool m_hasVisibleContent : 1;
     bool m_visibleDescendantStatusDirty : 1;
     bool m_hasVisibleDescendant : 1;
-
-    bool m_isPaginated : 1; // If we think this layer is split by a multi-column ancestor, then this bit will be set.
 
     bool m_3DTransformedDescendantStatusDirty : 1;
     bool m_has3DTransformedDescendant : 1;  // Set on a stacking context layer that has 3D descendants anywhere

@@ -233,6 +233,9 @@ public:
 
     ContainingRegionMap& containingRegionMap();
 
+    // FIXME: Eventually as column and region flow threads start nesting, this may end up changing.
+    virtual bool shouldCheckColumnBreaks() const { return false; }
+
 private:
     virtual bool isRenderFlowThread() const override final { return true; }
 

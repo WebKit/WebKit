@@ -389,9 +389,7 @@ public:
 
     bool childrenInline() const { return m_bitfields.childrenInline(); }
     void setChildrenInline(bool b) { m_bitfields.setChildrenInline(b); }
-    bool hasColumns() const { return m_bitfields.hasColumns(); }
-    void setHasColumns(bool b = true) { m_bitfields.setHasColumns(b); }
-
+    
     enum FlowThreadState {
         NotInsideFlowThread = 0,
         InsideOutOfFlowThread = 1,
@@ -494,8 +492,6 @@ public:
 #endif
             ;
     }
-    bool isAnonymousColumnsBlock() const { return style().specifiesColumns() && isAnonymousBlock(); }
-    bool isAnonymousColumnSpanBlock() const { return style().columnSpan() && isAnonymousBlock(); }
     bool isElementContinuation() const { return node() && node()->renderer() != this; }
     bool isInlineElementContinuation() const { return isElementContinuation() && isInline(); }
     bool isBlockElementContinuation() const { return isElementContinuation() && !isInline(); }
@@ -764,16 +760,6 @@ public:
     virtual void computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect&, bool fixed = false) const;
     virtual void computeFloatRectForRepaint(const RenderLayerModelObject* repaintContainer, FloatRect& repaintRect, bool fixed = false) const;
 
-    // If multiple-column layout results in applying an offset to the given point, add the same
-    // offset to the given size.
-    virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const { }
-    LayoutSize offsetForColumns(const LayoutPoint& point) const
-    {
-        LayoutSize offset;
-        adjustForColumns(offset, point);
-        return offset;
-    }
-
     virtual unsigned int length() const { return 1; }
 
     bool isFloatingOrOutOfFlowPositioned() const { return (isFloating() || isOutOfFlowPositioned()); }
@@ -966,7 +952,6 @@ private:
             , m_hasCounterNodeMap(false)
             , m_everHadLayout(false)
             , m_childrenInline(false)
-            , m_hasColumns(false)
             , m_positionedState(IsStaticallyPositioned)
             , m_selectionState(SelectionNone)
             , m_flowThreadState(NotInsideFlowThread)
@@ -1002,7 +987,6 @@ private:
 
         // from RenderBlock
         ADD_BOOLEAN_BITFIELD(childrenInline, ChildrenInline);
-        ADD_BOOLEAN_BITFIELD(hasColumns, HasColumns);
 
     private:
         unsigned m_positionedState : 2; // PositionedState

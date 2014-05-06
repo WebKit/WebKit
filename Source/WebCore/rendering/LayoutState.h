@@ -26,7 +26,6 @@
 #ifndef LayoutState_h
 #define LayoutState_h
 
-#include "ColumnInfo.h"
 #include "LayoutRect.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -53,7 +52,6 @@ public:
         , m_layoutDeltaXSaturated(false)
         , m_layoutDeltaYSaturated(false)
 #endif
-        , m_columnInfo(nullptr)
         , m_lineGrid(nullptr)
         , m_pageLogicalHeight(0)
 #ifndef NDEBUG
@@ -62,18 +60,15 @@ public:
     {
     }
 
-    LayoutState(std::unique_ptr<LayoutState> state, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, ColumnInfo*);
+    LayoutState(std::unique_ptr<LayoutState>, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
     explicit LayoutState(RenderObject&);
 
     void clearPaginationInformation();
-    bool isPaginatingColumns() const { return m_columnInfo && m_columnInfo->paginationUnit() == ColumnInfo::Column; }
     bool isPaginated() const { return m_isPaginated; }
     
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
     LayoutUnit pageLogicalOffset(RenderBox*, LayoutUnit childLogicalOffset) const;
-
-    void addForcedColumnBreak(RenderBox*, LayoutUnit childLogicalOffset);
     
     LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
@@ -93,7 +88,7 @@ private:
     void establishLineGrid(RenderBlockFlow*);
 
 public:
-    // Do not add anything apart from bitfields until after m_columnInfo. See https://bugs.webkit.org/show_bug.cgi?id=100173
+    // Do not add anything apart from bitfields. See https://bugs.webkit.org/show_bug.cgi?id=100173
     bool m_clipped : 1;
     bool m_isPaginated : 1;
     // If our page height has changed, this will force all blocks to relayout.
@@ -103,8 +98,6 @@ public:
     bool m_layoutDeltaYSaturated : 1;
 #endif
 
-    // If the enclosing pagination model is a column model, then this will store column information for easy retrieval/manipulation.
-    ColumnInfo* m_columnInfo;
     // The current line grid that we're snapping to and the offset of the start of the grid.
     RenderBlockFlow* m_lineGrid;
     std::unique_ptr<LayoutState> m_next;

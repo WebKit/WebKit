@@ -26,17 +26,16 @@
 #include "config.h"
 #include "LayoutState.h"
 
-#include "ColumnInfo.h"
 #include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderMultiColumnFlowThread.h"
 #include "RenderView.h"
 
 namespace WebCore {
 
-LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, ColumnInfo* columnInfo)
-    : m_columnInfo(columnInfo)
-    , m_lineGrid(0)
+LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
+    : m_lineGrid(0)
     , m_next(std::move(next))
 #ifndef NDEBUG
     , m_renderer(renderer)
@@ -82,7 +81,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
 
     // If we establish a new page height, then cache the offset to the top of the first page.
     // We can compare this later on to figure out what part of the page we're actually on,
-    if (pageLogicalHeight || m_columnInfo || renderer->isRenderFlowThread()) {
+    if (pageLogicalHeight || renderer->isRenderFlowThread()) {
         m_pageLogicalHeight = pageLogicalHeight;
         bool isFlipped = renderer->style().isFlippedBlocksWritingMode();
         m_pageOffset = LayoutSize(m_layoutOffset.width() + (!isFlipped ? renderer->borderLeft() + renderer->paddingLeft() : renderer->borderRight() + renderer->paddingRight()),
@@ -101,14 +100,11 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
             m_pageLogicalHeight = 0;
             m_isPaginated = false;
         } else
-            m_isPaginated = m_pageLogicalHeight || m_next->m_columnInfo || renderer->flowThreadContainingBlock();
+            m_isPaginated = m_pageLogicalHeight || renderer->flowThreadContainingBlock();
     }
     
     // Propagate line grid information.
     propagateLineGridInfo(renderer);
-
-    if (!m_columnInfo)
-        m_columnInfo = m_next->m_columnInfo;
 
     m_layoutDelta = m_next->m_layoutDelta;
 #if !ASSERT_DISABLED && ENABLE(SATURATED_LAYOUT_ARITHMETIC)
@@ -116,8 +112,8 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
     m_layoutDeltaYSaturated = m_next->m_layoutDeltaYSaturated;
 #endif
 
-    if (lineGrid() && (lineGrid()->style().writingMode() == renderer->style().writingMode()) && renderer->isRenderBlock())
-        toRenderBlock(renderer)->computeLineGridPaginationOrigin(*this);
+    if (lineGrid() && (lineGrid()->style().writingMode() == renderer->style().writingMode()) && renderer->isRenderMultiColumnFlowThread())
+        toRenderMultiColumnFlowThread(renderer)->computeLineGridPaginationOrigin(*this);
 
     // If we have a new grid to track, then add it to our set.
     if (renderer->style().lineGrid() != RenderStyle::initialLineGrid() && renderer->isRenderBlockFlow())
@@ -134,7 +130,6 @@ LayoutState::LayoutState(RenderObject& root)
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
 #endif    
-    , m_columnInfo(0)
     , m_lineGrid(0)
     , m_pageLogicalHeight(0)
 #ifndef NDEBUG
@@ -156,7 +151,6 @@ void LayoutState::clearPaginationInformation()
 {
     m_pageLogicalHeight = m_next->m_pageLogicalHeight;
     m_pageOffset = m_next->m_pageOffset;
-    m_columnInfo = m_next->m_columnInfo;
 }
 
 LayoutUnit LayoutState::pageLogicalOffset(RenderBox* child, LayoutUnit childLogicalOffset) const
@@ -164,13 +158,6 @@ LayoutUnit LayoutState::pageLogicalOffset(RenderBox* child, LayoutUnit childLogi
     if (child->isHorizontalWritingMode())
         return m_layoutOffset.height() + childLogicalOffset - m_pageOffset.height();
     return m_layoutOffset.width() + childLogicalOffset - m_pageOffset.width();
-}
-
-void LayoutState::addForcedColumnBreak(RenderBox* child, LayoutUnit childLogicalOffset)
-{
-    if (!m_columnInfo || m_columnInfo->columnHeight())
-        return;
-    m_columnInfo->addForcedBreak(pageLogicalOffset(child, childLogicalOffset));
 }
 
 void LayoutState::propagateLineGridInfo(RenderBox* renderer)

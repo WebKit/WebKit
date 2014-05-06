@@ -89,7 +89,7 @@ PassRef<RenderStyle> resolveForDocument(const Document& document)
     if (pagination.mode != Pagination::Unpaginated) {
         documentStyle.get().setColumnStylesFromPaginationMode(pagination.mode);
         documentStyle.get().setColumnGap(pagination.gap);
-        if (renderView.hasColumns() || renderView.multiColumnFlowThread())
+        if (renderView.multiColumnFlowThread())
             renderView.updateColumnProgressionFromStyle(&documentStyle.get());
     }
 

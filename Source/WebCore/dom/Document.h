@@ -436,8 +436,6 @@ public:
 
     NamedFlowCollection* namedFlows();
 
-    bool regionBasedColumnsEnabled() const;
-
 #if ENABLE(CSS_GRID_LAYOUT)
     bool cssGridLayoutEnabled() const;
 #endif

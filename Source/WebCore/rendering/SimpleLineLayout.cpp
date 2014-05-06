@@ -115,9 +115,6 @@ bool canUseFor(const RenderBlockFlow& flow)
     // FIXME: Placeholders do something strange.
     if (flow.parent()->isTextControl() && toRenderTextControl(*flow.parent()).textFormControlElement().placeholderElement())
         return false;
-    // These tests only works during layout. Outside layout this function may give false positives.
-    if (flow.view().layoutState() && flow.view().layoutState()->m_columnInfo)
-        return false;
     const RenderStyle& style = flow.style();
     if (style.textDecorationsInEffect() != TextDecorationNone)
         return false;

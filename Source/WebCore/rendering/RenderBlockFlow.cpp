@@ -35,9 +35,11 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
+#include "RenderMarquee.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderNamedFlowFragment.h"
+#include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderView.h"
 #include "SimpleLineLayoutFunctions.h"
@@ -322,6 +324,108 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     }
 }
 
+void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+{
+    if (!style().hasAutoColumnCount() || !style().hasAutoColumnWidth()) {
+        // The min/max intrinsic widths calculated really tell how much space elements need when
+        // laid out inside the columns. In order to eventually end up with the desired column width,
+        // we need to convert them to values pertaining to the multicol container.
+        int columnCount = style().hasAutoColumnCount() ? 1 : style().columnCount();
+        LayoutUnit columnWidth;
+        LayoutUnit colGap = columnGap();
+        LayoutUnit gapExtra = (columnCount - 1) * colGap;
+        if (style().hasAutoColumnWidth())
+            minLogicalWidth = minLogicalWidth * columnCount + gapExtra;
+        else {
+            columnWidth = style().columnWidth();
+            minLogicalWidth = std::min(minLogicalWidth, columnWidth);
+        }
+        // FIXME: If column-count is auto here, we should resolve it to calculate the maximum
+        // intrinsic width, instead of pretending that it's 1. The only way to do that is by
+        // performing a layout pass, but this is not an appropriate time or place for layout. The
+        // good news is that if height is unconstrained and there are no explicit breaks, the
+        // resolved column-count really should be 1.
+        maxLogicalWidth = std::max(maxLogicalWidth, columnWidth) * columnCount + gapExtra;
+    }
+}
+
+void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+{
+    if (childrenInline()) {
+        // FIXME: Remove this const_cast.
+        const_cast<RenderBlockFlow*>(this)->computeInlinePreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
+    } else
+        computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
+
+    maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
+
+    adjustIntrinsicLogicalWidthsForColumns(minLogicalWidth, maxLogicalWidth);
+
+    if (!style().autoWrap() && childrenInline()) {
+        // A horizontal marquee with inline children has no minimum width.
+        if (layer() && layer()->marquee() && layer()->marquee()->isHorizontal())
+            minLogicalWidth = 0;
+    }
+
+    if (isTableCell()) {
+        Length tableCellWidth = toRenderTableCell(this)->styleOrColLogicalWidth();
+        if (tableCellWidth.isFixed() && tableCellWidth.value() > 0)
+            maxLogicalWidth = std::max(minLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(tableCellWidth.value()));
+    }
+
+    int scrollbarWidth = instrinsicScrollbarLogicalWidth();
+    maxLogicalWidth += scrollbarWidth;
+    minLogicalWidth += scrollbarWidth;
+}
+
+bool RenderBlockFlow::recomputeLogicalWidthAndColumnWidth()
+{
+    bool changed = recomputeLogicalWidth();
+
+    LayoutUnit oldColumnWidth = computedColumnWidth();
+    computeColumnCountAndWidth();
+    
+    return changed || oldColumnWidth != computedColumnWidth();
+}
+
+LayoutUnit RenderBlockFlow::columnGap() const
+{
+    if (style().hasNormalColumnGap())
+        return style().fontDescription().computedPixelSize(); // "1em" is recommended as the normal gap setting. Matches <p> margins.
+    return style().columnGap();
+}
+
+void RenderBlockFlow::computeColumnCountAndWidth()
+{   
+    // Calculate our column width and column count.
+    // FIXME: Can overflow on fast/block/float/float-not-removed-from-next-sibling4.html, see https://bugs.webkit.org/show_bug.cgi?id=68744
+    unsigned desiredColumnCount = 1;
+    LayoutUnit desiredColumnWidth = contentLogicalWidth();
+    
+    // For now, we don't support multi-column layouts when printing, since we have to do a lot of work for proper pagination.
+    if (document().paginated() || (style().hasAutoColumnCount() && style().hasAutoColumnWidth()) || !style().hasInlineColumnAxis()) {
+        setComputedColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
+        return;
+    }
+        
+    LayoutUnit availWidth = desiredColumnWidth;
+    LayoutUnit colGap = columnGap();
+    LayoutUnit colWidth = std::max<LayoutUnit>(LayoutUnit::fromPixel(1), LayoutUnit(style().columnWidth()));
+    int colCount = std::max<int>(1, style().columnCount());
+
+    if (style().hasAutoColumnWidth() && !style().hasAutoColumnCount()) {
+        desiredColumnCount = colCount;
+        desiredColumnWidth = std::max<LayoutUnit>(0, (availWidth - ((desiredColumnCount - 1) * colGap)) / desiredColumnCount);
+    } else if (!style().hasAutoColumnWidth() && style().hasAutoColumnCount()) {
+        desiredColumnCount = std::max<LayoutUnit>(1, (availWidth + colGap) / (colWidth + colGap));
+        desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
+    } else {
+        desiredColumnCount = std::max<LayoutUnit>(std::min<LayoutUnit>(colCount, (availWidth + colGap) / (colWidth + colGap)), 1);
+        desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
+    }
+    setComputedColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
+}
+
 void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     ASSERT(needsLayout());
@@ -331,7 +435,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
 
-    if (updateLogicalWidthAndColumnWidth())
+    if (recomputeLogicalWidthAndColumnWidth())
         relayoutChildren = true;
 
     rebuildFloatingObjectSetFromIntrudingFloats();
@@ -342,11 +446,10 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     setLogicalHeight(0);
 
     bool pageLogicalHeightChanged = false;
-    bool hasSpecifiedPageLogicalHeight = false;
-    checkForPaginationLogicalHeightChange(relayoutChildren, pageLogicalHeight, pageLogicalHeightChanged, hasSpecifiedPageLogicalHeight);
+    checkForPaginationLogicalHeightChange(relayoutChildren, pageLogicalHeight, pageLogicalHeightChanged);
 
     const RenderStyle& styleToUse = style();
-    LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, columnInfo());
+    LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged);
 
     preparePaginationBeforeBlockLayout(relayoutChildren);
     if (!relayoutChildren)
@@ -386,7 +489,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && expandsToEncloseOverhangingFloats())
         setLogicalHeight(lowestFloatLogicalBottom() + toAdd);
     
-    if (relayoutForPagination(hasSpecifiedPageLogicalHeight, pageLogicalHeight, statePusher) || relayoutToAvoidWidows(statePusher)) {
+    if (relayoutForPagination(statePusher) || relayoutToAvoidWidows(statePusher)) {
         ASSERT(!shouldBreakAtLineToAvoidWidow());
         return;
     }
@@ -457,9 +560,6 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
             repaintRect = LayoutRect(repaintLogicalLeft, repaintLogicalTop, repaintLogicalRight - repaintLogicalLeft, repaintLogicalBottom - repaintLogicalTop);
         else
             repaintRect = LayoutRect(repaintLogicalTop, repaintLogicalLeft, repaintLogicalBottom - repaintLogicalTop, repaintLogicalRight - repaintLogicalLeft);
-
-        // The repaint rect may be split across columns, in which case adjustRectForColumns() will return the union.
-        adjustRectForColumns(repaintRect);
 
         repaintRect.inflate(maximalOutlineSize(PaintPhaseOutline));
         
@@ -1357,7 +1457,7 @@ static bool inNormalFlow(RenderBox& child)
 {
     RenderBlock* curr = child.containingBlock();
     while (curr && curr != &child.view()) {
-        if (curr->hasColumns() || curr->isRenderFlowThread())
+        if (curr->isRenderFlowThread())
             return true;
         if (curr->isFloatingOrOutOfFlowPositioned())
             return false;
@@ -1371,7 +1471,7 @@ LayoutUnit RenderBlockFlow::applyBeforeBreak(RenderBox& child, LayoutUnit logica
     // FIXME: Add page break checking here when we support printing.
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     bool isInsideMulticolFlowThread = flowThread && !flowThread->isRenderNamedFlowThread();
-    bool checkColumnBreaks = isInsideMulticolFlowThread || view().layoutState()->isPaginatingColumns();
+    bool checkColumnBreaks = flowThread && flowThread->shouldCheckColumnBreaks();
     bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight; // FIXME: Once columns can print we have to check this.
     bool checkRegionBreaks = flowThread && flowThread->isRenderNamedFlowThread();
     bool checkBeforeAlways = (checkColumnBreaks && child.style().columnBreakBefore() == PBALWAYS)
@@ -1381,8 +1481,6 @@ LayoutUnit RenderBlockFlow::applyBeforeBreak(RenderBox& child, LayoutUnit logica
         if (checkColumnBreaks) {
             if (isInsideMulticolFlowThread)
                 checkRegionBreaks = true;
-            else
-                view().layoutState()->addForcedColumnBreak(&child, logicalOffset);
         }
         if (checkRegionBreaks) {
             LayoutUnit offsetBreakAdjustment = 0;
@@ -1399,7 +1497,7 @@ LayoutUnit RenderBlockFlow::applyAfterBreak(RenderBox& child, LayoutUnit logical
     // FIXME: Add page break checking here when we support printing.
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     bool isInsideMulticolFlowThread = flowThread && !flowThread->isRenderNamedFlowThread();
-    bool checkColumnBreaks = isInsideMulticolFlowThread || view().layoutState()->isPaginatingColumns();
+    bool checkColumnBreaks = flowThread && flowThread->shouldCheckColumnBreaks();
     bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight; // FIXME: Once columns can print we have to check this.
     bool checkRegionBreaks = flowThread && flowThread->isRenderNamedFlowThread();
     bool checkAfterAlways = (checkColumnBreaks && child.style().columnBreakAfter() == PBALWAYS)
@@ -1414,8 +1512,6 @@ LayoutUnit RenderBlockFlow::applyAfterBreak(RenderBox& child, LayoutUnit logical
         if (checkColumnBreaks) {
             if (isInsideMulticolFlowThread)
                 checkRegionBreaks = true;
-            else
-                view().layoutState()->addForcedColumnBreak(&child, logicalOffset);
         }
         if (checkRegionBreaks) {
             LayoutUnit offsetBreakAdjustment = 0;
@@ -1714,8 +1810,6 @@ void RenderBlockFlow::updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minH
 {
     if (RenderFlowThread* flowThread = flowThreadContainingBlock())
         flowThread->updateMinimumPageHeight(this, offsetFromLogicalTopOfFirstPage() + offset, minHeight);
-    else if (ColumnInfo* colInfo = view().layoutState()->m_columnInfo)
-        colInfo->updateMinimumColumnHeight(minHeight);
 }
 
 LayoutUnit RenderBlockFlow::nextPageLogicalTop(LayoutUnit logicalOffset, PageBoundaryRule pageBoundaryRule) const
@@ -1967,7 +2061,7 @@ void RenderBlockFlow::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomp
 {
     RenderBlock::computeOverflow(oldClientAfterEdge, recomputeFloats);
 
-    if (!hasColumns() && !multiColumnFlowThread() && (recomputeFloats || isRoot() || expandsToEncloseOverhangingFloats() || hasSelfPaintingLayer()))
+    if (!multiColumnFlowThread() && (recomputeFloats || isRoot() || expandsToEncloseOverhangingFloats() || hasSelfPaintingLayer()))
         addOverflowFromFloats();
 }
 
@@ -2422,7 +2516,7 @@ LayoutUnit RenderBlockFlow::lowestFloatLogicalBottom(FloatingObject::Type floatT
 LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child, bool makeChildPaintOtherFloats)
 {
     // Prevent floats from being added to the canvas by the root element, e.g., <html>.
-    if (child.hasOverflowClip() || !child.containsFloats() || child.isRoot() || child.hasColumns() || child.isWritingModeRoot() || child.isRenderFlowThread() || child.isRenderRegion())
+    if (child.hasOverflowClip() || !child.containsFloats() || child.isRoot() || child.isWritingModeRoot() || child.isRenderFlowThread() || child.isRenderRegion())
         return 0;
 
     LayoutUnit childLogicalTop = child.logicalTop();
@@ -2480,7 +2574,7 @@ LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child, bool ma
 
 bool RenderBlockFlow::hasOverhangingFloat(RenderBox& renderer)
 {
-    if (!m_floatingObjects || hasColumns() || !parent())
+    if (!m_floatingObjects || !parent())
         return false;
 
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
@@ -3221,59 +3315,9 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
     m_lineBoxes.paint(this, paintInfo, paintOffset);
 }
 
-bool RenderBlockFlow::relayoutForPagination(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer& statePusher)
+bool RenderBlockFlow::relayoutForPagination(LayoutStateMaintainer& statePusher)
 {
-    if (!hasColumns() && !multiColumnFlowThread())
-        return false;
-
-    if (hasColumns()) {
-        RefPtr<RenderOverflow> savedOverflow = m_overflow.release();
-        if (childrenInline())
-            addOverflowFromInlineChildren();
-        else
-            addOverflowFromBlockChildren();
-        LayoutUnit layoutOverflowLogicalBottom = (isHorizontalWritingMode() ? layoutOverflowRect().maxY() : layoutOverflowRect().maxX()) - borderAndPaddingBefore();
-
-        // FIXME: We don't balance properly at all in the presence of forced page breaks. We need to understand what
-        // the distance between forced page breaks is so that we can avoid making the minimum column height too tall.
-        ColumnInfo* colInfo = columnInfo();
-        if (!hasSpecifiedPageLogicalHeight) {
-            LayoutUnit columnHeight = pageLogicalHeight;
-            int minColumnCount = colInfo->forcedBreaks() + 1;
-            int desiredColumnCount = colInfo->desiredColumnCount();
-            if (minColumnCount >= desiredColumnCount) {
-                // The forced page breaks are in control of the balancing. Just set the column height to the
-                // maximum page break distance.
-                if (!pageLogicalHeight) {
-                    LayoutUnit distanceBetweenBreaks = std::max<LayoutUnit>(colInfo->maximumDistanceBetweenForcedBreaks(),
-                        view().layoutState()->pageLogicalOffset(this, borderAndPaddingBefore() + layoutOverflowLogicalBottom) - colInfo->forcedBreakOffset());
-                    columnHeight = std::max(colInfo->minimumColumnHeight(), distanceBetweenBreaks);
-                }
-            } else if (layoutOverflowLogicalBottom > boundedMultiply(pageLogicalHeight, desiredColumnCount)) {
-                // Now that we know the intrinsic height of the columns, we have to rebalance them.
-                columnHeight = std::max<LayoutUnit>(colInfo->minimumColumnHeight(), ceilf((float)layoutOverflowLogicalBottom / desiredColumnCount));
-            }
-            
-            if (columnHeight && columnHeight != pageLogicalHeight) {
-                statePusher.pop();
-                setEverHadLayout(true);
-                layoutBlock(false, columnHeight);
-                return true;
-            }
-        } 
-
-        if (pageLogicalHeight)
-            colInfo->setColumnCountAndHeight(ceilf((float)layoutOverflowLogicalBottom / pageLogicalHeight), pageLogicalHeight);
-
-        if (columnCount(colInfo)) {
-            setLogicalHeight(borderAndPaddingBefore() + colInfo->columnHeight() + borderAndPaddingAfter() + scrollbarLogicalHeight());
-            clearOverflow();
-        } else
-            m_overflow = savedOverflow.release();
-        return false;
-    }
-    
-    if (!multiColumnFlowThread()->shouldRelayoutForPagination())
+    if (!multiColumnFlowThread() || !multiColumnFlowThread()->shouldRelayoutForPagination())
         return false;
     
     multiColumnFlowThread()->setNeedsHeightsRecalculation(false);
@@ -3580,10 +3624,10 @@ void RenderBlockFlow::removeChild(RenderObject& oldChild)
     RenderBlock::removeChild(oldChild);
 }
 
-void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight)
+void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged)
 {
-    // If we don't use either of the two column implementations or a flow thread, then bail.
-    if (!isRenderFlowThread() && !multiColumnFlowThread() && !hasColumns())
+    // If we don't use columns or flow threads, then bail.
+    if (!isRenderFlowThread() && !multiColumnFlowThread())
         return;
     
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
@@ -3595,30 +3639,6 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildr
         flowThread->setColumnHeightAvailable(std::max<LayoutUnit>(columnHeight, 0));
         if (oldHeightAvailable != flowThread->columnHeightAvailable())
             relayoutChildren = true;
-    } else if (hasColumns()) {
-        ColumnInfo* colInfo = columnInfo();
-    
-        if (!pageLogicalHeight) {
-            // We need to go ahead and set our explicit page height if one exists, so that we can
-            // avoid doing two layout passes.
-            updateLogicalHeight();
-            LayoutUnit columnHeight = isRenderView() ? view().pageOrViewLogicalHeight() : contentLogicalHeight();
-            if (columnHeight > 0) {
-                pageLogicalHeight = columnHeight;
-                hasSpecifiedPageLogicalHeight = true;
-            }
-            setLogicalHeight(0);
-        }
-
-        if (colInfo->columnHeight() != pageLogicalHeight && everHadLayout())
-            pageLogicalHeightChanged = true;
-
-        colInfo->setColumnHeight(pageLogicalHeight);
-        
-        if (!hasSpecifiedPageLogicalHeight && !pageLogicalHeight)
-            colInfo->clearForcedBreaks();
-
-        colInfo->setPaginationUnit(paginationUnit());
     } else if (isRenderFlowThread()) {
         RenderFlowThread* flowThread = toRenderFlowThread(this);
 
@@ -3637,11 +3657,17 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildr
     }
 }
 
+bool RenderBlockFlow::requiresColumns(int desiredColumnCount) const
+{
+    // If overflow-y is set to paged-x or paged-y on the body or html element, we'll handle the paginating
+    // in the RenderView instead.
+    bool isPaginated = (style().overflowY() == OPAGEDX || style().overflowY() == OPAGEDY) && !(isRoot() || isBody());
+
+    return firstChild() && (desiredColumnCount != 1 || !style().hasAutoColumnWidth() || !style().hasInlineColumnAxis() || isPaginated);
+}
+
 void RenderBlockFlow::setComputedColumnCountAndWidth(int count, LayoutUnit width)
 {
-    if (!document().regionBasedColumnsEnabled())
-        return RenderBlock::setComputedColumnCountAndWidth(count, width);
-    
     bool destroyColumns = !requiresColumns(count);
     if (destroyColumns) {
         if (multiColumnFlowThread())
@@ -3657,9 +3683,6 @@ void RenderBlockFlow::setComputedColumnCountAndWidth(int count, LayoutUnit width
 
 void RenderBlockFlow::updateColumnProgressionFromStyle(RenderStyle* style)
 {
-    if (!document().regionBasedColumnsEnabled())
-        return RenderBlock::updateColumnProgressionFromStyle(style);
-
     if (!multiColumnFlowThread())
         return;
     
@@ -3684,9 +3707,6 @@ void RenderBlockFlow::updateColumnProgressionFromStyle(RenderStyle* style)
 
 LayoutUnit RenderBlockFlow::computedColumnWidth() const
 {
-    if (!document().regionBasedColumnsEnabled())
-        return RenderBlock::computedColumnWidth();
-    
     if (multiColumnFlowThread())
         return multiColumnFlowThread()->computedColumnWidth();
     return contentLogicalWidth();
@@ -3694,9 +3714,6 @@ LayoutUnit RenderBlockFlow::computedColumnWidth() const
 
 unsigned RenderBlockFlow::computedColumnCount() const
 {
-    if (!document().regionBasedColumnsEnabled())
-        return RenderBlock::computedColumnCount();
-    
     if (multiColumnFlowThread())
         return multiColumnFlowThread()->computedColumnCount();
     

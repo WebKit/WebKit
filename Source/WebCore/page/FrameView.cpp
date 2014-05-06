@@ -120,7 +120,7 @@ static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLay
         flags &= ~RenderLayer::CheckForRepaint;
         flags |= RenderLayer::NeedsFullRepaintInBacking;
     }
-    if (isRelayoutingSubtree && (layer->isPaginated() || layer->enclosingPaginationLayer()))
+    if (isRelayoutingSubtree && layer->enclosingPaginationLayer())
         flags |= RenderLayer::UpdatePagination;
     return flags;
 }

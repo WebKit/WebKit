@@ -1,3 +1,188 @@
+2014-05-06  David Hyatt  <hyatt@apple.com>
+
+        Begin Removal of Old Multi-Column Code.
+        https://bugs.webkit.org/show_bug.cgi?id=132480
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp:
+        (WebCore::Document::regionBasedColumnsEnabled): Deleted.
+        * dom/Document.h:
+        * page/FrameView.cpp:
+        (WebCore::updateLayerPositionFlags):
+        * page/Settings.in:
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::clearPaginationInformation):
+        (WebCore::LayoutState::addForcedColumnBreak): Deleted.
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::isPaginatingColumns): Deleted.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::addChildToContinuation):
+        (WebCore::RenderBlock::addChild):
+        (WebCore::RenderBlock::addChildIgnoringContinuation):
+        (WebCore::RenderBlock::removeLeftoverAnonymousBlock):
+        (WebCore::canMergeContiguousAnonymousBlocks):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::recomputeLogicalWidth):
+        (WebCore::RenderBlock::addOverflowFromChildren):
+        (WebCore::RenderBlock::expandsToEncloseOverhangingFloats):
+        (WebCore::RenderBlock::simplifiedLayout):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::offsetForContents):
+        (WebCore::RenderBlock::computeIntrinsicLogicalWidths):
+        (WebCore::RenderBlock::createAnonymousBoxWithSameTypeAs):
+        (WebCore::RenderBlock::childBoxIsUnsplittableForFragmentation):
+        (WebCore::RenderBlock::renderName):
+        (WebCore::RenderBlock::addChildToAnonymousColumnBlocks): Deleted.
+        (WebCore::RenderBlock::containingColumnsBlock): Deleted.
+        (WebCore::RenderBlock::splitFlow): Deleted.
+        (WebCore::RenderBlock::makeChildrenAnonymousColumnBlocks): Deleted.
+        (WebCore::RenderBlock::columnsBlockForSpanningElement): Deleted.
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks): Deleted.
+        (WebCore::RenderBlock::updateLogicalWidthAndColumnWidth): Deleted.
+        (WebCore::RenderBlock::isTopLayoutOverflowAllowed): Deleted.
+        (WebCore::RenderBlock::isLeftLayoutOverflowAllowed): Deleted.
+        (WebCore::RenderBlock::paintColumnRules): Deleted.
+        (WebCore::RenderBlock::initialBlockOffsetForPainting): Deleted.
+        (WebCore::RenderBlock::blockDeltaForPaintingNextColumn): Deleted.
+        (WebCore::RenderBlock::paintColumnContents): Deleted.
+        (WebCore::ColumnRectIterator::ColumnRectIterator): Deleted.
+        (WebCore::ColumnRectIterator::advance): Deleted.
+        (WebCore::ColumnRectIterator::columnRect): Deleted.
+        (WebCore::ColumnRectIterator::hasMore): Deleted.
+        (WebCore::ColumnRectIterator::adjust): Deleted.
+        (WebCore::ColumnRectIterator::update): Deleted.
+        (WebCore::RenderBlock::hitTestColumns): Deleted.
+        (WebCore::RenderBlock::adjustForColumnRect): Deleted.
+        (WebCore::RenderBlock::availableLogicalWidth): Deleted.
+        (WebCore::RenderBlock::columnGap): Deleted.
+        (WebCore::RenderBlock::computeColumnCountAndWidth): Deleted.
+        (WebCore::RenderBlock::requiresColumns): Deleted.
+        (WebCore::RenderBlock::setComputedColumnCountAndWidth): Deleted.
+        (WebCore::RenderBlock::updateColumnProgressionFromStyle): Deleted.
+        (WebCore::RenderBlock::computedColumnWidth): Deleted.
+        (WebCore::RenderBlock::computedColumnCount): Deleted.
+        (WebCore::RenderBlock::columnInfo): Deleted.
+        (WebCore::RenderBlock::columnCount): Deleted.
+        (WebCore::RenderBlock::columnRectAt): Deleted.
+        (WebCore::RenderBlock::adjustPointToColumnContents): Deleted.
+        (WebCore::RenderBlock::adjustRectForColumns): Deleted.
+        (WebCore::RenderBlock::flipForWritingModeIncludingColumns): Deleted.
+        (WebCore::RenderBlock::adjustStartEdgeForWritingModeIncludingColumns): Deleted.
+        (WebCore::RenderBlock::adjustForColumns): Deleted.
+        (WebCore::RenderBlock::adjustIntrinsicLogicalWidthsForColumns): Deleted.
+        (WebCore::RenderBlock::paginationUnit): Deleted.
+        (WebCore::RenderBlock::createAnonymousColumnsWithParentRenderer): Deleted.
+        (WebCore::RenderBlock::createAnonymousColumnSpanWithParentRenderer): Deleted.
+        (WebCore::RenderBlock::computeLineGridPaginationOrigin): Deleted.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::pixelSnappedLogicalRightOffsetForLine):
+        (WebCore::RenderBlock::createAnonymousBlock):
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::createAnonymousColumnsBlock): Deleted.
+        (WebCore::RenderBlock::createAnonymousColumnSpanBlock): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns):
+        (WebCore::RenderBlockFlow::computeIntrinsicLogicalWidths):
+        (WebCore::RenderBlockFlow::recomputeLogicalWidthAndColumnWidth):
+        (WebCore::RenderBlockFlow::columnGap):
+        (WebCore::RenderBlockFlow::computeColumnCountAndWidth):
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::inNormalFlow):
+        (WebCore::RenderBlockFlow::applyBeforeBreak):
+        (WebCore::RenderBlockFlow::applyAfterBreak):
+        (WebCore::RenderBlockFlow::updateMinimumPageHeight):
+        (WebCore::RenderBlockFlow::computeOverflow):
+        (WebCore::RenderBlockFlow::addOverhangingFloats):
+        (WebCore::RenderBlockFlow::hasOverhangingFloat):
+        (WebCore::RenderBlockFlow::relayoutForPagination):
+        (WebCore::RenderBlockFlow::checkForPaginationLogicalHeightChange):
+        (WebCore::RenderBlockFlow::requiresColumns):
+        (WebCore::RenderBlockFlow::setComputedColumnCountAndWidth):
+        (WebCore::RenderBlockFlow::updateColumnProgressionFromStyle):
+        (WebCore::RenderBlockFlow::computedColumnWidth):
+        (WebCore::RenderBlockFlow::computedColumnCount):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::hasOverhangingFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent):
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::canHaveBoxInfoInRegion):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::canMapBetweenRenderers):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderInline::computeRectForRepaint):
+        (WebCore::RenderInline::offsetFromContainer):
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updatePagination):
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::paintList):
+        (WebCore::RenderLayer::hitTestList):
+        (WebCore::checkContainingBlockChainForPagination): Deleted.
+        (WebCore::RenderLayer::useRegionBasedColumns): Deleted.
+        (WebCore::RenderLayer::paintPaginatedChildLayer): Deleted.
+        (WebCore::RenderLayer::paintChildLayerIntoColumns): Deleted.
+        (WebCore::RenderLayer::hitTestPaginatedChildLayer): Deleted.
+        (WebCore::RenderLayer::hitTestChildLayerColumns): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::shouldCheckColumnBreaks):
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::computeRectForRepaint):
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::pushMappingToContainer):
+        (WebCore::RenderObject::offsetFromContainer):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAnonymousBlock):
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+        (WebCore::RenderObject::hasColumns): Deleted.
+        (WebCore::RenderObject::setHasColumns): Deleted.
+        (WebCore::RenderObject::isAnonymousColumnsBlock): Deleted.
+        (WebCore::RenderObject::isAnonymousColumnSpanBlock): Deleted.
+        (WebCore::RenderObject::adjustForColumns): Deleted.
+        (WebCore::RenderObject::offsetForColumns): Deleted.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::selectionRectForRepaint):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::availableLogicalHeight):
+        (WebCore::RenderView::pageOrViewLogicalHeight):
+        (WebCore::RenderView::unextendedBackgroundRect):
+        (WebCore::RenderView::backgroundRect):
+        (WebCore::RenderView::shouldDisableLayoutStateForSubtree):
+        (WebCore::RenderView::pageNumberForBlockProgressionOffset):
+        (WebCore::RenderView::pageCount):
+        (WebCore::RenderView::paginationUnit): Deleted.
+        * rendering/RenderView.h:
+        (WebCore::LayoutStateMaintainer::LayoutStateMaintainer):
+        (WebCore::LayoutStateMaintainer::push):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2014-05-06  Brady Eidson  <beidson@apple.com>
 
         Don't select an image that is about to have its menu shown.

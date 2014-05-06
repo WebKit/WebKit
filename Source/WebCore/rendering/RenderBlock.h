@@ -23,7 +23,6 @@
 #ifndef RenderBlock_h
 #define RenderBlock_h
 
-#include "ColumnInfo.h"
 #include "GapRects.h"
 #include "RenderBox.h"
 #include "TextRun.h"
@@ -164,9 +163,7 @@ public:
     }
     LayoutUnit pixelSnappedLogicalRightOffsetForLine(LayoutUnit position, bool shouldIndentText, LayoutUnit logicalHeight = 0) const 
     {
-        // FIXME: Multicolumn layouts break carrying over subpixel values to the logical right offset because the lines may be shifted
-        // by a subpixel value for all but the first column. This can lead to the actual pixel snapped width of the column being off
-        // by one pixel when rendered versus layed out, which can result in the line being clipped. For now, we have to floor.
+        // FIXME: Now that we have a new multicolumn implementation, can this be fixed?
         // https://bugs.webkit.org/show_bug.cgi?id=105461
         return floorToInt(logicalRightOffsetForLine(position, shouldIndentText, logicalHeight));
     }
@@ -184,12 +181,6 @@ public:
     LayoutUnit textIndentOffset() const;
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
-    
-    // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
-    virtual LayoutUnit availableLogicalWidth() const override final;
-
-    LayoutPoint flipForWritingModeIncludingColumns(const LayoutPoint&) const;
-    void adjustStartEdgeForWritingModeIncludingColumns(LayoutRect&) const;
 
     GapRects selectionGapRectsForRepaint(const RenderLayerModelObject* repaintContainer);
     LayoutRect logicalLeftSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
@@ -200,10 +191,6 @@ public:
     RenderBlock* blockBeforeWithinSelectionRoot(LayoutSize& offset) const;
 
     LayoutRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect);
-
-    void adjustRectForColumns(LayoutRect&) const;
-    virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const override final;
-    void adjustForColumnRect(LayoutSize& offset, const LayoutPoint& locationInContainer) const;
 
     void addContinuationWithOutline(RenderInline*);
     bool paintsContinuationOutline(RenderInline*);
@@ -217,11 +204,7 @@ public:
     using RenderBoxModelObject::setContinuation;
 
     static RenderBlock* createAnonymousWithParentRendererAndDisplay(const RenderObject*, EDisplay = BLOCK);
-    static RenderBlock* createAnonymousColumnsWithParentRenderer(const RenderObject*);
-    static RenderBlock* createAnonymousColumnSpanWithParentRenderer(const RenderObject*);
     RenderBlock* createAnonymousBlock(EDisplay display = BLOCK) const { return createAnonymousWithParentRendererAndDisplay(this, display); }
-    RenderBlock* createAnonymousColumnsBlock() const { return createAnonymousColumnsWithParentRenderer(this); }
-    RenderBlock* createAnonymousColumnSpanBlock() const { return createAnonymousColumnSpanWithParentRenderer(this); }
     static void collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* child);
 
     virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override;
@@ -248,20 +231,7 @@ public:
 
     static TextRun constructTextRun(RenderObject* context, const Font&, const UChar* characters, int length, const RenderStyle&,
         TextRun::ExpansionBehavior = TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion);
-
-    ColumnInfo* columnInfo() const;
-    int columnGap() const;
-
-    // FIXME: Can devirtualize this and only have the RenderBlockFlow version once the old multi-column code is gone.
-    virtual void updateColumnProgressionFromStyle(RenderStyle*);
     
-    LayoutUnit initialBlockOffsetForPainting() const;
-    LayoutUnit blockDeltaForPaintingNextColumn() const;
-
-    // These two functions take the ColumnInfo* to avoid repeated lookups of the info in the global HashMap.
-    unsigned columnCount(ColumnInfo*) const;
-    LayoutRect columnRectAt(ColumnInfo*, unsigned) const;
-
     LayoutUnit paginationStrut() const;
     void setPaginationStrut(LayoutUnit);
 
@@ -380,8 +350,7 @@ protected:
 
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     virtual void computePreferredLogicalWidths() override;
-    void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
-
+    
     virtual int firstLineBaseline() const override;
     virtual int inlineBlockBaseline(LineDirectionMode) const override;
 
@@ -404,20 +373,11 @@ protected:
     bool simplifiedLayout();
     virtual void simplifiedNormalFlowLayout();
 
-    // FIXME: Can de-virtualize this once old columns go away.
-    virtual void setComputedColumnCountAndWidth(int, LayoutUnit);
-
     bool childBoxIsUnsplittableForFragmentation(const RenderBox& child) const;
 
 public:
     virtual void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false);
     void clearLayoutOverflow();
-    
-    bool isTopLayoutOverflowAllowed() const override;
-    bool isLeftLayoutOverflowAllowed() const override;
-
-    // FIXME: Can devirtualize once old column code is gone.
-    virtual void computeLineGridPaginationOrigin(LayoutState&) const;
     
     // Adjust from painting offsets to the local coords of this renderer
     void offsetForContents(LayoutPoint&) const;
@@ -462,10 +422,7 @@ private:
 
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild) override;
-    void addChildToAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild);
 
-    void addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild = 0);
-    
     virtual bool isSelfCollapsingBlock() const override final;
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual bool hasLines() const { return false; }
@@ -482,16 +439,14 @@ private:
     virtual void paintFloats(PaintInfo&, const LayoutPoint&, bool) { }
     virtual void paintInlineChildren(PaintInfo&, const LayoutPoint&) { }
     void paintContents(PaintInfo&, const LayoutPoint&);
-    void paintColumnContents(PaintInfo&, const LayoutPoint&, bool paintFloats = false);
-    virtual void paintColumnRules(PaintInfo&, const LayoutPoint&);
+    virtual void paintColumnRules(PaintInfo&, const LayoutPoint&) { };
     void paintSelection(PaintInfo&, const LayoutPoint&);
     void paintCaret(PaintInfo&, const LayoutPoint&, CaretType);
 
     virtual bool avoidsFloats() const override;
 
-    bool hitTestColumns(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
-    // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
+    // FIXME-BLOCKFLOW: Remove virtualization when all callers have moved to RenderBlockFlow
     virtual bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&) { return false; }
     virtual bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) { return false; }
 
@@ -535,21 +490,12 @@ private:
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-    // FIXME: Can de-virtualize once old columns go away.
-    virtual LayoutUnit computedColumnWidth() const;
-    virtual unsigned computedColumnCount() const;
-
     void paintContinuationOutlines(PaintInfo&, const LayoutPoint&);
 
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) override final;
-
-    void adjustPointToColumnContents(LayoutPoint&) const;
     
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual VisiblePosition positionForPointWithInlineChildren(const LayoutPoint&, const RenderRegion*);
-
-    virtual void computeColumnCountAndWidth();
-    void makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild);
 
     bool expandsToEncloseOverhangingFloats() const;
 
@@ -559,21 +505,16 @@ private:
                    RenderObject* newChild, RenderBoxModelObject* oldCont);
     RenderPtr<RenderBlock> clone() const;
     RenderBlock* continuationBefore(RenderObject* beforeChild);
-    RenderBlock* containingColumnsBlock(bool allowAnonymousColumnBlock = true);
-    RenderBlock* columnsBlockForSpanningElement(RenderObject* newChild);
 
 private:
     bool hasRareData() const;
     
 protected:
     void dirtyForLayoutFromPercentageHeightDescendants();
-    
-    virtual ColumnInfo::PaginationUnit paginationUnit() const;
 
 protected:
-    virtual bool requiresColumns(int computedColumnCount) const;
-
-    bool updateLogicalWidthAndColumnWidth();
+    bool recomputeLogicalWidth();
+    
 public:
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const override;
     RenderRegion* regionAtBlockOffset(LayoutUnit) const;

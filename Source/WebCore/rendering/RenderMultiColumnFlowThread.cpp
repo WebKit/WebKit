@@ -774,4 +774,11 @@ bool RenderMultiColumnFlowThread::nodeAtPoint(const HitTestRequest& request, Hit
     return inside;
 }
 
+bool RenderMultiColumnFlowThread::shouldCheckColumnBreaks() const
+{
+    if (!parent()->isRenderView())
+        return true;
+    return view().frameView().pagination().behavesLikeColumns;
+}
+
 }

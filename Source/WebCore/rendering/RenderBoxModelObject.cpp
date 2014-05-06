@@ -301,7 +301,6 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
         return LayoutPoint();
 
     LayoutPoint referencePoint = startPoint;
-    referencePoint.move(parent()->offsetForColumns(referencePoint));
     
     // If the offsetParent of the element is null, or is the HTML body element,
     // return the distance between the canvas origin and the left border edge 
@@ -330,7 +329,6 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
                 } else if (!isOutOfFlowPositioned()) {
                     if (curr->isBox() && !curr->isTableRow())
                         referencePoint.moveBy(toRenderBox(curr)->topLeftLocation());
-                    referencePoint.move(curr->parent()->offsetForColumns(referencePoint));
                 }
                 
                 curr = curr->parent();
@@ -2650,13 +2648,6 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, Tra
     o->mapAbsoluteToLocalPoint(mode, transformState);
 
     LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint());
-
-    if (!style().hasOutOfFlowPosition() && o->hasColumns()) {
-        RenderBlock* block = toRenderBlock(o);
-        LayoutPoint point(roundedLayoutPoint(transformState.mappedPoint()));
-        point -= containerOffset;
-        block->adjustForColumnRect(containerOffset, point);
-    }
 
     bool preserve3D = mode & UseTransforms && (o->style().preserves3D() || style().preserves3D());
     if (mode & UseTransforms && shouldUseTransformFromContainer(o)) {

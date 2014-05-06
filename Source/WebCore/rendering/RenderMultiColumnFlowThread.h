@@ -92,7 +92,7 @@ public:
     bool progressionIsReversed() const { return m_progressionIsReversed; }
     void setProgressionIsReversed(bool reversed) { m_progressionIsReversed = reversed; }
     
-    virtual void computeLineGridPaginationOrigin(LayoutState&) const override;
+    void computeLineGridPaginationOrigin(LayoutState&) const;
     
     virtual RenderRegion* mapFromFlowToRegion(TransformState&) const override;
     
@@ -111,6 +111,9 @@ public:
     virtual void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const override;
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
+    // FIXME: Eventually as column and region flow threads start nesting, this will end up changing.
+    virtual bool shouldCheckColumnBreaks() const override;
+
 private:
     virtual const char* renderName() const override;
     virtual void addRegionToThread(RenderRegion*) override;

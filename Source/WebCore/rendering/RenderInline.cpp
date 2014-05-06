@@ -1122,9 +1122,6 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObj
     if (hitRepaintContainer || !cb)
         return repaintRect;
 
-    if (cb->hasColumns())
-        cb->adjustRectForColumns(repaintRect);
-
     if (cb->hasOverflowClip())
         cb->applyCachedClipAndScrollOffsetForRepaint(repaintRect);
 
@@ -1174,16 +1171,6 @@ void RenderInline::computeRectForRepaint(const RenderLayerModelObject* repaintCo
 
     LayoutPoint topLeft = rect.location();
 
-    if (o->isRenderBlockFlow() && !style().hasOutOfFlowPosition()) {
-        RenderBlock* cb = toRenderBlock(o);
-        if (cb->hasColumns()) {
-            LayoutRect repaintRect(topLeft, rect.size());
-            cb->adjustRectForColumns(repaintRect);
-            topLeft = repaintRect.location();
-            rect = repaintRect;
-        }
-    }
-
     if (style().hasInFlowPosition() && layer()) {
         // Apply the in-flow position offset when invalidating a rectangle. The layer
         // is translated, but the render box isn't, so we need to do this to get the
@@ -1212,7 +1199,7 @@ void RenderInline::computeRectForRepaint(const RenderLayerModelObject* repaintCo
     o->computeRectForRepaint(repaintContainer, rect, fixed);
 }
 
-LayoutSize RenderInline::offsetFromContainer(RenderObject* container, const LayoutPoint& point, bool* offsetDependsOnPoint) const
+LayoutSize RenderInline::offsetFromContainer(RenderObject* container, const LayoutPoint&, bool* offsetDependsOnPoint) const
 {
     ASSERT(container == this->container());
     
@@ -1220,15 +1207,11 @@ LayoutSize RenderInline::offsetFromContainer(RenderObject* container, const Layo
     if (isInFlowPositioned())
         offset += offsetForInFlowPosition();
 
-    container->adjustForColumns(offset, point);
-
     if (container->isBox())
         offset -= toRenderBox(container)->scrolledContentOffset();
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = container->hasColumns()
-            || (container->isBox() && container->style().isFlippedBlocksWritingMode())
-            || container->isRenderFlowThread();
+        *offsetDependsOnPoint = (container->isBox() && container->style().isFlippedBlocksWritingMode()) || container->isRenderFlowThread();
 
     return offset;
 }
@@ -1254,8 +1237,8 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintCont
 
     if (mode & ApplyContainerFlip && o->isBox()) {
         if (o->style().isFlippedBlocksWritingMode()) {
-            IntPoint centerPoint = roundedIntPoint(transformState.mappedPoint());
-            transformState.move(toRenderBox(o)->flipForWritingModeIncludingColumns(centerPoint) - centerPoint);
+            LayoutPoint centerPoint = roundedLayoutPoint(transformState.mappedPoint());
+            transformState.move(toRenderBox(o)->flipForWritingMode(centerPoint) - centerPoint);
         }
         mode &= ~ApplyContainerFlip;
     }

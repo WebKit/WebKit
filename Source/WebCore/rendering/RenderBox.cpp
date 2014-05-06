@@ -374,7 +374,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         const Pagination& pagination = view().frameView().pagination();
         if (viewChangedWritingMode && pagination.mode != Pagination::Unpaginated) {
             viewStyle.setColumnStylesFromPaginationMode(pagination.mode);
-            if (view().hasColumns() || view().multiColumnFlowThread())
+            if (view().multiColumnFlowThread())
                 view().updateColumnProgressionFromStyle(&viewStyle);
         }
     }
@@ -1970,7 +1970,7 @@ void RenderBox::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState
     RenderBoxModelObject::mapAbsoluteToLocalPoint(mode, transformState);
 }
 
-LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& point, bool* offsetDependsOnPoint) const
+LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint&, bool* offsetDependsOnPoint) const
 {
     // A region "has" boxes inside it without being their container. 
     ASSERT(o == container() || o->isRenderRegion());
@@ -1979,22 +1979,8 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
     if (isInFlowPositioned())
         offset += offsetForInFlowPosition();
 
-    if (!isInline() || isReplaced()) {
-        if (!style().hasOutOfFlowPosition() && o->hasColumns()) {
-            RenderBlock* block = toRenderBlock(o);
-            LayoutRect columnRect(frameRect());
-            block->adjustStartEdgeForWritingModeIncludingColumns(columnRect);
-            offset += toLayoutSize(columnRect.location());
-            LayoutPoint columnPoint = block->flipForWritingModeIncludingColumns(point + offset);
-            offset = toLayoutSize(block->flipForWritingModeIncludingColumns(toLayoutPoint(offset)));
-            o->adjustForColumns(offset, columnPoint);
-            offset = block->flipForWritingMode(offset);
-
-            if (offsetDependsOnPoint)
-                *offsetDependsOnPoint = true;
-        } else
-            offset += topLeftLocationOffset();
-    }
+    if (!isInline() || isReplaced())
+        offset += topLeftLocationOffset();
 
     if (o->isBox())
         offset -= toRenderBox(o)->scrolledContentOffset();
@@ -2170,13 +2156,6 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
         // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position
         // flag on the RenderObject has been cleared, so use the one on the style().
         topLeft += layer()->offsetForInFlowPosition();
-    }
-    
-    if (position != AbsolutePosition && position != FixedPosition && o->hasColumns() && o->isRenderBlockFlow()) {
-        LayoutRect repaintRect(topLeft, rect.size());
-        toRenderBlock(o)->adjustRectForColumns(repaintRect);
-        topLeft = repaintRect.location();
-        rect = repaintRect;
     }
 
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
@@ -4668,13 +4647,6 @@ LayoutPoint RenderBox::flipForWritingMode(const LayoutPoint& position) const
     if (!style().isFlippedBlocksWritingMode())
         return position;
     return isHorizontalWritingMode() ? LayoutPoint(position.x(), height() - position.y()) : LayoutPoint(width() - position.x(), position.y());
-}
-
-LayoutPoint RenderBox::flipForWritingModeIncludingColumns(const LayoutPoint& point) const
-{
-    if (!hasColumns() || !style().isFlippedBlocksWritingMode())
-        return flipForWritingMode(point);
-    return toRenderBlock(this)->flipForWritingModeIncludingColumns(point);
 }
 
 LayoutSize RenderBox::flipForWritingMode(const LayoutSize& offset) const

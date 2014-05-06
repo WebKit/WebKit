@@ -256,18 +256,17 @@ private:
     void initializeLayoutState(LayoutState&);
 
     virtual void computeColumnCountAndWidth() override;
-    virtual ColumnInfo::PaginationUnit paginationUnit() const override;
 
     bool shouldRepaint(const LayoutRect&) const;
     void flushAccumulatedRepaintRegion() const;
 
     // These functions may only be accessed by LayoutStateMaintainer.
-    bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = nullptr)
+    bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false)
     {
         // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
-        if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer.hasColumns() || renderer.flowThreadContainingBlock()
+        if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer.flowThreadContainingBlock()
             || m_layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
-            m_layoutState = std::make_unique<LayoutState>(std::move(m_layoutState), &renderer, offset, pageHeight, pageHeightChanged, colInfo);
+            m_layoutState = std::make_unique<LayoutState>(std::move(m_layoutState), &renderer, offset, pageHeight, pageHeightChanged);
             pushLayoutStateForCurrentFlowThread(renderer);
             return true;
         }
@@ -371,14 +370,14 @@ class LayoutStateMaintainer {
     WTF_MAKE_NONCOPYABLE(LayoutStateMaintainer);
 public:
     // Constructor to push now.
-    explicit LayoutStateMaintainer(RenderView& view, RenderBox& root, LayoutSize offset, bool disableState = false, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = nullptr)
+    explicit LayoutStateMaintainer(RenderView& view, RenderBox& root, LayoutSize offset, bool disableState = false, LayoutUnit pageHeight = 0, bool pageHeightChanged = false)
         : m_view(view)
         , m_disabled(disableState)
         , m_didStart(false)
         , m_didEnd(false)
         , m_didCreateLayoutState(false)
     {
-        push(root, offset, pageHeight, pageHeightChanged, colInfo);
+        push(root, offset, pageHeight, pageHeightChanged);
     }
 
     // Constructor to maybe push later.
@@ -396,11 +395,11 @@ public:
         ASSERT(m_didStart == m_didEnd);   // if this fires, it means that someone did a push(), but forgot to pop().
     }
 
-    void push(RenderBox& root, LayoutSize offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = nullptr)
+    void push(RenderBox& root, LayoutSize offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false)
     {
         ASSERT(!m_didStart);
         // We push state even if disabled, because we still need to store layoutDelta
-        m_didCreateLayoutState = m_view.pushLayoutState(root, offset, pageHeight, pageHeightChanged, colInfo);
+        m_didCreateLayoutState = m_view.pushLayoutState(root, offset, pageHeight, pageHeightChanged);
         if (m_disabled && m_didCreateLayoutState)
             m_view.disableLayoutState();
         m_didStart = true;

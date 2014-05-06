@@ -1370,12 +1370,6 @@ void RenderObject::computeRectForRepaint(const RenderLayerModelObject* repaintCo
         return;
 
     if (auto o = parent()) {
-        if (o->isRenderBlockFlow()) {
-            RenderBlock* cb = toRenderBlock(o);
-            if (cb->hasColumns())
-                cb->adjustRectForColumns(rect);
-        }
-
         if (o->hasOverflowClip()) {
             RenderBox* boxParent = toRenderBox(o);
             boxParent->applyCachedClipAndScrollOffsetForRepaint(rect);
@@ -1619,14 +1613,9 @@ void RenderObject::mapLocalToContainer(const RenderLayerModelObject* repaintCont
     LayoutPoint centerPoint = roundedLayoutPoint(transformState.mappedPoint());
     if (mode & ApplyContainerFlip && o->isBox()) {
         if (o->style().isFlippedBlocksWritingMode())
-            transformState.move(toRenderBox(o)->flipForWritingModeIncludingColumns(roundedLayoutPoint(transformState.mappedPoint())) - centerPoint);
+            transformState.move(toRenderBox(o)->flipForWritingMode(roundedLayoutPoint(transformState.mappedPoint())) - centerPoint);
         mode &= ~ApplyContainerFlip;
     }
-
-    LayoutSize columnOffset;
-    o->adjustForColumns(columnOffset, roundedLayoutPoint(transformState.mappedPoint()));
-    if (!columnOffset.isZero())
-        transformState.move(columnOffset);
 
     if (o->isBox())
         transformState.move(-toRenderBox(o)->scrolledContentOffset());
@@ -1647,7 +1636,7 @@ const RenderObject* RenderObject::pushMappingToContainer(const RenderLayerModelO
     if (container->isBox())
         offset = -toRenderBox(container)->scrolledContentOffset();
 
-    geometryMap.push(this, offset, hasColumns());
+    geometryMap.push(this, offset, false);
     
     return container;
 }
@@ -1720,19 +1709,16 @@ FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, con
     return transformState.lastPlanarPoint();
 }
 
-LayoutSize RenderObject::offsetFromContainer(RenderObject* o, const LayoutPoint& point, bool* offsetDependsOnPoint) const
+LayoutSize RenderObject::offsetFromContainer(RenderObject* o, const LayoutPoint&, bool* offsetDependsOnPoint) const
 {
     ASSERT(o == container());
 
     LayoutSize offset;
-
-    o->adjustForColumns(offset, point);
-
     if (o->isBox())
         offset -= toRenderBox(o)->scrolledContentOffset();
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = hasColumns() || o->isRenderFlowThread();
+        *offsetDependsOnPoint = o->isRenderFlowThread();
 
     return offset;
 }

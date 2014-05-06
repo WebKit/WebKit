@@ -1277,12 +1277,8 @@ LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* rep
 
     if (clipToVisibleContent)
         computeRectForRepaint(repaintContainer, rect);
-    else {
-        if (cb->hasColumns())
-            cb->adjustRectForColumns(rect);
-
+    else
         rect = localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
-    }
 
     return rect;
 }

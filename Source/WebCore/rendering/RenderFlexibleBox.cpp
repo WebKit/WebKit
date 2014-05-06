@@ -259,7 +259,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
 
-    if (updateLogicalWidthAndColumnWidth())
+    if (recomputeLogicalWidth())
         relayoutChildren = true;
 
     LayoutUnit previousHeight = logicalHeight();
