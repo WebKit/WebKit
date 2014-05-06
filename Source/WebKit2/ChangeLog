@@ -1,3 +1,16 @@
+2014-05-06  Alex Christensen  <achristensen@webkit.org>
+
+        Removed unnecessary notImplemented.h includes.
+        https://bugs.webkit.org/show_bug.cgi?id=132587
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        Removed notImplemented from list of includes.
+
 2014-05-05  Jeremy Jones  <jeremyj@apple.com>
 
         Implement scan backward and forward in video fullscreen.

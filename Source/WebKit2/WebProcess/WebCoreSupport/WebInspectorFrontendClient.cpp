@@ -31,7 +31,6 @@
 #include "WebInspector.h"
 #include "WebPage.h"
 #include <WebCore/InspectorController.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <inspector/InspectorAgentBase.h>
 #include <wtf/text/WTFString.h>

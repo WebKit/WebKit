@@ -43,7 +43,6 @@
 #include "Document.h"
 #include "JSDOMWindow.h"
 #include "Logging.h"
-#include "NotImplemented.h"
 #include "Page.h"
 #include "SQLError.h"
 #include "SQLTransaction.h"

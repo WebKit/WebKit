@@ -46,7 +46,6 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "Logging.h"
-#include "NotImplemented.h"
 #include "TemporaryOpenGLSetting.h"
 #include <cstring>
 #include <runtime/ArrayBuffer.h>

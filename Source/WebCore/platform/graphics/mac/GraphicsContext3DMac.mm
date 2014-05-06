@@ -41,7 +41,6 @@
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBuffer.h"
-#include "NotImplemented.h"
 #if PLATFORM(IOS)
 #import <OpenGLES/ES2/glext.h>
 #import <OpenGLES/EAGL.h>

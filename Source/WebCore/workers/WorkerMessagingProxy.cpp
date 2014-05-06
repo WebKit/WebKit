@@ -40,7 +40,6 @@
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
-#include "NotImplemented.h"
 #include "PageGroup.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"

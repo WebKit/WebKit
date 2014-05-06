@@ -37,7 +37,6 @@
 #include <WebCore/IDBCursorBackend.h>
 #include <WebCore/IDBDatabaseCallbacks.h>
 #include <WebCore/IDBTransactionBackend.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

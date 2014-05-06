@@ -45,7 +45,6 @@
 #include "JSImageData.h"
 #include "JSMessagePort.h"
 #include "JSNavigator.h"
-#include "NotImplemented.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include "WebCoreJSClientData.h"

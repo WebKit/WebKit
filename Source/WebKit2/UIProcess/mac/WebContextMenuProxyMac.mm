@@ -38,7 +38,6 @@
 #import "WKView.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IntRect.h>
-#import <WebCore/NotImplemented.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RetainPtr.h>
 

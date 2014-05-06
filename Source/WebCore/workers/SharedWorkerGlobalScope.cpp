@@ -37,7 +37,6 @@
 #include "DOMWindow.h"
 #include "EventNames.h"
 #include "MessageEvent.h"
-#include "NotImplemented.h"
 #include "SecurityOrigin.h"
 #include "SharedWorkerThread.h"
 #include <inspector/ScriptCallStack.h>
