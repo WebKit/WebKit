@@ -1,3 +1,12 @@
+2014-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build.
+
+        WebCore::Editor::replaceNodeFromPasteboard(WebCore::Node*, WTF::String const&) is Mac-only.
+        Also sort the export file.
+
+        * WebCore.exp.in:
+
 2014-05-06  David Hyatt  <hyatt@apple.com>
 
         Begin Removal of Old Multi-Column Code.
