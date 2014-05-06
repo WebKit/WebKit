@@ -1,5 +1,14 @@
 2014-05-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Skip fast/workers/worker-copy-shared-blob-url.html.
+
+        Rubberstamped by Oliver Hunt and Lucas Forschler.
+
+        * TestExpectations: Skip fast/workers/worker-copy-shared-blob-url.html
+        until <rdar://problem/16820362> is resolved.
+
+2014-05-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Rebaseline fast/dom/MutationObserver/parser-mutations-actual.txt
 
         Unreviewed.
