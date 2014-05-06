@@ -28,23 +28,34 @@
 
 #if ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
 
-#include "BlobRegistrationData.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
-#include <WebCore/BlobData.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-unsigned long long BlobRegistryProxy::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
+void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, const String& path, const String& contentType)
+{
+    ASSERT(WebProcess::shared().usesNetworkProcess());
+
+    SandboxExtension::Handle extensionHandle;
+
+    // File path can be empty when submitting a form file input without a file, see bug 111778.
+    if (!path.isEmpty())
+        SandboxExtension::createHandle(path, SandboxExtension::ReadOnly, extensionHandle);
+
+    WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(url, path, extensionHandle, contentType), 0);
+}
+
+unsigned long long BlobRegistryProxy::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
 {
     ASSERT(WebProcess::shared().usesNetworkProcess());
 
     uint64_t resultSize;
-    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(url, BlobRegistrationData(std::move(blobData))), Messages::NetworkConnectionToWebProcess::RegisterBlobURL::Reply(resultSize), 0))
+    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(url, blobParts, contentType), Messages::NetworkConnectionToWebProcess::RegisterBlobURL::Reply(resultSize), 0))
         return 0;
     return resultSize;
 }

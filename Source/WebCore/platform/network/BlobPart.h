@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,68 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BlobRegistrationData_h
-#define BlobRegistrationData_h
+#ifndef BlobPart_h
+#define BlobPart_h
 
-#if ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
-
-#include "SandboxExtension.h"
+#include "URL.h"
 
 namespace WebCore {
-class BlobData;
-}
 
-namespace WebKit {
-
-class BlobRegistrationData {
-WTF_MAKE_NONCOPYABLE(BlobRegistrationData);
+class BlobPart {
 public:
-    BlobRegistrationData();
-    BlobRegistrationData(std::unique_ptr<WebCore::BlobData>);
-    ~BlobRegistrationData();
+    enum Type {
+        Data,
+        Blob
+    };
 
-    void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, BlobRegistrationData&);
+    BlobPart()
+        : m_type(Data)
+    {
+    }
 
-    std::unique_ptr<WebCore::BlobData> releaseData() const;
-    const SandboxExtension::HandleArray& sandboxExtensions() const { return m_sandboxExtensions; }
+    BlobPart(Vector<char> data)
+        : m_type(Data)
+        , m_data(std::move(data))
+    {
+    }
+
+    BlobPart(const URL& url)
+        : m_type(Blob)
+        , m_url(url)
+    {
+    }
+
+    Type type() const { return m_type; }
+
+    const Vector<char>& data() const
+    {
+        ASSERT(m_type == Data);
+        return m_data;
+    }
+
+    Vector<char> moveData()
+    {
+        ASSERT(m_type == Data);
+        return std::move(m_data);
+    }
+
+    const URL& url() const
+    {
+        ASSERT(m_type == Blob);
+        return m_url;
+    }
+
+    void detachFromCurrentThread()
+    {
+        m_url = m_url.copy();
+    }
 
 private:
-    mutable std::unique_ptr<WebCore::BlobData> m_data;
-    SandboxExtension::HandleArray m_sandboxExtensions;
+    Type m_type;
+    Vector<char> m_data;
+    URL m_url;
 };
 
 }
 
-#endif // ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
-
-#endif // BlobRegistrationData_h
+#endif // BlobPart_h

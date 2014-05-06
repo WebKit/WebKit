@@ -269,8 +269,6 @@ set(WebKit2_SOURCES
     Shared/Downloads/DownloadAuthenticationClient.cpp
     Shared/Downloads/DownloadManager.cpp
 
-    Shared/FileAPI/BlobRegistrationData.cpp
-
     Shared/Network/NetworkProcessCreationParameters.cpp
     Shared/Network/NetworkResourceLoadParameters.cpp
 

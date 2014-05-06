@@ -35,7 +35,6 @@
 #include "WebSocket.h"
 
 #include "Blob.h"
-#include "BlobData.h"
 #include "CloseEvent.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
@@ -520,9 +519,7 @@ void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char>> binaryData)
     switch (m_binaryType) {
     case BinaryTypeBlob: {
         // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
-        auto blobData = std::make_unique<BlobData>();
-        blobData->appendData(RawData::create(std::move(*binaryData)), 0, BlobDataItem::toEndOfFile);
-        RefPtr<Blob> blob = Blob::create(std::move(blobData));
+        RefPtr<Blob> blob = Blob::create(std::move(*binaryData), emptyString());
         dispatchEvent(MessageEvent::create(blob.release(), SecurityOrigin::create(m_url)->toString()));
         break;
     }

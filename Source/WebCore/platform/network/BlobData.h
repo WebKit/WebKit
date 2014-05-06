@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+// FIXME: RawData doesn't need to be ThreadSafeRefCounted any more. We can probably switch to another data buffer type now.
 class RawData : public ThreadSafeRefCounted<RawData> {
 public:
     static PassRefPtr<RawData> create(Vector<char>&& data)
@@ -118,9 +119,6 @@ struct BlobDataItem {
     {
     }
 
-    // Detaches from current thread so that it can be passed to another thread.
-    void detachFromCurrentThread();
-
     enum {
         Data,
         File,
@@ -160,9 +158,6 @@ class BlobData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     BlobData() { }
-
-    // Detaches from current thread so that it can be passed to another thread.
-    void detachFromCurrentThread();
 
     const String& contentType() const { return m_contentType; }
     void setContentType(const String&);

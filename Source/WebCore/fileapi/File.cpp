@@ -26,56 +26,46 @@
 #include "config.h"
 #include "File.h"
 
+#include "BlobURL.h"
 #include "FileMetadata.h"
 #include "FileSystem.h"
 #include "MIMETypeRegistry.h"
+#include "ThreadableBlobRegistry.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-static std::unique_ptr<BlobData> createBlobDataForFileWithType(const String& path, const String& contentType)
-{
-    auto blobData = std::make_unique<BlobData>();
-    ASSERT(Blob::isNormalizedContentType(contentType));
-    blobData->setContentType(contentType);
-    blobData->appendFile(path);
-    return blobData;
-}
-
-static std::unique_ptr<BlobData> createBlobDataForFile(const String& path, File::ContentTypeLookupPolicy policy)
-{
-    return createBlobDataForFileWithType(path, File::contentTypeFromFilePath(path, policy));
-}
-
-static std::unique_ptr<BlobData> createBlobDataForFileWithName(const String& path, const String& fileSystemName, File::ContentTypeLookupPolicy policy)
-{
-    return createBlobDataForFileWithType(path, File::contentTypeFromFilePath(fileSystemName, policy));
-}
-
 File::File(const String& path, ContentTypeLookupPolicy policy)
-    : Blob(createBlobDataForFile(path, policy))
+    : Blob(uninitializedContructor)
     , m_path(path)
     , m_name(pathGetFileName(path))
 {
-}
-
-File::File(const String& path, const URL& url, const String& type)
-    : Blob(url, type, -1)
-    , m_path(path)
-{
-    m_name = pathGetFileName(path);
-    // FIXME: File object serialization/deserialization does not include
-    // newer file object data members: m_name and m_relativePath.
-    // See SerializedScriptValue.cpp
+    m_internalURL = BlobURL::createInternalURL();
+    m_type = contentTypeFromFilePathOrName(path, policy);
+    m_size = -1;
+    ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
 }
 
 File::File(const String& path, const String& name, ContentTypeLookupPolicy policy)
-    : Blob(createBlobDataForFileWithName(path, name, policy))
+    : Blob(uninitializedContructor)
     , m_path(path)
     , m_name(name)
 {
+    m_internalURL = BlobURL::createInternalURL();
+    m_type = contentTypeFromFilePathOrName(name, policy);
+    m_size = -1;
+    ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
+}
+
+File::File(DeserializationContructor, const String& path, const URL& url, const String& type)
+    : Blob(deserializationContructor, url, type, -1)
+    , m_path(path)
+{
+    m_name = pathGetFileName(path);
+    // FIXME: File object serialization/deserialization does not include m_name.
+    // See SerializedScriptValue.cpp
 }
 
 double File::lastModifiedDate() const
@@ -97,7 +87,7 @@ unsigned long long File::size() const
     return static_cast<unsigned long long>(size);
 }
 
-String File::contentTypeFromFilePath(const String& name, File::ContentTypeLookupPolicy policy)
+String File::contentTypeFromFilePathOrName(const String& name, File::ContentTypeLookupPolicy policy)
 {
     String type;
     int index = name.reverseFind('.');

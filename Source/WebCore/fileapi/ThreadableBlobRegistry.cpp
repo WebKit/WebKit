@@ -31,7 +31,7 @@
 #include "config.h"
 #include "ThreadableBlobRegistry.h"
 
-#include "BlobData.h"
+#include "BlobPart.h"
 #include "BlobRegistry.h"
 #include "BlobURL.h"
 #include "SecurityOrigin.h"
@@ -50,11 +50,13 @@ namespace WebCore {
 struct BlobRegistryContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BlobRegistryContext(const URL& url, std::unique_ptr<BlobData> blobData)
+    BlobRegistryContext(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
         : url(url.copy())
-        , blobData(std::move(blobData))
+        , contentType(contentType.isolatedCopy())
+        , blobParts(std::move(blobParts))
     {
-        this->blobData->detachFromCurrentThread();
+        for (BlobPart& part : blobParts)
+            part.detachFromCurrentThread();
     }
 
     BlobRegistryContext(const URL& url, const URL& srcURL)
@@ -68,9 +70,18 @@ public:
     {
     }
 
+    BlobRegistryContext(const URL& url, const String& path, const String& contentType)
+        : url(url.copy())
+        , path(path.isolatedCopy())
+        , contentType(contentType.isolatedCopy())
+    {
+    }
+
     URL url;
     URL srcURL;
-    std::unique_ptr<BlobData> blobData;
+    String path;
+    String contentType;
+    Vector<BlobPart> blobParts;
 };
 
 #if ENABLE(BLOB)
@@ -88,18 +99,33 @@ static ThreadSpecific<BlobUrlOriginMap>& originMap()
     return *map;
 }
 
-unsigned long long ThreadableBlobRegistry::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
+void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& path, const String& contentType)
+{
+    if (isMainThread())
+        blobRegistry().registerFileBlobURL(url, path, contentType);
+    else {
+        // BlobRegistryContext performs an isolated copy of data.
+        BlobRegistryContext* context = new BlobRegistryContext(url, path, contentType);
+        BinarySemaphore semaphore;
+        callOnMainThread([context] {
+            std::unique_ptr<BlobRegistryContext> blobRegistryContext(context);
+            blobRegistry().registerFileBlobURL(blobRegistryContext->url, blobRegistryContext->path, blobRegistryContext->contentType);
+        });
+    }
+}
+
+unsigned long long ThreadableBlobRegistry::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
 {
     unsigned long long resultSize;
     if (isMainThread())
-        resultSize = blobRegistry().registerBlobURL(url, std::move(blobData));
+        resultSize = blobRegistry().registerBlobURL(url, std::move(blobParts), contentType);
     else {
         // BlobRegistryContext performs an isolated copy of data.
-        BlobRegistryContext* context = new BlobRegistryContext(url, std::move(blobData));
+        BlobRegistryContext* context = new BlobRegistryContext(url, std::move(blobParts), contentType);
         BinarySemaphore semaphore;
         callOnMainThread([context, &semaphore, &resultSize] {
             std::unique_ptr<BlobRegistryContext> blobRegistryContext(context);
-            resultSize = blobRegistry().registerBlobURL(blobRegistryContext->url, std::move(blobRegistryContext->blobData));
+            resultSize = blobRegistry().registerBlobURL(blobRegistryContext->url, std::move(blobRegistryContext->blobParts), blobRegistryContext->contentType);
             semaphore.signal();
         });
         semaphore.wait(std::numeric_limits<double>::max());
@@ -168,7 +194,11 @@ PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& ur
 
 #else
 
-unsigned long long ThreadableBlobRegistry::registerBlobURL(const URL&, std::unique_ptr<BlobData>)
+void ThreadableBlobRegistry::registerFileBlobURL(const URL&, const String&, const String&)
+{
+}
+
+unsigned long long ThreadableBlobRegistry::registerBlobURL(const URL&, Vector<BlobPart>, const String&)
 {
     return 0;
 }

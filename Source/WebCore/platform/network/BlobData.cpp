@@ -45,20 +45,6 @@ namespace WebCore {
 
 const long long BlobDataItem::toEndOfFile = -1;
 
-void BlobDataItem::detachFromCurrentThread()
-{
-    path = path.isolatedCopy();
-    url = url.copy();
-}
-
-void BlobData::detachFromCurrentThread()
-{
-    m_contentType = m_contentType.isolatedCopy();
-    m_contentDisposition = m_contentDisposition.isolatedCopy();
-    for (size_t i = 0; i < m_items.size(); ++i)
-        m_items.at(i).detachFromCurrentThread();
-}
-
 void BlobData::setContentType(const String& contentType)
 {
     ASSERT(Blob::isNormalizedContentType(contentType));

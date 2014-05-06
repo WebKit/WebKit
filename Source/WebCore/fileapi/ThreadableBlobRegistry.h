@@ -31,17 +31,19 @@
 #ifndef ThreadableBlobRegistry_h
 #define ThreadableBlobRegistry_h
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class BlobData;
+class BlobPart;
 class URL;
 class SecurityOrigin;
 
 class ThreadableBlobRegistry {
 public:
-    static unsigned long long registerBlobURL(const URL&, std::unique_ptr<BlobData>);
+    static void registerFileBlobURL(const URL&, const String& path, const String& contentType);
+    static unsigned long long registerBlobURL(const URL&, Vector<BlobPart> blobParts, const String& contentType);
     static void registerBlobURL(SecurityOrigin*, const URL&, const URL& srcURL);
     static void unregisterBlobURL(const URL&);
 

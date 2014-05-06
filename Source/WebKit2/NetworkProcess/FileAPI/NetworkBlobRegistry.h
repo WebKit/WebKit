@@ -33,7 +33,7 @@
 #include <wtf/HashSet.h>
 
 namespace WebCore {
-class BlobData;
+class BlobPart;
 }
 
 namespace WebKit {
@@ -47,7 +47,8 @@ public:
     NetworkBlobRegistry();
     static NetworkBlobRegistry& shared();
 
-    uint64_t registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, std::unique_ptr<WebCore::BlobData>, const Vector<RefPtr<SandboxExtension>>&);
+    void registerFileBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, const String& path, PassRefPtr<SandboxExtension>, const String& contentType);
+    uint64_t registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, Vector<WebCore::BlobPart>, const String& contentType);
     void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL);
     uint64_t registerBlobURLForSlice(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end);
     void unregisterBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&);

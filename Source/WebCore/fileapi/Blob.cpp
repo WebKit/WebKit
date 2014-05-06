@@ -66,31 +66,37 @@ URLRegistry& BlobURLRegistry::registry()
 }
 
 
+Blob::Blob(UninitializedContructor)
+{
+}
+
 Blob::Blob()
     : m_size(0)
 {
-    auto blobData = std::make_unique<BlobData>();
-
-    // Create a new internal URL and register it with the provided blob data.
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobData));
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, Vector<BlobPart>(), String());
 }
 
-Blob::Blob(std::unique_ptr<BlobData> blobData)
-    : m_type(blobData->contentType())
+Blob::Blob(Vector<char> data, const String& contentType)
+    : m_type(contentType)
 {
-    ASSERT(blobData);
-
-    // Create a new internal URL and register it with the provided blob data.
+    Vector<BlobPart> blobParts;
+    blobParts.append(BlobPart(std::move(data)));
     m_internalURL = BlobURL::createInternalURL();
-    m_size = ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobData));
+    m_size = ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobParts), contentType);
 }
 
-Blob::Blob(const URL& srcURL, const String& type, long long size)
+Blob::Blob(Vector<BlobPart> blobParts, const String& contentType)
+    : m_type(contentType)
+{
+    m_internalURL = BlobURL::createInternalURL();
+    m_size = ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobParts), contentType);
+}
+
+Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, long long size)
     : m_type(Blob::normalizedContentType(type))
     , m_size(size)
 {
-    // Create a new internal URL and register it with the same blob data as the source URL.
     m_internalURL = BlobURL::createInternalURL();
     ThreadableBlobRegistry::registerBlobURL(0, m_internalURL, srcURL);
 }
@@ -99,7 +105,6 @@ Blob::Blob(const URL& srcURL, const String& type, long long size)
 Blob::Blob(const URL& srcURL, long long start, long long end, const String& type)
     : m_type(Blob::normalizedContentType(type))
 {
-    // Create a new internal URL and register it with the same blob data as the source URL.
     m_internalURL = BlobURL::createInternalURL();
     m_size = ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end);
 }

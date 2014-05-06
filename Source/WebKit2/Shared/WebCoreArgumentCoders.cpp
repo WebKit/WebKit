@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include "ShareableBitmap.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/BlobPart.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Cookie.h>
 #include <WebCore/Credential.h>
@@ -1968,6 +1969,47 @@ bool ArgumentCoder<SessionID>::decode(ArgumentDecoder& decoder, SessionID& sessi
         return false;
 
     sessionID = SessionID(session);
+
+    return true;
+}
+
+void ArgumentCoder<BlobPart>::encode(ArgumentEncoder& encoder, const BlobPart& blobPart)
+{
+    encoder << static_cast<uint32_t>(blobPart.type());
+    switch (blobPart.type()) {
+    case BlobPart::Data:
+        encoder << blobPart.data();
+        break;
+    case BlobPart::Blob:
+        encoder << blobPart.url();
+        break;
+    }
+}
+
+bool ArgumentCoder<BlobPart>::decode(ArgumentDecoder& decoder, BlobPart& blobPart)
+{
+    uint32_t type;
+    if (!decoder.decode(type))
+        return false;
+
+    switch (type) {
+    case BlobPart::Data: {
+        Vector<char> data;
+        if (!decoder.decode(data))
+            return false;
+        blobPart = BlobPart(std::move(data));
+        break;
+    }
+    case BlobPart::Blob: {
+        String url;
+        if (!decoder.decode(url))
+            return false;
+        blobPart = BlobPart(URL(URL(), url));
+        break;
+    }
+    default:
+        return false;
+    }
 
     return true;
 }

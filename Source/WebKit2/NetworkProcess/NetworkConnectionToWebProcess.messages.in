@@ -44,7 +44,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     DeleteCookie(WebCore::SessionID sessionID, WebCore::URL url, String cookieName)
 
 #if ENABLE(BLOB)
-    RegisterBlobURL(WebCore::URL url, WebKit::BlobRegistrationData data) -> (uint64_t resultSize)
+    RegisterFileBlobURL(WebCore::URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
+    RegisterBlobURL(WebCore::URL url, Vector<WebCore::BlobPart> blobParts, String contentType) -> (uint64_t resultSize)
     RegisterBlobURLFromURL(WebCore::URL url, WebCore::URL srcURL)
     RegisterBlobURLForSlice(WebCore::URL url, WebCore::URL srcURL, int64_t start, int64_t end) -> (uint64_t resultSize)
     UnregisterBlobURL(WebCore::URL url)

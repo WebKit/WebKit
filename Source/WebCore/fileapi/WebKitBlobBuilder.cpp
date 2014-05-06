@@ -75,7 +75,7 @@ void BlobBuilder::append(ArrayBuffer* arrayBuffer)
     if (!arrayBuffer)
         return;
 
-    appendBytesData(arrayBuffer->data(), arrayBuffer->byteLength());
+    m_appendableData.append(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength());
 }
 
 void BlobBuilder::append(PassRefPtr<ArrayBufferView> arrayBufferView)
@@ -83,7 +83,7 @@ void BlobBuilder::append(PassRefPtr<ArrayBufferView> arrayBufferView)
     if (!arrayBufferView)
         return;
 
-    appendBytesData(arrayBufferView->baseAddress(), arrayBufferView->byteLength());
+    m_appendableData.append(static_cast<const char*>(arrayBufferView->baseAddress()), arrayBufferView->byteLength());
 }
 #endif
 
@@ -92,25 +92,14 @@ void BlobBuilder::append(Blob* blob)
     if (!blob)
         return;
     if (!m_appendableData.isEmpty())
-        m_items.append(BlobDataItem(RawData::create(std::move(m_appendableData))));
-    if (blob->isFile()) {
-        File* file = toFile(blob);
-        m_items.append(BlobDataItem(file->path(), 0, BlobDataItem::toEndOfFile, invalidFileTime()));
-    } else {
-        long long blobSize = static_cast<long long>(blob->size());
-        m_items.append(BlobDataItem(blob->url(), 0, blobSize));
-    }
+        m_items.append(BlobPart(std::move(m_appendableData)));
+    m_items.append(BlobPart(blob->url()));
 }
 
-void BlobBuilder::appendBytesData(const void* data, size_t length)
-{
-    m_appendableData.append(static_cast<const char*>(data), length);
-}
-
-BlobDataItemList BlobBuilder::finalize()
+Vector<BlobPart> BlobBuilder::finalize()
 {
     if (!m_appendableData.isEmpty())
-        m_items.append(BlobDataItem(RawData::create(std::move(m_appendableData))));
+        m_items.append(BlobPart(std::move(m_appendableData)));
     return std::move(m_items);
 }
 

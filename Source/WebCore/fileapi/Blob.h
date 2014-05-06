@@ -31,8 +31,7 @@
 #ifndef Blob_h
 #define Blob_h
 
-#include "BlobData.h"
-#include "URL.h"
+#include "BlobPart.h"
 #include "ScriptWrappable.h"
 #include "URLRegistry.h"
 #include <wtf/PassRefPtr.h>
@@ -50,15 +49,20 @@ public:
         return adoptRef(new Blob);
     }
 
-    static PassRefPtr<Blob> create(std::unique_ptr<BlobData> blobData)
+    static PassRefPtr<Blob> create(Vector<char> data, const String& contentType)
     {
-        return adoptRef(new Blob(std::move(blobData)));
+        return adoptRef(new Blob(std::move(data), contentType));
+    }
+
+    static PassRefPtr<Blob> create(Vector<BlobPart> blobParts, const String& contentType)
+    {
+        return adoptRef(new Blob(std::move(blobParts), contentType));
     }
 
     static PassRefPtr<Blob> deserialize(const URL& srcURL, const String& type, long long size)
     {
         ASSERT(Blob::isNormalizedContentType(type));
-        return adoptRef(new Blob(srcURL, type, size));
+        return adoptRef(new Blob(deserializationContructor, srcURL, type, size));
     }
 
     virtual ~Blob();
@@ -89,10 +93,14 @@ public:
 
 protected:
     Blob();
-    Blob(std::unique_ptr<BlobData>);
+    Blob(Vector<char>, const String& contentType);
+    Blob(Vector<BlobPart>, const String& contentType);
 
-    // For deserialization.
-    Blob(const URL& srcURL, const String& type, long long size);
+    enum UninitializedContructor { uninitializedContructor };
+    Blob(UninitializedContructor);
+
+    enum DeserializationContructor { deserializationContructor };
+    Blob(DeserializationContructor, const URL& srcURL, const String& type, long long size);
 
 #if ENABLE(BLOB)
     // For slicing.

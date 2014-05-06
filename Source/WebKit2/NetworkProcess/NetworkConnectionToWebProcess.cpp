@@ -28,7 +28,6 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include "BlobRegistrationData.h"
 #include "ConnectionStack.h"
 #include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -38,7 +37,6 @@
 #include "NetworkResourceLoaderMessages.h"
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
-#include <WebCore/BlobData.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
@@ -225,15 +223,16 @@ void NetworkConnectionToWebProcess::deleteCookie(SessionID sessionID, const URL&
 }
 
 #if ENABLE(BLOB)
-void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const BlobRegistrationData& data, uint64_t& resultSize)
+void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const String& path, const SandboxExtension::Handle& extensionHandle, const String& contentType)
 {
-    Vector<RefPtr<SandboxExtension>> extensions;
-    for (size_t i = 0, count = data.sandboxExtensions().size(); i < count; ++i) {
-        if (RefPtr<SandboxExtension> extension = SandboxExtension::create(data.sandboxExtensions()[i]))
-            extensions.append(extension);
-    }
+    RefPtr<SandboxExtension> extension = SandboxExtension::create(extensionHandle);
 
-    resultSize = NetworkBlobRegistry::shared().registerBlobURL(this, url, data.releaseData(), extensions);
+    NetworkBlobRegistry::shared().registerFileBlobURL(this, url, path, extension.release(), contentType);
+}
+
+void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType, uint64_t& resultSize)
+{
+    resultSize = NetworkBlobRegistry::shared().registerBlobURL(this, url, std::move(blobParts), contentType);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const URL& srcURL)

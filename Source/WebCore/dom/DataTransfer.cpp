@@ -189,7 +189,7 @@ bool DataTransfer::hasFileOfType(const String& type)
     ASSERT_WITH_SECURITY_IMPLICATION(canReadTypes());
 
     for (const String& filename : m_pasteboard->readFilenames()) {
-        if (equalIgnoringCase(File::contentTypeFromFilePath(filename, File::AllContentTypes), type))
+        if (equalIgnoringCase(File::contentTypeFromFilePathOrName(filename, File::AllContentTypes), type))
             return true;
     }
 

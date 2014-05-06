@@ -31,6 +31,7 @@
 namespace WebCore {
 class AffineTransform;
 class AuthenticationChallenge;
+class BlobPart;
 class CertificateInfo;
 class Color;
 class Credential;
@@ -422,6 +423,11 @@ template<> struct ArgumentCoder<WebCore::IDBObjectStoreMetadata> {
 template<> struct ArgumentCoder<WebCore::SessionID> {
     static void encode(ArgumentEncoder&, const WebCore::SessionID&);
     static bool decode(ArgumentDecoder&, WebCore::SessionID&);
+};
+
+template<> struct ArgumentCoder<WebCore::BlobPart> {
+    static void encode(ArgumentEncoder&, const WebCore::BlobPart&);
+    static bool decode(ArgumentDecoder&, WebCore::BlobPart&);
 };
 
 } // namespace IPC

@@ -1,3 +1,80 @@
+2014-05-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Stop using BlobData on client side
+        https://bugs.webkit.org/show_bug.cgi?id=132582
+
+        Reviewed by Sam Weinig.
+
+        Blob registration now uses either a single file path, or a vector of much simpler
+        BlobPart objects, not an array with arbitrarily sliced blobs or files, which can't happen.
+
+        * Modules/websockets/WebSocket.cpp:(WebCore::WebSocket::didReceiveBinaryData):
+        Use a new simpler Blob constructor.
+
+        * WebCore.xcodeproj/project.pbxproj: Added BlobPart, removed BlobRegistrationData.
+
+        * bindings/js/JSBlobCustom.cpp: (WebCore::JSBlobConstructor::constructJSBlob):
+        Use Vector<BlobPart> instead of BlobData (1 line of code instead of 5).
+
+        * dom/DataTransfer.cpp: (WebCore::DataTransfer::hasFileOfType): Updated for
+        File::contentTypeFromFilePathOrName rename.
+
+        * fileapi/Blob.cpp: (WebCore::Blob::Blob):
+        * fileapi/Blob.h:
+        (WebCore::Blob::create):
+        (WebCore::Blob::deserialize):
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        (WebCore::File::contentTypeFromFilePathOrName):
+        (WebCore::createBlobDataForFileWithType): Deleted.
+        (WebCore::createBlobDataForFile): Deleted.
+        (WebCore::createBlobDataForFileWithName): Deleted.
+        (WebCore::File::contentTypeFromFilePath): Deleted.
+        * fileapi/File.h: (WebCore::File::deserialize): Deleted.
+        Added and updated constructors to not use BlobData. Changed special case constructors
+        to use name tags instead of non-enforced comments.
+
+        * fileapi/ThreadableBlobRegistry.h:
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::BlobRegistryContext::BlobRegistryContext): Updated with new data members
+        that were split out of BlobData.
+        (WebCore::ThreadableBlobRegistry::registerFileBlobURL): Added.
+        (WebCore::ThreadableBlobRegistry::registerBlobURL): Updated to pass Content-Type
+        explicitly, as it's no longer hidden in BlobData.
+
+        * fileapi/WebKitBlobBuilder.h:
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::BlobBuilder::append):
+        (WebCore::BlobBuilder::finalize):
+        (WebCore::BlobBuilder::appendBytesData): Deleted.
+        Updated to use BlobPart. There is no longer any need to special case Files,
+        the registry takes care of that.
+
+        * platform/network/BlobData.h:
+        * platform/network/BlobData.cpp:
+        (WebCore::BlobDataItem::detachFromCurrentThread): Deleted.
+        (WebCore::BlobData::detachFromCurrentThread): Deleted.
+        BlobData will only be used on main thread by the registry.
+
+        * platform/network/BlobPart.h: Added. A new class to encapsulate a list of blobs
+        that are combined into a new blob, as exposed to JS via Blob constructor.
+
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerFileBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        * platform/network/BlobRegistryImpl.h:
+        Updated for the new registration methods. We no longer have arbitrary BlobDatas
+        coming in.
+
+        * platform/network/FormData.cpp: Don't include BlobData for now (but really,
+        BlobStorageData is the same thing, and they will be merged soon).
+        Unfortunately, FormData is used by both client and registry side, and there is
+        no clear delimitation at the time.
+ 
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::responseBlob): Use the new simpler
+        way to create a Blob.
+
 2014-05-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Clean up Image Document and tweak the layout and viewport

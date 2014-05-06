@@ -32,9 +32,10 @@
 
 namespace WebKit {
 
-class BlobRegistryProxy : public WebCore::BlobRegistry {
+class BlobRegistryProxy final : public WebCore::BlobRegistry {
 public:
-    virtual unsigned long long registerBlobURL(const WebCore::URL&, std::unique_ptr<WebCore::BlobData>) override;
+    virtual void registerFileBlobURL(const WebCore::URL&, const String& path, const String& contentType) override;
+    virtual unsigned long long registerBlobURL(const WebCore::URL&, Vector<WebCore::BlobPart>, const String& contentType) override;
     virtual void registerBlobURL(const WebCore::URL&, const WebCore::URL& srcURL) override;
     virtual void unregisterBlobURL(const WebCore::URL&) override;
     virtual unsigned long long registerBlobURLForSlice(const WebCore::URL&, const WebCore::URL& srcURL, long long start, long long end) override;

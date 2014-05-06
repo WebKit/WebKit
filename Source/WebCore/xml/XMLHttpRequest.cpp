@@ -24,7 +24,6 @@
 #include "XMLHttpRequest.h"
 
 #include "Blob.h"
-#include "BlobData.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"
@@ -289,13 +288,11 @@ Blob* XMLHttpRequest::responseBlob()
     if (!m_responseBlob) {
         if (m_binaryResponseBuilder) {
             // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
-            unsigned size = m_binaryResponseBuilder->size();
-            auto blobData = std::make_unique<BlobData>();
-            blobData->appendData(RawData::create(m_binaryResponseBuilder->data(), size), 0, BlobDataItem::toEndOfFile);
-            String normalizedContentType = Blob::normalizedContentType(responseMIMEType());
-            blobData->setContentType(normalizedContentType); // responseMIMEType defaults to text/xml which may be incorrect.
+            Vector<char> data;
+            data.append(m_binaryResponseBuilder->data(), m_binaryResponseBuilder->size());
+            String normalizedContentType = Blob::normalizedContentType(responseMIMEType()); // responseMIMEType defaults to text/xml which may be incorrect.
+            m_responseBlob = Blob::create(std::move(data), normalizedContentType);
             m_binaryResponseBuilder.clear();
-            m_responseBlob = Blob::create(std::move(blobData));
         } else {
             // If we errored out or got no data, we still return a blob, just an empty one.
             m_responseBlob = Blob::create();

@@ -29,6 +29,7 @@
 #if ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
 
 #include "SandboxExtension.h"
+#include <WebCore/BlobPart.h>
 #include <WebCore/BlobRegistryImpl.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
@@ -48,22 +49,40 @@ NetworkBlobRegistry::NetworkBlobRegistry()
 {
 }
 
-uint64_t NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, std::unique_ptr<BlobData> data, const Vector<RefPtr<SandboxExtension>>& newSandboxExtensions)
+void NetworkBlobRegistry::registerFileBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, const String& path, PassRefPtr<SandboxExtension> sandboxExtension, const String& contentType)
 {
     ASSERT(!m_sandboxExtensions.contains(url.string()));
 
-    // Combine new extensions for File items and existing extensions for inner Blob items.
-    Vector<RefPtr<SandboxExtension>> sandboxExtensions = newSandboxExtensions;
-    const BlobDataItemList& items = data->items();
-    for (size_t i = 0, count = items.size(); i < count; ++i) {
-        if (items[i].type == BlobDataItem::Blob)
-            sandboxExtensions.appendVector(m_sandboxExtensions.get(items[i].url.string()));
+    blobRegistry().registerFileBlobURL(url, path, contentType);
+
+    if (sandboxExtension) {
+        Vector<RefPtr<SandboxExtension>> extensionsVector;
+        extensionsVector.append(sandboxExtension);
+        m_sandboxExtensions.add(url.string(), std::move(extensionsVector));
     }
 
-    uint64_t resultSize = blobRegistry().registerBlobURL(url, std::move(data));
+    ASSERT(!m_blobsForConnection.get(connection).contains(url));
+    BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);
+    if (mapIterator == m_blobsForConnection.end())
+        mapIterator = m_blobsForConnection.add(connection, HashSet<URL>()).iterator;
+    mapIterator->value.add(url);
+}
+
+uint64_t NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, Vector<WebCore::BlobPart> blobParts, const String& contentType)
+{
+    ASSERT(!m_sandboxExtensions.contains(url.string()));
+
+    // Combine existing extensions for inner Blob items.
+    Vector<RefPtr<SandboxExtension>> sandboxExtensions;
+    for (const BlobPart& part : blobParts) {
+        if (part.type() == BlobPart::Blob)
+            sandboxExtensions.appendVector(m_sandboxExtensions.get(part.url().string()));
+    }
+
+    uint64_t resultSize = blobRegistry().registerBlobURL(url, std::move(blobParts), contentType);
 
     if (!sandboxExtensions.isEmpty())
-        m_sandboxExtensions.add(url.string(), sandboxExtensions);
+        m_sandboxExtensions.add(url.string(), std::move(sandboxExtensions));
 
     ASSERT(!m_blobsForConnection.get(connection).contains(url));
     BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);

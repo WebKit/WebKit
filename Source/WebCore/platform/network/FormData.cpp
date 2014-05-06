@@ -23,8 +23,8 @@
 
 #include "FormData.h"
 
-#include "BlobData.h"
 #include "BlobRegistryImpl.h"
+#include "BlobStorageData.h"
 #include "BlobURL.h"
 #include "Chrome.h"
 #include "ChromeClient.h"

@@ -34,6 +34,7 @@
 
 #if ENABLE(BLOB)
 
+#include "BlobPart.h"
 #include "BlobResourceHandle.h"
 #include "BlobStorageData.h"
 #include "FileMetadata.h"
@@ -116,12 +117,28 @@ void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, cons
     ASSERT(!length);
 }
 
-unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
+void BlobRegistryImpl::registerFileBlobURL(const URL& url, const String& path, const String& contentType)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
 
-    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create(blobData->contentType());
+    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create(contentType);
+
+    // FIXME: Factor out size and modification tracking for a cleaner implementation.
+    FileMetadata metadata;
+    if (!getFileMetadata(path, metadata))
+        return;
+
+    blobStorageData->m_data.appendFile(path, 0, metadata.length, metadata.modificationTime);
+    m_blobs.set(url.string(), blobStorageData);
+}
+
+unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
+{
+    ASSERT(isMainThread());
+    registerBlobResourceHandleConstructor();
+
+    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create(contentType);
 
     // The blob data is stored in the "canonical" way. That is, it only contains a list of Data and File items.
     // 1) The Data item is denoted by the raw data and the range.
@@ -129,37 +146,24 @@ unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, std::unique
     // 3) The URL item is denoted by the URL, the range and the expected modification time.
     // All the Blob items in the passing blob data are resolved and expanded into a set of Data and File items.
 
-    // FIXME: BlobDataItems contain a lot of information that we do not expect to be present when registering a new blob,
-    // these data members are only used inside the registry. Use a more appropriate type than BlobData.
-
     unsigned long long size = 0;
-    for (const BlobDataItem& item : blobData->items()) {
-        switch (item.type) {
-        case BlobDataItem::Data:
-            blobStorageData->m_data.appendData(item.data, 0, item.data->length());
-            size += item.data->length();
-            break;
-        case BlobDataItem::File: {
-            ASSERT(!item.offset);
-            ASSERT(item.length == BlobDataItem::toEndOfFile);
-            ASSERT(!isValidFileTime(item.expectedModificationTime));
-
-            // FIXME: Factor out size and modification tracking for a cleaner implementation.
-            FileMetadata metadata;
-            if (!getFileMetadata(item.path, metadata))
-                return 0;
-
-            blobStorageData->m_data.appendFile(item.path, 0, metadata.length, metadata.modificationTime);
-            size += metadata.length;
+    for (BlobPart& part : blobParts) {
+        switch (part.type()) {
+        case BlobPart::Data: {
+            unsigned long long partSize = part.data().size();
+            RefPtr<RawData> rawData = RawData::create(part.moveData());
+            size += partSize;
+            blobStorageData->m_data.appendData(rawData.release(), 0, partSize);
             break;
         }
-        case BlobDataItem::Blob:
-            if (!m_blobs.contains(item.url.string()))
+        case BlobPart::Blob: {
+            if (!m_blobs.contains(part.url().string()))
                 return 0;
-            size += blobSize(item.url); // As a side effect, this calculates sizes of all files in the blob.
-            ASSERT(blobSize(item.url) == static_cast<unsigned long long>(item.length));
-            appendStorageItems(blobStorageData.get(), m_blobs.get(item.url.string())->items(), item.offset, item.length);
+            unsigned long long partSize = blobSize(part.url()); // As a side effect, this calculates sizes of all files in the blob.
+            size += partSize;
+            appendStorageItems(blobStorageData.get(), m_blobs.get(part.url().string())->items(), 0, partSize);
             break;
+        }
         }
     }
 
