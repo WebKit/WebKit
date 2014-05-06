@@ -69,7 +69,7 @@ public:
 protected:
     virtual bool needsPreferredWidthsRecalculation() const override final;
     virtual RenderBox* embeddedContentBox() const override final;
-    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const override final;
+    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override final;
     virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle*) override final;

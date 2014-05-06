@@ -96,6 +96,7 @@ public:
     virtual AffineTransform* supplementalTransform() { return 0; }
 
     void invalidateSVGAttributes() { ensureUniqueElementData().setAnimatedSVGAttributesAreDirty(true); }
+    void invalidateSVGPresentationAttributeStyle() { ensureUniqueElementData().setPresentationAttributeStyleIsDirty(true); }
 
     const HashSet<SVGElementInstance*>& instancesForElement() const;
 

@@ -44,7 +44,7 @@ public:
     bool isEmbeddedThroughSVGImage() const;
     bool isEmbeddedThroughFrameContainingSVGDocument() const;
 
-    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const override;
+    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override;
 
     bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
     virtual void setNeedsBoundariesUpdate() override { m_needsBoundariesOrTransformUpdate = true; }
@@ -55,8 +55,6 @@ public:
     void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; }
 
     virtual bool hasRelativeDimensions() const override;
-    virtual bool hasRelativeIntrinsicLogicalWidth() const override;
-    virtual bool hasRelativeLogicalHeight() const override;
 
     // localToBorderBoxTransform maps local SVG viewport coordinates to local CSS box coordinates.  
     const AffineTransform& localToBorderBoxTransform() const { return m_localToBorderBoxTransform; }

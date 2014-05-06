@@ -1,3 +1,91 @@
+2014-05-05  Dirk Schulze  <krit@webkit.org>
+
+        Adapt inline SVG sizing behavior to Firefox and Blink
+        https://bugs.webkit.org/show_bug.cgi?id=132569
+
+        Reviewed by Dean Jackson.
+
+        This patch is ported from Blink CR 308992. Thanks to David Vest for helping
+        with back porting his Blink patch. From the commit message:
+
+        "The basis of this change is to map explicit width and height
+        attributes to CSS properties, essentially promoting them to
+        presentation attributes. Note that implicit "100%" width and height
+        are not mapped.
+        
+        This enables us to remove the concept of "percentage intrinsic size"
+        and rely on normal CSS rules to resolve percentage values.
+        
+        The change has been approved by the SVG WG and the spec is being
+        updated. Minutes here:
+        
+        http://www.w3.org/2014/04/07-svg-minutes.html#item03"
+
+        The new model was indeed approved by the SVG WG and is basically following
+        the CSS 2.1 model for replaced elements.
+
+        With this patch WebKit, Firefox and Blink have the same behavior for inline SVG.
+        This is the first successful approach to unify the sizing behavior of SVG
+        across UAs.
+
+        Tests: svg/as-object/sizing/svg-in-object-placeholder-height-auto.html
+               svg/as-object/sizing/svg-in-object-placeholder-height-fixed.html
+               svg/as-object/sizing/svg-in-object-placeholder-height-percentage.html
+               svg/in-html/sizing/svg-inline.html
+
+        * css/svg.css: Root SVG elements still need to be sized with height: 100% and
+            width: 100%. This is necessary since width and height are presentation
+            attributes now.
+        (svg:root):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::computeIntrinsicRatioInformation): Remove all special
+            behavior for intrinsic and percentage based sizes in SVG. This simplifies and
+            unifies the code a lot. Most of the logic that is used is in RenderBox and
+            RenderReplaced now. RenderSVGRoot was cleaned up a lot and is much lighter. 
+            And so it SVGSVGElement.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight):
+        (WebCore::RenderBoxModelObject::calculateImageIntrinsicDimensions):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeIntrinsicRatioInformation):
+        * rendering/RenderImage.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeAspectRatioInformationForRenderBox):
+        (WebCore::RenderReplaced::computeIntrinsicRatioInformation):
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+        (WebCore::RenderReplaced::computePreferredLogicalWidths):
+        * rendering/RenderReplaced.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeIntrinsicRatioInformation):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+        (WebCore::RenderSVGRoot::hasRelativeDimensions):
+        (WebCore::RenderSVGRoot::hasRelativeIntrinsicLogicalWidth): Deleted.
+        (WebCore::RenderSVGRoot::hasRelativeLogicalHeight): Deleted.
+        * rendering/svg/RenderSVGRoot.h:
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::invalidateSVGPresentationAttributeStyle):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::isPresentationAttribute):
+        (WebCore::SVGSVGElement::collectStyleForPresentationAttribute):
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+        (WebCore::SVGSVGElement::currentViewportSize):
+        (WebCore::SVGSVGElement::hasIntrinsicWidth):
+        (WebCore::SVGSVGElement::hasIntrinsicHeight):
+        (WebCore::SVGSVGElement::intrinsicWidth):
+        (WebCore::SVGSVGElement::intrinsicHeight):
+        (WebCore::SVGSVGElement::widthAttributeEstablishesViewport): Deleted.
+        (WebCore::SVGSVGElement::heightAttributeEstablishesViewport): Deleted.
+        * svg/SVGSVGElement.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::containerSize):
+        * xml/XMLErrors.cpp: If an error occurs in a stand alone SVG file, we create
+            an XHTML document with the error message and append the SVG file.
+            This SVG file now follows the CSS sizing behavior as inline SVG.
+            Therefore, we need to set width and height to 100% explicitly.
+        (WebCore::XMLErrors::insertErrorMessageBlock):
+
 2014-05-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] REGRESSION(167145): JavaScript media controls are broken

@@ -11,6 +11,8 @@
 function test() {
     // create some SVG
     var svgroot = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svgroot.setAttribute("width", "100%");
+    svgroot.setAttribute("height", "100%");
     document.getElementById("root").appendChild(svgroot);
     // add a red rectangle that will be covered up by the green rectangle
     var redRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");

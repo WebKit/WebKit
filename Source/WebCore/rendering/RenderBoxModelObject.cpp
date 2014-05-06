@@ -241,7 +241,12 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
     // don't care if the cell specified a height or not.
     if (cb->isTableCell())
         return false;
-    
+
+    // Match RenderBox::availableLogicalHeightUsing by special casing
+    // the render view. The available height is taken from the frame.
+    if (cb->isRenderView())
+        return false;
+
     if (!cb->style().logicalHeight().isAuto() || (!cb->style().logicalTop().isAuto() && !cb->style().logicalBottom().isAuto()))
         return false;
 
@@ -896,18 +901,10 @@ LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* i
     FloatSize intrinsicRatio;
     image->computeIntrinsicDimensions(this, intrinsicWidth, intrinsicHeight, intrinsicRatio);
 
-    // Intrinsic dimensions expressed as percentages must be resolved relative to the dimensions of the rectangle
-    // that establishes the coordinate system for the 'background-position' property. 
-    
-    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-    if (intrinsicWidth.isPercentNotCalculated() && intrinsicHeight.isPercentNotCalculated() && intrinsicRatio.isEmpty()) {
-        // Resolve width/height percentages against positioningAreaSize, only if no intrinsic ratio is provided.
-        float resolvedWidth = positioningAreaSize.width() * intrinsicWidth.percent() / 100;
-        float resolvedHeight = positioningAreaSize.height() * intrinsicHeight.percent() / 100;
-        return LayoutSize(resolvedWidth, resolvedHeight);
-    }
+    ASSERT(!intrinsicWidth.isPercent());
+    ASSERT(!intrinsicHeight.isPercent());
 
-    LayoutSize resolvedSize(intrinsicWidth.isFixed() ? intrinsicWidth.value() : 0, intrinsicHeight.isFixed() ? intrinsicHeight.value() : 0);
+    LayoutSize resolvedSize(intrinsicWidth.value(), intrinsicHeight.value());
     LayoutSize minimumSize(resolvedSize.width() > 0 ? 1 : 0, resolvedSize.height() > 0 ? 1 : 0);
     if (shouldScaleOrNot == ScaleByEffectiveZoom)
         resolvedSize.scale(style().effectiveZoom());

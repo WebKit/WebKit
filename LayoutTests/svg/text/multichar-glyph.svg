@@ -5,7 +5,7 @@ left edges of their containing red or green boxes. In addition, all
 the assertions below should pass.</p>
 
 <div style="width: 800px; height: 200px;">
-<svg xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
 <font>
 <font-face font-family="xyzzy" units-per-em="100" ascent="100" descent="500">
 </font-face>

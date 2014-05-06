@@ -42,6 +42,8 @@ var armed = null;
 window.addEventListener('load', function () {
 
     var svgContainer = newSvgElement('svg', document.body);
+    svgContainer.setAttribute('width', '100%');
+    svgContainer.setAttribute('height', '100%');
     var shapes = [
         { pos: [ 100, 100 ], size: 60, hasStroke: false },
         { pos: [ 250, 100 ], size: 60, hasStroke: true },

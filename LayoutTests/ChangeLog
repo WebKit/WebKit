@@ -1,3 +1,199 @@
+2014-05-05  Dirk Schulze  <krit@webkit.org>
+
+        Adapt inline SVG sizing behavior to Firefox and Blink
+        https://bugs.webkit.org/show_bug.cgi?id=132569
+
+        Reviewed by Dean Jackson.
+
+        The new sizing behavior for inline SVG causes different DRT outputs for about 40 test cases.
+        This is expected but for most tests an improvement since the SVGs fit into the documents
+        and scrollbars disappear or the general size gets smaller.
+        Some tests needed to be updated. The size was either not set at all or not properly.
+
+        svg-in-object.js and svg-inline.js contain dozens of new tests to check the correct sizing
+        behavior.
+
+        The tests were written by David Vest from Opera as part of CR 308992.
+
+        Many of the -expected updates are caused by SVG size changes in turn
+        affecting where line breaks are inserted.
+
+        * TestExpectations:
+        * accessibility/svg-image-expected.txt:
+        * css3/flexbox/flexitem.html:
+        * fast/css/infinite-floating-value-expected.txt:
+        * fast/css/remove-fixed-resizer-crash-expected.txt:
+        * fast/css3-text/css3-word-spacing-percentage/word-spacing-crash-expected.txt:
+        * fast/repaint/moving-shadow-on-container.html:
+        * fast/repaint/moving-shadow-on-path.html:
+        * fast/repaint/svg-layout-root-style-attr-update.html:
+        * fast/shapes/shape-outside-floats/shape-outside-relative-size-svg-expected.html:
+        * fast/shapes/shape-outside-floats/shape-outside-relative-size-svg.html:
+        * http/tests/xmlviewer/dumpAsText/svg-expected.txt:
+        * platform/mac/svg/batik/filters/feTile-expected.txt:
+        * platform/mac/svg/batik/masking/maskRegions-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/mac/svg/batik/text/longTextOnPath-expected.txt:
+        * platform/mac/svg/batik/text/textDecoration-expected.txt:
+        * platform/mac/svg/batik/text/textEffect-expected.txt:
+        * platform/mac/svg/batik/text/textLength-expected.txt:
+        * platform/mac/svg/batik/text/textOnPath-expected.txt:
+        * platform/mac/svg/batik/text/textPosition-expected.txt:
+        * platform/mac/svg/batik/text/verticalText-expected.txt:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/mac/svg/custom/bug45331-expected.txt:
+        * platform/mac/svg/custom/junk-data-expected.txt:
+        * platform/mac/svg/custom/missing-xlink-expected.txt:
+        * platform/mac/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.png: Removed.
+        * platform/mac/svg/custom/object-sizing-height-50p-on-target-svg-expected.png: Removed.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.png: Removed.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.png: Removed.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Removed.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Removed.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png: Removed.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Removed.
+        * platform/mac/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.png: Removed.
+        * platform/mac/svg/custom/object-sizing-width-50p-on-target-svg-expected.png: Removed.
+        * platform/mac/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.png: Removed.
+        * platform/mac/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.png: Removed.
+        * platform/mac/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Removed.
+        * platform/mac/svg/custom/path-bad-data-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/mac/svg/custom/use-font-face-crash-expected.txt:
+        * platform/mac/svg/foreignObject/svg-document-in-html-document-expected.txt:
+        * platform/mac/svg/hixie/error/012-expected.txt:
+        * platform/mac/svg/hixie/intrinsic/001-expected.png: Removed.
+        * platform/mac/svg/hixie/intrinsic/001-expected.txt: Removed.
+        * platform/mac/svg/hixie/intrinsic/002-expected.png: Removed.
+        * platform/mac/svg/hixie/intrinsic/002-expected.txt: Removed.
+        * platform/mac/svg/in-html/circle-expected.txt:
+        * platform/mac/svg/text/non-bmp-positioning-lists-expected.txt:
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.txt:
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt:
+        * platform/mac/svg/wicd/rightsizing-grid-expected.txt:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-background-image-tiled-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-background-images-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-as-relative-image-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-float-border-padding-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-zoom-coords-expected.txt:
+        * platform/mac/svg/zoom/text/zoom-foreignObject-expected.txt:
+        * svg/animations/animate-css-xml-attributeType-expected.txt:
+        * svg/as-image/image-respects-deviceScaleFactor.html:
+        * svg/as-image/image-respects-pageScaleFactor.html:
+        * svg/as-image/svg-as-image-with-relative-size-expected.html:
+        * svg/as-image/svg-as-relative-image.html:
+        * svg/as-object/sizing/svg-in-object-placeholder-height-auto-expected.txt: Added.
+        * svg/as-object/sizing/svg-in-object-placeholder-height-auto.html: Added.
+        * svg/as-object/sizing/svg-in-object-placeholder-height-fixed-expected.txt: Added.
+        * svg/as-object/sizing/svg-in-object-placeholder-height-fixed.html: Added.
+        * svg/as-object/sizing/svg-in-object-placeholder-height-percentage-expected.txt: Added.
+        * svg/as-object/sizing/svg-in-object-placeholder-height-percentage.html: Added.
+        * svg/as-object/sizing/svg-in-object.js: Added.
+        (.):
+        (.addAttr):
+        (.generateSVGURI):
+        (buildDemo):
+        (.doCombinationTestRecursive):
+        (doCombinationTest):
+        (debugHint):
+        (.debugHint):
+        (testSVGInObjectWithPlaceholderHeightAttr.):
+        (testSVGInObjectWithPlaceholderHeightAttr):
+        * svg/css/composite-shadow-example.html:
+        * svg/css/composite-shadow-with-opacity.html:
+        * svg/css/max-width-2.html:
+        * svg/css/stars-with-shadow.html:
+        * svg/custom/absolute-sized-content-with-resources.xhtml:
+        * svg/custom/altglyph.svg:
+        * svg/custom/document-all-includes-svg-expected.txt:
+        * svg/custom/external-paintserver-reference-expected.txt:
+        * svg/custom/external-paintserver-reference.svg:
+        * svg/custom/get-text-element-transform-crash-expected.txt:
+        * svg/custom/linking-base-external-reference-expected.txt:
+        * svg/custom/linking-base-external-reference.xhtml:
+        * svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.txt: Removed.
+        * svg/custom/object-sizing-height-50p-on-target-svg-absolute.xhtml: Removed.
+        * svg/custom/object-sizing-height-50p-on-target-svg-expected.txt: Removed.
+        * svg/custom/object-sizing-height-50p-on-target-svg.xhtml: Removed.
+        * svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.txt: Removed.
+        * svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute.xhtml: Removed.
+        * svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.txt: Removed.
+        * svg/custom/object-sizing-width-50p-height-50p-on-target-svg.xhtml: Removed.
+        * svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Removed.
+        * svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml: Removed.
+        * svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Removed.
+        * svg/custom/object-sizing-width-50p-height-75p-on-target-svg.xhtml: Removed.
+        * svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.txt: Removed.
+        * svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml: Removed.
+        * svg/custom/object-sizing-width-50p-on-target-svg-expected.txt: Removed.
+        * svg/custom/object-sizing-width-50p-on-target-svg.xhtml: Removed.
+        * svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt: Removed.
+        * svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml: Removed.
+        * svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Removed.
+        * svg/custom/object-sizing-width-75p-height-50p-on-target-svg.xhtml: Removed.
+        * svg/custom/pending-resource-after-removal.xhtml:
+        * svg/custom/percentage-of-html-parent.xhtml:
+        * svg/custom/relative-sized-content-with-resources.xhtml:
+        * svg/custom/relative-sized-content.xhtml:
+        * svg/custom/relative-sized-deep-shadow-tree-content.xhtml:
+        * svg/custom/relative-sized-image.xhtml:
+        * svg/custom/relative-sized-inner-svg.xhtml:
+        * svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml:
+        * svg/custom/relative-sized-shadow-tree-content.xhtml:
+        * svg/custom/relative-sized-use-on-symbol.xhtml:
+        * svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml:
+        * svg/custom/tref-with-progress-tag-setpseudo-assert-expected.txt:
+        * svg/custom/unicode-in-tspan-multi-svg-crash-expected.txt:
+        * svg/custom/use-invalid-html-expected.txt:
+        * svg/custom/window-named-item-lookup-expected.txt:
+        * svg/dom/SVGViewSpec-invalid-ref-crash-expected.txt:
+        * svg/dom/parent-view-layout-crash-expected.txt:
+        * svg/dom/stylesheet-candidate-node-crash-main-expected.txt:
+        * svg/dom/svg-root-lengths.html:
+        * svg/foreignObject/absolute-position-foreign-object-child-crash-expected.txt:
+        * svg/hixie/intrinsic/001-expected.png: Removed.
+        * svg/hixie/intrinsic/001-expected.txt: Removed.
+        * svg/hixie/intrinsic/001.html: Removed.
+        * svg/hixie/intrinsic/002-expected.png: Removed.
+        * svg/hixie/intrinsic/002-expected.txt: Removed.
+        * svg/hixie/intrinsic/002.html: Removed.
+        * svg/hixie/intrinsic/resources/001.svg: Removed.
+        * svg/hixie/intrinsic/resources/002.svg: Removed.
+        * svg/in-html/sizing/svg-inline-expected.txt: Added.
+        * svg/in-html/sizing/svg-inline.html: Added.
+        * svg/in-html/sizing/svg-inline.js: Added.
+        (.):
+        (setupSVGElement):
+        (buildDemo):
+        (.doCombinationTestRecursive):
+        (doCombinationTest):
+        (debugHint):
+        (.debugHint):
+        * svg/path-arc-invalid-expected.txt:
+        * svg/repaint/repaint-webkit-svg-shadow-container-expected.txt:
+        * svg/text/append-text-node-to-tspan.html:
+        * svg/text/kerning.svg:
+        * svg/text/modify-text-node-in-tspan.html:
+        * svg/text/multichar-glyph.svg:
+        * svg/text/remove-text-node-from-tspan.html:
+        * svg/text/remove-tspan-from-text.html:
+        * svg/text/svg-rtl-text-crash-expected.txt:
+        * svg/text/text-block-child-crash-expected.txt:
+        * svg/transforms/animated-path-inside-transformed-html.xhtml:
+        * svg/transforms/svg-css-transforms-clip-path.xhtml:
+        * svg/transforms/transform-origin-css-property.xhtml:
+        * svg/zoom/page/zoom-foreignObject.svg:
+        * svg/zoom/page/zoom-svg-as-relative-image.html:
+        * svg/zoom/text/zoom-foreignObject.svg:
+
 2014-05-05  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Add tests using blending and isolation for body and html elements.

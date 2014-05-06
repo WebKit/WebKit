@@ -719,9 +719,9 @@ void RenderImage::layoutShadowControls(const LayoutSize& oldSize)
     statePusher.pop();
 }
 
-void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const
+void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
-    RenderReplaced::computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio, isPercentageIntrinsicSize);
+    RenderReplaced::computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
 
     // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
     if (intrinsicSize.isEmpty() && (imageResource().imageHasRelativeWidth() || imageResource().imageHasRelativeHeight())) {

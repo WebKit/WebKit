@@ -120,7 +120,7 @@ IntSize SVGImage::containerSize() const
     ASSERT(renderer->style().effectiveZoom() == 1);
 
     FloatSize currentSize;
-    if (rootElement->intrinsicWidth().isFixed() && rootElement->intrinsicHeight().isFixed())
+    if (rootElement->hasIntrinsicWidth() && rootElement->hasIntrinsicHeight())
         currentSize = rootElement->currentViewportSize();
     else
         currentSize = rootElement->currentViewBoxRect().size();

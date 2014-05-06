@@ -80,9 +80,9 @@ layer at (173,351) size 454x135
           text run at (12,97) width 429: "Learn to use the (yet to be) time-honored techniques in new"
           text run at (12,111) width 350: "and invigorating fashion. Become one with the web."
     RenderText {#text} at (0,0) size 0x0
-layer at (321,235) size 306x80
-  RenderBlock (positioned) {H3} at (148,-116) size 306x81 [color=#CCCC77] [bgcolor=#888811] [border: (3px solid #888811) none (3px solid #888811)]
+layer at (321,234) size 307x81
+  RenderBlock (positioned) {H3} at (147,-118) size 307x83 [color=#CCCC77] [bgcolor=#888811] [border: (3.77px solid #888811) none (3.77px solid #888811)]
     RenderInline {SPAN} at (0,0) size 277x83
-      RenderText {#text} at (45,-2) size 277x83
-        text run at (45,-2) width 230: "The Road to"
-        text run at (3,35) width 277: "Enlightenment"
+      RenderText {#text} at (45,-1) size 277x83
+        text run at (45,-1) width 230: "The Road to"
+        text run at (4,36) width 277: "Enlightenment"

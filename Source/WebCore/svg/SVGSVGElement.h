@@ -68,14 +68,9 @@ public:
     bool useCurrentView() const { return m_useCurrentView; }
     SVGViewSpec* currentView();
 
-    enum ConsiderCSSMode {
-        RespectCSSProperties,
-        IgnoreCSSProperties
-    };
-
     // RenderSVGRoot wants to query the intrinsic size, by only examining the width/height attributes.
-    Length intrinsicWidth(ConsiderCSSMode = RespectCSSProperties) const;
-    Length intrinsicHeight(ConsiderCSSMode = RespectCSSProperties) const;
+    Length intrinsicWidth() const;
+    Length intrinsicHeight() const;
     FloatSize currentViewportSize() const;
     FloatRect currentViewBoxRect() const;
 
@@ -121,10 +116,10 @@ public:
 
     void setupInitialView(const String& fragmentIdentifier, Element* anchorNode);
 
-    Element* getElementById(const String&);
+    bool hasIntrinsicWidth() const;
+    bool hasIntrinsicHeight() const;
 
-    bool widthAttributeEstablishesViewport() const;
-    bool heightAttributeEstablishesViewport() const;
+    Element* getElementById(const String&);
 
     SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
     void setZoomAndPan(unsigned short zoomAndPan) { m_zoomAndPan = SVGZoomAndPan::parseFromNumber(zoomAndPan); }
@@ -138,6 +133,8 @@ private:
     virtual void didMoveToNewDocument(Document* oldDocument) override;
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
     virtual bool rendererIsNeeded(const RenderStyle&) override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;

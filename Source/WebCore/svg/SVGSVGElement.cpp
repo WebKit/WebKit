@@ -270,23 +270,48 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
     reportAttributeParsingError(parseError, name, value);
 }
 
+bool SVGSVGElement::isPresentationAttribute(const QualifiedName& name) const
+{
+    if (isOutermostSVGSVGElement() && (name == SVGNames::widthAttr || name == SVGNames::heightAttr))
+        return true;
+    return SVGGraphicsElement::isPresentationAttribute(name);
+}
+
+void SVGSVGElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+{
+    if (isOutermostSVGSVGElement() && (name == SVGNames::widthAttr || name == SVGNames::heightAttr)) {
+        if (name == SVGNames::widthAttr)
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWidth, value);
+        else if (name == SVGNames::heightAttr)
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyHeight, value);
+    } else
+        SVGGraphicsElement::collectStyleForPresentationAttribute(name, value, style);
+}
+
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     bool updateRelativeLengthsOrViewBox = false;
     bool widthChanged = attrName == SVGNames::widthAttr;
-    if (widthChanged
-        || attrName == SVGNames::heightAttr
+    bool heightChanged = attrName == SVGNames::heightAttr;
+    if (widthChanged || heightChanged
         || attrName == SVGNames::xAttr
         || attrName == SVGNames::yAttr) {
         updateRelativeLengthsOrViewBox = true;
         updateRelativeLengthsInformation();
 
-        // At the SVG/HTML boundary (aka RenderSVGRoot), the width attribute can
-        // affect the replaced size so we need to mark it for updating.
-        if (widthChanged) {
+        // At the SVG/HTML boundary (aka RenderSVGRoot), the width and
+        // height attributes can affect the replaced size so we need
+        // to mark it for updating.
+        if (widthChanged || heightChanged) {
+            // FIXME: This is a hack to synchronize changes from SVG DOM earlier in the
+            // run. We need these changes in the style calculation process earlier than
+            // usual.
+            synchronizeAllAttributes();
             RenderObject* renderObject = renderer();
-            if (renderObject && renderObject->isSVGRoot())
-                toRenderSVGRoot(renderObject)->setNeedsLayoutAndPrefWidthsRecalc();
+            if (renderObject && renderObject->isSVGRoot()) {
+                invalidateSVGPresentationAttributeStyle();
+                setNeedsStyleRecalc();
+            }
         }
     }
 
@@ -569,10 +594,11 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
 
 FloatSize SVGSVGElement::currentViewportSize() const
 {
-    Length intrinsicWidth = this->intrinsicWidth();
-    Length intrinsicHeight = this->intrinsicHeight();
-    if (intrinsicWidth.isFixed() && intrinsicHeight.isFixed())
+    if (hasIntrinsicWidth() && hasIntrinsicHeight()) {
+        Length intrinsicWidth = this->intrinsicWidth();
+        Length intrinsicHeight = this->intrinsicHeight();
         return FloatSize(floatValueForLength(intrinsicWidth, 0), floatValueForLength(intrinsicHeight, 0));
+    }
 
     if (!renderer())
         return FloatSize();
@@ -586,80 +612,32 @@ FloatSize SVGSVGElement::currentViewportSize() const
     return FloatSize(viewportRect.width(), viewportRect.height());
 }
 
-bool SVGSVGElement::widthAttributeEstablishesViewport() const
+bool SVGSVGElement::hasIntrinsicWidth() const
 {
-    if (!renderer() || renderer()->isSVGViewportContainer())
-        return true;
-
-    // Spec: http://www.w3.org/TR/SVG/coords.html#ViewportSpace
-    // The ‘width’ attribute on the outermost svg element establishes the viewport's width, unless the following conditions are met:
-    // - the SVG content is a separately stored resource that is embedded by reference (such as the ‘object’ element in XHTML [XHTML]), or
-    //   the SVG content is embedded inline within a containing document;
-    // - and the referencing element or containing document is styled using CSS [CSS2] or XSL [XSL];
-    // - and there are CSS-compatible positioning properties ([CSS2], section 9.3) specified on the referencing element (e.g., the ‘object’ element)
-    //   or on the containing document's outermost svg element that are sufficient to establish the width of the viewport. Under these conditions,
-    //   the positioning properties establish the viewport's width.
-    RenderSVGRoot* root = toRenderSVGRoot(renderer());
-
-    // SVG embedded through object/embed/iframe.
-    if (root->isEmbeddedThroughFrameContainingSVGDocument())
-        return !root->hasReplacedLogicalWidth() && !document().frame()->ownerRenderer()->hasReplacedLogicalWidth();
-
-    // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
-    if (root->isEmbeddedThroughSVGImage() || document().documentElement() != this)
-        return !root->hasReplacedLogicalWidth();
-
-    return true;
+    return width().unitType() != LengthTypePercentage;
 }
 
-bool SVGSVGElement::heightAttributeEstablishesViewport() const
+bool SVGSVGElement::hasIntrinsicHeight() const
 {
-    if (!renderer() || renderer()->isSVGViewportContainer())
-        return true;
-
-    // Spec: http://www.w3.org/TR/SVG/coords.html#IntrinsicSizing
-    // Similarly, if there are positioning properties specified on the referencing element or on the outermost svg element
-    // that are sufficient to establish the height of the viewport, then these positioning properties establish the viewport's
-    // height; otherwise, the ‘height’ attribute on the outermost svg element establishes the viewport's height.
-    RenderSVGRoot* root = toRenderSVGRoot(renderer());
-
-    // SVG embedded through object/embed/iframe.
-    if (root->isEmbeddedThroughFrameContainingSVGDocument())
-        return !root->hasReplacedLogicalHeight() && !document().frame()->ownerRenderer()->hasReplacedLogicalHeight();
-
-    // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
-    if (root->isEmbeddedThroughSVGImage() || document().documentElement() != this)
-        return !root->hasReplacedLogicalHeight();
-
-    return true;
+    return height().unitType() != LengthTypePercentage;
 }
 
-Length SVGSVGElement::intrinsicWidth(ConsiderCSSMode mode) const
+Length SVGSVGElement::intrinsicWidth() const
 {
-    if (widthAttributeEstablishesViewport() || mode == IgnoreCSSProperties) {
-        if (width().unitType() == LengthTypePercentage)
-            return Length(width().valueAsPercentage() * 100, Percent);
+    if (width().unitType() == LengthTypePercentage)
+        return Length(0, Fixed);
 
-        SVGLengthContext lengthContext(this);
-        return Length(width().value(lengthContext), Fixed);
-    }
-
-    ASSERT(renderer());
-    return renderer()->style().width();
+    SVGLengthContext lengthContext(this);
+    return Length(width().value(lengthContext), Fixed);
 }
 
-Length SVGSVGElement::intrinsicHeight(ConsiderCSSMode mode) const
+Length SVGSVGElement::intrinsicHeight() const
 {
-    if (heightAttributeEstablishesViewport() || mode == IgnoreCSSProperties) {
-        if (height().unitType() == LengthTypePercentage)
-            return Length(height().valueAsPercentage() * 100, Percent);
+    if (height().unitType() == LengthTypePercentage)
+        return Length(0, Fixed);
 
-        SVGLengthContext lengthContext(this);
-        return Length(height().value(lengthContext), Fixed);
-    }
-
-    ASSERT(renderer());
-    return renderer()->style().height();
+    SVGLengthContext lengthContext(this);
+    return Length(height().value(lengthContext), Fixed);
 }
 
 AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const
