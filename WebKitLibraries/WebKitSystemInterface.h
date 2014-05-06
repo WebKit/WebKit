@@ -139,10 +139,12 @@ CFReadStreamRef WKCreateCustomCFReadStream(void *(*formCreate)(CFReadStreamRef, 
 #if !TARGET_OS_IPHONE
 void WKDrawCapsLockIndicator(CGContextRef, CGRect);
 
+// The CG context's current path is the focus ring's path.
+// Color and radius are ignored. Older versions of WebKit expected to
+// be able to change the rendering of the system focus ring.
 void WKDrawFocusRing(CGContextRef context, CGColorRef color, int radius);
-    // The CG context's current path is the focus ring's path.
-    // A color of 0 means "use system focus ring color".
-    // A radius of 0 means "use default focus ring radius".
+bool WKDrawFocusRingAtTime(CGContextRef context, NSTimeInterval time);
+bool WKDrawCellFocusRingWithFrameAtTime(NSCell *cell, NSRect cellFrame, NSView *controlView, NSTimeInterval time);
 
 void WKSetDragImage(NSImage *image, NSPoint offset);
 

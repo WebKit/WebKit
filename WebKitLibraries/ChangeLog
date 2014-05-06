@@ -1,3 +1,13 @@
+2014-05-05  Dean Jackson  <dino@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=132593
+
+        Update WebKitSystemInterface to allow animated focus rings.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceMavericks.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2014-05-05  Brent Fulgham  <bfulgham@apple.com>
 
         [WIN] Enhance auto-version.sh to handle all-caps or mixed-case build environment variable
