@@ -252,6 +252,7 @@ public:
     explicit ChildNodesLazySnapshot(Node& parentNode)
         : m_currentNode(parentNode.firstChild())
         , m_currentIndex(0)
+        , m_hasSnapshot(false)
     {
         m_nextSnapshot = latestSnapshot;
         latestSnapshot = this;
@@ -271,26 +272,25 @@ public:
                 m_currentNode = node->nextSibling();
             return node.release();
         }
-        Vector<RefPtr<Node>>& nodeVector = *m_childNodes;
-        if (m_currentIndex >= nodeVector.size())
+        if (m_currentIndex >= m_snapshot.size())
             return 0;
-        return nodeVector[m_currentIndex++];
+        return m_snapshot[m_currentIndex++];
     }
 
     void takeSnapshot()
     {
         if (hasSnapshot())
             return;
-        m_childNodes = adoptPtr(new Vector<RefPtr<Node>>());
+        m_hasSnapshot = true;
         Node* node = m_currentNode.get();
         while (node) {
-            m_childNodes->append(node);
+            m_snapshot.append(node);
             node = node->nextSibling();
         }
     }
 
     ChildNodesLazySnapshot* nextSnapshot() { return m_nextSnapshot; }
-    bool hasSnapshot() { return !!m_childNodes.get(); }
+    bool hasSnapshot() { return m_hasSnapshot; }
 
     static void takeChildNodesLazySnapshot()
     {
@@ -306,7 +306,8 @@ private:
 
     RefPtr<Node> m_currentNode;
     unsigned m_currentIndex;
-    OwnPtr<Vector<RefPtr<Node>>> m_childNodes; // Lazily instantiated.
+    bool m_hasSnapshot;
+    Vector<RefPtr<Node>> m_snapshot; // Lazily instantiated.
     ChildNodesLazySnapshot* m_nextSnapshot;
 };
 

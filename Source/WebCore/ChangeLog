@@ -1,3 +1,23 @@
+2014-05-06  Andreas Kling  <akling@apple.com>
+
+        ChildNodesLazySnapshot::m_childNodes needs two heap allocations.
+        <https://webkit.org/b/132616>
+
+        This seems a bit silly, since ChildNodesLazySnapshot is always
+        allocated on the stack.
+
+        Change it to be a bool + a Vector instead of using the nullity
+        as a presence indicator. This way we also don't end up with an
+        out-of-line ~OwnPtr for the Vector.
+
+        Reviewed by Geoff Garen.
+
+        * dom/ContainerNode.h:
+        (WebCore::ChildNodesLazySnapshot::ChildNodesLazySnapshot):
+        (WebCore::ChildNodesLazySnapshot::nextNode):
+        (WebCore::ChildNodesLazySnapshot::takeSnapshot):
+        (WebCore::ChildNodesLazySnapshot::hasSnapshot):
+
 2014-05-06  Alexey Proskuryakov  <ap@apple.com>
 
         Eliminate BlobStorageData
