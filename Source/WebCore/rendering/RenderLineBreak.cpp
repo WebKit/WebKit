@@ -29,8 +29,11 @@
 #include "RenderBlock.h"
 #include "RenderView.h"
 #include "RootInlineBox.h"
-#include "SelectionRect.h"
 #include "VisiblePosition.h"
+
+#if PLATFORM(IOS)
+#include "SelectionRect.h"
+#endif
 
 namespace WebCore {
 
