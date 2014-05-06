@@ -1,3 +1,47 @@
+2014-05-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Eliminate BlobStorageData
+        https://bugs.webkit.org/show_bug.cgi?id=132617
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/BlobData.h:
+        (WebCore::BlobData::create):
+        (WebCore::BlobData::BlobData):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::loadResourceSynchronously):
+        (WebCore::BlobRegistryImpl::appendStorageItems):
+        (WebCore::BlobRegistryImpl::registerFileBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURLForSlice):
+        (WebCore::BlobRegistryImpl::getBlobDataFromURL):
+        (WebCore::BlobRegistryImpl::blobSize):
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::createAsync):
+        (WebCore::BlobResourceHandle::loadResourceSynchronously):
+        (WebCore::BlobResourceHandle::BlobResourceHandle):
+        (WebCore::BlobResourceHandle::doStart):
+        (WebCore::BlobResourceHandle::getSizeForNext):
+        (WebCore::BlobResourceHandle::didGetSize):
+        (WebCore::BlobResourceHandle::seek):
+        (WebCore::BlobResourceHandle::readSync):
+        (WebCore::BlobResourceHandle::readDataSync):
+        (WebCore::BlobResourceHandle::readFileSync):
+        (WebCore::BlobResourceHandle::readAsync):
+        (WebCore::BlobResourceHandle::readDataAsync):
+        (WebCore::BlobResourceHandle::readFileAsync):
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+        * platform/network/BlobResourceHandle.h:
+        * platform/network/BlobStorageData.h: Removed.
+        * platform/network/FormData.cpp:
+        (WebCore::appendBlobResolved):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::addEncodedBlobToSoupMessageBody):
+
 2014-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS build.

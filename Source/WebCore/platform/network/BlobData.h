@@ -35,6 +35,7 @@
 #include "URL.h"
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -154,10 +155,12 @@ private:
 
 typedef Vector<BlobDataItem> BlobDataItemList;
 
-class BlobData {
-    WTF_MAKE_FAST_ALLOCATED;
+class BlobData : public RefCounted<BlobData> {
 public:
-    BlobData() { }
+    static PassRefPtr<BlobData> create()
+    {
+        return adoptRef(new BlobData);
+    }
 
     const String& contentType() const { return m_contentType; }
     void setContentType(const String&);
@@ -172,10 +175,8 @@ public:
 
 private:
     friend class BlobRegistryImpl;
-    friend class BlobStorageData;
 
-    // This is only exposed to BlobStorageData.
-    void appendData(const RawData&, long long offset, long long length);
+    BlobData() { }
 
     String m_contentType;
     String m_contentDisposition;

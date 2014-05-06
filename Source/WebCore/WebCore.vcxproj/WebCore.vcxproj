@@ -19567,7 +19567,6 @@
     <ClInclude Include="..\platform\network\BlobRegistry.h" />
     <ClInclude Include="..\platform\network\BlobRegistryImpl.h" />
     <ClInclude Include="..\platform\network\BlobResourceHandle.h" />
-    <ClInclude Include="..\platform\network\BlobStorageData.h" />
     <ClInclude Include="..\platform\network\CookieStorage.h" />
     <ClInclude Include="..\platform\network\Credential.h" />
     <ClInclude Include="..\platform\network\CredentialStorage.h" />

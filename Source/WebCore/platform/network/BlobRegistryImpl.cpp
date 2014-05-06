@@ -34,9 +34,9 @@
 
 #if ENABLE(BLOB)
 
+#include "BlobData.h"
 #include "BlobPart.h"
 #include "BlobResourceHandle.h"
-#include "BlobStorageData.h"
 #include "FileMetadata.h"
 #include "FileSystem.h"
 #include "ResourceError.h"
@@ -63,7 +63,7 @@ static PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest& re
 
 static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    BlobStorageData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(request.url());
+    BlobData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(request.url());
     BlobResourceHandle::loadResourceSynchronously(blobData, request, error, response, data);
 }
 
@@ -87,7 +87,7 @@ PassRefPtr<ResourceHandle> BlobRegistryImpl::createResourceHandle(const Resource
     return handle.release();
 }
 
-void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, const BlobDataItemList& items, long long offset, long long length)
+void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItemList& items, long long offset, long long length)
 {
     ASSERT(length != BlobDataItem::toEndOfFile);
 
@@ -106,10 +106,10 @@ void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, cons
         long long currentLength = iter->length - offset;
         long long newLength = currentLength > length ? length : currentLength;
         if (iter->type == BlobDataItem::Data)
-            blobStorageData->m_data.appendData(iter->data, iter->offset + offset, newLength);
+            blobData->appendData(iter->data, iter->offset + offset, newLength);
         else {
             ASSERT(iter->type == BlobDataItem::File);
-            blobStorageData->m_data.appendFile(iter->path, iter->offset + offset, newLength, iter->expectedModificationTime);
+            blobData->appendFile(iter->path, iter->offset + offset, newLength, iter->expectedModificationTime);
         }
         length -= newLength;
         offset = 0;
@@ -122,15 +122,16 @@ void BlobRegistryImpl::registerFileBlobURL(const URL& url, const String& path, c
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
 
-    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create(contentType);
+    RefPtr<BlobData> blobData = BlobData::create();
+    blobData->setContentType(contentType);
 
     // FIXME: Factor out size and modification tracking for a cleaner implementation.
     FileMetadata metadata;
     if (!getFileMetadata(path, metadata))
         return;
 
-    blobStorageData->m_data.appendFile(path, 0, metadata.length, metadata.modificationTime);
-    m_blobs.set(url.string(), blobStorageData);
+    blobData->appendFile(path, 0, metadata.length, metadata.modificationTime);
+    m_blobs.set(url.string(), blobData.release());
 }
 
 unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
@@ -138,7 +139,8 @@ unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, Vector<Blob
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
 
-    RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create(contentType);
+    RefPtr<BlobData> blobData = BlobData::create();
+    blobData->setContentType(contentType);
 
     // The blob data is stored in the "canonical" way. That is, it only contains a list of Data and File items.
     // 1) The Data item is denoted by the raw data and the range.
@@ -153,7 +155,7 @@ unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, Vector<Blob
             unsigned long long partSize = part.data().size();
             RefPtr<RawData> rawData = RawData::create(part.moveData());
             size += partSize;
-            blobStorageData->m_data.appendData(rawData.release(), 0, partSize);
+            blobData->appendData(rawData.release(), 0, partSize);
             break;
         }
         case BlobPart::Blob: {
@@ -161,22 +163,21 @@ unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, Vector<Blob
                 return 0;
             unsigned long long partSize = blobSize(part.url()); // As a side effect, this calculates sizes of all files in the blob.
             size += partSize;
-            appendStorageItems(blobStorageData.get(), m_blobs.get(part.url().string())->items(), 0, partSize);
+            appendStorageItems(blobData.get(), m_blobs.get(part.url().string())->items(), 0, partSize);
             break;
         }
         }
     }
 
-    m_blobs.set(url.string(), blobStorageData);
+    m_blobs.set(url.string(), blobData.release());
     return size;
 }
 
 void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
 {
     ASSERT(isMainThread());
-    registerBlobResourceHandleConstructor();
 
-    RefPtr<BlobStorageData> src = m_blobs.get(srcURL.string());
+    BlobData* src = getBlobDataFromURL(srcURL);
     if (!src)
         return;
 
@@ -186,8 +187,8 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
 unsigned long long BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)
 {
     ASSERT(isMainThread());
-    BlobStorageData* originalStorageData = m_blobs.get(srcURL.string());
-    if (!originalStorageData)
+    BlobData* originalData = getBlobDataFromURL(srcURL);
+    if (!originalData)
         return 0;
 
     unsigned long long originalSize = blobSize(srcURL);
@@ -212,11 +213,12 @@ unsigned long long BlobRegistryImpl::registerBlobURLForSlice(const URL& url, con
         end = originalSize;
 
     unsigned long long newLength = end - start;
-    RefPtr<BlobStorageData> newStorageData = BlobStorageData::create(originalStorageData->contentType());
+    RefPtr<BlobData> newData = BlobData::create();
+    newData->setContentType(originalData->contentType());
 
-    appendStorageItems(newStorageData.get(), originalStorageData->items(), start, newLength);
+    appendStorageItems(newData.get(), originalData->items(), start, newLength);
 
-    m_blobs.set(url.string(), newStorageData.release());
+    m_blobs.set(url.string(), newData.release());
     return newLength;
 }
 
@@ -226,7 +228,7 @@ void BlobRegistryImpl::unregisterBlobURL(const URL& url)
     m_blobs.remove(url.string());
 }
 
-BlobStorageData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
+BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
 {
     ASSERT(isMainThread());
     return m_blobs.get(url.string());
@@ -235,12 +237,12 @@ BlobStorageData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
 unsigned long long BlobRegistryImpl::blobSize(const URL& url)
 {
     ASSERT(isMainThread());
-    BlobStorageData* storageData = m_blobs.get(url.string());
-    if (!storageData)
+    BlobData* data = getBlobDataFromURL(url);
+    if (!data)
         return 0;
 
     unsigned long long result = 0;
-    for (const BlobDataItem& item : storageData->items()) {
+    for (const BlobDataItem& item : data->items()) {
         if (item.length == BlobDataItem::toEndOfFile) {
             FileMetadata metadata;
             if (!getFileMetadata(item.path, metadata))

@@ -42,7 +42,7 @@
 namespace WebCore {
 
 class AsyncFileStream;
-class BlobStorageData;
+class BlobData;
 class FileStream;
 class ResourceHandleClient;
 class ResourceRequest;
@@ -50,9 +50,9 @@ struct BlobDataItem;
 
 class BlobResourceHandle : public FileStreamClient, public ResourceHandle  {
 public:
-    static PassRefPtr<BlobResourceHandle> createAsync(BlobStorageData*, const ResourceRequest&, ResourceHandleClient*);
+    static PassRefPtr<BlobResourceHandle> createAsync(BlobData*, const ResourceRequest&, ResourceHandleClient*);
 
-    static void loadResourceSynchronously(BlobStorageData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data);
+    static void loadResourceSynchronously(BlobData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data);
 
     // FileStreamClient methods.
     virtual void didGetSize(long long) override;
@@ -70,7 +70,7 @@ public:
 private:
     friend void delayedStartBlobResourceHandle(void*);
 
-    BlobResourceHandle(PassRefPtr<BlobStorageData>, const ResourceRequest&, ResourceHandleClient*, bool async);
+    BlobResourceHandle(BlobData*, const ResourceRequest&, ResourceHandleClient*, bool async);
     virtual ~BlobResourceHandle();
 
     void doStart();
@@ -93,7 +93,7 @@ private:
     void notifyFail(int errorCode);
     void notifyFinish();
 
-    RefPtr<BlobStorageData> m_blobData;
+    RefPtr<BlobData> m_blobData;
     bool m_async;
     RefPtr<AsyncFileStream> m_asyncStream; // For asynchronous loading.
     RefPtr<FileStream> m_stream; // For synchronous loading.

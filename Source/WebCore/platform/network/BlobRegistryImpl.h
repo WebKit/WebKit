@@ -31,8 +31,8 @@
 #ifndef BlobRegistryImpl_h
 #define BlobRegistryImpl_h
 
+#include "BlobData.h"
 #include "BlobRegistry.h"
-#include "BlobStorageData.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -50,12 +50,12 @@ class BlobRegistryImpl final : public BlobRegistry {
 public:
     virtual ~BlobRegistryImpl();
 
-    BlobStorageData* getBlobDataFromURL(const URL&) const;
+    BlobData* getBlobDataFromURL(const URL&) const;
 
     PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
 
 private:
-    void appendStorageItems(BlobStorageData*, const BlobDataItemList&, long long offset, long long length);
+    void appendStorageItems(BlobData*, const BlobDataItemList&, long long offset, long long length);
 
     virtual void registerFileBlobURL(const WebCore::URL&, const String& path, const String& contentType) override;
     virtual unsigned long long registerBlobURL(const URL&, Vector<BlobPart>, const String& contentType) override;
@@ -66,7 +66,7 @@ private:
 
     unsigned long long blobSize(const URL&);
 
-    HashMap<String, RefPtr<BlobStorageData>> m_blobs;
+    HashMap<String, RefPtr<BlobData>> m_blobs;
 };
 
 } // namespace WebCore
