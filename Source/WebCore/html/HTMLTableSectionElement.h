@@ -35,6 +35,7 @@ class HTMLTableSectionElement final : public HTMLTablePartElement {
 public:
     static PassRefPtr<HTMLTableSectionElement> create(const QualifiedName&, Document&);
 
+    PassRefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
     PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 

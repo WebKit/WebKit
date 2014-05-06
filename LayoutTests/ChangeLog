@@ -1,3 +1,16 @@
+2014-05-06  Christophe Dumez  <ch.dumez@samsung.com>
+
+        [HTML] Default argument to HTMLTableSectionElement.insertRow() should be -1
+        https://bugs.webkit.org/show_bug.cgi?id=132570
+
+        Reviewed by Darin Adler.
+
+        Add layout test to test that the default argument to
+        HTMLTableSectionElement.insertRow() is -1.
+
+        * fast/dom/HTMLTableSectionElement/insertRow-default-argument-expected.txt: Added.
+        * fast/dom/HTMLTableSectionElement/insertRow-default-argument.html: Added.
+
 2014-05-06  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Optimize the number of regions invalidations

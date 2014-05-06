@@ -1,3 +1,22 @@
+2014-05-06  Christophe Dumez  <ch.dumez@samsung.com>
+
+        [HTML] Default argument to HTMLTableSectionElement.insertRow() should be -1
+        https://bugs.webkit.org/show_bug.cgi?id=132570
+
+        Reviewed by Darin Adler.
+
+        HTMLTableSectionElement.insertRow()'s argument default value should be -1, not
+        0, as per the specification:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/tabular-data.html#the-tbody-element
+
+        The new behavior matches the one of Firefox 29 and IE11, and soon Blink:
+        https://code.google.com/p/chromium/issues/detail?id=369803
+
+        Test: fast/dom/HTMLTableSectionElement/insertRow-default-argument.html
+
+        * html/HTMLTableSectionElement.h:
+        * html/HTMLTableSectionElement.idl:
+
 2014-05-05  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION(r155957): Selection rects are incorrect when the selection contains BR elements.
