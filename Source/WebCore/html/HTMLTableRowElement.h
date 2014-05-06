@@ -41,6 +41,7 @@ public:
     int sectionRowIndex() const;
     void setSectionRowIndex(int);
 
+    PassRefPtr<HTMLElement> insertCell(ExceptionCode& ec) { return insertCell(-1, ec); }
     PassRefPtr<HTMLElement> insertCell(int index, ExceptionCode&);
     void deleteCell(int index, ExceptionCode&);
 

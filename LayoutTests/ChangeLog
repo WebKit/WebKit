@@ -1,3 +1,16 @@
+2014-05-06  Christophe Dumez  <ch.dumez@samsung.com>
+
+        [HTML] Default argument to HTMLTableRowElement.insertCell() should be -1
+        https://bugs.webkit.org/show_bug.cgi?id=132615
+
+        Reviewed by Darin Adler.
+
+        Add layout test to test that the default argument to
+        HTMLTableRowElement.insertCell() is -1.
+
+        * fast/dom/HTMLTableRowElement/insertCell-default-argument-expected.txt: Added.
+        * fast/dom/HTMLTableRowElement/insertCell-default-argument.html: Added.
+
 2014-05-06  Oliver Hunt  <oliver@apple.com>
 
         Can't make a booking at virginamerica.com
