@@ -110,7 +110,7 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
     if (renderServerPort == MACH_PORT_NULL)
         return false;
 
-    NSString *pluginHostAppPath = [[NSBundle bundleForClass:[WebNetscapePluginPackage class]] pathForAuxiliaryExecutable:pluginHostAppName];
+    NSString *pluginHostAppPath = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] pathForAuxiliaryExecutable:pluginHostAppName];
     NSString *pluginHostAppExecutablePath = [[NSBundle bundleWithPath:pluginHostAppPath] executablePath];
 
     RetainPtr<CFStringRef> localization = adoptCF(WKCopyCFLocalizationPreferredName(NULL));

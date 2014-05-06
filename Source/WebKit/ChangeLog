@@ -1,3 +1,15 @@
+2014-05-05  Andreas Kling  <akling@apple.com>
+
+        Unreviewed, rolling out r168334.
+
+        Broke builds.
+
+        Reverted changeset:
+
+        "Put WebKitPluginHost.app in WebKitLegacy.framework"
+        https://bugs.webkit.org/show_bug.cgi?id=132592
+        http://trac.webkit.org/changeset/168334
+
 2014-05-05  Anders Carlsson  <andersca@apple.com>
 
         Put WebKitPluginHost.app in WebKitLegacy.framework
