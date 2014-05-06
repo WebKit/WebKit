@@ -1,3 +1,15 @@
+2014-05-06  Alberto Garcia  <berto@igalia.com>
+
+        There is no HW_AVAILCPU on FreeBSD, NetBSD, and OpenBSD
+        https://bugs.webkit.org/show_bug.cgi?id=132542
+
+        Reviewed by Michael Saboff.
+
+        Use sysconf() to get the number of processor cores.
+
+        * wtf/NumberOfCores.cpp:
+        (WTF::numberOfProcessorCores):
+
 2014-05-04  Darin Adler  <darin@apple.com>
 
         RetainPtr: Use adoptCF function instead of AdoptCF constructor argument
