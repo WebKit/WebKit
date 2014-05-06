@@ -193,6 +193,42 @@ void WebVideoFullscreenModelMediaElement::seekToTime(double time)
     });
 }
 
+void WebVideoFullscreenModelMediaElement::fastSeek(double time)
+{
+    __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
+    WebThreadRun(^{
+        m_mediaElement->fastSeek(time);
+        protect.clear();
+    });
+}
+
+void WebVideoFullscreenModelMediaElement::beginScanningForward()
+{
+    __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
+    WebThreadRun(^{
+        m_mediaElement->beginScanning(MediaControllerInterface::Forward);
+        protect.clear();
+    });
+}
+
+void WebVideoFullscreenModelMediaElement::beginScanningBackward()
+{
+    __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
+    WebThreadRun(^{
+        m_mediaElement->beginScanning(MediaControllerInterface::Backward);
+        protect.clear();
+    });
+}
+
+void WebVideoFullscreenModelMediaElement::endScanning()
+{
+    __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
+    WebThreadRun(^{
+        m_mediaElement->endScanning();
+        protect.clear();
+    });
+}
+
 void WebVideoFullscreenModelMediaElement::requestExitFullscreen()
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);

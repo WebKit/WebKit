@@ -42,6 +42,10 @@ public:
     virtual void beginScrubbing() = 0;
     virtual void endScrubbing() = 0;
     virtual void seekToTime(double time) = 0;
+    virtual void fastSeek(double time) = 0;
+    virtual void beginScanningForward() = 0;
+    virtual void beginScanningBackward() = 0;
+    virtual void endScanning() = 0;
     virtual void requestExitFullscreen() = 0;
     virtual void setVideoLayerFrame(FloatRect) = 0;
     enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };

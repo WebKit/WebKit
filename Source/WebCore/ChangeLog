@@ -1,3 +1,46 @@
+2014-05-05  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement scan backward and forward in video fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=132517
+
+        Reviewed by Simon Fraser.
+
+        Implement scanning forward and backward. This implements methods in 
+        WebAVPlayerController and forwards them through WebVideoFullscreenModelMediaElement
+        and on to HTMLMediaElement.
+
+        * WebCore.exp.in: necessary exports.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController seekToTime:]):
+        Use fastSeek in this case.
+        (-[WebAVPlayerController canScanForward]): If you can play, you can scan.
+        (+[WebAVPlayerController keyPathsForValuesAffectingCanScanForward]): ditto
+        (-[WebAVPlayerController beginScanningForward:]): ditto
+        (-[WebAVPlayerController endScanningForward:]): ditto
+        (-[WebAVPlayerController canScanBackward]): If you can play, you can scan.
+        (+[WebAVPlayerController keyPathsForValuesAffectingCanScanBackward]): ditto
+        (-[WebAVPlayerController beginScanningBackward:]): ditto
+        (-[WebAVPlayerController endScanningBackward:]): ditto
+        (-[WebAVPlayerController canSeekToBeginning]):
+        This looks at seekableRanges to determine if any seeking is possible.
+        (+[WebAVPlayerController keyPathsForValuesAffectingCanSeekToBeginning]):
+        depends on seekableRanges.
+        (-[WebAVPlayerController seekToBeginning:]): seek to -ininity
+        (-[WebAVPlayerController canSeekToEnd]):
+        This looks at seekableRanges to determine if any seeking is possible.
+        (+[WebAVPlayerController keyPathsForValuesAffectingCanSeekToEnd]):
+        depends on seekableRanges.
+        (-[WebAVPlayerController seekToEnd:]): seek to INFINITY.
+        * platform/ios/WebVideoFullscreenModel.h:
+        Add 4 new functions.
+        * platform/ios/WebVideoFullscreenModelMediaElement.h:
+        ditto
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        (WebVideoFullscreenModelMediaElement::fastSeek): forwards to HTMLMediaEelement
+        (WebVideoFullscreenModelMediaElement::beginScanningForward): forwards to HTMLMediaEelement
+        (WebVideoFullscreenModelMediaElement::beginScanningBackward): forwards to HTMLMediaEelement
+        (WebVideoFullscreenModelMediaElement::endScanning): forwards to HTMLMediaEelement
+
 2014-05-05  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Prefetch DNS hostnames on tap highlight

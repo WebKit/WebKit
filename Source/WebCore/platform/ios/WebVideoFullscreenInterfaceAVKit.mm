@@ -72,6 +72,11 @@ SOFT_LINK(CoreMedia, CMTimeRangeContainsTime, Boolean, (CMTimeRange range, CMTim
 SOFT_LINK(CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
 SOFT_LINK(CoreMedia, CMTimeRangeMake, CMTimeRange, (CMTime start, CMTime duration), (start, duration))
 SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend), (minuend, subtrahend))
+SOFT_LINK(CoreMedia, CMTimeMaximum, CMTime, (CMTime time1, CMTime time2), (time1, time2))
+SOFT_LINK(CoreMedia, CMTimeMinimum, CMTime, (CMTime time1, CMTime time2), (time1, time2))
+SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
+
+#define kCMTimeIndefinite getkCMTimeIndefinite()
 
 @class WebAVMediaSelectionOption;
 
@@ -83,6 +88,11 @@ SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend)
 
 @property(retain) AVPlayerController* playerControllerProxy;
 @property(assign) WebVideoFullscreenModel* delegate;
+
+@property (readonly) BOOL canScanForward;
+@property (readonly) BOOL canScanBackward;
+@property (readonly) BOOL canSeekToBeginning;
+@property (readonly) BOOL canSeekToEnd;
 
 @property BOOL canPlay;
 @property(getter=isPlaying) BOOL playing;
@@ -212,7 +222,7 @@ SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend)
 - (void)seekToTime:(NSTimeInterval)time
 {
     ASSERT(self.delegate);
-    self.delegate->seekToTime(time);
+    self.delegate->fastSeek(time);
 }
 
 - (BOOL)hasLiveStreamingContent
@@ -259,6 +269,100 @@ SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend)
     
     if (!isnan(timeAtEndOfSeekableTimeRanges))
         [self seekToTime:timeAtEndOfSeekableTimeRanges];
+}
+
+- (BOOL)canScanForward
+{
+    return [self canPlay];
+}
+
++ (NSSet *)keyPathsForValuesAffectingCanScanForward
+{
+    return [NSSet setWithObject:@"canPlay"];
+}
+
+- (void)beginScanningForward:(id)sender
+{
+    UNUSED_PARAM(sender);
+    ASSERT(self.delegate);
+    self.delegate->beginScanningForward();
+}
+
+- (void)endScanningForward:(id)sender
+{
+    UNUSED_PARAM(sender);
+    ASSERT(self.delegate);
+    self.delegate->endScanning();
+}
+
+- (BOOL)canScanBackward
+{
+    return [self canPlay];
+}
+
++ (NSSet *)keyPathsForValuesAffectingCanScanBackward
+{
+    return [NSSet setWithObject:@"canPlay"];
+}
+
+- (void)beginScanningBackward:(id)sender
+{
+    UNUSED_PARAM(sender);
+    ASSERT(self.delegate);
+    self.delegate->beginScanningBackward();
+}
+
+- (void)endScanningBackward:(id)sender
+{
+    UNUSED_PARAM(sender);
+    ASSERT(self.delegate);
+    self.delegate->endScanning();
+}
+
+- (BOOL)canSeekToBeginning
+{
+    CMTime minimumTime = kCMTimeIndefinite;
+
+    for (NSValue *value in [self seekableTimeRanges])
+        minimumTime = CMTimeMinimum([value CMTimeRangeValue].start, minimumTime);
+
+    return CMTIME_IS_NUMERIC(minimumTime);
+}
+
++ (NSSet *)keyPathsForValuesAffectingCanSeekToBeginning
+{
+    return [NSSet setWithObject:@"seekableTimeRanges"];
+}
+
+- (void)seekToBeginning:(id)sender
+{
+    UNUSED_PARAM(sender);
+    ASSERT(self.delegate);
+
+    self.delegate->seekToTime(-INFINITY);
+}
+
+- (BOOL)canSeekToEnd
+{
+    CMTime maximumTime = kCMTimeIndefinite;
+
+    for (NSValue *value in [self seekableTimeRanges])
+        maximumTime = CMTimeMaximum(CMTimeRangeGetEnd([value CMTimeRangeValue]), maximumTime);
+
+    return CMTIME_IS_NUMERIC(maximumTime);
+}
+
++ (NSSet *)keyPathsForValuesAffectingCanSeekToEnd
+{
+    return [NSSet setWithObject:@"seekableTimeRanges"];
+}
+
+- (void)seekToEnd:(id)sender
+{
+    UNUSED_PARAM(sender);
+    ASSERT(self.delegate);
+
+    self.delegate->seekToTime(INFINITY);
 }
 
 - (BOOL)hasMediaSelectionOptions

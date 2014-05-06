@@ -139,6 +139,26 @@ void WebVideoFullscreenManagerProxy::seekToTime(double time)
     m_page->send(Messages::WebVideoFullscreenManager::SeekToTime(time), m_page->pageID());
 }
 
+void WebVideoFullscreenManagerProxy::fastSeek(double time)
+{
+    m_page->send(Messages::WebVideoFullscreenManager::FastSeek(time), m_page->pageID());
+}
+
+void WebVideoFullscreenManagerProxy::beginScanningForward()
+{
+    m_page->send(Messages::WebVideoFullscreenManager::BeginScanningForward(), m_page->pageID());
+}
+
+void WebVideoFullscreenManagerProxy::beginScanningBackward()
+{
+    m_page->send(Messages::WebVideoFullscreenManager::BeginScanningBackward(), m_page->pageID());
+}
+
+void WebVideoFullscreenManagerProxy::endScanning()
+{
+    m_page->send(Messages::WebVideoFullscreenManager::EndScanning(), m_page->pageID());
+}
+
 void WebVideoFullscreenManagerProxy::setVideoLayerFrame(WebCore::FloatRect frame)
 {
     m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerFrame(frame), m_page->pageID());

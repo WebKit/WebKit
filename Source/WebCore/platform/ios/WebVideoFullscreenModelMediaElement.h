@@ -60,6 +60,10 @@ public:
     virtual void beginScrubbing() override;
     virtual void endScrubbing() override;
     virtual void seekToTime(double time) override;
+    virtual void fastSeek(double time) override;
+    virtual void beginScanningForward() override;
+    virtual void beginScanningBackward() override;
+    virtual void endScanning() override;
     virtual void requestExitFullscreen() override;
     virtual void setVideoLayerFrame(FloatRect) override;
     virtual void setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity) override;
