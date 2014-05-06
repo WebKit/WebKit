@@ -52,7 +52,7 @@ class BlobResourceHandle : public FileStreamClient, public ResourceHandle  {
 public:
     static PassRefPtr<BlobResourceHandle> createAsync(BlobData*, const ResourceRequest&, ResourceHandleClient*);
 
-    static void loadResourceSynchronously(BlobData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data);
+    static void loadResourceSynchronously(BlobData*, const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
 
     // FileStreamClient methods.
     virtual void didGetSize(long long) override;

@@ -8373,6 +8373,7 @@
     <ClCompile Include="..\platform\graphics\avfoundation\cf\MediaPlayerPrivateAVFoundationCF.cpp" />
     <ClCompile Include="..\platform\network\AuthenticationChallengeBase.cpp" />
     <ClCompile Include="..\platform\network\BlobData.cpp" />
+    <ClCompile Include="..\platform\network\BlobDataFileReference.cpp" />
     <ClCompile Include="..\platform\network\BlobResourceHandle.cpp" />
     <ClCompile Include="..\platform\network\Credential.cpp" />
     <ClCompile Include="..\platform\network\CredentialStorage.cpp" />
@@ -19564,6 +19565,7 @@
     <ClInclude Include="..\platform\network\AuthenticationChallengeBase.h" />
     <ClInclude Include="..\platform\network\AuthenticationClient.h" />
     <ClInclude Include="..\platform\network\BlobData.h" />
+    <ClInclude Include="..\platform\network\BlobDataFileReference.h" />
     <ClInclude Include="..\platform\network\BlobRegistry.h" />
     <ClInclude Include="..\platform\network\BlobRegistryImpl.h" />
     <ClInclude Include="..\platform\network\BlobResourceHandle.h" />

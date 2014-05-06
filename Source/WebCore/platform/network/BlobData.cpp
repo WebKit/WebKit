@@ -33,7 +33,6 @@
 
 #include "Blob.h"
 #include "BlobURL.h"
-#include "ThreadableBlobRegistry.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -45,10 +44,32 @@ namespace WebCore {
 
 const long long BlobDataItem::toEndOfFile = -1;
 
+long long BlobDataItem::length() const
+{
+    if (m_length != toEndOfFile)
+        return m_length;
+
+    switch (type) {
+    case Data:
+        ASSERT_NOT_REACHED();
+        return m_length;
+    case File:
+        return file->size();
+    }
+
+    ASSERT_NOT_REACHED();
+    return m_length;
+}
+
 void BlobData::setContentType(const String& contentType)
 {
     ASSERT(Blob::isNormalizedContentType(contentType));
     m_contentType = contentType;
+}
+
+void BlobData::appendData(PassRefPtr<RawData> data)
+{
+    appendData(data, 0, data->length());
 }
 
 void BlobData::appendData(PassRefPtr<RawData> data, long long offset, long long length)
@@ -61,14 +82,9 @@ void BlobData::appendFile(const String& path)
     m_items.append(BlobDataItem(path));
 }
 
-void BlobData::appendFile(const String& path, long long offset, long long length, double expectedModificationTime)
+void BlobData::appendFile(BlobDataFileReference* file, long long offset, long long length)
 {
-    m_items.append(BlobDataItem(path, offset, length, expectedModificationTime));
-}
-
-void BlobData::appendBlob(const URL& url, long long offset, long long length)
-{
-    m_items.append(BlobDataItem(url, offset, length));
+    m_items.append(BlobDataItem(file, offset, length));
 }
 
 void BlobData::swapItems(BlobDataItemList& items)

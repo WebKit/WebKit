@@ -312,11 +312,9 @@ static void appendBlobResolved(FormData* formData, const URL& url)
     for (; it != itend; ++it) {
         const BlobDataItem& blobItem = *it;
         if (blobItem.type == BlobDataItem::Data)
-            formData->appendData(blobItem.data->data() + static_cast<int>(blobItem.offset), static_cast<int>(blobItem.length));
+            formData->appendData(blobItem.data->data() + static_cast<int>(blobItem.offset()), static_cast<int>(blobItem.length()));
         else if (blobItem.type == BlobDataItem::File)
-            formData->appendFileRange(blobItem.path, blobItem.offset, blobItem.length, blobItem.expectedModificationTime);
-        else if (blobItem.type == BlobDataItem::Blob)
-            appendBlobResolved(formData, blobItem.url);
+            formData->appendFileRange(blobItem.file->path(), blobItem.offset(), blobItem.length(), blobItem.file->expectedModificationTime());
         else
             ASSERT_NOT_REACHED();
     }

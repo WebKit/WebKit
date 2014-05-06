@@ -31,18 +31,16 @@
 #ifndef BlobData_h
 #define BlobData_h
 
-#include "FileSystem.h"
+#include "BlobDataFileReference.h"
 #include "URL.h"
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-// FIXME: RawData doesn't need to be ThreadSafeRefCounted any more. We can probably switch to another data buffer type now.
-class RawData : public ThreadSafeRefCounted<RawData> {
+class RawData : public RefCounted<RawData> {
 public:
     static PassRefPtr<RawData> create(Vector<char>&& data)
     {
@@ -71,86 +69,49 @@ private:
 struct BlobDataItem {
     static const long long toEndOfFile;
 
-    // Default constructor.
-    BlobDataItem()
-        : type(Data)
-        , offset(0)
-        , length(toEndOfFile)
-        , expectedModificationTime(invalidFileTime())
-    {
-    }
-
-    // Constructor for String type (complete string).
-    explicit BlobDataItem(PassRefPtr<RawData> data)
-        : type(Data)
-        , data(data)
-        , offset(0)
-        , length(toEndOfFile)
-        , expectedModificationTime(invalidFileTime())
-    {
-    }
-
-    // Constructor for File type (complete file).
-    explicit BlobDataItem(const String& path)
-        : type(File)
-        , path(path)
-        , offset(0)
-        , length(toEndOfFile)
-        , expectedModificationTime(invalidFileTime())
-    {
-    }
-
-    // Constructor for File type (partial file).
-    BlobDataItem(const String& path, long long offset, long long length, double expectedModificationTime)
-        : type(File)
-        , path(path)
-        , offset(offset)
-        , length(length)
-        , expectedModificationTime(expectedModificationTime)
-    {
-    }
-
-    // Constructor for Blob type.
-    BlobDataItem(const URL& url, long long offset, long long length)
-        : type(Blob)
-        , url(url)
-        , offset(offset)
-        , length(length)
-        , expectedModificationTime(invalidFileTime())
-    {
-    }
-
     enum {
         Data,
-        File,
-        Blob
+        File
     } type;
 
     // For Data type.
     RefPtr<RawData> data;
 
     // For File type.
-    String path;
+    RefPtr<BlobDataFileReference> file;
 
-    // For Blob or URL type.
-    URL url;
-
-    long long offset;
-    long long length;
-    double expectedModificationTime;
+    long long offset() const { return m_offset; }
+    long long length() const; // Computes file length if it's not known yet.
 
 private:
     friend class BlobData;
 
-    // Constructor for String type (partial string).
+    explicit BlobDataItem(const String& path)
+        : type(File)
+        , file(BlobDataFileReference::create(path))
+        , m_offset(0)
+        , m_length(toEndOfFile)
+    {
+    }
+
     BlobDataItem(PassRefPtr<RawData> data, long long offset, long long length)
         : type(Data)
         , data(data)
-        , offset(offset)
-        , length(length)
-        , expectedModificationTime(invalidFileTime())
+        , m_offset(offset)
+        , m_length(length)
     {
     }
+
+    BlobDataItem(BlobDataFileReference* file, long long offset, long long length)
+        : type(File)
+        , file(file)
+        , m_offset(offset)
+        , m_length(length)
+    {
+    }
+
+    long long m_offset;
+    long long m_length;
 };
 
 typedef Vector<BlobDataItem> BlobDataItemList;
@@ -168,18 +129,16 @@ public:
     const BlobDataItemList& items() const { return m_items; }
     void swapItems(BlobDataItemList&);
 
-    void appendData(PassRefPtr<RawData>, long long offset, long long length);
+    void appendData(PassRefPtr<RawData>);
     void appendFile(const String& path);
-    void appendFile(const String& path, long long offset, long long length, double expectedModificationTime);
-    void appendBlob(const URL&, long long offset, long long length);
 
 private:
     friend class BlobRegistryImpl;
 
-    BlobData() { }
+    void appendData(PassRefPtr<RawData>, long long offset, long long length);
+    void appendFile(BlobDataFileReference*, long long offset, long long length);
 
     String m_contentType;
-    String m_contentDisposition;
     BlobDataItemList m_items;
 };
 

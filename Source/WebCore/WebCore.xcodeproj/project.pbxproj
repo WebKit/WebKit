@@ -5968,6 +5968,8 @@
 		E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CAA5C50E8BD23600A73ECA /* JSWorker.h */; };
 		E1CDE92015018ED000862CC5 /* AsyncFileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1CDE91F15018ED000862CC5 /* AsyncFileStream.cpp */; };
 		E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CDE9211501916900862CC5 /* AsyncFileStream.h */; settings = {ATTRIBUTES = (); }; };
+		E1D31CDC19196020001005A3 /* BlobDataFileReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1D31CDA19196020001005A3 /* BlobDataFileReference.cpp */; };
+		E1D31CDD19196020001005A3 /* BlobDataFileReference.h in Headers */ = {isa = PBXBuildFile; fileRef = E1D31CDB19196020001005A3 /* BlobDataFileReference.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */; };
 		E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */; };
@@ -13374,6 +13376,8 @@
 		E1CAA5C50E8BD23600A73ECA /* JSWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorker.h; sourceTree = "<group>"; };
 		E1CDE91F15018ED000862CC5 /* AsyncFileStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AsyncFileStream.cpp; path = fileapi/AsyncFileStream.cpp; sourceTree = "<group>"; };
 		E1CDE9211501916900862CC5 /* AsyncFileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncFileStream.h; path = fileapi/AsyncFileStream.h; sourceTree = "<group>"; };
+		E1D31CDA19196020001005A3 /* BlobDataFileReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobDataFileReference.cpp; sourceTree = "<group>"; };
+		E1D31CDB19196020001005A3 /* BlobDataFileReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobDataFileReference.h; sourceTree = "<group>"; };
 		E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowsKeyboardCodes.h; sourceTree = "<group>"; };
 		E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElement.cpp; sourceTree = "<group>"; };
 		E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSHTMLSelectElement.h; sourceTree = "<group>"; };
@@ -16055,6 +16059,8 @@
 				E124748310AA161D00B79493 /* AuthenticationClient.h */,
 				2EDEF1ED121B0EFC00726DB2 /* BlobData.cpp */,
 				2EDEF1EE121B0EFC00726DB2 /* BlobData.h */,
+				E1D31CDA19196020001005A3 /* BlobDataFileReference.cpp */,
+				E1D31CDB19196020001005A3 /* BlobDataFileReference.h */,
 				E1C94AF7191303F000D5A893 /* BlobPart.h */,
 				E14A94D616DFDF950068DE82 /* BlobRegistry.cpp */,
 				2EDEF1EF121B0EFC00726DB2 /* BlobRegistry.h */,
@@ -22945,6 +22951,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1D31CDD19196020001005A3 /* BlobDataFileReference.h in Headers */,
 				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
 				CD2F4A2418D89F700063746D /* AudioHardwareListener.h in Headers */,
 				FE4AADEE16D2C37400026FFC /* AbstractSQLStatement.h in Headers */,
@@ -29400,6 +29407,7 @@
 				FD7F299313D4C0CB00AD9535 /* WaveShaperNode.cpp in Sources */,
 				FD7F299613D4C0CB00AD9535 /* WaveShaperProcessor.cpp in Sources */,
 				29A8124A0FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.mm in Sources */,
+				E1D31CDC19196020001005A3 /* BlobDataFileReference.cpp in Sources */,
 				AAA728F816D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.mm in Sources */,
 				AA478A8016CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm in Sources */,
 				A56C5B9A189F34570082D13C /* WebConsoleAgent.cpp in Sources */,

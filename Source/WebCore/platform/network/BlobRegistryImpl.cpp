@@ -94,22 +94,21 @@ void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItem
     BlobDataItemList::const_iterator iter = items.begin();
     if (offset) {
         for (; iter != items.end(); ++iter) {
-            if (offset >= iter->length)
-                offset -= iter->length;
+            if (offset >= iter->length())
+                offset -= iter->length();
             else
                 break;
         }
     }
 
     for (; iter != items.end() && length > 0; ++iter) {
-        ASSERT(iter->length != BlobDataItem::toEndOfFile);
-        long long currentLength = iter->length - offset;
+        long long currentLength = iter->length() - offset;
         long long newLength = currentLength > length ? length : currentLength;
         if (iter->type == BlobDataItem::Data)
-            blobData->appendData(iter->data, iter->offset + offset, newLength);
+            blobData->appendData(iter->data, iter->offset() + offset, newLength);
         else {
             ASSERT(iter->type == BlobDataItem::File);
-            blobData->appendFile(iter->path, iter->offset + offset, newLength, iter->expectedModificationTime);
+            blobData->appendFile(iter->file.get(), iter->offset() + offset, newLength);
         }
         length -= newLength;
         offset = 0;
@@ -125,12 +124,7 @@ void BlobRegistryImpl::registerFileBlobURL(const URL& url, const String& path, c
     RefPtr<BlobData> blobData = BlobData::create();
     blobData->setContentType(contentType);
 
-    // FIXME: Factor out size and modification tracking for a cleaner implementation.
-    FileMetadata metadata;
-    if (!getFileMetadata(path, metadata))
-        return;
-
-    blobData->appendFile(path, 0, metadata.length, metadata.modificationTime);
+    blobData->appendFile(path);
     m_blobs.set(url.string(), blobData.release());
 }
 
@@ -161,9 +155,9 @@ unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, Vector<Blob
         case BlobPart::Blob: {
             if (!m_blobs.contains(part.url().string()))
                 return 0;
-            unsigned long long partSize = blobSize(part.url()); // As a side effect, this calculates sizes of all files in the blob.
-            size += partSize;
-            appendStorageItems(blobData.get(), m_blobs.get(part.url().string())->items(), 0, partSize);
+            size += blobSize(part.url());
+            for (const BlobDataItem& item : m_blobs.get(part.url().string())->items())
+                blobData->m_items.append(item);
             break;
         }
         }
@@ -242,18 +236,9 @@ unsigned long long BlobRegistryImpl::blobSize(const URL& url)
         return 0;
 
     unsigned long long result = 0;
-    for (const BlobDataItem& item : data->items()) {
-        if (item.length == BlobDataItem::toEndOfFile) {
-            FileMetadata metadata;
-            if (!getFileMetadata(item.path, metadata))
-                return 0;
+    for (const BlobDataItem& item : data->items())
+        result += item.length();
 
-            // FIXME: Factor out size and modification tracking for a cleaner implementation.
-            const_cast<BlobDataItem&>(item).length = metadata.length;
-            const_cast<BlobDataItem&>(item).expectedModificationTime = metadata.modificationTime;
-        }
-        result += item.length;
-    }
     return result;
 }
 

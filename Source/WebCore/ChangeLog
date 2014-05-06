@@ -1,3 +1,56 @@
+2014-05-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Make BlobDataItem use a refcounted object for files
+        https://bugs.webkit.org/show_bug.cgi?id=132628
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added BlobDataFileReference.{h|cpp}
+
+        * WebCore.exp.in: Removed unused exports.
+
+        * platform/network/BlobData.h:
+        (WebCore::BlobDataItem::offset):
+        (WebCore::BlobDataItem::BlobDataItem):
+        Use a wrapper class for files, not a path. Changed to be more class-like accordingly.
+
+        * platform/network/BlobData.cpp:
+        (WebCore::BlobData::appendData):
+        (WebCore::BlobData::appendFile):
+        (WebCore::BlobData::appendBlob): Deleted.
+        (WebCore::BlobData::BlobData): Deleted.
+        We never add blobs to BlobData, they are always resolved to data of file references.
+        Lots of very confusing code to delete.
+
+        * platform/network/BlobDataFileReference.h: Added.
+        * platform/network/BlobDataFileReference.cpp: Added.
+        (WebCore::BlobDataFileReference::size):
+        (WebCore::BlobDataFileReference::expectedModificationTime):
+        (WebCore::BlobDataFileReference::computeFileSystemData):
+        A unique reference to a file referenced by blob, to be preserved when you slice
+        or combine blobs.
+
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::appendStorageItems):
+        (WebCore::BlobRegistryImpl::registerFileBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        (WebCore::BlobRegistryImpl::blobSize):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::getSizeForNext):
+        (WebCore::BlobResourceHandle::didGetSize):
+        (WebCore::BlobResourceHandle::readDataSync):
+        (WebCore::BlobResourceHandle::readFileSync):
+        (WebCore::BlobResourceHandle::readDataAsync):
+        (WebCore::BlobResourceHandle::readFileAsync):
+        * platform/network/BlobResourceHandle.h:
+        * platform/network/FormData.cpp:
+        (WebCore::appendBlobResolved):
+        Updated for BlobDataItem interface changes.
+
 2014-05-06  Christophe Dumez  <ch.dumez@samsung.com>
 
         [HTML] Default argument to HTMLTableRowElement.insertCell() should be -1

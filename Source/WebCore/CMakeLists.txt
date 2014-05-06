@@ -2171,6 +2171,7 @@ set(WebCore_SOURCES
 
     platform/network/AuthenticationChallengeBase.cpp
     platform/network/BlobData.cpp
+    platform/network/BlobDataFileReference.cpp
     platform/network/BlobRegistry.cpp
     platform/network/BlobRegistryImpl.cpp
     platform/network/BlobResourceHandle.cpp
