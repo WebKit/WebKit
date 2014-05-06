@@ -1,3 +1,15 @@
+2014-05-06  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Optimize the number of regions invalidations
+        https://bugs.webkit.org/show_bug.cgi?id=132611
+
+        Reviewed by David Hyatt.
+
+        Because there are less region invalidations there are less repaints
+        of the flow threads.
+
+        * fast/regions/repaint/repaint-regions-overflow-expected.txt:
+
 2014-05-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver does not announce text changes for content editable regions in Safari

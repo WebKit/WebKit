@@ -2925,8 +2925,10 @@ void RenderBlockFlow::updateLogicalHeight()
 {
     RenderBlock::updateLogicalHeight();
 
-    if (renderNamedFlowFragment())
+    if (renderNamedFlowFragment()) {
         renderNamedFlowFragment()->setLogicalHeight(std::max<LayoutUnit>(0, logicalHeight() - borderAndPaddingLogicalHeight()));
+        renderNamedFlowFragment()->invalidateRegionIfNeeded();
+    }
 }
 
 void RenderBlockFlow::setRenderNamedFlowFragment(RenderNamedFlowFragment* flowFragment)

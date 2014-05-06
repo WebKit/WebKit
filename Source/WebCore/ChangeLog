@@ -1,3 +1,26 @@
+2014-05-06  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Optimize the number of regions invalidations
+        https://bugs.webkit.org/show_bug.cgi?id=132611
+
+        Reviewed by David Hyatt.
+
+        It is possible to invalidate the region chain of a flow thread
+        during the layout of the region when its height is not final.
+
+        This patch places the check after the height of the region
+        is determined, reducing the number of invalidations.
+
+        Tests: Less invalidations and repaints in the repaint tests for
+        the flow threads.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::updateLogicalHeight):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::layoutBlock):
+        (WebCore::RenderNamedFlowFragment::invalidateRegionIfNeeded):
+        * rendering/RenderNamedFlowFragment.h:
+
 2014-05-03  Sam Weinig  <sam@webkit.org>
 
         [Extended Background] Respect repeat-x/repeat-y when creating margin tiles

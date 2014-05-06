@@ -262,10 +262,6 @@ void RenderNamedFlowFragment::layoutBlock(bool relayoutChildren, LayoutUnit)
     RenderRegion::layoutBlock(relayoutChildren);
 
     if (isValid()) {
-        LayoutRect oldRegionRect(flowThreadPortionRect());
-        if (!isHorizontalWritingMode())
-            oldRegionRect = oldRegionRect.transposedRect();
-
         if (m_flowThread->inOverflowLayoutPhase() || m_flowThread->inFinalLayoutPhase()) {
             computeOverflowFromFlowThread();
             updateOversetState();
@@ -276,11 +272,21 @@ void RenderNamedFlowFragment::layoutBlock(bool relayoutChildren, LayoutUnit)
             clearComputedAutoHeight();
             return;
         }
+    }
+}
 
-        if ((oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight()) && !m_flowThread->inFinalLayoutPhase()) {
-            // This can happen even if we are in the inConstrainedLayoutPhase and it will trigger a pathological layout of the flow thread.
-            m_flowThread->invalidateRegions();
-        }
+void RenderNamedFlowFragment::invalidateRegionIfNeeded()
+{
+    if (!isValid())
+        return;
+
+    LayoutRect oldRegionRect(flowThreadPortionRect());
+    if (!isHorizontalWritingMode())
+        oldRegionRect = oldRegionRect.transposedRect();
+
+    if ((oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight()) && !m_flowThread->inFinalLayoutPhase()) {
+        // This can happen even if we are in the inConstrainedLayoutPhase and it will trigger a pathological layout of the flow thread.
+        m_flowThread->invalidateRegions();
     }
 }
 

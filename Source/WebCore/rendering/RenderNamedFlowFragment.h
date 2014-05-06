@@ -118,6 +118,8 @@ public:
 
     virtual void absoluteQuadsForBoxInRegion(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) override;
 
+    void invalidateRegionIfNeeded();
+
 private:
     virtual const char* renderName() const override { return "RenderNamedFlowFragment"; }
 
