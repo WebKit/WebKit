@@ -25,8 +25,11 @@
 #include "Document.h"
 #include "HTMLElement.h"
 #include "InlineElementBox.h"
+#include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"
+#include "RenderView.h"
 #include "RootInlineBox.h"
+#include "SelectionRect.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {
@@ -186,5 +189,58 @@ IntRect RenderLineBreak::borderBoundingBox() const
 {
     return IntRect(IntPoint(), linesBoundingBox().size());
 }
+
+#if PLATFORM(IOS)
+void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, unsigned)
+{
+    InlineElementBox* box = m_inlineBoxWrapper;
+    if (!box)
+        return;
+    const RootInlineBox& rootBox = box->root();
+    LayoutRect rect = rootBox.computeCaretRect(box->logicalLeft(), 0, nullptr);
+    if (rootBox.isFirstAfterPageBreak()) {
+        if (box->isHorizontal())
+            rect.shiftYEdgeTo(rootBox.lineTopWithLeading());
+        else
+            rect.shiftXEdgeTo(rootBox.lineTopWithLeading());
+    }
+
+    RenderBlock* containingBlock = this->containingBlock();
+    // Map rect, extended left to leftOffset, and right to rightOffset, through transforms to get minX and maxX.
+    LogicalSelectionOffsetCaches cache(*containingBlock);
+    LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, box->logicalTop(), cache);
+    LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, box->logicalTop(), cache);
+    LayoutRect extentsRect = rect;
+    if (box->isHorizontal()) {
+        extentsRect.setX(leftOffset);
+        extentsRect.setWidth(rightOffset - leftOffset);
+    } else {
+        extentsRect.setY(leftOffset);
+        extentsRect.setHeight(rightOffset - leftOffset);
+    }
+    extentsRect = localToAbsoluteQuad(FloatRect(extentsRect)).enclosingBoundingBox();
+    if (!box->isHorizontal())
+        extentsRect = extentsRect.transposedRect();
+    bool isFirstOnLine = !box->previousOnLineExists();
+    bool isLastOnLine = !box->nextOnLineExists();
+    if (containingBlock->isRubyBase() || containingBlock->isRubyText())
+        isLastOnLine = !containingBlock->containingBlock()->inlineBoxWrapper()->nextOnLineExists();
+
+    bool isFixed = false;
+    IntRect absRect = localToAbsoluteQuad(FloatRect(rect), false, &isFixed).enclosingBoundingBox();
+    bool boxIsHorizontal = !box->isSVGInlineTextBox() ? box->isHorizontal() : !style().svgStyle().isVerticalWritingMode();
+    // If the containing block is an inline element, we want to check the inlineBoxWrapper orientation
+    // to determine the orientation of the block. In this case we also use the inlineBoxWrapper to
+    // determine if the element is the last on the line.
+    if (containingBlock->inlineBoxWrapper()) {
+        if (containingBlock->inlineBoxWrapper()->isHorizontal() != boxIsHorizontal) {
+            boxIsHorizontal = containingBlock->inlineBoxWrapper()->isHorizontal();
+            isLastOnLine = !containingBlock->inlineBoxWrapper()->nextOnLineExists();
+        }
+    }
+
+    rects.append(SelectionRect(absRect, box->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, box->isLineBreak(), isFirstOnLine, isLastOnLine, false, false, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absRect.x())));
+}
+#endif
 
 } // namespace WebCore

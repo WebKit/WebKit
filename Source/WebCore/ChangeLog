@@ -1,3 +1,19 @@
+2014-05-05  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION(r155957): Selection rects are incorrect when the selection contains BR elements.
+        https://bugs.webkit.org/show_bug.cgi?id=132596
+        <rdar://problem/16692206>
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds an implementation of collectSelectionRects to RenderLineBreak.
+        It uses the same logic used by RenderText to compute and annotate the returned rect
+        which is computed, like the caret rect, using information from the rootline box.
+
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::collectSelectionRects):
+        * rendering/RenderLineBreak.h:
+
 2014-05-06  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Optimize the number of regions invalidations
