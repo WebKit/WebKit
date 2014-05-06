@@ -1,3 +1,23 @@
+2014-05-05  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Add tests using blending and isolation for body and html elements.
+        https://bugs.webkit.org/show_bug.cgi?id=132325
+
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/blend-mode-body-child-background-color-expected.html: Added.
+        * css3/compositing/blend-mode-body-child-background-color.html: Added.
+        * css3/compositing/blend-mode-body-child-expected.html: Added.
+        * css3/compositing/blend-mode-body-child-isolate-background-color-expected.html: Added.
+        * css3/compositing/blend-mode-body-child-isolate-background-color.html: Added.
+        * css3/compositing/blend-mode-body-child-isolate-html-background-color-expected.html: Added.
+        * css3/compositing/blend-mode-body-child-isolate-html-background-color.html: Added.
+        * css3/compositing/blend-mode-body-child.html: Added.
+        * css3/compositing/blend-mode-body-element-expected.html: Added.
+        * css3/compositing/blend-mode-body-element.html: Added.
+        * css3/compositing/blend-mode-html-element-screen-expected.html: Added.
+        * css3/compositing/blend-mode-html-element-screen.html: Added.
+
 2014-05-05  Andreas Kling  <akling@apple.com>
 
         Mark http/tests/media/hls/video-controls-live-stream.html as WontFix on Mountain Lion.

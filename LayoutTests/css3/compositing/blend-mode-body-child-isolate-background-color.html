@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<head>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            background-color: #00ff00;
+            mix-blend-mode: multiply;
+        }
+        p {
+            color: white;
+        }
+        body {
+            background-color: black;
+            isolation: isolate;
+        }
+    </style>
+</head>
+
+<body>
+    <p>This file tests that a blending element will not blend with body's black background when body creates a stacking context.<br/>
+       Test passes if you see a green rectangle on top of a black background.</p>
+    <div></div>
+</body>
