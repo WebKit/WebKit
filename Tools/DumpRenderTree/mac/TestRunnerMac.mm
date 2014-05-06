@@ -925,7 +925,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
 
 @interface APITestDelegateIPhone : NSObject
 {
-    TestRunner& testRunner;
+    TestRunner* testRunner;
     NSData *data;
     NSURL *baseURL;
     WebView *webView;
@@ -936,15 +936,15 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
 
 @implementation APITestDelegateIPhone
 
-- (id)initWithTestRunner:(TestRunner*)runner utf8Data:(JSStringRef)data baseURL:(JSStringRef)baseURL
+- (id)initWithTestRunner:(TestRunner*)runner utf8Data:(JSStringRef)dataString baseURL:(JSStringRef)baseURLString
 {
     self = [super init];
     if (!self)
         return nil;
 
-    testRunner = *runner;
-    data = [[(NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, data)).get() dataUsingEncoding:NSUTF8StringEncoding] retain];
-    baseURL = [[NSURL URLWithString:(NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, baseURL)).get()] retain];
+    testRunner = runner;
+    data = [[(NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, dataString)).get() dataUsingEncoding:NSUTF8StringEncoding] retain];
+    baseURL = [[NSURL URLWithString:(NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, baseURLString)).get()] retain];
     return self;
 }
 
@@ -960,7 +960,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
     if (webView)
         return;
 
-    testRunner.setWaitToDump(true);
+    testRunner->setWaitToDump(true);
 
     WebThreadLock();
 
@@ -981,7 +981,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
     [webView release];
     webView = nil;
 
-    testRunner.notifyDone();
+    testRunner->notifyDone();
 }
 
 - (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame

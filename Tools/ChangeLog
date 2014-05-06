@@ -1,3 +1,14 @@
+2014-05-06  Darin Adler  <darin@apple.com>
+
+        Try to fix iOS build.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (-[APITestDelegateIPhone initWithTestRunner:utf8Data:baseURL:]):
+        Updated since I changed testRunner into a pointer instead of a reference.
+        Updated argument names to avoid conflict with field names.
+        (-[APITestDelegateIPhone run]): Ditto.
+        (-[APITestDelegateIPhone _cleanUp]): Ditto.
+
 2014-05-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168304.
