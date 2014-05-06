@@ -1,3 +1,19 @@
+2014-05-06  Andreas Kling  <akling@apple.com>
+
+        JSString::toAtomicString() should return AtomicString.
+        <https://webkit.org/b/132627>
+
+        Remove premature optimization where I was trying to avoid refcount
+        churn when returning an already atomicized String.
+
+        Instead of using reinterpret_cast to mangle the String member into
+        a const AtomicString& return value, just return AtomicString.
+
+        Reviewed by Geoff Garen.
+
+        * runtime/JSString.h:
+        (JSC::JSString::toAtomicString):
+
 2014-05-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Roll out r167889

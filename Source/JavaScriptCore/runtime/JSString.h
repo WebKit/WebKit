@@ -140,7 +140,7 @@ namespace JSC {
         }
 
         Identifier toIdentifier(ExecState*) const;
-        const AtomicString& toAtomicString(ExecState*) const;
+        AtomicString toAtomicString(ExecState*) const;
         AtomicStringImpl* toExistingAtomicString(ExecState*) const;
         const String& value(ExecState*) const;
         const String& tryGetValue() const;
@@ -393,13 +393,11 @@ namespace JSC {
         return Identifier(exec, toAtomicString(exec));
     }
 
-    ALWAYS_INLINE const AtomicString& JSString::toAtomicString(ExecState* exec) const
+    ALWAYS_INLINE AtomicString JSString::toAtomicString(ExecState* exec) const
     {
         if (isRope())
             static_cast<const JSRopeString*>(this)->resolveRopeToAtomicString(exec);
-        else if (!m_value.impl()->isAtomic())
-            m_value = AtomicString(m_value);
-        return *reinterpret_cast<const AtomicString*>(&m_value);
+        return AtomicString(m_value);
     }
 
     ALWAYS_INLINE AtomicStringImpl* JSString::toExistingAtomicString(ExecState* exec) const
