@@ -2183,6 +2183,13 @@
                     { "name": "flowName", "type": "string", "description": "Identifier of the removed Named Flow." }
                 ],
                 "description": "Fires when a Named Flow is removed: has no associated content nodes and regions."
+            },
+            {
+                "name": "regionOversetChanged",
+                "parameters": [
+                    { "name": "namedFlow", "$ref": "NamedFlow", "description": "The Named Flow containing the regions whose regionOverset values changed." }
+                ],
+                "description": "Fires if any of the regionOverset values changed in a Named Flow's region chain."
             }
         ]
     },

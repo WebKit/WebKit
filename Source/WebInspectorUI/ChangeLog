@@ -1,3 +1,15 @@
+2014-05-06  Radu Stavila  <stavila@adobe.com>
+
+        Web Inspector: [CSS Regions] Add the regionOversetChange event to the iOS 7.0 WebInspector UI
+        https://bugs.webkit.org/show_bug.cgi?id=132566
+
+        Reviewed by Antti Koivisto.
+
+        The regionOversetChange event was missing from the iOS7 WebInspector.
+
+        * UserInterface/Protocol/Legacy/7.0/InspectorWebBackendCommands.js:
+        * Versions/Inspector-iOS-7.0.json:
+
 2014-05-05  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Remove regionLayoutUpdate event
