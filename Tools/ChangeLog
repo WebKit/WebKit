@@ -1,3 +1,24 @@
+2014-05-04  Darin Adler  <darin@apple.com>
+
+        RetainPtr: Use adoptCF function instead of AdoptCF constructor argument
+        https://bugs.webkit.org/show_bug.cgi?id=80222
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (-[APITestDelegateIPhone initWithTestRunner:utf8Data:baseURL:]): Updated to
+        do more work here so we don't use RetainPtr local variables.
+        (-[APITestDelegateIPhone dealloc]): Added.
+        (-[APITestDelegateIPhone run]): Added an early exit if the web view is already
+        created. Updated for changes to member names and types.
+        (-[APITestDelegateIPhone _cleanUp]): Added code to set webView to nil and
+        updated for changes to member names and types. Changed to two word spelling.
+        (-[APITestDelegateIPhone webView:didFailLoadWithError:forFrame:]): Updated
+        name of _cleanUp method.
+        (-[APITestDelegateIPhone webView:didFailProvisionalLoadWithError:forFrame:]):
+        Ditto.
+        (-[APITestDelegateIPhone webView:didFinishLoadForFrame:]): Ditto.
+
 2014-05-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Clean up Image Document and tweak the layout and viewport

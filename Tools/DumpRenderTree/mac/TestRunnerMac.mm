@@ -922,77 +922,88 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
 @end
 
 #if PLATFORM(IOS)
+
 @interface APITestDelegateIPhone : NSObject
 {
-    TestRunner* m_layoutTestRunner;
-    JSStringRef m_utf8Data;
-    JSStringRef m_baseURL;
-    WebView *m_webView;
+    TestRunner& testRunner;
+    NSData *data;
+    NSURL *baseURL;
+    WebView *webView;
 }
-
-- (id)initWithTestRunner:(TestRunner*)layoutTestRunner utf8Data:(JSStringRef)utf8Data baseURL:(JSStringRef)baseURL;
+- (id)initWithTestRunner:(TestRunner*)testRunner utf8Data:(JSStringRef)data baseURL:(JSStringRef)baseURL;
 - (void)run;
 @end
 
 @implementation APITestDelegateIPhone
 
-- (id)initWithTestRunner:(TestRunner*)layoutTestRunner utf8Data:(JSStringRef)utf8Data baseURL:(JSStringRef)baseURL
+- (id)initWithTestRunner:(TestRunner*)runner utf8Data:(JSStringRef)data baseURL:(JSStringRef)baseURL
 {
     self = [super init];
     if (!self)
         return nil;
 
-    m_layoutTestRunner = layoutTestRunner;
-    m_utf8Data = utf8Data;
-    m_baseURL = baseURL;
+    testRunner = *runner;
+    data = [[(NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, data)).get() dataUsingEncoding:NSUTF8StringEncoding] retain];
+    baseURL = [[NSURL URLWithString:(NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, baseURL)).get()] retain];
     return self;
+}
+
+- (void)dealloc
+{
+    [data release];
+    [baseURL release];
+    [super dealloc];
 }
 
 - (void)run
 {
-    m_layoutTestRunner->setWaitToDump(true);
+    if (webView)
+        return;
 
-    RetainPtr<CFStringRef> utf8DataCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_utf8Data));
-    RetainPtr<CFStringRef> baseURLCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_baseURL));
-    m_utf8Data = NULL;
-    m_baseURL = NULL;
+    testRunner.setWaitToDump(true);
 
     WebThreadLock();
-    m_webView = [[WebView alloc] initWithFrame:NSZeroRect frameName:@"" groupName:@""];
-    [m_webView setFrameLoadDelegate:self];
 
-    [[m_webView mainFrame] loadData:[(NSString *)utf8DataCF.get() dataUsingEncoding:NSUTF8StringEncoding] MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:[NSURL URLWithString:(NSString *)baseURLCF.get()]];
+    webView = [[WebView alloc] initWithFrame:NSZeroRect frameName:@"" groupName:@""];
+    [webView setFrameLoadDelegate:self];
+    [[webView mainFrame] loadData:data MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:baseURL];
 }
 
-- (void)_cleanup
+- (void)_cleanUp
 {
-    WebThreadLock();
-    [m_webView _clearDelegates];
-    [m_webView close];
-    [m_webView release];
+    if (!webView)
+        return;
 
-    m_layoutTestRunner->notifyDone();
+    WebThreadLock();
+
+    [webView _clearDelegates];
+    [webView close];
+    [webView release];
+    webView = nil;
+
+    testRunner.notifyDone();
 }
 
 - (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
     printf("API Test load failed\n");
-    [self _cleanup];
+    [self _cleanUp];
 }
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
     printf("API Test load failed provisional\n");
-    [self _cleanup];
+    [self _cleanUp];
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
     printf("API Test load succeeded\n");
-    [self _cleanup];
+    [self _cleanUp];
 }
 
 @end
+
 #endif
 
 void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)

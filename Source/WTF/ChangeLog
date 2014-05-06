@@ -1,3 +1,19 @@
+2014-05-04  Darin Adler  <darin@apple.com>
+
+        RetainPtr: Use adoptCF function instead of AdoptCF constructor argument
+        https://bugs.webkit.org/show_bug.cgi?id=80222
+
+        Reviewed by Alexey Proskuryakov.
+
+        All the clients are gone, so we can now remove AdoptCF and AdoptNS.
+
+        * wtf/RetainPtr.h: Removed the public constructors that let you specify AdoptCF
+        and AdoptNS. Instead, made the adoptCF and adoptNS functions be friends and use
+        a private constructor that takes an Adopt argument.
+        (WTF::adoptCF): Moved the Objective-C class check in here.
+        (WTF::adoptNS): Moved the code to deal with the CFRetain for garbage collection
+        in here; it used to be spread across the constructor and adoptNSReference.
+
 2014-05-04  Andreas Kling  <akling@apple.com>
 
         Optimize JSRopeString for resolving directly to AtomicString.

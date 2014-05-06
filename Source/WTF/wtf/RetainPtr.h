@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005, 2006, 2007, 2008, 2010, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005, 2006, 2007, 2008, 2010, 2013, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -48,29 +48,10 @@ namespace WTF {
     // Unlike most most of our smart pointers, RetainPtr can take either the pointer type or the pointed-to type,
     // so both RetainPtr<NSDictionary> and RetainPtr<CFDictionaryRef> will work.
 
-#if !PLATFORM(IOS)
-    #define AdoptCF DeprecatedAdoptCF
-    #define AdoptNS DeprecatedAdoptNS
-#endif
+    template<typename T> class RetainPtr;
 
-    enum AdoptCFTag { AdoptCF };
-    enum AdoptNSTag { AdoptNS };
-    
-#if defined(__OBJC__) && !__has_feature(objc_arc)
-#ifdef OBJC_NO_GC
-    inline void adoptNSReference(id)
-    {
-    }
-#else
-    inline void adoptNSReference(id ptr)
-    {
-        if (ptr) {
-            CFRetain(ptr);
-            [ptr release];
-        }
-    }
-#endif
-#endif
+    template<typename T> RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
+    template<typename T> RetainPtr<T> adoptNS(T NS_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
 
     template<typename T> class RetainPtr {
     public:
@@ -78,27 +59,9 @@ namespace WTF {
         typedef ValueType* PtrType;
         typedef CFTypeRef StorageType;
 
-        RetainPtr() : m_ptr(0) {}
+        RetainPtr() : m_ptr(nullptr) { }
         RetainPtr(PtrType ptr) : m_ptr(toStorageType(ptr)) { if (m_ptr) CFRetain(m_ptr); }
 
-        RetainPtr(AdoptCFTag, PtrType ptr)
-            : m_ptr(toStorageType(ptr))
-        {
-#ifdef __OBJC__
-            static_assert((!std::is_convertible<T, id>::value), "Don't use adoptCF with Objective-C pointer types, use adoptNS.");
-#endif
-        }
-
-#if __has_feature(objc_arc)
-        RetainPtr(AdoptNSTag, PtrType ptr) : m_ptr(toStorageType(ptr)) { if (m_ptr) CFRetain(m_ptr); }
-#else
-        RetainPtr(AdoptNSTag, PtrType ptr)
-            : m_ptr(toStorageType(ptr))
-        {
-            adoptNSReference(ptr);
-        }
-#endif
-        
         RetainPtr(const RetainPtr& o) : m_ptr(o.m_ptr) { if (StorageType ptr = m_ptr) CFRetain(ptr); }
 
         RetainPtr(RetainPtr&& o) : m_ptr(toStorageType(o.leakRef())) { }
@@ -124,7 +87,7 @@ namespace WTF {
     
         // This conversion operator allows implicit conversion to bool but not to other integer types.
         typedef StorageType RetainPtr::*UnspecifiedBoolType;
-        operator UnspecifiedBoolType() const { return m_ptr ? &RetainPtr::m_ptr : 0; }
+        operator UnspecifiedBoolType() const { return m_ptr ? &RetainPtr::m_ptr : nullptr; }
         
         RetainPtr& operator=(const RetainPtr&);
         template<typename U> RetainPtr& operator=(const RetainPtr<U>&);
@@ -136,7 +99,13 @@ namespace WTF {
 
         void swap(RetainPtr&);
 
+        template<typename U> friend RetainPtr<U> adoptCF(U CF_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
+        template<typename U> friend RetainPtr<U> adoptNS(U NS_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
+
     private:
+        enum AdoptTag { Adopt };
+        RetainPtr(PtrType ptr, AdoptTag) : m_ptr(toStorageType(ptr)) { }
+
         static PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
 
 #if defined (__OBJC__) && __has_feature(objc_arc)
@@ -165,6 +134,9 @@ namespace WTF {
         StorageType m_ptr;
     };
 
+    // Helper function for creating a RetainPtr using template argument deduction.
+    template<typename T> inline RetainPtr<T> retainPtr(T) WARN_UNUSED_RETURN;
+
     template<typename T> template<typename U> inline RetainPtr<T>::RetainPtr(const RetainPtr<U>& o)
         : m_ptr(toStorageType(o.get()))
     {
@@ -175,7 +147,7 @@ namespace WTF {
     template<typename T> inline void RetainPtr<T>::clear()
     {
         if (StorageType ptr = m_ptr) {
-            m_ptr = 0;
+            m_ptr = nullptr;
             CFRelease(ptr);
         }
     }
@@ -183,7 +155,7 @@ namespace WTF {
     template<typename T> inline typename RetainPtr<T>::PtrType RetainPtr<T>::leakRef()
     {
         PtrType ptr = fromStorageType(m_ptr);
-        m_ptr = 0;
+        m_ptr = nullptr;
         return ptr;
     }
 
@@ -269,23 +241,32 @@ namespace WTF {
         return a != b.get(); 
     }
 
-    template<typename T> inline RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
-    template<typename T> inline RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT o)
+    template<typename T> inline RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT ptr)
     {
-        return RetainPtr<T>(AdoptCF, o);
+#ifdef __OBJC__
+        static_assert((!std::is_convertible<T, id>::value), "Don't use adoptCF with Objective-C pointer types, use adoptNS.");
+#endif
+        return RetainPtr<T>(ptr, RetainPtr<T>::Adopt);
     }
 
-    template<typename T> inline RetainPtr<T> adoptNS(T NS_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
-    template<typename T> inline RetainPtr<T> adoptNS(T NS_RELEASES_ARGUMENT o)
+#ifdef __OBJC__
+    template<typename T> inline RetainPtr<T> adoptNS(T NS_RELEASES_ARGUMENT ptr)
     {
-        return RetainPtr<T>(AdoptNS, o);
+#if __has_feature(objc_arc)
+        return ptr;
+#elif defined(OBJC_NO_GC)
+        return RetainPtr<T>(ptr, RetainPtr<T>::Adopt);
+#else
+        RetainPtr<T> result = ptr;
+        [ptr release];
+        return result;
+#endif
     }
+#endif
 
-    // Helper function for creating a RetainPtr using template argument deduction.
-    template<typename T> inline RetainPtr<T> retainPtr(T) WARN_UNUSED_RETURN;
-    template<typename T> inline RetainPtr<T> retainPtr(T o)
+    template<typename T> inline RetainPtr<T> retainPtr(T ptr)
     {
-        return o;
+        return ptr;
     }
 
     template<typename P> struct HashTraits<RetainPtr<P>> : SimpleClassHashTraits<RetainPtr<P>> { };
@@ -324,22 +305,12 @@ namespace WTF {
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-#if !PLATFORM(IOS)
-    #undef AdoptCF
-    #undef AdoptNS
-#endif
-
 } // namespace WTF
 
 using WTF::RetainPtr;
 using WTF::adoptCF;
 using WTF::adoptNS;
 using WTF::retainPtr;
-
-#if PLATFORM(IOS)
-using WTF::AdoptCF;
-using WTF::AdoptNS;
-#endif
 
 #endif // USE(CF) || defined(__OBJC__)
 
