@@ -1,3 +1,14 @@
+2014-05-06  Brady Eidson  <beidson@apple.com>
+
+        Don't select an image that is about to have its menu shown.
+        <rdar://problem/16807845> and https://bugs.webkit.org/show_bug.cgi?id=132579
+
+        Reviewed by Tim Horton.
+
+        * Misc/WebSharingServicePickerController.mm:
+        (-[WebSharingServicePickerController didShareImageData:confirmDataIsValidTIFFData:]):
+          Call the new replaceNodeFromPasteboard API instead of readSelectionFromPasteboard.
+
 2014-05-06  Anders Carlsson  <andersca@apple.com>
 
         Move the WebKitLegacy header check to the right file

@@ -432,6 +432,7 @@ public:
     bool canCopyExcludingStandaloneImages();
     void takeFindStringFromSelection();
     void readSelectionFromPasteboard(const String& pasteboardName);
+    void replaceNodeFromPasteboard(Node*, const String& pasteboardName);
     PassRefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
 #endif // !PLATFORM(IOS)
 #endif

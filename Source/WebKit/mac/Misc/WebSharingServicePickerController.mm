@@ -31,6 +31,7 @@
 #import "WebViewInternal.h"
 #import <AppKit/NSSharingService.h>
 #import <WebCore/BitmapImage.h>
+#import <WebCore/Document.h>
 #import <WebCore/Editor.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
@@ -120,9 +121,10 @@ using namespace WebCore;
     [pasteboard declareTypes:@[ NSPasteboardTypeTIFF ] owner:nil];
     [pasteboard setData:data forType:NSPasteboardTypeTIFF];
 
-    Frame& frame = page->focusController().focusedOrMainFrame();
-    if (!frame.selection().isNone())
-        frame.editor().readSelectionFromPasteboard(serviceControlsPasteboardName);
+    if (Node* node = page->contextMenuController().context().hitTestResult().innerNode()) {
+        if (Frame* frame = node->document().frame())
+            frame->editor().replaceNodeFromPasteboard(node, serviceControlsPasteboardName);
+    }
 
     [self clear];
 }

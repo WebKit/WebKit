@@ -265,6 +265,19 @@ void Editor::readSelectionFromPasteboard(const String& pasteboardName)
         pasteAsPlainTextWithPasteboard(pasteboard);
 }
 
+void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
+{
+    ASSERT(node);
+
+    if (&node->document() != m_frame.document())
+        return;
+
+    RefPtr<Range> range = Range::create(node->document(), Position(node, Position::PositionIsBeforeAnchor), Position(node, Position::PositionIsAfterAnchor));
+    m_frame.selection().setSelection(VisibleSelection(range.get()), FrameSelection::DoNotSetFocus);
+
+    readSelectionFromPasteboard(pasteboardName);
+}
+
 // FIXME: Makes no sense that selectedTextForDataTransfer always includes alt text, but stringSelectionForPasteboard does not.
 // This was left in a bad state when selectedTextForDataTransfer was added. Need to look over clients and fix this.
 String Editor::stringSelectionForPasteboard()

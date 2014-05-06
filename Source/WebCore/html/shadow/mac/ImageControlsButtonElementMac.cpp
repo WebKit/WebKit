@@ -111,23 +111,6 @@ void ImageControlsButtonElementMac::defaultEventHandler(Event* event)
         if (!page)
             return;
 
-        ContainerNode* parent = parentNode();
-        Element* hostElement = nullptr;
-        while (parent) {
-            if (parent->isShadowRoot()) {
-                hostElement = static_cast<ShadowRoot*>(parent)->hostElement();
-                break;
-            }
-            parent = parent->parentNode();
-        }
-
-        if (!hostElement)
-            return;
-        ASSERT(isHTMLImageElement(hostElement));
-
-        RefPtr<Range> range = Range::create(document(), Position(hostElement, Position::PositionIsBeforeAnchor), Position(hostElement, Position::PositionIsAfterAnchor));
-        frame->selection().setSelection(VisibleSelection(range.get()));
-
         page->contextMenuController().showImageControlsMenu(event);
         event->setDefaultHandled();
         return;
