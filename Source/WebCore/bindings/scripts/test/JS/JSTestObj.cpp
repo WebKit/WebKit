@@ -2026,7 +2026,10 @@ void setJSTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, JSObject
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "TestSubObjEnabledBySetting");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "TestSubObjEnabledBySetting");
+        else
+            throwSetterTypeError(*exec, "TestObj", "TestSubObjEnabledBySetting");
         return;
     }
     // Shadowing a built-in constructor
@@ -2039,7 +2042,10 @@ void setJSTestObjEnumAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJS
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "enumAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "enumAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "enumAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2057,7 +2063,10 @@ void setJSTestObjByteAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJS
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "byteAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "byteAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "byteAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2073,7 +2082,10 @@ void setJSTestObjOctetAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJ
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "octetAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "octetAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "octetAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2089,7 +2101,10 @@ void setJSTestObjShortAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJ
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "shortAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "shortAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "shortAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2105,7 +2120,10 @@ void setJSTestObjUnsignedShortAttr(ExecState* exec, JSObject* /* baseObject */, 
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "unsignedShortAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "unsignedShortAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "unsignedShortAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2121,7 +2139,10 @@ void setJSTestObjLongAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJS
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "longAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "longAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "longAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2137,7 +2158,10 @@ void setJSTestObjLongLongAttr(ExecState* exec, JSObject* /* baseObject */, Encod
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "longLongAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "longLongAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "longLongAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2153,7 +2177,10 @@ void setJSTestObjUnsignedLongLongAttr(ExecState* exec, JSObject* /* baseObject *
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "unsignedLongLongAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "unsignedLongLongAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "unsignedLongLongAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2169,7 +2196,10 @@ void setJSTestObjStringAttr(ExecState* exec, JSObject* /* baseObject */, Encoded
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "stringAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "stringAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "stringAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2185,7 +2215,10 @@ void setJSTestObjTestObjAttr(ExecState* exec, JSObject* /* baseObject */, Encode
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "testObjAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "testObjAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "testObjAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2201,7 +2234,10 @@ void setJSTestObjXMLObjAttr(ExecState* exec, JSObject* /* baseObject */, Encoded
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "XMLObjAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "XMLObjAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "XMLObjAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2217,7 +2253,10 @@ void setJSTestObjCreate(ExecState* exec, JSObject* /* baseObject */, EncodedJSVa
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "create");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "create");
+        else
+            throwSetterTypeError(*exec, "TestObj", "create");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2233,7 +2272,10 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* /* baseObject */
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "reflectedStringAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "reflectedStringAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "reflectedStringAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2249,7 +2291,10 @@ void setJSTestObjReflectedIntegralAttr(ExecState* exec, JSObject* /* baseObject 
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "reflectedIntegralAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "reflectedIntegralAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "reflectedIntegralAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2265,7 +2310,10 @@ void setJSTestObjReflectedUnsignedIntegralAttr(ExecState* exec, JSObject* /* bas
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "reflectedUnsignedIntegralAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "reflectedUnsignedIntegralAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "reflectedUnsignedIntegralAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2281,7 +2329,10 @@ void setJSTestObjReflectedBooleanAttr(ExecState* exec, JSObject* /* baseObject *
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "reflectedBooleanAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "reflectedBooleanAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "reflectedBooleanAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2297,7 +2348,10 @@ void setJSTestObjReflectedURLAttr(ExecState* exec, JSObject* /* baseObject */, E
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "reflectedURLAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "reflectedURLAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "reflectedURLAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2313,7 +2367,10 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* /* baseObject */
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "reflectedStringAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "reflectedStringAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "reflectedStringAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2329,7 +2386,10 @@ void setJSTestObjReflectedCustomIntegralAttr(ExecState* exec, JSObject* /* baseO
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "reflectedCustomIntegralAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "reflectedCustomIntegralAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "reflectedCustomIntegralAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2345,7 +2405,10 @@ void setJSTestObjReflectedCustomBooleanAttr(ExecState* exec, JSObject* /* baseOb
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "reflectedCustomBooleanAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "reflectedCustomBooleanAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "reflectedCustomBooleanAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2361,7 +2424,10 @@ void setJSTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* /* baseObject
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "reflectedCustomURLAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "reflectedCustomURLAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "reflectedCustomURLAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2377,7 +2443,10 @@ void setJSTestObjTypedArrayAttr(ExecState* exec, JSObject* /* baseObject */, Enc
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "typedArrayAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "typedArrayAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "typedArrayAttr");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2393,7 +2462,10 @@ void setJSTestObjAttrWithGetterException(ExecState* exec, JSObject* /* baseObjec
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "attrWithGetterException");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "attrWithGetterException");
+        else
+            throwSetterTypeError(*exec, "TestObj", "attrWithGetterException");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2409,7 +2481,10 @@ void setJSTestObjAttrWithSetterException(ExecState* exec, JSObject* /* baseObjec
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "attrWithSetterException");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "attrWithSetterException");
+        else
+            throwSetterTypeError(*exec, "TestObj", "attrWithSetterException");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2427,7 +2502,10 @@ void setJSTestObjStringAttrWithGetterException(ExecState* exec, JSObject* /* bas
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "stringAttrWithGetterException");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "stringAttrWithGetterException");
+        else
+            throwSetterTypeError(*exec, "TestObj", "stringAttrWithGetterException");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2443,7 +2521,10 @@ void setJSTestObjStringAttrWithSetterException(ExecState* exec, JSObject* /* bas
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "stringAttrWithSetterException");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "stringAttrWithSetterException");
+        else
+            throwSetterTypeError(*exec, "TestObj", "stringAttrWithSetterException");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2461,7 +2542,10 @@ void setJSTestObjCustomAttr(ExecState* exec, JSObject* /* baseObject */, Encoded
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "customAttr");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "customAttr");
+        else
+            throwSetterTypeError(*exec, "TestObj", "customAttr");
         return;
     }
     castedThis->setCustomAttr(exec, value);
@@ -2473,7 +2557,10 @@ void setJSTestObjWithScriptStateAttribute(ExecState* exec, JSObject* /* baseObje
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "withScriptStateAttribute");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "withScriptStateAttribute");
+        else
+            throwSetterTypeError(*exec, "TestObj", "withScriptStateAttribute");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2489,7 +2576,10 @@ void setJSTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSObject* 
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "withScriptExecutionContextAttribute");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "withScriptExecutionContextAttribute");
+        else
+            throwSetterTypeError(*exec, "TestObj", "withScriptExecutionContextAttribute");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2508,7 +2598,10 @@ void setJSTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject* /* ba
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "withScriptStateAttributeRaises");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "withScriptStateAttributeRaises");
+        else
+            throwSetterTypeError(*exec, "TestObj", "withScriptStateAttributeRaises");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2524,7 +2617,10 @@ void setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, JSOb
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "withScriptExecutionContextAttributeRaises");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "withScriptExecutionContextAttributeRaises");
+        else
+            throwSetterTypeError(*exec, "TestObj", "withScriptExecutionContextAttributeRaises");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2543,7 +2639,10 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* ex
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "withScriptExecutionContextAndScriptStateAttribute");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "withScriptExecutionContextAndScriptStateAttribute");
+        else
+            throwSetterTypeError(*exec, "TestObj", "withScriptExecutionContextAndScriptStateAttribute");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2562,7 +2661,10 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecSta
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "withScriptExecutionContextAndScriptStateAttributeRaises");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "withScriptExecutionContextAndScriptStateAttributeRaises");
+        else
+            throwSetterTypeError(*exec, "TestObj", "withScriptExecutionContextAndScriptStateAttributeRaises");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2581,7 +2683,10 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(Exe
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "withScriptExecutionContextAndScriptStateWithSpacesAttribute");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "withScriptExecutionContextAndScriptStateWithSpacesAttribute");
+        else
+            throwSetterTypeError(*exec, "TestObj", "withScriptExecutionContextAndScriptStateWithSpacesAttribute");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2600,7 +2705,10 @@ void setJSTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, JSObj
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "withScriptArgumentsAndCallStackAttribute");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "withScriptArgumentsAndCallStackAttribute");
+        else
+            throwSetterTypeError(*exec, "TestObj", "withScriptArgumentsAndCallStackAttribute");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2617,7 +2725,10 @@ void setJSTestObjConditionalAttr1(ExecState* exec, JSObject* /* baseObject */, E
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "conditionalAttr1");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "conditionalAttr1");
+        else
+            throwSetterTypeError(*exec, "TestObj", "conditionalAttr1");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2635,7 +2746,10 @@ void setJSTestObjConditionalAttr2(ExecState* exec, JSObject* /* baseObject */, E
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "conditionalAttr2");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "conditionalAttr2");
+        else
+            throwSetterTypeError(*exec, "TestObj", "conditionalAttr2");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2653,7 +2767,10 @@ void setJSTestObjConditionalAttr3(ExecState* exec, JSObject* /* baseObject */, E
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "conditionalAttr3");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "conditionalAttr3");
+        else
+            throwSetterTypeError(*exec, "TestObj", "conditionalAttr3");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2671,7 +2788,10 @@ void setJSTestObjConditionalAttr4Constructor(ExecState* exec, JSObject* /* baseO
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "conditionalAttr4");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "conditionalAttr4");
+        else
+            throwSetterTypeError(*exec, "TestObj", "conditionalAttr4");
         return;
     }
     // Shadowing a built-in constructor
@@ -2686,7 +2806,10 @@ void setJSTestObjConditionalAttr5Constructor(ExecState* exec, JSObject* /* baseO
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "conditionalAttr5");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "conditionalAttr5");
+        else
+            throwSetterTypeError(*exec, "TestObj", "conditionalAttr5");
         return;
     }
     // Shadowing a built-in constructor
@@ -2701,7 +2824,10 @@ void setJSTestObjConditionalAttr6Constructor(ExecState* exec, JSObject* /* baseO
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "conditionalAttr6");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "conditionalAttr6");
+        else
+            throwSetterTypeError(*exec, "TestObj", "conditionalAttr6");
         return;
     }
     // Shadowing a built-in constructor
@@ -2715,7 +2841,10 @@ void setJSTestObjAnyAttribute(ExecState* exec, JSObject* /* baseObject */, Encod
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "anyAttribute");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "anyAttribute");
+        else
+            throwSetterTypeError(*exec, "TestObj", "anyAttribute");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2731,7 +2860,10 @@ void setJSTestObjMutablePoint(ExecState* exec, JSObject* /* baseObject */, Encod
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "mutablePoint");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "mutablePoint");
+        else
+            throwSetterTypeError(*exec, "TestObj", "mutablePoint");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2747,7 +2879,10 @@ void setJSTestObjImmutablePoint(ExecState* exec, JSObject* /* baseObject */, Enc
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "immutablePoint");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "immutablePoint");
+        else
+            throwSetterTypeError(*exec, "TestObj", "immutablePoint");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2763,7 +2898,10 @@ void setJSTestObjStrawberry(ExecState* exec, JSObject* /* baseObject */, Encoded
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "strawberry");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "strawberry");
+        else
+            throwSetterTypeError(*exec, "TestObj", "strawberry");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2779,7 +2917,10 @@ void setJSTestObjStrictFloat(ExecState* exec, JSObject* /* baseObject */, Encode
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "strictFloat");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "strictFloat");
+        else
+            throwSetterTypeError(*exec, "TestObj", "strictFloat");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2795,7 +2936,10 @@ void setJSTestObjId(ExecState* exec, JSObject* /* baseObject */, EncodedJSValue 
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "id");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "id");
+        else
+            throwSetterTypeError(*exec, "TestObj", "id");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2811,7 +2955,10 @@ void setJSTestObjReplaceableAttribute(ExecState* exec, JSObject* /* baseObject *
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "replaceableAttribute");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "replaceableAttribute");
+        else
+            throwSetterTypeError(*exec, "TestObj", "replaceableAttribute");
         return;
     }
     // Shadowing a built-in object
@@ -2824,7 +2971,10 @@ void setJSTestObjNullableLongSettableAttribute(ExecState* exec, JSObject* /* bas
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "nullableLongSettableAttribute");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "nullableLongSettableAttribute");
+        else
+            throwSetterTypeError(*exec, "TestObj", "nullableLongSettableAttribute");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2840,7 +2990,10 @@ void setJSTestObjNullableStringValue(ExecState* exec, JSObject* /* baseObject */
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "nullableStringValue");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "nullableStringValue");
+        else
+            throwSetterTypeError(*exec, "TestObj", "nullableStringValue");
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2856,7 +3009,10 @@ void setJSTestObjAttributeWithReservedEnumType(ExecState* exec, JSObject* /* bas
     JSValue value = JSValue::decode(encodedValue);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestObj", "attributeWithReservedEnumType");
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "attributeWithReservedEnumType");
+        else
+            throwSetterTypeError(*exec, "TestObj", "attributeWithReservedEnumType");
         return;
     }
     TestObj& impl = castedThis->impl();

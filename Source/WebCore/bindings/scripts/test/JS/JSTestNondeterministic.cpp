@@ -339,7 +339,10 @@ void setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* exec, JSO
     JSValue value = JSValue::decode(encodedValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestNondeterministic", "nondeterministicWriteableAttr");
+        if (jsDynamicCast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestNondeterministic", "nondeterministicWriteableAttr");
+        else
+            throwSetterTypeError(*exec, "TestNondeterministic", "nondeterministicWriteableAttr");
         return;
     }
     TestNondeterministic& impl = castedThis->impl();
@@ -355,7 +358,10 @@ void setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* exec, JSO
     JSValue value = JSValue::decode(encodedValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestNondeterministic", "nondeterministicExceptionAttr");
+        if (jsDynamicCast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestNondeterministic", "nondeterministicExceptionAttr");
+        else
+            throwSetterTypeError(*exec, "TestNondeterministic", "nondeterministicExceptionAttr");
         return;
     }
     TestNondeterministic& impl = castedThis->impl();
@@ -371,7 +377,10 @@ void setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* exe
     JSValue value = JSValue::decode(encodedValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestNondeterministic", "nondeterministicGetterExceptionAttr");
+        if (jsDynamicCast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestNondeterministic", "nondeterministicGetterExceptionAttr");
+        else
+            throwSetterTypeError(*exec, "TestNondeterministic", "nondeterministicGetterExceptionAttr");
         return;
     }
     TestNondeterministic& impl = castedThis->impl();
@@ -387,7 +396,10 @@ void setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* exe
     JSValue value = JSValue::decode(encodedValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestNondeterministic", "nondeterministicSetterExceptionAttr");
+        if (jsDynamicCast<JSTestNondeterministicPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestNondeterministic", "nondeterministicSetterExceptionAttr");
+        else
+            throwSetterTypeError(*exec, "TestNondeterministic", "nondeterministicSetterExceptionAttr");
         return;
     }
     TestNondeterministic& impl = castedThis->impl();

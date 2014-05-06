@@ -363,7 +363,10 @@ void setJSTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSObject* /* baseObj
     JSValue value = JSValue::decode(encodedValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestTypedefs", "unsignedLongLongAttr");
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestTypedefs", "unsignedLongLongAttr");
+        else
+            throwSetterTypeError(*exec, "TestTypedefs", "unsignedLongLongAttr");
         return;
     }
     TestTypedefs& impl = castedThis->impl();
@@ -379,7 +382,10 @@ void setJSTestTypedefsImmutableSerializedScriptValue(ExecState* exec, JSObject* 
     JSValue value = JSValue::decode(encodedValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestTypedefs", "immutableSerializedScriptValue");
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestTypedefs", "immutableSerializedScriptValue");
+        else
+            throwSetterTypeError(*exec, "TestTypedefs", "immutableSerializedScriptValue");
         return;
     }
     TestTypedefs& impl = castedThis->impl();
@@ -395,7 +401,10 @@ void setJSTestTypedefsAttrWithGetterException(ExecState* exec, JSObject* /* base
     JSValue value = JSValue::decode(encodedValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestTypedefs", "attrWithGetterException");
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestTypedefs", "attrWithGetterException");
+        else
+            throwSetterTypeError(*exec, "TestTypedefs", "attrWithGetterException");
         return;
     }
     TestTypedefs& impl = castedThis->impl();
@@ -411,7 +420,10 @@ void setJSTestTypedefsAttrWithSetterException(ExecState* exec, JSObject* /* base
     JSValue value = JSValue::decode(encodedValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestTypedefs", "attrWithSetterException");
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestTypedefs", "attrWithSetterException");
+        else
+            throwSetterTypeError(*exec, "TestTypedefs", "attrWithSetterException");
         return;
     }
     TestTypedefs& impl = castedThis->impl();
@@ -429,7 +441,10 @@ void setJSTestTypedefsStringAttrWithGetterException(ExecState* exec, JSObject* /
     JSValue value = JSValue::decode(encodedValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestTypedefs", "stringAttrWithGetterException");
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestTypedefs", "stringAttrWithGetterException");
+        else
+            throwSetterTypeError(*exec, "TestTypedefs", "stringAttrWithGetterException");
         return;
     }
     TestTypedefs& impl = castedThis->impl();
@@ -445,7 +460,10 @@ void setJSTestTypedefsStringAttrWithSetterException(ExecState* exec, JSObject* /
     JSValue value = JSValue::decode(encodedValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestTypedefs", "stringAttrWithSetterException");
+        if (jsDynamicCast<JSTestTypedefsPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestTypedefs", "stringAttrWithSetterException");
+        else
+            throwSetterTypeError(*exec, "TestTypedefs", "stringAttrWithSetterException");
         return;
     }
     TestTypedefs& impl = castedThis->impl();

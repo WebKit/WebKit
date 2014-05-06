@@ -2483,7 +2483,10 @@ sub GenerateImplementation
                         push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
                     }
                     push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
-                    push(@implContent, "        throwSetterTypeError(*exec, \"$interfaceName\", \"$name\");\n");
+                    push(@implContent, "        if (jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue)))\n");
+                    push(@implContent, "            reportDeprecatedSetterError(*exec, \"$interfaceName\", \"$name\");\n");
+                    push(@implContent, "        else\n");
+                    push(@implContent, "            throwSetterTypeError(*exec, \"$interfaceName\", \"$name\");\n");
                     push(@implContent, "        return;\n");
                     push(@implContent, "    }\n");
                 }

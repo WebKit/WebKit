@@ -576,6 +576,12 @@ JSC::EncodedJSValue reportDeprecatedGetterError(JSC::ExecState& state, const cha
     context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Deprecated attempt to access property '", attributeName, "' on a non-", interfaceName, " object."));
     return JSValue::encode(jsUndefined());
 }
+    
+void reportDeprecatedSetterError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
+{
+    auto& context = *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
+    context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Deprecated attempt to set property '", attributeName, "' on a non-", interfaceName, " object."));
+}
 
 JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState& state, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues)
 {

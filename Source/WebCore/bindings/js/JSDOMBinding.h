@@ -67,6 +67,7 @@ DOMWindow& activeDOMWindow(JSC::ExecState*);
 DOMWindow& firstDOMWindow(JSC::ExecState*);
 
 JSC::EncodedJSValue reportDeprecatedGetterError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
+void reportDeprecatedSetterError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
 
 void throwArrayElementTypeError(JSC::ExecState&);
 void throwAttributeTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName, const char* expectedType);

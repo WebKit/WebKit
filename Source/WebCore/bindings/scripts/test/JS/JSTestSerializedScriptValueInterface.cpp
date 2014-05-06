@@ -236,7 +236,10 @@ void setJSTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* /* 
     JSValue value = JSValue::decode(encodedValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestSerializedScriptValueInterface", "value");
+        if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestSerializedScriptValueInterface", "value");
+        else
+            throwSetterTypeError(*exec, "TestSerializedScriptValueInterface", "value");
         return;
     }
     TestSerializedScriptValueInterface& impl = castedThis->impl();
@@ -252,7 +255,10 @@ void setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, JSObjec
     JSValue value = JSValue::decode(encodedValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestSerializedScriptValueInterface", "cachedValue");
+        if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestSerializedScriptValueInterface", "cachedValue");
+        else
+            throwSetterTypeError(*exec, "TestSerializedScriptValueInterface", "cachedValue");
         return;
     }
     TestSerializedScriptValueInterface& impl = castedThis->impl();

@@ -625,7 +625,10 @@ void setJSTestInterfaceImplementsStr2(ExecState* exec, JSObject* /* baseObject *
     JSValue value = JSValue::decode(encodedValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestInterface", "implementsStr2");
+        if (jsDynamicCast<JSTestInterfacePrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestInterface", "implementsStr2");
+        else
+            throwSetterTypeError(*exec, "TestInterface", "implementsStr2");
         return;
     }
     TestInterface& impl = castedThis->impl();
@@ -643,7 +646,10 @@ void setJSTestInterfaceImplementsStr3(ExecState* exec, JSObject* /* baseObject *
     JSValue value = JSValue::decode(encodedValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestInterface", "implementsStr3");
+        if (jsDynamicCast<JSTestInterfacePrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestInterface", "implementsStr3");
+        else
+            throwSetterTypeError(*exec, "TestInterface", "implementsStr3");
         return;
     }
     castedThis->setImplementsStr3(exec, value);
@@ -657,7 +663,10 @@ void setJSTestInterfaceImplementsNode(ExecState* exec, JSObject* /* baseObject *
     JSValue value = JSValue::decode(encodedValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestInterface", "implementsNode");
+        if (jsDynamicCast<JSTestInterfacePrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestInterface", "implementsNode");
+        else
+            throwSetterTypeError(*exec, "TestInterface", "implementsNode");
         return;
     }
     TestInterface& impl = castedThis->impl();
@@ -687,7 +696,10 @@ void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* /* baseObject
     JSValue value = JSValue::decode(encodedValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestInterface", "supplementalStr2");
+        if (jsDynamicCast<JSTestInterfacePrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestInterface", "supplementalStr2");
+        else
+            throwSetterTypeError(*exec, "TestInterface", "supplementalStr2");
         return;
     }
     TestInterface& impl = castedThis->impl();
@@ -705,7 +717,10 @@ void setJSTestInterfaceSupplementalStr3(ExecState* exec, JSObject* /* baseObject
     JSValue value = JSValue::decode(encodedValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestInterface", "supplementalStr3");
+        if (jsDynamicCast<JSTestInterfacePrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestInterface", "supplementalStr3");
+        else
+            throwSetterTypeError(*exec, "TestInterface", "supplementalStr3");
         return;
     }
     castedThis->setSupplementalStr3(exec, value);
@@ -719,7 +734,10 @@ void setJSTestInterfaceSupplementalNode(ExecState* exec, JSObject* /* baseObject
     JSValue value = JSValue::decode(encodedValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwSetterTypeError(*exec, "TestInterface", "supplementalNode");
+        if (jsDynamicCast<JSTestInterfacePrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestInterface", "supplementalNode");
+        else
+            throwSetterTypeError(*exec, "TestInterface", "supplementalNode");
         return;
     }
     TestInterface& impl = castedThis->impl();
