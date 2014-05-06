@@ -1,3 +1,10 @@
+2014-05-06  Darin Adler  <darin@apple.com>
+
+        [iOS] Fix two more AdoptCF I missed in my last patch.
+
+        * WebView/WebHTMLView.mm:
+        (imageFromRect): Use adoptCF instead of AdoptCF.
+
 2014-05-05  Andreas Kling  <akling@apple.com>
 
         Unreviewed, rolling out r168334.

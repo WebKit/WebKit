@@ -6593,8 +6593,8 @@ static CGImageRef imageFromRect(Frame* frame, CGRect rect)
     size_t bitsPerComponent = 8;
     size_t bitsPerPixel = 4 * bitsPerComponent;
     size_t bytesPerRow = ((bitsPerPixel + 7) / 8) * width;
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(NULL, width, height, bitsPerComponent, bytesPerRow, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(NULL, width, height, bitsPerComponent, bytesPerRow, colorSpace.get(), kCGImageAlphaPremultipliedLast));
     if (!context)
         return nil;
     
