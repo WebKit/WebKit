@@ -1,3 +1,14 @@
+2014-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Put WebKitPluginHost.app in WebKitLegacy.framework
+        https://bugs.webkit.org/show_bug.cgi?id=132592
+        <rdar://problem/15920046>
+
+        Reviewed by Dan Bernstein.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+
 2014-05-06  Darin Adler  <darin@apple.com>
 
         [iOS] Fix two more AdoptCF I missed in my last patch.

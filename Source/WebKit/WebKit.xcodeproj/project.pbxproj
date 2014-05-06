@@ -1987,7 +1987,6 @@
 				1AD7451518D0D26C006F3A1E /* Frameworks */,
 				1A27F2A3190F1BB700D2B661 /* Check For Framework Include Consistency */,
 				1A27F2A2190F1B8500D2B661 /* Check For Inappropriate Macros in External Headers */,
-				5DE6D18C0FCF231B002DE28C /* Symlink WebKitPluginHost in to place */,
 				1AC9317F19130A87006EA8BC /* Add Symlink in /System/Library/PrivateFrameworks */,
 			);
 			buildRules = (
@@ -2015,6 +2014,7 @@
 				939811270824BF01008DF038 /* Frameworks */,
 				5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */,
 				3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */,
+				1A3193D5191856E500E1CF89 /* Symlink WebKitPluginHost */,
 			);
 			buildRules = (
 			);
@@ -2103,6 +2103,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\nexit 0;\nfi\n\n# FIXME: Once WebKit is provided by WebKit2.xcodeproj, this should be re-enabled.\nif [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\nexit 0\nfi\n\nif [ -f ../../Tools/Scripts/check-for-webkit-framework-include-consistency ]; then\n../../Tools/Scripts/check-for-webkit-framework-include-consistency || exit $?\nfi\n";
+		};
+		1A3193D5191856E500E1CF89 /* Symlink WebKitPluginHost */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Symlink WebKitPluginHost";
+			outputPaths = (
+				"$(CONFIGURATION_BUILD_DIR)/WebKitLegacy.framework/WebKitPluginHost.app",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\nexit 0\nfi\n\nif [[ \"${CONFIGURATION}\" != \"Production\" && \"${ACTION}\" == \"build\" ]]; then\nif [[ ! -e \"${CONFIGURATION_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\" ]]; then\nif [[ -e \"/System/Library/Frameworks/WebKitLegacy.framework/WebKitPluginHost.app\" ]]; then\nln -s /System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\"\nelse\nln -s /System/Library/Frameworks/WebKit.framework/Frameworks/WebKitLegacy.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\"\nfi\nfi\nfi\n";
 		};
 		1A5B250818D0D90C00913729 /* Migrate Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2243,21 +2258,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"${PROJECT_DIR}/mac/Info.plist\";\nfi;\n";
-		};
-		5DE6D18C0FCF231B002DE28C /* Symlink WebKitPluginHost in to place */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Symlink WebKitPluginHost in to place";
-			outputPaths = (
-				"$(CONFIGURATION_BUILD_DIR)/WebKit.framework/WebKitPluginHost.app",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\n    exit 0\nfi\n\nif [[ \"${CONFIGURATION}\" != \"Production\" && \"${ACTION}\" == \"build\" ]]; then\n    if [[ ! -e \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\" ]]; then\n        if [[ -e \"/System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app\" ]]; then\n            ln -s /System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\"\n        else\n            ln -s /System/Library/Frameworks/WebKit.framework/Frameworks/WebKitLegacy.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\"\n        fi\n    fi\nfi\n";
 		};
 		939811300824BF01008DF038 /* Make Frameworks Symbolic Link */ = {
 			isa = PBXShellScriptBuildPhase;
