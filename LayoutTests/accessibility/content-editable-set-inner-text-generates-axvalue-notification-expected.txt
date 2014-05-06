@@ -1,0 +1,13 @@
+This tests that a contenteditable region will send an AXValueChange notification when JS methods for changing children are used.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Updated value: AXValue: Test1
+Updated value: AXValue: Test2
+Updated value: AXValue: Test3
+Updated value: AXValue: Test3Test4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

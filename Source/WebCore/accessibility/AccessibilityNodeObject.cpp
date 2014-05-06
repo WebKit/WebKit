@@ -152,7 +152,7 @@ void AccessibilityNodeObject::childrenChanged()
             cache->postNotification(parent, parent->document(), AXObjectCache::AXLiveRegionChanged);
         
         // If this element is an ARIA text control, notify the AT of changes.
-        if (parent->isARIATextControl() && !parent->isNativeTextControl() && !parent->node()->hasEditableStyle())
+        if ((parent->isARIATextControl() || parent->hasContentEditableAttributeSet()) && !parent->isNativeTextControl())
             cache->postNotification(parent, parent->document(), AXObjectCache::AXValueChanged);
     }
 }
@@ -2007,13 +2007,6 @@ AccessibilityRole AccessibilityNodeObject::remapAriaRoleDueToParent(Accessibilit
     
     return role;
 }   
-
-// If you call node->hasEditableStyle() since that will return true if an ancestor is editable.
-// This only returns true if this is the element that actually has the contentEditable attribute set.
-bool AccessibilityNodeObject::hasContentEditableAttributeSet() const
-{
-    return contentEditableAttributeIsEnabled(element());
-}
 
 bool AccessibilityNodeObject::canSetSelectedAttribute() const
 {

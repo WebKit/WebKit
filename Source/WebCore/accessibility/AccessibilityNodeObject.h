@@ -177,7 +177,6 @@ protected:
     virtual AccessibilityRole ariaRoleAttribute() const override;
     AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
-    bool hasContentEditableAttributeSet() const;
     virtual bool isDescendantOfBarrenParent() const override;
     void alterSliderValue(bool increase);
     void changeValueByStep(bool increase);

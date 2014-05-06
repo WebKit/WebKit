@@ -1,3 +1,13 @@
+2014-05-06  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver does not announce text changes for content editable regions in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=132577
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/content-editable-set-inner-text-generates-axvalue-notification-expected.txt: Added.
+        * accessibility/content-editable-set-inner-text-generates-axvalue-notification.html: Added.
+
 2014-05-06  Dirk Schulze  <krit@webkit.org>
 
         [SVG2] Share "on"- event attributes with HTMLElement

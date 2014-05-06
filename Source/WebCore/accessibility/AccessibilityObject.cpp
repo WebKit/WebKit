@@ -1316,6 +1316,13 @@ AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const V
     return obj->document().axObjectCache()->getOrCreate(obj);
 }
     
+// If you call node->hasEditableStyle() since that will return true if an ancestor is editable.
+// This only returns true if this is the element that actually has the contentEditable attribute set.
+bool AccessibilityObject::hasContentEditableAttributeSet() const
+{
+    return contentEditableAttributeIsEnabled(element());
+}
+
 bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
 {
     if (!element)
