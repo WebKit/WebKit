@@ -258,7 +258,7 @@ public:
         latestSnapshot = this;
     }
 
-    ~ChildNodesLazySnapshot()
+    ALWAYS_INLINE ~ChildNodesLazySnapshot()
     {
         latestSnapshot = m_nextSnapshot;
     }
