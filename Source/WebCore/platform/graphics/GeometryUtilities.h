@@ -43,6 +43,8 @@ FloatRect unionRect(const Vector<FloatRect>&);
 // Map rect r from srcRect to an equivalent rect in destRect.
 FloatRect mapRect(const FloatRect&, const FloatRect& srcRect, const FloatRect& destRect);
 
+FloatRect largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRect&);
+
 }
 
 #endif // GeometryUtilities_h

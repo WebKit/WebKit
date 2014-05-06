@@ -101,4 +101,18 @@ FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect&
         r.width() * widthScale, r.height() * heightScale);
 }
 
+FloatRect largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRect& srcRect)
+{
+    FloatRect destRect = srcRect;
+
+    if (aspectRatio > srcRect.size().aspectRatio()) {
+        float dy = destRect.width() / aspectRatio - destRect.height();
+        destRect.inflateY(dy / 2);
+    } else {
+        float dx = destRect.height() * aspectRatio - destRect.width();
+        destRect.inflateX(dx / 2);
+    }
+    return destRect;
+}
+
 }

@@ -1,3 +1,26 @@
+2014-05-06  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Animate AVPlayerLayer into and out of full screen
+        https://bugs.webkit.org/show_bug.cgi?id=132603
+
+        Reviewed by Simon Fraser.
+
+        Rather than synchronize animations across the WebProcess / UIProcess boundary, animate
+        the AVPlayerLayer into place by first resizing the full screen layer to occupy the
+        entire screen in the WebProcess, and use a sublayerTransform animation in the UIProcess
+        to scale the AVPlayer from its initial screen location, as well as back to its final screen
+        location.
+
+        * platform/graphics/GeometryUtilities.cpp:
+        (WebCore::largestRectWithAspectRatioInsideRect): Added utility method.
+        * platform/graphics/GeometryUtilities.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVVideoLayer init]): Added, initialize video gravity and enable child layer masking.
+        (-[WebAVVideoLayer setBounds:]): Create a transform to scale the video area.
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen): Block implicit animations during setup.
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen): Reset the gravity to ResizeAspect
+            if necessary.
+
 2014-05-06  Alexey Proskuryakov  <ap@apple.com>
 
         Make BlobDataItem use a refcounted object for files
