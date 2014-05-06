@@ -56,7 +56,7 @@ RemoteScrollingCoordinatorProxy::~RemoteScrollingCoordinatorProxy()
 {
 }
 
-WebCore::ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
+ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
 {
     if (!m_scrollingTree->rootNode())
         return 0;
@@ -139,25 +139,25 @@ bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent&
     return result == ScrollingTree::DidHandleEvent; // FIXME: handle other values.
 }
 
-bool RemoteScrollingCoordinatorProxy::isPointInNonFastScrollableRegion(const WebCore::IntPoint& p) const
+bool RemoteScrollingCoordinatorProxy::isPointInNonFastScrollableRegion(const IntPoint& p) const
 {
     return m_scrollingTree->isPointInNonFastScrollableRegion(p);
 }
 
-void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatRect& viewportRect, double scale)
+void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const FloatRect& viewportRect, double scale)
 {
     m_scrollingTree->viewportChangedViaDelegatedScrolling(nodeID, viewportRect, scale);
 }
 
 // This comes from the scrolling tree.
-void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(WebCore::ScrollingNodeID scrolledNodeID, const WebCore::FloatPoint& newScrollPosition)
+void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& newScrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     // Scroll updates for the main frame are sent via WebPageProxy::updateVisibleContentRects()
     // so don't send them here.
     if (!m_propagatesMainFrameScrolls && scrolledNodeID == rootScrollingNodeID())
         return;
 
-    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition));
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition, scrollingLayerPositionAction));
 }
 
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& scrollPosition, bool representsProgrammaticScroll)

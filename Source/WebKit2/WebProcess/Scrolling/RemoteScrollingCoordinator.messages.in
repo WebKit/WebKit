@@ -23,7 +23,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 messages -> RemoteScrollingCoordinator {
-    ScrollPositionChangedForNode(uint64_t nodeID, WebCore::FloatPoint scrollPosition);
+    ScrollPositionChangedForNode(uint64_t nodeID, WebCore::FloatPoint scrollPosition, bool syncLayerPosition);
 }
 
 #endif // ENABLE(ASYNC_SCROLLING)

@@ -41,7 +41,7 @@ public:
     static PassOwnPtr<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
 
-    void scrollViewDidScroll(const WebCore::FloatPoint&);
+    void scrollViewDidScroll(const WebCore::FloatPoint&, bool inUserInteration);
 
 private:
     ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);

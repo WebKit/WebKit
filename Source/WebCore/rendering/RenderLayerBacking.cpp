@@ -924,8 +924,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollingLayer->offsetFromRenderer();
 
         if (m_owningLayer.isInUserScroll()) {
-            // If scrolling is happening externally, we don't want to touch the layer bounds origin here because that will cause
-            // jitter. Set a flag to ensure that we sync up later.
+            // If scrolling is happening externally, we don't want to touch the layer bounds origin here because that will cause jitter.
+            m_scrollingLayer->syncBoundsOrigin(FloatPoint(scrollOffset.width(), scrollOffset.height()));
             m_owningLayer.setRequiresScrollBoundsOriginUpdate(true);
         } else {
             // Note that we implement the contents offset via the bounds origin on this layer, rather than a position on the sublayer.

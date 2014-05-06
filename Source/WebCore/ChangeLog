@@ -1,3 +1,44 @@
+2014-05-05  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Flickery scrolling inside overflow-scrolling: touch
+        https://bugs.webkit.org/show_bug.cgi?id=132591
+        <rdar://problem/16760466>
+
+        Reviewed by Tim Horton.
+
+        Avoid triggering layer tree commits that touch the layer's boundsOrigin
+        while the user is scrolling in the UI process.
+        
+        Fix the WKOverflowScrollViewDelegate to pass along an "inUserInteration"
+        flag to the ScrollingTree to say that we're in the middle of a user interaction
+        (and also to send a final non-interactive update). That gets passed along
+        to the web process, and turned into "SyncScrollingLayerPosition" update.
+        AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll() consults
+        this, and uses it to set a flag on the ScrollableArea to say that the scroll
+        is a user scroll.
+        
+        RenderLayerBacking then makes use of this (in existing code, shared with WK1)
+        to avoid triggering layer bounds setting. Instead, it now just calls syncBoundsOrigin(),
+        which updates the GraphicsLayer without touching platform layers. This is necessary
+        so that GraphicsLayer geometry is up-to-date (used for tiled layer visibility
+        computations).
+        
+        Finally, a hack in GraphicsLayerCA::computeVisibleRect() is conditionalized
+        for WebKit1 by checking the type of platform layer.
+
+        * WebCore.exp.in:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::scrollPositionChangedViaDelegatedScrolling):
+        * page/scrolling/ScrollingTree.h:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::syncBoundsOrigin):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::computeVisibleRect):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2014-05-05  Alexey Proskuryakov  <ap@apple.com>
 
         Stop using BlobData on client side

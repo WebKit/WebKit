@@ -1147,8 +1147,9 @@ FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state, ComputeVisi
     FloatRect clipRectForChildren = state.mappedQuad(&mapWasClamped).boundingBox();
     FloatPoint boundsOrigin = m_boundsOrigin;
 #if PLATFORM(IOS)
-    // UIKit may be changing layer bounds behind our back in overflow-scroll layers, so use the layer's origin.
-    boundsOrigin = m_layer->bounds().location();
+    // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so use the layer's origin.
+    if (m_layer->isPlatformCALayerMac())
+        boundsOrigin = m_layer->bounds().location();
 #endif
     clipRectForChildren.move(boundsOrigin.x(), boundsOrigin.y());
     

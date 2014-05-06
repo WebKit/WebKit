@@ -58,7 +58,7 @@ using namespace WebCore;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset);
+    _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
@@ -68,13 +68,18 @@ using namespace WebCore;
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)willDecelerate
 {
-    if (!willDecelerate)
+    if (_inUserInteraction && !willDecelerate) {
         _inUserInteraction = NO;
+        _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
+    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    _inUserInteraction = NO;
+    if (_inUserInteraction) {
+        _inUserInteraction = NO;
+        _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
+    }
 }
 
 @end
@@ -145,9 +150,9 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
     }
 }
 
-void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition)
+void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteration)
 {
-    scrollingTree().scrollPositionChangedViaDelegatedScrolling(scrollingNodeID(), scrollPosition);
+    scrollingTree().scrollPositionChangedViaDelegatedScrolling(scrollingNodeID(), scrollPosition, inUserInteration);
 }
 
 } // namespace WebCore

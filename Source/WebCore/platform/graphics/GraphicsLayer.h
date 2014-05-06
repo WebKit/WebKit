@@ -289,7 +289,7 @@ public:
 
     // For platforms that move underlying platform layers on a different thread for scrolling; just update the GraphicsLayer state.
     virtual void syncPosition(const FloatPoint& p) { m_position = p; }
-    
+
     // Anchor point: (0, 0) is top left, (1, 1) is bottom right. The anchor point
     // affects the origin of the transforms.
     const FloatPoint3D& anchorPoint() const { return m_anchorPoint; }
@@ -302,6 +302,9 @@ public:
     // The boundOrigin affects the offset at which content is rendered, and sublayers are positioned.
     const FloatPoint& boundsOrigin() const { return m_boundsOrigin; }
     virtual void setBoundsOrigin(const FloatPoint& origin) { m_boundsOrigin = origin; }
+
+    // For platforms that move underlying platform layers on a different thread for scrolling; just update the GraphicsLayer state.
+    virtual void syncBoundsOrigin(const FloatPoint& origin) { m_boundsOrigin = origin; }
 
     const TransformationMatrix& transform() const { return m_transform; }
     virtual void setTransform(const TransformationMatrix& t) { m_transform = t; }
