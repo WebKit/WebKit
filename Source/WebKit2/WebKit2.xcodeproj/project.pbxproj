@@ -474,6 +474,8 @@
 		2684054F18B86C8E0022C38B /* ViewUpdateDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2684054518B85E7E0022C38B /* ViewUpdateDispatcher.cpp */; };
 		2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2684055018B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp */; };
 		2684055318B86ED60022C38B /* ViewUpdateDispatcherMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2684055118B86ED60022C38B /* ViewUpdateDispatcherMessages.h */; };
+		26F10BE819187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F10BE619187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h */; };
+		26F10BE919187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F10BE719187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m */; };
 		26F9A83B18A3468100AEB88A /* WKWebViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F9A83A18A3463F00AEB88A /* WKWebViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		290F4272172A0C7400939FF0 /* ChildProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 290F4271172A0C7400939FF0 /* ChildProcessSupplement.h */; };
 		29232DF418B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 29232DF318B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h */; };
@@ -2288,6 +2290,8 @@
 		2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibleContentRectUpdateInfo.cpp; sourceTree = "<group>"; };
 		2684055018B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewUpdateDispatcherMessageReceiver.cpp; sourceTree = "<group>"; };
 		2684055118B86ED60022C38B /* ViewUpdateDispatcherMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewUpdateDispatcherMessages.h; sourceTree = "<group>"; };
+		26F10BE619187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKSyntheticClickTapGestureRecognizer.h; path = ios/WKSyntheticClickTapGestureRecognizer.h; sourceTree = "<group>"; };
+		26F10BE719187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKSyntheticClickTapGestureRecognizer.m; path = ios/WKSyntheticClickTapGestureRecognizer.m; sourceTree = "<group>"; };
 		26F9A83A18A3463F00AEB88A /* WKWebViewPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrivate.h; sourceTree = "<group>"; };
 		290F4271172A0C7400939FF0 /* ChildProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessSupplement.h; sourceTree = "<group>"; };
 		29232DF118B29D1100D0596F /* WKAccessibilityWebPageObjectMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKAccessibilityWebPageObjectMac.mm; sourceTree = "<group>"; };
@@ -4502,6 +4506,8 @@
 				2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */,
 				2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */,
 				2DAF06D818BD23BA0081CEB1 /* SmartMagnificationController.messages.in */,
+				26F10BE619187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h */,
+				26F10BE719187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m */,
 				2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */,
 				2D3EF4401917646300034184 /* WebMemoryPressureHandlerIOS.cpp */,
 				2D3EF4411917646300034184 /* WebMemoryPressureHandlerIOS.h */,
@@ -7386,6 +7392,7 @@
 				753E3E0E1887398900188496 /* SessionTracker.h in Headers */,
 				BC40760E124FF0270068F20A /* WKURLResponse.h in Headers */,
 				759CCD5A1808F6160078E8A8 /* WebOriginDataManagerProxy.h in Headers */,
+				26F10BE819187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h in Headers */,
 				BC40762B124FF0400068F20A /* WKURLResponseNS.h in Headers */,
 				F6113E29126CE19B0057D0A7 /* WKUserContentURLPattern.h in Headers */,
 				BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */,
@@ -8699,6 +8706,7 @@
 				935EEBA0127761AC003322B8 /* WKBundleBackForwardListItem.cpp in Sources */,
 				51FA2D7715212E2600C1BA0B /* WKBundleDOMWindowExtension.cpp in Sources */,
 				BCD25F1811D6BDE100169B0E /* WKBundleFrame.cpp in Sources */,
+				26F10BE919187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m in Sources */,
 				BC498630124D18C100D834E1 /* WKBundleHitTestResult.cpp in Sources */,
 				6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */,
 				753E3E0D1887398500188496 /* SessionTracker.cpp in Sources */,

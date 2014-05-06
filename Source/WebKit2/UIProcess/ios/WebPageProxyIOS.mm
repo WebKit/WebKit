@@ -461,11 +461,23 @@ void WebPageProxy::willStartUserTriggeredZooming()
     process().send(Messages::WebPage::WillStartUserTriggeredZooming(), m_pageID);
 }
 
+void WebPageProxy::potentialTapAtPosition(const WebCore::FloatPoint& position, uint64_t& requestID)
+{
+    process().send(Messages::WebPage::PotentialTapAtPosition(requestID, position), m_pageID);
+}
+
+void WebPageProxy::commitPotentialTap()
+{
+    process().send(Messages::WebPage::CommitPotentialTap(), m_pageID);
+}
+
+void WebPageProxy::cancelPotentialTap()
+{
+    process().send(Messages::WebPage::CancelPotentialTap(), m_pageID);
+}
+
 void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, uint64_t& requestID)
 {
-    static uint64_t uniqueRequestID = 0;
-    requestID = ++uniqueRequestID;
-
     process().send(Messages::WebPage::TapHighlightAtPosition(requestID, position), m_pageID);
 }
 
@@ -579,6 +591,11 @@ void WebPageProxy::showPlaybackTargetPicker(bool hasVideo, const IntRect& elemen
 void WebPageProxy::zoomToRect(FloatRect rect, double minimumScale, double maximumScale)
 {
     m_pageClient.zoomToRect(rect, minimumScale, maximumScale);
+}
+
+void WebPageProxy::commitPotentialTapFailed()
+{
+    m_pageClient.commitPotentialTapFailed();
 }
 
 void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)

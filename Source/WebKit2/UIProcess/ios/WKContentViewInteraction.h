@@ -30,6 +30,7 @@
 #import "AssistedNodeInformation.h"
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
+#import "WKSyntheticClickTapGestureRecognizer.h"
 #import "WKAirPlayRoutePicker.h"
 #import "WKFileUploadPanel.h"
 #import "WKFormPeripheral.h"
@@ -39,6 +40,8 @@
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <UIKit/UIWebFormAccessory.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
+#import <WebCore/Color.h>
+#import <WebCore/FloatQuad.h>
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
@@ -84,7 +87,7 @@ struct WKAutoCorrectionData {
 
     BOOL _canSendTouchEventsAsynchronously;
 
-    RetainPtr<UITapGestureRecognizer> _singleTapGestureRecognizer;
+    RetainPtr<WKSyntheticClickTapGestureRecognizer> _singleTapGestureRecognizer;
     RetainPtr<_UIWebHighlightLongPressGestureRecognizer> _highlightLongPressGestureRecognizer;
     RetainPtr<UILongPressGestureRecognizer> _longPressGestureRecognizer;
     RetainPtr<UITapGestureRecognizer> _doubleTapGestureRecognizer;
@@ -108,6 +111,15 @@ struct WKAutoCorrectionData {
     id <UITextInputDelegate> _inputDelegate;
 
     uint64_t _latestTapHighlightID;
+    struct TapHighlightInformation {
+        WebCore::Color color;
+        Vector<WebCore::FloatQuad> quads;
+        WebCore::IntSize topLeftRadius;
+        WebCore::IntSize topRightRadius;
+        WebCore::IntSize bottomLeftRadius;
+        WebCore::IntSize bottomRightRadius;
+    };
+    std::unique_ptr<TapHighlightInformation> _potentialTapHighlightInformation;
 
     WebKit::WKAutoCorrectionData _autocorrectionData;
     WebKit::InteractionInformationAtPosition _positionInformation;
@@ -120,6 +132,7 @@ struct WKAutoCorrectionData {
     BOOL _showingTextStyleOptions;
     BOOL _hasValidPositionInformation;
     BOOL _isTapHighlightIDValid;
+    BOOL _potentialTapInProgress;
     BOOL _selectionNeedsUpdate;
     BOOL _usingGestureForSelection;
 }
@@ -139,6 +152,7 @@ struct WKAutoCorrectionData {
 - (void)cleanupInteraction;
 
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;
+- (void)_commitPotentialTapFailed;
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius;
 
 - (void)_startAssistingNode:(const WebKit::AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting userObject:(NSObject <NSSecureCoding> *)userObject;

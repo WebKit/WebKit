@@ -48,6 +48,9 @@ messages -> WebPage LegacyReceiver {
     DynamicViewportSizeUpdate(WebCore::FloatSize minimumLayoutSize, WebCore::FloatRect targetExposedContentRect, WebCore::FloatRect targetUnobscuredRect, double scale)
 
     HandleTap(WebCore::IntPoint point)
+    PotentialTapAtPosition(uint64_t requestID, WebCore::FloatPoint point)
+    CommitPotentialTap()
+    CancelPotentialTap()
     TapHighlightAtPosition(uint64_t requestID, WebCore::FloatPoint point)
     BlurAssistedNode()
     SelectWithGesture(WebCore::IntPoint point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)

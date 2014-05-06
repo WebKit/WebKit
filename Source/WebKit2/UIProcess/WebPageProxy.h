@@ -622,6 +622,7 @@ public:
     void applicationWillResignActive();
     void applicationDidBecomeActive();
     void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);
+    void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
 #endif
 
@@ -1030,6 +1031,9 @@ public:
 #if PLATFORM(IOS)
     void willStartUserTriggeredZooming();
 
+    void potentialTapAtPosition(const WebCore::FloatPoint&, uint64_t& requestID);
+    void commitPotentialTap();
+    void cancelPotentialTap();
     void tapHighlightAtPosition(const WebCore::FloatPoint&, uint64_t& requestID);
 
     void blurAssistedNode();

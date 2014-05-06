@@ -106,6 +106,7 @@ private:
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
     virtual void clearCustomSwipeViews() override;
 
+    virtual void commitPotentialTapFailed() override;
     virtual void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius) override;
 
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;

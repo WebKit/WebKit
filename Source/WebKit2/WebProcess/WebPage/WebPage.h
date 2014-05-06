@@ -451,6 +451,9 @@ public:
     bool allowsUserScaling() const;
 
     void handleTap(const WebCore::IntPoint&);
+    void potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
+    void commitPotentialTap();
+    void cancelPotentialTap();
     void tapHighlightAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
 
     void blurAssistedNode();
@@ -820,7 +823,8 @@ private:
     PassRefPtr<WebCore::Range> contractedRangeFromHandle(WebCore::Range* currentRange, SelectionHandlePosition, SelectionFlags&);
     void getAssistedNodeInformation(AssistedNodeInformation&);
     void platformInitializeAccessibility();
-    RefPtr<WebCore::Range> m_currentBlockSelection;
+    void handleSyntheticClick(WebCore::Node* nodeRespondingToClick, const WebCore::FloatPoint& location);
+    void sendTapHighlightForNodeIfNecessary(uint64_t requestID, WebCore::Node*);
 #endif
 #if !PLATFORM(COCOA)
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
@@ -1173,6 +1177,9 @@ private:
     RefPtr<WebCore::Node> m_interactionNode;
     WebCore::IntPoint m_lastInteractionLocation;
 
+    RefPtr<WebCore::Node> m_potentialTapNode;
+    WebCore::FloatPoint m_potentialTapLocation;
+
     WebCore::ViewportConfiguration m_viewportConfiguration;
     uint64_t m_lastVisibleContentRectUpdateID;
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad;
@@ -1181,6 +1188,7 @@ private:
     bool m_userIsInteracting;
     WebCore::FloatSize m_screenSize;
     WebCore::FloatSize m_availableScreenSize;
+    RefPtr<WebCore::Range> m_currentBlockSelection;
     WebCore::IntSize m_blockSelectionDesiredSize;
     WebCore::FloatSize m_minimumLayoutSizeForMinimalUI;
     bool m_inDynamicSizeUpdate;

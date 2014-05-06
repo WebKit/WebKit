@@ -1,3 +1,55 @@
+2014-05-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Add tap highlight on the simple UITapGestureRecognizer
+        https://bugs.webkit.org/show_bug.cgi?id=132623
+        <rdar://problem/16709507>
+
+        Reviewed by Enrica Casucci.
+
+        Add a low latency highlight for tap/click.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::commitPotentialTapFailed):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _showTapHighlightWithColor:WebCore::quads:WebCore::topLeftRadius:WebCore::topRightRadius:WebCore::bottomLeftRadius:WebCore::bottomRightRadius:WebCore::]):
+        (-[WKContentView _didGetTapHighlightForRequest:color:WebCore::quads:WebCore::topLeftRadius:WebCore::topRightRadius:WebCore::bottomLeftRadius:WebCore::bottomRightRadius:WebCore::]):
+        (-[WKContentView _finishInteraction]):
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (-[WKContentView _singleTapRecognized:]):
+        (-[WKContentView _singleTapDidReset:]):
+        (-[WKContentView _commitPotentialTapFailed]):
+        (-[WKContentView _singleTapCommited:]):
+        (-[WKContentView _attemptClickAtLocation:]):
+        * UIProcess/ios/WKSyntheticClickTapGestureRecognizer.h: Added.
+        * UIProcess/ios/WKSyntheticClickTapGestureRecognizer.m: Added.
+        (-[WKSyntheticClickTapGestureRecognizer setGestureRecognizedTarget:action:]):
+        (-[WKSyntheticClickTapGestureRecognizer setResetTarget:action:]):
+        (-[WKSyntheticClickTapGestureRecognizer setState:]):
+        (-[WKSyntheticClickTapGestureRecognizer reset]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::potentialTapAtPosition):
+        (WebKit::WebPageProxy::commitPotentialTap):
+        (WebKit::WebPageProxy::cancelPotentialTap):
+        (WebKit::WebPageProxy::tapHighlightAtPosition):
+        (WebKit::WebPageProxy::commitPotentialTapFailed):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+        (WebKit::WebPage::handleTap):
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary):
+        (WebKit::WebPage::potentialTapAtPosition):
+        (WebKit::WebPage::commitPotentialTap):
+        (WebKit::WebPage::cancelPotentialTap):
+        (WebKit::WebPage::tapHighlightAtPosition):
+
 2014-05-06  Anders Carlsson  <andersca@apple.com>
 
         Put WebArchive and WebArchiveResource in the API namespace.

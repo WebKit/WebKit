@@ -191,8 +191,10 @@ static const float tapAndHoldDelay  = 0.75;
     [_touchEventGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
 
-    _singleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapRecognized:)]);
+    _singleTapGestureRecognizer = adoptNS([[WKSyntheticClickTapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapCommited:)]);
     [_singleTapGestureRecognizer setDelegate:self];
+    [_singleTapGestureRecognizer setGestureRecognizedTarget:self action:@selector(_singleTapRecognized:)];
+    [_singleTapGestureRecognizer setResetTarget:self action:@selector(_singleTapDidReset:)];
     [self addGestureRecognizer:_singleTapGestureRecognizer.get()];
 
     _doubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
@@ -362,11 +364,8 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
     return true;
 }
 
-- (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius
+- (void)_showTapHighlightWithColor:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius
 {
-    if (!_isTapHighlightIDValid || _latestTapHighlightID != requestID)
-        return;
-
     if (!highlightedQuadsAreSmallerThanRect(highlightedQuads, _page->unobscuredContentRect()))
         return;
 
@@ -431,6 +430,30 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
     [borderRadii addObject:[NSValue valueWithCGSize:CGSizeMake(bottomLeftRadius.width() + UIWebViewMinimumHighlightRadius, bottomLeftRadius.height() + UIWebViewMinimumHighlightRadius)]];
     [borderRadii addObject:[NSValue valueWithCGSize:CGSizeMake(bottomRightRadius.width() + UIWebViewMinimumHighlightRadius, bottomRightRadius.height() + UIWebViewMinimumHighlightRadius)]];
     [_highlightView setCornerRadii:borderRadii.get()];
+}
+
+- (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius
+{
+    if (!_isTapHighlightIDValid || _latestTapHighlightID != requestID)
+        return;
+
+    if (_potentialTapInProgress) {
+        _potentialTapHighlightInformation = std::make_unique<TapHighlightInformation>();
+        _potentialTapHighlightInformation->color = color;
+        _potentialTapHighlightInformation->quads = highlightedQuads;
+        _potentialTapHighlightInformation->topLeftRadius = topLeftRadius;
+        _potentialTapHighlightInformation->topRightRadius = topRightRadius;
+        _potentialTapHighlightInformation->bottomLeftRadius = bottomLeftRadius;
+        _potentialTapHighlightInformation->bottomRightRadius = bottomRightRadius;
+        return;
+    }
+
+    [self _showTapHighlightWithColor:color
+                               quads:highlightedQuads
+                       topLeftRadius:topLeftRadius
+                      topRightRadius:topRightRadius
+                    bottomLeftRadius:bottomLeftRadius
+                   bottomRightRadius:bottomRightRadius];
 }
 
 - (void)_cancelLongPressGestureRecognizer
@@ -635,6 +658,19 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     [_highlightRootView removeFromSuperview];
 }
 
+- (void)_finishInteraction
+{
+    [UIView animateWithDuration:0.1
+                     animations:^{
+                         [[_highlightRootView layer] setOpacity:0];
+                     }
+                     completion:^(BOOL){
+                         _isTapHighlightIDValid = NO;
+                         [_highlightRootView removeFromSuperview];
+                         [[_highlightRootView layer] setOpacity:1];
+                     }];
+}
+
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point
 {
     [self ensurePositionInformationIsUpToDate:point];
@@ -686,12 +722,15 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     switch ([gestureRecognizer state]) {
     case UIGestureRecognizerStateBegan:
-        _page->tapHighlightAtPosition([gestureRecognizer startPoint], _latestTapHighlightID);
+        _page->tapHighlightAtPosition([gestureRecognizer startPoint], ++_latestTapHighlightID);
         _isTapHighlightIDValid = YES;
         break;
     case UIGestureRecognizerStateEnded:
-        if (!_positionInformation.clickableElementName.isEmpty())
+        if (!_positionInformation.clickableElementName.isEmpty()) {
             [self _attemptClickAtLocation:[gestureRecognizer startPoint]];
+            [self _finishInteraction];
+        } else
+            [self _cancelInteraction];
         break;
     case UIGestureRecognizerStateCancelled:
         [self _cancelInteraction];
@@ -717,15 +756,59 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (void)_singleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
+    ASSERT(!_potentialTapInProgress);
 
-    if (_webSelectionAssistant && ![_webSelectionAssistant shouldHandleSingleTapAtPoint:gestureRecognizer.location])
+    _page->potentialTapAtPosition(gestureRecognizer.location, ++_latestTapHighlightID);
+    _potentialTapInProgress = YES;
+    _isTapHighlightIDValid = YES;
+}
+
+- (void)_singleTapDidReset:(UITapGestureRecognizer *)gestureRecognizer
+{
+    ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
+    if (_potentialTapInProgress) {
+        _potentialTapInProgress = NO;
+        _potentialTapHighlightInformation = nullptr;
+        [self _cancelInteraction];
+        _page->cancelPotentialTap();
+    }
+}
+
+- (void)_commitPotentialTapFailed
+{
+    [self _cancelInteraction];
+}
+
+- (void)_singleTapCommited:(UITapGestureRecognizer *)gestureRecognizer
+{
+    ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
+
+    if (_webSelectionAssistant && ![_webSelectionAssistant shouldHandleSingleTapAtPoint:gestureRecognizer.location]) {
+        [self _singleTapDidReset:gestureRecognizer];
         return;
+    }
+
+    ASSERT(_potentialTapInProgress);
 
     [_webSelectionAssistant clearSelection];
 
     _lastInteractionLocation = gestureRecognizer.location;
 
-    [self _attemptClickAtLocation:gestureRecognizer.location];
+    _potentialTapInProgress = NO;
+
+    if (_potentialTapHighlightInformation) {
+        [self _showTapHighlightWithColor:_potentialTapHighlightInformation->color
+                                   quads:_potentialTapHighlightInformation->quads
+                           topLeftRadius:_potentialTapHighlightInformation->topLeftRadius
+                          topRightRadius:_potentialTapHighlightInformation->topRightRadius
+                        bottomLeftRadius:_potentialTapHighlightInformation->bottomLeftRadius
+                       bottomRightRadius:_potentialTapHighlightInformation->bottomRightRadius];
+        _potentialTapHighlightInformation = nullptr;
+    }
+
+    _page->commitPotentialTap();
+
+    [self _finishInteraction];
 }
 
 - (void)_doubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
@@ -744,10 +827,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_attemptClickAtLocation:(CGPoint)location
 {
-    // FIXME: Ideally, we should always provide some visual feedback on click. If a short tap did not trigger the
-    // tap highlight, we should show one based on a timer if we commit the synthetic mouse events.
-    [self _cancelInteraction];
-
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
