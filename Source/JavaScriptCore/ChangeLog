@@ -1,3 +1,38 @@
+2014-05-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Roll out r167889
+
+        Rubber stamped by Geoff Garen.
+
+        It broke some websites.
+
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::hasDeletedOffset):
+        (JSC::PropertyTable::hadDeletedOffset): Deleted.
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::removePropertyWithoutTransition):
+        (JSC::Structure::pin):
+        (JSC::Structure::pinAndPreventTransitions): Deleted.
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::setEnumerationCache):
+        (JSC::Structure::propertyTable):
+        (JSC::Structure::checkOffsetConsistency):
+        (JSC::Structure::hadDeletedOffsets): Deleted.
+        * tests/stress/for-in-after-delete.js:
+        (foo): Deleted.
+
 2014-05-05  Andreas Kling  <akling@apple.com>
 
         Fix debug build.

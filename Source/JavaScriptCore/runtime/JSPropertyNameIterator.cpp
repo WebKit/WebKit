@@ -57,14 +57,13 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
     o->methodTable()->getPropertyNames(o, exec, propertyNames, ExcludeDontEnumProperties);
     size_t numCacheableSlots = 0;
     if (!o->structure()->hasNonEnumerableProperties() && !o->structure()->hasGetterSetterProperties()
-        && !o->structure()->isUncacheableDictionary() && !o->structure()->hadDeletedOffsets() && !o->structure()->typeInfo().overridesGetPropertyNames())
+        && !o->structure()->isUncacheableDictionary() && !o->structure()->typeInfo().overridesGetPropertyNames())
         numCacheableSlots = propertyNames.numCacheableSlots();
     
     JSPropertyNameIterator* jsPropertyNameIterator = new (NotNull, allocateCell<JSPropertyNameIterator>(vm.heap)) JSPropertyNameIterator(exec, propertyNames.data(), numCacheableSlots);
     jsPropertyNameIterator->finishCreation(vm, propertyNames.data(), o);
 
-    // JSPropertyNameIterator doesn't know how to skip deleted buckets, so just give up.
-    if (o->structure()->isDictionary() || o->structure()->hadDeletedOffsets())
+    if (o->structure()->isDictionary())
         return jsPropertyNameIterator;
 
     if (o->structure()->typeInfo().overridesGetPropertyNames())

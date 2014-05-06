@@ -1,3 +1,17 @@
+2014-05-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Roll out r167889
+
+        Rubber stamped by Geoff Garen.
+
+        It broke some websites.
+
+        * js/regress/delete-a-few-properties-then-get-by-id-expected.txt:
+        * js/regress/delete-a-few-properties-then-get-by-id.html:
+        * js/regress/script-tests/delete-a-few-properties-then-get-by-id.js:
+        (MyObject): Deleted.
+        (foo): Deleted.
+
 2014-05-06  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Unreviewed GTK gardening

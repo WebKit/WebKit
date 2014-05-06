@@ -189,8 +189,7 @@ public:
 
     // Used to maintain a list of unused entries in the property storage.
     void clearDeletedOffsets();
-    bool hasDeletedOffset() const;
-    bool hadDeletedOffset() const; // Returns true if we ever had deleted properties.
+    bool hasDeletedOffset();
     PropertyOffset getDeletedOffset();
     void addDeletedOffset(PropertyOffset);
     
@@ -468,14 +467,9 @@ inline void PropertyTable::clearDeletedOffsets()
     m_deletedOffsets.clear();
 }
 
-inline bool PropertyTable::hasDeletedOffset() const
+inline bool PropertyTable::hasDeletedOffset()
 {
     return m_deletedOffsets && !m_deletedOffsets->isEmpty();
-}
-
-inline bool PropertyTable::hadDeletedOffset() const
-{
-    return m_deletedOffsets;
 }
 
 inline PropertyOffset PropertyTable::getDeletedOffset()
