@@ -98,6 +98,8 @@ public:
     virtual bool isLabelable() const { return false; }
     virtual FormNamedItem* asFormNamedItem() { return 0; }
 
+    static void populateEventNameForAttributeLocalNameMap(HashMap<AtomicStringImpl*, AtomicString>&);
+
     bool hasTagName(const HTMLQualifiedName& name) const { return hasLocalName(name.localName()); }
 
 protected:

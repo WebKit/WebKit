@@ -1,3 +1,16 @@
+2014-05-06  Dirk Schulze  <krit@webkit.org>
+
+        [SVG2] Share "on"- event attributes with HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=132604
+
+        Reviewed by Mihnea Ovidenie.
+
+        Test that the "on" event attributes supported by HTMLElement are
+        supported by SVGElement as well.
+
+        * fast/dom/event-attribute-availability-expected.txt:
+        * fast/dom/script-tests/event-attribute-availability.js:
+
 2014-05-06  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Rename all the tests css3/compositing to css3/blending

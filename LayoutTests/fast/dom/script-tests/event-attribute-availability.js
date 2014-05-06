@@ -32,6 +32,12 @@ for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
     shouldBeTrue("'" + elementAndDocumentProperties[i] + "' in element");
 }
 
+debug("Test SVGElement");
+var svgelement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
+    shouldBeTrue("'" + elementAndDocumentProperties[i] + "' in svgelement");
+}
+
 debug("\nTest Document");
 for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
     shouldBeTrue("'" + elementAndDocumentProperties[i] + "' in document");

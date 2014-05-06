@@ -220,7 +220,7 @@ void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name
         StyledElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-static NEVER_INLINE void populateEventNameForAttributeLocalNameMap(HashMap<AtomicStringImpl*, AtomicString>& map)
+void HTMLElement::populateEventNameForAttributeLocalNameMap(HashMap<AtomicStringImpl*, AtomicString>& map)
 {
     static const QualifiedName* const simpleTable[] = {
         &onabortAttr,

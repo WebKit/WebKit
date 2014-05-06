@@ -1,3 +1,23 @@
+2014-05-06  Dirk Schulze  <krit@webkit.org>
+
+        [SVG2] Share "on"- event attributes with HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=132604
+
+        Reviewed by Mihnea Ovidenie.
+
+        Share "on" event attribute parsing between SVGElement and HTMLElement.
+
+        Tests: fast/dom/script-tests/event-attribute-availability.js:
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::populateEventNameForAttributeLocalNameMap):
+        (WebCore::populateEventNameForAttributeLocalNameMap): Deleted.
+        * html/HTMLElement.h: Make populateEventNameForAttributeLocalNameMap
+            public for use in SVGElement.
+        * svg/SVGElement.cpp: Use HTMLElement code to parse "on" event
+            attributes.
+        (WebCore::SVGElement::parseAttribute):
+
 2014-05-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [Soup] Use std::unique_ptr<char[]> for the read buffer in SocketStreamHandle

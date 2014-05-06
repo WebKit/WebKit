@@ -42,6 +42,45 @@ PASS 'onpaste' in element is true
 PASS 'onreset' in element is true
 PASS 'onsearch' in element is true
 PASS 'onselectstart' in element is true
+Test SVGElement
+PASS 'onabort' in svgelement is true
+PASS 'onblur' in svgelement is true
+PASS 'onchange' in svgelement is true
+PASS 'onclick' in svgelement is true
+PASS 'oncontextmenu' in svgelement is true
+PASS 'ondblclick' in svgelement is true
+PASS 'ondrag' in svgelement is true
+PASS 'ondragend' in svgelement is true
+PASS 'ondragenter' in svgelement is true
+PASS 'ondragleave' in svgelement is true
+PASS 'ondragover' in svgelement is true
+PASS 'ondragstart' in svgelement is true
+PASS 'ondrop' in svgelement is true
+PASS 'onerror' in svgelement is true
+PASS 'onfocus' in svgelement is true
+PASS 'oninput' in svgelement is true
+PASS 'onkeydown' in svgelement is true
+PASS 'onkeypress' in svgelement is true
+PASS 'onkeyup' in svgelement is true
+PASS 'onload' in svgelement is true
+PASS 'onmousedown' in svgelement is true
+PASS 'onmousemove' in svgelement is true
+PASS 'onmouseout' in svgelement is true
+PASS 'onmouseover' in svgelement is true
+PASS 'onmouseup' in svgelement is true
+PASS 'onmousewheel' in svgelement is true
+PASS 'onscroll' in svgelement is true
+PASS 'onselect' in svgelement is true
+PASS 'onsubmit' in svgelement is true
+PASS 'onbeforecut' in svgelement is true
+PASS 'oncut' in svgelement is true
+PASS 'onbeforecopy' in svgelement is true
+PASS 'oncopy' in svgelement is true
+PASS 'onbeforepaste' in svgelement is true
+PASS 'onpaste' in svgelement is true
+PASS 'onreset' in svgelement is true
+PASS 'onsearch' in svgelement is true
+PASS 'onselectstart' in svgelement is true
 
 Test Document
 PASS 'onabort' in document is true
