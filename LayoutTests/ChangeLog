@@ -1,5 +1,12 @@
 2014-05-05  Andreas Kling  <akling@apple.com>
 
+        Mark http/tests/media/hls/video-controls-live-stream.html as WontFix on Mountain Lion.
+        <https://webkit.org/b/132491>
+
+        * platform/mac/TestExpectations:
+
+2014-05-05  Andreas Kling  <akling@apple.com>
+
         REGRESSION (r168256): ASSERTION FAILED: (buffer + m_length) == position loading vanityfair.com article.
         <https://webkit.org/b/168256>
         <rdar://problem/16816316>
