@@ -234,6 +234,7 @@ if (WTF_USE_TEXTURE_MAPPER)
 endif ()
 
 set(WebCore_USER_AGENT_SCRIPTS
+    ${WEBCORE_DIR}/English.lproj/mediaControlsLocalizedStrings.js
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.js
 )
 

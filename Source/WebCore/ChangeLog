@@ -1,3 +1,14 @@
+2014-05-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] REGRESSION(167145): JavaScript media controls are broken
+        https://bugs.webkit.org/show_bug.cgi?id=131573
+
+        Reviewed by Brent Fulgham.
+
+        * PlatformEfl.cmake: Add the localized strings file to the list of user agent scripts.
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::mediaControlsScript): Include the localized strings file in the script body.
+
 2014-05-05  Jeremy Jones  <jeremyj@apple.com>
 
         Implement scan backward and forward in video fullscreen.

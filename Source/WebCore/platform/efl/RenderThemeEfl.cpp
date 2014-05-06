@@ -51,6 +51,7 @@
 #include <Edje.h>
 #include <new>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -1039,7 +1040,10 @@ String RenderThemeEfl::mediaControlsStyleSheet()
 
 String RenderThemeEfl::mediaControlsScript()
 {
-    return ASCIILiteral(mediaControlsAppleJavaScript);
+    StringBuilder scriptBuilder;
+    scriptBuilder.append(mediaControlsLocalizedStringsJavaScript, sizeof(mediaControlsLocalizedStringsJavaScript));
+    scriptBuilder.append(mediaControlsAppleJavaScript, sizeof(mediaControlsAppleJavaScript));
+    return scriptBuilder.toString();
 }
 #endif
 
