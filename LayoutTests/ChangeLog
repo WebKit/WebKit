@@ -1,3 +1,31 @@
+2014-05-06  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed GTK gardening
+
+        Rebaseline affected tests by the modifications done to
+        inline SVG sizing behavior introduced on r168350.
+
+        * platform/gtk/svg/custom/bug45331-expected.txt:
+        * platform/gtk/svg/custom/external-paintserver-reference-expected.txt:
+        * platform/gtk/svg/custom/junk-data-expected.txt:
+        * platform/gtk/svg/custom/linking-base-external-reference-expected.txt:
+        * platform/gtk/svg/custom/missing-xlink-expected.txt:
+        * platform/gtk/svg/custom/path-bad-data-expected.txt:
+        * platform/gtk/svg/custom/use-font-face-crash-expected.txt:
+        * platform/gtk/svg/foreignObject/svg-document-in-html-document-expected.txt:
+        * platform/gtk/svg/hixie/error/012-expected.txt:
+        * platform/gtk/svg/in-html/circle-expected.txt:
+        * platform/gtk/svg/transforms/animated-path-inside-transformed-html-expected.txt:
+        * platform/gtk/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt:
+        * platform/gtk/svg/wicd/rightsizing-grid-expected.txt:
+        * platform/gtk/svg/wicd/test-rightsizing-b-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/gtk/svg/zoom/text/zoom-foreignObject-expected.txt:
+
 2014-05-06  Christophe Dumez  <ch.dumez@samsung.com>
 
         [HTML] Default argument to HTMLTableSectionElement.insertRow() should be -1

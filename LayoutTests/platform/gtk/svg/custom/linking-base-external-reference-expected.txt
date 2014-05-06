@@ -1,7 +1,7 @@
-layer at (0,0) size 785x603
-  RenderView at (0,0) size 785x600
-layer at (0,0) size 785x603
-  RenderBlock {html} at (0,0) size 785x603
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x153
+  RenderBlock {html} at (0,0) size 800x153
     RenderInline {base} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
