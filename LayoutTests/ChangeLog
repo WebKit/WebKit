@@ -364,7 +364,6 @@
             * fast/forms/form-submission-crash-successful-submit-button-expected.txt: Added.
             * fast/forms/form-submission-crash-successful-submit-button.html: Added.
 
->>>>>>> .r168067
 2014-04-29  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r160010.
