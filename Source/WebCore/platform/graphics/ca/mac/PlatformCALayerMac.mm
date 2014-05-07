@@ -764,6 +764,19 @@ void PlatformCALayerMac::updateCustomAppearance(GraphicsLayer::CustomAppearance 
 #endif
 }
 
+void PlatformCALayerMac::updateCustomBehavior(GraphicsLayer::CustomBehavior customBehavior)
+{
+    m_customBehavior = customBehavior;
+
+    // Custom layers can get wrapped in UIViews (which clobbers the layer delegate),
+    // so fall back to the slower way of disabling implicit animations.
+    if (m_customBehavior != GraphicsLayer::NoCustomBehavior) {
+        if ([[m_layer delegate] isKindOfClass:[WebActionDisablingCALayerDelegate class]])
+            [m_layer setDelegate:nil];
+        [m_layer web_disableAllActions];
+    }
+}
+
 TiledBacking* PlatformCALayerMac::tiledBacking()
 {
     if (!usesTiledBackingLayer())

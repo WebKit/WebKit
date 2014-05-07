@@ -1,3 +1,25 @@
+2014-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Acclerated overflow-scrolling broken in WK1
+        https://bugs.webkit.org/show_bug.cgi?id=132665
+        <rdar://problem/16842909>
+
+        Reviewed by Tim Horton.
+
+        r168301 added a CALayer delegate to disable implicit animations,
+        but for some layers we wrap them in UIViews (which are themselves
+        layer delegates), so bad things happened.
+        
+        Fix by falling back to setting the null actions dictionary for
+        layers with custom scrolling behavior.
+
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::updateCustomBehavior):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+
 2014-05-07  Jeremy Jones  <jeremyj@apple.com>
 
         HTMLMediaElement should exitFullscreen when view is removed from the window.
