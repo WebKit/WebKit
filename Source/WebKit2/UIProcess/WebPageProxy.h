@@ -524,6 +524,8 @@ public:
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<WebBackForwardListItem>> removed);
     void willGoToBackForwardListItem(uint64_t itemID, IPC::MessageDecoder&);
 
+    bool shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem*);
+
     bool willHandleHorizontalScrollEvents() const;
 
     bool canShowMIMEType(const String& mimeType);

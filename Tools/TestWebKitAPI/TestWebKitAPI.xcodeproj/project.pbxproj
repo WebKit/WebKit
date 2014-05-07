@@ -96,6 +96,9 @@
 		5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */; };
 		517E7DFC15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */; };
 		517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */; };
+		51E5C7021919C3B200D8B3E1 /* simple2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780361919AFF8001829A2 /* simple2.html */; };
+		51E5C7031919C3B200D8B3E1 /* simple3.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780371919AFF8001829A2 /* simple3.html */; };
+		51E5C7051919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E5C7041919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp */; };
 		51E93017156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E93016156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp */; };
 		51FBBB4D1513D4E900822738 /* WebViewCanPasteURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */; };
 		51FCF79A1534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FCF7981534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp */; };
@@ -279,6 +282,8 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				51E5C7021919C3B200D8B3E1 /* simple2.html in Copy Resources */,
+				51E5C7031919C3B200D8B3E1 /* simple3.html in Copy Resources */,
 				290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */,
 				290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */,
 				C2CF975B16CEC71B0054E99D /* JSContextBackForwardCache1.html in Copy Resources */,
@@ -426,6 +431,9 @@
 		5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ContextMenuCanCopyURL.html; sourceTree = "<group>"; };
 		517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCachePruneWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCachePruneWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
+		51E5C7041919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShouldKeepCurrentBackForwardListItemInList.cpp; sourceTree = "<group>"; };
+		51E780361919AFF8001829A2 /* simple2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = simple2.html; sourceTree = "<group>"; };
+		51E780371919AFF8001829A2 /* simple3.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = simple3.html; sourceTree = "<group>"; };
 		51E93016156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageGetScaleFactorNotZero.cpp; sourceTree = "<group>"; };
 		51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteURL.mm; sourceTree = "<group>"; };
 		51FCF7971534AC6D00104491 /* ShouldGoToBackForwardListItem_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShouldGoToBackForwardListItem_Bundle.cpp; sourceTree = "<group>"; };
@@ -541,7 +549,7 @@
 		BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FailedLoad.cpp; sourceTree = "<group>"; };
 		C01363C713C3997300EF3964 /* StringOperators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringOperators.cpp; sourceTree = "<group>"; };
 		C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpacebarScrolling.cpp; sourceTree = "<group>"; };
-		C02B7853126613AE0026BF0F /* Carbon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = Carbon.framework; sourceTree = SDKROOT; };
+		C02B7853126613AE0026BF0F /* Carbon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Carbon.framework; sourceTree = SDKROOT; };
 		C02B7882126615410026BF0F /* spacebar-scrolling.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "spacebar-scrolling.html"; sourceTree = "<group>"; };
 		C045F9441385C2E900C0F3CD /* DownloadDecideDestinationCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadDecideDestinationCrash.cpp; sourceTree = "<group>"; };
 		C045F9461385C2F800C0F3CD /* 18-characters.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "18-characters.html"; sourceTree = "<group>"; };
@@ -826,6 +834,7 @@
 				2D640B5417875DFF00BFAF99 /* ScrollPinningBehaviors.cpp */,
 				51FCF7981534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp */,
 				51FCF7971534AC6D00104491 /* ShouldGoToBackForwardListItem_Bundle.cpp */,
+				51E5C7041919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp */,
 				C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */,
 				1AE72F47173EB214006362F0 /* TerminateTwice.cpp */,
 				BC22D31314DC689800FFB1DD /* UserMessage.cpp */,
@@ -911,6 +920,8 @@
 				33DC890E1419539300747EF7 /* simple-iframe.html */,
 				BCAA485514A021640088FAC4 /* simple-tall.html */,
 				BC909778125571AB00083756 /* simple.html */,
+				51E780361919AFF8001829A2 /* simple2.html */,
+				51E780371919AFF8001829A2 /* simple3.html */,
 				C02B7882126615410026BF0F /* spacebar-scrolling.html */,
 			);
 			name = Resources;
@@ -1249,6 +1260,7 @@
 				52E5CE4614D21E9D003B2BD8 /* ParentFrame.cpp in Sources */,
 				C54237F016B8955800E638FC /* PasteboardNotifications.mm in Sources */,
 				BC575BC0126F5752006F0F12 /* PlatformUtilities.cpp in Sources */,
+				51E5C7051919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */,
 				BC131885117114B600B69727 /* PlatformUtilitiesMac.mm in Sources */,
 				BC90955D125548AA00083756 /* PlatformWebViewMac.mm in Sources */,
 				333B9CE21277F23100FEFCE3 /* PreventEmptyUserAgent.cpp in Sources */,

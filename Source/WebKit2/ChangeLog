@@ -1,3 +1,25 @@
+2014-05-06  Brady Eidson  <beidson@apple.com>
+
+        Add WK2 SPI to prevent the previous back/forward item from remaining in the list
+        <rdar://problem/16248710> and https://bugs.webkit.org/show_bug.cgi?id=132636
+
+        Reviewed by Sam Weinig.
+
+        Add new PageLoaderClient SPI to keep the current back/forward item from remaining in the list:
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::shouldKeepCurrentBackForwardListItemInList):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/C/WKPageLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::shouldKeepCurrentBackForwardListItemInList):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::addItem): Use that SPI to determine whether we should insert the new item after
+        the previous item, or simply replace the previous item.
+        (WebKit::WebBackForwardList::goToItem): Use that SPI to determine whether the previous item stays or goes.
+
 2014-05-06  Dan Bernstein  <mitz@apple.com>
 
         -[WKWebView isLoading] is NO immediately after -loadRequest: until the provisional load starts

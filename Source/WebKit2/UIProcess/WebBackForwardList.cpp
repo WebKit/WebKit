@@ -113,19 +113,34 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         }
         m_entries.clear();
     }
-    
+
+    bool shouldKeepCurrentItem = true;
+
     if (!m_hasCurrentIndex) {
         ASSERT(m_entries.isEmpty());
         m_currentIndex = 0;
         m_hasCurrentIndex = true;
-    } else
-        m_currentIndex++;
+    } else {
+        shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[m_currentIndex].get());
+        if (shouldKeepCurrentItem)
+            m_currentIndex++;
+    }
 
-    // m_current never be pointing more than 1 past the end of the entries Vector.
-    // If it is, something has gone wrong and we should not try to insert the new item.
-    ASSERT(m_currentIndex <= m_entries.size());
-    if (m_currentIndex <= m_entries.size())
-        m_entries.insert(m_currentIndex, newItem);
+    if (!shouldKeepCurrentItem) {
+        // m_current never be pointing past the end of the entries Vector.
+        // If it is, something has gone wrong and we should not try to swap in the new item.
+        ASSERT(m_currentIndex < m_entries.size());
+
+        removedItems.append(m_entries[m_currentIndex]);
+        m_entries[m_currentIndex] = newItem;
+    } else {
+        // m_current never be pointing more than 1 past the end of the entries Vector.
+        // If it is, something has gone wrong and we should not try to insert the new item.
+        ASSERT(m_currentIndex <= m_entries.size());
+
+        if (m_currentIndex <= m_entries.size())
+            m_entries.insert(m_currentIndex, newItem);
+    }
 
     m_page->didChangeBackForwardList(newItem, std::move(removedItems));
 }
@@ -136,16 +151,32 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
 
     if (!m_entries.size() || !item || !m_page || !m_hasCurrentIndex)
         return;
-        
-    unsigned index = 0;
-    for (; index < m_entries.size(); ++index) {
-        if (m_entries[index] == item)
-            break;
+
+    size_t targetIndex = m_entries.find(item);
+
+    // If the target item wasn't even in the list, there's nothing else to do.
+    if (targetIndex == notFound)
+        return;
+
+    // If we're going to an item different from the current item, ask the client if the current
+    // item should remain in the list.
+    WebBackForwardListItem* currentItem = m_entries[m_currentIndex].get();
+    bool shouldKeepCurrentItem = true;
+    if (currentItem != item)
+        shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[m_currentIndex].get());
+
+    // If the client said to remove the current item, remove it and then update the target index.
+    Vector<RefPtr<WebBackForwardListItem>> removedItems;
+    if (!shouldKeepCurrentItem) {
+        removedItems.append(currentItem);
+        m_entries.remove(m_currentIndex);
+        targetIndex = m_entries.find(item);
+
+        ASSERT(targetIndex != notFound);
     }
-    if (index < m_entries.size()) {
-        m_currentIndex = index;
-        m_page->didChangeBackForwardList(nullptr, { });
-    }
+
+    m_currentIndex = targetIndex;
+    m_page->didChangeBackForwardList(nullptr, removedItems);
 }
 
 WebBackForwardListItem* WebBackForwardList::currentItem() const

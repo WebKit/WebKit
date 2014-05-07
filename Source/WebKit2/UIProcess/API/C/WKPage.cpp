@@ -968,6 +968,14 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.didChangeBackForwardList(toAPI(page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.base.clientInfo);
         }
 
+        virtual bool shouldKeepCurrentBackForwardListItemInList(WebKit::WebPageProxy* page, WebKit::WebBackForwardListItem* item) override
+        {
+            if (!m_client.shouldKeepCurrentBackForwardListItemInList)
+                return false;
+
+            return m_client.shouldKeepCurrentBackForwardListItemInList(toAPI(page), toAPI(item));
+        }
+
         virtual void willGoToBackForwardListItem(WebPageProxy* page, WebBackForwardListItem* item, API::Object* userData) override
         {
             if (m_client.willGoToBackForwardListItem)

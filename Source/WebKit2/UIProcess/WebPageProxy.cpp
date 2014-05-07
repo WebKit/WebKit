@@ -908,6 +908,11 @@ void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, IPC::MessageDeco
         m_loaderClient->willGoToBackForwardListItem(this, item, userData.get());
 }
 
+bool WebPageProxy::shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem* item)
+{
+    return m_loaderClient->shouldKeepCurrentBackForwardListItemInList(this, item);
+}
+
 bool WebPageProxy::canShowMIMEType(const String& mimeType)
 {
     if (MIMETypeRegistry::canShowMIMEType(mimeType))

@@ -90,6 +90,7 @@ public:
     virtual void processDidCrash(WebKit::WebPageProxy*) { }
 
     virtual void didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem*, Vector<RefPtr<WebKit::WebBackForwardListItem>>) { }
+    virtual bool shouldKeepCurrentBackForwardListItemInList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem*) { return true; }
     virtual void willGoToBackForwardListItem(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem*, API::Object*) { }
 
     virtual PassRefPtr<Data> webCryptoMasterKey(WebKit::WebPageProxy&) { return nullptr; }
