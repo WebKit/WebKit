@@ -446,7 +446,7 @@ public:
     virtual void setCustomAppearance(CustomAppearance customAppearance) { m_customAppearance = customAppearance; }
     CustomAppearance customAppearance() const { return m_customAppearance; }
 
-    enum CustomBehavior { NoCustomBehavior, CustomScrollingBehavior };
+    enum CustomBehavior { NoCustomBehavior, CustomScrollingBehavior, CustomScrolledContentsBehavior };
     virtual void setCustomBehavior(CustomBehavior customBehavior) { m_customBehavior = customBehavior; }
     CustomBehavior customBehavior() const { return m_customBehavior; }
 

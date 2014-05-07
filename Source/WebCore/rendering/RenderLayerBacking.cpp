@@ -1427,6 +1427,9 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         // Inner layer which renders the content that scrolls.
         m_scrollingContentsLayer = createGraphicsLayer("Scrolled Contents");
         m_scrollingContentsLayer->setDrawsContent(true);
+#if PLATFORM(IOS)
+        m_scrollingContentsLayer->setCustomBehavior(GraphicsLayer::CustomScrolledContentsBehavior);
+#endif
         GraphicsLayerPaintingPhase paintPhase = GraphicsLayerPaintOverflowContents | GraphicsLayerPaintCompositedScroll;
         if (!m_foregroundLayer)
             paintPhase |= GraphicsLayerPaintForeground;
