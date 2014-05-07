@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void WebFindClient::didFindString(WebPageProxy* page, const String& string, uint32_t matchCount, int32_t matchIndex)
+void WebFindClient::didFindString(WebPageProxy* page, const String& string, uint32_t matchCount, int32_t)
 {
     if (!m_client.didFindString)
         return;
