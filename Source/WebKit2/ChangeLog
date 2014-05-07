@@ -1,5 +1,27 @@
 2014-05-06  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] WebKit2 does not set CanPreventNativeGestures on the platform events
+        https://bugs.webkit.org/show_bug.cgi?id=132594
+
+        Reviewed by Simon Fraser.
+
+        Set CanPreventNativeGestures on the plaform event.
+        Change the tracking of WKContentView to be similar to WebPageProxy.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        (WebKit::WebTouchEvent::canPreventNativeGestures):
+        (WebKit::WebTouchEvent::setCanPreventNativeGestures):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+        * Shared/ios/WebTouchEventIOS.cpp:
+        (WebKit::WebTouchEvent::encode):
+        (WebKit::WebTouchEvent::decode):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]):
+
+2014-05-06  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Add tap highlight on the simple UITapGestureRecognizer
         https://bugs.webkit.org/show_bug.cgi?id=132623
         <rdar://problem/16709507>

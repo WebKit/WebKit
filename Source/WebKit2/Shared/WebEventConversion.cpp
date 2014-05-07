@@ -306,6 +306,7 @@ public:
 
         m_gestureScale = webEvent.gestureScale();
         m_gestureRotation = webEvent.gestureRotation();
+        m_canPreventNativeGestures = webEvent.canPreventNativeGestures();
         m_isGesture = webEvent.isGesture();
         m_position = webEvent.position();
         m_globalPosition = webEvent.position();

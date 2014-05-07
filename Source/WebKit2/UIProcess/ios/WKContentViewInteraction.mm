@@ -298,15 +298,17 @@ static const float tapAndHoldDelay  = 0.75;
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
     NativeWebTouchEvent nativeWebTouchEvent(gestureRecognizer);
-    if (nativeWebTouchEvent.type() == WebKit::WebEvent::TouchStart)
-        _canSendTouchEventsAsynchronously = NO;
 
     _lastInteractionLocation = gestureRecognizer.locationInWindow;
+    nativeWebTouchEvent.setCanPreventNativeGestures(!_canSendTouchEventsAsynchronously || [_touchEventGestureRecognizer isDefaultPrevented]);
 
     if (_canSendTouchEventsAsynchronously)
         _page->handleTouchEventAsynchronously(nativeWebTouchEvent);
     else
         _page->handleTouchEventSynchronously(nativeWebTouchEvent);
+
+    if (nativeWebTouchEvent.allTouchPointsAreReleased())
+        _canSendTouchEventsAsynchronously = NO;
 }
 
 static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)

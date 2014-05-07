@@ -298,6 +298,7 @@ public:
         : WebEvent(type, modifiers, timestamp)
         , m_touchPoints(touchPoints)
         , m_position(position)
+        , m_canPreventNativeGestures(true)
         , m_isGesture(isGesture)
         , m_gestureScale(gestureScale)
         , m_gestureRotation(gestureRotation)
@@ -313,6 +314,11 @@ public:
     float gestureScale() const { return m_gestureScale; }
     float gestureRotation() const { return m_gestureRotation; }
 
+    bool canPreventNativeGestures() const { return m_canPreventNativeGestures; }
+    void setCanPreventNativeGestures(bool canPreventNativeGestures) { m_canPreventNativeGestures = canPreventNativeGestures; }
+
+    bool allTouchPointsAreReleased() const;
+
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebTouchEvent&);
     
@@ -320,6 +326,7 @@ private:
     Vector<WebPlatformTouchPoint> m_touchPoints;
     
     WebCore::IntPoint m_position;
+    bool m_canPreventNativeGestures;
     bool m_isGesture;
     float m_gestureScale;
     float m_gestureRotation;
@@ -354,6 +361,8 @@ public:
     float force() const { return m_force; }
 
     void setState(TouchPointState state) { m_state = state; }
+
+    bool allTouchPointsAreReleased() const;
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebPlatformTouchPoint&);

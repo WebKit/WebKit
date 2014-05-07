@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ void WebTouchEvent::encode(IPC::ArgumentEncoder& encoder) const
 
     encoder << m_touchPoints;
     encoder << m_position;
+    encoder << m_canPreventNativeGestures;
     encoder << m_isGesture;
     encoder << m_gestureScale;
     encoder << m_gestureRotation;
@@ -53,6 +54,8 @@ bool WebTouchEvent::decode(IPC::ArgumentDecoder& decoder, WebTouchEvent& result)
     if (!decoder.decode(result.m_touchPoints))
         return false;
     if (!decoder.decode(result.m_position))
+        return false;
+    if (!decoder.decode(result.m_canPreventNativeGestures))
         return false;
     if (!decoder.decode(result.m_isGesture))
         return false;

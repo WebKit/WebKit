@@ -63,5 +63,17 @@ bool WebEvent::decode(IPC::ArgumentDecoder& decoder, WebEvent& result)
         return false;
     return true;
 }
-    
+
+#if ENABLE(TOUCH_EVENTS)
+bool WebTouchEvent::allTouchPointsAreReleased() const
+{
+    for (const auto& touchPoint : touchPoints()) {
+        if (touchPoint.state() != WebPlatformTouchPoint::TouchReleased && touchPoint.state() != WebPlatformTouchPoint::TouchCancelled)
+            return false;
+    }
+
+    return true;
+}
+#endif
+
 } // namespace WebKit
