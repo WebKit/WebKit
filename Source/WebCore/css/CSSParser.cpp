@@ -251,9 +251,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     , isHTMLDocument(false)
     , isCSSRegionsEnabled(false)
     , isCSSCompositingEnabled(false)
-#if ENABLE(CSS_GRID_LAYOUT)
-    , isCSSGridLayoutEnabled(false)
-#endif
     , needsSiteSpecificQuirks(false)
     , enforcesCSSMIMETypeInNoQuirksMode(true)
     , useLegacyBackgroundSizeShorthandBehavior(false)
@@ -273,9 +270,6 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
     , isHTMLDocument(document.isHTMLDocument())
     , isCSSRegionsEnabled(document.cssRegionsEnabled())
     , isCSSCompositingEnabled(document.cssCompositingEnabled())
-#if ENABLE(CSS_GRID_LAYOUT)
-    , isCSSGridLayoutEnabled(document.cssGridLayoutEnabled())
-#endif
     , needsSiteSpecificQuirks(document.settings() ? document.settings()->needsSiteSpecificQuirks() : false)
     , enforcesCSSMIMETypeInNoQuirksMode(!document.settings() || document.settings()->enforceCSSMIMETypeInNoQuirksMode())
     , useLegacyBackgroundSizeShorthandBehavior(document.settings() ? document.settings()->useLegacyBackgroundSizeShorthandBehavior() : false)
@@ -296,9 +290,6 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.isHTMLDocument == b.isHTMLDocument
         && a.isCSSRegionsEnabled == b.isCSSRegionsEnabled
         && a.isCSSCompositingEnabled == b.isCSSCompositingEnabled
-#if ENABLE(CSS_GRID_LAYOUT)
-        && a.isCSSGridLayoutEnabled == b.isCSSGridLayoutEnabled
-#endif
         && a.needsSiteSpecificQuirks == b.needsSiteSpecificQuirks
         && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
         && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior;
@@ -683,7 +674,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if ((valueID >= CSSValueInline && valueID <= CSSValueWebkitInlineFlex) || valueID == CSSValueNone)
             return true;
 #if ENABLE(CSS_GRID_LAYOUT)
-        if (parserContext.isCSSGridLayoutEnabled && (valueID == CSSValueWebkitGrid || valueID == CSSValueWebkitInlineGrid))
+        if (valueID == CSSValueWebkitGrid || valueID == CSSValueWebkitInlineGrid)
             return true;
 #endif
         break;
@@ -2564,15 +2555,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridAutoColumns:
     case CSSPropertyWebkitGridAutoRows:
-        if (!cssGridLayoutEnabled())
-            return false;
         parsedValue = parseGridTrackSize(*m_valueList);
         break;
 
     case CSSPropertyWebkitGridTemplateColumns:
     case CSSPropertyWebkitGridTemplateRows:
-        if (!cssGridLayoutEnabled())
-            return false;
         parsedValue = parseGridTrackList();
         break;
 
@@ -2580,34 +2567,21 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitGridColumnEnd:
     case CSSPropertyWebkitGridRowStart:
     case CSSPropertyWebkitGridRowEnd:
-        if (!cssGridLayoutEnabled())
-            return false;
-
         parsedValue = parseGridPosition();
         break;
 
     case CSSPropertyWebkitGridColumn:
     case CSSPropertyWebkitGridRow: {
-        if (!cssGridLayoutEnabled())
-            return false;
-
         return parseGridItemPositionShorthand(propId, important);
     }
 
     case CSSPropertyWebkitGridTemplate:
-        if (!cssGridLayoutEnabled())
-            return false;
         return parseGridTemplateShorthand(important);
 
     case CSSPropertyWebkitGridArea:
-        if (!cssGridLayoutEnabled())
-            return false;
         return parseGridAreaShorthand(important);
 
     case CSSPropertyWebkitGridTemplateAreas:
-        if (!cssGridLayoutEnabled())
-            return false;
-
         parsedValue = parseGridTemplateAreas();
         break;
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
@@ -4861,8 +4835,6 @@ bool CSSParser::parseGridTemplateRowsAndAreas(PassRefPtr<CSSValue> templateColum
 
 bool CSSParser::parseGridTemplateShorthand(bool important)
 {
-    ASSERT(cssGridLayoutEnabled());
-
     ShorthandScope scope(this, CSSPropertyWebkitGridTemplate);
     ASSERT(shorthandForProperty(CSSPropertyWebkitGridTemplate).length() == 3);
 
@@ -4910,8 +4882,6 @@ bool CSSParser::parseGridTemplateShorthand(bool important)
 
 bool CSSParser::parseGridAreaShorthand(bool important)
 {
-    ASSERT(cssGridLayoutEnabled());
-
     ShorthandScope scope(this, CSSPropertyWebkitGridArea);
     ASSERT(shorthandForProperty(CSSPropertyWebkitGridArea).length() == 4);
 
@@ -9137,13 +9107,6 @@ bool CSSParser::cssCompositingEnabled() const
 {
     return m_context.isCSSCompositingEnabled;
 }
-
-#if ENABLE(CSS_GRID_LAYOUT)
-bool CSSParser::cssGridLayoutEnabled() const
-{
-    return m_context.isCSSGridLayoutEnabled;
-}
-#endif
 
 #if ENABLE(CSS_REGIONS)
 

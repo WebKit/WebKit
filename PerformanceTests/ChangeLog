@@ -1,3 +1,15 @@
+2014-05-07  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Remove runtime feature
+        https://bugs.webkit.org/show_bug.cgi?id=132382
+
+        Reviewed by Benjamin Poulain.
+
+        Remove set of WebKitCSSGridLayoutEnabled preference.
+
+        * Layout/auto-grid-lots-of-data.html:
+        * Layout/fixed-grid-lots-of-data.html:
+
 2014-05-06  Radu Stavila  <stavila@adobe.com>
 
         [CSSRegions] Enabled regions performance tests by default

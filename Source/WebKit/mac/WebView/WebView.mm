@@ -2338,7 +2338,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled([preferences webAudioEnabled]);
 #endif
-    settings.setCSSGridLayoutEnabled([preferences cssGridLayoutEnabled]);
 #if ENABLE(FULLSCREEN_API)
     settings.setFullScreenEnabled([preferences fullScreenEnabled]);
 #endif

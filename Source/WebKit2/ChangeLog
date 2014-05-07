@@ -1,3 +1,27 @@
+2014-05-07  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Remove runtime feature
+        https://bugs.webkit.org/show_bug.cgi?id=132382
+
+        Reviewed by Benjamin Poulain.
+
+        Remove cssGridLayoutEnabled setting usage.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCSSGridLayoutEnabled): Deleted.
+        (WKPreferencesGetCSSGridLayoutEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsConstructed):
+        * UIProcess/gtk/ExperimentalFeatures.cpp:
+        * UIProcess/gtk/ExperimentalFeatures.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * mac/WebKit2.order:
+
 2014-05-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r168393 to fix !IOS builds.

@@ -1,3 +1,111 @@
+2014-05-07  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Remove runtime feature
+        https://bugs.webkit.org/show_bug.cgi?id=132382
+
+        Reviewed by Benjamin Poulain.
+
+        Remove set of WebKitCSSGridLayoutEnabled preference.
+        Remove fast/css-grid-layout/grid-disabled.html patch as the setting is not available anymore.
+
+        * fast/css-grid-layout/anonymous-grid-items-expected.html:
+        * fast/css-grid-layout/anonymous-grid-items.html:
+        * fast/css-grid-layout/auto-content-resolution-columns.html:
+        * fast/css-grid-layout/auto-content-resolution-rows.html:
+        * fast/css-grid-layout/breadth-size-resolution-grid.html:
+        * fast/css-grid-layout/calc-resolution-grid-item.html:
+        * fast/css-grid-layout/containing-block-grids.html:
+        * fast/css-grid-layout/display-grid-set-get.html:
+        * fast/css-grid-layout/flex-and-minmax-content-resolution-columns.html:
+        * fast/css-grid-layout/flex-and-minmax-content-resolution-rows.html:
+        * fast/css-grid-layout/flex-content-resolution-columns.html:
+        * fast/css-grid-layout/flex-content-resolution-rows.html:
+        * fast/css-grid-layout/flex-content-sized-column-use-available-width.html:
+        * fast/css-grid-layout/flex-content-sized-columns-resize.html:
+        * fast/css-grid-layout/floating-empty-grids.html:
+        * fast/css-grid-layout/grid-auto-columns-rows-auto-flow-resolution.html:
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-auto-columns-rows-resolution.html:
+        * fast/css-grid-layout/grid-auto-columns-rows-update.html:
+        * fast/css-grid-layout/grid-auto-flow-get-set.html:
+        * fast/css-grid-layout/grid-auto-flow-resolution.html:
+        * fast/css-grid-layout/grid-auto-flow-update.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-container-change-named-grid-lines-recompute-child.html:
+        * fast/css-grid-layout/grid-disabled-expected.txt: Removed.
+        * fast/css-grid-layout/grid-disabled.html: Removed.
+        * fast/css-grid-layout/grid-dynamic-updates-relayout.html:
+        * fast/css-grid-layout/grid-element-border-grid-item.html:
+        * fast/css-grid-layout/grid-element-border-padding-grid-item.html:
+        * fast/css-grid-layout/grid-element-change-columns-repaint.html:
+        * fast/css-grid-layout/grid-element-change-rows-repaint.html:
+        * fast/css-grid-layout/grid-element-empty-row-column.html:
+        * fast/css-grid-layout/grid-element-min-max-height.html:
+        * fast/css-grid-layout/grid-element-min-max-width.html:
+        * fast/css-grid-layout/grid-element-padding-grid-item.html:
+        * fast/css-grid-layout/grid-element-padding-margin.html:
+        * fast/css-grid-layout/grid-element-repeat-get-set.html:
+        * fast/css-grid-layout/grid-element-shrink-to-fit.html:
+        * fast/css-grid-layout/grid-item-addition-auto-placement-update.html:
+        * fast/css-grid-layout/grid-item-addition-track-breadth-update.html:
+        * fast/css-grid-layout/grid-item-area-get-set.html:
+        * fast/css-grid-layout/grid-item-bad-named-area-auto-placement.html:
+        * fast/css-grid-layout/grid-item-bad-resolution-double-span.html:
+        * fast/css-grid-layout/grid-item-change-column-repaint.html:
+        * fast/css-grid-layout/grid-item-change-row-repaint.html:
+        * fast/css-grid-layout/grid-item-column-row-get-set.html:
+        * fast/css-grid-layout/grid-item-end-after-get-set.html:
+        * fast/css-grid-layout/grid-item-margin-auto-columns-rows.html:
+        * fast/css-grid-layout/grid-item-margin-resolution.html:
+        * fast/css-grid-layout/grid-item-multiple-minmax-content-resolution.html:
+        * fast/css-grid-layout/grid-item-named-grid-area-resolution.html:
+        * fast/css-grid-layout/grid-item-named-grid-line-resolution.html:
+        * fast/css-grid-layout/grid-item-negative-indexes.html:
+        * fast/css-grid-layout/grid-item-negative-integer-explicit-grid-resolution.html:
+        * fast/css-grid-layout/grid-item-negative-position-resolution.html:
+        * fast/css-grid-layout/grid-item-order-auto-flow-resolution.html:
+        * fast/css-grid-layout/grid-item-order-paint-order.html:
+        * fast/css-grid-layout/grid-item-position-changed-dynamic.html:
+        * fast/css-grid-layout/grid-item-removal-auto-placement-update.html:
+        * fast/css-grid-layout/grid-item-removal-track-breadth-update.html:
+        * fast/css-grid-layout/grid-item-spanning-resolution.html:
+        * fast/css-grid-layout/grid-item-start-before-get-set.html:
+        * fast/css-grid-layout/grid-item-with-percent-height-in-auto-height-grid-resolution.html:
+        * fast/css-grid-layout/grid-item-with-percent-min-max-height-dynamic.html:
+        * fast/css-grid-layout/grid-preferred-logical-widths.html:
+        * fast/css-grid-layout/grid-strict-ordering-crash.html:
+        * fast/css-grid-layout/grid-template-areas-get-set.html:
+        * fast/css-grid-layout/grid-template-shorthand-get-set.html:
+        * fast/css-grid-layout/implicit-columns-auto-resolution.html:
+        * fast/css-grid-layout/implicit-position-dynamic-change.html:
+        * fast/css-grid-layout/implicit-rows-auto-resolution.html:
+        * fast/css-grid-layout/minmax-fixed-logical-height-only.html:
+        * fast/css-grid-layout/minmax-fixed-logical-width-only.html:
+        * fast/css-grid-layout/minmax-max-content-resolution-columns.html:
+        * fast/css-grid-layout/minmax-max-content-resolution-rows.html:
+        * fast/css-grid-layout/minmax-min-content-column-resolution-columns.html:
+        * fast/css-grid-layout/minmax-min-content-column-resolution-rows.html:
+        * fast/css-grid-layout/minmax-spanning-resolution-columns.html:
+        * fast/css-grid-layout/minmax-spanning-resolution-rows.html:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-get-set.html:
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-resolution.html:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/non-grid-element-repeat-get-set.html:
+        * fast/css-grid-layout/non-named-grid-line-get-set.html:
+        * fast/css-grid-layout/percent-grid-item-in-percent-grid-track-in-percent-grid.html:
+        * fast/css-grid-layout/percent-grid-item-in-percent-grid-track-update.html:
+        * fast/css-grid-layout/percent-grid-item-in-percent-grid-track.html:
+        * fast/css-grid-layout/percent-padding-margin-resolution-grid-item-update.html:
+        * fast/css-grid-layout/percent-padding-margin-resolution-grid-item.html:
+        * fast/css-grid-layout/percent-resolution-grid-item.html:
+        * fast/css-grid-layout/place-cell-by-index.html:
+        * fast/css-grid-layout/should-not-collapse-anonymous-blocks.html:
+        * ietestcenter/css3/grid/grid-column-002.htm:
+        * ietestcenter/css3/grid/testRunnerEnableGrid.js: Removed.
+
 2014-05-07  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Unreviewed GTK gardening

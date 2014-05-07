@@ -509,16 +509,6 @@ bool WKPreferencesGetCSSRegionsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->cssRegionsEnabled();
 }
 
-void WKPreferencesSetCSSGridLayoutEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setCSSGridLayoutEnabled(flag);
-}
-
-bool WKPreferencesGetCSSGridLayoutEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->cssGridLayoutEnabled();
-}
-
 void WKPreferencesSetRegionBasedColumnsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setRegionBasedColumnsEnabled(flag);

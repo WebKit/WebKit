@@ -158,7 +158,6 @@ public:
     bool parseAnimationShorthand(bool important);
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    bool cssGridLayoutEnabled() const;
     PassRefPtr<CSSValue> parseGridPosition();
     bool parseGridItemPositionShorthand(CSSPropertyID, bool important);
     bool parseGridTemplateRowsAndAreas(PassRefPtr<CSSValue>, bool important);

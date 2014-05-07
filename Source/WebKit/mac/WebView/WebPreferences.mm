@@ -482,7 +482,6 @@ public:
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSRegionsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSCompositingEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitCSSGridLayoutEnabledPreferenceKey,
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
         [NSNumber numberWithBool:YES],  WebKitAcceleratedDrawingEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitCanvasUsesAcceleratedDrawingPreferenceKey,
@@ -1879,16 +1878,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setCSSCompositingEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitCSSCompositingEnabledPreferenceKey];
-}
-
-- (BOOL)cssGridLayoutEnabled
-{
-    return [self _boolValueForKey:WebKitCSSGridLayoutEnabledPreferenceKey];
-}
-
-- (void)setCSSGridLayoutEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitCSSGridLayoutEnabledPreferenceKey];
 }
 
 - (BOOL)showDebugBorders

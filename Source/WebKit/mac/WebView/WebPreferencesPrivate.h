@@ -205,9 +205,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)cssCompositingEnabled;
 - (void)setCSSCompositingEnabled:(BOOL)enabled;
 
-- (BOOL)cssGridLayoutEnabled;
-- (void)setCSSGridLayoutEnabled:(BOOL)enabled;
-
 - (BOOL)showDebugBorders;
 - (void)setShowDebugBorders:(BOOL)show;
 

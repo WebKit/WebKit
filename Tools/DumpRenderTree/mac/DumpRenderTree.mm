@@ -878,7 +878,6 @@ static void resetWebPreferencesToConsistentValues()
 #endif
     [preferences setWebGLEnabled:NO];
     [preferences setCSSRegionsEnabled:YES];
-    [preferences setCSSGridLayoutEnabled:NO];
     [preferences setUsePreHTML5ParserQuirks:NO];
     [preferences setAsynchronousSpellCheckingEnabled:NO];
 #if !PLATFORM(IOS)

@@ -39,7 +39,6 @@ struct Setting {
 };
 
 static Setting settings[] = {
-    { ExperimentalFeatures::CSSGridLayout, "CSS_GRID_LAYOUT", true },
     { ExperimentalFeatures::RegionBasedColumns, "REGION_BASED_COLUMNS", false }
 };
 

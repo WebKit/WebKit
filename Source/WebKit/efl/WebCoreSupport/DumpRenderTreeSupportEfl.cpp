@@ -311,13 +311,6 @@ bool DumpRenderTreeSupportEfl::findString(const Evas_Object* ewkView, const Stri
     return page->findString(text, options);
 }
 
-void DumpRenderTreeSupportEfl::setCSSGridLayoutEnabled(const Evas_Object* ewkView, bool enabled)
-{
-    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
-
-    page->settings().setCSSGridLayoutEnabled(enabled);
-}
-
 void DumpRenderTreeSupportEfl::setCSSRegionsEnabled(const Evas_Object* ewkView, bool enabled)
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
