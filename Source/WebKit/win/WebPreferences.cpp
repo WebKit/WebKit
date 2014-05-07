@@ -280,6 +280,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitFullScreenEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitRequestAnimationFrameEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 }
 
@@ -1766,3 +1768,14 @@ HRESULT WebPreferences::requestAnimationFrameEnabled(BOOL* enabled)
     return S_OK;
 }
 
+HRESULT WebPreferences::isInheritURIQueryComponentEnabled(BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitEnableInheritURIQueryComponentPreferenceKey));
+    return S_OK;
+}
+
+HRESULT WebPreferences::setEnableInheritURIQueryComponent(BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitEnableInheritURIQueryComponentPreferenceKey), enabled);
+    return S_OK;
+}

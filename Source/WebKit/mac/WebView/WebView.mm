@@ -1555,6 +1555,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setDiagnosticLoggingEnabled([preferences diagnosticLoggingEnabled]);
     settings->setLowPowerVideoAudioBufferSizeEnabled([preferences lowPowerVideoAudioBufferSizeEnabled]);
 
+    settings->setEnableInheritURIQueryComponent([preferences isInheritURIQueryComponentEnabled]);
+
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:
         settings->setStorageBlockingPolicy(SecurityOrigin::AllowAllStorage);

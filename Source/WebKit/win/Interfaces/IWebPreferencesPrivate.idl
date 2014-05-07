@@ -142,4 +142,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setRequestAnimationFrameEnabled([in] BOOL);
     HRESULT requestAnimationFrameEnabled([out, retval] BOOL*);
+
+    HRESULT isInheritURIQueryComponentEnabled([out, retval] BOOL* enabled);
+    HRESULT setEnableInheritURIQueryComponent([in] BOOL enabled);
 }

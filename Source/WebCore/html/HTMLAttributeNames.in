@@ -307,6 +307,7 @@ sizes
 sortable
 sortdirection
 span
+x-itunes-inherit-uri-query-component
 x-webkit-speech
 x-webkit-grammar
 spellcheck

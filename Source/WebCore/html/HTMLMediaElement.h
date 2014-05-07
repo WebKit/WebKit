@@ -118,6 +118,8 @@ public:
     virtual bool supportsSave() const;
     virtual bool supportsScanning() const;
     
+    virtual bool doesHaveAttribute(const AtomicString&) const override;
+
     PlatformMedia platformMedia() const;
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer() const;

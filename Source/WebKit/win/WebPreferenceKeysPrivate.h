@@ -165,3 +165,4 @@
 
 #define WebKitRequestAnimationFrameEnabledPreferenceKey "WebKitRequestAnimationFrameEnabled"
 
+#define WebKitEnableInheritURIQueryComponentPreferenceKey "WebKitEnableInheritURIQueryComponent"

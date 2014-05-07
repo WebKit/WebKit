@@ -480,6 +480,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE requestAnimationFrameEnabled(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setRequestAnimationFrameEnabled(BOOL);
 
+    virtual HRESULT STDMETHODCALLTYPE isInheritURIQueryComponentEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setEnableInheritURIQueryComponent(BOOL);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

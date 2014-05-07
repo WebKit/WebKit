@@ -5125,5 +5125,28 @@ void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
     m_restrictions = NoRestrictions;
 }
 
+bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute) const
+{
+    QualifiedName attributeName(nullAtom, attribute, nullAtom);
+    if (!fastHasAttribute(attributeName))
+        return false;
+
+    if (Settings* settings = document()->settings()) {
+        if (attributeName == HTMLNames::x_itunes_inherit_uri_query_componentAttr)
+            return settings->enableInheritURIQueryComponent();
+    }
+
+    return true;
 }
+
+bool MediaPlayer::doesHaveAttribute(const AtomicString& attribute) const
+{
+    if (!m_mediaPlayerClient)
+        return false;
+    
+    return m_mediaPlayerClient->doesHaveAttribute(attribute);
+}
+
+}
+
 #endif

@@ -240,6 +240,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)seamlessIFramesEnabled;
 - (void)setSeamlessIFramesEnabled:(BOOL)enabled;
 
+- (BOOL)isInheritURIQueryComponentEnabled;
+- (void)setEnableInheritURIQueryComponent:(BOOL)flag;
+
 // Other private methods
 - (void)_postPreferencesChangedNotification;
 - (void)_postPreferencesChangedAPINotification;

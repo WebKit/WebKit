@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2011, 2012, 2014 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -419,6 +419,7 @@ public:
         [NSNumber numberWithBool:NO], WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitEnableInheritURIQueryComponentPreferenceKey,
         nil];
 
 
@@ -1594,6 +1595,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)isHixie76WebSocketProtocolEnabled
 {
     return false;
+}
+
+- (BOOL)isInheritURIQueryComponentEnabled 
+{
+    return [self _boolValueForKey: WebKitEnableInheritURIQueryComponentPreferenceKey]; 
+} 
+
+- (void)setEnableInheritURIQueryComponent:(BOOL)flag 
+{
+    [self _setBoolValue:flag forKey: WebKitEnableInheritURIQueryComponentPreferenceKey]; 
 }
 
 - (BOOL)mediaPlaybackRequiresUserGesture
