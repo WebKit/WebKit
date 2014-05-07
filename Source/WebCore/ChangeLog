@@ -1,3 +1,17 @@
+2014-05-07  Dean Jackson  <dino@apple.com>
+
+        Clean up the difference between painting focus rings and adding PDF annotations
+        https://bugs.webkit.org/show_bug.cgi?id=132638
+
+        Follow-up comments from Darin Adler.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline): Move "else if" to a separate "if" for clarity.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintFocusRing): Don't guard against outlineIsAuto(). ASSERT instead.
+        (WebCore::RenderObject::addPDFURLRect): Give "rect" variable a better name.
+        (WebCore::RenderObject::paintOutline): Move "else if" to a separate "if" for clarity.
+
 2014-05-07  Alexey Proskuryakov  <ap@apple.com>
 
         Make blob size computation lazy

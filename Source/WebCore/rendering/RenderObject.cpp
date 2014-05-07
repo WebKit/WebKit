@@ -999,27 +999,27 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1
 
 void RenderObject::paintFocusRing(PaintInfo& paintInfo, const LayoutPoint& paintOffset, RenderStyle* style)
 {
-    if (style->outlineStyleIsAuto()) {
-        Vector<IntRect> focusRingRects;
-        addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
+    ASSERT(style->outlineStyleIsAuto());
+
+    Vector<IntRect> focusRingRects;
+    addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
 #if PLATFORM(MAC)
-        bool needsRepaint;
-        paintInfo.context->drawFocusRing(focusRingRects, style->outlineWidth(), style->outlineOffset(), document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
-        if (needsRepaint)
-            document().page()->focusController().setFocusedElementNeedsRepaint();
+    bool needsRepaint;
+    paintInfo.context->drawFocusRing(focusRingRects, style->outlineWidth(), style->outlineOffset(), document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
+    if (needsRepaint)
+        document().page()->focusController().setFocusedElementNeedsRepaint();
 #else
-        paintInfo.context->drawFocusRing(focusRingRects, style->outlineWidth(), style->outlineOffset(), style->visitedDependentColor(CSSPropertyOutlineColor));
+    paintInfo.context->drawFocusRing(focusRingRects, style->outlineWidth(), style->outlineOffset(), style->visitedDependentColor(CSSPropertyOutlineColor));
 #endif
-    }
 }
 
 void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     Vector<IntRect> focusRingRects;
     addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
-    IntRect rect = unionRect(focusRingRects);
+    IntRect urlRect = unionRect(focusRingRects);
 
-    if (rect.isEmpty())
+    if (urlRect.isEmpty())
         return;
     Node* n = node();
     if (!n || !n->isLink() || !n->isElementNode())
@@ -1027,7 +1027,7 @@ void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintO
     const AtomicString& href = toElement(n)->getAttribute(hrefAttr);
     if (href.isNull())
         return;
-    paintInfo.context->setURLForRect(n->document().completeURL(href), pixelSnappedIntRect(rect));
+    paintInfo.context->setURLForRect(n->document().completeURL(href), pixelSnappedIntRect(urlRect));
 }
 
 void RenderObject::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRect)
@@ -1043,7 +1043,8 @@ void RenderObject::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRec
     // Only paint the focus ring by hand if the theme isn't able to draw it.
     if (styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(&styleToUse))
         paintFocusRing(paintInfo, paintRect.location(), &styleToUse);
-    else if (hasOutlineAnnotation() && !theme().supportsFocusRing(&styleToUse))
+
+    if (hasOutlineAnnotation() && !styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(&styleToUse))
         addPDFURLRect(paintInfo, paintRect.location());
 
     if (styleToUse.outlineStyleIsAuto() || styleToUse.outlineStyle() == BNONE)
