@@ -1,3 +1,22 @@
+2014-05-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Soup] Use std::unique_ptr<char[]> for the read buffer in SocketStreamHandle
+        https://bugs.webkit.org/show_bug.cgi?id=132559
+
+        Reviewed by Carlos Garcia Campos.
+
+        Manage the read buffer array through a std::unique_ptr<char[]> object.
+        This avoids handling with the raw pointer and also ensures that the memory
+        allocated with the new[] operator is deleted with the delete[] operator,
+        a problem exposed by the AddressSanitizer in WebSocket tests.
+
+        * platform/network/soup/SocketStreamHandle.h:
+        * platform/network/soup/SocketStreamHandleSoup.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::connected):
+        (WebCore::SocketStreamHandle::readBytes):
+        (WebCore::SocketStreamHandle::platformClose):
+
 2014-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         Check (rather than assume) element is a RenderTableSection before using it

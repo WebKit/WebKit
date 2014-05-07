@@ -64,7 +64,7 @@ namespace WebCore {
         GRefPtr<GInputStream> m_inputStream;
         GRefPtr<GPollableOutputStream> m_outputStream;
         GRefPtr<GSource> m_writeReadySource;
-        char* m_readBuffer;
+        std::unique_ptr<char[]> m_readBuffer;
         void* m_id;
 
         SocketStreamHandle(const URL&, SocketStreamHandleClient*);
