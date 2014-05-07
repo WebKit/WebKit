@@ -1,3 +1,9 @@
+2014-05-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r168393 to fix !IOS builds.
+
+        * Shared/WebEvent.h:
+
 2014-05-06  Brady Eidson  <beidson@apple.com>
 
         Followup to "Add WK2 SPI to prevent the previous back/forward item from remaining in the list"

@@ -362,8 +362,6 @@ public:
 
     void setState(TouchPointState state) { m_state = state; }
 
-    bool allTouchPointsAreReleased() const;
-
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebPlatformTouchPoint&);
 
@@ -386,6 +384,8 @@ public:
     WebTouchEvent(Type, Vector<WebPlatformTouchPoint>, Modifiers, double timestamp);
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
+
+    bool allTouchPointsAreReleased() const;
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebTouchEvent&);
