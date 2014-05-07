@@ -134,6 +134,16 @@ static void testTLSErrorsPolicy(SSLTest* test, gconstpointer)
     g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
 }
 
+static void testTLSErrorsRedirect(SSLTest* test, gconstpointer)
+{
+    webkit_web_context_set_tls_errors_policy(webkit_web_view_get_context(test->m_webView), WEBKIT_TLS_ERRORS_POLICY_FAIL);
+    test->loadURI(kHttpsServer->getURIForPath("/redirect").data());
+    test->waitUntilLoadFinished();
+    g_assert(test->m_loadFailed);
+    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+}
+
 class TLSErrorsTest: public SSLTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(TLSErrorsTest);
@@ -233,6 +243,9 @@ static void httpsServerCallback(SoupServer* server, SoupMessage* message, const 
         soup_message_set_status(message, SOUP_STATUS_OK);
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, TLSSuccessHTMLString, strlen(TLSSuccessHTMLString));
         soup_message_body_complete(message->response_body);
+    } else if (g_str_equal(path, "/redirect")) {
+        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
+        soup_message_headers_append(message->response_headers, "Location", kHttpServer->getURIForPath("/test-image").data());
     } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
 }
@@ -280,6 +293,7 @@ void beforeAll()
     // and expects that no exception will have been added for this certificate and host pair as is
     // done in the tls-permission-request test.
     SSLTest::add("WebKitWebView", "tls-errors-policy", testTLSErrorsPolicy);
+    SSLTest::add("WebKitWebView", "tls-errors-redirect-to-http", testTLSErrorsRedirect);
     TLSErrorsTest::add("WebKitWebView", "load-failed-with-tls-errors", testLoadFailedWithTLSErrors);
 }
 
