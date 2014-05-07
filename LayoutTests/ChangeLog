@@ -1,3 +1,16 @@
+2014-05-07  Christophe Dumez  <ch.dumez@samsung.com>
+
+        [HTML] Default argument to HTMLTableElement.insertRow() should be -1
+        https://bugs.webkit.org/show_bug.cgi?id=132651
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add layout test to test that the default argument to HTMLTableElement.insertRow()
+        is -1.
+
+        * fast/dom/HTMLTableElement/insertRow-default-argument-expected.txt: Added.
+        * fast/dom/HTMLTableElement/insertRow-default-argument.html: Added.
+
 2014-05-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: AXSelectTextWithCriteria should support capitalize/lowercase/uppercase

@@ -56,6 +56,7 @@ public:
     PassRefPtr<HTMLElement> createTBody();
     PassRefPtr<HTMLElement> createCaption();
     void deleteCaption();
+    PassRefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
     PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 

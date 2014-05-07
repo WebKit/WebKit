@@ -45,7 +45,7 @@ interface HTMLTableElement : HTMLElement {
     HTMLElement createCaption();
     void deleteCaption();
 
-    [RaisesException] HTMLElement insertRow([Default=Undefined] optional long index);
+    [RaisesException] HTMLElement insertRow(optional long index);
     [RaisesException] void deleteRow([Default=Undefined] optional long index);
 };
 
