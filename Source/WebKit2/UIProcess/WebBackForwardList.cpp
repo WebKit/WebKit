@@ -127,14 +127,14 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
     }
 
     if (!shouldKeepCurrentItem) {
-        // m_current never be pointing past the end of the entries Vector.
+        // m_current should never be pointing past the end of the entries Vector.
         // If it is, something has gone wrong and we should not try to swap in the new item.
         ASSERT(m_currentIndex < m_entries.size());
 
         removedItems.append(m_entries[m_currentIndex]);
         m_entries[m_currentIndex] = newItem;
     } else {
-        // m_current never be pointing more than 1 past the end of the entries Vector.
+        // m_current should never be pointing more than 1 past the end of the entries Vector.
         // If it is, something has gone wrong and we should not try to insert the new item.
         ASSERT(m_currentIndex <= m_entries.size());
 

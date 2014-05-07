@@ -1,5 +1,19 @@
 2014-05-06  Brady Eidson  <beidson@apple.com>
 
+        Followup to "Add WK2 SPI to prevent the previous back/forward item from remaining in the list"
+        <rdar://problem/16248710> and https://bugs.webkit.org/show_bug.cgi?id=132636
+
+        Reviewed by NOBODY (My mistake while addressing previous review feedback)
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient): During review feedback, this client switched from default negative to default
+          positve, so when the client isn't implemented...  return true instead of false.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::addItem): Fix nonsensical comments while I'm at it.
+
+2014-05-06  Brady Eidson  <beidson@apple.com>
+
         Add WK2 SPI to prevent the previous back/forward item from remaining in the list
         <rdar://problem/16248710> and https://bugs.webkit.org/show_bug.cgi?id=132636
 

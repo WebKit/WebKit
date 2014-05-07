@@ -971,7 +971,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
         virtual bool shouldKeepCurrentBackForwardListItemInList(WebKit::WebPageProxy* page, WebKit::WebBackForwardListItem* item) override
         {
             if (!m_client.shouldKeepCurrentBackForwardListItemInList)
-                return false;
+                return true;
 
             return m_client.shouldKeepCurrentBackForwardListItemInList(toAPI(page), toAPI(item));
         }
