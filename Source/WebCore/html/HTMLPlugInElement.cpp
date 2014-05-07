@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006, 2014 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -57,6 +57,7 @@
 
 #if PLATFORM(COCOA)
 #include "QuickTimePluginReplacement.h"
+#include "YouTubePluginReplacement.h"
 #endif
 
 namespace WebCore {
@@ -328,6 +329,7 @@ static Vector<ReplacementPlugin*>& registeredPluginReplacements()
 
 #if PLATFORM(COCOA)
     QuickTimePluginReplacement::registerPluginReplacement(registrar);
+    YouTubePluginReplacement::registerPluginReplacement(registrar);
 #endif
     
     return registeredReplacements;
@@ -357,9 +359,10 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
         type = mimeTypeFromDataURL(url.string());
     
     if (type.isEmpty() && !extension.isEmpty()) {
-        for (size_t i = 0; i < replacements.size(); i++)
-            if (replacements[i]->supportsFileExtension(extension))
-                return replacements[i];
+        for (auto* replacement : replacements) {
+            if (replacement->supportsFileExtension(extension) && replacement->supportsURL(url))
+                return replacement;
+        }
     }
     
     if (type.isEmpty()) {
@@ -371,9 +374,10 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
     if (type.isEmpty())
         return nullptr;
 
-    for (unsigned i = 0; i < replacements.size(); i++)
-        if (replacements[i]->supportsType(type))
-            return replacements[i];
+    for (auto* replacement : replacements) {
+        if (replacement->supportsType(type) && replacement->supportsURL(url))
+            return replacement;
+    }
 
     return nullptr;
 }

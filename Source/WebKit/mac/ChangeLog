@@ -1,3 +1,19 @@
+2014-05-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac, iOS] REGRESSION: WK2 YouTube support
+        https://bugs.webkit.org/show_bug.cgi?id=132568
+        <rdar://problem/11464344>
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebNSURLExtras.h:
+        * Misc/WebNSURLExtras.mm: Remove code that has been converted to C++
+        and added to YouTubePluginReplacement.cpp.
+        (-[NSURL _webkit_youTubeURL]):
+        (-[NSString _webkit_queryKeysAndValues]):
+        (createYouTubeURL): Deleted.
+        (-[NSString _webkit_unescapedQueryValue]): Deleted.
+
 2014-05-07  Jeremy Jones  <jeremyj@apple.com>
 
         HTMLMediaElement should exitFullscreen when view is removed from the window.

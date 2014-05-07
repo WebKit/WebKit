@@ -75,7 +75,7 @@ static String quickTimePluginReplacementScript()
 
 void QuickTimePluginReplacement::registerPluginReplacement(PluginReplacementRegistrar registrar)
 {
-    registrar(ReplacementPlugin(create, supportsMimeType, supportsFileExtension));
+    registrar(ReplacementPlugin(create, supportsMimeType, supportsFileExtension, supportsURL));
 }
 
 PassRefPtr<PluginReplacement> QuickTimePluginReplacement::create(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)

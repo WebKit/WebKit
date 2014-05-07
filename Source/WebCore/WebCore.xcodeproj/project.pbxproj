@@ -2306,6 +2306,8 @@
 		7A54858014E02D51006AE05A /* InspectorHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A54857E14E02D51006AE05A /* InspectorHistory.h */; };
 		7A54881714E432A1006AE05A /* DOMPatchSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A54881514E432A1006AE05A /* DOMPatchSupport.h */; };
 		7A54881814E432A1006AE05A /* DOMPatchSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A54881614E432A1006AE05A /* DOMPatchSupport.cpp */; };
+		7A5515F5191830A3009687D2 /* YouTubePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A5515F3191830A3009687D2 /* YouTubePluginReplacement.h */; };
+		7A5515F6191830A3009687D2 /* YouTubePluginReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A5515F4191830A3009687D2 /* YouTubePluginReplacement.cpp */; };
 		7A674BDB0F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */; };
 		7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */; };
 		7A74ECBA101839A600BF939E /* InspectorDOMStorageAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECB8101839A500BF939E /* InspectorDOMStorageAgent.cpp */; };
@@ -9355,6 +9357,8 @@
 		7A54857E14E02D51006AE05A /* InspectorHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorHistory.h; sourceTree = "<group>"; };
 		7A54881514E432A1006AE05A /* DOMPatchSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPatchSupport.h; sourceTree = "<group>"; };
 		7A54881614E432A1006AE05A /* DOMPatchSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMPatchSupport.cpp; sourceTree = "<group>"; };
+		7A5515F3191830A3009687D2 /* YouTubePluginReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YouTubePluginReplacement.h; path = plugins/YouTubePluginReplacement.h; sourceTree = "<group>"; };
+		7A5515F4191830A3009687D2 /* YouTubePluginReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YouTubePluginReplacement.cpp; path = plugins/YouTubePluginReplacement.cpp; sourceTree = "<group>"; };
 		7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroupLoadDeferrer.cpp; sourceTree = "<group>"; };
 		7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroupLoadDeferrer.h; sourceTree = "<group>"; };
 		7A7256B915EB9F5B007323A7 /* InspectorOverlayPage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = InspectorOverlayPage.html; sourceTree = "<group>"; };
@@ -14317,6 +14321,8 @@
 		072AE1DE183C0513000A5988 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				7A5515F3191830A3009687D2 /* YouTubePluginReplacement.h */,
+				7A5515F4191830A3009687D2 /* YouTubePluginReplacement.cpp */,
 				072AE1DF183C0741000A5988 /* PluginReplacement.h */,
 				072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.mm */,
 				072AE1E1183C0741000A5988 /* QuickTimePluginReplacement.css */,
@@ -23157,6 +23163,7 @@
 				079D0868162F20E800DB8658 /* CaptionUserPreferences.h in Headers */,
 				079D086B162F21F900DB8658 /* CaptionUserPreferencesMediaAF.h in Headers */,
 				99CC0B4F18BE9849006CEBCC /* CapturingInputCursor.h in Headers */,
+				7A5515F5191830A3009687D2 /* YouTubePluginReplacement.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				CDDD571518B57A8200A94FCB /* CDMSession.h in Headers */,
 				5FA904CA178E61F5004C8A2D /* CertificateInfo.h in Headers */,
@@ -26858,6 +26865,7 @@
 				B27535660B053814002CE64F /* Color.cpp in Sources */,
 				0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */,
 				1ABA76C911D20E47004C201C /* ColorData.cpp in Sources */,
+				7A5515F6191830A3009687D2 /* YouTubePluginReplacement.cpp in Sources */,
 				B22279620D00BF220071B782 /* ColorDistance.cpp in Sources */,
 				BC29935D17A1DD5800BCE880 /* ColorInputType.cpp in Sources */,
 				B27535770B053814002CE64F /* ColorMac.mm in Sources */,

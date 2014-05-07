@@ -2000,66 +2000,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
             [error release];
         }
 
-#if PLATFORM(IOS)
-        // See if this is a YouTube Flash plug-in
-        if ([MIMEType isEqualToString:@"application/x-shockwave-flash"]) {
-            NSDictionary *attributes = [NSDictionary dictionaryWithObjects:kit(paramValues) forKeys:kit(paramNames)];
-            NSString *srcString = [attributes objectForKey:@"src"];
-            if (srcString) {
-                NSURL *srcURL = [NSURL URLWithString:srcString];
-                NSURL *youtubeURL = [srcURL _webkit_youTubeURL];
-                if (srcURL && youtubeURL) {
-                    // Transform the youtubeURL (youtube:VideoID) to iframe embed url which has the format: http://www.youtube.com/embed/VideoID
-                    NSString *srcPath = [srcURL path];
-                    NSString *videoID = [[youtubeURL absoluteString] substringFromIndex:[[youtubeURL scheme] length] + 1];
-                    NSRange rangeOfVideoIDInPath = [srcPath rangeOfString:videoID];
-                    NSString *srcURLPrefix = nil;
-                    if (rangeOfVideoIDInPath.location == NSNotFound && !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_YOUTUBE_EMBED_IFRAME_TRANSFORM)) {
-                        // If the videoID is not inside srcPath, the embed src url is in wrong format. We still want to support them for apps build against 5.1 and older.
-                        // For embed src like http://www.youtube.com/watch?v=VideoID, we make srcURLPrefix "http://www.youtube.com".
-                        // See: <rdar://problem/11517502> youtube videos don't work in FAO Forestry
-                        srcURLPrefix = [srcString substringToIndex:[srcString rangeOfString:srcPath].location];
-                    } else {
-                        ASSERT(rangeOfVideoIDInPath.length);
-
-                        // From the original URL, we need to get the part before /path/VideoId.
-                        NSRange rangeOfPathBeforeVideoID = [srcString rangeOfString:[srcPath substringToIndex:rangeOfVideoIDInPath.location]];
-                        ASSERT(rangeOfPathBeforeVideoID.length);
-
-                        srcURLPrefix = [srcString substringToIndex:rangeOfPathBeforeVideoID.location];
-                    }
-                    NSString *query = [srcURL query];
-                    // By default, the iframe will display information like the video title and uploader on top of the video.  Don't display
-                    // them if the embeding html doesn't specify it.
-                    if (query && [query length] && [query rangeOfString:@"showinfo"].location == NSNotFound)
-                        query = [query stringByAppendingFormat:@"&showinfo=0"];
-                    else
-                        query = @"showinfo=0";
-
-                    // Append the query string if it is valid.  Some sites apparently forget to add "?" for the query string, in that case,
-                    // we will discard the parameters in the url.
-                    // See: <rdar://problem/11535155> [Bincompat] Regression: SC2Casts app: Videos don't play in SC2Casts
-                    NSString *embedSrc = query ? [srcURLPrefix stringByAppendingFormat:@"/embed/%@?%@", videoID, query] : [srcURLPrefix stringByAppendingFormat:@"/embed/%@", videoID];
-
-                    if (element->hasTagName(HTMLNames::embedTag) || element->hasTagName(HTMLNames::objectTag)) {
-                        // Create a shadow subtree for the plugin element, the iframe player is injected in the shadow tree.
-                        toHTMLPlugInImageElement(*element).createShadowIFrameSubtree(embedSrc);
-                        return nullptr;
-                    }
-
-                    // If this is a YouTube Flash plug-in.  We don't have Flash.  Create an instance of Apple's special YouTube plug-in instead
-                    pluginPackage = [webView _pluginForMIMEType:@"application/x-apple-fake-youtube-plugin"];
-                    if (pluginPackage) {
-                        view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, kit(paramNames), kit(paramValues), baseURL, kit(element), loadManually);
-                        if (view)
-                            return adoptRef(new PluginWidgetIOS(view));
-                    }
-                }
-            }
-        }
-#endif // PLATFORM(IOS)
-
-        return 0;
+        return nullptr;
     }
     
     ASSERT(view);

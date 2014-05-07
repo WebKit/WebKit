@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QuickTimePluginReplacement_h
-#define QuickTimePluginReplacement_h
+#ifndef YouTubePluginReplacement_h
+#define YouTubePluginReplacement_h
 
 #include "PluginReplacement.h"
-#include "ScriptState.h"
-#include <bindings/ScriptObject.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+
+#include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
 class HTMLPlugInElement;
-class HTMLVideoElement;
+class HTMLIFrameElement;
 class RenderElement;
 class RenderStyle;
 class ShadowRoot;
+class YouTubeEmbedShadowElement;
 
-class QuickTimePluginReplacement : public PluginReplacement {
+class YouTubePluginReplacement : public PluginReplacement {
 public:
     static void registerPluginReplacement(PluginReplacementRegistrar);
-    static bool supportsMimeType(const String&);
-    static bool supportsFileExtension(const String&);
-    static bool supportsURL(const URL&) { return true; }
-    
-    static PassRefPtr<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
-    ~QuickTimePluginReplacement();
 
-    virtual bool installReplacement(ShadowRoot*) override;
-    virtual JSC::JSObject* scriptObject() override { return m_scriptObject; }
-
-    virtual bool willCreateRenderer() override { return m_mediaElement; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, PassRef<RenderStyle>) override;
-
-    HTMLVideoElement* parentElement() { return m_mediaElement.get(); }
-
-    unsigned long long movieSize() const;
-    void postEvent(const String&);
+    typedef HashMap<String, String> KeyValueMap;
 
 private:
-    QuickTimePluginReplacement(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
+    YouTubePluginReplacement(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
-    bool ensureReplacementScriptInjected();
-    DOMWrapperWorld& isolatedWorld();
+    static bool supportsMimeType(const String&);
+    static bool supportsFileExtension(const String&);
+    static bool supportsURL(const URL&);
+    
+    static PassRefPtr<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
+    virtual bool installReplacement(ShadowRoot*) override;
+    
+    String youTubeURL(const String& rawURL);
+    
+    virtual bool willCreateRenderer() override { return m_embedShadowElement; }
+    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, PassRef<RenderStyle>) override;
+    
     HTMLPlugInElement* m_parentElement;
-    RefPtr<HTMLVideoElement> m_mediaElement;
-    const Vector<String> m_names;
-    const Vector<String> m_values;
-    JSC::JSObject* m_scriptObject;
+    RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;
+    KeyValueMap m_attributes;
 };
 
 }
