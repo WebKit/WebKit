@@ -266,7 +266,7 @@ PassRefPtr<FileList> FileInputType::createFileList(const Vector<FileChooserFileI
 {
     Vector<RefPtr<File>> fileObjects;
     for (const FileChooserFileInfo& info : files)
-        fileObjects.append(File::createWithName(info.path, info.displayName, File::AllContentTypes));
+        fileObjects.append(File::createWithName(info.path, info.displayName));
 
     return FileList::create(std::move(fileObjects));
 }

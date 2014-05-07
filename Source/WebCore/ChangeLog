@@ -1,3 +1,27 @@
+2014-05-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Eliminate "well known MIME type" support
+        https://bugs.webkit.org/show_bug.cgi?id=132654
+
+        Reviewed by Anders Carlsson.
+
+        Vestiges of FileSystem API.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::files):
+        (WebCore::DataTransfer::hasFileOfType):
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        (WebCore::File::contentTypeFromFilePathOrName):
+        * fileapi/File.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::createFileList):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::findMimeType): Deleted.
+        (WebCore::MIMETypeRegistry::getWellKnownMIMETypeForExtension): Deleted.
+        * platform/MIMETypeRegistry.h:
+
 2014-05-07  Christophe Dumez  <ch.dumez@samsung.com>
 
         [HTML] Default argument to HTMLTableElement.insertRow() should be -1

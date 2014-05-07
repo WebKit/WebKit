@@ -37,24 +37,24 @@
 
 namespace WebCore {
 
-File::File(const String& path, ContentTypeLookupPolicy policy)
+File::File(const String& path)
     : Blob(uninitializedContructor)
     , m_path(path)
     , m_name(pathGetFileName(path))
 {
     m_internalURL = BlobURL::createInternalURL();
-    m_type = contentTypeFromFilePathOrName(path, policy);
+    m_type = contentTypeFromFilePathOrName(path);
     m_size = -1;
     ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
 }
 
-File::File(const String& path, const String& name, ContentTypeLookupPolicy policy)
+File::File(const String& path, const String& name)
     : Blob(uninitializedContructor)
     , m_path(path)
     , m_name(name)
 {
     m_internalURL = BlobURL::createInternalURL();
-    m_type = contentTypeFromFilePathOrName(name, policy);
+    m_type = contentTypeFromFilePathOrName(name);
     m_size = -1;
     ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
 }
@@ -87,17 +87,12 @@ unsigned long long File::size() const
     return static_cast<unsigned long long>(size);
 }
 
-String File::contentTypeFromFilePathOrName(const String& name, File::ContentTypeLookupPolicy policy)
+String File::contentTypeFromFilePathOrName(const String& name)
 {
     String type;
     int index = name.reverseFind('.');
     if (index != -1) {
-        if (policy == File::WellKnownContentTypes)
-            type = MIMETypeRegistry::getWellKnownMIMETypeForExtension(name.substring(index + 1));
-        else {
-            ASSERT(policy == File::AllContentTypes);
-            type = MIMETypeRegistry::getMIMETypeForExtension(name.substring(index + 1));
-        }
+        type = MIMETypeRegistry::getMIMETypeForExtension(name.substring(index + 1));
     }
     return type;
 }

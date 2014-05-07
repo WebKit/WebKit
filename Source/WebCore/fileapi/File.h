@@ -36,16 +36,9 @@ class URL;
 
 class File final : public Blob {
 public:
-    // AllContentTypes should only be used when the full path/name are trusted; otherwise, it could
-    // allow arbitrary pages to determine what applications an user has installed.
-    enum ContentTypeLookupPolicy {
-        WellKnownContentTypes,
-        AllContentTypes,
-    };
-
-    static PassRefPtr<File> create(const String& path, ContentTypeLookupPolicy policy = WellKnownContentTypes)
+    static PassRefPtr<File> create(const String& path)
     {
-        return adoptRef(new File(path, policy));
+        return adoptRef(new File(path));
     }
 
     static PassRefPtr<File> deserialize(const String& path, const URL& srcURL, const String& type)
@@ -54,11 +47,11 @@ public:
     }
 
     // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
-    static PassRefPtr<File> createWithName(const String& path, const String& name, ContentTypeLookupPolicy policy = WellKnownContentTypes)
+    static PassRefPtr<File> createWithName(const String& path, const String& name)
     {
         if (name.isEmpty())
-            return adoptRef(new File(path, policy));
-        return adoptRef(new File(path, name, policy));
+            return adoptRef(new File(path));
+        return adoptRef(new File(path, name));
     }
 
     virtual unsigned long long size() const override;
@@ -70,11 +63,11 @@ public:
     // This returns the current date and time if the file's last modifiecation date is not known (per spec: http://www.w3.org/TR/FileAPI/#dfn-lastModifiedDate).
     double lastModifiedDate() const;
 
-    static String contentTypeFromFilePathOrName(const String&, ContentTypeLookupPolicy);
+    static String contentTypeFromFilePathOrName(const String&);
 
 private:
-    File(const String& path, ContentTypeLookupPolicy);
-    File(const String& path, const String& name, ContentTypeLookupPolicy);
+    explicit File(const String& path);
+    File(const String& path, const String& name);
 
     File(DeserializationContructor, const String& path, const URL& srcURL, const String& type);
 

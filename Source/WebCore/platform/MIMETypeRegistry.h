@@ -36,7 +36,6 @@ namespace WebCore {
 class MIMETypeRegistry {
 public:
     static String getMIMETypeForExtension(const String& extension);
-    static String getWellKnownMIMETypeForExtension(const String& extension);
 
     static Vector<String> getExtensionsForMIMEType(const String& type);
     static String getPreferredExtensionForMIMEType(const String& type);

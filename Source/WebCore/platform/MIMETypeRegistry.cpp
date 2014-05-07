@@ -144,43 +144,6 @@ static const char textHtml[] = "text/html";
 static const char imageJpeg[] = "image/jpeg";
 static const char octetStream[] = "application/octet-stream";
 
-// A table of well known MIME types used when we don't want to leak to the
-// caller information about types known to underlying platform.
-static const TypeExtensionPair wellKnownMimeTypes[] = {
-    { textPlain, "txt" },
-    { textPlain, "text" },
-    { textHtml, "html" },
-    { textHtml, "htm" },
-    { "text/css", "css" },
-    { "text/xml", "xml" },
-    { "text/xsl", "xsl" },
-    { "image/gif", "gif" },
-    { "image/png", "png" },
-    { imageJpeg, "jpeg" },
-    { imageJpeg, "jpg" },
-    { imageJpeg, "jfif" },
-    { imageJpeg, "pjpeg" },
-    { "image/webp", "webp" },
-    { "image/bmp", "bmp" },
-    { "application/xhtml+xml", "xhtml" },
-    { "application/x-javascript", "js" },
-    { "application/json", "json" },
-    { octetStream, "exe" },
-    { octetStream, "com" },
-    { octetStream, "bin" },
-    { "application/zip", "zip" },
-    { "application/gzip", "gz" },
-    { "application/pdf", "pdf" },
-    { "application/postscript", "ps" },
-    { "image/x-icon", "ico" },
-    { "image/tiff", "tiff" },
-    { "image/x-xbitmap", "xbm" },
-    { "image/svg+xml", "svg" },
-    { "application/rss+xml", "rss" },
-    { "application/rdf+xml", "rdf" },
-    { "application/x-shockwave-flash", "swf" },
-};
-
 static HashSet<String>* supportedImageResourceMIMETypes;
 static HashSet<String>* supportedImageMIMETypes;
 static HashSet<String>* supportedImageMIMETypesForEncoding;
@@ -504,26 +467,6 @@ static void initializeMIMETypeRegistry()
 
     unsupportedTextMIMETypes = new HashSet<String>;
     initializeUnsupportedTextMIMETypes();
-}
-
-static String findMimeType(const TypeExtensionPair* pairs, unsigned numPairs, const String& extension)
-{
-    if (!extension.isEmpty()) {
-      for (unsigned i = 0; i < numPairs; ++i, ++pairs) {
-          if (equalIgnoringCase(extension, pairs->extension))
-              return String(pairs->type);
-      }
-    }
-    return String();
-}
-
-String MIMETypeRegistry::getWellKnownMIMETypeForExtension(const String& extension)
-{
-    // This method must be thread safe and should not consult the OS/registry.
-    String found = findMimeType(wellKnownMimeTypes, sizeof(wellKnownMimeTypes) / sizeof(wellKnownMimeTypes[0]), extension);
-    if (!found.isEmpty())
-        return found;
-    return findMimeType(commonMediaTypes, sizeof(commonMediaTypes) / sizeof(commonMediaTypes[0]), extension);
 }
 
 String MIMETypeRegistry::getMIMETypeForPath(const String& path)
