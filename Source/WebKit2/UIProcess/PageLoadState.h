@@ -139,8 +139,6 @@ public:
     void didFinishProgress(const Transaction::Token&);
 
 private:
-    static bool isLoadingState(State);
-
     void beginTransaction() { ++m_outstandingTransactionCount; }
     void endTransaction();
 
@@ -171,6 +169,7 @@ private:
         double estimatedProgress;
     };
 
+    static bool isLoading(const Data&);
     static String activeURL(const Data&);
     static bool hasOnlySecureContent(const Data&);
     static double estimatedProgress(const Data&);

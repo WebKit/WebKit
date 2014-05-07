@@ -96,7 +96,7 @@ void PageLoadState::commitChanges()
     m_mayHaveUncommittedChanges = false;
 
     bool titleChanged = m_committedState.title != m_uncommittedState.title;
-    bool isLoadingChanged = isLoadingState(m_committedState.state) != isLoadingState(m_uncommittedState.state);
+    bool isLoadingChanged = isLoading(m_committedState) != isLoading(m_uncommittedState);
     bool activeURLChanged = activeURL(m_committedState) != activeURL(m_uncommittedState);
     bool hasOnlySecureContentChanged = hasOnlySecureContent(m_committedState) != hasOnlySecureContent(m_uncommittedState);
     bool estimatedProgressChanged = estimatedProgress(m_committedState) != estimatedProgress(m_uncommittedState);
@@ -148,7 +148,7 @@ void PageLoadState::reset(const Transaction::Token& token)
 
 bool PageLoadState::isLoading() const
 {
-    return isLoadingState(m_committedState.state);
+    return isLoading(m_committedState);
 }
 
 String PageLoadState::activeURL(const Data& data)
@@ -336,9 +336,12 @@ void PageLoadState::didFinishProgress(const Transaction::Token& token)
     m_uncommittedState.estimatedProgress = 1;
 }
 
-bool PageLoadState::isLoadingState(State state)
+bool PageLoadState::isLoading(const Data& data)
 {
-    switch (state) {
+    if (!data.pendingAPIRequestURL.isNull())
+        return true;
+
+    switch (data.state) {
     case State::Provisional:
     case State::Committed:
         return true;
