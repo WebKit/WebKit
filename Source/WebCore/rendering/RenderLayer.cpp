@@ -2321,6 +2321,8 @@ void RenderLayer::scrollTo(int x, int y)
     InspectorInstrumentation::didScrollLayer(&frame);
     if (scrollsOverflow())
         frame.loader().client().didChangeScrollOffset();
+
+    renderer().view().resumePausedImageAnimationsIfNeeded();
 }
 
 static inline bool frameElementAndViewPermitScroll(HTMLFrameElementBase* frameElementBase, FrameView* frameView) 
