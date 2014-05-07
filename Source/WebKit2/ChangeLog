@@ -1,3 +1,16 @@
+2014-05-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        <rdar://problem/16833442> [iOS WebKit2]: Keep the order of contentView in _scrollView after rotation
+        https://bugs.webkit.org/show_bug.cgi?id=132634
+
+        Reviewed by Enrica Casucci.
+
+        Nice idea of Yongjun.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _endAnimatedResize]):
+
 2014-05-06  Timothy Hatcher  <timothy@apple.com>
 
         Take WKView's topContentInset into account when docking Web Inspector to the right.

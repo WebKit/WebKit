@@ -1414,8 +1414,9 @@ static void updateTopAndBottomExtendedBackgroundExclusionIfNecessary(WKWebView* 
     _isAnimatingResize = YES;
     _resizeAnimationTransformAdjustments = CATransform3DIdentity;
 
+    NSUInteger indexOfContentView = [[_scrollView subviews] indexOfObject:_contentView.get()];
     _resizeAnimationView = adoptNS([[UIView alloc] init]);
-    [_scrollView addSubview:_resizeAnimationView.get()];
+    [_scrollView insertSubview:_resizeAnimationView.get() atIndex:indexOfContentView];
     [_resizeAnimationView addSubview:_contentView.get()];
 
     CGRect oldBounds = self.bounds;
@@ -1490,7 +1491,8 @@ static void updateTopAndBottomExtendedBackgroundExclusionIfNecessary(WKWebView* 
 - (void)_endAnimatedResize
 {
     if (!_customContentView) {
-        [_scrollView addSubview:_contentView.get()];
+        NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
+        [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
 
         CALayer *contentViewLayer = [_contentView layer];
         CATransform3D resizeAnimationTransformAdjustements = _resizeAnimationTransformAdjustments;
