@@ -14,8 +14,13 @@ _addTest(function(canvas, ctx) {
 
 var img = document.getElementById('green.png');
 img.src = "";
-_assertSame(ctx.createPattern(img, 'repeat'), null, "ctx.createPattern(img, 'repeat')", "null");
-
+var _thrown = undefined;
+try{
+  ctx.createPattern(img, 'repeat');
+}catch(e) {
+  _thrown = e;
+}
+_assert(_thrown && _thrown.name == "InvalidStateError" && _thrown.code == DOMException.INVALID_STATE_ERR, "should throw InvalidStateError");
 
 });
 </script>

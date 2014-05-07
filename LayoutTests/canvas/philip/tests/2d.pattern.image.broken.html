@@ -13,11 +13,17 @@
 _addTest(function(canvas, ctx) {
 
 var img = document.getElementById('broken.png');
-_assertSame(img.complete, false, "img.complete", "false");
-_assertSame(ctx.createPattern(img, 'repeat'), null, "ctx.createPattern(img, 'repeat')", "null");
+_assertSame(img.complete, true, "img.complete", "true");
+var _thrown = undefined;
+try{
+  ctx.createPattern(img, 'repeat');
+}catch(e) {
+  _thrown = e;
+}
+_assert(_thrown && _thrown.name == "InvalidStateError" && _thrown.code == DOMException.INVALID_STATE_ERR, "should throw InvalidStateError");
 
 
 });
 </script>
-<img src="../images/broken.png" id="broken.png" class="resource">
+<img src="missing.png" id="broken.png" class="resource">
 
