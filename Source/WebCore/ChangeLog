@@ -1,3 +1,19 @@
+2014-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] TLSErrors do not cause page load to fail when not ignored
+        https://bugs.webkit.org/show_bug.cgi?id=121548
+
+        Reviewed by Sergio Villar Senin.
+
+        This only happens in case of redirection, when the initial URL is
+        an HTTPS site with an invalid certificate, that redirects to
+        another location. We are starting the redirection without checking
+        the TLS errors.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sendRequestCallback): Check TLS errors before starting a
+        possible redirection.
+
 2014-05-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [Soup] Use std::unique_ptr<char[]> for the read buffer in SocketStreamHandle

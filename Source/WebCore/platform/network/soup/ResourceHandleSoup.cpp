@@ -677,13 +677,6 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
     }
 
     if (soupMessage) {
-        if (SOUP_STATUS_IS_REDIRECTION(soupMessage->status_code) && shouldRedirect(handle.get())) {
-            d->m_inputStream = inputStream;
-            g_input_stream_skip_async(d->m_inputStream.get(), gDefaultReadBufferSize, G_PRIORITY_DEFAULT,
-                d->m_cancellable.get(), redirectSkipCallback, handle.get());
-            return;
-        }
-
         if (handle->shouldContentSniff() && soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED) {
             const char* sniffedType = soup_request_get_content_type(d->m_soupRequest.get());
             d->m_response.setSniffedContentType(sniffedType);
@@ -695,6 +688,12 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
             return;
         }
 
+        if (SOUP_STATUS_IS_REDIRECTION(soupMessage->status_code) && shouldRedirect(handle.get())) {
+            d->m_inputStream = inputStream;
+            g_input_stream_skip_async(d->m_inputStream.get(), gDefaultReadBufferSize, G_PRIORITY_DEFAULT,
+                d->m_cancellable.get(), redirectSkipCallback, handle.get());
+            return;
+        }
     } else {
         d->m_response.setURL(handle->firstRequest().url());
         const gchar* contentType = soup_request_get_content_type(d->m_soupRequest.get());
