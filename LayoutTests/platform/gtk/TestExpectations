@@ -793,7 +793,6 @@ webkit.org/b/132282 fast/inline-block/14498-positionForCoordinates.html [ Failur
 #fast/dom/Window
 webkit.org/b/132255 fast/dom/Window/window-resize-and-move-sub-frame.html [ Timeout Pass ]
 webkit.org/b/132255 fast/dom/Window/window-resize-contents.html [ Timeout Pass ]
-webkit.org/b/132255 fast/dom/Window/window-resize.html [ Failure Timeout ]
 
 #Fast overflow
 webkit.org/b/132258 fast/overflow/hit-test-overflow-controls.html [ Failure ImageOnlyFailure Pass ]
@@ -1320,7 +1319,7 @@ webkit.org/b/53964 fast/forms/option-mouseevents.html [ Failure ]
 
 # Probably failing because resizing is asynchronous.
 webkit.org/b/53959 fast/dom/Window/window-resize-and-move-arguments.html [ Failure Timeout ]
-webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure ]
+webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure Timeout ]
 
 # keygen element rendering is broken
 webkit.org/b/54136 http/tests/misc/submit-post-keygen.html [ Failure ]
@@ -1944,7 +1943,6 @@ webkit.org/b/132126 animations/suspend-resume-animation.html [ Failure ]
 webkit.org/b/132126 animations/transform-non-accelerated.html [ Failure ]
 webkit.org/b/132126 animations/body-removal-crash.html [ Crash Pass ]
 webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
-webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
 webkit.org/b/132126 media/video-poster-background.html [ ImageOnlyFailure ]
 webkit.org/b/132126 media/restore-from-page-cache.html [ Crash ]
@@ -1963,8 +1961,6 @@ webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-
 webkit.org/b/132253 media/volume-bar-empty-when-muted.html [ Failure ]
 
 webkit.org/b/132274 fast/multicol/newmulticol/compare-with-old-impl/column-rules-stacking.html [ ImageOnlyFailure ]
-
-webkit.org/b/132328 js/dom/basic-weakmap.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

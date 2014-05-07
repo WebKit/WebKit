@@ -1,3 +1,12 @@
+2014-05-07  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed GTK gardening
+
+        Avoid duplicated expectations and remove failure flag for fixed
+        js/dom/basic-weakmap.html test.
+
+        * platform/gtk/TestExpectations:
+
 2014-05-06  Rik Cabanier  <cabanier@adobe.com>
 
         Calling createPattern with a broken image must throw an invalidstate error
