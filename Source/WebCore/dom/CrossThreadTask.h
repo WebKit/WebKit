@@ -34,7 +34,6 @@
 #include "CrossThreadCopier.h"
 #include "ScriptExecutionContext.h"
 #include <memory>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -52,8 +51,8 @@ template<typename T> struct CrossThreadTaskTraits<PassRefPtr<T>> {
     typedef PassRefPtr<T> ParamType;
 };
 
-template<typename T> struct CrossThreadTaskTraits<PassOwnPtr<T>> {
-    typedef PassOwnPtr<T> ParamType;
+template<typename T> struct CrossThreadTaskTraits<std::unique_ptr<T>> {
+    typedef std::unique_ptr<T> ParamType;
 };
 
 template<typename P1, typename MP1>
