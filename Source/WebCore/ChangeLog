@@ -1,3 +1,19 @@
+2014-05-07  peavo@outlook.com  <peavo@outlook.com>
+
+        DocumentLoader::dataReceived assertion failed
+        https://bugs.webkit.org/show_bug.cgi?id=132017
+
+        Reviewed by Brent Fulgham.
+
+        We need to call didReceiveResponse client method before the didReceiveData client method, otherwise we get a lot of asserts.
+        This patch also fixes frequent crashes in downloadTimerCallback method on page loading.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::calculateWebTimingInformations): Initialize local variables.
+        (WebCore::headerCallback): Call didReceiveResponse client method here instead of in downloadTimerCallback.
+        (WebCore::ResourceHandleManager::downloadTimerCallback): Remove call to didReceiveResponse method.
+        (WebCore::ResourceHandleManager::dispatchSynchronousJob): Removed empty line.
+
 2014-05-06  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: Animated GIF inside compositing layer never resumes animation when scrolled back into view

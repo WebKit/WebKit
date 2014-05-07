@@ -158,11 +158,11 @@ static int milisecondsSinceRequest(double requestTime)
 
 static void calculateWebTimingInformations(ResourceHandleInternal* d)
 {
-    double startTransfertTime;
-    double preTransferTime;
-    double dnslookupTime;
-    double connectTime;
-    double appConnectTime;
+    double startTransfertTime = 0;
+    double preTransferTime = 0;
+    double dnslookupTime = 0;
+    double connectTime = 0;
+    double appConnectTime = 0;
 
     curl_easy_getinfo(d->m_handle, CURLINFO_NAMELOOKUP_TIME, &dnslookupTime);
     curl_easy_getinfo(d->m_handle, CURLINFO_CONNECT_TIME, &connectTime);
@@ -531,9 +531,10 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
             }
         }
 
-        if (client)
+        if (client) {
+            client->didReceiveResponse(job, d->m_response); 
             CurlCacheManager::getInstance().didReceiveResponse(job, d->m_response);
-
+        }
         d->m_response.setResponseFired(true);
 
     } else {
@@ -668,7 +669,6 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
 
 
         if (CURLE_OK == msg->data.result) {
-
 #if ENABLE(WEB_TIMING)
             calculateWebTimingInformations(d);
 #endif
@@ -684,7 +684,6 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
                 d->m_multipartHandle->contentEnded();
 
             if (d->client()) {
-                d->client()->didReceiveResponse(job, d->m_response);
                 d->client()->didFinishLoading(job, 0);
                 CurlCacheManager::getInstance().didFinishLoading(job->firstRequest().url().string());
             }
@@ -918,7 +917,6 @@ void ResourceHandleManager::dispatchSynchronousJob(ResourceHandle* job)
         if (handle->client())
             handle->client()->didReceiveResponse(job, handle->m_response);
     }
-
 
 #if ENABLE(WEB_TIMING)
     calculateWebTimingInformations(handle);
