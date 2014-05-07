@@ -1,3 +1,13 @@
+2014-05-06  David Kilzer  <ddkilzer@apple.com>
+
+        Add Makefile targets for copying static libraries (LLVM and WKSI)
+        <http://webkit.org/b/132619>
+
+        Reviewed by Mark Rowe.
+
+        * Makefile:
+        (MODULES): Add WebKitLibraries.
+
 2014-05-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168304.

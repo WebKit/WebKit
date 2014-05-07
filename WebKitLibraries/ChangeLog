@@ -1,3 +1,16 @@
+2014-05-06  David Kilzer  <ddkilzer@apple.com>
+
+        Add Makefile targets for copying static libraries (LLVM and WKSI)
+        <http://webkit.org/b/132619>
+
+        Reviewed by Mark Rowe.
+
+        * Makefile: Added.
+        (libs): Install both LLVM and WKSI static libraries.
+        (all): Add dependency on 'libs' target.
+        (debug d): Set configuration, the call 'libs' target.
+        (release r): Ditto.
+
 2014-05-05  Dean Jackson  <dino@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=132593

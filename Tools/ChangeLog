@@ -1,3 +1,15 @@
+2014-05-06  David Kilzer  <ddkilzer@apple.com>
+
+        Add Makefile targets for copying static libraries (LLVM and WKSI)
+        <http://webkit.org/b/132619>
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/copy-webkitlibraries-to-product-directory: Set a
+        sensible default for product directory if not specified on
+        either the command-line or in the environment (by Xcode) by
+        calling productDir() in webkitdirs.pm.
+
 2014-05-06  Brady Eidson  <beidson@apple.com>
 
         Add WK2 SPI to prevent the previous back/forward item from remaining in the list
