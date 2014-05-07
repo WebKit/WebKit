@@ -1,3 +1,15 @@
+2014-05-06  Timothy Hatcher  <timothy@apple.com>
+
+        Take WKView's topContentInset into account when docking Web Inspector to the right.
+
+        https://bugs.webkit.org/show_bug.cgi?id=132631
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange): Subtract topContentInset
+        from the height of the frame for the Inspector.
+
 2014-05-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] WebKit2 does not set CanPreventNativeGestures on the platform events
