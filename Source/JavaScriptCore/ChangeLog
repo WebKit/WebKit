@@ -1,3 +1,27 @@
+2014-05-06  Michael Saboff  <msaboff@apple.com>
+
+        Add test for deleteAllCompiledCode
+        https://bugs.webkit.org/show_bug.cgi?id=132632
+
+        Reviewed by Phil Pizlo.
+
+        Added two new hooks to jsc, one to call Heap::deleteAllCompiledCode() and
+        the other to call CodeBlock::optimizeNextInvocation().  Used these two hooks
+        to write a test that will queue up loads of DFG compiles and then call
+        Heap::deleteAllCompiledCode() to make sure that it can handle compiled
+        code as well as code being compiled.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionDeleteAllCompiledCode):
+        (functionOptimizeNextInvocation):
+        * runtime/TestRunnerUtils.cpp:
+        (JSC::optimizeNextInvocation):
+        * runtime/TestRunnerUtils.h:
+        * tests/stress/deleteAllCompiledCode.js: Added.
+        (functionList):
+        (runTest):
+
 2014-05-06  Andreas Kling  <akling@apple.com>
 
         JSString::toAtomicString() should return AtomicString.

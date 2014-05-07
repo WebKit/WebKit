@@ -38,9 +38,11 @@ JS_EXPORT_PRIVATE CodeBlock* getSomeBaselineCodeBlockForFunction(JSValue theFunc
 
 JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(JSValue function);
 JS_EXPORT_PRIVATE JSValue setNeverInline(JSValue function);
+JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(JSValue function);
 
 JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(ExecState*);
 JS_EXPORT_PRIVATE JSValue setNeverInline(ExecState*);
+JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(ExecState*);
 
 } // namespace JSC
 
