@@ -1,3 +1,9 @@
+2014-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Fix windows build.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-05-06  Anders Carlsson  <andersca@apple.com>
 
         Put the symlink in the right place.

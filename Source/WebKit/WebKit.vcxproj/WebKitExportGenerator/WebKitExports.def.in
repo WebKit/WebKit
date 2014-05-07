@@ -480,6 +480,7 @@ EXPORTS
         ?isAPIValueWrapper@JSCell@JSC@@QBE_NXZ
 #endif
         symbolWithPointer(?reportDeprecatedGetterError@WebCore@@YA_JAAVExecState@JSC@@PBD1@Z, ?reportDeprecatedGetterError@WebCore@@YA_JAEAVExecState@JSC@@PEBD1@Z)
+        symbolWithPointer(?reportDeprecatedSetterError@WebCore@@YAXAAVExecState@JSC@@PBD1@Z, ?reportDeprecatedSetterError@WebCore@@YAXAAVExecState@JSC@@PBD1@Z)
         symbolWithPointer(?throwGetterTypeError@WebCore@@YA_JAAVExecState@JSC@@PBD1@Z, ?throwGetterTypeError@WebCore@@YA_JAEAVExecState@JSC@@PEBD1@Z)
         symbolWithPointer(?throwSequenceTypeError@WebCore@@YAXAAVExecState@JSC@@@Z, ?throwSequenceTypeError@WebCore@@YAXAEAVExecState@JSC@@@Z)
         symbolWithPointer(?throwSetterTypeError@WebCore@@YAXAAVExecState@JSC@@PBD1@Z, ?throwSetterTypeError@WebCore@@YAXAEAVExecState@JSC@@PEBD1@Z)
