@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -218,7 +218,7 @@ struct SymbolTableEntry {
     
     JSValue inferredValue();
     
-    void prepareToWatch();
+    void prepareToWatch(SymbolTable*);
     
     void addWatchpoint(Watchpoint*);
     
@@ -229,11 +229,11 @@ struct SymbolTableEntry {
         return fatEntry()->m_watchpoints.get();
     }
     
-    ALWAYS_INLINE void notifyWrite(JSValue value)
+    ALWAYS_INLINE void notifyWrite(VM& vm, JSValue value)
     {
         if (LIKELY(!isFat()))
             return;
-        notifyWriteSlow(value);
+        notifyWriteSlow(vm, value);
     }
     
 private:
@@ -257,7 +257,7 @@ private:
     };
     
     SymbolTableEntry& copySlow(const SymbolTableEntry&);
-    JS_EXPORT_PRIVATE void notifyWriteSlow(JSValue);
+    JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue);
     
     bool isFat() const
     {

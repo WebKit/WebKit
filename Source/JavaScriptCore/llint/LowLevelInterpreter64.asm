@@ -656,18 +656,8 @@ _llint_op_mov:
 macro notifyWrite(set, value, scratch, slow)
     loadb VariableWatchpointSet::m_state[set], scratch
     bieq scratch, IsInvalidated, .done
-    bineq scratch, ClearWatchpoint, .overwrite
-    storeq value, VariableWatchpointSet::m_inferredValue[set]
-    storeb IsWatched, VariableWatchpointSet::m_state[set]
-    jmp .done
-
-.overwrite:
-    bqeq value, VariableWatchpointSet::m_inferredValue[set], .done
-    btbnz VariableWatchpointSet::m_setIsNotEmpty[set], slow
-    storeq 0, VariableWatchpointSet::m_inferredValue[set]
-    storeb IsInvalidated, VariableWatchpointSet::m_state[set]
-
-.done:    
+    bqneq value, VariableWatchpointSet::m_inferredValue[set], slow
+.done:
 end
 
 _llint_op_captured_mov:

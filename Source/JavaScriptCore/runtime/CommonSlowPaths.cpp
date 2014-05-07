@@ -53,6 +53,7 @@
 #include "ObjectConstructor.h"
 #include "JSCInlines.h"
 #include "StructureRareDataInlines.h"
+#include "VariableWatchpointSetInlines.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
@@ -262,7 +263,7 @@ SLOW_PATH_DECL(slow_path_captured_mov)
     BEGIN();
     JSValue value = OP_C(2).jsValue();
     if (VariableWatchpointSet* set = pc[3].u.watchpointSet)
-        set->notifyWrite(value);
+        set->notifyWrite(vm, value);
     RETURN(value);
 }
 
@@ -273,7 +274,7 @@ SLOW_PATH_DECL(slow_path_new_captured_func)
     ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsActivation() || exec->hasActivation());
     JSValue value = JSFunction::create(vm, codeBlock->functionDecl(pc[2].u.operand), exec->scope());
     if (VariableWatchpointSet* set = pc[3].u.watchpointSet)
-        set->notifyWrite(value);
+        set->notifyWrite(vm, value);
     RETURN(value);
 }
 

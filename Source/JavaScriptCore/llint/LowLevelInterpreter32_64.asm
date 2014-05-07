@@ -796,21 +796,8 @@ _llint_op_mov:
 macro notifyWrite(set, valueTag, valuePayload, scratch, slow)
     loadb VariableWatchpointSet::m_state[set], scratch
     bieq scratch, IsInvalidated, .done
-    bineq scratch, ClearWatchpoint, .overwrite
-    storei valueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set]
-    storei valuePayload, VariableWatchpointSet::m_inferredValue + PayloadOffset[set]
-    storeb IsWatched, VariableWatchpointSet::m_state[set]
-    jmp .done
-
-.overwrite:
-    bineq valuePayload, VariableWatchpointSet::m_inferredValue + PayloadOffset[set], .definitelyDifferent
-    bieq valueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set], .done
-.definitelyDifferent:
-    btbnz VariableWatchpointSet::m_setIsNotEmpty[set], slow
-    storei EmptyValueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set]
-    storei 0, VariableWatchpointSet::m_inferredValue + PayloadOffset[set]
-    storeb IsInvalidated, VariableWatchpointSet::m_state[set]
-
+    bineq valuePayload, VariableWatchpointSet::m_inferredValue + PayloadOffset[set], slow
+    bineq valueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set], slow
 .done:
 end
 

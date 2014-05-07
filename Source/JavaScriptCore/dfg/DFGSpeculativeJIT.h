@@ -1144,12 +1144,6 @@ public:
         return appendCallWithExceptionCheck(operation);
     }
 
-    JITCompiler::Call callOperation(V_JITOperation_EVws operation, VariableWatchpointSet* watchpointSet)
-    {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(watchpointSet));
-        return appendCall(operation);
-    }
-
     JITCompiler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb operation, void* pointer)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(pointer));
@@ -1439,6 +1433,12 @@ public:
         return appendCallWithExceptionCheck(operation);
     }
 
+    JITCompiler::Call callOperation(V_JITOperation_EVwsJ operation, VariableWatchpointSet* watchpointSet, GPRReg arg)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(watchpointSet), arg);
+        return appendCall(operation);
+    }
+
     JITCompiler::Call callOperation(D_JITOperation_EJ operation, FPRReg result, GPRReg arg1)
     {
         m_jit.setupArgumentsWithExecState(arg1);
@@ -1702,6 +1702,12 @@ public:
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG SH4_32BIT_DUMMY_ARG arg3Payload, arg3Tag);
         return appendCallWithExceptionCheck(operation);
+    }
+
+    JITCompiler::Call callOperation(V_JITOperation_EVwsJ operation, VariableWatchpointSet* watchpointSet, GPRReg argTag, GPRReg argPayload)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(watchpointSet), argPayload, argTag);
+        return appendCall(operation);
     }
 
     JITCompiler::Call callOperation(D_JITOperation_EJ operation, FPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)

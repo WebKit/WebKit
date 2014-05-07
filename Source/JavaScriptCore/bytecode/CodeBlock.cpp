@@ -1793,7 +1793,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             ConcurrentJITLocker locker(m_symbolTable->m_lock);
             SymbolTable::Map::iterator iter = m_symbolTable->find(locker, uid);
             ASSERT(iter != m_symbolTable->end(locker));
-            iter->value.prepareToWatch();
+            iter->value.prepareToWatch(symbolTable());
             instructions[i + 3].u.watchpointSet = iter->value.watchpointSet();
             break;
         }

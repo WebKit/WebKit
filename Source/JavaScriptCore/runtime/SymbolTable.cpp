@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "JSDestructibleObject.h"
 #include "JSCInlines.h"
 #include "SlotVisitorInlines.h"
+#include "VariableWatchpointSetInlines.h"
 
 namespace JSC {
 
@@ -65,12 +66,12 @@ JSValue SymbolTableEntry::inferredValue()
     return fatEntry()->m_watchpoints->inferredValue();
 }
 
-void SymbolTableEntry::prepareToWatch()
+void SymbolTableEntry::prepareToWatch(SymbolTable* symbolTable)
 {
     FatEntry* entry = inflate();
     if (entry->m_watchpoints)
         return;
-    entry->m_watchpoints = adoptRef(new VariableWatchpointSet());
+    entry->m_watchpoints = adoptRef(new VariableWatchpointSet(*symbolTable));
 }
 
 void SymbolTableEntry::addWatchpoint(Watchpoint* watchpoint)
@@ -78,13 +79,13 @@ void SymbolTableEntry::addWatchpoint(Watchpoint* watchpoint)
     fatEntry()->m_watchpoints->add(watchpoint);
 }
 
-void SymbolTableEntry::notifyWriteSlow(JSValue value)
+void SymbolTableEntry::notifyWriteSlow(VM& vm, JSValue value)
 {
     VariableWatchpointSet* watchpoints = fatEntry()->m_watchpoints.get();
     if (!watchpoints)
         return;
     
-    watchpoints->notifyWrite(value);
+    watchpoints->notifyWrite(vm, value);
 }
 
 SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()

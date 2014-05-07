@@ -1333,7 +1333,7 @@ public:
 
         void* limit = static_cast<void*>(reinterpret_cast<char*>(cell) + MarkedBlock::blockFor(cell)->cellSize());
         for (; current < limit; current++)
-            *current = reinterpret_cast<void*>(0xbbadbeef);
+            *current = zombifiedBits;
     }
 };
 

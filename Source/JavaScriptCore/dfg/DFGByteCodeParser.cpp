@@ -36,6 +36,7 @@
 #include "DFGCapabilities.h"
 #include "DFGJITCode.h"
 #include "GetByIdStatus.h"
+#include "Heap.h"
 #include "JSActivation.h"
 #include "JSCInlines.h"
 #include "PreciseJumpTargets.h"
@@ -720,8 +721,10 @@ private:
     Node* cellConstant(JSCell* cell)
     {
         HashMap<JSCell*, Node*>::AddResult result = m_cellConstantNodes.add(cell, nullptr);
-        if (result.isNewEntry)
+        if (result.isNewEntry) {
+            ASSERT(!Heap::isZombified(cell));
             result.iterator->value = addToGraph(WeakJSConstant, OpInfo(cell));
+        }
         
         return result.iterator->value;
     }

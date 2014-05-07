@@ -812,34 +812,15 @@ void JIT::emitNotifyWrite(RegisterID tag, RegisterID payload, RegisterID scratch
         return;
     
     load8(set->addressOfState(), scratch);
-    
-    JumpList ready;
-    
-    ready.append(branch32(Equal, scratch, TrustedImm32(IsInvalidated)));
-    
-    if (set->state() == ClearWatchpoint) {
-        Jump isWatched = branch32(NotEqual, scratch, TrustedImm32(ClearWatchpoint));
-        
-        store32(tag, &set->addressOfInferredValue()->u.asBits.tag);
-        store32(payload, &set->addressOfInferredValue()->u.asBits.payload);
-        store8(TrustedImm32(IsWatched), set->addressOfState());
-        ready.append(jump());
-        
-        isWatched.link(this);
-    }
+    Jump isDone = branch32(Equal, scratch, TrustedImm32(IsInvalidated));
 
-    Jump definitelyNotEqual = branch32(
-        NotEqual, AbsoluteAddress(&set->addressOfInferredValue()->u.asBits.payload), payload);
-    ready.append(branch32(
-        Equal, AbsoluteAddress(&set->addressOfInferredValue()->u.asBits.tag), tag));
-    definitelyNotEqual.link(this);
-    addSlowCase(branchTest8(NonZero, AbsoluteAddress(set->addressOfSetIsNotEmpty())));
-    store8(TrustedImm32(IsInvalidated), set->addressOfState());
-    store32(
-        TrustedImm32(JSValue::EmptyValueTag), &set->addressOfInferredValue()->u.asBits.tag);
-    store32(TrustedImm32(0), &set->addressOfInferredValue()->u.asBits.payload);
-    
-    ready.link(this);
+    JumpList notifySlow = branch32(
+        NotEqual, AbsoluteAddress(set->addressOfInferredValue()->payloadPointer()), payload);
+    notifySlow.append(branch32(
+        NotEqual, AbsoluteAddress(set->addressOfInferredValue()->tagPointer()), tag));
+    addSlowCase(notifySlow);
+
+    isDone.link(this);
 }
 
 void JIT::emitPutGlobalVar(uintptr_t operand, int value, VariableWatchpointSet* set)
@@ -900,7 +881,7 @@ void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowC
         linkCount++;
     if ((resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
         && currentInstruction[5].u.watchpointSet->state() != IsInvalidated)
-        linkCount++;
+        linkCount += 2;
     if (!linkCount)
         return;
     while (linkCount--)
