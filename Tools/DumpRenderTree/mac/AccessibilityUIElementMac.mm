@@ -247,7 +247,7 @@ static NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSCo
     return parameterizedAttribute;
 }
 
-static NSDictionary *selectTextParameterizedAttributeForCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString)
+static NSDictionary *selectTextParameterizedAttributeForCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity)
 {
     NSMutableDictionary *parameterizedAttribute = [NSMutableDictionary dictionary];
     
@@ -284,6 +284,9 @@ static NSDictionary *selectTextParameterizedAttributeForCriteria(JSContextRef co
         [parameterizedAttribute setObject:[NSString stringWithJSStringRef:replacementString] forKey:@"AXSelectTextReplacementString"];
     } else
         [parameterizedAttribute setObject:@"AXSelectTextActivityFindAndSelect" forKey:@"AXSelectTextActivity"];
+    
+    if (activity)
+        [parameterizedAttribute setObject:[NSString stringWithJSStringRef:activity] forKey:@"AXSelectTextActivity"];
     
     return parameterizedAttribute;
 }
@@ -1111,10 +1114,10 @@ AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSCon
     return nullptr;
 }
 
-JSStringRef AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString)
+JSStringRef AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSDictionary *parameterizedAttribute = selectTextParameterizedAttributeForCriteria(context, ambiguityResolution, searchStrings, replacementString);
+    NSDictionary *parameterizedAttribute = selectTextParameterizedAttributeForCriteria(context, ambiguityResolution, searchStrings, replacementString, activity);
     id result = [m_element accessibilityAttributeValue:@"AXSelectTextWithCriteria" forParameter:parameterizedAttribute];
     if ([result isKindOfClass:[NSString class]])
         return [result createJSStringRef];

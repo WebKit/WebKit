@@ -391,7 +391,10 @@ struct PlainTextRange {
 
 enum AccessibilitySelectTextActivity {
     FindAndReplaceActivity,
-    FindAndSelectActivity
+    FindAndSelectActivity,
+    FindAndCapitalize,
+    FindAndLowercase,
+    FindAndUppercase
 };
 
 enum AccessibilitySelectTextAmbiguityResolution {

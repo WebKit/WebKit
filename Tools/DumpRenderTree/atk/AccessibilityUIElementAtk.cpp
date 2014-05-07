@@ -1305,7 +1305,7 @@ AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSCon
     return nullptr;
 }
 
-JSStringRef AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString)
+JSStringRef AccessibilityUIElement::selectTextWithCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity)
 {
     // FIXME: implement
     return nullptr;

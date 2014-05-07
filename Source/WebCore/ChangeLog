@@ -1,3 +1,24 @@
+2014-05-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: AXSelectTextWithCriteria should support capitalize/lowercase/uppercase
+        https://bugs.webkit.org/show_bug.cgi?id=132622
+
+        Reviewed by Mario Sanchez Prada.
+
+        The select text with criteria mechanism used through accessibility needs to support
+        a few more parameters to be complete (including capitalize, lowercase and uppercase).
+
+        Updated: accessibility/select-text.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::selectText):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute):
+        * rendering/RenderText.cpp:
+        (WebCore::makeCapitalized):
+        * rendering/RenderText.h:
+
 2014-05-07  peavo@outlook.com  <peavo@outlook.com>
 
         DocumentLoader::dataReceived assertion failed

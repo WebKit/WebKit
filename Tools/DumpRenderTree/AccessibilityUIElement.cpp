@@ -260,7 +260,7 @@ static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSOb
 
 static JSValueRef selectTextWithCriteriaCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    if (argumentCount < 2 || argumentCount > 3)
+    if (argumentCount < 2 || argumentCount > 4)
         return JSValueMakeUndefined(context);
     
     JSRetainPtr<JSStringRef> ambiguityResolution(Adopt, JSValueToStringCopy(context, arguments[0], exception));
@@ -268,8 +268,11 @@ static JSValueRef selectTextWithCriteriaCallback(JSContextRef context, JSObjectR
     JSStringRef replacementString = nullptr;
     if (argumentCount == 3)
         replacementString = JSValueToStringCopy(context, arguments[2], exception);
+    JSStringRef activityString = nullptr;
+    if (argumentCount == 4)
+        activityString = JSValueToStringCopy(context, arguments[3], exception);
     
-    JSRetainPtr<JSStringRef> result(Adopt, toAXElement(thisObject)->selectTextWithCriteria(context, ambiguityResolution.get(), searchStrings, replacementString));
+    JSRetainPtr<JSStringRef> result(Adopt, toAXElement(thisObject)->selectTextWithCriteria(context, ambiguityResolution.get(), searchStrings, replacementString, activityString));
     if (replacementString)
         JSStringRelease(replacementString);
     return JSValueMakeString(context, result.get());

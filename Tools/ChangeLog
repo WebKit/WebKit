@@ -1,3 +1,35 @@
+2014-05-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: AXSelectTextWithCriteria should support capitalize/lowercase/uppercase
+        https://bugs.webkit.org/show_bug.cgi?id=132622
+
+        Reviewed by Mario Sanchez Prada.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (selectTextWithCriteriaCallback):
+        (isEqualCallback):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (selectTextParameterizedAttributeForCriteria):
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::selectTextParameterizedAttributeForCriteria):
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+
 2014-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] TLSErrors do not cause page load to fail when not ignored

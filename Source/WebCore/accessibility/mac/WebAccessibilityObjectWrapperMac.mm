@@ -404,6 +404,18 @@ using namespace HTMLNames;
 #define NSAccessibilitySelectTextActivityFindAndSelect @"AXSelectTextActivityFindAndSelect"
 #endif
 
+#ifndef kAXSelectTextActivityFindAndCapitalize
+#define kAXSelectTextActivityFindAndCapitalize @"AXSelectTextActivityFindAndCapitalize"
+#endif
+
+#ifndef kAXSelectTextActivityFindAndLowercase
+#define kAXSelectTextActivityFindAndLowercase @"AXSelectTextActivityFindAndLowercase"
+#endif
+
+#ifndef kAXSelectTextActivityFindAndUppercase
+#define kAXSelectTextActivityFindAndUppercase @"AXSelectTextActivityFindAndUppercase"
+#endif
+
 #ifndef NSAccessibilitySelectTextAmbiguityResolution
 #define NSAccessibilitySelectTextAmbiguityResolution @"AXSelectTextAmbiguityResolution"
 #endif
@@ -662,6 +674,12 @@ static AccessibilitySelectTextCriteria accessibilitySelectTextCriteriaForCriteri
     if ([activityParameter isKindOfClass:[NSString class]]) {
         if ([activityParameter isEqualToString:NSAccessibilitySelectTextActivityFindAndReplace])
             activity = FindAndReplaceActivity;
+        else if ([activityParameter isEqualToString:kAXSelectTextActivityFindAndCapitalize])
+            activity = FindAndCapitalize;
+        else if ([activityParameter isEqualToString:kAXSelectTextActivityFindAndLowercase])
+            activity = FindAndLowercase;
+        else if ([activityParameter isEqualToString:kAXSelectTextActivityFindAndUppercase])
+            activity = FindAndUppercase;
     }
     
     AccessibilitySelectTextAmbiguityResolution ambiguityResolution = ClosestToSelectionAmbiguityResolution;

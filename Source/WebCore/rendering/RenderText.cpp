@@ -111,7 +111,7 @@ static HashMap<const RenderText*, String>& originalTextMap()
     return map;
 }
 
-static void makeCapitalized(String* string, UChar previous)
+void makeCapitalized(String* string, UChar previous)
 {
     // FIXME: Need to change this to use u_strToTitle instead of u_totitle and to consider locale.
 

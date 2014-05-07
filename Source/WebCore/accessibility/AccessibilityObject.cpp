@@ -54,6 +54,7 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
+#include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -629,14 +630,33 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
     // Determine which candidate is closest to the selection and perform the activity.
     if (RefPtr<Range> closestStringRange = rangeClosestToRange(selectedStringRange.get(), closestAfterStringRange, closestBeforeStringRange)) {
         String closestString = closestStringRange->text();
+        bool replaceSelection = false;
         if (frame->selection().setSelectedRange(closestStringRange.get(), DOWNSTREAM, true)) {
             switch (activity) {
-            case FindAndReplaceActivity:
-                frame->editor().replaceSelectionWithText(replacementString, true, true);
-                FALLTHROUGH;
-            case FindAndSelectActivity:
-                return closestString;
+            case FindAndCapitalize: {
+                replacementString = closestString;
+                makeCapitalized(&replacementString, 0);
+                replaceSelection = true;
+                break;
             }
+            case FindAndUppercase:
+                replacementString = closestString.upper();
+                replaceSelection = true;
+                break;
+            case FindAndLowercase:
+                replacementString = closestString.lower();
+                replaceSelection = true;
+                break;
+            case FindAndReplaceActivity:
+                replaceSelection = true;
+                break;
+            case FindAndSelectActivity:
+                break;
+            }
+            
+            if (replaceSelection)
+                frame->editor().replaceSelectionWithText(replacementString, true, true);
+            return closestString;
         }
     }
     

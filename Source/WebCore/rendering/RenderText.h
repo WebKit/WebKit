@@ -242,7 +242,8 @@ inline RenderStyle& RenderText::firstLineStyle() const
 }
 
 void applyTextTransform(const RenderStyle&, String&, UChar);
-
+void makeCapitalized(String*, UChar previous);
+    
 inline RenderText* Text::renderer() const
 {
     return toRenderText(Node::renderer());
