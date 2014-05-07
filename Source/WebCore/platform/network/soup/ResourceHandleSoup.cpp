@@ -765,22 +765,21 @@ static bool addFileToSoupMessageBody(SoupMessage* message, const String& fileNam
 static bool blobIsOutOfDate(const BlobDataItem& blobItem)
 {
     ASSERT(blobItem.type == BlobDataItem::File);
-    if (!isValidFileTime(blobItem.expectedModificationTime))
+    if (!isValidFileTime(blobItem.file->expectedModificationTime()))
         return false;
 
     time_t fileModificationTime;
-    if (!getFileModificationTime(blobItem.path, fileModificationTime))
+    if (!getFileModificationTime(blobItem.file->path(), fileModificationTime))
         return true;
 
-    return fileModificationTime != static_cast<time_t>(blobItem.expectedModificationTime);
+    return fileModificationTime != static_cast<time_t>(blobItem.file->expectedModificationTime());
 }
 
 static void addEncodedBlobItemToSoupMessageBody(SoupMessage* message, const BlobDataItem& blobItem, unsigned long& totalBodySize)
 {
     if (blobItem.type == BlobDataItem::Data) {
-        totalBodySize += blobItem.length;
-        soup_message_body_append(message->request_body, SOUP_MEMORY_TEMPORARY,
-                                 blobItem.data->data() + blobItem.offset, blobItem.length);
+        totalBodySize += blobItem.length();
+        soup_message_body_append(message->request_body, SOUP_MEMORY_TEMPORARY, blobItem.data->data() + blobItem.offset(), blobItem.length());
         return;
     }
 
@@ -788,11 +787,7 @@ static void addEncodedBlobItemToSoupMessageBody(SoupMessage* message, const Blob
     if (blobIsOutOfDate(blobItem))
         return;
 
-    addFileToSoupMessageBody(message,
-                             blobItem.path,
-                             blobItem.offset,
-                             blobItem.length == BlobDataItem::toEndOfFile ? 0 : blobItem.length,
-                             totalBodySize);
+    addFileToSoupMessageBody(message, blobItem.file->path(), blobItem.offset(), blobItem.length() == BlobDataItem::toEndOfFile ? 0 : blobItem.length(),  totalBodySize);
 }
 
 static void addEncodedBlobToSoupMessageBody(SoupMessage* message, const FormDataElement& element, unsigned long& totalBodySize)
