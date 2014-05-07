@@ -429,9 +429,8 @@ void WebContextMenuClient::showContextMenu()
         return;
 
     NSView* view = frameView->documentView();
-    IntPoint point = frameView->contentsToRootView(page->contextMenuController().hitTestResult().roundedPointInInnerNodeFrame());
-    NSPoint nsScreenPoint = [view convertPoint:point toView:nil];
-    NSEvent* event = [NSEvent mouseEventWithType:NSRightMouseDown location:nsScreenPoint modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
+    IntPoint point = frameView->contentsToWindow(page->contextMenuController().hitTestResult().roundedPointInInnerNodeFrame());
+    NSEvent* event = [NSEvent mouseEventWithType:NSRightMouseDown location:point modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
 
     // Show the contextual menu for this event.
     if (NSMenu *menu = contextMenuForEvent(event, view))
