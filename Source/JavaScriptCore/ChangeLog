@@ -1,3 +1,21 @@
+2014-05-07  Andreas Kling  <akling@apple.com>
+
+        [X86] Emit BT instruction for single-bit tests.
+        <https://webkit.org/b/132650>
+
+        Implement test-bit-and-branch slightly more efficiently by using
+        BT + JC/JNC instead of TEST + JZ/JNZ when we're only testing for
+        a single bit.
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::singleBitIndex):
+        (JSC::MacroAssemblerX86Common::branchTest32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::bt_i8r):
+        (JSC::X86Assembler::bt_i8m):
+
 2014-05-07  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION(r166678): Dromaeo/cssquery-dojo.html crashes regularly.

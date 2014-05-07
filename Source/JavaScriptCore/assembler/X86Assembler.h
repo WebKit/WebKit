@@ -278,6 +278,7 @@ private:
         OP_SETCC            = 0x90,
         OP2_3BYTE_ESCAPE    = 0xAE,
         OP2_IMUL_GvEv       = 0xAF,
+        OP2_GROUP_BT        = 0xBA,
         OP2_MOVZX_GvEb      = 0xB6,
         OP2_MOVSX_GvEb      = 0xBE,
         OP2_MOVZX_GvEw      = 0xB7,
@@ -335,6 +336,8 @@ private:
 
         GROUP14_OP_PSLLQ = 6,
         GROUP14_OP_PSRLQ = 2,
+
+        GROUP_BT_OP_BT = 4,
 
         ESCAPE_DD_FSTP_doubleReal = 3,
     } GroupOpcodeID;
@@ -1219,6 +1222,18 @@ public:
         else
             m_formatter.oneByteOp8(OP_GROUP3_EbIb, GROUP3_OP_TEST, dst);
         m_formatter.immediate8(imm);
+    }
+
+    void bt_i8r(int bitIndex, RegisterID src)
+    {
+        m_formatter.twoByteOp(OP2_GROUP_BT, GROUP_BT_OP_BT, src);
+        m_formatter.immediate8(bitIndex);
+    }
+
+    void bt_i8m(int bitIndex, int offset, RegisterID base)
+    {
+        m_formatter.twoByteOp(OP2_GROUP_BT, GROUP_BT_OP_BT, base, offset);
+        m_formatter.immediate8(bitIndex);
     }
 
     void setCC_r(Condition cond, RegisterID dst)
