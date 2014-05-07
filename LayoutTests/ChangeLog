@@ -1,3 +1,30 @@
+2014-05-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Share mac/editing/spelling/editing-multiple-words-with-markers.html with other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=132649
+
+        Reviewed by Ryosuke Niwa.
+
+        This test does not verify autocorrection feature which is only implemented
+        by Mac. Other WebKit ports might be interested in running it due to
+        verification of spelling markers after merging two misspelled words.
+
+        Additionally, add the test case confirming spelling markers
+        before any selection change.
+
+        Due to bug 125689, this test starts using asynchronous spellchecking.
+
+        * editing/spelling/editing-multiple-words-with-markers-expected.txt:
+        Renamed from platform/mac/editing/spelling/editing-multiple-words-with-markers-expected.txt
+        * editing/spelling/editing-multiple-words-with-markers.html:
+        Renamed from platform/mac/editing/spelling/editing-multiple-words-with-markers.html
+
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        Mark editing-multiple-words-with-markers.html as failing since those
+        platforms didn't turn on asynchronous spellchecking.
+
 2014-05-06  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: Animated GIF inside compositing layer never resumes animation when scrolled back into view
