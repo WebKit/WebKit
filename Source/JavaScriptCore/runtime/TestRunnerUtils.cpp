@@ -85,8 +85,12 @@ JSValue setNeverInline(JSValue theFunctionValue)
 
 JSValue optimizeNextInvocation(JSValue theFunctionValue)
 {
+#if ENABLE(JIT)
     if (CodeBlock* baselineCodeBlock = getSomeBaselineCodeBlockForFunction(theFunctionValue))
         baselineCodeBlock->optimizeNextInvocation();
+#else
+    UNUSED_PARAM(theFunctionValue);
+#endif
 
     return jsUndefined();
 }

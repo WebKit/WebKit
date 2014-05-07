@@ -1,5 +1,12 @@
 2014-05-06  Michael Saboff  <msaboff@apple.com>
 
+        Unreviewd build fix for C-LOOP after r168396.
+
+        * runtime/TestRunnerUtils.cpp:
+        (JSC::optimizeNextInvocation): Wrapped actual call inside #if ENABLE(JIT)
+
+2014-05-06  Michael Saboff  <msaboff@apple.com>
+
         Add test for deleteAllCompiledCode
         https://bugs.webkit.org/show_bug.cgi?id=132632
 
