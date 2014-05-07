@@ -2329,6 +2329,8 @@ void AccessibilityRenderObject::handleAriaExpandedChanged()
     // Post that the specific row either collapsed or expanded.
     if (roleValue() == RowRole || roleValue() == TreeItemRole)
         cache->postNotification(this, document(), isExpanded() ? AXObjectCache::AXRowExpanded : AXObjectCache::AXRowCollapsed);
+    else
+        cache->postNotification(this, document(), AXObjectCache::AXExpandedChanged);
 }
 
 void AccessibilityRenderObject::handleActiveDescendantChanged()

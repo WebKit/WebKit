@@ -178,6 +178,7 @@ public:
         AXRowCountChanged,
         AXRowCollapsed,
         AXRowExpanded,
+        AXExpandedChanged,
         AXInvalidStatusChanged,
         AXTextChanged,
         AXAriaAttributeChanged,

@@ -125,6 +125,9 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXElementBusyChanged:
             macNotification = @"AXElementBusyChanged";
             break;
+        case AXExpandedChanged:
+            macNotification = @"AXExpandedChanged";
+            break;
         case AXMenuClosed:
             macNotification = (id)kAXMenuClosedNotification;
             break;

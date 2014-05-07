@@ -1,3 +1,21 @@
+2014-05-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: aria-expanded changes are not communicated to clients
+        https://bugs.webkit.org/show_bug.cgi?id=132642
+
+        Reviewed by Mario Sanchez Prada.
+
+        When aria-expanded changes on non list/tree items, send out a generic
+        AXExpandedChange notification.
+
+        Test: platform/mac/accessibility/expanded-notification.html
+
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::handleAriaExpandedChanged):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2014-05-07  Alexey Proskuryakov  <ap@apple.com>
 
         Release build fix.
