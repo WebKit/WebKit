@@ -79,18 +79,20 @@ Blob::Blob()
 
 Blob::Blob(Vector<char> data, const String& contentType)
     : m_type(contentType)
+    , m_size(data.size())
 {
     Vector<BlobPart> blobParts;
     blobParts.append(BlobPart(std::move(data)));
     m_internalURL = BlobURL::createInternalURL();
-    m_size = ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobParts), contentType);
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobParts), contentType);
 }
 
 Blob::Blob(Vector<BlobPart> blobParts, const String& contentType)
     : m_type(contentType)
+    , m_size(-1)
 {
     m_internalURL = BlobURL::createInternalURL();
-    m_size = ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobParts), contentType);
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, std::move(blobParts), contentType);
 }
 
 Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, long long size)
@@ -104,15 +106,28 @@ Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, lon
 #if ENABLE(BLOB)
 Blob::Blob(const URL& srcURL, long long start, long long end, const String& type)
     : m_type(Blob::normalizedContentType(type))
+    , m_size(-1) // size is not necessarily equal to end - start.
 {
     m_internalURL = BlobURL::createInternalURL();
-    m_size = ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end);
+    ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end);
 }
 #endif
 
 Blob::~Blob()
 {
     ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
+}
+
+unsigned long long Blob::size() const
+{
+    if (m_size < 0) {
+        // FIXME: JavaScript cannot represent sizes as large as unsigned long long, we need to
+        // come up with an exception to throw if file size is not representable.
+        unsigned long long actualSize = ThreadableBlobRegistry::blobSize(m_internalURL);
+        m_size = (actualSize <= std::numeric_limits<long long>::max()) ? static_cast<long long>(actualSize) : 0;
+    }
+
+    return static_cast<unsigned long long>(m_size);
 }
 
 bool Blob::isValidContentType(const String& contentType)

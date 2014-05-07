@@ -128,7 +128,7 @@ void BlobRegistryImpl::registerFileBlobURL(const URL& url, const String& path, c
     m_blobs.set(url.string(), blobData.release());
 }
 
-unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
+void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -142,20 +142,16 @@ unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, Vector<Blob
     // 3) The URL item is denoted by the URL, the range and the expected modification time.
     // All the Blob items in the passing blob data are resolved and expanded into a set of Data and File items.
 
-    unsigned long long size = 0;
     for (BlobPart& part : blobParts) {
         switch (part.type()) {
         case BlobPart::Data: {
-            unsigned long long partSize = part.data().size();
             RefPtr<RawData> rawData = RawData::create(part.moveData());
-            size += partSize;
-            blobData->appendData(rawData.release(), 0, partSize);
+            blobData->appendData(rawData.release());
             break;
         }
         case BlobPart::Blob: {
             if (!m_blobs.contains(part.url().string()))
-                return 0;
-            size += blobSize(part.url());
+                return;
             for (const BlobDataItem& item : m_blobs.get(part.url().string())->items())
                 blobData->m_items.append(item);
             break;
@@ -164,7 +160,6 @@ unsigned long long BlobRegistryImpl::registerBlobURL(const URL& url, Vector<Blob
     }
 
     m_blobs.set(url.string(), blobData.release());
-    return size;
 }
 
 void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
@@ -178,12 +173,12 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
     m_blobs.set(url.string(), src);
 }
 
-unsigned long long BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)
+void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)
 {
     ASSERT(isMainThread());
     BlobData* originalData = getBlobDataFromURL(srcURL);
     if (!originalData)
-        return 0;
+        return;
 
     unsigned long long originalSize = blobSize(srcURL);
 
@@ -213,7 +208,6 @@ unsigned long long BlobRegistryImpl::registerBlobURLForSlice(const URL& url, con
     appendStorageItems(newData.get(), originalData->items(), start, newLength);
 
     m_blobs.set(url.string(), newData.release());
-    return newLength;
 }
 
 void BlobRegistryImpl::unregisterBlobURL(const URL& url)

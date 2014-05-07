@@ -1,3 +1,34 @@
+2014-05-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Make blob size computation lazy
+        https://bugs.webkit.org/show_bug.cgi?id=132653
+
+        Reviewed by Anders Carlsson.
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::size):
+        * fileapi/Blob.h:
+        (WebCore::Blob::size): Deleted.
+        * fileapi/File.cpp:
+        (WebCore::File::size): Deleted.
+        * fileapi/File.h:
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerFileBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        (WebCore::ThreadableBlobRegistry::registerBlobURLForSlice):
+        (WebCore::ThreadableBlobRegistry::blobSize):
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURL):
+        (WebCore::unregisterBlobURLTask): Deleted.
+        * fileapi/ThreadableBlobRegistry.h:
+        * platform/network/BlobData.cpp:
+        (WebCore::BlobData::appendData):
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURLForSlice):
+        * platform/network/BlobRegistryImpl.h:
+
 2014-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         Add scrolling tree logging to RemoteLayerTree output

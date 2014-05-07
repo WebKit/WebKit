@@ -70,7 +70,7 @@ public:
     const URL& url() const { return m_internalURL; }
     const String& type() const { return m_type; }
 
-    virtual unsigned long long size() const { return static_cast<unsigned long long>(m_size); }
+    unsigned long long size() const;
     virtual bool isFile() const { return false; }
 
     // The checks described in the File API spec.
@@ -113,7 +113,7 @@ protected:
     URL m_internalURL;
 
     String m_type;
-    long long m_size;
+    mutable long long m_size;
 };
 
 } // namespace WebCore

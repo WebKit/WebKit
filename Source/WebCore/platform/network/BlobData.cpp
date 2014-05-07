@@ -69,7 +69,8 @@ void BlobData::setContentType(const String& contentType)
 
 void BlobData::appendData(PassRefPtr<RawData> data)
 {
-    appendData(data, 0, data->length());
+    size_t dataSize = data->length();
+    appendData(data, 0, dataSize);
 }
 
 void BlobData::appendData(PassRefPtr<RawData> data, long long offset, long long length)

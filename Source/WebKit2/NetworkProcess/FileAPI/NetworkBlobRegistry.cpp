@@ -68,7 +68,7 @@ void NetworkBlobRegistry::registerFileBlobURL(NetworkConnectionToWebProcess* con
     mapIterator->value.add(url);
 }
 
-uint64_t NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, Vector<WebCore::BlobPart> blobParts, const String& contentType)
+void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, Vector<WebCore::BlobPart> blobParts, const String& contentType)
 {
     ASSERT(!m_sandboxExtensions.contains(url.string()));
 
@@ -79,7 +79,7 @@ uint64_t NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* con
             sandboxExtensions.appendVector(m_sandboxExtensions.get(part.url().string()));
     }
 
-    uint64_t resultSize = blobRegistry().registerBlobURL(url, std::move(blobParts), contentType);
+    blobRegistry().registerBlobURL(url, std::move(blobParts), contentType);
 
     if (!sandboxExtensions.isEmpty())
         m_sandboxExtensions.add(url.string(), std::move(sandboxExtensions));
@@ -89,8 +89,6 @@ uint64_t NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* con
     if (mapIterator == m_blobsForConnection.end())
         mapIterator = m_blobsForConnection.add(connection, HashSet<URL>()).iterator;
     mapIterator->value.add(url);
-
-    return resultSize;
 }
 
 void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL)
@@ -105,9 +103,9 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
     m_blobsForConnection.find(connection)->value.add(url);
 }
 
-uint64_t NetworkBlobRegistry::registerBlobURLForSlice(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL, int64_t start, int64_t end)
+void NetworkBlobRegistry::registerBlobURLForSlice(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL, int64_t start, int64_t end)
 {
-    uint64_t resultSize = blobRegistry().registerBlobURLForSlice(url, srcURL, start, end);
+    blobRegistry().registerBlobURLForSlice(url, srcURL, start, end);
 
     // FIXME: Only store extensions for files that the slice actually contains, not for all the files in original blob.
     SandboxExtensionMap::iterator iter = m_sandboxExtensions.find(srcURL.string());
@@ -117,8 +115,6 @@ uint64_t NetworkBlobRegistry::registerBlobURLForSlice(NetworkConnectionToWebProc
     ASSERT(m_blobsForConnection.contains(connection));
     ASSERT(m_blobsForConnection.find(connection)->value.contains(srcURL));
     m_blobsForConnection.find(connection)->value.add(url);
-
-    return resultSize;
 }
 
 void NetworkBlobRegistry::unregisterBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::URL& url)
@@ -129,6 +125,14 @@ void NetworkBlobRegistry::unregisterBlobURL(NetworkConnectionToWebProcess* conne
     ASSERT(m_blobsForConnection.contains(connection));
     ASSERT(m_blobsForConnection.find(connection)->value.contains(url));
     m_blobsForConnection.find(connection)->value.remove(url);
+}
+
+uint64_t NetworkBlobRegistry::blobSize(NetworkConnectionToWebProcess* connection, const WebCore::URL& url)
+{
+    if (!m_blobsForConnection.contains(connection) || !m_blobsForConnection.find(connection)->value.contains(url))
+        return 0;
+
+    return blobRegistry().blobSize(url);
 }
 
 void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebProcess* connection)

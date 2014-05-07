@@ -54,13 +54,12 @@ public:
         return adoptRef(new File(path, name));
     }
 
-    virtual unsigned long long size() const override;
     virtual bool isFile() const override { return true; }
 
     const String& path() const { return m_path; }
     const String& name() const { return m_name; }
 
-    // This returns the current date and time if the file's last modifiecation date is not known (per spec: http://www.w3.org/TR/FileAPI/#dfn-lastModifiedDate).
+    // This returns the current date and time if the file's last modification date is not known (per spec: http://www.w3.org/TR/FileAPI/#dfn-lastModifiedDate).
     double lastModifiedDate() const;
 
     static String contentTypeFromFilePathOrName(const String&);

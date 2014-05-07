@@ -77,16 +77,6 @@ double File::lastModifiedDate() const
     return currentTime() * msPerSecond;
 }
 
-unsigned long long File::size() const
-{
-    // FIXME: JavaScript cannot represent sizes as large as unsigned long long, we need to
-    // come up with an exception to throw if file size is not representable.
-    long long size;
-    if (!getFileSize(m_path, size))
-        return 0;
-    return static_cast<unsigned long long>(size);
-}
-
 String File::contentTypeFromFilePathOrName(const String& name)
 {
     String type;

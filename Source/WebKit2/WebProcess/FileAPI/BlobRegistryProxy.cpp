@@ -50,14 +50,11 @@ void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, const Strin
     WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(url, path, extensionHandle, contentType), 0);
 }
 
-unsigned long long BlobRegistryProxy::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
+void BlobRegistryProxy::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
 {
     ASSERT(WebProcess::shared().usesNetworkProcess());
 
-    uint64_t resultSize;
-    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(url, blobParts, contentType), Messages::NetworkConnectionToWebProcess::RegisterBlobURL::Reply(resultSize), 0))
-        return 0;
-    return resultSize;
+    WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(url, blobParts, contentType), 0);
 }
 
 void BlobRegistryProxy::registerBlobURL(const URL& url, const URL& srcURL)
@@ -74,12 +71,19 @@ void BlobRegistryProxy::unregisterBlobURL(const URL& url)
     WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURL(url), 0);
 }
 
-unsigned long long BlobRegistryProxy::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)
+void BlobRegistryProxy::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)
+{
+    ASSERT(WebProcess::shared().usesNetworkProcess());
+
+    WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLForSlice(url, srcURL, start, end), 0);
+}
+
+unsigned long long BlobRegistryProxy::blobSize(const URL& url)
 {
     ASSERT(WebProcess::shared().usesNetworkProcess());
 
     uint64_t resultSize;
-    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::RegisterBlobURLForSlice(url, srcURL, start, end), Messages::NetworkConnectionToWebProcess::RegisterBlobURLForSlice::Reply(resultSize), 0))
+    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::BlobSize(url), Messages::NetworkConnectionToWebProcess::BlobSize::Reply(resultSize), 0))
         return 0;
     return resultSize;
 }

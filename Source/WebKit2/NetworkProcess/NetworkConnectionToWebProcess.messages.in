@@ -45,10 +45,11 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
 #if ENABLE(BLOB)
     RegisterFileBlobURL(WebCore::URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
-    RegisterBlobURL(WebCore::URL url, Vector<WebCore::BlobPart> blobParts, String contentType) -> (uint64_t resultSize)
+    RegisterBlobURL(WebCore::URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
     RegisterBlobURLFromURL(WebCore::URL url, WebCore::URL srcURL)
-    RegisterBlobURLForSlice(WebCore::URL url, WebCore::URL srcURL, int64_t start, int64_t end) -> (uint64_t resultSize)
+    RegisterBlobURLForSlice(WebCore::URL url, WebCore::URL srcURL, int64_t start, int64_t end)
     UnregisterBlobURL(WebCore::URL url)
+    BlobSize(WebCore::URL url) -> (uint64_t resultSize)
 #endif
 }
 

@@ -230,9 +230,9 @@ void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const St
     NetworkBlobRegistry::shared().registerFileBlobURL(this, url, path, extension.release(), contentType);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType, uint64_t& resultSize)
+void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
 {
-    resultSize = NetworkBlobRegistry::shared().registerBlobURL(this, url, std::move(blobParts), contentType);
+    NetworkBlobRegistry::shared().registerBlobURL(this, url, std::move(blobParts), contentType);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const URL& srcURL)
@@ -240,14 +240,19 @@ void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const
     NetworkBlobRegistry::shared().registerBlobURL(this, url, srcURL);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end, uint64_t& resultSize)
+void NetworkConnectionToWebProcess::registerBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end)
 {
-    resultSize = NetworkBlobRegistry::shared().registerBlobURLForSlice(this, url, srcURL, start, end);
+    NetworkBlobRegistry::shared().registerBlobURLForSlice(this, url, srcURL, start, end);
 }
 
 void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)
 {
     NetworkBlobRegistry::shared().unregisterBlobURL(this, url);
+}
+
+void NetworkConnectionToWebProcess::blobSize(const URL& url, uint64_t& resultSize)
+{
+    resultSize = NetworkBlobRegistry::shared().blobSize(this, url);
 }
 #endif
 
