@@ -139,11 +139,6 @@ static const TypeExtensionPair commonMediaTypes[] = {
     { "audio/x-wav", "wav" }
 };
 
-static const char textPlain[] = "text/plain";
-static const char textHtml[] = "text/html";
-static const char imageJpeg[] = "image/jpeg";
-static const char octetStream[] = "application/octet-stream";
-
 static HashSet<String>* supportedImageResourceMIMETypes;
 static HashSet<String>* supportedImageMIMETypes;
 static HashSet<String>* supportedImageMIMETypesForEncoding;
