@@ -153,7 +153,7 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::T
     treeStateClone->m_nodesRemovedSinceLastCommit.swap(m_nodesRemovedSinceLastCommit);
 
     // Now the clone tree has changed properties, and the original tree does not.
-    treeStateClone->m_hasChangedProperties = true;
+    treeStateClone->m_hasChangedProperties = m_hasChangedProperties;
     m_hasChangedProperties = false;
 
     treeStateClone->m_hasNewRootStateNode = m_hasNewRootStateNode;

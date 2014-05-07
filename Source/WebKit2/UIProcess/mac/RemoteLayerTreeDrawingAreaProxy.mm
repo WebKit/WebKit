@@ -30,6 +30,7 @@
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "DrawingAreaMessages.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "RemoteScrollingCoordinatorTransaction.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
@@ -118,6 +119,7 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
 {
     LOG(RemoteLayerTree, "%s", layerTreeTransaction.description().data());
+    LOG(RemoteLayerTree, "%s", scrollingTreeTransaction.description().data());
 
     if (m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction))
         m_webPageProxy->setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost.rootLayer());

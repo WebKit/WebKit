@@ -1,3 +1,25 @@
+2014-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Add scrolling tree logging to RemoteLayerTree output
+        https://bugs.webkit.org/show_bug.cgi?id=132640
+
+        Reviewed by Beth Dakin.
+
+        Support scrolling tree logging in the RemoteLayerTree log channel
+        output.
+        
+        ScrollingStateTree::commit() unconditionally set treeStateClone->m_hasChangedProperties
+        to true, but we should set it based on original scrolling state tree's 
+        m_hasChangedProperties.
+        
+        We have to encode all of the scrolling state nodes anyway (they only encode
+        changed properties), but we can use this for future optimizations, and to
+        avoid spurious logging.
+        
+        * WebCore.exp.in: Export a couple of things we need.
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::commit):
+
 2014-05-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-expanded changes are not communicated to clients

@@ -48,6 +48,11 @@ public:
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, RemoteScrollingCoordinatorTransaction&);
 
+#if !defined(NDEBUG) || !LOG_DISABLED
+    WTF::CString description() const;
+    void dump() const;
+#endif
+
 private:
 #if ENABLE(ASYNC_SCROLLING)
     bool decode(IPC::ArgumentDecoder&);

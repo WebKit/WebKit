@@ -34,6 +34,10 @@
 #include <WebCore/ScrollingStateFixedNode.h>
 #include <WebCore/ScrollingStateScrollingNode.h>
 #include <WebCore/ScrollingStateStickyNode.h>
+#include <WebCore/ScrollingStateTree.h>
+#include <WebCore/TextStream.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 #include <wtf/HashMap.h>
 
@@ -277,6 +281,8 @@ void RemoteScrollingCoordinatorTransaction::encode(IPC::ArgumentEncoder& encoder
     encoder << hasNewRootNode;
 
     if (m_scrollingStateTree) {
+        encoder << m_scrollingStateTree->hasChangedProperties();
+
         if (const ScrollingStateNode* rootNode = m_scrollingStateTree->rootStateNode())
             encodeNodeAndDescendants(encoder, *rootNode);
 
@@ -301,7 +307,13 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder
         return false;
     
     m_scrollingStateTree = ScrollingStateTree::create();
-    
+
+    bool hasChangedProperties;
+    if (!decoder.decode(hasChangedProperties))
+        return false;
+
+    m_scrollingStateTree->setHasChangedProperties(hasChangedProperties);
+
     for (int i = 0; i < numNodes; ++i) {
         ScrollingNodeType nodeType;
         if (!decoder.decodeEnum(nodeType))
@@ -349,6 +361,261 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder
 
     return true;
 }
+
+#if !defined(NDEBUG) || !LOG_DISABLED
+
+class RemoteScrollingTreeTextStream : public TextStream {
+public:
+    using TextStream::operator<<;
+
+    RemoteScrollingTreeTextStream()
+        : m_indent(0)
+    {
+    }
+
+    RemoteScrollingTreeTextStream& operator<<(FloatRect);
+    RemoteScrollingTreeTextStream& operator<<(ScrollingNodeType);
+
+    RemoteScrollingTreeTextStream& operator<<(const FixedPositionViewportConstraints&);
+    RemoteScrollingTreeTextStream& operator<<(const StickyPositionViewportConstraints&);
+
+    void dump(const ScrollingStateTree&, bool changedPropertiesOnly = true);
+
+    void dump(const ScrollingStateNode&, bool changedPropertiesOnly = true);
+    void dump(const ScrollingStateScrollingNode&, bool changedPropertiesOnly = true);
+    void dump(const ScrollingStateFixedNode&, bool changedPropertiesOnly = true);
+    void dump(const ScrollingStateStickyNode&, bool changedPropertiesOnly = true);
+
+    void increaseIndent() { ++m_indent; }
+    void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
+
+    void writeIndent();
+
+private:
+    void recursiveDumpNodes(const ScrollingStateNode&, bool changedPropertiesOnly);
+
+    int m_indent;
+};
+
+void RemoteScrollingTreeTextStream::writeIndent()
+{
+    for (int i = 0; i < m_indent; ++i)
+        *this << "  ";
+}
+
+template <class T>
+static void dumpProperty(RemoteScrollingTreeTextStream& ts, String name, T value)
+{
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(" << name << " ";
+    ts << value << ")";
+    ts.decreaseIndent();
+}
+
+RemoteScrollingTreeTextStream& RemoteScrollingTreeTextStream::operator<<(FloatRect rect)
+{
+    RemoteScrollingTreeTextStream& ts = *this;
+    ts << rect.x() << " " << rect.y() << " " << rect.width() << " " << rect.height();
+    return ts;
+}
+
+RemoteScrollingTreeTextStream& RemoteScrollingTreeTextStream::operator<<(ScrollingNodeType nodeType)
+{
+    RemoteScrollingTreeTextStream& ts = *this;
+
+    switch (nodeType) {
+    case FrameScrollingNode: ts << "frame-scrolling"; break;
+    case OverflowScrollingNode: ts << "overflow-scrolling"; break;
+    case FixedNode: ts << "fixed"; break;
+    case StickyNode: ts << "sticky"; break;
+    }
+
+    return ts;
+}
+
+RemoteScrollingTreeTextStream& RemoteScrollingTreeTextStream::operator<<(const FixedPositionViewportConstraints& constraints)
+{
+    RemoteScrollingTreeTextStream& ts = *this;
+
+    dumpProperty(ts, "viewport-rect-at-last-layout", constraints.viewportRectAtLastLayout());
+    dumpProperty(ts, "layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
+
+    return ts;
+}
+
+RemoteScrollingTreeTextStream& RemoteScrollingTreeTextStream::operator<<(const StickyPositionViewportConstraints& constraints)
+{
+    RemoteScrollingTreeTextStream& ts = *this;
+
+    dumpProperty(ts, "sticky-position-at-last-layout", constraints.stickyOffsetAtLastLayout());
+    dumpProperty(ts, "layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
+
+    return ts;
+}
+
+void RemoteScrollingTreeTextStream::dump(const ScrollingStateNode& node, bool changedPropertiesOnly)
+{
+    RemoteScrollingTreeTextStream& ts = *this;
+
+    ts << "(node " << node.scrollingNodeID();
+
+    dumpProperty(ts, "type", node.nodeType());
+
+    switch (node.nodeType()) {
+    case FrameScrollingNode:
+    case OverflowScrollingNode:
+        dump(toScrollingStateScrollingNode(node), changedPropertiesOnly);
+        break;
+    case FixedNode:
+        dump(toScrollingStateFixedNode(node), changedPropertiesOnly);
+        break;
+    case StickyNode:
+        dump(toScrollingStateStickyNode(node), changedPropertiesOnly);
+        break;
+    }
+}
+
+void RemoteScrollingTreeTextStream::dump(const ScrollingStateScrollingNode& node, bool changedPropertiesOnly)
+{
+    RemoteScrollingTreeTextStream& ts = *this;
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ViewportSize))
+        dumpProperty(ts, "viewport-size", node.viewportSize());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize))
+        dumpProperty(ts, "total-contents-size", node.totalContentsSize());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition))
+        dumpProperty(ts, "scroll-position", node.scrollPosition());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
+        dumpProperty(ts, "scroll-origin", node.scrollOrigin());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::FrameScaleFactor))
+        dumpProperty(ts, "frame-scale-factor", node.frameScaleFactor());
+
+    // FIXME: dump nonFastScrollableRegion
+    // FIXME: dump wheelEventHandlerCount
+    // FIXME: dump synchronousScrollingReasons
+    // FIXME: dump scrollableAreaParameters
+    // FIXME: dump scrollBehaviorForFixedElements
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
+        dumpProperty(ts, "requested-scroll-position", node.requestedScrollPosition());
+        dumpProperty(ts, "requested-scroll-position-is-programatic", node.requestedScrollPositionRepresentsProgrammaticScroll());
+    }
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::HeaderHeight))
+        dumpProperty(ts, "header-height", node.headerHeight());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::FooterHeight))
+        dumpProperty(ts, "footer-height", node.footerHeight());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::TopContentInset))
+        dumpProperty(ts, "top-content-inset", node.topContentInset());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
+        dumpProperty(ts, "scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
+        dumpProperty(ts, "counter-scrolling-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.counterScrollingLayer()));
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::InsetClipLayer))
+        dumpProperty(ts, "clip-inset-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.insetClipLayer()));
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::HeaderLayer))
+        dumpProperty(ts, "header-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.headerLayer()));
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::FooterLayer))
+        dumpProperty(ts, "footer-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.footerLayer()));
+}
+
+void RemoteScrollingTreeTextStream::dump(const ScrollingStateFixedNode& node, bool changedPropertiesOnly)
+{
+    RemoteScrollingTreeTextStream& ts = *this;
+
+    ts << node.viewportConstraints();
+}
+
+void RemoteScrollingTreeTextStream::dump(const ScrollingStateStickyNode& node, bool changedPropertiesOnly)
+{
+    RemoteScrollingTreeTextStream& ts = *this;
+
+    ts << node.viewportConstraints();
+}
+
+void RemoteScrollingTreeTextStream::recursiveDumpNodes(const ScrollingStateNode& node, bool changedPropertiesOnly)
+{
+    RemoteScrollingTreeTextStream& ts = *this;
+
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    dump(node, changedPropertiesOnly);
+
+    if (node.children()) {
+        ts << "\n";
+        ts.increaseIndent();
+        ts.writeIndent();
+        ts << "(children";
+        ts.increaseIndent();
+
+        for (auto& childNode : *node.children())
+            recursiveDumpNodes(*childNode, changedPropertiesOnly);
+
+        ts << ")";
+        ts.decreaseIndent();
+        ts.decreaseIndent();
+    }
+
+    ts << ")";
+    ts.decreaseIndent();
+}
+
+void RemoteScrollingTreeTextStream::dump(const ScrollingStateTree& stateTree, bool changedPropertiesOnly)
+{
+    RemoteScrollingTreeTextStream& ts = *this;
+
+    dumpProperty(ts, "has changed properties", stateTree.hasChangedProperties());
+    dumpProperty(ts, "has new root node", stateTree.hasNewRootStateNode());
+
+    if (stateTree.rootStateNode())
+        recursiveDumpNodes(*stateTree.rootStateNode(), changedPropertiesOnly);
+
+    if (!stateTree.removedNodes().isEmpty())
+        dumpProperty<Vector<ScrollingNodeID>>(ts, "removed-nodes", stateTree.removedNodes());
+}
+
+WTF::CString RemoteScrollingCoordinatorTransaction::description() const
+{
+    RemoteScrollingTreeTextStream ts;
+
+    ts << "(\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(scrolling state tree";
+
+    if (m_scrollingStateTree) {
+        if (!m_scrollingStateTree->hasChangedProperties())
+            ts << " - no changes";
+        else
+            ts.dump(*m_scrollingStateTree.get());
+    } else
+        ts << " - none";
+
+    ts << ")\n";
+    ts.decreaseIndent();
+
+    return ts.release().utf8();
+}
+
+void RemoteScrollingCoordinatorTransaction::dump() const
+{
+    fprintf(stderr, "%s", description().data());
+}
+#endif
 
 } // namespace WebKit
 
