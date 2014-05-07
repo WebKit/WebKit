@@ -1,3 +1,25 @@
+2014-05-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Corrected typo
+        https://bugs.webkit.org/show_bug.cgi?id=132609
+
+        Reviewed by Martin Robinson.
+
+        Corrected m_canFallBackToLastFinishedSeekPositon typo and
+        initialized in the constructor to prevent problems in the future.
+
+        No test needed.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        Initialized m_canFallBackToLastFinishedSeekPosition as false.
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::asyncStateChangeDone):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        m_canFallBackToLastFinishedSeekPositon ->
+        m_canFallBackToLastFinishedSeekPosition
+
 2014-05-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert PassOwnPtr to unique_ptr in CrossThreadTask.h

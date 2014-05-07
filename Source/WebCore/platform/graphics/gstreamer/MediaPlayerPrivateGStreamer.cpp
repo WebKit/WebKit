@@ -204,6 +204,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_seeking(false)
     , m_seekIsPending(false)
     , m_timeOfOverlappingSeek(-1)
+    , m_canFallBackToLastFinishedSeekPosition(false)
     , m_buffering(false)
     , m_playbackRate(1)
     , m_lastPlaybackRate(1)
@@ -359,7 +360,7 @@ float MediaPlayerPrivateGStreamer::playbackPosition() const
     float result = 0.0f;
     if (static_cast<GstClockTime>(position) != GST_CLOCK_TIME_NONE)
         result = static_cast<double>(position) / GST_SECOND;
-    else if (m_canFallBackToLastFinishedSeekPositon)
+    else if (m_canFallBackToLastFinishedSeekPosition)
         result = m_seekTime;
 
     LOG_MEDIA_MESSAGE("Position %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
@@ -877,7 +878,7 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     const GstStructure* structure = gst_message_get_structure(message);
     GstState requestedState, currentState;
 
-    m_canFallBackToLastFinishedSeekPositon = false;
+    m_canFallBackToLastFinishedSeekPosition = false;
 
     if (structure) {
         const gchar* messageTypeName = gst_structure_get_name(structure);
@@ -1304,7 +1305,7 @@ void MediaPlayerPrivateGStreamer::asyncStateChangeDone()
 
             // The pipeline can still have a pending state. In this case a position query will fail.
             // Right now we can use m_seekTime as a fallback.
-            m_canFallBackToLastFinishedSeekPositon = true;
+            m_canFallBackToLastFinishedSeekPosition = true;
             timeChanged();
         }
     } else

@@ -180,7 +180,7 @@ private:
     bool m_seeking;
     bool m_seekIsPending;
     float m_timeOfOverlappingSeek;
-    bool m_canFallBackToLastFinishedSeekPositon;
+    bool m_canFallBackToLastFinishedSeekPosition;
     bool m_buffering;
     float m_playbackRate;
     float m_lastPlaybackRate;
