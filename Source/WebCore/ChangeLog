@@ -3,6 +3,16 @@
         [Mac] Allow focus rings to redraw themselves if necessary
         https://bugs.webkit.org/show_bug.cgi?id=132593
 
+        Fix iOS build.
+
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing): We no longer use the color parameter.
+
+2014-05-06  Dean Jackson  <dino@apple.com>
+
+        [Mac] Allow focus rings to redraw themselves if necessary
+        https://bugs.webkit.org/show_bug.cgi?id=132593
+
         Reviewed by Simon Fraser.
 
         Mac allows focus rings to change rendering over time. Expose this

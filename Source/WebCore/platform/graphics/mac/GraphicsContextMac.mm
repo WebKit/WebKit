@@ -112,7 +112,6 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     UNUSED_PARAM(rects);
     UNUSED_PARAM(width);
     UNUSED_PARAM(offset);
-    UNUSED_PARAM(color);
 #endif
 }
 
