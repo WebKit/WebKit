@@ -48,6 +48,8 @@
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderTable.h"
+#include "RenderText.h"
+#include "RenderTextFragment.h"
 #include "RenderView.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
@@ -2693,6 +2695,22 @@ void RenderBoxModelObject::moveChildrenTo(RenderBoxModelObject* toBoxModelObject
     for (RenderObject* child = startChild; child && child != endChild; ) {
         // Save our next sibling as moveChildTo will clear it.
         RenderObject* nextSibling = child->nextSibling();
+        
+        // Check to make sure we're not saving the firstLetter as the nextSibling.
+        // When the |child| object will be moved, its firstLetter will be recreated,
+        // so saving it now in nextSibling would let us with a destroyed object.
+        if (child->isText() && toRenderText(child)->isTextFragment() && nextSibling && nextSibling->isText()) {
+            RenderObject* firstLetterObj = nullptr;
+            if (RenderBlock* block = toRenderTextFragment(child)->blockForAccompanyingFirstLetter()) {
+                RenderElement* firstLetterContainer = nullptr;
+                block->getFirstLetter(firstLetterObj, firstLetterContainer, child);
+            }
+            
+            // This is the first letter, skip it.
+            if (firstLetterObj == nextSibling)
+                nextSibling = nextSibling->nextSibling();
+        }
+
         moveChildTo(toBoxModelObject, child, beforeChild, fullRemoveInsert);
         child = nextSibling;
     }

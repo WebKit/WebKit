@@ -48,6 +48,8 @@ public:
 
     RenderBoxModelObject* firstLetter() const { return m_firstLetter; }
     void setFirstLetter(RenderBoxModelObject& firstLetter) { m_firstLetter = &firstLetter; }
+    
+    RenderBlock* blockForAccompanyingFirstLetter();
 
     StringImpl* contentString() const { return m_contentString.impl(); }
 
@@ -61,7 +63,6 @@ private:
     virtual void willBeDestroyed() override;
 
     virtual UChar previousCharacter() const override;
-    RenderBlock* blockForAccompanyingFirstLetter();
 
     unsigned m_start;
     unsigned m_end;

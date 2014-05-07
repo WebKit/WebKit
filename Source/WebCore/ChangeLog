@@ -1,3 +1,21 @@
+2014-05-07  Radu Stavila  <stavila@adobe.com>
+
+        Use after free in WebCore::RenderObject::nextSibling / WebCore::RenderBoxModelObject::moveChildrenTo
+        https://bugs.webkit.org/show_bug.cgi?id=132625
+
+        Reviewed by David Hyatt.
+
+        Fixed problem with dynamically inserting first letter elements.
+
+        Test: fast/multicol/newmulticol/first-letter-create.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::getFirstLetter):
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildrenTo):
+
 2014-05-07  Enrica Casucci  <enrica@apple.com>
 
         WK2: Programatic scroll requests during scroll or zoom animation to reveal focused element are ignored.

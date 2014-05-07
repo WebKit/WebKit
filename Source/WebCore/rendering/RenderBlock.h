@@ -260,6 +260,7 @@ public:
     LayoutUnit collapsedMarginAfterForChild(const RenderBox& child) const;
 
     virtual void updateFirstLetter();
+    void getFirstLetter(RenderObject*& firstLetter, RenderElement*& firstLetterContainer, RenderObject* skipObject = nullptr);
 
     virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { }
 
