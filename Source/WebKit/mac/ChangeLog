@@ -1,3 +1,26 @@
+2014-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKit1 is flashy when compositing layers come and go
+        https://bugs.webkit.org/show_bug.cgi?id=132655
+
+        Reviewed by Sam Weinig.
+        
+        In r166117 I removed code to flush compositing layers in FrameView::paintContents(),
+        which caused problems when painting iframes. However, this removed a flush
+        that WebKit1 relied on to flush compositing layers when painting, which caused
+        flashing when compositing layers come and go, and broke WebView snapshotting
+        in some cases.
+        
+        Fix by adding back compositing layer flushing, but this time in WebKit1's
+        -viewWillDraw code path. This allows removal of some flushing in DumpRenderTree.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView viewWillDraw]):
+        * WebView/WebView.mm:
+        (-[WebView _flushCompositingChanges]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2014-05-07  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Remove runtime feature

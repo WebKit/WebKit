@@ -1521,8 +1521,6 @@ static void updateDisplay()
         [webView display];
     else
         [webView displayIfNeeded];
-
-    [webView _flushCompositingChanges];
 }
 
 void dump()

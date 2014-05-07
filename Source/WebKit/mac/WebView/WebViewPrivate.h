@@ -771,7 +771,6 @@ Could be worth adding to the API.
 - (BOOL)_postsAcceleratedCompositingNotifications;
 - (void)_setPostsAcceleratedCompositingNotifications:(BOOL)flag;
 - (BOOL)_isUsingAcceleratedCompositing;
-- (BOOL)_flushCompositingChanges;
 - (void)_setBaseCTM:(CGAffineTransform)transform forContext:(CGContextRef)context;
 
 // For DumpRenderTree

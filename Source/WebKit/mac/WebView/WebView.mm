@@ -3870,15 +3870,6 @@ static inline IMP getMethod(id o, SEL s)
     return NO;
 }
 
-- (BOOL)_flushCompositingChanges
-{
-    Frame* frame = [self _mainCoreFrame];
-    if (frame && frame->view())
-        return frame->view()->flushCompositingStateIncludingSubframes();
-
-    return YES;
-}
-
 - (void)_setBaseCTM:(CGAffineTransform)transform forContext:(CGContextRef)context
 {
     WKSetBaseCTM(context, transform);
@@ -8418,6 +8409,15 @@ bool LayerFlushController::flushLayers()
     if (!_private->layerFlushController)
         _private->layerFlushController = LayerFlushController::create(self);
     _private->layerFlushController->scheduleLayerFlush();
+}
+
+- (BOOL)_flushCompositingChanges
+{
+    Frame* frame = [self _mainCoreFrame];
+    if (frame && frame->view())
+        return frame->view()->flushCompositingStateIncludingSubframes();
+
+    return YES;
 }
 
 #if PLATFORM(IOS)

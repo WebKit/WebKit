@@ -102,6 +102,7 @@ OBJC_CLASS NSTextAlternatives;
 - (BOOL)_needsOneShotDrawingSynchronization;
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
 - (void)_scheduleCompositingLayerFlush;
+- (BOOL)_flushCompositingChanges;
 
 #if USE(GLIB)
 - (void)_scheduleGlibContextIterations;

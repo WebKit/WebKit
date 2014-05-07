@@ -1394,8 +1394,10 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     // On window close we will be called when the datasource is nil, then hit an assert in _topHTMLView
     // So check if the dataSource is nil before calling [self _isTopHTMLView], this can be removed
     // once the FIXME in _isTopHTMLView is fixed.
-    if (_private->dataSource && [self _isTopHTMLView])
+    if (_private->dataSource && [self _isTopHTMLView]) {
         [self _web_updateLayoutAndStyleIfNeededRecursive];
+        [[self _webView] _flushCompositingChanges];
+    }
 
     [super viewWillDraw];
 }
