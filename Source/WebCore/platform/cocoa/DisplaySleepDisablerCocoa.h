@@ -34,11 +34,10 @@ namespace WebCore {
 
 class DisplaySleepDisablerCocoa : public DisplaySleepDisabler {
 public:
+    DisplaySleepDisablerCocoa(const char*);
     virtual ~DisplaySleepDisablerCocoa();
 
 private:
-    DisplaySleepDisablerCocoa(const char*);
-
     uint32_t m_disableDisplaySleepAssertion;
 };
 

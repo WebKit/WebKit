@@ -35,7 +35,7 @@ namespace WebCore {
 
 std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* reason)
 {
-    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisabler(reason));
+    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisablerCocoa(reason));
 }
 
 DisplaySleepDisablerCocoa::DisplaySleepDisablerCocoa(const char* reason)

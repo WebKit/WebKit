@@ -1,3 +1,16 @@
+2014-05-06  Jer Noble  <jer.noble@apple.com>
+
+        [iOS][Mac] Display sleeps while playing <video> content.
+        https://bugs.webkit.org/show_bug.cgi?id=132624
+
+        Reviewed by Darin Adler.
+
+        On iOS and Mac, create a DisplaySleepDisablerCocoa rather than an (no-op) DisplaySleepDisabler.
+
+        * platform/cocoa/DisplaySleepDisablerCocoa.cpp:
+        (WebCore::DisplaySleepDisabler::create):
+        * platform/cocoa/DisplaySleepDisablerCocoa.h:
+
 2014-05-06  Dean Jackson  <dino@apple.com>
 
         [Mac] Allow focus rings to redraw themselves if necessary
