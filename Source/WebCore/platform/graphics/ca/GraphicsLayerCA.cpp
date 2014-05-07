@@ -311,7 +311,7 @@ static inline bool supportsAcceleratedFilterAnimations()
 }
 #endif
 
-std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
+std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client)
 {
     std::unique_ptr<GraphicsLayer> graphicsLayer;
     if (!factory)
@@ -362,7 +362,7 @@ PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(Platf
 #endif
 }
 
-GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
+GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient& client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_isPageTiledBackingLayer(false)
@@ -375,7 +375,7 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
 void GraphicsLayerCA::initialize()
 {
     PlatformCALayer::LayerType layerType = PlatformCALayer::LayerTypeWebLayer;
-    if (m_client && m_client->shouldUseTiledBacking(this)) {
+    if (client().shouldUseTiledBacking(this)) {
         layerType = PlatformCALayer::LayerTypePageTiledBackingLayer;
         m_isPageTiledBackingLayer = true;
     }
@@ -860,8 +860,7 @@ void GraphicsLayerCA::removeAnimation(const String& animationName)
 
 void GraphicsLayerCA::platformCALayerAnimationStarted(CFTimeInterval startTime)
 {
-    if (m_client)
-        m_client->notifyAnimationStarted(this, startTime);
+    client().notifyAnimationStarted(this, startTime);
 }
 
 void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
@@ -1012,8 +1011,7 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
     FloatPoint offset;
     for (const GraphicsLayer* currLayer = this; currLayer; currLayer = currLayer->parent()) {
         if (currLayer->appliesPageScale()) {
-            if (currLayer->client())
-                pageScale = currLayer->pageScaleFactor();
+            pageScale = currLayer->pageScaleFactor();
             return offset;
         }
 
@@ -1041,8 +1039,8 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
     commitLayerChangesBeforeSublayers(commitState, pageScaleFactor, offset, m_visibleRect);
     commitLayerChangesAfterSublayers(commitState);
 
-    if (hadChanges && client())
-        client()->didCommitChangesForLayer(this);
+    if (hadChanges)
+        client().didCommitChangesForLayer(this);
 }
 
 bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformState& state) const
@@ -1130,12 +1128,11 @@ FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state, ComputeVisi
     TransformState::TransformAccumulation accumulation = preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
 
     FloatPoint position = m_position;
-    if (client())
-        client()->customPositionForVisibleRectComputation(this, position);
+    client().customPositionForVisibleRectComputation(this, position);
 
     TransformationMatrix layerTransform;
     TransformationMatrix currentTransform;
-    if ((flags & RespectAnimatingTransforms) && client() && client()->getCurrentTransform(this, currentTransform))
+    if ((flags & RespectAnimatingTransforms) && client().getCurrentTransform(this, currentTransform))
         layerTransform = this->layerTransform(position, &currentTransform);
     else
         layerTransform = this->layerTransform(position);
@@ -1273,11 +1270,11 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         commitLayerChangesAfterSublayers(childCommitState);
     }
 
-    if (affectedByTransformAnimation && client() && m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
-        client()->notifyFlushBeforeDisplayRefresh(this);
+    if (affectedByTransformAnimation && m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
+        client().notifyFlushBeforeDisplayRefresh(this);
 
-    if (hadChanges && client())
-        client()->didCommitChangesForLayer(this);
+    if (hadChanges)
+        client().didCommitChangesForLayer(this);
 }
 
 bool GraphicsLayerCA::platformCALayerShowRepaintCounter(PlatformCALayer* platformLayer) const
@@ -1307,21 +1304,17 @@ float GraphicsLayerCA::platformCALayerDeviceScaleFactor() const
 
 float GraphicsLayerCA::platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const
 {
-    return client() ? client()->contentsScaleMultiplierForNewTiles(this) : 1;
+    return client().contentsScaleMultiplierForNewTiles(this);
 }
 
 bool GraphicsLayerCA::platformCALayerShouldAggressivelyRetainTiles(PlatformCALayer*) const
 {
-    if (GraphicsLayerClient* layerClient = client())
-        return layerClient->shouldAggressivelyRetainTiles(this);
-    return false;
+    return client().shouldAggressivelyRetainTiles(this);
 }
 
 bool GraphicsLayerCA::platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const
 {
-    if (GraphicsLayerClient* layerClient = client())
-        return layerClient->shouldTemporarilyRetainTileCohorts(this);
-    return true;
+    return client().shouldTemporarilyRetainTileCohorts(this);
 }
 
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect, TransformationMatrix* transformFromRoot)
@@ -1664,7 +1657,7 @@ void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)
     bool contentsOpaque = m_contentsOpaque;
     if (contentsOpaque) {
         float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor, pageScaleFactor * deviceScaleFactor());
-        if (!isIntegral(contentsScale) && !m_client->paintsOpaquelyAtNonIntegralScales(this))
+        if (!isIntegral(contentsScale) && !m_client.paintsOpaquelyAtNonIntegralScales(this))
             contentsOpaque = false;
     }
     
@@ -2946,7 +2939,7 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
     float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor, pageScaleFactor * deviceScaleFactor());
 
     if (m_isPageTiledBackingLayer && tiledBacking()) {
-        float zoomedOutScale = m_client->zoomedOutPageScaleFactor() * deviceScaleFactor();
+        float zoomedOutScale = m_client.zoomedOutPageScaleFactor() * deviceScaleFactor();
         tiledBacking()->setZoomedOutContentsScale(zoomedOutScale);
     }
 
@@ -3157,8 +3150,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     // need to tell new layer to draw itself
     setNeedsDisplay();
     
-    if (client())
-        client()->tiledBackingUsageChanged(this, m_usingTiledBacking);
+    client().tiledBackingUsageChanged(this, m_usingTiledBacking);
 }
 
 GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContentsOrientation() const
@@ -3503,8 +3495,8 @@ void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags, ScheduleF
 
     if (scheduleFlush == ScheduleFlush) {
         bool needsFlush = !hadUncommittedChanges || oldCanThrottleLayerFlush != canThrottleLayerFlush();
-        if (needsFlush && m_client)
-            m_client->notifyFlushRequired(this);
+        if (needsFlush)
+            client().notifyFlushRequired(this);
     }
 }
 

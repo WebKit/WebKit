@@ -174,7 +174,7 @@ void CompositingCoordinator::createRootLayer(const IntSize& size)
 {
     ASSERT(!m_rootLayer);
     // Create a root layer.
-    m_rootLayer = GraphicsLayer::create(this, this);
+    m_rootLayer = GraphicsLayer::create(this, *this);
 #ifndef NDEBUG
     m_rootLayer->setName("CompositingCoordinator root layer");
 #endif
@@ -257,7 +257,7 @@ void CompositingCoordinator::paintContents(const GraphicsLayer* graphicsLayer, G
     m_client->paintLayerContents(graphicsLayer, graphicsContext, enclosingIntRect(clipRect));
 }
 
-std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayerClient* client)
+std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayerClient& client)
 {
     CoordinatedGraphicsLayer* layer = new CoordinatedGraphicsLayer(client);
     layer->setCoordinator(this);

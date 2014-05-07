@@ -55,7 +55,7 @@ public:
     // to keep the overall tile cost low.
     static const int kTiledLayerTileSize = 512;
 
-    GraphicsLayerCA(GraphicsLayerClient*);
+    explicit GraphicsLayerCA(GraphicsLayerClient&);
     virtual ~GraphicsLayerCA();
 
     virtual void initialize() override;

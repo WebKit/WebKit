@@ -1,3 +1,70 @@
+2014-05-07  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        GraphicsLayer::client() should return a reference.
+        https://bugs.webkit.org/show_bug.cgi?id=126372
+
+        Reviewed by Simon Fraser.
+
+        GraphicsLayers always have a GraphicsLayerClient attached,
+        so make client() a reference and remove some unnecessary branches.
+        The author of the changes in the mac port is Andreas Kling <akling@apple.com>.
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::GraphicsLayer::willBeDestroyed):
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents):
+        (WebCore::GraphicsLayer::addRepaintRect):
+        (WebCore::dumpChildren):
+        (WebCore::GraphicsLayer::dumpProperties):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::client):
+        (WebCore::GraphicsLayer::pageScaleFactor):
+        (WebCore::GraphicsLayer::deviceScaleFactor):
+        * platform/graphics/GraphicsLayerFactory.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayer::create):
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::initialize):
+        (WebCore::GraphicsLayerCA::platformCALayerAnimationStarted):
+        (WebCore::GraphicsLayerCA::computePositionRelativeToBase):
+        (WebCore::GraphicsLayerCA::flushCompositingStateForThisLayerOnly):
+        (WebCore::GraphicsLayerCA::computeVisibleRect):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::platformCALayerContentsScaleMultiplierForNewTiles):
+        (WebCore::GraphicsLayerCA::platformCALayerShouldAggressivelyRetainTiles):
+        (WebCore::GraphicsLayerCA::platformCALayerShouldTemporarilyRetainTileCohorts):
+        (WebCore::GraphicsLayerCA::updateContentsOpaque):
+        (WebCore::GraphicsLayerCA::updateContentsScale):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::noteLayerPropertyChanged):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayer::create):
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::notifyChange):
+        (WebCore::GraphicsLayerTextureMapper::commitLayerChanges):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::createRootLayer):
+        (WebCore::CompositingCoordinator::createGraphicsLayer):
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::notifyFlushRequired):
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::computeTransformedVisibleRect):
+        (WebCore::CoordinatedGraphicsLayer::animationStartedTimerFired):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+
 2014-05-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Corrected typo

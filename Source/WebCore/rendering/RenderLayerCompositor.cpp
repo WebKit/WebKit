@@ -2904,7 +2904,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLa
     }
 
     if (!m_layerForTopOverhangArea) {
-        m_layerForTopOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), this);
+        m_layerForTopOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
         m_layerForTopOverhangArea->setName("top overhang area");
 #endif
@@ -2928,7 +2928,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool want
     }
 
     if (!m_layerForBottomOverhangArea) {
-        m_layerForBottomOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), this);
+        m_layerForBottomOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
         m_layerForBottomOverhangArea->setName("bottom overhang area");
 #endif
@@ -2958,7 +2958,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
     }
 
     if (!m_layerForHeader) {
-        m_layerForHeader = GraphicsLayer::create(graphicsLayerFactory(), this);
+        m_layerForHeader = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
         m_layerForHeader->setName("header");
 #endif
@@ -2998,7 +2998,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
     }
 
     if (!m_layerForFooter) {
-        m_layerForFooter = GraphicsLayer::create(graphicsLayerFactory(), this);
+        m_layerForFooter = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
         m_layerForFooter->setName("footer");
 #endif
@@ -3064,7 +3064,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #if ENABLE(RUBBER_BANDING)
     if (requiresOverhangAreasLayer()) {
         if (!m_layerForOverhangAreas) {
-            m_layerForOverhangAreas = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_layerForOverhangAreas = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
             m_layerForOverhangAreas->setName("overhang areas");
 #endif
@@ -3092,7 +3092,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 
     if (requiresContentShadowLayer()) {
         if (!m_contentShadowLayer) {
-            m_contentShadowLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_contentShadowLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
             m_contentShadowLayer->setName("content shadow");
 #endif
@@ -3110,7 +3110,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 
     if (requiresHorizontalScrollbarLayer()) {
         if (!m_layerForHorizontalScrollbar) {
-            m_layerForHorizontalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_layerForHorizontalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_layerForHorizontalScrollbar->setShowDebugBorder(m_showDebugBorders);
 #ifndef NDEBUG
             m_layerForHorizontalScrollbar->setName("horizontal scrollbar container");
@@ -3134,7 +3134,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 
     if (requiresVerticalScrollbarLayer()) {
         if (!m_layerForVerticalScrollbar) {
-            m_layerForVerticalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_layerForVerticalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_layerForVerticalScrollbar->setShowDebugBorder(m_showDebugBorders);
 #ifndef NDEBUG
             m_layerForVerticalScrollbar->setName("vertical scrollbar container");
@@ -3157,7 +3157,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 
     if (requiresScrollCornerLayer()) {
         if (!m_layerForScrollCorner) {
-            m_layerForScrollCorner = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_layerForScrollCorner = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_layerForScrollCorner->setShowDebugBorder(m_showDebugBorders);
 #ifndef NDEBUG
             m_layerForScrollCorner->setName("scroll corner");
@@ -3182,7 +3182,7 @@ void RenderLayerCompositor::ensureRootLayer()
          return;
 
     if (!m_rootContentLayer) {
-        m_rootContentLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
+        m_rootContentLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
         m_rootContentLayer->setName("content root");
 #endif
@@ -3207,19 +3207,19 @@ void RenderLayerCompositor::ensureRootLayer()
             ASSERT(!m_clipLayer);
 
             // Create a layer to host the clipping layer and the overflow controls layers.
-            m_overflowControlsHostLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_overflowControlsHostLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
             m_overflowControlsHostLayer->setName("overflow controls host");
 #endif
 
             // Create a clipping layer if this is an iframe
-            m_clipLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_clipLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
             m_clipLayer->setName("frame clipping");
 #endif
             m_clipLayer->setMasksToBounds(true);
             
-            m_scrollLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_scrollLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
             m_scrollLayer->setName("frame scrolling");
 #endif

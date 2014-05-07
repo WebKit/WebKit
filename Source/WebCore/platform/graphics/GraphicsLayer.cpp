@@ -71,7 +71,7 @@ void KeyframeValueList::insert(PassOwnPtr<const AnimationValue> value)
     m_values.append(value);
 }
 
-GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
+GraphicsLayer::GraphicsLayer(GraphicsLayerClient& client)
     : m_client(client)
     , m_anchorPoint(0.5f, 0.5f, 0)
     , m_opacity(1)
@@ -101,8 +101,7 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     , m_customBehavior(NoCustomBehavior)
 {
 #ifndef NDEBUG
-    if (m_client)
-        m_client->verifyNotPainting();
+    m_client.verifyNotPainting();
 #endif
 }
 
@@ -115,8 +114,7 @@ GraphicsLayer::~GraphicsLayer()
 void GraphicsLayer::willBeDestroyed()
 {
 #ifndef NDEBUG
-    if (m_client)
-        m_client->verifyNotPainting();
+    m_client.verifyNotPainting();
 #endif
     if (m_replicaLayer)
         m_replicaLayer->setReplicatedLayer(0);
@@ -326,15 +324,13 @@ void GraphicsLayer::setBackgroundColor(const Color& color)
 
 void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const FloatRect& clip)
 {
-    if (m_client) {
-        FloatSize offset = offsetFromRenderer();
-        context.translate(-offset);
+    FloatSize offset = offsetFromRenderer();
+    context.translate(-offset);
 
-        FloatRect clipRect(clip);
-        clipRect.move(offset);
+    FloatRect clipRect(clip);
+    clipRect.move(offset);
 
-        m_client->paintContents(this, context, m_paintingPhase, clipRect);
-    }
+    m_client.paintContents(this, context, m_paintingPhase, clipRect);
 }
 
 String GraphicsLayer::animationNameForTransition(AnimatedPropertyID property)
@@ -557,7 +553,7 @@ void GraphicsLayer::resetTrackedRepaints()
 
 void GraphicsLayer::addRepaintRect(const FloatRect& repaintRect)
 {
-    if (m_client->isTrackingRepaints()) {
+    if (m_client.isTrackingRepaints()) {
         FloatRect largestRepaintRect(FloatPoint(), m_size);
         largestRepaintRect.intersect(repaintRect);
         RepaintMap::iterator repaintIt = repaintRectMap().find(this);
@@ -592,7 +588,7 @@ static void dumpChildren(TextStream& ts, const Vector<GraphicsLayer*>& children,
 {
     totalChildCount += children.size();
     for (auto* child : children) {
-        if (!child->client()->shouldSkipLayerInDump(child)) {
+        if (!child->client().shouldSkipLayerInDump(child)) {
             child->dumpLayer(ts, indent + 2, behavior);
             continue;
         }
@@ -651,7 +647,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         ts << "(preserves3D " << m_preserves3D << ")\n";
     }
 
-    if (m_drawsContent && m_client->shouldDumpPropertyForLayer(this, "drawsContent")) {
+    if (m_drawsContent && m_client.shouldDumpPropertyForLayer(this, "drawsContent")) {
         writeIndent(ts, indent + 1);
         ts << "(drawsContent " << m_drawsContent << ")\n";
     }
@@ -668,15 +664,10 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
 
     if (behavior & LayerTreeAsTextDebug) {
         writeIndent(ts, indent + 1);
-        ts << "(";
-        if (m_client)
-            ts << "client " << static_cast<void*>(m_client);
-        else
-            ts << "no client";
-        ts << ")\n";
+        ts << "(client " << static_cast<void*>(&m_client) << ")\n";
     }
 
-    if (m_backgroundColor.isValid() && m_client->shouldDumpPropertyForLayer(this, "backgroundColor")) {
+    if (m_backgroundColor.isValid() && m_client.shouldDumpPropertyForLayer(this, "backgroundColor")) {
         writeIndent(ts, indent + 1);
         ts << "(backgroundColor " << m_backgroundColor.nameForRenderTreeAsText() << ")\n";
     }
@@ -718,7 +709,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         ts << ")\n";
     }
 
-    if (behavior & LayerTreeAsTextIncludeRepaintRects && repaintRectMap().contains(this) && !repaintRectMap().get(this).isEmpty() && m_client->shouldDumpPropertyForLayer(this, "repaintRects")) {
+    if (behavior & LayerTreeAsTextIncludeRepaintRects && repaintRectMap().contains(this) && !repaintRectMap().get(this).isEmpty() && m_client.shouldDumpPropertyForLayer(this, "repaintRects")) {
         writeIndent(ts, indent + 1);
         ts << "(repaint rects\n";
         for (size_t i = 0; i < repaintRectMap().get(this).size(); ++i) {

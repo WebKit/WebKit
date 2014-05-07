@@ -51,8 +51,8 @@ static CoordinatedLayerID toCoordinatedLayerID(GraphicsLayer* layer)
 bool CoordinatedGraphicsLayer::notifyFlushRequired()
 {
     ASSERT(m_coordinator);
-    if (client() && !m_coordinator->isFlushingLayerChanges()) {
-        client()->notifyFlushRequired(this);
+    if (!m_coordinator->isFlushingLayerChanges()) {
+        client().notifyFlushRequired(this);
         return true;
     }
     return false;
@@ -105,7 +105,7 @@ void CoordinatedGraphicsLayer::didChangeGeometry()
     setShouldUpdateVisibleRect();
 }
 
-CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient* client)
+CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient& client)
     : GraphicsLayer(client)
 #ifndef NDEBUG
     , m_isPurging(false)
@@ -1133,7 +1133,7 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
     m_shouldUpdateVisibleRect = false;
     TransformationMatrix currentTransform = transform();
     if (m_movingVisibleRect)
-        client()->getCurrentTransform(this, currentTransform);
+        client().getCurrentTransform(this, currentTransform);
     m_layerTransform.setLocalTransform(currentTransform);
 
     m_layerTransform.setAnchorPoint(m_adjustedAnchorPoint);
@@ -1226,7 +1226,7 @@ void CoordinatedGraphicsLayer::resumeAnimations()
 
 void CoordinatedGraphicsLayer::animationStartedTimerFired(Timer<CoordinatedGraphicsLayer>*)
 {
-    client()->notifyAnimationStarted(this, m_lastAnimationStartTime);
+    client().notifyAnimationStarted(this, m_lastAnimationStartTime);
 }
 } // namespace WebCore
 #endif // USE(COORDINATED_GRAPHICS)

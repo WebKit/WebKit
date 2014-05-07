@@ -226,7 +226,7 @@ protected:
 class GraphicsLayer {
     WTF_MAKE_NONCOPYABLE(GraphicsLayer); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient*);
+    static std::unique_ptr<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient&);
     
     virtual ~GraphicsLayer();
 
@@ -235,7 +235,7 @@ public:
     typedef uint64_t PlatformLayerID;
     virtual PlatformLayerID primaryLayerID() const { return 0; }
 
-    GraphicsLayerClient* client() const { return m_client; }
+    GraphicsLayerClient& client() const { return m_client; }
 
     // Layer name. Only used to identify layers in debug output
     const String& name() const { return m_name; }
@@ -464,8 +464,8 @@ public:
     virtual void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
     virtual bool appliesPageScale() const { return m_appliesPageScale; }
 
-    float pageScaleFactor() const { return m_client ? m_client->pageScaleFactor() : 1; }
-    float deviceScaleFactor() const { return m_client ? m_client->deviceScaleFactor() : 1; }
+    float pageScaleFactor() const { return m_client.pageScaleFactor(); }
+    float deviceScaleFactor() const { return m_client.deviceScaleFactor(); }
 
     virtual void deviceOrPageScaleFactorChanged() { }
     void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
@@ -548,14 +548,14 @@ protected:
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }
     virtual void setReplicatedLayer(GraphicsLayer* layer) { m_replicatedLayer = layer; }
 
-    GraphicsLayer(GraphicsLayerClient*);
+    explicit GraphicsLayer(GraphicsLayerClient&);
 
     void dumpProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const;
     virtual void dumpAdditionalProperties(TextStream&, int /*indent*/, LayerTreeAsTextBehavior) const { }
 
     virtual void getDebugBorderInfo(Color&, float& width) const;
 
-    GraphicsLayerClient* m_client;
+    GraphicsLayerClient& m_client;
     String m_name;
     
     // Offset from the owning renderer

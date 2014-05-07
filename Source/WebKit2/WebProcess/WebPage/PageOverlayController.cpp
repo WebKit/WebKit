@@ -52,8 +52,8 @@ void PageOverlayController::initialize()
     ASSERT(!m_documentOverlayRootLayer);
     ASSERT(!m_viewOverlayRootLayer);
 
-    m_documentOverlayRootLayer = GraphicsLayer::create(m_webPage.drawingArea()->graphicsLayerFactory(), this);
-    m_viewOverlayRootLayer = GraphicsLayer::create(m_webPage.drawingArea()->graphicsLayerFactory(), this);
+    m_documentOverlayRootLayer = GraphicsLayer::create(m_webPage.drawingArea()->graphicsLayerFactory(), *this);
+    m_viewOverlayRootLayer = GraphicsLayer::create(m_webPage.drawingArea()->graphicsLayerFactory(), *this);
 #ifndef NDEBUG
     m_documentOverlayRootLayer->setName("Page Overlay container (document-relative)");
     m_viewOverlayRootLayer->setName("Page Overlay container (view-relative)");
@@ -87,7 +87,7 @@ void PageOverlayController::installPageOverlay(PassRefPtr<PageOverlay> pageOverl
     if (fadeMode == PageOverlay::FadeMode::Fade)
         overlay->startFadeInAnimation();
 
-    std::unique_ptr<GraphicsLayer> layer = GraphicsLayer::create(m_webPage.drawingArea()->graphicsLayerFactory(), this);
+    std::unique_ptr<GraphicsLayer> layer = GraphicsLayer::create(m_webPage.drawingArea()->graphicsLayerFactory(), *this);
     layer->setAnchorPoint(FloatPoint3D());
     layer->setBackgroundColor(overlay->backgroundColor());
     updateOverlayGeometry(*overlay, *layer);

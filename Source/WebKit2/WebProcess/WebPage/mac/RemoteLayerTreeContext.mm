@@ -86,7 +86,7 @@ void RemoteLayerTreeContext::backingStoreWillBeDestroyed(RemoteLayerBackingStore
     m_backingStoreCollection.backingStoreWillBeDestroyed(backingStore);
 }
 
-std::unique_ptr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(GraphicsLayerClient* client)
+std::unique_ptr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(GraphicsLayerClient& client)
 {
     return std::make_unique<GraphicsLayerCARemote>(client, this);
 }

@@ -35,7 +35,7 @@ TextureMapperLayer* toTextureMapperLayer(GraphicsLayer* layer)
     return layer ? toGraphicsLayerTextureMapper(layer)->layer() : 0;
 }
 
-std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
+std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client)
 {
     if (!factory)
         return std::make_unique<GraphicsLayerTextureMapper>(client);
@@ -43,7 +43,7 @@ std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* facto
     return factory->createGraphicsLayer(client);
 }
 
-GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient* client)
+GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient& client)
     : GraphicsLayer(client)
     , m_layer(std::make_unique<TextureMapperLayer>())
     , m_compositedNativeImagePtr(0)
@@ -60,9 +60,7 @@ GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient* clie
 void GraphicsLayerTextureMapper::notifyChange(ChangeMask changeMask)
 {
     m_changeMask |= changeMask;
-    if (!client())
-        return;
-    client()->notifyFlushRequired(this);
+    client().notifyFlushRequired(this);
 }
 
 void GraphicsLayerTextureMapper::setName(const String& name)
@@ -560,7 +558,7 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
         m_layer->setAnimations(m_animations);
 
     if (m_changeMask & AnimationStarted)
-        client()->notifyAnimationStarted(this, m_animationStartTime);
+        client().notifyAnimationStarted(this, m_animationStartTime);
 
     if (m_changeMask & FixedToViewporChange)
         m_layer->setFixedToViewport(fixedToViewport());

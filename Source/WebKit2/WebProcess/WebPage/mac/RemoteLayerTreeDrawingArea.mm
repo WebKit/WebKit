@@ -51,7 +51,7 @@ namespace WebKit {
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const WebPageCreationParameters&)
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
     , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
-    , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), nullptr))
+    , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), *this))
     , m_exposedRect(FloatRect::infiniteRect())
     , m_scrolledExposedRect(FloatRect::infiniteRect())
     , m_layerFlushTimer(this, &RemoteLayerTreeDrawingArea::layerFlushTimerFired)

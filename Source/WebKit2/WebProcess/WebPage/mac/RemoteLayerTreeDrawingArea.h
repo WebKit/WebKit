@@ -28,6 +28,7 @@
 
 #include "DrawingArea.h"
 #include "GraphicsLayerCARemote.h"
+#include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
 
@@ -39,7 +40,7 @@ namespace WebKit {
 
 class RemoteLayerTreeContext;
 
-class RemoteLayerTreeDrawingArea : public DrawingArea {
+class RemoteLayerTreeDrawingArea : public DrawingArea, public WebCore::GraphicsLayerClient {
 public:
     RemoteLayerTreeDrawingArea(WebPage*, const WebPageCreationParameters&);
     virtual ~RemoteLayerTreeDrawingArea();
@@ -82,6 +83,11 @@ private:
 #endif
 
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+
+    // GraphicsLayerClient
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) override { }
+    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) override { }
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& inClip) override { }
 
     void updateScrolledExposedRect();
 
