@@ -2294,6 +2294,8 @@ _wkDrawBezeledTextArea
 _wkDrawBezeledTextFieldCell
 _wkDrawCapsLockIndicator
 _wkDrawFocusRing
+_wkDrawFocusRingAtTime
+_wkDrawCellFocusRingWithFrameAtTime
 _wkDrawMediaSliderTrack
 _wkDrawMediaUIPart
 _wkDrawTextFieldCellFocusRing

@@ -28,6 +28,7 @@
 
 #include "FocusDirection.h"
 #include "LayoutRect.h"
+#include "Timer.h"
 #include "ViewState.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -88,6 +89,9 @@ public:
     Element* nextFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
     Element* previousFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
 
+    void setFocusedElementNeedsRepaint();
+    double timeSinceFocusWasSet() const;
+
 private:
     void setActiveInternal(bool);
     void setFocusedInternal(bool);
@@ -116,10 +120,15 @@ private:
     bool advanceFocusDirectionallyInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*);
     void findFocusCandidateInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);
 
+    void focusRepaintTimerFired(Timer<FocusController>&);
+
     Page& m_page;
     RefPtr<Frame> m_focusedFrame;
     bool m_isChangingFocusedFrame;
     ViewState::Flags m_viewState;
+
+    Timer<FocusController> m_focusRepaintTimer;
+    double m_focusSetTime;
 };
 
 } // namespace WebCore

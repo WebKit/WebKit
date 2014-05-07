@@ -60,6 +60,8 @@ void InitWebCoreSystemInterface(void)
         INIT(DrawBezeledTextFieldCell);
         INIT(DrawCapsLockIndicator);
         INIT(DrawFocusRing);
+        INIT(DrawFocusRingAtTime);
+        INIT(DrawCellFocusRingWithFrameAtTime);
         INIT(DrawMediaSliderTrack);
         INIT(DrawMediaUIPart);
         INIT(DrawTextFieldCellFocusRing);

@@ -1,3 +1,13 @@
+2014-05-06  Dean Jackson  <dino@apple.com>
+
+        [Mac] Allow focus rings to redraw themselves if necessary
+        https://bugs.webkit.org/show_bug.cgi?id=132593
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Add DrawFocusRingAtTime and DrawCellFocusRingWithFrameAtTime.
+
 2014-05-06  Brady Eidson  <beidson@apple.com>
 
         Don't select an image that is about to have its menu shown.

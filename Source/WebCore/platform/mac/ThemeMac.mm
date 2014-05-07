@@ -30,7 +30,6 @@
 #import "GraphicsContext.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "ScrollView.h"
-#import "WebCoreNSCellExtras.h"
 #import "WebCoreSystemInterface.h"
 #import <Carbon/Carbon.h>
 #include <wtf/StdLibExtras.h>
@@ -283,9 +282,15 @@ static const int* checkboxMargins(NSControlSize controlSize)
 {
     static const int margins[3][4] =
     {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+        { 7, 8, 8, 6 },
+        { 8, 7, 7, 7 },
+        { 8, 7, 7, 7 },
+#else
         { 3, 4, 4, 2 },
         { 4, 3, 3, 3 },
         { 4, 3, 3, 3 },
+#endif
     };
     return margins[controlSize];
 }
@@ -312,9 +317,15 @@ static const int* radioMargins(NSControlSize controlSize)
 {
     static const int margins[3][4] =
     {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+        { 6, 6, 8, 6 },
+        { 7, 6, 7, 6 },
+        { 5, 4, 6, 4 },
+#else
         { 2, 2, 4, 2 },
         { 3, 2, 3, 2 },
         { 1, 0, 2, 0 },
+#endif
     };
     return margins[controlSize];
 }
@@ -432,13 +443,13 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
         [toggleButtonCell _renderCurrentAnimationFrameInContext:context->platformContext() atLocation:NSMakePoint(0, 0)];
 #endif
     }
+    bool needsRepaint = false;
     if (controlStates->states() & ControlStates::FocusState)
-        [toggleButtonCell _web_drawFocusRingWithFrame:NSRect(inflatedRect) inView:view];
+        needsRepaint = wkDrawCellFocusRingWithFrameAtTime(toggleButtonCell, inflatedRect, view, controlStates->timeSinceControlWasFocused());
     [toggleButtonCell setControlView:nil];
     
-    bool needsRepaint = false;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-    needsRepaint = [toggleButtonCell _stateAnimationRunning];
+    needsRepaint |= [toggleButtonCell _stateAnimationRunning];
 #endif
     controlStates->setNeedsRepaint(needsRepaint);
     if (needsRepaint)
@@ -460,9 +471,15 @@ static const int* buttonMargins(NSControlSize controlSize)
 {
     static const int margins[3][4] =
     {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+        { 8, 10, 11, 10 },
+        { 8, 9, 10, 9 },
+        { 4, 5, 5, 5 },
+#else
         { 4, 6, 7, 6 },
         { 4, 5, 6, 5 },
         { 0, 1, 1, 1 },
+#endif
     };
     return margins[controlSize];
 }
@@ -556,8 +573,12 @@ static void paintButton(ControlPart part, ControlStates* controlStates, Graphics
         [window setDefaultButtonCell:nil];
 
     [buttonCell drawWithFrame:NSRect(inflatedRect) inView:view];
+    bool needsRepaint = false;
     if (states & ControlStates::FocusState)
-        [buttonCell _web_drawFocusRingWithFrame:NSRect(inflatedRect) inView:view];
+        needsRepaint = wkDrawCellFocusRingWithFrameAtTime(buttonCell, inflatedRect, view, controlStates->timeSinceControlWasFocused());
+
+    controlStates->setNeedsRepaint(needsRepaint);
+
     [buttonCell setControlView:nil];
 
     if (![previousDefaultButtonCell isEqual:buttonCell])

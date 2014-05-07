@@ -54,9 +54,11 @@
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
 #include "StyleResolver.h"
+#include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
 
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -369,7 +371,7 @@ void RenderElement::initializeStyle()
     // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
     // during styleDidChange (it's used by clippedOverflowRectForRepaint()).
     if (m_style->outlineWidth() > 0 && m_style->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
-        view().setMaximalOutlineSize(m_style->outlineSize());
+        view().setMaximalOutlineSize(std::max(theme().platformFocusRingMaxWidth(), static_cast<int>(m_style->outlineSize())));
 
     styleDidChange(StyleDifferenceEqual, nullptr);
 
@@ -422,7 +424,7 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
     // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
     // during styleDidChange (it's used by clippedOverflowRectForRepaint()).
     if (m_style->outlineWidth() > 0 && m_style->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
-        view().setMaximalOutlineSize(m_style->outlineSize());
+        view().setMaximalOutlineSize(std::max(theme().platformFocusRingMaxWidth(), static_cast<int>(m_style->outlineSize())));
 
     bool doesNotNeedLayout = !parent();
 

@@ -30,6 +30,7 @@
 #import "ExceptionCodePlaceholder.h"
 #import "FileList.h"
 #import "FloatRoundedRect.h"
+#import "FocusController.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "GraphicsContextCG.h"
@@ -60,7 +61,6 @@
 #import "TimeRanges.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
-#import "WebCoreNSCellExtras.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/RetainPtr.h>
@@ -294,6 +294,15 @@ Color RenderThemeMac::platformFocusRingColor() const
         return oldAquaFocusRingColor();
 
     return systemColor(CSSValueWebkitFocusRingColor);
+}
+
+int RenderThemeMac::platformFocusRingMaxWidth() const
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+    return 9;
+#else
+    return 0;
+#endif
 }
 
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor() const
@@ -918,8 +927,12 @@ bool RenderThemeMac::paintMenuList(const RenderObject& o, const PaintInfo& paint
 
     NSView *view = documentViewFor(o);
     [popupButton drawWithFrame:inflatedRect inView:view];
-    if (isFocused(o) && o.style().outlineStyleIsAuto())
-        [popupButton _web_drawFocusRingWithFrame:inflatedRect inView:view];
+    if (isFocused(o) && o.style().outlineStyleIsAuto()) {
+        double timeSinceFocused = o.document().page()->focusController().timeSinceFocusWasSet();
+        if (wkDrawCellFocusRingWithFrameAtTime(popupButton, inflatedRect, view, timeSinceFocused))
+            o.document().page()->focusController().setFocusedElementNeedsRepaint();
+    }
+
     [popupButton setControlView:nil];
 
     return false;

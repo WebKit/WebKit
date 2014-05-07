@@ -32,6 +32,7 @@
 #include "EventHandler.h"
 #include "FloatQuad.h"
 #include "FlowThreadController.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -1000,9 +1001,16 @@ void RenderObject::paintFocusRing(PaintInfo& paintInfo, const LayoutPoint& paint
 {
     Vector<IntRect> focusRingRects;
     addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
-    if (style->outlineStyleIsAuto())
+    if (style->outlineStyleIsAuto()) {
+#if PLATFORM(MAC)
+        bool needsRepaint;
+        paintInfo.context->drawFocusRing(focusRingRects, style->outlineWidth(), style->outlineOffset(), document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
+        if (needsRepaint)
+            document().page()->focusController().setFocusedElementNeedsRepaint();
+#else
         paintInfo.context->drawFocusRing(focusRingRects, style->outlineWidth(), style->outlineOffset(), style->visitedDependentColor(CSSPropertyOutlineColor));
-    else
+#endif
+    } else
         addPDFURLRect(paintInfo.context, unionRect(focusRingRects));
 }
 

@@ -59,6 +59,7 @@ typedef const struct __CTTypesetter * CTTypesetterRef;
 typedef const struct __AXUIElement *AXUIElementRef;
 #if !PLATFORM(IOS)
 typedef struct _NSRange NSRange;
+typedef double NSTimeInterval;
 
 typedef UInt32 FMFont;
 typedef FMFont ATSUFontID;
@@ -98,6 +99,7 @@ OBJC_CLASS AVPlayer;
 OBJC_CLASS CALayer;
 OBJC_CLASS NSArray;
 OBJC_CLASS NSButtonCell;
+OBJC_CLASS NSCell;
 OBJC_CLASS NSControl;
 OBJC_CLASS NSCursor;
 OBJC_CLASS NSData;
@@ -155,7 +157,10 @@ extern void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
 extern void (*wkDrawTextFieldCellFocusRing)(NSTextFieldCell*, NSRect);
 extern void (*wkDrawCapsLockIndicator)(CGContextRef, CGRect);
 extern void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
-extern void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int radius);
+extern void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int);
+extern bool (*wkDrawFocusRingAtTime)(CGContextRef, NSTimeInterval time);
+extern bool (*wkDrawCellFocusRingWithFrameAtTime)(NSCell *cell, NSRect cellFrame, NSView *controlView, NSTimeInterval time);
+
 extern NSFont* (*wkGetFontInLanguageForRange)(NSFont*, NSString*, NSRange);
 extern NSFont* (*wkGetFontInLanguageForCharacter)(NSFont*, UniChar);
 extern BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransform*, ATSGlyphRef*, CGSize* advance);

@@ -1,3 +1,83 @@
+2014-05-06  Dean Jackson  <dino@apple.com>
+
+        [Mac] Allow focus rings to redraw themselves if necessary
+        https://bugs.webkit.org/show_bug.cgi?id=132593
+
+        Reviewed by Simon Fraser.
+
+        Mac allows focus rings to change rendering over time. Expose this
+        functionality to WebKit by having the rendering code detect that
+        a focused element has asked to repaint itself, and also have
+        the FocusController object remember how long it has been since
+        an element was focused.
+
+        This patch removes WebCoreNSCellExtras, since a better version is
+        available in WebKitSystemInterface, and it was going to be cumbersome
+        to port the code from there into WebKit.
+
+        * WebCore.exp.in: Export _wkDrawFocusRingAtTime and _wkDrawCellFocusRingWithFrameAtTime.
+        * WebCore.xcodeproj/project.pbxproj: Remove WebCoreNSCellExtras.
+        * page/FocusController.cpp:
+        (WebCore::FocusController::FocusController): Initialize the repaint timer.
+        (WebCore::FocusController::~FocusController): Stop the repaint timer on deletion.
+        (WebCore::FocusController::setFocusedElement): Keep track of the current time when focused.
+        (WebCore::FocusController::focusedElementNeedsRepaint): Start the repaint timer.
+        (WebCore::FocusController::focusRepaintTimerFired): Ask the focused element to repaint itself.
+        (WebCore::FocusController::timeSinceFocusWasSet):
+        * page/FocusController.h: Expose timeSinceFocusWasSet() and focusedElementNeedsRepaint(), as
+        well as add the timer for repainting.
+
+        * platform/ControlStates.h: Add timeSinceControlWasFocused member variable, allowing the platform
+        code such as Theme to obtain the value from FocusController.
+        (WebCore::ControlStates::ControlStates):
+        (WebCore::ControlStates::timeSinceControlWasFocused):
+        (WebCore::ControlStates::setTimeSinceControlWasFocused):
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::drawFocusRing): New Mac-only method that uses timeOffset.
+
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::drawFocusRingToContext): No need to pass in color and radius - these are now
+        ignored in WKDrawFocusRing. However, I didn't want to change the signature of the
+        WKSI function.
+        (WebCore::drawFocusRingToContextAtTime): Call into the new method WKDrawFocusRingAtTime.
+        (WebCore::GraphicsContext::drawFocusRing): Color and radius no longer used.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::checkboxMargins): Update the margins since our focus ring can be a lot bigger.
+        (WebCore::radioMargins): Ditto.
+        (WebCore::paintToggleButton): Drawing a focus ring might trigger a repaint too.
+        (WebCore::buttonMargins): Increase the margins.
+        (WebCore::paintButton): If our focus ring wants to be drawn again, set the ControlStates flag.
+
+        * platform/mac/WebCoreNSCellExtras.h: Removed.
+        * platform/mac/WebCoreNSCellExtras.m: Removed.
+
+        * platform/mac/WebCoreSystemInterface.h: Declare the new methods.
+        * platform/mac/WebCoreSystemInterface.mm:
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::initializeStyle): Expand the overflow rects by the maximum
+        focus ring width. This might be different from the current outline size.
+        (WebCore::RenderElement::setStyle): Ditto.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintFocusRing): If we're on Mac, use the new drawFocusRing method,
+        which sets a parameter to true if the focused element needs a repaint.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::updateControlStatesForRenderer): Copy the value from FocusController
+        so that the platform Theme code can use it.
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::platformFocusRingMaxWidth): Add a way to get the maximum width
+        of a focus ring for the platform. This is used to extend the overflow rects.
+        * rendering/RenderThemeMac.h: Override the focus ring width.
+        * rendering/RenderThemeMac.mm: On newer versions of OS X, we have a larger focus ring.
+        (WebCore::RenderThemeMac::platformFocusRingMaxWidth):
+        (WebCore::RenderThemeMac::paintMenuList): If a menu is focused, and needs a repaint, mark
+        it as such.
+
 2014-05-06  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Animate AVPlayerLayer into and out of full screen

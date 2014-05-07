@@ -403,6 +403,9 @@ namespace WebCore {
 
         void drawFocusRing(const Vector<IntRect>&, int width, int offset, const Color&);
         void drawFocusRing(const Path&, int width, int offset, const Color&);
+#if PLATFORM(MAC)
+        void drawFocusRing(const Vector<IntRect>&, int width, int offset, double timeOffset, bool& needsRedraw);
+#endif
 
         void setLineCap(LineCap);
         void setLineDash(const DashArray&, float dashOffset);

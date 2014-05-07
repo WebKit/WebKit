@@ -60,6 +60,7 @@ public:
         , m_initialized(false)
         , m_needsRepaint(false)
         , m_isDirty(false)
+        , m_timeSinceControlWasFocused(0)
 #if PLATFORM(COCOA)
         , m_controlInstance(nullptr)
 #endif
@@ -91,6 +92,9 @@ public:
     bool isDirty() const { return m_isDirty; }
     void setDirty(bool d) { m_isDirty = d; }
 
+    double timeSinceControlWasFocused() const { return m_timeSinceControlWasFocused; }
+    void setTimeSinceControlWasFocused(double time) { m_timeSinceControlWasFocused = time; }
+
 #if PLATFORM(COCOA)
     PlatformControlInstance platformControl() const { return m_controlInstance.get(); }
     void setPlatformControl(PlatformControlInstance instance) { m_controlInstance = instance; }
@@ -101,6 +105,7 @@ private:
     bool m_initialized;
     bool m_needsRepaint;
     bool m_isDirty;
+    double m_timeSinceControlWasFocused;
 #if PLATFORM(COCOA)
     RetainPtr<PlatformControlInstance> m_controlInstance;
 #endif

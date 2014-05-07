@@ -60,6 +60,7 @@
 #include "Widget.h"
 #include "htmlediting.h" // For firstPositionInOrBeforeNode
 #include <limits>
+#include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -162,6 +163,7 @@ FocusController::FocusController(Page& page, ViewState::Flags viewState)
     : m_page(page)
     , m_isChangingFocusedFrame(false)
     , m_viewState(viewState)
+    , m_focusRepaintTimer(this, &FocusController::focusRepaintTimerFired)
 {
 }
 
@@ -630,6 +632,9 @@ bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newF
     if (newDocument->focusedElement() == element)
         m_page.editorClient()->setInputMethodState(element->shouldUseInputMethod());
 
+    m_focusSetTime = monotonicallyIncreasingTime();
+    m_focusRepaintTimer.stop();
+
     return true;
 }
 
@@ -898,6 +903,30 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     } while (!consumed && container);
 
     return consumed;
+}
+
+void FocusController::setFocusedElementNeedsRepaint()
+{
+    m_focusRepaintTimer.startOneShot(0.033);
+}
+
+void FocusController::focusRepaintTimerFired(Timer<FocusController>&)
+{
+    Document* focusedDocument = focusedOrMainFrame().document();
+    if (!focusedDocument)
+        return;
+
+    Element* focusedElement = focusedDocument->focusedElement();
+    if (!focusedElement)
+        return;
+
+    if (focusedElement->renderer())
+        focusedElement->renderer()->repaint();
+}
+
+double FocusController::timeSinceFocusWasSet() const
+{
+    return monotonicallyIncreasingTime() - m_focusSetTime;
 }
 
 } // namespace WebCore

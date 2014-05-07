@@ -754,6 +754,8 @@ void RenderTheme::updateControlStatesForRenderer(const RenderObject& o, ControlS
 {
     ControlStates newStates = extractControlStatesForRenderer(o);
     controlStates->setStates(newStates.states());
+    if (isFocused(o))
+        controlStates->setTimeSinceControlWasFocused(o.document().page()->focusController().timeSinceFocusWasSet());
 }
 
 ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderObject& o) const
