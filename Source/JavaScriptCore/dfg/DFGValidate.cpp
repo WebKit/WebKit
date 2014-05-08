@@ -45,6 +45,7 @@ public:
     
     #define VALIDATE(context, assertion) do { \
         if (!(assertion)) { \
+            startCrashing(); \
             dataLogF("\n\n\nAt "); \
             reportValidationContext context; \
             dataLogF(": validation %s (%s:%d) failed.\n", #assertion, __FILE__, __LINE__); \
@@ -56,6 +57,7 @@ public:
     
     #define V_EQUAL(context, left, right) do { \
         if (left != right) { \
+            startCrashing(); \
             dataLogF("\n\n\nAt "); \
             reportValidationContext context; \
             dataLogF(": validation (%s = ", #left); \

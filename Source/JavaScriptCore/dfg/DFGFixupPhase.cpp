@@ -1898,6 +1898,7 @@ private:
             Node* result;
             if (edge->hasDoubleResult()) {
                 // This will never happen.
+                startCrashing();
                 dataLog("Found an Int52RepUse to a double result: ", node, " -> ", edge, "\n");
                 m_graph.dump();
                 RELEASE_ASSERT_NOT_REACHED();
@@ -1908,6 +1909,7 @@ private:
             } else {
                 // This is only here for dealing with constants.
                 if (edge->op() != JSConstant) {
+                    startCrashing();
                     dataLog("Found an Int52RepUse on something that is neither Int32 nor a constant: ", node, " -> ", edge, "\n");
                     m_graph.dump();
                     RELEASE_ASSERT_NOT_REACHED();

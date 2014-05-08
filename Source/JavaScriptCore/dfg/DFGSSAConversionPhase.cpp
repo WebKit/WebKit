@@ -347,12 +347,23 @@ public:
                 }
                     
                 case PhantomLocal: {
-                    VariableAccessData* variable = node->variableAccessData();
-                    if (variable->isCaptured())
-                        break;
                     ASSERT(node->child1().useKind() == UntypedUse);
-                    node->child1() =
-                        block->variablesAtHead.operand(variable->local())->defaultEdge();
+                    VariableAccessData* variable = node->variableAccessData();
+                    if (variable->isCaptured()) {
+                        // This is a fun case. We could have a captured variable that had some
+                        // or all of its uses strength reduced to phantoms rather than flushes.
+                        // SSA conversion will currently still treat it as flushed, in the sense
+                        // that it will just keep the SetLocal. Therefore, there is nothing that
+                        // needs to be done here: we don't need to also keep the source value
+                        // alive. And even if we did want to keep the source value alive, we
+                        // wouldn't be able to, because the variablesAtHead value for a captured
+                        // local wouldn't have been computed by the Phi reduction algorithm
+                        // above.
+                        node->children.reset();
+                    } else {
+                        node->child1() =
+                            block->variablesAtHead.operand(variable->local())->defaultEdge();
+                    }
                     node->convertToPhantom();
                     // This is only for Upsilons. An Upsilon will only refer to a
                     // PhantomLocal if there were no SetLocals or GetLocals in the block.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -205,6 +205,11 @@ bool checkAndSet(T& left, U right)
     left = right;
     return true;
 }
+
+// If possible, this will acquire a lock to make sure that if multiple threads
+// start crashing at the same time, you get coherent dump output. Use this only
+// when you're forcing a crash with diagnostics.
+void startCrashing();
 
 } } // namespace JSC::DFG
 

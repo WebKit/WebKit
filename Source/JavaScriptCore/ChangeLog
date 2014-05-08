@@ -1,3 +1,24 @@
+2014-05-08  Filip Pizlo  <fpizlo@apple.com>
+
+        SSA conversion should delete PhantomLocals for captured variables
+        https://bugs.webkit.org/show_bug.cgi?id=132693
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGCommon.cpp:
+        (JSC::DFG::startCrashing): Parallel JIT and a JIT bug means that we man dump IR in parallel. This is the workaround. This patch uses it in all of the places where we dump IR and crash.
+        * dfg/DFGCommon.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge): Use the workaround.
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        (JSC::DFG::LivenessAnalysisPhase::run): Use the workaround.
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run): Fix the bug - it's true that PhantomLocal for captured variables doesn't need anything done to it, but it's wrong that we didn't delete it outright.
+        * dfg/DFGValidate.cpp: Use the workaround.
+        * tests/stress/phantom-local-captured-but-not-flushed-to-ssa.js: Added.
+        (foo):
+        (bar):
+
 2014-05-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168451.
