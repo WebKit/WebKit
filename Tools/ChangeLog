@@ -1,3 +1,15 @@
+2014-05-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r168471): Update the builder names on the scheduler list.
+        https://bugs.webkit.org/show_bug.cgi?id=132699
+
+        Reviewed by Martin Robinson.
+
+        On r168471 I missed to update the builder names for the GTK build
+        bots on the AnyBranchScheduler type scheduler list of bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-05-08  Brady Eidson  <beidson@apple.com>
 
         "shouldKeepCurrentBackForwardListItemInList" API should pass clientInfo to the callback
