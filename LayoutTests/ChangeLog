@@ -1,3 +1,15 @@
+2014-05-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Content overflowing a fixed positioned region is clipped
+        https://bugs.webkit.org/show_bug.cgi?id=118607
+
+        Reviewed by Andrei Bucur.
+
+        Fixed by the overflow in regions work, add test to prevent future regressions.
+
+        * fast/regions/fixed-pos-region-overflow-content-expected.html: Added.
+        * fast/regions/fixed-pos-region-overflow-content.html: Added.
+
 2014-05-08  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Changing isolation CSS property should not trigger repaint in RenderStyle::changeRequiresLayerRepaint

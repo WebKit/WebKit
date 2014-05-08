@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>[118607]Content overflowing a fixed positioned region is clipped</title>
+        <script>
+            if (window.internals)
+                internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+        </script>
+        <style>
+            #contentNode {
+                -webkit-flow-into: flow;
+                width: 100px;
+                height: 200px;
+                background-color: green;
+            }
+            #region {
+                -webkit-flow-from: flow;
+                width: 100px;
+                height: 100px;
+                position: fixed;
+                top: 100px;
+                left: 100px;
+            }
+            #red {
+                width: 100px;
+                height: 200px;
+                position: absolute;
+                top: 100px;
+                left: 100px;
+                background-color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test the flow thread content overflowing a fixed positioned region is not incorrectly clipped.</p>
+        <p>On success you should see a green rectangle below and no red.</p>
+        <div id="red"></div>
+        <div id="contentNode"></div>
+        <div id="region"></div>
+    </body>
+</html>
