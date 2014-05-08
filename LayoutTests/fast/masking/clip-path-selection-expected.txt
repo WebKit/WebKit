@@ -1,0 +1,12 @@
+PASS selection.toString() is ""
+PASS selection.toString() is 'was'
+PASS selection.toString() is ""
+PASS selection.toString() is 'was'
+PASS selection.toString() is ""
+PASS selection.toString() is 'was'
+PASS selection.toString() is ""
+PASS selection.toString() is 'was'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

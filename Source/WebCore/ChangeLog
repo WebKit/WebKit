@@ -1,3 +1,27 @@
+2014-05-08  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Can't select content within the area of the floating box when clip-path is applied
+        https://bugs.webkit.org/show_bug.cgi?id=131375
+
+        Reviewed by Dirk Schulze.
+
+        According to http://www.w3.org/TR/css-masking-1/, the clipped part of the element should
+        not have pointer event dispatching. So add this logic to RenderBlock::nodeAtPoint. This
+        fixes the bug as it disallows selection on any clipped parts.
+
+        I implemented the proper selection for the various CSS box types and added testing
+        for them. Also, I made and run performance tests for exposing mouse events over the
+        clipped/non-clipped area, which results can be seen in bugzilla.
+
+        Based on the patch made by Rob Buis <rob.buis@samsung.com>
+        Blink revision: http://src.chromium.org/viewvc/blink?view=revision&revision=172619
+
+        Tests: fast/masking/clip-path-selection.html
+               fast/shapes/shape-outside-floats/shape-outside-clip-path-selection.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+
 2014-05-07  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Blending doesn't work if the parent stacking context is not a self painting layer
