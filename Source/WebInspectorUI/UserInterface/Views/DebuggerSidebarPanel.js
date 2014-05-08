@@ -129,6 +129,11 @@ WebInspector.DebuggerSidebarPanel.prototype = {
 
     // Public
 
+    get hasSelectedElement()
+    {
+        return !!this._breakpointsContentTreeOutline.selectedTreeElement || !!this._callStackContentTreeOutline.selectedTreeElement;
+    },
+
     showDefaultContentView: function()
     {
         WebInspector.resourceSidebarPanel.showDefaultContentView();
@@ -211,7 +216,7 @@ WebInspector.DebuggerSidebarPanel.prototype = {
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = true;
         this._debuggerStepOverButtonItem.enabled = true;
-        this._debuggerStepIntoButtonItem.enabled = true;        
+        this._debuggerStepIntoButtonItem.enabled = true;
     },
 
     _debuggerDidResume: function(event)

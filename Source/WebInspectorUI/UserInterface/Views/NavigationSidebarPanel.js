@@ -147,6 +147,11 @@ WebInspector.NavigationSidebarPanel.prototype = {
         return this._contentTreeOutline;
     },
 
+    get hasSelectedElement()
+    {
+        return !!this._contentTreeOutline.selectedTreeElement;
+    },
+
     get filterBar()
     {
         return this._filterBar;
