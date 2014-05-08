@@ -128,10 +128,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
         bool requestAllowed = globalCachedResourceLoader->frame() && globalCachedResourceLoader->document()->securityOrigin()->canRequest(url);
         if (requestAllowed) {
             globalCachedResourceLoader->frame()->loader().loadResourceSynchronously(url, AllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, error, response, data);
-            if (error.isNull())
-                requestAllowed = globalCachedResourceLoader->document()->securityOrigin()->canRequest(response.url());
-            else
-                data.clear();
+            requestAllowed = globalCachedResourceLoader->document()->securityOrigin()->canRequest(response.url());
         }
         if (!requestAllowed) {
             data.clear();
