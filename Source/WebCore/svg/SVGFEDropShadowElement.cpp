@@ -29,6 +29,7 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGRenderStyle.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -85,14 +86,14 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
 
 bool SVGFEDropShadowElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::inAttr);
-        supportedAttributes.add(SVGNames::dxAttr);
-        supportedAttributes.add(SVGNames::dyAttr);
-        supportedAttributes.add(SVGNames::stdDeviationAttr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::inAttr);
+        supportedAttributes.get().add(SVGNames::dxAttr);
+        supportedAttributes.get().add(SVGNames::dyAttr);
+        supportedAttributes.get().add(SVGNames::stdDeviationAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

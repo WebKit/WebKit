@@ -26,6 +26,7 @@
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -66,15 +67,15 @@ SVGCursorElement::~SVGCursorElement()
 
 bool SVGCursorElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGTests::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
         SVGURIReference::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::xAttr);
-        supportedAttributes.add(SVGNames::yAttr);
+        supportedAttributes.get().add(SVGNames::xAttr);
+        supportedAttributes.get().add(SVGNames::yAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGCursorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

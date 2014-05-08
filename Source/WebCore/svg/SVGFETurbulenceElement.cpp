@@ -27,6 +27,7 @@
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -77,15 +78,15 @@ const AtomicString& SVGFETurbulenceElement::baseFrequencyYIdentifier()
 
 bool SVGFETurbulenceElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::baseFrequencyAttr);
-        supportedAttributes.add(SVGNames::numOctavesAttr);
-        supportedAttributes.add(SVGNames::seedAttr);
-        supportedAttributes.add(SVGNames::stitchTilesAttr);
-        supportedAttributes.add(SVGNames::typeAttr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::baseFrequencyAttr);
+        supportedAttributes.get().add(SVGNames::numOctavesAttr);
+        supportedAttributes.get().add(SVGNames::seedAttr);
+        supportedAttributes.get().add(SVGNames::stitchTilesAttr);
+        supportedAttributes.get().add(SVGNames::typeAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

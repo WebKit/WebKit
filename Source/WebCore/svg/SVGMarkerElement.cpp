@@ -28,6 +28,7 @@
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
  
@@ -109,19 +110,19 @@ AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float 
 
 bool SVGMarkerElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
         SVGFitToViewBox::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::markerUnitsAttr);
-        supportedAttributes.add(SVGNames::refXAttr);
-        supportedAttributes.add(SVGNames::refYAttr);
-        supportedAttributes.add(SVGNames::markerWidthAttr);
-        supportedAttributes.add(SVGNames::markerHeightAttr);
-        supportedAttributes.add(SVGNames::orientAttr);
+        supportedAttributes.get().add(SVGNames::markerUnitsAttr);
+        supportedAttributes.get().add(SVGNames::refXAttr);
+        supportedAttributes.get().add(SVGNames::refYAttr);
+        supportedAttributes.get().add(SVGNames::markerWidthAttr);
+        supportedAttributes.get().add(SVGNames::markerHeightAttr);
+        supportedAttributes.get().add(SVGNames::orientAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

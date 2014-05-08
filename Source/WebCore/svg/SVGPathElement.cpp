@@ -51,6 +51,7 @@
 #include "SVGPathSegMovetoRel.h"
 #include "SVGPathUtilities.h"
 #include "SVGSVGElement.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -213,14 +214,14 @@ PassRefPtr<SVGPathSegCurvetoQuadraticSmoothRel> SVGPathElement::createSVGPathSeg
 
 bool SVGPathElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::dAttr);
-        supportedAttributes.add(SVGNames::pathLengthAttr);
+        supportedAttributes.get().add(SVGNames::dAttr);
+        supportedAttributes.get().add(SVGNames::pathLengthAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

@@ -51,6 +51,7 @@
 #include "XLinkNames.h"
 #include "XMLDocumentParser.h"
 #include "XMLSerializer.h"
+#include <wtf/NeverDestroyed.h>
 
 // Dump SVGElementInstance object tree - useful to debug instanceRoot problems
 // #define DUMP_INSTANCE_TREE
@@ -129,17 +130,17 @@ SVGElementInstance* SVGUseElement::animatedInstanceRoot() const
 
 bool SVGUseElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
         SVGURIReference::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::xAttr);
-        supportedAttributes.add(SVGNames::yAttr);
-        supportedAttributes.add(SVGNames::widthAttr);
-        supportedAttributes.add(SVGNames::heightAttr);
+        supportedAttributes.get().add(SVGNames::xAttr);
+        supportedAttributes.get().add(SVGNames::yAttr);
+        supportedAttributes.get().add(SVGNames::widthAttr);
+        supportedAttributes.get().add(SVGNames::heightAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -334,31 +335,31 @@ static bool isDisallowedElement(const Element& element)
     if (!element.isSVGElement())
         return true;
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedElementTags, ());
-    if (allowedElementTags.isEmpty()) {
-        allowedElementTags.add(SVGNames::aTag);
-        allowedElementTags.add(SVGNames::circleTag);
-        allowedElementTags.add(SVGNames::descTag);
-        allowedElementTags.add(SVGNames::ellipseTag);
-        allowedElementTags.add(SVGNames::gTag);
-        allowedElementTags.add(SVGNames::imageTag);
-        allowedElementTags.add(SVGNames::lineTag);
-        allowedElementTags.add(SVGNames::metadataTag);
-        allowedElementTags.add(SVGNames::pathTag);
-        allowedElementTags.add(SVGNames::polygonTag);
-        allowedElementTags.add(SVGNames::polylineTag);
-        allowedElementTags.add(SVGNames::rectTag);
-        allowedElementTags.add(SVGNames::svgTag);
-        allowedElementTags.add(SVGNames::switchTag);
-        allowedElementTags.add(SVGNames::symbolTag);
-        allowedElementTags.add(SVGNames::textTag);
-        allowedElementTags.add(SVGNames::textPathTag);
-        allowedElementTags.add(SVGNames::titleTag);
-        allowedElementTags.add(SVGNames::trefTag);
-        allowedElementTags.add(SVGNames::tspanTag);
-        allowedElementTags.add(SVGNames::useTag);
+    static NeverDestroyed<HashSet<QualifiedName>> allowedElementTags;
+    if (allowedElementTags.get().isEmpty()) {
+        allowedElementTags.get().add(SVGNames::aTag);
+        allowedElementTags.get().add(SVGNames::circleTag);
+        allowedElementTags.get().add(SVGNames::descTag);
+        allowedElementTags.get().add(SVGNames::ellipseTag);
+        allowedElementTags.get().add(SVGNames::gTag);
+        allowedElementTags.get().add(SVGNames::imageTag);
+        allowedElementTags.get().add(SVGNames::lineTag);
+        allowedElementTags.get().add(SVGNames::metadataTag);
+        allowedElementTags.get().add(SVGNames::pathTag);
+        allowedElementTags.get().add(SVGNames::polygonTag);
+        allowedElementTags.get().add(SVGNames::polylineTag);
+        allowedElementTags.get().add(SVGNames::rectTag);
+        allowedElementTags.get().add(SVGNames::svgTag);
+        allowedElementTags.get().add(SVGNames::switchTag);
+        allowedElementTags.get().add(SVGNames::symbolTag);
+        allowedElementTags.get().add(SVGNames::textTag);
+        allowedElementTags.get().add(SVGNames::textPathTag);
+        allowedElementTags.get().add(SVGNames::titleTag);
+        allowedElementTags.get().add(SVGNames::trefTag);
+        allowedElementTags.get().add(SVGNames::tspanTag);
+        allowedElementTags.get().add(SVGNames::useTag);
     }
-    return !allowedElementTags.contains<SVGAttributeHashTranslator>(element.tagQName());
+    return !allowedElementTags.get().contains<SVGAttributeHashTranslator>(element.tagQName());
 }
 
 static bool subtreeContainsDisallowedElement(SVGElement& start)

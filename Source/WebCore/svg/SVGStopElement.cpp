@@ -28,6 +28,7 @@
 #include "SVGElementInstance.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -54,10 +55,10 @@ PassRefPtr<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, 
 
 bool SVGStopElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty())
-        supportedAttributes.add(SVGNames::offsetAttr);
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty())
+        supportedAttributes.get().add(SVGNames::offsetAttr);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

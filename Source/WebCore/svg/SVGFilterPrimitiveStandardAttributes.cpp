@@ -33,6 +33,7 @@
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGUnitTypes.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -66,15 +67,15 @@ SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const
 
 bool SVGFilterPrimitiveStandardAttributes::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::xAttr);
-        supportedAttributes.add(SVGNames::yAttr);
-        supportedAttributes.add(SVGNames::widthAttr);
-        supportedAttributes.add(SVGNames::heightAttr);
-        supportedAttributes.add(SVGNames::resultAttr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::xAttr);
+        supportedAttributes.get().add(SVGNames::yAttr);
+        supportedAttributes.get().add(SVGNames::widthAttr);
+        supportedAttributes.get().add(SVGNames::heightAttr);
+        supportedAttributes.get().add(SVGNames::resultAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFilterPrimitiveStandardAttributes::parseAttribute(const QualifiedName& name, const AtomicString& value)

@@ -29,6 +29,7 @@
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGElementInstance.h"
 #include "XLinkNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -57,14 +58,14 @@ PassRefPtr<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagNa
 
 bool SVGScriptElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGURIReference::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::typeAttr);
-        supportedAttributes.add(HTMLNames::onerrorAttr);
+        supportedAttributes.get().add(SVGNames::typeAttr);
+        supportedAttributes.get().add(HTMLNames::onerrorAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGScriptElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

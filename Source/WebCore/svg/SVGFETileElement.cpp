@@ -29,6 +29,7 @@
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -54,10 +55,10 @@ PassRefPtr<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagNa
 
 bool SVGFETileElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty())
-        supportedAttributes.add(SVGNames::inAttr);
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty())
+        supportedAttributes.get().add(SVGNames::inAttr);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFETileElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

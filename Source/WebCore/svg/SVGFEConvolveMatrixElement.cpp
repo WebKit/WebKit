@@ -31,6 +31,7 @@
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -103,20 +104,20 @@ const AtomicString& SVGFEConvolveMatrixElement::orderYIdentifier()
 
 bool SVGFEConvolveMatrixElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::inAttr);
-        supportedAttributes.add(SVGNames::orderAttr);
-        supportedAttributes.add(SVGNames::kernelMatrixAttr);
-        supportedAttributes.add(SVGNames::edgeModeAttr);
-        supportedAttributes.add(SVGNames::divisorAttr);
-        supportedAttributes.add(SVGNames::biasAttr);
-        supportedAttributes.add(SVGNames::targetXAttr);
-        supportedAttributes.add(SVGNames::targetYAttr);
-        supportedAttributes.add(SVGNames::kernelUnitLengthAttr);
-        supportedAttributes.add(SVGNames::preserveAlphaAttr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::inAttr);
+        supportedAttributes.get().add(SVGNames::orderAttr);
+        supportedAttributes.get().add(SVGNames::kernelMatrixAttr);
+        supportedAttributes.get().add(SVGNames::edgeModeAttr);
+        supportedAttributes.get().add(SVGNames::divisorAttr);
+        supportedAttributes.get().add(SVGNames::biasAttr);
+        supportedAttributes.get().add(SVGNames::targetXAttr);
+        supportedAttributes.get().add(SVGNames::targetYAttr);
+        supportedAttributes.get().add(SVGNames::kernelUnitLengthAttr);
+        supportedAttributes.get().add(SVGNames::preserveAlphaAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

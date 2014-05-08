@@ -38,6 +38,7 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -143,21 +144,21 @@ static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
 
 bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGTests::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::valuesAttr);
-        supportedAttributes.add(SVGNames::keyTimesAttr);
-        supportedAttributes.add(SVGNames::keyPointsAttr);
-        supportedAttributes.add(SVGNames::keySplinesAttr);
-        supportedAttributes.add(SVGNames::attributeTypeAttr);
-        supportedAttributes.add(SVGNames::calcModeAttr);
-        supportedAttributes.add(SVGNames::fromAttr);
-        supportedAttributes.add(SVGNames::toAttr);
-        supportedAttributes.add(SVGNames::byAttr);
+        supportedAttributes.get().add(SVGNames::valuesAttr);
+        supportedAttributes.get().add(SVGNames::keyTimesAttr);
+        supportedAttributes.get().add(SVGNames::keyPointsAttr);
+        supportedAttributes.get().add(SVGNames::keySplinesAttr);
+        supportedAttributes.get().add(SVGNames::attributeTypeAttr);
+        supportedAttributes.get().add(SVGNames::calcModeAttr);
+        supportedAttributes.get().add(SVGNames::fromAttr);
+        supportedAttributes.get().add(SVGNames::toAttr);
+        supportedAttributes.get().add(SVGNames::byAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

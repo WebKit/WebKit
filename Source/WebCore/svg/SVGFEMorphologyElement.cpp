@@ -28,6 +28,7 @@
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -79,13 +80,13 @@ void SVGFEMorphologyElement::setRadius(float x, float y)
 
 bool SVGFEMorphologyElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::inAttr);
-        supportedAttributes.add(SVGNames::operatorAttr);
-        supportedAttributes.add(SVGNames::radiusAttr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::inAttr);
+        supportedAttributes.get().add(SVGNames::operatorAttr);
+        supportedAttributes.get().add(SVGNames::radiusAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

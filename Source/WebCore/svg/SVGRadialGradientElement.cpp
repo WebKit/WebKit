@@ -35,6 +35,7 @@
 #include "SVGTransform.h"
 #include "SVGTransformList.h"
 #include "SVGUnitTypes.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -77,16 +78,16 @@ PassRefPtr<SVGRadialGradientElement> SVGRadialGradientElement::create(const Qual
 
 bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::cxAttr);
-        supportedAttributes.add(SVGNames::cyAttr);
-        supportedAttributes.add(SVGNames::fxAttr);
-        supportedAttributes.add(SVGNames::fyAttr);
-        supportedAttributes.add(SVGNames::rAttr);
-        supportedAttributes.add(SVGNames::frAttr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::cxAttr);
+        supportedAttributes.get().add(SVGNames::cyAttr);
+        supportedAttributes.get().add(SVGNames::fxAttr);
+        supportedAttributes.get().add(SVGNames::fyAttr);
+        supportedAttributes.get().add(SVGNames::rAttr);
+        supportedAttributes.get().add(SVGNames::frAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGRadialGradientElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

@@ -30,6 +30,7 @@
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #include <wtf/Assertions.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -69,16 +70,16 @@ PassRefPtr<SVGForeignObjectElement> SVGForeignObjectElement::create(const Qualif
 
 bool SVGForeignObjectElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::xAttr);
-        supportedAttributes.add(SVGNames::yAttr);
-        supportedAttributes.add(SVGNames::widthAttr);
-        supportedAttributes.add(SVGNames::heightAttr);
+        supportedAttributes.get().add(SVGNames::xAttr);
+        supportedAttributes.get().add(SVGNames::yAttr);
+        supportedAttributes.get().add(SVGNames::widthAttr);
+        supportedAttributes.get().add(SVGNames::heightAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

@@ -411,7 +411,7 @@ void SVGElement::removeInstanceMapping(SVGElementInstance* instance)
 const HashSet<SVGElementInstance*>& SVGElement::instancesForElement() const
 {
     if (!m_svgRareData) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<SVGElementInstance*>, emptyInstances, ());
+        static NeverDestroyed<HashSet<SVGElementInstance*>> emptyInstances;
         return emptyInstances;
     }
     return m_svgRareData->elementInstances();
@@ -672,19 +672,19 @@ void SVGElement::finishParsingChildren()
 
 bool SVGElement::childShouldCreateRenderer(const Node& child) const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, invalidTextContent, ());
+    static NeverDestroyed<HashSet<QualifiedName>> invalidTextContent;
 
-    if (invalidTextContent.isEmpty()) {
-        invalidTextContent.add(SVGNames::textPathTag);
+    if (invalidTextContent.get().isEmpty()) {
+        invalidTextContent.get().add(SVGNames::textPathTag);
 #if ENABLE(SVG_FONTS)
-        invalidTextContent.add(SVGNames::altGlyphTag);
+        invalidTextContent.get().add(SVGNames::altGlyphTag);
 #endif
-        invalidTextContent.add(SVGNames::trefTag);
-        invalidTextContent.add(SVGNames::tspanTag);
+        invalidTextContent.get().add(SVGNames::trefTag);
+        invalidTextContent.get().add(SVGNames::tspanTag);
     }
     if (child.isSVGElement()) {
         const SVGElement& svgChild = toSVGElement(child);
-        if (invalidTextContent.contains(svgChild.tagQName()))
+        if (invalidTextContent.get().contains(svgChild.tagQName()))
             return false;
 
         return svgChild.isValid();

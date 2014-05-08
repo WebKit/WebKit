@@ -31,6 +31,7 @@
 #include "SVGRenderSupport.h"
 #include "SVGUnitTypes.h"
 #include "StyleResolver.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -77,19 +78,19 @@ PassRefPtr<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, 
 
 bool SVGMaskElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGTests::addSupportedAttributes(supportedAttributes);
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::maskUnitsAttr);
-        supportedAttributes.add(SVGNames::maskContentUnitsAttr);
-        supportedAttributes.add(SVGNames::xAttr);
-        supportedAttributes.add(SVGNames::yAttr);
-        supportedAttributes.add(SVGNames::widthAttr);
-        supportedAttributes.add(SVGNames::heightAttr);
+        supportedAttributes.get().add(SVGNames::maskUnitsAttr);
+        supportedAttributes.get().add(SVGNames::maskContentUnitsAttr);
+        supportedAttributes.get().add(SVGNames::xAttr);
+        supportedAttributes.get().add(SVGNames::yAttr);
+        supportedAttributes.get().add(SVGNames::widthAttr);
+        supportedAttributes.get().add(SVGNames::heightAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

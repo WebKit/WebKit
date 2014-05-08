@@ -29,6 +29,7 @@
 #include "SVGNames.h"
 #include "SVGTransformList.h"
 #include "StyleResolver.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -57,13 +58,13 @@ PassRefPtr<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& t
 
 bool SVGClipPathElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::clipPathUnitsAttr);
+        supportedAttributes.get().add(SVGNames::clipPathUnitsAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGClipPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

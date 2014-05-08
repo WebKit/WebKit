@@ -29,6 +29,7 @@
 #include "SVGElementInstance.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -66,16 +67,16 @@ PassRefPtr<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tag
 
 bool SVGEllipseElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::cxAttr);
-        supportedAttributes.add(SVGNames::cyAttr);
-        supportedAttributes.add(SVGNames::rxAttr);
-        supportedAttributes.add(SVGNames::ryAttr);
+        supportedAttributes.get().add(SVGNames::cxAttr);
+        supportedAttributes.get().add(SVGNames::cyAttr);
+        supportedAttributes.get().add(SVGNames::rxAttr);
+        supportedAttributes.get().add(SVGNames::ryAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGEllipseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

@@ -34,6 +34,7 @@
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -88,20 +89,20 @@ PassRefPtr<LightSource> SVGFELightElement::findLightSource(const SVGElement* svg
 
 bool SVGFELightElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::azimuthAttr);
-        supportedAttributes.add(SVGNames::elevationAttr);
-        supportedAttributes.add(SVGNames::xAttr);
-        supportedAttributes.add(SVGNames::yAttr);
-        supportedAttributes.add(SVGNames::zAttr);
-        supportedAttributes.add(SVGNames::pointsAtXAttr);
-        supportedAttributes.add(SVGNames::pointsAtYAttr);
-        supportedAttributes.add(SVGNames::pointsAtZAttr);
-        supportedAttributes.add(SVGNames::specularExponentAttr);
-        supportedAttributes.add(SVGNames::limitingConeAngleAttr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::azimuthAttr);
+        supportedAttributes.get().add(SVGNames::elevationAttr);
+        supportedAttributes.get().add(SVGNames::xAttr);
+        supportedAttributes.get().add(SVGNames::yAttr);
+        supportedAttributes.get().add(SVGNames::zAttr);
+        supportedAttributes.get().add(SVGNames::pointsAtXAttr);
+        supportedAttributes.get().add(SVGNames::pointsAtYAttr);
+        supportedAttributes.get().add(SVGNames::pointsAtZAttr);
+        supportedAttributes.get().add(SVGNames::specularExponentAttr);
+        supportedAttributes.get().add(SVGNames::limitingConeAngleAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

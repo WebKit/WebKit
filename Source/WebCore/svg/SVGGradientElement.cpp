@@ -34,6 +34,7 @@
 #include "SVGTransformable.h"
 #include "StyleResolver.h"
 #include "XLinkNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -63,15 +64,15 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
 
 bool SVGGradientElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGURIReference::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::gradientUnitsAttr);
-        supportedAttributes.add(SVGNames::gradientTransformAttr);
-        supportedAttributes.add(SVGNames::spreadMethodAttr);
+        supportedAttributes.get().add(SVGNames::gradientUnitsAttr);
+        supportedAttributes.get().add(SVGNames::gradientTransformAttr);
+        supportedAttributes.get().add(SVGNames::spreadMethodAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

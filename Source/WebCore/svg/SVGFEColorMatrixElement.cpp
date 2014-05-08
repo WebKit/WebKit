@@ -28,6 +28,7 @@
 #include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -58,13 +59,13 @@ PassRefPtr<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const Qualif
 
 bool SVGFEColorMatrixElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::typeAttr);
-        supportedAttributes.add(SVGNames::valuesAttr);
-        supportedAttributes.add(SVGNames::inAttr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::typeAttr);
+        supportedAttributes.get().add(SVGNames::valuesAttr);
+        supportedAttributes.get().add(SVGNames::inAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

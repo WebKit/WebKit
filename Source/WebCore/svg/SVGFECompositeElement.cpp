@@ -28,6 +28,7 @@
 #include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -66,17 +67,17 @@ PassRefPtr<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedN
 
 bool SVGFECompositeElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::inAttr);
-        supportedAttributes.add(SVGNames::in2Attr);
-        supportedAttributes.add(SVGNames::operatorAttr);
-        supportedAttributes.add(SVGNames::k1Attr);
-        supportedAttributes.add(SVGNames::k2Attr);
-        supportedAttributes.add(SVGNames::k3Attr);
-        supportedAttributes.add(SVGNames::k4Attr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::inAttr);
+        supportedAttributes.get().add(SVGNames::in2Attr);
+        supportedAttributes.get().add(SVGNames::operatorAttr);
+        supportedAttributes.get().add(SVGNames::k1Attr);
+        supportedAttributes.get().add(SVGNames::k2Attr);
+        supportedAttributes.get().add(SVGNames::k3Attr);
+        supportedAttributes.get().add(SVGNames::k4Attr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFECompositeElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

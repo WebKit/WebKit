@@ -30,6 +30,7 @@
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -65,13 +66,13 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
 
 bool SVGPolyElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::pointsAttr);
+        supportedAttributes.get().add(SVGNames::pointsAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

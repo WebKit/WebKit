@@ -34,6 +34,7 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "XLinkNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -105,20 +106,20 @@ void SVGFilterElement::setFilterRes(unsigned filterResX, unsigned filterResY)
 
 bool SVGFilterElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGURIReference::addSupportedAttributes(supportedAttributes);
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::filterUnitsAttr);
-        supportedAttributes.add(SVGNames::primitiveUnitsAttr);
-        supportedAttributes.add(SVGNames::xAttr);
-        supportedAttributes.add(SVGNames::yAttr);
-        supportedAttributes.add(SVGNames::widthAttr);
-        supportedAttributes.add(SVGNames::heightAttr);
-        supportedAttributes.add(SVGNames::filterResAttr);
+        supportedAttributes.get().add(SVGNames::filterUnitsAttr);
+        supportedAttributes.get().add(SVGNames::primitiveUnitsAttr);
+        supportedAttributes.get().add(SVGNames::xAttr);
+        supportedAttributes.get().add(SVGNames::yAttr);
+        supportedAttributes.get().add(SVGNames::widthAttr);
+        supportedAttributes.get().add(SVGNames::heightAttr);
+        supportedAttributes.get().add(SVGNames::filterResAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -200,36 +201,36 @@ bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const
 
     const SVGElement& svgElement = toSVGElement(child);
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedChildElementTags, ());
-    if (allowedChildElementTags.isEmpty()) {
-        allowedChildElementTags.add(SVGNames::feBlendTag);
-        allowedChildElementTags.add(SVGNames::feColorMatrixTag);
-        allowedChildElementTags.add(SVGNames::feComponentTransferTag);
-        allowedChildElementTags.add(SVGNames::feCompositeTag);
-        allowedChildElementTags.add(SVGNames::feConvolveMatrixTag);
-        allowedChildElementTags.add(SVGNames::feDiffuseLightingTag);
-        allowedChildElementTags.add(SVGNames::feDisplacementMapTag);
-        allowedChildElementTags.add(SVGNames::feDistantLightTag);
-        allowedChildElementTags.add(SVGNames::feDropShadowTag);
-        allowedChildElementTags.add(SVGNames::feFloodTag);
-        allowedChildElementTags.add(SVGNames::feFuncATag);
-        allowedChildElementTags.add(SVGNames::feFuncBTag);
-        allowedChildElementTags.add(SVGNames::feFuncGTag);
-        allowedChildElementTags.add(SVGNames::feFuncRTag);
-        allowedChildElementTags.add(SVGNames::feGaussianBlurTag);
-        allowedChildElementTags.add(SVGNames::feImageTag);
-        allowedChildElementTags.add(SVGNames::feMergeTag);
-        allowedChildElementTags.add(SVGNames::feMergeNodeTag);
-        allowedChildElementTags.add(SVGNames::feMorphologyTag);
-        allowedChildElementTags.add(SVGNames::feOffsetTag);
-        allowedChildElementTags.add(SVGNames::fePointLightTag);
-        allowedChildElementTags.add(SVGNames::feSpecularLightingTag);
-        allowedChildElementTags.add(SVGNames::feSpotLightTag);
-        allowedChildElementTags.add(SVGNames::feTileTag);
-        allowedChildElementTags.add(SVGNames::feTurbulenceTag);
+    static NeverDestroyed<HashSet<QualifiedName>> allowedChildElementTags;
+    if (allowedChildElementTags.get().isEmpty()) {
+        allowedChildElementTags.get().add(SVGNames::feBlendTag);
+        allowedChildElementTags.get().add(SVGNames::feColorMatrixTag);
+        allowedChildElementTags.get().add(SVGNames::feComponentTransferTag);
+        allowedChildElementTags.get().add(SVGNames::feCompositeTag);
+        allowedChildElementTags.get().add(SVGNames::feConvolveMatrixTag);
+        allowedChildElementTags.get().add(SVGNames::feDiffuseLightingTag);
+        allowedChildElementTags.get().add(SVGNames::feDisplacementMapTag);
+        allowedChildElementTags.get().add(SVGNames::feDistantLightTag);
+        allowedChildElementTags.get().add(SVGNames::feDropShadowTag);
+        allowedChildElementTags.get().add(SVGNames::feFloodTag);
+        allowedChildElementTags.get().add(SVGNames::feFuncATag);
+        allowedChildElementTags.get().add(SVGNames::feFuncBTag);
+        allowedChildElementTags.get().add(SVGNames::feFuncGTag);
+        allowedChildElementTags.get().add(SVGNames::feFuncRTag);
+        allowedChildElementTags.get().add(SVGNames::feGaussianBlurTag);
+        allowedChildElementTags.get().add(SVGNames::feImageTag);
+        allowedChildElementTags.get().add(SVGNames::feMergeTag);
+        allowedChildElementTags.get().add(SVGNames::feMergeNodeTag);
+        allowedChildElementTags.get().add(SVGNames::feMorphologyTag);
+        allowedChildElementTags.get().add(SVGNames::feOffsetTag);
+        allowedChildElementTags.get().add(SVGNames::fePointLightTag);
+        allowedChildElementTags.get().add(SVGNames::feSpecularLightingTag);
+        allowedChildElementTags.get().add(SVGNames::feSpotLightTag);
+        allowedChildElementTags.get().add(SVGNames::feTileTag);
+        allowedChildElementTags.get().add(SVGNames::feTurbulenceTag);
     }
 
-    return allowedChildElementTags.contains<SVGAttributeHashTranslator>(svgElement.tagQName());
+    return allowedChildElementTags.get().contains<SVGAttributeHashTranslator>(svgElement.tagQName());
 }
 
 bool SVGFilterElement::selfHasRelativeLengths() const

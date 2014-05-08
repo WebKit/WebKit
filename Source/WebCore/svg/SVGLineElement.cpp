@@ -28,6 +28,7 @@
 #include "SVGElementInstance.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -65,16 +66,16 @@ PassRefPtr<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, 
 
 bool SVGLineElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::x1Attr);
-        supportedAttributes.add(SVGNames::x2Attr);
-        supportedAttributes.add(SVGNames::y1Attr);
-        supportedAttributes.add(SVGNames::y2Attr);
+        supportedAttributes.get().add(SVGNames::x1Attr);
+        supportedAttributes.get().add(SVGNames::x2Attr);
+        supportedAttributes.get().add(SVGNames::y1Attr);
+        supportedAttributes.get().add(SVGNames::y2Attr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

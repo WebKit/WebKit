@@ -27,6 +27,7 @@
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -71,14 +72,14 @@ void SVGTextPathElement::clearResourceReferences()
 
 bool SVGTextPathElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGURIReference::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::startOffsetAttr);
-        supportedAttributes.add(SVGNames::methodAttr);
-        supportedAttributes.add(SVGNames::spacingAttr);
+        supportedAttributes.get().add(SVGNames::startOffsetAttr);
+        supportedAttributes.get().add(SVGNames::methodAttr);
+        supportedAttributes.get().add(SVGNames::spacingAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

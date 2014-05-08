@@ -28,6 +28,7 @@
 #include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -58,13 +59,13 @@ PassRefPtr<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tag
 
 bool SVGFEBlendElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::modeAttr);
-        supportedAttributes.add(SVGNames::inAttr);
-        supportedAttributes.add(SVGNames::in2Attr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::modeAttr);
+        supportedAttributes.get().add(SVGNames::inAttr);
+        supportedAttributes.get().add(SVGNames::in2Attr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEBlendElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

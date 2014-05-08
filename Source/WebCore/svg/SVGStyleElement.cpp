@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "SVGNames.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -97,14 +98,14 @@ void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode&)
 
 bool SVGStyleElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::titleAttr);
-        supportedAttributes.add(SVGNames::mediaAttr);
-        supportedAttributes.add(SVGNames::typeAttr);
+        supportedAttributes.get().add(SVGNames::titleAttr);
+        supportedAttributes.get().add(SVGNames::mediaAttr);
+        supportedAttributes.get().add(SVGNames::typeAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

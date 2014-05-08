@@ -39,6 +39,7 @@
 #include "SVGSVGElement.h"
 #include "SVGTransformable.h"
 #include "XLinkNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -91,22 +92,22 @@ PassRefPtr<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tag
 
 bool SVGPatternElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGURIReference::addSupportedAttributes(supportedAttributes);
         SVGTests::addSupportedAttributes(supportedAttributes);
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
         SVGFitToViewBox::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::patternUnitsAttr);
-        supportedAttributes.add(SVGNames::patternContentUnitsAttr);
-        supportedAttributes.add(SVGNames::patternTransformAttr);
-        supportedAttributes.add(SVGNames::xAttr);
-        supportedAttributes.add(SVGNames::yAttr);
-        supportedAttributes.add(SVGNames::widthAttr);
-        supportedAttributes.add(SVGNames::heightAttr);
+        supportedAttributes.get().add(SVGNames::patternUnitsAttr);
+        supportedAttributes.get().add(SVGNames::patternContentUnitsAttr);
+        supportedAttributes.get().add(SVGNames::patternTransformAttr);
+        supportedAttributes.get().add(SVGNames::xAttr);
+        supportedAttributes.get().add(SVGNames::yAttr);
+        supportedAttributes.get().add(SVGNames::widthAttr);
+        supportedAttributes.get().add(SVGNames::heightAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

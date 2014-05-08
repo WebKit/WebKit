@@ -28,6 +28,7 @@
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGPathData.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -100,12 +101,12 @@ AffineTransform* SVGGraphicsElement::supplementalTransform()
 
 bool SVGGraphicsElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
         SVGTests::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.add(SVGNames::transformAttr);
+        supportedAttributes.get().add(SVGNames::transformAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

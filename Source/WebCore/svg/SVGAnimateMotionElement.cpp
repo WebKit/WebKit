@@ -37,6 +37,7 @@
 #include "SVGPathUtilities.h"
 #include "SVGTransformList.h"
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
 
@@ -98,10 +99,10 @@ bool SVGAnimateMotionElement::hasValidAttributeName()
 
 bool SVGAnimateMotionElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty())
-        supportedAttributes.add(SVGNames::pathAttr);
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty())
+        supportedAttributes.get().add(SVGNames::pathAttr);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

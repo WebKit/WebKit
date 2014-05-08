@@ -1,3 +1,129 @@
+2014-05-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T> in svg/
+        https://bugs.webkit.org/show_bug.cgi?id=132647
+
+        Reviewed by Darin Adler.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::isSupportedAttribute):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::isSupportedAttribute):
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::isSupportedAttribute):
+        * svg/SVGAnimatedLength.cpp:
+        (WebCore::sharedSVGLength):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::isSupportedAttribute):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::isSupportedAttribute):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::isSupportedAttribute):
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::isSupportedAttribute):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::isSupportedAttribute):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::instancesForElement):
+        (WebCore::SVGElement::childShouldCreateRenderer):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::isSupportedAttribute):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::isSupportedAttribute):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::isSupportedAttribute):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::isSupportedAttribute):
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::isSupportedAttribute):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::isSupportedAttribute):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::isSupportedAttribute):
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::isSupportedAttribute):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::isSupportedAttribute):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::isSupportedAttribute):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::isSupportedAttribute):
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::isSupportedAttribute):
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::isSupportedAttribute):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::isSupportedAttribute):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::isSupportedAttribute):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::isSupportedAttribute):
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::isSupportedAttribute):
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::isSupportedAttribute):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::isSupportedAttribute):
+        (WebCore::SVGFilterElement::childShouldCreateRenderer):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::isSupportedAttribute):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::isSupportedAttribute):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::isSupportedAttribute):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::isSupportedAttribute):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::isSupportedAttribute):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::isSupportedAttribute):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::lengthModeForAnimatedLengthAttribute):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::isSupportedAttribute):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::isSupportedAttribute):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::isSupportedAttribute):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::isSupportedAttribute):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::isSupportedAttribute):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::isSupportedAttribute):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::isSupportedAttribute):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::isSupportedAttribute):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::isSupportedAttribute):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::isSupportedAttribute):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::isSupportedAttribute):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::isSupportedAttribute):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::isSupportedAttribute):
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::isSupportedAttribute):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::isSupportedAttribute):
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::attributeToPropertyMap):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::textLengthAnimated):
+        (WebCore::SVGTextContentElement::isSupportedAttribute):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::isSupportedAttribute):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::isSupportedAttribute):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::isSupportedAttribute):
+        (WebCore::isDisallowedElement):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::isSupportedAttribute):
+
 2014-05-08  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Replacing Unisolated with NotIsolated in variables and methods names

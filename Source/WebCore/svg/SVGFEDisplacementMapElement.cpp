@@ -27,6 +27,7 @@
 #include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -62,15 +63,15 @@ PassRefPtr<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(cons
 
 bool SVGFEDisplacementMapElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::inAttr);
-        supportedAttributes.add(SVGNames::in2Attr);
-        supportedAttributes.add(SVGNames::xChannelSelectorAttr);
-        supportedAttributes.add(SVGNames::yChannelSelectorAttr);
-        supportedAttributes.add(SVGNames::scaleAttr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::inAttr);
+        supportedAttributes.get().add(SVGNames::in2Attr);
+        supportedAttributes.get().add(SVGNames::xChannelSelectorAttr);
+        supportedAttributes.get().add(SVGNames::yChannelSelectorAttr);
+        supportedAttributes.get().add(SVGNames::scaleAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEDisplacementMapElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

@@ -32,6 +32,7 @@
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -79,15 +80,15 @@ const AtomicString& SVGFEDiffuseLightingElement::kernelUnitLengthYIdentifier()
 
 bool SVGFEDiffuseLightingElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::inAttr);
-        supportedAttributes.add(SVGNames::diffuseConstantAttr);
-        supportedAttributes.add(SVGNames::surfaceScaleAttr);
-        supportedAttributes.add(SVGNames::kernelUnitLengthAttr);
-        supportedAttributes.add(SVGNames::lighting_colorAttr); // Even though it's a SVG-CSS property, we override its handling here.
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::inAttr);
+        supportedAttributes.get().add(SVGNames::diffuseConstantAttr);
+        supportedAttributes.get().add(SVGNames::surfaceScaleAttr);
+        supportedAttributes.get().add(SVGNames::kernelUnitLengthAttr);
+        supportedAttributes.get().add(SVGNames::lighting_colorAttr); // Even though it's a SVG-CSS property, we override its handling here.
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEDiffuseLightingElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

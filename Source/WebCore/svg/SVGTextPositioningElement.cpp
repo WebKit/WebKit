@@ -28,6 +28,7 @@
 #include "SVGLengthList.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -55,15 +56,15 @@ SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagNam
 
 bool SVGTextPositioningElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty()) {
-        supportedAttributes.add(SVGNames::xAttr);
-        supportedAttributes.add(SVGNames::yAttr);
-        supportedAttributes.add(SVGNames::dxAttr);
-        supportedAttributes.add(SVGNames::dyAttr);
-        supportedAttributes.add(SVGNames::rotateAttr);
+    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
+    if (supportedAttributes.get().isEmpty()) {
+        supportedAttributes.get().add(SVGNames::xAttr);
+        supportedAttributes.get().add(SVGNames::yAttr);
+        supportedAttributes.get().add(SVGNames::dxAttr);
+        supportedAttributes.get().add(SVGNames::dyAttr);
+        supportedAttributes.get().add(SVGNames::rotateAttr);
     }
-    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
