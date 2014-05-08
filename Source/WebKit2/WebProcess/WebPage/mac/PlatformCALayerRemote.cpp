@@ -118,7 +118,6 @@ PlatformCALayerRemote::~PlatformCALayerRemote()
 
 void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction& transaction)
 {
-    ASSERT(owner());
     if (m_properties.backingStore && (!owner() || !owner()->platformCALayerDrawsContent())) {
         m_properties.backingStore = nullptr;
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);

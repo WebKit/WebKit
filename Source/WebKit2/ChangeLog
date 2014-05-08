@@ -1,3 +1,10 @@
+2014-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        This assertion was wrong and fired every time. Remove it.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+
 2014-05-07  Enrica Casucci  <enrica@apple.com>
 
         WK2: Programatic scroll requests during scroll or zoom animation to reveal focused element are ignored.
