@@ -1,5 +1,15 @@
 2014-05-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Put a better version of the assertion back, and add one when we ensureBackingStore.
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+        (WebKit::PlatformCALayerRemote::ensureBackingStore):
+
+2014-05-07  Simon Fraser  <simon.fraser@apple.com>
+
         This assertion was wrong and fired every time. Remove it.
 
         * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:

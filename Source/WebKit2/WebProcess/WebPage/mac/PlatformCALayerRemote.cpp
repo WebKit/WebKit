@@ -118,6 +118,8 @@ PlatformCALayerRemote::~PlatformCALayerRemote()
 
 void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction& transaction)
 {
+    ASSERT(!m_properties.backingStore || owner());
+    
     if (m_properties.backingStore && (!owner() || !owner()->platformCALayerDrawsContent())) {
         m_properties.backingStore = nullptr;
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
@@ -167,6 +169,8 @@ void PlatformCALayerRemote::animationStarted(CFTimeInterval beginTime)
 
 void PlatformCALayerRemote::ensureBackingStore()
 {
+    ASSERT(owner());
+    
     if (!m_properties.backingStore)
         m_properties.backingStore = std::make_unique<RemoteLayerBackingStore>(m_context);
 
