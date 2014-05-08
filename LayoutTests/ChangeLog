@@ -1,3 +1,15 @@
+2014-05-07  Dean Jackson  <dino@apple.com>
+
+        Using a fill pattern much larger than actual canvas reliably segfaults browser
+        https://bugs.webkit.org/show_bug.cgi?id=132635
+
+        Reviewed by Simon Fraser.
+
+        Test case that makes a huge canvas and tries to create a pattern out of it.
+
+        * fast/canvas/pattern-too-large-to-create-expected.html: Added.
+        * fast/canvas/pattern-too-large-to-create.html: Added.
+
 2014-05-07  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION (r161429?): Frequent crashes on media/track/media-element-enqueue-event-crash.html

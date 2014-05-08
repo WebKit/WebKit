@@ -1772,7 +1772,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
         ec = TYPE_MISMATCH_ERR;
         return 0;
     }
-    if (!canvas->width() || !canvas->height()) {
+    if (!canvas->width() || !canvas->height() || !canvas->buffer()) {
         ec = INVALID_STATE_ERR;
         return 0;
     }

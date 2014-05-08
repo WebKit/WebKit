@@ -1,3 +1,19 @@
+2014-05-07  Dean Jackson  <dino@apple.com>
+
+        Using a fill pattern much larger than actual canvas reliably segfaults browser
+        https://bugs.webkit.org/show_bug.cgi?id=132635
+
+        Reviewed by Simon Fraser.
+
+        Make sure that createPattern checks that the canvas it is about to use
+        as a source is valid.
+
+        Test: fast/canvas/pattern-too-large-to-create.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern): Check that the source canvas has
+        an ok ImageBuffer.
+
 2014-05-07  Pratik Solanki  <psolanki@apple.com>
 
         Use system defaults for hardware jpeg decoding
