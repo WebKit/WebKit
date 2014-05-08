@@ -17,6 +17,7 @@
 # 02110-1301  USA
 
 import common
+import errno
 import os
 import re
 import sys
@@ -237,8 +238,10 @@ def write_doc_files():
 
     try:
         os.mkdir(doc_dir)
-    except:
-        pass  # Commonly happens if the directory already exists.
+    except OSError, e:
+        if e.errno != errno.EEXIST or not os.path.isdir(doc_dir):
+            sys.stderr.write("Could not create doc dir at %s: %s\n" % (doc_dir, str(e)))
+            sys.exit(1)
 
     with open(os.path.join(doc_dir, 'webkitdomgtk-sections.txt'), 'w') as sections_file:
         generator = WebKitDOMDocGeneratorSections(get_all_webkitdom_symbol_files(), sections_file)
