@@ -52,13 +52,16 @@ typedef enum {
 @end
 #endif
 
-// FIXME: We should import the private header if we have it.
+#if __has_include(<AppKit/NSItemProvider.h>)
+#import <AppKit/NSItemProvider.h>
+#else
 // FIXME: We should properly disable code that interacts with NSItemProvider/NSSharingServicePicker in 32-bit.
 @interface NSItemProvider : NSObject
 @property (copy, readonly) NSArray *registeredTypeIdentifiers;
 - (instancetype)initWithItem:(id <NSSecureCoding>)item typeIdentifier:(NSString *)typeIdentifier;
 - (void)loadItemForTypeIdentifier:(NSString *)typeIdentifier options:(NSDictionary *)options completionHandler:(void (^)(id <NSSecureCoding> item, NSError *error))completionHandler;
 @end
+#endif
 
 static NSString *serviceControlsPasteboardName = @"WebKitServiceControlsPasteboard";
 
