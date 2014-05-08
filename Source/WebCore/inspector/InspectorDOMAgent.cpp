@@ -878,6 +878,9 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
 void InspectorDOMAgent::getAccessibilityPropertiesForNode(ErrorString* errorString, int nodeId, RefPtr<Inspector::TypeBuilder::DOM::AccessibilityProperties>& axProperties)
 {
     Node* node = assertNode(errorString, nodeId);
+    if (!node)
+        return;
+
     axProperties = buildObjectForAccessibilityProperties(node);
 }
 
