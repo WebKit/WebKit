@@ -102,11 +102,11 @@ public:
 
     const BasicShape* basicShape() const { return m_shape.get(); }
     WindRule windRule() const { return m_shape->windRule(); }
-    const Path pathForReferenceRect(const FloatRect& boundingRect) const
+    const Path pathForReferenceRect(const FloatRect& boundingRect, RenderView* view) const
     {
         ASSERT(m_shape);
         Path path;
-        m_shape->path(path, boundingRect);
+        m_shape->path(path, boundingRect, view);
         return path;
     }
 
@@ -140,7 +140,7 @@ public:
         return adoptRef(new BoxClipPathOperation(referenceBox));
     }
 
-    const Path pathForReferenceRect(const RoundedRect& boundingRect) const
+    const Path pathForReferenceRect(const RoundedRect& boundingRect, RenderView*) const
     {
         Path path;
         path.addRoundedRect(boundingRect);

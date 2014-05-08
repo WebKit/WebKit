@@ -210,9 +210,9 @@ float floatValueForLength(const Length& length, float maximumValue, RenderView* 
     return 0;
 }
 
-FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatSize& boxSize)
+FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatSize& boxSize, RenderView* view)
 {
-    return FloatSize(floatValueForLength(lengthSize.width(), boxSize.width()), floatValueForLength(lengthSize.height(), boxSize.height()));
+    return FloatSize(floatValueForLength(lengthSize.width(), boxSize.width(), view), floatValueForLength(lengthSize.height(), boxSize.height(), view));
 }
 
 } // namespace WebCore

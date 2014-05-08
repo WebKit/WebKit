@@ -1,3 +1,15 @@
+2014-05-08  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Shapes do not resolve dimensions specified in viewport units
+        https://bugs.webkit.org/show_bug.cgi?id=124052
+
+        Reviewed by Dirk Schulze.
+
+        * css3/masking/clip-path-polygon-viewport-units-expected.html: Added.
+        * css3/masking/clip-path-polygon-viewport-units.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-viewport-units-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-viewport-units.html: Added.
+
 2014-05-08  Rik Cabanier  <cabanier@adobe.com>
 
         Add support for drawFocusIfNeeded

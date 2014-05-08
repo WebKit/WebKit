@@ -36,6 +36,7 @@
 #include "CSSValuePool.h"
 #include "Pair.h"
 #include "RenderStyle.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -264,9 +265,9 @@ PassRefPtr<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conve
     return basicShape.release();
 }
 
-float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension)
+float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension, RenderView* view)
 {
-    float offset = floatValueForLength(center.length(), boxDimension);
+    float offset = floatValueForLength(center.length(), boxDimension, view);
     if (center.direction() == BasicShapeCenterCoordinate::TopLeft)
         return offset;
     return boxDimension - offset;

@@ -2507,7 +2507,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             case CSSBoxType::ViewBox:
                 referenceBoxRect = borderBoxRect();
             }
-            if (!clipPath->pathForReferenceRect(referenceBoxRect).contains(locationInContainer.point() - localOffset, clipPath->windRule()))
+            if (!clipPath->pathForReferenceRect(referenceBoxRect, &view()).contains(locationInContainer.point() - localOffset, clipPath->windRule()))
                 return false;
             break;
         }

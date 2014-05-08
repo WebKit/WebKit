@@ -1,3 +1,45 @@
+2014-05-08  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Shapes do not resolve dimensions specified in viewport units
+        https://bugs.webkit.org/show_bug.cgi?id=124052
+
+        Reviewed by Dirk Schulze.
+
+        Viewport unit resolution doesn't work unless the RenderView is passed
+        down into the floatValueForLength methods. All this does is plumb down
+        a RenderView in all of these cases.
+
+        Tests: css3/masking/clip-path-polygon-viewport-units.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-viewport-units.html
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::floatValueForCenterCoordinate):
+        * css/BasicShapeFunctions.h:
+        * css/LengthFunctions.cpp:
+        (WebCore::floatSizeForLengthSize):
+        * css/LengthFunctions.h:
+        * rendering/ClipPathOperation.h:
+        (WebCore::ShapeClipPathOperation::pathForReferenceRect):
+        (WebCore::BoxClipPathOperation::pathForReferenceRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupClipPath):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape):
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computedShape):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeCircle::floatValueForRadiusInBox):
+        (WebCore::BasicShapeCircle::path):
+        (WebCore::BasicShapeEllipse::floatValueForRadiusInBox):
+        (WebCore::BasicShapeEllipse::path):
+        (WebCore::BasicShapePolygon::path):
+        (WebCore::floatSizeForLengthSize):
+        (WebCore::BasicShapeInset::path):
+        * rendering/style/BasicShapes.h:
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+
 2014-05-08  Brent Fulgham  <bfulgham@apple.com>
 
         Cue display events may not be registered during page load.

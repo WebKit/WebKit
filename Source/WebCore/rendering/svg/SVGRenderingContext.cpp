@@ -152,7 +152,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
             referenceBox.setHeight(viewportSize.height());
         } else
             referenceBox = renderer.objectBoundingBox();
-        m_paintInfo->context->clipPath(clipPath.pathForReferenceRect(referenceBox), clipPath.windRule());
+        m_paintInfo->context->clipPath(clipPath.pathForReferenceRect(referenceBox, &renderer.view()), clipPath.windRule());
     }
 
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(*m_renderer);
