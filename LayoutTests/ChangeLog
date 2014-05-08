@@ -1,3 +1,16 @@
+2014-05-08  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        REGRESSION (r167652): SelectionState is not set properly for non leaf objects in pages with regions
+        https://bugs.webkit.org/show_bug.cgi?id=132493
+
+        Reviewed by David Hyatt.
+
+        * TestExpectations: Marked
+        fast/regions/cssom/region-range-for-box-crash.html as crashing on
+        debug due to regression detected in bug #131982.
+        * fast/regions/selection/crash-select-all-expected.txt: Added.
+        * fast/regions/selection/crash-select-all.html: Added.
+
 2014-05-08  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Can't select content within the area of the floating box when clip-path is applied

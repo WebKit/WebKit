@@ -844,7 +844,7 @@ void RenderView::splitSelectionBetweenSubtrees(RenderObject* start, int startPos
         renderSubtreesMap.set(namedFlowThread, nullptr);
 
     if (start && end) {
-        RefPtr<Range> initialRange = Range::create(document(), start->node(), 0, end->node(), 0);
+        RefPtr<Range> initialRange = Range::create(document(), start->node(), startPos, end->node(), endPos);
 
         Node* startNode = initialRange->startContainer();
         Node* endNode = initialRange->endContainer();
@@ -852,7 +852,7 @@ void RenderView::splitSelectionBetweenSubtrees(RenderObject* start, int startPos
 
         for (Node* node = startNode; node != stopNode; node = NodeTraversal::next(node)) {
             RenderObject* renderer = node->renderer();
-            if (!renderer || !renderer->canBeSelectionLeaf())
+            if (!renderer)
                 continue;
 
             SelectionSubtreeRoot& root = renderer->selectionRoot();

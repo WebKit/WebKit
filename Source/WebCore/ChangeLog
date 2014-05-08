@@ -1,3 +1,26 @@
+2014-05-08  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        REGRESSION (r167652): SelectionState is not set properly for non leaf objects in pages with regions
+        https://bugs.webkit.org/show_bug.cgi?id=132493
+
+        Reviewed by David Hyatt.
+
+        Non selection leaf elements were not included in the selection ranges,
+        that was causing that their selection state was not set properly and
+        when one of the element was removed as it was marked as SelectionNone
+        current selection was not removed.
+
+        Due to this fix, the regression detected in bug #131982 arose again.
+        Reverted changes from r167675 and reopened bug as previous fix was not
+        right. Updated TestExpectations accordingly.
+
+        Test: fast/regions/selection/crash-select-all.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::splitSelectionBetweenSubtrees): We need to include
+        non selection leafs in the range, otherwise we won't be marking
+        selection state of some elements properly.
+
 2014-05-08  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Can't select content within the area of the floating box when clip-path is applied
