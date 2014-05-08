@@ -186,9 +186,9 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
 #endif
 #if ENABLE(CSS_COMPOSITING)
     , m_blendMode(BlendModeNormal)
-    , m_hasUnisolatedCompositedBlendingDescendants(false)
-    , m_hasUnisolatedBlendingDescendants(false)
-    , m_hasUnisolatedBlendingDescendantsStatusDirty(false)
+    , m_hasNotIsolatedCompositedBlendingDescendants(false)
+    , m_hasNotIsolatedBlendingDescendants(false)
+    , m_hasNotIsolatedBlendingDescendantsStatusDirty(false)
 #endif
     , m_renderer(rendererLayerModelObject)
     , m_parent(0)
@@ -826,10 +826,10 @@ void RenderLayer::updateBlendMode()
 void RenderLayer::updateAncestorChainHasBlendingDescendants()
 {
     for (auto layer = this; layer; layer = layer->parent()) {
-        if (!layer->hasUnisolatedBlendingDescendantsStatusDirty() && layer->hasUnisolatedBlendingDescendants())
+        if (!layer->hasNotIsolatedBlendingDescendantsStatusDirty() && layer->hasNotIsolatedBlendingDescendants())
             break;
-        layer->m_hasUnisolatedBlendingDescendants = true;
-        layer->m_hasUnisolatedBlendingDescendantsStatusDirty = false;
+        layer->m_hasNotIsolatedBlendingDescendants = true;
+        layer->m_hasNotIsolatedBlendingDescendantsStatusDirty = false;
 
         layer->updateSelfPaintingLayer();
 
@@ -841,10 +841,10 @@ void RenderLayer::updateAncestorChainHasBlendingDescendants()
 void RenderLayer::dirtyAncestorChainHasBlendingDescendants()
 {
     for (auto layer = this; layer; layer = layer->parent()) {
-        if (layer->hasUnisolatedBlendingDescendantsStatusDirty())
+        if (layer->hasNotIsolatedBlendingDescendantsStatusDirty())
             break;
         
-        layer->m_hasUnisolatedBlendingDescendantsStatusDirty = true;
+        layer->m_hasNotIsolatedBlendingDescendantsStatusDirty = true;
 
         if (layer->isStackingContext())
             break;
@@ -1042,12 +1042,12 @@ void RenderLayer::setAncestorChainHasVisibleDescendant()
 
 void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks)
 {
-    if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || m_hasOutOfFlowPositionedDescendantDirty || hasUnisolatedBlendingDescendantsStatusDirty()) {
+    if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || m_hasOutOfFlowPositionedDescendantDirty || hasNotIsolatedBlendingDescendantsStatusDirty()) {
         bool hasVisibleDescendant = false;
         bool hasSelfPaintingLayerDescendant = false;
         bool hasOutOfFlowPositionedDescendant = false;
 #if ENABLE(CSS_COMPOSITING)
-        bool hasUnisolatedBlendingDescendants = false;
+        bool hasNotIsolatedBlendingDescendants = false;
 #endif
 
         HashSet<const RenderObject*> childOutOfFlowDescendantContainingBlocks;
@@ -1069,12 +1069,12 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
             hasSelfPaintingLayerDescendant |= child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant();
             hasOutOfFlowPositionedDescendant |= !childOutOfFlowDescendantContainingBlocks.isEmpty();
 #if ENABLE(CSS_COMPOSITING)
-            hasUnisolatedBlendingDescendants |= child->hasBlendMode() || (child->hasUnisolatedBlendingDescendants() && !child->isolatesBlending());
+            hasNotIsolatedBlendingDescendants |= child->hasBlendMode() || (child->hasNotIsolatedBlendingDescendants() && !child->isolatesBlending());
 #endif
 
             bool allFlagsSet = hasVisibleDescendant && hasSelfPaintingLayerDescendant && hasOutOfFlowPositionedDescendant;
 #if ENABLE(CSS_COMPOSITING)
-            allFlagsSet &= hasUnisolatedBlendingDescendants;
+            allFlagsSet &= hasNotIsolatedBlendingDescendants;
 #endif
             if (allFlagsSet)
                 break;
@@ -1094,9 +1094,9 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
 
         m_hasOutOfFlowPositionedDescendantDirty = false;
 #if ENABLE(CSS_COMPOSITING)
-        m_hasUnisolatedBlendingDescendants = hasUnisolatedBlendingDescendants;
-        if (m_hasUnisolatedBlendingDescendantsStatusDirty) {
-            m_hasUnisolatedBlendingDescendantsStatusDirty = false;
+        m_hasNotIsolatedBlendingDescendants = hasNotIsolatedBlendingDescendants;
+        if (m_hasNotIsolatedBlendingDescendantsStatusDirty) {
+            m_hasNotIsolatedBlendingDescendantsStatusDirty = false;
             updateSelfPaintingLayer();
         }
 #endif
@@ -1756,7 +1756,7 @@ void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
         setAncestorChainHasOutOfFlowPositionedDescendant(child->renderer().containingBlock());
 
 #if ENABLE(CSS_COMPOSITING)
-    if (child->hasBlendMode() || (child->hasUnisolatedBlendingDescendants() && !child->isolatesBlending()))
+    if (child->hasBlendMode() || (child->hasNotIsolatedBlendingDescendants() && !child->isolatesBlending()))
         updateAncestorChainHasBlendingDescendants();
 #endif
 
@@ -1803,7 +1803,7 @@ RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
         dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 
 #if ENABLE(CSS_COMPOSITING)
-    if (oldChild->hasBlendMode() || (oldChild->hasUnisolatedBlendingDescendants() && !oldChild->isolatesBlending()))
+    if (oldChild->hasBlendMode() || (oldChild->hasNotIsolatedBlendingDescendants() && !oldChild->isolatesBlending()))
         dirtyAncestorChainHasBlendingDescendants();
 #endif
 
@@ -6278,12 +6278,12 @@ void RenderLayer::updateStackingContextsAfterStyleChange(const RenderStyle* oldS
 #if ENABLE(CSS_COMPOSITING)
         if (parent()) {
             if (isStackingContext) {
-                if (!hasUnisolatedBlendingDescendantsStatusDirty() && hasUnisolatedBlendingDescendants())
+                if (!hasNotIsolatedBlendingDescendantsStatusDirty() && hasNotIsolatedBlendingDescendants())
                     parent()->dirtyAncestorChainHasBlendingDescendants();
             } else {
-                if (hasUnisolatedBlendingDescendantsStatusDirty())
+                if (hasNotIsolatedBlendingDescendantsStatusDirty())
                     parent()->dirtyAncestorChainHasBlendingDescendants();
-                else if (hasUnisolatedBlendingDescendants())
+                else if (hasNotIsolatedBlendingDescendants())
                     parent()->updateAncestorChainHasBlendingDescendants();
             }
         }

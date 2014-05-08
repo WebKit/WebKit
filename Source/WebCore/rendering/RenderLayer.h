@@ -798,23 +798,23 @@ public:
     bool hasBlendMode() const { return renderer().hasBlendMode(); }
     BlendMode blendMode() const { return m_blendMode; }
 
-    bool isolatesCompositedBlending() const { return m_hasUnisolatedCompositedBlendingDescendants && isStackingContext(); }
-    bool hasUnisolatedCompositedBlendingDescendants() const { return m_hasUnisolatedCompositedBlendingDescendants; }
-    void setHasUnisolatedCompositedBlendingDescendants(bool hasUnisolatedCompositedBlendingDescendants)
+    bool isolatesCompositedBlending() const { return m_hasNotIsolatedCompositedBlendingDescendants && isStackingContext(); }
+    bool hasNotIsolatedCompositedBlendingDescendants() const { return m_hasNotIsolatedCompositedBlendingDescendants; }
+    void setHasNotIsolatedCompositedBlendingDescendants(bool hasNotIsolatedCompositedBlendingDescendants)
     {
-        m_hasUnisolatedCompositedBlendingDescendants = hasUnisolatedCompositedBlendingDescendants;
+        m_hasNotIsolatedCompositedBlendingDescendants = hasNotIsolatedCompositedBlendingDescendants;
     }
 
-    bool isolatesBlending() const { return hasUnisolatedBlendingDescendants() && isStackingContext(); }
+    bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && isStackingContext(); }
     
-    // FIXME: We should ASSERT(!m_hasUnisolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
-    bool hasUnisolatedBlendingDescendants() const { return m_hasUnisolatedBlendingDescendants; }
-    bool hasUnisolatedBlendingDescendantsStatusDirty() const { return m_hasUnisolatedBlendingDescendantsStatusDirty; }
+    // FIXME: We should ASSERT(!m_hasNotIsolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
+    bool hasNotIsolatedBlendingDescendants() const { return m_hasNotIsolatedBlendingDescendants; }
+    bool hasNotIsolatedBlendingDescendantsStatusDirty() const { return m_hasNotIsolatedBlendingDescendantsStatusDirty; }
 #else
     bool hasBlendMode() const { return false; }
     bool isolatesCompositedBlending() const { return false; }
     bool isolatesBlending() const { return false; }
-    bool hasUnisolatedBlendingDescendantsStatusDirty() const { return false; }
+    bool hasNotIsolatedBlendingDescendantsStatusDirty() const { return false; }
 #endif
 
     bool isComposited() const { return m_backing != 0; }
@@ -1268,9 +1268,9 @@ private:
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode m_blendMode : 5;
-    bool m_hasUnisolatedCompositedBlendingDescendants : 1;
-    bool m_hasUnisolatedBlendingDescendants : 1;
-    bool m_hasUnisolatedBlendingDescendantsStatusDirty : 1;
+    bool m_hasNotIsolatedCompositedBlendingDescendants : 1;
+    bool m_hasNotIsolatedBlendingDescendants : 1;
+    bool m_hasNotIsolatedBlendingDescendantsStatusDirty : 1;
 #endif
 
     RenderLayerModelObject& m_renderer;

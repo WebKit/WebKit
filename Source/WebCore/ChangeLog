@@ -1,3 +1,34 @@
+2014-05-08  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Replacing Unisolated with NotIsolated in variables and methods names
+        https://bugs.webkit.org/show_bug.cgi?id=132677
+
+        Reviewed by Dirk Schulze.
+
+        No new tests required.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateAncestorChainHasBlendingDescendants):
+        (WebCore::RenderLayer::dirtyAncestorChainHasBlendingDescendants):
+        (WebCore::RenderLayer::updateDescendantDependentFlags):
+        hasUnisolatedBlendingDescendants -> hasNotIsolatedBlendingDescendants
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::updateStackingContextsAfterStyleChange):
+        * rendering/RenderLayer.h:
+        m_hasUnisolatedBlendingDescendants -> m_hasNotIsolatedBlendingDescendants
+        m_hasUnisolatedBlendingDescendantsStatusDirty -> m_hasNotIsolatedBlendingDescendantsStatusDirty
+        hasUnisolatedBlendingDescendants() -> hasNotIsolatedBlendingDescendants()
+        hasUnisolatedBlendingDescendantsStatusDirty() -> hasNotIsolatedBlendingDescendantsStatusDirty()
+        m_hasUnisolatedCompositedBlendingDescendants -> m_hasNotIsolatedCompositedBlendingDescendants
+        hasUnisolatedCompositedBlendingDescendants() -> hasNotIsolatedCompositedBlendingDescendants()
+        setHasUnisolatedCompositedBlendingDescendants() -> setHasNotIsolatedCompositedBlendingDescendants
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::CompositingState::CompositingState):
+        m_hasUnisolatedCompositedBlendingDescendants -> m_hasNotIsolatedCompositedBlendingDescendants
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2014-05-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Enable skipped http/tests/media/hls/video-controls-live-stream.html
