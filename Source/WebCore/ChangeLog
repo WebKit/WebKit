@@ -1,3 +1,33 @@
+2014-05-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Enable skipped http/tests/media/hls/video-controls-live-stream.html
+        https://bugs.webkit.org/show_bug.cgi?id=132329
+
+        Reviewed by Eric Carlson.
+
+        GTK port needed to define what happened with live stream media
+        controls. Now we disable and dim the timeline and tweak the
+        timers.
+
+        Test: http/tests/media/hls/video-controls-live-stream.html.
+
+        * Modules/mediacontrols/mediaControlsGtk.js:
+        (ControllerGtk.prototype.configureControls): Moved logic from
+        setControlsType and changed to use an early return.
+        (ControllerGtk.prototype.reconnectControls): Redefined to just
+        configure the controls.
+        (ControllerGtk.prototype.handlePlay): If stream is live we don't
+        activate the current time just in case.
+        (ControllerGtk.prototype.updateDuration): Calls the superclass and
+        sets timeline.max to 0.
+        (ControllerGtk.prototype.setControlsType): Deleted.
+        (ControllerGtk.prototype.setIsLive): Configures controls and
+        disables the timeline if stream is live.
+        * css/mediaControlsGtk.css:
+        (audio::-webkit-media-controls-timeline[disabled])
+        (video::-webkit-media-controls-timeline[disabled]): Dimmed the
+        timeline by setting opacity to 0.3.
+
 2014-05-08  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Changing isolation CSS property should not trigger repaint in RenderStyle::changeRequiresLayerRepaint

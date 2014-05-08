@@ -411,9 +411,6 @@ webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ Failure ImageOnlyFai
 webkit.org/b/131347 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
 
-# No HLS support
-http/tests/media/hls [ Skip ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

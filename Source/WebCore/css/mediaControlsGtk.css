@@ -186,6 +186,10 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     outline: none;
 }
 
+audio::-webkit-media-controls-timeline[disabled], video::-webkit-media-controls-timeline[disabled] {
+    opacity: 0.3;
+}
+
 audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
     -webkit-appearance: media-volume-slider-container;
     display: -webkit-flex;

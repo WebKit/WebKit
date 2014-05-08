@@ -17,12 +17,11 @@
                 testExpected('video.duration', Infinity);
 
                 controls = internals.shadowRoot(video).firstChild.firstChild;
-                testExpected('mediaControlsElement(controls, "-webkit-media-controls-rewind-button")', null);
-                testExpected('mediaControlsElement(controls, "-webkit-media-controls-play-button")', null, '!=');
-                testExpected('mediaControlsElement(controls, "-webkit-media-controls-status-display")', null, '!=');
-                testExpected('mediaControlsElement(controls, "-webkit-media-controls-timeline")', null);
-                testExpected('mediaControlsElement(controls, "-webkit-media-controls-current-time-display")', null);
-                testExpected('mediaControlsElement(controls, "-webkit-media-controls-remaining-time-display")', null);
+                dumpMediaControlsTree(controls);
+
+                timeline = mediaControlsElement(controls, "-webkit-media-controls-timeline");
+                test('timeline == null || timeline.disabled', false);
+
                 endTest();
             }
 

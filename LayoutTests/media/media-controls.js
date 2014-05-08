@@ -19,6 +19,25 @@ function mediaControlsElement(first, id)
     return null;
 }
 
+function dumpMediaControlsTree(first)
+{
+    for (var element = first; element; element = element.nextSibling) {
+        // Not every element in the media controls has a shadow pseudo ID, eg. the
+        // text nodes for the time values, so guard against exceptions.
+        try {
+            var pseudo = internals.shadowPseudoId(element);
+            if (pseudo == "")
+                pseudo = "none";
+            consoleWrite(pseudo + ": classes: [" + element.classList + "]");
+        } catch (exception) { }
+
+        if (element.firstChild)
+            dumpMediaControlsTree(element.firstChild);
+    }
+
+    return null;
+}
+
 function mediaControlsButtonCoordinates(element, id)
 {
     var controlID = "-webkit-media-controls-" + id;

@@ -54,6 +54,20 @@ ControllerGtk.prototype = {
         this.controls.enclosure.appendChild(this.controls.panel);
     },
 
+    configureControls: function() {
+        if (this.controls.configured)
+            return;
+
+        this.configureInlineControls();
+        this.controls.configured = true;
+        this.addControls();
+    },
+
+    reconnectControls: function()
+    {
+        this.configureControls();
+    },
+
     setStatusHidden: function(hidden)
     {
     },
@@ -88,6 +102,8 @@ ControllerGtk.prototype = {
     {
         Controller.prototype.handlePlay.apply(this, arguments);
         this.showCurrentTime();
+        if (!this.isLive)
+            this.showCurrentTime();
     },
 
     handleTimeUpdate: function(event)
@@ -126,13 +142,17 @@ ControllerGtk.prototype = {
         this.updateVolume();
     },
 
-    setControlsType: function(type)
+    updateDuration: function()
     {
-        if (!this.controls.configured) {
-            this.configureInlineControls();
-            this.controls.configured = true;
-            this.addControls();
-        }
+        Controller.prototype.updateDuration.apply(this, arguments);
+        if (this.isLive)
+            this.controls.timeline.max = 0;
+    },
+
+    setIsLive: function(live)
+    {
+        Controller.prototype.setIsLive.apply(this, arguments);
+        this.controls.timeline.disabled = this.isLive;
     },
 
     updatePlaying: function()
