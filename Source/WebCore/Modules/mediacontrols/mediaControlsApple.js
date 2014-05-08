@@ -571,7 +571,6 @@ Controller.prototype = {
     handleTextTrackAdd: function(event)
     {
         var track = event.track;
-        this.listenFor(track, 'cuechange', this.handleTextTrackCueChange);
 
         if (this.trackHasThumbnails(track) && track.mode === 'disabled')
             track.mode = 'hidden';
@@ -583,15 +582,8 @@ Controller.prototype = {
 
     handleTextTrackRemove: function(event)
     {
-        var track = event.track;
-        this.stopListeningFor(track, 'cuechange', this.handleTextTrackCueChange);
         this.updateThumbnail();
         this.updateCaptionButton();
-        this.updateCaptionContainer();
-    },
-
-    handleTextTrackCueChange: function(event)
-    {
         this.updateCaptionContainer();
     },
 
@@ -1049,9 +1041,12 @@ Controller.prototype = {
         if (!this.host.textTrackContainer)
             return;
 
-        if (this.video.webkitHasClosedCaptions)
+        var hasClosedCaptions = this.video.webkitHasClosedCaptions;
+        var hasHiddenClass = this.host.textTrackContainer.classList.contains(this.ClassNames.hidden);
+
+        if (hasClosedCaptions && hasHiddenClass)
             this.host.textTrackContainer.classList.remove(this.ClassNames.hidden);
-        else
+        else if (!hasClosedCaptions && !hasHiddenClass)
             this.host.textTrackContainer.classList.add(this.ClassNames.hidden);
 
         this.updateBase();

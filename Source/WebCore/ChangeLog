@@ -1,3 +1,25 @@
+2014-05-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Cue display events may not be registered during page load.
+        https://bugs.webkit.org/show_bug.cgi?id=132696
+        <rdar://problem/16652874>
+
+        Reviewed by Eric Carlson.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handleTextTrackAdd): Don't register
+        for 'cuechange' events anymore.
+        (Controller.prototype.handleTextTrackRemove): Ditto.
+        (Controller.prototype.updateCaptionContainer): Reduce CSS
+        churn by not adding/removing 'Hidden' class every time a
+        new cue is processed. Only do this when transitioning
+        track display state.
+        (Controller.prototype.handleTextTrackCueChange): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateTextTrackDisplay): Call
+        'updateTextTrackContainer' directory when processing cues,
+        rather than trampolining through the JS layer.
+
 2014-05-08  Alexey Proskuryakov  <ap@apple.com>
 
         Make BlobDataFileReference manage its sandbox extension
