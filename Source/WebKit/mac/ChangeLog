@@ -1,3 +1,13 @@
+2014-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Use a different install name for WebKitLegacy.framework for staged framework builds
+        https://bugs.webkit.org/show_bug.cgi?id=132711
+        <rdar://problem/16850620>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKitLegacy.xcconfig:
+
 2014-05-08  Brady Eidson  <beidson@apple.com>
 
         Wrap a new class definition with __has_include()
