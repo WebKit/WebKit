@@ -69,15 +69,19 @@ static bool drawFocusRingToContextAtTime(CGContextRef context, CGPathRef focusRi
     CGContextAddPath(context, focusRingPath);
     return wkDrawFocusRingAtTime(context, timeOffset);
 }
+#endif // !PLATFORM(IOS)
 
 void GraphicsContext::drawFocusRing(const Path& path, int /* width */, int /* offset */, const Color&)
 {
+#if PLATFORM(MAC)
     if (paintingDisabled() || path.isNull())
         return;
 
     drawFocusRingToContext(platformContext(), path.platformPath());
+#else
+    UNUSED_PARAM(path);
+#endif
 }
-#endif // !PLATFORM(IOS)
 
 #if PLATFORM(MAC)
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, double timeOffset, bool& needsRedraw)
