@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<style>
+    .parent {
+        width: 100px;
+        height: 100px;
+        overflow:hidden;
+        isolation:isolate;
+        -webkit-isolation: isolate;
+    }
+
+    .blender {
+        width: 400px;
+        height: 20px;
+        background: rgb(0, 255, 0);
+        mix-blend-mode: difference;
+        -webkit-mix-blend-mode: difference;
+    }
+</style>
+
+<p>This test checks that an element with overflow hidden, being normal flow only, isolates blending descendants properly.<br/>
+Test passes if you see a green rectangle.</p>
+<div class="parent">
+    <div class="blender"></div>
+</div>

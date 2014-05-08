@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<style>
+    .parent {
+        width: 100px;
+        height: 100px;
+        overflow:hidden;
+        isolation:isolate;
+        -webkit-isolation: isolate;
+    }
+
+    .child {
+        width: 400px;
+        height: 20px;
+        background: rgb(0, 255, 0);
+    }
+
+    .blending {
+        mix-blend-mode: difference;
+        -webkit-mix-blend-mode: difference;
+    }
+</style>
+
+<!-- This test checks that an element with overflow hidden, not being a self painting layer, will be able to dynamically isolate blending descendants. -->
+<p>Test passes if you see a green rectangle.</p>
+<div class="parent">
+    <div id="target" class="child"></div>
+</div>
+
+<script type="text/javascript">
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
+
+    window.addEventListener('load', function() {
+       var target = document.getElementById("target");
+       target.className = "blending child";
+
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+    }, false);
+</script>

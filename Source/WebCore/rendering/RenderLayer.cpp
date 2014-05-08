@@ -831,6 +831,8 @@ void RenderLayer::updateAncestorChainHasBlendingDescendants()
         layer->m_hasUnisolatedBlendingDescendants = true;
         layer->m_hasUnisolatedBlendingDescendantsStatusDirty = false;
 
+        layer->updateSelfPaintingLayer();
+
         if (layer->isStackingContext())
             break;
     }
@@ -1041,11 +1043,11 @@ void RenderLayer::setAncestorChainHasVisibleDescendant()
 void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks)
 {
     if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || m_hasOutOfFlowPositionedDescendantDirty || hasUnisolatedBlendingDescendantsStatusDirty()) {
-        m_hasVisibleDescendant = false;
-        m_hasSelfPaintingLayerDescendant = false;
-        m_hasOutOfFlowPositionedDescendant = false;
+        bool hasVisibleDescendant = false;
+        bool hasSelfPaintingLayerDescendant = false;
+        bool hasOutOfFlowPositionedDescendant = false;
 #if ENABLE(CSS_COMPOSITING)
-        m_hasUnisolatedBlendingDescendants = false;
+        bool hasUnisolatedBlendingDescendants = false;
 #endif
 
         HashSet<const RenderObject*> childOutOfFlowDescendantContainingBlocks;
@@ -1063,21 +1065,16 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
                     outOfFlowDescendantContainingBlocks->add(*it);
             }
 
-            bool hasVisibleDescendant = child->m_hasVisibleContent || child->m_hasVisibleDescendant;
-            bool hasSelfPaintingLayerDescendant = child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant();
-            bool hasOutOfFlowPositionedDescendant = !childOutOfFlowDescendantContainingBlocks.isEmpty();
+            hasVisibleDescendant |= child->m_hasVisibleContent || child->m_hasVisibleDescendant;
+            hasSelfPaintingLayerDescendant |= child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant();
+            hasOutOfFlowPositionedDescendant |= !childOutOfFlowDescendantContainingBlocks.isEmpty();
 #if ENABLE(CSS_COMPOSITING)
-            bool hasUnisolatedBlendingDescendants = child->hasBlendMode() || (child->hasUnisolatedBlendingDescendants() && !child->isolatesBlending());
-
-            m_hasUnisolatedBlendingDescendants |= hasUnisolatedBlendingDescendants;
+            hasUnisolatedBlendingDescendants |= child->hasBlendMode() || (child->hasUnisolatedBlendingDescendants() && !child->isolatesBlending());
 #endif
-            m_hasVisibleDescendant |= hasVisibleDescendant;
-            m_hasSelfPaintingLayerDescendant |= hasSelfPaintingLayerDescendant;
-            m_hasOutOfFlowPositionedDescendant |= hasOutOfFlowPositionedDescendant;
 
-            bool allFlagsSet = m_hasVisibleDescendant && m_hasSelfPaintingLayerDescendant && m_hasOutOfFlowPositionedDescendant;
+            bool allFlagsSet = hasVisibleDescendant && hasSelfPaintingLayerDescendant && hasOutOfFlowPositionedDescendant;
 #if ENABLE(CSS_COMPOSITING)
-            allFlagsSet &= m_hasUnisolatedBlendingDescendants;
+            allFlagsSet &= hasUnisolatedBlendingDescendants;
 #endif
             if (allFlagsSet)
                 break;
@@ -1086,15 +1083,22 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
         if (outOfFlowDescendantContainingBlocks)
             outOfFlowDescendantContainingBlocks->remove(&renderer());
 
+        m_hasVisibleDescendant = hasVisibleDescendant;
         m_visibleDescendantStatusDirty = false;
+        m_hasSelfPaintingLayerDescendant = hasSelfPaintingLayerDescendant;
         m_hasSelfPaintingLayerDescendantDirty = false;
 
+        m_hasOutOfFlowPositionedDescendant = hasOutOfFlowPositionedDescendant;
         if (m_hasOutOfFlowPositionedDescendantDirty)
             updateNeedsCompositedScrolling();
 
         m_hasOutOfFlowPositionedDescendantDirty = false;
 #if ENABLE(CSS_COMPOSITING)
-        m_hasUnisolatedBlendingDescendantsStatusDirty = false;
+        m_hasUnisolatedBlendingDescendants = hasUnisolatedBlendingDescendants;
+        if (m_hasUnisolatedBlendingDescendantsStatusDirty) {
+            m_hasUnisolatedBlendingDescendantsStatusDirty = false;
+            updateSelfPaintingLayer();
+        }
 #endif
     }
 
@@ -6178,6 +6182,7 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
     return !isNormalFlowOnly()
         || hasOverlayScrollbars()
         || needsCompositedScrolling()
+        || isolatesBlending()
         || renderer().hasReflection()
         || renderer().hasMask()
         || renderer().isTableRow()

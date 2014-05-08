@@ -806,11 +806,9 @@ public:
     }
 
     bool isolatesBlending() const { return hasUnisolatedBlendingDescendants() && isStackingContext(); }
-    bool hasUnisolatedBlendingDescendants() const
-    {
-        ASSERT(!m_hasUnisolatedBlendingDescendantsStatusDirty);
-        return m_hasUnisolatedBlendingDescendants;
-    }
+    
+    // FIXME: We should ASSERT(!m_hasUnisolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
+    bool hasUnisolatedBlendingDescendants() const { return m_hasUnisolatedBlendingDescendants; }
     bool hasUnisolatedBlendingDescendantsStatusDirty() const { return m_hasUnisolatedBlendingDescendantsStatusDirty; }
 #else
     bool hasBlendMode() const { return false; }

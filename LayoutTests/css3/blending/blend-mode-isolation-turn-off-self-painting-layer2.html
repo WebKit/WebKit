@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<style>
+    .parent {
+        width: 100px;
+        height: 100px;
+        overflow:hidden;
+        isolation:isolate;
+        -webkit-isolation: isolate;
+    }
+
+    .child {
+        width: 400px;
+        height: 20px;
+        background: rgb(0, 255, 0);
+        /*Keep child RenderLayer after removing blending*/
+        position: relative;
+    }
+
+    .blending {
+        mix-blend-mode: difference;
+        -webkit-mix-blend-mode: difference;
+    }
+</style>
+
+<!-- This test checks that an element with overflow hidden will be able to stop isolating after dinamically removing mix-blend-mode on descendants. -->
+<p>Test passes if you see a green rectangle.</p>
+<div class="parent">
+    <div id="target" class="child blending"></div>
+</div>
+
+<script type="text/javascript">
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
+
+    window.addEventListener('load', function() {
+       var target = document.getElementById("target");
+       target.className = "child";
+
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+    }, false);
+</script>

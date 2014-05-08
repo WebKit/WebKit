@@ -1,3 +1,43 @@
+2014-05-07  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Blending doesn't work if the parent stacking context is not a self painting layer
+        https://bugs.webkit.org/show_bug.cgi?id=130891
+
+        Reviewed by Dean Jackson.
+
+        The stacking context layers having unisolated blending descendants should be able
+        to create transparency layers or to become composited in order to restrict blending 
+        content to accessing the information outside the current stacking context.
+        Some layers are not self painting layers and these layers cannot crate transparency
+        layers and cannot be composited, thus they are not able to isolate blending descendants
+        when it's required.
+        
+        The solution in this patch is to make a layer isSelfPaintingLayer when
+        it needs to isolate blending descendants (hasUnisolatedBlendingDescendants).
+
+        Tests: css3/blending/blend-mode-isolation-accelerated-overflow-hidden.html
+               css3/blending/blend-mode-isolation-overflow-hidden.html
+               css3/blending/blend-mode-isolation-turn-off-self-painting-layer.html
+               css3/blending/blend-mode-isolation-turn-off-self-painting-layer1.html
+               css3/blending/blend-mode-isolation-turn-off-self-painting-layer2.html
+               css3/blending/blend-mode-isolation-turn-on-self-painting-layer.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateAncestorChainHasBlendingDescendants):
+        When hasUnisolatedBlendingDescendants is set we make sure that isSelfPaintingLayer flag is set too.
+        (WebCore::RenderLayer::updateDescendantDependentFlags):
+        The flags might be read or changed while walking the descendants, so we don't want to reset
+        them before traversing the tree.
+        (WebCore::RenderLayer::shouldBeSelfPaintingLayer):
+        Adding isolatesBlending() condition for a layer to be self painting.
+        * rendering/RenderLayer.h:
+        Removing ASSERT from hasUnisolatedBlendingDescendants(). It crashes in minibrowser
+        and in layout tests when painting contents. Similar bugs on other flags: #71044, #71277.
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        Telling ancestors that blend mode property has been removed from CSS when the layer for
+        this element is going to be removed; styleChanged will not be called anymore.
+
 2014-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Dragging text from one paragraph to another does not render as expected

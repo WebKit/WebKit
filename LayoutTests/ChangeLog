@@ -1,3 +1,31 @@
+2014-05-07  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Blending doesn't work if the parent stacking context is not a self painting layer
+        https://bugs.webkit.org/show_bug.cgi?id=130891
+
+        Reviewed by Dean Jackson.
+
+        Removed position:relative which forced tests to avoid this bug. 
+        * css3/blending/blend-mode-accelerated-parent-overflow-hidden.html:
+        * css3/blending/blend-mode-clip-accelerated-blending-canvas.html:
+        * css3/blending/blend-mode-clip-accelerated-blending-child.html:
+        * css3/blending/blend-mode-clip-accelerated-blending-with-siblings.html:
+        * css3/blending/blend-mode-clip-accelerated-transformed-blending.html:
+
+        New tests:
+        * css3/blending/blend-mode-isolation-accelerated-overflow-hidden-expected.txt: Added.
+        * css3/blending/blend-mode-isolation-accelerated-overflow-hidden.html: Added.
+        * css3/blending/blend-mode-isolation-overflow-hidden-expected.html: Added.
+        * css3/blending/blend-mode-isolation-overflow-hidden.html: Added.
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer-expected.txt: Added.
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer.html: Added.
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer1-expected.txt: Added.
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer1.html: Added.
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer2-expected.txt: Added.
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer2.html: Added.
+        * css3/blending/blend-mode-isolation-turn-on-self-painting-layer-expected.txt: Added.
+        * css3/blending/blend-mode-isolation-turn-on-self-painting-layer.html: Added.
+
 2014-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Dragging text from one paragraph to another does not render as expected

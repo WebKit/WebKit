@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<style>
+    .parent {
+        width: 100px;
+        height: 100px;
+        overflow:hidden;
+        isolation:isolate;
+        -webkit-isolation: isolate;
+    }
+
+    .blender {
+        width: 400px;
+        height: 20px;
+        background: rgb(0, 255, 0);
+        mix-blend-mode: difference;
+        -webkit-mix-blend-mode: difference;
+    }
+
+    .accelerated {
+        -webkit-transform: translateZ(0px);
+    }
+</style>
+
+<!-- This test checks that an element with overflow hidden, being normal flow only, can get accelerated in order to isolate blending descendants properly. -->
+<!-- Test passes if you see a green rectangle. -->
+<div class="parent">
+    <div class="blender accelerated"></div>
+</div>
+
+<pre id="layerTree"></pre>
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    var text = document.getElementById("layerTree");
+    text.innerHTML = window.internals.layerTreeAsText(document);
+</script>

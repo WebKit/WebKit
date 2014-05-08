@@ -151,6 +151,10 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             }
         }
     } else if (layer() && layer()->parent()) {
+#if ENABLE(CSS_COMPOSITING)
+        if (oldStyle->hasBlendMode())
+            layer()->parent()->dirtyAncestorChainHasBlendingDescendants();
+#endif
         setHasTransform(false); // Either a transform wasn't specified or the object doesn't support transforms, so just null out the bit.
         setHasReflection(false);
         layer()->removeOnlyThisLayer(); // calls destroyLayer() which clears m_layer
