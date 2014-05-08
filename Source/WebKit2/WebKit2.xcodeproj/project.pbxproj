@@ -1528,6 +1528,8 @@
 		E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E1513C65166EABB200149FCB /* ChildProcessProxy.h */; };
 		E152551A17011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E152551817011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp */; };
 		E152551B17011819003D7ADB /* NetworkResourceLoaderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E152551917011819003D7ADB /* NetworkResourceLoaderMessages.h */; };
+		E164A2F1191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E164A2EF191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.cpp */; };
+		E164A2F2191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = E164A2F0191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h */; };
 		E170876B16D6CA6900F99226 /* BlobRegistryProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E170876916D6CA6900F99226 /* BlobRegistryProxy.cpp */; };
 		E170876C16D6CA6900F99226 /* BlobRegistryProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */; };
 		E179088D169BAA62006904C7 /* SecItemShim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6947169B77C8009B6670 /* SecItemShim.cpp */; };
@@ -3452,6 +3454,8 @@
 		E1525517170109FB003D7ADB /* NetworkResourceLoader.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = NetworkResourceLoader.messages.in; path = NetworkProcess/NetworkResourceLoader.messages.in; sourceTree = "<group>"; };
 		E152551817011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkResourceLoaderMessageReceiver.cpp; sourceTree = "<group>"; };
 		E152551917011819003D7ADB /* NetworkResourceLoaderMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoaderMessages.h; sourceTree = "<group>"; };
+		E164A2EF191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobDataFileReferenceWithSandboxExtension.cpp; sourceTree = "<group>"; };
+		E164A2F0191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobDataFileReferenceWithSandboxExtension.h; sourceTree = "<group>"; };
 		E170876916D6CA6900F99226 /* BlobRegistryProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobRegistryProxy.cpp; path = WebProcess/FileAPI/BlobRegistryProxy.cpp; sourceTree = "<group>"; };
 		E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobRegistryProxy.h; path = WebProcess/FileAPI/BlobRegistryProxy.h; sourceTree = "<group>"; };
 		E1798C7716E6818800240139 /* NetworkBlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkBlobRegistry.cpp; path = NetworkProcess/FileAPI/NetworkBlobRegistry.cpp; sourceTree = "<group>"; };
@@ -4104,6 +4108,8 @@
 				515E7725183DD6F60007203F /* AsyncRequest.cpp */,
 				515E7726183DD6F60007203F /* AsyncRequest.h */,
 				51BA24431858EE3000EA2811 /* AsyncTask.h */,
+				E164A2EF191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.cpp */,
+				E164A2F0191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h */,
 				4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */,
 				BCF18637167D071E00A1A85A /* CacheModel.cpp */,
 				BC3065F91259344E00E71278 /* CacheModel.h */,
@@ -6789,6 +6795,7 @@
 				1ADCB86B189831B30022EE5A /* NavigationActionData.h in Headers */,
 				935EEBA2127761D0003322B8 /* InjectedBundleBackForwardList.h in Headers */,
 				935EEBA4127761D6003322B8 /* InjectedBundleBackForwardListItem.h in Headers */,
+				E164A2F2191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h in Headers */,
 				1A6637D718B2831F00C0BCF3 /* APIHistoryClient.h in Headers */,
 				BCEE7DC5128B645D009827DA /* InjectedBundleClient.h in Headers */,
 				BC498618124D10E200D834E1 /* InjectedBundleHitTestResult.h in Headers */,
@@ -8582,6 +8589,7 @@
 				33D3A3C81339617900709BE4 /* WebMediaCacheManagerMessageReceiver.cpp in Sources */,
 				33D3A3BA1339606200709BE4 /* WebMediaCacheManagerProxy.cpp in Sources */,
 				33D3A3CA1339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp in Sources */,
+				E164A2F1191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.cpp in Sources */,
 				0FCB4E4D18BBE044000FCFC9 /* WKContentView.mm in Sources */,
 				519EF59218EF80CE0003B7F4 /* TelephoneNumberOverlayController.cpp in Sources */,
 				909854EC12BC4E17000AD080 /* WebMemorySampler.cpp in Sources */,

@@ -32,22 +32,23 @@
 #include "NetworkProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <WebCore/BlobDataFileReference.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, const String& path, const String& contentType)
+void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, PassRefPtr<BlobDataFileReference> file, const String& contentType)
 {
     ASSERT(WebProcess::shared().usesNetworkProcess());
 
     SandboxExtension::Handle extensionHandle;
 
     // File path can be empty when submitting a form file input without a file, see bug 111778.
-    if (!path.isEmpty())
-        SandboxExtension::createHandle(path, SandboxExtension::ReadOnly, extensionHandle);
+    if (!file->path().isEmpty())
+        SandboxExtension::createHandle(file->path(), SandboxExtension::ReadOnly, extensionHandle);
 
-    WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(url, path, extensionHandle, contentType), 0);
+    WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(url, file->path(), extensionHandle, contentType), 0);
 }
 
 void BlobRegistryProxy::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)

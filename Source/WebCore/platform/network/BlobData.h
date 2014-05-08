@@ -86,9 +86,9 @@ struct BlobDataItem {
 private:
     friend class BlobData;
 
-    explicit BlobDataItem(const String& path)
+    explicit BlobDataItem(PassRefPtr<BlobDataFileReference> file)
         : type(File)
-        , file(BlobDataFileReference::create(path))
+        , file(file)
         , m_offset(0)
         , m_length(toEndOfFile)
     {
@@ -130,7 +130,7 @@ public:
     void swapItems(BlobDataItemList&);
 
     void appendData(PassRefPtr<RawData>);
-    void appendFile(const String& path);
+    void appendFile(PassRefPtr<BlobDataFileReference>);
 
 private:
     friend class BlobRegistryImpl;

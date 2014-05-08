@@ -42,6 +42,7 @@
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 
 namespace WebCore {
+class BlobDataFileReference;
 class ResourceBuffer;
 class ResourceHandle;
 class ResourceRequest;
@@ -189,6 +190,7 @@ private:
 
     Vector<RefPtr<SandboxExtension>> m_requestBodySandboxExtensions;
     Vector<RefPtr<SandboxExtension>> m_resourceSandboxExtensions;
+    Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
     bool m_sandboxExtensionsAreConsumed;
 
     RefPtr<NetworkConnectionToWebProcess> m_connection;

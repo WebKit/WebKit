@@ -563,6 +563,7 @@ if (ENABLE_PLUGIN_PROCESS)
         PluginProcess/unix/PluginProcessUnix.cpp
 
         Shared/ActivityAssertion.cpp
+        Shared/BlobDataFileReferenceWithSandboxExtension.cpp
         Shared/ChildProcess.cpp
         Shared/ChildProcessProxy.cpp
         Shared/ConnectionStack.cpp

@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class BlobDataFileReference;
 class BlobPart;
 class BlobRegistry;
 class URL;
@@ -47,7 +48,7 @@ class BlobRegistry {
 public:
 
     // Registers a blob URL referring to the specified file.
-    virtual void registerFileBlobURL(const URL&, const String& path, const String& contentType) = 0;
+    virtual void registerFileBlobURL(const URL&, PassRefPtr<BlobDataFileReference>, const String& contentType) = 0;
 
     // Registers a blob URL referring to the specified blob data.
     virtual void registerBlobURL(const URL&, Vector<BlobPart>, const String& contentType) = 0;

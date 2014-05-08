@@ -30,32 +30,39 @@
 
 namespace WebCore {
 
+BlobDataFileReference::~BlobDataFileReference()
+{
+}
+
 unsigned long long BlobDataFileReference::size() const
 {
-    if (!m_fileSystemDataComputed)
-        computeFileSystemData();
-
     return m_size;
 }
 
 double BlobDataFileReference::expectedModificationTime() const
 {
-    if (!m_fileSystemDataComputed)
-        computeFileSystemData();
-
     return m_expectedModificationTime;
 }
 
-void BlobDataFileReference::computeFileSystemData() const
+void BlobDataFileReference::startTrackingModifications()
 {
-    m_fileSystemDataComputed = true;
-
+    // This is not done automatically by the constructor, because BlobDataFileReference is
+    // also used to pass paths around before registration. Only registered blobs need to pay
+    // the cost of tracking file modifications.
     FileMetadata metadata;
     if (!getFileMetadata(m_path, metadata))
         return;
 
     m_size = metadata.length;
     m_expectedModificationTime = metadata.modificationTime;
+}
+
+void BlobDataFileReference::prepareForFileAccess()
+{
+}
+
+void BlobDataFileReference::revokeFileAccess()
+{
 }
 
 }

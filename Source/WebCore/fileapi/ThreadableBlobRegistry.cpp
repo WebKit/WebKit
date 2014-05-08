@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ThreadableBlobRegistry.h"
 
+#include "BlobDataFileReference.h"
 #include "BlobPart.h"
 #include "BlobRegistry.h"
 #include "BlobURL.h"
@@ -102,13 +103,13 @@ static ThreadSpecific<BlobUrlOriginMap>& originMap()
 void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& path, const String& contentType)
 {
     if (isMainThread())
-        blobRegistry().registerFileBlobURL(url, path, contentType);
+        blobRegistry().registerFileBlobURL(url, BlobDataFileReference::create(path), contentType);
     else {
         // BlobRegistryContext performs an isolated copy of data.
         BlobRegistryContext* context = new BlobRegistryContext(url, path, contentType);
         callOnMainThread([context] {
             std::unique_ptr<BlobRegistryContext> blobRegistryContext(context);
-            blobRegistry().registerFileBlobURL(blobRegistryContext->url, blobRegistryContext->path, blobRegistryContext->contentType);
+            blobRegistry().registerFileBlobURL(blobRegistryContext->url, BlobDataFileReference::create(blobRegistryContext->path), blobRegistryContext->contentType);
         });
     }
 }

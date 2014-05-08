@@ -23,47 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BlobDataFileReference_h
-#define BlobDataFileReference_h
+#ifndef BlobDataFileReferenceWithSandboxExtension_h
+#define BlobDataFileReferenceWithSandboxExtension_h
 
-#include "FileSystem.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include <WebCore/BlobDataFileReference.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class BlobDataFileReference : public RefCounted<BlobDataFileReference> {
+class SandboxExtension;
+
+class BlobDataFileReferenceWithSandboxExtension : public WebCore::BlobDataFileReference {
 public:
-    static PassRefPtr<BlobDataFileReference> create(const String& path)
+    static PassRefPtr<BlobDataFileReference> create(const String& path, PassRefPtr<SandboxExtension> sandboxExtension)
     {
-        return adoptRef(new BlobDataFileReference(path));
-    }
-
-    virtual ~BlobDataFileReference();
-
-    void startTrackingModifications();
-
-    const String& path() const { return m_path; }
-    unsigned long long size() const;
-    double expectedModificationTime() const;
-
-    virtual void prepareForFileAccess();
-    virtual void revokeFileAccess();
-
-protected:
-    BlobDataFileReference(const String& path)
-        : m_path(path)
-        , m_size(0)
-        , m_expectedModificationTime(invalidFileTime())
-    {
+        return adoptRef(new BlobDataFileReferenceWithSandboxExtension(path, sandboxExtension));
     }
 
 private:
-    String m_path;
-    unsigned long long m_size;
-    double m_expectedModificationTime;
+    BlobDataFileReferenceWithSandboxExtension(const String& path, PassRefPtr<SandboxExtension>);
+    virtual ~BlobDataFileReferenceWithSandboxExtension();
+
+    virtual void prepareForFileAccess() override;
+    virtual void revokeFileAccess() override;
+
+    RefPtr<SandboxExtension> m_sandboxExtension;
 };
 
 }
 
-#endif // BlobDataFileReference_h
+#endif // BlobDataFileReferenceWithSandboxExtension_h

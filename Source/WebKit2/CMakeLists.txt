@@ -185,6 +185,7 @@ set(WebKit2_SOURCES
     Shared/APIURLRequest.cpp
     Shared/APIURLResponse.cpp
     Shared/ActivityAssertion.cpp
+    Shared/BlobDataFileReferenceWithSandboxExtension.cpp
     Shared/CacheModel.cpp
     Shared/ChildProcess.cpp
     Shared/ChildProcessProxy.cpp

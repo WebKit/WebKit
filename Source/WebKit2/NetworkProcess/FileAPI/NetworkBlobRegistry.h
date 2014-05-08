@@ -33,6 +33,7 @@
 #include <wtf/HashSet.h>
 
 namespace WebCore {
+class BlobDataFileReference;
 class BlobPart;
 }
 
@@ -56,13 +57,10 @@ public:
 
     void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*);
 
-    const Vector<RefPtr<SandboxExtension>> sandboxExtensions(const WebCore::URL&);
+    Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(NetworkConnectionToWebProcess*, const WebCore::URL&);
 
 private:
     ~NetworkBlobRegistry();
-
-    typedef HashMap<String, Vector<RefPtr<SandboxExtension>>> SandboxExtensionMap;
-    SandboxExtensionMap m_sandboxExtensions;
 
     typedef HashMap<NetworkConnectionToWebProcess*, HashSet<WebCore::URL>> BlobForConnectionMap;
     BlobForConnectionMap m_blobsForConnection;

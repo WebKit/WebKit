@@ -44,6 +44,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebResourceLoaderMessages.h"
+#include <WebCore/BlobDataFileReference.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceHandle.h>
@@ -83,18 +84,15 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
 
 #if ENABLE(BLOB)
     if (m_request.httpBody()) {
-        const Vector<FormDataElement>& elements = m_request.httpBody()->elements();
-        for (size_t i = 0, count = elements.size(); i < count; ++i) {
-            if (elements[i].m_type == FormDataElement::Type::EncodedBlob) {
-                Vector<RefPtr<SandboxExtension>> blobElementExtensions = NetworkBlobRegistry::shared().sandboxExtensions(elements[i].m_url);
-                m_requestBodySandboxExtensions.appendVector(blobElementExtensions);
-            }
+        for (const FormDataElement& element : m_request.httpBody()->elements()) {
+            if (element.m_type == FormDataElement::Type::EncodedBlob)
+                m_fileReferences.appendVector(NetworkBlobRegistry::shared().filesInBlob(connection, element.m_url));
         }
     }
 
     if (m_request.url().protocolIs("blob")) {
         ASSERT(!SandboxExtension::create(parameters.resourceSandboxExtension));
-        m_resourceSandboxExtensions = NetworkBlobRegistry::shared().sandboxExtensions(m_request.url());
+        m_fileReferences.appendVector(NetworkBlobRegistry::shared().filesInBlob(connection, m_request.url()));
     } else
 #endif
     if (RefPtr<SandboxExtension> resourceSandboxExtension = SandboxExtension::create(parameters.resourceSandboxExtension))
@@ -355,11 +353,14 @@ IPC::Connection* NetworkResourceLoader::messageSenderConnection()
 
 void NetworkResourceLoader::consumeSandboxExtensions()
 {
-    for (size_t i = 0, count = m_requestBodySandboxExtensions.size(); i < count; ++i)
-        m_requestBodySandboxExtensions[i]->consume();
+    for (RefPtr<SandboxExtension>& extension : m_requestBodySandboxExtensions)
+        extension->consume();
 
-    for (size_t i = 0, count = m_resourceSandboxExtensions.size(); i < count; ++i)
-        m_resourceSandboxExtensions[i]->consume();
+    for (RefPtr<SandboxExtension>& extension : m_resourceSandboxExtensions)
+        extension->consume();
+
+    for (RefPtr<BlobDataFileReference>& fileReference : m_fileReferences)
+        fileReference->prepareForFileAccess();
 
     m_sandboxExtensionsAreConsumed = true;
 }
@@ -367,14 +368,17 @@ void NetworkResourceLoader::consumeSandboxExtensions()
 void NetworkResourceLoader::invalidateSandboxExtensions()
 {
     if (m_sandboxExtensionsAreConsumed) {
-        for (size_t i = 0, count = m_requestBodySandboxExtensions.size(); i < count; ++i)
-            m_requestBodySandboxExtensions[i]->revoke();
-        for (size_t i = 0, count = m_resourceSandboxExtensions.size(); i < count; ++i)
-            m_resourceSandboxExtensions[i]->revoke();
+        for (RefPtr<SandboxExtension>& extension : m_requestBodySandboxExtensions)
+            extension->revoke();
+        for (RefPtr<SandboxExtension>& extension : m_resourceSandboxExtensions)
+            extension->revoke();
+        for (RefPtr<BlobDataFileReference>& fileReference : m_fileReferences)
+            fileReference->revokeFileAccess();
     }
 
     m_requestBodySandboxExtensions.clear();
     m_resourceSandboxExtensions.clear();
+    m_fileReferences.clear();
 
     m_sandboxExtensionsAreConsumed = false;
 }

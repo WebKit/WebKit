@@ -1,3 +1,32 @@
+2014-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Make BlobDataFileReference manage its sandbox extension
+        https://bugs.webkit.org/show_bug.cgi?id=132689
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in: Export symbols that are now needed in WebKit2 to subclass BlobDataFileReference.
+
+        * fileapi/ThreadableBlobRegistry.cpp: (WebCore::ThreadableBlobRegistry::registerFileBlobURL):
+        * platform/network/BlobData.cpp: (WebCore::BlobData::appendFile):
+        * platform/network/BlobData.h: (WebCore::BlobDataItem::BlobDataItem):
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp: (WebCore::BlobRegistryImpl::registerFileBlobURL):
+        * platform/network/BlobRegistryImpl.h:
+        BlobRegistry now takes a BlobDataFileReference and not a path, so that WebKit2
+        could pass objects that include sandbox extensions.
+
+        * platform/network/BlobDataFileReference.h:
+        * platform/network/BlobDataFileReference.cpp:
+        (WebCore::BlobDataFileReference::~BlobDataFileReference): Added a virtual destructor.
+        (WebCore::BlobDataFileReference::size): We now record the size and modification time right away, no need to lazily calculate them.
+        (WebCore::BlobDataFileReference::expectedModificationTime): Ditto.
+        (WebCore::BlobDataFileReference::startTrackingModifications): Record time and size
+        (since it's a single call). However, size calculation will become complicated again soon.
+        (WebCore::BlobDataFileReference::prepareForFileAccess): A hook for subclasses.
+        (WebCore::BlobDataFileReference::revokeFileAccess): Ditto.
+        (WebCore::BlobDataFileReference::computeFileSystemData): Deleted.
+
 2014-05-08  Rik Cabanier  <cabanier@adobe.com>
 
         Add support for drawFocusIfNeeded

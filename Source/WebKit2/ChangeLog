@@ -1,3 +1,50 @@
+2014-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Make BlobDataFileReference manage its sandbox extension
+        https://bugs.webkit.org/show_bug.cgi?id=132689
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Added BlobDataFileReferenceWithSandboxExtension.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::registerFileBlobURL):
+        (WebKit::NetworkBlobRegistry::registerBlobURL):
+        (WebKit::NetworkBlobRegistry::registerBlobURLForSlice):
+        (WebKit::NetworkBlobRegistry::unregisterBlobURL):
+        (WebKit::NetworkBlobRegistry::connectionToWebProcessDidClose):
+        (WebKit::NetworkBlobRegistry::filesInBlob):
+        (WebKit::NetworkBlobRegistry::sandboxExtensions): Deleted.
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        We no longer track sandbox extensions here. Instead, provide a way to get files
+        for a blob, which contain extensions and can allow access to themselves.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::consumeSandboxExtensions):
+        (WebKit::NetworkResourceLoader::invalidateSandboxExtensions):
+        * NetworkProcess/NetworkResourceLoader.h:
+        Allow/revoke access to files in blob, just like we do for explicitly passed extensions.
+
+        * Shared/BlobDataFileReferenceWithSandboxExtension.cpp: Added.
+        (WebKit::BlobDataFileReferenceWithSandboxExtension::BlobDataFileReferenceWithSandboxExtension):
+        (WebKit::BlobDataFileReferenceWithSandboxExtension::~BlobDataFileReferenceWithSandboxExtension):
+        (WebKit::BlobDataFileReferenceWithSandboxExtension::prepareForFileAccess):
+        (WebKit::BlobDataFileReferenceWithSandboxExtension::revokeFileAccess):
+        * Shared/BlobDataFileReferenceWithSandboxExtension.h: Added.
+        (WebKit::BlobDataFileReferenceWithSandboxExtension::create):
+        A subclass of BlobDataFileReference that also contains a sandbox extension. NetworkProcess
+        always uses it in BlobRegistryImpl.
+
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp: (WebKit::BlobRegistryProxy::registerFileBlobURL):
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+        Updated for BlobRegistry interface changes. BlobRegistryProxy doesn't really need
+        a BlobDataFileReference here, as it only uses a path, but it needs to implement the same interface
+        as BlobRegistryImpl.
+
 2014-05-08  Brady Eidson  <beidson@apple.com>
 
         "shouldKeepCurrentBackForwardListItemInList" API should pass clientInfo to the callback

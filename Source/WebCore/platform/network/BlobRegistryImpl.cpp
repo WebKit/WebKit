@@ -116,7 +116,7 @@ void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItem
     ASSERT(!length);
 }
 
-void BlobRegistryImpl::registerFileBlobURL(const URL& url, const String& path, const String& contentType)
+void BlobRegistryImpl::registerFileBlobURL(const URL& url, PassRefPtr<BlobDataFileReference> file, const String& contentType)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -124,7 +124,7 @@ void BlobRegistryImpl::registerFileBlobURL(const URL& url, const String& path, c
     RefPtr<BlobData> blobData = BlobData::create();
     blobData->setContentType(contentType);
 
-    blobData->appendFile(path);
+    blobData->appendFile(file);
     m_blobs.set(url.string(), blobData.release());
 }
 
