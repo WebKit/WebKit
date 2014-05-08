@@ -1,3 +1,10 @@
+2014-05-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed 64-bit build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add
+        correct 64-bit symbol definitions.
+
 2014-05-07  Oliver Hunt  <oliver@apple.com>
 
         Fix windows build.
