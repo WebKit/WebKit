@@ -1,3 +1,15 @@
+2014-05-08  Antti Koivisto  <antti@apple.com>
+
+        [iOS WebKit2] Can't activate text fields on Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=132682
+
+        Reviewed by Enrica Casucci.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::fired):
+        
+            The isDocument() test here had reversed in the merge breaking content change observer callback.
+
 2014-05-07  Sergio Villar Senin  <svillar@igalia.com>
 
         Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T> in svg/
