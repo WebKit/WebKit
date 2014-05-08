@@ -1,3 +1,26 @@
+2014-05-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Make Executable::clearCode() actually clear all of the entrypoints, and
+        clean up some other FTL-related calling convention stuff.
+        <rdar://problem/16720172>
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::Worklist):
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::create):
+        (JSC::DFG::ensureGlobalDFGWorklist):
+        (JSC::DFG::ensureGlobalFTLWorklist):
+        * dfg/DFGWorklist.h:
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::dump):
+        * heap/CodeBlockSet.h:
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::clearCode):
+
 2014-05-07  Andreas Kling  <akling@apple.com>
 
         [X86] Emit BT instruction for single-bit tests.

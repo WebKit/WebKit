@@ -372,7 +372,7 @@ while (0)
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 static inline void UNREACHABLE_FOR_PLATFORM()
 {
-    ASSERT_NOT_REACHED();
+    CRASH();
 }
 #pragma clang diagnostic pop
 #else

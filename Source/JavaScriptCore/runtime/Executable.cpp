@@ -57,6 +57,8 @@ void ExecutableBase::clearCode()
     m_jitCodeForConstruct.clear();
     m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
     m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
+    m_jitCodeForCallWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
+    m_jitCodeForConstructWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
 #endif
     m_numParametersForCall = NUM_PARAMETERS_NOT_COMPILED;
     m_numParametersForConstruct = NUM_PARAMETERS_NOT_COMPILED;

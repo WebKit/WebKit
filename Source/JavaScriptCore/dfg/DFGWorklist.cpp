@@ -37,8 +37,9 @@
 
 namespace JSC { namespace DFG {
 
-Worklist::Worklist()
-    : m_numberOfActiveThreads(0)
+Worklist::Worklist(CString worklistName)
+    : m_threadName(toCString(worklistName, " Worker Thread"))
+    , m_numberOfActiveThreads(0)
 {
 }
 
@@ -60,16 +61,16 @@ void Worklist::finishCreation(unsigned numberOfThreads, int relativePriority)
     RELEASE_ASSERT(numberOfThreads);
     for (unsigned i = numberOfThreads; i--;) {
         std::unique_ptr<ThreadData> data = std::make_unique<ThreadData>(this);
-        data->m_identifier = createThread(threadFunction, data.get(), "JSC Compilation Thread");
+        data->m_identifier = createThread(threadFunction, data.get(), m_threadName.data());
         if (relativePriority)
             changeThreadPriority(data->m_identifier, relativePriority);
         m_threads.append(std::move(data));
     }
 }
 
-PassRefPtr<Worklist> Worklist::create(unsigned numberOfThreads, int relativePriority)
+PassRefPtr<Worklist> Worklist::create(CString worklistName, unsigned numberOfThreads, int relativePriority)
 {
-    RefPtr<Worklist> result = adoptRef(new Worklist());
+    RefPtr<Worklist> result = adoptRef(new Worklist(worklistName));
     result->finishCreation(numberOfThreads, relativePriority);
     return result;
 }
@@ -405,7 +406,7 @@ Worklist* ensureGlobalDFGWorklist()
 {
     static std::once_flag initializeGlobalWorklistOnceFlag;
     std::call_once(initializeGlobalWorklistOnceFlag, [] {
-        theGlobalDFGWorklist = Worklist::create(Options::numberOfDFGCompilerThreads(), Options::priorityDeltaOfDFGCompilerThreads()).leakRef();
+        theGlobalDFGWorklist = Worklist::create("DFG Worklist", Options::numberOfDFGCompilerThreads(), Options::priorityDeltaOfDFGCompilerThreads()).leakRef();
     });
     return theGlobalDFGWorklist;
 }
@@ -421,7 +422,7 @@ Worklist* ensureGlobalFTLWorklist()
 {
     static std::once_flag initializeGlobalWorklistOnceFlag;
     std::call_once(initializeGlobalWorklistOnceFlag, [] {
-        theGlobalFTLWorklist = Worklist::create(Options::numberOfFTLCompilerThreads(), Options::priorityDeltaOfFTLCompilerThreads()).leakRef();
+        theGlobalFTLWorklist = Worklist::create("FTL Worklist", Options::numberOfFTLCompilerThreads(), Options::priorityDeltaOfFTLCompilerThreads()).leakRef();
     });
     return theGlobalFTLWorklist;
 }
