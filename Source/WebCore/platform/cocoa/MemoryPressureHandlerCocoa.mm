@@ -81,7 +81,7 @@ void MemoryPressureHandler::install()
 
     dispatch_async(dispatch_get_main_queue(), ^{
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
-        _cache_event_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYSTATUS, 0, DISPATCH_MEMORYSTATUS_PRESSURE_WARN, dispatch_get_main_queue());
+        _cache_event_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYSTATUS, 0, DISPATCH_MEMORYSTATUS_PRESSURE_WARN | DISPATCH_MEMORYSTATUS_PRESSURE_CRITICAL, dispatch_get_main_queue());
 #elif PLATFORM(MAC) && MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         _cache_event_source = wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue();
 #else

@@ -1,3 +1,18 @@
+2014-05-08  Andreas Kling  <akling@apple.com>
+
+        [iOS] WebKit should listen to critical memory warnings.
+        <https://webkit.org/b/132704>
+        <rdar://problem/16857112>
+
+        Listen for DISPATCH_MEMORYSTATUS_PRESSURE_CRITICAL in addition to
+        DISPATCH_MEMORYSTATUS_PRESSURE_WARN, since we may only get the critical
+        notification on some systems.
+
+        Reviewed by Gavin Barraclough.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+
 2014-05-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorDOMAgent::getAccessibilityPropertiesForNode should gracefully handle bad node
