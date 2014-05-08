@@ -1,19 +1,6 @@
-2014-04-30  Lucas Forschler  <lforschler@apple.com>
+2014-05-08  Matthew Hanson  <matthew_hanson@apple.com>
 
-        Merge r167211
-
-    2014-04-13  Darin Adler  <darin@apple.com>
-
-            userVisibleString should not try to "encode" host names
-            https://bugs.webkit.org/show_bug.cgi?id=131587
-            rdar://problem/14686849
-
-            Reviewed by Alexey Proskuryakov.
-
-            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added URLExtras.mm.
-
-            * TestWebKitAPI/Tests/mac/URLExtras.mm: Added. A few tests for WebCoreNSURLExtras.
-            Coverage is tiny at this point; we could add a lot more cases!
+        Rollout r168034.
 
 2014-04-30  Lucas Forschler  <lforschler@apple.com>
 
