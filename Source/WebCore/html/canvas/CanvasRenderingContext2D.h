@@ -196,6 +196,8 @@ public:
     void webkitPutImageDataHD(ImageData*, float dx, float dy, ExceptionCode&);
     void webkitPutImageDataHD(ImageData*, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
 
+    void drawFocusIfNeeded(Element*);
+
     float webkitBackingStorePixelRatio() const { return canvas()->deviceScaleFactor(); }
 
     void reset();

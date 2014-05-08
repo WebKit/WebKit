@@ -177,6 +177,9 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     [RaisesException] ImageData getImageData(float sx, float sy, float sw, float sh);
 
     [RaisesException] ImageData webkitGetImageDataHD(float sx, float sy, float sw, float sh);
+    
+    // Focus rings
+    void drawFocusIfNeeded(Element element);
 
     readonly attribute float webkitBackingStorePixelRatio;
 

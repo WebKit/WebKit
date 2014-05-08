@@ -1,3 +1,20 @@
+2014-05-08  Rik Cabanier  <cabanier@adobe.com>
+
+        Add support for drawFocusIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=132584
+
+        Reviewed by Dirk Schulze.
+
+        The drawFocusIfNeeded API will draw a focus ring if the element that is passed
+        in is focused and a child element of the canvas.
+
+        Test: fast/canvas/draw-focus-if-needed.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeeded):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2014-05-08  Antti Koivisto  <antti@apple.com>
 
         [iOS WebKit2] Can't activate text fields on Facebook

@@ -50,6 +50,7 @@
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
+#include "RenderTheme.h"
 #include "SecurityOrigin.h"
 #include "StrokeStyleApplier.h"
 #include "StyleProperties.h"
@@ -1968,6 +1969,17 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy,
 void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData* data, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode& ec)
 {
     putImageData(data, ImageBuffer::BackingStoreCoordinateSystem, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight, ec);
+}
+
+void CanvasRenderingContext2D::drawFocusIfNeeded(Element* element)
+{
+    GraphicsContext* context = drawingContext();
+
+    if (!element || !element->focused() || !state().m_hasInvertibleTransform || m_path.isEmpty()
+        || !element->isDescendantOf(canvas()) || !context)
+        return;
+
+    context->drawFocusRing(m_path, 1, 1, RenderTheme::focusRingColor());
 }
 
 void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::CoordinateSystem coordinateSystem, float dx, float dy, float dirtyX, float dirtyY,
