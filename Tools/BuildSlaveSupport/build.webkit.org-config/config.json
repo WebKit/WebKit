@@ -165,7 +165,7 @@
                       "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Tests)", "type": "TestWebKit2", "builddir": "gtk-linux-64-release",
+                      "name": "GTK Linux 64-bit Release (Tests)", "type": "TestWebKit2", "builddir": "gtk-linux-64-release-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-6"]
                     },
@@ -176,7 +176,7 @@
                       "slavenames": ["gtk-linux-slave-3"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Debug (Tests)", "type": "TestWebKit2", "builddir": "gtk-linux-64-debug",
+                      "name": "GTK Linux 64-bit Debug (Tests)", "type": "TestWebKit2", "builddir": "gtk-linux-64-debug-tests",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-7"]
                     },

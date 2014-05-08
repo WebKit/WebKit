@@ -1,3 +1,15 @@
+2014-05-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r168471): Duplicate builddirs broke the build master.
+        https://bugs.webkit.org/show_bug.cgi?id=132688
+
+        Reviewed by Carlos Garcia Campos.
+
+        Rename the builddirs of the new GTK bots introduced on r168471 to
+        be unique. Otherwise the master will break.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] webkitdom script assumes mkdir only fails because the directory already exists
