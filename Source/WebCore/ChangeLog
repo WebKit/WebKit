@@ -1,3 +1,22 @@
+2014-05-08  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Changing isolation CSS property should not trigger repaint in RenderStyle::changeRequiresLayerRepaint
+        https://bugs.webkit.org/show_bug.cgi?id=131436
+
+        Reviewed by Dirk Schulze.
+
+        The isolation:isolate property will create a stacking context. This is done in
+        StyleResolver::adjustRenderStyle where z-index is forced to 0.
+        If the element is already a stacking context for any other reason,
+        changing the isolation flag should not have any effect.
+
+        Tests: css3/blending/repaint/blend-mode-turn-off-isolation-no-effect.html
+               css3/blending/repaint/blend-mode-turn-off-isolation.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayerRepaint):
+        do not request repaint if isolation has changed.
+
 2014-05-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         REGRESSION (r167652): SelectionState is not set properly for non leaf objects in pages with regions
