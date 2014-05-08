@@ -354,12 +354,9 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
     layer.contents = (id)m_frontBuffer->makeCGImageCopy().get();
 }
 
-void RemoteLayerBackingStore::flush()
+RetainPtr<CGContextRef> RemoteLayerBackingStore::takeFrontContextPendingFlush()
 {
-    if (m_frontContextPendingFlush) {
-        CGContextFlush(m_frontContextPendingFlush.get());
-        m_frontContextPendingFlush = nullptr;
-    }
+    return std::move(m_frontContextPendingFlush);
 }
 
 #if USE(IOSURFACE)

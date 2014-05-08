@@ -81,7 +81,7 @@ public:
         return !!m_frontBuffer;
     }
 
-    void flush();
+    RetainPtr<CGContextRef> takeFrontContextPendingFlush();
 
     enum class Volatility {
         NonVolatile,

@@ -1,5 +1,38 @@
 2014-05-08  Tim Horton  <timothy_horton@apple.com>
 
+        [iOS WebKit2] Flush RemoteLayerBackingStore contexts on a secondary queue
+        https://bugs.webkit.org/show_bug.cgi?id=132667
+        <rdar://problem/15349483>
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::takeFrontContextPendingFlush):
+        (WebKit::RemoteLayerBackingStore::flush): Deleted.
+        Add takeFrontContextPendingFlush, which returns the painted-but-not-yet-flushed front context,
+        and drops our reference to it. This needs to be called on all backing store between paints.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::hasFlushed):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::create):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush):
+        (WebKit::flushBackingStoreChangesInTransaction): Deleted.
+        Flush backing store and send the layer tree commit to the UI process from a dispatch queue.
+        We will only ever have a single commit in flight at a time, and there's a new
+        RELEASE_ASSERT to ensure that is the case.
+        We package up the commit on the main thread; the queue calls CGContextFlush
+        on all of the newly painted contexts and then tosses the commit over to the UI process.
+        This is a win in many cases because the Web process main thread can go ahead
+        and do other non-painting tasks while the queue is blocked on painting.
+
+2014-05-08  Tim Horton  <timothy_horton@apple.com>
+
         [wk2] Don't use the XPC-based plugin process for Adobe Reader
         https://bugs.webkit.org/show_bug.cgi?id=132701
         <rdar://problem/16792692>

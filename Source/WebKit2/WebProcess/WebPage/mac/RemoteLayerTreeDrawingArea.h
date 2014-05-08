@@ -30,10 +30,16 @@
 #include "GraphicsLayerCARemote.h"
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/Timer.h>
+#include <atomic>
+#include <dispatch/dispatch.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 class PlatformCALayer;
+}
+
+namespace IPC {
+class MessageEncoder;
 }
 
 namespace WebKit {
@@ -96,6 +102,23 @@ private:
 
     WebCore::TiledBacking* mainFrameTiledBacking() const;
 
+    class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
+    public:
+        static PassRefPtr<BackingStoreFlusher> create(IPC::Connection*, std::unique_ptr<IPC::MessageEncoder>, Vector<RetainPtr<CGContextRef>>);
+
+        void flush();
+        bool hasFlushed() const { return m_hasFlushed; }
+
+    private:
+        BackingStoreFlusher(IPC::Connection*, std::unique_ptr<IPC::MessageEncoder>, Vector<RetainPtr<CGContextRef>>);
+
+        RefPtr<IPC::Connection> m_connection;
+        std::unique_ptr<IPC::MessageEncoder> m_commitEncoder;
+        Vector<RetainPtr<CGContextRef>> m_contextsToFlush;
+
+        std::atomic<bool> m_hasFlushed;
+    };
+
     std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
     std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
 
@@ -110,6 +133,9 @@ private:
 
     bool m_waitingForBackingStoreSwap;
     bool m_hadFlushDeferredWhileWaitingForBackingStoreSwap;
+
+    dispatch_queue_t m_commitQueue;
+    RefPtr<BackingStoreFlusher> m_pendingBackingStoreFlusher;
 };
 
 DRAWING_AREA_TYPE_CASTS(RemoteLayerTreeDrawingArea, type() == DrawingAreaTypeRemoteLayerTree);

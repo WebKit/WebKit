@@ -35,6 +35,7 @@
 #import "RemoteScrollingCoordinator.h"
 #import "RemoteScrollingCoordinatorTransaction.h"
 #import "WebPage.h"
+#import "WebProcess.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
@@ -64,10 +65,13 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const W
 #if PLATFORM(IOS)
     webPage->corePage()->settings().setDelegatesPageScaling(true);
 #endif
+
+    m_commitQueue = dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr);
 }
 
 RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
 {
+    dispatch_release(m_commitQueue);
 }
 
 void RemoteLayerTreeDrawingArea::setNeedsDisplay()
@@ -223,17 +227,6 @@ void RemoteLayerTreeDrawingArea::layerFlushTimerFired(WebCore::Timer<RemoteLayer
     flushLayers();
 }
 
-static void flushBackingStoreChangesInTransaction(RemoteLayerTreeTransaction& transaction)
-{
-    for (RefPtr<PlatformCALayerRemote> layer : transaction.changedLayers()) {
-        if (!layer->properties().changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged)
-            return;
-
-        if (RemoteLayerBackingStore* backingStore = layer->properties().backingStore.get())
-            backingStore->flush();
-    }
-}
-
 void RemoteLayerTreeDrawingArea::flushLayers()
 {
     if (!m_rootLayer)
@@ -248,6 +241,8 @@ void RemoteLayerTreeDrawingArea::flushLayers()
         m_hadFlushDeferredWhileWaitingForBackingStoreSwap = true;
         return;
     }
+
+    RELEASE_ASSERT(!m_pendingBackingStoreFlusher || m_pendingBackingStoreFlusher->hasFlushed());
 
     m_webPage->layoutIfNeeded();
 
@@ -268,21 +263,33 @@ void RemoteLayerTreeDrawingArea::flushLayers()
         toRemoteScrollingCoordinator(m_webPage->scrollingCoordinator())->buildTransaction(scrollingTransaction);
 #endif
 
-    // FIXME: Move flushing backing store and sending CommitLayerTree onto a background thread.
-    flushBackingStoreChangesInTransaction(layerTransaction);
-
     m_waitingForBackingStoreSwap = true;
-    m_webPage->send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree(layerTransaction, scrollingTransaction));
+
+    Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(layerTransaction, scrollingTransaction);
+    auto commitEncoder = std::make_unique<IPC::MessageEncoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::receiverName(), Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_webPage->pageID());
+    commitEncoder->encode(message.arguments());
 
     bool hadAnyChangedBackingStore = false;
+    Vector<RetainPtr<CGContextRef>> contextsToFlush;
     for (auto& layer : layerTransaction.changedLayers()) {
-        if (layer->properties().changedProperties & RemoteLayerTreeTransaction::LayerChanges::BackingStoreChanged)
+        if (layer->properties().changedProperties & RemoteLayerTreeTransaction::LayerChanges::BackingStoreChanged) {
             hadAnyChangedBackingStore = true;
+            if (auto contextPendingFlush = layer->properties().backingStore->takeFrontContextPendingFlush())
+                contextsToFlush.append(contextPendingFlush);
+        }
+
         layer->didCommit();
     }
 
     if (hadAnyChangedBackingStore)
         m_remoteLayerTreeContext->backingStoreCollection().schedulePurgeabilityTimer();
+
+    RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::shared().parentProcessConnection(), std::move(commitEncoder), std::move(contextsToFlush));
+    m_pendingBackingStoreFlusher = backingStoreFlusher;
+
+    dispatch_async(m_commitQueue, [backingStoreFlusher]{
+        backingStoreFlusher->flush();
+    });
 }
 
 void RemoteLayerTreeDrawingArea::didUpdate()
@@ -306,6 +313,30 @@ void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize& cont
 {
     m_rootLayer->setSize(contentsSize);
     m_webPage->pageOverlayController().didChangeDocumentSize();
+}
+
+PassRefPtr<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(IPC::Connection* connection, std::unique_ptr<IPC::MessageEncoder> encoder, Vector<RetainPtr<CGContextRef>> contextsToFlush)
+{
+    return adoptRef(new RemoteLayerTreeDrawingArea::BackingStoreFlusher(connection, std::move(encoder), contextsToFlush));
+}
+
+RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(IPC::Connection* connection, std::unique_ptr<IPC::MessageEncoder> encoder, Vector<RetainPtr<CGContextRef>> contextsToFlush)
+    : m_connection(connection)
+    , m_commitEncoder(std::move(encoder))
+    , m_contextsToFlush(std::move(contextsToFlush))
+    , m_hasFlushed(false)
+{
+}
+
+void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
+{
+    ASSERT(!m_hasFlushed);
+
+    for (auto& context : m_contextsToFlush)
+        CGContextFlush(context.get());
+
+    m_connection->sendMessage(std::move(m_commitEncoder));
+    m_hasFlushed = true;
 }
 
 } // namespace WebKit
