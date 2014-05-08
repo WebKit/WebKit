@@ -6,7 +6,10 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (0,0) size 100x200 [bgcolor=#00FF00]
 layer at (108,8) size 142x435
   RenderBlock {DIV} at (100,0) size 142x435 [border: (10px solid #000000)]
-    RenderBlock {P} at (26,10) size 90x415
+    RenderMultiColumnSet at (10,10) size 122x415
+layer at (118,18) size 122x415
+  RenderMultiColumnFlowThread at (10,10) size 122x415
+    RenderBlock {P} at (16,0) size 90x415
       RenderText {#text} at (0,0) size 89x415
         text run at (0,0) width 415: "This technology preview of our award winning next generation"
         text run at (18,0) width 56: "browser "

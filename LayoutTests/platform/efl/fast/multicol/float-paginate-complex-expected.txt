@@ -5,7 +5,10 @@ layer at (0,0) size 785x1680
     RenderBody {BODY} at (8,8) size 769x1664
 layer at (8,8) size 769x404
   RenderBlock {DIV} at (0,0) size 769x404 [border: (2px solid #000000)]
-    RenderBlock (anonymous) at (2,2) size 375x252
+    RenderMultiColumnSet at (2,2) size 765x400
+layer at (10,10) size 375x888
+  RenderMultiColumnFlowThread at (2,2) size 375x888
+    RenderBlock (anonymous) at (0,0) size 375x252
       RenderText {#text} at (0,0) size 110x17
         text run at (0,0) width 110: "This is some text."
       RenderBR {BR} at (110,14) size 0x0
@@ -48,7 +51,7 @@ layer at (8,8) size 769x404
       RenderText {#text} at (0,234) size 110x17
         text run at (0,234) width 110: "This is some text."
       RenderBR {BR} at (110,248) size 0x0
-    RenderBlock {P} at (2,270) size 375x604
+    RenderBlock {P} at (0,268) size 375x604
       RenderBlock (floating) {SPAN} at (0,132) size 78x147
         RenderText {#text} at (0,2) size 78x142
           text run at (0,2) width 78: "T"
@@ -132,7 +135,10 @@ layer at (8,8) size 769x404
       RenderBR {BR} at (110,600) size 0x0
 layer at (8,428) size 769x404
   RenderBlock {DIV} at (0,420) size 769x404 [border: (2px solid #000000)]
-    RenderBlock (anonymous) at (2,2) size 375x252
+    RenderMultiColumnSet at (2,2) size 765x400
+layer at (10,430) size 375x888
+  RenderMultiColumnFlowThread at (2,2) size 375x888
+    RenderBlock (anonymous) at (0,0) size 375x252
       RenderText {#text} at (0,0) size 110x17
         text run at (0,0) width 110: "This is some text."
       RenderBR {BR} at (110,14) size 0x0
@@ -175,7 +181,7 @@ layer at (8,428) size 769x404
       RenderText {#text} at (0,234) size 110x17
         text run at (0,234) width 110: "This is some text."
       RenderBR {BR} at (110,248) size 0x0
-    RenderBlock {P} at (2,270) size 375x604
+    RenderBlock {P} at (0,268) size 375x604
       RenderImage {IMG} at (0,132) size 100x100 [bgcolor=#008000]
       RenderImage {IMG} at (274,132) size 101x200 [bgcolor=#008000]
       RenderText {#text} at (100,132) size 106x17
@@ -258,48 +264,54 @@ layer at (8,428) size 769x404
       RenderBR {BR} at (110,600) size 0x0
 layer at (8,848) size 769x404
   RenderBlock {DIV} at (0,840) size 769x404 [border: (2px solid #000000)]
-    RenderImage {IMG} at (2,2) size 300x390 [bgcolor=#008000]
-    RenderText {#text} at (302,2) size 373x435
-      text run at (302,2) width 73: "Longer text"
-      text run at (302,20) width 72: "designed to"
-      text run at (302,38) width 53: "test float"
-      text run at (302,56) width 23: "and"
-      text run at (302,74) width 60: "wrapping"
-      text run at (302,92) width 59: "behavior."
-      text run at (302,110) width 73: "Longer text"
-      text run at (302,128) width 72: "designed to"
-      text run at (302,146) width 53: "test float"
-      text run at (302,164) width 23: "and"
-      text run at (302,182) width 60: "wrapping"
-      text run at (302,200) width 59: "behavior."
-      text run at (302,218) width 73: "Longer text"
-      text run at (302,236) width 72: "designed to"
-      text run at (302,254) width 53: "test float"
-      text run at (302,272) width 23: "and"
-      text run at (302,290) width 60: "wrapping"
-      text run at (302,308) width 59: "behavior."
-      text run at (302,326) width 73: "Longer text"
-      text run at (302,344) width 72: "designed to"
-      text run at (302,362) width 53: "test float"
-      text run at (302,380) width 23: "and"
-      text run at (2,402) width 360: "wrapping behavior. Longer text designed to test float and"
-      text run at (2,420) width 123: "wrapping behavior."
+    RenderMultiColumnSet at (2,2) size 765x400
+layer at (10,850) size 375x436
+  RenderMultiColumnFlowThread at (2,2) size 375x436
+    RenderImage {IMG} at (0,0) size 300x390 [bgcolor=#008000]
+    RenderText {#text} at (300,0) size 373x435
+      text run at (300,0) width 73: "Longer text"
+      text run at (300,18) width 72: "designed to"
+      text run at (300,36) width 53: "test float"
+      text run at (300,54) width 23: "and"
+      text run at (300,72) width 60: "wrapping"
+      text run at (300,90) width 59: "behavior."
+      text run at (300,108) width 73: "Longer text"
+      text run at (300,126) width 72: "designed to"
+      text run at (300,144) width 53: "test float"
+      text run at (300,162) width 23: "and"
+      text run at (300,180) width 60: "wrapping"
+      text run at (300,198) width 59: "behavior."
+      text run at (300,216) width 73: "Longer text"
+      text run at (300,234) width 72: "designed to"
+      text run at (300,252) width 53: "test float"
+      text run at (300,270) width 23: "and"
+      text run at (300,288) width 60: "wrapping"
+      text run at (300,306) width 59: "behavior."
+      text run at (300,324) width 73: "Longer text"
+      text run at (300,342) width 72: "designed to"
+      text run at (300,360) width 53: "test float"
+      text run at (300,378) width 23: "and"
+      text run at (0,400) width 360: "wrapping behavior. Longer text designed to test float and"
+      text run at (0,418) width 123: "wrapping behavior."
 layer at (8,1268) size 769x404
   RenderBlock {DIV} at (0,1260) size 769x404 [border: (2px solid #000000)]
-    RenderImage {IMG} at (2,2) size 375x380 [bgcolor=#0000FF]
+    RenderMultiColumnSet at (2,2) size 765x400
+layer at (10,1270) size 375x652 backgroundClip at (0,0) size 1166x1680 clip at (0,0) size 1166x1680 outlineClip at (0,0) size 1166x1680
+  RenderMultiColumnFlowThread at (2,2) size 375x652
+    RenderImage {IMG} at (0,0) size 375x380 [bgcolor=#0000FF]
     RenderInline {SPAN} at (0,0) size 370x250
-      RenderImage {IMG} at (2,402) size 100x20 [bgcolor=#008000]
-      RenderText {#text} at (102,403) size 211x26
-        text run at (102,403) width 211: "Longer text designed "
-      RenderImage {IMG} at (276,430) size 101x20 [bgcolor=#008000]
-      RenderText {#text} at (313,403) size 370x250
-        text run at (313,403) width 59: "to test"
-        text run at (2,431) width 183: "float and wrapping"
-        text run at (2,459) width 367: "behavior. Longer text designed to test"
-        text run at (2,487) width 356: "float and wrapping behavior. Longer"
-        text run at (2,515) width 286: "text designed to test float and"
-        text run at (2,543) width 307: "wrapping behavior. Longer text"
-        text run at (2,571) width 340: "designed to test float and wrapping"
-        text run at (2,599) width 367: "behavior. Longer text designed to test"
-        text run at (2,627) width 280: "float and wrapping behavior."
+      RenderImage {IMG} at (0,400) size 100x20 [bgcolor=#008000]
+      RenderText {#text} at (100,401) size 211x26
+        text run at (100,401) width 211: "Longer text designed "
+      RenderImage {IMG} at (274,428) size 101x20 [bgcolor=#008000]
+      RenderText {#text} at (311,401) size 370x250
+        text run at (311,401) width 59: "to test"
+        text run at (0,429) width 183: "float and wrapping"
+        text run at (0,457) width 367: "behavior. Longer text designed to test"
+        text run at (0,485) width 356: "float and wrapping behavior. Longer"
+        text run at (0,513) width 286: "text designed to test float and"
+        text run at (0,541) width 307: "wrapping behavior. Longer text"
+        text run at (0,569) width 340: "designed to test float and wrapping"
+        text run at (0,597) width 367: "behavior. Longer text designed to test"
+        text run at (0,625) width 280: "float and wrapping behavior."
     RenderText {#text} at (0,0) size 0x0
