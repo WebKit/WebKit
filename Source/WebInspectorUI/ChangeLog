@@ -1,5 +1,19 @@
 2014-05-08  Jono Wells  <jonowells@apple.com>
 
+        Web Inspector: Console error when launching Web Inspector "Mode htmlmixed failed to advance stream"
+        https://bugs.webkit.org/show_bug.cgi?id=132703
+
+        Reviewed by Timothy Hatcher.
+
+        The CodeMirror 4 update brought with it a change in the XML mode that 
+        causes our XML mode extension to fail to consume empty paired quotes
+        correctly.
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        Updated extendedXMLToken() to properly handle empty paired quotes.
+
+2014-05-08  Jono Wells  <jonowells@apple.com>
+
         Web Inspector: Selecting frame in debugger sidebar doesn't reveal code
         https://bugs.webkit.org/show_bug.cgi?id=132112
 

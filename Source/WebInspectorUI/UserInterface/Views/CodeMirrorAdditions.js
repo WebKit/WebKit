@@ -80,7 +80,6 @@
         // Remember the start position so we can rewind if needed.
         var startPosition = stream.pos;
         var style = this._token(stream, state);
-
         if (style === "attribute") {
             // Look for "href" or "src" attributes. If found then we should
             // expect a string later that should get the "link" style instead.
@@ -90,23 +89,30 @@
             else
                 delete state._expectLink;
         } else if (state._expectLink && style === "string") {
-            delete state._expectLink;
+            var current = stream.current();
 
-            // This is a link, so setup the state to process it next.
-            state._linkTokenize = tokenizeLinkString;
-            state._linkBaseStyle = style;
+            // Unless current token is empty quotes, consume quote character
+            // and tokenize link next.
+            if (current !== "\"\"" && current !== "''") {
+                delete state._expectLink;
 
-            // The attribute may or may not be quoted.
-            var quote = stream.current()[0];
-            state._linkQuoteCharacter = quote === "'" || quote === "\"" ? quote : null;
+                // This is a link, so setup the state to process it next.
+                state._linkTokenize = tokenizeLinkString;
+                state._linkBaseStyle = style;
 
-            // Rewind the steam to the start of this token.
-            stream.pos = startPosition;
+                // The attribute may or may not be quoted.
+                var quote = current[0];
 
-            // Eat the open quote of the string so the string style
-            // will be used for the quote character.
-            if (state._linkQuoteCharacter)
-                stream.eat(state._linkQuoteCharacter);
+                state._linkQuoteCharacter = quote === "'" || quote === "\"" ? quote : null;
+
+                // Rewind the steam to the start of this token.
+                stream.pos = startPosition;
+
+                // Eat the open quote of the string so the string style
+                // will be used for the quote character.
+                if (state._linkQuoteCharacter)
+                    stream.eat(state._linkQuoteCharacter);
+            }
         } else if (style) {
             // We don't expect other tokens between attribute and string since
             // spaces and the equal character are not tokenized. So if we get
