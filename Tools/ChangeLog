@@ -1,3 +1,13 @@
+2014-05-08  Brady Eidson  <beidson@apple.com>
+
+        "shouldKeepCurrentBackForwardListItemInList" API should pass clientInfo to the callback
+        <rdar://problem/16855357> and https://bugs.webkit.org/show_bug.cgi?id=132692
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit2/ShouldKeepCurrentBackForwardListItemInList.cpp:
+        (TestWebKitAPI::shouldKeepCurrentBackForwardListItemInList):
+
 2014-05-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r168471): Duplicate builddirs broke the build master.
