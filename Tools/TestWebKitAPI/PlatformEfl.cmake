@@ -98,6 +98,7 @@ set(test_webkit2_api_BINARIES
     WillLoad
     WillSendSubmitEvent
     CoordinatedGraphics/WKViewIsActiveSetIsActive
+    CoordinatedGraphics/WKViewRestoreZoomAndScrollBackForward
     CoordinatedGraphics/WKViewUserViewportToContents
     efl/WKViewClientWebProcessCallbacks
 )

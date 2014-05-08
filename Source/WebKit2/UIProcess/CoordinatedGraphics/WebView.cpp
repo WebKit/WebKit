@@ -372,6 +372,7 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
 
 void WebView::didCommitLoadForMainFrame(const String&, bool)
 {
+    setContentPosition(WebCore::FloatPoint());
     m_contentsSize = IntSize();
 }
 

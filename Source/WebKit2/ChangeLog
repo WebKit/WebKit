@@ -1,3 +1,21 @@
+2014-05-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CoordinatedGraphics][WK2] Scale factor and scroll position is not being restored properly in a back/forward load
+        https://bugs.webkit.org/show_bug.cgi?id=126022
+
+        Reviewed by Benjamin Poulain.
+
+        Original author : Thiago de Barros Lacerda, and finished by Gyuyoung Kim.
+
+        When user is navigating back/forward to a page that has been scrolled and/or scaled, that page must be shown
+        with its last scroll position and scale factor. However, when fixed layout was enabled with CoordinatedGraphics
+        and TILED_BACKING_STORE, Page::setPageScaleFactor() doesn't send previous scroll position since r165652 and r165913.
+
+        This patch allows the Page::setPageScaleFactor() send stored position to WK2 implementation.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::didCommitLoadForMainFrame):
+
 2014-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         Put a better version of the assertion back, and add one when we ensureBackingStore.

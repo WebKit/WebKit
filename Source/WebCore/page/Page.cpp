@@ -719,6 +719,10 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
 
             if (!view->delegatesScrolling())
                 view->setScrollPosition(origin);
+#if USE(TILED_BACKING_STORE)
+            else
+                view->hostWindow()->delegatedScrollRequested(origin);
+#endif
         }
         return;
     }
@@ -746,6 +750,10 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
         
         if (!view->delegatesScrolling())
             view->setScrollPosition(origin);
+#if USE(TILED_BACKING_STORE)
+        else
+            view->hostWindow()->delegatedScrollRequested(origin);
+#endif
     }
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
