@@ -1552,8 +1552,6 @@ void WebPageProxy::handleTouchEventAsynchronously(const NativeWebTouchEvent& eve
     if (!isValid())
         return;
 
-    ASSERT(event.type() != WebEvent::TouchStart);
-
     if (!m_isTrackingTouchEvents)
         return;
 
