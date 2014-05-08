@@ -1,3 +1,17 @@
+2014-05-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r168451.
+        https://bugs.webkit.org/show_bug.cgi?id=132670
+
+        Not a speed-up, just do what other compilers do. (Requested by
+        kling on #webkit).
+
+        Reverted changeset:
+
+        "[X86] Emit BT instruction for single-bit tests."
+        https://bugs.webkit.org/show_bug.cgi?id=132650
+        http://trac.webkit.org/changeset/168451
+
 2014-05-07  Filip Pizlo  <fpizlo@apple.com>
 
         Make Executable::clearCode() actually clear all of the entrypoints, and
