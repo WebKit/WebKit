@@ -52,7 +52,7 @@ test('loading steps', 1, function() {
 // and then 2 per builder (one for ok, one for deepEqual of tests).
 test('results files loading', 9, function() {
     resetGlobals();
-    var expectedLoadedBuilders =  ['Apple Lion Debug WK2 (Tests)', 'Apple Lion Release WK2 (Tests)', 'GTK Linux 64-bit Release'];
+    var expectedLoadedBuilders =  ['Apple Lion Debug WK2 (Tests)', 'Apple Lion Release WK2 (Tests)', 'GTK Linux 64-bit Release (Tests)'];
     var loadedBuilders = [];
     var resourceLoader = new loader.Loader();
     resourceLoader._loadNext = function() {

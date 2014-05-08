@@ -1,3 +1,31 @@
+2014-05-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WK2][GTK] Split the 64-bit GTK buildbots in Build and Test.
+        https://bugs.webkit.org/show_bug.cgi?id=131358
+
+        Reviewed by Carlos Garcia Campos.
+
+        Current 64-bit GTK build bots (Release and Debug) not only test
+        the build, but run all tests. Split each one of the bots in
+        BuildOnly and TestWebKit2.
+
+        This will allow us to have a better overview of the status of
+        the GTK port.
+
+        Original patch from Sergio Villar Senin <svillar@igalia.com>
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * Scripts/webkitpy/port/builders.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory):
+        * TestResultServer/static-dashboards/builders.jsonp:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (resetGlobals):
+        * TestResultServer/static-dashboards/loader_unittests.js:
+
 2014-05-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CoordinatedGraphics][WK2] Scale factor and scroll position is not being restored properly in a back/forward load

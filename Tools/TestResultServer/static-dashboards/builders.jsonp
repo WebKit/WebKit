@@ -21,8 +21,8 @@ LOAD_BUILDBOT_DATA([
                     "EFL Linux 64-bit Release", 
                     "EFL Linux 64-bit Release WK2", 
                     "GTK Linux 32-bit Release",
-                    "GTK Linux 64-bit Debug",
-                    "GTK Linux 64-bit Release",
+                    "GTK Linux 64-bit Debug (Tests)",
+                    "GTK Linux 64-bit Release (Tests)",
                     "WinCairo Release"
                 ]
             }

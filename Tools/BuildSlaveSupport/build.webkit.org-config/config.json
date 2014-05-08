@@ -37,6 +37,8 @@
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
                     { "name": "gtk-linux-slave-3", "platform": "gtk"},
                     { "name": "gtk-linux-slave-5", "platform": "gtk"},
+                    { "name": "gtk-linux-slave-6", "platform": "gtk"},
+                    { "name": "gtk-linux-slave-7", "platform": "gtk"},
 
                     { "name": "wincairo-1", "platform": "wincairo" },
 
@@ -157,14 +159,26 @@
                       "slavenames": ["gtk-linux-slave-1"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release", "type": "BuildAndTestWebKit2Only", "builddir": "gtk-linux-64-release",
+                      "name": "GTK Linux 64-bit Release (Build)", "type": "Build", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["gtk-linux-64-release-tests"],
                       "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Debug", "type": "BuildAndTestWebKit2Only", "builddir": "gtk-linux-64-debug",
+                      "name": "GTK Linux 64-bit Release (Tests)", "type": "TestWebKit2", "builddir": "gtk-linux-64-release",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["gtk-linux-slave-6"]
+                    },
+                    {
+                      "name": "GTK Linux 64-bit Debug (Build)", "type": "Build", "builddir": "gtk-linux-64-debug",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["gtk-linux-64-debug-tests"],
                       "slavenames": ["gtk-linux-slave-3"]
+                    },
+                    {
+                      "name": "GTK Linux 64-bit Debug (Tests)", "type": "TestWebKit2", "builddir": "gtk-linux-64-debug",
+                      "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["gtk-linux-slave-7"]
                     },
                     {
                       "name": "GTK Linux ARM Release", "type": "BuildAndNonLayoutTest", "builddir": "gtk-linux-arm-release",
@@ -264,6 +278,12 @@
                     },
                     { "type": "Triggerable", "name": "win-debug-tests",
                       "builderNames": ["Apple Win 7 Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-tests",
+                      "builderNames": ["GTK Linux 64-bit Release (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-debug-tests",
+                      "builderNames": ["GTK Linux 64-bit Debug (Tests)"]
                     }
                   ]
 }
