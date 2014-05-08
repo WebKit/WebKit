@@ -1,3 +1,18 @@
+2014-05-08  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168477
+
+    2014-05-08  Brady Eidson  <beidson@apple.com>
+
+            "shouldKeepCurrentBackForwardListItemInList" API should pass clientInfo to the callback
+            <rdar://problem/16855357> and https://bugs.webkit.org/show_bug.cgi?id=132692
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/API/C/WKPage.cpp:
+            (WKPageSetPageLoaderClient):
+            * UIProcess/API/C/WKPageLoaderClient.h:
+
 2014-04-17  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168411

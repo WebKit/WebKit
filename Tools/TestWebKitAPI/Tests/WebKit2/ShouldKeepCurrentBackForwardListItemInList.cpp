@@ -104,7 +104,7 @@ static void willGoToBackForwardListItem(WKPageRef, WKBackForwardListItemRef item
         successfulSoFar = false;
 }
 
-static bool shouldKeepCurrentBackForwardListItemInList(WKPageRef page, WKBackForwardListItemRef item)
+static bool shouldKeepCurrentBackForwardListItemInList(WKPageRef page, WKBackForwardListItemRef item, const void*)
 {
     // We make sure the item for "simple2.html" is removed when we navigate to "simple3.html"
     // We also want to make sure the item for "simple3.html" is removed when we go back to "simple.html"

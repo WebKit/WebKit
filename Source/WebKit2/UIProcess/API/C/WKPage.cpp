@@ -973,7 +973,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             if (!m_client.shouldKeepCurrentBackForwardListItemInList)
                 return true;
 
-            return m_client.shouldKeepCurrentBackForwardListItemInList(toAPI(page), toAPI(item));
+            return m_client.shouldKeepCurrentBackForwardListItemInList(toAPI(page), toAPI(item), m_client.base.clientInfo);
         }
 
         virtual void willGoToBackForwardListItem(WebPageProxy* page, WebBackForwardListItem* item, API::Object* userData) override
