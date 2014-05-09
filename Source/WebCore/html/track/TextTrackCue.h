@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc.  All rights reserved.
- * Copyright (C) 2012, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -82,6 +82,9 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const override final { return &m_scriptExecutionContext; }
 
     virtual bool isOrderedBefore(const TextTrackCue*) const;
+
+    bool hasEquivalentStartTime(const TextTrackCue&) const;
+    virtual double startTimeVariance() const { return 0; }
 
     enum CueType {
         Data,

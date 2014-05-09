@@ -507,7 +507,7 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
 
             // If there is more than one cue with the same start time, back up to first one so we
             // consider all of them.
-            while (searchStart >= 2 && cue->startTime() == m_cues->item(searchStart - 2)->startTime())
+            while (searchStart >= 2 && cue->hasEquivalentStartTime(*m_cues->item(searchStart - 2)))
                 --searchStart;
             
             bool firstCompare = true;
@@ -519,7 +519,7 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
                     return false;
 
                 existingCue = m_cues->item(searchStart - 1);
-                if (!existingCue || cue->startTime() > existingCue->startTime())
+                if (!existingCue || cue->startTime() > (existingCue->startTime() + existingCue->startTimeVariance()))
                     return false;
 
                 if (!existingCue->isEqual(*cue, match))
@@ -531,7 +531,7 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
         
         size_t index = (searchStart + searchEnd) / 2;
         existingCue = m_cues->item(index);
-        if (cue->startTime() < existingCue->startTime() || (match != TextTrackCue::IgnoreDuration && cue->startTime() == existingCue->startTime() && cue->endTime() > existingCue->endTime()))
+        if ((cue->startTime() + existingCue->startTimeVariance()) < existingCue->startTime() || (match != TextTrackCue::IgnoreDuration && cue->hasEquivalentStartTime(*existingCue) && cue->endTime() > existingCue->endTime()))
             searchEnd = index;
         else
             searchStart = index + 1;

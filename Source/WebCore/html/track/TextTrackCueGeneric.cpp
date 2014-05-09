@@ -153,6 +153,8 @@ void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bo
     
 bool TextTrackCueGeneric::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
 {
+    // Do not call the parent class isEqual here, because we are not cueType() == VTTCue,
+    // and will fail that equality test.
     if (!TextTrackCue::isEqual(cue, match))
         return false;
 
@@ -172,7 +174,7 @@ bool TextTrackCueGeneric::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatc
     if (m_backgroundColor != other->backgroundColor())
         return false;
 
-    return VTTCue::isEqual(cue, match);
+    return true;
 }
 
 bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
