@@ -1,3 +1,24 @@
+2014-05-09  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Destroy the AVStreamDataParser when the SourceBuffer is removed from its MediaSource.
+        https://bugs.webkit.org/show_bug.cgi?id=132710
+
+        Reviewed by Eric Carlson.
+
+        The AVStreamDataParser should be destroyed when the SourceBuffer is removed, so that subsequent
+        SourceBuffers can utilize resources released by the parser on destruction.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener invalidate]):
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:]):  Protect against _parent being invalidated.
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:withDiscontinuity:]): Ditto.
+        (-[WebAVStreamDataParserListener streamDataParser:didFailToParseStreamDataWithError:]): Ditto.
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideMediaData:forTrackID:mediaType:flags:]): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC): Call destroyParser();.
+        (WebCore::SourceBufferPrivateAVFObjC::removedFromMediaSource): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::destroyParser): Call -[WebAVStreamDataParserListener invalidate].
+
 2014-05-09  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] 1-2% performance regression in html5-full-render after r168286

@@ -179,6 +179,13 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     [super dealloc];
 }
 
+- (void)invalidate
+{
+    [_parser setDelegate:nil];
+    _parent = nullptr;
+    _parser = nullptr;
+}
+
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didParseStreamDataAsAsset:(AVAsset *)asset
 {
 #if ASSERT_DISABLED
@@ -186,6 +193,9 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 #endif
     ASSERT(streamDataParser == _parser);
     RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    if (!strongParent)
+        return;
+
     RetainPtr<AVAsset*> strongAsset = asset;
     callOnMainThread([strongParent, strongAsset] {
         strongParent->didParseStreamDataAsAsset(strongAsset.get());
@@ -200,6 +210,9 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 #endif
     ASSERT(streamDataParser == _parser);
     RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    if (!strongParent)
+        return;
+
     RetainPtr<AVAsset*> strongAsset = asset;
     callOnMainThread([strongParent, strongAsset] {
         strongParent->didParseStreamDataAsAsset(strongAsset.get());
@@ -213,6 +226,9 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 #endif
     ASSERT(streamDataParser == _parser);
     RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    if (!strongParent)
+        return;
+
     RetainPtr<NSError> strongError = error;
     callOnMainThread([strongParent, strongError] {
         strongParent->didFailToParseStreamDataWithError(strongError.get());
@@ -226,6 +242,9 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 #endif
     ASSERT(streamDataParser == _parser);
     RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    if (!strongParent)
+        return;
+
     RetainPtr<CMSampleBufferRef> strongSample = sample;
     String mediaType = nsMediaType;
     callOnMainThread([strongParent, strongSample, trackID, mediaType, flags] {
@@ -240,6 +259,9 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 #endif
     ASSERT(streamDataParser == _parser);
     RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    if (!strongParent)
+        return;
+
     String mediaType = nsMediaType;
     callOnMainThread([strongParent, trackID, mediaType] {
         strongParent->didReachEndOfTrackWithTrackID(trackID, mediaType);
@@ -253,6 +275,9 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 #endif
     ASSERT(streamDataParser == _parser);
     RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    if (!strongParent)
+        return;
+
     RetainPtr<NSData> strongData = initData;
     callOnMainThread([strongParent, strongData, trackID] {
         strongParent->didProvideContentKeyRequestInitializationDataForTrackID(strongData.get(), trackID);
@@ -373,6 +398,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
 
 SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
 {
+    destroyParser();
     destroyRenderers();
 }
 
@@ -520,6 +546,13 @@ void SourceBufferPrivateAVFObjC::abort()
     notImplemented();
 }
 
+void SourceBufferPrivateAVFObjC::destroyParser()
+{
+    [m_delegate invalidate];
+    m_delegate = nullptr;
+    m_parser = nullptr;
+}
+
 void SourceBufferPrivateAVFObjC::destroyRenderers()
 {
     if (m_displayLayer) {
@@ -543,6 +576,7 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
 
 void SourceBufferPrivateAVFObjC::removedFromMediaSource()
 {
+    destroyParser();
     destroyRenderers();
 
     if (m_mediaSource)
