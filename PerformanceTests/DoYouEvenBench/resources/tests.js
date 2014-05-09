@@ -223,8 +223,44 @@ Suites.push({
     ]
 });
 
+Suites.push({
+    name: 'FlightJS-TodoMVC',
+    url: 'todomvc/dependency-examples/flight/index.html',
+    prepare: function (runner, contentWindow, contentDocument) {
+        return runner.waitForElement('#appIsReady').then(function () {
+            var newTodo = contentDocument.querySelector('#new-todo');
+            newTodo.focus();
+            return newTodo;
+        });;
+    },
+    tests: [
+        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+            var todomvc = contentWindow.todomvc;
+            for (var i = 0; i < numberOfItemsToAdd; i++) {
+                newTodo.value = 'Something to do ' + i;
+
+                var keydownEvent = document.createEvent('Event');
+                keydownEvent.initEvent('keydown', true, true);
+                keydownEvent.which = 13; // VK_ENTER
+                newTodo.dispatchEvent(keydownEvent);
+            }
+        }),
+        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var checkboxes = contentDocument.querySelectorAll('.toggle');
+            for (var i = 0; i < checkboxes.length; i++)
+                checkboxes[i].click();
+        }),
+        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var deleteButtons = contentDocument.querySelectorAll('.destroy');
+            for (var i = 0; i < deleteButtons.length; i++)
+                deleteButtons[i].click();
+        }),
+    ]
+});
+
 var actionCount = 50;
 Suites.push({
+    disabled: true,
     name: 'FlightJS-MailClient',
     url: 'flightjs-example-app/index.html',
     prepare: function (runner, contentWindow, contentDocument) {

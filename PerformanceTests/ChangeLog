@@ -1,3 +1,93 @@
+2014-05-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DYEBench should use TodoMVC to test FlightJS for consistency
+        https://bugs.webkit.org/show_bug.cgi?id=132727
+
+        Reviewed by Andreas Kling.
+
+        Add a test suite for the FlightJS version of TodoMVC, and disable FlightJS-MailClient by default.
+
+        I initially intended to include a wider variety of demo apps in DYEBench
+        but that's not happening any time soon so let us use TodoMVC for all frameworks for now.
+
+        We can add more demo apps in v2.
+
+        * DoYouEvenBench/Full.html: Increment the version to 0.10.
+        * DoYouEvenBench/InteractiveRunner.html: Don't check disabled suites by default.
+        * DoYouEvenBench/resources/tests.js:
+        * DoYouEvenBench/resources/todomvc/dependency-examples: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/.gitignore: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/.jshintrc: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/app.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/data: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/data/stats.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/data/todos.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/main.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/store.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/ui: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/ui/main_selector.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/ui/new_item.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/ui/stats.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/ui/todo_list.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/ui/toggle_all.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/ui/with_filters.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/js/utils.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/templates: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/templates/stats.html: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/app/templates/todo.html: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower.json: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/depot: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/depot/depot.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/es5-shim: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/es5-shim/es5-sham.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/es5-shim/es5-shim.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight/lib: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/advice.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/base.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/component.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/compose.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/debug.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/index.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/logger.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/registry.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/utils.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/jquery: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/jquery/jquery.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/requirejs: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/requirejs-text: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/requirejs-text/text.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/requirejs/require.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common/base.css: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common/base.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common/bg.png: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/index.html: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/karma.conf.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/package.json: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/readme.md: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/.jshintrc: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/fixture: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/fixture/footer.html: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/fixture/new_todo.html: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/fixture/toggle_all.html: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/mock: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/mock/datastore.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/spec: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/spec/data: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/spec/data/stats_spec.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/spec/data/todos_spec.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/spec/ui: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/spec/ui/new_item_spec.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/spec/ui/stats_spec.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/spec/ui/toggle_all_spec.js: Added.
+        * DoYouEvenBench/resources/todomvc/dependency-examples/flight/test/test-main.js: Added.
+
 2014-05-07  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Remove runtime feature
