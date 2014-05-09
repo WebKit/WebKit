@@ -1,3 +1,20 @@
+2014-05-09  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] Crash when enabling DFG JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=132683
+
+        Reviewed by Geoffrey Garen.
+
+        On windows, using register GPRInfo::regT0 as parameter to e.g. JIT::storeDouble(..., GPRInfo::regT0)),
+        results in a call to JIT::storeDouble(FPRegisterID src, const void* address),
+        where the address parameter gets the value of GPRInfo::regT0, which is 0 (eax on Windows).
+        This causes the register to be written to address 0, hence the crash.
+
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit): Use address in regT0 as parameter.
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit): Ditto.
+
 2014-05-09  Martin Hodovan <mhodovan.u-szeged@partner.samsung.com>
 
         REGRESSION(r167094): JSC crashes on ARM Traditional
