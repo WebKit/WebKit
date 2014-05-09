@@ -1,3 +1,25 @@
+2014-05-09  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r168095): 1-pixel gap between adjacent selection inlines
+        https://bugs.webkit.org/show_bug.cgi?id=132474
+        <rdar://problem/16797394>
+
+        Reviewed by David Hyatt.
+
+        This patch changes text selection rectangle calculation from integral to device
+        pixel snapping. It ensures that selection rect painting matches box boundaries for inline elements.
+        Directional rounding (horizontal only atm) is moved out from Font class and now accessible
+        to all the painting code. RTL snapping strategy is changed from floor to round to match ltr behavior.
+        However this patch does not address all the integral snapping across inline elements. There are
+        a few places where we still calculate enclosing rects where snapping is sufficient.
+
+        * fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines-expected.html: Added.
+        * fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html: Added.
+        * platform/mac/editing/selection/mixed-editability-10-expected.txt: progression.
+        * platform/mac/fast/forms/cursor-at-editable-content-boundary-expected.txt: progression.
+        * platform/mac/platform/mac/editing/input/caret-primary-bidi-expected.txt: Added. change in rounding strategy.
+        * platform/mac/svg/text/caret-in-svg-text-expected.txt: Added. progression + change in rounding strategy.
+
 2014-05-09  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
 
         ASSERTION FAILED: !m_code || m_code == defaultExceptionCode

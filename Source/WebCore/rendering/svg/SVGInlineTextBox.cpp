@@ -125,12 +125,15 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
 
     textOrigin.move(0, -scaledFontMetrics.floatAscent());
 
-    FloatRect selectionRect = scaledFont.selectionRectForText(constructTextRun(style, fragment), textOrigin, fragment.height * scalingFactor, startPosition, endPosition);
+    LayoutRect selectionRect = LayoutRect(textOrigin, LayoutSize(0, fragment.height * scalingFactor));
+    TextRun run = constructTextRun(style, fragment);
+    scaledFont.adjustSelectionRectForText(run, selectionRect, startPosition, endPosition);
+    FloatRect snappedSelectionRect = directionalPixelSnappedForPainting(selectionRect, renderer().document().deviceScaleFactor(), run.ltr());
     if (scalingFactor == 1)
-        return selectionRect;
+        return snappedSelectionRect;
 
     selectionRect.scale(1 / scalingFactor);
-    return selectionRect;
+    return snappedSelectionRect;
 }
 
 LayoutRect SVGInlineTextBox::localSelectionRect(int startPosition, int endPosition) const

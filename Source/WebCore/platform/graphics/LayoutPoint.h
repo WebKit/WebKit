@@ -184,12 +184,14 @@ inline IntSize pixelSnappedIntSize(const LayoutSize& s, const LayoutPoint& p)
     return IntSize(snapSizeToPixel(s.width(), p.x()), snapSizeToPixel(s.height(), p.y()));
 }
 
-inline FloatPoint roundedForPainting(const LayoutPoint& point, float pixelSnappingFactor)
+inline FloatPoint roundedForPainting(const LayoutPoint& point, float pixelSnappingFactor, bool directionalRoundingToRight = true, bool directionalRoundingToBottom = true)
 {
 #if ENABLE(SUBPIXEL_LAYOUT)
-    return FloatPoint(roundToDevicePixel(point.x(), pixelSnappingFactor), roundToDevicePixel(point.y(), pixelSnappingFactor));
+    return FloatPoint(roundToDevicePixel(point.x(), pixelSnappingFactor, !directionalRoundingToRight), roundToDevicePixel(point.y(), pixelSnappingFactor, !directionalRoundingToBottom));
 #else
     UNUSED_PARAM(pixelSnappingFactor);
+    UNUSED_PARAM(directionalRoundingToRight);
+    UNUSED_PARAM(directionalRoundingToBottom);
     return FloatPoint(point);
 #endif
 }

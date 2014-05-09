@@ -265,6 +265,16 @@ static const Font& fontToUse(const RenderStyle& style, const RenderText& rendere
     return style.font();
 }
 
+// FIXME: remove this function, when switching to directional pixel snapping.
+static IntRect integralEnclosingRectForSelection(const LayoutRect& rect)
+{
+    // Empty rects with fractional x, y values turn into non-empty rects when converting to enclosing.
+    // We need to ensure that empty rects stay empty after the conversion, because the selection code expects them to be empty.
+    IntPoint location = flooredIntPoint(rect.minXMinYCorner());
+    IntPoint maxPoint = IntPoint(rect.width() ? rect.maxX().ceil() : location.x(), rect.height() ? rect.maxY().ceil() : location.y());
+    return IntRect(location, maxPoint - location);
+}
+
 LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
 {
     int sPos = std::max(startPos - m_start, 0);
@@ -275,8 +285,8 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
 
     FontCachePurgePreventer fontCachePurgePreventer;
 
-    LayoutUnit selTop = selectionTop();
-    LayoutUnit selHeight = selectionHeight();
+    LayoutUnit selectionTop = this->selectionTop();
+    LayoutUnit selectionHeight = this->selectionHeight();
     const RenderStyle& lineStyle = this->lineStyle();
     const Font& font = fontToUse(lineStyle, renderer());
 
@@ -286,22 +296,20 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
     if (respectHyphen)
         endPos = textRun.length();
 
-    FloatPoint startingPoint = FloatPoint(logicalLeft(), selTop);
-    LayoutRect r;
+    LayoutRect selectionRect = LayoutRect(LayoutPoint(logicalLeft(), selectionTop), LayoutSize(m_logicalWidth, selectionHeight));
+    // Avoid computing the font width when the entire line box is selected as an optimization.
     if (sPos || ePos != static_cast<int>(m_len))
-        r = enclosingIntRect(font.selectionRectForText(textRun, startingPoint, selHeight, sPos, ePos));
-    else // Avoid computing the font width when the entire line box is selected as an optimization.
-        r = enclosingIntRect(FloatRect(startingPoint, FloatSize(m_logicalWidth, selHeight)));
-
-    LayoutUnit logicalWidth = r.width();
-    if (r.x() > logicalRight())
+        font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
+    IntRect snappedSelectionRect = integralEnclosingRectForSelection(selectionRect);
+    LayoutUnit logicalWidth = snappedSelectionRect.width();
+    if (snappedSelectionRect.x() > logicalRight())
         logicalWidth  = 0;
-    else if (r.maxX() > logicalRight())
-        logicalWidth = logicalRight() - r.x();
+    else if (snappedSelectionRect.maxX() > logicalRight())
+        logicalWidth = logicalRight() - snappedSelectionRect.x();
 
-    LayoutPoint topPoint = isHorizontal() ? LayoutPoint(r.x(), selTop) : LayoutPoint(selTop, r.x());
-    LayoutUnit width = isHorizontal() ? logicalWidth : selHeight;
-    LayoutUnit height = isHorizontal() ? selHeight : logicalWidth;
+    LayoutPoint topPoint = isHorizontal() ? LayoutPoint(snappedSelectionRect.x(), selectionTop) : LayoutPoint(selectionTop, snappedSelectionRect.x());
+    LayoutUnit width = isHorizontal() ? logicalWidth : selectionHeight;
+    LayoutUnit height = isHorizontal() ? selectionHeight : logicalWidth;
 
     return LayoutRect(topPoint, LayoutSize(width, height));
 }
@@ -759,10 +767,9 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop;
     LayoutUnit selectionHeight = std::max<LayoutUnit>(0, selectionBottom - selectionTop);
 
-    float deviceScaleFactor = renderer().document().deviceScaleFactor();
-    FloatPoint localOrigin = roundedForPainting(LayoutPoint(boxOrigin.x(), boxOrigin.y() - deltaY), deviceScaleFactor);
-    context->clip(pixelSnappedForPainting(LayoutRect(LayoutPoint(localOrigin), LayoutSize(m_logicalWidth, selectionHeight)), deviceScaleFactor));
-    context->drawHighlightForText(font, textRun, localOrigin, selectionHeight, c, style.colorSpace(), sPos, ePos);
+    LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, m_logicalWidth, selectionHeight);
+    font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
+    context->fillRect(directionalPixelSnappedForPainting(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c, style.colorSpace());
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(boxOrigin);
@@ -793,10 +800,11 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
     
     updateGraphicsContext(*context, TextPaintStyle(c, style.colorSpace())); // Don't draw text at all!
 
-    int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
-    int selHeight = selectionHeight();
-    FloatPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
-    context->drawHighlightForText(font, constructTextRun(style, font), localOrigin, selHeight, c, style.colorSpace(), sPos, ePos);
+    LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
+    LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight());
+    TextRun textRun = constructTextRun(style, font);
+    font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
+    context->fillRect(directionalPixelSnappedForPainting(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c, style.colorSpace());
 }
 
 static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)
@@ -1178,8 +1186,9 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
         FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
         TextRun run = constructTextRun(style, font);
 
-        // FIXME: Convert the document markers to float rects.
-        IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, selHeight, startPosition, endPosition));
+        LayoutRect selectionRect = LayoutRect(startPoint, FloatSize(0, selHeight));
+        font.adjustSelectionRectForText(run, selectionRect, startPosition, endPosition);
+        IntRect markerRect = integralEnclosingRectForSelection(selectionRect);
         start = markerRect.x() - startPoint.x();
         width = markerRect.width();
         
@@ -1212,45 +1221,51 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
     pt->drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkerType(marker->type()));
 }
 
-void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, DocumentMarker* marker, const RenderStyle& style, const Font& font)
+void InlineTextBox::paintTextMatchMarker(GraphicsContext* context, const FloatPoint& boxOrigin, DocumentMarker* marker, const RenderStyle& style, const Font& font)
 {
-    // Use same y positioning and height as for selection, so that when the selection and this highlight are on
-    // the same word there are no pieces sticking out.
-    int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
-    int selHeight = selectionHeight();
+    LayoutUnit selectionHeight = this->selectionHeight();
 
     int sPos = std::max(marker->startOffset() - m_start, (unsigned)0);
     int ePos = std::min(marker->endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
 
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
-    IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(x(), selectionTop()), selHeight, sPos, ePos));
-    markerRect = renderer().localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
+    // FIXME: figure out how renderedRect and selectionRect are different.
+    LayoutRect renderedRect = LayoutRect(LayoutPoint(x(), selectionTop()), FloatSize(0, selectionHeight));
+    font.adjustSelectionRectForText(run, renderedRect, sPos, ePos);
+    IntRect markerRect = integralEnclosingRectForSelection(renderedRect);
+    markerRect = renderer().localToAbsoluteQuad(FloatQuad(markerRect)).enclosingBoundingBox();
     toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
     
     // Optionally highlight the text
     if (renderer().frame().editor().markedTextMatchesAreHighlighted()) {
         Color color = marker->activeMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
-        GraphicsContextStateSaver stateSaver(*pt);
-        updateGraphicsContext(*pt, TextPaintStyle(color, style.colorSpace())); // Don't draw text at all!
-        pt->clip(FloatRect(boxOrigin.x(), boxOrigin.y() - deltaY, m_logicalWidth, selHeight));
-        pt->drawHighlightForText(font, run, FloatPoint(boxOrigin.x(), boxOrigin.y() - deltaY), selHeight, color, style.colorSpace(), sPos, ePos);
+        GraphicsContextStateSaver stateSaver(*context);
+        updateGraphicsContext(*context, TextPaintStyle(color, style.colorSpace())); // Don't draw text at all!
+
+        // Use same y positioning and height as for selection, so that when the selection and this highlight are on
+        // the same word there are no pieces sticking out.
+        LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
+        LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight);
+        font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
+        context->fillRect(directionalPixelSnappedForPainting(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), color, style.colorSpace());
     }
 }
 
 void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, const RenderStyle& style, const Font& font)
 {
     // Replacement markers are not actually drawn, but their rects need to be computed for hit testing.
-    int top = selectionTop();
-    int h = selectionHeight();
+    LayoutUnit top = selectionTop();
+    LayoutUnit h = selectionHeight();
     
     int sPos = std::max(marker->startOffset() - m_start, (unsigned)0);
     int ePos = std::min(marker->endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
-    IntPoint startPoint = IntPoint(x(), top);
-    
+
     // Compute and store the rect associated with this marker.
-    IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, h, sPos, ePos));
+    LayoutRect selectionRect = LayoutRect(LayoutPoint(x(), top), LayoutSize(0, h));
+    font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
+    IntRect markerRect = integralEnclosingRectForSelection(selectionRect);
     markerRect = renderer().localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
     toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
 }
@@ -1431,7 +1446,10 @@ float InlineTextBox::positionForOffset(int offset) const
     int from = !isLeftToRightDirection() ? offset - m_start : 0;
     int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
-    return font.selectionRectForText(constructTextRun(lineStyle, font), IntPoint(logicalLeft(), 0), 0, from, to).maxX();
+    LayoutRect selectionRect = LayoutRect(logicalLeft(), 0, 0, 0);
+    TextRun run = constructTextRun(lineStyle, font);
+    font.adjustSelectionRectForText(run, selectionRect, from, to);
+    return directionalPixelSnappedForPainting(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()).maxX();
 }
 
 TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& font, BufferForAppendingHyphen* charactersWithHyphen) const

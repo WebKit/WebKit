@@ -547,14 +547,6 @@ float GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const 
 #endif
 }
 
-void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run, const FloatPoint& point, int h, const Color& backgroundColor, ColorSpace colorSpace, int from, int to)
-{
-    if (paintingDisabled())
-        return;
-
-    fillRect(font.selectionRectForText(run, point, h, from, to), backgroundColor, colorSpace);
-}
-
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatPoint& p, CompositeOperator op, ImageOrientationDescription description)
 {
     if (!image)

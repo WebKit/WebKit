@@ -247,6 +247,18 @@ inline FloatRect pixelSnappedForPainting(LayoutUnit x, LayoutUnit y, LayoutUnit 
     return pixelSnappedForPainting(LayoutRect(x, y, width, height), pixelSnappingFactor);
 }
 
+// FIXME: This needs to take vertical centering into account too.
+inline FloatRect directionalPixelSnappedForPainting(const LayoutRect& rect, float deviceScaleFactor, bool ltr)
+{
+    if (!ltr) {
+        FloatPoint snappedTopRight = roundedForPainting(rect.maxXMinYCorner(), deviceScaleFactor, ltr);
+        float snappedWidth = snapSizeToDevicePixel(rect.width(), rect.maxX(), deviceScaleFactor);
+        float snappedHeight = snapSizeToDevicePixel(rect.height(), rect.y(), deviceScaleFactor);
+        return FloatRect(snappedTopRight.x() - snappedWidth, snappedTopRight.y(), snappedWidth, snappedHeight);
+    }
+    return pixelSnappedForPainting(rect, deviceScaleFactor);
+}
+
 } // namespace WebCore
 
 #endif // LayoutRect_h

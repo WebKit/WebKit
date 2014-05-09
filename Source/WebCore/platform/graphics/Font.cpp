@@ -26,8 +26,8 @@
 
 #include "FloatRect.h"
 #include "FontCache.h"
-#include "IntPoint.h"
 #include "GlyphBuffer.h"
+#include "LayoutRect.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
 #include <wtf/MainThread.h>
@@ -507,7 +507,7 @@ bool Font::fastAverageCharWidthIfAvailable(float& width) const
     return success;
 }
 
-FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
+void Font::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
 {
     to = (to == -1 ? run.length() : to);
 
@@ -517,9 +517,9 @@ FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point
         codePathToUse = Complex;
 
     if (codePathToUse != Complex)
-        return selectionRectForSimpleText(run, point, h, from, to);
+        return adjustSelectionRectForSimpleText(run, selectionRect, from, to);
 
-    return selectionRectForComplexText(run, point, h, from, to);
+    return adjustSelectionRectForComplexText(run, selectionRect, from, to);
 }
 
 int Font::offsetForPosition(const TextRun& run, float x, bool includePartialGlyphs) const

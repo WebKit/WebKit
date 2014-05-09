@@ -30,14 +30,14 @@
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "LayoutRect.h"
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
-FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& point, int h,
-                                            int from, int to) const
+void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
 {
     ComplexTextController controller(this, run);
     controller.advance(from);
@@ -45,13 +45,11 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint
     controller.advance(to);
     float afterWidth = controller.runWidthSoFar();
 
-    // Using roundf() rather than ceilf() for the right edge as a compromise to ensure correct caret positioning
-    if (run.rtl()) {
-        float totalWidth = controller.totalWidth();
-        return FloatRect(floorf(point.x() + totalWidth - afterWidth), point.y(), roundf(point.x() + totalWidth - beforeWidth) - floorf(point.x() + totalWidth - afterWidth), h);
-    } 
-
-    return FloatRect(floorf(point.x() + beforeWidth), point.y(), roundf(point.x() + afterWidth) - floorf(point.x() + beforeWidth), h);
+    if (run.rtl())
+        selectionRect.move(controller.totalWidth() - afterWidth, 0);
+    else
+        selectionRect.move(beforeWidth, 0);
+    selectionRect.setWidth(afterWidth - beforeWidth);
 }
 
 float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const

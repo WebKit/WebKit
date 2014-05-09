@@ -28,6 +28,7 @@
 #include "FontGlyphs.h"
 #include "GlyphBuffer.h"
 #include "GlyphPageTreeNode.h"
+#include "LayoutRect.h"
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
@@ -295,7 +296,7 @@ float Font::floatWidthForSimpleText(const TextRun& run, HashSet<const SimpleFont
     return it.m_runWidthSoFar;
 }
 
-FloatRect Font::selectionRectForSimpleText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
+void Font::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
 {
     GlyphBuffer glyphBuffer;
     WidthIterator it(this, run);
@@ -303,15 +304,15 @@ FloatRect Font::selectionRectForSimpleText(const TextRun& run, const FloatPoint&
     float beforeWidth = it.m_runWidthSoFar;
     it.advance(to, &glyphBuffer);
     float afterWidth = it.m_runWidthSoFar;
+    float totalWidth = -1;
 
-    // Using roundf() rather than ceilf() for the right edge as a compromise to ensure correct caret positioning.
     if (run.rtl()) {
         it.advance(run.length(), &glyphBuffer);
-        float totalWidth = it.m_runWidthSoFar;
-        return FloatRect(floorf(point.x() + totalWidth - afterWidth), point.y(), roundf(point.x() + totalWidth - beforeWidth) - floorf(point.x() + totalWidth - afterWidth), h);
-    }
-
-    return FloatRect(floorf(point.x() + beforeWidth), point.y(), roundf(point.x() + afterWidth) - floorf(point.x() + beforeWidth), h);
+        totalWidth = it.m_runWidthSoFar;
+        selectionRect.move(totalWidth - afterWidth, 0);
+    } else
+        selectionRect.move(beforeWidth, 0);
+    selectionRect.setWidth(afterWidth - beforeWidth);
 }
 
 int Font::offsetForPositionForSimpleText(const TextRun& run, float x, bool includePartialGlyphs) const

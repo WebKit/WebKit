@@ -113,7 +113,10 @@ IntRect EllipsisBox::selectionRect()
     const Font& font = lineStyle.font();
     const RootInlineBox& rootBox = root();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(&blockFlow(), font, m_str, lineStyle, TextRun::AllowTrailingExpansion), IntPoint(x(), y() + rootBox.selectionTopAdjustedForPrecedingBlock()), rootBox.selectionHeightAdjustedForPrecedingBlock()));
+    LayoutRect selectionRect = LayoutRect(x(), y() + rootBox.selectionTopAdjustedForPrecedingBlock(), 0, rootBox.selectionHeightAdjustedForPrecedingBlock());
+    font.adjustSelectionRectForText(RenderBlock::constructTextRun(&blockFlow(), font, m_str, lineStyle, TextRun::AllowTrailingExpansion), selectionRect);
+    // FIXME: use directional pixel snapping instead.
+    return enclosingIntRect(selectionRect);
 }
 
 void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& paintOffset, const RenderStyle& style, const Font& font)
@@ -129,15 +132,12 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& pa
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
     const RootInlineBox& rootBox = root();
-    LayoutUnit top = rootBox.selectionTop();
-    LayoutUnit h = rootBox.selectionHeight();
-
     GraphicsContextStateSaver stateSaver(*context);
-    float deviceScaleFactor = renderer().document().deviceScaleFactor();
-    context->clip(pixelSnappedForPainting(x() + paintOffset.x(), top + paintOffset.y(), m_logicalWidth, h, renderer().document().deviceScaleFactor()));
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    FloatPoint localOrigin = roundedForPainting(LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + top), deviceScaleFactor);
-    context->drawHighlightForText(font, RenderBlock::constructTextRun(&blockFlow(), font, m_str, style, TextRun::AllowTrailingExpansion), localOrigin, h, c, style.colorSpace());
+    LayoutRect selectionRect = LayoutRect(x() + paintOffset.x(), y() + paintOffset.y() + rootBox.selectionTop(), 0, rootBox.selectionHeight());
+    TextRun run = RenderBlock::constructTextRun(&blockFlow(), font, m_str, style, TextRun::AllowTrailingExpansion);
+    font.adjustSelectionRectForText(run, selectionRect, 0, -1);
+    context->fillRect(directionalPixelSnappedForPainting(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c, style.colorSpace());
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom)

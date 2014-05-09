@@ -354,8 +354,6 @@ namespace WebCore {
 #else
         float drawBidiText(const Font&, const TextRun&, const FloatPoint&, Font::CustomFontNotReadyAction = Font::DoNotPaintIfFontNotReady, BidiStatus* = 0, int length = -1);
 #endif
-        void drawHighlightForText(const Font&, const TextRun&, const FloatPoint&, int h, const Color& backgroundColor, ColorSpace, int from = 0, int to = -1);
-
         enum RoundingMode {
             RoundAllSides,
             RoundOriginAndDimensions

@@ -935,9 +935,9 @@ inline int floorToInt(LayoutUnit value)
     return value.floor();
 }
 
-inline float roundToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
+inline float roundToDevicePixel(LayoutUnit value, float pixelSnappingFactor, bool needsDirectionalRounding = false)
 {
-    return roundf((value.rawValue() * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
+    return roundf(((value.rawValue() - (needsDirectionalRounding ? LayoutUnit::epsilon() / 2.0f : 0)) * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
 }
 
 inline float floorToDevicePixel(LayoutUnit value, float pixelSnappingFactor)

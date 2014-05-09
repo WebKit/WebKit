@@ -30,6 +30,7 @@
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "LayoutRect.h"
 #include "Logging.h"
 #include "SimpleFontData.h"
 #include "TextRun.h"
@@ -50,8 +51,7 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& point, int h,
-                                            int from, int to) const
+void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
 {
     UniscribeController it(this, run);
     it.advance(from);
@@ -59,14 +59,11 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint
     it.advance(to);
     float afterWidth = it.runWidthSoFar();
 
-    // Using roundf() rather than ceilf() for the right edge as a compromise to ensure correct caret positioning
-    if (run.rtl()) {
-        it.advance(run.length());
-        float totalWidth = it.runWidthSoFar();
-        return FloatRect(point.x() + floorf(totalWidth - afterWidth), point.y(), roundf(totalWidth - beforeWidth) - floorf(totalWidth - afterWidth), h);
-    } 
-    
-    return FloatRect(point.x() + floorf(beforeWidth), point.y(), roundf(afterWidth) - floorf(beforeWidth), h);
+    if (run.rtl())
+        selectionRect.move(controller.totalWidth() - afterWidth, 0);
+    else
+        selectionRect.move(beforeWidth, 0);
+    selectionRect.setWidth(afterWidth - beforeWidth);
 }
 
 float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const

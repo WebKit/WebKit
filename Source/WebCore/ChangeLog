@@ -1,3 +1,60 @@
+2014-05-09  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r168095): 1-pixel gap between adjacent selection inlines
+        https://bugs.webkit.org/show_bug.cgi?id=132474
+        <rdar://problem/16797394>
+
+        Reviewed by David Hyatt.
+
+        This patch changes text selection rectangle calculation from integral to device
+        pixel snapping. It ensures that selection rect painting matches box boundaries for inline elements.
+        Directional rounding (horizontal only atm) is moved out from Font class and now accessible
+        to all the painting code. RTL snapping strategy is changed from floor to round to match ltr behavior.
+        However this patch does not address all the integral snapping across inline elements. There are
+        a few places where we still calculate enclosing rects where snapping is sufficient.
+
+        Test: fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html
+
+        * platform/LayoutUnit.h:
+        (WebCore::roundToDevicePixel): added fudge factor to change rounding direction as directed.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::adjustSelectionRectForText):
+        (WebCore::Font::selectionRectForText): Deleted.
+        * platform/graphics/Font.h:
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::adjustSelectionRectForSimpleText): removed directional rounding.
+        (WebCore::Font::selectionRectForSimpleText): Deleted.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawHighlightForText): Deleted.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::roundedForPainting):
+        * platform/graphics/LayoutRect.h:
+        (WebCore::directionalPixelSnappedForPainting): Snap top right corner for rtl direction.
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::Font::adjustSelectionRectForComplexText):
+        (WebCore::Font::selectionRectForComplexText): Deleted.
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::adjustSelectionRectForComplexText): removed directional rounding.
+        (WebCore::Font::selectionRectForComplexText): Deleted.
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::adjustSelectionRectForComplexText):
+        (WebCore::Font::selectionRectForComplexText): Deleted.
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::selectionRect):
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::integralEnclosingRectForSelection): helper to address enclosing empty rect problem.
+        (WebCore::InlineTextBox::localSelectionRect):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintDocumentMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::selectionRectForTextFragment):
+
 2014-05-09  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
 
         ASSERTION FAILED: !m_code || m_code == defaultExceptionCode
