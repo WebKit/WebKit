@@ -199,13 +199,9 @@ sub postStartSessionNotification
     my $self = shift;
     my $dict = shift;
 
-    my $userInfo = NSMutableDictionary->dictionaryWithCapacity_(4);
-    for my $property (qw(applicationArguments applicationEnvironment applicationIdentifier applicationPath deviceFamily deviceInfo productType sessionOwner sessionUUID sdkRoot version waitForDebugger)) {
-        if (exists $dict->{$property}) {
-            my $key = NSString->stringWithCString_($property);
-            my $value = $dict->{$property};
-            $userInfo->setObject_forKey_($value, $key);
-        }
+    my $userInfo = NSMutableDictionary->dictionaryWithCapacity_(scalar(keys($dict)) + 1);
+    foreach my $key (keys($dict)) {
+        $userInfo->setObject_forKey_($dict->{$key}, $key);
     }
     $userInfo->setObject_forKey_(NSNumber->numberWithInt_(1), NSString->stringWithCString_("version"));
 

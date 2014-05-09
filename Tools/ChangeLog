@@ -1,3 +1,28 @@
+2014-05-09  David Farler  <dfarler@apple.com>
+
+        com.apple.iphonesimulator.startSession needs to pass "RuntimeIdentifier"
+        https://bugs.webkit.org/show_bug.cgi?id=132718
+
+        Reviewed by David Kilzer.
+
+        The simulator may not be able to look up runtimes by SDK paths
+        and instead will map SDK versions to runtimes instead. In
+        com.apple.iphonesimulator.startSession notifications,
+        'runtimeIdentifier' (SDK version string) is preferred over
+        'sdkRoot' (SDK path) anyway. Include the 'runtimeIdentifier' key
+        when creating a new DRT or WKTR simulator session.
+
+        IPhoneSimulatorNotification.pm filters out keys for this
+        notification's userInfo with a hard-coded list. There's no harm
+        in including extra key-value pairs in an NSNotification userInfo
+        dictionary anyway and the simulator may again change its
+        userInfo schema for this notification.
+
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/lib/IPhoneSimulatorNotification.pm:
+        (postStartSessionNotification):
+        * Scripts/old-run-webkit-tests:
+        (installAndLaunchDumpToolAppUsingNotification):
+
 2014-05-09  Anders Carlsson  <andersca@apple.com>
 
         Another build fix.

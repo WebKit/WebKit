@@ -1392,12 +1392,15 @@ sub installAndLaunchDumpToolAppUsingNotification($$)
         $applicationPath = "$productDir/DumpRenderTree.app";
     }
 
+    chomp(my $sdkVersion = `xcrun --sdk iphonesimulator --show-sdk-version`);
+
     my $dict = {
         applicationArguments => &$makeNSArrayFromArray($args),
         applicationEnvironment => &$makeNSDictionaryFromHash($cleanEnv),
         applicationIdentifier => NSString->stringWithCString_($identifier),
         applicationPath => NSString->stringWithCString_($applicationPath),
         deviceInfo => NSString->stringWithCString_($deviceName),
+        runtimeIdentifier => NSString->stringWithCString_($sdkVersion),
         sessionOwner => NSString->stringWithCString_($programName),
         sessionUUID => NSString->stringWithCString_(simulatorSessionUUID()),
         sdkRoot => NSString->stringWithCString_($sdkRoot),
