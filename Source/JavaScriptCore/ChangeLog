@@ -1,3 +1,15 @@
+2014-05-09  Alberto Garcia  <berto@igalia.com>
+
+        jsmin.py license header confusing, mentions non-free license
+        https://bugs.webkit.org/show_bug.cgi?id=123665
+
+        Reviewed by Darin Adler.
+
+        Pull the most recent version from upstream, which has a clear
+        license.
+
+        * inspector/scripts/jsmin.py:
+
 2014-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Base case for get-by-id inline cache doesn't check for HasImpureGetOwnPropertySlot
