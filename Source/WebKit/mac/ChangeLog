@@ -1,3 +1,23 @@
+2014-05-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS] Switch geolocation to an explicit authorization query model
+        https://bugs.webkit.org/show_bug.cgi?id=132717
+
+        Reviewed by Sam Weinig.
+
+        Since there is no warmup code, WebGeolocationPolicyListener no longer need to know about the provider,
+        which is awesome :)
+
+        * WebCoreSupport/WebGeolocationClient.mm:
+        (-[WebGeolocationPolicyListener initWithGeolocation:forWebView:]):
+        (-[WebGeolocationPolicyListener deny]):
+        (-[WebGeolocationProviderInitializationListener initializationAllowedWebView:]):
+        (-[WebGeolocationProviderInitializationListener initializationDeniedWebView:]):
+        (-[WebGeolocationPolicyListener initWithGeolocation:forWebView:provider:]): Deleted.
+        (-[WebGeolocationProviderInitializationListener initializationAllowedWebView:provider:]): Deleted.
+        (-[WebGeolocationProviderInitializationListener initializationDeniedWebView:provider:]): Deleted.
+        * WebView/WebViewPrivate.h:
+
 2014-05-08  Jer Noble  <jer.noble@apple.com>
 
         [Mac, iOS] Add source application accounting to AVURLAsset.

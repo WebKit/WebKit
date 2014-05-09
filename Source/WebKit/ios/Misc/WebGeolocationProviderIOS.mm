@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,11 +66,7 @@ typedef HashMap<RetainPtr<WebView>, RetainPtr<id<WebGeolocationProviderInitializ
 
     // WebViews waiting for CoreLocation to be ready. If the Application does not yet have the permission to use Geolocation
     // we also have to wait for that to be granted.
-    GeolocationInitializationCallbackMap _webViewsWaitingForCoreLocationStart;
-
-    // WebViews that have required location services and are in "Warm Up" while waiting to be registered or denied for the SecurityOrigin.
-    // The warm up expire after some time to avoid keeping CoreLocation alive while waiting for the user response for the Security Origin.
-    HashSet<WebView*> _warmUpWebViews;
+    GeolocationInitializationCallbackMap _webViewsWaitingForCoreLocationAuthorization;
 
     // List of WebView needing the initial position after registerWebView:. This is needed because WebKit does not
     // handle sending the position synchronously in response to registerWebView:, so we queue sending lastPosition behind a timer.
@@ -121,7 +117,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
     // A new position is acquired and sent to all registered views on resume.
     _lastPosition.clear();
     abortSendLastPosition(self);
-    [_coreLocationProvider.get() stop];
+    [_coreLocationProvider stop];
 }
 
 - (void)resume
@@ -138,7 +134,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
         return;
     }
 
-    if (_registeredWebViews.isEmpty() && _webViewsWaitingForCoreLocationStart.isEmpty() && _warmUpWebViews.isEmpty())
+    if (_registeredWebViews.isEmpty() && _webViewsWaitingForCoreLocationAuthorization.isEmpty())
         return;
 
     if (!_coreLocationProvider) {
@@ -146,38 +142,17 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
         _coreLocationUpdateListenerProxy = adoptNS([[_WebCoreLocationUpdateThreadingProxy alloc] initWithProvider:self]);
         _coreLocationProvider = adoptNS([[WebGeolocationCoreLocationProvider alloc] initWithListener:_coreLocationUpdateListenerProxy.get()]);
     }
-    [_coreLocationProvider.get() setEnableHighAccuracy:_enableHighAccuracy];
-    [_coreLocationProvider.get() start];
+
+    if (!_webViewsWaitingForCoreLocationAuthorization.isEmpty())
+        [_coreLocationProvider requestGeolocationAuthorization];
+
+    if (!_registeredWebViews.isEmpty()) {
+        [_coreLocationProvider setEnableHighAccuracy:_enableHighAccuracy];
+        [_coreLocationProvider start];
+    }
 }
 
 #pragma mark - Internal utility methods
-- (void)_startCoreLocationDelegate
-{
-    ASSERT(!(_registeredWebViews.isEmpty() && _webViewsWaitingForCoreLocationStart.isEmpty()));
-
-    if (_isSuspended)
-        return;
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!_coreLocationProvider.get()) {
-            ASSERT(!_coreLocationUpdateListenerProxy);
-            _coreLocationUpdateListenerProxy = adoptNS([[_WebCoreLocationUpdateThreadingProxy alloc] initWithProvider:self]);
-            _coreLocationProvider = adoptNS([[WebGeolocationCoreLocationProvider alloc] initWithListener:_coreLocationUpdateListenerProxy.get()]);
-        }
-        [_coreLocationProvider.get() start];
-    });
-}
-
-- (void)_stopCoreLocationDelegateIfNeeded
-{
-    if (_registeredWebViews.isEmpty() && _webViewsWaitingForCoreLocationStart.isEmpty() && _warmUpWebViews.isEmpty()) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_coreLocationProvider.get() stop];
-        });
-        _enableHighAccuracy = NO;
-        _lastPosition.clear();
-    }
-}
 
 - (void)_handlePendingInitialPosition:(NSTimer*)timer
 {
@@ -202,13 +177,21 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
         return;
 
     _registeredWebViews.add(webView);
-    _warmUpWebViews.remove(webView);
 #if PLATFORM(IOS)
     if (!CallUIDelegateReturningBoolean(YES, webView, @selector(webViewCanCheckGeolocationAuthorizationStatus:)))
         return;
 #endif
 
-    [self _startCoreLocationDelegate];
+    if (!_isSuspended) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!_coreLocationProvider) {
+                ASSERT(!_coreLocationUpdateListenerProxy);
+                _coreLocationUpdateListenerProxy = adoptNS([[_WebCoreLocationUpdateThreadingProxy alloc] initWithProvider:self]);
+                _coreLocationProvider = adoptNS([[WebGeolocationCoreLocationProvider alloc] initWithListener:_coreLocationUpdateListenerProxy.get()]);
+            }
+            [_coreLocationProvider start];
+        });
+    }
 
     // We send the lastPosition asynchronously because WebKit does not handle updating the position synchronously.
     // On WebKit2, we could skip that and send the position directly from the UIProcess.
@@ -230,7 +213,14 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 
     _registeredWebViews.remove(webView);
     _pendingInitialPositionWebView.remove(webView);
-    [self _stopCoreLocationDelegateIfNeeded];
+
+    if (_registeredWebViews.isEmpty()) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_coreLocationProvider stop];
+        });
+        _enableHighAccuracy = NO;
+        _lastPosition.clear();
+    }
 }
 
 - (WebGeolocationPosition *)lastPosition
@@ -244,7 +234,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
     ASSERT(WebThreadIsLockedOrDisabled());
     _enableHighAccuracy = _enableHighAccuracy || enableHighAccuracy;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_coreLocationProvider.get() setEnableHighAccuracy:_enableHighAccuracy];
+        [_coreLocationProvider setEnableHighAccuracy:_enableHighAccuracy];
     });
 }
 
@@ -256,18 +246,39 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
     if (!CallUIDelegateReturningBoolean(YES, webView, @selector(webViewCanCheckGeolocationAuthorizationStatus:)))
         return;
 #endif
-    _webViewsWaitingForCoreLocationStart.add(webView, listener);
+    _webViewsWaitingForCoreLocationAuthorization.add(webView, listener);
     _trackedWebViews.add(webView);
 
-    [self _startCoreLocationDelegate];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!_coreLocationProvider) {
+            ASSERT(!_coreLocationUpdateListenerProxy);
+            _coreLocationUpdateListenerProxy = adoptNS([[_WebCoreLocationUpdateThreadingProxy alloc] initWithProvider:self]);
+            _coreLocationProvider = adoptNS([[WebGeolocationCoreLocationProvider alloc] initWithListener:_coreLocationUpdateListenerProxy.get()]);
+        }
+        [_coreLocationProvider requestGeolocationAuthorization];
+    });
 }
 
-- (void)cancelWarmUpForWebView:(WebView *)webView
+- (void)geolocationAuthorizationGranted
 {
-    ASSERT(WebThreadIsLockedOrDisabled());
+    ASSERT(WebThreadIsCurrent());
 
-    _warmUpWebViews.remove(webView);
-    [self _stopCoreLocationDelegateIfNeeded];
+    GeolocationInitializationCallbackMap requests;
+    requests.swap(_webViewsWaitingForCoreLocationAuthorization);
+
+    for (const auto& slot : requests)
+        [slot.value initializationAllowedWebView:slot.key.get()];
+}
+
+- (void)geolocationAuthorizationDenied
+{
+    ASSERT(WebThreadIsCurrent());
+
+    GeolocationInitializationCallbackMap requests;
+    requests.swap(_webViewsWaitingForCoreLocationAuthorization);
+
+    for (const auto& slot : requests)
+        [slot.value initializationDeniedWebView:slot.key.get()];
 }
 
 - (void)stopTrackingWebView:(WebView*)webView
@@ -277,61 +288,6 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 }
 
 #pragma mark - Mirror to WebGeolocationCoreLocationUpdateListener called by the proxy.
-- (void)geolocationDelegateStarted
-{
-    ASSERT(WebThreadIsCurrent());
-
-    // This could be called recursively. We must clean _webViewsWaitingForCoreLocationStart before invoking the callbacks.
-    Vector<RetainPtr<WebView> > webViews;
-    copyKeysToVector(_webViewsWaitingForCoreLocationStart, webViews);
-
-    Vector<RetainPtr<id<WebGeolocationProviderInitializationListener> > > initializationListeners;
-    copyValuesToVector(_webViewsWaitingForCoreLocationStart, initializationListeners);
-
-    _webViewsWaitingForCoreLocationStart.clear();
-
-    // Start warmup period for each view in intialization.
-    const int64_t warmUpTimeoutInterval = 20 * NSEC_PER_SEC;
-    dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, warmUpTimeoutInterval);
-    for (size_t i = 0; i < webViews.size(); ++i) {
-        WebView *webView = webViews[i].get();
-
-        _warmUpWebViews.add(webView);
-
-        dispatch_after(when, dispatch_get_main_queue(), ^{
-            _warmUpWebViews.remove(webView);
-            [self _stopCoreLocationDelegateIfNeeded];
-        });
-    }
-
-    // Inform the listeners the initialization succeeded.
-    for (size_t i = 0; i < webViews.size(); ++i) {
-        RetainPtr<WebView>& webView = webViews[i];
-        RetainPtr<id<WebGeolocationProviderInitializationListener> >& listener = initializationListeners[i];
-        [listener.get() initializationAllowedWebView:webView.get() provider:self];
-    }
-}
-
-- (void)geolocationDelegateUnableToStart
-{
-    ASSERT(WebThreadIsCurrent());
-
-    // This could be called recursively. We must clean _webViewsWaitingForCoreLocationStart before invoking the callbacks.
-    Vector<RetainPtr<WebView> > webViews;
-    copyKeysToVector(_webViewsWaitingForCoreLocationStart, webViews);
-
-    Vector<RetainPtr<id<WebGeolocationProviderInitializationListener> > > initializationListeners;
-    copyValuesToVector(_webViewsWaitingForCoreLocationStart, initializationListeners);
-
-    _webViewsWaitingForCoreLocationStart.clear();
-
-    // Inform the listeners of the failure.
-    for (size_t i = 0; i < webViews.size(); ++i) {
-        RetainPtr<WebView>& webView = webViews[i];
-        RetainPtr<id<WebGeolocationProviderInitializationListener> >& listener = initializationListeners[i];
-        [listener.get() initializationDeniedWebView:webView.get() provider:self];
-    }
-}
 
 - (void)positionChanged:(WebGeolocationPosition*)position
 {
@@ -367,11 +323,9 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
         return;
     }
     // 1) Stop all ongoing Geolocation initialization and tracking.
-    _webViewsWaitingForCoreLocationStart.clear();
-    _warmUpWebViews.clear();
+    _webViewsWaitingForCoreLocationAuthorization.clear();
     _registeredWebViews.clear();
     abortSendLastPosition(self);
-    [self _stopCoreLocationDelegateIfNeeded];
 
     // 2) Reset the views, each frame will register back if needed.
     Vector<WebView*> webViewsCopy;
@@ -394,30 +348,40 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
     return self;
 }
 
-- (void)geolocationDelegateStarted
+- (void)geolocationAuthorizationGranted
 {
-    WebThreadRun(^{ [_provider geolocationDelegateStarted]; });
+    WebThreadRun(^{
+        [_provider geolocationAuthorizationGranted];
+    });
 }
 
-- (void)geolocationDelegateUnableToStart
+- (void)geolocationAuthorizationDenied
 {
-    WebThreadRun(^{ [_provider geolocationDelegateUnableToStart]; });
+    WebThreadRun(^{
+        [_provider geolocationAuthorizationDenied];
+    });
 }
 
 - (void)positionChanged:(WebCore::GeolocationPosition*)position
 {
     RetainPtr<WebGeolocationPosition> webPosition = adoptNS([[WebGeolocationPosition alloc] initWithGeolocationPosition:position]);
-    WebThreadRun(^{ [_provider positionChanged:webPosition.get()]; });
+    WebThreadRun(^{
+        [_provider positionChanged:webPosition.get()];
+    });
 }
 
 - (void)errorOccurred:(NSString *)errorMessage
 {
-    WebThreadRun(^{ [_provider errorOccurred:errorMessage]; });
+    WebThreadRun(^{
+        [_provider errorOccurred:errorMessage];
+    });
 }
 
 - (void)resetGeolocation
 {
-    WebThreadRun(^{ [_provider resetGeolocation]; });
+    WebThreadRun(^{
+        [_provider resetGeolocation];
+    });
 }
 @end
 
