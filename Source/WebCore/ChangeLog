@@ -1,3 +1,20 @@
+2014-05-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Set up the resize events
+        https://bugs.webkit.org/show_bug.cgi?id=132726
+
+        Reviewed by Darin Adler and Simon Fraser.
+
+        Let the WebKit2 layer override the size used for resize events.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::sizeForResizeEvent):
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+        (WebCore::FrameView::setCustomSizeForResizeEvent):
+        * page/FrameView.h:
+
 2014-05-09  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r168518): Multiple tests for workers in blobs assert

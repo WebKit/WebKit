@@ -297,7 +297,7 @@ static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, 
     return FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(unobscuredRect), roundedLayoutSize(FloatSize(documentSize)), scale, false, StickToViewportBounds);
 }
 
-- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)zoomScale inStableState:(BOOL)isStableState
+- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates scale:(CGFloat)zoomScale inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
 {
     double timestamp = monotonicallyIncreasingTime();
     HistoricalVelocityData::VelocityData velocityData;
@@ -315,7 +315,7 @@ static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, 
     }
 
     FloatRect customFixedPositionRect = fixedPositionRectFromExposedRect(unobscuredRect, [self bounds].size, zoomScale);
-    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(_page->nextVisibleContentRectUpdateID(), visibleRect, unobscuredRect, customFixedPositionRect, filteredScale, isStableState, timestamp, velocityData.horizontalVelocity, velocityData.verticalVelocity, velocityData.scaleChangeRate));
+    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(_page->nextVisibleContentRectUpdateID(), visibleRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, customFixedPositionRect, filteredScale, isStableState, isChangingObscuredInsetsInteractively, timestamp, velocityData.horizontalVelocity, velocityData.verticalVelocity, velocityData.scaleChangeRate));
     
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
     scrollingCoordinator->viewportChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), unobscuredRect, zoomScale);
