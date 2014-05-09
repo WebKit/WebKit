@@ -26,8 +26,8 @@
 #ifndef WKBundleHitTestResult_h
 #define WKBundleHitTestResult_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKGeometry.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKGeometry.h>
 
 #ifdef __cplusplus
 extern "C" {

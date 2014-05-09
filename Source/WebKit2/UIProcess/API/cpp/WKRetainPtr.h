@@ -26,7 +26,7 @@
 #ifndef WKRetainPtr_h
 #define WKRetainPtr_h
 
-#include <WebKit2/WKType.h>
+#include <WebKit/WKType.h>
 #include <algorithm>
 
 namespace WebKit {

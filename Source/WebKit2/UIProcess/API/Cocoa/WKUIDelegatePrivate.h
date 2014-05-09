@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKUIDelegate.h>
+#import <WebKit/WKUIDelegate.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit2/_WKActivatedElementInfo.h>
+#import <WebKit/_WKActivatedElementInfo.h>
 
 @protocol WKUIDelegatePrivate <WKUIDelegate>
 

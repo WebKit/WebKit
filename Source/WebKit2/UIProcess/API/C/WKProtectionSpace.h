@@ -26,8 +26,8 @@
 #ifndef WKProtectionSpace_h
 #define WKProtectionSpace_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKProtectionSpaceTypes.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKProtectionSpaceTypes.h>
 
 #ifdef __cplusplus
 extern "C" {

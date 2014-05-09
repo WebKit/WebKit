@@ -26,7 +26,7 @@
 #ifndef WKDictionary_h
 #define WKDictionary_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 #include <stddef.h>
 

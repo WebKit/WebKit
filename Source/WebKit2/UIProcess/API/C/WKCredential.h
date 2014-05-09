@@ -26,8 +26,8 @@
 #ifndef WKCredential_h
 #define WKCredential_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKCredentialTypes.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKCredentialTypes.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -89,8 +89,8 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
     DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], _NSGetMachExecuteHeader()->cputype);
     environmentExtractor.getExtractedEnvironmentVariables(environmentVariables);
 
-    NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
-    NSString *frameworksPath = [[webKit2Bundle bundlePath] stringByDeletingLastPathComponent];
+    NSBundle *webKitBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
+    NSString *frameworksPath = [[webKitBundle bundlePath] stringByDeletingLastPathComponent];
 
     // To make engineering builds work, if the path is outside of /System set up
     // DYLD_FRAMEWORK_PATH to pick up other frameworks, but don't do it for the
@@ -101,7 +101,7 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
     NSString *processShimPathNSString = nil;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (launchOptions.processType == ProcessLauncher::PluginProcess) {
-        NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
+        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
         NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
 
         processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
@@ -109,14 +109,14 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(NETWORK_PROCESS)
     if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
-        NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
+        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
         NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
 
         processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"SecItemShim.dylib"];
     } else
 #endif // ENABLE(NETWORK_PROCESS)
     if (launchOptions.processType == ProcessLauncher::WebProcess) {
-        NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
+        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"WebProcess.app"];
         NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
 
         processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
@@ -202,7 +202,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
 
     xpc_object_t bootstrapMessage = xpc_dictionary_create(0, 0, 0);
     xpc_dictionary_set_string(bootstrapMessage, "message-name", "bootstrap");
-    xpc_dictionary_set_string(bootstrapMessage, "framework-executable-path", [[[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] executablePath] fileSystemRepresentation]);
+    xpc_dictionary_set_string(bootstrapMessage, "framework-executable-path", [[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] executablePath] fileSystemRepresentation]);
     xpc_dictionary_set_mach_send(bootstrapMessage, "server-port", listeningPort);
     xpc_dictionary_set_string(bootstrapMessage, "client-identifier", clientIdentifier.data());
     xpc_dictionary_set_string(bootstrapMessage, "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
@@ -374,31 +374,31 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     // Insert a send right so we can send to it.
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 
-    NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
+    NSBundle *webKitBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
 
     NSString *processPath = nil;
     switch (launchOptions.processType) {
     case ProcessLauncher::WebProcess:
-        processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
+        processPath = [webKitBundle pathForAuxiliaryExecutable:@"WebProcess.app"];
         break;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::PluginProcess:
-        processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
+        processPath = [webKitBundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
         break;
 #endif
 #if ENABLE(NETWORK_PROCESS)
     case ProcessLauncher::NetworkProcess:
-        processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
+        processPath = [webKitBundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
         break;
 #endif
 #if ENABLE(DATABASE_PROCESS)
     case ProcessLauncher::DatabaseProcess:
-        processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"DatabaseProcess.app"];
+        processPath = [webKitBundle pathForAuxiliaryExecutable:@"DatabaseProcess.app"];
         break;
 #endif
     }
 
-    NSString *frameworkExecutablePath = [webKit2Bundle executablePath];
+    NSString *frameworkExecutablePath = [webKitBundle executablePath];
     NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
 
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
@@ -520,7 +520,7 @@ void ProcessLauncher::launchProcess()
     if (tryPreexistingProcess(m_launchOptions, this, &ProcessLauncher::didFinishLaunchingProcess))
         return;
 
-    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:systemDirectoryPath()];
+    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:systemDirectoryPath()];
 
     if (m_launchOptions.useXPC) {
         createService(m_launchOptions, isWebKitDevelopmentBuild, this, &ProcessLauncher::didFinishLaunchingProcess);

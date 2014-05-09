@@ -1,3 +1,99 @@
+2014-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Rename WebKit2.framework to WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=132743
+        <rdar://problem/15920046>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/BaseLegacyProcess.xcconfig:
+        Change INSTALL_PATH to WebKit.framework.
+
+        * Configurations/BaseTarget.xcconfig:
+        Change WEBKIT2_FRAMEWORKS_DIR to WEBKIT_FRAMEWORKS_DIR and add WEBKIT_LEGACY_PRIVATE_HEADERS_DIR.
+
+        * Configurations/BaseXPCService.xcconfig:
+        Change WebKit2.framework to WebKit.framework.
+
+        * Configurations/WebKit.xcconfig: Copied from Source/WebKit2/Configurations/WebKit2.xcconfig.
+        New configuration file for WebKit.framework. Re-export WebKitLegacy.framework.
+
+        * Configurations/WebKit2.xcconfig:
+        New configuration file for the WebKit2 shim framework. Re-export WebKit.framework.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist:
+        Update DYLD_INSERT_LIBRARIES to refer to WebKit.framework.
+
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist:
+        Update DYLD_INSERT_LIBRARIES to refer to WebKit.framework.
+        
+        * Shared/API/Cocoa/WKBrowsingContextHandle.h:
+        * Shared/API/Cocoa/WKRenderingProgressEvents.h:
+        Update header imports.
+
+        * Shared/API/Cocoa/WebKit.h: Renamed from Source/WebKit/mac/WebKitLegacy/WebKit.h.
+        New umbrella header. Imports the modern WebKit API as well as the legacy API.
+
+        * Shared/API/Cocoa/WebKit.m: Renamed from Source/WebKit/mac/WebKitLegacy/WebKit.m.
+        Export install name symbols on iOS.
+
+        * Shared/API/Cocoa/WebKitPrivate.h: Renamed from Source/WebKit/mac/WebKitLegacy/WebKitPrivate.h.
+        New umbrella SPI header. Imports the modern WebKit SPI.
+
+        * Many headers:
+        Change WebKit2 includes to WebKit includes.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        (WebKit::XPCServiceEventHandler):
+        Change bundle identifiers from com.apple.WebKit2 to com.apple.WebKit.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        Change bundle identifier from com.apple.WebKit2 to com.apple.WebKit.
+        
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        Stop including WKPreferencesRef.h, we have a WebKit2 header that handles this workaround for us now.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::addDYLDEnvironmentAdditions):
+        (WebKit::connectToService):
+        (WebKit::createProcess):
+        (WebKit::ProcessLauncher::launchProcess):
+        Change bundle identifiers from com.apple.WebKit2 to com.apple.WebKit.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::createPropertyListFile):
+        Change bundle identifiers from com.apple.WebKit2 to com.apple.WebKit.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        Change bundle identifier from com.apple.WebKit2 to com.apple.WebKit.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        Copy the python message scripts to the WebKit2 framework.
+        Rename WebKit2.framework to WebKit.framework everywhere.
+        Add a new WebKit2 target that builds the shim WebKit2 framework.
+        Move the build script phase that migrates WebKitLegacy headers to WebKit.
+        Add a new build script phase that adds forwarding headers from WebKit2 to WebKit.
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist:
+        Update DYLD_INSERT_LIBRARIES to refer to WebKit.framework.
+
+        * mac/MigrateHeadersFromWebKitLegacy.make: Renamed from Source/WebKit/mac/WebKitLegacy/MigrateHeadersFromWebKitLegacy.make.
+        Move the makefile that migrates WebKitLegacy headers here. On OS X, it copies the header contents and on iOS it creates forarding headers.
+
+        * mac/MigrateHeadersToWebKit2.make:
+        New makefile that creates forwarding headers for the WebKit2 shim framework.
+
+        * mac/WKPreferences.h: Added.
+        Add WebKit2/WKPreferences.h header that imports WebKit2/WKPreferencesref.h.
+
+        * mac/WebKit2.m:
+        Skeleton for the WebKit2 shim framework.
+
+        * mac/Info-WebKit2.plist: Added.
+        New Info.plist file for the WebKit2 shim framework.
+
 2014-05-09  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
 
         [WK2] Make generate-forwarding-headers.pl work after WebKit2.framework -> WebKit.framework rename

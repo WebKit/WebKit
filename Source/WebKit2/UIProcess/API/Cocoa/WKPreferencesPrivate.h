@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <WebKit2/WKPreferencesRefPrivate.h>
+#include <WebKit/WKPreferencesRefPrivate.h>
 
 #ifdef __OBJC__
 
-#import <WebKit2/WKPreferences.h>
+#import <WebKit/WKPreferences.h>
 
 #if WK_API_ENABLED
 

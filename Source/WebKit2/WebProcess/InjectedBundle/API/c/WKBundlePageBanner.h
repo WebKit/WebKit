@@ -26,9 +26,9 @@
 #ifndef WKBundlePageBanner_h
 #define WKBundlePageBanner_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKEvent.h>
-#include <WebKit2/WKGeometry.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKEvent.h>
+#include <WebKit/WKGeometry.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>

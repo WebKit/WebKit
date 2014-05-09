@@ -26,9 +26,9 @@
 #ifndef WKBundleNavigationAction_h
 #define WKBundleNavigationAction_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKEvent.h>
-#include <WebKit2/WKPageLoadTypes.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKEvent.h>
+#include <WebKit/WKPageLoadTypes.h>
 
 #ifdef __cplusplus
 extern "C" {

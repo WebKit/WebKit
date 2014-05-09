@@ -24,10 +24,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKBrowsingContextGroup.h>
-#import <WebKit2/WKFoundation.h>
-#import <WebKit2/WKProcessGroup.h>
-#import <WebKit2/WKRenderingProgressEvents.h>
+#import <WebKit/WKBrowsingContextGroup.h>
+#import <WebKit/WKFoundation.h>
+#import <WebKit/WKProcessGroup.h>
+#import <WebKit/WKRenderingProgressEvents.h>
 
 #if WK_API_ENABLED
 

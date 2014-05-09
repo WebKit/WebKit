@@ -1,3 +1,17 @@
+2014-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Rename WebKit2.framework to WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=132743
+        <rdar://problem/15920046>
+
+        Reviewed by Dan Bernstein.
+
+        * Source/Makefile:
+        Build WebKit.xcodeproj before WebKit2.xcodeproj.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/:
+        Ditto.
+
 2014-05-06  David Kilzer  <ddkilzer@apple.com>
 
         Add Makefile targets for copying static libraries (LLVM and WKSI)

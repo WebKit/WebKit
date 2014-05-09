@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKWebProcessPlugInBrowserContextController.h>
-#import <WebKit2/WKWebProcessPlugInFrame.h>
-#import <WebKit2/WKWebProcessPlugInNodeHandle.h>
+#import <WebKit/WKWebProcessPlugInBrowserContextController.h>
+#import <WebKit/WKWebProcessPlugInFrame.h>
+#import <WebKit/WKWebProcessPlugInNodeHandle.h>
 
 @protocol WKWebProcessPlugInFormDelegatePrivate <NSObject>
 

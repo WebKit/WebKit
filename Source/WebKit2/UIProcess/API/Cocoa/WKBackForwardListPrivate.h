@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBackForwardList.h>
+#import <WebKit/WKBackForwardList.h>
 
 #if WK_API_ENABLED
 

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBase.h>
-#import <WebKit2/WKView.h>
+#import <WebKit/WKBase.h>
+#import <WebKit/WKView.h>
 
 @interface WKView (Private)
 

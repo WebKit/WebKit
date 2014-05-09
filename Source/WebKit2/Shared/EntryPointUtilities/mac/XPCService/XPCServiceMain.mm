@@ -42,11 +42,11 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             assert(type == XPC_TYPE_DICTIONARY);
 
             if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "bootstrap")) {
-                CFBundleRef webKit2Bundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit2"));
+                CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
                 CFStringRef entryPointFunctionName = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
 
                 typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t);
-                InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKit2Bundle, entryPointFunctionName));
+                InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKitBundle, entryPointFunctionName));
                 if (!initializerFunctionPtr) {
                     NSLog(@"Unable to find entry point in WebKit2.framework with name: %@", (NSString *)entryPointFunctionName);
                     exit(EXIT_FAILURE);

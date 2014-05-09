@@ -33,8 +33,6 @@
 		1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */; };
 		1A6A208D1886154600E50F5F /* WebProgressTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A6A208B1886154600E50F5F /* WebProgressTrackerClient.mm */; };
 		1A6A208E1886154600E50F5F /* WebProgressTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6A208C1886154600E50F5F /* WebProgressTrackerClient.h */; };
-		1A739036190AE622002E3105 /* WebKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A739034190AE5D4002E3105 /* WebKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A739038190AE674002E3105 /* WebKitPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A739037190AE674002E3105 /* WebKitPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A74A28E0F4F75400082E228 /* WebTextInputWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A74A28C0F4F75400082E228 /* WebTextInputWindowController.h */; };
 		1A74A28F0F4F75400082E228 /* WebTextInputWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74A28D0F4F75400082E228 /* WebTextInputWindowController.m */; };
 		1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */; };
@@ -62,7 +60,6 @@
 		1AAF5FC00EDE3A92008D883D /* WebHostedNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF5FBE0EDE3A92008D883D /* WebHostedNetscapePluginView.mm */; };
 		1AB1DAC118BC0232004B6A9F /* WebViewGroup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1DABF18BC0232004B6A9F /* WebViewGroup.mm */; };
 		1AB1DAC218BC0232004B6A9F /* WebViewGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB1DAC018BC0232004B6A9F /* WebViewGroup.h */; };
-		1AD7453C18D0D324006F3A1E /* WebKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD7451218D0D24C006F3A1E /* WebKit.m */; };
 		1AEA66D40DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */; };
 		1AEA66D50DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */; };
 		1AEA66D80DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */; };
@@ -453,16 +450,6 @@
 		F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F834AAD60E64B1C700E2737C /* WebTextIterator.mm */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		1A5B250918D0DBD300913729 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9398100A0824BF01008DF038;
-			remoteInfo = WebKit;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		065AD5A10B0C32C7005A2B1D /* WebContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebContextMenuClient.h; sourceTree = "<group>"; };
 		065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClient.mm; sourceTree = "<group>"; };
@@ -478,7 +465,6 @@
 		0F30985E11ECFE4500F559DF /* WebRenderLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRenderLayer.mm; sourceTree = "<group>"; };
 		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
 		14D8252E0AF955090004F057 /* WebChromeClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClient.mm; sourceTree = "<group>"; };
-		1A06CDB21909A4F000FCB52C /* MigrateHeadersFromWebKitLegacy.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MigrateHeadersFromWebKitLegacy.make; sourceTree = "<group>"; };
 		1A2DBE9D0F251E3A0036F8A6 /* ProxyInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyInstance.h; sourceTree = "<group>"; };
 		1A2DBE9E0F251E3A0036F8A6 /* ProxyInstance.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProxyInstance.mm; sourceTree = "<group>"; };
 		1A4DF5200EC8C74D006BD4B4 /* WebNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginView.h; sourceTree = "<group>"; };
@@ -491,8 +477,6 @@
 		1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryPropertyList.h; sourceTree = "<group>"; };
 		1A6A208B1886154600E50F5F /* WebProgressTrackerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProgressTrackerClient.mm; sourceTree = "<group>"; };
 		1A6A208C1886154600E50F5F /* WebProgressTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProgressTrackerClient.h; sourceTree = "<group>"; };
-		1A739034190AE5D4002E3105 /* WebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit.h; sourceTree = "<group>"; };
-		1A739037190AE674002E3105 /* WebKitPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPrivate.h; sourceTree = "<group>"; };
 		1A74A28C0F4F75400082E228 /* WebTextInputWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTextInputWindowController.h; sourceTree = "<group>"; };
 		1A74A28D0F4F75400082E228 /* WebTextInputWindowController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = WebTextInputWindowController.m; sourceTree = "<group>"; };
 		1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginRequest.h; sourceTree = "<group>"; };
@@ -517,10 +501,7 @@
 		1AAF5FBE0EDE3A92008D883D /* WebHostedNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHostedNetscapePluginView.mm; sourceTree = "<group>"; };
 		1AB1DABF18BC0232004B6A9F /* WebViewGroup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewGroup.mm; sourceTree = "<group>"; };
 		1AB1DAC018BC0232004B6A9F /* WebViewGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewGroup.h; sourceTree = "<group>"; };
-		1AD7451218D0D24C006F3A1E /* WebKit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebKit.m; sourceTree = "<group>"; };
-		1AD7451918D0D26C006F3A1E /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AD7453B18D0D2A6006F3A1E /* WebKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKit.xcconfig; sourceTree = "<group>"; };
-		1AD7453D18D0D383006F3A1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandler.h; sourceTree = "<group>"; };
 		1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePluginEventHandler.mm; sourceTree = "<group>"; };
 		1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandlerCarbon.h; sourceTree = "<group>"; };
@@ -924,13 +905,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1AD7451518D0D26C006F3A1E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		939811270824BF01008DF038 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -950,7 +924,6 @@
 			isa = PBXGroup;
 			children = (
 				939811330824BF01008DF038 /* WebKitLegacy.framework */,
-				1AD7451918D0D26C006F3A1E /* WebKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -973,7 +946,6 @@
 				F5EBC45202134BB601CA1520 /* Plugins */,
 				511F3FC30CECC7E200852565 /* Storage */,
 				F5B36B400281DE87018635CB /* WebCoreSupport */,
-				1AD7451118D0D23D006F3A1E /* WebKit Framework */,
 				9C7CABBB0190A37C0ECA16EA /* WebView */,
 				1C68F63F095B5F9C00C2984E /* WebInspector */,
 				F7EBEE5903F9DB2203CA0DE6 /* Carbon */,
@@ -1053,19 +1025,6 @@
 				1AEA6A4F0DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm */,
 			);
 			name = Events;
-			sourceTree = "<group>";
-		};
-		1AD7451118D0D23D006F3A1E /* WebKit Framework */ = {
-			isa = PBXGroup;
-			children = (
-				1A06CDB21909A4F000FCB52C /* MigrateHeadersFromWebKitLegacy.make */,
-				1AD7453D18D0D383006F3A1E /* Info.plist */,
-				1AD7451218D0D24C006F3A1E /* WebKit.m */,
-				1A739034190AE5D4002E3105 /* WebKit.h */,
-				1A739037190AE674002E3105 /* WebKitPrivate.h */,
-			);
-			name = "WebKit Framework";
-			path = mac/WebKitLegacy;
 			sourceTree = "<group>";
 		};
 		1C68F63F095B5F9C00C2984E /* WebInspector */ = {
@@ -1703,15 +1662,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		1A739035190AE603002E3105 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1A739038190AE674002E3105 /* WebKitPrivate.h in Headers */,
-				1A739036190AE622002E3105 /* WebKit.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		9398100D0824BF01008DF038 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1975,30 +1925,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		1AD7451818D0D26C006F3A1E /* WebKit */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1AD7453318D0D26C006F3A1E /* Build configuration list for PBXNativeTarget "WebKit" */;
-			buildPhases = (
-				1ABDE1BB1909AC18005E2FA9 /* Update Info.plist with version information */,
-				1A5B250818D0D90C00913729 /* Migrate Headers */,
-				1AE4A9121909E0C7007035C8 /* Make Frameworks Symbolic Link */,
-				1A739035190AE603002E3105 /* Headers */,
-				1AD7451418D0D26C006F3A1E /* Sources */,
-				1AD7451518D0D26C006F3A1E /* Frameworks */,
-				1A27F2A3190F1BB700D2B661 /* Check For Framework Include Consistency */,
-				1A27F2A2190F1B8500D2B661 /* Check For Inappropriate Macros in External Headers */,
-				1AC9317F19130A87006EA8BC /* Add Symlink in /System/Library/PrivateFrameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1A5B250A18D0DBD300913729 /* PBXTargetDependency */,
-			);
-			name = WebKit;
-			productName = WebKit;
-			productReference = 1AD7451918D0D26C006F3A1E /* WebKit.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		9398100A0824BF01008DF038 /* WebKitLegacy */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C282D08902B0F008A9EFC /* Build configuration list for PBXNativeTarget "WebKitLegacy" */;
@@ -2052,7 +1978,6 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1AD7451818D0D26C006F3A1E /* WebKit */,
 				9398100A0824BF01008DF038 /* WebKitLegacy */,
 			);
 		};
@@ -2074,36 +1999,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1A27F2A2190F1B8500D2B661 /* Check For Inappropriate Macros in External Headers */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Check For Inappropriate Macros in External Headers";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers PrivateHeaders || exit $?\nfi";
-		};
-		1A27F2A3190F1BB700D2B661 /* Check For Framework Include Consistency */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Check For Framework Include Consistency";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\nexit 0;\nfi\n\n# FIXME: Once WebKit is provided by WebKit2.xcodeproj, this should be re-enabled.\nif [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\nexit 0\nfi\n\nif [ -f ../../Tools/Scripts/check-for-webkit-framework-include-consistency ]; then\n../../Tools/Scripts/check-for-webkit-framework-include-consistency || exit $?\nfi\n";
-		};
 		1A3193D5191856E500E1CF89 /* Symlink WebKitPluginHost */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2118,66 +2013,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\n    exit 0\nfi\n\nif [[ \"${CONFIGURATION}\" != \"Production\" && \"${ACTION}\" == \"build\" ]]; then\n    # FIXME: This should be removed once faulty links have been removed on the bots.\n    if [[ -L \"${CONFIGURATION_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\" ]]; then\n        rm \"${CONFIGURATION_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\"\n    fi\n\n    if [[ -e \"/System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app\" ]]; then\n        ln -s /System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\"\n    else\n        ln -s /System/Library/Frameworks/WebKit.framework/Frameworks/WebKitLegacy.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\"\n    fi\nfi\n";
-		};
-		1A5B250818D0D90C00913729 /* Migrate Headers */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Migrate Headers";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    if [[ ${PLATFORM_NAME} == \"macosx\" ]]; then\n        mkdir -p \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n    fi\n    mkdir -p \"${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\"\n    make -C mac/WebKitLegacy -f \"MigrateHeadersFromWebKitLegacy.make\" -j `/usr/sbin/sysctl -n hw.activecpu`\nfi\n";
-		};
-		1ABDE1BB1909AC18005E2FA9 /* Update Info.plist with version information */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(PROJECT_DIR)/mac/Configurations/Version.xcconfig",
-			);
-			name = "Update Info.plist with version information";
-			outputPaths = (
-				"$(PROJECT_DIR)/mac/WebKitLegacy/Info.plist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\ntouch \"${PROJECT_DIR}/mac/WebKitLegacy/Info.plist\";\nfi;\n";
-		};
-		1AC9317F19130A87006EA8BC /* Add Symlink in /System/Library/PrivateFrameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Add Symlink in /System/Library/PrivateFrameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\n    if [[ ! -d \"${INSTALL_DIR}/../PrivateFrameworks\" ]]; then\n        mkdir -p \"${INSTALL_DIR}/../PrivateFrameworks\"\n    fi\n    if [[ -d \"${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\" && ! -L \"${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\" ]]; then\n        echo \"ERROR: Cannot create symlink. ${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework already exists and is a directory.\"\n        exit 1\n    fi\n    # If the symlink already exists, remove it and create the new one in its place.\n    ln -s -h -f ../Frameworks/WebKit.framework ${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\nfi";
-		};
-		1AE4A9121909E0C7007035C8 /* Make Frameworks Symbolic Link */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputPaths = (
-				WebKit.xcodeproj,
-			);
-			name = "Make Frameworks Symbolic Link";
-			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/frameworks-symlink-stamp",
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\nexit 0\nfi\n\nln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
 		};
 		1C395DE20C6BE8E0000D1E52 /* Generate Export Files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2292,14 +2127,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1AD7451418D0D26C006F3A1E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1AD7453C18D0D324006F3A1E /* WebKit.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		939810BB0824BF01008DF038 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2487,14 +2314,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		1A5B250A18D0DBD300913729 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9398100A0824BF01008DF038 /* WebKitLegacy */;
-			targetProxy = 1A5B250918D0DBD300913729 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXVariantGroup section */
 		5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib */ = {
 			isa = PBXVariantGroup;
@@ -2580,27 +2399,6 @@
 			};
 			name = Production;
 		};
-		1AD7453418D0D26C006F3A1E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1AD7453B18D0D2A6006F3A1E /* WebKit.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		1AD7453518D0D26C006F3A1E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1AD7453B18D0D2A6006F3A1E /* WebKit.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		1AD7453618D0D26C006F3A1E /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1AD7453B18D0D2A6006F3A1E /* WebKit.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2620,16 +2418,6 @@
 				149C283308902B0F008A9EFC /* Debug */,
 				149C283408902B0F008A9EFC /* Release */,
 				149C283608902B0F008A9EFC /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		1AD7453318D0D26C006F3A1E /* Build configuration list for PBXNativeTarget "WebKit" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1AD7453418D0D26C006F3A1E /* Debug */,
-				1AD7453518D0D26C006F3A1E /* Release */,
-				1AD7453618D0D26C006F3A1E /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

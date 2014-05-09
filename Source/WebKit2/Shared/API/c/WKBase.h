@@ -27,23 +27,23 @@
 #ifndef WKBase_h
 #define WKBase_h
 
-#include <WebKit2/WKDeclarationSpecifiers.h>
+#include <WebKit/WKDeclarationSpecifiers.h>
 #include <stdint.h>
 
 #if defined(BUILDING_GTK__)
-#include <WebKit2/WKBaseGtk.h>
+#include <WebKit/WKBaseGtk.h>
 #endif
 
 #if defined(WTF_USE_SOUP)
-#include <WebKit2/WKBaseSoup.h>
+#include <WebKit/WKBaseSoup.h>
 #endif
 
 #if defined(BUILDING_EFL__)
-#include <WebKit2/WKBaseEfl.h>
+#include <WebKit/WKBaseEfl.h>
 #endif
 
 #if defined(__APPLE__)
-#include <WebKit2/WKBaseMac.h>
+#include <WebKit/WKBaseMac.h>
 #endif
 
 /* WebKit2 shared types */

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKDOMRange.h>
-#import <WebKit2/WKBase.h>
+#import <WebKit/WKDOMRange.h>
+#import <WebKit/WKBase.h>
 
 #if WK_API_ENABLED
 

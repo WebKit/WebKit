@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKWebProcessPlugInBrowserContextController.h>
+#import <WebKit/WKWebProcessPlugInBrowserContextController.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKBase.h>
+#import <WebKit/WKBase.h>
 
 @class WKBrowsingContextHandle;
 @class _WKRemoteObjectRegistry;

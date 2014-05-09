@@ -1,4 +1,4 @@
-MODULES = bmalloc WTF JavaScriptCore ThirdParty/ANGLE WebCore WebInspectorUI WebKit2 WebKit
+MODULES = bmalloc WTF JavaScriptCore ThirdParty/ANGLE WebCore WebInspectorUI WebKit WebKit2
 
 ifneq (,$(findstring iphoneos,$(SDKROOT)))
 	MODULES = bmalloc WTF JavaScriptCore ThirdParty/ANGLE WebCore WebKit WebKit2

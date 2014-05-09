@@ -26,7 +26,7 @@
 #ifndef WKData_h
 #define WKData_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 #include <stddef.h>
 

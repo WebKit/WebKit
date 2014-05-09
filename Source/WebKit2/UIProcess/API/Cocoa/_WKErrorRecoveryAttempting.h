@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
+#import <WebKit/WKDeclarationSpecifiers.h>
 
 WK_EXPORT extern NSString * const _WKRecoveryAttempterErrorKey;
 

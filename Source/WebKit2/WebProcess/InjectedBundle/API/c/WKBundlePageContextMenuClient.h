@@ -26,7 +26,7 @@
 #ifndef WKBundlePageContextMenuClient_h
 #define WKBundlePageContextMenuClient_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 typedef void (*WKBundlePageGetContextMenuFromDefaultContextMenuCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKArrayRef defaultMenu, WKArrayRef* newMenu, WKTypeRef* userData, const void* clientInfo);
 

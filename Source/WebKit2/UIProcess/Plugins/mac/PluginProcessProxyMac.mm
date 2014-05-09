@@ -77,7 +77,7 @@ bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginModuleInfo& plugi
 
 bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
 {
-    NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
+    NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
     NSString *frameworksPath = [[webKit2Bundle bundlePath] stringByDeletingLastPathComponent];
     const char* frameworkExecutablePath = [[webKit2Bundle executablePath] fileSystemRepresentation];
     

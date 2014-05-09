@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessGroup.h>
+#import <WebKit/WKProcessGroup.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKBase.h>
+#import <WebKit/WKBase.h>
 
 #if TARGET_OS_IPHONE
 @class WKGeolocationProviderIOS;

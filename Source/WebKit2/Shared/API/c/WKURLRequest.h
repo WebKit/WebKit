@@ -26,7 +26,7 @@
 #ifndef WKURLRequest_h
 #define WKURLRequest_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 #ifdef __cplusplus
 extern "C" {

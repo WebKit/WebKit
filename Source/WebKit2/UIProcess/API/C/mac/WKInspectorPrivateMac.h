@@ -24,8 +24,8 @@
  */
 
 #import <AppKit/NSWindow.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
-#import <WebKit2/WKInspector.h>
+#import <WebKit/WKDeclarationSpecifiers.h>
+#import <WebKit/WKInspector.h>
 
 #ifdef __cplusplus
 extern "C" {

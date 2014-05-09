@@ -26,7 +26,7 @@
 #ifndef WKSecurityOrigin_h
 #define WKSecurityOrigin_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 #ifdef __cplusplus
 extern "C" {

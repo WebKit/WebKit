@@ -26,8 +26,8 @@
 #ifndef WKBundlePageFullScreenClient_h
 #define WKBundlePageFullScreenClient_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKGeometry.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKGeometry.h>
 
 typedef bool (*WKBundlePageSupportsFullScreen)(WKBundlePageRef page, WKFullScreenKeyboardRequestType requestType);
 typedef void (*WKBundlePageEnterFullScreenForElement)(WKBundlePageRef page, WKBundleNodeHandleRef element);

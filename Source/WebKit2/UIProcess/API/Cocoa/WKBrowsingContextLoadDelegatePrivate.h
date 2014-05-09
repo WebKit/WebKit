@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBrowsingContextLoadDelegate.h>
+#import <WebKit/WKBrowsingContextLoadDelegate.h>
 
 @protocol WKBrowsingContextLoadDelegatePrivate <WKBrowsingContextLoadDelegate>
 @optional
