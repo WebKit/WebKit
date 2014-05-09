@@ -1,3 +1,13 @@
+2014-05-09  Tanay C  <tanay.c@samsung.com>
+
+        Fix build warning (uninitialized variable) in DFGFixupPhase.cpp 
+        https://bugs.webkit.org/show_bug.cgi?id=132331
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+
 2014-05-09  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Crash when enabling DFG JIT.

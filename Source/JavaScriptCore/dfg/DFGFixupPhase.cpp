@@ -1865,6 +1865,7 @@ private:
     void injectTypeConversionsForEdge(Node* node, Edge& edge)
     {
         ASSERT(node == m_currentNode);
+        Node* result = nullptr;
         
         switch (edge.useKind()) {
         case DoubleRepUse:
@@ -1874,7 +1875,6 @@ private:
             
             addRequiredPhantom(edge.node());
 
-            Node* result;
             if (edge->hasInt52Result()) {
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecInt52AsDouble, DoubleRep, node->origin,
@@ -1895,7 +1895,6 @@ private:
             
             addRequiredPhantom(edge.node());
 
-            Node* result;
             if (edge->hasDoubleResult()) {
                 // This will never happen.
                 startCrashing();
@@ -1929,7 +1928,6 @@ private:
             
             addRequiredPhantom(edge.node());
             
-            Node* result;
             if (edge->hasDoubleResult()) {
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecBytecodeDouble, ValueRep, node->origin,
