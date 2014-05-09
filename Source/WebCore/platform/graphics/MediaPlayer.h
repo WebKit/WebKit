@@ -264,6 +264,8 @@ public:
 
     virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) { return false; }
     virtual void mediaPlayerHandlePlaybackCommand(MediaSession::RemoteControlCommandType) { }
+
+    virtual String mediaPlayerSourceApplicationIdentifier() const { return emptyString(); }
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -575,6 +577,7 @@ public:
 
     bool shouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&);
     void handlePlaybackCommand(MediaSession::RemoteControlCommandType);
+    String sourceApplicationIdentifier() const;
 
 private:
     MediaPlayer(MediaPlayerClient*);

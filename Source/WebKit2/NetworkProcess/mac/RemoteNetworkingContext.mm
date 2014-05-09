@@ -80,6 +80,11 @@ RetainPtr<CFDataRef> RemoteNetworkingContext::sourceApplicationAuditData() const
 #endif
 }
 
+String RemoteNetworkingContext::sourceApplicationIdentifier() const
+{
+    return SessionTracker::getIdentifierBase();
+}
+
 ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& request) const
 {
     return WebKit::blockedError(request);

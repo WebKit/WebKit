@@ -101,6 +101,11 @@ RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() con
 #endif
 }
 
+String WebFrameNetworkingContext::sourceApplicationIdentifier() const
+{
+    return SessionTracker::getIdentifierBase();
+}
+
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
 {
     return frame()->loader().client().blockedError(request);

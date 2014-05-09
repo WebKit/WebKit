@@ -1,5 +1,26 @@
 2014-05-08  Jer Noble  <jer.noble@apple.com>
 
+        [Mac, iOS] Add source application accounting to AVURLAsset.
+        https://bugs.webkit.org/show_bug.cgi?id=132637
+
+        Reviewed by Eric Carlson.
+
+        Properly account for the application responisble for data loading by passing the source
+        application identifier through to AVFoundation through AVURLAsset options.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::sourceApplicationIdentifier):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerSourceApplicationIdentifier):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        * platform/network/NetworkingContext.h:
+
+2014-05-08  Jer Noble  <jer.noble@apple.com>
+
         [MSE][Mac] Move AVStreamDataParser off-main-thread.
         https://bugs.webkit.org/show_bug.cgi?id=132698
 

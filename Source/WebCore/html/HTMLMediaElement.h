@@ -566,6 +566,7 @@ private:
 
     virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) override;
     virtual void mediaPlayerHandlePlaybackCommand(MediaSession::RemoteControlCommandType command) override { didReceiveRemoteControlCommand(command); }
+    virtual String mediaPlayerSourceApplicationIdentifier() const;
 
     void loadTimerFired(Timer<HTMLMediaElement>&);
     void progressEventTimerFired(Timer<HTMLMediaElement>&);

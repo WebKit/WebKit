@@ -64,6 +64,7 @@ private:
     void setLocalFileContentSniffingEnabled(bool value) { m_localFileContentSniffingEnabled = value; }
     virtual bool localFileContentSniffingEnabled() const override;
     virtual RetainPtr<CFDataRef> sourceApplicationAuditData() const override;
+    virtual String sourceApplicationIdentifier() const override;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
 #endif
 

@@ -57,6 +57,8 @@ public:
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;
 #endif
 
+    virtual String sourceApplicationIdentifier() const { return emptyString(); }
+
 #if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     virtual NetworkStorageSession& storageSession() const = 0;
 #endif

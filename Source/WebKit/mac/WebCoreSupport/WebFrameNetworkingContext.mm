@@ -104,6 +104,11 @@ RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() con
     return reinterpret_cast<CFDataRef>(webview._sourceApplicationAuditData);
 }
 
+String WebFrameNetworkingContext::sourceApplicationIdentifier() const
+{
+    return [[NSBundle mainBundle] bundleIdentifier];
+}
+
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
 {
     return frame()->loader().client().blockedError(request);

@@ -62,6 +62,7 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaSessionManager.h"
+#include "NetworkingContext.h"
 #include "PageActivityAssertionToken.h"
 #include "PageGroup.h"
 #include "PageThrottler.h"
@@ -5626,6 +5627,15 @@ bool HTMLMediaElement::mediaPlayerShouldWaitForResponseToAuthenticationChallenge
     notifier.didReceiveAuthenticationChallenge(identifier, documentLoader, challenge);
 
     return true;
+}
+
+String HTMLMediaElement::mediaPlayerSourceApplicationIdentifier() const
+{
+    if (Frame* frame = document().frame()) {
+        if (NetworkingContext* networkingContext = frame->loader().networkingContext())
+            return networkingContext->sourceApplicationIdentifier();
+    }
+    return emptyString();
 }
 
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
