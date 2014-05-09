@@ -1,3 +1,20 @@
+2014-05-09  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+        Expose functions necessary for copying favicon between IconDatabases.
+        https://bugs.webkit.org/show_bug.cgi?id=132709
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseSetIconURLForPageURL):
+        Add C API wrapper for WebIconDatabase::setIconURLForPageURL().
+
+        (WKIconDatabaseCopyIconURLForPageURL):
+        Add C API wrapper for WebIconDatabase::synchronousIconURLForPageURL().
+
+        * UIProcess/API/C/WKIconDatabase.h:
+        Added declarations for wrapper functions above.
+
 2014-05-09  Tim Horton  <timothy_horton@apple.com>
 
         Fix the iOS DRT build by including CG headers in WKPreferences.h, which uses CGFloat.
