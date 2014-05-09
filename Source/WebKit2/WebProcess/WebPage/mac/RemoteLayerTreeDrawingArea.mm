@@ -274,8 +274,10 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     for (auto& layer : layerTransaction.changedLayers()) {
         if (layer->properties().changedProperties & RemoteLayerTreeTransaction::LayerChanges::BackingStoreChanged) {
             hadAnyChangedBackingStore = true;
-            if (auto contextPendingFlush = layer->properties().backingStore->takeFrontContextPendingFlush())
-                contextsToFlush.append(contextPendingFlush);
+            if (layer->properties().backingStore) {
+                if (auto contextPendingFlush = layer->properties().backingStore->takeFrontContextPendingFlush())
+                    contextsToFlush.append(contextPendingFlush);
+            }
         }
 
         layer->didCommit();
