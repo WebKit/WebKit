@@ -29,6 +29,7 @@
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
 #import <WebCore/Document.h>
+#import <WebCore/FloatQuad.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/MainFrame.h>
@@ -55,6 +56,17 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static IntRect textQuadsToBoundingRectForRange(Range& range)
+{
+    Vector<FloatQuad> textQuads;
+    range.textQuads(textQuads);
+    FloatRect boundingRect;
+    size_t size = textQuads.size();
+    for (size_t i = 0; i < size; ++i)
+        boundingRect.unite(textQuads[i].boundingBox());
+    return enclosingIntRect(boundingRect);
+}
+
 void TelephoneNumberOverlayController::drawRect(PageOverlay* overlay, WebCore::GraphicsContext& graphicsContext, const WebCore::IntRect& dirtyRect)
 {
     if (m_currentSelectionRanges.isEmpty())
@@ -67,14 +79,17 @@ void TelephoneNumberOverlayController::drawRect(PageOverlay* overlay, WebCore::G
     for (auto& range : m_currentSelectionRanges) {
         // FIXME: This will choke if the range wraps around the edge of the view.
         // What should we do in that case?
-        IntRect rect = enclosingIntRect(range->boundingRect());
+        IntRect rect = textQuadsToBoundingRectForRange(*range);
 
         // Convert to the main document's coordinate space.
+        // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
+        // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
+        // not equivalent to what we need when you have a topContentInset or a header banner.
         FrameView* viewForRange = range->ownerDocument().view();
         if (!viewForRange)
             return;
         FrameView& mainFrameView = *m_webPage->corePage()->mainFrame().view();
-        rect.setLocation(mainFrameView.convertChildToSelf(viewForRange, rect.location()));
+        rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
 
         CGRect cgRects[] = { (CGRect)rect };
 
@@ -122,7 +137,7 @@ void TelephoneNumberOverlayController::handleTelephoneClick(TelephoneNumberData*
 bool TelephoneNumberOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& event)
 {
     IntPoint mousePosition = m_webPage->corePage()->mainFrame().view()->rootViewToContents(event.position());
-    
+
     // If this event has nothing to do with the left button, it clears the current mouse down tracking and we're done processing it.
     if (event.button() != WebMouseEvent::LeftButton) {
         clearMouseDownInformation();
@@ -138,7 +153,7 @@ bool TelephoneNumberOverlayController::mouseEvent(PageOverlay*, const WebMouseEv
         // If the mouse lifted while still over the highlight button that it went down on, then that is a click.
         Boolean onButton;
         if (DDHighlightPointIsOnHighlight(currentNumber->highlight(), (CGPoint)mousePosition, &onButton) && onButton) {
-            handleTelephoneClick(currentNumber.get(), mousePosition);
+            handleTelephoneClick(currentNumber.get(), m_webPage->corePage()->mainFrame().view()->contentsToWindow(mousePosition));
             
             return true;
         }

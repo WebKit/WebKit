@@ -1,3 +1,28 @@
+2014-05-09  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168499
+
+    2014-05-08  Beth Dakin  <bdakin@apple.com>
+
+            REGRESSION (r168053): Phone number detection boxes are wrong when scrolled
+            https://bugs.webkit.org/show_bug.cgi?id=132706
+            -and corresponding-
+            <rdar://problem/16787957>
+
+            Reviewed by Tim Horton.
+
+            We need to paint the boxes in Document coordinates. Range::boundingRect() was 
+            giving us a point that took scroll position into account, and that’s not what we 
+            want. Here we use Range::textQuads() instead so that we can get something in 
+            Document coordinates, and then we need to convert that up to the main Document’s 
+            coordinates.
+            * WebProcess/WebPage/mac/TelephoneNumberOverlayControllerMac.mm:
+            (WebKit::textQuadsToBoundingRectForRange):
+            (WebKit::TelephoneNumberOverlayController::drawRect):
+
+            The telephone click function wants a point in Window coordinates.
+            (WebKit::TelephoneNumberOverlayController::mouseEvent):
+
 2014-05-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168477
