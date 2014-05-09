@@ -1,3 +1,21 @@
+2014-05-09  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        [WK2] Make generate-forwarding-headers.pl work after WebKit2.framework -> WebKit.framework rename
+        https://bugs.webkit.org/show_bug.cgi?id=132733
+
+        Reviewed by Csaba Osztrogonác.
+
+        Rewrite framework's directory name to WebKit2 if the framework is WebKit (former WebKit2)
+        and then collect headers inside the fixed framework directory and generate forwarding
+        headers point to the fixed directory.
+
+        Leave WebKit2 in @frameworks list during the transition. It can be removed
+        once <WebKit2/foo.h> style includes were renamed to <WebKit/foo.h> everywhere.
+
+        * Scripts/generate-forwarding-headers.pl:
+        (collectFameworkHeaderPaths):
+        (createForwardingHeadersForFramework):
+
 2014-05-08  Alexey Proskuryakov  <ap@apple.com>
 
         Automatically zip document bundles used via File API

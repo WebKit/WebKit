@@ -36,10 +36,11 @@ use File::Spec::Functions;
 my $srcRoot = realpath(File::Spec->catfile(dirname(abs_path($0)), "../.."));
 my $incFromRoot = abs_path($ARGV[0]);
 my @platformPrefixes = ("cf", "Cocoa", "CoordinatedGraphics", "curl", "efl", "gtk", "mac", "soup", "win");
-my @frameworks = ("JavaScriptCore", "WebCore", "WebKit2");
+my @frameworks = ("JavaScriptCore", "WebCore", "WebKit", "WebKit2");
 my @skippedPrefixes;
 my @frameworkHeaders;
 my $framework;
+my $frameworkDirectoryName;
 my %neededHeaders;
 
 shift;
@@ -53,11 +54,12 @@ foreach my $prefix (@platformPrefixes) {
 
 foreach (@frameworks) {
     $framework = $_;
+    $frameworkDirectoryName = ($framework eq "WebKit") ? "WebKit2" : $framework;
     @frameworkHeaders = ();
     %neededHeaders = ();
 
     find(\&collectNeededHeaders, $incFromRoot);
-    find(\&collectFameworkHeaderPaths, File::Spec->catfile($srcRoot, $framework));
+    find(\&collectFameworkHeaderPaths, File::Spec->catfile($srcRoot, $frameworkDirectoryName));
     createForwardingHeadersForFramework();
 }
 
@@ -79,7 +81,7 @@ sub collectFameworkHeaderPaths {
     my $filePath = $File::Find::name;
     my $file = $_;
     if ($filePath =~ '\.h$' && $filePath !~ "ForwardingHeaders" && grep{$file eq $_} keys %neededHeaders) {
-        my $headerPath = substr($filePath, length(File::Spec->catfile($srcRoot, $framework)) + 1 );
+        my $headerPath = substr($filePath, length(File::Spec->catfile($srcRoot, $frameworkDirectoryName)) + 1 );
         push(@frameworkHeaders, $headerPath) unless (grep($headerPath =~ "$_/", @skippedPrefixes) || $headerPath =~ "config.h");
     }
 }
@@ -93,7 +95,7 @@ sub createForwardingHeadersForFramework {
         # If we found more headers with the same name, only generate a forwarding header for the current platform
         if(grep($_ =~ "/$headerName\$", @frameworkHeaders) == 1 || $header =~ "/$platform/" ) {
             my $forwardingHeaderPath = File::Spec->catfile($targetDirectory, $headerName);
-            my $expectedIncludeStatement = "#include \"$framework/$header\"";
+            my $expectedIncludeStatement = "#include \"$frameworkDirectoryName/$header\"";
             my $foundIncludeStatement = 0;
 
             $foundIncludeStatement = <EXISTING_HEADER> if open(EXISTING_HEADER, "<$forwardingHeaderPath");
