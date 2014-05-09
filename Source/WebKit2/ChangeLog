@@ -1,3 +1,22 @@
+2014-05-09  Brent Fulgham  <bfulgham@apple.com>
+
+        {TelephoneNumber, Selection}ControllerMac implementations dosn't handle tiled drawing properly.
+        https://bugs.webkit.org/show_bug.cgi?id=132746
+        <rdar://problem/16789588>
+
+        Reviewed by Tim Horton.
+
+        Don't try to draw the detector UI if no part of the selection bounds are inside
+        the current tile. Don't limit the detector UI to the bounds of this tile, or else
+        it will attempt to squeeze itself into the possibly small space available. Let it
+        draw as if it had the whole screen, and rely on the context clip region to
+        avoid overdrawing.
+
+        * WebProcess/WebPage/mac/TelephoneNumberOverlayControllerMac.mm:
+        (WebKit::TelephoneNumberOverlayController::drawRect): Correct tiled drawing behavior.
+        * WebProcess/WebPage/mac/SelectionOverlayControllerMac.mm:
+        (WebKit::SelectionOverlayController::drawRect): Ditto.
+
 2014-05-09  Anders Carlsson  <andersca@apple.com>
 
         Production build fix.

@@ -91,9 +91,13 @@ void TelephoneNumberOverlayController::drawRect(PageOverlay* overlay, WebCore::G
         FrameView& mainFrameView = *m_webPage->corePage()->mainFrame().view();
         rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
 
+        // If the selection rect is completely outside this drawing tile, don't process it further
+        if (!rect.intersects(dirtyRect))
+            continue;
+
         CGRect cgRects[] = { (CGRect)rect };
 
-        RetainPtr<DDHighlightRef> highlight = adoptCF(DDHighlightCreateWithRectsInVisibleRect(nullptr, cgRects, 1, (CGRect)dirtyRect, true));
+        RetainPtr<DDHighlightRef> highlight = adoptCF(DDHighlightCreateWithRectsInVisibleRect(nullptr, cgRects, 1, viewForRange->boundsRect(), true));
         RefPtr<TelephoneNumberData> telephoneNumberData = TelephoneNumberData::create(range.get(), highlight.get());
         m_telephoneNumberDatas.append(telephoneNumberData);
         

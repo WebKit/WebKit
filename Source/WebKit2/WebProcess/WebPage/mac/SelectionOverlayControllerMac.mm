@@ -71,16 +71,25 @@ void SelectionOverlayController::drawRect(PageOverlay* overlay, WebCore::Graphic
         Vector<CGRect> cgRects;
         cgRects.reserveCapacity(m_currentSelectionRects.size());
 
-        for (auto& rect : m_currentSelectionRects)
+        for (auto& rect : m_currentSelectionRects) {
+            IntRect selectionRect(rect.pixelSnappedLocation(), rect.pixelSnappedSize());
+
+            if (!selectionRect.intersects(dirtyRect))
+                continue;
+
             cgRects.append((CGRect)pixelSnappedIntRect(rect));
+        }
 
-        m_currentHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRect(nullptr, cgRects.begin(), cgRects.size(), (CGRect)dirtyRect, true));
-        m_currentHighlightIsDirty = false;
+        if (!cgRects.isEmpty()) {
+            CGRect bounds = m_webPage->corePage()->mainFrame().view()->boundsRect();
+            m_currentHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRect(nullptr, cgRects.begin(), cgRects.size(), bounds, true));
+            m_currentHighlightIsDirty = false;
 
-        Boolean onButton;
-        m_mouseIsOverHighlight = DDHighlightPointIsOnHighlight(m_currentHighlight.get(), (CGPoint)m_mousePosition, &onButton);
+            Boolean onButton;
+            m_mouseIsOverHighlight = DDHighlightPointIsOnHighlight(m_currentHighlight.get(), (CGPoint)m_mousePosition, &onButton);
 
-        mouseHoverStateChanged();
+            mouseHoverStateChanged();
+        }
     }
 
     // If the UI is not visibile or if the mouse is not over the DDHighlight we have no drawing to do.
