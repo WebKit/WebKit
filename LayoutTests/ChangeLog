@@ -1,3 +1,20 @@
+2014-05-09  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168460
+
+    2014-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Dragging text from one paragraph to another does not render as expected
+            https://bugs.webkit.org/show_bug.cgi?id=132633
+
+            Reviewed by Darin Adler and Ryosuke Niwa.
+
+            The problem occurs when dragging text that includes a <p> into an editable
+            area that has a <p> as a parent.
+
+            * editing/pasteboard/drag-drop-paragraph-crasher-expected.txt: Added.
+            * editing/pasteboard/drag-drop-paragraph-crasher.html: Added.
+
 2014-05-06  Rik Cabanier  <cabanier@adobe.com>
 
         Calling createPattern with a broken image must throw an invalidstate error
