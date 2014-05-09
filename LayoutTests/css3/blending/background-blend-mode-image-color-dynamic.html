@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+    div {
+        width: 130px;
+        height: 130px;
+        background: url('resources/ducky.png') no-repeat 0 0 /100% 100%, green;
+        background-blend-mode: normal, normal;
+    }
+</style>
+<script>
+    function blendDuck() {
+        document.body.offsetTop;
+        document.getElementById('blender').style.backgroundBlendMode = "multiply, normal";
+    }
+</script>
+</head>
+<!-- This file should contain a duck with multiply blending set from script. -->
+<body onload="blendDuck()">
+    <p>Test passes if the duck is green</p>
+    <div id="blender"></div>
+</body>
+</html>

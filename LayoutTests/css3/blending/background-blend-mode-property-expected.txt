@@ -1,4 +1,4 @@
-Test the parsing of the -webkit-background-blend-mode property.
+Test the parsing of the background-blend-mode property.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

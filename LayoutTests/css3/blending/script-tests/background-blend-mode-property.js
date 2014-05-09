@@ -1,4 +1,4 @@
-description("Test the parsing of the -webkit-background-blend-mode property.");
+description("Test the parsing of the background-blend-mode property.");
 
 var styleElement = document.createElement("style");
 document.head.appendChild(styleElement);

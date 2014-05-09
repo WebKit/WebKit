@@ -1,3 +1,22 @@
+2014-05-09  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Move background-blend-mode tests from fast/repaint to css3/blending and remove the -webkit- prefix
+        https://bugs.webkit.org/show_bug.cgi?id=132741
+
+        Reviewed by Mihnea Ovidenie.
+
+        Remove the -webkit prefix from comments:
+        * css3/blending/background-blend-mode-property-expected.txt:
+        * css3/blending/script-tests/background-blend-mode-property.js:
+
+        Move the background-blend-mode test from fast/repaint to css3/blending.
+        This is not required to be a repaint test. It works well as a regular reftest too.
+        * css3/blending/background-blend-mode-image-color-dynamic-expected.html: Added.
+        * css3/blending/background-blend-mode-image-color-dynamic.html: Added.
+        * fast/repaint/background-blend-mode-image-color-dynamic-expected.html: Removed.
+        * fast/repaint/background-blend-mode-image-color-dynamic.html: Removed.
+        * fast/repaint/resources/ducky.png: Removed.
+
 2014-05-09  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r168095): 1-pixel gap between adjacent selection inlines
