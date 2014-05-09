@@ -1,3 +1,25 @@
+2014-05-09  Andreas Kling  <akling@apple.com>
+
+        8.8% spent in Object.prototype.hasOwnProperty() on sbperftest.
+        <https://webkit.org/b/132749>
+
+        Leverage the fast-resolve-to-AtomicString optimization for JSRopeString
+        in Object.prototype.* by using JSString::toIdentifier() in the cases where
+        we are converting JSString -> String -> Identifier.
+
+        This brings time spent in hasOwnProperty() from 8.8% to 1.3% on
+        "The Great HTML5 Gaming Performance Test: 2014 edition"
+        <http://www.scirra.com/demos/c2/sbperftest/>
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+
 2014-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSDOMWindow should have a WatchpointSet to fire on window close

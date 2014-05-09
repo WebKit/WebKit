@@ -85,7 +85,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
-    return JSValue::encode(jsBoolean(thisValue.toObject(exec)->hasOwnProperty(exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)))));
+    return JSValue::encode(jsBoolean(thisValue.toObject(exec)->hasOwnProperty(exec, exec->argument(0).toString(exec)->toIdentifier(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)
@@ -122,7 +122,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
     descriptor.setGetter(get);
     descriptor.setEnumerable(true);
     descriptor.setConfigurable(true);
-    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), descriptor, false);
+    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, exec->argument(0).toString(exec)->toIdentifier(exec), descriptor, false);
 
     return JSValue::encode(jsUndefined());
 }
@@ -142,7 +142,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     descriptor.setSetter(set);
     descriptor.setEnumerable(true);
     descriptor.setConfigurable(true);
-    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), descriptor, false);
+    thisObject->methodTable(exec->vm())->defineOwnProperty(thisObject, exec, exec->argument(0).toString(exec)->toIdentifier(exec), descriptor, false);
 
     return JSValue::encode(jsUndefined());
 }
@@ -154,7 +154,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     PropertySlot slot(thisObject);
-    if (thisObject->getPropertySlot(exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), slot)
+    if (thisObject->getPropertySlot(exec, exec->argument(0).toString(exec)->toIdentifier(exec), slot)
         && slot.isAccessor()) {
         JSObject* getter = slot.getterSetter()->getter();
         return getter ? JSValue::encode(getter) : JSValue::encode(jsUndefined());
@@ -170,7 +170,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     PropertySlot slot(thisObject);
-    if (thisObject->getPropertySlot(exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), slot)
+    if (thisObject->getPropertySlot(exec, exec->argument(0).toString(exec)->toIdentifier(exec), slot)
         && slot.isAccessor()) {
         JSObject* setter = slot.getterSetter()->setter();
         return setter ? JSValue::encode(setter) : JSValue::encode(jsUndefined());
