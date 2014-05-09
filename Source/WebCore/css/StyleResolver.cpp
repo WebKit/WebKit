@@ -1318,17 +1318,6 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         style.setTransformStyle3D(TransformStyle3DFlat);
 
     if (e && e->isSVGElement()) {
-        // Spec: http://www.w3.org/TR/SVG/masking.html#OverflowProperty
-        if (style.overflowY() == OSCROLL)
-            style.setOverflowY(OHIDDEN);
-        else if (style.overflowY() == OAUTO)
-            style.setOverflowY(OVISIBLE);
-
-        if (style.overflowX() == OSCROLL)
-            style.setOverflowX(OHIDDEN);
-        else if (style.overflowX() == OAUTO)
-            style.setOverflowX(OVISIBLE);
-
         // Only the root <svg> element in an SVG document fragment tree honors css position
         if (!(e->hasTagName(SVGNames::svgTag) && e->parentNode() && !e->parentNode()->isSVGElement()))
             style.setPosition(RenderStyle::NonInheritedFlags::initialPosition());

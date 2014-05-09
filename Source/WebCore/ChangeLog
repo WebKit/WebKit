@@ -1,3 +1,46 @@
+2014-05-09  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        ASSERTION FAILED: object->style()->overflowX() == object->style()->overflowY()
+        https://bugs.webkit.org/show_bug.cgi?id=121682
+
+        Reviewed by Dirk Schulze.
+
+        Add more overflow freedom to the SVG element:
+        -overflow-x and overflow-y for controlling each scrollbar independently is now supported
+        -overflow:scroll will display scrollbars regardless of the svg overflowing or not (as required by CSS)
+        -overflow:hidden will cause overflow to be clipped away and scrollbars to be hidden
+
+        Merged from Blink r172126 by <ed@opera.com>
+
+        Tests: svg/W3C-SVG-1.1-SE/painting-marker-05-f.svg
+               svg/W3C-SVG-1.1-SE/painting-marker-06-f.svg
+               svg/animations/animate-viewport-overflow-2.html
+               svg/animations/animate-viewport-overflow.html
+               svg/in-html/overflow-repaint.html
+               svg/in-html/overflow-svg-root-attr.html
+               svg/in-html/overflow-svg-root-style.html
+               svg/in-html/overflow-svg-root.html
+               svg/overflow/overflow-on-outermost-svg-element-horizontal-auto.svg
+               svg/overflow/overflow-on-outermost-svg-element-vertical-auto.svg
+               svg/overflow/overflow-scroll-on-outermost-svg-element.svg
+               svg/overflow/overflow-x-hidden-on-outermost-svg-element-expected.svg
+               svg/overflow/overflow-x-hidden-on-outermost-svg-element.svg
+               svg/overflow/overflow-y-hidden-on-outermost-svg-element-expected.svg
+               svg/overflow/overflow-y-hidden-on-outermost-svg-element.svg
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::applyOverflowToViewport):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::shouldApplyViewportClip):
+        (WebCore::RenderSVGRoot::paintReplaced):
+        (WebCore::RenderSVGRoot::computeFloatRectForRepaint):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::isOverflowHidden):
+
 2014-05-09  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Destroy the AVStreamDataParser when the SourceBuffer is removed from its MediaSource.

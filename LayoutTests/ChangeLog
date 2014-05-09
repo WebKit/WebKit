@@ -1,3 +1,49 @@
+2014-05-09  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        ASSERTION FAILED: object->style()->overflowX() == object->style()->overflowY()
+        https://bugs.webkit.org/show_bug.cgi?id=121682
+
+        Reviewed by Dirk Schulze.
+
+        Merge Blink r172126 by Erik Dahlström.
+
+        * platform/efl/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.txt:
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.png:
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.txt:
+        * platform/mac/svg/text/non-bmp-positioning-lists-expected.txt: Added.
+        * svg/W3C-SVG-1.1-SE/painting-marker-05-f-expected.png: Added.
+        * svg/W3C-SVG-1.1-SE/painting-marker-05-f-expected.txt: Added.
+        * svg/W3C-SVG-1.1-SE/painting-marker-05-f.svg: Added.
+        * svg/W3C-SVG-1.1-SE/painting-marker-06-f-expected.png: Added.
+        * svg/W3C-SVG-1.1-SE/painting-marker-06-f-expected.txt: Added.
+        * svg/W3C-SVG-1.1-SE/painting-marker-06-f.svg: Added.
+        * svg/animations/animate-viewport-overflow-2-expected.txt: Added.
+        * svg/animations/animate-viewport-overflow-2.html: Added.
+        * svg/animations/animate-viewport-overflow-expected.txt: Added.
+        * svg/animations/animate-viewport-overflow.html: Added.
+        * svg/in-html/overflow-repaint-expected.txt: Added.
+        * svg/in-html/overflow-repaint.html: Added.
+        * svg/in-html/overflow-svg-root-attr-expected.html: Added.
+        * svg/in-html/overflow-svg-root-attr.html: Added.
+        * svg/in-html/overflow-svg-root-expected.html: Added.
+        * svg/in-html/overflow-svg-root-style-expected.html: Added.
+        * svg/in-html/overflow-svg-root-style.html: Added.
+        * svg/in-html/overflow-svg-root.html: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-horizontal-auto-expected.html: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-horizontal-auto.svg: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.txt:
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.png:
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.txt: Copied from LayoutTests/platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.txt.
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible.xhtml:
+        * svg/overflow/overflow-on-outermost-svg-element-vertical-auto-expected.html: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-vertical-auto.svg: Added.
+        * svg/overflow/overflow-scroll-on-outermost-svg-element-expected.txt: Added.
+        * svg/overflow/overflow-scroll-on-outermost-svg-element.svg: Added.
+        * svg/overflow/overflow-x-hidden-on-outermost-svg-element-expected.svg: Added.
+        * svg/overflow/overflow-x-hidden-on-outermost-svg-element.svg: Added.
+        * svg/overflow/overflow-y-hidden-on-outermost-svg-element-expected.svg: Added.
+        * svg/overflow/overflow-y-hidden-on-outermost-svg-element.svg: Added.
+
 2014-05-09  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r168448): fast/multicol/newmulticol/first-letter-create.html is very flaky

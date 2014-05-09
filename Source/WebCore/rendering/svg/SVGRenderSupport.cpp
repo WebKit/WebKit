@@ -292,16 +292,10 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
 
 bool SVGRenderSupport::isOverflowHidden(const RenderElement& renderer)
 {
-    // SVG doesn't support independent x/y overflow
-    ASSERT(renderer.style().overflowX() == renderer.style().overflowY());
-
-    // OSCROLL is never set for SVG - see StyleResolver::adjustRenderStyle
-    ASSERT(renderer.style().overflowX() != OSCROLL);
-
     // RenderSVGRoot should never query for overflow state - it should always clip itself to the initial viewport size.
     ASSERT(!renderer.isRoot());
 
-    return renderer.style().overflowX() == OHIDDEN;
+    return renderer.style().overflowX() == OHIDDEN || renderer.style().overflowX() == OSCROLL;
 }
 
 bool SVGRenderSupport::rendererHasSVGShadow(const RenderObject& renderer)
