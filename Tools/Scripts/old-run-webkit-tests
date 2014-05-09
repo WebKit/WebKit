@@ -1378,7 +1378,7 @@ sub installAndLaunchDumpToolAppUsingNotification($$)
         return $result->autorelease();
     };
 
-    my $deviceName = architecture() eq 'i386' ? "iPhone Retina (4-inch)" : "iPhone Retina (4-inch 64-bit)";
+    my $deviceName = architecture() eq 'i386' ? "iPhone 5" : "iPhone 5s";
 
     my $sdkRoot = `xcrun --sdk iphonesimulator --show-sdk-path`;
     chomp $sdkRoot;
@@ -1422,7 +1422,7 @@ sub openIPhoneSimulator()
     my $iPhoneSimulatorNotification = new IPhoneSimulatorNotification;
     $iPhoneSimulatorNotification->startObservingReadyNotification();
 
-    my $deviceName = architecture() eq 'i386' ? "iPhone Retina (4-inch)" : "iPhone Retina (4-inch 64-bit)";
+    my $deviceName = architecture() eq 'i386' ? "iPhone 5" : "iPhone 5s";
 
     system "open", "-a", "iOS Simulator", "--args", "-SessionOnLaunch", "NO", "-SimulateDevice", $deviceName;
 
@@ -1466,7 +1466,7 @@ sub quitDumpToolUsingNotification()
 
 sub quitIPhoneSimulator()
 {
-    system "osascript", "-e", "tell application \"iPhone Simulator\" to quit";
+    system "osascript", "-e", "tell application \"iOS Simulator\" to quit";
 }
 
 sub simulatorSessionUUID()
