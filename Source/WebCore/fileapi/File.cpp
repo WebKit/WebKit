@@ -40,22 +40,20 @@ namespace WebCore {
 File::File(const String& path)
     : Blob(uninitializedContructor)
     , m_path(path)
-    , m_name(pathGetFileName(path))
 {
     m_internalURL = BlobURL::createInternalURL();
-    m_type = contentTypeFromFilePathOrName(path);
     m_size = -1;
+    computeNameAndContentType(m_path, String(), m_name, m_type);
     ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
 }
 
-File::File(const String& path, const String& name)
+File::File(const String& path, const String& nameOverride)
     : Blob(uninitializedContructor)
     , m_path(path)
-    , m_name(name)
 {
     m_internalURL = BlobURL::createInternalURL();
-    m_type = contentTypeFromFilePathOrName(name);
     m_size = -1;
+    computeNameAndContentType(m_path, nameOverride, m_name, m_type);
     ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
 }
 
@@ -63,9 +61,9 @@ File::File(DeserializationContructor, const String& path, const URL& url, const 
     : Blob(deserializationContructor, url, type, -1)
     , m_path(path)
 {
-    m_name = pathGetFileName(path);
-    // FIXME: File object serialization/deserialization does not include m_name.
-    // See SerializedScriptValue.cpp
+    // FIXME: File object serialization/deserialization does not include m_name, see SerializedScriptValue.cpp.
+    // Once it does, we should take deserialized name verbatim, not compute it again.
+    computeNameAndContentType(m_path, String(), m_name, m_type);
 }
 
 double File::lastModifiedDate() const
@@ -77,13 +75,26 @@ double File::lastModifiedDate() const
     return currentTime() * msPerSecond;
 }
 
-String File::contentTypeFromFilePathOrName(const String& name)
+void File::computeNameAndContentType(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType)
 {
-    String type;
-    int index = name.reverseFind('.');
-    if (index != -1) {
-        type = MIMETypeRegistry::getMIMETypeForExtension(name.substring(index + 1));
+#if ENABLE(FILE_REPLACEMENT)
+    if (shouldReplaceFile(path)) {
+        computeNameAndContentTypeForReplacedFile(path, nameOverride, effectiveName, effectiveContentType);
+        return;
     }
+#endif
+    effectiveName = nameOverride.isNull() ? pathGetFileName(path) : nameOverride;
+    size_t index = effectiveName.reverseFind('.');
+    if (index != notFound)
+        effectiveContentType = MIMETypeRegistry::getMIMETypeForExtension(effectiveName.substring(index + 1));
+}
+
+String File::contentTypeForFile(const String& path)
+{
+    String name;
+    String type;
+    computeNameAndContentType(path, String(), name, type);
+
     return type;
 }
 

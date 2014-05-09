@@ -43,23 +43,26 @@ public:
 
     void startTrackingModifications();
 
-    const String& path() const { return m_path; }
-    unsigned long long size() const;
-    double expectedModificationTime() const;
+    const String& path();
+    unsigned long long size();
+    double expectedModificationTime();
 
     virtual void prepareForFileAccess();
     virtual void revokeFileAccess();
 
 protected:
-    BlobDataFileReference(const String& path)
-        : m_path(path)
-        , m_size(0)
-        , m_expectedModificationTime(invalidFileTime())
-    {
-    }
+    BlobDataFileReference(const String& path);
 
 private:
+#if ENABLE(FILE_REPLACEMENT)
+    void generateReplacementFile();
+#endif
+
     String m_path;
+#if ENABLE(FILE_REPLACEMENT)
+    String m_replacementPath;
+    bool m_replacementShouldBeGenerated;
+#endif
     unsigned long long m_size;
     double m_expectedModificationTime;
 };

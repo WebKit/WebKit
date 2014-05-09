@@ -26,21 +26,61 @@
 #include "config.h"
 #include "BlobDataFileReference.h"
 
+#include "File.h"
 #include "FileMetadata.h"
 
 namespace WebCore {
 
-BlobDataFileReference::~BlobDataFileReference()
+BlobDataFileReference::BlobDataFileReference(const String& path)
+    : m_path(path)
+#if ENABLE(FILE_REPLACEMENT)
+    , m_replacementShouldBeGenerated(false)
+#endif
+    , m_size(0)
+    , m_expectedModificationTime(invalidFileTime())
 {
 }
 
-unsigned long long BlobDataFileReference::size() const
+BlobDataFileReference::~BlobDataFileReference()
 {
+#if ENABLE(FILE_REPLACEMENT)
+    if (!m_replacementPath.isNull())
+        deleteFile(m_replacementPath);
+#endif
+}
+
+const String& BlobDataFileReference::path()
+{
+#if ENABLE(FILE_REPLACEMENT)
+    if (m_replacementShouldBeGenerated)
+        generateReplacementFile();
+
+    if (!m_replacementPath.isNull())
+        return m_replacementPath;
+#endif
+
+    return m_path;
+}
+
+unsigned long long BlobDataFileReference::size()
+{
+#if ENABLE(FILE_REPLACEMENT)
+    if (m_replacementShouldBeGenerated)
+        generateReplacementFile();
+#endif
+
     return m_size;
 }
 
-double BlobDataFileReference::expectedModificationTime() const
+double BlobDataFileReference::expectedModificationTime()
 {
+#if ENABLE(FILE_REPLACEMENT)
+    // We do not currently track modifications for generated files, because we have a snapshot.
+    // Unfortunately, this is inconsistent with regular file handling - File objects should be invalidated when underlying files change.
+    if (m_replacementShouldBeGenerated || !m_replacementPath.isNull())
+        return invalidFileTime();
+#endif
+
     return m_expectedModificationTime;
 }
 
@@ -49,12 +89,26 @@ void BlobDataFileReference::startTrackingModifications()
     // This is not done automatically by the constructor, because BlobDataFileReference is
     // also used to pass paths around before registration. Only registered blobs need to pay
     // the cost of tracking file modifications.
+
+    ASSERT(!isValidFileTime(m_expectedModificationTime));
+
+#if ENABLE(FILE_REPLACEMENT)
+    m_replacementShouldBeGenerated = File::shouldReplaceFile(m_path);
+#endif
+
+    // FIXME: Some platforms provide better ways to listen for file system object changes, consider using these.
     FileMetadata metadata;
     if (!getFileMetadata(m_path, metadata))
         return;
 
-    m_size = metadata.length;
     m_expectedModificationTime = metadata.modificationTime;
+
+#if ENABLE(FILE_REPLACEMENT)
+    if (m_replacementShouldBeGenerated)
+        return;
+#endif
+
+    m_size = metadata.length;
 }
 
 void BlobDataFileReference::prepareForFileAccess()

@@ -1,3 +1,16 @@
+2014-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Automatically zip document bundles used via File API
+        https://bugs.webkit.org/show_bug.cgi?id=132713
+        <rdar://problem/13397892>
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in: NetworkProcess
+        now uses FileCoordination (WebProcess already had this allowed).
+
+        * Shared/BlobDataFileReferenceWithSandboxExtension.h: Added final to the class.
+
 2014-05-08  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Bottom-relative position:fixed elements are misplaced on page load

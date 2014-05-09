@@ -91,6 +91,10 @@ public:
     long long m_fileLength;
     double m_expectedFileModificationTime;
 #endif
+    // FIXME: Generated file support in FormData is almost identical to Blob, they should be merged.
+    // We can't just switch to using Blobs for all files for two reasons:
+    // 1. Not all platforms enable BLOB support.
+    // 2. EncodedFile form data elements do not have a valid m_expectedFileModificationTime, meaning that we always upload the latest content from disk.
     String m_generatedFilename;
     bool m_shouldGenerateFile;
     bool m_ownsGeneratedFile;

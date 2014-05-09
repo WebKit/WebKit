@@ -32,7 +32,7 @@ namespace WebKit {
 
 class SandboxExtension;
 
-class BlobDataFileReferenceWithSandboxExtension : public WebCore::BlobDataFileReference {
+class BlobDataFileReferenceWithSandboxExtension final : public WebCore::BlobDataFileReference {
 public:
     static PassRefPtr<BlobDataFileReference> create(const String& path, PassRefPtr<SandboxExtension> sandboxExtension)
     {

@@ -47,11 +47,11 @@ public:
     }
 
     // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
-    static PassRefPtr<File> createWithName(const String& path, const String& name)
+    static PassRefPtr<File> createWithName(const String& path, const String& nameOverride)
     {
-        if (name.isEmpty())
+        if (nameOverride.isEmpty())
             return adoptRef(new File(path));
-        return adoptRef(new File(path, name));
+        return adoptRef(new File(path, nameOverride));
     }
 
     virtual bool isFile() const override { return true; }
@@ -62,13 +62,22 @@ public:
     // This returns the current date and time if the file's last modification date is not known (per spec: http://www.w3.org/TR/FileAPI/#dfn-lastModifiedDate).
     double lastModifiedDate() const;
 
-    static String contentTypeFromFilePathOrName(const String&);
+    static String contentTypeForFile(const String& path);
+
+#if ENABLE(FILE_REPLACEMENT)
+    static bool shouldReplaceFile(const String& path);
+#endif
 
 private:
     explicit File(const String& path);
-    File(const String& path, const String& name);
+    File(const String& path, const String& nameOverride);
 
     File(DeserializationContructor, const String& path, const URL& srcURL, const String& type);
+
+    static void computeNameAndContentType(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType);
+#if ENABLE(FILE_REPLACEMENT)
+    static void computeNameAndContentTypeForReplacedFile(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType);
+#endif
 
     String m_path;
     String m_name;

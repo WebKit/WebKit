@@ -1,3 +1,56 @@
+2014-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Automatically zip document bundles used via File API
+        https://bugs.webkit.org/show_bug.cgi?id=132713
+        <rdar://problem/13397892>
+
+        Reviewed by Anders Carlsson.
+
+        Tests: fast/files/filereader-zip-bundle.html
+               http/tests/local/fileapi/upload-zip-bundle-as-blob.html
+
+        * FileMac.mm: Added.
+        (WebCore::File::shouldReplaceFile):
+        (WebCore::File::computeNameAndContentTypeForReplacedFile):
+        Added code that decides what to do with a bundle. We need this to happen in
+        WebProcess, because HTML5 dropzone depends on this, it needs to know file type
+        even before a File object can be created.
+
+        * WebCore.exp.in: Export new functions.
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+
+        * dom/DataTransfer.cpp: (WebCore::DataTransfer::hasFileOfType): Updated for File
+        interface change.
+
+        * fileapi/File.h:
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        (WebCore::File::computeNameAndContentType):
+        (WebCore::File::contentTypeForFile):
+        (WebCore::File::contentTypeFromFilePathOrName): Deleted.
+        Make it possible for a subclass to affect file name and content type calculation.
+
+        * platform/network/BlobDataFileReference.cpp:
+        (WebCore::BlobDataFileReference::BlobDataFileReference):
+        (WebCore::BlobDataFileReference::~BlobDataFileReference):
+        (WebCore::BlobDataFileReference::path):
+        (WebCore::BlobDataFileReference::size):
+        (WebCore::BlobDataFileReference::expectedModificationTime):
+        (WebCore::BlobDataFileReference::startTrackingModifications):
+        * platform/network/BlobDataFileReference.h:
+        (WebCore::BlobDataFileReference::path): Deleted.
+        (WebCore::BlobDataFileReference::BlobDataFileReference): Deleted.
+        Use original or replaced file, as appropriate. 
+
+        * platform/network/mac/BlobDataFileReferenceMac.mm: Added.
+        (WebCore::BlobDataFileReference::generateReplacementFile): Implements generateReplacementFile().
+
+        * platform/network/FormData.h: Added a FIXME.
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::send): Always use Blob code path
+        for blobs, don't unwrap them into a file path.
+
 2014-05-08  Simon Fraser  <simon.fraser@apple.com>
 
         Occasional crash under AsyncScrollingCoordinator::frameViewRootLayerDidChange() on history navigation
