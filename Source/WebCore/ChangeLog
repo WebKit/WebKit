@@ -1,3 +1,25 @@
+2014-05-09  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        ASSERTION FAILED: !m_code || m_code == defaultExceptionCode
+        in WebCore::constructQualifiedName
+        https://bugs.webkit.org/show_bug.cgi?id=132343
+
+        'Remove bad assertion in SVGSMILElement's constructQualifiedName() by passing
+        IGNORE_EXCEPTION instead ASSERT_NO_EXCEPTION to Document::parseQualifiedName().
+        The constructQualifiedName() function handles parseQualifiedName() failures
+        propertly by returning early so there is no reason to assert on parsing
+        failures.'
+
+        Blink merge: http://src.chromium.org/viewvc/blink?view=revision&revision=173564
+        Based on the patch made by Christophe Dumez <ch.dumez@samsung.com>.
+
+        Reviewed by Dirk Schulze.
+
+        Test: svg/custom/bad-attributeName-crash.html
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::constructQualifiedName):
+
 2014-05-08  Brent Fulgham  <bfulgham@apple.com>
 
         Multiple (stacked) cues when shuttling through video while playing closed captions
