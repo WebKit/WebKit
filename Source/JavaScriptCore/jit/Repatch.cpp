@@ -685,6 +685,9 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         return false;
     if (!structure->propertyAccessesAreCacheable())
         return false;
+    TypeInfo typeInfo = structure->typeInfo();
+    if (typeInfo.hasImpureGetOwnPropertySlot() && !typeInfo.newImpurePropertyFiresWatchpoints())
+        return false;
 
     // Optimize self access.
     if (slot.slotBase() == baseValue
@@ -744,6 +747,10 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     if (!structure->propertyAccessesAreCacheable())
         return false;
 
+    TypeInfo typeInfo = structure->typeInfo();
+    if (typeInfo.hasImpureGetOwnPropertySlot() && !typeInfo.newImpurePropertyFiresWatchpoints())
+        return false;
+
     if (stubInfo.patch.spillMode == NeedToSpill) {
         // We cannot do as much inline caching if the registers were not flushed prior to this GetById. In particular,
         // non-Value cached properties require planting calls, which requires registers to have been flushed. Thus,
@@ -757,8 +764,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     size_t count = 0;
     
     if (slot.slotBase() != baseValue) {
-        if (baseValue.asCell()->structure()->typeInfo().prohibitsPropertyCaching()
-            || baseValue.asCell()->structure()->isDictionary())
+        if (typeInfo.prohibitsPropertyCaching() || structure->isDictionary())
             return false;
         
         count = normalizePrototypeChainForChainAccess(

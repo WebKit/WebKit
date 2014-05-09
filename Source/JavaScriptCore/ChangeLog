@@ -1,3 +1,31 @@
+2014-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Base case for get-by-id inline cache doesn't check for HasImpureGetOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=132695
+
+        Reviewed by Filip Pizlo.
+
+        We check in the case where we're accessing something other than the base object (e.g. the prototype), 
+        but we fail to do so for the base object.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryBuildGetByIDList):
+        * jsc.cpp: Added some infrastructure to support this test. We don't currently trigger this bug anywhere in WebKit
+        because all of the values that are returned that could be impure are set to uncacheable anyways.
+        (WTF::ImpureGetter::ImpureGetter):
+        (WTF::ImpureGetter::createStructure):
+        (WTF::ImpureGetter::create):
+        (WTF::ImpureGetter::finishCreation):
+        (WTF::ImpureGetter::getOwnPropertySlot):
+        (WTF::ImpureGetter::visitChildren):
+        (WTF::ImpureGetter::setDelegate):
+        (GlobalObject::finishCreation):
+        (functionCreateImpureGetter):
+        (functionSetImpureGetterDelegate):
+        * tests/stress/impure-get-own-property-slot-inline-cache.js: Added.
+        (foo):
+
 2014-05-08  Filip Pizlo  <fpizlo@apple.com>
 
         deleteAllCompiledCode() shouldn't use the suspension worklist

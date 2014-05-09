@@ -219,9 +219,67 @@ private:
     Weak<Element> m_element;
 };
 
+class ImpureGetter : public JSNonFinalObject {
+public:
+    ImpureGetter(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    DECLARE_INFO;
+    typedef JSNonFinalObject Base;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    static ImpureGetter* create(VM& vm, Structure* structure, JSObject* delegate)
+    {
+        ImpureGetter* getter = new (NotNull, allocateCell<ImpureGetter>(vm.heap, sizeof(ImpureGetter))) ImpureGetter(vm, structure);
+        getter->finishCreation(vm, delegate);
+        return getter;
+    }
+
+    void finishCreation(VM& vm, JSObject* delegate)
+    {
+        Base::finishCreation(vm);
+        if (delegate)
+            m_delegate.set(vm, this, delegate);
+    }
+
+    static const unsigned StructureFlags = JSC::HasImpureGetOwnPropertySlot | JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | Base::StructureFlags;
+
+    static bool getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName name, PropertySlot& slot)
+    {
+        ImpureGetter* thisObject = jsCast<ImpureGetter*>(object);
+        
+        if (thisObject->m_delegate && thisObject->m_delegate->getPropertySlot(exec, name, slot))
+            return true;
+
+        return Base::getOwnPropertySlot(object, exec, name, slot);
+    }
+
+    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
+    {
+        Base::visitChildren(cell, visitor);
+        ImpureGetter* thisObject = jsCast<ImpureGetter*>(cell);
+        visitor.append(&thisObject->m_delegate);
+    }
+
+    void setDelegate(VM& vm, JSObject* delegate)
+    {
+        m_delegate.set(vm, this, delegate);
+    }
+
+private:
+    WriteBarrier<JSObject> m_delegate;
+};
+
 const ClassInfo Element::s_info = { "Element", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Element) };
 const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Masquerader) };
 const ClassInfo Root::s_info = { "Root", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Root) };
+const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ImpureGetter) };
 
 ElementHandleOwner* Element::handleOwner()
 {
@@ -242,6 +300,8 @@ void Element::finishCreation(VM& vm)
 static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer);
 
 static EncodedJSValue JSC_HOST_CALL functionCreateProxy(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCreateImpureGetter(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState*);
 
 static EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState*);
@@ -421,6 +481,9 @@ protected:
         addFunction(vm, "makeMasquerader", functionMakeMasquerader, 0);
 
         addFunction(vm, "createProxy", functionCreateProxy, 1);
+
+        addFunction(vm, "createImpureGetter", functionCreateImpureGetter, 1);
+        addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -589,6 +652,32 @@ EncodedJSValue JSC_HOST_CALL functionCreateProxy(ExecState* exec)
     Structure* structure = JSProxy::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsTarget->prototype());
     JSProxy* proxy = JSProxy::create(exec->vm(), structure, jsTarget);
     return JSValue::encode(proxy);
+}
+
+EncodedJSValue JSC_HOST_CALL functionCreateImpureGetter(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    JSValue target = exec->argument(0);
+    JSObject* delegate = nullptr;
+    if (target.isObject())
+        delegate = asObject(target.asCell());
+    Structure* structure = ImpureGetter::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsNull());
+    ImpureGetter* result = ImpureGetter::create(exec->vm(), structure, delegate);
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    JSValue base = exec->argument(0);
+    if (!base.isObject())
+        return JSValue::encode(jsUndefined());
+    JSValue delegate = exec->argument(1);
+    if (!delegate.isObject())
+        return JSValue::encode(jsUndefined());
+    ImpureGetter* impureGetter = jsCast<ImpureGetter*>(asObject(base.asCell()));
+    impureGetter->setDelegate(exec->vm(), asObject(delegate.asCell()));
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState* exec)
