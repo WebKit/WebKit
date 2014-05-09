@@ -1,3 +1,15 @@
+2014-05-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Remove GTK+ WK1 EWS from build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=132732
+
+        Reviewed by Alexey Proskuryakov.
+
+        GTK+ WK1 EWS was removed in r166427, so it shouldn't appear in the dashboard.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWS.js:
+        (EWS): Remove GTK+ WK1 EWS.
+
 2014-05-09  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Add new u-szeged contributors.
