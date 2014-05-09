@@ -401,6 +401,9 @@ RenderRegion* RenderFlowThread::regionAtBlockOffset(const RenderBox* clampBox, L
     if (m_regionList.isEmpty())
         return 0;
 
+    if (m_regionList.size() == 1 && extendLastRegion)
+        return m_regionList.first();
+
     if (offset <= 0)
         return clampBox ? clampBox->clampToStartAndEndRegions(m_regionList.first()) : m_regionList.first();
 
@@ -747,7 +750,7 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, RenderRegion* 
     range.setRange(startRegion, endRegion);
 }
 
-bool RenderFlowThread::hasRegionRangeForBox(const RenderBox* box) const
+bool RenderFlowThread::hasCachedRegionRangeForBox(const RenderBox* box) const
 {
     ASSERT(box);
 
@@ -794,6 +797,11 @@ bool RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
     if (!hasValidRegionInfo()) // We clear the ranges when we invalidate the regions.
         return false;
 
+    if (m_regionList.size() == 1) {
+        startRegion = endRegion = m_regionList.first();
+        return true;
+    }
+
     if (getRegionRangeForBoxFromCachedInfo(box, startRegion, endRegion))
         return true;
 
@@ -810,7 +818,7 @@ bool RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
         cb = cb->parent()->enclosingBox();
         ASSERT(cb);
 
-        if (hasRegionRangeForBox(cb))
+        if (hasCachedRegionRangeForBox(cb))
             cbToUse = cb;
     }
 

@@ -3897,7 +3897,7 @@ static bool canComputeRegionRangeForBox(const RenderBlock* parentBlock, const Re
     if (!childBox.canHaveOutsideRegionRange())
         return false;
 
-    return flowThreadContainingBlock->hasRegionRangeForBox(parentBlock);
+    return flowThreadContainingBlock->hasCachedRegionRangeForBox(parentBlock);
 }
 
 bool RenderBlock::childBoxIsUnsplittableForFragmentation(const RenderBox& child) const

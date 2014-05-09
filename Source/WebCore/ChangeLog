@@ -1,3 +1,25 @@
+2014-05-09  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] 1-2% performance regression in html5-full-render after r168286
+        https://bugs.webkit.org/show_bug.cgi?id=132672
+
+        Reviewed by Mihnea Ovidenie.
+
+        The patch optimizes the search of regions when there's a single region in the chain.
+        There's no need to execute advanced search logic, we can directly return that region.
+
+        Tests: No function change, no tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::canComputeRegionRangeForBox):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::regionAtBlockOffset):
+        (WebCore::RenderFlowThread::hasCachedRegionRangeForBox): Renamed from hasRegionRangeForBox to
+        better suggest what the function does.
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+        (WebCore::RenderFlowThread::hasRegionRangeForBox): Deleted.
+        * rendering/RenderFlowThread.h:
+
 2014-05-09  Jer Noble  <jer.noble@apple.com>
 
         [EME] Call suspendIfNeeded() in the MediaKeySession create() method to avoid an ASSERT.
