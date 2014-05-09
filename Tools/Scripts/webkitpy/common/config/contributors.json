@@ -2924,6 +2924,15 @@
             "epenner"
          ]
       },
+      "Eva Balazsfalvi" : {
+         "emails" : [
+            "evab.u-szeged@partner.samsung.com",
+            "balazsfalvi.eva@stud.u-szeged.hu"
+         ],
+         "nicks" : [
+            "ebalazsfalvi"
+         ]
+      },
       "Frédéric Wang" : {
          "emails" : [
             "fred.wang@free.fr"
@@ -3072,6 +3081,15 @@
             "backer"
          ]
       },
+      "Jozsef Berta" : {
+         "emails" : [
+            "jberta.u-szeged@partner.samsung.com",
+            "jberta@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "jberta"
+         ]
+      },
       "Juergen Ributzka" : {
          "emails" : [
             "juergen@apple.com"
@@ -3105,6 +3123,15 @@
       "Lia Chen" : {
          "emails" : [
             "liachen@rim.com"
+         ]
+      },
+      "Martin Hodovan" : {
+         "emails" : [
+            "mhodovan.u-szeged@partner.samsung.com",
+            "mhodovan@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "hmartin"
          ]
       },
       "Mihai Balan" : {
@@ -3183,6 +3210,15 @@
             "tczene"
          ]
       },
+      "Tibor Meszaros" : {
+         "emails" : [
+            "tmeszaros.u-szeged@partner.samsung.com",
+            "mtibor@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "mtibor"
+         ]
+      },
       "Tien-Ren Chen" : {
          "emails" : [
             "trchen@chromium.org"
@@ -3232,6 +3268,15 @@
       "Zeev Lieber" : {
          "emails" : [
             "zlieber@chromium.org"
+         ]
+      },
+      "Zsolt Borbely" : {
+         "emails" : [
+            "zsborbely.u-szeged@partner.samsung.com",
+            "borbezs@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "bzsolt"
          ]
       }
    },

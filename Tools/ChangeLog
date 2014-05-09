@@ -1,3 +1,11 @@
+2014-05-09  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Add new u-szeged contributors.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(CMAKE): [GTK] run-gtk-tests doesn't set the right injected bundle path
