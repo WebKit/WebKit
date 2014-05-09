@@ -1,3 +1,15 @@
+2014-05-09  Martin Hodovan <mhodovan.u-szeged@partner.samsung.com>
+
+        REGRESSION(r167094): JSC crashes on ARM Traditional
+        https://bugs.webkit.org/show_bug.cgi?id=132738
+
+        Reviewed by Zoltan Herczeg.
+
+        PC is two instructions ahead of the current instruction
+        on ARM Traditional, so the distance is 8 bytes not 2.
+
+        * llint/LowLevelInterpreter.asm:
+
 2014-05-09  Alberto Garcia  <berto@igalia.com>
 
         jsmin.py license header confusing, mentions non-free license

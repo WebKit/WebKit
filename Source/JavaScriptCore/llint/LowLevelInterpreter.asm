@@ -709,7 +709,7 @@ macro initPCRelative(pcBase)
     elsif ARM or ARMv7_TRADITIONAL
     _relativePCBase:
         move pc, pcBase
-        subp 2, pcBase
+        subp 8, pcBase
     elsif MIPS
         crash()  # Need to replace with any initialization steps needed to step up PC relative address calculation
     elsif SH4
