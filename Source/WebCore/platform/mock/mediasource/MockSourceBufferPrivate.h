@@ -63,7 +63,7 @@ private:
 
     // SourceBufferPrivate overrides
     virtual void setClient(SourceBufferPrivateClient*) override;
-    virtual AppendResult append(const unsigned char* data, unsigned length) override;
+    virtual void append(const unsigned char* data, unsigned length) override;
     virtual void abort() override;
     virtual void removedFromMediaSource() override;
     virtual MediaPlayer::ReadyState readyState() const override;

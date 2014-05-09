@@ -118,7 +118,7 @@ private:
     virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*, AtomicString trackID) override;
     virtual void sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const MediaTime&);
     virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
-
+    virtual void sourceBufferPrivateAppendComplete(SourceBufferPrivate*, AppendResult) override;
 
     // AudioTrackClient
     virtual void audioTrackEnabledChanged(AudioTrack*) override;

@@ -77,6 +77,13 @@ public:
 
     virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime& time, const MediaTime&, const MediaTime&) { return time; }
     virtual void sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const MediaTime&) { };
+
+    enum AppendResult {
+        AppendSucceeded,
+        ReadStreamFailed,
+        ParsingFailed,
+    };
+    virtual void sourceBufferPrivateAppendComplete(SourceBufferPrivate*, AppendResult) = 0;
 };
 
 }
