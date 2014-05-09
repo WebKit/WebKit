@@ -61,6 +61,7 @@ public:
         : m_propertyType(TypeUnset)
         , m_offset(invalidOffset)
         , m_thisValue(thisValue)
+        , m_watchpointSet(nullptr)
     {
     }
 
@@ -102,6 +103,11 @@ public:
     {
         ASSERT(m_propertyType != TypeUnset);
         return m_slotBase;
+    }
+
+    WatchpointSet* watchpointSet() const
+    {
+        return m_watchpointSet;
     }
 
     void setValue(JSObject* slotBase, unsigned attributes, JSValue value)
@@ -210,6 +216,11 @@ public:
         m_offset = invalidOffset;
     }
 
+    void setWatchpointSet(WatchpointSet& set)
+    {
+        m_watchpointSet = &set;
+    }
+
 private:
     JS_EXPORT_PRIVATE JSValue functionGetter(ExecState*) const;
 
@@ -232,6 +243,7 @@ private:
     PropertyOffset m_offset;
     const JSValue m_thisValue;
     JSObject* m_slotBase;
+    WatchpointSet* m_watchpointSet;
 };
 
 } // namespace JSC

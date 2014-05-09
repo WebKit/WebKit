@@ -457,6 +457,7 @@ void DOMWindow::frameDestroyed()
     willDestroyDocumentInFrame();
     FrameDestructionObserver::frameDestroyed();
     resetDOMWindowProperties();
+    JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(this);
 }
 
 void DOMWindow::willDetachPage()

@@ -60,6 +60,7 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &sh
 
 JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
     : JSDOMGlobalObject(vm, structure, &shell->world(), &s_globalObjectMethodTable)
+    , m_windowCloseWatchpoints((window && window->frame()) ? IsWatched : IsInvalidated)
     , m_impl(window)
     , m_shell(shell)
 {
@@ -264,6 +265,25 @@ JSDOMWindow* toJSDOMWindow(JSValue value)
     if (classInfo == JSDOMWindowShell::info())
         return jsCast<JSDOMWindowShell*>(asObject(value))->window();
     return 0;
+}
+
+void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)
+{
+    JSC::VM& vm = JSDOMWindowBase::commonVM();
+    WebCoreJSClientData* clientData = static_cast<WebCoreJSClientData*>(vm.clientData);
+    Vector<Ref<DOMWrapperWorld>> wrapperWorlds;
+    clientData->getAllWorlds(wrapperWorlds);
+    for (unsigned i = 0; i < wrapperWorlds.size(); ++i) {
+        DOMObjectWrapperMap& wrappers = wrapperWorlds[i]->m_wrappers;
+        auto result = wrappers.find(window);
+        if (result == wrappers.end())
+            continue;
+        JSC::JSObject* wrapper = result->value.get();
+        if (!wrapper)
+            continue;
+        JSDOMWindowBase* jsWindow = JSC::jsCast<JSDOMWindowBase*>(wrapper);
+        jsWindow->m_windowCloseWatchpoints.fireAll();
+    }
 }
 
 } // namespace WebCore

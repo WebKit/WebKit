@@ -57,8 +57,8 @@ class InlineWatchpointSet;
 class WatchpointSet : public ThreadSafeRefCounted<WatchpointSet> {
     friend class LLIntOffsetsExtractor;
 public:
-    WatchpointSet(WatchpointState);
-    ~WatchpointSet(); // Note that this will not fire any of the watchpoints; if you need to know when a WatchpointSet dies then you need a separate mechanism for this.
+    JS_EXPORT_PRIVATE WatchpointSet(WatchpointState);
+    JS_EXPORT_PRIVATE ~WatchpointSet(); // Note that this will not fire any of the watchpoints; if you need to know when a WatchpointSet dies then you need a separate mechanism for this.
     
     // It is safe to call this from another thread. It may return an old
     // state. Guarantees that if *first* read the state() of the thing being

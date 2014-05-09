@@ -72,6 +72,10 @@ namespace WebCore {
         JSDOMWindowShell* shell() const;
 
         static JSC::VM& commonVM();
+        static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
+
+    protected:
+        JSC::WatchpointSet m_windowCloseWatchpoints;
 
     private:
         RefPtr<DOMWindow> m_impl;

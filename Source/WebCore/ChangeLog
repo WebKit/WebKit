@@ -1,3 +1,30 @@
+2014-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSDOMWindow should have a WatchpointSet to fire on window close
+        https://bugs.webkit.org/show_bug.cgi?id=132721
+
+        Reviewed by Filip Pizlo.
+
+        No new tests.
+
+        This patch allows us to reset the inline caches that assumed they could skip 
+        the first part of JSDOMWindow::getOwnPropertySlot that checks if the window has 
+        been closed. This is part of getting rid of HasImpureGetOwnPropertySlot on JSDOMWindow.
+
+        JSDOMWindowBase now has a WatchpointSet that the underlying DOMWindow fires when its
+        frame is cleared. In getOwnPropertySlot, we now pass this WatchpointSet to PropertySlot
+        which will shepherd it back up to the code that generates the inline cache (and the 
+        Watchpoint for clearing it).
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::fireFrameClearedWatchpointsForWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::frameDestroyed):
+
 2014-05-09  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         ASSERTION FAILED: object->style()->overflowX() == object->style()->overflowY()

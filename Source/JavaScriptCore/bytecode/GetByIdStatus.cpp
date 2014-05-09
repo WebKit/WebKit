@@ -178,10 +178,23 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
     PolymorphicGetByIdList* list = 0;
     if (stubInfo->accessType == access_get_by_id_list) {
         list = stubInfo->u.getByIdList.list;
+        bool makesCalls = false;
+        bool isWatched = false;
         for (unsigned i = 0; i < list->size(); ++i) {
-            if (list->at(i).doesCalls())
-                return GetByIdStatus(MakesCalls, true);
+            const GetByIdAccess& access = list->at(i);
+            if (access.doesCalls()) {
+                makesCalls = true;
+                break;
+            }
+            if (access.isWatched()) {
+                isWatched = true;
+                continue;
+            }
         }
+        if (makesCalls)
+            return GetByIdStatus(MakesCalls, true);
+        if (isWatched)
+            return GetByIdStatus(TakesSlowPath, true);
     }
     
     // Finally figure out if we can derive an access strategy.
@@ -215,7 +228,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
         
     case access_get_by_id_list: {
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
-            ASSERT(!list->at(listIndex).doesCalls());
+            ASSERT(list->at(listIndex).isSimple());
             
             Structure* structure = list->at(listIndex).structure();
             

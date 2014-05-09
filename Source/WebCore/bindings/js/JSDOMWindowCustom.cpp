@@ -132,7 +132,8 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
         // not allowed. 
         slot.setUndefined();
         return true;
-    }
+    } else
+        slot.setWatchpointSet(thisObject->m_windowCloseWatchpoints);
 
     // We need to check for cross-domain access here without printing the generic warning message
     // because we always allow access to some function, just different ones depending whether access

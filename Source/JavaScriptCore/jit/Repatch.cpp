@@ -285,8 +285,8 @@ static FunctionPtr customFor(const PutPropertySlot& slot)
 static void generateByIdStub(
     ExecState* exec, ByIdStubKind kind, const Identifier& propertyName,
     FunctionPtr custom, StructureStubInfo& stubInfo, StructureChain* chain, size_t count,
-    PropertyOffset offset, Structure* structure, bool loadTargetFromProxy, CodeLocationLabel successLabel,
-    CodeLocationLabel slowCaseLabel, RefPtr<JITStubRoutine>& stubRoutine)
+    PropertyOffset offset, Structure* structure, bool loadTargetFromProxy, WatchpointSet* watchpointSet,
+    CodeLocationLabel successLabel, CodeLocationLabel slowCaseLabel, RefPtr<JITStubRoutine>& stubRoutine)
 {
     VM* vm = &exec->vm();
     GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
@@ -328,6 +328,9 @@ static void generateByIdStub(
     CodeBlock* codeBlock = exec->codeBlock();
     if (structure->typeInfo().newImpurePropertyFiresWatchpoints())
         vm->registerWatchpointForImpureProperty(propertyName, stubInfo.addWatchpoint(codeBlock));
+
+    if (watchpointSet)
+        watchpointSet->add(stubInfo.addWatchpoint(codeBlock));
 
     Structure* currStructure = structure;
     JSObject* protoObject = 0;
@@ -692,6 +695,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     // Optimize self access.
     if (slot.slotBase() == baseValue
         && slot.isCacheableValue()
+        && !slot.watchpointSet()
         && MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))) {
             repatchByIdSelfAccess(*vm, codeBlock, stubInfo, structure, propertyName, slot.cachedOffset(), operationGetByIdBuildList, true);
             stubInfo.initGetByIdSelf(*vm, codeBlock->ownerExecutable(), structure);
@@ -783,12 +787,13 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     RefPtr<JITStubRoutine> stubRoutine;
     generateByIdStub(
         exec, kindFor(slot), ident, customFor(slot), stubInfo, prototypeChain, count, offset, 
-        structure, loadTargetFromProxy, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
+        structure, loadTargetFromProxy, slot.watchpointSet(), 
+        stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
         CodeLocationLabel(list->currentSlowPathTarget(stubInfo)), stubRoutine);
     
     GetByIdAccess::AccessType accessType;
     if (slot.isCacheableValue())
-        accessType = GetByIdAccess::SimpleStub;
+        accessType = slot.watchpointSet() ? GetByIdAccess::WatchedStub : GetByIdAccess::SimpleStub;
     else if (slot.isCacheableGetter())
         accessType = GetByIdAccess::Getter;
     else
@@ -1201,7 +1206,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
 
         generateByIdStub(
             exec, kindFor(slot), ident, customFor(slot), stubInfo, prototypeChain, count,
-            offset, structure, false,
+            offset, structure, false, nullptr,
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase),
             stubRoutine);
@@ -1333,7 +1338,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
 
         generateByIdStub(
             exec, kindFor(slot), propertyName, customFor(slot), stubInfo, prototypeChain, count,
-            offset, structure, false,
+            offset, structure, false, nullptr,
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
             CodeLocationLabel(list->currentSlowPathTarget()),
             stubRoutine);

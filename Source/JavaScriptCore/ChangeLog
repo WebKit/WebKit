@@ -1,3 +1,28 @@
+2014-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSDOMWindow should have a WatchpointSet to fire on window close
+        https://bugs.webkit.org/show_bug.cgi?id=132721
+
+        Reviewed by Filip Pizlo.
+
+        This patch allows us to reset the inline caches that assumed they could skip 
+        the first part of JSDOMWindow::getOwnPropertySlot that checks if the window has 
+        been closed. This is part of getting rid of HasImpureGetOwnPropertySlot on JSDOMWindow.
+
+        PropertySlot now accepts a WatchpointSet which the inline cache code can look for
+        to see if it should create a new Watchpoint for that particular inline cache site.
+
+        * bytecode/Watchpoint.h:
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+        (JSC::tryBuildGetByIDList):
+        (JSC::tryCachePutByID):
+        (JSC::tryBuildPutByIdList):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::watchpointSet):
+        (JSC::PropertySlot::setWatchpointSet):
+
 2014-05-09  Tanay C  <tanay.c@samsung.com>
 
         Fix build warning (uninitialized variable) in DFGFixupPhase.cpp 

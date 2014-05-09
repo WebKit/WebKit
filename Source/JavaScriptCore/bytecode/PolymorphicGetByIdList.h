@@ -45,6 +45,7 @@ public:
         Invalid,
         SimpleInline, // This is the patched inline access.
         SimpleStub, // This is a stub.
+        WatchedStub,
         Getter,
         CustomGetter
     };
@@ -80,6 +81,8 @@ public:
     }
     
     bool doesCalls() const { return type() == Getter || type() == CustomGetter; }
+    bool isWatched() const { return type() == WatchedStub; }
+    bool isSimple() const { return !doesCalls() && !isWatched(); }
     
     bool visitWeak(RepatchBuffer&) const;
 
