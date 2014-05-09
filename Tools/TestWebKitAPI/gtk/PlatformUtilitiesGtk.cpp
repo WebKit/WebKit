@@ -68,7 +68,7 @@ static char* getFilenameFromEnvironmentVariableAsUTF8(const char* variableName)
 WKStringRef createInjectedBundlePath()
 {
     GUniquePtr<char> injectedBundlePath(getFilenameFromEnvironmentVariableAsUTF8("TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"));
-    GUniquePtr<char> injectedBundleFilename(g_build_filename(injectedBundlePath.get(), "libTestWebKitAPIInjectedBundle.la", nullptr));
+    GUniquePtr<char> injectedBundleFilename(g_build_filename(injectedBundlePath.get(), "libTestWebKitAPIInjectedBundle.so", nullptr));
     return WKStringCreateWithUTF8CString(injectedBundleFilename.get());
 }
 

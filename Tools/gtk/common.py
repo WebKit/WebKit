@@ -24,7 +24,7 @@ import sys
 top_level_dir = None
 build_dir = None
 library_build_dir = None
-tests_library_build_dir = None
+binary_build_dir = None
 build_types = ('Release', 'Debug')
 
 
@@ -48,10 +48,10 @@ def library_build_path(*args):
 
 
 def binary_build_path(*args):
-    global library_build_dir
-    if not library_build_dir:
-        library_build_dir = build_path('bin', *args)
-    return library_build_dir
+    global binary_build_dir
+    if not binary_build_dir:
+        binary_build_dir = build_path('bin', *args)
+    return binary_build_dir
 
 
 def get_build_path(fatal=True):

@@ -1,3 +1,22 @@
+2014-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(CMAKE): [GTK] run-gtk-tests doesn't set the right injected bundle path
+        https://bugs.webkit.org/show_bug.cgi?id=132736
+
+        Reviewed by Philippe Normand.
+
+        There are two problems, the path returned by common.library_build_path() is wrong when
+        common.binary_build_path() has previously been called, and the test is still looking for
+        the .la instead of .so
+
+        * TestWebKitAPI/gtk/PlatformUtilitiesGtk.cpp:
+        (TestWebKitAPI::Util::createInjectedBundlePath): Use .so instead
+        of .la as extension of the injected bundle library.
+        * gtk/common.py:
+        (binary_build_path): Remove unused global variable and add a new
+        one for binary_build_dir instead of sharing the same global
+        variable for library_build_path and binary_build_path.
+
 2014-05-08  Praveen R Jadhav  <praveen.j@samsung.com>
 
         [EFL] Enable MEDIA_STREAM for EFL port
