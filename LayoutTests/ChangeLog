@@ -1,3 +1,10 @@
+2014-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r168518): Multiple tests for workers in blobs assert
+        https://bugs.webkit.org/show_bug.cgi?id=132728
+
+        * platform/mac/TestExpectations: Skipped for now.
+
 2014-05-08  Praveen R Jadhav  <praveen.j@samsung.com>
 
         [EFL] Enable MEDIA_STREAM for EFL port
