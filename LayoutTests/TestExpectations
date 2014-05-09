@@ -117,3 +117,5 @@ css2.1/20110323/replaced-intrinsic-002.htm [ Failure ]
 
 # Regression from r167652:
 webkit.org/b/131982 [ Debug ] fast/regions/cssom/region-range-for-box-crash.html [ Crash ]
+
+webkit.org/b/132744 fast/multicol/newmulticol/first-letter-create.html [ Pass ImageOnlyFailure ]

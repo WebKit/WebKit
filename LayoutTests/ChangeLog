@@ -1,3 +1,10 @@
+2014-05-09  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r168448): fast/multicol/newmulticol/first-letter-create.html is very flaky
+        https://bugs.webkit.org/show_bug.cgi?id=132744
+
+        * TestExpectations: Marked as such.
+
 2014-05-09  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Move background-blend-mode tests from fast/repaint to css3/blending and remove the -webkit- prefix
