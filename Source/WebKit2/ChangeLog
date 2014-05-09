@@ -1,3 +1,13 @@
+2014-05-09  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Flush RemoteLayerBackingStore contexts on a secondary queue
+        https://bugs.webkit.org/show_bug.cgi?id=132667
+        <rdar://problem/15349483>
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::create):
+        Address a missed review comment about a missing std::move.
+
 2014-05-09  Anders Carlsson  <andersca@apple.com>
 
         Rename WebKit2.framework to WebKit.framework
