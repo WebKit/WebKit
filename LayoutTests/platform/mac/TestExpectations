@@ -1370,10 +1370,3 @@ webkit.org/b/131886 [ MountainLion ] fast/canvas/webgl/webgl-compressed-texture-
 webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ Pass Failure ]
 
 webkit.org/b/132491 [ MountainLion ] http/tests/media/hls/video-controls-live-stream.html [ WontFix ]
-
-webkit.org/b/132728 [ Debug ] fast/files/workers/worker-apply-blob-url-to-xhr.html [ Skip ]
-webkit.org/b/132728 [ Debug ] fast/files/workers/worker-read-blob-async.html [ Skip ]
-webkit.org/b/132728 [ Debug ] fast/files/workers/worker-read-blob-sync.html [ Skip ]
-webkit.org/b/132728 [ Debug ] fast/files/workers/worker-read-file-async.html [ Skip ]
-webkit.org/b/132728 [ Debug ] fast/files/workers/worker-read-file-sync.html [ Skip ]
-webkit.org/b/132728 [ Debug ] fast/workers/worker-copy-shared-blob-url.html [ Skip ]

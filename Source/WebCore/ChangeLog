@@ -1,3 +1,25 @@
+2014-05-09  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r168518): Multiple tests for workers in blobs assert
+        https://bugs.webkit.org/show_bug.cgi?id=132728
+
+        Reviewed by Geoffrey Garen.
+
+        Change File serialization to include name, so that we don't have to regenerate anything
+        on a secondary thread after deserialization.
+
+        Files and Blobs can't be stored persistently, because URLs are transient (IndexedDB
+        has an explicit check, and fails if there were any blob URLs). API doesn't have the
+        check, but given that anyone who tried to use these to serialize a File would fail,
+        it seems OK to change the format.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::readFile):
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        * fileapi/File.h:
+
 2014-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSDOMWindow should have a WatchpointSet to fire on window close

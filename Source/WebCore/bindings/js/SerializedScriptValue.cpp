@@ -316,7 +316,7 @@ static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
  *    FileTag FileData
  *
  * FileData :-
- *    <path:StringData> <url:StringData> <type:StringData>
+ *    <path:StringData> <url:StringData> <type:StringData> <name:StringData>
  *
  * FileList :-
  *    FileListTag <length:uint32_t>(<file:FileData>){length}
@@ -1029,6 +1029,7 @@ private:
         write(file->path());
         write(file->url());
         write(file->type());
+        write(file->name());
     }
 
 #if ENABLE(SUBTLE_CRYPTO)
@@ -1730,8 +1731,11 @@ private:
         CachedStringRef type;
         if (!readStringData(type))
             return 0;
+        CachedStringRef name;
+        if (!readStringData(name))
+            return 0;
         if (m_isDOMGlobalObject)
-            file = File::deserialize(path->string(), URL(URL(), url->string()), type->string());
+            file = File::deserialize(path->string(), URL(URL(), url->string()), type->string(), name->string());
         return true;
     }
 

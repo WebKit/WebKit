@@ -57,13 +57,11 @@ File::File(const String& path, const String& nameOverride)
     ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
 }
 
-File::File(DeserializationContructor, const String& path, const URL& url, const String& type)
+File::File(DeserializationContructor, const String& path, const URL& url, const String& type, const String& name)
     : Blob(deserializationContructor, url, type, -1)
     , m_path(path)
+    , m_name(name)
 {
-    // FIXME: File object serialization/deserialization does not include m_name, see SerializedScriptValue.cpp.
-    // Once it does, we should take deserialized name verbatim, not compute it again.
-    computeNameAndContentType(m_path, String(), m_name, m_type);
 }
 
 double File::lastModifiedDate() const

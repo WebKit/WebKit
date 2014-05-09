@@ -1,3 +1,12 @@
+2014-05-09  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r168518): Multiple tests for workers in blobs assert
+        https://bugs.webkit.org/show_bug.cgi?id=132728
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/mac/TestExpectations: Unskip the tests.
+
 2014-05-09  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         ASSERTION FAILED: object->style()->overflowX() == object->style()->overflowY()
