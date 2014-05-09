@@ -1,5 +1,12 @@
 2014-05-09  Anders Carlsson  <andersca@apple.com>
 
+        Follow-up build fix.
+
+        * Scripts/build-webkit:
+        WebKit2 should no longer be built before WebKit.
+
+2014-05-09  Anders Carlsson  <andersca@apple.com>
+
         Rename WebKit2.framework to WebKit.framework
         https://bugs.webkit.org/show_bug.cgi?id=132743
         <rdar://problem/15920046>
