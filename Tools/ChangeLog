@@ -1,5 +1,12 @@
 2014-05-09  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix.
+
+        * Scripts/build-webkit:
+        WebKit2 should always be built for OS X and iOS.
+
+2014-05-09  Anders Carlsson  <andersca@apple.com>
+
         Follow-up build fix.
 
         * Scripts/build-webkit:

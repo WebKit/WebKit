@@ -208,6 +208,8 @@ if (isAppleMacWebKit()) {
     # ANGLE must come before WebCore
     splice @projects, 0, 0, "Source/ThirdParty/ANGLE";
 
+    push @projects, ("Source/WebKit2");
+
     if (!isIOSWebKit()) {
         push @projects, ("Tools/MiniBrowser");
 
@@ -220,8 +222,6 @@ if (isAppleMacWebKit()) {
         print(join(" ", @copyLibrariesArgs) . "\n");
         (system(@copyLibrariesArgs) == 0) or die;
     } else {
-        push @projects, ("Source/WebKit2");
-        
         my @copyLibrariesArgs = (
             "perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory",
             "--sdk", xcodeSDK(), "--llvm", "--prefer-system-llvm",
