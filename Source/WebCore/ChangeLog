@@ -1,5 +1,12 @@
 2014-05-09  Zalan Bujtas  <zalan@apple.com>
 
+        Unreviewed. Another attempt to fix Windows build after r168528.
+
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::adjustSelectionRectForComplexText):
+
+2014-05-09  Zalan Bujtas  <zalan@apple.com>
+
         Unreviewed build fix for Win after r168528.
 
         * platform/graphics/win/FontWin.cpp:

@@ -59,9 +59,10 @@ void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& sel
     it.advance(to);
     float afterWidth = it.runWidthSoFar();
 
-    if (run.rtl())
-        selectionRect.move(it.totalWidth() - afterWidth, 0);
-    else
+    if (run.rtl()) {
+        it.advance(run.length());
+        selectionRect.move(it.runWidthSoFar() - afterWidth, 0);
+    } else
         selectionRect.move(beforeWidth, 0);
     selectionRect.setWidth(afterWidth - beforeWidth);
 }
