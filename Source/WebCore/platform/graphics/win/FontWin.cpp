@@ -60,7 +60,7 @@ void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& sel
     float afterWidth = it.runWidthSoFar();
 
     if (run.rtl())
-        selectionRect.move(controller.totalWidth() - afterWidth, 0);
+        selectionRect.move(it.totalWidth() - afterWidth, 0);
     else
         selectionRect.move(beforeWidth, 0);
     selectionRect.setWidth(afterWidth - beforeWidth);
