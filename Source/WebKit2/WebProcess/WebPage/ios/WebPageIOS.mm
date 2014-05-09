@@ -2087,6 +2087,11 @@ void WebPage::viewportConfigurationChanged()
         m_drawingArea->setExposedContentRect(unobscuredContentRect);
     }
     scalePage(scale, scrollPosition);
+    
+    if (!m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
+        // This takes scale into account, so do after the scale change.
+        frameView.setCustomFixedPositionLayoutRect(enclosingIntRect(frameView.viewportConstrainedObjectsRect()));
+    }
 }
 
 void WebPage::applicationWillResignActive()
