@@ -1,3 +1,15 @@
+2014-05-09  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Call suspendIfNeeded() in the MediaKeySession create() method to avoid an ASSERT.
+        https://bugs.webkit.org/show_bug.cgi?id=132712
+
+        Reviewed by Eric Carlson.
+
+        All ActiveDOMObject subclasses must call suspendIfNeeded() immediately after creation.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::MediaKeySession):
+
 2014-05-09  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed. Another attempt to fix Windows build after r168528.
