@@ -1,3 +1,14 @@
+2014-05-08  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        [EFL] Enable MEDIA_STREAM for EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=132648
+
+        Reviewed by Gyuyoung Kim.
+
+        Script modified to enable MEDIA_STREAM for EFL build.
+
+        * Scripts/webkitperl/FeatureList.pm: 
+
 2014-05-08  David Farler  <dfarler@apple.com>
 
         old-run-webkit-tests: update strings for simulator devices and app name

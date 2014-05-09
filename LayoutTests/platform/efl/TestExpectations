@@ -1218,8 +1218,6 @@ webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes-repaint.html [ Image
 webkit.org/b/105406 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
 
 # WebAudio remaining issues
-webkit.org/b/105289 webaudio/mediastreamaudiosourcenode.html [ Failure ]
-webkit.org/b/105289 webaudio/mediastreamaudiodestinationnode.html [ Failure ]
 webkit.org/b/105294 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Failure ]
 webkit.org/b/105294 webaudio/codec-tests/mp3/128kbps-44khz.html [ Missing Failure ]
 webkit.org/b/105294 webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Failure ]

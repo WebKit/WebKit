@@ -1,3 +1,14 @@
+2014-05-08  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        [EFL] Enable MEDIA_STREAM for EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=132648
+
+        Reviewed by Gyuyoung Kim.
+
+        Updated webaudio test case expectation after enabling MEDIA_STREAM
+
+        * platform/efl/TestExpectations:
+
 2014-05-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168498.
