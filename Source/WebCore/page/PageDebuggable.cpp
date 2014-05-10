@@ -29,7 +29,6 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "Document.h"
-#include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorForwarding.h"
 #include "MainFrame.h"
@@ -69,14 +68,6 @@ String PageDebuggable::url() const
 bool PageDebuggable::hasLocalDebugger() const
 {
     return m_page.inspectorController().hasLocalFrontend();
-}
-
-pid_t PageDebuggable::parentProcessIdentifier() const
-{
-    if (InspectorClient* inspectorClient = m_page.inspectorController().inspectorClient())
-        return inspectorClient->parentProcessIdentifier();
-
-    return 0;
 }
 
 void PageDebuggable::connect(Inspector::InspectorFrontendChannel* channel)

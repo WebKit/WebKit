@@ -326,27 +326,7 @@ typedef enum {
 - (void)setShowingInspectorIndication:(BOOL)enabled;
 
 #if TARGET_OS_IPHONE
-/*!
-    @method setHostApplicationBundleId:name
-    @param bundleId The application that this WebView was created for.
-    @param name That application's localized display name.
-    @abstract When a WebView is created out of process for an application,
-    you can clarify to a Remote Debugger which application this WebView
-    is intended to belong to; the application which hosts the WebView.
-*/
-- (void)setHostApplicationBundleId:(NSString *)bundleId name:(NSString *)name;
-
-/*!
-    @method hostApplicationBundleId
-    @result Returns the host application bundle id.
-*/
-- (NSString *)hostApplicationBundleId;
-
-/*!
-    @method hostApplicationName
-    @result Returns the host application name.
-*/
-- (NSString *)hostApplicationName;
+- (void)_setHostApplicationProcessIdentifier:(pid_t)pid auditToken:(audit_token_t)auditToken;
 #endif
 
 #endif // ENABLE_REMOTE_INSPECTOR

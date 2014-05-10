@@ -1918,29 +1918,10 @@ static bool fastDocumentTeardownEnabled()
 }
 
 #if PLATFORM(IOS)
-- (void)setHostApplicationBundleId:(NSString *)bundleId name:(NSString *)name
+- (void)_setHostApplicationProcessIdentifier:(pid_t)pid auditToken:(audit_token_t)auditToken
 {
-    if (![_private->hostApplicationBundleId isEqualToString:bundleId]) {
-        [_private->hostApplicationBundleId release];
-        _private->hostApplicationBundleId = [bundleId copy];
-    }
-
-    if (![_private->hostApplicationName isEqualToString:name]) {
-        [_private->hostApplicationName release];
-        _private->hostApplicationName = [name copy];
-    }
-
-    // FIXME: This has not yet been ported to Inspector::RemoteInspectorServer.
-}
-
-- (NSString *)hostApplicationBundleId
-{
-    return _private->hostApplicationBundleId;
-}
-
-- (NSString *)hostApplicationName
-{
-    return _private->hostApplicationName;
+    RetainPtr<CFDataRef> auditData = adoptCF(CFDataCreate(nullptr, (const UInt8*)&auditToken, sizeof(auditToken)));
+    RemoteInspector::shared().setParentProcessInformation(pid, auditData);
 }
 #endif // PLATFORM(IOS)
 #endif // ENABLE(REMOTE_INSPECTOR)

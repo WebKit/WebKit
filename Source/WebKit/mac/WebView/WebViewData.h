@@ -256,8 +256,6 @@ private:
 #if ENABLE(REMOTE_INSPECTOR)
 #if PLATFORM(IOS)
     WebIndicateLayer *indicateLayer;
-    NSString *hostApplicationBundleId;
-    NSString *hostApplicationName;
 #endif
 #endif
 

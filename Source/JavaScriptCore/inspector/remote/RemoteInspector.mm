@@ -87,6 +87,8 @@ RemoteInspector::RemoteInspector()
     , m_enabled(false)
     , m_hasActiveDebugSession(false)
     , m_pushScheduled(false)
+    , m_parentProcessIdentifier(0)
+    , m_shouldSendParentProcessInformation(false)
 {
 }
 
@@ -248,6 +250,22 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
     pushListingSoon();
 }
 
+#pragma mark - Proxy Application Information
+
+void RemoteInspector::setParentProcessInformation(pid_t pid, RetainPtr<CFDataRef> auditData)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    if (m_parentProcessIdentifier || m_parentProcessAuditData)
+        return;
+
+    m_parentProcessIdentifier = pid;
+    m_parentProcessAuditData = auditData;
+
+    if (m_shouldSendParentProcessInformation)
+        receivedProxyApplicationSetupMessage(nil);
+}
+
 #pragma mark - RemoteInspectorXPCConnection::Client
 
 void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo)
@@ -269,6 +287,8 @@ void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*
         receivedGetListingMessage(userInfo);
     else if ([messageName isEqualToString:WIRIndicateMessage])
         receivedIndicateMessage(userInfo);
+    else if ([messageName isEqualToString:WIRProxyApplicationSetupMessage])
+        receivedProxyApplicationSetupMessage(userInfo);
     else if ([messageName isEqualToString:WIRConnectionDiedMessage])
         receivedConnectionDiedMessage(userInfo);
     else
@@ -333,11 +353,6 @@ NSDictionary *RemoteInspector::listingForDebuggable(const RemoteInspectorDebugga
 
     if (debuggableInfo.hasLocalDebugger)
         [debuggableDetails setObject:@YES forKey:WIRHasLocalDebuggerKey];
-
-    if (debuggableInfo.hasParentProcess()) {
-        NSString *parentApplicationIdentifier = [NSString stringWithFormat:@"PID:%lu", (unsigned long)debuggableInfo.parentProcessIdentifier];
-        [debuggableDetails setObject:parentApplicationIdentifier forKey:WIRHostApplicationIdentifierKey];
-    }
 
     return debuggableDetails;
 }
@@ -503,6 +518,32 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
             debuggable = it->value.first;
         }
         debuggable->setIndicating(indicateEnabled);
+    });
+}
+
+void RemoteInspector::receivedProxyApplicationSetupMessage(NSDictionary *)
+{
+    ASSERT(m_xpcConnection);
+    if (!m_xpcConnection)
+        return;
+
+    if (!m_parentProcessIdentifier || !m_parentProcessAuditData) {
+        // We are a proxy application without parent process information.
+        // Wait a bit for the information, but give up after a second.
+        m_shouldSendParentProcessInformation = true;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            std::lock_guard<std::mutex> lock(m_mutex);
+            if (m_shouldSendParentProcessInformation)
+                stopInternal(StopSource::XPCMessage);
+        });
+        return;
+    }
+
+    m_shouldSendParentProcessInformation = false;
+
+    m_xpcConnection->sendMessage(WIRProxyApplicationSetupResponseMessage, @{
+        WIRProxyApplicationParentPIDKey: @(m_parentProcessIdentifier),
+        WIRProxyApplicationParentAuditDataKey: (NSData *)m_parentProcessAuditData.get(),
     });
 }
 

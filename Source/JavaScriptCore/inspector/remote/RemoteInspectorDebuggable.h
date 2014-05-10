@@ -56,7 +56,6 @@ public:
     virtual String name() const { return String(); } // JavaScript and Web
     virtual String url() const { return String(); } // Web
     virtual bool hasLocalDebugger() const = 0;
-    virtual pid_t parentProcessIdentifier() const { return 0; }
 
     virtual void connect(InspectorFrontendChannel*) = 0;
     virtual void disconnect() = 0;
@@ -74,11 +73,8 @@ struct RemoteInspectorDebuggableInfo {
         , type(RemoteInspectorDebuggable::JavaScript)
         , hasLocalDebugger(false)
         , remoteDebuggingAllowed(false)
-        , parentProcessIdentifier(0)
     {
     }
-
-    bool hasParentProcess() const { return !!parentProcessIdentifier; }
 
     unsigned identifier;
     RemoteInspectorDebuggable::DebuggableType type;
@@ -86,7 +82,6 @@ struct RemoteInspectorDebuggableInfo {
     String url;
     bool hasLocalDebugger;
     bool remoteDebuggingAllowed;
-    pid_t parentProcessIdentifier;
 };
 
 } // namespace Inspector

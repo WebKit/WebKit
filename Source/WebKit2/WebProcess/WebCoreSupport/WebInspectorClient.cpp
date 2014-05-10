@@ -33,10 +33,6 @@
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
 
-#if ENABLE(REMOTE_INSPECTOR)
-#include "WebProcess.h"
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -70,13 +66,6 @@ void WebInspectorClient::didResizeMainFrame(Frame*)
     if (m_page->inspector())
         m_page->inspector()->updateDockingAvailability();
 }
-
-#if ENABLE(REMOTE_INSPECTOR)
-pid_t WebInspectorClient::parentProcessIdentifier() const
-{
-    return WebProcess::shared().presenterApplicationPid();
-}
-#endif
 
 void WebInspectorClient::highlight()
 {
