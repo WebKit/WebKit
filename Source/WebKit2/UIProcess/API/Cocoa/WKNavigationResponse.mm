@@ -29,25 +29,20 @@
 #if WK_API_ENABLED
 
 #import <wtf/RetainPtr.h>
+#import "WKFrameInfo.h"
 
 @implementation WKNavigationResponse {
-    RetainPtr<WKFrameInfo> _frame;
     RetainPtr<NSURLResponse> _response;
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p; frame = %@; response = %@>", NSStringFromClass(self.class), self, _frame.get(), _response.get()];
+    return [NSString stringWithFormat:@"<%@: %p; response = %@>", NSStringFromClass(self.class), self, _response.get()];
 }
 
-- (WKFrameInfo *)frame
+- (BOOL)isMainFrameNavigation
 {
-    return _frame.get();
-}
-
-- (void)setFrame:(WKFrameInfo *)frame
-{
-    _frame = frame;
+    return [_frame isMainFrame];
 }
 
 - (NSURLResponse *)response
@@ -61,5 +56,15 @@
 }
 
 @end
+
+@implementation WKNavigationResponse (WKPrivate)
+
+- (WKFrameInfo *)_frame
+{
+    return _frame.get();
+}
+
+@end
+
 
 #endif

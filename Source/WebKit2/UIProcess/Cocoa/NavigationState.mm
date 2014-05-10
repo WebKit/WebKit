@@ -320,7 +320,7 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
 
     auto navigationResponse = adoptNS([[WKNavigationResponse alloc] init]);
 
-    [navigationResponse setFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*frame]).get()];
+    navigationResponse->_frame = adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*frame]);
     [navigationResponse setResponse:resourceResponse.nsURLResponse()];
     [navigationResponse setCanShowMIMEType:canShowMIMEType];
 

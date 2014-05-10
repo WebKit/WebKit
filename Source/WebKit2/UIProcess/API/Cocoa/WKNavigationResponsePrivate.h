@@ -23,30 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import <WebKit/WKNavigationResponse.h>
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
+@interface WKNavigationResponse (WKPrivate)
 
-@class WKFrameInfo;
-
-/*! Contains information about a navigation response, used for making policy decisions.
- */
-WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface WKNavigationResponse : NSObject
-
-/*! @abstract Whether the frame that is being navigated is the main frame or not.
- */
-@property (nonatomic, readonly, getter=isMainFrameNavigation) BOOL mainFrameNavigation;
-
-/*! @abstract The NSURLResponse of the frame.
- */
-@property (nonatomic, readonly) NSURLResponse *response;
-
-/*! @abstract Whether WebKit can show the MIME type natively or not.
- */
-@property (nonatomic, readonly) BOOL canShowMIMEType;
+@property (nonatomic, readonly) WKFrameInfo *_frame;
 
 @end
 
