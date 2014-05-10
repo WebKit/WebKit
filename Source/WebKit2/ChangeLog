@@ -1,3 +1,13 @@
+2014-05-09  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Remove a deprecated bundle form delegate method now that no one implements it
+        https://bugs.webkit.org/show_bug.cgi?id=132769
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]):
+
 2014-05-09  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Fix bugs exposed by r168556
