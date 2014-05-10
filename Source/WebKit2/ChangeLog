@@ -1,5 +1,18 @@
 2014-05-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix some issues with scrolling tree logging
+        https://bugs.webkit.org/show_bug.cgi?id=132762
+
+        Reviewed by Tim Horton.
+        
+        Only dump viewport constraints when they change, and dump the primary layer on
+        scrolling nodes.
+        
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::RemoteScrollingTreeTextStream::dump): Dump the primary layer.
+
+2014-05-09  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Fixed elements can go outside the document on pinching
         https://bugs.webkit.org/show_bug.cgi?id=132759
         <rdar://problem/16870835>

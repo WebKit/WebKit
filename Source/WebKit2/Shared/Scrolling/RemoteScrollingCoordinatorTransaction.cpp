@@ -463,6 +463,9 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateNode& node, bool ch
 
     dumpProperty(ts, "type", node.nodeType());
 
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::ScrollLayer))
+        dumpProperty(ts, "layer", static_cast<GraphicsLayer::PlatformLayerID>(node.layer()));
+    
     switch (node.nodeType()) {
     case FrameScrollingNode:
     case OverflowScrollingNode:
@@ -536,14 +539,16 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateFixedNode& node, bo
 {
     RemoteScrollingTreeTextStream& ts = *this;
 
-    ts << node.viewportConstraints();
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFixedNode::ViewportConstraints))
+        ts << node.viewportConstraints();
 }
 
 void RemoteScrollingTreeTextStream::dump(const ScrollingStateStickyNode& node, bool changedPropertiesOnly)
 {
     RemoteScrollingTreeTextStream& ts = *this;
 
-    ts << node.viewportConstraints();
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFixedNode::ViewportConstraints))
+        ts << node.viewportConstraints();
 }
 
 void RemoteScrollingTreeTextStream::recursiveDumpNodes(const ScrollingStateNode& node, bool changedPropertiesOnly)
