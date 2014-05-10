@@ -1,3 +1,10 @@
+2014-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Another build fix.
+
+        * mac/MigrateHeadersToWebKit2.make:
+        Don't migrate the WKPreferences.h header, WebKit2 provides its own header.
+
 2014-05-09  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS][WK2] Reset the scroll position on the first frame after didCommitLoad
