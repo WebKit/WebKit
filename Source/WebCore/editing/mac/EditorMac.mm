@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Editor.h"
 
+#import "BlockExceptions.h"
 #import "CachedResourceLoader.h"
 #import "ColorMac.h"
 #import "DOMRangeInternal.h"
@@ -319,14 +320,28 @@ PassRefPtr<Range> Editor::adjustedSelectionRange()
     
 static PassRefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *string)
 {
-    NSUInteger length = [string length];
-    return length ? SharedBuffer::wrapNSData([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:nil]) : 0;
+    NSUInteger length = string.length;
+    if (!length)
+        return nullptr;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return SharedBuffer::wrapNSData([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:nil]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return nullptr;
 }
 
 static PassRefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *string)
 {
-    NSUInteger length = [string length];
-    return length ? SharedBuffer::wrapNSData([string RTFFromRange:NSMakeRange(0, length) documentAttributes:nil]) : 0;
+    NSUInteger length = string.length;
+    if (!length)
+        return nullptr;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return SharedBuffer::wrapNSData([string RTFFromRange:NSMakeRange(0, length) documentAttributes:nil]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return nullptr;
 }
 
 PassRefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboardType)

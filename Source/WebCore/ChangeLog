@@ -1,3 +1,23 @@
+2014-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Block exceptions when trying to convert attributed strings to RTF and RTFD
+        https://bugs.webkit.org/show_bug.cgi?id=132778
+        <rdar://problem/16675805>
+
+        Reviewed by Darin Adler.
+
+        When the iOS WebHTMLConverter was upstreamed, converting some attributed strings to RTF and RTFD
+        started throwing Objective-C exceptions (see <rdar://problem/16876920>).
+        
+        In WebKit2, we now crash on unhandled exceptions so work around that crash by adding exception blocking macros.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::dataInRTFDFormat):
+        (WebCore::dataInRTFFormat):
+        * editing/mac/EditorMac.mm:
+        (WebCore::dataInRTFDFormat):
+        (WebCore::dataInRTFFormat):
+
 2014-05-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Move Source/WebCore/workers/ code to std::unique_ptr
