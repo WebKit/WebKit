@@ -37,6 +37,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
@@ -58,7 +59,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
 {
     m_url = url;
 
-    std::unique_ptr<ResourceRequest> request(createResourceRequest());
+    OwnPtr<ResourceRequest> request(createResourceRequest());
     if (!request)
         return;
 
@@ -78,7 +79,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     m_client = client;
     m_url = url;
 
-    std::unique_ptr<ResourceRequest> request(createResourceRequest());
+    OwnPtr<ResourceRequest> request(createResourceRequest());
     if (!request)
         return;
 
@@ -98,11 +99,11 @@ const URL& WorkerScriptLoader::responseURL() const
     return m_responseURL;
 }
 
-std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
+PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
 {
-    auto request = std::make_unique<ResourceRequest>(m_url);
+    OwnPtr<ResourceRequest> request = adoptPtr(new ResourceRequest(m_url));
     request->setHTTPMethod("GET");
-    return std::move(request);
+    return request.release();
 }
     
 void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)

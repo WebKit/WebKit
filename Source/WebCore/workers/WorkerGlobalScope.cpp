@@ -67,7 +67,7 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, st
     : m_url(url)
     , m_userAgent(userAgent)
     , m_groupSettings(std::move(settings))
-    , m_script(std::make_unique<WorkerScriptController>(this))
+    , m_script(adoptPtr(new WorkerScriptController(this)))
     , m_thread(thread)
 #if ENABLE(INSPECTOR)
     , m_workerInspectorController(std::make_unique<WorkerInspectorController>(*this))
@@ -152,9 +152,9 @@ void WorkerGlobalScope::postTask(Task task)
     thread().runLoop().postTask(std::move(task));
 }
 
-int WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout)
+int WorkerGlobalScope::setTimeout(PassOwnPtr<ScheduledAction> action, int timeout)
 {
-    return DOMTimer::install(scriptExecutionContext(), std::move(action), timeout, true);
+    return DOMTimer::install(scriptExecutionContext(), action, timeout, true);
 }
 
 void WorkerGlobalScope::clearTimeout(int timeoutId)
@@ -162,9 +162,9 @@ void WorkerGlobalScope::clearTimeout(int timeoutId)
     DOMTimer::removeById(scriptExecutionContext(), timeoutId);
 }
 
-int WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction> action, int timeout)
+int WorkerGlobalScope::setInterval(PassOwnPtr<ScheduledAction> action, int timeout)
 {
-    return DOMTimer::install(scriptExecutionContext(), std::move(action), timeout, false);
+    return DOMTimer::install(scriptExecutionContext(), action, timeout, false);
 }
 
 void WorkerGlobalScope::clearInterval(int timeoutId)

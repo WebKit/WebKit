@@ -29,6 +29,7 @@
 
 #include "EventQueue.h"
 #include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

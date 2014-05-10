@@ -87,7 +87,7 @@ private:
 };
 
 WorkerRunLoop::WorkerRunLoop()
-    : m_sharedTimer(std::make_unique<WorkerSharedTimer>())
+    : m_sharedTimer(adoptPtr(new WorkerSharedTimer))
     , m_nestedCount(0)
     , m_uniqueId(0)
 {

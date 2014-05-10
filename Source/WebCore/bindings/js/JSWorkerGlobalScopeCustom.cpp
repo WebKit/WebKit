@@ -87,24 +87,24 @@ JSValue JSWorkerGlobalScope::importScripts(ExecState* exec)
 
 JSValue JSWorkerGlobalScope::setTimeout(ExecState* exec)
 {
-    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), impl().contentSecurityPolicy());
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), impl().contentSecurityPolicy());
     if (exec->hadException())
         return jsUndefined();
     if (!action)
         return jsNumber(0);
     int delay = exec->argument(1).toInt32(exec);
-    return jsNumber(impl().setTimeout(std::move(action), delay));
+    return jsNumber(impl().setTimeout(action.release(), delay));
 }
 
 JSValue JSWorkerGlobalScope::setInterval(ExecState* exec)
 {
-    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), impl().contentSecurityPolicy());
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), impl().contentSecurityPolicy());
     if (exec->hadException())
         return jsUndefined();
     if (!action)
         return jsNumber(0);
     int delay = exec->argument(1).toInt32(exec);
-    return jsNumber(impl().setInterval(std::move(action), delay));
+    return jsNumber(impl().setInterval(action.release(), delay));
 }
 
 } // namespace WebCore

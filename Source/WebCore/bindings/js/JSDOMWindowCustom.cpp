@@ -594,7 +594,7 @@ JSValue JSDOMWindow::postMessage(ExecState* exec)
 JSValue JSDOMWindow::setTimeout(ExecState* exec)
 {
     ContentSecurityPolicy* contentSecurityPolicy = impl().document() ? impl().document()->contentSecurityPolicy() : 0;
-    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), contentSecurityPolicy);
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), contentSecurityPolicy);
     if (exec->hadException())
         return jsUndefined();
 
@@ -604,7 +604,7 @@ JSValue JSDOMWindow::setTimeout(ExecState* exec)
     int delay = exec->argument(1).toInt32(exec);
 
     ExceptionCode ec = 0;
-    int result = impl().setTimeout(std::move(action), delay, ec);
+    int result = impl().setTimeout(action.release(), delay, ec);
     setDOMException(exec, ec);
 
     return jsNumber(result);
@@ -613,7 +613,7 @@ JSValue JSDOMWindow::setTimeout(ExecState* exec)
 JSValue JSDOMWindow::setInterval(ExecState* exec)
 {
     ContentSecurityPolicy* contentSecurityPolicy = impl().document() ? impl().document()->contentSecurityPolicy() : 0;
-    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), contentSecurityPolicy);
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), contentSecurityPolicy);
     if (exec->hadException())
         return jsUndefined();
     int delay = exec->argument(1).toInt32(exec);
@@ -622,7 +622,7 @@ JSValue JSDOMWindow::setInterval(ExecState* exec)
         return jsNumber(0);
 
     ExceptionCode ec = 0;
-    int result = impl().setInterval(std::move(action), delay, ec);
+    int result = impl().setInterval(action.release(), delay, ec);
     setDOMException(exec, ec);
 
     return jsNumber(result);

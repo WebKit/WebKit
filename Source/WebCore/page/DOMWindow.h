@@ -33,7 +33,6 @@
 #include "URL.h"
 #include "Supplementable.h"
 #include <functional>
-#include <memory>
 
 namespace Inspector {
 class ScriptCallStack;
@@ -254,9 +253,9 @@ namespace WebCore {
         void resizeTo(float width, float height) const;
 
         // Timers
-        int setTimeout(std::unique_ptr<ScheduledAction>, int timeout, ExceptionCode&);
+        int setTimeout(PassOwnPtr<ScheduledAction>, int timeout, ExceptionCode&);
         void clearTimeout(int timeoutId);
-        int setInterval(std::unique_ptr<ScheduledAction>, int timeout, ExceptionCode&);
+        int setInterval(PassOwnPtr<ScheduledAction>, int timeout, ExceptionCode&);
         void clearInterval(int timeoutId);
 
         // WebKit animation extensions

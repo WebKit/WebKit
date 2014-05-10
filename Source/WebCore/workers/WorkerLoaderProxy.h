@@ -33,6 +33,7 @@
 
 #include "ScriptExecutionContext.h"
 #include <wtf/Forward.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

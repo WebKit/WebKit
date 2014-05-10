@@ -1513,14 +1513,14 @@ void DOMWindow::resizeTo(float width, float height) const
     page->chrome().setWindowRect(adjustWindowRect(page, update));
 }
 
-int DOMWindow::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout, ExceptionCode& ec)
+int DOMWindow::setTimeout(PassOwnPtr<ScheduledAction> action, int timeout, ExceptionCode& ec)
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     if (!context) {
         ec = INVALID_ACCESS_ERR;
         return -1;
     }
-    return DOMTimer::install(context, std::move(action), timeout, true);
+    return DOMTimer::install(context, action, timeout, true);
 }
 
 void DOMWindow::clearTimeout(int timeoutId)
@@ -1547,14 +1547,14 @@ void DOMWindow::clearTimeout(int timeoutId)
     DOMTimer::removeById(context, timeoutId);
 }
 
-int DOMWindow::setInterval(std::unique_ptr<ScheduledAction> action, int timeout, ExceptionCode& ec)
+int DOMWindow::setInterval(PassOwnPtr<ScheduledAction> action, int timeout, ExceptionCode& ec)
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     if (!context) {
         ec = INVALID_ACCESS_ERR;
         return -1;
     }
-    return DOMTimer::install(context, std::move(action), timeout, false);
+    return DOMTimer::install(context, action, timeout, false);
 }
 
 void DOMWindow::clearInterval(int timeoutId)

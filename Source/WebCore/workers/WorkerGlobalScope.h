@@ -35,9 +35,9 @@
 #include "ScriptExecutionContext.h"
 #include "WorkerEventQueue.h"
 #include "WorkerScriptController.h"
-#include <memory>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -72,7 +72,7 @@ namespace WebCore {
         virtual void disableEval(const String& errorMessage) override;
 
         WorkerScriptController* script() { return m_script.get(); }
-        void clearScript() { m_script = nullptr; }
+        void clearScript() { m_script.clear(); }
 
         WorkerThread& thread() const { return m_thread; }
 
@@ -94,9 +94,9 @@ namespace WebCore {
         WorkerNavigator* navigator() const;
 
         // Timers
-        int setTimeout(std::unique_ptr<ScheduledAction>, int timeout);
+        int setTimeout(PassOwnPtr<ScheduledAction>, int timeout);
         void clearTimeout(int timeoutId);
-        int setInterval(std::unique_ptr<ScheduledAction>, int timeout);
+        int setInterval(PassOwnPtr<ScheduledAction>, int timeout);
         void clearInterval(int timeoutId);
 
         virtual bool isContextThread() const override;
@@ -167,7 +167,7 @@ namespace WebCore {
         mutable RefPtr<WorkerLocation> m_location;
         mutable RefPtr<WorkerNavigator> m_navigator;
 
-        std::unique_ptr<WorkerScriptController> m_script;
+        OwnPtr<WorkerScriptController> m_script;
         WorkerThread& m_thread;
 
 #if ENABLE(INSPECTOR)
