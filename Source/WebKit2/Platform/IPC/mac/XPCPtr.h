@@ -52,6 +52,7 @@ public:
 
     T get() const { return m_ptr; }
 
+    explicit operator bool() const { return m_ptr; }
     bool operator!() const { return !m_ptr; }
 
     XPCPtr(const XPCPtr& other)

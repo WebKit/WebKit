@@ -172,7 +172,9 @@ public:
     bool inSendSync() const { return m_inSendSyncCount; }
 
     Identifier identifier() const;
-    
+
+    bool kill();
+
 private:
     Connection(Identifier, bool isServer, Client*, WTF::RunLoop& clientRunLoop);
     void platformInitialize(Identifier);

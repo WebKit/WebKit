@@ -1,5 +1,21 @@
 2014-05-10  Anders Carlsson  <andersca@apple.com>
 
+        Use xpc_connection_kill for killing child processes where appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=132788
+        <rdar://problem/16664185>
+
+        Reviewed by Sam Weinig.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::kill):
+        * Platform/IPC/mac/XPCPtr.h:
+        (IPC::XPCPtr::operator bool):
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::terminate):
+
+2014-05-10  Anders Carlsson  <andersca@apple.com>
+
         WebKit2 is leaking an xpc_connection per web process it creates
         https://bugs.webkit.org/show_bug.cgi?id=132785
         <rdar://problem/14912160>

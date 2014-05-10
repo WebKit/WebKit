@@ -37,9 +37,11 @@
 
 #if __has_include(<xpc/private.h>)
 #include <xpc/private.h>
+#else
+extern "C" void xpc_connection_get_audit_token(xpc_connection_t, audit_token_t*);
+extern "C" void xpc_connection_kill(xpc_connection_t, int);
 #endif
 
-extern "C" void xpc_connection_get_audit_token(xpc_connection_t, audit_token_t*);
 
 namespace IPC {
 
@@ -522,5 +524,17 @@ bool Connection::getAuditToken(audit_token_t& auditToken)
     xpc_connection_get_audit_token(m_xpcConnection.get(), &auditToken);
     return true;
 }
-    
+
+bool Connection::kill()
+{
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
+    if (m_xpcConnection) {
+        xpc_connection_kill(m_xpcConnection.get(), SIGKILL);
+        return true;
+    }
+#endif
+
+    return false;
+}
+
 } // namespace IPC
