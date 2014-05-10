@@ -391,7 +391,7 @@ IntSize FEGaussianBlur::calculateUnscaledKernelSize(const FloatPoint& stdDeviati
     IntSize kernelSize;
 
     // Limit the kernel size to 500. A bigger radius won't make a big difference for the result image but
-    // inflates the absolute paint rect to much. This is compatible with Firefox' behavior.
+    // inflates the absolute paint rect too much. This is compatible with Firefox' behavior.
     if (stdDeviation.x()) {
         int size = std::max<unsigned>(2, static_cast<unsigned>(floorf(stdDeviation.x() * gaussianKernelFactor() + 0.5f)));
         kernelSize.setWidth(std::min(size, gMaxKernelSize));
@@ -451,8 +451,10 @@ void FEGaussianBlur::platformApplySoftware()
         return;
 
     IntSize kernelSize = calculateKernelSize(filter(), FloatPoint(m_stdX, m_stdY));
+    kernelSize.scale(filter().filterScale());
 
     IntSize paintSize = absolutePaintRect().size();
+    paintSize.scale(filter().filterScale());
     RefPtr<Uint8ClampedArray> tmpImageData = Uint8ClampedArray::createUninitialized(paintSize.width() * paintSize.height() * 4);
     Uint8ClampedArray* tmpPixelArray = tmpImageData.get();
 

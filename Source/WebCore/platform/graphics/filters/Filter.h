@@ -33,9 +33,10 @@ class FilterEffect;
 
 class Filter : public RefCounted<Filter> {
 public:
-    Filter(const AffineTransform& absoluteTransform)
+    Filter(const AffineTransform& absoluteTransform, float filterScale = 1)
         : m_absoluteTransform(absoluteTransform)
         , m_renderingMode(Unaccelerated)
+        , m_filterScale(filterScale)
     { }
     virtual ~Filter() { }
 
@@ -44,6 +45,9 @@ public:
 
     FloatSize filterResolution() const { return m_filterResolution; }
     void setFilterResolution(const FloatSize& filterResolution) { m_filterResolution = filterResolution; }
+
+    float filterScale() const { return m_filterScale; }
+    void setFilterScale(float scale) { m_filterScale = scale; }
 
     const AffineTransform& absoluteTransform() const { return m_absoluteTransform; }
     FloatPoint mapAbsolutePointToLocalPoint(const FloatPoint& point) const { return m_absoluteTransform.inverse().mapPoint(point); }
@@ -64,6 +68,7 @@ private:
     FloatSize m_filterResolution;
     AffineTransform m_absoluteTransform;
     RenderingMode m_renderingMode;
+    float m_filterScale;
 };
 
 #define FILTER_TYPE_CASTS(ToValueTypeName, predicate) \

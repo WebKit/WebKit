@@ -1,3 +1,35 @@
+2014-05-09  Dean Jackson  <dino@apple.com>
+
+        -webkit-filter prevents rendering at retina scale
+        https://bugs.webkit.org/show_bug.cgi?id=93471
+
+        Reviewed by Dirk Schulze.
+
+        New tests for filters at high resolutions. The image used
+        has a crosshatch at the pixel level, so any scale changes
+        are visible (such as going from 2x to 1x). All the actual
+        filters are no-ops so they can be compared to an element
+        without a filter in the -expected version.
+
+        * fast/hidpi/filters-blur-expected.html: Added.
+        * fast/hidpi/filters-blur.html: Added.
+        * fast/hidpi/filters-hue-rotate-expected.html: Added.
+        * fast/hidpi/filters-hue-rotate.html: Added.
+        * fast/hidpi/filters-invert-expected.html: Added.
+        * fast/hidpi/filters-invert.html: Added.
+        * fast/hidpi/filters-multiple-expected.html: Added.
+        * fast/hidpi/filters-multiple.html: Added.
+        * fast/hidpi/filters-reference-expected.html: Added.
+        * fast/hidpi/filters-reference.html: Added.
+        * fast/hidpi/filters-shadow-expected.html: Added.
+        * fast/hidpi/filters-shadow.html: Added.
+        * fast/hidpi/resources/color-grid.png: Added.
+        * fast/hidpi/resources/ensure-hidpi.js: Added.
+        (runTest):
+        (scaleFactorIsSet):
+        * platform/mac-wk2/TestExpectations: Skip some of these on WK2 Mac.
+        See webkit.org/b/132766.
+
 2014-05-10  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Empty rects should remain empty after integrally enclosing them.

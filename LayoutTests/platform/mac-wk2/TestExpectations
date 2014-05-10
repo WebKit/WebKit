@@ -423,6 +423,12 @@ webkit.org/b/128315 editing/caret/caret-color.html [ Pass Failure ]
 
 webkit.org/b/129468 [ MountainLion Debug ] css3/blending/isolation-isolate-blended-child.html [ ImageOnlyFailure ]
 
+webkit.org/b/132766 fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
+webkit.org/b/132766 fast/hidpi/filters-hue-rotate.html [ ImageOnlyFailure ]
+webkit.org/b/132766 fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
+webkit.org/b/132766 fast/hidpi/filters-multiple.html [ ImageOnlyFailure ]
+webkit.org/b/132766 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
+
 ### END OF (3) Unclassified failures
 ########################################
 

@@ -82,6 +82,7 @@ void FEDropShadow::platformApplySoftware()
 
     Filter& filter = this->filter();
     FloatSize blurRadius(filter.applyHorizontalScale(m_stdX), filter.applyVerticalScale(m_stdY));
+    blurRadius.scale(filter.filterScale());
     FloatSize offset(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
 
     FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
@@ -100,11 +101,11 @@ void FEDropShadow::platformApplySoftware()
 
     // TODO: Direct pixel access to ImageBuffer would avoid copying the ImageData.
     IntRect shadowArea(IntPoint(), resultImage->internalSize());
-    RefPtr<Uint8ClampedArray> srcPixelArray = resultImage->getPremultipliedImageData(shadowArea);
+    RefPtr<Uint8ClampedArray> srcPixelArray = resultImage->getPremultipliedImageData(shadowArea, ImageBuffer::BackingStoreCoordinateSystem);
 
     contextShadow.blurLayerImage(srcPixelArray->data(), shadowArea.size(), 4 * shadowArea.size().width());
 
-    resultImage->putByteArray(Premultiplied, srcPixelArray.get(), shadowArea.size(), shadowArea, IntPoint());
+    resultImage->putByteArray(Premultiplied, srcPixelArray.get(), shadowArea.size(), shadowArea, IntPoint(), ImageBuffer::BackingStoreCoordinateSystem);
 
     resultContext->setCompositeOperation(CompositeSourceIn);
     resultContext->fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), m_shadowColor, ColorSpaceDeviceRGB);

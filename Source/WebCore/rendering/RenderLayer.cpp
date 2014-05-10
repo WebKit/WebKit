@@ -6647,12 +6647,16 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
     FilterInfo& filterInfo = FilterInfo::get(*this);
     if (!filterInfo.renderer()) {
         RefPtr<FilterEffectRenderer> filterRenderer = FilterEffectRenderer::create();
+        filterRenderer->setFilterScale(renderer().frame().page()->deviceScaleFactor());
         RenderingMode renderingMode = renderer().frame().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
         filterRenderer->setRenderingMode(renderingMode);
         filterInfo.setRenderer(filterRenderer.release());
         
         // We can optimize away code paths in other places if we know that there are no software filters.
         renderer().view().setHasSoftwareFilters(true);
+    } else if (filterInfo.renderer()->filterScale() != renderer().frame().page()->deviceScaleFactor()) {
+        filterInfo.renderer()->setFilterScale(renderer().frame().page()->deviceScaleFactor());
+        filterInfo.renderer()->clearIntermediateResults();
     }
 
     // If the filter fails to build, remove it from the layer. It will still attempt to

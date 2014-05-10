@@ -268,7 +268,7 @@ ImageBuffer* FilterEffect::asImageBuffer()
     if (m_openCLImageResult)
         return openCLImageToImageBuffer();
 #endif
-    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), 1, m_resultColorSpace, m_filter->renderingMode());
+    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), m_filter->filterScale(), m_resultColorSpace, m_filter->renderingMode());
     IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
     if (m_premultipliedImageResult)
         m_imageBufferResult->putByteArray(Premultiplied, m_premultipliedImageResult.get(), destinationRect.size(), destinationRect, IntPoint());
@@ -308,7 +308,9 @@ ImageBuffer* FilterEffect::openCLImageToImageBuffer()
 PassRefPtr<Uint8ClampedArray> FilterEffect::asUnmultipliedImage(const IntRect& rect)
 {
     ASSERT(isFilterSizeValid(rect));
-    RefPtr<Uint8ClampedArray> imageData = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
+    IntSize scaledSize(rect.size());
+    scaledSize.scale(m_filter->filterScale());
+    RefPtr<Uint8ClampedArray> imageData = Uint8ClampedArray::createUninitialized(scaledSize.width() * scaledSize.height() * 4);
     copyUnmultipliedImage(imageData.get(), rect);
     return imageData.release();
 }
@@ -316,46 +318,53 @@ PassRefPtr<Uint8ClampedArray> FilterEffect::asUnmultipliedImage(const IntRect& r
 PassRefPtr<Uint8ClampedArray> FilterEffect::asPremultipliedImage(const IntRect& rect)
 {
     ASSERT(isFilterSizeValid(rect));
-    RefPtr<Uint8ClampedArray> imageData = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
+    IntSize scaledSize(rect.size());
+    scaledSize.scale(m_filter->filterScale());
+    RefPtr<Uint8ClampedArray> imageData = Uint8ClampedArray::createUninitialized(scaledSize.width() * scaledSize.height() * 4);
     copyPremultipliedImage(imageData.get(), rect);
     return imageData.release();
 }
 
 inline void FilterEffect::copyImageBytes(Uint8ClampedArray* source, Uint8ClampedArray* destination, const IntRect& rect)
 {
+    IntRect scaledRect(rect);
+    scaledRect.scale(m_filter->filterScale());
+    IntSize scaledPaintSize(m_absolutePaintRect.size());
+    scaledPaintSize.scale(m_filter->filterScale());
+
     // Initialize the destination to transparent black, if not entirely covered by the source.
-    if (rect.x() < 0 || rect.y() < 0 || rect.maxX() > m_absolutePaintRect.width() || rect.maxY() > m_absolutePaintRect.height())
+    if (scaledRect.x() < 0 || scaledRect.y() < 0 || scaledRect.maxX() > scaledPaintSize.width() || scaledRect.maxY() > scaledPaintSize.height())
         memset(destination->data(), 0, destination->length());
 
     // Early return if the rect does not intersect with the source.
-    if (rect.maxX() <= 0 || rect.maxY() <= 0 || rect.x() >= m_absolutePaintRect.width() || rect.y() >= m_absolutePaintRect.height())
+    if (scaledRect.maxX() <= 0 || scaledRect.maxY() <= 0 || scaledRect.x() >= scaledPaintSize.width() || scaledRect.y() >= scaledPaintSize.height())
         return;
 
-    int xOrigin = rect.x();
+    int xOrigin = scaledRect.x();
     int xDest = 0;
     if (xOrigin < 0) {
         xDest = -xOrigin;
         xOrigin = 0;
     }
-    int xEnd = rect.maxX();
-    if (xEnd > m_absolutePaintRect.width())
-        xEnd = m_absolutePaintRect.width();
+    int xEnd = scaledRect.maxX();
+    if (xEnd > scaledPaintSize.width())
+        xEnd = scaledPaintSize.width();
 
-    int yOrigin = rect.y();
+    int yOrigin = scaledRect.y();
     int yDest = 0;
     if (yOrigin < 0) {
         yDest = -yOrigin;
         yOrigin = 0;
     }
-    int yEnd = rect.maxY();
-    if (yEnd > m_absolutePaintRect.height())
-        yEnd = m_absolutePaintRect.height();
+    int yEnd = scaledRect.maxY();
+    if (yEnd > scaledPaintSize.height())
+        yEnd = scaledPaintSize.height();
 
     int size = (xEnd - xOrigin) * 4;
-    int destinationScanline = rect.width() * 4;
-    int sourceScanline = m_absolutePaintRect.width() * 4;
-    unsigned char *destinationPixel = destination->data() + ((yDest * rect.width()) + xDest) * 4;
-    unsigned char *sourcePixel = source->data() + ((yOrigin * m_absolutePaintRect.width()) + xOrigin) * 4;
+    int destinationScanline = scaledRect.width() * 4;
+    int sourceScanline = scaledPaintSize.width() * 4;
+    unsigned char *destinationPixel = destination->data() + ((yDest * scaledRect.width()) + xDest) * 4;
+    unsigned char *sourcePixel = source->data() + ((yOrigin * scaledPaintSize.width()) + xOrigin) * 4;
 
     while (yOrigin < yEnd) {
         memcpy(destinationPixel, sourcePixel, size);
@@ -375,10 +384,12 @@ void FilterEffect::copyUnmultipliedImage(Uint8ClampedArray* destination, const I
             m_unmultipliedImageResult = m_imageBufferResult->getUnmultipliedImageData(IntRect(IntPoint(), m_absolutePaintRect.size()));
         else {
             ASSERT(isFilterSizeValid(m_absolutePaintRect));
-            m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized(m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
+            IntSize inputSize(m_absolutePaintRect.size());
+            inputSize.scale(m_filter->filterScale());
+            m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized(inputSize.width() * inputSize.height() * 4);
             unsigned char* sourceComponent = m_premultipliedImageResult->data();
             unsigned char* destinationComponent = m_unmultipliedImageResult->data();
-            unsigned char* end = sourceComponent + (m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
+            unsigned char* end = sourceComponent + (inputSize.width() * inputSize.height() * 4);
             while (sourceComponent < end) {
                 int alpha = sourceComponent[3];
                 if (alpha) {
@@ -409,10 +420,12 @@ void FilterEffect::copyPremultipliedImage(Uint8ClampedArray* destination, const 
             m_premultipliedImageResult = m_imageBufferResult->getPremultipliedImageData(IntRect(IntPoint(), m_absolutePaintRect.size()));
         else {
             ASSERT(isFilterSizeValid(m_absolutePaintRect));
-            m_premultipliedImageResult = Uint8ClampedArray::createUninitialized(m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
+            IntSize inputSize(m_absolutePaintRect.size());
+            inputSize.scale(m_filter->filterScale());
+            m_premultipliedImageResult = Uint8ClampedArray::createUninitialized(inputSize.width() * inputSize.height() * 4);
             unsigned char* sourceComponent = m_unmultipliedImageResult->data();
             unsigned char* destinationComponent = m_premultipliedImageResult->data();
-            unsigned char* end = sourceComponent + (m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
+            unsigned char* end = sourceComponent + (inputSize.width() * inputSize.height() * 4);
             while (sourceComponent < end) {
                 int alpha = sourceComponent[3];
                 destinationComponent[0] = static_cast<int>(sourceComponent[0]) * alpha / 255;
@@ -433,7 +446,7 @@ ImageBuffer* FilterEffect::createImageBufferResult()
     ASSERT(!hasResult());
     if (m_absolutePaintRect.isEmpty())
         return 0;
-    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), 1, m_resultColorSpace, m_filter->renderingMode());
+    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), m_filter->filterScale(), m_resultColorSpace, m_filter->renderingMode());
     if (!m_imageBufferResult)
         return 0;
     ASSERT(m_imageBufferResult->context());
@@ -448,7 +461,9 @@ Uint8ClampedArray* FilterEffect::createUnmultipliedImageResult()
 
     if (m_absolutePaintRect.isEmpty())
         return 0;
-    m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized(m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
+    IntSize resultSize(m_absolutePaintRect.size());
+    resultSize.scale(m_filter->filterScale());
+    m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized(resultSize.width() * resultSize.height() * 4);
     return m_unmultipliedImageResult.get();
 }
 
@@ -460,7 +475,9 @@ Uint8ClampedArray* FilterEffect::createPremultipliedImageResult()
 
     if (m_absolutePaintRect.isEmpty())
         return 0;
-    m_premultipliedImageResult = Uint8ClampedArray::createUninitialized(m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
+    IntSize resultSize(m_absolutePaintRect.size());
+    resultSize.scale(m_filter->filterScale());
+    m_premultipliedImageResult = Uint8ClampedArray::createUninitialized(resultSize.width() * resultSize.height() * 4);
     return m_premultipliedImageResult.get();
 }
 

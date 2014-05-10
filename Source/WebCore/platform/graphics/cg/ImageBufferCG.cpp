@@ -343,7 +343,11 @@ PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRec
     if (m_context->isAcceleratedContext())
         flushContext();
 
-    return m_data.getData(rect, internalSize(), m_context->isAcceleratedContext(), true, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
+    IntRect srcRect = rect;
+    if (coordinateSystem == LogicalCoordinateSystem)
+        srcRect.scale(m_resolutionScale);
+
+    return m_data.getData(srcRect, internalSize(), m_context->isAcceleratedContext(), true, 1);
 }
 
 PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
@@ -351,13 +355,24 @@ PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRe
     if (m_context->isAcceleratedContext())
         flushContext();
 
-    return m_data.getData(rect, internalSize(), m_context->isAcceleratedContext(), false, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
+    IntRect srcRect = rect;
+    if (coordinateSystem == LogicalCoordinateSystem)
+        srcRect.scale(m_resolutionScale);
+
+    return m_data.getData(srcRect, internalSize(), m_context->isAcceleratedContext(), false, 1);
 }
 
 void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
 {
     if (!m_context->isAcceleratedContext()) {
-        m_data.putData(source, sourceSize, sourceRect, destPoint, internalSize(), m_context->isAcceleratedContext(), multiplied == Unmultiplied, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
+        IntRect scaledSourceRect = sourceRect;
+        IntSize scaledSourceSize = sourceSize;
+        if (coordinateSystem == LogicalCoordinateSystem) {
+            scaledSourceRect.scale(m_resolutionScale);
+            scaledSourceSize.scale(m_resolutionScale);
+        }
+
+        m_data.putData(source, scaledSourceSize, scaledSourceRect, destPoint, internalSize(), false, multiplied == Unmultiplied, 1);
         return;
     }
 

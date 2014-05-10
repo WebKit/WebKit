@@ -1,3 +1,63 @@
+2014-05-09  Dean Jackson  <dino@apple.com>
+
+        -webkit-filter prevents rendering at retina scale
+        https://bugs.webkit.org/show_bug.cgi?id=93471
+
+        Reviewed by Dirk Schulze.
+
+        Implement 2x support for filters that go through
+        the -webkit-filter property. This includes all
+        shorthand filters, and any referenced SVG-style filters
+        (as long as they use only the supported subset of
+        operations - basically the same as is exposed for
+        the shorthands).
+
+        Tests: fast/hidpi/filters-blur.html
+               fast/hidpi/filters-hue-rotate.html
+               fast/hidpi/filters-invert.html
+               fast/hidpi/filters-multiple.html
+               fast/hidpi/filters-reference.html
+               fast/hidpi/filters-shadow.html
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::getUnmultipliedImageData): Scale the source rectangle if the method was
+        called using LogicalCoordinates.
+        (WebCore::ImageBuffer::getPremultipliedImageData): Ditto.
+        (WebCore::ImageBuffer::putByteArray): Ditto.
+
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::platformApplySoftware): Make sure to scale the blur radius by the filter
+        resolution, and call the byte-array methods with the native coordinate system.
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::calculateUnscaledKernelSize): Fix typo.
+        (WebCore::FEGaussianBlur::platformApplySoftware): Scale the kernel and paint rectangles
+        by the filter scale.
+
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::Filter): Initialise the filter scale.
+        (WebCore::Filter::filterScale): New property which reflects the mapping between logical pixels
+        and device pixels.
+        (WebCore::Filter::setFilterScale):
+
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::asImageBuffer): Make sure buffer creation takes scale into account.
+        (WebCore::FilterEffect::asUnmultipliedImage): Ditto.
+        (WebCore::FilterEffect::asPremultipliedImage): Ditto.
+        (WebCore::FilterEffect::copyImageBytes): Scale any incoming regions if they are talking about
+        device pixels rather than logical pixels.
+        (WebCore::FilterEffect::copyUnmultipliedImage): Ditto.
+        (WebCore::FilterEffect::copyPremultipliedImage): Ditto.
+        (WebCore::FilterEffect::createImageBufferResult): Take scale into account when creating byte array.
+        (WebCore::FilterEffect::createUnmultipliedImageResult): Ditto.
+        (WebCore::FilterEffect::createPremultipliedImageResult): Ditto.
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::allocateBackingStoreIfNeeded): Pass filter scale into buffer creation.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffectRenderer): Make sure to set the filter scale to
+        the device scale factor, and notice if we ever change scales.
+
 2014-05-10  Praveen R Jadhav  <praveen.j@samsung.com>
 
         [MediaStream] Rename NavigatorMediaStream as NavigatorUserMedia.

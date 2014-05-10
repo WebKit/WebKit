@@ -331,7 +331,7 @@ void FilterEffectRenderer::allocateBackingStoreIfNeeded()
     if (!m_graphicsBufferAttached) {
         IntSize logicalSize(m_sourceDrawingRegion.width(), m_sourceDrawingRegion.height());
         if (!sourceImage() || sourceImage()->logicalSize() != logicalSize)
-            setSourceImage(ImageBuffer::create(logicalSize, 1, ColorSpaceDeviceRGB, renderingMode()));
+            setSourceImage(ImageBuffer::create(logicalSize, filterScale(), ColorSpaceDeviceRGB, renderingMode()));
         m_graphicsBufferAttached = true;
     }
 }
