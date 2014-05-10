@@ -129,9 +129,10 @@ LayoutRect unionRect(const Vector<LayoutRect>& rects)
 
 IntRect enclosingIntRect(const LayoutRect& rect)
 {
+    // Empty rects with fractional x, y values turn into non-empty rects when converting to enclosing.
+    // We need to ensure that empty rects stay empty after the conversion, because the selection code expects them to be empty.
     IntPoint location = flooredIntPoint(rect.minXMinYCorner());
-    IntPoint maxPoint = ceiledIntPoint(rect.maxXMaxYCorner());
-
+    IntPoint maxPoint = IntPoint(rect.width() ? rect.maxX().ceil() : location.x(), rect.height() ? rect.maxY().ceil() : location.y());
     return IntRect(location, maxPoint - location);
 }
 

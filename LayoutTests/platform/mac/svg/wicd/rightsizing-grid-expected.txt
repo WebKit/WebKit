@@ -10,7 +10,7 @@ layer at (0,0) size 785x1435
         RenderBlock {h4} at (0,79) size 769x19
           RenderText {#text} at (0,0) size 149x18
             text run at (0,0) width 149: "WICD Core 1.0 #20-3"
-        RenderBlock {p} at (0,119) size 769x1
+        RenderBlock {p} at (0,119) size 769x0
           RenderEmbeddedObject {object} at (0,0) size 385x128
             layer at (0,0) size 385x128
               RenderView at (0,0) size 385x128

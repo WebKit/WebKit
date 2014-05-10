@@ -481,7 +481,7 @@ layer at (0,0) size 785x2358
               RenderTableCell {TD} at (430,218) size 39x22 [bgcolor=#ADD8E6] [border: (1px inset #808080)] [r=9 c=9 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 31x18
                   text run at (2,2) width 31: "col 9"
-      RenderBlock {P} at (0,1090) size 769x1
+      RenderBlock {P} at (0,1090) size 769x0
       RenderBlock {HR} at (0,1090) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,1108) size 769x62
         RenderTable {TABLE} at (0,0) size 653x61 [bgcolor=#F08080] [border: (1px outset #808080)]
@@ -872,7 +872,7 @@ layer at (0,0) size 785x2358
               RenderTableCell {TD} at (433,218) size 36x22 [bgcolor=#ADD8E6] [border: (1px inset #808080)] [r=9 c=10 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 31x18
                   text run at (2,2) width 31: "col 9"
-      RenderBlock {P} at (0,1667) size 769x1
+      RenderBlock {P} at (0,1667) size 769x0
       RenderBlock {HR} at (0,1667) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,1685) size 769x62
         RenderTable {TABLE} at (0,0) size 653x61 [bgcolor=#F08080] [border: (1px outset #808080)]
@@ -1317,7 +1317,7 @@ layer at (0,0) size 785x2358
                 RenderText {#text} at (2,2) size 19x36
                   text run at (2,2) width 19: "col"
                   text run at (2,20) width 8: "9"
-      RenderBlock {P} at (0,2272) size 769x1
+      RenderBlock {P} at (0,2272) size 769x0
       RenderBlock {HR} at (0,2272) size 769x3 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,2282) size 769x19
         RenderImage {IMG} at (0,1) size 13x13

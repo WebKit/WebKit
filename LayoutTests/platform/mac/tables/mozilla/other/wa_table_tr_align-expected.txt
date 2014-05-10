@@ -308,7 +308,7 @@ layer at (0,0) size 785x1309
               RenderTableCell {TD} at (230,26) size 112x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (43,2) size 67x18
                   text run at (43,2) width 67: "row data 3"
-      RenderBlock {P} at (0,1222) size 769x1
+      RenderBlock {P} at (0,1222) size 769x0
       RenderBlock {HR} at (0,1222) size 769x3 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,1232) size 769x19
         RenderImage {IMG} at (0,1) size 13x13
@@ -320,4 +320,4 @@ layer at (0,0) size 785x1309
         RenderBR {BR} at (216,14) size 0x0
       RenderBlock {P} at (0,1266) size 769x19
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {P} at (0,1300) size 769x1
+      RenderBlock {P} at (0,1300) size 769x0

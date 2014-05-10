@@ -51,7 +51,7 @@ layer at (0,0) size 785x1207
           text run at (0,188) width 213: "Totally Blank STYLED Textarea"
         RenderBR {BR} at (213,188) size 0x18
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1199) size 769x1
+      RenderBlock {P} at (0,1199) size 769x0
 layer at (8,60) size 406x206 clip at (9,61) size 404x204
   RenderTextControl {TEXTAREA} at (0,18) size 406x206 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
     RenderBlock {DIV} at (3,3) size 400x106

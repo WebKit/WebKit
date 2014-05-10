@@ -265,16 +265,6 @@ static const Font& fontToUse(const RenderStyle& style, const RenderText& rendere
     return style.font();
 }
 
-// FIXME: remove this function, when switching to directional pixel snapping.
-static IntRect integralEnclosingRectForSelection(const LayoutRect& rect)
-{
-    // Empty rects with fractional x, y values turn into non-empty rects when converting to enclosing.
-    // We need to ensure that empty rects stay empty after the conversion, because the selection code expects them to be empty.
-    IntPoint location = flooredIntPoint(rect.minXMinYCorner());
-    IntPoint maxPoint = IntPoint(rect.width() ? rect.maxX().ceil() : location.x(), rect.height() ? rect.maxY().ceil() : location.y());
-    return IntRect(location, maxPoint - location);
-}
-
 LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
 {
     int sPos = std::max(startPos - m_start, 0);
@@ -300,7 +290,7 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
     // Avoid computing the font width when the entire line box is selected as an optimization.
     if (sPos || ePos != static_cast<int>(m_len))
         font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
-    IntRect snappedSelectionRect = integralEnclosingRectForSelection(selectionRect);
+    IntRect snappedSelectionRect = enclosingIntRect(selectionRect);
     LayoutUnit logicalWidth = snappedSelectionRect.width();
     if (snappedSelectionRect.x() > logicalRight())
         logicalWidth  = 0;
@@ -1188,7 +1178,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
 
         LayoutRect selectionRect = LayoutRect(startPoint, FloatSize(0, selHeight));
         font.adjustSelectionRectForText(run, selectionRect, startPosition, endPosition);
-        IntRect markerRect = integralEnclosingRectForSelection(selectionRect);
+        IntRect markerRect = enclosingIntRect(selectionRect);
         start = markerRect.x() - startPoint.x();
         width = markerRect.width();
         
@@ -1233,7 +1223,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* context, const FloatPo
     // FIXME: figure out how renderedRect and selectionRect are different.
     LayoutRect renderedRect = LayoutRect(LayoutPoint(x(), selectionTop()), FloatSize(0, selectionHeight));
     font.adjustSelectionRectForText(run, renderedRect, sPos, ePos);
-    IntRect markerRect = integralEnclosingRectForSelection(renderedRect);
+    IntRect markerRect = enclosingIntRect(renderedRect);
     markerRect = renderer().localToAbsoluteQuad(FloatQuad(markerRect)).enclosingBoundingBox();
     toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
     
@@ -1265,7 +1255,7 @@ void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, cons
     // Compute and store the rect associated with this marker.
     LayoutRect selectionRect = LayoutRect(LayoutPoint(x(), top), LayoutSize(0, h));
     font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
-    IntRect markerRect = integralEnclosingRectForSelection(selectionRect);
+    IntRect markerRect = enclosingIntRect(selectionRect);
     markerRect = renderer().localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
     toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
 }

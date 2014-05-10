@@ -28,9 +28,9 @@ layer at (0,0) size 800x600
                     RenderInline {I} at (0,0) size 64x36
                       RenderText {#text} at (4,4) size 64x36
                         text run at (4,4) width 64: "Four"
-                RenderBlock (anonymous) at (4,138) size 760x1
+                RenderBlock (anonymous) at (4,138) size 760x0
                   RenderInline {I} at (0,0) size 0x0
-            RenderBlock (anonymous) at (4,224) size 768x1
+            RenderBlock (anonymous) at (4,224) size 768x0
               RenderInline {I} at (0,0) size 0x0
-        RenderBlock (anonymous) at (4,297) size 776x1
+        RenderBlock (anonymous) at (4,297) size 776x0
           RenderInline {I} at (0,0) size 0x0
