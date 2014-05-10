@@ -114,6 +114,7 @@
     UIView *_extendedBackgroundLayerTopInset;
     UIView *_extendedBackgroundLayerBottomInset;
 
+    BOOL _needsResetViewStateAfterCommitLoadForMainFrame;
     BOOL _isAnimatingResize;
     CATransform3D _resizeAnimationTransformAdjustments;
     RetainPtr<UIView> _resizeAnimationView;
@@ -456,6 +457,11 @@ static CGFloat contentZoomScale(WKWebView* webView)
     _extendedBackgroundLayerBottomInset.backgroundColor = uiBackgroundColor.get();
 }
 
+- (void)_didCommitLoadForMainFrame
+{
+    _needsResetViewStateAfterCommitLoadForMainFrame = YES;
+}
+
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     if (_customContentView)
@@ -477,6 +483,11 @@ static CGFloat contentZoomScale(WKWebView* webView)
 
     if (_gestureController)
         _gestureController->setRenderTreeSize(layerTreeTransaction.renderTreeSize());
+
+    if (_needsResetViewStateAfterCommitLoadForMainFrame) {
+        _needsResetViewStateAfterCommitLoadForMainFrame = NO;
+        [_scrollView setContentOffset:CGPointMake(-_obscuredInsets.left, -_obscuredInsets.top)];
+    }
 }
 
 - (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition
