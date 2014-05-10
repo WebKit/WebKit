@@ -1,3 +1,15 @@
+2014-05-09  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Close icondatabase when EwkFaviconDatabase is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=132767
+
+        Reviewed by Gyuyoung Kim.
+
+        IconDatabase should be closed explicitly.
+
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (EwkFaviconDatabase::~EwkFaviconDatabase):
+
 2014-05-09  Anders Carlsson  <andersca@apple.com>
 
         Another build fix.

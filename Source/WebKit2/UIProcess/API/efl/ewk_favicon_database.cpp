@@ -53,6 +53,7 @@ EwkFaviconDatabase::EwkFaviconDatabase(WKIconDatabaseRef iconDatabase)
 EwkFaviconDatabase::~EwkFaviconDatabase()
 {
     WKIconDatabaseSetIconDatabaseClient(m_iconDatabase.get(), 0);
+    WKIconDatabaseClose(m_iconDatabase.get());
 }
 
 void EwkFaviconDatabase::watchChanges(const IconChangeCallbackData& callbackData)
