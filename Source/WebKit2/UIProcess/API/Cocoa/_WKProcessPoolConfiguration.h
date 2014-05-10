@@ -28,7 +28,7 @@
 
 #if WK_API_ENABLED
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface _WKProcessPoolConfiguration : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSURL *injectedBundleURL;

@@ -23,16 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
 
 /*! A @link WKFrameInfo @/link object contains information about a frame on a web page.
  @discussion WKFrameInfo objects are transient data only objects, they can not be used to uniquely 
  identify a frame across multiple delegate method calls.
  */
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKFrameInfo : NSObject
 
 /*! @abstract Whether the frame is the main frame or a subframe.

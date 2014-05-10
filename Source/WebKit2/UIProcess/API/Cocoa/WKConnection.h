@@ -38,7 +38,7 @@
 
 @end
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKConnection : NSObject
 
 - (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody;

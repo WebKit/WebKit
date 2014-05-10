@@ -29,7 +29,7 @@
 
 #import <WebKit/WKDOMNode.h>
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKDOMText : WKDOMNode
 
 @property(nonatomic, copy) NSString *data;

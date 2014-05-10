@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKBase.h>
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKTypeRefWrapper : NSObject
 
 - (id)initWithObject:(WKTypeRef)object;

@@ -23,17 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
 
 /*! A pool of Web Content processes.
  A @link WKWebView @/link specifies from which pool the Web Content process backing it comes through its @link WKWebViewConfiguration @/link.
  Each WKWebView will get its own Web Content process until an implementation-defined process limit is reached; after that,
  web views with the same process pool end up sharing Web Content processes.
  */
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKProcessPool : NSObject
 @end
 

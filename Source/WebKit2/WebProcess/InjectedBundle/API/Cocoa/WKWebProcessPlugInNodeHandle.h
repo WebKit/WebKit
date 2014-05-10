@@ -32,7 +32,7 @@
 
 @class WKWebProcessPlugInFrame;
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKWebProcessPlugInNodeHandle : NSObject
 
 + (WKWebProcessPlugInNodeHandle *)nodeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context;
