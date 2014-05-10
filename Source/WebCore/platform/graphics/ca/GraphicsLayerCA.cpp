@@ -1533,7 +1533,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
     FloatPoint3D scaledAnchorPoint;
     FloatSize scaledSize;
     FloatSize pixelAlignmentOffset;
-    computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledSize, scaledAnchorPoint, pixelAlignmentOffset);
+    computePixelAlignment(pageScaleFactor * deviceScaleFactor(), positionRelativeToBase, scaledPosition, scaledSize, scaledAnchorPoint, pixelAlignmentOffset);
 
     FloatRect adjustedBounds(m_boundsOrigin - pixelAlignmentOffset, scaledSize);
 
@@ -3429,10 +3429,10 @@ void GraphicsLayerCA::noteChangesForScaleSensitiveProperties()
     noteLayerPropertyChanged(GeometryChanged | ContentsScaleChanged | ContentsOpaqueChanged);
 }
 
-void GraphicsLayerCA::computePixelAlignment(float pageScaleFactor, const FloatPoint& positionRelativeToBase,
+void GraphicsLayerCA::computePixelAlignment(float contentsScale, const FloatPoint& positionRelativeToBase,
     FloatPoint& position, FloatSize& size, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const
 {
-    if (isIntegral(pageScaleFactor) || !m_drawsContent || m_masksToBounds) {
+    if (isIntegral(contentsScale) || !m_drawsContent || m_masksToBounds) {
         position = m_position;
         size = m_size;
         anchorPoint = m_anchorPoint;
@@ -3443,12 +3443,12 @@ void GraphicsLayerCA::computePixelAlignment(float pageScaleFactor, const FloatPo
     FloatRect baseRelativeBounds(positionRelativeToBase, m_size);
     FloatRect scaledBounds = baseRelativeBounds;
     // Scale by the page scale factor to compute the screen-relative bounds.
-    scaledBounds.scale(pageScaleFactor);
+    scaledBounds.scale(contentsScale);
     // Round to integer boundaries.
     FloatRect alignedBounds = enclosingIntRect(scaledBounds);
     
     // Convert back to layer coordinates.
-    alignedBounds.scale(1 / pageScaleFactor);
+    alignedBounds.scale(1 / contentsScale);
 
 #if !PLATFORM(IOS)
     // Epsilon is necessary to ensure that backing store size computation in CA, which involves integer truncation,
@@ -3471,7 +3471,7 @@ void GraphicsLayerCA::computePixelAlignment(float pageScaleFactor, const FloatPo
     if (alignedBounds.height())
         anchorPointY = (baseRelativeBounds.height() * anchorPointY + alignmentOffset.height()) / alignedBounds.height();
      
-    anchorPoint = FloatPoint3D(anchorPointX, anchorPointY, m_anchorPoint.z() * pageScaleFactor);
+    anchorPoint = FloatPoint3D(anchorPointX, anchorPointY, m_anchorPoint.z() * contentsScale);
 }
 
 void GraphicsLayerCA::noteSublayersChanged(ScheduleFlushOrNot scheduleFlush)

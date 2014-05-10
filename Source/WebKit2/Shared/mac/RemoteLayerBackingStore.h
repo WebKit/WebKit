@@ -51,14 +51,14 @@ public:
     RemoteLayerBackingStore(RemoteLayerTreeContext*);
     ~RemoteLayerBackingStore();
 
-    void ensureBackingStore(PlatformCALayerRemote*, WebCore::IntSize, float scale, bool acceleratesDrawing, bool isOpaque);
+    void ensureBackingStore(PlatformCALayerRemote*, WebCore::FloatSize, float scale, bool acceleratesDrawing, bool isOpaque);
 
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
 
     bool display();
 
-    WebCore::IntSize size() const { return m_size; }
+    WebCore::FloatSize size() const { return m_size; }
     float scale() const { return m_scale; }
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     bool isOpaque() const { return m_isOpaque; }
@@ -100,7 +100,7 @@ private:
 
     PlatformCALayerRemote* m_layer;
 
-    WebCore::IntSize m_size;
+    WebCore::FloatSize m_size;
     float m_scale;
     bool m_isOpaque;
 

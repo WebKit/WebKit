@@ -1,3 +1,30 @@
+2014-05-09  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering[iOS]: Top bar on apple.com/support jiggles when the swoosh animates.
+        https://bugs.webkit.org/show_bug.cgi?id=132750
+        <rdar://problem/16803281>
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that GraphicsLayer and RemoteLayerBackingStore have the same dimensions.
+        
+        Remove integral enclosing when we set the size on RemoteLayerBackingStore. It makes the layer's size
+        different from the backingstore when the passed value is fractional.
+        We scale and integral round this value to size the shareable bitmap later. Rounding ensures that
+        the final size value matches what we calculated at GraphicsLayerCA::updateGeometry()
+
+        Currently not testable.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::size):
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureBackingStore):
+        (WebKit::RemoteLayerBackingStore::setNeedsDisplay): use enclosing here to ensure we cover the entire backing store.
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::updateBackingStore):
+
 2014-05-09  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Set up the resize events

@@ -74,7 +74,7 @@ RemoteLayerBackingStore::~RemoteLayerBackingStore()
         m_context->backingStoreWillBeDestroyed(this);
 }
 
-void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, IntSize size, float scale, bool acceleratesDrawing, bool isOpaque)
+void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, FloatSize size, float scale, bool acceleratesDrawing, bool isOpaque)
 {
     if (m_layer == layer && m_size == size && m_scale == scale && m_acceleratesDrawing == acceleratesDrawing && m_isOpaque == isOpaque)
         return;
@@ -167,7 +167,7 @@ void RemoteLayerBackingStore::setNeedsDisplay(const IntRect rect)
 
 void RemoteLayerBackingStore::setNeedsDisplay()
 {
-    setNeedsDisplay(IntRect(IntPoint(), m_size));
+    setNeedsDisplay(IntRect(IntPoint(), expandedIntSize(m_size)));
 }
 
 bool RemoteLayerBackingStore::display()
@@ -181,7 +181,7 @@ bool RemoteLayerBackingStore::display()
     if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
         return false;
 
-    IntRect layerBounds(IntPoint(), m_size);
+    IntRect layerBounds(IntPoint(), expandedIntSize(m_size));
     if (!hasFrontBuffer())
         m_dirtyRegion.unite(layerBounds);
 
@@ -192,9 +192,8 @@ bool RemoteLayerBackingStore::display()
 
     FloatSize scaledSize = m_size;
     scaledSize.scale(m_scale);
-    IntSize expandedScaledSize = expandedIntSize(scaledSize);
+    IntSize expandedScaledSize = roundedIntSize(scaledSize);
     IntRect expandedScaledLayerBounds(IntPoint(), expandedScaledSize);
-
     bool willPaintEntireBackingStore = m_dirtyRegion.contains(layerBounds);
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
@@ -240,8 +239,9 @@ bool RemoteLayerBackingStore::display()
 
 void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef backImage)
 {
-    IntRect layerBounds(IntPoint(), m_size);
-    IntRect scaledLayerBounds(IntPoint(), expandedIntSize(m_size * m_scale));
+    FloatSize scaledSize = m_size;
+    scaledSize.scale(m_scale);
+    IntRect scaledLayerBounds(IntPoint(), roundedIntSize(scaledSize));
 
     if (!m_isOpaque)
         context.clearRect(scaledLayerBounds);
@@ -267,9 +267,9 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     // FIXME: find a consistent way to scale and snap dirty and CG clip rects.
     for (const auto& rect : dirtyRects) {
         FloatRect scaledRect(rect);
-        scaledRect.scale(m_scale, m_scale);
+        scaledRect.scale(m_scale);
         scaledRect = enclosingIntRect(scaledRect);
-        scaledRect.scale(1 / m_scale, 1 / m_scale);
+        scaledRect.scale(1 / m_scale);
         m_paintingRects.append(scaledRect);
     }
 
