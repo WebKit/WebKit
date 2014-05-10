@@ -111,12 +111,11 @@ void Connection::platformInitialize(Identifier identifier)
         xpc_retain(m_xpcConnection);
 }
 
-static dispatch_source_t createDataAvailableSource(mach_port_t receivePort, WorkQueue* workQueue, std::function<void ()> function)
+template<typename Function>
+static dispatch_source_t createDataAvailableSource(mach_port_t receivePort, WorkQueue& workQueue, Function&& function)
 {
-    dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, receivePort, 0, workQueue->dispatchQueue());
-    dispatch_source_set_event_handler(source, ^{
-        function();
-    });
+    dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, receivePort, 0, workQueue.dispatchQueue());
+    dispatch_source_set_event_handler(source, function);
 
     dispatch_source_set_cancel_handler(source, ^{
         mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
@@ -157,12 +156,17 @@ bool Connection::open()
     setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
 
     // Register the data available handler.
-    m_receivePortDataAvailableSource = createDataAvailableSource(m_receivePort, m_connectionQueue.get(), bind(&Connection::receiveSourceEventHandler, this));
+    RefPtr<Connection> connection(this);
+    m_receivePortDataAvailableSource = createDataAvailableSource(m_receivePort, *m_connectionQueue, [connection] {
+        connection->receiveSourceEventHandler();
+    });
 
 #if !PLATFORM(IOS)
     // If we have an exception port, register the data available handler and send over the port to the other end.
     if (m_exceptionPort) {
-        m_exceptionPortDataAvailableSource = createDataAvailableSource(m_exceptionPort, m_connectionQueue.get(), bind(&Connection::exceptionSourceEventHandler, this));
+        m_exceptionPortDataAvailableSource = createDataAvailableSource(m_exceptionPort, *m_connectionQueue, [connection] {
+            connection->exceptionSourceEventHandler();
+        });
 
         auto encoder = std::make_unique<MessageEncoder>("IPC", "SetExceptionPort", 0);
         encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));

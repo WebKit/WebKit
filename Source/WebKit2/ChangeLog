@@ -1,5 +1,25 @@
 2014-05-10  Anders Carlsson  <andersca@apple.com>
 
+        Simplify createDataAvailableSource
+        https://bugs.webkit.org/show_bug.cgi?id=132782
+        <rdar://problem/16815202>
+
+        Reviewed by Sam Weinig.
+
+        * Platform/IPC/mac/ConnectionMac.mm: Renamed from Source/WebKit2/Platform/IPC/mac/ConnectionMac.cpp.
+        Rename to make this Objective-C++ so we get the lambda-to-block conversion.
+
+        (IPC::createDataAvailableSource):
+        Make this a function template and just pass the function directly to dispatch_source_set_event_handler.
+
+        (IPC::Connection::open):
+        Use lambdas instead of WTF::bind, so we'll make sure the connection is kept alive.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Update for ConnectionMac.cpp to ConnectionMac.mm rename.
+
+2014-05-10  Anders Carlsson  <andersca@apple.com>
+
         Follow-up fix.
 
         Reviewed by Darin Adler.

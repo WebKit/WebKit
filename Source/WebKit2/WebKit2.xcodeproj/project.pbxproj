@@ -180,7 +180,7 @@
 		1A2D956F12848564001EB962 /* ChildProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D956D12848564001EB962 /* ChildProcess.h */; };
 		1A2D957012848564001EB962 /* ChildProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D956E12848564001EB962 /* ChildProcess.cpp */; };
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
-		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
+		1A30EAC6115D7DA30053E937 /* ConnectionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.mm */; };
 		1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */; };
 		1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */; };
 		1A3C888018A5ABAE00C4C962 /* WKPreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */; };
@@ -1990,7 +1990,7 @@
 		1A2D956D12848564001EB962 /* ChildProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcess.h; sourceTree = "<group>"; };
 		1A2D956E12848564001EB962 /* ChildProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildProcess.cpp; sourceTree = "<group>"; };
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
-		1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionMac.cpp; sourceTree = "<group>"; };
+		1A30EAC5115D7DA30053E937 /* ConnectionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ConnectionMac.mm; sourceTree = "<group>"; };
 		1A334DEA16DE8B68006A8E38 /* StorageAreaMap.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageAreaMap.messages.in; sourceTree = "<group>"; };
 		1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaMapMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMapMessages.h; sourceTree = "<group>"; };
@@ -6269,7 +6269,7 @@
 		BCC56F751159955E001CCAF9 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */,
+				1A30EAC5115D7DA30053E937 /* ConnectionMac.mm */,
 				1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */,
 				BCC56F771159957D001CCAF9 /* MachPort.h */,
 			);
@@ -8398,7 +8398,7 @@
 				1A6F9FB711E1408500DB1371 /* CommandLinePOSIX.cpp in Sources */,
 				BC032DAA10F437D10058C15A /* Connection.cpp in Sources */,
 				2DA944A31884E4F000ED86DB /* WebTouchEventIOS.cpp in Sources */,
-				1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */,
+				1A30EAC6115D7DA30053E937 /* ConnectionMac.mm in Sources */,
 				5136183D163126DA00A99DDE /* ConnectionStack.cpp in Sources */,
 				2DA944B91884EA3900ED86DB /* WebBackForwardListProxyIOS.mm in Sources */,
 				515E773318402D510007203F /* UniqueIDBDatabaseIdentifier.cpp in Sources */,
