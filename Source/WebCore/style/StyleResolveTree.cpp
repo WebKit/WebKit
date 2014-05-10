@@ -34,6 +34,7 @@
 #include "FlowThreadController.h"
 #include "InsertionPoint.h"
 #include "LoaderStrategy.h"
+#include "MainFrame.h"
 #include "NodeRenderStyle.h"
 #include "NodeRenderingTraversal.h"
 #include "NodeTraversal.h"
@@ -987,11 +988,9 @@ static void suspendMemoryCacheClientCalls(Document& document)
 
     page->setMemoryCacheClientCallsEnabled(false);
 
-    RefPtr<Document> protectedDocument = &document;
-    postResolutionCallbackQueue().append([protectedDocument]{
-        // FIXME: If the document becomes unassociated with the page during style resolution
-        // then this won't work and the memory cache client calls will be permanently disabled.
-        if (Page* page = protectedDocument->page())
+    RefPtr<MainFrame> protectedMainFrame = &page->mainFrame();
+    postResolutionCallbackQueue().append([protectedMainFrame]{
+        if (Page* page = protectedMainFrame->page())
             page->setMemoryCacheClientCallsEnabled(true);
     });
 }
