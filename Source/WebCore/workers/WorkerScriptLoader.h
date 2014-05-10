@@ -32,7 +32,7 @@
 #include "ResourceRequest.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
-
+#include <memory>
 #include <wtf/FastMalloc.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -77,7 +77,7 @@ namespace WebCore {
         WorkerScriptLoader();
         ~WorkerScriptLoader();
 
-        PassOwnPtr<ResourceRequest> createResourceRequest();
+        std::unique_ptr<ResourceRequest> createResourceRequest();
         void notifyFinished();
 
         WorkerScriptLoaderClient* m_client;

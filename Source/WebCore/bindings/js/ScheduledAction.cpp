@@ -46,7 +46,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperWorld& isolatedWorld, ContentSecurityPolicy* policy)
+std::unique_ptr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperWorld& isolatedWorld, ContentSecurityPolicy* policy)
 {
     JSValue v = exec->argument(0);
     CallData callData;
@@ -56,10 +56,10 @@ PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperW
         String string = v.toString(exec)->value(exec);
         if (exec->hadException())
             return nullptr;
-        return adoptPtr(new ScheduledAction(string, isolatedWorld));
+        return std::unique_ptr<ScheduledAction>(new ScheduledAction(string, isolatedWorld));
     }
 
-    return adoptPtr(new ScheduledAction(exec, v, isolatedWorld));
+    return std::unique_ptr<ScheduledAction>(new ScheduledAction(exec, v, isolatedWorld));
 }
 
 ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWorld& isolatedWorld)

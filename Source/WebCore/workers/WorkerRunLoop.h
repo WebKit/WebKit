@@ -32,9 +32,8 @@
 #define WorkerRunLoop_h
 
 #include "ScriptExecutionContext.h"
+#include <memory>
 #include <wtf/MessageQueue.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -90,7 +89,7 @@ namespace WebCore {
         void runCleanupTasks(WorkerGlobalScope*);
 
         MessageQueue<Task> m_messageQueue;
-        OwnPtr<WorkerSharedTimer> m_sharedTimer;
+        std::unique_ptr<WorkerSharedTimer> m_sharedTimer;
         int m_nestedCount;
         unsigned long m_uniqueId;
     };

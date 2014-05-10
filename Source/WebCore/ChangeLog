@@ -1,3 +1,55 @@
+2014-05-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move Source/WebCore/workers/ code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=132401
+
+        Reviewed by Andreas Kling.
+
+        Replace uses of OwnPtr and PassOwnPtr in code under Source/WebCore/workers (and related places)
+        with std::unique_ptr.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        (WebCore::JSWorkerGlobalScope::setTimeout):
+        (WebCore::JSWorkerGlobalScope::setInterval):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        * bindings/js/ScheduledAction.h:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+        (WebCore::DOMTimer::didStop):
+        * page/DOMTimer.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setTimeout):
+        (WebCore::DOMWindow::setInterval):
+        * page/DOMWindow.h:
+        * workers/WorkerEventQueue.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::setTimeout):
+        (WebCore::WorkerGlobalScope::setInterval):
+        * workers/WorkerGlobalScope.h:
+        (WebCore::WorkerGlobalScope::clearScript):
+        * workers/WorkerLoaderProxy.h:
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::WorkerRunLoop):
+        * workers/WorkerRunLoop.h:
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+        (WebCore::WorkerScriptLoader::createResourceRequest):
+        * workers/WorkerScriptLoader.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        (WebCore::WorkerThreadStartupData::create): Deleted.
+        * workers/WorkerThread.h:
+
 2014-05-09  Dean Jackson  <dino@apple.com>
 
         -webkit-filter prevents rendering at retina scale
