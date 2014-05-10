@@ -1,3 +1,14 @@
+2014-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(CMAKE): [GTK] WebKit2 C API tests are not longer built in the same binary
+        https://bugs.webkit.org/show_bug.cgi?id=132685
+
+        Reviewed by Martin Robinson.
+
+        Use a single TestWebKit2 binary for all WebKit2 C API tests.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+
 2014-05-09  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS] Switch geolocation to an explicit authorization query model
