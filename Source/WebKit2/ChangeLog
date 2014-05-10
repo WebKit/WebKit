@@ -1,3 +1,19 @@
+2014-05-09  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (WebKit2): Tapping in search field at wikipedia.org doesn’t bring up the keyboard.
+        https://bugs.webkit.org/show_bug.cgi?id=132761
+        <rdar://problem/16857491>
+
+        Reviewed by Benjamin Poulain.
+
+        The interactionAssistant accessor should never create an instance of
+        UIWKTextInteractionAssistant, but simply return the value of _textInteractionAssistant.
+        The text interaction assistant should only be created when needed so that the rest of
+        the code could reliably check if we are interacting with text or not.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView interactionAssistant]):
+
 2014-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         Fix some issues with scrolling tree logging
