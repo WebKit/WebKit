@@ -32,8 +32,8 @@ video:-webkit-full-screen, audio:-webkit-full-screen {
     -webkit-transition: none !important;
 }
 
-:-webkit-full-screen video:hover {
-    -webkit-cursor-visibility:auto-hide;
+video:-webkit-full-screen {
+    -webkit-cursor-visibility: auto-hide;
 }
 
 img:-webkit-full-screen {

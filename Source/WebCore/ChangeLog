@@ -1,3 +1,17 @@
+2014-05-09  Dean Jackson  <dino@apple.com>
+
+        [fullscreen] cursor should auto-hide when over video
+        https://bugs.webkit.org/show_bug.cgi?id=132758
+
+        Reviewed by Brent Fulgham.
+
+        Cursors were not auto-hiding over fullscreen video. There was
+        a small error in the CSS we load for fullscreen content.
+
+        * css/fullscreen.css: Don't hide when video is a child of the fullscreen element - hide when it *is* the fullscreen element.
+        (video:-webkit-full-screen):
+        (:-webkit-full-screen video:hover): Deleted.
+
 2014-05-09  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering[iOS]: Top bar on apple.com/support jiggles when the swoosh animates.
