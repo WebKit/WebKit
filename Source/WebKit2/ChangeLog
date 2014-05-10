@@ -1,5 +1,16 @@
 2014-05-10  Anders Carlsson  <andersca@apple.com>
 
+        Follow-up fix.
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKNavigationResponse.h:
+        * UIProcess/API/Cocoa/WKNavigationResponse.mm:
+        (-[WKNavigationResponse isForMainFrame]):
+        Use a slightly better name.
+
+2014-05-10  Anders Carlsson  <andersca@apple.com>
+
         Make -[WKNavigationResponse frame] SPI and only expose -[WKNavigationResponse isMainFrame]
         https://bugs.webkit.org/show_bug.cgi?id=132781
         <rdar://problem/16868319>
