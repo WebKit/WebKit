@@ -1,5 +1,59 @@
 2014-05-10  Anders Carlsson  <andersca@apple.com>
 
+        WebKit2 is leaking an xpc_connection per web process it creates
+        https://bugs.webkit.org/show_bug.cgi?id=132785
+        <rdar://problem/14912160>
+
+        Reviewed by Sam Weinig.
+
+        Introduce an IPC::XPCPtr smart pointer class and use it for XPC connections inside Connection::Identifier and Connection itself.
+
+        Make sure we always adopt any connections that are created.
+
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm:
+        (DatabaseServiceInitializer):
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (WebKit::NetworkServiceInitializerDelegate::NetworkServiceInitializerDelegate):
+        (NetworkServiceInitializer):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::Identifier::Identifier):
+        (IPC::Connection::xpcConnection):
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::platformInitialize):
+        (IPC::Connection::getAuditToken):
+        * Platform/IPC/mac/XPCPtr.h: Added.
+        (IPC::XPCPtr::XPCPtr):
+        (IPC::XPCPtr::~XPCPtr):
+        (IPC::XPCPtr::get):
+        (IPC::XPCPtr::operator!):
+        (IPC::XPCPtr::operator=):
+        (IPC::adoptXPC):
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+        (WebKit::PluginServiceInitializerDelegate::PluginServiceInitializerDelegate):
+        (PluginServiceInitializer):
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.mm:
+        (WebKit::BootstrapMain):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializerDelegate::XPCServiceInitializerDelegate):
+        (WebKit::XPCServiceInitializer):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::hasEntitlement):
+        (WebKit::XPCServiceInitializerDelegate::isClientSandboxed):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        (WebKit::XPCServiceEventHandler):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::didFinishLaunchingProcess):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+
+2014-05-10  Anders Carlsson  <andersca@apple.com>
+
         Simplify createDataAvailableSource
         https://bugs.webkit.org/show_bug.cgi?id=132782
         <rdar://problem/16815202>

@@ -24,7 +24,7 @@
  */
 
 #import <CoreFoundation/CoreFoundation.h>
-#import <xpc/xpc.h>
+#import "XPCPtr.h"
 
 namespace WebKit {
 
@@ -48,14 +48,13 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t);
                 InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKitBundle, entryPointFunctionName));
                 if (!initializerFunctionPtr) {
-                    NSLog(@"Unable to find entry point in WebKit2.framework with name: %@", (NSString *)entryPointFunctionName);
+                    NSLog(@"Unable to find entry point in WebKit.framework with name: %@", (NSString *)entryPointFunctionName);
                     exit(EXIT_FAILURE);
                 }
 
-                xpc_object_t reply = xpc_dictionary_create_reply(event);
-                xpc_dictionary_set_string(reply, "message-name", "process-finished-launching");
-                xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply);
-                xpc_release(reply);
+                auto reply = IPC::adoptXPC(xpc_dictionary_create_reply(event));
+                xpc_dictionary_set_string(reply.get(), "message-name", "process-finished-launching");
+                xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply.get());
 
                 initializerFunctionPtr(peer, event);
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,82 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#ifndef XPCPtr_h
+#define XPCPtr_h
 
-#import "EnvironmentUtilities.h"
-#import "WKBase.h"
-#import "WebProcess.h"
-#import "XPCServiceEntryPoint.h"
-#import <wtf/RunLoop.h>
+#include <xpc/xpc.h>
 
-#if PLATFORM(IOS)
-#import <GraphicsServices/GraphicsServices.h>
-#import <WebCore/WebCoreThreadSystemInterface.h>
-#endif // PLATFORM(IOS)
+namespace IPC {
 
-using namespace WebCore;
-using namespace WebKit;
+struct AdoptXPC { };
 
-extern "C" WK_EXPORT void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
+template<typename T> class XPCPtr {
+public:
+    XPCPtr()
+        : m_ptr(nullptr)
+    {
+    }
 
-void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
+    XPCPtr(AdoptXPC, T ptr)
+        : m_ptr(ptr)
+    {
+    }
+
+    ~XPCPtr()
+    {
+        if (m_ptr)
+            xpc_release(m_ptr);
+    }
+
+    T get() const { return m_ptr; }
+
+    bool operator!() const { return !m_ptr; }
+
+    XPCPtr(const XPCPtr& other)
+        : m_ptr(other.m_ptr)
+    {
+        if (m_ptr)
+            xpc_retain(m_ptr);
+    }
+
+    XPCPtr(XPCPtr&& other)
+        : m_ptr(other.m_ptr)
+    {
+        other.m_ptr = nullptr;
+    }
+
+    XPCPtr& operator=(const XPCPtr& other)
+    {
+        T optr = other.get();
+        if (optr)
+            xpc_retain(optr);
+
+        T ptr = m_ptr;
+        m_ptr = optr;
+
+        if (ptr)
+            xpc_release(ptr);
+
+        return *this;
+    }
+
+    XPCPtr& operator=(std::nullptr_t)
+    {
+        if (m_ptr)
+            xpc_release(m_ptr);
+        m_ptr = nullptr;
+
+        return *this;
+    }
+private:
+    T m_ptr;
+};
+
+template<typename T> inline XPCPtr<T> adoptXPC(T ptr)
 {
-    // Remove the WebProcessShim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
-    // the this process don't try to insert the shim and crash.
-    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
-
-#if PLATFORM(IOS)
-    GSInitialize();
-    InitWebCoreThreadSystemInterface();
-#endif // PLATFORM(IOS)
-
-    XPCServiceInitializer<WebProcess, XPCServiceInitializerDelegate>(IPC::adoptXPC(connection), initializerMessage);
+    return XPCPtr<T>(AdoptXPC { }, ptr);
 }
+
+} // namespace IPC
+
+#endif // XPCPtr_h

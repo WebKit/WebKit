@@ -172,21 +172,20 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 
 static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction, UUIDHolder* instanceUUID)
 {
-    // Create a connection to the WebKit2 XPC service.
-    xpc_connection_t connection = xpc_connection_create(serviceName(launchOptions, forDevelopment), 0);
-    xpc_connection_set_instance(connection, instanceUUID->uuid);
+    // Create a connection to the WebKit XPC service.
+    auto connection = IPC::adoptXPC(xpc_connection_create(serviceName(launchOptions, forDevelopment), 0));
+    xpc_connection_set_instance(connection.get(), instanceUUID->uuid);
 
     // XPC requires having an event handler, even if it is not used.
-    xpc_connection_set_event_handler(connection, ^(xpc_object_t event) { });
-    xpc_connection_resume(connection);
+    xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) { });
+    xpc_connection_resume(connection.get());
 
 #if ENABLE(NETWORK_PROCESS) && !PLATFORM(IOS)
     // Leak a boost onto the NetworkProcess.
     if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
-        xpc_object_t preBootstrapMessage = xpc_dictionary_create(0, 0, 0);
-        xpc_dictionary_set_string(preBootstrapMessage, "message-name", "pre-bootstrap");
-        xpc_connection_send_message(connection, preBootstrapMessage);
-        xpc_release(preBootstrapMessage);
+        auto preBootstrapMessage = IPC::adoptXPC(xpc_dictionary_create(nullptr, nullptr, 0));
+        xpc_dictionary_set_string(preBootstrapMessage.get(), "message-name", "pre-bootstrap");
+        xpc_connection_send_message(connection.get(), preBootstrapMessage.get());
     }
 #endif
 
@@ -200,29 +199,28 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
     CString clientIdentifier = bundleIdentifier ? String([[NSBundle mainBundle] bundleIdentifier]).utf8() : *_NSGetProgname();
 
-    xpc_object_t bootstrapMessage = xpc_dictionary_create(0, 0, 0);
-    xpc_dictionary_set_string(bootstrapMessage, "message-name", "bootstrap");
-    xpc_dictionary_set_string(bootstrapMessage, "framework-executable-path", [[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] executablePath] fileSystemRepresentation]);
-    xpc_dictionary_set_mach_send(bootstrapMessage, "server-port", listeningPort);
-    xpc_dictionary_set_string(bootstrapMessage, "client-identifier", clientIdentifier.data());
-    xpc_dictionary_set_string(bootstrapMessage, "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
+    auto bootstrapMessage = IPC::adoptXPC(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");
+    xpc_dictionary_set_string(bootstrapMessage.get(), "framework-executable-path", [[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] executablePath] fileSystemRepresentation]);
+    xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
+    xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", clientIdentifier.data());
+    xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
 
     if (forDevelopment) {
-        xpc_dictionary_set_fd(bootstrapMessage, "stdout", STDOUT_FILENO);
-        xpc_dictionary_set_fd(bootstrapMessage, "stderr", STDERR_FILENO);
+        xpc_dictionary_set_fd(bootstrapMessage.get(), "stdout", STDOUT_FILENO);
+        xpc_dictionary_set_fd(bootstrapMessage.get(), "stderr", STDERR_FILENO);
     }
 
-    xpc_object_t extraInitializationData = xpc_dictionary_create(0, 0, 0);
-    HashMap<String, String>::const_iterator it = launchOptions.extraInitializationData.begin();
-    HashMap<String, String>::const_iterator end = launchOptions.extraInitializationData.end();
-    for (; it != end; ++it)
-        xpc_dictionary_set_string(extraInitializationData, it->key.utf8().data(), it->value.utf8().data());
-    xpc_dictionary_set_value(bootstrapMessage, "extra-initialization-data", extraInitializationData);
-    xpc_release(extraInitializationData);
+    auto extraInitializationData = IPC::adoptXPC(xpc_dictionary_create(nullptr, nullptr, 0));
+
+    for (const auto& keyValuePair : launchOptions.extraInitializationData)
+        xpc_dictionary_set_string(extraInitializationData.get(), keyValuePair.key.utf8().data(), keyValuePair.value.utf8().data());
+
+    xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
     that->ref();
 
-    xpc_connection_send_message_with_reply(connection, bootstrapMessage, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(xpc_object_t reply) {
+    xpc_connection_send_message_with_reply(connection.get(), bootstrapMessage.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(xpc_object_t reply) {
         xpc_type_t type = xpc_get_type(reply);
         if (type == XPC_TYPE_ERROR) {
             // We failed to launch. Release the send right.
@@ -237,15 +235,14 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
             ASSERT(!strcmp(xpc_dictionary_get_string(reply, "message-name"), "process-finished-launching"));
 
             // The process has finished launching, grab the pid from the connection.
-            pid_t processIdentifier = xpc_connection_get_pid(connection);
+            pid_t processIdentifier = xpc_connection_get_pid(connection.get());
 
-            // We've finished launching the process, message back to the main run loop.
+            // We've finished launching the process, message back to the main run loop. This takes ownership of the connection.
             RunLoop::main().dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, IPC::Connection::Identifier(listeningPort, connection)));
         }
 
         that->deref();
     });
-    xpc_release(bootstrapMessage);
 }
 
 static void connectToReExecService(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
@@ -257,6 +254,8 @@ static void connectToReExecService(const ProcessLauncher::LaunchOptions& launchO
     // FIXME: This UUID should be stored on the ChildProcessProxy.
     RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
 
+    // FIXME: It would be nice if we could use XPCPtr for this connection as well, but we'd have to be careful
+    // not to introduce any retain cycles in the call to xpc_connection_set_event_handler below.
     xpc_connection_t reExecConnection = xpc_connection_create(serviceName(launchOptions, true), 0);
     xpc_connection_set_instance(reExecConnection, instanceUUID->uuid);
 

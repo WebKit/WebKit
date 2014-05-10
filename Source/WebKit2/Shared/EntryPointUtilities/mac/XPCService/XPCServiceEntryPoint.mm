@@ -95,20 +95,16 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
 
 bool XPCServiceInitializerDelegate::hasEntitlement(const char* entitlement)
 {
-    xpc_object_t value = xpc_connection_copy_entitlement_value(m_connection, entitlement);
+    auto value = IPC::adoptXPC(xpc_connection_copy_entitlement_value(m_connection.get(), entitlement));
     if (!value)
         return false;
 
-    bool result = xpc_get_type(value) == XPC_TYPE_BOOL && xpc_bool_get_value(value);
-
-    xpc_release(value);
-
-    return result;
+    return xpc_get_type(value.get()) == XPC_TYPE_BOOL && xpc_bool_get_value(value.get());
 }
 
 bool XPCServiceInitializerDelegate::isClientSandboxed()
 {
-    pid_t clientPID = xpc_connection_get_pid(m_connection);
+    pid_t clientPID = xpc_connection_get_pid(m_connection.get());
 
     return sandbox_check(clientPID, nullptr, SANDBOX_FILTER_NONE);
 }

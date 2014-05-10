@@ -80,10 +80,7 @@ void Connection::platformInvalidate()
     }
 #endif
 
-    if (m_xpcConnection) {
-        xpc_release(m_xpcConnection);
-        m_xpcConnection = 0;
-    }
+    m_xpcConnection = nullptr;
 }
 
 void Connection::platformInitialize(Identifier identifier)
@@ -105,10 +102,6 @@ void Connection::platformInitialize(Identifier identifier)
     m_receivePortDataAvailableSource = nullptr;
 
     m_xpcConnection = identifier.xpcConnection;
-    // FIXME: Instead of explicitly retaining the connection here, Identifier::xpcConnection
-    // should just be a smart pointer.
-    if (m_xpcConnection)
-        xpc_retain(m_xpcConnection);
 }
 
 template<typename Function>
@@ -520,13 +513,13 @@ IPC::Connection::Identifier Connection::identifier() const
 {
     return Identifier(m_isServer ? m_receivePort : m_sendPort, m_xpcConnection);
 }
-    
+
 bool Connection::getAuditToken(audit_token_t& auditToken)
 {
     if (!m_xpcConnection)
         return false;
     
-    xpc_connection_get_audit_token(m_xpcConnection, &auditToken);
+    xpc_connection_get_audit_token(m_xpcConnection.get(), &auditToken);
     return true;
 }
     

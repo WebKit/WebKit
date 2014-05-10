@@ -59,7 +59,7 @@ static int BootstrapMain(int argc, char** argv)
 
     static void* frameworkLibrary = dlopen(argv[1], RTLD_NOW);
     if (!frameworkLibrary) {
-        NSLog(@"Unable to load WebKit2.framework: %s\n", dlerror());
+        NSLog(@"Unable to load WebKit.framework: %s\n", dlerror());
         return EXIT_FAILURE;
     }
 
@@ -73,7 +73,7 @@ static int BootstrapMain(int argc, char** argv)
 
         bootstrapMainFunction = reinterpret_cast<BootstrapMainFunction>(dlsym(frameworkLibrary, [entryPointFunctionName UTF8String]));
         if (!bootstrapMainFunction) {
-            NSLog(@"Unable to find entry point '%s' in WebKit2.framework: %s\n", [entryPointFunctionName UTF8String], dlerror());
+            NSLog(@"Unable to find entry point '%s' in WebKit.framework: %s\n", [entryPointFunctionName UTF8String], dlerror());
             return EXIT_FAILURE;
         }
     }

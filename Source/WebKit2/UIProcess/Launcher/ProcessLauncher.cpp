@@ -57,11 +57,6 @@ void ProcessLauncher::didFinishLaunchingProcess(PlatformProcessIdentifier proces
 #if OS(DARWIN)
         if (identifier.port)
             mach_port_mod_refs(mach_task_self(), identifier.port, MACH_PORT_RIGHT_RECEIVE, -1);
-
-        if (identifier.xpcConnection) {
-            xpc_release(identifier.xpcConnection);
-            identifier.xpcConnection = 0;
-        }
 #endif
         return;
     }

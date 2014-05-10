@@ -28,14 +28,14 @@
 
 #import "ChildProcess.h"
 #import "WebKit2Initialize.h"
-#import <xpc/xpc.h>
+#import "XPCPtr.h"
 
 namespace WebKit {
 
 class XPCServiceInitializerDelegate {
 public:
-    XPCServiceInitializerDelegate(xpc_connection_t connection, xpc_object_t initializerMessage)
-        : m_connection(connection)
+    XPCServiceInitializerDelegate(IPC::XPCPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+        : m_connection(std::move(connection))
         , m_initializerMessage(initializerMessage)
     {
     }
@@ -55,14 +55,14 @@ protected:
     bool hasEntitlement(const char* entitlement);
     bool isClientSandboxed();
 
-    xpc_connection_t m_connection;
+    IPC::XPCPtr<xpc_connection_t> m_connection;
     xpc_object_t m_initializerMessage;
 };
 
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
-void XPCServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
+void XPCServiceInitializer(IPC::XPCPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
-    XPCServiceInitializerDelegateType delegate(connection, initializerMessage);
+    XPCServiceInitializerDelegateType delegate(std::move(connection), initializerMessage);
 
     // We don't want XPC to be in charge of whether the process should be terminated or not,
     // so ensure that we have an outstanding transaction here.

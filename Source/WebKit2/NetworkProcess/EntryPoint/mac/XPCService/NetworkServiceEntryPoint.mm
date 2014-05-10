@@ -34,8 +34,8 @@ namespace WebKit {
 
 class NetworkServiceInitializerDelegate : public XPCServiceInitializerDelegate {
 public:
-    NetworkServiceInitializerDelegate(xpc_connection_t connection, xpc_object_t initializerMessage)
-        : XPCServiceInitializerDelegate(connection, initializerMessage)
+    NetworkServiceInitializerDelegate(IPC::XPCPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+        : XPCServiceInitializerDelegate(std::move(connection), initializerMessage)
     {
     }
 };
@@ -53,6 +53,6 @@ void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initial
     // the this process don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
 
-    XPCServiceInitializer<NetworkProcess, NetworkServiceInitializerDelegate>(connection, initializerMessage);
+    XPCServiceInitializer<NetworkProcess, NetworkServiceInitializerDelegate>(IPC::adoptXPC(connection), initializerMessage);
 #endif
 }
