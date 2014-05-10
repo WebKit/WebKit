@@ -196,6 +196,12 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
         return true;
     }
 
+    // After this point it is no longer valid to cache any results because of
+    // the impure nature of the property accesses which follow. We can move this 
+    // statement further down when we add ways to mitigate these impurities with, 
+    // for example, watchpoints.
+    slot.disableCaching();
+
     // Check for child frames by name before built-in properties to
     // match Mozilla. This does not match IE, but some sites end up
     // naming frames things that conflict with window properties that

@@ -1,3 +1,19 @@
+2014-05-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSDOMWindow should disable property caching after a certain point
+        https://bugs.webkit.org/show_bug.cgi?id=132751
+
+        Reviewed by Filip Pizlo.
+
+        No new tests.
+
+        This is part of removing HasImpureGetOwnPropertySlot from JSDOMWindow. After the lookup in the static 
+        hash table for JSDOMWindow fails we want to disable property caching even if the code that follows thinks 
+        that it has provided a cacheable value.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+
 2014-05-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the export file after r168556

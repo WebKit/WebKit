@@ -56,12 +56,18 @@ class PropertySlot {
         TypeCustomIndex
     };
 
+    enum CacheabilityType {
+        CachingDisallowed,
+        CachingAllowed
+    };
+
 public:
     explicit PropertySlot(const JSValue thisValue)
         : m_propertyType(TypeUnset)
         , m_offset(invalidOffset)
         , m_thisValue(thisValue)
         , m_watchpointSet(nullptr)
+        , m_cacheability(CachingAllowed)
     {
     }
 
@@ -71,13 +77,18 @@ public:
     JSValue getValue(ExecState*, PropertyName) const;
     JSValue getValue(ExecState*, unsigned propertyName) const;
 
-    bool isCacheable() const { return m_offset != invalidOffset; }
+    bool isCacheable() const { return m_cacheability == CachingAllowed && m_offset != invalidOffset; }
     bool isValue() const { return m_propertyType == TypeValue; }
     bool isAccessor() const { return m_propertyType == TypeGetter; }
     bool isCustom() const { return m_propertyType == TypeCustom; }
     bool isCacheableValue() const { return isCacheable() && isValue(); }
     bool isCacheableGetter() const { return isCacheable() && isAccessor(); }
     bool isCacheableCustom() const { return isCacheable() && isCustom(); }
+
+    void disableCaching()
+    {
+        m_cacheability = CachingDisallowed;
+    }
 
     unsigned attributes() const { return m_attributes; }
 
@@ -244,6 +255,7 @@ private:
     const JSValue m_thisValue;
     JSObject* m_slotBase;
     WatchpointSet* m_watchpointSet;
+    CacheabilityType m_cacheability;
 };
 
 } // namespace JSC
