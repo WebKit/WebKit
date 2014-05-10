@@ -261,9 +261,11 @@ using namespace WebKit;
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, _obscuredInsets);
     CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
 
-    CGFloat scaleFactor = [_scrollView zoomScale];
-
-    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates unobscuredRectInScrollViewCoordinates:unobscuredRect scale:scaleFactor inStableState:YES isChangingObscuredInsetsInteractively:NO];
+    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates
+        unobscuredRect:unobscuredRectInContentCoordinates
+        unobscuredRectInScrollViewCoordinates:unobscuredRect
+        scale:[_scrollView zoomScale] minimumScale:[_scrollView minimumZoomScale]
+        inStableState:YES isChangingObscuredInsetsInteractively:NO];
 }
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView

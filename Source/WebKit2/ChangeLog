@@ -1,3 +1,28 @@
+2014-05-09  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fixed elements can go outside the document on pinching
+        https://bugs.webkit.org/show_bug.cgi?id=132759
+        <rdar://problem/16870835>
+
+        Reviewed by Benjamin Poulain.
+        
+        Constrain the rect used to position fixed position objects when pinching (when
+        the scale goes below the minimumScale). Do so in such a way that there's a smooth
+        transition between rubber-banding and pinching.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateScrollViewBackground]): Use a nicer form for std::max<>.
+        (-[WKWebView _updateVisibleContentRects]): Pass the minimum scale.
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _updateVisibleContentRects]): Ditto.
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (adjustedUnexposedEdge): Helper to adjust the left/top.
+        (adjustedUnexposedMaxEdge): Helper to adjust the right/bottom.
+        (fixedPositionRectFromExposedRect):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:minimumScale:inStableState:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:inStableState:]): Deleted.
+
 2014-05-09  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering[iOS]: Top bar on apple.com/support jiggles when the swoosh animates.

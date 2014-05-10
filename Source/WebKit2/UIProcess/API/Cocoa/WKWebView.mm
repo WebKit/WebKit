@@ -447,7 +447,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
     CGFloat minimumZoomScale = [_scrollView minimumZoomScale];
     if (zoomScale < minimumZoomScale) {
         CGFloat slope = 12;
-        CGFloat opacity = std::max(1 - slope * (minimumZoomScale - zoomScale), static_cast<CGFloat>(0));
+        CGFloat opacity = std::max<CGFloat>(1 - slope * (minimumZoomScale - zoomScale), 0);
         cgColor = adoptCF(CGColorCreateCopyWithAlpha(cgColor.get(), opacity));
     }
     RetainPtr<UIColor*> uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cgColor.get()]);
@@ -779,7 +779,11 @@ static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProx
     CGFloat scaleFactor = contentZoomScale(self);
 
     BOOL isStableState = !(_isChangingObscuredInsetsInteractively || [_scrollView isDragging] || [_scrollView isDecelerating] || [_scrollView isZooming] || [_scrollView isZoomBouncing] || [_scrollView _isAnimatingZoom]);
-    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates unobscuredRectInScrollViewCoordinates:unobscuredRect scale:scaleFactor inStableState:isStableState isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively];
+    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates
+        unobscuredRect:unobscuredRectInContentCoordinates
+        unobscuredRectInScrollViewCoordinates:unobscuredRect
+        scale:scaleFactor minimumScale:[_scrollView minimumZoomScale]
+        inStableState:isStableState isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively];
 }
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView
