@@ -32,7 +32,7 @@
 #include "ExceptionCode.h"
 #include "JSNavigatorUserMediaErrorCallback.h"
 #include "JSNavigatorUserMediaSuccessCallback.h"
-#include "NavigatorMediaStream.h"
+#include "NavigatorUserMedia.h"
 
 using namespace JSC;
 
@@ -72,7 +72,7 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
     RefPtr<NavigatorUserMediaSuccessCallback> successCallback = JSNavigatorUserMediaSuccessCallback::create(asObject(exec->uncheckedArgument(1)), castedThis->globalObject());
     Navigator& impl = castedThis->impl();
     ExceptionCode ec = 0;
-    NavigatorMediaStream::webkitGetUserMedia(&impl, options, successCallback, errorCallback, ec);
+    NavigatorUserMedia::webkitGetUserMedia(&impl, options, successCallback, errorCallback, ec);
     setDOMException(exec, ec);
     return jsUndefined();
 }

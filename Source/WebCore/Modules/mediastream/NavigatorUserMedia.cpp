@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "NavigatorMediaStream.h"
+#include "NavigatorUserMedia.h"
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -38,15 +38,15 @@
 
 namespace WebCore {
 
-NavigatorMediaStream::NavigatorMediaStream()
+NavigatorUserMedia::NavigatorUserMedia()
 {
 }
 
-NavigatorMediaStream::~NavigatorMediaStream()
+NavigatorUserMedia::~NavigatorUserMedia()
 {
 }
 
-void NavigatorMediaStream::webkitGetUserMedia(Navigator* navigator, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback, ExceptionCode& ec)
+void NavigatorUserMedia::webkitGetUserMedia(Navigator* navigator, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback, ExceptionCode& ec)
 {
     if (!successCallback)
         return;

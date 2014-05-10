@@ -1,3 +1,32 @@
+2014-05-10  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        [MediaStream] Rename NavigatorMediaStream as NavigatorUserMedia.
+        https://bugs.webkit.org/show_bug.cgi?id=132734
+
+        Reviewed by Eric Carlson.
+
+        Spec: http://www.w3.org/TR/mediacapture-streams/#navigatorusermedia
+
+        This patch replaces 'NavigatorMediaStream' with 'NavigatorUserMedia'
+        throughout the code to be consistent with W3C specifications.
+        Test cases remain the same as 'Navigator' implies 'NavigatorUserMedia'.
+
+        * CMakeLists.txt: Compiles NavigatorUserMedia.cpp
+        * DerivedSources.make: Compiles NavigatorUserMedia.idl
+        * Modules/mediastream/NavigatorMediaStream.cpp: Removed.
+        * Modules/mediastream/NavigatorMediaStream.h: Removed.
+        * Modules/mediastream/NavigatorMediaStream.idl: Removed.
+        * Modules/mediastream/NavigatorUserMedia.cpp: Added.
+        (WebCore::NavigatorUserMedia::NavigatorUserMedia):
+        (WebCore::NavigatorUserMedia::~NavigatorUserMedia):
+        (WebCore::NavigatorUserMedia::webkitGetUserMedia):
+        * Modules/mediastream/NavigatorUserMedia.h: Added.
+        * Modules/mediastream/NavigatorUserMedia.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::JSNavigator::webkitGetUserMedia): NavigatorUserMedia
+        class is used instead of NavigatorMediaStream.
+
 2014-05-10  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Empty rects should remain empty after integrally enclosing them.

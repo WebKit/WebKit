@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef NavigatorMediaStream_h
-#define NavigatorMediaStream_h
+#ifndef NavigatorUserMedia_h
+#define NavigatorUserMedia_h
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -34,17 +34,17 @@ class NavigatorUserMediaSuccessCallback;
 
 typedef int ExceptionCode;
 
-class NavigatorMediaStream {
+class NavigatorUserMedia {
 public:
     static void webkitGetUserMedia(Navigator*, const Dictionary&, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
 
 private:
-    NavigatorMediaStream();
-    ~NavigatorMediaStream();
+    NavigatorUserMedia();
+    ~NavigatorUserMedia();
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // NavigatorMediaStream_h
+#endif // NavigatorUserMedia_h
