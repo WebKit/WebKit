@@ -66,12 +66,13 @@ td { text-align: left; }
         didFinishLastIteration: function () {
             var sum = values.reduce(function (a, b) { return a + b; }, 0);
             var arithmeticMean = sum / values.length;
-            addResult('Arithmetic Mean', arithmeticMean.toFixed(2) + 'ms');
+            var meanLabel = arithmeticMean.toFixed(2) + ' ms';
             if (window.Statistics) {
                 var delta = Statistics.confidenceIntervalDelta(0.95, values.length, sum, Statistics.squareSum(values));
                 var precentDelta = delta * 100 / arithmeticMean;
-                addResult('95th Percentile', delta.toFixed(2) + ' ms (' + precentDelta.toFixed(2) + '%)');
+                meanLabel += ' \xb1 ' + delta.toFixed(2) + ' ms (' + precentDelta.toFixed(2) + '%)';
             }
+            addResult('Arithmetic Mean', meanLabel);
             progressContainer.parentNode.removeChild(progressContainer);
         }
     }

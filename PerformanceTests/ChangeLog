@@ -1,3 +1,15 @@
+2014-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DYEBench should show 95th percentile right next to the mean with ±
+        https://bugs.webkit.org/show_bug.cgi?id=132729
+
+        Reviewed by Darin Adler.
+
+        Before this patch, Full.html showed the 95th percentile delta for the arthemtic mean in a separate row
+        but this was confusing for some people. Show it right next to mean in the same row separated by ±.
+
+        * DoYouEvenBench/Full.html:
+
 2014-05-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         DYEBench should use TodoMVC to test FlightJS for consistency
