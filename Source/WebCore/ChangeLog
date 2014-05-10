@@ -17,6 +17,15 @@
         [fullscreen] cursor should auto-hide when over video
         https://bugs.webkit.org/show_bug.cgi?id=132758
 
+        Unreviewed followup based on test failure.
+
+        * css/fullscreen.css: Append the previous rule - video children of fullscreen elements.
+
+2014-05-09  Dean Jackson  <dino@apple.com>
+
+        [fullscreen] cursor should auto-hide when over video
+        https://bugs.webkit.org/show_bug.cgi?id=132758
+
         Reviewed by Brent Fulgham.
 
         Cursors were not auto-hiding over fullscreen video. There was
