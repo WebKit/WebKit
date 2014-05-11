@@ -359,7 +359,7 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const FloatPoint& pos
     if (m_insetClipLayer && m_scrolledContentsLayer && topContentInset) {
         m_insetClipLayer.get().position = FloatPoint(0, FrameView::yPositionForInsetClipLayer(position, topContentInset));
         m_scrolledContentsLayer.get().position = FloatPoint(m_scrolledContentsLayer.get().position.x,
-            FrameView::yPositionForRootContentLayer(position, topContentInset));
+            FrameView::yPositionForRootContentLayer(position, topContentInset, headerHeight()));
     }
 
     if (m_headerLayer || m_footerLayer) {
@@ -371,10 +371,11 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const FloatPoint& pos
             horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
 
         if (m_headerLayer)
-            m_headerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, 0);
+            m_headerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, FrameView::yPositionForHeaderLayer(position, topContentInset));
 
         if (m_footerLayer)
-            m_footerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, totalContentsSize().height() - footerHeight());
+            m_footerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner,
+                FrameView::yPositionForFooterLayer(position, topContentInset, totalContentsSize().height(), footerHeight()));
     }
 
     if (m_verticalScrollbarPainter || m_horizontalScrollbarPainter) {
