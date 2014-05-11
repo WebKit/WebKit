@@ -173,7 +173,9 @@ public:
 
     Identifier identifier() const;
 
+#if PLATFORM(COCOA)
     bool kill();
+#endif
 
 private:
     Connection(Identifier, bool isServer, Client*, WTF::RunLoop& clientRunLoop);

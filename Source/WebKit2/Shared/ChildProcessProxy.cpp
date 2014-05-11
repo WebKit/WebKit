@@ -65,8 +65,10 @@ void ChildProcessProxy::connect()
 
 void ChildProcessProxy::terminate()
 {
+#if PLATFORM(COCOA)
     if (m_connection && m_connection->kill())
         return;
+#endif
 
     // FIXME: We should really merge process launching into IPC connection creation and get rid of the process launcher.
     if (m_processLauncher)

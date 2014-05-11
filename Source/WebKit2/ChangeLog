@@ -1,3 +1,11 @@
+2014-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] URTBF after r168585.
+
+        * Platform/IPC/Connection.h:
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::terminate):
+
 2014-05-10  Tim Horton  <timothy_horton@apple.com>
 
         [WKWebView _updateScrollViewBackground] churns UI-and-CGColors while repainting
