@@ -336,9 +336,9 @@ void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
 
     for (auto& context : m_contextsToFlush)
         CGContextFlush(context.get());
+    m_hasFlushed = true;
 
     m_connection->sendMessage(std::move(m_commitEncoder));
-    m_hasFlushed = true;
 }
 
 } // namespace WebKit

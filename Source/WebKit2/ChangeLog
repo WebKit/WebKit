@@ -1,3 +1,23 @@
+2014-05-10  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] REGRESSION (r168493): Canvasmark 2013 benchmark always hits the RELEASE_ASSERT in RemoteLayerTreeDrawingArea::flushLayers()
+        https://bugs.webkit.org/show_bug.cgi?id=132783
+        <rdar://problem/16877326>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush):
+        There's a race window between the BackingStoreFlusher sending the new
+        layer tree to the UI process and updating m_hasFlushed where we can
+        get a reply back in (on the Web process main thread) from the UI process
+        that we committed the new layer tree (didUpdate).
+        This will cause the RELEASE_ASSERT in flushLayers() to fire incorrectly.
+        Since the RELEASE_ASSERT is there only to avoid painting garbage, move
+        our code to set m_hasFlushed=true to after we finish calling CGContextFlush
+        on all of the contexts, instead of after we send the layer tree commit message,
+        which will remove the race entirely.
+
 2014-05-10  Anders Carlsson  <andersca@apple.com>
 
         ASSERTION FAILED: !m_connection under RunJavaScriptAlert
