@@ -1,222 +1,238 @@
-#!/usr/bin/python
-
 # This code is original from jsmin by Douglas Crockford, it was translated to
-# Python by Baruch Even. The original code had the following copyright and
-# license.
+# Python by Baruch Even. It was rewritten by Dave St.Germain for speed.
 #
-# /* jsmin.c
-#    2007-05-22
+# The MIT License (MIT)
 #
-# Copyright (c) 2002 Douglas Crockford  (www.crockford.com)
+# Copyright (c) 2013 Dave St.Germain
 #
-# Permission is hereby granted, free of charge, to any person obtaining a copy of
-# this software and associated documentation files (the "Software"), to deal in
-# the Software without restriction, including without limitation the rights to
-# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-# of the Software, and to permit persons to whom the Software is furnished to do
-# so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# The Software shall be used for Good, not Evil.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-# */
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 
-# Import StringIO from either the StringIO module (Python 2.x) or the io module (Python 3.x).
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+
+import sys
+is_3 = sys.version_info >= (3, 0)
+if is_3:
+    import io
+else:
+    import StringIO
+    try:
+        import cStringIO
+    except ImportError:
+        cStringIO = None
+
+
+__all__ = ['jsmin', 'JavascriptMinify']
+__version__ = '2.0.9'
+
 
 def jsmin(js):
-    ins = StringIO(js)
-    outs = StringIO()
-    JavascriptMinify().minify(ins, outs)
-    str = outs.getvalue()
-    if len(str) > 0 and str[0] == '\n':
-        str = str[1:]
-    return str
-
-def isAlphanum(c):
-    """return true if the character is a letter, digit, underscore,
-           dollar sign, or non-ASCII character.
     """
-    return ((c >= 'a' and c <= 'z') or (c >= '0' and c <= '9') or
-            (c >= 'A' and c <= 'Z') or c == '_' or c == '$' or c == '\\' or (c is not None and ord(c) > 126));
+    returns a minified version of the javascript string
+    """
+    if not is_3:
+        if cStringIO and not isinstance(js, unicode):
+            # strings can use cStringIO for a 3x performance
+            # improvement, but unicode (in python2) cannot
+            klass = cStringIO.StringIO
+        else:
+            klass = StringIO.StringIO
+    else:
+        klass = io.StringIO
+    ins = klass(js)
+    outs = klass()
+    JavascriptMinify(ins, outs).minify()
+    return outs.getvalue()
 
-class UnterminatedComment(Exception):
-    pass
-
-class UnterminatedStringLiteral(Exception):
-    pass
-
-class UnterminatedRegularExpression(Exception):
-    pass
 
 class JavascriptMinify(object):
+    """
+    Minify an input stream of javascript, writing
+    to an output stream
+    """
 
-    def _outA(self):
-        self.outstream.write(self.theA)
-    def _outB(self):
-        self.outstream.write(self.theB)
+    def __init__(self, instream=None, outstream=None):
+        self.ins = instream
+        self.outs = outstream
 
-    def _get(self):
-        """return the next character from stdin. Watch out for lookahead. If
-           the character is a control character, translate it to a space or
-           linefeed.
-        """
-        c = self.theLookahead
-        self.theLookahead = None
-        if c == None:
-            c = self.instream.read(1)
-        if c >= ' ' or c == '\n':
-            return c
-        if c == '': # EOF
-            return '\000'
-        if c == '\r':
-            return '\n'
-        return ' '
+    def minify(self, instream=None, outstream=None):
+        if instream and outstream:
+            self.ins, self.outs = instream, outstream
 
-    def _peek(self):
-        self.theLookahead = self._get()
-        return self.theLookahead
+        self.is_return = False
+        self.return_buf = ''
 
-    def _next(self):
-        """get the next character, excluding comments. peek() is used to see
-           if an unescaped '/' is followed by a '/' or '*'.
-        """
-        c = self._get()
-        if c == '/' and self.theA != '\\':
-            p = self._peek()
-            if p == '/':
-                c = self._get()
-                while c > '\n':
-                    c = self._get()
-                return c
-            if p == '*':
-                c = self._get()
-                while 1:
-                    c = self._get()
-                    if c == '*':
-                        if self._peek() == '/':
-                            self._get()
-                            return ' '
-                    if c == '\000':
-                        raise UnterminatedComment()
+        def write(char):
+            # all of this is to support literal regular expressions.
+            # sigh
+            if char in 'return':
+                self.return_buf += char
+                self.is_return = self.return_buf == 'return'
+            self.outs.write(char)
+            if self.is_return:
+                self.return_buf = ''
 
-        return c
+        read = self.ins.read
 
-    def _action(self, action):
-        """do something! What you do is determined by the argument:
-           1   Output A. Copy B to A. Get the next B.
-           2   Copy B to A. Get the next B. (Delete A).
-           3   Get the next B. (Delete B).
-           action treats a string as a single character. Wow!
-           action recognizes a regular expression if it is preceded by ( or , or =.
-        """
-        if action <= 1:
-            self._outA()
+        space_strings = "abcdefghijklmnopqrstuvwxyz"\
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$\\"
+        starters, enders = '{[(+-', '}])+-"\''
+        newlinestart_strings = starters + space_strings
+        newlineend_strings = enders + space_strings
+        do_newline = False
+        do_space = False
+        escape_slash_count = 0
+        doing_single_comment = False
+        previous_before_comment = ''
+        doing_multi_comment = False
+        in_re = False
+        in_quote = ''
+        quote_buf = []
 
-        if action <= 2:
-            self.theA = self.theB
-            if self.theA == "'" or self.theA == '"':
-                while 1:
-                    self._outA()
-                    self.theA = self._get()
-                    if self.theA == self.theB:
-                        break
-                    if self.theA <= '\n':
-                        raise UnterminatedStringLiteral()
-                    if self.theA == '\\':
-                        self._outA()
-                        self.theA = self._get()
-
-
-        if action <= 3:
-            self.theB = self._next()
-            if self.theB == '/' and (self.theA == '(' or self.theA == ',' or
-                                     self.theA == '=' or self.theA == ':' or
-                                     self.theA == '[' or self.theA == '?' or
-                                     self.theA == '!' or self.theA == '&' or
-                                     self.theA == '|' or self.theA == ';' or
-                                     self.theA == '{' or self.theA == '}' or
-                                     self.theA == '\n'):
-                self._outA()
-                self._outB()
-                while 1:
-                    self.theA = self._get()
-                    if self.theA == '/':
-                        break
-                    elif self.theA == '\\':
-                        self._outA()
-                        self.theA = self._get()
-                    elif self.theA <= '\n':
-                        raise UnterminatedRegularExpression()
-                    self._outA()
-                self.theB = self._next()
-
-
-    def _jsmin(self):
-        """Copy the input to the output, deleting the characters which are
-           insignificant to JavaScript. Comments will be removed. Tabs will be
-           replaced with spaces. Carriage returns will be replaced with linefeeds.
-           Most spaces and linefeeds will be removed.
-        """
-        self.theA = '\n'
-        self._action(3)
-
-        while self.theA != '\000':
-            if self.theA == ' ':
-                if isAlphanum(self.theB):
-                    self._action(1)
-                else:
-                    self._action(2)
-            elif self.theA == '\n':
-                if self.theB in ['{', '[', '(', '+', '-']:
-                    self._action(1)
-                elif self.theB == ' ':
-                    self._action(3)
-                else:
-                    if isAlphanum(self.theB):
-                        self._action(1)
-                    else:
-                        self._action(2)
+        previous = read(1)
+        if previous == '\\':
+            escape_slash_count += 1
+        next1 = read(1)
+        if previous == '/':
+            if next1 == '/':
+                doing_single_comment = True
+            elif next1 == '*':
+                doing_multi_comment = True
+                previous = next1
+                next1 = read(1)
             else:
-                if self.theB == ' ':
-                    if isAlphanum(self.theA):
-                        self._action(1)
-                    else:
-                        self._action(3)
-                elif self.theB == '\n':
-                    if self.theA in ['}', ']', ')', '+', '-', '"', '\'']:
-                        self._action(1)
-                    else:
-                        if isAlphanum(self.theA):
-                            self._action(1)
+                write(previous)
+        elif not previous:
+            return
+        elif previous >= '!':
+            if previous in "'\"":
+                in_quote = previous
+            write(previous)
+            previous_non_space = previous
+        else:
+            previous_non_space = ' '
+        if not next1:
+            return
+
+        while 1:
+            next2 = read(1)
+            if not next2:
+                last = next1.strip()
+                if not (doing_single_comment or doing_multi_comment)\
+                    and last not in ('', '/'):
+                    if in_quote:
+                        write(''.join(quote_buf))
+                    write(last)
+                break
+            if doing_multi_comment:
+                if next1 == '*' and next2 == '/':
+                    doing_multi_comment = False
+                    next2 = read(1)
+            elif doing_single_comment:
+                if next1 in '\r\n':
+                    doing_single_comment = False
+                    while next2 in '\r\n':
+                        next2 = read(1)
+                        if not next2:
+                            break
+                    if previous_before_comment in ')}]':
+                        do_newline = True
+                    elif previous_before_comment in space_strings:
+                        write('\n')
+            elif in_quote:
+                quote_buf.append(next1)
+
+                if next1 == in_quote:
+                    numslashes = 0
+                    for c in reversed(quote_buf[:-1]):
+                        if c != '\\':
+                            break
                         else:
-                            self._action(3)
+                            numslashes += 1
+                    if numslashes % 2 == 0:
+                        in_quote = ''
+                        write(''.join(quote_buf))
+            elif next1 in '\r\n':
+                if previous_non_space in newlineend_strings \
+                    or previous_non_space > '~':
+                    while 1:
+                        if next2 < '!':
+                            next2 = read(1)
+                            if not next2:
+                                break
+                        else:
+                            if next2 in newlinestart_strings \
+                                or next2 > '~' or next2 == '/':
+                                do_newline = True
+                            break
+            elif next1 < '!' and not in_re:
+                if (previous_non_space in space_strings \
+                    or previous_non_space > '~') \
+                    and (next2 in space_strings or next2 > '~'):
+                    do_space = True
+                elif previous_non_space in '-+' and next2 == previous_non_space:
+                    # protect against + ++ or - -- sequences
+                    do_space = True
+                elif self.is_return and next2 == '/':
+                    # returning a regex...
+                    write(' ')
+            elif next1 == '/':
+                if do_space:
+                    write(' ')
+                if in_re:
+                    if previous != '\\' or (not escape_slash_count % 2) or next2 in 'gimy':
+                        in_re = False
+                    write('/')
+                elif next2 == '/':
+                    doing_single_comment = True
+                    previous_before_comment = previous_non_space
+                elif next2 == '*':
+                    doing_multi_comment = True
+                    previous = next1
+                    next1 = next2
+                    next2 = read(1)
                 else:
-                    self._action(1)
+                    in_re = previous_non_space in '(,=:[?!&|' or self.is_return  # literal regular expression
+                    write('/')
+            else:
+                if do_space:
+                    do_space = False
+                    write(' ')
+                if do_newline:
+                    write('\n')
+                    do_newline = False
 
-    def minify(self, instream, outstream):
-        self.instream = instream
-        self.outstream = outstream
-        self.theA = '\n'
-        self.theB = None
-        self.theLookahead = None
+                write(next1)
+                if not in_re and next1 in "'\"":
+                    in_quote = next1
+                    quote_buf = []
 
-        self._jsmin()
-        self.instream.close()
+            previous = next1
+            next1 = next2
+
+            if previous >= '!':
+                previous_non_space = previous
+
+            if previous == '\\':
+                escape_slash_count += 1
+            else:
+                escape_slash_count = 0
 
 if __name__ == '__main__':
-    import sys
-    jsm = JavascriptMinify()
-    jsm.minify(sys.stdin, sys.stdout)
+    minifier = JavascriptMinify(sys.stdin, sys.stdout)
+    minifier.minify()
+    sys.stdout.write('\n')

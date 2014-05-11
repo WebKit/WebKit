@@ -1,3 +1,15 @@
+2014-05-09  Alberto Garcia  <berto@igalia.com>
+
+        jsmin.py license header confusing, mentions non-free license
+        https://bugs.webkit.org/show_bug.cgi?id=123665
+
+        Reviewed by Darin Adler.
+
+        Pull the most recent version from upstream, which has a clear
+        license.
+
+        * Scripts/jsmin.py:
+
 2014-01-30  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: Implement open/close Console window shortcut
