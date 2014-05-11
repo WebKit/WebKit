@@ -30,8 +30,8 @@
 #include "ContentSecurityPolicy.h"
 #include "GroupSettings.h"
 #include "WorkerRunLoop.h"
+#include <memory>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -92,7 +92,7 @@ namespace WebCore {
         RefPtr<WorkerGlobalScope> m_workerGlobalScope;
         Mutex m_threadCreationMutex;
 
-        OwnPtr<WorkerThreadStartupData> m_startupData;
+        std::unique_ptr<WorkerThreadStartupData> m_startupData;
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
         NotificationClient* m_notificationClient;

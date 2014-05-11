@@ -58,10 +58,10 @@ static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
         && nestingLevel == 1; // Gestures should not be forwarded to nested timers.
 }
 
-DOMTimer::DOMTimer(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> action, int interval, bool singleShot)
+DOMTimer::DOMTimer(ScriptExecutionContext* context, std::unique_ptr<ScheduledAction> action, int interval, bool singleShot)
     : SuspendableTimer(context)
     , m_nestingLevel(timerNestingLevel + 1)
-    , m_action(action)
+    , m_action(std::move(action))
     , m_originalInterval(interval)
     , m_shouldForwardUserGesture(shouldForwardUserGesture(interval, m_nestingLevel))
 {
@@ -83,12 +83,12 @@ DOMTimer::~DOMTimer()
         scriptExecutionContext()->removeTimeout(m_timeoutId);
 }
 
-int DOMTimer::install(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> action, int timeout, bool singleShot)
+int DOMTimer::install(ScriptExecutionContext* context, std::unique_ptr<ScheduledAction> action, int timeout, bool singleShot)
 {
     // DOMTimer constructor links the new timer into a list of ActiveDOMObjects held by the 'context'.
     // The timer is deleted when context is deleted (DOMTimer::contextDestroyed) or explicitly via DOMTimer::removeById(),
     // or if it is a one-time timer and it has fired (DOMTimer::fired).
-    DOMTimer* timer = new DOMTimer(context, action, timeout, singleShot);
+    DOMTimer* timer = new DOMTimer(context, std::move(action), timeout, singleShot);
 #if PLATFORM(IOS)
     if (context->isDocument()) {
         Document& document = toDocument(*context);
@@ -157,7 +157,7 @@ void DOMTimer::fired()
     }
 
     // Delete timer before executing the action for one-shot timers.
-    OwnPtr<ScheduledAction> action = m_action.release();
+    std::unique_ptr<ScheduledAction> action = std::move(m_action);
 
     // No access to member variables after this point.
     delete this;
@@ -207,7 +207,7 @@ void DOMTimer::didStop()
     // Need to release JS objects potentially protected by ScheduledAction
     // because they can form circular references back to the ScriptExecutionContext
     // which will cause a memory leak.
-    m_action.clear();
+    m_action = nullptr;
 }
 
 void DOMTimer::adjustMinimumTimerInterval(double oldMinimumTimerInterval)
