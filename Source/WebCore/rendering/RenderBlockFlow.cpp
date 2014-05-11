@@ -2872,6 +2872,12 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
     if (logicalTop >= logicalBottom)
         return;
 
+    // Floats currently affect the choice whether to use simple line layout path.
+    if (m_simpleLineLayout) {
+        invalidateLineLayoutPath();
+        return;
+    }
+
     RootInlineBox* lowestDirtyLine = lastRootBox();
     RootInlineBox* afterLowest = lowestDirtyLine;
     while (lowestDirtyLine && lowestDirtyLine->lineBottomWithLeading() >= logicalBottom && logicalBottom < LayoutUnit::max()) {

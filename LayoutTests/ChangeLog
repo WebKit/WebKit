@@ -1,3 +1,15 @@
+2014-05-11  Antti Koivisto  <antti@apple.com>
+
+        Text with simple line layout not getting pushed below float when there is not enough space for it
+        https://bugs.webkit.org/show_bug.cgi?id=126991
+
+        Reviewed by Andreas Kling.
+
+        * fast/text/simple-lines-intruding-wide-float-dynamic-expected.html: Added.
+        * fast/text/simple-lines-intruding-wide-float-dynamic.html: Added.
+        * fast/text/simple-lines-intruding-wide-float-expected.html: Added.
+        * fast/text/simple-lines-intruding-wide-float.html: Added.
+
 2014-05-10  Alexey Proskuryakov  <ap@apple.com>
 
         Multiple svg-in-object-placeholder-height tests fail

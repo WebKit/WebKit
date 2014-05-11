@@ -1,3 +1,27 @@
+2014-05-11  Antti Koivisto  <antti@apple.com>
+
+        Text with simple line layout not getting pushed below float when there is not enough space for it
+        https://bugs.webkit.org/show_bug.cgi?id=126991
+
+        Reviewed by Andreas Kling.
+
+        Tests: fast/text/simple-lines-intruding-wide-float-dynamic.html
+               fast/text/simple-lines-intruding-wide-float.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::markLinesDirtyInBlockRange):
+        
+            Invalidate the line layout path when floats change. We need to check SimpleLineLayout::canUseFor again as
+            intruding floats may make this flow ineligible to use the path.
+
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::floatingObjectSet):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        
+            Test the top positions of all floats for case that would push text below the float instead of just testing 
+            the first line. We may have floats in the middle of the paragraph too.
+
 2014-05-11  peavo@outlook.com  <peavo@outlook.com>
 
         WinCairo crashes on acid3 test

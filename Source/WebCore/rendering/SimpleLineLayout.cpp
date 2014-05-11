@@ -162,9 +162,13 @@ bool canUseFor(const RenderBlockFlow& flow)
     const RenderText& textRenderer = toRenderText(*flow.firstChild());
     if (flow.containsFloats()) {
         // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
-        // It is enough to test the first line width only as currently all floats must be overhanging.
-        if (textRenderer.minLogicalWidth() > LineWidth(const_cast<RenderBlockFlow&>(flow), false, DoNotIndentText).availableWidth())
-            return false;
+        float minimumWidthNeeded = textRenderer.minLogicalWidth();
+        for (auto& floatRenderer : *flow.floatingObjectSet()) {
+            ASSERT(floatRenderer);
+            float availableWidth = flow.availableLogicalWidthForLine(floatRenderer->y(), false);
+            if (availableWidth < minimumWidthNeeded)
+                return false;
+        }
     }
     if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isTextFragment()
         || textRenderer.isSVGInlineText())
