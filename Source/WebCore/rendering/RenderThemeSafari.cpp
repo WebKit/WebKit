@@ -810,7 +810,7 @@ void RenderThemeSafari::paintMenuListButtonGradients(const RenderObject& o, cons
     paintInfo.context->restore();
 }
 
-bool RenderThemeSafari::paintMenuListButtonDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeSafari::paintMenuListButtonDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     IntRect bounds = IntRect(rect.x() + renderer.style().borderLeftWidth(),
         rect.y() + renderer.style().borderTopWidth(),

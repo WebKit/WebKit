@@ -1267,7 +1267,7 @@ void RenderThemeMac::paintMenuListButtonGradients(const RenderObject& o, const P
     }
 }
 
-bool RenderThemeMac::paintMenuListButtonDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeMac::paintMenuListButtonDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     IntRect bounds = IntRect(rect.x() + renderer.style().borderLeftWidth(),
         rect.y() + renderer.style().borderTopWidth(),

@@ -89,7 +89,7 @@ public:
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&);
 
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&);

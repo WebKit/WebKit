@@ -863,9 +863,9 @@ void RenderThemeEfl::adjustMenuListButtonStyle(StyleResolver* styleResolver, Ren
     adjustMenuListStyle(styleResolver, style, element);
 }
 
-bool RenderThemeEfl::paintMenuListButtonDecorations(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintMenuListButtonDecorations(const RenderObject& object, const PaintInfo& info, const FloatRect& rect)
 {
-    return paintMenuList(object, info, rect);
+    return paintMenuList(object, info, IntRect(rect));
 }
 
 void RenderThemeEfl::adjustTextFieldStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const

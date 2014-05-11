@@ -794,7 +794,7 @@ bool RenderThemeWin::paintMenuList(const RenderObject& renderer, const PaintInfo
 
     drawControl(paintInfo.context, renderer, theme, ThemeData(part, determineState(renderer)), rect);
     
-    return paintMenuListButtonDecorations(renderer, paintInfo, rect);
+    return paintMenuListButtonDecorations(renderer, paintInfo, FloatRect(rect));
 }
 
 void RenderThemeWin::adjustMenuListStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
@@ -834,7 +834,7 @@ void RenderThemeWin::adjustMenuListButtonStyle(StyleResolver* styleResolver, Ren
     style->setWhiteSpace(PRE);
 }
 
-bool RenderThemeWin::paintMenuListButtonDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeWin::paintMenuListButtonDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     // FIXME: Don't make hardcoded assumptions about the thickness of the textfield border.
     int borderThickness = haveTheme ? 1 : 2;

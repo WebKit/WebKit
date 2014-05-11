@@ -476,7 +476,7 @@ bool RenderTheme::paintDecorations(const RenderObject& renderer, const PaintInfo
     // Call the appropriate paint method based off the appearance value.
     switch (renderer.style().appearance()) {
     case MenulistButtonPart:
-        return paintMenuListButtonDecorations(renderer, paintInfo, integralSnappedRect);
+        return paintMenuListButtonDecorations(renderer, paintInfo, devicePixelSnappedRect);
     case TextFieldPart:
         return paintTextFieldDecorations(renderer, paintInfo, devicePixelSnappedRect);
     case TextAreaPart:

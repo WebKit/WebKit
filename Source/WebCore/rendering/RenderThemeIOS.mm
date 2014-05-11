@@ -583,7 +583,7 @@ void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* styl
     }
 }
 
-bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     RenderStyle& style = box.style();
     float borderTopWidth = style.borderTopWidth();
@@ -637,7 +637,7 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderObject& box, con
         int count = 3;
         int padding = 3;
 
-        IntRect ellipse(buttonClip.x() + (buttonClip.width() - count * (size + padding) + padding) / 2.0, buttonClip.maxY() - 10.0, size, size);
+        FloatRect ellipse(buttonClip.x() + (buttonClip.width() - count * (size + padding) + padding) / 2.0, buttonClip.maxY() - 10.0, size, size);
 
         for (int i = 0; i < count; ++i) {
             paintInfo.context->drawRaisedEllipse(ellipse, Color::white, ColorSpaceDeviceRGB, Color(0.0f, 0.0f, 0.0f, 0.5f), ColorSpaceDeviceRGB);

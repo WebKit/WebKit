@@ -1,3 +1,46 @@
+2014-05-11  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering[iOS]: <select> decoration is misaligned when the renderer is on subpixel position.
+        https://bugs.webkit.org/show_bug.cgi?id=132779
+        <rdar://problem/16631071>
+
+        Reviewed by Simon Fraser.
+
+        Push <select> theme decoration's rect to device pixel position to ensure
+        that the theme bounds are aligned with the renderer's bounds. (in painting terms)
+        However, as the decoration code paints multiple items, they all need to use snapped 
+        final coordinates for painting : tracked here https://bugs.webkit.org/show_bug.cgi?id=132780
+        This patch also changes the padding values for <select> [iOS] to compensate for the integer
+        truncation that happened before subpixel. 
+
+        Not testable.
+
+        * css/html.css:
+        (select):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintMenuListButtonDecorations):
+        * platform/efl/RenderThemeEfl.h:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintMenuListButtonDecorations):
+        * platform/gtk/RenderThemeGtk.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintDecorations):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintMenuListButtonDecorations):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonDecorations):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMenuListButtonDecorations):
+        * rendering/RenderThemeSafari.h:
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::paintMenuList):
+        (WebCore::RenderThemeWin::paintMenuListButtonDecorations):
+        * rendering/RenderThemeWin.h:
+
 2014-05-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Move Source/WebCore/workers/ code to std::unique_ptr

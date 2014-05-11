@@ -105,7 +105,7 @@ protected:
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&);
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&);
