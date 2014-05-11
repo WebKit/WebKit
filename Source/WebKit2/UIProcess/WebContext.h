@@ -95,15 +95,19 @@ int webProcessLatencyQOS();
 int webProcessThroughputQOS();
 #endif
 
+struct WebContextConfiguration {
+    String injectedBundlePath;
+};
+
 class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private IPC::MessageReceiver
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , private PluginInfoStoreClient
 #endif
     {
 public:
-    WebContext(const String& injectedBundlePath);
-
-    static PassRefPtr<WebContext> create(const String& injectedBundlePath);
+    WebContext(WebContextConfiguration);
+        
+    static PassRefPtr<WebContext> create(WebContextConfiguration);
     virtual ~WebContext();
 
     static const Vector<WebContext*>& allContexts();

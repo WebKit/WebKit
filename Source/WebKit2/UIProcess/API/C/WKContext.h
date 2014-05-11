@@ -102,6 +102,7 @@ WK_EXPORT WKTypeID WKContextGetTypeID();
 
 WK_EXPORT WKContextRef WKContextCreate();
 WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path);
+WK_EXPORT WKContextRef WKContextCreateWithConfiguration(WKContextConfigurationRef configuration);
 
 WK_EXPORT void WKContextSetClient(WKContextRef context, const WKContextClientBase* client);
 WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKContextInjectedBundleClientBase* client);

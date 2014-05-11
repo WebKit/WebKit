@@ -101,6 +101,7 @@ public:
         CacheManager,
         ColorPickerResultListener,
         Context,
+        ContextConfiguration,
         CookieManager,
         DatabaseManager,
         Download,

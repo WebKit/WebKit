@@ -116,15 +116,16 @@ enum : NSUInteger {
     InitWebCoreThreadSystemInterface();
 #endif
 
-    String bundlePath;
+    WebKit::WebContextConfiguration webContextConfiguration;
+
     if (NSURL *bundleURL = [_configuration injectedBundleURL]) {
         if (!bundleURL.isFileURL)
             [NSException raise:NSInvalidArgumentException format:@"Injected Bundle URL must be a file URL"];
 
-        bundlePath = bundleURL.path;
+        webContextConfiguration.injectedBundlePath = bundleURL.path;
     }
 
-    API::Object::constructInWrapper<WebKit::WebContext>(self, bundlePath);
+    API::Object::constructInWrapper<WebKit::WebContext>(self, std::move(webContextConfiguration));
     _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());
     _context->setUsesNetworkProcess(true);
     _context->setProcessModel(WebKit::ProcessModelMultipleSecondaryProcesses);

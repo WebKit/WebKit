@@ -27,11 +27,13 @@
 #include "WKContextPrivate.h"
 
 #include "APIClient.h"
+#include "APIContextConfiguration.h"
 #include "APIDownloadClient.h"
 #include "APIHistoryClient.h"
 #include "APINavigationData.h"
 #include "APIURLRequest.h"
 #include "WKAPICast.h"
+#include "WKContextConfigurationRef.h"
 #include "WKRetainPtr.h"
 #include "WebContext.h"
 #include <wtf/PassRefPtr.h>
@@ -75,14 +77,20 @@ WKTypeID WKContextGetTypeID()
 
 WKContextRef WKContextCreate()
 {
-    RefPtr<WebContext> context = WebContext::create(String());
-    return toAPI(context.release().leakRef());
+    return WKContextCreateWithConfiguration(adoptWK(WKContextConfigurationCreate()).get());
 }
 
 WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
 {
-    RefPtr<WebContext> context = WebContext::create(toImpl(pathRef)->string());
-    return toAPI(context.release().leakRef());
+    auto configuration = adoptWK(WKContextConfigurationCreate());
+    WKContextConfigurationSetInjectedBundlePath(configuration.get(), pathRef);
+
+    return WKContextCreateWithConfiguration(configuration.get());
+}
+
+WKContextRef WKContextCreateWithConfiguration(WKContextConfigurationRef configuration)
+{
+    return toAPI(WebContext::create(toImpl(configuration)->webContextConfiguration()).leakRef());
 }
 
 void WKContextSetClient(WKContextRef contextRef, const WKContextClientBase* wkClient)

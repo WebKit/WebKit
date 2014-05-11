@@ -1,3 +1,79 @@
+2014-05-11  Anders Carlsson  <andersca@apple.com>
+
+        Add a WKContextConfigurationRef object and make the injected bundle path part of the configuration
+        https://bugs.webkit.org/show_bug.cgi?id=132806
+        <rdar://problem/16830143>
+
+        Reviewed by Beth Dakin.
+
+        Many setters on WKContextRef really only make sense to set early on, so move to a pattern where we create a
+        configuration object, a WKContextConfiguration which WKContexts can be created from. Add the injected bundle path
+        as a configuration property. More setters will follow.
+
+        * Shared/API/c/WKBase.h:
+        Add WKContextConfigurationRef.
+
+        * Shared/APIObject.h:
+        Add ContextConfiguration enum declaration.
+
+        * UIProcess/API/C/WKAPICast.h:
+        Handle WKContextConfigurationRef.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextCreate):
+        Create an empty WKContextConfigurationRef object and pass it to WKContextCreateWithConfiguration.
+
+        (WKContextCreateWithInjectedBundlePath):
+        Create a WKContextConfigurationRef object, set its bundle path and pass the configuration to WKContextCreateWithConfiguration.
+
+        (WKContextCreateWithConfiguration):
+        Convert the WKContextConfigurationRef object to a WebContextConfiguration and pass it to WebContext::create.
+
+        * UIProcess/API/C/WKContext.h:
+        Add WKContextCreateWithConfiguration.
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp: Added.
+        (WKContextConfigurationCreate):
+        Create an API::ContextConfiguration object.
+
+        (WKContextConfigurationCopyInjectedBundlePath):
+        Return the injected bundle path.
+
+        (WKContextConfigurationSetInjectedBundlePath):
+        Set the injected bundle path.
+
+        * UIProcess/API/C/WKContextConfigurationRef.h: Added.
+        New C SPI header.
+        
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        Construct a WebContextConfiguration object and pass it to WebContext::Create.
+    
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _initWithConfiguration:]):
+        Construct a WebContextConfiguration object and pass it to WebContext::Create.
+
+        * UIProcess/APIContextConfiguration.cpp: Added.
+        New API::ContextConfiguration object.
+
+        (API::ContextConfiguration::webContextConfiguration):
+        Construct a WebContextConfiguration struct from our current configuration.
+
+        * UIProcess/APIContextConfiguration.h: Added.
+        
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::create):
+        Pass the WebContextConfiguration to the constructor.
+
+        (WebKit::WebContext::WebContext):
+        Set the injected bundle path from the WebContextConfiguration object.
+
+        * UIProcess/WebContext.h:
+        Change the WebContext constructor and create function to take a WebContextConfiguration object.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2014-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] URTBF after r168585.

@@ -117,10 +117,10 @@ static const double sharedSecondaryProcessShutdownTimeout = 60;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webContextCounter, ("WebContext"));
 
-PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
+PassRefPtr<WebContext> WebContext::create(WebContextConfiguration configuration)
 {
     InitializeWebKit2();
-    return adoptRef(new WebContext(injectedBundlePath));
+    return adoptRef(new WebContext(std::move(configuration)));
 }
 
 static Vector<WebContext*>& contexts()
@@ -134,13 +134,13 @@ const Vector<WebContext*>& WebContext::allContexts()
     return contexts();
 }
 
-WebContext::WebContext(const String& injectedBundlePath)
+WebContext::WebContext(WebContextConfiguration configuration)
     : m_processModel(ProcessModelSharedSecondaryProcess)
     , m_webProcessCountLimit(UINT_MAX)
     , m_haveInitialEmptyProcess(false)
     , m_processWithPageCache(0)
     , m_defaultPageGroup(WebPageGroup::createNonNull())
-    , m_injectedBundlePath(injectedBundlePath)
+    , m_injectedBundlePath(configuration.injectedBundlePath)
     , m_downloadClient(std::make_unique<API::DownloadClient>())
     , m_historyClient(std::make_unique<API::HistoryClient>())
     , m_visitedLinkProvider(VisitedLinkProvider::create())

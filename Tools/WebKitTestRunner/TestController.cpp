@@ -33,6 +33,7 @@
 #include "TestInvocation.h"
 #include <WebKit2/WKAuthenticationChallenge.h>
 #include <WebKit2/WKAuthenticationDecisionListener.h>
+#include <WebKit2/WKContextConfigurationRef.h>
 #include <WebKit2/WKContextPrivate.h>
 #include <WebKit2/WKCredential.h>
 #include <WebKit2/WKIconDatabase.h>
@@ -326,7 +327,10 @@ void TestController::initialize(int argc, const char* argv[])
     WKRetainPtr<WKStringRef> pageGroupIdentifier(AdoptWK, WKStringCreateWithUTF8CString("WebKitTestRunnerPageGroup"));
     m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
 
-    m_context.adopt(WKContextCreateWithInjectedBundlePath(injectedBundlePath()));
+    auto configuration = adoptWK(WKContextConfigurationCreate());
+    WKContextConfigurationSetInjectedBundlePath(configuration.get(), injectedBundlePath());
+
+    m_context = adoptWK(WKContextCreateWithConfiguration(configuration.get()));
     m_geolocationProvider = adoptPtr(new GeolocationProviderMock(m_context.get()));
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)

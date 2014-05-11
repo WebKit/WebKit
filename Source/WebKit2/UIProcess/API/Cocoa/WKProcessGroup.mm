@@ -189,7 +189,10 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     InitWebCoreThreadSystemInterface();
 #endif
 
-    _context = WebContext::create(bundleURL ? String([bundleURL path]) : String());
+    WebContextConfiguration webContextConfiguration;
+    webContextConfiguration.injectedBundlePath = bundleURL ? String(bundleURL.path) : String();
+
+    _context = WebContext::create(std::move(webContextConfiguration));
 
     setUpConnectionClient(self, toAPI(_context.get()));
     setUpInectedBundleClient(self, toAPI(_context.get()));

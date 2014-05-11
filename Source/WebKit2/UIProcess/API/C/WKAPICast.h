@@ -51,6 +51,7 @@
 #include <WebCore/Settings.h>
 
 namespace API {
+class ContextConfiguration;
 class NavigationData;
 }
 
@@ -111,6 +112,7 @@ WK_ADD_API_MAPPING(WKBundleHitTestResultMediaType, BundleHitTestResultMediaType)
 WK_ADD_API_MAPPING(WKResourceCacheManagerRef, WebResourceCacheManagerProxy)
 WK_ADD_API_MAPPING(WKColorPickerResultListenerRef, WebColorPickerResultListenerProxy)
 WK_ADD_API_MAPPING(WKContextRef, WebContext)
+WK_ADD_API_MAPPING(WKContextConfigurationRef, API::ContextConfiguration)
 WK_ADD_API_MAPPING(WKCookieManagerRef, WebCookieManagerProxy)
 WK_ADD_API_MAPPING(WKCredentialRef, WebCredential)
 WK_ADD_API_MAPPING(WKDatabaseManagerRef, WebDatabaseManagerProxy)
