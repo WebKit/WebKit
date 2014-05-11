@@ -196,6 +196,10 @@ void CurlCacheManager::didReceiveResponse(ResourceHandle* job, ResourceResponse&
     if (m_disabled)
         return;
 
+    ResourceHandleInternal* d = job->getInternal();
+    if (d->m_cancelled)
+        return;
+
     String url = job->firstRequest().url().string();
 
     if (response.httpStatusCode() == 304) {
@@ -245,6 +249,16 @@ HTTPHeaderMap& CurlCacheManager::requestHeaders(const String& url)
 {
     ASSERT(isCached(url));
     return m_index.find(url)->value->requestHeaders();
+}
+
+bool CurlCacheManager::getCachedResponse(const String& url, ResourceResponse& response)
+{
+    HashMap<String, std::unique_ptr<CurlCacheEntry>>::iterator it = m_index.find(url);
+    if (it != m_index.end()) {
+        it->value->setResponseFromCachedHeaders(response);
+        return true;
+    }
+    return false;
 }
 
 void CurlCacheManager::didReceiveData(const String& url, const char* data, size_t size)

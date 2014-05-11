@@ -47,6 +47,7 @@ public:
 
     bool isCached(const String&);
     HTTPHeaderMap& requestHeaders(const String&); // Load headers
+    bool getCachedResponse(const String& url, ResourceResponse&);
 
     void didReceiveResponse(ResourceHandle*, ResourceResponse&);
     void didReceiveData(const String&, const char*, size_t); // Save data

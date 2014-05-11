@@ -1,3 +1,22 @@
+2014-05-11  peavo@outlook.com  <peavo@outlook.com>
+
+        WinCairo crashes on acid3 test
+        https://bugs.webkit.org/show_bug.cgi?id=131364
+
+        Reviewed by Brent Fulgham.
+
+        When the 304 (Not-modified) response is received, the Curl backend should look up the cached response,
+        and call the client method didReceiveResponse with the cached response, instead of the 304 response.
+        Otherwise the response will contain an empty MIME type, which causes the request to be cancelled, and the client deleted.
+        When the Curl cache manager then accesses the client afterwards, it is deleted, and we crash.
+
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::didReceiveResponse): Return early if request is cancelled.
+        (WebCore::CurlCacheManager::getCachedResponse): Added method to get cached response.
+        * platform/network/curl/CurlCacheManager.h: Ditto.
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback): When 304 response is received, look up cached response, and use it.
+
 2014-05-10  Tim Horton  <timothy_horton@apple.com>
 
         [WKWebView _updateScrollViewBackground] churns UI-and-CGColors while repainting
