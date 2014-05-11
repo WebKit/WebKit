@@ -9,6 +9,9 @@ if (ENABLE_WEBKIT2)
         "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml"
         "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt"
     )
+endif ()
+
+if (ENABLE_GTKDOC)
     install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk/html/
             DESTINATION ${CMAKE_INSTALL_DATADIR}/gtk-doc/html/webkit2gtk
     )
@@ -24,15 +27,20 @@ macro(ADD_GTKDOC_GENERATOR _stamp_name _extra_args)
     )
 endmacro()
 
-add_gtkdoc_generator("docs-build-no-html.stamp" "--skip-html")
-add_custom_target(gtkdoc-no-html ALL
-    DEPENDS "${CMAKE_BINARY_DIR}/docs-build-no-html.stamp"
-)
-
 add_gtkdoc_generator("docs-build.stamp" "")
-add_custom_target(gtkdoc
-    DEPENDS "${CMAKE_BINARY_DIR}/docs-build.stamp"
-)
+if (ENABLE_GTKDOC)
+    add_custom_target(gtkdoc ALL DEPENDS "${CMAKE_BINARY_DIR}/docs-build.stamp")
+else ()
+    add_custom_target(gtkdoc DEPENDS "${CMAKE_BINARY_DIR}/docs-build.stamp")
+
+    # Add a default build step which check that documentation does not have any warnings
+    # or errors. This is useful to prevent breaking documentation inadvertently during
+    # the course of development.
+    if (DEVELOPER_MODE)
+        add_gtkdoc_generator("docs-build-no-html.stamp" "--skip-html")
+        add_custom_target(gtkdoc-no-html ALL DEPENDS "${CMAKE_BINARY_DIR}/docs-build-no-html.stamp")
+    endif ()
+endif ()
 
 add_custom_target(check
     COMMAND ${TOOLS_DIR}/Scripts/run-gtk-tests

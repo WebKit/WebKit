@@ -17,6 +17,7 @@ CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT2 32 0 7)
 CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 16 2 16)
 
 set(ENABLE_CREDENTIAL_STORAGE ON CACHE BOOL "Whether or not to enable support for credential storage using libsecret.")
+set(ENABLE_GTKDOC OFF CACHE BOOL "Whether or not to use generate gtkdoc.")
 
 # FIXME: We want to expose fewer options to downstream, but for now everything is public.
 WEBKIT_OPTION_BEGIN()

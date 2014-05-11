@@ -1,3 +1,20 @@
+2014-05-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] Unable to do make install
+        https://bugs.webkit.org/show_bug.cgi?id=130188
+
+        Reviewed by Carlos Garcia Campos.
+
+        Only try to install the HTML documentation if the build is configured to generate it via
+        the new ENABLE_GTKDOC option. We cannot conditionally install something, so this allows us
+        to keep the HTML documentation directory as an installation source.
+
+        * Source/PlatformGTK.cmake: The gtkdoc target now always builds HTML documentation, but
+        is only added to the default target when ENABLE_GTKDOC is turned on. gtkdoc-no-html is
+        now only added to the default target when DEVELOPER_MODE is true and ENABLE_GTKDOC is
+        false. When both ENABLE_GTKDOC and DEVELOPER_MODE are false, documentation isn't built at all.
+        * Source/cmake/OptionsGTK.cmake: Add an ENABLE_GTKDOC option to the build.
+
 2014-05-09  Anders Carlsson  <andersca@apple.com>
 
         Rename WebKit2.framework to WebKit.framework
