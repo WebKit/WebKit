@@ -125,6 +125,8 @@
     BOOL _allowsBackForwardNavigationGestures;
 
     RetainPtr<UIView <WKWebViewContentProvider>> _customContentView;
+
+    WebCore::Color _scrollViewBackgroundColor;
 #endif
 #if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
@@ -442,16 +444,20 @@ static CGFloat contentZoomScale(WKWebView* webView)
 - (void)_updateScrollViewBackground
 {
     WebCore::Color color = _page->pageExtendedBackgroundColor();
-    RetainPtr<CGColorRef> cgColor = cachedCGColor(color, WebCore::ColorSpaceDeviceRGB);
-
     CGFloat zoomScale = contentZoomScale(self);
     CGFloat minimumZoomScale = [_scrollView minimumZoomScale];
     if (zoomScale < minimumZoomScale) {
         CGFloat slope = 12;
         CGFloat opacity = std::max<CGFloat>(1 - slope * (minimumZoomScale - zoomScale), 0);
-        cgColor = adoptCF(CGColorCreateCopyWithAlpha(cgColor.get(), opacity));
+        color = WebCore::colorWithOverrideAlpha(color.rgb(), opacity);
     }
-    RetainPtr<UIColor*> uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cgColor.get()]);
+
+    if (_scrollViewBackgroundColor == color)
+        return;
+
+    _scrollViewBackgroundColor = color;
+
+    RetainPtr<UIColor*> uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color, WebCore::ColorSpaceDeviceRGB)]);
     _mainExtendedBackgroundView.backgroundColor = uiBackgroundColor.get();
     _extendedBackgroundLayerTopInset.backgroundColor = uiBackgroundColor.get();
     _extendedBackgroundLayerBottomInset.backgroundColor = uiBackgroundColor.get();

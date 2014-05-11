@@ -1,5 +1,19 @@
 2014-05-10  Tim Horton  <timothy_horton@apple.com>
 
+        [WKWebView _updateScrollViewBackground] churns UI-and-CGColors while repainting
+        https://bugs.webkit.org/show_bug.cgi?id=132793
+        <rdar://problem/16877870>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateScrollViewBackground]):
+        Don't bypass the cache and make a copy of the CGColor just to set its alpha.
+        Cache the last color and don't bother creating a UIColor nor updating the
+        color on our views if it hasn't changed.
+
+2014-05-10  Tim Horton  <timothy_horton@apple.com>
+
         Implement -forwardingTargetForSelector on WKScrollViewDelegateForwarder
         https://bugs.webkit.org/show_bug.cgi?id=132790
         <rdar://problem/16877802>
