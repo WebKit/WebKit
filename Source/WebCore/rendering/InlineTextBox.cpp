@@ -979,9 +979,6 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
     UNUSED_PARAM(textPainter);
 #endif
 
-    // FIXME: We should improve this rule and not always just assume 1.
-    const float textDecorationThickness = 1.f;
-
     if (m_truncation == cFullTruncation)
         return;
 
@@ -1004,9 +1001,8 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
     bool isPrinting = renderer().document().printing();
 
     const float textDecorationBaseFontSize = 16;
-    float fontSizeScaling = renderer().style().fontSize() / textDecorationBaseFontSize;
-    float strokeThickness = roundf(textDecorationThickness * fontSizeScaling);
-    context.setStrokeThickness(strokeThickness);
+    float textDecorationThickness = renderer().style().fontSize() / textDecorationBaseFontSize;
+    context.setStrokeThickness(textDecorationThickness);
 
     bool linesAreOpaque = !isPrinting && (!(decoration & TextDecorationUnderline) || underline.alpha() == 255) && (!(decoration & TextDecorationOverline) || overline.alpha() == 255) && (!(decoration & TextDecorationLineThrough) || linethrough.alpha() == 255);
 
