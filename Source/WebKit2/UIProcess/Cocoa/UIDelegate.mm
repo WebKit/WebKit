@@ -38,6 +38,57 @@
 
 namespace WebKit {
 
+class CompletionHandlerCallChecker : public WTF::ThreadSafeRefCounted<CompletionHandlerCallChecker> {
+public:
+    static PassRefPtr<CompletionHandlerCallChecker> create(id delegate, SEL delegateMethodSelector)
+    {
+        return adoptRef(new CompletionHandlerCallChecker(object_getClass(delegate), delegateMethodSelector));
+    }
+
+    ~CompletionHandlerCallChecker()
+    {
+        if (m_didCallCompletionHandler)
+            return;
+
+        Class delegateClass = classImplementingDelegateMethod();
+        [NSException raise:NSInternalInconsistencyException format:@"Completion handler passed to %c[%@ %@] was not called", class_isMetaClass(delegateClass) ? '+' : '-', NSStringFromClass(delegateClass), NSStringFromSelector(m_delegateMethodSelector)];
+    }
+
+    void didCallCompletionHandler()
+    {
+        ASSERT(!m_didCallCompletionHandler);
+        m_didCallCompletionHandler = true;
+    }
+
+private:
+    CompletionHandlerCallChecker(Class delegateClass, SEL delegateMethodSelector)
+        : m_delegateClass(delegateClass)
+        , m_delegateMethodSelector(delegateMethodSelector)
+        , m_didCallCompletionHandler(false)
+    {
+    }
+
+    Class classImplementingDelegateMethod() const
+    {
+        Class delegateClass = m_delegateClass;
+        Method delegateMethod = class_getInstanceMethod(delegateClass, m_delegateMethodSelector);
+
+        for (Class superclass = class_getSuperclass(delegateClass); superclass; superclass = class_getSuperclass(superclass)) {
+            if (class_getInstanceMethod(superclass, m_delegateMethodSelector) != delegateMethod)
+                break;
+
+            delegateClass = superclass;
+        }
+
+        return delegateClass;
+    }
+
+    Class m_delegateClass;
+    SEL m_delegateMethodSelector;
+    bool m_didCallCompletionHandler;
+};
+
+
 UIDelegate::UIDelegate(WKWebView *webView)
     : m_webView(webView)
 {
@@ -123,8 +174,10 @@ void UIDelegate::UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::
         return;
     }
 
-    [delegate webView:m_uiDelegate.m_webView runJavaScriptAlertPanelWithMessage:message initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler] {
+    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:));
+    [delegate webView:m_uiDelegate.m_webView runJavaScriptAlertPanelWithMessage:message initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler, checker] {
         completionHandler();
+        checker->didCallCompletionHandler();
     }];
 }
 
@@ -141,8 +194,10 @@ void UIDelegate::UIClient::runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF
         return;
     }
 
-    [delegate webView:m_uiDelegate.m_webView runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler](BOOL result) {
+    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:));
+    [delegate webView:m_uiDelegate.m_webView runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler, checker](BOOL result) {
         completionHandler(result);
+        checker->didCallCompletionHandler();
     }];
 }
 
@@ -159,8 +214,10 @@ void UIDelegate::UIClient::runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF:
         return;
     }
 
-    [delegate webView:m_uiDelegate.m_webView runJavaScriptTextInputPanelWithPrompt:message defaultText:defaultValue initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler](NSString *result) {
+    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:));
+    [delegate webView:m_uiDelegate.m_webView runJavaScriptTextInputPanelWithPrompt:message defaultText:defaultValue initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler, checker](NSString *result) {
         completionHandler(result);
+        checker->didCallCompletionHandler();
     }];
 }
 
