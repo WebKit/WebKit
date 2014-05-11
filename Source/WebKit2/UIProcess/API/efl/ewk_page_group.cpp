@@ -32,6 +32,7 @@
 #include "WKPageGroup.h"
 #include "WKString.h"
 #include "ewk_page_group_private.h"
+#include "ewk_settings_private.h"
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebKit;
@@ -67,6 +68,7 @@ PassRefPtr<EwkPageGroup> EwkPageGroup::create(const char* identifier)
 
 EwkPageGroup::EwkPageGroup(WKPageGroupRef pageGroupRef)
     : m_pageGroupRef(pageGroupRef)
+    , m_settings(std::make_unique<EwkSettings>(WKPageGroupGetPreferences(pageGroupRef)))
 {
     PageGroupMap::AddResult result = pageGroupMap().add(pageGroupRef, this);
     ASSERT_UNUSED(result, result.isNewEntry);

@@ -187,7 +187,7 @@ Ewk_Settings* ewk_view_settings_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, nullptr);
 
-    return impl->settings();
+    return impl->ewkPageGroup()->settings();
 }
 
 const char* ewk_view_title_get(const Evas_Object* ewkView)

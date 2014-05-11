@@ -76,7 +76,6 @@ class EwkColorPicker;
 class EwkContextMenu;
 class EwkPageGroup;
 class EwkPopupMenu;
-class EwkSettings;
 class EwkUrlRequest;
 class EwkWindowFeatures;
 
@@ -99,7 +98,6 @@ public:
     WebKit::WebPageProxy* page() { return webView()->page(); }
     EwkContext* ewkContext() { return m_context.get(); }
     EwkPageGroup* ewkPageGroup() { return m_pageGroup.get(); }
-    EwkSettings* settings() { return m_settings.get(); }
     EwkBackForwardList* backForwardList() { return m_backForwardList.get(); }
     EwkWindowFeatures* windowFeatures();
 
@@ -254,7 +252,6 @@ private:
     std::unique_ptr<WebKit::VibrationClientEfl> m_vibrationClient;
 #endif
     std::unique_ptr<EwkBackForwardList> m_backForwardList;
-    std::unique_ptr<EwkSettings> m_settings;
     RefPtr<EwkWindowFeatures> m_windowFeatures;
     union CursorIdentifier {
         CursorIdentifier()

@@ -1,3 +1,24 @@
+2014-05-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Move the ownership of EwkSettings from EwkView to EwkPageGroup
+        https://bugs.webkit.org/show_bug.cgi?id=132771
+
+        Reviewed by Gyuyoung Kim.
+
+        Moved ownership of EwkSettings from EwkView to EwkPageGroup.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView::settings): Deleted.
+        * UIProcess/API/efl/ewk_page_group.cpp:
+        (EwkPageGroup::EwkPageGroup):
+        * UIProcess/API/efl/ewk_page_group_private.h:
+        (EwkPageGroup::settings):
+        * UIProcess/API/efl/ewk_settings_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_settings_get):
+
 2014-05-10  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] REGRESSION (r168493): Canvasmark 2013 benchmark always hits the RELEASE_ASSERT in RemoteLayerTreeDrawingArea::flushLayers()

@@ -34,7 +34,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-class EwkView;
+class EwkSettings;
 
 class EwkPageGroup : public EwkObject {
 public:
@@ -46,6 +46,7 @@ public:
     ~EwkPageGroup();
 
     WKPageGroupRef wkPageGroup() const { return m_pageGroupRef.get(); }
+    EwkSettings* settings() const { return m_settings.get(); }
 
     void addUserStyleSheet(const String& source, const String& baseURL, Eina_List* whitelist, Eina_List* blacklist, bool mainFrameOnly);
     void removeAllUserStyleSheets();
@@ -54,6 +55,7 @@ private:
     explicit EwkPageGroup(WKPageGroupRef pageGroupRef);    
 
     WKRetainPtr<WKPageGroupRef> m_pageGroupRef;
+    std::unique_ptr<EwkSettings> m_settings;
 };
 
 #endif // ewk_page_group_private_h

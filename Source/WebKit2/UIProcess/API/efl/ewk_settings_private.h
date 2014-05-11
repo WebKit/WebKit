@@ -31,7 +31,6 @@
 #include "WKRetainPtr.h"
 #include <WebKit2/WKBase.h>
 
-class EwkView;
 /**
  * \struct  Ewk_Settings
  * @brief   Contains the settings data.
