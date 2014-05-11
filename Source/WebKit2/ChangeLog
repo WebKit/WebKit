@@ -1,3 +1,17 @@
+2014-05-10  Tim Horton  <timothy_horton@apple.com>
+
+        Implement -forwardingTargetForSelector on WKScrollViewDelegateForwarder
+        https://bugs.webkit.org/show_bug.cgi?id=132790
+        <rdar://problem/16877802>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollViewDelegateForwarder forwardingTargetForSelector:]):
+        If only one of the delegates will respond to a selector,
+        we can return it from forwardingTargetForSelector: to avoid
+        NSInvocation overhead.
+
 2014-05-10  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Some targets that link or soft-link WebKit.framework don't depend on it

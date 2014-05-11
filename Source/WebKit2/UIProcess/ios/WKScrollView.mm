@@ -85,6 +85,18 @@
         [super forwardInvocation:anInvocation];
 }
 
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    BOOL internalDelegateWillRespond = [_internalDelegate respondsToSelector:aSelector];
+    BOOL externalDelegateWillRespond = [_externalDelegate respondsToSelector:aSelector];
+
+    if (internalDelegateWillRespond && !externalDelegateWillRespond)
+        return _internalDelegate;
+    if (externalDelegateWillRespond && !internalDelegateWillRespond)
+        return _externalDelegate;
+    return nil;
+}
+
 @end
 
 @implementation WKScrollView {
