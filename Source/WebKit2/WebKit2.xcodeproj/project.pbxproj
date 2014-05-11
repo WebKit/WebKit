@@ -1625,6 +1625,69 @@
 			remoteGlobalIDString = 1A6280CF191997BD006AD9F9;
 			remoteInfo = WebKit2;
 		};
+		375E0626191EA8CC004E3CAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
+		375E062A191EA8D4004E3CAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
+		375E0630191EA904004E3CAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
+		375E0632191EA909004E3CAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
+		375E0636191EA9A7004E3CAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
+		375E0638191EA9AD004E3CAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
+		375E063A191EA9BA004E3CAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
+		375E063C191EA9C1004E3CAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
+		375E063E191EAA33004E3CAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
 		37F7407812721F740093869B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -7617,6 +7680,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				375E0637191EA9A7004E3CAF /* PBXTargetDependency */,
 			);
 			name = Databases.Development;
 			productName = Networking.Development;
@@ -7634,6 +7698,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				375E0627191EA8CC004E3CAF /* PBXTargetDependency */,
 			);
 			name = Databases;
 			productName = Networking;
@@ -7703,6 +7768,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				375E0633191EA909004E3CAF /* PBXTargetDependency */,
 			);
 			name = WebContent;
 			productName = WebKit2Service;
@@ -7720,6 +7786,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				375E0631191EA904004E3CAF /* PBXTargetDependency */,
 			);
 			name = Networking;
 			productName = Networking;
@@ -7737,6 +7804,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				375E063B191EA9BA004E3CAF /* PBXTargetDependency */,
 			);
 			name = Networking.Development;
 			productName = Networking.Development;
@@ -7754,6 +7822,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				375E063F191EAA33004E3CAF /* PBXTargetDependency */,
 			);
 			name = Plugin.32;
 			productName = Plugin.32;
@@ -7771,6 +7840,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				375E062B191EA8D4004E3CAF /* PBXTargetDependency */,
 			);
 			name = Plugin.64;
 			productName = Plugin.64;
@@ -7788,6 +7858,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				375E0639191EA9AD004E3CAF /* PBXTargetDependency */,
 			);
 			name = Plugin.Development;
 			productName = Plugin.64.Development;
@@ -7805,6 +7876,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				375E063D191EA9C1004E3CAF /* PBXTargetDependency */,
 			);
 			name = WebContent.Development;
 			productName = WebProcessServiceForWebKitDevelopment;
@@ -9173,6 +9245,51 @@
 			isa = PBXTargetDependency;
 			target = 1A6280CF191997BD006AD9F9 /* WebKit2 */;
 			targetProxy = 1A6280F519199865006AD9F9 /* PBXContainerItemProxy */;
+		};
+		375E0627191EA8CC004E3CAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 375E0626191EA8CC004E3CAF /* PBXContainerItemProxy */;
+		};
+		375E062B191EA8D4004E3CAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 375E062A191EA8D4004E3CAF /* PBXContainerItemProxy */;
+		};
+		375E0631191EA904004E3CAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 375E0630191EA904004E3CAF /* PBXContainerItemProxy */;
+		};
+		375E0633191EA909004E3CAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 375E0632191EA909004E3CAF /* PBXContainerItemProxy */;
+		};
+		375E0637191EA9A7004E3CAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 375E0636191EA9A7004E3CAF /* PBXContainerItemProxy */;
+		};
+		375E0639191EA9AD004E3CAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 375E0638191EA9AD004E3CAF /* PBXContainerItemProxy */;
+		};
+		375E063B191EA9BA004E3CAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 375E063A191EA9BA004E3CAF /* PBXContainerItemProxy */;
+		};
+		375E063D191EA9C1004E3CAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 375E063C191EA9C1004E3CAF /* PBXContainerItemProxy */;
+		};
+		375E063F191EAA33004E3CAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 375E063E191EAA33004E3CAF /* PBXContainerItemProxy */;
 		};
 		37F7407912721F740093869B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

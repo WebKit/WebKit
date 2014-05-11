@@ -1,3 +1,12 @@
+2014-05-10  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] Some targets that link or soft-link WebKit.framework don't depend on it
+        https://bugs.webkit.org/show_bug.cgi?id=132776
+
+        Reviewed by Darin Adler.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-05-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Move the ownership of EwkSettings from EwkView to EwkPageGroup
