@@ -1,3 +1,10 @@
+2014-05-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Multiple svg-in-object-placeholder-height tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=132791
+
+        * TestExpectations: Skipped them, the tests take a long time before they fail.
+
 2014-05-10  Darin Adler  <darin@apple.com>
 
         REGRESSION (r166853): fast/preloader/document-write.html is very flaky
