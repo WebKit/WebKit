@@ -1,5 +1,61 @@
 2014-04-17  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168650
+
+    2014-05-12  Brady Eidson  <beidson@apple.com>
+
+            Teach Editor to support more direct replacement of a Node
+            <rdar://problem/16817952> and https://bugs.webkit.org/show_bug.cgi?id=132834
+
+            Reviewed by Enrica Casucci.
+
+            The new method "Editor::replaceNodeFromPasteboard" has the intent that the new DocumentFragment
+            from the pasteboard is as similar to the old Node as possible.
+
+            In practice, the new DocumentFragment:
+            1 - Can represent a single node that's missing various attributes the original Node had.
+            2 - Can be an unwanted fragment of arbitrary depth when the replacement happens inside Mail.app
+
+            This fixes both of these issues.
+
+            Add a MailBlockquoteHandling enum class for various Editor operations to pass through to the
+            ReplaceSelectionCommand:
+            * editing/Editor.cpp:
+            (WebCore::Editor::handleTextEvent):
+            (WebCore::Editor::pasteAsFragment):
+            (WebCore::Editor::pasteWithPasteboard):
+            (WebCore::Editor::replaceSelectionWithFragment):
+            * editing/Editor.h:
+
+            * dom/TextEvent.cpp:
+            (WebCore::TextEvent::createForPlainTextPaste):
+            (WebCore::TextEvent::createForFragmentPaste):
+            (WebCore::TextEvent::TextEvent):
+            * dom/TextEvent.h:
+            (WebCore::TextEvent::mailBlockquoteHandling):
+
+            * editing/ReplaceSelectionCommand.cpp:
+            (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand):
+            (WebCore::ReplaceSelectionCommand::doApply): Consider whether or not this particular Editor
+              operation was meant to give special consideration to Mail's Blockquotes.
+            * editing/ReplaceSelectionCommand.h:
+
+            * editing/efl/EditorEfl.cpp:
+            (WebCore::Editor::pasteWithPasteboard):
+            * editing/ios/EditorIOS.mm:
+            (WebCore::Editor::pasteWithPasteboard):
+
+            * editing/mac/EditorMac.mm:
+            (WebCore::Editor::pasteWithPasteboard):
+            (WebCore::Editor::readSelectionFromPasteboard):
+            (WebCore::maybeCopyNodeAttributesToFragment): If the new DocumentFragment represents a single HTML node
+              with the same tag name is the original HTML node, copy over most attributes from the original node.
+            (WebCore::Editor::replaceNodeFromPasteboard): Create the fragment, run it through maybeCopyNodeAttributesToFragment.
+
+            * WebCore.exp.in:
+
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168565
 
     2014-05-09  Joseph Pecoraro  <pecoraro@apple.com>

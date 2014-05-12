@@ -378,6 +378,7 @@ ReplaceSelectionCommand::ReplaceSelectionCommand(Document& document, PassRefPtr<
     , m_editAction(editAction)
     , m_sanitizeFragment(options & SanitizeFragment)
     , m_shouldMergeEnd(false)
+    , m_ignoreMailBlockquote(options & IgnoreMailBlockquote)
 {
 }
 
@@ -933,12 +934,12 @@ void ReplaceSelectionCommand::doApply()
     Node* startBlock = enclosingBlock(visibleStart.deepEquivalent().deprecatedNode());
     
     Position insertionPos = selection.start();
-    bool startIsInsideMailBlockquote = enclosingNodeOfType(insertionPos, isMailBlockquote, CanCrossEditingBoundary);
+    bool shouldHandleMailBlockquote = enclosingNodeOfType(insertionPos, isMailBlockquote, CanCrossEditingBoundary) && !m_ignoreMailBlockquote;
     bool selectionIsPlainText = !selection.isContentRichlyEditable();
     Element* currentRoot = selection.rootEditableElement();
 
-    if ((selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph && !startIsInsideMailBlockquote) ||
-        startBlock == currentRoot || isListItem(startBlock) || selectionIsPlainText)
+    if ((selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph && !shouldHandleMailBlockquote)
+        || startBlock == currentRoot || isListItem(startBlock) || selectionIsPlainText)
         m_preventNesting = false;
     
     if (selection.isRange()) {
@@ -948,7 +949,7 @@ void ReplaceSelectionCommand::doApply()
         // will leave hanging block(s).
         // Merge blocks if the start of the selection was in a Mail blockquote, since we handle  
         // that case specially to prevent nesting. 
-        bool mergeBlocksAfterDelete = startIsInsideMailBlockquote || isEndOfParagraph(visibleEnd) || isStartOfBlock(visibleStart);
+        bool mergeBlocksAfterDelete = shouldHandleMailBlockquote || isEndOfParagraph(visibleEnd) || isStartOfBlock(visibleStart);
         // FIXME: We should only expand to include fully selected special elements if we are copying a 
         // selection and pasting it on top of itself.
         deleteSelection(false, mergeBlocksAfterDelete, true, false);
@@ -977,7 +978,7 @@ void ReplaceSelectionCommand::doApply()
         // As long as the  div styles are the same, visually you'd expect: <div>xbar</div><div>bar</div><div>bazx</div>, 
         // not <div>xbar<div>bar</div><div>bazx</div></div>.
         // Don't do this if the selection started in a Mail blockquote.
-        if (m_preventNesting && !startIsInsideMailBlockquote && !isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
+        if (m_preventNesting && !shouldHandleMailBlockquote && !isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
             insertParagraphSeparator();
             setEndingSelection(endingSelection().visibleStart().previous());
         }
@@ -987,7 +988,7 @@ void ReplaceSelectionCommand::doApply()
     // We don't want any of the pasted content to end up nested in a Mail blockquote, so first break 
     // out of any surrounding Mail blockquotes. Unless we're inserting in a table, in which case
     // breaking the blockquote will prevent the content from actually being inserted in the table.
-    if (startIsInsideMailBlockquote && m_preventNesting && !(enclosingNodeOfType(insertionPos, &isTableStructureNode))) { 
+    if (shouldHandleMailBlockquote && m_preventNesting && !(enclosingNodeOfType(insertionPos, &isTableStructureNode))) {
         applyCommandToComposite(BreakBlockquoteCommand::create(document())); 
         // This will leave a br between the split. 
         Node* br = endingSelection().start().deprecatedNode(); 
@@ -1016,7 +1017,7 @@ void ReplaceSelectionCommand::doApply()
     
     // Adjust insertionPos to prevent nesting.
     // If the start was in a Mail blockquote, we will have already handled adjusting insertionPos above.
-    if (m_preventNesting && insertionBlock && !isTableCell(insertionBlock.get()) && !startIsInsideMailBlockquote) {
+    if (m_preventNesting && insertionBlock && !isTableCell(insertionBlock.get()) && !shouldHandleMailBlockquote) {
         ASSERT(insertionBlock != currentRoot);
         VisiblePosition visibleInsertionPos(insertionPos);
         if (isEndOfBlock(visibleInsertionPos) && !(isStartOfBlock(visibleInsertionPos) && fragment.hasInterchangeNewlineAtEnd()))
@@ -1162,7 +1163,7 @@ void ReplaceSelectionCommand::doApply()
     // the start merge so that the start merge doesn't effect our decision.
     m_shouldMergeEnd = shouldMergeEnd(selectionEndWasEndOfParagraph);
     
-    if (shouldMergeStart(selectionStartWasStartOfParagraph, fragment.hasInterchangeNewlineAtStart(), startIsInsideMailBlockquote)) {
+    if (shouldMergeStart(selectionStartWasStartOfParagraph, fragment.hasInterchangeNewlineAtStart(), shouldHandleMailBlockquote)) {
         VisiblePosition startOfParagraphToMove = positionAtStartOfInsertedContent();
         VisiblePosition destination = startOfParagraphToMove.previous();
         // We need to handle the case where we need to merge the end
@@ -1211,7 +1212,7 @@ void ReplaceSelectionCommand::doApply()
                 } else {
                     // Use a default paragraph element (a plain div) for the empty paragraph, using the last paragraph
                     // block's style seems to annoy users.
-                    insertParagraphSeparator(true, !startIsInsideMailBlockquote && highestEnclosingNodeOfType(endOfInsertedContent.deepEquivalent(),
+                    insertParagraphSeparator(true, !shouldHandleMailBlockquote && highestEnclosingNodeOfType(endOfInsertedContent.deepEquivalent(),
                         isMailBlockquote, CannotCrossEditingBoundary, insertedNodes.firstNodeInserted()->parentNode()));
                 }
 

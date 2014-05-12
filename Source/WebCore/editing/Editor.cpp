@@ -266,7 +266,7 @@ bool Editor::handleTextEvent(TextEvent* event)
             if (client()->performsTwoStepPaste(event->pastingFragment()))
                 return true;
 #endif
-            replaceSelectionWithFragment(event->pastingFragment(), false, event->shouldSmartReplace(), event->shouldMatchStyle());
+            replaceSelectionWithFragment(event->pastingFragment(), false, event->shouldSmartReplace(), event->shouldMatchStyle(), event->mailBlockquoteHandling());
 #if PLATFORM(IOS)
         }
 #endif
@@ -528,12 +528,12 @@ void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
     target->dispatchEvent(TextEvent::createForPlainTextPaste(document().domWindow(), pastingText, smartReplace), IGNORE_EXCEPTION);
 }
 
-void Editor::pasteAsFragment(PassRefPtr<DocumentFragment> pastingFragment, bool smartReplace, bool matchStyle)
+void Editor::pasteAsFragment(PassRefPtr<DocumentFragment> pastingFragment, bool smartReplace, bool matchStyle, MailBlockquoteHandling respectsMailBlockquote)
 {
     Node* target = findEventTargetFromSelection();
     if (!target)
         return;
-    target->dispatchEvent(TextEvent::createForFragmentPaste(document().domWindow(), pastingFragment, smartReplace, matchStyle), IGNORE_EXCEPTION);
+    target->dispatchEvent(TextEvent::createForFragmentPaste(document().domWindow(), pastingFragment, smartReplace, matchStyle, respectsMailBlockquote), IGNORE_EXCEPTION);
 }
 
 void Editor::pasteAsPlainTextBypassingDHTML()
@@ -565,7 +565,7 @@ String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
 #endif
 
 #if !PLATFORM(COCOA) && !PLATFORM(EFL)
-void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
+void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, MailBlockquoteHandling mailBlockquoteHandling)
 {
     RefPtr<Range> range = selectedRange();
     if (!range)
@@ -574,7 +574,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     bool chosePlainText;
     RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, *range, allowPlainText, chosePlainText);
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
-        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(*pasteboard), chosePlainText);
+        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(*pasteboard), chosePlainText, mailBlockquoteHandling);
 }
 #endif
 
@@ -597,7 +597,7 @@ bool Editor::shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRef
     return client()->shouldInsertNode(fragment.get(), replacingDOMRange.get(), givenAction);
 }
 
-void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment, bool selectReplacement, bool smartReplace, bool matchStyle)
+void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment, bool selectReplacement, bool smartReplace, bool matchStyle, MailBlockquoteHandling mailBlockquoteHandling)
 {
     VisibleSelection selection = m_frame.selection().selection();
     if (selection.isNone() || !selection.isContentEditable() || !fragment)
@@ -610,6 +610,9 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
         options |= ReplaceSelectionCommand::SmartReplace;
     if (matchStyle)
         options |= ReplaceSelectionCommand::MatchStyle;
+    if (mailBlockquoteHandling == MailBlockquoteHandling::IgnoreBlockquote)
+        options |= ReplaceSelectionCommand::IgnoreMailBlockquote;
+
     applyCommand(ReplaceSelectionCommand::create(document(), fragment, options, EditActionPaste));
     revealSelectionAfterEditingOperation();
 

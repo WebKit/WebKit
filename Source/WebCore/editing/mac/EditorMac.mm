@@ -81,7 +81,7 @@ void Editor::showColorPanel()
     [[NSApplication sharedApplication] orderFrontColorPanel:nil];
 }
 
-void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
+void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, MailBlockquoteHandling mailBlockquoteHandling)
 {
     RefPtr<Range> range = selectedRange();
 
@@ -92,7 +92,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     RefPtr<DocumentFragment> fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainText);
 
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
-        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(*pasteboard), false);
+        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(*pasteboard), false, mailBlockquoteHandling);
 
     client()->setInsertionPasteboard(String());
 }
@@ -256,13 +256,37 @@ void Editor::takeFindStringFromSelection()
     platformStrategies()->pasteboardStrategy()->setStringForType(m_frame.displayStringModifiedByEncoding(selectedTextForDataTransfer()), NSStringPboardType, NSFindPboard);
 }
 
-void Editor::readSelectionFromPasteboard(const String& pasteboardName)
+void Editor::readSelectionFromPasteboard(const String& pasteboardName, MailBlockquoteHandling mailBlockquoteHandling)
 {
     Pasteboard pasteboard(pasteboardName);
     if (m_frame.selection().selection().isContentRichlyEditable())
-        pasteWithPasteboard(&pasteboard, true);
+        pasteWithPasteboard(&pasteboard, true, mailBlockquoteHandling);
     else
         pasteAsPlainTextWithPasteboard(pasteboard);
+}
+
+static void maybeCopyNodeAttributesToFragment(Node* node, DocumentFragment* fragment)
+{
+    // This is only supported for single-Node fragments.
+    Node* firstChild = fragment->firstChild();
+    if (firstChild != fragment->lastChild())
+        return;
+
+    // And only supported for HTML elements.
+    if (!node->isHTMLElement() || !firstChild->isHTMLElement())
+        return;
+
+    // And only if the source Element and destination Element have the same HTML tag name.
+    const Element& oldElement = toHTMLElement(*node);
+    Element& newElement = toHTMLElement(*firstChild);
+    if (!oldElement.hasTagName(newElement.tagQName()))
+        return;
+
+    for (const Attribute& attribute : oldElement.attributesIterator()) {
+        if (newElement.hasAttribute(attribute.name()))
+            continue;
+        newElement.setAttribute(attribute.name(), attribute.value());
+    }
 }
 
 void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
@@ -275,7 +299,25 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     RefPtr<Range> range = Range::create(node->document(), Position(node, Position::PositionIsBeforeAnchor), Position(node, Position::PositionIsAfterAnchor));
     m_frame.selection().setSelection(VisibleSelection(range.get()), FrameSelection::DoNotSetFocus);
 
-    readSelectionFromPasteboard(pasteboardName);
+    Pasteboard pasteboard(pasteboardName);
+
+    if (!m_frame.selection().selection().isContentRichlyEditable()) {
+        pasteAsPlainTextWithPasteboard(pasteboard);
+        return;
+    }
+
+    // FIXME: How can this hard-coded pasteboard name be right, given that the passed-in pasteboard has a name?
+    client()->setInsertionPasteboard(NSGeneralPboard);
+
+    bool chosePlainText;
+    RefPtr<DocumentFragment> fragment = webContentFromPasteboard(pasteboard, *range, true, chosePlainText);
+
+    maybeCopyNodeAttributesToFragment(node, fragment.get());
+
+    if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
+        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false, MailBlockquoteHandling::IgnoreBlockquote);
+
+    client()->setInsertionPasteboard(String());
 }
 
 // FIXME: Makes no sense that selectedTextForDataTransfer always includes alt text, but stringSelectionForPasteboard does not.

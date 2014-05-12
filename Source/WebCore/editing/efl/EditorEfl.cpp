@@ -42,7 +42,7 @@ void Editor::writeImageToPasteboard(Pasteboard&, Element&, const URL&, const Str
     notImplemented();
 }
 
-void Editor::pasteWithPasteboard(Pasteboard*, bool)
+void Editor::pasteWithPasteboard(Pasteboard*, bool, MailBlockquoteHandling)
 {
     notImplemented();
 }
