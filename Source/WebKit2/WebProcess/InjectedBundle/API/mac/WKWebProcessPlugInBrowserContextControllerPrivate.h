@@ -45,6 +45,8 @@
 
 @property (nonatomic, setter=_setDefersLoading:) BOOL _defersLoading;
 
+@property (nonatomic, readonly) BOOL _usesNonPersistentWebsiteDataStore;
+
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle;
 
 @end

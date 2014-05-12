@@ -484,6 +484,11 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     _page->setDefersLoading(defersLoading);
 }
 
+- (BOOL)_usesNonPersistentWebsiteDataStore
+{
+    return _page->usesEphemeralSession();
+}
+
 @end
 
 #endif // WK_API_ENABLED
