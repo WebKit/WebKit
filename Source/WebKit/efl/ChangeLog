@@ -1,3 +1,15 @@
+2014-05-12  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL][WK1] Enable region based columns
+        https://bugs.webkit.org/show_bug.cgi?id=132646
+
+        Reviewed by Gyuyoung Kim.
+
+        Enable new multi-column mode as it was enabled in WK2 (r168046).
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2014-05-07  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Remove runtime feature
