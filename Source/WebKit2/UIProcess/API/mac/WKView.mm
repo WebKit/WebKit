@@ -1898,6 +1898,20 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         parameters->eventInterpretationHadSideEffects |= eventHandled;
 }
 
+- (NSTextInputContext *)inputContext
+{
+    WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
+
+    if (_data->_pluginComplexTextInputIdentifier && !parameters)
+        return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
+
+    // Disable text input machinery when in non-editable content. An invisible inline input area affects performance, and can prevent Expose from working.
+    if (!_data->_page->editorState().isContentEditable)
+        return nil;
+
+    return [super inputContext];
+}
+
 - (NSRange)selectedRange
 {
     [self _executeSavedKeypressCommands];
