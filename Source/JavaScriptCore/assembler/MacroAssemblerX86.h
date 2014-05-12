@@ -123,11 +123,11 @@ public:
         m_assembler.addsd_mr(address.m_ptr, dest);
     }
 
-    void storeDouble(FPRegisterID src, TrustedImmPtr address)
+    void storeDouble(FPRegisterID src, const void* address)
     {
         ASSERT(isSSE2Present());
-        ASSERT(address.m_value);
-        m_assembler.movsd_rm(src, address.m_value);
+        ASSERT(address);
+        m_assembler.movsd_rm(src, address);
     }
 
     void convertInt32ToDouble(AbsoluteAddress src, FPRegisterID dest)

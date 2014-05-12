@@ -2268,7 +2268,7 @@ public:
 #endif
     }
 
-    void loadDouble(TrustedImmPtr address, FPRegisterID dest)
+    void loadDouble(const void* address, FPRegisterID dest)
     {
 #if WTF_MIPS_ISA(1)
         /*
@@ -2276,7 +2276,7 @@ public:
             lwc1        dest, 0(addrTemp)
             lwc1        dest+1, 4(addrTemp)
          */
-        move(address, addrTempRegister);
+        move(TrustedImmPtr(address), addrTempRegister);
         m_assembler.lwc1(dest, addrTempRegister, 0);
         m_assembler.lwc1(FPRegisterID(dest + 1), addrTempRegister, 4);
 #else
@@ -2284,7 +2284,7 @@ public:
             li          addrTemp, address
             ldc1        dest, 0(addrTemp)
         */
-        move(address, addrTempRegister);
+        move(TrustedImmPtr(address), addrTempRegister);
         m_assembler.ldc1(dest, addrTempRegister, 0);
 #endif
     }
@@ -2406,14 +2406,14 @@ public:
 #endif
     }
 
-    void storeDouble(FPRegisterID src, TrustedImmPtr address)
+    void storeDouble(FPRegisterID src, const void* address)
     {
 #if WTF_MIPS_ISA(1)
-        move(address, addrTempRegister);
+        move(TrustedImmPtr(address), addrTempRegister);
         m_assembler.swc1(src, addrTempRegister, 0);
         m_assembler.swc1(FPRegisterID(src + 1), addrTempRegister, 4);
 #else
-        move(address, addrTempRegister);
+        move(TrustedImmPtr(address), addrTempRegister);
         m_assembler.sdc1(src, addrTempRegister, 0);
 #endif
     }

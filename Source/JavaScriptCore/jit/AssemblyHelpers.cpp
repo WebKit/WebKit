@@ -58,7 +58,7 @@ void AssemblyHelpers::purifyNaN(FPRReg fpr)
 {
     MacroAssembler::Jump notNaN = branchDouble(DoubleEqual, fpr, fpr);
     static const double NaN = PNaN;
-    loadDouble(TrustedImmPtr(&NaN), fpr);
+    loadDouble(&NaN, fpr);
     notNaN.link(this);
 }
 

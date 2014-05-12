@@ -816,7 +816,7 @@ inline void JIT::emitLoadDouble(int index, FPRegisterID value)
 {
     if (m_codeBlock->isConstantRegisterIndex(index)) {
         WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(index);
-        loadDouble(TrustedImmPtr(&inConstantPool), value);
+        loadDouble(&inConstantPool, value);
     } else
         loadDouble(addressFor(index), value);
 }
@@ -1016,7 +1016,7 @@ inline void JIT::emitLoadDouble(int index, FPRegisterID value)
 {
     if (m_codeBlock->isConstantRegisterIndex(index)) {
         WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(index);
-        loadDouble(TrustedImmPtr(&inConstantPool), value);
+        loadDouble(&inConstantPool, value);
     } else
         loadDouble(addressFor(index), value);
 }

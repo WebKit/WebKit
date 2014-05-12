@@ -1310,9 +1310,9 @@ public:
         m_assembler.ldr<64>(dest, address.base, memoryTempRegister);
     }
     
-    void loadDouble(TrustedImmPtr address, FPRegisterID dest)
+    void loadDouble(const void* address, FPRegisterID dest)
     {
-        moveToCachedReg(address, m_cachedMemoryTempRegister);
+        moveToCachedReg(TrustedImmPtr(address), m_cachedMemoryTempRegister);
         m_assembler.ldr<64>(dest, memoryTempRegister, ARM64Registers::zr);
     }
 
@@ -1378,9 +1378,9 @@ public:
         m_assembler.str<64>(src, address.base, memoryTempRegister);
     }
 
-    void storeDouble(FPRegisterID src, TrustedImmPtr address)
+    void storeDouble(FPRegisterID src, const void* address)
     {
-        moveToCachedReg(address, m_cachedMemoryTempRegister);
+        moveToCachedReg(TrustedImmPtr(address), m_cachedMemoryTempRegister);
         m_assembler.str<64>(src, memoryTempRegister, ARM64Registers::zr);
     }
 
