@@ -1,3 +1,17 @@
+2014-05-11  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+        Expose a function to copy favicon data without image conversion.
+        https://bugs.webkit.org/show_bug.cgi?id=132805
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseCopyIconDataForPageURL):
+        Add a function to copy the data from the image of a favicon for an associated page url.
+
+        * UIProcess/API/C/WKIconDatabase.h:
+        Declare WKIconDatabaseCopyIconDataForPageURL.
+
 2014-05-11  Seongjun Kim  <isAir@company100.com>
 
         REGRESSION(r168603): [GTK] Build broken.
