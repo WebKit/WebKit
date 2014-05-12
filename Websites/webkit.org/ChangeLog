@@ -1,3 +1,16 @@
+2014-05-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add potential illustrations for a potential future blog post about the viewport meta tag
+
+        * blog-files/simple-viewport-configuration: Added.
+        * blog-files/simple-viewport-configuration/860_viewport.html: Added.
+        * blog-files/simple-viewport-configuration/blog_with_viewport.png: Added.
+        * blog-files/simple-viewport-configuration/blog_without_viewport.png: Added.
+        * blog-files/simple-viewport-configuration/default_viewport.html: Added.
+        * blog-files/simple-viewport-configuration/horizontal_design.html: Added.
+        * blog-files/simple-viewport-configuration/inspector.png: Added.
+        * blog-files/simple-viewport-configuration/report_size.js: Added.
+
 2014-04-29  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Switch video from GStreamer to Media Foundation.
