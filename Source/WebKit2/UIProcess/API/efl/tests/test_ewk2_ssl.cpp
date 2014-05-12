@@ -41,6 +41,8 @@ static const char indexHTMLString[] =
 static bool finishTest = false;
 static constexpr double testTimeoutSeconds = 2.0;
 
+WTF::CString httpUri;
+
 #define STRINGIFY2(x) #x
 #define STRINGIFY(x) STRINGIFY2(x)
 
@@ -124,6 +126,30 @@ public:
 
         soup_message_body_complete(message->response_body);
     }
+
+    static void serverCallbackBadCertRedirectHttps(SoupServer*, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, void*)
+    {
+        if (message->method != SOUP_METHOD_GET) {
+            soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+            return;
+        }
+
+        soup_message_set_redirect(message, SOUP_STATUS_MOVED_PERMANENTLY, httpUri.data());
+    }
+
+    static void serverCallbackBadCertRedirectHttp(SoupServer*, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, void*)
+    {
+        if (message->method != SOUP_METHOD_GET) {
+            soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+            return;
+        }
+
+        if (!strcmp(path, "/index.html")) {
+            soup_message_set_status(message, SOUP_STATUS_OK);
+            soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, indexHTMLString, strlen(indexHTMLString));
+        } else
+            soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+    }
 };
 
 static GTlsCertificate* getCertificate()
@@ -203,6 +229,35 @@ TEST_F(EWK2SSLTest, ewk_ssl_bad_cert_page_load_test_policy_fail)
     bool isFinished = false;
     evas_object_smart_callback_add(webView(), "load,finished", onLoadFinishedFail, &isFinished);
 
+    ewk_view_url_set(webView(), httpsServer->getURLForPath("/index.html").data());
+
+    waitUntilTrue(finishTest, testTimeoutSeconds);
+}
+
+TEST_F(EWK2SSLTest, ewk_ssl_bad_cert_redirect_https_to_http)
+{
+    finishTest = false;
+
+    Ewk_Context* context = ewk_view_context_get(webView());
+    ewk_context_tls_error_policy_set(context, EWK_TLS_ERROR_POLICY_FAIL);
+
+    GTlsCertificate* TLSCertificate = getCertificate();
+
+    if (!TLSCertificate)
+        FAIL();
+
+    std::unique_ptr<EWK2UnitTestServer> httpsServer = std::make_unique<EWK2UnitTestServer>(TLSCertificate);
+    httpsServer->run(serverCallbackBadCertRedirectHttps);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
+    httpServer->run(serverCallbackBadCertRedirectHttp);
+
+    Ewk_Error* error = nullptr;
+    evas_object_smart_callback_add(webView(), "load,provisional,failed", onLoadProvisionalFailedFail, &error);
+
+    bool isFinished = false;
+    evas_object_smart_callback_add(webView(), "load,finished", onLoadFinishedFail, &isFinished);
+
+    httpUri = httpServer->getURLForPath("/index.html");
     ewk_view_url_set(webView(), httpsServer->getURLForPath("/index.html").data());
 
     waitUntilTrue(finishTest, testTimeoutSeconds);

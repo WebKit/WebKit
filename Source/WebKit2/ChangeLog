@@ -1,3 +1,14 @@
+2014-05-12  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        [EFL] TLSErrors do not cause page load to fail when not ignored
+        https://bugs.webkit.org/show_bug.cgi?id=131104
+
+        Reviewed by Gyuyoung Kim.
+
+        Added EFL unit test for the bug https://bugs.webkit.org/show_bug.cgi?id=121548
+
+        * UIProcess/API/efl/tests/test_ewk2_ssl.cpp: Added new test: ewk_ssl_bad_cert_redirect_https_to_http
+
 2014-05-11  Gordon Sheridan  <gordon_sheridan@apple.com>
 
         Expose a function to copy favicon data without image conversion.
