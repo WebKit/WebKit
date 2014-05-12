@@ -1,4 +1,17 @@
 =================
+WebKitGTK+  2.4.2
+=================
+
+What's new in WebKitGTK+ 2.4.2?
+
+  - Correctly handle TLS errors in case of a server redirection.
+  - Fix a crash when submitting a form.
+  - Fix several JavaScriptCore crashes when browsing facebook.
+  - Fix a crash when closing a page with windowed plugins.
+  - Fix a crash after getting web view context property with g_object_get.
+  - Fix a new[] delete[] mismatch in SocketStreamHandleSoup.
+
+=================
 WebKitGTK+  2.4.1
 =================
 
