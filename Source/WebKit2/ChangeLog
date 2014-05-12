@@ -1,3 +1,14 @@
+2014-05-11  Seongjun Kim  <isAir@company100.com>
+
+        REGRESSION(r168603): [GTK] Build broken.
+        https://bugs.webkit.org/show_bug.cgi?id=132810
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext):
+        Construct a WebContextConfiguration object and pass it to WebContext::create.
+
 2014-05-11  Anders Carlsson  <andersca@apple.com>
 
         Remove local storage directory and sandbox extension from WebProcessCreationParameters

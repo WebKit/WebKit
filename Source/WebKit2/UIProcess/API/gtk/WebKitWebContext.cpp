@@ -253,7 +253,10 @@ static gpointer createDefaultWebContext(gpointer)
     static GRefPtr<WebKitWebContext> webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, NULL)));
     WebKitWebContextPrivate* priv = webContext->priv;
 
-    priv->context = WebContext::create(WebCore::filenameToString(injectedBundleFilename().data()));
+    WebContextConfiguration webContextConfiguration;
+    webContextConfiguration.injectedBundlePath = WebCore::filenameToString(injectedBundleFilename().data());
+    priv->context = WebContext::create(std::move(webContextConfiguration));
+
     priv->requestManager = webContext->priv->context->supplement<WebSoupCustomProtocolRequestManager>();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_IGNORE;
