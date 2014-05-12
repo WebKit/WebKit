@@ -213,9 +213,9 @@ void CurlDownloadManager::downloadThread(void* data)
 
         if (msg->msg == CURLMSG_DONE) {
             if (msg->data.result == CURLE_OK)
-                callOnMainThread<CurlDownload*, CurlDownload*>(CurlDownload::downloadFinishedCallback, download);
+                callOnMainThread(MainThreadTask(CurlDownload::downloadFinishedCallback, download));
             else
-                callOnMainThread<CurlDownload*, CurlDownload*>(CurlDownload::downloadFailedCallback, download);
+                callOnMainThread(MainThreadTask(CurlDownload::downloadFailedCallback, download));
 
             downloadManager->removeFromCurl(msg->easy_handle);
         }
@@ -400,7 +400,7 @@ void CurlDownload::didReceiveHeader(const String& header)
             m_response.setTextEncodingName(extractCharsetFromMediaType(m_response.httpHeaderField("Content-Type")));
             m_response.setSuggestedFilename(filenameFromHTTPContentDisposition(m_response.httpHeaderField("Content-Disposition")));
 
-            callOnMainThread<CurlDownload*, CurlDownload*>(receivedResponseCallback, this);
+            callOnMainThread(MainThreadTask(receivedResponseCallback, this));
         }
     } else {
         int splitPos = header.find(":");
@@ -413,7 +413,7 @@ void CurlDownload::didReceiveData(void* data, int size)
 {
     MutexLocker locker(m_mutex);
 
-    callOnMainThread<CurlDownload*, CurlDownload*, int, int>(receivedDataCallback, this, size);
+    callOnMainThread(MainThreadTask(receivedDataCallback, this, size));
 
     writeDataToFile(static_cast<const char*>(data), size);
 }

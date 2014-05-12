@@ -1,3 +1,15 @@
+2014-05-12  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
+
+        WinCairo buildfix after r168611
+        https://bugs.webkit.org/show_bug.cgi?id=132825
+
+        Reviewed by Darin Adler.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownloadManager::downloadThread):
+        (WebCore::CurlDownload::didReceiveHeader):
+        (WebCore::CurlDownload::didReceiveData):
+
 2014-05-12  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r159560): Text clips on tile border if line-height < font-size
