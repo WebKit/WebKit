@@ -1,3 +1,38 @@
+2014-05-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Simplify FileThread::Task usage
+        https://bugs.webkit.org/show_bug.cgi?id=132798
+
+        Reviewed by Darin Adler.
+
+        Remove the createFileThreadTask functions and the related FileThreadTask helper classes.
+
+        Instead, the FileThread::Task class now has a templated constructor that takes in a pointer
+        to the object instance, a method, and a variadic pack of parameters. The pointer and the
+        cross-thread copies of all the parameters are then bound to the given method through std::bind().
+
+        Instead of createFileThreadTask, std::make_unique<>() should be used to construct unique pointers
+        that wrap FileThread::Task objects.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::AsyncFileStream::create):
+        (WebCore::AsyncFileStream::stop):
+        (WebCore::AsyncFileStream::getSize):
+        (WebCore::AsyncFileStream::openForRead):
+        (WebCore::AsyncFileStream::openForWrite):
+        (WebCore::AsyncFileStream::close):
+        (WebCore::AsyncFileStream::read):
+        (WebCore::AsyncFileStream::write):
+        (WebCore::AsyncFileStream::truncate):
+        * fileapi/FileThread.h:
+        (WebCore::FileThread::Task::Task):
+        (WebCore::FileThread::Task::performTask):
+        (WebCore::FileThread::Task::~Task): Deleted.
+        * fileapi/FileThreadTask.h: Removed.
+
 2014-05-11  Benjamin Poulain  <benjamin@webkit.org>
 
         Do not create a temporary string to append the SVGLength's unit

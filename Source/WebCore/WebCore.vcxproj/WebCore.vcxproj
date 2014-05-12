@@ -20514,7 +20514,6 @@
     <ClInclude Include="..\fileapi\FileReaderLoaderClient.h" />
     <ClInclude Include="..\fileapi\FileReaderSync.h" />
     <ClInclude Include="..\fileapi\FileThread.h" />
-    <ClInclude Include="..\fileapi\FileThreadTask.h" />
     <ClInclude Include="..\html\FormAssociatedElement.h" />
     <ClInclude Include="..\html\FormController.h" />
     <ClInclude Include="..\html\FormDataList.h" />

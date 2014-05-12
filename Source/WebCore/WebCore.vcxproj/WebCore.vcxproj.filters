@@ -10765,9 +10765,6 @@
     <ClInclude Include="..\fileapi\FileThread.h">
       <Filter>html</Filter>
     </ClInclude>
-    <ClInclude Include="..\fileapi\FileThreadTask.h">
-      <Filter>html</Filter>
-    </ClInclude>
     <ClInclude Include="..\html\FormAssociatedElement.h">
       <Filter>html</Filter>
     </ClInclude>

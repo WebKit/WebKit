@@ -33,6 +33,8 @@
 
 #if ENABLE(BLOB)
 
+#include "CrossThreadCopier.h"
+#include <functional>
 #include <wtf/MessageQueue.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
@@ -56,11 +58,21 @@ public:
     class Task {
         WTF_MAKE_NONCOPYABLE(Task);
     public:
-        virtual ~Task() { }
-        virtual void performTask() = 0;
+        template<typename T, typename Method, typename... Parameters>
+        Task(T* instance, Method method, const Parameters&... parameters)
+            : m_task(std::bind(method, instance, typename CrossThreadCopier<Parameters>::Type(CrossThreadCopier<Parameters>::copy(parameters))...))
+            , m_instance(instance)
+        {
+        }
+
+        void performTask()
+        {
+            m_task();
+        }
         void* instance() const { return m_instance; }
-    protected:
-        Task(void* instance) : m_instance(instance) { }
+
+    private:
+        std::function<void ()> m_task;
         void* m_instance;
     };
 
