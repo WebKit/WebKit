@@ -76,27 +76,27 @@ public:
     {
 #if USE(IOSURFACE)
         if (m_acceleratesDrawing)
-            return !!m_frontSurface;
+            return !!m_frontBuffer.surface;
 #endif
-        return !!m_frontBuffer;
+        return !!m_frontBuffer.bitmap;
     }
 
     RetainPtr<CGContextRef> takeFrontContextPendingFlush();
 
-    enum class Volatility {
-        NonVolatile,
-        BackBufferVolatile,
-        AllBuffersVolatile
+    enum class BufferType {
+        Front,
+        Back,
+        SecondaryBack
     };
 
-    Volatility volatility() const { return m_volatility; }
-    bool setVolatility(Volatility);
+    bool setBufferVolatility(BufferType type, bool isVolatile);
 
     std::chrono::steady_clock::time_point lastDisplayTime() const { return m_lastDisplayTime; }
 
 private:
     void drawInContext(WebCore::GraphicsContext&, CGImageRef backImage);
     void clearBackingStore();
+    void swapToValidFrontBuffer();
 
     PlatformCALayerRemote* m_layer;
 
@@ -106,18 +106,25 @@ private:
 
     WebCore::Region m_dirtyRegion;
 
-    RefPtr<ShareableBitmap> m_frontBuffer;
-    RefPtr<ShareableBitmap> m_backBuffer;
+    struct Buffer {
+        RefPtr<ShareableBitmap> bitmap;
 #if USE(IOSURFACE)
-    RefPtr<WebCore::IOSurface> m_frontSurface;
-    RefPtr<WebCore::IOSurface> m_backSurface;
+        RefPtr<WebCore::IOSurface> surface;
+        bool isVolatile = false;
+#endif
+
+        void discard();
+    };
+
+    Buffer m_frontBuffer;
+    Buffer m_backBuffer;
+#if USE(IOSURFACE)
+    Buffer m_secondaryBackBuffer;
 #endif
 
     RetainPtr<CGContextRef> m_frontContextPendingFlush;
 
     bool m_acceleratesDrawing;
-
-    Volatility m_volatility;
 
     WebCore::RepaintRectList m_paintingRects;
 

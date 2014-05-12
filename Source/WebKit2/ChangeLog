@@ -1,3 +1,52 @@
+2014-05-12  Tim Horton  <timothy_horton@apple.com>
+
+        Triple-buffer RemoteLayerBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=132786
+        <rdar://problem/16877498>
+
+        Reviewed by Simon Fraser.
+
+        We need three buffers because we're currently unable to synchronize
+        with the render server to swap when they're not in use, so we were
+        throwing surfaces away far too frequently.
+
+        This hugely reduces time spent in IOSurface::create on various repaint benchmarks.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::hasFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::volatility): Deleted.
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::RemoteLayerBackingStore):
+        (WebKit::RemoteLayerBackingStore::clearBackingStore):
+        (WebKit::RemoteLayerBackingStore::encode):
+        (WebKit::RemoteLayerBackingStore::decode):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+        (WebKit::RemoteLayerBackingStore::Buffer::discard):
+        (WebKit::RemoteLayerBackingStore::setVolatility): Deleted.
+        * Shared/mac/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::purgeabilityTimerFired):
+        Put the ShareableBitmap/IOSurface and a volatility bit in a Buffer struct.
+        Also factor out "throw away this buffer and put it in the pool" into Buffer::discard().
+        We keep a volatility bit because querying IOSurface purgeability is expensive,
+        and we have a guarantee that any changes will happen in the Web process
+        and go through this class (the lack of this guarantee in most cases is why I'm not
+        putting this bit in WebCore::IOSurface itself).
+
+        Make it so that each buffer's volatility can be adjusted individually
+        by setBufferVolatility(), and adopt in RemoteLayerBackingStoreCollection.
+
+        Add a third buffer, m_secondaryBackBuffer, which will swap with the back buffer
+        before swapping front and back if the back buffer (soon to be the front buffer)
+        is still in use by the render server. This means that we will almost never
+        have to throw away a surface because it's in use (and conversely never need
+        to make a new surface).
+
+        Adjust RemoteLayerBackingStoreCollection to make secondary back surfaces purgeable
+        more aggressively than others.
+
 2014-05-12  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r165972): Can't type into text fields in Flash

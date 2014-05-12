@@ -31,7 +31,8 @@
 #import "RemoteLayerTreeContext.h"
 
 const std::chrono::seconds purgeableBackingStoreAgeThreshold = 1_s;
-const std::chrono::seconds purgeabilityTimerInterval = 1_s;
+const std::chrono::milliseconds purgeableSecondaryBackingStoreAgeThreshold = 200_ms;
+const std::chrono::milliseconds purgeabilityTimerInterval = 200_ms;
 
 namespace WebKit {
 
@@ -60,11 +61,17 @@ void RemoteLayerBackingStoreCollection::purgeabilityTimerFired(WebCore::Timer<Re
     for (const auto& backingStore : m_liveBackingStore) {
         if (now - backingStore->lastDisplayTime() < purgeableBackingStoreAgeThreshold) {
             hadRecentlyPaintedBackingStore = true;
+
+            if (now - backingStore->lastDisplayTime() >= purgeableSecondaryBackingStoreAgeThreshold)
+                backingStore->setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true);
+
             continue;
         }
 
         // FIXME: If the layer is unparented, we should make all buffers volatile.
-        if (!backingStore->setVolatility(RemoteLayerBackingStore::Volatility::BackBufferVolatile))
+        if (!backingStore->setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true))
+            successfullyMadeBackingStorePurgeable = false;
+        if (!backingStore->setBufferVolatility(RemoteLayerBackingStore::BufferType::Back, true))
             successfullyMadeBackingStorePurgeable = false;
     }
 

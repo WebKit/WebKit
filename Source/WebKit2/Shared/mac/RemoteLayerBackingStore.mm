@@ -58,7 +58,6 @@ namespace WebKit {
 RemoteLayerBackingStore::RemoteLayerBackingStore(RemoteLayerTreeContext* context)
     : m_layer(nullptr)
     , m_isOpaque(false)
-    , m_volatility(RemoteLayerBackingStore::Volatility::NonVolatile)
     , m_context(context)
     , m_lastDisplayTime(std::chrono::steady_clock::time_point::min())
 {
@@ -90,17 +89,11 @@ void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, F
 
 void RemoteLayerBackingStore::clearBackingStore()
 {
+    m_frontBuffer.discard();
+    m_backBuffer.discard();
 #if USE(IOSURFACE)
-    if (m_frontSurface)
-        IOSurfacePool::sharedPool().addSurface(m_frontSurface.get());
-    if (m_backSurface)
-        IOSurfacePool::sharedPool().addSurface(m_backSurface.get());
-
-    m_frontSurface = nullptr;
-    m_backSurface = nullptr;
+    m_secondaryBackBuffer.discard();
 #endif
-    m_frontBuffer = nullptr;
-    m_backBuffer = nullptr;
 }
 
 void RemoteLayerBackingStore::encode(IPC::ArgumentEncoder& encoder) const
@@ -112,7 +105,7 @@ void RemoteLayerBackingStore::encode(IPC::ArgumentEncoder& encoder) const
 
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
-        mach_port_t port = m_frontSurface->createMachPort();
+        mach_port_t port = m_frontBuffer.surface->createMachPort();
         encoder << IPC::MachPort(port, MACH_MSG_TYPE_MOVE_SEND);
         return;
     }
@@ -121,7 +114,7 @@ void RemoteLayerBackingStore::encode(IPC::ArgumentEncoder& encoder) const
     ASSERT(!m_acceleratesDrawing);
 
     ShareableBitmap::Handle handle;
-    m_frontBuffer->createHandle(handle);
+    m_frontBuffer.bitmap->createHandle(handle);
     encoder << handle;
 }
 
@@ -144,7 +137,7 @@ bool RemoteLayerBackingStore::decode(IPC::ArgumentDecoder& decoder, RemoteLayerB
         IPC::MachPort machPort;
         if (!decoder.decode(machPort))
             return false;
-        result.m_frontSurface = IOSurface::createFromMachPort(machPort.port(), ColorSpaceDeviceRGB);
+        result.m_frontBuffer.surface = IOSurface::createFromMachPort(machPort.port(), ColorSpaceDeviceRGB);
         mach_port_deallocate(mach_task_self(), machPort.port());
         return true;
     }
@@ -155,7 +148,7 @@ bool RemoteLayerBackingStore::decode(IPC::ArgumentDecoder& decoder, RemoteLayerB
     ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))
         return false;
-    result.m_frontBuffer = ShareableBitmap::create(handle);
+    result.m_frontBuffer.bitmap = ShareableBitmap::create(handle);
 
     return true;
 }
@@ -170,13 +163,46 @@ void RemoteLayerBackingStore::setNeedsDisplay()
     setNeedsDisplay(IntRect(IntPoint(), expandedIntSize(m_size)));
 }
 
+void RemoteLayerBackingStore::swapToValidFrontBuffer()
+{
+    FloatSize scaledSize = m_size;
+    scaledSize.scale(m_scale);
+    IntSize expandedScaledSize = roundedIntSize(scaledSize);
+
+#if USE(IOSURFACE)
+    if (m_acceleratesDrawing) {
+        if (!m_backBuffer.surface || m_backBuffer.surface->isInUse()) {
+            std::swap(m_backBuffer, m_secondaryBackBuffer);
+            if (m_backBuffer.surface && m_backBuffer.surface->isInUse())
+                m_backBuffer.discard();
+        }
+
+        std::swap(m_frontBuffer, m_backBuffer);
+
+        if (!m_frontBuffer.surface)
+            m_frontBuffer.surface = IOSurface::create(expandedScaledSize, ColorSpaceDeviceRGB);
+
+        setBufferVolatility(BufferType::Front, false);
+
+        return;
+    }
+#endif
+
+    ASSERT(!m_acceleratesDrawing);
+    std::swap(m_frontBuffer, m_backBuffer);
+
+    if (!m_frontBuffer.bitmap)
+        m_frontBuffer.bitmap = ShareableBitmap::createShareable(expandedScaledSize, m_isOpaque ? ShareableBitmap::NoFlags : ShareableBitmap::SupportsAlpha);
+}
+
 bool RemoteLayerBackingStore::display()
 {
     ASSERT(!m_frontContextPendingFlush);
 
     m_lastDisplayTime = std::chrono::steady_clock::now();
 
-    setVolatility(Volatility::NonVolatile);
+    // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
+    setBufferVolatility(BufferType::Front, false);
 
     if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
         return false;
@@ -195,42 +221,33 @@ bool RemoteLayerBackingStore::display()
     IntSize expandedScaledSize = roundedIntSize(scaledSize);
     IntRect expandedScaledLayerBounds(IntPoint(), expandedScaledSize);
     bool willPaintEntireBackingStore = m_dirtyRegion.contains(layerBounds);
+
+    swapToValidFrontBuffer();
+
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
-        std::swap(m_frontSurface, m_backSurface);
-
-        if (!m_frontSurface || m_frontSurface->isInUse()) {
-            if (m_frontSurface)
-                IOSurfacePool::sharedPool().addSurface(m_frontSurface.get());
-            m_frontSurface = IOSurface::create(expandedScaledSize, ColorSpaceDeviceRGB);
-        }
-
         RetainPtr<CGImageRef> backImage;
-        if (m_backSurface && !willPaintEntireBackingStore)
-            backImage = m_backSurface->createImage();
+        if (m_backBuffer.surface && !willPaintEntireBackingStore)
+            backImage = m_backBuffer.surface->createImage();
 
-        GraphicsContext& context = m_frontSurface->ensureGraphicsContext();
+        GraphicsContext& context = m_frontBuffer.surface->ensureGraphicsContext();
 
         context.scale(FloatSize(1, -1));
         context.translate(0, -expandedScaledSize.height());
         drawInContext(context, backImage.get());
 
-        m_frontSurface->clearGraphicsContext();
+        m_frontBuffer.surface->clearGraphicsContext();
 
         return true;
     }
 #endif
 
     ASSERT(!m_acceleratesDrawing);
-
-    std::swap(m_frontBuffer, m_backBuffer);
-    if (!m_frontBuffer)
-        m_frontBuffer = ShareableBitmap::createShareable(expandedScaledSize, m_isOpaque ? ShareableBitmap::NoFlags : ShareableBitmap::SupportsAlpha);
-    std::unique_ptr<GraphicsContext> context = m_frontBuffer->createGraphicsContext();
+    std::unique_ptr<GraphicsContext> context = m_frontBuffer.bitmap->createGraphicsContext();
 
     RetainPtr<CGImageRef> backImage;
-    if (m_backBuffer && !willPaintEntireBackingStore)
-        backImage = m_backBuffer->makeCGImage();
+    if (m_backBuffer.bitmap && !willPaintEntireBackingStore)
+        backImage = m_backBuffer.bitmap->makeCGImage();
 
     drawInContext(*context, backImage.get());
     
@@ -345,13 +362,13 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
 
 #if USE(IOSURFACE)
     if (acceleratesDrawing()) {
-        layer.contents = (id)m_frontSurface->surface();
+        layer.contents = (id)m_frontBuffer.surface->surface();
         return;
     }
 #endif
 
     ASSERT(!acceleratesDrawing());
-    layer.contents = (id)m_frontBuffer->makeCGImageCopy().get();
+    layer.contents = (id)m_frontBuffer.bitmap->makeCGImageCopy().get();
 }
 
 RetainPtr<CGContextRef> RemoteLayerBackingStore::takeFrontContextPendingFlush()
@@ -360,40 +377,59 @@ RetainPtr<CGContextRef> RemoteLayerBackingStore::takeFrontContextPendingFlush()
 }
 
 #if USE(IOSURFACE)
-bool RemoteLayerBackingStore::setVolatility(Volatility volatility)
+bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolatile)
 {
-    if (m_volatility == volatility)
-        return true;
+    switch(type) {
+    case BufferType::Front:
+        if (m_frontBuffer.surface && m_frontBuffer.isVolatile != isVolatile) {
+            if (!isVolatile || !m_frontBuffer.surface->isInUse()) {
+                IOSurface::SurfaceState previousState = m_frontBuffer.surface->setIsVolatile(isVolatile);
+                m_frontBuffer.isVolatile = isVolatile;
 
-    bool wantsVolatileFrontBuffer = volatility == Volatility::AllBuffersVolatile;
-    bool wantsVolatileBackBuffer = volatility == Volatility::AllBuffersVolatile || volatility == Volatility::BackBufferVolatile;
-
-    // If either surface is in-use and would become volatile, don't make any changes.
-    if (wantsVolatileFrontBuffer && m_frontSurface && m_frontSurface->isInUse())
-        return false;
-    if (wantsVolatileBackBuffer && m_backSurface && m_backSurface->isInUse())
-        return false;
-
-    if (m_frontSurface) {
-        IOSurface::SurfaceState previousState = m_frontSurface->setIsVolatile(wantsVolatileFrontBuffer);
-
-        // Becoming non-volatile and the front buffer was purged, so we need to repaint.
-        if (!wantsVolatileFrontBuffer && (previousState == IOSurface::SurfaceState::Empty))
-            setNeedsDisplay();
+                // Becoming non-volatile and the front buffer was purged, so we need to repaint.
+                if (!isVolatile && (previousState == IOSurface::SurfaceState::Empty))
+                    setNeedsDisplay();
+            } else
+                return false;
+        }
+        break;
+    case BufferType::Back:
+        if (m_backBuffer.surface && m_backBuffer.isVolatile != isVolatile) {
+            if (!isVolatile || !m_backBuffer.surface->isInUse()) {
+                m_backBuffer.surface->setIsVolatile(isVolatile);
+                m_backBuffer.isVolatile = isVolatile;
+            } else
+                return false;
+        }
+        break;
+    case BufferType::SecondaryBack:
+        if (m_secondaryBackBuffer.surface && m_secondaryBackBuffer.isVolatile != isVolatile) {
+            if (!isVolatile || !m_secondaryBackBuffer.surface->isInUse()) {
+                m_secondaryBackBuffer.surface->setIsVolatile(isVolatile);
+                m_secondaryBackBuffer.isVolatile = isVolatile;
+            } else
+                return false;
+        }
+        break;
     }
-
-    if (m_backSurface)
-        m_backSurface->setIsVolatile(wantsVolatileBackBuffer);
-
-    m_volatility = volatility;
-
     return true;
 }
 #else
-bool RemoteLayerBackingStore::setVolatility(Volatility)
+bool RemoteLayerBackingStore::setBufferVolatility(BufferType, bool)
 {
     return true;
 }
 #endif
+
+void RemoteLayerBackingStore::Buffer::discard()
+{
+#if USE(IOSURFACE)
+    if (surface)
+        IOSurfacePool::sharedPool().addSurface(surface.get());
+    surface = nullptr;
+    isVolatile = false;
+#endif
+    bitmap = nullptr;
+}
 
 } // namespace WebKit
