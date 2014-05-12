@@ -102,7 +102,8 @@ public:
     Range<Iterator> rangeForRect(const LayoutRect&) const;
 
 private:
-    unsigned lineIndexForHeight(LayoutUnit) const;
+    enum class IndexType { First, Last };
+    unsigned lineIndexForHeight(LayoutUnit, IndexType) const;
 
     const Layout& m_layout;
     const String m_string;
@@ -270,10 +271,16 @@ inline RunResolver::Iterator RunResolver::end() const
     return Iterator(*this, m_layout.runCount(), m_layout.lineCount());
 }
 
-inline unsigned RunResolver::lineIndexForHeight(LayoutUnit height) const
+inline unsigned RunResolver::lineIndexForHeight(LayoutUnit height, IndexType type) const
 {
     ASSERT(m_lineHeight);
-    float y = std::max<float>(height - m_borderAndPaddingBefore - m_baseline + m_ascent, 0);
+    float y = height - m_borderAndPaddingBefore;
+    // Lines may overlap, adjust to get the first or last line at this height.
+    if (type == IndexType::First)
+        y += m_lineHeight - (m_baseline + m_descent);
+    else
+        y -= m_baseline - m_ascent;
+    y = std::max<float>(y, 0);
     return std::min<unsigned>(y / m_lineHeight, m_layout.lineCount() - 1);
 }
 
@@ -282,8 +289,8 @@ inline Range<RunResolver::Iterator> RunResolver::rangeForRect(const LayoutRect& 
     if (!m_lineHeight)
         return Range<Iterator>(begin(), end());
 
-    unsigned firstLine = lineIndexForHeight(rect.y());
-    unsigned lastLine = std::max(firstLine, lineIndexForHeight(rect.maxY()));
+    unsigned firstLine = lineIndexForHeight(rect.y(), IndexType::First);
+    unsigned lastLine = std::max(firstLine, lineIndexForHeight(rect.maxY(), IndexType::Last));
 
     auto rangeBegin = begin().advanceLines(firstLine);
     if (rangeBegin == end())

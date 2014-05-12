@@ -1,3 +1,22 @@
+2014-05-12  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r159560): Text clips on tile border if line-height < font-size
+        https://bugs.webkit.org/show_bug.cgi?id=132822
+
+        Reviewed by Andreas Kling.
+        
+        The first line of simple line layout run range was miscomputed.
+
+        Test: fast/text/simple-lines-range-low-line-height.html
+
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::lineIndexForHeight):
+        
+            Lines may overlap if line-height < font-size. Apply different adjustment when searching for range begin
+            so that overflowing earlier lines are taken into account.
+
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRect):
+
 2014-05-12  Radu Stavila  <stavila@adobe.com>
 
         Invalid information remaining in lineToRegion map of RenderFlowThread.
