@@ -1821,9 +1821,6 @@
     <ClCompile Include="..\platform\network\ResourceHandleClient.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\network\ResourceLoadTiming.cpp">
-      <Filter>platform\network</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\network\ResourceRequestBase.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>

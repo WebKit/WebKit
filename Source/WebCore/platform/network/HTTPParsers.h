@@ -37,9 +37,6 @@
 
 namespace WebCore {
 
-class HTTPHeaderMap;
-class ResourceResponseBase;
-
 enum ContentDispositionType {
     ContentDispositionNone,
     ContentDispositionInline,

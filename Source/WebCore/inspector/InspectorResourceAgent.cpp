@@ -203,18 +203,14 @@ static PassRefPtr<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& he
 static PassRefPtr<Inspector::TypeBuilder::Network::ResourceTiming> buildObjectForTiming(const ResourceLoadTiming& timing, DocumentLoader* loader)
 {
     return Inspector::TypeBuilder::Network::ResourceTiming::create()
-        .setRequestTime(loader->timing()->monotonicTimeToPseudoWallTime(timing.convertResourceLoadTimeToMonotonicTime(0)))
-        .setProxyStart(timing.proxyStart)
-        .setProxyEnd(timing.proxyEnd)
-        .setDnsStart(timing.dnsStart)
-        .setDnsEnd(timing.dnsEnd)
+        .setNavigationStart(loader->timing()->navigationStart())
+        .setDomainLookupStart(timing.domainLookupStart)
+        .setDomainLookupEnd(timing.domainLookupEnd)
         .setConnectStart(timing.connectStart)
         .setConnectEnd(timing.connectEnd)
-        .setSslStart(timing.sslStart)
-        .setSslEnd(timing.sslEnd)
-        .setSendStart(timing.sendStart)
-        .setSendEnd(timing.sendEnd)
-        .setReceiveHeadersEnd(timing.receiveHeadersEnd)
+        .setSecureConnectionStart(timing.secureConnectionStart)
+        .setRequestStart(timing.requestStart)
+        .setResponseStart(timing.responseStart)
         .release();
 }
 

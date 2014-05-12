@@ -1,3 +1,15 @@
+2014-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Progress on web timing.
+        https://bugs.webkit.org/show_bug.cgi?id=132574
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceResponse>::encode):
+        (IPC::ArgumentCoder<ResourceResponse>::decode):
+        Transfer ResourceLoadTiming values if they exist.
+
 2014-05-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose WebPage::usesEphemeralSession to the bundle

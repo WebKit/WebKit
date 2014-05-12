@@ -41,7 +41,6 @@ public:
     double monotonicTimeToPseudoWallTime(double) const;
 
     void markNavigationStart();
-    void setNavigationStart(double);
     void addRedirect(const URL& redirectingUrl, const URL& redirectedUrl);
 
     void markUnloadEventStart() { m_unloadEventStart = monotonicallyIncreasingTime(); }

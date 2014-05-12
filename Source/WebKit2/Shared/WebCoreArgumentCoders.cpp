@@ -688,6 +688,21 @@ void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder& encoder, const Res
         encoder << resourceResponse.httpStatusText();
         encoder << resourceResponse.suggestedFilename();
     }
+    
+#if ENABLE(WEB_TIMING)
+    ResourceLoadTiming* timing = resourceResponse.resourceLoadTiming();
+    bool hasResourceLoadTiming = timing;
+    encoder << hasResourceLoadTiming;
+    if (hasResourceLoadTiming) {
+        encoder << timing->domainLookupStart;
+        encoder << timing->domainLookupEnd;
+        encoder << timing->connectStart;
+        encoder << timing->connectEnd;
+        encoder << timing->requestStart;
+        encoder << timing->responseStart;
+        encoder << timing->secureConnectionStart;
+    }
+#endif
 }
 
 bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder& decoder, ResourceResponse& resourceResponse)
@@ -755,6 +770,24 @@ bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder& decoder, ResourceR
             return false;
         response.setSuggestedFilename(suggestedFilename);
     }
+    
+#if ENABLE(WEB_TIMING)
+    bool hasResourceLoadTiming;
+    if (!decoder.decode(hasResourceLoadTiming))
+        return false;
+    if (hasResourceLoadTiming) {
+        response.setResourceLoadTiming(ResourceLoadTiming::create());
+        ResourceLoadTiming* timing = response.resourceLoadTiming();
+        if (!decoder.decode(timing->domainLookupStart)
+            || !decoder.decode(timing->domainLookupEnd)
+            || !decoder.decode(timing->connectStart)
+            || !decoder.decode(timing->connectEnd)
+            || !decoder.decode(timing->requestStart)
+            || !decoder.decode(timing->responseStart)
+            || !decoder.decode(timing->secureConnectionStart))
+            return false;
+    }
+#endif
 
     resourceResponse = response;
 

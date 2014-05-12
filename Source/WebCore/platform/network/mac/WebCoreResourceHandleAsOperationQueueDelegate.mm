@@ -39,6 +39,14 @@
 #import "WebCoreURLResponse.h"
 #import <wtf/MainThread.h>
 
+#if __has_include(<CFNetwork/CFNSURLConnection.h>)
+#import <CFNetwork/CFNSURLConnection.h>
+#else
+@interface NSURLConnection (TimingData)
+- (NSDictionary *)_timingData;
+@end
+#endif
+
 @interface NSURLRequest (Details)
 - (id)_propertyForKey:(NSString *)key;
 @end
@@ -193,7 +201,6 @@ using namespace WebCore;
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(!isMainThread());
-    UNUSED_PARAM(connection);
 
     LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, reported MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
 
@@ -212,8 +219,39 @@ using namespace WebCore;
 
         if ([m_handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) _propertyForKey:@"ForceHTMLMIMEType"])
             [r _setMIMEType:@"text/html"];
-
-        m_handle->client()->didReceiveResponseAsync(m_handle, r);
+        
+        ResourceResponse resourceResponse(r);
+#if ENABLE(WEB_TIMING)
+        if (NSDictionary *timingData = [connection _timingData]) {
+            resourceResponse.setResourceLoadTiming(ResourceLoadTiming::create());
+            ResourceLoadTiming* timing = resourceResponse.resourceLoadTiming();
+            
+            // This is not the navigationStart time in monotonic time, but the other times are relative to this time
+            // and only the differences between times are stored.
+            double referenceStart = [[timingData valueForKey:@"_kCFNTimingDataTimingDataInit"] doubleValue];
+            
+            double domainLookupStart = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupStart"] doubleValue];
+            double domainLookupEnd = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupEnd"] doubleValue];
+            double connectStart = [[timingData valueForKey:@"_kCFNTimingDataConnectStart"] doubleValue];
+            double secureConnectionStart = [[timingData valueForKey:@"_kCFNTimingDataSecureConnectionStart"] doubleValue];
+            double connectEnd = [[timingData valueForKey:@"_kCFNTimingDataConnectEnd"] doubleValue];
+            double requestStart = [[timingData valueForKey:@"_kCFNTimingDataRequestStart"] doubleValue];
+            double responseStart = [[timingData valueForKey:@"_kCFNTimingDataResponseStart"] doubleValue];
+            
+            if (timing) {
+                timing->domainLookupStart = domainLookupStart <= 0.0 ? -1 : (domainLookupStart - referenceStart) * 1000;
+                timing->domainLookupEnd = domainLookupEnd <= 0.0 ? -1 : (domainLookupEnd - referenceStart) * 1000;
+                timing->connectStart = connectStart <= 0.0 ? -1 : (connectStart - referenceStart) * 1000;
+                timing->secureConnectionStart = secureConnectionStart <= 0.0 ? -1 : (secureConnectionStart - referenceStart) * 1000;
+                timing->connectEnd = connectEnd <= 0.0 ? -1 : (connectEnd - referenceStart) * 1000;
+                timing->requestStart = requestStart <= 0.0 ? -1 : (requestStart - referenceStart) * 1000;
+                timing->responseStart = responseStart <= 0.0 ? -1 : (responseStart - referenceStart) * 1000;
+            }
+        }
+#else
+        UNUSED_PARAM(connection);
+#endif
+        m_handle->client()->didReceiveResponseAsync(m_handle, resourceResponse);
     });
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);

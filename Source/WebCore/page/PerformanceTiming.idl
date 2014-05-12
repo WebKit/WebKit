@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// See: http://dev.w3.org/2006/webapi/WebTiming/
+// See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/NavigationTiming/Overview.html
 [
     Conditional=WEB_TIMING,
 ] interface PerformanceTiming {

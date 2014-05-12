@@ -130,11 +130,11 @@ unsigned long long PerformanceTiming::domainLookupStart() const
 
     // This will be -1 when a DNS request is not performed.
     // Rather than exposing a special value that indicates no DNS, we "backfill" with fetchStart.
-    int dnsStart = timing->dnsStart;
-    if (dnsStart < 0)
+    int domainLookupStart = timing->domainLookupStart;
+    if (domainLookupStart < 0)
         return fetchStart();
 
-    return resourceLoadTimeRelativeToAbsolute(dnsStart);
+    return resourceLoadTimeRelativeToAbsolute(domainLookupStart);
 }
 
 unsigned long long PerformanceTiming::domainLookupEnd() const
@@ -145,11 +145,11 @@ unsigned long long PerformanceTiming::domainLookupEnd() const
 
     // This will be -1 when a DNS request is not performed.
     // Rather than exposing a special value that indicates no DNS, we "backfill" with domainLookupStart.
-    int dnsEnd = timing->dnsEnd;
-    if (dnsEnd < 0)
+    int domainLookupEnd = timing->domainLookupEnd;
+    if (domainLookupEnd < 0)
         return domainLookupStart();
 
-    return resourceLoadTimeRelativeToAbsolute(dnsEnd);
+    return resourceLoadTimeRelativeToAbsolute(domainLookupEnd);
 }
 
 unsigned long long PerformanceTiming::connectStart() const
@@ -170,8 +170,8 @@ unsigned long long PerformanceTiming::connectStart() const
 
     // ResourceLoadTiming's connect phase includes DNS, however Navigation Timing's
     // connect phase should not. So if there is DNS time, trim it from the start.
-    if (timing->dnsEnd >= 0 && timing->dnsEnd > connectStart)
-        connectStart = timing->dnsEnd;
+    if (timing->domainLookupEnd >= 0 && timing->domainLookupEnd > connectStart)
+        connectStart = timing->domainLookupEnd;
 
     return resourceLoadTimeRelativeToAbsolute(connectStart);
 }
@@ -205,11 +205,11 @@ unsigned long long PerformanceTiming::secureConnectionStart() const
     if (!timing)
         return 0;
 
-    int sslStart = timing->sslStart;
-    if (sslStart < 0)
+    int secureConnectionStart = timing->secureConnectionStart;
+    if (secureConnectionStart < 0)
         return 0;
 
-    return resourceLoadTimeRelativeToAbsolute(sslStart);
+    return resourceLoadTimeRelativeToAbsolute(secureConnectionStart);
 }
 
 unsigned long long PerformanceTiming::requestStart() const
@@ -218,8 +218,8 @@ unsigned long long PerformanceTiming::requestStart() const
     if (!timing)
         return connectEnd();
 
-    ASSERT(timing->sendStart >= 0);
-    return resourceLoadTimeRelativeToAbsolute(timing->sendStart);
+    ASSERT(timing->requestStart >= 0);
+    return resourceLoadTimeRelativeToAbsolute(timing->requestStart);
 }
 
 unsigned long long PerformanceTiming::responseStart() const
@@ -228,14 +228,8 @@ unsigned long long PerformanceTiming::responseStart() const
     if (!timing)
         return requestStart();
 
-    // FIXME: Response start needs to be the time of the first received byte.
-    // However, the ResourceLoadTiming API currently only supports the time
-    // the last header byte was received. For many responses with reasonable
-    // sized cookies, the HTTP headers fit into a single packet so this time
-    // is basically equivalent. But for some responses, particularly those with
-    // headers larger than a single packet, this time will be too late.
-    ASSERT(timing->receiveHeadersEnd >= 0);
-    return resourceLoadTimeRelativeToAbsolute(timing->receiveHeadersEnd);
+    ASSERT(timing->responseStart >= 0);
+    return resourceLoadTimeRelativeToAbsolute(timing->responseStart);
 }
 
 unsigned long long PerformanceTiming::responseEnd() const
@@ -351,9 +345,7 @@ ResourceLoadTiming* PerformanceTiming::resourceLoadTiming() const
 unsigned long long PerformanceTiming::resourceLoadTimeRelativeToAbsolute(int relativeMilliseconds) const
 {
     ASSERT(relativeMilliseconds >= 0);
-    ResourceLoadTiming* resourceTiming = resourceLoadTiming();
-    ASSERT(resourceTiming);
-    return monotonicTimeToIntegerMilliseconds(resourceTiming->convertResourceLoadTimeToMonotonicTime(relativeMilliseconds));
+    return navigationStart() + relativeMilliseconds;
 }
 
 unsigned long long PerformanceTiming::monotonicTimeToIntegerMilliseconds(double monotonicSeconds) const

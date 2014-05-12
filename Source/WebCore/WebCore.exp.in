@@ -3349,3 +3349,8 @@ __ZN7WebCore9PageGroup18captionPreferencesEv
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
 __ZN7WebCore4Page11setViewModeENS0_8ViewModeE
 #endif
+
+#if ENABLE(WEB_TIMING)
+__ZN7WebCore20ResourceResponseBase21setResourceLoadTimingEN3WTF10PassRefPtrINS_18ResourceLoadTimingEEE
+__ZNK7WebCore20ResourceResponseBase18resourceLoadTimingEv
+#endif

@@ -1,3 +1,80 @@
+2014-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Progress on web timing.
+        https://bugs.webkit.org/show_bug.cgi?id=132574
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CMakeLists.txt:
+        Removed ResourceLoadTiming.cpp.
+        * WebCore.exp.in:
+        Added linker symbols for ResourceLoadTiming.
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        Removed ResourceLoadTiming.cpp.
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForTiming):
+        * inspector/protocol/Network.json:
+        Updated ResourceTiming structure.
+        * loader/DocumentLoadTiming.cpp:
+        (WebCore::DocumentLoadTiming::setNavigationStart):
+        * loader/DocumentLoadTiming.h:
+         Deleted unused setNavigationStart function.
+        * page/Performance.idl:
+        Updated spec URL.
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::domainLookupStart):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd):
+        (WebCore::PerformanceResourceTiming::connectStart):
+        (WebCore::PerformanceResourceTiming::secureConnectionStart):
+        (WebCore::PerformanceResourceTiming::responseEnd):
+        Updated ResourceLoadTiming member variable names.
+        (WebCore::PerformanceResourceTiming::responseStart):
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceResourceTiming.idl:
+        Deleted responseStart because it is not in the spec.
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::domainLookupStart):
+        (WebCore::PerformanceTiming::domainLookupEnd):
+        (WebCore::PerformanceTiming::connectStart):
+        (WebCore::PerformanceTiming::secureConnectionStart):
+        (WebCore::PerformanceTiming::requestStart):
+        (WebCore::PerformanceTiming::responseStart):
+        Updated ResourceLoadTiming member variable names.
+        (WebCore::PerformanceTiming::resourceLoadTimeRelativeToAbsolute):
+        Use navigationStart as base for resource load times.
+        * page/PerformanceTiming.idl:
+        Updated spec URL.
+        * platform/network/HTTPParsers.h:
+        Removed unused class declarations.
+        * platform/network/ResourceHandle.h:
+        Moved soup request time from ResourceLoadTiming to ResourceHandle.
+        * platform/network/ResourceLoadTiming.cpp: Removed.
+        * platform/network/ResourceLoadTiming.h:
+        (WebCore::ResourceLoadTiming::deepCopy):
+        (WebCore::ResourceLoadTiming::operator==):
+        (WebCore::ResourceLoadTiming::ResourceLoadTiming):
+        Updated ResourceLoadTiming member variable names.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        Collect timing data.
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        Save timing data to a ResourceLoadTiming on the ResourceResponse.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::gotHeadersCallback):
+        (WebCore::restartedCallback):
+        (WebCore::milisecondsSinceRequest):
+        (WebCore::ResourceHandle::didStartRequest):
+        (WebCore::networkEventCallback):
+        (WebCore::createSoupMessageForHandleAndRequest):
+        (WebCore::ResourceHandle::sendPendingRequest):
+        Updated ResourceLoadTiming member variable names.
+        (WebCore::wroteBodyCallback): Deleted.
+
 2014-05-12  Dirk Schulze  <krit@webkit.org>
 
         SVG outline property is broken and inefficient

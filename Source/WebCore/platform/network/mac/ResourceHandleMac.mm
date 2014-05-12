@@ -56,6 +56,14 @@
 #import <wtf/text/Base64.h>
 #import <wtf/text/CString.h>
 
+#if __has_include(<Foundation/NSURLConnectionPrivate.h>)
+#import <Foundation/NSURLConnectionPrivate.h>
+#else
+@interface NSURLConnection (TimingData)
++ (void)_setCollectsTimingData:(BOOL)collect;
+@end
+#endif
+
 #if PLATFORM(IOS)
 #import <CFNetwork/CFURLRequest.h>
 
@@ -200,6 +208,9 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     const bool usesCache = true;
 #endif
     d->m_connection = adoptNS([[NSURLConnection alloc] _initWithRequest:nsRequest delegate:delegate usesCache:usesCache maxContentLength:0 startImmediately:NO connectionProperties:propertyDictionary]);
+#if ENABLE(WEB_TIMING)
+    [NSURLConnection _setCollectsTimingData:YES];
+#endif
 }
 
 bool ResourceHandle::start()

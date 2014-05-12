@@ -65,7 +65,6 @@ public:
     double connectEnd() const;
     double secureConnectionStart() const;
     double requestStart() const;
-    double responseStart() const;
     double responseEnd() const;
 
     virtual bool isResource() { return true; }

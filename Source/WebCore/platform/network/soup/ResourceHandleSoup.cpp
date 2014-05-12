@@ -316,11 +316,6 @@ static void gotHeadersCallback(SoupMessage* message, gpointer data)
 
     ResourceHandleInternal* d = handle->getInternal();
 
-#if ENABLE(WEB_TIMING)
-    if (d->m_response.resourceLoadTiming())
-        d->m_response.resourceLoadTiming()->receiveHeadersEnd = milisecondsSinceRequest(d->m_response.resourceLoadTiming()->requestTime);
-#endif
-
 #if PLATFORM(GTK)
     // We are a bit more conservative with the persistent credential storage than the session store,
     // since we are waiting until we know that this authentication succeeded before actually storing.
@@ -390,7 +385,7 @@ static void restartedCallback(SoupMessage*, gpointer data)
     ResourceHandleInternal* d = handle->getInternal();
     ResourceResponse& redirectResponse = d->m_response;
     redirectResponse.setResourceLoadTiming(ResourceLoadTiming::create());
-    redirectResponse.resourceLoadTiming()->requestTime = monotonicallyIncreasingTime();
+    handle->m_requestTime = monotonicallyIncreasingTime();
 }
 #endif
 
@@ -838,35 +833,13 @@ static int milisecondsSinceRequest(double requestTime)
     return static_cast<int>((monotonicallyIncreasingTime() - requestTime) * 1000.0);
 }
 
-static void wroteBodyCallback(SoupMessage*, gpointer data)
-{
-    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
-    if (!handle)
-        return;
-
-    ResourceHandleInternal* d = handle->getInternal();
-    if (!d->m_response.resourceLoadTiming())
-        return;
-
-    d->m_response.resourceLoadTiming()->sendEnd = milisecondsSinceRequest(d->m_response.resourceLoadTiming()->requestTime);
-}
-
 void ResourceHandle::didStartRequest()
 {
     ResourceHandleInternal* d = getInternal();
     if (!d->m_response.resourceLoadTiming())
         return;
 
-    d->m_response.resourceLoadTiming()->sendStart = milisecondsSinceRequest(d->m_response.resourceLoadTiming()->requestTime);
-    if (d->m_response.resourceLoadTiming()->sslStart != -1) {
-        // WebCore/inspector/front-end/RequestTimingView.js assumes
-        // that SSL time is included in connection time so must
-        // substract here the SSL delta that will be added later (see
-        // WebInspector.RequestTimingView.createTimingTable in the
-        // file above for more details).
-        d->m_response.resourceLoadTiming()->sendStart -=
-            d->m_response.resourceLoadTiming()->sslEnd - d->m_response.resourceLoadTiming()->sslStart;
-    }
+    d->m_response.resourceLoadTiming()->requestStart = milisecondsSinceRequest(m_requestTime);
 }
 
 static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStream*, gpointer data)
@@ -879,40 +852,38 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
         return;
 
     ResourceHandleInternal* d = handle->getInternal();
-    int deltaTime = milisecondsSinceRequest(d->m_response.resourceLoadTiming()->requestTime);
+    int deltaTime = milisecondsSinceRequest(handle->m_requestTime);
     switch (event) {
     case G_SOCKET_CLIENT_RESOLVING:
-        d->m_response.resourceLoadTiming()->dnsStart = deltaTime;
+        d->m_response.resourceLoadTiming()->domainLookupStart = deltaTime;
         break;
     case G_SOCKET_CLIENT_RESOLVED:
-        d->m_response.resourceLoadTiming()->dnsEnd = deltaTime;
+        d->m_response.resourceLoadTiming()->domainLookupEnd = deltaTime;
         break;
     case G_SOCKET_CLIENT_CONNECTING:
         d->m_response.resourceLoadTiming()->connectStart = deltaTime;
-        if (d->m_response.resourceLoadTiming()->dnsStart != -1)
+        if (d->m_response.resourceLoadTiming()->domainLookupStart != -1) {
             // WebCore/inspector/front-end/RequestTimingView.js assumes
             // that DNS time is included in connection time so must
             // substract here the DNS delta that will be added later (see
             // WebInspector.RequestTimingView.createTimingTable in the
             // file above for more details).
             d->m_response.resourceLoadTiming()->connectStart -=
-                d->m_response.resourceLoadTiming()->dnsEnd - d->m_response.resourceLoadTiming()->dnsStart;
+                d->m_response.resourceLoadTiming()->domainLookupEnd - d->m_response.resourceLoadTiming()->domainLookupStart;
+        }
         break;
     case G_SOCKET_CLIENT_CONNECTED:
         // Web Timing considers that connection time involves dns, proxy & TLS negotiation...
         // so we better pick G_SOCKET_CLIENT_COMPLETE for connectEnd
         break;
     case G_SOCKET_CLIENT_PROXY_NEGOTIATING:
-        d->m_response.resourceLoadTiming()->proxyStart = deltaTime;
         break;
     case G_SOCKET_CLIENT_PROXY_NEGOTIATED:
-        d->m_response.resourceLoadTiming()->proxyEnd = deltaTime;
         break;
     case G_SOCKET_CLIENT_TLS_HANDSHAKING:
-        d->m_response.resourceLoadTiming()->sslStart = deltaTime;
+        d->m_response.resourceLoadTiming()->secureConnectionStart = deltaTime;
         break;
     case G_SOCKET_CLIENT_TLS_HANDSHAKED:
-        d->m_response.resourceLoadTiming()->sslEnd = deltaTime;
         break;
     case G_SOCKET_CLIENT_COMPLETE:
         d->m_response.resourceLoadTiming()->connectEnd = deltaTime;
@@ -974,7 +945,6 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     d->m_response.setResourceLoadTiming(ResourceLoadTiming::create());
     g_signal_connect(d->m_soupMessage.get(), "network-event", G_CALLBACK(networkEventCallback), handle);
     g_signal_connect(d->m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), handle);
-    g_signal_connect(d->m_soupMessage.get(), "wrote-body", G_CALLBACK(wroteBodyCallback), handle);
 #endif
 
 #if SOUP_CHECK_VERSION(2, 43, 1)
@@ -1048,7 +1018,7 @@ void ResourceHandle::sendPendingRequest()
 {
 #if ENABLE(WEB_TIMING)
     if (d->m_response.resourceLoadTiming())
-        d->m_response.resourceLoadTiming()->requestTime = monotonicallyIncreasingTime();
+        m_requestTime = monotonicallyIncreasingTime();
 #endif
 
     if (d->m_firstRequest.timeoutInterval() > 0) {
