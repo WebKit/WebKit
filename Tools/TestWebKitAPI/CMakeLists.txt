@@ -3,12 +3,20 @@ set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Te
 
 include_directories(${CMAKE_BINARY_DIR}
     ${TESTWEBKITAPI_DIR}
-    ${TESTWEBKITAPI_DIR}
     ${CMAKE_SOURCE_DIR}/Source
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
     ${DERIVED_SOURCES_WEBCORE_DIR}
     ${JAVASCRIPTCORE_DIR}
     ${JAVASCRIPTCORE_DIR}/API
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
+    ${JAVASCRIPTCORE_DIR}/assembler
+    ${JAVASCRIPTCORE_DIR}/bytecode
+    ${JAVASCRIPTCORE_DIR}/disassembler
+    ${JAVASCRIPTCORE_DIR}/heap
+    ${JAVASCRIPTCORE_DIR}/jit
+    ${JAVASCRIPTCORE_DIR}/llint
+    ${JAVASCRIPTCORE_DIR}/parser
+    ${JAVASCRIPTCORE_DIR}/runtime
     ${THIRDPARTY_DIR}/gtest/include
     ${WEBCORE_DIR}/editing
     ${WEBCORE_DIR}/platform
@@ -48,6 +56,11 @@ set(test_webkit2_api_LIBRARIES
 set(TestWebKitAPI_LIBRARIES
     WTF
     WebKit2
+)
+
+set(TestJavaScriptCore_LIBRARIES
+    gtest
+    JavaScriptCore
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
@@ -135,6 +148,18 @@ set_tests_properties(TestWTF PROPERTIES TIMEOUT 60)
     set_target_properties(TestWTF PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WTF
     )
+
+
+add_executable(TestJavaScriptCore
+    ${test_main_SOURCES}
+    ${TESTWEBKITAPI_DIR}/TestsController.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/JavaScriptCore/VMInspector.cpp
+)
+
+target_link_libraries(TestJavaScriptCore ${TestJavaScriptCore_LIBRARIES})
+add_test(TestJavaScriptCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore/TestJavaScriptCore)
+set_tests_properties(TestJavaScriptCore PROPERTIES TIMEOUT 60)
+set_target_properties(TestJavaScriptCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore)
 
 foreach (testName ${test_webcore_BINARIES})
     add_executable(${testName} ${test_main_SOURCES} ${TESTWEBKITAPI_DIR}/TestsController.cpp ${TESTWEBKITAPI_DIR}/Tests/WebCore/${testName}.cpp)

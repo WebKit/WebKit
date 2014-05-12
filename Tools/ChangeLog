@@ -1,3 +1,14 @@
+2014-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(CMAKE): [GTK] JavaScriptCore API tests are not built anymore
+        https://bugs.webkit.org/show_bug.cgi?id=132739
+
+        Reviewed Anders Carlsson.
+
+        * TestWebKitAPI/CMakeLists.txt: Add missing includes required by
+        the JSC unit tests.
+        * TestWebKitAPI/PlatformGTK.cmake: Bring back JavaScriptCore unit tests.
+
 2014-05-11  Anders Carlsson  <andersca@apple.com>
 
         Add a WKContextConfigurationRef object and make the injected bundle path part of the configuration
