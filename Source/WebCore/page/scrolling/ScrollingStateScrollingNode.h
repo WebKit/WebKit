@@ -63,6 +63,7 @@ public:
         ScrolledContentsLayer,
         CounterScrollingLayer,
         InsetClipLayer,
+        ContentShadowLayer,
         HeaderHeight,
         FooterHeight,
         HeaderLayer,
@@ -130,6 +131,9 @@ public:
     const LayerRepresentation& insetClipLayer() const { return m_insetClipLayer; }
     void setInsetClipLayer(const LayerRepresentation&);
 
+    const LayerRepresentation& contentShadowLayer() const { return m_contentShadowLayer; }
+    void setContentShadowLayer(const LayerRepresentation&);
+
     // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
     const LayerRepresentation& headerLayer() const { return m_headerLayer; }
     void setHeaderLayer(const LayerRepresentation&);
@@ -153,6 +157,7 @@ private:
     LayerRepresentation m_scrolledContentsLayer;
     LayerRepresentation m_counterScrollingLayer;
     LayerRepresentation m_insetClipLayer;
+    LayerRepresentation m_contentShadowLayer;
     LayerRepresentation m_headerLayer;
     LayerRepresentation m_footerLayer;
 

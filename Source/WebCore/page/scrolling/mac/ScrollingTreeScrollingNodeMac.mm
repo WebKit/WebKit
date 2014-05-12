@@ -87,6 +87,9 @@ void ScrollingTreeScrollingNodeMac::updateBeforeChildren(const ScrollingStateNod
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::InsetClipLayer))
         m_insetClipLayer = scrollingStateNode.insetClipLayer();
 
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ContentShadowLayer))
+        m_contentShadowLayer = scrollingStateNode.contentShadowLayer();
+
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::HeaderLayer))
         m_headerLayer = scrollingStateNode.headerLayer();
 
@@ -360,6 +363,8 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const FloatPoint& pos
         m_insetClipLayer.get().position = FloatPoint(0, FrameView::yPositionForInsetClipLayer(position, topContentInset));
         m_scrolledContentsLayer.get().position = FloatPoint(m_scrolledContentsLayer.get().position.x,
             FrameView::yPositionForRootContentLayer(position, topContentInset, headerHeight()));
+        if (m_contentShadowLayer)
+            m_contentShadowLayer.get().position = m_scrolledContentsLayer.get().position;
     }
 
     if (m_headerLayer || m_footerLayer) {

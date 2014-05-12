@@ -255,6 +255,13 @@ GraphicsLayer* ScrollingCoordinator::insetClipLayerForFrameView(FrameView* frame
     return nullptr;
 }
 
+GraphicsLayer* ScrollingCoordinator::contentShadowLayerForFrameView(FrameView* frameView)
+{
+    if (RenderView* renderView = frameView->frame().contentRenderer())
+        return renderView->compositor().layerForContentShadow();
+    return nullptr;
+}
+
 GraphicsLayer* ScrollingCoordinator::rootContentLayerForFrameView(FrameView* frameView)
 {
     if (RenderView* renderView = frameView->frame().contentRenderer())

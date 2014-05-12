@@ -1,3 +1,44 @@
+2014-05-12  Beth Dakin  <bdakin@apple.com>
+
+        Content shadow layer needs to move in sync with the content layer
+        https://bugs.webkit.org/show_bug.cgi?id=132841
+        -and corresponding-
+        <rdar://problem/16641115>
+
+        Reviewed by Simon Fraser.
+
+        Now that the root content layer moves a little bit (for y scroll positions between 
+        0 and topContentInset), the shadow layer needs to move along with it since the 
+        shadow layer should always have the same position as the root content layer.
+
+        Set the root state node’s shadow layer, and update the position whenever the root 
+        content layer’s position is updated.
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+
+        Fetch the compositor’s layerForContentShadow().
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::contentShadowLayerForFrameView):
+        * page/scrolling/ScrollingCoordinator.h:
+
+        Hook up the contentShadowLayer in the state node.
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setContentShadowLayer):
+
+        Hook it up in the ScrollingTreeNode as well. Move the layer whenever the m
+        _scrolledContentsLayer is moved.
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+
+        The shadow layer needs an anchor point now that we are moving it around.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+
 2014-05-12  Dirk Schulze  <krit@webkit.org>
 
         <svg> with opacity and compositing double-applies its opacity
