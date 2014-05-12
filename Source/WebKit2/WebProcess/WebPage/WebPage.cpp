@@ -4594,7 +4594,7 @@ PassRefPtr<WebCore::Range> WebPage::rangeFromEditingRange(WebCore::Frame& frame,
     
 bool WebPage::synchronousMessagesShouldSpinRunLoop()
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
     return WebCore::AXObjectCache::accessibilityEnabled();
 #endif
     return false;

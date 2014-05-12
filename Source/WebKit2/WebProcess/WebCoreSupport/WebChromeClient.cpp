@@ -327,7 +327,12 @@ bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame* 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
 
     bool shouldClose = false;
-    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(message, webFrame->frameID()), Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::Reply(shouldClose), m_page->pageID()))
+
+    unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
+    if (WebPage::synchronousMessagesShouldSpinRunLoop())
+        syncSendFlags |= IPC::SpinRunLoopWhileWaitingForReply;
+    
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(message, webFrame->frameID()), Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::Reply(shouldClose), m_page->pageID(), std::chrono::milliseconds::max(), syncSendFlags))
         return false;
 
     return shouldClose;
@@ -360,8 +365,9 @@ void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptAlert(m_page, alertText, webFrame);
 
-    // FIXME (126021): It is not good to change IPC behavior conditionally, and SpinRunLoopWhileWaitingForReply was known to cause trouble in other similar cases.
-    unsigned syncSendFlags = WebPage::synchronousMessagesShouldSpinRunLoop() ? IPC::SpinRunLoopWhileWaitingForReply : 0;
+    unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
+    if (WebPage::synchronousMessagesShouldSpinRunLoop())
+        syncSendFlags |= IPC::SpinRunLoopWhileWaitingForReply;
     WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), alertText), Messages::WebPageProxy::RunJavaScriptAlert::Reply(), m_page->pageID(), std::chrono::milliseconds::max(), syncSendFlags);
 }
 
@@ -373,8 +379,9 @@ bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptConfirm(m_page, message, webFrame);
 
-    // FIXME (126021): It is not good to change IPC behavior conditionally, and SpinRunLoopWhileWaitingForReply was known to cause trouble in other similar cases.
-    unsigned syncSendFlags = WebPage::synchronousMessagesShouldSpinRunLoop() ? IPC::SpinRunLoopWhileWaitingForReply : 0;
+    unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
+    if (WebPage::synchronousMessagesShouldSpinRunLoop())
+        syncSendFlags |= IPC::SpinRunLoopWhileWaitingForReply;
     bool result = false;
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), message), Messages::WebPageProxy::RunJavaScriptConfirm::Reply(result), m_page->pageID(), std::chrono::milliseconds::max(), syncSendFlags))
         return false;
@@ -390,8 +397,10 @@ bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, c
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptPrompt(m_page, message, defaultValue, webFrame);
 
-    // FIXME (126021): It is not good to change IPC behavior conditionally, and SpinRunLoopWhileWaitingForReply was known to cause trouble in other similar cases.
-    unsigned syncSendFlags = WebPage::synchronousMessagesShouldSpinRunLoop() ? IPC::SpinRunLoopWhileWaitingForReply : 0;
+    unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
+    if (WebPage::synchronousMessagesShouldSpinRunLoop())
+        syncSendFlags |= IPC::SpinRunLoopWhileWaitingForReply;
+    
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), message, defaultValue), Messages::WebPageProxy::RunJavaScriptPrompt::Reply(result), m_page->pageID(), std::chrono::milliseconds::max(), syncSendFlags))
         return false;
 
@@ -608,7 +617,11 @@ void WebChromeClient::print(Frame* frame)
     RefPtr<PrinterListGtk> printerList = PrinterListGtk::shared();
 #endif
 
-    m_page->sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply());
+    unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
+    if (WebPage::synchronousMessagesShouldSpinRunLoop())
+        syncSendFlags |= IPC::SpinRunLoopWhileWaitingForReply;
+    
+    m_page->sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply(), std::chrono::milliseconds::max(), syncSendFlags);
 }
 
 #if ENABLE(SQL_DATABASE)
@@ -627,9 +640,13 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     newQuota = m_page->injectedBundleUIClient().didExceedDatabaseQuota(m_page, webSecurityOrigin.get(), databaseName, details.displayName(), currentQuota, currentOriginUsage, details.currentUsage(), details.expectedUsage());
 
     if (!newQuota) {
+        unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
+        if (WebPage::synchronousMessagesShouldSpinRunLoop())
+            syncSendFlags |= IPC::SpinRunLoopWhileWaitingForReply;
+        
         WebProcess::shared().parentProcessConnection()->sendSync(
             Messages::WebPageProxy::ExceededDatabaseQuota(webFrame->frameID(), origin->databaseIdentifier(), databaseName, details.displayName(), currentQuota, currentOriginUsage, details.currentUsage(), details.expectedUsage()),
-            Messages::WebPageProxy::ExceededDatabaseQuota::Reply(newQuota), m_page->pageID());
+            Messages::WebPageProxy::ExceededDatabaseQuota::Reply(newQuota), m_page->pageID(), std::chrono::milliseconds::max(), syncSendFlags);
     }
 
     dbManager.setQuota(origin, newQuota);

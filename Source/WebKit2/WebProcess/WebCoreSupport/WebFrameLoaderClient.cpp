@@ -53,7 +53,6 @@
 #include "WebProcessProxyMessages.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObject.h>
-#include <WebCore/AXObjectCache.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DOMWrapperWorld.h>
@@ -661,9 +660,9 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     uint64_t policyAction;
     uint64_t downloadID;
 
-    // Notify the UIProcess.
-    // FIXME (126021): It is not good to change IPC behavior conditionally, and SpinRunLoopWhileWaitingForReply was known to cause trouble in other similar cases.
-    unsigned syncSendFlags = WebPage::synchronousMessagesShouldSpinRunLoop() ? IPC::SpinRunLoopWhileWaitingForReply : 0;
+    unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
+    if (WebPage::synchronousMessagesShouldSpinRunLoop())
+        syncSendFlags |= IPC::SpinRunLoopWhileWaitingForReply;
     if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForResponseSync(m_frame->frameID(), response, request, canShowMIMEType, listenerID, InjectedBundleUserMessageEncoder(userData.get())), Messages::WebPageProxy::DecidePolicyForResponseSync::Reply(receivedPolicyAction, policyAction, downloadID), std::chrono::milliseconds::max(), syncSendFlags))
         return;
 

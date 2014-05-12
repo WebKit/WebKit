@@ -510,6 +510,8 @@ std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncReques
 {
     double absoluteTime = currentTime() + (timeout.count() / 1000.0);
 
+    willSendSyncMessage(syncSendFlags);
+    
     bool timedOut = false;
     while (!timedOut) {
         // First, check if we have any messages that we need to process.
@@ -525,16 +527,20 @@ std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncReques
             ASSERT_UNUSED(syncRequestID, pendingSyncReply.syncRequestID == syncRequestID);
             
             // We found the sync reply, or the connection was closed.
-            if (pendingSyncReply.didReceiveReply || !m_shouldWaitForSyncReplies)
+            if (pendingSyncReply.didReceiveReply || !m_shouldWaitForSyncReplies) {
+                didReceiveSyncReply(syncSendFlags);
                 return std::move(pendingSyncReply.replyDecoder);
+            }
         }
 
         // Processing a sync message could cause the connection to be invalidated.
         // (If the handler ends up calling Connection::invalidate).
         // If that happens, we need to stop waiting, or we'll hang since we won't get
         // any more incoming messages.
-        if (!isValid())
+        if (!isValid()) {
+            didReceiveSyncReply(syncSendFlags);
             return nullptr;
+        }
 
         // We didn't find a sync reply yet, keep waiting.
         // This allows the WebProcess to still serve clients while waiting for the message to return.
@@ -550,6 +556,8 @@ std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncReques
             timedOut = !m_syncMessageState->wait(absoluteTime);
         
     }
+    
+    didReceiveSyncReply(syncSendFlags);
 
     return nullptr;
 }

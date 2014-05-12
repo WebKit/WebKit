@@ -557,5 +557,15 @@ Connection::SocketPair Connection::createPlatformConnection()
     SocketPair socketPair = { sockets[0], sockets[1] };
     return socketPair;
 }
+    
+void Connection::willSendSyncMessage(unsigned flags)
+{
+    UNUSED_PARAM(flags);
+}
+    
+void Connection::didReceiveSyncReply(unsigned flags)
+{
+    UNUSED_PARAM(flags);    
+}
 
 } // namespace IPC

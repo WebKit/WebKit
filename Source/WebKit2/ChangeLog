@@ -1,3 +1,30 @@
+2014-05-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: .js dialogs shown in unload while AX is running crash WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=123828
+
+        Reviewed by Anders Carlsson.
+
+        Utilize platform API to inform AX clients when the WebProcess will suspend and resume.
+        This allows us to avoid having special behavior for accessibility when the WebProcess needs
+        to wait on a reply.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForSyncReply):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.cpp:
+        (IPC::Connection::willSendSyncMessage):
+        (IPC::Connection::didReceiveSyncReply):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        (WebKit::WebChromeClient::print):
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+
 2014-05-12  Alex Christensen  <achristensen@webkit.org>
 
         Progress on web timing.

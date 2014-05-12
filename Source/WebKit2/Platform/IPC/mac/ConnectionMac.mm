@@ -30,6 +30,7 @@
 #include "ImportanceAssertion.h"
 #include "MachPort.h"
 #include "MachUtilities.h"
+#include <WebCore/AXObjectCache.h>
 #include <mach/mach_error.h>
 #include <mach/vm_map.h>
 #include <wtf/RunLoop.h>
@@ -42,6 +43,18 @@ extern "C" void xpc_connection_get_audit_token(xpc_connection_t, audit_token_t*)
 extern "C" void xpc_connection_kill(xpc_connection_t, int);
 #endif
 
+#if __has_include(<HIServices/AccessibilityPriv.h>)
+#include <HIServices/AccessibilityPriv.h>
+#else
+typedef enum {
+    AXSuspendStatusRunning = 0,
+    AXSuspendStatusSuspended,
+} AXSuspendStatus;
+#endif
+
+#if !TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+extern "C" AXError _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatus);
+#endif
 
 namespace IPC {
 
@@ -536,5 +549,21 @@ bool Connection::kill()
 
     return false;
 }
+    
+void Connection::willSendSyncMessage(unsigned flags)
+{
+#if !TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    if ((flags & InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
+        _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatusSuspended);
+#endif
+}
 
+void Connection::didReceiveSyncReply(unsigned flags)
+{
+#if !TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    if ((flags & InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
+        _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatusRunning);
+#endif
+}    
+    
 } // namespace IPC

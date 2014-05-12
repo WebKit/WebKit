@@ -62,8 +62,11 @@ enum MessageSendFlags {
 };
 
 enum SyncMessageSendFlags {
-    // Will allow events to continue being handled while waiting for the sync reply.
-    SpinRunLoopWhileWaitingForReply = 1 << 0,
+    // Use this to inform that this sync call will suspend this process until the user responds with input.
+    InformPlatformProcessWillSuspend = 1 << 0,
+    // Some platform accessibility clients can't suspend gracefully and need to spin the run loop so WebProcess doesn't hang.
+    // FIXME (126021): Remove when no platforms need to support this.
+    SpinRunLoopWhileWaitingForReply = 1 << 1,
 };
     
 #define MESSAGE_CHECK_BASE(assertion, connection) do \
@@ -212,6 +215,9 @@ private:
     // Can be called on any thread.
     void enqueueIncomingMessage(std::unique_ptr<MessageDecoder>);
 
+    void willSendSyncMessage(unsigned syncSendFlags);
+    void didReceiveSyncReply(unsigned syncSendFlags);
+    
     Client* m_client;
     bool m_isServer;
     std::atomic<uint64_t> m_syncRequestID;
