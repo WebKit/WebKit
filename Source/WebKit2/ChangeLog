@@ -1,3 +1,61 @@
+2014-05-11  Anders Carlsson  <andersca@apple.com>
+
+        Replace WKContextSetLocalStorageDirectory with a context configuration getter/setter
+        https://bugs.webkit.org/show_bug.cgi?id=132809
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetLocalStorageDirectory): Deleted.
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCopyLocalStorageDirectory):
+        (WKContextConfigurationSetLocalStorageDirectory):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        Add getters and setters for the local storage directory.
+
+        * UIProcess/API/C/WKContextPrivate.h:
+        Remove WKContextSetLocalStorageDirectory.
+
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        Call WebContext::applyPlatformSpecificConfigurationDefaults.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _initWithConfiguration:]):
+        Call WebContext::applyPlatformSpecificConfigurationDefaults (for now).
+
+        * UIProcess/APIContextConfiguration.cpp:
+        (API::ContextConfiguration::webContextConfiguration):
+        Set the local storage. Also, call WebContext::applyPlatformSpecificConfigurationDefaults.
+
+        * UIProcess/APIContextConfiguration.h:
+        (API::ContextConfiguration::injectedBundlePath):
+        This should be const.
+
+        (API::ContextConfiguration::localStorageDirectory):
+        (API::ContextConfiguration::setLocalStorageDirectory):
+        Add getter and setter.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::setLocalStorageDirectory):
+        ASSERT that the path isn't null.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::applyPlatformSpecificConfigurationDefaults):
+        New helper function that will fill in platform specific defaults for empty parameters.
+
+        (WebKit::WebContext::WebContext):
+        Get the local storage directory from the configuration.
+
+        (WebKit::WebContext::setLocalStorageDirectory): Deleted.
+        (WebKit::WebContext::localStorageDirectory): Deleted.
+        These are no longer needed.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultLocalStorageDirectory):
+        This should be a static member function.
+
 2014-05-12  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
 
         Typo fix in generate-forwarding-headers

@@ -276,7 +276,7 @@ String WebContext::platformDefaultIconDatabasePath() const
     return [databasesDirectory stringByStandardizingPath];
 }
 
-String WebContext::platformDefaultLocalStorageDirectory() const
+String WebContext::platformDefaultLocalStorageDirectory()
 {
     NSString *localStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebStorageDirectoryDefaultsKey];
     if (!localStorageDirectory || ![localStorageDirectory isKindOfClass:[NSString class]])

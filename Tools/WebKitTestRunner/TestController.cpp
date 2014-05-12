@@ -330,6 +330,14 @@ void TestController::initialize(int argc, const char* argv[])
     auto configuration = adoptWK(WKContextConfigurationCreate());
     WKContextConfigurationSetInjectedBundlePath(configuration.get(), injectedBundlePath());
 
+    if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
+        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+
+        const char separator = '/';
+
+        WKContextConfigurationSetLocalStorageDirectory(configuration.get(), toWK(temporaryFolder + separator + "LocalStorage").get());
+    }
+
     m_context = adoptWK(WKContextCreateWithConfiguration(configuration.get()));
     m_geolocationProvider = adoptPtr(new GeolocationProviderMock(m_context.get()));
 
@@ -341,13 +349,11 @@ void TestController::initialize(int argc, const char* argv[])
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
 
-        // WebCore::pathByAppendingComponent is not used here because of the namespace,
-        // which leads us to this ugly #ifdef and file path concatenation.
         const char separator = '/';
 
+        // FIXME: These should be migrated to WKContextConfigurationRef.
         WKContextSetApplicationCacheDirectory(m_context.get(), toWK(temporaryFolder + separator + "ApplicationCache").get());
         WKContextSetDatabaseDirectory(m_context.get(), toWK(temporaryFolder + separator + "Databases").get());
-        WKContextSetLocalStorageDirectory(m_context.get(), toWK(temporaryFolder + separator + "LocalStorage").get());
         WKContextSetDiskCacheDirectory(m_context.get(), toWK(temporaryFolder + separator + "Cache").get());
         WKContextSetCookieStorageDirectory(m_context.get(), toWK(temporaryFolder + separator + "Cookies").get());
         WKContextSetIconDatabasePath(m_context.get(), toWK(temporaryFolder + separator + "IconDatabase" + separator + "WebpageIcons.db").get());

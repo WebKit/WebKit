@@ -125,6 +125,9 @@ enum : NSUInteger {
         webContextConfiguration.injectedBundlePath = bundleURL.path;
     }
 
+    // FIXME: These are legacy configuration defaults and should not be applied when creating a WKProcessPool.
+    WebKit::WebContext::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
+
     API::Object::constructInWrapper<WebKit::WebContext>(self, std::move(webContextConfiguration));
     _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());
     _context->setUsesNetworkProcess(true);

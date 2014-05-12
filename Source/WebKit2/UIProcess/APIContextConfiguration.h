@@ -43,8 +43,11 @@ public:
     }
     virtual ~ContextConfiguration();
 
-    String injectedBundlePath() { return m_injectedBundlePath; }
+    String injectedBundlePath() const { return m_injectedBundlePath; }
     void setInjectedBundlePath(const String& injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
+
+    String localStorageDirectory() const { return m_localStorageDirectory; }
+    void setLocalStorageDirectory(const String& localStorageDirectory) { m_localStorageDirectory = localStorageDirectory; }
 
     WebKit::WebContextConfiguration webContextConfiguration() const;
 
@@ -52,6 +55,7 @@ private:
     ContextConfiguration();
 
     String m_injectedBundlePath;
+    String m_localStorageDirectory;
 };
 
 } // namespace API

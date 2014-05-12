@@ -387,6 +387,8 @@ StorageManager::~StorageManager()
 
 void StorageManager::setLocalStorageDirectory(const String& localStorageDirectory)
 {
+    ASSERT(!localStorageDirectory.isNull());
+
     m_localStorageDatabaseTracker->setLocalStorageDirectory(localStorageDirectory);
 }
 

@@ -27,6 +27,7 @@
 #include "APIContextConfiguration.h"
 
 #include "WebContext.h"
+
 namespace API {
 
 ContextConfiguration::ContextConfiguration()
@@ -42,6 +43,9 @@ WebKit::WebContextConfiguration ContextConfiguration::webContextConfiguration() 
     WebKit::WebContextConfiguration configuration;
 
     configuration.injectedBundlePath = m_injectedBundlePath;
+    configuration.localStorageDirectory = m_localStorageDirectory;
+
+    WebKit::WebContext::applyPlatformSpecificConfigurationDefaults(configuration);
 
     return configuration;
 }

@@ -37,6 +37,9 @@ WK_EXPORT WKContextConfigurationRef WKContextConfigurationCreate();
 WK_EXPORT WKStringRef WKContextConfigurationCopyInjectedBundlePath(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetInjectedBundlePath(WKContextConfigurationRef configuration, WKStringRef injectedBundlePath);
 
+WK_EXPORT WKStringRef WKContextConfigurationCopyLocalStorageDirectory(WKContextConfigurationRef configuration);
+WK_EXPORT void WKContextConfigurationSetLocalStorageDirectory(WKContextConfigurationRef configuration, WKStringRef localStorageDirectory);
+
 #ifdef __cplusplus
 }
 #endif

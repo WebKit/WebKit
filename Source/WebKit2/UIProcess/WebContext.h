@@ -97,6 +97,7 @@ int webProcessThroughputQOS();
 
 struct WebContextConfiguration {
     String injectedBundlePath;
+    String localStorageDirectory;
 };
 
 class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private IPC::MessageReceiver
@@ -105,6 +106,8 @@ class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private I
 #endif
     {
 public:
+    static void applyPlatformSpecificConfigurationDefaults(WebContextConfiguration&);
+
     WebContext(WebContextConfiguration);
         
     static PassRefPtr<WebContext> create(WebContextConfiguration);
@@ -243,7 +246,6 @@ public:
     void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
     void setIconDatabasePath(const String&);
     String iconDatabasePath() const;
-    void setLocalStorageDirectory(const String&);
     void setDiskCacheDirectory(const String& dir) { m_overrideDiskCacheDirectory = dir; }
     void setCookieStorageDirectory(const String& dir) { m_overrideCookieStorageDirectory = dir; }
 
@@ -412,8 +414,7 @@ private:
 
     String platformDefaultIconDatabasePath() const;
 
-    String localStorageDirectory() const;
-    String platformDefaultLocalStorageDirectory() const;
+    static String platformDefaultLocalStorageDirectory();
 
     String diskCacheDirectory() const;
     String platformDefaultDiskCacheDirectory() const;
@@ -515,7 +516,6 @@ private:
     String m_overrideApplicationCacheDirectory;
     String m_overrideDatabaseDirectory;
     String m_overrideIconDatabasePath;
-    String m_overrideLocalStorageDirectory;
     String m_overrideDiskCacheDirectory;
     String m_overrideCookieStorageDirectory;
 

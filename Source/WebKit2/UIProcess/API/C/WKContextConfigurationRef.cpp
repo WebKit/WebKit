@@ -45,3 +45,13 @@ void WKContextConfigurationSetInjectedBundlePath(WKContextConfigurationRef confi
 {
     toImpl(configuration)->setInjectedBundlePath(toImpl(injectedBundlePath)->string());
 }
+
+WKStringRef WKContextConfigurationCopyLocalStorageDirectory(WKContextConfigurationRef configuration)
+{
+    return toCopiedAPI(toImpl(configuration)->localStorageDirectory());
+}
+
+void WKContextConfigurationSetLocalStorageDirectory(WKContextConfigurationRef configuration, WKStringRef localStorageDirectory)
+{
+    toImpl(configuration)->setLocalStorageDirectory(toImpl(localStorageDirectory)->string());
+}

@@ -192,6 +192,8 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     WebContextConfiguration webContextConfiguration;
     webContextConfiguration.injectedBundlePath = bundleURL ? String(bundleURL.path) : String();
 
+    WebContext::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
+
     _context = WebContext::create(std::move(webContextConfiguration));
 
     setUpConnectionClient(self, toAPI(_context.get()));
