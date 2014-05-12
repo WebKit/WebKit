@@ -186,8 +186,8 @@ static void postExceptionTask(ScriptExecutionContext* context, const String& err
 void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
     MutexLocker lock(m_workerDocumentsLock);
-    for (HashSet<Document*>::iterator iter = m_workerDocuments.begin(); iter != m_workerDocuments.end(); ++iter)
-        (*iter)->postTask(createCallbackTask(&postExceptionTask, errorMessage, lineNumber, columnNumber, sourceURL));
+    for (auto& document : m_workerDocuments)
+        document->postTask(CrossThreadTask(&postExceptionTask, errorMessage, lineNumber, columnNumber, sourceURL));
 }
 
 static void postConsoleMessageTask(ScriptExecutionContext* document, MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber)
@@ -198,8 +198,8 @@ static void postConsoleMessageTask(ScriptExecutionContext* document, MessageSour
 void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageLevel level, const String& message, int lineNumber, int columnNumber, const String& sourceURL)
 {
     MutexLocker lock(m_workerDocumentsLock);
-    for (HashSet<Document*>::iterator iter = m_workerDocuments.begin(); iter != m_workerDocuments.end(); ++iter)
-        (*iter)->postTask(createCallbackTask(&postConsoleMessageTask, source, level, message, sourceURL, lineNumber, columnNumber));
+    for (auto& document : m_workerDocuments)
+        document->postTask(CrossThreadTask(&postConsoleMessageTask, source, level, message, sourceURL, lineNumber, columnNumber));
 }
 
 #if ENABLE(INSPECTOR)

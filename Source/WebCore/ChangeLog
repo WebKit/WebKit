@@ -1,3 +1,93 @@
+2014-05-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up CrossThreadTask
+        https://bugs.webkit.org/show_bug.cgi?id=132800
+
+        Reviewed by Darin Adler.
+
+        Remove the createCallbackTask overloads and the related CrossThreadTask helper classes.
+
+        Instead, have one simple CrossThreadTask class that derives from ScriptExecutionContext::Task.
+        Its templated constructor takes in the method and the variadic pack of parameters. The cross-thread
+        copies of the parameters are then bound to that method and the resulting bind expression is used to
+        initialize the base class. The bind expression is constructed with a placeholder for the
+        ScriptExecutionContext* parameter that's provided through ScriptExecutionContext::Task::performTask().
+
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnect):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessage):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageError):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessage):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::initialize):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::close):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::fail):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::disconnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::suspend):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::resume):
+        * dom/CrossThreadTask.h:
+        (WebCore::CrossThreadTask::CrossThreadTask):
+        (WebCore::CrossThreadTask1::CrossThreadTask1): Deleted.
+        (WebCore::CrossThreadTask1::performTask): Deleted.
+        (WebCore::CrossThreadTask2::CrossThreadTask2): Deleted.
+        (WebCore::CrossThreadTask2::performTask): Deleted.
+        (WebCore::CrossThreadTask3::CrossThreadTask3): Deleted.
+        (WebCore::CrossThreadTask3::performTask): Deleted.
+        (WebCore::CrossThreadTask4::CrossThreadTask4): Deleted.
+        (WebCore::CrossThreadTask4::performTask): Deleted.
+        (WebCore::CrossThreadTask5::CrossThreadTask5): Deleted.
+        (WebCore::CrossThreadTask5::performTask): Deleted.
+        (WebCore::CrossThreadTask6::CrossThreadTask6): Deleted.
+        (WebCore::CrossThreadTask6::performTask): Deleted.
+        (WebCore::CrossThreadTask7::CrossThreadTask7): Deleted.
+        (WebCore::CrossThreadTask7::performTask): Deleted.
+        (WebCore::CrossThreadTask8::CrossThreadTask8): Deleted.
+        (WebCore::CrossThreadTask8::performTask): Deleted.
+        (WebCore::createCallbackTask): Deleted.
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::abort):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::destroy):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::cancel):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didSendData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck):
+        * loader/WorkerThreadableLoader.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::removeRequestFromCache):
+        (WebCore::MemoryCache::removeRequestFromSessionCaches):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::postExceptionToWorkerObject):
+        (WebCore::SharedWorkerProxy::postConsoleMessageToWorkerObject):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postConsoleMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::workerObjectDestroyed):
+        (WebCore::WorkerMessagingProxy::connectToInspector):
+        (WebCore::WorkerMessagingProxy::disconnectFromInspector):
+        (WebCore::WorkerMessagingProxy::sendMessageToInspector):
+
 2014-05-12  Alex Christensen  <achristensen@webkit.org>
 
         Implement EXT_shader_texture_lod in WebGL.

@@ -847,7 +847,7 @@ void MemoryCache::removeUrlFromCache(ScriptExecutionContext* context, const Stri
 void MemoryCache::removeRequestFromCache(ScriptExecutionContext* context, const ResourceRequest& request, SessionID sessionID)
 {
     if (context->isWorkerGlobalScope()) {
-        toWorkerGlobalScope(context)->thread().workerLoaderProxy().postTaskToLoader(createCallbackTask(&crossThreadRemoveRequestFromCache, request, sessionID));
+        toWorkerGlobalScope(context)->thread().workerLoaderProxy().postTaskToLoader(CrossThreadTask(&crossThreadRemoveRequestFromCache, request, sessionID));
         return;
     }
 
@@ -863,7 +863,7 @@ void MemoryCache::removeRequestFromCacheImpl(ScriptExecutionContext*, const Reso
 void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext* context, const ResourceRequest& request)
 {
     if (context->isWorkerGlobalScope()) {
-        toWorkerGlobalScope(context)->thread().workerLoaderProxy().postTaskToLoader(createCallbackTask(&crossThreadRemoveRequestFromSessionCaches, request));
+        toWorkerGlobalScope(context)->thread().workerLoaderProxy().postTaskToLoader(CrossThreadTask(&crossThreadRemoveRequestFromSessionCaches, request));
         return;
     }
     removeRequestFromSessionCachesImpl(context, request);
