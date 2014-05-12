@@ -100,7 +100,7 @@ void AsyncFileStream::startOnFileThread()
     if (!m_client)
         return;
     m_stream->start();
-    callOnMainThread(didStart, AllowCrossThreadAccess(this));
+    callOnMainThread(MainThreadTask(didStart, AllowCrossThreadAccess(this)));
 }
 
 void AsyncFileStream::stop()
@@ -121,7 +121,7 @@ static void derefProxyOnMainThread(AsyncFileStream* proxy)
 void AsyncFileStream::stopOnFileThread()
 {
     m_stream->stop();
-    callOnMainThread(derefProxyOnMainThread, AllowCrossThreadAccess(this));
+    callOnMainThread(MainThreadTask(derefProxyOnMainThread, AllowCrossThreadAccess(this)));
 }
 
 static void didGetSize(AsyncFileStream* proxy, long long size)
@@ -138,7 +138,7 @@ void AsyncFileStream::getSize(const String& path, double expectedModificationTim
 void AsyncFileStream::getSizeOnFileThread(const String& path, double expectedModificationTime)
 {
     long long size = m_stream->getSize(path, expectedModificationTime);
-    callOnMainThread(didGetSize, AllowCrossThreadAccess(this), size);
+    callOnMainThread(MainThreadTask(didGetSize, AllowCrossThreadAccess(this), size));
 }
 
 static void didOpen(AsyncFileStream* proxy, bool success)
@@ -155,7 +155,7 @@ void AsyncFileStream::openForRead(const String& path, long long offset, long lon
 void AsyncFileStream::openForReadOnFileThread(const String& path, long long offset, long long length)
 {
     bool success = m_stream->openForRead(path, offset, length);
-    callOnMainThread(didOpen, AllowCrossThreadAccess(this), success);
+    callOnMainThread(MainThreadTask(didOpen, AllowCrossThreadAccess(this), success));
 }
 
 void AsyncFileStream::openForWrite(const String& path)
@@ -166,7 +166,7 @@ void AsyncFileStream::openForWrite(const String& path)
 void AsyncFileStream::openForWriteOnFileThread(const String& path)
 {
     bool success = m_stream->openForWrite(path);
-    callOnMainThread(didOpen, AllowCrossThreadAccess(this), success);
+    callOnMainThread(MainThreadTask(didOpen, AllowCrossThreadAccess(this), success));
 }
 
 void AsyncFileStream::close()
@@ -193,7 +193,7 @@ void AsyncFileStream::read(char* buffer, int length)
 void AsyncFileStream::readOnFileThread(char* buffer, int length)
 {
     int bytesRead = m_stream->read(buffer, length);
-    callOnMainThread(didRead, AllowCrossThreadAccess(this), bytesRead);
+    callOnMainThread(MainThreadTask(didRead, AllowCrossThreadAccess(this), bytesRead));
 }
 
 static void didWrite(AsyncFileStream* proxy, int bytesWritten)
@@ -210,7 +210,7 @@ void AsyncFileStream::write(const URL& blobURL, long long position, int length)
 void AsyncFileStream::writeOnFileThread(const URL& blobURL, long long position, int length)
 {
     int bytesWritten = m_stream->write(blobURL, position, length);
-    callOnMainThread(didWrite, AllowCrossThreadAccess(this), bytesWritten);
+    callOnMainThread(MainThreadTask(didWrite, AllowCrossThreadAccess(this), bytesWritten));
 }
 
 static void didTruncate(AsyncFileStream* proxy, bool success)
@@ -227,7 +227,7 @@ void AsyncFileStream::truncate(long long position)
 void AsyncFileStream::truncateOnFileThread(long long position)
 {
     bool success = m_stream->truncate(position);
-    callOnMainThread(didTruncate, AllowCrossThreadAccess(this), success);
+    callOnMainThread(MainThreadTask(didTruncate, AllowCrossThreadAccess(this), success));
 }
 
 } // namespace WebCore

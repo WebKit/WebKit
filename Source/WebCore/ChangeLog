@@ -1,3 +1,51 @@
+2014-05-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up MainThreadTask
+        https://bugs.webkit.org/show_bug.cgi?id=132799
+
+        Reviewed by Darin Adler.
+
+        Only have one simple MainThreadTask class that derives from std::function<void ()>.
+        Its templated constructor takes in the method and a variadic pack of parameters.
+        The cross-thread copies of the parameter are then bound to the given method through
+        std::bind(), with the resulting bind expression used to initialize the base
+        std::function<void ()> class.
+
+        The WebCore::callOnMainThread() functions and the helper classes are removed in favor
+        of passing MainThreadTask rvalues directly to WTF::callOnMainThread().
+
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::AsyncFileStream::startOnFileThread):
+        (WebCore::AsyncFileStream::stopOnFileThread):
+        (WebCore::AsyncFileStream::getSizeOnFileThread):
+        (WebCore::AsyncFileStream::openForReadOnFileThread):
+        (WebCore::AsyncFileStream::openForWriteOnFileThread):
+        (WebCore::AsyncFileStream::readOnFileThread):
+        (WebCore::AsyncFileStream::writeOnFileThread):
+        (WebCore::AsyncFileStream::truncateOnFileThread):
+        * platform/MainThreadTask.h:
+        (WebCore::MainThreadTask::MainThreadTask):
+        (WebCore::MainThreadTaskBase::MainThreadTaskBase): Deleted.
+        (WebCore::MainThreadTaskBase::~MainThreadTaskBase): Deleted.
+        (WebCore::MainThreadTask1::create): Deleted.
+        (WebCore::MainThreadTask1::MainThreadTask1): Deleted.
+        (WebCore::MainThreadTask2::create): Deleted.
+        (WebCore::MainThreadTask2::MainThreadTask2): Deleted.
+        (WebCore::MainThreadTask3::create): Deleted.
+        (WebCore::MainThreadTask3::MainThreadTask3): Deleted.
+        (WebCore::MainThreadTask4::create): Deleted.
+        (WebCore::MainThreadTask4::MainThreadTask4): Deleted.
+        (WebCore::MainThreadTask5::create): Deleted.
+        (WebCore::MainThreadTask5::MainThreadTask5): Deleted.
+        (WebCore::MainThreadTask6::create): Deleted.
+        (WebCore::MainThreadTask6::MainThreadTask6): Deleted.
+        (WebCore::MainThreadTask7::create): Deleted.
+        (WebCore::MainThreadTask7::MainThreadTask7): Deleted.
+        (WebCore::MainThreadTask8::create): Deleted.
+        (WebCore::MainThreadTask8::MainThreadTask8): Deleted.
+        (WebCore::executeMainThreadTask): Deleted.
+        (WebCore::callOnMainThread): Deleted.
+
 2014-05-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Simplify FileThread::Task usage
