@@ -1,3 +1,53 @@
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168565
+
+    2014-05-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Allow Remote Inspector to entitlement check UIProcess through WebProcess
+            https://bugs.webkit.org/show_bug.cgi?id=132409
+
+            Reviewed by Timothy Hatcher.
+
+            Proxy applications are applications which hold WebViews for other
+            applications. The WebProcess (Web Content Service) is a proxy application.
+            For legacy reasons we were supporting a scenario where proxy applications
+            could potentially host WebViews for more then one other application. That
+            was never the case for WebProcess and it is now a scenario we don't need
+            to worry about supporting.
+
+            With this change, a proxy application more naturally only holds WebViews
+            for a single parent / host application. The proxy process can set the
+            parent pid / audit_token data on the RemoteInspector singleton, and
+            that data will be sent on to webinspectord later on to be validated.
+            In the WebProcess<->UIProcess relationship that information is known
+            and set immediately. In the Legacy iOS case that information is set
+            soon after, but not immediately known at the point the WebView is created.
+
+            This allows us to simplify the RemoteInspectorDebuggable interface.
+            We no longer need a pid per-Debuggable.
+
+            * inspector/remote/RemoteInspector.h:
+            * inspector/remote/RemoteInspector.mm:
+            (Inspector::RemoteInspector::RemoteInspector):
+            (Inspector::RemoteInspector::setParentProcessInformation):
+            (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+            (Inspector::RemoteInspector::listingForDebuggable):
+            (Inspector::RemoteInspector::receivedProxyApplicationSetupMessage):
+            Handle new proxy application setup message, and provide an API
+            for a proxy application to set the parent process information.
+
+            * inspector/remote/RemoteInspectorConstants.h:
+            New setup and response message for proxy applications to pass
+            their parent / host application information to webinspectord.
+
+            * inspector/remote/RemoteInspectorDebuggable.cpp:
+            (Inspector::RemoteInspectorDebuggable::info):
+            * inspector/remote/RemoteInspectorDebuggable.h:
+            (Inspector::RemoteInspectorDebuggableInfo::RemoteInspectorDebuggableInfo):
+            (Inspector::RemoteInspectorDebuggableInfo::hasParentProcess): Deleted.
+            pid per debuggable is no longer needed.
+
 2014-05-06  Michael Saboff  <msaboff@apple.com>
 
         Unreviewd build fix for C-LOOP after r168396.

@@ -123,6 +123,10 @@
 #include "WebResourceLoadScheduler.h"
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR)
+#include <JavaScriptCore/RemoteInspector.h>
+#endif
+
 #if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
 #include "WebSoupRequestManager.h"
 #endif
@@ -365,6 +369,14 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
 #if ENABLE(SERVICE_CONTROLS)
     setEnabledServices(parameters.hasImageServices, parameters.hasSelectionServices);
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR)
+    audit_token_t auditToken;
+    if (parentProcessConnection()->getAuditToken(auditToken)) {
+        RetainPtr<CFDataRef> auditData = adoptCF(CFDataCreate(nullptr, (const UInt8*)&auditToken, sizeof(auditToken)));
+        Inspector::RemoteInspector::shared().setParentProcessInformation(presenterApplicationPid(), auditData);
+    }
 #endif
 }
 

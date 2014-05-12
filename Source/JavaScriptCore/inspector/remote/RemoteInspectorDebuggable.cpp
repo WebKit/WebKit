@@ -73,7 +73,6 @@ RemoteInspectorDebuggableInfo RemoteInspectorDebuggable::info() const
     info.url = url();
     info.hasLocalDebugger = hasLocalDebugger();
     info.remoteDebuggingAllowed = remoteDebuggingAllowed();
-    info.parentProcessIdentifier = parentProcessIdentifier();
     return info;
 }
 

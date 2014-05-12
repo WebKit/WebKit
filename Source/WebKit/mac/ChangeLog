@@ -1,3 +1,27 @@
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168565
+
+    2014-05-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Allow Remote Inspector to entitlement check UIProcess through WebProcess
+            https://bugs.webkit.org/show_bug.cgi?id=132409
+
+            Reviewed by Timothy Hatcher.
+
+            Simplify the legacy iOS UIWebViewController case by passing on
+            the host process pid and audit_token.
+
+            * WebView/WebView.mm:
+            (-[WebView _setHostApplicationProcessIdentifier:auditToken:]):
+            (-[WebView setHostApplicationBundleId:name:]): Deleted.
+            (-[WebView hostApplicationBundleId]): Deleted.
+            (-[WebView hostApplicationName]): Deleted.
+            * WebView/WebViewData.h:
+            * WebView/WebViewData.mm:
+            (-[WebViewPrivate dealloc]):
+            * WebView/WebViewPrivate.h:
+
 2014-05-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168500

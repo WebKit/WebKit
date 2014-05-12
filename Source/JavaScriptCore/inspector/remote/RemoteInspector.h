@@ -31,13 +31,14 @@
 #import "RemoteInspectorXPCConnection.h"
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
-#import <wtf/Forward.h>
+#import <wtf/RetainPtr.h>
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
 
 namespace Inspector {
 
+class RemoteInspectorClient;
 class RemoteInspectorDebuggable;
 class RemoteInspectorDebuggableConnection;
 struct RemoteInspectorDebuggableInfo;
@@ -59,6 +60,12 @@ public:
 
     void start();
     void stop();
+
+    bool hasParentProcessInformation() const { return m_parentProcessIdentifier != 0; }
+    pid_t parentProcessIdentifier() const { return m_parentProcessIdentifier; }
+    RetainPtr<CFDataRef> parentProcessAuditData() const { return m_parentProcessAuditData; }
+    void setParentProcessInformation(pid_t, RetainPtr<CFDataRef> auditData);
+    void setParentProcessInfomationIsDelayed();
 
 private:
     RemoteInspector();
@@ -85,6 +92,7 @@ private:
     void receivedDidCloseMessage(NSDictionary *userInfo);
     void receivedGetListingMessage(NSDictionary *userInfo);
     void receivedIndicateMessage(NSDictionary *userInfo);
+    void receivedProxyApplicationSetupMessage(NSDictionary *userInfo);
     void receivedConnectionDiedMessage(NSDictionary *userInfo);
 
     static bool startEnabled;
@@ -98,12 +106,17 @@ private:
     HashMap<unsigned, std::pair<RemoteInspectorDebuggable*, RemoteInspectorDebuggableInfo>> m_debuggableMap;
     HashMap<unsigned, RefPtr<RemoteInspectorDebuggableConnection>> m_connectionMap;
     RefPtr<RemoteInspectorXPCConnection> m_xpcConnection;
+
     dispatch_queue_t m_xpcQueue;
     unsigned m_nextAvailableIdentifier;
     int m_notifyToken;
     bool m_enabled;
     bool m_hasActiveDebugSession;
     bool m_pushScheduled;
+
+    pid_t m_parentProcessIdentifier;
+    RetainPtr<CFDataRef> m_parentProcessAuditData;
+    bool m_shouldSendParentProcessInformation;
 };
 
 } // namespace Inspector

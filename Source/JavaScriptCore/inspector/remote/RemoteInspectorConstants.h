@@ -81,5 +81,9 @@
 // These definitions are shared between webinspectord and WebKit.
 
 #define WIRPermissionDenied                     @"WIRPermissionDenied"
+#define WIRProxyApplicationParentPIDKey         @"WIRProxyApplicationParentPID"
+#define WIRProxyApplicationParentAuditDataKey   @"WIRProxyApplicationParentAuditData"
+#define WIRProxyApplicationSetupMessage         @"WIRProxyApplicationSetupMessage"
+#define WIRProxyApplicationSetupResponseMessage @"WIRProxyApplicationSetupResponseMessage"
 
 #endif

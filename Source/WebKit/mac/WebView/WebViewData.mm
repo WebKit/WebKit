@@ -153,8 +153,6 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 #if ENABLE(REMOTE_INSPECTOR)
 #if PLATFORM(IOS)
     [indicateLayer release];
-    [hostApplicationBundleId release];
-    [hostApplicationName release];
 #endif
 #endif
 
