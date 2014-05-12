@@ -47,10 +47,8 @@ class WebProcessProxy;
 
 class StorageManager : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static PassRefPtr<StorageManager> create();
+    static PassRefPtr<StorageManager> create(const String& localStorageDirectory);
     ~StorageManager();
-
-    void setLocalStorageDirectory(const String&);
 
     void createSessionStorageNamespace(uint64_t storageNamespaceID, IPC::Connection* allowedConnection, unsigned quotaInBytes);
     void destroySessionStorageNamespace(uint64_t storageNamespaceID);
@@ -68,7 +66,7 @@ public:
     void deleteAllEntries();
 
 private:
-    StorageManager();
+    explicit StorageManager(const String& localStorageDirectory);
 
     // IPC::Connection::WorkQueueMessageReceiver.
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;

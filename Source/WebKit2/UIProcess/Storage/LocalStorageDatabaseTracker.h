@@ -46,10 +46,9 @@ struct LocalStorageDetails;
 
 class LocalStorageDatabaseTracker : public ThreadSafeRefCounted<LocalStorageDatabaseTracker> {
 public:
-    static PassRefPtr<LocalStorageDatabaseTracker> create(PassRefPtr<WorkQueue>);
+    static PassRefPtr<LocalStorageDatabaseTracker> create(PassRefPtr<WorkQueue>, const String& localStorageDirectory);
     ~LocalStorageDatabaseTracker();
 
-    void setLocalStorageDirectory(const String&);
     String databasePath(WebCore::SecurityOrigin*) const;
 
     void didOpenDatabaseWithOrigin(WebCore::SecurityOrigin*);
@@ -60,9 +59,7 @@ public:
     Vector<LocalStorageDetails> details();
 
 private:
-    explicit LocalStorageDatabaseTracker(PassRefPtr<WorkQueue>);
-
-    void setLocalStorageDirectoryInternal(StringImpl*);
+    LocalStorageDatabaseTracker(PassRefPtr<WorkQueue>, const String& localStorageDirectory);
 
     String databasePath(const String& filename) const;
     String trackerDatabasePath() const;

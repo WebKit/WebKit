@@ -368,14 +368,14 @@ void StorageManager::SessionStorageNamespace::cloneTo(SessionStorageNamespace& n
         newSessionStorageNamespace.m_storageAreaMap.add(it->key, it->value->clone());
 }
 
-PassRefPtr<StorageManager> StorageManager::create()
+PassRefPtr<StorageManager> StorageManager::create(const String& localStorageDirectory)
 {
-    return adoptRef(new StorageManager);
+    return adoptRef(new StorageManager(localStorageDirectory));
 }
 
-StorageManager::StorageManager()
+StorageManager::StorageManager(const String& localStorageDirectory)
     : m_queue(WorkQueue::create("com.apple.WebKit.StorageManager"))
-    , m_localStorageDatabaseTracker(LocalStorageDatabaseTracker::create(m_queue))
+    , m_localStorageDatabaseTracker(LocalStorageDatabaseTracker::create(m_queue, localStorageDirectory))
 {
     // Make sure the encoding is initialized before we start dispatching things to the queue.
     UTF8Encoding();
@@ -383,13 +383,6 @@ StorageManager::StorageManager()
 
 StorageManager::~StorageManager()
 {
-}
-
-void StorageManager::setLocalStorageDirectory(const String& localStorageDirectory)
-{
-    ASSERT(!localStorageDirectory.isNull());
-
-    m_localStorageDatabaseTracker->setLocalStorageDirectory(localStorageDirectory);
 }
 
 void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, IPC::Connection* allowedConnection, unsigned quotaInBytes)

@@ -31,34 +31,35 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/TextEncoding.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<LocalStorageDatabaseTracker> LocalStorageDatabaseTracker::create(PassRefPtr<WorkQueue> queue)
+PassRefPtr<LocalStorageDatabaseTracker> LocalStorageDatabaseTracker::create(PassRefPtr<WorkQueue> queue, const String& localStorageDirectory)
 {
-    return adoptRef(new LocalStorageDatabaseTracker(queue));
+    return adoptRef(new LocalStorageDatabaseTracker(queue, localStorageDirectory));
 }
 
-LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(PassRefPtr<WorkQueue> queue)
+LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(PassRefPtr<WorkQueue> queue, const String& localStorageDirectory)
     : m_queue(queue)
+    , m_localStorageDirectory(localStorageDirectory.isolatedCopy())
 {
+    ASSERT(!m_localStorageDirectory.isEmpty());
+
+    // Make sure the encoding is initialized before we start dispatching things to the queue.
+    UTF8Encoding();
+
+    RefPtr<LocalStorageDatabaseTracker> localStorageDatabaseTracker(this);
+    m_queue->dispatch([localStorageDatabaseTracker] {
+        localStorageDatabaseTracker->importOriginIdentifiers();
+    });
 }
 
 LocalStorageDatabaseTracker::~LocalStorageDatabaseTracker()
 {
-}
-
-void LocalStorageDatabaseTracker::setLocalStorageDirectory(const String& localStorageDirectory)
-{
-    // FIXME: We should come up with a better idiom for safely copying strings across threads.
-    RefPtr<StringImpl> copiedLocalStorageDirectory;
-    if (localStorageDirectory.impl())
-        copiedLocalStorageDirectory = localStorageDirectory.impl()->isolatedCopy();
-
-    m_queue->dispatch(bind(&LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal, this, copiedLocalStorageDirectory.release()));
 }
 
 String LocalStorageDatabaseTracker::databasePath(SecurityOrigin* securityOrigin) const
@@ -152,17 +153,6 @@ Vector<LocalStorageDetails> LocalStorageDatabaseTracker::details()
     }
 
     return result;
-}
-
-void LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal(StringImpl* localStorageDirectory)
-{
-    if (m_database.isOpen())
-        m_database.close();
-
-    m_localStorageDirectory = localStorageDirectory;
-    m_origins.clear();
-
-    m_queue->dispatch(bind(&LocalStorageDatabaseTracker::importOriginIdentifiers, this));
 }
 
 String LocalStorageDatabaseTracker::databasePath(const String& filename) const

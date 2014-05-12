@@ -160,7 +160,7 @@ WebContext::WebContext(WebContextConfiguration configuration)
     , m_cacheModel(CacheModelDocumentViewer)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
-    , m_storageManager(StorageManager::create())
+    , m_storageManager(StorageManager::create(configuration.localStorageDirectory))
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif
@@ -222,8 +222,6 @@ WebContext::WebContext(WebContextConfiguration configuration)
 #ifndef NDEBUG
     webContextCounter.increment();
 #endif
-
-    m_storageManager->setLocalStorageDirectory(configuration.localStorageDirectory);
 }
 
 #if !PLATFORM(COCOA)
