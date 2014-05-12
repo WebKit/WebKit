@@ -62,8 +62,6 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << applicationCacheDirectoryExtensionHandle;
     encoder << databaseDirectory;
     encoder << databaseDirectoryExtensionHandle;
-    encoder << localStorageDirectory;
-    encoder << localStorageDirectoryExtensionHandle;
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
     encoder << cookieStorageDirectory;
@@ -151,10 +149,6 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.databaseDirectory))
         return false;
     if (!decoder.decode(parameters.databaseDirectoryExtensionHandle))
-        return false;
-    if (!decoder.decode(parameters.localStorageDirectory))
-        return false;
-    if (!decoder.decode(parameters.localStorageDirectoryExtensionHandle))
         return false;
     if (!decoder.decode(parameters.diskCacheDirectory))
         return false;

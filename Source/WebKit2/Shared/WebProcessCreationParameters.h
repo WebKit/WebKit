@@ -68,8 +68,6 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
     String databaseDirectory;
     SandboxExtension::Handle databaseDirectoryExtensionHandle;
-    String localStorageDirectory;
-    SandboxExtension::Handle localStorageDirectoryExtensionHandle;
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
     String cookieStorageDirectory;

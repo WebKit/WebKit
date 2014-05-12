@@ -161,7 +161,6 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 {
 #if ENABLE(WEB_PROCESS_SANDBOX)
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
-    SandboxExtension::consumePermanently(parameters.localStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.databaseDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);

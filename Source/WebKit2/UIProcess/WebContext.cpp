@@ -562,10 +562,6 @@ WebProcessProxy& WebContext::createNewWebProcess()
     if (!parameters.databaseDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.databaseDirectory, parameters.databaseDirectoryExtensionHandle);
 
-    parameters.localStorageDirectory = localStorageDirectory();
-    if (!parameters.localStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
-
     parameters.diskCacheDirectory = diskCacheDirectory();
     if (!parameters.diskCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
