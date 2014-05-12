@@ -71,6 +71,8 @@ public:
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     bool checkLinesConsistency(const RenderBlockFlow*) const;
 #endif
+    
+    virtual void deleteLines() override;
 
     virtual void addRegionToThread(RenderRegion*) = 0;
     virtual void removeRegionFromThread(RenderRegion*);

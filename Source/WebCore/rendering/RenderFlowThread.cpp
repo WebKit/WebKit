@@ -953,6 +953,14 @@ bool RenderFlowThread::checkLinesConsistency(const RenderBlockFlow* removedBlock
 }
 #endif
 
+void RenderFlowThread::deleteLines()
+{
+    if (m_lineToRegionMap)
+        m_lineToRegionMap->clear();
+
+    RenderBlockFlow::deleteLines();
+}
+
 // During the measure content layout phase of the named flow the regions are initialized with a height equal to their max-height.
 // This way unforced breaks are automatically placed when a region is full and the content height/position correctly estimated.
 // Also, the region where a forced break falls is exactly the region found at the forced break offset inside the flow content.

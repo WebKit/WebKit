@@ -1,3 +1,15 @@
+2014-05-12  Radu Stavila  <stavila@adobe.com>
+
+        Invalid information remaining in lineToRegion map of RenderFlowThread.
+        https://bugs.webkit.org/show_bug.cgi?id=132690
+
+        Reviewed by Antti Koivisto.
+
+        Added test for crash caused by invalid information in the lineToRegion map.
+
+        * fast/multicol/newmulticol/lines-region-map-crash-expected.html: Added.
+        * fast/multicol/newmulticol/lines-region-map-crash.html: Added.
+
 2014-05-12  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Adjust blending pixel test expectations
