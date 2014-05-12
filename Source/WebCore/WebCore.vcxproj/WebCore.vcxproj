@@ -298,6 +298,20 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTShaderTextureLOD.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTTextureFilterAnisotropic.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -6488,6 +6502,7 @@
     <ClCompile Include="..\html\canvas\ANGLEInstancedArrays.cpp" />
     <ClCompile Include="..\html\canvas\CanvasContextAttributes.cpp" />
     <ClCompile Include="..\html\canvas\CanvasPathMethods.cpp" />
+    <ClCompile Include="..\html\canvas\EXTShaderTextureLOD.cpp" />
     <ClCompile Include="..\html\canvas\EXTTextureFilterAnisotropic.cpp" />
     <ClCompile Include="..\html\canvas\OESElementIndexUint.cpp" />
     <ClCompile Include="..\html\canvas\OESStandardDerivatives.cpp" />
@@ -18547,6 +18562,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\XMLViewerJS.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\XPathGrammar.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSANGLEInstancedArrays.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTShaderTextureLOD.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTTextureFilterAnisotropic.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSOESElementIndexUint.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSOESStandardDerivatives.h" />
@@ -18722,6 +18738,7 @@
     <ClInclude Include="..\html\canvas\ANGLEInstancedArrays.h" />
     <ClInclude Include="..\html\canvas\CanvasContextAttributes.h" />
     <ClInclude Include="..\html\canvas\CanvasPathMethods.h" />
+    <ClInclude Include="..\html\canvas\EXTShaderTextureLOD.h" />
     <ClInclude Include="..\html\canvas\EXTTextureFilterAnisotropic.h" />
     <ClInclude Include="..\html\canvas\OESElementIndexUint.h" />
     <ClInclude Include="..\html\canvas\OESStandardDerivatives.h" />

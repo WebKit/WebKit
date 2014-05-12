@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLExtension_h
-#define WebGLExtension_h
+#include "config.h"
 
-#include "WebGLRenderingContext.h"
+#if ENABLE(WEBGL)
+#include "EXTShaderTextureLOD.h"
 
 namespace WebCore {
 
-class WebGLExtension {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    // Extension names are needed to properly wrap instances in JavaScript objects.
-    enum ExtensionName {
-        WebGLLoseContextName,
-        EXTShaderTextureLODName,
-        EXTTextureFilterAnisotropicName,
-        OESTextureFloatName,
-        OESTextureFloatLinearName,
-        OESTextureHalfFloatName,
-        OESTextureHalfFloatLinearName,
-        OESStandardDerivativesName,
-        OESVertexArrayObjectName,
-        WebGLDebugRendererInfoName,
-        WebGLDebugShadersName,
-        WebGLCompressedTextureS3TCName,
-        WebGLDepthTextureName,
-        WebGLDrawBuffersName,
-        OESElementIndexUintName,
-        WebGLCompressedTextureATCName,
-        WebGLCompressedTexturePVRTCName,
-        ANGLEInstancedArraysName,
-    };
+EXTShaderTextureLOD::EXTShaderTextureLOD(WebGLRenderingContext* context)
+    : WebGLExtension(context)
+{
+}
 
-    void ref() { m_context->ref(); }
-    void deref() { m_context->deref(); }
-    WebGLRenderingContext* context() { return m_context; }
+EXTShaderTextureLOD::~EXTShaderTextureLOD()
+{
+}
 
-    virtual ~WebGLExtension();
-    virtual ExtensionName getName() const = 0;
-
-protected:
-    WebGLExtension(WebGLRenderingContext*);
-    WebGLRenderingContext* m_context;
-};
+WebGLExtension::ExtensionName EXTShaderTextureLOD::getName() const
+{
+    return EXTShaderTextureLODName;
+}
 
 } // namespace WebCore
 
-#endif // WebGLExtension_h
+#endif // ENABLE(WEBGL)

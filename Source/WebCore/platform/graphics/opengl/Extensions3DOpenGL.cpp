@@ -198,7 +198,10 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
     // Desktop GL always supports UNSIGNED_INT indices
     if (name == "GL_OES_element_index_uint")
         return true;
-
+    
+    if (name == "GL_EXT_shader_texture_lod")
+        return m_availableExtensions.contains("GL_EXT_shader_texture_lod");
+    
     if (name == "GL_EXT_texture_filter_anisotropic")
         return m_availableExtensions.contains("GL_EXT_texture_filter_anisotropic");
 

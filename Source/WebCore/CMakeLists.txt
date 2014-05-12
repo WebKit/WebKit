@@ -506,6 +506,7 @@ set(WebCore_IDL_FILES
     html/canvas/CanvasRenderingContext.idl
     html/canvas/CanvasRenderingContext2D.idl
     html/canvas/DOMPath.idl
+    html/canvas/EXTShaderTextureLOD.idl
     html/canvas/EXTTextureFilterAnisotropic.idl
     html/canvas/OESElementIndexUint.idl
     html/canvas/OESStandardDerivatives.idl
@@ -1652,6 +1653,7 @@ set(WebCore_SOURCES
     html/canvas/CanvasRenderingContext.cpp
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp
+    html/canvas/EXTShaderTextureLOD.cpp
     html/canvas/EXTTextureFilterAnisotropic.cpp
     html/canvas/OESElementIndexUint.cpp
     html/canvas/OESStandardDerivatives.cpp
@@ -2787,6 +2789,7 @@ if (ENABLE_WEBGL)
 
     list(APPEND WebCore_SOURCES
         html/canvas/ANGLEInstancedArrays.cpp
+        html/canvas/EXTShaderTextureLOD.cpp
         html/canvas/EXTTextureFilterAnisotropic.cpp
         html/canvas/OESElementIndexUint.cpp
         html/canvas/OESStandardDerivatives.cpp
@@ -2824,6 +2827,7 @@ if (ENABLE_WEBGL)
     )
     list(APPEND WebCore_IDL_FILES
         html/canvas/ANGLEInstancedArrays.idl
+        html/canvas/EXTShaderTextureLOD.idl
         html/canvas/EXTTextureFilterAnisotropic.idl
         html/canvas/OESElementIndexUint.idl
         html/canvas/OESStandardDerivatives.idl
@@ -2929,11 +2933,11 @@ if (ENABLE_QUOTA OR PORT STREQUAL "GTK")
 endif ()
 
 list(APPEND WebCore_SOURCES
+    platform/text/TextCodecICU.cpp
+    platform/text/TextEncodingDetectorICU.cpp
     platform/text/icu/UTextProvider.cpp
     platform/text/icu/UTextProviderLatin1.cpp
     platform/text/icu/UTextProviderUTF16.cpp
-    platform/text/TextCodecICU.cpp
-    platform/text/TextEncodingDetectorICU.cpp
 )
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${ICU_INCLUDE_DIRS}

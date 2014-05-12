@@ -29,7 +29,6 @@
 
 #include "WebGLObject.h"
 
-#include "EXTTextureFilterAnisotropic.h"
 #include "WebGLCompressedTextureS3TC.h"
 #include "WebGLContextGroup.h"
 #include "WebGLDebugRendererInfo.h"

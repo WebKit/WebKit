@@ -30,11 +30,13 @@
 #include "JSWebGLRenderingContext.h"
 
 #include "ANGLEInstancedArrays.h"
+#include "EXTShaderTextureLOD.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "ExceptionCode.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "JSANGLEInstancedArrays.h"
+#include "JSEXTShaderTextureLOD.h"
 #include "JSEXTTextureFilterAnisotropic.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
@@ -205,6 +207,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
     switch (extension->getName()) {
     case WebGLExtension::WebGLLoseContextName:
         return toJS(exec, globalObject, static_cast<WebGLLoseContext*>(extension));
+    case WebGLExtension::EXTShaderTextureLODName:
+        return toJS(exec, globalObject, static_cast<EXTShaderTextureLOD*>(extension));
     case WebGLExtension::EXTTextureFilterAnisotropicName:
         return toJS(exec, globalObject, static_cast<EXTTextureFilterAnisotropic*>(extension));
     case WebGLExtension::OESStandardDerivativesName:

@@ -1,3 +1,42 @@
+2014-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Implement EXT_shader_texture_lod in WebGL.
+        https://bugs.webkit.org/show_bug.cgi?id=128985
+        <rdar://problem/16111396>
+
+        Based on Chromium patch by bajones@chromium.org.
+        https://src.chromium.org/viewvc/blink?revision=171465&view=revision
+
+        Reviewed by Dean Jackson.
+
+        Test: webgl/conformance/extensions/ext-shader-texture-lod.html
+        
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added new EXTShaderTextureLOD files.
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        Added EXTShaderTextureLOD.
+        * html/canvas/EXTShaderTextureLOD.cpp: Added.
+        (WebCore::EXTShaderTextureLOD::EXTShaderTextureLOD):
+        (WebCore::EXTShaderTextureLOD::~EXTShaderTextureLOD):
+        (WebCore::EXTShaderTextureLOD::getName):
+        * html/canvas/EXTShaderTextureLOD.h: Added.
+        * html/canvas/EXTShaderTextureLOD.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        Added EXTShaderTextureLODName.
+        * html/canvas/WebGLObject.cpp:
+        Removed unused inclusion of EXTTextureFilterAnisotropic.h.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        Added EXT_shader_texture_lod.
+        * html/canvas/WebGLRenderingContext.h:
+        Added a EXTShaderTextureLOD member variable.
+
 2014-05-12  Martin Hock  <mhock@apple.com>
 
         Disallow drag and drop of non-displayable resources.

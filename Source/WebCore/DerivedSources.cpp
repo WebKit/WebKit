@@ -41,6 +41,7 @@
 #include "JSCanvasRenderingContext.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
 #if ENABLE(WEBGL)
+#include "JSEXTShaderTextureLOD.cpp"
 #include "JSEXTTextureFilterAnisotropic.cpp"
 #include "JSOESElementIndexUint.cpp"
 #include "JSOESStandardDerivatives.cpp"

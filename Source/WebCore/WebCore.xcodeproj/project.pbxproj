@@ -2045,6 +2045,10 @@
 		5B30695D18B3D3450099D5E8 /* WebGLDrawBuffers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B30695A18B3D3450099D5E8 /* WebGLDrawBuffers.cpp */; };
 		5B30695E18B3D3450099D5E8 /* WebGLDrawBuffers.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B30695B18B3D3450099D5E8 /* WebGLDrawBuffers.h */; };
 		5B7A208D2E12979B4AE19DE6 /* RenderMathMLSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBFCB0EBFF5CD77EBEB35395 /* RenderMathMLSpace.cpp */; };
+		5C4304B0191AC908000E2BC0 /* EXTShaderTextureLOD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4304AD191AC908000E2BC0 /* EXTShaderTextureLOD.cpp */; };
+		5C4304B1191AC908000E2BC0 /* EXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */; };
+		5C4304B5191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */; };
+		5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */; };
 		5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */; };
 		5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
@@ -9068,6 +9072,11 @@
 		5B30695A18B3D3450099D5E8 /* WebGLDrawBuffers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLDrawBuffers.cpp; path = canvas/WebGLDrawBuffers.cpp; sourceTree = "<group>"; };
 		5B30695B18B3D3450099D5E8 /* WebGLDrawBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLDrawBuffers.h; path = canvas/WebGLDrawBuffers.h; sourceTree = "<group>"; };
 		5B30695C18B3D3450099D5E8 /* WebGLDrawBuffers.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLDrawBuffers.idl; path = canvas/WebGLDrawBuffers.idl; sourceTree = "<group>"; };
+		5C4304AD191AC908000E2BC0 /* EXTShaderTextureLOD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EXTShaderTextureLOD.cpp; path = canvas/EXTShaderTextureLOD.cpp; sourceTree = "<group>"; };
+		5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTShaderTextureLOD.h; path = canvas/EXTShaderTextureLOD.h; sourceTree = "<group>"; };
+		5C4304AF191AC908000E2BC0 /* EXTShaderTextureLOD.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTShaderTextureLOD.idl; path = canvas/EXTShaderTextureLOD.idl; sourceTree = "<group>"; };
+		5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTShaderTextureLOD.cpp; sourceTree = "<group>"; };
+		5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTShaderTextureLOD.h; sourceTree = "<group>"; };
 		5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTParser.cpp; sourceTree = "<group>"; };
 		5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVTTParser.h; sourceTree = "<group>"; };
 		5D4B8C5211E52C8B00BBB62F /* WebCore.exp.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCore.exp.in; sourceTree = "<group>"; };
@@ -15531,6 +15540,9 @@
 		49484FAE102CF01E00187DD3 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				5C4304AD191AC908000E2BC0 /* EXTShaderTextureLOD.cpp */,
+				5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */,
+				5C4304AF191AC908000E2BC0 /* EXTShaderTextureLOD.idl */,
 				31A795C11888B72400382F90 /* ANGLEInstancedArrays.cpp */,
 				31A795C21888B72400382F90 /* ANGLEInstancedArrays.h */,
 				31A795C31888B72400382F90 /* ANGLEInstancedArrays.idl */,
@@ -18328,6 +18340,8 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */,
+				5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */,
 				31A795C41888BAD100382F90 /* JSANGLEInstancedArrays.cpp */,
 				31A795C51888BAD100382F90 /* JSANGLEInstancedArrays.h */,
 				BE8EF03E171C8FF9009B48C3 /* JSAudioTrack.cpp */,
@@ -23332,6 +23346,7 @@
 				A80E6CE60A1989CA007FB8C5 /* CSSPrimitiveValue.h in Headers */,
 				E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */,
 				A80E6CFF0A1989CA007FB8C5 /* CSSProperty.h in Headers */,
+				5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */,
 				78D02BC6154A18DF00B62D05 /* CSSPropertyAnimation.h in Headers */,
 				656580F409D12B20000E61D7 /* CSSPropertyNames.h in Headers */,
 				82E3D8DF122EA0D1003AE5BC /* CSSPropertySourceData.h in Headers */,
@@ -23606,6 +23621,7 @@
 				85DF81990AA77E4B00486AD7 /* DOMHTMLIFrameElement.h in Headers */,
 				85E711B10AC5D5350053270F /* DOMHTMLIFrameElementInternal.h in Headers */,
 				85DF81290AA7787200486AD7 /* DOMHTMLImageElement.h in Headers */,
+				5C4304B1191AC908000E2BC0 /* EXTShaderTextureLOD.h in Headers */,
 				85E711B20AC5D5350053270F /* DOMHTMLImageElementInternal.h in Headers */,
 				85F32AEC0AA63B8700FF3184 /* DOMHTMLInputElement.h in Headers */,
 				85E711B30AC5D5350053270F /* DOMHTMLInputElementInternal.h in Headers */,
@@ -27702,6 +27718,7 @@
 				F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */,
 				F350B73513F1377D00880C43 /* InstrumentingAgents.cpp in Sources */,
 				2D46F04E17B96FBD005647F0 /* IntPoint.cpp in Sources */,
+				5C4304B0191AC908000E2BC0 /* EXTShaderTextureLOD.cpp in Sources */,
 				B27535600B053814002CE64F /* IntPointCG.cpp in Sources */,
 				B275357C0B053814002CE64F /* IntPointMac.mm in Sources */,
 				B27535730B053814002CE64F /* IntRect.cpp in Sources */,
@@ -27755,6 +27772,7 @@
 				65DF31F309D1CC60000BE325 /* JSCharacterData.cpp in Sources */,
 				BCC065870F3CE2A700CD2D87 /* JSClientRect.cpp in Sources */,
 				BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */,
+				5C4304B5191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp in Sources */,
 				BCA83E4F0D7CE1E9003421A8 /* JSDataTransfer.cpp in Sources */,
 				BCA83E520D7CE205003421A8 /* JSDataTransferCustom.cpp in Sources */,
 				51FB5505113E3E9100821176 /* JSCloseEvent.cpp in Sources */,
