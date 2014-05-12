@@ -836,7 +836,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
         if (edge->hasConstant()) {
             RELEASE_ASSERT(isNumberConstant(edge.node()));
             FPRReg fpr = fprAllocate();
-            m_jit.loadDouble(addressOfDoubleConstant(edge.node()), fpr);
+            m_jit.loadDouble(TrustedImmPtr(addressOfDoubleConstant(edge.node())), fpr);
             m_fprs.retain(fpr, virtualRegister, SpillOrderConstant);
             info.fillDouble(*m_stream, fpr);
             return fpr;
@@ -3126,7 +3126,7 @@ void SpeculativeJIT::compile(Node* node)
                     JSValueRegs(), use, SpecFullRealNumber,
                     m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, opFPR, opFPR));
                 
-                m_jit.storeDouble(opFPR, reinterpret_cast<char*>(buffer + operandIdx));
+                m_jit.storeDouble(opFPR, TrustedImmPtr(reinterpret_cast<char*>(buffer + operandIdx)));
                 break;
             }
             case ALL_INT32_INDEXING_TYPES: {

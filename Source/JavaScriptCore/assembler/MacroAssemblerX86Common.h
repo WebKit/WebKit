@@ -448,7 +448,7 @@ public:
     {
         ASSERT(src != dst);
         static const double negativeZeroConstant = -0.0;
-        loadDouble(&negativeZeroConstant, dst);
+        loadDouble(TrustedImmPtr(&negativeZeroConstant), dst);
         m_assembler.andnpd_rr(src, dst);
     }
 
@@ -456,7 +456,7 @@ public:
     {
         ASSERT(src != dst);
         static const double negativeZeroConstant = -0.0;
-        loadDouble(&negativeZeroConstant, dst);
+        loadDouble(TrustedImmPtr(&negativeZeroConstant), dst);
         m_assembler.xorpd_rr(src, dst);
     }
 
@@ -684,13 +684,13 @@ public:
             m_assembler.movsd_rr(src, dest);
     }
 
-    void loadDouble(const void* address, FPRegisterID dest)
+    void loadDouble(TrustedImmPtr address, FPRegisterID dest)
     {
 #if CPU(X86)
         ASSERT(isSSE2Present());
-        m_assembler.movsd_mr(address, dest);
+        m_assembler.movsd_mr(address.m_value, dest);
 #else
-        move(TrustedImmPtr(address), scratchRegister);
+        move(address, scratchRegister);
         loadDouble(scratchRegister, dest);
 #endif
     }

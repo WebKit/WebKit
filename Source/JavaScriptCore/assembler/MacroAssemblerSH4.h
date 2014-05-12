@@ -1155,10 +1155,10 @@ public:
         releaseScratch(scr);
     }
 
-    void loadDouble(const void* address, FPRegisterID dest)
+    void loadDouble(TrustedImmPtr address, FPRegisterID dest)
     {
         RegisterID scr = claimScratch();
-        move(TrustedImmPtr(address), scr);
+        move(address, scr);
         m_assembler.fmovsReadrminc(scr, (FPRegisterID)(dest + 1));
         m_assembler.fmovsReadrm(scr, dest);
         releaseScratch(scr);
@@ -1204,10 +1204,10 @@ public:
         }
     }
 
-    void storeDouble(FPRegisterID src, const void* address)
+    void storeDouble(FPRegisterID src, TrustedImmPtr address)
     {
         RegisterID scr = claimScratch();
-        m_assembler.loadConstant(reinterpret_cast<uint32_t>(const_cast<void*>(address)) + 8, scr);
+        m_assembler.loadConstant(reinterpret_cast<uint32_t>(const_cast<void*>(address.m_value)) + 8, scr);
         m_assembler.fmovsWriterndec(src, scr);
         m_assembler.fmovsWriterndec((FPRegisterID)(src + 1), scr);
         releaseScratch(scr);
