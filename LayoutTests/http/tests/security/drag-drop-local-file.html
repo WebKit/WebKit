@@ -1,0 +1,36 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function moveToCenter(element)
+{
+    x = element.offsetParent.offsetLeft + element.offsetLeft + element.offsetWidth / 2;
+    y = element.offsetParent.offsetTop + element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+}
+
+function runTest() {
+
+    var x, y;
+    var span = document.getElementById("span");
+    moveToCenter(span);
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    var input = document.getElementById("target");
+    moveToCenter(input);
+    eventSender.leapForward(500);
+    eventSender.mouseUp();
+
+    input.contentWindow.postMessage("go", "*");
+}
+</script>
+</head>
+<body onload="runTest()">
+<span id="span"><a href="file:///foobar">Dragme</a></span>
+<iframe id="target" src="http://127.0.0.1:8000/security/resources/drag-drop.html"></iframe>
+</body>
+</html>

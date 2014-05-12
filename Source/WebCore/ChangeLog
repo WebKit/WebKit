@@ -1,3 +1,16 @@
+2014-05-12  Martin Hock  <mhock@apple.com>
+
+        Disallow drag and drop of non-displayable resources.
+        https://bugs.webkit.org/show_bug.cgi?id=132745
+        <rdar://problem/10562662>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/security/drag-drop-local-file.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
 2014-05-12  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
 
         WinCairo buildfix after r168611

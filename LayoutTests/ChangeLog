@@ -1,3 +1,14 @@
+2014-05-12  Martin Hock  <mhock@apple.com>
+
+        Disallow drag and drop of non-displayable resources.
+        https://bugs.webkit.org/show_bug.cgi?id=132745
+        <rdar://problem/10562662>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/security/drag-drop-local-file-expected.txt: Added.
+        * http/tests/security/drag-drop-local-file.html: Added.
+
 2014-05-12  Radu Stavila  <stavila@adobe.com>
 
         fast/multicol/newmulticol/first-letter-create.html is very flaky
