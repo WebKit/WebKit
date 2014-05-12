@@ -1,3 +1,17 @@
+2014-05-12  Beth Dakin  <bdakin@apple.com>
+
+        Layer for bottom overhang area needs to be offset by the topContentInset
+        https://bugs.webkit.org/show_bug.cgi?id=132835
+        -and corresponding-
+        <rdar://problem/16641115>
+
+        Reviewed by Simon Fraser.
+
+        Push this layer down by the topContentInset in addition to the root layer height, 
+        footer height, and header height.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
+
 2014-05-09  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION (r167818): editing/inserting/typing-space-to-trigger-smart-link.html fails on WebKit1 bots
