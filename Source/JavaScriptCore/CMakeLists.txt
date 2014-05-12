@@ -704,10 +704,13 @@ if (ENABLE_FTL_JIT)
 
         ftl/FTLAbstractHeap.cpp
         ftl/FTLAbstractHeapRepository.cpp
+        ftl/FTLAvailableRecovery.cpp
         ftl/FTLCapabilities.cpp
         ftl/FTLCommonValues.cpp
         ftl/FTLCompile.cpp
+        ftl/FTLDataSection.cpp
         ftl/FTLDWARFDebugLineInfo.cpp
+        ftl/FTLDWARFRegister.cpp
         ftl/FTLExitArgument.cpp
         ftl/FTLExitArgumentForOperand.cpp
         ftl/FTLExitThunkGenerator.cpp
@@ -718,20 +721,25 @@ if (ENABLE_FTL_JIT)
         ftl/FTLIntrinsicRepository.cpp
         ftl/FTLJITCode.cpp
         ftl/FTLJITFinalizer.cpp
+        ftl/FTLJSCall.cpp
         ftl/FTLLink.cpp
         ftl/FTLLocation.cpp
         ftl/FTLLowerDFGToLLVM.cpp
         ftl/FTLOSREntry.cpp
-        ftl/FTLOSRExit.cpp
         ftl/FTLOSRExitCompiler.cpp
+        ftl/FTLOSRExit.cpp
         ftl/FTLOutput.cpp
+        ftl/FTLRecoveryOpcode.cpp
+        ftl/FTLRegisterAtOffset.cpp
         ftl/FTLSaveRestore.cpp
         ftl/FTLSlowPathCall.cpp
         ftl/FTLSlowPathCallKey.cpp
         ftl/FTLStackMaps.cpp
         ftl/FTLState.cpp
         ftl/FTLThunks.cpp
+        ftl/FTLUnwindInfo.cpp
         ftl/FTLValueFormat.cpp
+        ftl/FTLValueRange.cpp
     )
 endif ()
 
