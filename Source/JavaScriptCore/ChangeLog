@@ -1,3 +1,18 @@
+2014-05-12  Andreas Kling  <akling@apple.com>
+
+        0.4% of PLT3 in JSCell::structure() below JSObject::visitChildren().
+        <https://webkit.org/b/132828>
+        <rdar://problem/16886285>
+
+        Reviewed by Michael Saboff.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::visitChildren):
+
+            Use JSCell::structure(VM&) to reduce the number of hoops we jump
+            through to find Structures during marking.
+
 2014-05-12  László Langó  <llango.u-szeged@partner.samsung.com>
 
         [cmake] Add missing FTL source files to the build system.

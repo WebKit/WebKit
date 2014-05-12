@@ -165,7 +165,7 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
 {
     ASSERT(butterfly);
     
-    Structure* structure = this->structure();
+    Structure* structure = this->structure(visitor.vm());
     
     size_t propertyCapacity = structure->outOfLineCapacity();
     size_t preCapacity;
@@ -214,7 +214,7 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Butterfly* butterfly = thisObject->butterfly();
     if (butterfly)
-        thisObject->visitButterfly(visitor, butterfly, thisObject->structure()->outOfLineSize());
+        thisObject->visitButterfly(visitor, butterfly, thisObject->structure(visitor.vm())->outOfLineSize());
 
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
