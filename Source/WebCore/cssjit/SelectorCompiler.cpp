@@ -711,12 +711,12 @@ static inline bool equalTagNamePatterns(const TagNamePattern& lhs, const Qualifi
 
 // Find the largest matching prefix from already known tagNames.
 // And by using this, compute an appropriate height of backtracking start element from the closest descendant.
-static inline unsigned computeBacktrackingStartHeightFromDescendant(const TagNameList& tagNames)
+static inline unsigned computeBacktrackingStartHeightFromDescendant(const TagNameList& tagNames, unsigned maxPrefixSize)
 {
     RELEASE_ASSERT(!tagNames.isEmpty());
+    RELEASE_ASSERT(maxPrefixSize < tagNames.size());
 
-    unsigned largestPrefixSize = tagNames.size();
-    while (--largestPrefixSize) {
+    for (unsigned largestPrefixSize = maxPrefixSize; largestPrefixSize > 0; --largestPrefixSize) {
         unsigned offsetToLargestPrefix = tagNames.size() - largestPrefixSize;
         bool matched = true;
         // Since TagNamePatterns are pushed to a tagNames, check tagNames with reverse order.
@@ -752,15 +752,21 @@ static inline void computeBacktrackingHeightFromDescendant(SelectorFragment& fra
         pattern.tagName = fragment.tagName;
         tagNames.append(pattern);
 
+        unsigned maxPrefixSize = tagNames.size() - 1;
+        if (previousChildFragmentInDescendantBacktrackingChain) {
+            RELEASE_ASSERT(tagNames.size() >= previousChildFragmentInDescendantBacktrackingChain->tagNameMatchedBacktrackingStartHeightFromDescendant);
+            maxPrefixSize = tagNames.size() - previousChildFragmentInDescendantBacktrackingChain->tagNameMatchedBacktrackingStartHeightFromDescendant;
+        }
+
         if (pattern.tagName) {
             // Compute height from descendant in the case that tagName is not matched.
             tagNames.last().inverted = true;
-            fragment.tagNameNotMatchedBacktrackingStartHeightFromDescendant = computeBacktrackingStartHeightFromDescendant(tagNames);
+            fragment.tagNameNotMatchedBacktrackingStartHeightFromDescendant = computeBacktrackingStartHeightFromDescendant(tagNames, maxPrefixSize);
         }
 
         // Compute height from descendant in the case that tagName is matched.
         tagNames.last().inverted = false;
-        fragment.tagNameMatchedBacktrackingStartHeightFromDescendant = computeBacktrackingStartHeightFromDescendant(tagNames);
+        fragment.tagNameMatchedBacktrackingStartHeightFromDescendant = computeBacktrackingStartHeightFromDescendant(tagNames, maxPrefixSize);
         fragment.heightFromDescendant = tagNames.size() - 1;
         previousChildFragmentInDescendantBacktrackingChain = &fragment;
     } else {

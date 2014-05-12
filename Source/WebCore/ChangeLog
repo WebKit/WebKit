@@ -1,3 +1,64 @@
+2014-05-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: reduce cost of computing backtracking height
+        https://bugs.webkit.org/show_bug.cgi?id=132546
+
+        Reviewed by Benjamin Poulain.
+
+        Because compiler previously compute backtracking height for
+        previous child fragment, by leveraging this, we can limit the
+        `maxPrefixSize` for `computeBacktrackingHeightFromDescendant`.
+
+        For example, consider selector "c>a>b>d>a>b e"'s descendant chain,
+        "c>a>b>d>a>b".
+
+        At the <a> position, we have matching pattern [b, a, d, b, a] and
+        calculate the backtracking height by following method.
+
+        pattern:    [b, a, d, b, a]
+        candidate0:    [b, a, d, b]  => Not matched.
+        candidate1:       [b, a, d]  => Not matched.
+        candidate2:          [b, a]  => Matched against the pattern.
+
+        At this time, first candidate0's pattern size is `pattern.size() - 1`.
+        And get backtracking height from descendant 3, that is
+        `pattern.size() - candidate.size()`, `5 - 2`.
+
+        And next, at the <c> position, we calcucate the backtracking height
+        for this pattern.
+
+        pattern:    [b, a, d, b, a, c]
+        candidate0:    [b, a, d, b, a]  => Not matched.
+        candidate1:       [b, a, d, b]  => Not matched.
+        candidate2:          [b, a, d]  => Not matched.
+        candidate3:             [b, a]  => Not matched.
+        candidate4:                [b]  => Not matched.
+        candidate5:                 []  => Matched against the pattern.
+
+        Then, we get the backtracking height, which is 6 (6 - 0).
+        However, in the above case, we already know that attempts from candidate0
+        to candidate1 always fail, since parts of these are already tested at
+        the <b> position trial and we know they don't match.
+
+        So in this case, we should start this computation from candidate2,
+        such as,
+
+        pattern:    [b, a, d, b, a, c]
+        candidate2:          [b, a, d]  => Not matched.
+        candidate3:             [b, a]  => Not matched.
+        candidate4:                [b]  => Not matched.
+        candidate5:                 []  => Matched against the pattern.
+
+        We can start computation with candidate size
+        `pattern.size() - previousChildFragmentBacktrackingHeight`.
+        In this example, `pattern.size()` is 6 and
+        `previousChildFragmentBacktrackingHeight` is 3, so candidate size is
+        3, that is candidate2.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::computeBacktrackingStartHeightFromDescendant):
+        (WebCore::SelectorCompiler::computeBacktrackingHeightFromDescendant):
+
 2014-05-11  Beth Dakin  <bdakin@apple.com>
 
         Headers and footers are not positioned correctly with topContentInset
