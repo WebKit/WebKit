@@ -1931,7 +1931,6 @@
 			buildPhases = (
 				5D2F7DB70C687A5A00B5B72B /* Update Info.plist with version information */,
 				1C6CB0510AA63EB000D23BFD /* Migrate Headers */,
-				939811300824BF01008DF038 /* Make Frameworks Symbolic Link */,
 				9398100D0824BF01008DF038 /* Headers */,
 				A13EE61D185AE82700556064 /* Postprocess Headers */,
 				939810B20824BF01008DF038 /* Resources */,
@@ -2093,22 +2092,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"${PROJECT_DIR}/mac/Info.plist\";\nfi;\n";
-		};
-		939811300824BF01008DF038 /* Make Frameworks Symbolic Link */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputPaths = (
-				WebKit.xcodeproj,
-			);
-			name = "Make Frameworks Symbolic Link";
-			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/frameworks-symlink-stamp",
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\n    exit 0\nfi\n\nln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKitLegacy.framework/Frameworks\"\n";
 		};
 		A13EE61D185AE82700556064 /* Postprocess Headers */ = {
 			isa = PBXShellScriptBuildPhase;
