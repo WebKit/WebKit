@@ -1,3 +1,18 @@
+2014-05-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        Do not create a temporary string to append the SVGLength's unit
+        https://bugs.webkit.org/show_bug.cgi?id=132807
+
+        Reviewed by Geoffrey Garen.
+
+        * svg/SVGLength.cpp:
+        (WebCore::lengthTypeToString):
+        The caller just append the string to a number string. The function
+        lengthTypeToString() was creating a new WTF::String from scratch,
+        copied the characters to make a new string, and destroyed the WTF::String.
+
+        Instead, just append the string literal.
+
 2014-05-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: reduce cost of computing backtracking height

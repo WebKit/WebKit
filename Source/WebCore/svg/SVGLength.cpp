@@ -54,7 +54,7 @@ static inline SVGLengthType extractType(unsigned int unit)
     return static_cast<SVGLengthType>(type);
 }
 
-static inline String lengthTypeToString(SVGLengthType type)
+static inline const char* lengthTypeToString(SVGLengthType type)
 {
     switch (type) {
     case LengthTypeUnknown:
@@ -81,7 +81,7 @@ static inline String lengthTypeToString(SVGLengthType type)
     }
 
     ASSERT_NOT_REACHED();
-    return String();
+    return "";
 }
 
 inline SVGLengthType stringToLengthType(const UChar*& ptr, const UChar* end)
