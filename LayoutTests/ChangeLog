@@ -1,5 +1,17 @@
 2014-05-12  Dirk Schulze  <krit@webkit.org>
 
+        <svg> with opacity and compositing double-applies its opacity
+        https://bugs.webkit.org/show_bug.cgi?id=116856
+
+        Reviewed by Simon Fraser.
+
+        Test that opacity is not applied twice for composited inline SVG.
+
+        * svg/custom/composited-svg-with-opacity-expected.html: Added.
+        * svg/custom/composited-svg-with-opacity.html: Added.
+
+2014-05-12  Dirk Schulze  <krit@webkit.org>
+
         SVG outline property is broken and inefficient
         https://bugs.webkit.org/show_bug.cgi?id=113666
 

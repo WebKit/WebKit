@@ -101,7 +101,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
 
     // Setup transparency layers before setting up SVG resources!
     bool isRenderingMask = isRenderingMaskImage(*m_renderer);
-    float opacity = isRenderingMask ? 1 : style.opacity();
+    float opacity = isRenderingMask || (renderer.hasLayer() && toRenderLayerModelObject(renderer).layer()->isComposited()) ? 1 : style.opacity();
     const ShadowData* shadow = svgStyle.shadow();
     bool hasBlendMode = style.hasBlendMode();
     bool hasIsolation = style.hasIsolation();

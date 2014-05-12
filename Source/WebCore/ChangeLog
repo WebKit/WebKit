@@ -1,3 +1,22 @@
+2014-05-12  Dirk Schulze  <krit@webkit.org>
+
+        <svg> with opacity and compositing double-applies its opacity
+        https://bugs.webkit.org/show_bug.cgi?id=116856
+
+        Reviewed by Simon Fraser.
+
+        The opacity is applied by the compositor. However, all SVG elements
+        create transparency layers on their own to apply opacity. So did
+        SVGSVGElement.
+
+        Added a check if the current element has a compositing layer and skip
+        creating transparency layer if it has.
+
+        Test: svg/custom/composited-svg-with-opacity.html
+
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+
 2014-05-12  Brady Eidson  <beidson@apple.com>
 
         Teach Editor to support more direct replacement of a Node
