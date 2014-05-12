@@ -5,7 +5,7 @@
     div {
         width: 130px;
         height: 130px;
-        background: url('resources/squares.gif'), green;
+        background-color: green;
         float: left;
         margin: 5px;
     }
@@ -14,11 +14,17 @@
     if (window.testRunner)
         window.testRunner.waitUntilDone();
 
-    function done() {
-        if (window.testRunner)
-            window.testRunner.notifyDone();
-    }
+    var blueWhite1px400msGif = "url('data:image/gif;base64,R0lGODlhAQABAJECAP///wAt0v///wAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJKAACACwAAAAAAQABAAACAkwBACH5BAkoAAIALAAAAAABAAEAAAICRAEAOw==')";
 
+    window.onload = function () {
+        var list = document.getElementsByTagName('div');
+        for (var i = 0; i < list.length; i++)
+            list[i].style.backgroundImage = blueWhite1px400msGif;
+        setTimeout(function () {
+            if (window.testRunner)
+                window.testRunner.notifyDone();
+        }, 500);
+    };
 </script>
 </head>
 <!-- This file should contain a gif on top of a background color with every type of blending. -->
@@ -34,8 +40,5 @@
     <div style="background-blend-mode: soft-light, normal"></div>
     <div style="background-blend-mode: difference, normal"></div>
     <div style="background-blend-mode: exclusion, normal"></div>
-    <script type="text/javascript">
-        window.setTimeout("done()", 400);
-    </script>
 </body>
 </html>

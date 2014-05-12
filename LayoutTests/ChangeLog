@@ -1,3 +1,51 @@
+2014-05-12  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Adjust blending pixel test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=132737
+
+        Reviewed by Mihnea Ovidenie.
+
+        Changing failing gif file with with one pixel base64 data and make them different for the two tests,
+        otherwise they might get cached and the gif animation is shared among multiple tests.
+        Changing the incorrect expectations for *gif-color-2* and adjusting test expectation for *gif-color-1*
+        * css3/blending/background-blend-mode-gif-color-2.html:
+        * css3/blending/background-blend-mode-gif-color.html:
+        * css3/blending/resources/squares.gif: Removed.
+        * platform/mac/css3/blending/background-blend-mode-gif-color-2-expected.png:
+        * platform/mac/css3/blending/background-blend-mode-gif-color-expected.png:
+ 
+        * platform/mac-wk1/TestExpectations:
+        The background-blend-mode-gif-color-2 does not pass on WK1: the git animation doesn't get started.
+
+        * platform/mac/TestExpectations: Adding bugs to the excepted blending tests.
+
+        Adjusting this test to avoid scrollbars. Adjusting test expectations.
+        * css3/blending/blend-mode-overflow-expected.txt: Removed.
+        * css3/blending/blend-mode-overflow.html:
+        * platform/mac/css3/blending/blend-mode-overflow-expected.png:
+        * platform/mac/css3/blending/blend-mode-overflow-expected.txt:
+        
+        Adding pixel expectations for newly added tests:
+        * platform/mac/css3/blending/blend-mode-isolation-flags-append-non-stacking-context-blending-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-flags-append-stacking-context-blending-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-flags-remove-non-stacking-context-blending-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-flags-remove-stacking-context-blending-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-flags-turn-off-blending-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-flags-turn-off-blending-no-isolation-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-flags-turn-off-stacking-context-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-flags-turn-on-blending-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-flags-turn-on-stacking-context-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-turn-off-self-painting-layer-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-turn-off-self-painting-layer1-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-turn-off-self-painting-layer2-expected.png: Added.
+        * platform/mac/css3/blending/blend-mode-isolation-turn-on-self-painting-layer-expected.png: Added.
+
+        Adjusting pixel tests after removing non separable blend modes.
+        * platform/mac/css3/blending/blend-mode-simple-composited-expected.png:
+        * platform/mac/css3/blending/blend-mode-simple-expected.png:
+        * platform/mac/css3/blending/effect-background-blend-mode-expected.png:
+        * platform/mac/css3/blending/effect-background-blend-mode-tiled-expected.png:
+
 2014-05-09  Myles C. Maxfield  <litherum@gmail.com>
 
         [Mac] [iOS] Underlines are too low

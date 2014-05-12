@@ -589,9 +589,9 @@ compositing/overflow/updating-scrolling-content.html
 compositing/overflow/scrolling-without-painting.html
 
 # Blend mode result is slightly different than the applied formula.
-css3/blending/background-blend-mode-data-uri-svg-image.html [ ImageOnlyFailure Pass ]
-css3/blending/background-blend-mode-tiled-layers.html [ ImageOnlyFailure Pass ]
-css3/blending/background-blend-mode-crossfade-image.html [ ImageOnlyFailure Pass ]
+webkit.org/b/130582 css3/blending/background-blend-mode-data-uri-svg-image.html [ ImageOnlyFailure Pass ]
+webkit.org/b/130582 css3/blending/background-blend-mode-tiled-layers.html [ ImageOnlyFailure Pass ]
+webkit.org/b/130582 css3/blending/background-blend-mode-crossfade-image.html [ ImageOnlyFailure Pass ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=110871
 compositing/overlap-blending/reflection-opacity-huge.html
