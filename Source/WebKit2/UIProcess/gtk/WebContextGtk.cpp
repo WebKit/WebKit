@@ -124,7 +124,7 @@ String WebContext::platformDefaultIconDatabasePath() const
     return WebCore::filenameToString(databaseDirectory.get());
 }
 
-String WebContext::platformDefaultLocalStorageDirectory() const
+String WebContext::platformDefaultLocalStorageDirectory()
 {
     GUniquePtr<gchar> storageDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "localstorage", nullptr));
     return WebCore::filenameToString(storageDirectory.get());
