@@ -1,3 +1,13 @@
+2014-05-12  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        Typo fix in generate-forwarding-headers
+        https://bugs.webkit.org/show_bug.cgi?id=132820
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/generate-forwarding-headers.pl:
+        (collectFrameworkHeaderPaths):
+        
 2014-05-12  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         [EFL] TLSErrors do not cause page load to fail when not ignored

@@ -59,7 +59,7 @@ foreach (@frameworks) {
     %neededHeaders = ();
 
     find(\&collectNeededHeaders, $incFromRoot);
-    find(\&collectFameworkHeaderPaths, File::Spec->catfile($srcRoot, $frameworkDirectoryName));
+    find(\&collectFrameworkHeaderPaths, File::Spec->catfile($srcRoot, $frameworkDirectoryName));
     createForwardingHeadersForFramework();
 }
 
@@ -77,7 +77,7 @@ sub collectNeededHeaders {
     }
 }
 
-sub collectFameworkHeaderPaths {
+sub collectFrameworkHeaderPaths {
     my $filePath = $File::Find::name;
     my $file = $_;
     if ($filePath =~ '\.h$' && $filePath !~ "ForwardingHeaders" && grep{$file eq $_} keys %neededHeaders) {
