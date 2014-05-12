@@ -37,7 +37,7 @@ WK_API_CLASS
 
 /*! @abstract Whether the frame that is being navigated is the main frame or not.
  */
-@property (nonatomic, readonly, getter=isMainFrameNavigation) BOOL mainFrameNavigation;
+@property (nonatomic, readonly, getter=isForMainFrame) BOOL forMainFrame;
 
 /*! @abstract The NSURLResponse of the frame.
  */

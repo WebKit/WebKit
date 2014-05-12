@@ -40,7 +40,7 @@
     return [NSString stringWithFormat:@"<%@: %p; response = %@>", NSStringFromClass(self.class), self, _response.get()];
 }
 
-- (BOOL)isMainFrameNavigation
+- (BOOL)isForMainFrame
 {
     return [_frame isMainFrame];
 }
