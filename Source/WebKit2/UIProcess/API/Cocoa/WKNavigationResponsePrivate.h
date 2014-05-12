@@ -23,48 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKNavigationResponseInternal.h"
+#import <WebKit/WKNavigationResponse.h>
 
 #if WK_API_ENABLED
 
-#import <wtf/RetainPtr.h>
-#import "WKFrameInfo.h"
+@interface WKNavigationResponse (WKPrivate)
 
-@implementation WKNavigationResponse {
-    RetainPtr<NSURLResponse> _response;
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; response = %@>", NSStringFromClass(self.class), self, _response.get()];
-}
-
-- (BOOL)isMainFrameNavigation
-{
-    return [_frame isMainFrame];
-}
-
-- (NSURLResponse *)response
-{
-    return _response.get();
-}
-
-- (void)setResponse:(NSURLResponse *)response
-{
-    _response = adoptNS([response copy]);
-}
+@property (nonatomic, readonly) WKFrameInfo *_frame;
 
 @end
-
-@implementation WKNavigationResponse (WKPrivate)
-
-- (WKFrameInfo *)_frame
-{
-    return _frame.get();
-}
-
-@end
-
 
 #endif

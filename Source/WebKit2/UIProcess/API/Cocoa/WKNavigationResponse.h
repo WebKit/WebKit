@@ -35,9 +35,9 @@
 WK_API_CLASS
 @interface WKNavigationResponse : NSObject
 
-/*! @abstract Represents the frame that is being navigated.
+/*! @abstract Whether the frame that is being navigated is the main frame or not.
  */
-@property (nonatomic, readonly) WKFrameInfo *frame;
+@property (nonatomic, readonly, getter=isMainFrameNavigation) BOOL mainFrameNavigation;
 
 /*! @abstract The NSURLResponse of the frame.
  */

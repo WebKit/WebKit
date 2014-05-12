@@ -1,3 +1,28 @@
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168581
+
+    2014-05-10  Anders Carlsson  <andersca@apple.com>
+
+            Make -[WKNavigationResponse frame] SPI and only expose -[WKNavigationResponse isMainFrame]
+            https://bugs.webkit.org/show_bug.cgi?id=132781
+            <rdar://problem/16868319>
+
+            Reviewed by Darin Adler.
+
+            * UIProcess/API/Cocoa/WKNavigationResponse.h:
+            * UIProcess/API/Cocoa/WKNavigationResponse.mm:
+            (-[WKNavigationResponse description]):
+            (-[WKNavigationResponse isMainFrameNavigation]):
+            (-[WKNavigationResponse _frame]):
+            (-[WKNavigationResponse frame]): Deleted.
+            (-[WKNavigationResponse setFrame:]): Deleted.
+            * UIProcess/API/Cocoa/WKNavigationResponseInternal.h:
+            * UIProcess/API/Cocoa/WKNavigationResponsePrivate.h: Added.
+            * UIProcess/Cocoa/NavigationState.mm:
+            (WebKit::NavigationState::PolicyClient::decidePolicyForResponse):
+            * WebKit2.xcodeproj/project.pbxproj:
+
 2014-05-09  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168499

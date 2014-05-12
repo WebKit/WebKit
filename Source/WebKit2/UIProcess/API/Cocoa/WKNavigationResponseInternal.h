@@ -23,13 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKNavigationResponse.h"
+#import "WKNavigationResponsePrivate.h"
 
 #if WK_API_ENABLED
 
-@interface WKNavigationResponse ()
+#import <wtf/RetainPtr.h>
 
-@property (nonatomic, readwrite, strong) WKFrameInfo *frame;
+@interface WKNavigationResponse () {
+@package
+    RetainPtr<WKFrameInfo> _frame;
+}
+
 @property (nonatomic, readwrite, copy) NSURLResponse *response;
 @property (nonatomic, readwrite) BOOL canShowMIMEType;
 
