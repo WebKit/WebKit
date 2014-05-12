@@ -225,6 +225,8 @@
     _page = WebKit::toImpl([_wkView pageRef]);
 #endif
 
+    _page->setBackgroundExtendsBeyondPage(true);
+
     _navigationState = std::make_unique<WebKit::NavigationState>(self);
     _page->setPolicyClient(_navigationState->createPolicyClient());
     _page->setLoaderClient(_navigationState->createLoaderClient());
