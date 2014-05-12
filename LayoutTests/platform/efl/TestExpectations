@@ -1635,3 +1635,5 @@ webkit.org/b/109570 media/track/w3c [ Skip ]
 
 # No HLS support
 http/tests/media/hls [ Skip ]
+
+webkit.org/b/132823 svg/zoom/page/zoom-foreignObject.svg [ ImageOnlyFailure ]
