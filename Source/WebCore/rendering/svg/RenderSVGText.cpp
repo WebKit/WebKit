@@ -493,7 +493,6 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint&)
         return;
 
     if (paintInfo.phase != PaintPhaseForeground
-     && paintInfo.phase != PaintPhaseSelfOutline
      && paintInfo.phase != PaintPhaseSelection)
          return;
 
@@ -501,6 +500,12 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint&)
     GraphicsContextStateSaver stateSaver(*blockInfo.context);
     blockInfo.applyTransform(localToParentTransform());
     RenderBlock::paint(blockInfo, LayoutPoint());
+
+    // Paint the outlines, if any
+    if (paintInfo.phase == PaintPhaseForeground) {
+        blockInfo.phase = PaintPhaseSelfOutline;
+        RenderBlock::paint(blockInfo, LayoutPoint());
+    }
 }
 
 FloatRect RenderSVGText::strokeBoundingBox() const

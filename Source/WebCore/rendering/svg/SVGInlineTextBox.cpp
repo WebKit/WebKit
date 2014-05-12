@@ -30,6 +30,7 @@
 #include "InlineFlowBox.h"
 #include "PointerEventsHitRules.h"
 #include "RenderBlock.h"
+#include "RenderInline.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "RenderView.h"
 #include "SVGRenderingContext.h"
@@ -242,7 +243,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
     ASSERT(!m_paintingResource);
 }
 
-void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUnit, LayoutUnit)
+void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
 {
     ASSERT(paintInfo.shouldPaintWithinRoot(renderer()));
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
@@ -334,6 +335,10 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
 
         m_paintingResourceMode = ApplyToDefaultMode;
     }
+
+    // Finally, paint the outline if any.
+    if (renderer().style().hasOutline() && parentRenderer.isRenderInline())
+        toRenderInline(parentRenderer).paintOutline(paintInfo, paintOffset);
 
     ASSERT(!m_paintingResource);
 }

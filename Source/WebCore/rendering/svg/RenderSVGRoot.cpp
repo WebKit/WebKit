@@ -230,6 +230,10 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
     if (paintInfo.context->paintingDisabled())
         return;
 
+    // SVG outlines are painted during PaintPhaseForeground.
+    if (paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline)
+        return;
+
     // An empty viewBox also disables rendering.
     // (http://www.w3.org/TR/SVG/coords.html#ViewBoxAttribute)
     if (svgSVGElement().hasEmptyViewBox())

@@ -45,7 +45,7 @@ void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
     }
 }
 
-void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUnit, LayoutUnit)
+void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
 {
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
     ASSERT(!paintInfo.context->paintingDisabled());
@@ -56,7 +56,7 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
             if (child->isSVGInlineTextBox())
                 computeTextMatchMarkerRectForRenderer(&(toSVGInlineTextBox(child)->renderer()));
 
-            child->paint(paintInfo, LayoutPoint(), 0, 0);
+            child->paint(paintInfo, paintOffset, 0, 0);
         }
     }
 }

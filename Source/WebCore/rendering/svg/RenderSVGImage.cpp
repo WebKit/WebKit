@@ -132,7 +132,8 @@ void RenderSVGImage::layout()
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context->paintingDisabled() || style().visibility() == HIDDEN || !imageResource().hasImage())
+    if (paintInfo.context->paintingDisabled() || paintInfo.phase != PaintPhaseForeground
+        || style().visibility() == HIDDEN || !imageResource().hasImage())
         return;
 
     FloatRect boundingBox = repaintRectInLocalCoordinates();
@@ -140,25 +141,22 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         return;
 
     PaintInfo childPaintInfo(paintInfo);
-    bool drawsOutline = style().outlineWidth() && (childPaintInfo.phase == PaintPhaseOutline || childPaintInfo.phase == PaintPhaseSelfOutline);
-    if (drawsOutline || childPaintInfo.phase == PaintPhaseForeground) {
-        GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
-        childPaintInfo.applyTransform(m_localTransform);
+    GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
+    childPaintInfo.applyTransform(m_localTransform);
 
-        if (childPaintInfo.phase == PaintPhaseForeground) {
-            SVGRenderingContext renderingContext(*this, childPaintInfo);
+    if (childPaintInfo.phase == PaintPhaseForeground) {
+        SVGRenderingContext renderingContext(*this, childPaintInfo);
 
-            if (renderingContext.isRenderingPrepared()) {
-                if (style().svgStyle().bufferedRendering() == BR_STATIC  && renderingContext.bufferForeground(m_bufferedForeground))
-                    return;
+        if (renderingContext.isRenderingPrepared()) {
+            if (style().svgStyle().bufferedRendering() == BR_STATIC  && renderingContext.bufferForeground(m_bufferedForeground))
+                return;
 
-                paintForeground(childPaintInfo);
-            }
+            paintForeground(childPaintInfo);
         }
-
-        if (drawsOutline)
-            paintOutline(childPaintInfo, IntRect(boundingBox));
     }
+
+    if (style().outlineWidth())
+        paintOutline(childPaintInfo, IntRect(boundingBox));
 }
 
 void RenderSVGImage::paintForeground(PaintInfo& paintInfo)

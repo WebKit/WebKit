@@ -1,3 +1,59 @@
+2014-05-12  Dirk Schulze  <krit@webkit.org>
+
+        SVG outline property is broken and inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=113666
+
+        Reviewed by Dean Jackson.
+
+        Patch by Erik Dahlström backported from Blink.
+
+        "[SVG2] css 'outline' property should apply to svg elements 
+
+        The 'outline' property was only partially working in SVG before
+        this patch, this makes it work on text and text content child
+        elements too. 
+
+        This makes SVG render the outlines as part of the foreground paint
+        phase. 
+
+        Partly based on Florin Malita's webkit patch https://bugs.webkit.org/show_bug.cgi?id=113666#c12."
+
+        Tests: svg/custom/outline-stacking-expected.svg
+               svg/custom/outline-stacking.svg
+               svg/custom/rgba-color-outline.svg
+               svg/text/text-outline-expected.svg
+               svg/text/text-outline-rgba.html
+               svg/text/text-outline.html
+               svg/text/textpath-outline-expected.svg
+               svg/text/textpath-outline.svg
+               svg/text/tspan-multiple-outline.svg
+               svg/text/tspan-outline-2-expected.svg
+               svg/text/tspan-outline-2.svg
+               svg/text/tspan-outline-expected.svg
+               svg/text/tspan-outline.html
+
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint): Draw outline in forground
+            paint phase.
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint): Draw outline in forground
+            paint phase.
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced): Pass paint offset.
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::paint): Draw outline in forground
+            paint phase.
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint): Draw outline in forground
+            paint phase.
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paint): Pass paint offset.
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint): Draw outline in forground
+            paint phase.
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint): Pass paint offset.
+
 2014-05-12  Beth Dakin  <bdakin@apple.com>
 
         Layer for bottom overhang area needs to be offset by the topContentInset

@@ -290,33 +290,31 @@ void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 
 void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context->paintingDisabled() || style().visibility() == HIDDEN || isEmpty())
+    if (paintInfo.context->paintingDisabled() || paintInfo.phase != PaintPhaseForeground
+        || style().visibility() == HIDDEN || isEmpty())
         return;
     FloatRect boundingBox = repaintRectInLocalCoordinates();
     if (!SVGRenderSupport::paintInfoIntersectsRepaintRect(boundingBox, m_localTransform, paintInfo))
         return;
 
     PaintInfo childPaintInfo(paintInfo);
-    bool drawsOutline = style().outlineWidth() && (childPaintInfo.phase == PaintPhaseOutline || childPaintInfo.phase == PaintPhaseSelfOutline);
-    if (drawsOutline || childPaintInfo.phase == PaintPhaseForeground) {
-        GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
-        childPaintInfo.applyTransform(m_localTransform);
+    GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
+    childPaintInfo.applyTransform(m_localTransform);
 
-        if (childPaintInfo.phase == PaintPhaseForeground) {
-            SVGRenderingContext renderingContext(*this, childPaintInfo);
+    if (childPaintInfo.phase == PaintPhaseForeground) {
+        SVGRenderingContext renderingContext(*this, childPaintInfo);
 
-            if (renderingContext.isRenderingPrepared()) {
-                const SVGRenderStyle& svgStyle = style().svgStyle();
-                if (svgStyle.shapeRendering() == SR_CRISPEDGES)
-                    childPaintInfo.context->setShouldAntialias(false);
+        if (renderingContext.isRenderingPrepared()) {
+            const SVGRenderStyle& svgStyle = style().svgStyle();
+            if (svgStyle.shapeRendering() == SR_CRISPEDGES)
+                childPaintInfo.context->setShouldAntialias(false);
 
-                fillStrokeMarkers(childPaintInfo);
-            }
+            fillStrokeMarkers(childPaintInfo);
         }
-
-        if (drawsOutline)
-            paintOutline(childPaintInfo, IntRect(boundingBox));
     }
+
+    if (style().outlineWidth())
+        paintOutline(childPaintInfo, IntRect(boundingBox));
 }
 
 // This method is called from inside paintOutline() since we call paintOutline()
