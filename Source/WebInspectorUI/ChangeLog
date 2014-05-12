@@ -1,3 +1,14 @@
+2014-05-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Correct Cygwin Path Confusion in WebInspectorUI Build
+        https://bugs.webkit.org/show_bug.cgi?id=132826
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/copy-user-interface-resources.pl: If the build is running
+        under Cygwin, be sure to use '/usr/bin/python', instead of just
+        'python' to avoid build errors.
+
 2014-05-09  Alberto Garcia  <berto@igalia.com>
 
         jsmin.py license header confusing, mentions non-free license

@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 
+use English;
 use File::Copy qw(copy);
 use File::Path qw(make_path);
 use File::Spec;
@@ -76,6 +77,7 @@ my $LICENSE = <<'EOF';
  */
 EOF
 
+my $python = ($OSNAME =~ /cygwin/) ? "/usr/bin/python" : "python";
 my $derivedSourcesDir = $ENV{'DERIVED_SOURCES_DIR'};
 my $scriptsRoot = File::Spec->catdir($ENV{'SRCROOT'}, 'Scripts');
 my $uiRoot = File::Spec->catdir($ENV{'SRCROOT'}, 'UserInterface');
@@ -141,14 +143,14 @@ if (defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESO
     # Minify the Main.js and Main.css files, with Main.js appending to the license that was exported above.
     my $jsMinScript = File::Spec->catfile($scriptsRoot, 'jsmin.py');
     my $cssMinScript = File::Spec->catfile($scriptsRoot, 'cssmin.py');
-    system(qq(python "$jsMinScript" < "$derivedSourcesMainJS" >> "$targetMainJS")) and die "Failed to minify $derivedSourcesMainJS: $!";
-    system(qq(python "$cssMinScript" < "$derivedSourcesMainCSS" >> "$targetMainCSS")) and die "Failed to minify $derivedSourcesMainCSS: $!";
+    system(qq("$python" "$jsMinScript" < "$derivedSourcesMainJS" >> "$targetMainJS")) and die "Failed to minify $derivedSourcesMainJS: $!";
+    system(qq("$python" "$cssMinScript" < "$derivedSourcesMainCSS" >> "$targetMainCSS")) and die "Failed to minify $derivedSourcesMainCSS: $!";
 
     # Minify the CodeMirror.js and CodeMirror.css files, appending to the license that was exported above.
     my $derivedSouressCodeMirrorJS = File::Spec->catfile($derivedSourcesDir, 'CodeMirror.js');
     my $derivedSourcesCodeMirrorCSS = File::Spec->catfile($derivedSourcesDir, 'CodeMirror.css');
-    system(qq(python "$jsMinScript" < "$derivedSouressCodeMirrorJS" >> "$targetCodeMirrorJS")) and die "Failed to minify $derivedSouressCodeMirrorJS: $!";
-    system(qq(python "$cssMinScript" < "$derivedSourcesCodeMirrorCSS" >> "$targetCodeMirrorCSS")) and die "Failed to minify $derivedSourcesCodeMirrorCSS: $!";
+    system(qq("$python" "$jsMinScript" < "$derivedSouressCodeMirrorJS" >> "$targetCodeMirrorJS")) and die "Failed to minify $derivedSouressCodeMirrorJS: $!";
+    system(qq("$python" "$cssMinScript" < "$derivedSourcesCodeMirrorCSS" >> "$targetCodeMirrorCSS")) and die "Failed to minify $derivedSourcesCodeMirrorCSS: $!";
 
     # Copy over Main.html and the Images directory.
     copy($derivedSourcesMainHTML, File::Spec->catfile($targetResourcePath, 'Main.html'));
