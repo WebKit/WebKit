@@ -1,3 +1,18 @@
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168438
+
+    2014-05-07  Brady Eidson  <beidson@apple.com>
+
+            Image menu is offset by the amount the view is scrolled
+            <rdar://problem/16818966> and https://bugs.webkit.org/show_bug.cgi?id=132663
+
+            Reviewed by Tim Horton.
+
+            * WebCoreSupport/WebContextMenuClient.mm:
+            (WebContextMenuClient::showContextMenu): Use FrameView::contentsToWindow instead of contentsToRoot, 
+              and skip the [NSView convertPoint:toView:] step.
+
 2014-04-17  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168565
