@@ -131,6 +131,12 @@ public:
     _interface->exitFullscreen(_mediaElement->screenRect());
 }
 
+- (void)requestExitFullscreen
+{
+    if (_model)
+        _model->requestExitFullscreen();
+}
+
 - (void)didEnterFullscreen
 {
 }

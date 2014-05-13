@@ -48,6 +48,7 @@ public:
     virtual ~WebVideoFullscreenManagerProxy();
 
     virtual void invalidate() override;
+    virtual void requestExitFullscreen() override;
 
 private:
     explicit WebVideoFullscreenManagerProxy(WebPageProxy&);
@@ -58,7 +59,6 @@ private:
     void setSeekableRangesVector(Vector<std::pair<double, double>>&);
 
     // Fullscreen Observer
-    virtual void requestExitFullscreen() override;
     virtual void didExitFullscreen() override;
     virtual void didEnterFullscreen() override;
     

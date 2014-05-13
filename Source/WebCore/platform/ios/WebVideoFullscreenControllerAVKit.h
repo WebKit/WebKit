@@ -37,6 +37,7 @@ OBJC_CLASS UIScreen;
 - (WebCore::HTMLMediaElement*)mediaElement;
 - (void)enterFullscreen:(UIScreen *)screen;
 - (void)exitFullscreen;
+- (void)requestExitFullscreen;
 @end
 
 #endif

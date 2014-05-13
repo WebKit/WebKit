@@ -1,5 +1,22 @@
 2014-05-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168439
+
+    2014-05-07  Jeremy Jones  <jeremyj@apple.com>
+
+            HTMLMediaElement should exitFullscreen when view is removed from the window.
+            https://bugs.webkit.org/show_bug.cgi?id=132506
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::viewStateDidChange):
+            Request WebVideoFUllscreenManagerProxy to exitFullscreen when removed from the window.
+            * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+            Make requestExitFullscreen() public instead of private.
+
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168441
 
     2014-05-07  Dan Bernstein  <mitz@apple.com>

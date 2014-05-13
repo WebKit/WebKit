@@ -135,7 +135,8 @@ void WebVideoFullscreenModelMediaElement::setVideoFullscreenLayer(PlatformLayer*
     
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
+        if (m_mediaElement)
+            m_mediaElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
         protect.clear();
     });
 }
@@ -143,7 +144,8 @@ void WebVideoFullscreenModelMediaElement::setVideoFullscreenLayer(PlatformLayer*
 void WebVideoFullscreenModelMediaElement::play() {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->play();
+        if (m_mediaElement)
+            m_mediaElement->play();
         protect.clear();
     });
 }
@@ -152,7 +154,8 @@ void WebVideoFullscreenModelMediaElement::pause()
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->pause();
+        if (m_mediaElement)
+            m_mediaElement->pause();
         protect.clear();
     });
 }
@@ -161,7 +164,8 @@ void WebVideoFullscreenModelMediaElement::togglePlayState()
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->togglePlayState();
+        if (m_mediaElement)
+            m_mediaElement->togglePlayState();
         protect.clear();
     });
 }
@@ -170,7 +174,8 @@ void WebVideoFullscreenModelMediaElement::beginScrubbing()
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->beginScrubbing();
+        if (m_mediaElement)
+            m_mediaElement->beginScrubbing();
         protect.clear();
     });
 }
@@ -179,7 +184,8 @@ void WebVideoFullscreenModelMediaElement::endScrubbing()
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->endScrubbing();
+        if (m_mediaElement)
+            m_mediaElement->endScrubbing();
         protect.clear();
     });
 }
@@ -188,7 +194,8 @@ void WebVideoFullscreenModelMediaElement::seekToTime(double time)
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->setCurrentTime(time);
+        if (m_mediaElement)
+            m_mediaElement->setCurrentTime(time);
         protect.clear();
     });
 }
@@ -197,7 +204,8 @@ void WebVideoFullscreenModelMediaElement::fastSeek(double time)
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->fastSeek(time);
+        if (m_mediaElement)
+            m_mediaElement->fastSeek(time);
         protect.clear();
     });
 }
@@ -206,7 +214,8 @@ void WebVideoFullscreenModelMediaElement::beginScanningForward()
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->beginScanning(MediaControllerInterface::Forward);
+        if (m_mediaElement)
+            m_mediaElement->beginScanning(MediaControllerInterface::Forward);
         protect.clear();
     });
 }
@@ -215,7 +224,8 @@ void WebVideoFullscreenModelMediaElement::beginScanningBackward()
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->beginScanning(MediaControllerInterface::Backward);
+        if (m_mediaElement)
+            m_mediaElement->beginScanning(MediaControllerInterface::Backward);
         protect.clear();
     });
 }
@@ -224,16 +234,20 @@ void WebVideoFullscreenModelMediaElement::endScanning()
 {
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_mediaElement->endScanning();
+        if (m_mediaElement)
+            m_mediaElement->endScanning();
         protect.clear();
     });
 }
 
 void WebVideoFullscreenModelMediaElement::requestExitFullscreen()
 {
+    if (!m_mediaElement)
+        return;
+
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        if (m_mediaElement->isFullscreen())
+        if (m_mediaElement && m_mediaElement->isFullscreen())
             m_mediaElement->exitFullscreen();
         protect.clear();
     });

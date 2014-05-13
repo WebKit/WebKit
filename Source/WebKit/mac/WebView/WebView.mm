@@ -5293,7 +5293,11 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [window setAcceleratedDrawingEnabled:[preferences acceleratedDrawingEnabled]];
 #endif
     }
-    
+#if PLATFORM(IOS)
+    else
+        [_private->fullscreenController requestExitFullscreen];
+#endif
+
 #if !PLATFORM(IOS)
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
 #endif
