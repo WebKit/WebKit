@@ -130,8 +130,7 @@
                 shouldBe('stream2.getAudioTracks().length', '0');
                 shouldBe('stream2.getVideoTracks().length', '0');
 
-                debug("<br>*** it should be impossible to add a track after the stream has ended");
-                shouldThrow('stream2.addTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
+                debug("<br>*** it should be impossible to remove a track after the stream has ended");
                 shouldThrow('stream2.removeTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
             }
 

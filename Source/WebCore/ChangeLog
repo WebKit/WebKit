@@ -1,3 +1,18 @@
+2014-05-13  Kiran  <kiran.guduru@samsung.com>
+
+        [MediaStream] MediaStream.addTrack Should not check for active state.
+        https://bugs.webkit.org/show_bug.cgi?id=132558
+
+        Reviewed by Eric Carlson.
+
+        MediaStream.addTrack method is checking for active state of a
+        MediaStream, but it should not check for active state while adding a Track.
+
+        Test: fast/mediastream/MediaStream-add-tracks-to-inactive-stream.html
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::addTrack):
+
 2014-05-12  Mark Lam  <mark.lam@apple.com>
 
         WebKit2 on iOS needs to capture the main thread's floating point environment.

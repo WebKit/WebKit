@@ -143,11 +143,6 @@ void MediaStream::cloneMediaStreamTrackVector(Vector<RefPtr<MediaStreamTrack>>& 
 
 void MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
 {
-    if (!active()) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
     if (!prpTrack) {
         ec = TYPE_MISMATCH_ERR;
         return;

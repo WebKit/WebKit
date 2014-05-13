@@ -1,3 +1,21 @@
+2014-05-13  Kiran  <kiran.guduru@samsung.com>
+
+        [MediaStream] MediaStream.addTrack Should not check for active state.
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=132558.
+
+        Reviewed by Eric Carlson.
+
+        MediaStream.addTrack method is checking for active state of a
+        MediaStream, but it should not check for active state while adding a Track
+
+        Removed check not to add tracks to ended stream:relative which forced tests to avoid this bug. 
+        * fast/mediastream/MediaStream-add-remove-tracks-expected.txt:
+        * fast/mediastream/MediaStream-add-remove-tracks.html:
+
+        New tests:
+        * fast/mediastream/MediaStream-add-tracks-to-inactive-stream-expected.txt: Added.
+        * fast/mediastream/MediaStream-add-tracks-to-inactive-stream.html: Added.
+
 2014-05-13  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Unreviewed GTK gardening

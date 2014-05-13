@@ -48,8 +48,7 @@ PASS stream1.getVideoTracks().length is 2
 PASS stream2.getAudioTracks().length is 0
 PASS stream2.getVideoTracks().length is 0
 
-*** it should be impossible to add a track after the stream has ended
-PASS stream2.addTrack(audioTrack) threw exception Error: InvalidStateError: DOM Exception 11.
+*** it should be impossible to remove a track after the stream has ended
 PASS stream2.removeTrack(audioTrack) threw exception Error: InvalidStateError: DOM Exception 11.
 Stream2 is inactive.
 PASS successfullyParsed is true
