@@ -1,3 +1,15 @@
+2014-05-13  Samuel White  <samuel_white@apple.com>
+
+        AX: Hit testing not accounting for top content inset.
+        https://bugs.webkit.org/show_bug.cgi?id=132876
+
+        Reviewed by Chris Fleizach.
+
+        Updated accessibilityHitTest: to account for top content inset when converting from screen coords to WebKit coords.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+
 2014-05-13  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WebKit2): Zooming to text field leaves it partially hidden by the form assistant.
