@@ -265,21 +265,21 @@ void Editor::readSelectionFromPasteboard(const String& pasteboardName, MailBlock
         pasteAsPlainTextWithPasteboard(pasteboard);
 }
 
-static void maybeCopyNodeAttributesToFragment(Node* node, DocumentFragment* fragment)
+static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment& fragment)
 {
     // This is only supported for single-Node fragments.
-    Node* firstChild = fragment->firstChild();
-    if (firstChild != fragment->lastChild())
+    Node* firstChild = fragment.firstChild();
+    if (!firstChild || firstChild != fragment.lastChild())
         return;
 
     // And only supported for HTML elements.
-    if (!node->isHTMLElement() || !firstChild->isHTMLElement())
+    if (!node.isHTMLElement() || !firstChild->isHTMLElement())
         return;
 
     // And only if the source Element and destination Element have the same HTML tag name.
-    const Element& oldElement = toHTMLElement(*node);
-    Element& newElement = toHTMLElement(*firstChild);
-    if (!oldElement.hasTagName(newElement.tagQName()))
+    const HTMLElement& oldElement = toHTMLElement(node);
+    HTMLElement& newElement = toHTMLElement(*firstChild);
+    if (oldElement.localName() != newElement.localName())
         return;
 
     for (const Attribute& attribute : oldElement.attributesIterator()) {
@@ -310,12 +310,11 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     client()->setInsertionPasteboard(NSGeneralPboard);
 
     bool chosePlainText;
-    RefPtr<DocumentFragment> fragment = webContentFromPasteboard(pasteboard, *range, true, chosePlainText);
-
-    maybeCopyNodeAttributesToFragment(node, fragment.get());
-
-    if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
-        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false, MailBlockquoteHandling::IgnoreBlockquote);
+    if (RefPtr<DocumentFragment> fragment = webContentFromPasteboard(pasteboard, *range, true, chosePlainText)) {
+        maybeCopyNodeAttributesToFragment(*node, *fragment);
+        if (shouldInsertFragment(fragment, range, EditorInsertActionPasted))
+            pasteAsFragment(fragment.release(), canSmartReplaceWithPasteboard(pasteboard), false, MailBlockquoteHandling::IgnoreBlockquote);
+    }
 
     client()->setInsertionPasteboard(String());
 }
