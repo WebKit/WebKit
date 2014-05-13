@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -115,6 +115,7 @@
 #include "StrictEvalActivation.h"
 #include "StringConstructor.h"
 #include "StringPrototype.h"
+#include "VariableWatchpointSetInlines.h"
 #include "WeakMapConstructor.h"
 #include "WeakMapPrototype.h"
 
@@ -242,7 +243,7 @@ JSGlobalObject::NewGlobalVar JSGlobalObject::addGlobalVar(const Identifier& iden
     int index = symbolTable()->size(locker);
     SymbolTableEntry newEntry(index, (constantMode == IsConstant) ? ReadOnly : 0);
     if (constantMode == IsVariable)
-        newEntry.prepareToWatch();
+        newEntry.prepareToWatch(symbolTable());
     SymbolTable::Map::AddResult result = symbolTable()->add(locker, ident.impl(), newEntry);
     if (result.isNewEntry)
         addRegisters(1);
@@ -256,11 +257,12 @@ JSGlobalObject::NewGlobalVar JSGlobalObject::addGlobalVar(const Identifier& iden
 
 void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName, JSValue value)
 {
-    removeDirect(exec->vm(), propertyName); // Newly declared functions overwrite existing properties.
+    VM& vm = exec->vm();
+    removeDirect(vm, propertyName); // Newly declared functions overwrite existing properties.
     NewGlobalVar var = addGlobalVar(propertyName, IsVariable);
     registerAt(var.registerNumber).set(exec->vm(), this, value);
     if (var.set)
-        var.set->notifyWrite(value);
+        var.set->notifyWrite(vm, value);
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)

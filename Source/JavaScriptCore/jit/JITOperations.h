@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -164,7 +164,7 @@ typedef void JIT_OPERATION (*V_JITOperation_EOZJ)(ExecState*, JSObject*, int32_t
 typedef void JIT_OPERATION (*V_JITOperation_EPc)(ExecState*, Instruction*);
 typedef void JIT_OPERATION (*V_JITOperation_EPZJ)(ExecState*, void*, int32_t, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_ESsiJJI)(ExecState*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, StringImpl*);
-typedef void JIT_OPERATION (*V_JITOperation_EVws)(ExecState*, VariableWatchpointSet*);
+typedef void JIT_OPERATION (*V_JITOperation_EVwsJ)(ExecState*, VariableWatchpointSet*, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_EZ)(ExecState*, int32_t);
 typedef void JIT_OPERATION (*V_JITOperation_EVm)(ExecState*, VM*);
 typedef char* JIT_OPERATION (*P_JITOperation_E)(ExecState*);

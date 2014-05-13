@@ -1708,6 +1708,7 @@
 		FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE4A331F15BD2E07006F54F3 /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */; };
 		FE4A332015BD2E07006F54F3 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4A331E15BD2E07006F54F3 /* VMInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE5248F9191442D900B7FDE4 /* VariableWatchpointSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5248F8191442D900B7FDE4 /* VariableWatchpointSetInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */; };
 		FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861E182B7A0400F6D851 /* Breakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3333,6 +3334,7 @@
 		FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntCLoop.h; path = llint/LLIntCLoop.h; sourceTree = "<group>"; };
 		FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 		FE4A331E15BD2E07006F54F3 /* VMInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspector.h; sourceTree = "<group>"; };
+		FE5248F8191442D900B7FDE4 /* VariableWatchpointSetInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableWatchpointSetInlines.h; sourceTree = "<group>"; };
 		FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMEntryScope.cpp; sourceTree = "<group>"; };
 		FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMEntryScope.h; sourceTree = "<group>"; };
 		FEA0861E182B7A0400F6D851 /* Breakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breakpoint.h; sourceTree = "<group>"; };
@@ -5029,6 +5031,7 @@
 				0F24E55717F74EDB00ABB217 /* ValueRecovery.cpp */,
 				0F426A451460CBAB00131F8F /* ValueRecovery.h */,
 				0F9181C618415CA50057B669 /* VariableWatchpointSet.h */,
+				FE5248F8191442D900B7FDE4 /* VariableWatchpointSetInlines.h */,
 				0F426A461460CBAB00131F8F /* VirtualRegister.h */,
 				0F919D2215853CDE004A4E7D /* Watchpoint.cpp */,
 				0F919D2315853CDE004A4E7D /* Watchpoint.h */,
@@ -5491,6 +5494,7 @@
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */,
 				2AABCDE718EF294200002096 /* GCLogging.h in Headers */,
+				FE5248F9191442D900B7FDE4 /* VariableWatchpointSetInlines.h in Headers */,
 				C2DA778318E259990066FCB6 /* HeapInlines.h in Headers */,
 				2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */,
 				2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,

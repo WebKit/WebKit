@@ -3898,45 +3898,19 @@ void SpeculativeJIT::compile(Node* node)
     
         m_jit.load8(set->addressOfState(), tempGPR);
     
-        JITCompiler::JumpList ready;
-    
-        ready.append(m_jit.branch32(JITCompiler::Equal, tempGPR, TrustedImm32(IsInvalidated)));
-    
-        if (set->state() == ClearWatchpoint) {
-            JITCompiler::Jump isWatched =
-                m_jit.branch32(JITCompiler::NotEqual, tempGPR, TrustedImm32(ClearWatchpoint));
-        
-            m_jit.store32(valueTagGPR, &set->addressOfInferredValue()->u.asBits.tag);
-            m_jit.store32(valuePayloadGPR, &set->addressOfInferredValue()->u.asBits.payload);
-            m_jit.store8(TrustedImm32(IsWatched), set->addressOfState());
-            ready.append(m_jit.jump());
-        
-            isWatched.link(&m_jit);
-        }
-
-        JITCompiler::Jump definitelyNotEqual = m_jit.branch32(
+        JITCompiler::Jump isDone = m_jit.branch32(JITCompiler::Equal, tempGPR, TrustedImm32(IsInvalidated));
+        JITCompiler::JumpList notifySlow;
+        notifySlow.append(m_jit.branch32(
             JITCompiler::NotEqual,
-            JITCompiler::AbsoluteAddress(&set->addressOfInferredValue()->u.asBits.payload),
-            valuePayloadGPR);
-        ready.append(m_jit.branch32(
-            JITCompiler::Equal, 
-            JITCompiler::AbsoluteAddress(&set->addressOfInferredValue()->u.asBits.tag),
+            JITCompiler::AbsoluteAddress(set->addressOfInferredValue()->payloadPointer()),
+            valuePayloadGPR));
+        notifySlow.append(m_jit.branch32(
+            JITCompiler::NotEqual, 
+            JITCompiler::AbsoluteAddress(set->addressOfInferredValue()->tagPointer()),
             valueTagGPR));
-        definitelyNotEqual.link(&m_jit);
-    
-        JITCompiler::Jump slowCase = m_jit.branchTest8(
-            JITCompiler::NonZero, JITCompiler::AbsoluteAddress(set->addressOfSetIsNotEmpty()));
-        m_jit.store8(TrustedImm32(IsInvalidated), set->addressOfState());
-        m_jit.store32(
-            TrustedImm32(JSValue::EmptyValueTag),
-            &set->addressOfInferredValue()->u.asBits.tag);
-        m_jit.store32(
-            TrustedImm32(0), &set->addressOfInferredValue()->u.asBits.payload);
-
-        ready.link(&m_jit);
-    
         addSlowPathGenerator(
-            slowPathCall(slowCase, this, operationInvalidate, NoResult, set));
+            slowPathCall(notifySlow, this, operationNotifyWrite, NoResult, set, valueTagGPR, valuePayloadGPR));
+        isDone.link(&m_jit);
     
         noResult(node);
         break;

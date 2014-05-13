@@ -1018,12 +1018,13 @@ char* JIT_OPERATION operationSwitchString(ExecState* exec, size_t tableIndex, JS
     return static_cast<char*>(exec->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(string->value(exec).impl()).executableAddress());
 }
 
-void JIT_OPERATION operationInvalidate(ExecState* exec, VariableWatchpointSet* set)
+void JIT_OPERATION operationNotifyWrite(ExecState* exec, VariableWatchpointSet* set, EncodedJSValue encodedValue)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    JSValue value = JSValue::decode(encodedValue);
 
-    set->invalidate();
+    set->notifyWrite(vm, value);
 }
 
 double JIT_OPERATION operationFModOnInts(int32_t a, int32_t b)

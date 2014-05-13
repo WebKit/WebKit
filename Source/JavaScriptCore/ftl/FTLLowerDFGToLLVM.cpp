@@ -3286,11 +3286,7 @@ private:
         LValue value = lowJSValue(m_node->child1());
         
         LBasicBlock isNotInvalidated = FTL_NEW_BLOCK(m_out, ("NotifyWrite not invalidated case"));
-        LBasicBlock isClear = FTL_NEW_BLOCK(m_out, ("NotifyWrite clear case"));
-        LBasicBlock isWatched = FTL_NEW_BLOCK(m_out, ("NotifyWrite watched case"));
-        LBasicBlock invalidate = FTL_NEW_BLOCK(m_out, ("NotifyWrite invalidate case"));
-        LBasicBlock invalidateFast = FTL_NEW_BLOCK(m_out, ("NotifyWrite invalidate fast case"));
-        LBasicBlock invalidateSlow = FTL_NEW_BLOCK(m_out, ("NotifyWrite invalidate slow case"));
+        LBasicBlock notifySlow = FTL_NEW_BLOCK(m_out, ("NotifyWrite notify slow case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("NotifyWrite continuation"));
         
         LValue state = m_out.load8(m_out.absolute(set->addressOfState()));
@@ -3299,44 +3295,15 @@ private:
             m_out.equal(state, m_out.constInt8(IsInvalidated)),
             usually(continuation), rarely(isNotInvalidated));
         
-        LBasicBlock lastNext = m_out.appendTo(isNotInvalidated, isClear);
+        LBasicBlock lastNext = m_out.appendTo(isNotInvalidated, notifySlow);
 
-        LValue isClearValue;
-        if (set->state() == ClearWatchpoint)
-            isClearValue = m_out.equal(state, m_out.constInt8(ClearWatchpoint));
-        else
-            isClearValue = m_out.booleanFalse;
-        m_out.branch(isClearValue, unsure(isClear), unsure(isWatched));
-        
-        m_out.appendTo(isClear, isWatched);
-        
-        m_out.store64(value, m_out.absolute(set->addressOfInferredValue()));
-        m_out.store8(m_out.constInt8(IsWatched), m_out.absolute(set->addressOfState()));
-        m_out.jump(continuation);
-        
-        m_out.appendTo(isWatched, invalidate);
-        
         m_out.branch(
             m_out.equal(value, m_out.load64(m_out.absolute(set->addressOfInferredValue()))),
-            unsure(continuation), unsure(invalidate));
-        
-        m_out.appendTo(invalidate, invalidateFast);
-        
-        m_out.branch(
-            m_out.notZero8(m_out.load8(m_out.absolute(set->addressOfSetIsNotEmpty()))),
-            rarely(invalidateSlow), usually(invalidateFast));
-        
-        m_out.appendTo(invalidateFast, invalidateSlow);
-        
-        m_out.store64(
-            m_out.constInt64(JSValue::encode(JSValue())),
-            m_out.absolute(set->addressOfInferredValue()));
-        m_out.store8(m_out.constInt8(IsInvalidated), m_out.absolute(set->addressOfState()));
-        m_out.jump(continuation);
-        
-        m_out.appendTo(invalidateSlow, continuation);
-        
-        vmCall(m_out.operation(operationInvalidate), m_callFrame, m_out.constIntPtr(set));
+            unsure(continuation), unsure(notifySlow));
+
+        m_out.appendTo(notifySlow, continuation);
+
+        vmCall(m_out.operation(operationNotifyWrite), m_callFrame, m_out.constIntPtr(set), value);
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);

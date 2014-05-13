@@ -779,28 +779,9 @@ void JIT::emitNotifyWrite(RegisterID value, RegisterID scratch, VariableWatchpoi
         return;
     
     load8(set->addressOfState(), scratch);
-    
-    JumpList ready;
-    
-    ready.append(branch32(Equal, scratch, TrustedImm32(IsInvalidated)));
-    
-    if (set->state() == ClearWatchpoint) {
-        Jump isWatched = branch32(NotEqual, scratch, TrustedImm32(ClearWatchpoint));
-        
-        store64(value, set->addressOfInferredValue());
-        store8(TrustedImm32(IsWatched), set->addressOfState());
-        ready.append(jump());
-        
-        isWatched.link(this);
-    }
-    
-    ready.append(branch64(Equal, AbsoluteAddress(set->addressOfInferredValue()), value));
-    addSlowCase(branchTest8(NonZero, AbsoluteAddress(set->addressOfSetIsNotEmpty())));
-    store8(TrustedImm32(IsInvalidated), set->addressOfState());
-    move(TrustedImm64(JSValue::encode(JSValue())), scratch);
-    store64(scratch, set->addressOfInferredValue());
-    
-    ready.link(this);
+    Jump isDone = branch32(Equal, scratch, TrustedImm32(IsInvalidated));
+    addSlowCase(branch64(NotEqual, AbsoluteAddress(set->addressOfInferredValue()), value));
+    isDone.link(this);
 }
 
 void JIT::emitPutGlobalVar(uintptr_t operand, int value, VariableWatchpointSet* set)

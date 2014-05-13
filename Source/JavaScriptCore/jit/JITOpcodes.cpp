@@ -1202,6 +1202,9 @@ void JIT::emitSlow_op_captured_mov(Instruction* currentInstruction, Vector<SlowC
     VariableWatchpointSet* set = currentInstruction[3].u.watchpointSet;
     if (!set || set->state() == IsInvalidated)
         return;
+#if USE(JSVALUE32_64)
+    linkSlowCase(iter);
+#endif
     linkSlowCase(iter);
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_captured_mov);
     slowPathCall.call();

@@ -3962,36 +3962,15 @@ void SpeculativeJIT::compile(Node* node)
     
         m_jit.load8(set->addressOfState(), tempGPR);
     
-        JITCompiler::JumpList ready;
-    
-        ready.append(m_jit.branch32(JITCompiler::Equal, tempGPR, TrustedImm32(IsInvalidated)));
-    
-        if (set->state() == ClearWatchpoint) {
-            JITCompiler::Jump isWatched =
-                m_jit.branch32(JITCompiler::NotEqual, tempGPR, TrustedImm32(ClearWatchpoint));
-        
-            m_jit.store64(valueGPR, set->addressOfInferredValue());
-            m_jit.store8(TrustedImm32(IsWatched), set->addressOfState());
-            ready.append(m_jit.jump());
-        
-            isWatched.link(&m_jit);
-        }
-    
-        ready.append(m_jit.branch64(
-            JITCompiler::Equal, 
-            JITCompiler::AbsoluteAddress(set->addressOfInferredValue()), valueGPR));
-    
-        JITCompiler::Jump slowCase = m_jit.branchTest8(
-            JITCompiler::NonZero, JITCompiler::AbsoluteAddress(set->addressOfSetIsNotEmpty()));
-        m_jit.store8(TrustedImm32(IsInvalidated), set->addressOfState());
-        m_jit.move(TrustedImm64(JSValue::encode(JSValue())), tempGPR);
-        m_jit.store64(tempGPR, set->addressOfInferredValue());
-
-        ready.link(&m_jit);
+        JITCompiler::Jump isDone =
+            m_jit.branch32(JITCompiler::Equal, tempGPR, TrustedImm32(IsInvalidated));
+        JITCompiler::Jump slowCase = m_jit.branch64(JITCompiler::NotEqual,
+            JITCompiler::AbsoluteAddress(set->addressOfInferredValue()), valueGPR);
+        isDone.link(&m_jit);
     
         addSlowPathGenerator(
-            slowPathCall(slowCase, this, operationInvalidate, NoResult, set));
-    
+            slowPathCall(slowCase, this, operationNotifyWrite, NoResult, set, valueGPR));
+
         noResult(node);
         break;
     }

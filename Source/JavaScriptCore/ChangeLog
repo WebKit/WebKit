@@ -1,3 +1,122 @@
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168443
+
+    2014-05-07  Mark Lam  <mark.lam@apple.com>
+
+            REGRESSION(r166678): Dromaeo/cssquery-dojo.html crashes regularly.
+            <https://webkit.org/b/131356>
+
+            Reviewed by Geoffrey Garen.
+
+            The issue is that GC needs to be made aware of writes to m_inferredValue
+            in the VariableWatchpointSet, but was not.  As a result, if a JSCell*
+            is written to a VariableWatchpointSet m_inferredValue, and that JSCell
+            does not survive an eden GC shortly after, we will end up with a stale
+            JSCell pointer left in the m_inferredValue.
+
+            This issue can be detected more easily by running Dromaeo/cssquery-dojo.html
+            using DumpRenderTree with the VM heap in zombie mode.
+
+            The fix is to change VariableWatchpointSet m_inferredValue to type
+            WriteBarrier<Unknown> and ensure that VariableWatchpointSet::notifyWrite()
+            is executed by all the execution engines so that the WriteBarrier semantics
+            are honored.
+
+            We still check if the value to be written is the same as the one in the
+            inferredValue.  We'll by-pass calling the slow path notifyWrite() if the
+            values are the same.        
+
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::CodeBlock):
+            - need to pass the symbolTable to prepareToWatch() because it will be needed
+              for instantiating the VariableWatchpointSet in prepareToWatch().
+
+            * bytecode/VariableWatchpointSet.h:
+            (JSC::VariableWatchpointSet::VariableWatchpointSet):
+            - VariableWatchpointSet now tracks its owner symbol table for its m_inferredValue
+              write barrier, and yes, m_inferredValue is now of type WriteBarrier<Unknown>.
+            (JSC::VariableWatchpointSet::inferredValue):
+            (JSC::VariableWatchpointSet::invalidate):
+            (JSC::VariableWatchpointSet::finalizeUnconditionally):
+            (JSC::VariableWatchpointSet::addressOfInferredValue):
+            (JSC::VariableWatchpointSet::notifyWrite): Deleted.
+            * bytecode/VariableWatchpointSetInlines.h: Added.
+            (JSC::VariableWatchpointSet::notifyWrite):
+
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::cellConstant):
+            - Added an assert in case we try to make constants of zombified JSCells again.
+
+            * dfg/DFGOperations.cpp:
+            * dfg/DFGOperations.h:
+            * dfg/DFGSpeculativeJIT.h:
+            (JSC::DFG::SpeculativeJIT::callOperation):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            - We now let the slow path handle the cases when the VariableWatchpointSet is
+              in state ClearWatchpoint and IsWatched, and the slow path will ensure that
+              we handle the needed write barrier semantics correctly.
+              We will by-pass the slow path if the value being written is the same as the
+              inferred value.
+
+            * ftl/FTLIntrinsicRepository.h:
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileNotifyWrite):
+            - Let the slow path handle the cases when the VariableWatchpointSet is
+              in state ClearWatchpoint and IsWatched.
+              We will by-pass the slow path if the value being written is the same as the
+              inferred value.
+
+            * heap/Heap.cpp:
+            (JSC::Zombify::operator()):
+            - Use a different value for the zombified bits (to distinguish it from 0xbbadbeef
+              which is used everywhere else).
+            * heap/Heap.h:
+            (JSC::Heap::isZombified):
+            - Provide a convenience test function to check if JSCells are zombified.  This is
+              currently only used in an assertion in the DFG bytecode parser, but the intent
+              it that we'll apply this test in other strategic places later to help with early
+              detection of usage of GC'ed objects when we run in zombie mode.
+
+            * jit/JITOpcodes.cpp:
+            (JSC::JIT::emitSlow_op_captured_mov):
+            * jit/JITOperations.h:
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emitNotifyWrite):
+            * jit/JITPropertyAccess32_64.cpp:
+            (JSC::JIT::emitNotifyWrite):
+            (JSC::JIT::emitSlow_op_put_to_scope):
+            - Let the slow path for notifyWrite handle the cases when the VariableWatchpointSet
+              is in state ClearWatchpoint and IsWatched.
+              We will by-pass the slow path if the value being written is the same as the
+              inferred value.
+
+            * llint/LowLevelInterpreter32_64.asm:
+            * llint/LowLevelInterpreter64.asm:
+            - Let the slow path for notifyWrite handle the cases when the VariableWatchpointSet
+              is in state ClearWatchpoint and IsWatched.
+              We will by-pass the slow path if the value being written is the same as the
+              inferred value.
+
+            * runtime/CommonSlowPaths.cpp:
+
+            * runtime/JSCJSValue.h: Fixed some typos in the comments.
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::addGlobalVar):
+            (JSC::JSGlobalObject::addFunction):
+            * runtime/JSSymbolTableObject.h:
+            (JSC::symbolTablePut):
+            (JSC::symbolTablePutWithAttributes):
+            * runtime/SymbolTable.cpp:
+            (JSC::SymbolTableEntry::prepareToWatch):
+            (JSC::SymbolTableEntry::notifyWriteSlow):
+            * runtime/SymbolTable.h:
+            (JSC::SymbolTableEntry::notifyWrite):
+
 2014-04-17  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168565

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "JSScope.h"
 #include "PropertyDescriptor.h"
 #include "SymbolTable.h"
+#include "VariableWatchpointSetInlines.h"
 
 namespace JSC {
 
@@ -138,7 +139,7 @@ inline bool symbolTablePut(
             return true;
         }
         if (VariableWatchpointSet* set = iter->value.watchpointSet())
-            set->notifyWrite(value);
+            set->notifyWrite(vm, value);
         reg = &object->registerAt(fastEntry.getIndex());
     }
     // I'd prefer we not hold lock while executing barriers, since I prefer to reserve
@@ -165,7 +166,7 @@ inline bool symbolTablePutWithAttributes(
         SymbolTableEntry& entry = iter->value;
         ASSERT(!entry.isNull());
         if (VariableWatchpointSet* set = entry.watchpointSet())
-            set->notifyWrite(value);
+            set->notifyWrite(vm, value);
         entry.setAttributes(attributes);
         reg = &object->registerAt(entry.getIndex());
     }

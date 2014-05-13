@@ -333,7 +333,7 @@ public:
      *
      * This range of NaN space is represented by 64-bit numbers begining with the 16-bit
      * hex patterns 0xFFFE and 0xFFFF - we rely on the fact that no valid double-precision
-     * numbers will begin fall in these ranges.
+     * numbers will fall in these ranges.
      *
      * The top 16-bits denote the type of the encoded JSValue:
      *
@@ -347,7 +347,7 @@ public:
      * 64-bit integer addition of the value 2^48 to the number. After this manipulation
      * no encoded double-precision value will begin with the pattern 0x0000 or 0xFFFF.
      * Values must be decoded by reversing this operation before subsequent floating point
-     * operations my be peformed.
+     * operations may be peformed.
      *
      * 32-bit signed integers are marked with the 16-bit tag 0xFFFF.
      *

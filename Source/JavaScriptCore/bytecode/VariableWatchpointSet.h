@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,14 @@
 
 namespace JSC {
 
+class SymbolTable;
+
 class VariableWatchpointSet : public WatchpointSet {
     friend class LLIntOffsetsExtractor;
 public:
-    VariableWatchpointSet()
+    VariableWatchpointSet(SymbolTable& symbolTable)
         : WatchpointSet(ClearWatchpoint)
+        , m_symbolTable(symbolTable)
     {
     }
     
@@ -52,35 +55,13 @@ public:
     //    IsInvalidated: in this case the variable's value may be anything but you'll
     //        either notice that it's invalidated and not install the watchpoint, or
     //        you will have been notified that the watchpoint was fired.
-    JSValue inferredValue() const { return m_inferredValue; }
+    JSValue inferredValue() const { return m_inferredValue.get(); }
     
-    void notifyWrite(JSValue value)
-    {
-        ASSERT(!!value);
-        switch (state()) {
-        case ClearWatchpoint:
-            m_inferredValue = value;
-            startWatching();
-            return;
-
-        case IsWatched:
-            ASSERT(!!m_inferredValue);
-            if (value == m_inferredValue)
-                return;
-            invalidate();
-            return;
-            
-        case IsInvalidated:
-            ASSERT(!m_inferredValue);
-            return;
-        }
-        
-        ASSERT_NOT_REACHED();
-    }
+    inline void notifyWrite(VM&, JSValue);
     
     void invalidate()
     {
-        m_inferredValue = JSValue();
+        m_inferredValue.clear();
         WatchpointSet::invalidate();
     }
     
@@ -89,18 +70,20 @@ public:
         ASSERT(!!m_inferredValue == (state() == IsWatched));
         if (!m_inferredValue)
             return;
-        if (!m_inferredValue.isCell())
+        JSValue inferredValue = m_inferredValue.get();
+        if (!inferredValue.isCell())
             return;
-        JSCell* cell = m_inferredValue.asCell();
+        JSCell* cell = inferredValue.asCell();
         if (Heap::isMarked(cell))
             return;
         invalidate();
     }
-    
-    JSValue* addressOfInferredValue() { return &m_inferredValue; }
 
+    WriteBarrier<Unknown>* addressOfInferredValue() { return &m_inferredValue; }
+    
 private:
-    JSValue m_inferredValue;
+    SymbolTable& m_symbolTable;
+    WriteBarrier<Unknown> m_inferredValue;
 };
 
 } // namespace JSC

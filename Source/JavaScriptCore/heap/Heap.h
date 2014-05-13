@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2013-2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -72,6 +72,8 @@ class SlotVisitor;
 namespace DFG {
 class Worklist;
 }
+
+static void* const zombifiedBits = reinterpret_cast<void*>(0xdeadbeef);
 
 typedef std::pair<JSValue, WTF::String> ValueStringPair;
 typedef HashCountedSet<JSCell*> ProtectCountSet;
@@ -218,6 +220,8 @@ public:
 #endif
 
     void removeCodeBlock(CodeBlock* cb) { m_codeBlocks.remove(cb); }
+
+    static bool isZombified(JSCell* cell) { return *(void**)cell == zombifiedBits; }
 
 private:
     friend class CodeBlock;
