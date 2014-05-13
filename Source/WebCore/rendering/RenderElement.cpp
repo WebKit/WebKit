@@ -57,6 +57,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
+#include "Settings.h"
 #include "StyleResolver.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
@@ -793,19 +794,6 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
     }
 }
 
-// On low-powered/mobile devices, preventing blitting on a scroll can cause noticeable delays
-// when scrolling a page with a fixed background image. As an optimization, assuming there are
-// no fixed positoned elements on the page, we can acclerate scrolling (via blitting) if we
-// ignore the CSS property "background-attachment: fixed".
-static bool shouldRepaintFixedBackgroundsOnScroll()
-{
-#if ENABLE(FAST_MOBILE_SCROLLING)
-    return false;
-#else
-    return true;
-#endif
-}
-
 static inline bool rendererHasBackground(const RenderElement* renderer)
 {
     return renderer && renderer->hasBackground();
@@ -879,27 +867,31 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         s_noLongerAffectsParentBlock = false;
     }
 
-    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll();
+    bool newStyleUsesFixedBackgrounds = newStyle.hasFixedBackgroundImage();
+    bool oldStyleUsesFixedBackgrounds = m_style->hasFixedBackgroundImage();
+    if (newStyleUsesFixedBackgrounds || oldStyleUsesFixedBackgrounds) {
+        bool repaintFixedBackgroundsOnScroll = !frame().settings().fixedBackgroundsPaintRelativeToDocument();
 
-    bool newStyleSlowScroll = repaintFixedBackgroundsOnScroll && newStyle.hasFixedBackgroundImage();
-    bool oldStyleSlowScroll = oldStyle && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
-    bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));
-    if (drawsRootBackground && repaintFixedBackgroundsOnScroll) {
-        if (view().compositor().supportsFixedRootBackgroundCompositing()) {
-            if (newStyleSlowScroll && newStyle.hasEntirelyFixedBackground())
-                newStyleSlowScroll = false;
+        bool newStyleSlowScroll = repaintFixedBackgroundsOnScroll && newStyleUsesFixedBackgrounds;
+        bool oldStyleSlowScroll = oldStyle && repaintFixedBackgroundsOnScroll && oldStyleUsesFixedBackgrounds;
+        bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));
+        if (drawsRootBackground && repaintFixedBackgroundsOnScroll) {
+            if (view().compositor().supportsFixedRootBackgroundCompositing()) {
+                if (newStyleSlowScroll && newStyle.hasEntirelyFixedBackground())
+                    newStyleSlowScroll = false;
 
-            if (oldStyleSlowScroll && m_style->hasEntirelyFixedBackground())
-                oldStyleSlowScroll = false;
+                if (oldStyleSlowScroll && m_style->hasEntirelyFixedBackground())
+                    oldStyleSlowScroll = false;
+            }
         }
-    }
 
-    if (oldStyleSlowScroll != newStyleSlowScroll) {
-        if (oldStyleSlowScroll)
-            view().frameView().removeSlowRepaintObject(this);
+        if (oldStyleSlowScroll != newStyleSlowScroll) {
+            if (oldStyleSlowScroll)
+                view().frameView().removeSlowRepaintObject(this);
 
-        if (newStyleSlowScroll)
-            view().frameView().addSlowRepaintObject(this);
+            if (newStyleSlowScroll)
+                view().frameView().addSlowRepaintObject(this);
+        }
     }
 
     if (isRoot() || isBody())
@@ -1002,8 +994,7 @@ void RenderElement::willBeRemovedFromTree()
         removeLayers(layer);
     }
 
-    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll();
-    if (repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage())
+    if (m_style->hasFixedBackgroundImage() && !frame().settings().fixedBackgroundsPaintRelativeToDocument())
         view().frameView().removeSlowRepaintObject(this);
 
     if (isOutOfFlowPositioned() && parent()->childrenInline())

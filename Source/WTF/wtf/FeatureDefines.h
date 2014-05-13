@@ -452,10 +452,6 @@
 #define ENABLE_ENCRYPTED_MEDIA_V2 0
 #endif
 
-#if !defined(ENABLE_FAST_MOBILE_SCROLLING)
-#define ENABLE_FAST_MOBILE_SCROLLING 0
-#endif
-
 #if !defined(ENABLE_FILTERS)
 #define ENABLE_FILTERS 0
 #endif

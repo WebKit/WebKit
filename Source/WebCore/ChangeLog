@@ -1,3 +1,28 @@
+2014-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] background-attachment:fixed behaves very poorly
+        https://bugs.webkit.org/show_bug.cgi?id=132881
+        <rdar://problem/16789526>
+
+        Reviewed by Beth Dakin.
+
+        Remove the old ENABLE_FAST_MOBILE_SCROLLING code, and add a setting that
+        controls whether fixed backgrounds paint relative to the document, which
+        is enabled for iOS (WK1 and WK2). This setting is consulted when we repaint
+        fixed backgrounds on scrolling, when we paint them, and when we decide to make
+        a layer for fixed backgrounds.
+        
+        * page/Settings.cpp:
+        * page/Settings.in:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::willBeRemovedFromTree):
+        (WebCore::shouldRepaintFixedBackgroundsOnScroll): Deleted.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::needsFixedRootBackgroundLayer):
+
 2014-05-13  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSSION(r168528) Subpixel rendering: Selection rect is not positioned properly when SVG text is selected.

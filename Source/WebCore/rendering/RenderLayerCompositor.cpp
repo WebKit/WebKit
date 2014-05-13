@@ -2720,6 +2720,9 @@ bool RenderLayerCompositor::needsFixedRootBackgroundLayer(const RenderLayer& lay
     if (&layer != m_renderView.layer())
         return false;
 
+    if (m_renderView.frameView().frame().settings().fixedBackgroundsPaintRelativeToDocument())
+        return false;
+
     return supportsFixedRootBackgroundCompositing() && m_renderView.rootBackgroundIsEntirelyFixed();
 }
 
