@@ -1,5 +1,42 @@
 2014-05-13  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WK2] When the secondary UIScrollView delegates respond to callbacks, delay the state change until both delegates have finished
+        https://bugs.webkit.org/show_bug.cgi?id=132849
+        <rdar://problem/16863716>
+
+        Reviewed by Anders Carlsson.
+
+        When there are two delegates responding to UIScrollView changes, there was often an intermediate invalid
+        state forwarded to the UIProcess.
+
+        For example, on scroll, WKWebView would update the state based on the current obscured insets in response to
+        delegate callbacks.
+        After that update, Safari would modify the insets, thus updating the state again.
+        The first state changed by WKWebView is incomplete, and should never have been set.
+
+        This patch works around the issue by delaying visible update rect in those cases.
+
+        When the two delegates of WKScrollView respond to the same selector, WKScrollView invokes 
+        [UIWebView _willInvokeUIScrollViewDelegateCallback] on entry, and
+        [UIWebView _didInvokeUIScrollViewDelegateCallback] on exit.
+
+        Between those two calls, WKWebView does not forward the new UI state to the WebProcess.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _willInvokeUIScrollViewDelegateCallback]):
+        (-[WKWebView _didInvokeUIScrollViewDelegateCallback]):
+        (-[WKWebView _updateVisibleContentRects]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/ios/WKScrollView.h:
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollViewDelegateForwarder initWithInternalDelegate:externalDelegate:]):
+        (-[WKScrollViewDelegateForwarder forwardInvocation:]):
+        (-[WKScrollView setInternalDelegate:]):
+
+2014-05-13  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Remove the _extendedBackgroundExclusionInsets SPI
         https://bugs.webkit.org/show_bug.cgi?id=132848
         <rdar://problem/16875093>

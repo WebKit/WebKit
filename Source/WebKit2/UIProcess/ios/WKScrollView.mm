@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "WKWebViewInternal.h"
 #import <CoreGraphics/CGFloat.h>
 
 @interface UIScrollView (UIScrollViewInternalHack)
@@ -36,16 +37,16 @@
 
 @interface WKScrollViewDelegateForwarder : NSObject <UIScrollViewDelegate>
 
-- (instancetype)initWithInternalDelegate:(id <UIScrollViewDelegate>)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate;
+- (instancetype)initWithInternalDelegate:(WKWebView *)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate;
 
 @end
 
 @implementation WKScrollViewDelegateForwarder {
-    id <UIScrollViewDelegate> _internalDelegate;
+    WKWebView *_internalDelegate;
     id <UIScrollViewDelegate> _externalDelegate;
 }
 
-- (instancetype)initWithInternalDelegate:(id <UIScrollViewDelegate>)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate
+- (instancetype)initWithInternalDelegate:(WKWebView <UIScrollViewDelegate> *)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate
 {
     self = [super init];
     if (!self)
@@ -72,16 +73,22 @@
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
-    BOOL messageHandled = NO;
-    if ([_internalDelegate respondsToSelector:[anInvocation selector]]) {
+    SEL aSelector = [anInvocation selector];
+    BOOL internalDelegateWillRespond = [_internalDelegate respondsToSelector:aSelector];
+    BOOL externalDelegateWillRespond = [_externalDelegate respondsToSelector:aSelector];
+
+    if (internalDelegateWillRespond && externalDelegateWillRespond)
+        [_internalDelegate _willInvokeUIScrollViewDelegateCallback];
+
+    if (internalDelegateWillRespond)
         [anInvocation invokeWithTarget:_internalDelegate];
-        messageHandled = YES;
-    }
-    if ([_externalDelegate respondsToSelector:[anInvocation selector]]) {
+    if (externalDelegateWillRespond)
         [anInvocation invokeWithTarget:_externalDelegate];
-        messageHandled = YES;
-    }
-    if (!messageHandled)
+
+    if (internalDelegateWillRespond && externalDelegateWillRespond)
+        [_internalDelegate _didInvokeUIScrollViewDelegateCallback];
+
+    if (!internalDelegateWillRespond && !externalDelegateWillRespond)
         [super forwardInvocation:anInvocation];
 }
 
@@ -104,7 +111,7 @@
     WKScrollViewDelegateForwarder *_delegateForwarder;
 }
 
-- (void)setInternalDelegate:(id <UIScrollViewDelegate>)internalDelegate
+- (void)setInternalDelegate:(WKWebView <UIScrollViewDelegate> *)internalDelegate
 {
     if (internalDelegate == _internalDelegate)
         return;

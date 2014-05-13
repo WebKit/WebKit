@@ -135,6 +135,9 @@
     RetainPtr<UIView <WKWebViewContentProvider>> _customContentView;
 
     WebCore::Color _scrollViewBackgroundColor;
+
+    BOOL _delayUpdateVisibleContentRects;
+    BOOL _hadDelayedUpdateVisibleContentRects;
 #endif
 #if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
@@ -417,6 +420,20 @@
 {
     ASSERT(_customContentView);
     [_customContentView web_setContentProviderData:data suggestedFilename:suggestedFilename];
+}
+
+- (void)_willInvokeUIScrollViewDelegateCallback
+{
+    _delayUpdateVisibleContentRects = YES;
+}
+
+- (void)_didInvokeUIScrollViewDelegateCallback
+{
+    _delayUpdateVisibleContentRects = NO;
+    if (_hadDelayedUpdateVisibleContentRects) {
+        _hadDelayedUpdateVisibleContentRects = NO;
+        [self _updateVisibleContentRects];
+    }
 }
 
 static CGFloat contentZoomScale(WKWebView* webView)
@@ -882,6 +899,11 @@ static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProx
 {
     if (![self usesStandardContentView])
         return;
+
+    if (_delayUpdateVisibleContentRects) {
+        _hadDelayedUpdateVisibleContentRects = YES;
+        return;
+    }
 
     if (_isAnimatingResize)
         return;

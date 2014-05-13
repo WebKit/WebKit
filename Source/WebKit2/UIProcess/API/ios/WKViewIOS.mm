@@ -221,7 +221,6 @@ using namespace WebKit;
     CGRect bounds = self.bounds;
 
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
-    [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
     [self addSubview:_scrollView.get()];
