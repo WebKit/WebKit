@@ -1,5 +1,16 @@
 2014-05-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168545
+
+    2014-05-09  Anders Carlsson  <andersca@apple.com>
+
+            Follow-up build fix.
+
+            * Scripts/build-webkit:
+            WebKit2 should no longer be built before WebKit.
+
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168541
 
     2014-05-09  Anders Carlsson  <andersca@apple.com>
