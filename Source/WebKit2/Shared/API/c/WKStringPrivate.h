@@ -27,7 +27,7 @@
 #define WKStringPrivate_h
 
 #include <JavaScriptCore/JavaScript.h>
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 #ifdef __cplusplus
 extern "C" {

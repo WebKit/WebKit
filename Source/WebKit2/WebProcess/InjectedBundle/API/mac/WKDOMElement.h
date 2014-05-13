@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKDOMNode.h>
+#import <WebKit/WKDOMNode.h>
 
 WK_API_CLASS
 @interface WKDOMElement : WKDOMNode

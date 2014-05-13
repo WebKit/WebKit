@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBrowsingContextController.h>
-#import <WebKit2/WKBrowsingContextGroup.h>
-#import <WebKit2/WKBrowsingContextLoadDelegate.h>
-#import <WebKit2/WKBrowsingContextPolicyDelegate.h>
-#import <WebKit2/WKConnection.h>
-#import <WebKit2/WKFoundation.h>
-#import <WebKit2/WKProcessGroup.h>
-#import <WebKit2/WKView.h>
+#import <WebKit/WKBrowsingContextController.h>
+#import <WebKit/WKBrowsingContextGroup.h>
+#import <WebKit/WKBrowsingContextLoadDelegate.h>
+#import <WebKit/WKBrowsingContextPolicyDelegate.h>
+#import <WebKit/WKConnection.h>
+#import <WebKit/WKFoundation.h>
+#import <WebKit/WKProcessGroup.h>
+#import <WebKit/WKView.h>

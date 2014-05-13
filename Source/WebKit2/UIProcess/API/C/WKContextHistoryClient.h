@@ -26,7 +26,7 @@
 #ifndef WKContextHistoryClient_h
 #define WKContextHistoryClient_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 typedef void (*WKContextDidNavigateWithNavigationDataCallback)(WKContextRef context, WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKContextDidPerformClientRedirectCallback)(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo);

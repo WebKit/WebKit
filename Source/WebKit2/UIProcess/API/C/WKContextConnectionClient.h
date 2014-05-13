@@ -26,7 +26,7 @@
 #ifndef WKContextConnectionClient_h
 #define WKContextConnectionClient_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 typedef void (*WKContextDidCreateConnection)(WKContextRef context, WKConnectionRef connection, const void* clientInfo);
 

@@ -27,7 +27,7 @@
 #ifndef WKHitTestResult_h
 #define WKHitTestResult_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 #ifdef __cplusplus
 extern "C" {

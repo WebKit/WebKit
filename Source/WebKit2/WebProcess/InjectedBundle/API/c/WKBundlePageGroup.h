@@ -26,7 +26,7 @@
 #ifndef WKBundlePageGroup_h
 #define WKBundlePageGroup_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 #ifdef __cplusplus
 extern "C" {

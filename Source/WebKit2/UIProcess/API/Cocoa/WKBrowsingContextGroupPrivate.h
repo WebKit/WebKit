@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBrowsingContextGroup.h>
+#import <WebKit/WKBrowsingContextGroup.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKBase.h>
+#import <WebKit/WKBase.h>
 
 @interface WKBrowsingContextGroup (Private)
 

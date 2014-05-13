@@ -27,10 +27,10 @@
 
 # Migration of WebKit Legacy headers to WebKit.
 
-ifeq ($(PLATFORM_NAME), macosx)
-
-PUBLIC_HEADERS_DIR = $(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)
 PRIVATE_HEADERS_DIR = $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)
+PUBLIC_HEADERS_DIR = $(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)
+
+ifeq ($(PLATFORM_NAME), macosx)
 
 WEBKIT_PUBLIC_HEADERS = \
     CarbonUtils.h \
@@ -196,94 +196,40 @@ WEBKIT_PUBLIC_HEADERS = \
     nptypes.h \
 #
 
-WEBKIT_LEGACY_PUBLIC_HEADERS = $(addprefix $(PUBLIC_HEADERS_DIR)/, $(filter $(WEBKIT_PUBLIC_HEADERS), $(notdir $(wildcard $(BUILT_PRODUCTS_DIR)/WebKitLegacy.framework/PrivateHeaders/*))) WebKitLegacy.h)
+WEBKIT_LEGACY_PUBLIC_HEADERS = $(addprefix $(PUBLIC_HEADERS_DIR)/, $(filter $(WEBKIT_PUBLIC_HEADERS), $(notdir $(wildcard $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/*.h))) WebKitLegacy.h)
 
-WEBKIT_LEGACY_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-out $(WEBKIT_PUBLIC_HEADERS) WebKit.h, $(notdir $(wildcard $(BUILT_PRODUCTS_DIR)/WebKitLegacy.framework/PrivateHeaders/*))))
+WEBKIT_LEGACY_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-out $(WEBKIT_PUBLIC_HEADERS) WebKit.h, $(notdir $(wildcard $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/*.h))))
 
 WEBKIT_LEGACY_HEADER_REPLACE_RULES = -e s/\<WebKitLegacy/\<WebKit/
 WEBKIT_LEGACY_HEADER_MIGRATE_CMD = sed $(WEBKIT_LEGACY_HEADER_REPLACE_RULES) $< > $@
 
 PUBLIC_HEADER_CHECK_CMD = @if grep -q "AVAILABLE.*TBD" "$<"; then line=$$(awk "/AVAILABLE.*TBD/ { print FNR; exit }" "$<" ); echo "$<:$$line: error: A class within a public header has unspecified availability."; false; fi
 
-$(PUBLIC_HEADERS_DIR)/% : $(BUILT_PRODUCTS_DIR)/WebKitLegacy.framework/PrivateHeaders/% MigrateHeadersFromWebKitLegacy.make
+$(PUBLIC_HEADERS_DIR)/% : $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/% MigrateHeadersFromWebKitLegacy.make
 	$(PUBLIC_HEADER_CHECK_CMD)
 	$(WEBKIT_LEGACY_HEADER_MIGRATE_CMD)
 
-$(PRIVATE_HEADERS_DIR)/% : $(BUILT_PRODUCTS_DIR)/WebKitLegacy.framework/PrivateHeaders/% MigrateHeadersFromWebKitLegacy.make
+$(PRIVATE_HEADERS_DIR)/% : $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/% MigrateHeadersFromWebKitLegacy.make
 	$(WEBKIT_LEGACY_HEADER_MIGRATE_CMD)
 
-# Migration of WebKit2 headers to WebKit
+all : $(WEBKIT_LEGACY_PUBLIC_HEADERS) $(WEBKIT_LEGACY_PRIVATE_HEADERS)
 
-WEBKIT2_HEADERS = \
-    WKBackForwardList.h \
-    WKBackForwardListItem.h \
-    WKBackForwardListPrivate.h \
-    WKFoundation.h \
-    WKFrameInfo.h \
-    WKHistoryDelegatePrivate.h \
-    WKNavigation.h \
-    WKNavigationAction.h \
-    WKNavigationDelegate.h \
-    WKNavigationDelegatePrivate.h \
-    WKNavigationResponse.h \
-    WKPreferences.h \
-    WKProcessPool.h \
-    WKProcessPoolPrivate.h \
-    WKScriptMessage.h \
-    WKScriptMessageHandler.h \
-    WKScriptMessagePrivate.h \
-    WKUIDelegate.h \
-    WKUIDelegatePrivate.h \
-    WKUserContentController.h \
-    WKUserContentControllerPrivate.h \
-    WKWebView.h \
-    WKWebViewConfiguration.h \
-    WKWebViewConfigurationPrivate.h \
-    WKWebViewPrivate.h \
-    _WKActivatedElementInfo.h \
-    _WKDownload.h \
-    _WKDownloadDelegate.h \
-    _WKElementAction.h \
-    _WKFormDelegate.h \
-    _WKFormInputSession.h \
-    _WKProcessPoolConfiguration.h \
-    _WKScriptWorld.h \
-    _WKThumbnailView.h \
-    _WKVisitedLinkProvider.h \
-#
-
-WEBKIT2_PUBLIC_HEADERS = $(addprefix $(PUBLIC_HEADERS_DIR)/, $(filter $(WEBKIT2_HEADERS),$(notdir $(wildcard $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Headers/*))))
-WEBKIT2_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter $(WEBKIT2_HEADERS),$(notdir $(wildcard $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/PrivateHeaders/*))))
-
-WEBKIT2_HEADER_REPLACE_RULES = -e s/\<WebKit2/\<WebKit/ -e /$\#.*\<WebKit\\/WK.*Ref\\.h\>/d
-WEBKIT2_HEADER_MIGRATE_CMD = sed $(WEBKIT2_HEADER_REPLACE_RULES) $< > $@
-
-$(PUBLIC_HEADERS_DIR)/% : $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Headers/% MigrateHeadersFromWebKitLegacy.make
-	$(WEBKIT2_HEADER_MIGRATE_CMD)
-
-$(PRIVATE_HEADERS_DIR)/% : $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/PrivateHeaders/% MigrateHeadersFromWebKitLegacy.make
-	$(WEBKIT2_HEADER_MIGRATE_CMD)
-
-all : $(WEBKIT_LEGACY_PUBLIC_HEADERS) $(WEBKIT_LEGACY_PRIVATE_HEADERS) $(WEBKIT2_PUBLIC_HEADERS) $(WEBKIT2_PRIVATE_HEADERS)
-
-$(PUBLIC_HEADERS_DIR)/WebKitLegacy.h : $(BUILT_PRODUCTS_DIR)/WebKitLegacy.framework/PrivateHeaders/WebKit.h MigrateHeadersFromWebKitLegacy.make
+$(PUBLIC_HEADERS_DIR)/WebKitLegacy.h : $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/WebKit.h MigrateHeadersFromWebKitLegacy.make
 	$(PUBLIC_HEADER_CHECK_CMD)
 	$(WEBKIT_LEGACY_HEADER_MIGRATE_CMD)
 
 else
 
-PRIVATE_HEADERS_DIR = $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)
+WEBKIT_LEGACY_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-out WebKit.h, $(notdir $(wildcard $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/*.h))))
 
-WEBKIT_LEGACY_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-out WebKit.h, $(notdir $(wildcard $(BUILT_PRODUCTS_DIR)/WebKitLegacy.framework/PrivateHeaders/*))))
-
-all : $(WEBKIT_LEGACY_PRIVATE_HEADERS) $(PRIVATE_HEADERS_DIR)/WebKitLegacy.h
+all : $(WEBKIT_LEGACY_PRIVATE_HEADERS) $(PUBLIC_HEADERS_DIR)/WebKitLegacy.h
 
 WEBKIT_HEADER_MIGRATE_CMD = echo "\#import <WebKitLegacy/"`basename $<`">" > $@
 
-$(PRIVATE_HEADERS_DIR)/% : $(BUILT_PRODUCTS_DIR)/WebKitLegacy.framework/PrivateHeaders/% MigrateHeadersFromWebKitLegacy.make
+$(PRIVATE_HEADERS_DIR)/% : $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/% MigrateHeadersFromWebKitLegacy.make
 	$(WEBKIT_HEADER_MIGRATE_CMD)
 
-$(PRIVATE_HEADERS_DIR)/WebKitLegacy.h : $(BUILT_PRODUCTS_DIR)/WebKitLegacy.framework/PrivateHeaders/WebKit.h MigrateHeadersFromWebKitLegacy.make
+$(PUBLIC_HEADERS_DIR)/WebKitLegacy.h : $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/WebKit.h MigrateHeadersFromWebKitLegacy.make
 	echo "#if defined(__has_include) && __has_include(<WebKitLegacy/WebKit.h>)" > $@
 	echo "#import <WebKitLegacy/"`basename $<`">" >> $@
 	echo "#endif" >> $@

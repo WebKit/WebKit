@@ -26,8 +26,8 @@
 #ifndef WKBundlePageBannerMac_h
 #define WKBundlePageBannerMac_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundlePageBanner.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKBundlePageBanner.h>
 
 @class CALayer;
 

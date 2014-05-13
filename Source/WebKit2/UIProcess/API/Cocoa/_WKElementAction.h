@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
 #if TARGET_OS_IPHONE
 
-#import <WebKit2/_WKActivatedElementInfo.h>
+#import <WebKit/_WKActivatedElementInfo.h>
 
 typedef void (^WKElementActionHandler)(_WKActivatedElementInfo *);
 

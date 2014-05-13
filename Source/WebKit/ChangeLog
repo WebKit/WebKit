@@ -1,3 +1,18 @@
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168541
+
+    2014-05-09  Anders Carlsson  <andersca@apple.com>
+
+            Rename WebKit2.framework to WebKit.framework
+            https://bugs.webkit.org/show_bug.cgi?id=132743
+            <rdar://problem/15920046>
+
+            Reviewed by Dan Bernstein.
+
+            * WebKit.xcodeproj/project.pbxproj:
+            Remove the WebKit framework, it lives inside WebKit2 now.
+
 2014-05-06  Anders Carlsson  <andersca@apple.com>
 
         Put the symlink in the right place.

@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBrowsingContextController.h>
+#import <WebKit/WKBrowsingContextController.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKBase.h>
+#import <WebKit/WKBase.h>
 
 typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
     WKPaginationModeUnpaginated,

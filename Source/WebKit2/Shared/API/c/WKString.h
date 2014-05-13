@@ -26,7 +26,7 @@
 #ifndef WKString_h
 #define WKString_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 #include <stddef.h>
 
 #ifndef __cplusplus

@@ -29,7 +29,7 @@
 
 #import <UIKit/UIActionSheet.h>
 #import <UIKit/UIPopoverController.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
+#import <WebKit/WKDeclarationSpecifiers.h>
 #import <wtf/RetainPtr.h>
 
 @protocol WKActionSheetDelegate;

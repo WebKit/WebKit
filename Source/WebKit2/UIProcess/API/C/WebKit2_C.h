@@ -26,42 +26,42 @@
 #ifndef WebKit2_C_h
 #define WebKit2_C_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKType.h>
 
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBackForwardListRef.h>
-#include <WebKit2/WKBackForwardListItemRef.h>
-#include <WebKit2/WKConnectionRef.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKDictionary.h>
-#include <WebKit2/WKError.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKGeolocationManager.h>
-#include <WebKit2/WKGeolocationPermissionRequest.h>
-#include <WebKit2/WKGeolocationPosition.h>
-#include <WebKit2/WKHitTestResult.h>
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKMutableDictionary.h>
-#include <WebKit2/WKNavigationDataRef.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKOpenPanelParameters.h>
-#include <WebKit2/WKOpenPanelResultListener.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageGroup.h>
-#include <WebKit2/WKPreferencesRef.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLRequest.h>
-#include <WebKit2/WKURLResponse.h>
+#include <WebKit/WKArray.h>
+#include <WebKit/WKBackForwardListRef.h>
+#include <WebKit/WKBackForwardListItemRef.h>
+#include <WebKit/WKConnectionRef.h>
+#include <WebKit/WKContext.h>
+#include <WebKit/WKData.h>
+#include <WebKit/WKDictionary.h>
+#include <WebKit/WKError.h>
+#include <WebKit/WKFormSubmissionListener.h>
+#include <WebKit/WKFrame.h>
+#include <WebKit/WKFramePolicyListener.h>
+#include <WebKit/WKGeolocationManager.h>
+#include <WebKit/WKGeolocationPermissionRequest.h>
+#include <WebKit/WKGeolocationPosition.h>
+#include <WebKit/WKHitTestResult.h>
+#include <WebKit/WKMutableArray.h>
+#include <WebKit/WKMutableDictionary.h>
+#include <WebKit/WKNavigationDataRef.h>
+#include <WebKit/WKNumber.h>
+#include <WebKit/WKOpenPanelParameters.h>
+#include <WebKit/WKOpenPanelResultListener.h>
+#include <WebKit/WKPage.h>
+#include <WebKit/WKPageGroup.h>
+#include <WebKit/WKPreferencesRef.h>
+#include <WebKit/WKString.h>
+#include <WebKit/WKURL.h>
+#include <WebKit/WKURLRequest.h>
+#include <WebKit/WKURLResponse.h>
 
 #if defined(__OBJC__) && __OBJC__
-#import <WebKit2/WKView.h>
+#import <WebKit/WKView.h>
 #elif !(defined(__APPLE__) && __APPLE__)
-#include <WebKit2/WKView.h>
+#include <WebKit/WKView.h>
 #endif
 
 #endif /* WebKit2_C_h */

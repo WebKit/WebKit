@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKNavigationAction.h>
+#import <WebKit/WKNavigationAction.h>
 
 #if WK_API_ENABLED
 

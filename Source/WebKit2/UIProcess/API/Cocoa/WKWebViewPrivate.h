@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKWebView.h>
+#import <WebKit/WKWebView.h>
 
 #if WK_API_ENABLED
 

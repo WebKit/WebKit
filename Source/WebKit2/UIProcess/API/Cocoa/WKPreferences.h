@@ -23,15 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKPreferences_h
-#define WKPreferences_h
-
-#include <WebKit2/WKPreferencesRef.h>
-
-#ifdef __OBJC__
-
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKFoundation.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
@@ -96,7 +89,3 @@ WK_API_CLASS
 @end
 
 #endif // WK_API_ENABLED
-
-#endif // defined(__OBJC__)
-
-#endif

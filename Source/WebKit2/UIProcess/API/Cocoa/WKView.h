@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import <WebKit/WKFoundation.h>
 
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
 #endif
-#import <WebKit2/WKDeclarationSpecifiers.h>
+#import <WebKit/WKDeclarationSpecifiers.h>
 
 @class WKBrowsingContextController;
 @class WKBrowsingContextGroup;

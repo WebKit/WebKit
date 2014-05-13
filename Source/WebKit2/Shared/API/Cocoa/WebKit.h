@@ -23,22 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <TargetConditionals.h>
-
-// FIXME: This file is only temporary; WebKit.framework is going to be provided by the WebKit2 project.
-
-#if TARGET_OS_IPHONE
-
-#define DEFINE_INSTALL_NAME(major, minor) \
-    extern __attribute__((visibility ("default"))) const char install_name_ ##major## _ ##minor __asm("$ld$install_name$os" #major "." #minor "$/System/Library/PrivateFrameworks/WebKit.framework/WebKit"); \
-    const char install_name_ ##major## _ ##minor = 0;
-
-DEFINE_INSTALL_NAME(4, 3);
-DEFINE_INSTALL_NAME(5, 0);
-DEFINE_INSTALL_NAME(5, 1);
-DEFINE_INSTALL_NAME(6, 0);
-DEFINE_INSTALL_NAME(6, 1);
-DEFINE_INSTALL_NAME(7, 0);
-DEFINE_INSTALL_NAME(7, 1);
-
-#endif
+#import <WebKit/WKBackForwardList.h>
+#import <WebKit/WKBackForwardListItem.h>
+#import <WebKit/WKFoundation.h>
+#import <WebKit/WKFrameInfo.h>
+#import <WebKit/WKNavigation.h>
+#import <WebKit/WKNavigationAction.h>
+#import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKNavigationResponse.h>
+#import <WebKit/WKPreferences.h>
+#import <WebKit/WKProcessPool.h>
+#import <WebKit/WKScriptMessage.h>
+#import <WebKit/WKScriptMessageHandler.h>
+#import <WebKit/WKUIDelegate.h>
+#import <WebKit/WKUserContentController.h>
+#import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WebKitLegacy.h>

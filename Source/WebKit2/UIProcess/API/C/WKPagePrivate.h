@@ -26,8 +26,8 @@
 #ifndef WKPagePrivate_h
 #define WKPagePrivate_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKPage.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKPage.h>
 
 #ifdef __cplusplus
 extern "C" {

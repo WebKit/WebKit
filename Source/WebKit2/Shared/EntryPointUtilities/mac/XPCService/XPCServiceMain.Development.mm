@@ -126,13 +126,13 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                     exit(EXIT_FAILURE);
                 }
 
-                CFBundleRef webKit2Bundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit2"));
+                CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
                 CFStringRef entryPointFunctionName = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
 
                 typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t);
-                InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKit2Bundle, entryPointFunctionName));
+                InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKitBundle, entryPointFunctionName));
                 if (!initializerFunctionPtr) {
-                    NSLog(@"Unable to find entry point in WebKit2.framework with name: %@", (NSString *)entryPointFunctionName);
+                    NSLog(@"Unable to find entry point in WebKit.framework with name: %@", (NSString *)entryPointFunctionName);
                     exit(EXIT_FAILURE);
                 }
 

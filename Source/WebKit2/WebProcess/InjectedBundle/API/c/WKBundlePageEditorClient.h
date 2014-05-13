@@ -26,7 +26,7 @@
 #ifndef WKBundlePageEditorClient_h
 #define WKBundlePageEditorClient_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 enum {
     kWKInsertActionTyped = 0,

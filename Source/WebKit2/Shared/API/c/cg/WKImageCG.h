@@ -27,8 +27,8 @@
 #define WKImageCG_h
 
 #include <CoreGraphics/CGImage.h>
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKImage.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKImage.h>
 
 #ifdef __cplusplus
 extern "C" {

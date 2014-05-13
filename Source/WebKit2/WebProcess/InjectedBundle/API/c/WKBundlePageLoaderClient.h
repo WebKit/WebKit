@@ -26,8 +26,8 @@
 #ifndef WKBundlePageLoaderClient_h
 #define WKBundlePageLoaderClient_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKPageLoadTypes.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKPageLoadTypes.h>
 
 typedef void (*WKBundlePageDidStartProvisionalLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);

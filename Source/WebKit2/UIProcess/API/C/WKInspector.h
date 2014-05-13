@@ -26,7 +26,7 @@
 #ifndef WKInspector_h
 #define WKInspector_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>

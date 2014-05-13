@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKNavigationDelegate.h>
-#import <WebKit2/WKWebViewPrivate.h>
+#import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKWebViewPrivate.h>
 
 #if WK_API_ENABLED
 

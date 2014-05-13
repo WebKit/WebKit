@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKRenderingProgressEvents.h>
+#import <WebKit/WKRenderingProgressEvents.h>
 
 @class WKWebProcessPlugInBrowsingContextController;
 @class WKWebProcessPlugInFrame;

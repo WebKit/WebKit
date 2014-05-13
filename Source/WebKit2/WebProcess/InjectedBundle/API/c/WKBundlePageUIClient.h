@@ -26,8 +26,8 @@
 #ifndef WKBundlePageUIClient_h
 #define WKBundlePageUIClient_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKEvent.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKEvent.h>
 
 enum {
     WKBundlePageUIElementVisibilityUnknown,

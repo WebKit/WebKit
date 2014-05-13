@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessPool.h>
+#import <WebKit/WKProcessPool.h>
 
 #if WK_API_ENABLED
 

@@ -248,7 +248,7 @@ String WebContext::platformDefaultDiskCacheDirectory() const
 {
     RetainPtr<NSString> cachePath = adoptNS((NSString *)WKCopyFoundationCacheDirectory());
     if (!cachePath)
-        cachePath = @"~/Library/Caches/com.apple.WebKit2.WebProcess";
+        cachePath = @"~/Library/Caches/com.apple.WebKit.WebProcess";
 
     return [cachePath stringByStandardizingPath];
 }

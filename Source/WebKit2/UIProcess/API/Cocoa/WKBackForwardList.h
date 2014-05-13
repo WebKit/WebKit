@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKBackForwardListItem.h>
+#import <WebKit/WKBackForwardListItem.h>
 
 /*! @abstract A @link WKWebView @/link's list of previously-visited webpages that can be reached by
  going back or forward.

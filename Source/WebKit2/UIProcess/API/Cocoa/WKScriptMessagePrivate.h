@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKScriptMessage.h>
+#import <WebKit/WKScriptMessage.h>
 
 #if WK_API_ENABLED
 

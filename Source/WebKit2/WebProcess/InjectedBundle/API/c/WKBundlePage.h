@@ -27,18 +27,18 @@
 #define WKBundlePage_h
 
 #include <JavaScriptCore/JavaScript.h>
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKBundlePageContextMenuClient.h>
-#include <WebKit2/WKBundlePageDiagnosticLoggingClient.h>
-#include <WebKit2/WKBundlePageEditorClient.h>
-#include <WebKit2/WKBundlePageFormClient.h>
-#include <WebKit2/WKBundlePageFullScreenClient.h>
-#include <WebKit2/WKBundlePageLoaderClient.h>
-#include <WebKit2/WKBundlePagePolicyClient.h>
-#include <WebKit2/WKBundlePageResourceLoadClient.h>
-#include <WebKit2/WKBundlePageUIClient.h>
-#include <WebKit2/WKFindOptions.h>
-#include <WebKit2/WKImage.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKBundlePageContextMenuClient.h>
+#include <WebKit/WKBundlePageDiagnosticLoggingClient.h>
+#include <WebKit/WKBundlePageEditorClient.h>
+#include <WebKit/WKBundlePageFormClient.h>
+#include <WebKit/WKBundlePageFullScreenClient.h>
+#include <WebKit/WKBundlePageLoaderClient.h>
+#include <WebKit/WKBundlePagePolicyClient.h>
+#include <WebKit/WKBundlePageResourceLoadClient.h>
+#include <WebKit/WKBundlePageUIClient.h>
+#include <WebKit/WKFindOptions.h>
+#include <WebKit/WKImage.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>

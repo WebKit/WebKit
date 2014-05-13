@@ -1,3 +1,22 @@
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168541
+
+    2014-05-09  Anders Carlsson  <andersca@apple.com>
+
+            Rename WebKit2.framework to WebKit.framework
+            https://bugs.webkit.org/show_bug.cgi?id=132743
+            <rdar://problem/15920046>
+
+            Reviewed by Dan Bernstein.
+
+            * Scripts/check-for-inappropriate-files-in-framework:
+            Use PRODUCT_NAME instead of PROJECT_NAME when matching frameworks.
+            Change WebKit2 to WebKit.
+
+            * Scripts/check-for-webkit-framework-include-consistency:
+            Change WebKit to WebKitLegacy.
+
 2014-05-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168477

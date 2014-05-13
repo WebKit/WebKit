@@ -23,24 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Remove this __has_include check once the WebKit framework lives in the right place.
-#if defined(__has_include) && __has_include(<WebKit/WKWebView.h>)
-#import <WebKit/WKBackForwardList.h>
-#import <WebKit/WKBackForwardListItem.h>
-#import <WebKit/WKFoundation.h>
-#import <WebKit/WKFrameInfo.h>
-#import <WebKit/WKNavigation.h>
-#import <WebKit/WKNavigationAction.h>
-#import <WebKit/WKNavigationDelegate.h>
-#import <WebKit/WKNavigationResponse.h>
-#import <WebKit/WKPreferences.h>
-#import <WebKit/WKProcessPool.h>
-#import <WebKit/WKScriptMessage.h>
-#import <WebKit/WKScriptMessageHandler.h>
-#import <WebKit/WKUIDelegate.h>
-#import <WebKit/WKUserContentController.h>
-#import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfiguration.h>
-#endif
+// This file is only here so WebKit2 has something to link against.
 
-#import <WebKit/WebKitLegacy.h>

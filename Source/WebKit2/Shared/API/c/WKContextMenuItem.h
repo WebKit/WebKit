@@ -26,8 +26,8 @@
 #ifndef WKContextMenuItem_h
 #define WKContextMenuItem_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKContextMenuItemTypes.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKContextMenuItemTypes.h>
 
 #ifdef __cplusplus
 extern "C" {

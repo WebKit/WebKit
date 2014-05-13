@@ -43,7 +43,7 @@
 		<key>EnvironmentVariables</key>
 		<dict>
 			<key>DYLD_INSERT_LIBRARIES</key>
-			<string>$(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/NetworkProcess.app/Contents/MacOS/SecItemShim.dylib</string>
+			<string>$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/NetworkProcess.app/Contents/MacOS/SecItemShim.dylib</string>
 		</dict>
 	</dict>
 </dict>

@@ -27,9 +27,9 @@
 #define WKBundleFrame_h
 
 #include <JavaScriptCore/JavaScript.h>
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKGeometry.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKFrame.h>
+#include <WebKit/WKGeometry.h>
 
 #ifdef __cplusplus
 extern "C" {

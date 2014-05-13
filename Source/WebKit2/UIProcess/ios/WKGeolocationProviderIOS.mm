@@ -34,7 +34,7 @@
 #import "WebSecurityOrigin.h"
 #import <WebGeolocationPosition.h>
 #import <WebCore/GeolocationPosition.h>
-#import <WebKit2/WKGeolocationPermissionRequest.h>
+#import <WebKit/WKGeolocationPermissionRequest.h>
 #import <wtf/Assertions.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>

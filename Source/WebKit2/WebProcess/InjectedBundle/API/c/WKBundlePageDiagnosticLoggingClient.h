@@ -26,7 +26,7 @@
 #ifndef WKBundlePageDiagnosticLoggingClient_h
 #define WKBundlePageDiagnosticLoggingClient_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 typedef void (*WKBundlePageDiagnosticLoggingCallback)(WKBundlePageRef page, WKStringRef message, WKStringRef description, WKStringRef success, const void* clientInfo);
 

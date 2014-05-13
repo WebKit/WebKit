@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+
 #if PLATFORM(IOS)
 
-#import <Foundation/NSObject.h>
-#import <WebKit/WKBase.h>
+#define DEFINE_INSTALL_NAME(major, minor) \
+    extern __attribute__((visibility ("default"))) const char install_name_ ##major## _ ##minor __asm("$ld$install_name$os" #major "." #minor "$/System/Library/PrivateFrameworks/WebKit.framework/WebKit"); \
+    const char install_name_ ##major## _ ##minor = 0;
 
-namespace WebKit {
-class WebContext;
-}
+DEFINE_INSTALL_NAME(4, 3);
+DEFINE_INSTALL_NAME(5, 0);
+DEFINE_INSTALL_NAME(5, 1);
+DEFINE_INSTALL_NAME(6, 0);
+DEFINE_INSTALL_NAME(6, 1);
+DEFINE_INSTALL_NAME(7, 0);
+DEFINE_INSTALL_NAME(7, 1);
 
-@class UIWindow;
-
-@interface WKGeolocationProviderIOS : NSObject
--(id)initWithContext:(WebKit::WebContext*)context;
--(void)decidePolicyForGeolocationRequestFromOrigin:(WKSecurityOriginRef)origin frame:(WKFrameRef)frame request:(WKGeolocationPermissionRequestRef)permissionRequest window:(UIWindow*)window;
-@end
-
-#endif // PLATFORM(IOS)
+#endif
