@@ -1,5 +1,16 @@
 2014-05-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168546
+
+    2014-05-09  Anders Carlsson  <andersca@apple.com>
+
+            Another build fix.
+
+            * Scripts/build-webkit:
+            WebKit2 should always be built for OS X and iOS.
+
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168545
 
     2014-05-09  Anders Carlsson  <andersca@apple.com>
