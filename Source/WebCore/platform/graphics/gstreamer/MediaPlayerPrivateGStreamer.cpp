@@ -124,18 +124,6 @@ static void mediaPlayerPrivatePluginInstallerResultFunction(GstInstallPluginsRet
     player->handlePluginInstallerResult(result);
 }
 
-static GstClockTime toGstClockTime(float time)
-{
-    // Extract the integer part of the time (seconds) and the fractional part (microseconds). Attempt to
-    // round the microseconds so no floating point precision is lost and we can perform an accurate seek.
-    float seconds;
-    float microSeconds = modf(time, &seconds) * 1000000;
-    GTimeVal timeValue;
-    timeValue.tv_sec = static_cast<glong>(seconds);
-    timeValue.tv_usec = static_cast<glong>(roundf(microSeconds / 10000) * 10000);
-    return GST_TIMEVAL_TO_TIME(timeValue);
-}
-
 void MediaPlayerPrivateGStreamer::setAudioStreamProperties(GObject* object)
 {
     if (g_strcmp0(G_OBJECT_TYPE_NAME(object), "GstPulseSink"))
@@ -1769,7 +1757,7 @@ void MediaPlayerPrivateGStreamer::setDownloadBuffering()
     unsigned flags;
     g_object_get(m_playBin.get(), "flags", &flags, NULL);
 
-    unsigned flagDownload = getGstPlaysFlag("download");
+    unsigned flagDownload = getGstPlayFlag("download");
 
     // We don't want to stop downloading if we already started it.
     if (flags & flagDownload && m_readyState > MediaPlayer::HaveNothing && !m_resetPipeline)

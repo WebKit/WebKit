@@ -72,6 +72,7 @@ char* getGstBufferDataPointer(GstBuffer*);
 void mapGstBuffer(GstBuffer*);
 void unmapGstBuffer(GstBuffer*);
 bool initializeGStreamer();
-unsigned getGstPlaysFlag(const char* nick);
+unsigned getGstPlayFlag(const char* nick);
+GstClockTime toGstClockTime(float time);
 
 }
