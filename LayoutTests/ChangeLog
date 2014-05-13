@@ -1,3 +1,9 @@
+2014-05-12  Jeffrey Pfau  <jpfau@apple.com>
+
+        Unreviewed, fix mismatched test expectation.
+
+        * webgl/many-contexts-expected.txt:
+
 2014-05-06  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Don't dispatch 'beforeload' event inside FrameView::layout()
