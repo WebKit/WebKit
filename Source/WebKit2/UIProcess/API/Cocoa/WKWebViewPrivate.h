@@ -103,10 +103,6 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 @property (nonatomic, setter=_setBackgroundExtendsBeyondPage:) BOOL _backgroundExtendsBeyondPage;
 
-// If BackgroundExtendsBeyondPage is set, the background of a page extend to the edges of the webview.
-// The extendedBackgroundExclusionInsets defines insets where the background is not extended. The view is transparent in those areas.
-@property (nonatomic, setter=_setExtendedBackgroundExclusionInsets:) UIEdgeInsets _extendedBackgroundExclusionInsets;
-
 // FIXME: Remove these three properties once we expose WKWebViewContentProvider as API.
 @property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF;
 @property (nonatomic, readonly) NSData *_dataForDisplayedPDF;

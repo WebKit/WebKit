@@ -1,3 +1,24 @@
+2014-05-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Remove the _extendedBackgroundExclusionInsets SPI
+        https://bugs.webkit.org/show_bug.cgi?id=132848
+        <rdar://problem/16875093>
+
+        Reviewed by Darin Adler.
+
+        The SPI is no longer needed by Safari.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView _updateScrollViewBackground]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _setObscuredInsets:]):
+        (-[WKWebView _endAnimatedResize]):
+        (updateTopAndBottomExtendedBackgroundExclusionIfNecessary): Deleted.
+        (-[WKWebView _setExtendedBackgroundExclusionInsets:]): Deleted.
+        (-[WKWebView _extendedBackgroundExclusionInsets]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-05-13  Samuel White  <samuel_white@apple.com>
 
         AX: Hit testing not accounting for top content inset.
