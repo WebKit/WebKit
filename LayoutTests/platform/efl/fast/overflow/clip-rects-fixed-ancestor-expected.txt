@@ -6,7 +6,7 @@ layer at (0,0) size 785x1029
       RenderBlock {H4} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 287x17
           text run at (0,0) width 287: "Safari Fixed / Overflow Hidden Scroll Bug"
-      RenderBlock {PRE} at (0,39) size 769x1
+      RenderBlock {PRE} at (0,39) size 769x0
       RenderBlock {PRE} at (0,39) size 769x496
         RenderText {#text} at (0,0) size 264x495
           text run at (0,0) width 72: "#fixed1 {"

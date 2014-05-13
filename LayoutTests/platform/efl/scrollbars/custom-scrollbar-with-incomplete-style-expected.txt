@@ -11,7 +11,7 @@ layer at (0,0) size 787x1412
         RenderText {#text} at (0,0) size 579x17
           text run at (0,0) width 579: "Note that Safari doesn't allow to customize the outermost scdrollbars and just show Cocoa's."
       RenderBlock {PRE} at (0,222) size 771x1169 [bgcolor=#008000]
-      RenderBlock {PRE} at (0,1403) size 1542x1 [bgcolor=#008000]
+      RenderBlock {PRE} at (0,1403) size 1542x0 [bgcolor=#008000]
 layer at (8,118) size 100x100 clip at (8,118) size 87x87 scrollWidth 1432 scrollHeight 105
   RenderBlock {PRE} at (0,109) size 100x101 [bgcolor=#008000]
     RenderText {#text} at (0,0) size 1432x105

@@ -35,8 +35,8 @@ layer at (0,0) size 785x847
                 RenderSVGEllipse {circle} at (0,0) size 148x148 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (19,44) size 110x61
                   RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 148x83
-                      chunk 1 (middle anchor) text run 1 at (26.23,125.00) startOffset 0 endOffset 3 width 147.55: "SVG"
+                    RenderSVGInlineText {#text} at (0,0) size 148x82
+                      chunk 1 (middle anchor) text run 1 at (26.44,125.00) startOffset 0 endOffset 3 width 147.13: "SVG"
           RenderText {#text} at (446,281) size 5x17
             text run at (446,281) width 5: " "
           RenderEmbeddedObject {object} at (450,221) size 75x74 [bgcolor=#FF0000]
@@ -49,8 +49,8 @@ layer at (0,0) size 785x847
                 RenderSVGEllipse {circle} at (0,0) size 74x74 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (9,22) size 56x31
                   RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 148x83
-                      chunk 1 (middle anchor) text run 1 at (26.22,125.00) startOffset 0 endOffset 3 width 147.56: "SVG"
+                    RenderSVGInlineText {#text} at (0,0) size 148x82
+                      chunk 1 (middle anchor) text run 1 at (26.44,125.00) startOffset 0 endOffset 3 width 147.13: "SVG"
           RenderText {#text} at (524,281) size 5x17
             text run at (524,281) width 5: " "
           RenderEmbeddedObject {object} at (528,258) size 38x37 [bgcolor=#FF0000]
@@ -63,8 +63,8 @@ layer at (0,0) size 785x847
                 RenderSVGEllipse {circle} at (0,0) size 37x37 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (4,11) size 29x16
                   RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 148x83
-                      chunk 1 (middle anchor) text run 1 at (26.22,125.00) startOffset 0 endOffset 3 width 147.56: "SVG"
+                    RenderSVGInlineText {#text} at (0,0) size 148x82
+                      chunk 1 (middle anchor) text run 1 at (26.44,125.00) startOffset 0 endOffset 3 width 147.13: "SVG"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {p} at (0,367) size 679x65
           RenderText {#text} at (0,0) size 627x31

@@ -24,7 +24,7 @@ layer at (0,0) size 800x502
             text run at (486,0) width 143: "Unicode Standard"
         RenderText {#text} at (629,0) size 5x17
           text run at (629,0) width 5: "."
-      RenderBlock {PRE} at (0,92) size 784x1
+      RenderBlock {PRE} at (0,92) size 784x0
       RenderBlock {P} at (0,92) size 784x19
         RenderText {#text} at (0,0) size 360x17
           text run at (0,0) width 360: "In each box, all the lines should be the same."
