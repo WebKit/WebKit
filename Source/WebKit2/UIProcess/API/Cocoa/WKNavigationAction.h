@@ -27,7 +27,11 @@
 
 #if WK_API_ENABLED
 
+#if TARGET_OS_IPHONE
 #import <Foundation/Foundation.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
 
 @class WKFrameInfo;
 
@@ -49,7 +53,6 @@ typedef NS_ENUM(NSInteger, WKNavigationType) {
     WKNavigationTypeOther = -1,
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
-
 /*! Contains information about an action that may cause a navigation, used for making policy decisions.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
@@ -70,6 +73,18 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 /*! @abstract The NSURLRequest of the navigation.
  */
 @property (nonatomic, readonly) NSURLRequest *request;
+
+#if !TARGET_OS_IPHONE
+
+/*! @abstract The modifier keys that were in effect when the navigation was requested.
+ */
+@property (nonatomic, readonly) NSEventModifierFlags modifierFlags;
+
+/*! @abstract The mouse button number that caused the navigation to be requested.
+ */
+@property (nonatomic, readonly) NSInteger buttonNumber;
+
+#endif
 
 @end
 
