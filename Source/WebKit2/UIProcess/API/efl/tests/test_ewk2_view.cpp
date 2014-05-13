@@ -288,17 +288,16 @@ TEST_F(EWK2ViewTest, ewk_view_html_string_load)
 
 TEST_F(EWK2ViewTest, ewk_view_navigation)
 {
-    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
-    httpServer->run(serverCallbackNavigation);
-
     // Visit Page1
-    ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/Page1").data()));
+    ewk_view_url_set(webView(), environment->urlForResource("/Page1.html").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo("Page1"));
     ASSERT_STREQ("Page1", ewk_view_title_get(webView()));
     ASSERT_FALSE(ewk_view_back_possible(webView()));
     ASSERT_FALSE(ewk_view_forward_possible(webView()));
 
     // Visit Page2
-    ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/Page2").data()));
+    ewk_view_url_set(webView(), environment->urlForResource("/Page2.html").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo("Page2"));
     ASSERT_STREQ("Page2", ewk_view_title_get(webView()));
     ASSERT_TRUE(ewk_view_back_possible(webView()));
     ASSERT_FALSE(ewk_view_forward_possible(webView()));
@@ -318,7 +317,7 @@ TEST_F(EWK2ViewTest, ewk_view_navigation)
     ASSERT_FALSE(ewk_view_forward_possible(webView()));
 
     // Visit Page3
-    ewk_view_url_set(webView(), httpServer->getURLForPath("/Page3").data());
+    ewk_view_url_set(webView(), environment->urlForResource("/Page3.html").data());
     ASSERT_TRUE(waitUntilTitleChangedTo("Page3"));
     ASSERT_STREQ("Page3", ewk_view_title_get(webView()));
     ASSERT_TRUE(ewk_view_back_possible(webView()));
