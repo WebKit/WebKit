@@ -28,99 +28,84 @@
 #define IconDatabase_h
 
 #include "IconDatabaseBase.h"
+
+#if ENABLE(ICONDATABASE)
+#include "SQLiteDatabase.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
-
-#if ENABLE(ICONDATABASE)
-#include "SQLiteDatabase.h"
-#include <wtf/Threading.h>
-#endif // ENABLE(ICONDATABASE)
+#endif
 
 namespace WebCore { 
 
-class DocumentLoader;
-class Image;
-class IntSize;
-class IconDatabaseClient;
-class IconRecord;
-class IconSnapshot;
-class URL;
-class PageURLRecord;
-class PageURLSnapshot;
-class SharedBuffer;
-class SuddenTerminationDisabler;
-
-#if ENABLE(ICONDATABASE)
-class SQLTransaction;
-#endif
-
 #if !ENABLE(ICONDATABASE)
-// For builds with IconDatabase disabled, they'll just use a default derivation of IconDatabaseBase. Which does nothing.
-class IconDatabase : public IconDatabaseBase {
+
+// Dummy version of IconDatabase that does nothing.
+class IconDatabase final : public IconDatabaseBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<IconDatabase> create() { return adoptPtr(new IconDatabase); }
     static void delayDatabaseCleanup() { }
     static void allowDatabaseCleanup() { }
     static void checkIntegrityBeforeOpening() { }
     static String defaultDatabaseFilename() { return "WebpageIcons.db"; }
 };
-#else 
 
-class IconDatabase : public IconDatabaseBase {
+#else
+
+class IconRecord;
+class IconSnapshot;
+class PageURLRecord;
+class PageURLSnapshot;
+class SuddenTerminationDisabler;
+
+class IconDatabase final : public IconDatabaseBase {
     WTF_MAKE_FAST_ALLOCATED;
     
 // *** Main Thread Only ***
 public:
-    static PassOwnPtr<IconDatabase> create() { return adoptPtr(new IconDatabase); }
+    IconDatabase();
     ~IconDatabase();
 
-    virtual void setClient(IconDatabaseClient*);
+    virtual void setClient(IconDatabaseClient*) override;
 
-    virtual bool open(const String& directory, const String& filename);
-    virtual void close();
+    virtual bool open(const String& directory, const String& filename) override;
+    virtual void close() override;
             
-    virtual void removeAllIcons();
+    virtual void removeAllIcons() override;
 
     void readIconForPageURLFromDisk(const String&);
 
-    virtual Image* defaultIcon(const IntSize&);
+    virtual Image* defaultIcon(const IntSize&) override;
 
-    virtual void retainIconForPageURL(const String&);
-    virtual void releaseIconForPageURL(const String&);
-    virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&);
-    virtual void setIconURLForPageURL(const String& iconURL, const String& pageURL);
+    virtual void retainIconForPageURL(const String&) override;
+    virtual void releaseIconForPageURL(const String&) override;
+    virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&) override;
+    virtual void setIconURLForPageURL(const String& iconURL, const String& pageURL) override;
 
-    virtual Image* synchronousIconForPageURL(const String&, const IntSize&);
-    virtual PassNativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&);
-    virtual String synchronousIconURLForPageURL(const String&);
-    virtual bool synchronousIconDataKnownForIconURL(const String&);
-    virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*);    
-    
-    virtual void setEnabled(bool);
-    virtual bool isEnabled() const;
-    
-    virtual void setPrivateBrowsingEnabled(bool flag);
+    virtual Image* synchronousIconForPageURL(const String&, const IntSize&) override;
+    virtual PassNativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&) override;
+    virtual String synchronousIconURLForPageURL(const String&) override;
+    virtual bool synchronousIconDataKnownForIconURL(const String&) override;
+    virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) override;
+
+    virtual void setEnabled(bool) override;
+    virtual bool isEnabled() const override;
+
+    virtual void setPrivateBrowsingEnabled(bool flag) override;
     bool isPrivateBrowsingEnabled() const;
-    
+
     static void delayDatabaseCleanup();
     static void allowDatabaseCleanup();
     static void checkIntegrityBeforeOpening();
-        
+
     // Support for WebCoreStatistics in WebKit
-    virtual size_t pageURLMappingCount();
-    virtual size_t retainedPageURLCount();
-    virtual size_t iconRecordCount();
-    virtual size_t iconRecordCountWithData();
+    virtual size_t pageURLMappingCount() override;
+    virtual size_t retainedPageURLCount() override;
+    virtual size_t iconRecordCount() override;
+    virtual size_t iconRecordCountWithData() override;
 
 private:
-    IconDatabase();
     friend IconDatabaseBase& iconDatabase();
 
     static void notifyPendingLoadDecisionsOnMainThread(void*);

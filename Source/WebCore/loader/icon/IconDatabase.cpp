@@ -34,16 +34,13 @@
 #include "IconDatabaseClient.h"
 #include "IconRecord.h"
 #include "Image.h"
-#include "IntSize.h"
 #include "Logging.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "SuddenTermination.h"
 #include <wtf/AutodrainedPool.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/CString.h>
 
 // For methods that are meant to support API from the main thread - should not be called internally
 #define ASSERT_NOT_SYNC_THREAD() ASSERT(!m_syncThreadRunning || !IS_ICON_SYNC_THREAD())
@@ -90,19 +87,19 @@ static String urlForLogging(const String& url)
 }
 #endif
 
-class DefaultIconDatabaseClient : public IconDatabaseClient {
+class DefaultIconDatabaseClient final : public IconDatabaseClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual void didImportIconURLForPageURL(const String&) { } 
-    virtual void didImportIconDataForPageURL(const String&) { }
-    virtual void didChangeIconForPageURL(const String&) { }
-    virtual void didRemoveAllIcons() { }
-    virtual void didFinishURLImport() { }
+    virtual void didImportIconURLForPageURL(const String&) override { }
+    virtual void didImportIconDataForPageURL(const String&) override { }
+    virtual void didChangeIconForPageURL(const String&) override { }
+    virtual void didRemoveAllIcons() override { }
+    virtual void didFinishURLImport() override { }
 };
 
 static IconDatabaseClient* defaultClient() 
 {
-    static IconDatabaseClient* defaultClient = new DefaultIconDatabaseClient();
+    static IconDatabaseClient* defaultClient = new DefaultIconDatabaseClient;
     return defaultClient;
 }
 

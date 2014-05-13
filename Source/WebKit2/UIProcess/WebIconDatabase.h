@@ -27,21 +27,14 @@
 #define WebIconDatabase_h
 
 #include "APIObject.h"
-
 #include "Connection.h"
 #include "WebIconDatabaseClient.h"
 #include <WebCore/IconDatabaseClient.h>
-#include <WebCore/ImageSource.h>
 #include <WebCore/IntSize.h>
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/StringHash.h>
+#include <WebCore/NativeImagePtr.h>
 
-namespace IPC {
-class ArgumentDecoder;
-class DataReference;
+namespace API {
+class Data;
 }
 
 namespace WebCore {
@@ -53,13 +46,13 @@ namespace WebKit {
 
 class WebContext;
 
-class WebIconDatabase : public API::ObjectImpl<API::Object::Type::IconDatabase>, public WebCore::IconDatabaseClient, private IPC::MessageReceiver {
+class WebIconDatabase : public API::ObjectImpl<API::Object::Type::IconDatabase>, private WebCore::IconDatabaseClient, private IPC::MessageReceiver {
 public:
     static PassRefPtr<WebIconDatabase> create(WebContext*);
     virtual ~WebIconDatabase();
 
     void invalidate();
-    void clearContext() { m_webContext = 0; }
+    void clearContext() { m_webContext = nullptr; }
     void setDatabasePath(const String&);
     void enableDatabaseCleanup();
 
@@ -67,17 +60,19 @@ public:
     void releaseIconForPageURL(const String&);
     void setIconURLForPageURL(const String&, const String&);
     void setIconDataForIconURL(const IPC::DataReference&, const String&);
-    
+
     void synchronousIconDataForPageURL(const String&, IPC::DataReference&);
     void synchronousIconURLForPageURL(const String&, String&);
     void synchronousIconDataKnownForIconURL(const String&, bool&) const;
     void synchronousLoadDecisionForIconURL(const String&, int&) const;
-    
+
     void getLoadDecisionForIconURL(const String&, uint64_t callbackID);
     void didReceiveIconForPageURL(const String&);
 
     WebCore::Image* imageForPageURL(const String&, const WebCore::IntSize& iconSize = WebCore::IntSize(32, 32));
     WebCore::NativeImagePtr nativeImageForPageURL(const String&, const WebCore::IntSize& iconSize = WebCore::IntSize(32, 32));
+    PassRefPtr<API::Data> iconDataForPageURL(const String& pageURL);
+
     bool isOpen();
     bool isUrlImportCompleted();
 
@@ -88,16 +83,16 @@ public:
     void initializeIconDatabaseClient(const WKIconDatabaseClientBase*);
 
     void setPrivateBrowsingEnabled(bool);
-    
+
 private:
-    WebIconDatabase(WebContext*);
+    explicit WebIconDatabase(WebContext&);
 
     // WebCore::IconDatabaseClient
-    virtual void didImportIconURLForPageURL(const String&);
-    virtual void didImportIconDataForPageURL(const String&);
-    virtual void didChangeIconForPageURL(const String&);
-    virtual void didRemoveAllIcons();
-    virtual void didFinishURLImport();
+    virtual void didImportIconURLForPageURL(const String&) override;
+    virtual void didImportIconDataForPageURL(const String&) override;
+    virtual void didChangeIconForPageURL(const String&) override;
+    virtual void didRemoveAllIcons() override;
+    virtual void didFinishURLImport() override;
 
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
@@ -106,8 +101,8 @@ private:
     void notifyIconDataReadyForPageURL(const String&);
 
     WebContext* m_webContext;
-    
-    OwnPtr<WebCore::IconDatabase> m_iconDatabaseImpl;
+
+    std::unique_ptr<WebCore::IconDatabase> m_iconDatabaseImpl;
     bool m_urlImportCompleted;
     bool m_databaseCleanupDisabled;
     HashMap<uint64_t, String> m_pendingLoadDecisionURLMap;

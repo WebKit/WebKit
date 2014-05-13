@@ -1,3 +1,22 @@
+2014-05-12  Darin Adler  <darin@apple.com>
+
+        Make a few icon database improvements
+        https://bugs.webkit.org/show_bug.cgi?id=132812
+
+        Reviewed by Brady Eidson.
+
+        * WebCore.exp.in: Export more IconDatabase functions, since they are now called
+        by WebKit2 through pointers to a class marked final.
+
+        * loader/icon/IconDatabase.cpp: Removed unneeded includes. Use override for
+        virtual functions.
+
+        * loader/icon/IconDatabase.h: Removed unneeded includes. Marked the class final.
+        Use override for virtual functions. Use a public constructor instead of a create
+        function.
+
+        * loader/icon/IconDatabaseBase.h: Removed unneeded includes.
+
 2014-05-13  Kiran  <kiran.guduru@samsung.com>
 
         [MediaStream] MediaStream.addTrack Should not check for active state.

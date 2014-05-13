@@ -1,3 +1,34 @@
+2014-05-12  Darin Adler  <darin@apple.com>
+
+        Make a few icon database improvements
+        https://bugs.webkit.org/show_bug.cgi?id=132812
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseCopyIconDataForPageURL): Moved the actual implementation of this
+        out of the bindings into the WebIconDatabase class.
+
+        * UIProcess/API/C/WKIconDatabase.h: Fixed argument names that were inconsistent.
+
+        * UIProcess/WebIconDatabase.cpp: Removed unneeded includes.
+        (WebKit::WebIconDatabase::create): Pass a reference instead of a pointer.
+        (WebKit::WebIconDatabase::WebIconDatabase): Take a reference instead of a pointer.
+        (WebKit::WebIconDatabase::invalidate): Use nullptr.
+        (WebKit::WebIconDatabase::setDatabasePath): Use make_unique.
+        (WebKit::WebIconDatabase::setIconDataForIconURL): Removed unneeded local variable.
+        (WebKit::WebIconDatabase::imageForPageURL): Use nullptr.
+        (WebKit::WebIconDatabase::nativeImageForPageURL): Ditto.
+        (WebKit::WebIconDatabase::didFinishURLImport): Use a modern for loop.
+        (WebKit::WebIconDatabase::iconDataForPageURL): Added. Moved this here from
+        WKIconDatabase.cpp, but also changed to use createWithoutCopying to avoid making
+        another copy of the data for each icon.
+
+        * UIProcess/WebIconDatabase.h: Removed unneeded includes. Derive from
+        IconDatabaseClient privately. Use nullptr. Added iconDataForPageURL member
+        function. Use a reference for the constructor argument. Use override for
+        virtual functions. Use unique_ptr instead of OwnPtr.
+
 2014-05-12  Mark Lam  <mark.lam@apple.com>
 
         WebKit2 on iOS needs to capture the main thread's floating point environment.

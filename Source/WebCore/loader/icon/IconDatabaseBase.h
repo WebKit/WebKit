@@ -26,12 +26,11 @@
 #ifndef IconDatabaseBase_h
 #define IconDatabaseBase_h
 
-#include "ImageSource.h"
-#include "SharedBuffer.h"
-
+#include "NativeImagePtr.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -39,6 +38,7 @@ class DocumentLoader;
 class IconDatabaseClient;
 class Image;
 class IntSize;
+class SharedBuffer;
 
 enum IconLoadDecision {
     IconLoadYes,

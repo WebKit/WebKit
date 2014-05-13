@@ -81,9 +81,9 @@ WK_EXPORT void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabas
 WK_EXPORT void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
 WK_EXPORT void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
 WK_EXPORT void WKIconDatabaseSetIconDataForIconURL(WKIconDatabaseRef iconDatabase, WKDataRef iconData, WKURLRef iconURL);
-WK_EXPORT void WKIconDatabaseSetIconURLForPageURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef iconURLRef, WKURLRef pageURLRef);
-WK_EXPORT WKURLRef WKIconDatabaseCopyIconURLForPageURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef);
-WK_EXPORT WKDataRef WKIconDatabaseCopyIconDataForPageURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURL);
+WK_EXPORT void WKIconDatabaseSetIconURLForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef iconURL, WKURLRef pageURL);
+WK_EXPORT WKURLRef WKIconDatabaseCopyIconURLForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
+WK_EXPORT WKDataRef WKIconDatabaseCopyIconDataForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
 
 WK_EXPORT void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabase);
 
