@@ -1,5 +1,16 @@
 2014-05-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168569
+
+    2014-05-09  Anders Carlsson  <andersca@apple.com>
+
+            Another build fix.
+
+            * mac/MigrateHeadersToWebKit2.make:
+            Don't migrate the WKPreferences.h header, WebKit2 provides its own header.
+
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168552
 
     2014-05-09  Tim Horton  <timothy_horton@apple.com>
