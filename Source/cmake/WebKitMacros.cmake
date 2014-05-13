@@ -73,7 +73,7 @@ macro(GENERATE_FONT_NAMES _infile)
     add_custom_command(
         OUTPUT  ${_outputfiles}
         MAIN_DEPENDENCY ${_infile}
-        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
+        DEPENDS ${MAKE_NAMES_DEPENDENCIES} ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
         COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} ${_arguments}
         VERBATIM)
 endmacro()
@@ -141,7 +141,7 @@ macro(GENERATE_DOM_NAMES _namespace _attrs)
 
     add_custom_command(
         OUTPUT  ${_outputfiles}
-        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_attrs} ${_tags}
+        DEPENDS ${MAKE_NAMES_DEPENDENCIES} ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_attrs} ${_tags}
         COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --preprocessor "${CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS}" --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} ${_arguments} ${_additionArguments}
         VERBATIM)
 endmacro()
