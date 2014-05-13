@@ -40,6 +40,7 @@ class HTMLPlugInElement;
 class RenderElement;
 class RenderStyle;
 class ShadowRoot;
+class URL;
 
 class PluginReplacement : public RefCounted<PluginReplacement> {
 public:
@@ -58,13 +59,15 @@ protected:
 typedef PassRefPtr<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 typedef bool (*PluginReplacementSupportsType)(const String&);
 typedef bool (*PluginReplacementSupportsFileExtension)(const String&);
-
+typedef bool (*PluginReplacementSupportsURL)(const URL&);
+    
 class ReplacementPlugin {
 public:
-    ReplacementPlugin(CreatePluginReplacement constructor, PluginReplacementSupportsType supportsType, PluginReplacementSupportsFileExtension supportsFileExtension)
+    ReplacementPlugin(CreatePluginReplacement constructor, PluginReplacementSupportsType supportsType, PluginReplacementSupportsFileExtension supportsFileExtension, PluginReplacementSupportsURL supportsURL)
         : m_constructor(constructor)
         , m_supportsType(supportsType)
         , m_supportsFileExtension(supportsFileExtension)
+        , m_supportsURL(supportsURL)
     {
     }
 
@@ -72,17 +75,20 @@ public:
         : m_constructor(other.m_constructor)
         , m_supportsType(other.m_supportsType)
         , m_supportsFileExtension(other.m_supportsFileExtension)
+        , m_supportsURL(other.m_supportsURL)
     {
     }
 
     PassRefPtr<PluginReplacement> create(HTMLPlugInElement& element, const Vector<String>& paramNames, const Vector<String>& paramValues) const { return m_constructor(element, paramNames, paramValues); }
     bool supportsType(const String& mimeType) const { return m_supportsType(mimeType); }
     bool supportsFileExtension(const String& extension) const { return m_supportsFileExtension(extension); }
-
+    bool supportsURL(const URL& url) const { return m_supportsURL(url); }
+    
 private:
     CreatePluginReplacement m_constructor;
     PluginReplacementSupportsType m_supportsType;
     PluginReplacementSupportsFileExtension m_supportsFileExtension;
+    PluginReplacementSupportsURL m_supportsURL;
 };
 
 typedef void (*PluginReplacementRegistrar)(const ReplacementPlugin&);

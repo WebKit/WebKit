@@ -1,5 +1,61 @@
 2014-05-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168442
+
+    2014-05-07  Brent Fulgham  <bfulgham@apple.com>
+
+            [Mac, iOS] REGRESSION: WK2 YouTube support
+            https://bugs.webkit.org/show_bug.cgi?id=132568
+            <rdar://problem/11464344>
+
+            Reviewed by Darin Adler.
+
+            Move the custom YouTube loader code out of the WebFrameLoaderClient into a
+            PluginReplacement-based class.
+
+            * Modules/plugins/PluginReplacement.h:
+            (WebCore::PluginReplacement::supportsURL): New predicate so we can restrict
+            use of a plugin to a particular category of URLs.
+            * Modules/plugins/QuickTimePluginReplacement.mm:
+            (WebCore::QuickTimePluginReplacement): Updated for new registrar signature.
+            * Modules/plugins/YouTubePluginReplacement.h: Added.
+            (WebCore::YouTubePluginReplacement::parentElement):
+            * Modules/plugins/YouTubePluginReplacement.cpp: Added.
+            (WebCore::YouTubePluginReplacement::registerPluginReplacement):
+            (WebCore::YouTubePluginReplacement::create):
+            (WebCore::YouTubePluginReplacement::supportsMimeType):
+            (WebCore::YouTubePluginReplacement::supportsFileExtension):
+            (WebCore::kit):
+            (WebCore::YouTubePluginReplacement::YouTubePluginReplacement):
+            (WebCore::YouTubePluginReplacement::createElementRenderer):
+            (WebCore::objectForKey):
+            (WebCore::YouTubePluginReplacement::installReplacement):
+            (WebCore::createYouTubeURL):
+            (WebCore::processAndCreateYouTubeURL):
+            (WebCore::YouTubePluginReplacement::youTubeURL):
+            * WebCore.exp.in: Add new export from WebCore.
+            * WebCore.xcodeproj/project.pbxproj:
+            * html/HTMLPlugInElement.cpp:
+            (WebCore::pluginReplacementForType): Update to also check that the URL is supported
+            by the plugin.
+            (WebCore::registeredPluginReplacements): Add new YouTubePluginReplacement to registry.
+            * html/HTMLPlugInImageElement.cpp:
+            (WebCore::HTMLPlugInImageElement::createElementRenderer): Remove custom YouTube code
+            now that this logic is handled in the plugin replacement class.
+            (WebCore::HTMLPlugInImageElement::createShadowIFrameSubtree): Deleted.
+            * html/HTMLPlugInImageElement.h:
+            * html/shadow/YouTubeEmbedShadowElement.cpp:
+            (WebCore::YouTubeEmbedShadowElement::YouTubeEmbedShadowElement):
+            (WebCore::YouTubeEmbedShadowElement::shadowPseudoId): Use correct pseudoID for the
+            plugin replacement architecture.
+            * html/shadow/YouTubeEmbedShadowElement.h:
+            * platform/mac/WebCoreNSURLExtras.h:
+            * platform/mac/WebCoreNSURLExtras.mm:
+            (WebCore::unescapedQueryValue): Moved from WebKit/Misc/WebNSURLExtras.
+            (WebCore::queryKeysAndValues): Ditto.
+
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168439
 
     2014-05-07  Jeremy Jones  <jeremyj@apple.com>

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "YouTubeEmbedShadowElement.h"
 
-#if PLATFORM(IOS)
-
 #include "HTMLEmbedElement.h"
 
 namespace WebCore {
@@ -42,6 +40,12 @@ PassRefPtr<YouTubeEmbedShadowElement> YouTubeEmbedShadowElement::create(Document
 YouTubeEmbedShadowElement::YouTubeEmbedShadowElement(Document& document)
     : HTMLDivElement(HTMLNames::divTag, document)
 {
+    setPseudo(shadowPseudoId());
+
+    setInlineStyleProperty(CSSPropertyDisplay, CSSValueInlineBlock);
+    setInlineStyleProperty(CSSPropertyPosition, CSSValueRelative);
+    setInlineStyleProperty(CSSPropertyWidth, CSSValue100);
+    setInlineStyleProperty(CSSPropertyHeight, CSSValue100);
 }
 
 HTMLPlugInImageElement* YouTubeEmbedShadowElement::pluginElement() const
@@ -53,10 +57,8 @@ HTMLPlugInImageElement* YouTubeEmbedShadowElement::pluginElement() const
 
 const AtomicString& YouTubeEmbedShadowElement::shadowPseudoId() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-apple-youtube-shadow-iframe"));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-plugin-replacement"));
     return pseudoId;
 }
 
 }
-
-#endif
