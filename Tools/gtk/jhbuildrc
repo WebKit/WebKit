@@ -25,15 +25,8 @@ __gtk_tools_directory = os.path.abspath(os.path.dirname(__file__))
 sys.path = [__gtk_tools_directory] + sys.path
 import common
 
-if 'NUMBER_OF_PROCESSORS' in os.environ:
-    jobs = os.environ['NUMBER_OF_PROCESSORS']
-
 # GTK+ 3.0.12 misses the -lm flag when linking the tests.
 module_makeargs['gtk+'] = 'LDFLAGS="-lm" ' + makeargs
-
-# Avoid runtime conflicts with GStreamer system-wide plugins. We want
-# to use only the plugins we build in JHBuild.
-os.environ['GST_PLUGIN_SYSTEM_PATH'] = ''
 
 # We always enable introspection so that we can sniff out problems with our
 # annotations sooner rather than later.
