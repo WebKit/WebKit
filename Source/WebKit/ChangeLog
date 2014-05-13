@@ -1,3 +1,10 @@
+2014-05-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r168668.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add
+        missing export symbols.
+
 2014-05-12  Anders Carlsson  <andersca@apple.com>
 
         Don't make a Frameworks symlink inside WebKitLegacy.framework
