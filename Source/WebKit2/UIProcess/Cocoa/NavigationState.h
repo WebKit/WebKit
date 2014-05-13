@@ -35,6 +35,7 @@
 #import "APILoaderClient.h"
 #import "APIPolicyClient.h"
 #import "PageLoadState.h"
+#import "ProcessThrottler.h"
 #import "WeakObjCPtr.h"
 
 @class WKNavigation;
@@ -159,6 +160,10 @@ private:
         bool webViewDidPerformServerRedirectFromURLToURL : 1;
         bool webViewDidUpdateHistoryTitleForURL : 1;
     } m_historyDelegateMethods;
+
+#if PLATFORM(IOS)
+    std::unique_ptr<ProcessThrottler::BackgroundActivityToken> m_activityToken;
+#endif
 };
 
 } // namespace WebKit

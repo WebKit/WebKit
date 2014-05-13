@@ -1,5 +1,22 @@
 2014-05-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168441
+
+    2014-05-07  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/16831276> [iOS] Unparenting a WKWebView that’s loading pauses it
+            https://bugs.webkit.org/show_bug.cgi?id=132659
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/Cocoa/NavigationState.h: Added a member variable.
+            * UIProcess/Cocoa/NavigationState.mm:
+            (WebKit::NavigationState::didChangeIsLoading): When transitioning into loading state,
+            acquire a background activity token. When transitioning out of loading state, dispose of
+            the token.
+
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168550
 
     2014-05-09  Anders Carlsson  <andersca@apple.com>
