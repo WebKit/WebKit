@@ -1,3 +1,27 @@
+2014-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DYEBench should run 20 iterations in browser
+        https://bugs.webkit.org/show_bug.cgi?id=132795
+
+        Reviewed by Gavin Barraclough.
+
+        Right now, run-perf-tests runs BYEBench 4 times with different instances of DRT/WTR to get
+        a more stable time and account for differences in the runtime environment, particularly,
+        ASLR (Address Space Layout Randomization).
+
+        While we can't account for the latter effect when the benchmark is ran inside a browser,
+        we can at least run 20 iterations to get a more stable (but perhaps biased by ALSR) number.
+
+        While the sample size of 20 is statistically unsound to compute the arithmetic mean from,
+        it's MUCH better than the current sample size of 5.
+
+        * DoYouEvenBench/Full.html:
+        (benchmarkClient.iterationCount): Set the default iteration count to 20.
+        (startTest): Use benchmarkClient.iterationCount as the iteration count.
+        * DoYouEvenBench/resources/benchmark-report.js:
+        (benchmarkClient.iterationCount): Continue to use the old iteration count of 5 when ran
+        inside run-perf-tests.
+
 2014-05-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         DYEBench should show 95th percentile right next to the mean with ±

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>DoYouEvenBench v0.10</title>
+<title>DoYouEvenBench v0.11</title>
 <style type="text/css">
 caption { margin: 0; padding: 0; font-family: sans-serif; font-size: 1em; font-weight: bold; white-space: nowrap; }
 #progressContainer { padding: 605px 0 10px 0; width: 800px; }
@@ -43,6 +43,7 @@ td { text-align: left; }
     }
 
     window.benchmarkClient = {
+        iterationCount: 20,
         willRunTest: function () {
             if (!progress) {
                 // We don't use the real progress element as some implementations animate it.
@@ -79,10 +80,10 @@ td { text-align: left; }
 })();
 
 function startTest() {
-    var iterationCount = 5;
-    benchmarkClient.testsCount = iterationCount * Suites.reduce(function (testsCount, suite) { return testsCount + suite.tests.length; }, 0);
+    var totalSubtestCount = Suites.reduce(function (testsCount, suite) { return testsCount + suite.tests.length; }, 0);
+    benchmarkClient.testsCount = benchmarkClient.iterationCount * totalSubtestCount;
     var runner = new BenchmarkRunner(Suites, benchmarkClient);
-    runner.runMultipleIterations(iterationCount);
+    runner.runMultipleIterations(benchmarkClient.iterationCount);
 }
 
 </script>
