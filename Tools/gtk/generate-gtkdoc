@@ -25,6 +25,7 @@ import gtkdoc
 import logging
 import os.path
 import sys
+import webkitdom
 
 def configure_logging(verbose):
     level = logging.DEBUG if verbose else logging.INFO
@@ -194,9 +195,10 @@ if __name__ == "__main__":
 
     prepare_environment_for_gtkdoc_generation()
 
+    webkitdom.write_doc_files()
+    generate_documentation_for_config(common.build_path('gtkdoc-webkitdom.cfg'))
+
     saw_webkit1_warnings = generate_documentation_for_config(common.build_path('gtkdoc-webkitgtk.cfg'))
     saw_webkit2_warnings = generate_documentation_for_config(common.build_path('gtkdoc-webkit2gtk.cfg'))
-    if not common.is_cmake_build():
-        generate_documentation_for_config(common.build_path('gtkdoc-webkitdom.cfg'))
 
     sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)

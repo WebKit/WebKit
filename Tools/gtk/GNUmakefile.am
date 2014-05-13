@@ -30,22 +30,8 @@ docs_build_dependencies += \
 	gtkdoc-webkit2gtk.cfg
 endif
 
-$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-docs.sgml: $(gdom_symbol_files) $(srcdir)/Tools/gtk/generate-webkitdom-doc-files
-	$(AM_V_GEN)mkdir -p $(top_builddir)/DerivedSources/webkitdom/docs \
-	&& echo $(gdom_symbol_files) | $(PYTHON) $(srcdir)/Tools/gtk/generate-webkitdom-doc-files docs > $@
-
-$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-sections.txt: $(gdom_symbol_files) $(srcdir)/Tools/gtk/generate-webkitdom-doc-files
-	$(AM_V_GEN)mkdir -p $(top_builddir)/DerivedSources/webkitdom/docs \
-	&& echo $(gdom_symbol_files) | $(PYTHON) $(srcdir)/Tools/gtk/generate-webkitdom-doc-files sections > $@
-
-BUILT_SOURCES += \
-	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-docs.sgml \
-	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-sections.txt
-
 docs_build_dependencies += \
 	libGObjectDOMBindings.la \
-	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-docs.sgml \
-	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-sections.txt \
 	gtkdoc-webkitdom.cfg
 
 docs-build.stamp: $(docs_build_dependencies)
