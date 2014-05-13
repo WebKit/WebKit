@@ -2030,7 +2030,10 @@ NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
 #if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
     if (!m_servicesRolloverButton) {
         m_servicesRolloverButton = [NSServicesRolloverButtonCell serviceRolloverButtonCellForStyle:NSSharingServicePickerStyleRollover];
-        [m_servicesRolloverButton setBordered:NO];
+        [m_servicesRolloverButton setBezelStyle:NSRoundedDisclosureBezelStyle];
+        [m_servicesRolloverButton setButtonType:NSPushOnPushOffButton];
+        [m_servicesRolloverButton setImagePosition:NSImageOnly];
+        [m_servicesRolloverButton setState:NO];
     }
 
     return m_servicesRolloverButton.get();
@@ -2067,6 +2070,21 @@ IntSize RenderThemeMac::imageControlsButtonSize(const RenderObject&) const
 {
 #if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
     return IntSize(servicesRolloverButtonCell().cellSize);
+#else
+    return IntSize();
+#endif
+}
+
+IntSize RenderThemeMac::imageControlsButtonPositionOffset() const
+{
+#if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
+    // FIXME: Currently the offsets will always be the same no matter what image rect you try with.
+    // This may not always be true in the future.
+    static const int dummyDimension = 100;
+    IntRect dummyImageRect(0, 0, dummyDimension, dummyDimension);
+    NSRect bounds = [servicesRolloverButtonCell() rectForBounds:dummyImageRect preferredEdge:NSMinYEdge];
+
+    return IntSize(dummyDimension - bounds.origin.x, bounds.origin.y);
 #else
     return IntSize();
 #endif

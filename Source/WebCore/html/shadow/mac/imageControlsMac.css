@@ -29,7 +29,6 @@
 
 .x-webkit-image-controls-button {
     position: absolute;
-    right: 18px; /* FIXME: Why is right: 0px off the right edge of the parent? */
 
     -webkit-appearance: image-controls-button;
 

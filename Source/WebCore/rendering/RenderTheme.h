@@ -250,6 +250,7 @@ public:
 
 #if ENABLE(SERVICE_CONTROLS)
     virtual IntSize imageControlsButtonSize(const RenderObject&) const { return IntSize(); }
+    virtual IntSize imageControlsButtonPositionOffset() const { return IntSize(); }
 #endif
 
 protected:

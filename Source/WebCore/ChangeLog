@@ -1,3 +1,24 @@
+2014-05-13  Brady Eidson  <beidson@apple.com>
+
+        Update positioning/drawing of the image controls button.
+        <rdar://problem/16885077> and https://bugs.webkit.org/show_bug.cgi?id=132883
+
+        Reviewed by Tim Horton.
+
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::ImageControlsButtonElementMac::maybeCreate): Add inline style for top/right
+          positioning based on the metrics from the render theme.
+
+        * html/shadow/mac/imageControlsMac.css:
+        (.x-webkit-image-controls-button): Can’t hard code any positioning.
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::imageControlsButtonPositionOffset):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::servicesRolloverButtonCell):
+        (WebCore::RenderThemeMac::imageControlsButtonPositionOffset):
+
 2014-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] background-attachment:fixed behaves very poorly
