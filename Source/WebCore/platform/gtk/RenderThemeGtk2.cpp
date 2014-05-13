@@ -422,7 +422,7 @@ bool RenderThemeGtk::paintMenuList(const RenderObject& object, const PaintInfo& 
     return false;
 }
 
-bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const PaintInfo& info, const FloatRect& rect)
 {
     GtkWidget* widget = gtkEntry();
 
@@ -432,8 +432,8 @@ bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const Pain
     gtk_widget_set_direction(widget, gtkTextDirection(renderObject.style().direction()));
     setWidgetHasFocus(widget, isFocused(renderObject));
 
-    WidgetRenderingContext widgetContext(info.context, rect);
-    IntRect textFieldRect(IntPoint(), rect.size());
+    WidgetRenderingContext widgetContext(info.context, IntRect(rect));
+    IntRect textFieldRect(IntPoint(), IntSize(rect.size()));
 
     // The entry background is only painted over the interior part of the GTK+ entry, not
     // the entire frame. This happens in the Mozilla theme drawing code as well.
@@ -699,25 +699,25 @@ Color RenderThemeGtk::platformInactiveSelectionForegroundColor() const
     return gtk_widget_get_style(widget)->text[GTK_STATE_ACTIVE];
 }
 
-Color RenderThemeGtk::activeListBoxSelectionBackgroundColor() const
+Color RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor() const
 {
     GtkWidget* widget = gtkTreeView();
     return gtk_widget_get_style(widget)->base[GTK_STATE_SELECTED];
 }
 
-Color RenderThemeGtk::inactiveListBoxSelectionBackgroundColor() const
+Color RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor() const
 {
     GtkWidget* widget = gtkTreeView();
     return gtk_widget_get_style(widget)->base[GTK_STATE_ACTIVE];
 }
 
-Color RenderThemeGtk::activeListBoxSelectionForegroundColor() const
+Color RenderThemeGtk::platformActiveListBoxSelectionForegroundColor() const
 {
     GtkWidget* widget = gtkTreeView();
     return gtk_widget_get_style(widget)->text[GTK_STATE_SELECTED];
 }
 
-Color RenderThemeGtk::inactiveListBoxSelectionForegroundColor() const
+Color RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor() const
 {
     GtkWidget* widget = gtkTreeView();
     return gtk_widget_get_style(widget)->text[GTK_STATE_ACTIVE];

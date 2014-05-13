@@ -246,7 +246,7 @@ bool RenderThemeGtk::paintMenuListButtonDecorations(const RenderObject& object, 
     return paintMenuList(object, info, IntRect(rect));
 }
 
-bool RenderThemeGtk::paintTextArea(const RenderObject& o, const PaintInfo& i, const IntRect& r)
+bool RenderThemeGtk::paintTextArea(const RenderObject& o, const PaintInfo& i, const FloatRect& r)
 {
     return paintTextField(o, i, r);
 }

@@ -595,7 +595,7 @@ bool RenderThemeGtk::paintMenuList(const RenderObject& renderObject, const Paint
     return false;
 }
 
-bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     GtkStyleContext* context = getStyleContext(GTK_TYPE_ENTRY);
     gtk_style_context_save(context);
@@ -961,28 +961,28 @@ Color RenderThemeGtk::platformInactiveSelectionForegroundColor() const
     return gdkRGBAColor;
 }
 
-Color RenderThemeGtk::activeListBoxSelectionBackgroundColor() const
+Color RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor() const
 {
     GdkRGBA gdkRGBAColor;
     gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
-Color RenderThemeGtk::inactiveListBoxSelectionBackgroundColor() const
+Color RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor() const
 {
     GdkRGBA gdkRGBAColor;
     gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
-Color RenderThemeGtk::activeListBoxSelectionForegroundColor() const
+Color RenderThemeGtk::platformActiveListBoxSelectionForegroundColor() const
 {
     GdkRGBA gdkRGBAColor;
     gtk_style_context_get_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
-Color RenderThemeGtk::inactiveListBoxSelectionForegroundColor() const
+Color RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor() const
 {
     GdkRGBA gdkRGBAColor;
     gtk_style_context_get_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);

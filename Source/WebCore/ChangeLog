@@ -1,3 +1,44 @@
+2014-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r167771): [GTK] Text fields and areas are rendered unthemed
+        https://bugs.webkit.org/show_bug.cgi?id=132864
+
+        Reviewed by Philippe Normand.
+
+        This is because the virtual methods changed the API in the parent,
+        and since we don't have the methods marked as override we didn't
+        noticed it. After using override keyword for all virtual methods
+        in the derived class another problem showed up, the ActiveListBox
+        selection methods were incorrectly named.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintTextArea): Update to API changes in the
+        parent class.
+        * platform/gtk/RenderThemeGtk.h: Mark all virtual methods as
+        override and the class as final.
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::paintTextField): Update to API changes
+        in the parent class.
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::activeListBoxSelectionBackgroundColor): Deleted.
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionBackgroundColor): Deleted.
+        (WebCore::RenderThemeGtk::activeListBoxSelectionForegroundColor): Deleted.
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionForegroundColor): Deleted.
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::paintTextField): Update to API changes
+        in the parent class.
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::activeListBoxSelectionBackgroundColor): Deleted.
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionBackgroundColor): Deleted.
+        (WebCore::RenderThemeGtk::activeListBoxSelectionForegroundColor): Deleted.
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionForegroundColor): Deleted.
+
 2014-05-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Move toGstClockTime to utilities
