@@ -1,3 +1,10 @@
+2014-05-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix since r168625.
+
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformDefaultLocalStorageDirectory): Remove const keyword.
+
 2014-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fuzzy tiles on some sites on loading

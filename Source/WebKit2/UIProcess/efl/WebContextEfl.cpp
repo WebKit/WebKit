@@ -110,7 +110,7 @@ String WebContext::platformDefaultIconDatabasePath() const
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/IconDatabase/" + WebCore::IconDatabase::defaultDatabaseFilename();
 }
 
-String WebContext::platformDefaultLocalStorageDirectory() const
+String WebContext::platformDefaultLocalStorageDirectory()
 {
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/LocalStorage";
 }
