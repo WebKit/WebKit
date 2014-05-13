@@ -455,7 +455,7 @@ void RenderLayerBacking::updateCompositedBounds()
 
         LayoutRect clippingBounds;
         if (renderer().style().position() == FixedPosition && renderer().container() == &view)
-            clippingBounds = view.frameView().viewportConstrainedExtentRect();
+            clippingBounds = view.frameView().viewportConstrainedVisibleContentRect();
         else
             clippingBounds = view.unscaledDocumentRect();
 
