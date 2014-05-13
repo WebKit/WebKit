@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@
 #define IconDatabase_h
 
 #include "IconDatabaseBase.h"
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(ICONDATABASE)
 #include "SQLiteDatabase.h"
@@ -48,7 +49,9 @@ public:
     static void delayDatabaseCleanup() { }
     static void allowDatabaseCleanup() { }
     static void checkIntegrityBeforeOpening() { }
-    static String defaultDatabaseFilename() { return "WebpageIcons.db"; }
+
+    // FIXME: Is it really helpful to return a filename here rather than just the null string?
+    static String defaultDatabaseFilename() { return ASCIILiteral("WebpageIcons.db"); }
 };
 
 #else

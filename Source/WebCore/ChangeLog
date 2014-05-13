@@ -1,3 +1,9 @@
+2014-05-13  Darin Adler  <darin@apple.com>
+
+        Try to fix the !ENABLE(ICONDATABASE) build
+
+        * loader/icon/IconDatabase.h: Include WTFString.h.
+
 2014-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r167771): [GTK] Text fields and areas are rendered unthemed
