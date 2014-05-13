@@ -36,6 +36,10 @@
 #import <stdlib.h>
 #import <sysexits.h>
 
+#if PLATFORM(IOS)
+#import <WebCore/FloatingPointEnvironment.h>
+#endif
+
 // We have to #undef __APPLE_API_PRIVATE to prevent sandbox.h from looking for a header file that does not exist (<rdar://problem/9679211>). 
 #undef __APPLE_API_PRIVATE
 #import <sandbox.h>
@@ -88,6 +92,11 @@ void ChildProcess::platformInitialize()
 {
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     initializeTimerCoalescingPolicy();
+#endif
+#if PLATFORM(IOS)
+    FloatingPointEnvironment& floatingPointEnvironment = FloatingPointEnvironment::shared();
+    floatingPointEnvironment.enableDenormalSupport();
+    floatingPointEnvironment.saveMainThreadEnvironment();
 #endif
 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];

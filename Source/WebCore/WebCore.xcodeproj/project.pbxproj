@@ -6545,6 +6545,8 @@
 		FE4AADEE16D2C37400026FFC /* AbstractSQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4AADEC16D2C37400026FFC /* AbstractSQLStatement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE4AADEF16D2C37400026FFC /* AbstractSQLStatementBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4AADED16D2C37400026FFC /* AbstractSQLStatementBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6938B61045D67E008EABB6 /* EventHandlerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */; };
+		FE699871192087E7006936BD /* FloatingPointEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE69986F192087E7006936BD /* FloatingPointEnvironment.cpp */; };
+		FE699872192087E7006936BD /* FloatingPointEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = FE699870192087E7006936BD /* FloatingPointEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6F6AAF169E057500FC30A2 /* DatabaseBackendContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6F6AAD169E057500FC30A2 /* DatabaseBackendContext.cpp */; };
 		FE6F6AB0169E057500FC30A2 /* DatabaseBackendContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6F6AAE169E057500FC30A2 /* DatabaseBackendContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */; };
@@ -14025,6 +14027,8 @@
 		FE4AADEC16D2C37400026FFC /* AbstractSQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSQLStatement.h; sourceTree = "<group>"; };
 		FE4AADED16D2C37400026FFC /* AbstractSQLStatementBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSQLStatementBackend.h; sourceTree = "<group>"; };
 		FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventHandlerIOS.mm; sourceTree = "<group>"; };
+		FE69986F192087E7006936BD /* FloatingPointEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FloatingPointEnvironment.cpp; path = ios/wak/FloatingPointEnvironment.cpp; sourceTree = "<group>"; };
+		FE699870192087E7006936BD /* FloatingPointEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FloatingPointEnvironment.h; path = ios/wak/FloatingPointEnvironment.h; sourceTree = "<group>"; };
 		FE6F6AAD169E057500FC30A2 /* DatabaseBackendContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseBackendContext.cpp; sourceTree = "<group>"; };
 		FE6F6AAE169E057500FC30A2 /* DatabaseBackendContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseBackendContext.h; sourceTree = "<group>"; };
 		FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCoordinates.cpp; sourceTree = "<group>"; };
@@ -18142,6 +18146,8 @@
 		A148328B187F506800DA63A6 /* wak */ = {
 			isa = PBXGroup;
 			children = (
+				FE69986F192087E7006936BD /* FloatingPointEnvironment.cpp */,
+				FE699870192087E7006936BD /* FloatingPointEnvironment.h */,
 				A148328C187F508700DA63A6 /* WAKAppKitStubs.h */,
 				A148328D187F508700DA63A6 /* WAKAppKitStubs.m */,
 				A148328E187F508700DA63A6 /* WAKClipView.h */,
@@ -22965,6 +22971,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE699872192087E7006936BD /* FloatingPointEnvironment.h in Headers */,
 				E1D31CDD19196020001005A3 /* BlobDataFileReference.h in Headers */,
 				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
 				CD2F4A2418D89F700063746D /* AudioHardwareListener.h in Headers */,
@@ -25073,7 +25080,7 @@
 				A9C6E5A60D746458006442E9 /* Navigator.h in Headers */,
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
 				9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */,
-				078E091A17D14D1C00420AA1 /* NavigatorMediaStream.h in Headers */,
+				078E091A17D14D1C00420AA1 /* NavigatorUserMedia.h in Headers */,
 				078E091B17D14D1C00420AA1 /* NavigatorUserMediaError.h in Headers */,
 				078E091C17D14D1C00420AA1 /* NavigatorUserMediaErrorCallback.h in Headers */,
 				078E091D17D14D1C00420AA1 /* NavigatorUserMediaSuccessCallback.h in Headers */,
@@ -27539,6 +27546,7 @@
 				A8EA7CAC0A192B9C00A8EF5F /* HTMLMarqueeElement.cpp in Sources */,
 				0F43C85F189E15A600019AE2 /* JSPerformanceTiming.cpp in Sources */,
 				E44613A40CD6331000FADA75 /* HTMLMediaElement.cpp in Sources */,
+				FE699871192087E7006936BD /* FloatingPointEnvironment.cpp in Sources */,
 				0779BF0D18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp in Sources */,
 				07FE99DC18807A7D00256648 /* HTMLMediaSession.cpp in Sources */,
 				A8EA79F80A1916DF00A8EF5F /* HTMLMenuElement.cpp in Sources */,

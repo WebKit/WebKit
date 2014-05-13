@@ -29,7 +29,6 @@
 #if TARGET_OS_IPHONE
 
 #import <CoreGraphics/CoreGraphics.h>
-#import <fenv.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -40,8 +39,6 @@ typedef struct {
 } WebThreadContext;
     
 extern volatile bool webThreadShouldYield;
-
-extern fenv_t mainThreadFEnv;
 
 #ifdef __OBJC__
 @class NSRunLoop;

@@ -1,3 +1,17 @@
+2014-05-12  Mark Lam  <mark.lam@apple.com>
+
+        WebKit2 on iOS needs to capture the main thread's floating point environment.
+        <https://webkit.org/b/132755>
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::platformInitialize):
+        - Call FloatingPointEnv::enableNeededFloatingPointModes() to initialize
+          the ARMv7 FP env to support denormalized numbers.
+        - Call FloatingPointEnv::saveMainThreadEnvironment() to capture the main thread
+          fp env.
+
 2014-05-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Fix ewk_view_navigation test in EWK2ViewTest 

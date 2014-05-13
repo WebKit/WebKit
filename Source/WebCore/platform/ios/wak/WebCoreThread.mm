@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "FloatingPointEnvironment.h"
 #import "JSDOMWindowBase.h"
 #import "ThreadGlobalData.h"
 #import "RuntimeApplicationChecksIOS.h"
@@ -101,7 +102,6 @@ static pthread_t webThread;
 static BOOL isWebThreadLocked;
 static BOOL webThreadStarted;
 static unsigned webThreadLockCount;
-fenv_t mainThreadFEnv;
 
 static NSAutoreleasePoolMark savedAutoreleasePoolMark;
 static BOOL isNestedWebThreadRunLoop;
@@ -643,8 +643,7 @@ NO_RETURN
 #endif
 void *RunWebThread(void *arg)
 {
-    // Propagate the mainThread's fenv to the web thread.
-    fesetenv(&mainThreadFEnv);
+    FloatingPointEnvironment::shared().propagateMainThreadEnvironment();
 
     UNUSED_PARAM(arg);
     // WTF::initializeMainThread() needs to be called before JSC::initializeThreading() since the
@@ -759,7 +758,7 @@ static void StartWebThread()
     ASSERT_WITH_MESSAGE(result == 0, "startup lock failed with code:%d", result);
 
     // Propagate the mainThread's fenv to workers & the web thread.
-    fegetenv(&mainThreadFEnv);
+    FloatingPointEnvironment::shared().saveMainThreadEnvironment();
 
     pthread_create(&webThread, &tattr, RunWebThread, NULL);
     pthread_attr_destroy(&tattr);

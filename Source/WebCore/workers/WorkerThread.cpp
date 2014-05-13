@@ -45,6 +45,7 @@
 #endif
 
 #if PLATFORM(IOS)
+#include "FloatingPointEnvironment.h"
 #include "WebCoreThread.h"
 #endif
 
@@ -153,7 +154,7 @@ void WorkerThread::workerThread()
 {
     // Propagate the mainThread's fenv to workers.
 #if PLATFORM(IOS)
-    fesetenv(&mainThreadFEnv);
+    FloatingPointEnvironment::shared().propagateMainThreadEnvironment();
 #endif
 
     {

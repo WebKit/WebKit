@@ -1,3 +1,44 @@
+2014-05-12  Mark Lam  <mark.lam@apple.com>
+
+        WebKit2 on iOS needs to capture the main thread's floating point environment.
+        <https://webkit.org/b/132755>
+
+        Reviewed by Geoffrey Garen.
+
+        For iOS, WorkerThread::workerThread() expects to be able to initialize the
+        worker thread's floating point environment to be the same as the one in the
+        main thread.  The FP env of the main thread is expected to have been captured
+        in the mainThreadFEnv global.  On WebKit2 for iOS, we neglected to initialize
+        mainThreadFEnv.
+
+        We now introduce a FloatingPointEnvironment class that will encapsulate the main
+        thread (aka "UIThread") fenv, and we'll call FloatingPointEnv::saveMainThreadEnvironment()
+        from ChildProcess::platformInitialize() to ensure that the FloatingPointEnvironment
+        singleton instance is initialized properly for WebKit2.
+
+        In the ChildProcess::platformInitialize(), we also need to initialize the ARMv7
+        FP env to support denormalized numbers.  We'll do this before calling
+        saveMainThreadEnvironment().
+
+        Tests: fast/workers/worker-floating-point.html
+               js/floating-point-denormalized.html
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/wak/FloatingPointEnvironment.cpp: Added.
+        (WebCore::FloatingPointEnvironment::env):
+        (WebCore::FloatingPointEnvironment::FloatingPointEnvironment):
+        (WebCore::FloatingPointEnvironment::enableDenormalSupport):
+        (WebCore::FloatingPointEnvironment::saveMainThreadEnvironment):
+        (WebCore::FloatingPointEnvironment::propagateMainThreadEnvironment):
+        * platform/ios/wak/FloatingPointEnvironment.h: Added.
+        * platform/ios/wak/WebCoreThread.h:
+        * platform/ios/wak/WebCoreThread.mm:
+        (RunWebThread):
+        (StartWebThread):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+
 2014-05-12  Dirk Schulze  <krit@webkit.org>
 
         SVG root element accepts background color but fails to repaint it
