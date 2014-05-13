@@ -382,6 +382,22 @@ static bool positionChangeIsMovementOnly(const LengthBox& a, const LengthBox& b,
     return true;
 }
 
+inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) const
+{
+    if (rareNonInheritedData.get() != other.rareNonInheritedData.get()
+        && !rareNonInheritedData->shadowDataEquivalent(*other.rareNonInheritedData.get()))
+        return true;
+
+    if (inherited_flags._text_decorations != other.inherited_flags._text_decorations
+        || visual->textDecoration != other.visual->textDecoration
+        || rareNonInheritedData->m_textDecorationStyle != other.rareNonInheritedData->m_textDecorationStyle
+        || rareNonInheritedData->m_textDecorationColor != other.rareNonInheritedData->m_textDecorationColor
+        || rareInheritedData->m_textDecorationSkip != other.rareInheritedData->m_textDecorationSkip)
+        return true;
+
+    return false;
+}
+
 bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
 {
     if (m_box->width() != other->m_box->width()
@@ -402,6 +418,10 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         return true;
 
     if (surround->padding != other->surround->padding)
+        return true;
+
+    // FIXME: We should add an optimized form of layout that just recomputes visual overflow.
+    if (changeAffectsVisualOverflow(*other))
         return true;
 
     if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
@@ -432,10 +452,6 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             || rareNonInheritedData->m_alignItems != other->rareNonInheritedData->m_alignItems
             || rareNonInheritedData->m_alignSelf != other->rareNonInheritedData->m_alignSelf
             || rareNonInheritedData->m_justifyContent != other->rareNonInheritedData->m_justifyContent)
-            return true;
-
-        // FIXME: We should add an optimized form of layout that just recomputes visual overflow.
-        if (!rareNonInheritedData->shadowDataEquivalent(*other->rareNonInheritedData.get()))
             return true;
 
         if (!rareNonInheritedData->reflectionDataEquivalent(*other->rareNonInheritedData.get()))
@@ -714,11 +730,6 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle* other, unsigned&) con
 bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle* other, unsigned&) const
 {
     if (inherited->color != other->inherited->color
-        || inherited_flags._text_decorations != other->inherited_flags._text_decorations
-        || visual->textDecoration != other->visual->textDecoration
-        || rareNonInheritedData->m_textDecorationStyle != other->rareNonInheritedData->m_textDecorationStyle
-        || rareNonInheritedData->m_textDecorationColor != other->rareNonInheritedData->m_textDecorationColor
-        || rareInheritedData->m_textDecorationSkip != other->rareInheritedData->m_textDecorationSkip
         || rareInheritedData->textFillColor != other->rareInheritedData->textFillColor
         || rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor
         || rareInheritedData->textEmphasisColor != other->rareInheritedData->textEmphasisColor

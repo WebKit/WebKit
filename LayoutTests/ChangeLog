@@ -1,3 +1,21 @@
+2014-05-13  Myles C. Maxfield  <litherum@gmail.com>
+
+        Text decorations do not contribute to visual overflow
+        https://bugs.webkit.org/show_bug.cgi?id=132773
+
+        Reviewed by Darin Adler.
+
+        This test makes sure that repaint rects are extended to include text decorations that may
+        lie outside of the text layout rects. It compares text with an underline to text that has
+        had underline applied to it in a timer.
+
+        * fast/css3-text/css3-text-decoration/repaint/resources/Litherum.svg: Added. This font has a
+        descent of 0 (so it will not intersect underlines)
+        * fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-expected.html: Added.
+        Apply the underline without any timeout
+        * fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html: Added.
+        Apply the underline with a timeout.
+
 2014-05-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         platform/mac/plugins/testplugin-onnew-onpaint.html failing after r168668
