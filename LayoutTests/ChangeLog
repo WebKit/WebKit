@@ -1,3 +1,15 @@
+2014-05-13  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSSION(r168528) Subpixel rendering: Selection rect is not positioned properly when SVG text is selected.
+        https://bugs.webkit.org/show_bug.cgi?id=132868
+
+        Reviewed by Dirk Schulze.
+
+        Scale the selection rect. r168528 missed applying this final transform on the selection/painting rect.
+
+        * svg/text/hidpi-text-selection-rect-position-expected.html: Added.
+        * svg/text/hidpi-text-selection-rect-position.html: Added.
+
 2014-05-13  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions] Add basic tests for inset flows into regions

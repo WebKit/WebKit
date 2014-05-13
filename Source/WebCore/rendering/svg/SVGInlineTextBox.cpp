@@ -133,7 +133,7 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     if (scalingFactor == 1)
         return snappedSelectionRect;
 
-    selectionRect.scale(1 / scalingFactor);
+    snappedSelectionRect.scale(1 / scalingFactor);
     return snappedSelectionRect;
 }
 
