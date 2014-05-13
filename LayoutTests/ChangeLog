@@ -1,3 +1,13 @@
+2014-05-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        platform/mac/plugins/testplugin-onnew-onpaint.html failing after r168668
+        <https://bugs.webkit.org/show_bug.cgi?id=132877>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/mac/plugins/testplugin-onnew-onpaint.html:
+        Make the test wait until plug-ins have loaded before finishing.
+
 2014-05-13  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Unreviewed GTK gardening
