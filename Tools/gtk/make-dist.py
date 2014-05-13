@@ -120,9 +120,9 @@ class Manifest(object):
         self.build_root = os.path.abspath(build_root)
 
         # Normalize the tarball root so that it starts and ends with a slash.
-        if self.tarball_root.endswith('/'):
+        if not self.tarball_root.endswith('/'):
             self.tarball_root = self.tarball_root + '/'
-        if self.tarball_root.startswith('/'):
+        if not self.tarball_root.startswith('/'):
             self.tarball_root = '/' + self.tarball_root
 
         with open(manifest_filename, 'r') as file:
