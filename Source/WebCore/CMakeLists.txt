@@ -195,6 +195,7 @@ set(WebCore_IDL_FILES
     Modules/mediastream/AllVideoCapabilities.idl
     Modules/mediastream/AudioStreamTrack.idl
     Modules/mediastream/CapabilityRange.idl
+    Modules/mediastream/DOMURLMediaStream.idl
     Modules/mediastream/HTMLMediaElementMediaStream.idl
     Modules/mediastream/MediaSourceStates.idl
     Modules/mediastream/MediaStream.idl
@@ -833,6 +834,7 @@ set(WebCore_SOURCES
 
     Modules/mediastream/AudioStreamTrack.cpp
     Modules/mediastream/CapabilityRange.cpp
+    Modules/mediastream/DOMURLMediaStream.cpp
     Modules/mediastream/HTMLMediaElementMediaStream.cpp
     Modules/mediastream/MediaConstraintsImpl.cpp
     Modules/mediastream/MediaSourceStates.cpp
