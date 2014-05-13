@@ -1,5 +1,18 @@
 2014-05-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168550
+
+    2014-05-09  Anders Carlsson  <andersca@apple.com>
+
+            Production build fix.
+
+            Reviewed by Dan Bernstein.
+
+            * Configurations/BaseTarget.xcconfig:
+            Add SDKROOT in front of UMBRELLA_FRAMEWORKS_DIR for OS X Production builds.
+
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168569
 
     2014-05-09  Anders Carlsson  <andersca@apple.com>
