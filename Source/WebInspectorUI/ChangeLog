@@ -1,3 +1,19 @@
+2014-05-13  Radu Stavila  <stavila@adobe.com>
+
+        Web Inspector: Restore regionLayoutUpdated event in iOS7 inspector and remove regionOversetChanged
+        https://bugs.webkit.org/show_bug.cgi?id=132731
+
+        Reviewed by Joseph Pecoraro.
+
+        Added the regionLayoutUpdated event back into the inspector for compatibility with iOS 7
+        and removed regionOversetChanged from the iOS7 inspector as iOS 7 does not implement that event.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        * UserInterface/Protocol/CSSObserver.js:
+        (WebInspector.CSSObserver.prototype.regionLayoutUpdated):
+        * UserInterface/Protocol/Legacy/7.0/InspectorWebBackendCommands.js:
+        * Versions/Inspector-iOS-7.0.json:
+
 2014-05-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Correct Cygwin Path Confusion in WebInspectorUI Build
