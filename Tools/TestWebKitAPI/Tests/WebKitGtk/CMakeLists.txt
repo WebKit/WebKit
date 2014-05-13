@@ -10,8 +10,9 @@ include_directories(
     ${DERIVED_SOURCES_DIR}
     ${DERIVED_SOURCES_WEBKITGTK_DIR}
     ${GLIB_INCLUDE_DIRS}
-    ${GTK3_INCLUDE_DIRS}
+    ${GTK_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
+    ${X11_INCLUDE_DIR}
 )
 
 macro(ADD_WK1_TEST test_name)
@@ -20,8 +21,9 @@ macro(ADD_WK1_TEST test_name)
         JavaScriptCore
         WebKit
         ${GLIB_LIBRARIES}
-        ${GTK3_LIBRARIES}
+        ${GTK_LIBRARIES}
         ${LIBSOUP_LIBRARIES}
+        ${X11_X11_LIB}
     )
     set_target_properties(${test_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WebKitGtk
