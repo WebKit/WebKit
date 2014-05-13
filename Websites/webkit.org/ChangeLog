@@ -1,3 +1,20 @@
+2014-05-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Add some illustrations about how JSC works.
+
+        * blog-files/ftl-jit: Added.
+        * blog-files/ftl-jit/dfg_pipeline.png: Added.
+        * blog-files/ftl-jit/four_tier_performance.png: Added.
+        * blog-files/ftl-jit/ftl_asm_bench_performance.png: Added.
+        * blog-files/ftl-jit/ftl_pipeline.png: Added.
+        * blog-files/ftl-jit/ftl_timeline.png: Added.
+        * blog-files/ftl-jit/object_model.png: Added.
+        * blog-files/ftl-jit/polymorphic_inlining_performance.png: Added.
+        * blog-files/ftl-jit/polyvariance.png: Added.
+        * blog-files/ftl-jit/polyvariant_devirtualization_performance.png: Added.
+        * blog-files/ftl-jit/three_tier_performance.png: Added.
+        * blog-files/ftl-jit/three_tiers.png: Added.
+
 2014-05-12  Benjamin Poulain  <benjamin@webkit.org>
 
         Add potential illustrations for a potential future blog post about the viewport meta tag
