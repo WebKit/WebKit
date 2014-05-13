@@ -61,6 +61,9 @@
 
 namespace WebCore {
 
+const int maxActiveContexts = 16;
+int GraphicsContext3D::numActiveContexts = 0;
+
 // FIXME: This class is currently empty on Mac, but will get populated as 
 // the restructuring in https://bugs.webkit.org/show_bug.cgi?id=66903 is done
 class GraphicsContext3DPrivate {
@@ -109,9 +112,19 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
     if (renderStyle == RenderDirectlyToHostWindow)
-        return 0;
+        return nullptr;
+
+    if (numActiveContexts >= maxActiveContexts)
+        return nullptr;
+
     RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(attrs, hostWindow, renderStyle));
-    return context->m_contextObj ? context.release() : 0;
+
+    if (!context->m_contextObj)
+        return nullptr;
+
+    numActiveContexts++;
+
+    return context.release();
 }
 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
@@ -319,6 +332,7 @@ GraphicsContext3D::~GraphicsContext3D()
         CGLSetCurrentContext(0);
         CGLDestroyContext(m_contextObj);
 #endif
+        numActiveContexts--;
     }
 }
 

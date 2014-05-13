@@ -1,3 +1,14 @@
+2014-05-12  Roger Fong  <roger_fong@apple.com>
+
+        Limit number of active graphics contexts per web process.
+        https://bugs.webkit.org/show_bug.cgi?id=132833.
+        <rdar://problem/16888459>
+
+        Reviewed by Dean Jackson.
+
+        * webgl/many-contexts-expected.txt: Added.
+        * webgl/many-contexts.html: Added.
+
 2014-05-12  Dirk Schulze  <krit@webkit.org>
 
         <svg> with opacity and compositing double-applies its opacity

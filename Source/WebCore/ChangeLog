@@ -1,3 +1,18 @@
+2014-05-12  Roger Fong  <roger_fong@apple.com>
+
+        Limit number of active graphics contexts per web process.
+        https://bugs.webkit.org/show_bug.cgi?id=132833.
+        <rdar://problem/16888459>
+
+        Reviewed by Dean Jackson.
+
+        Test: webgl/many-contexts.html
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.mm: Limit number of active contexts to 16.
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+
 2014-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix fix.
