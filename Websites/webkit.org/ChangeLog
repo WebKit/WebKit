@@ -1,5 +1,19 @@
 2014-05-13  Filip Pizlo  <fpizlo@apple.com>
 
+        Updated the files to have the right width.
+
+        * blog-files/ftl-jit/dfg_pipeline.png:
+        * blog-files/ftl-jit/four_tier_performance.png:
+        * blog-files/ftl-jit/ftl_asm_bench_performance.png:
+        * blog-files/ftl-jit/ftl_pipeline.png:
+        * blog-files/ftl-jit/ftl_timeline.png:
+        * blog-files/ftl-jit/polymorphic_inlining_performance.png:
+        * blog-files/ftl-jit/polyvariance.png:
+        * blog-files/ftl-jit/polyvariant_devirtualization_performance.png:
+        * blog-files/ftl-jit/three_tier_performance.png:
+
+2014-05-13  Filip Pizlo  <fpizlo@apple.com>
+
         Add some illustrations about how JSC works.
 
         * blog-files/ftl-jit: Added.
