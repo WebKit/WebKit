@@ -45,7 +45,10 @@ VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(AVAssetTrack* track)
 
 void VideoTrackPrivateAVFObjC::resetPropertiesFromTrack()
 {
-    setSelected(m_impl->enabled());
+    // Don't call this->setSelected() because it also sets the enabled state of the
+    // AVPlayerItemTrack
+    VideoTrackPrivateAVF::setSelected(m_impl->enabled());
+
     setKind(m_impl->videoKind());
     setId(m_impl->id());
     setLabel(m_impl->label());
