@@ -495,15 +495,13 @@ static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& q
 
 - (void)_displayFormNodeInputView
 {
-    if (UICurrentUserInterfaceIdiomIsPad())
-        [self _scrollToRect:_assistedNodeInformation.elementRect withOrigin:_page->editorState().caretRectAtStart.location() minimumScrollDistance:0];
-    else
-        [self _zoomToRect:_assistedNodeInformation.elementRect
-               withOrigin:_page->editorState().caretRectAtStart.location()
-            fitEntireRect:YES minimumScale:_assistedNodeInformation.minimumScaleFactor
-             maximumScale:_assistedNodeInformation.maximumScaleFactor
-    minimumScrollDistance:0];
-
+    [self _zoomToFocusRect:_assistedNodeInformation.elementRect
+             selectionRect:_assistedNodeInformation.selectionRect
+                  fontSize:_assistedNodeInformation.nodeFontSize
+              minimumScale:_assistedNodeInformation.minimumScaleFactor
+              maximumScale:_assistedNodeInformation.maximumScaleFactor
+              allowScaling:(_assistedNodeInformation.allowsUserScaling && !UICurrentUserInterfaceIdiomIsPad())
+               forceScroll:[self requiresAccessoryView]];
     [self _updateAccessory];
 }
 
@@ -2124,6 +2122,11 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 - (void)_startAssistingNode:(const AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting userObject:(NSObject <NSSecureCoding> *)userObject
 {
     if (!userIsInteracting && !_textSelectionAssistant)
+        return;
+
+    // FIXME: We should remove this check when we manage to send StartAssistingNode from the WebProcess
+    // only when it is truly time to show the keyboard.
+    if (_assistedNodeInformation.elementType == information.elementType && _assistedNodeInformation.elementRect == information.elementRect)
         return;
 
     _isEditable = YES;

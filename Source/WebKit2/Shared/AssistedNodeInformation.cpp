@@ -64,8 +64,10 @@ bool WKOptionItem::decode(IPC::ArgumentDecoder& decoder, WKOptionItem& result)
 void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << elementRect;
+    encoder << selectionRect;
     encoder << minimumScaleFactor;
     encoder << maximumScaleFactor;
+    encoder << nodeFontSize;
     encoder << hasNextNode;
     encoder << hasPreviousNode;
     encoder << isAutocorrect;
@@ -76,6 +78,7 @@ void AssistedNodeInformation::encode(IPC::ArgumentEncoder& encoder) const
     encoder << selectedIndex;
     encoder << isMultiSelect;
     encoder << isReadOnly;
+    encoder << allowsUserScaling;
     encoder << value;
     encoder << valueAsNumber;
     encoder << title;
@@ -86,10 +89,16 @@ bool AssistedNodeInformation::decode(IPC::ArgumentDecoder& decoder, AssistedNode
     if (!decoder.decode(result.elementRect))
         return false;
 
+    if (!decoder.decode(result.selectionRect))
+        return false;
+
     if (!decoder.decode(result.minimumScaleFactor))
         return false;
 
     if (!decoder.decode(result.maximumScaleFactor))
+        return false;
+
+    if (!decoder.decode(result.nodeFontSize))
         return false;
 
     if (!decoder.decode(result.hasNextNode))
@@ -120,6 +129,9 @@ bool AssistedNodeInformation::decode(IPC::ArgumentDecoder& decoder, AssistedNode
         return false;
 
     if (!decoder.decode(result.isReadOnly))
+        return false;
+
+    if (!decoder.decode(result.allowsUserScaling))
         return false;
 
     if (!decoder.decode(result.value))

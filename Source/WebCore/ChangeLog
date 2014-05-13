@@ -1,3 +1,18 @@
+2014-05-13  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (WebKit2): Zooming to text field leaves it partially hidden by the form assistant.
+        https://bugs.webkit.org/show_bug.cgi?id=132879
+        <rdar://problem/16318049>
+
+        Reviewed by Benjamin Poulain.
+
+        Adding some exports. The fix to setScrollPosition is to avoid clamping the scroll
+        position when using delegate scrolling.
+
+        * WebCore.exp.in:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollPosition):
+
 2014-05-13  Brady Eidson  <beidson@apple.com>
 
         Followup to: Update positioning/drawing of the image controls button.
