@@ -1240,7 +1240,7 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badT
     
     Jump notNaN = branchDouble(DoubleEqual, fpRegT0, fpRegT0);
     static const double NaN = PNaN;
-    loadDouble(&NaN, fpRegT0);
+    loadDouble(TrustedImmPtr(&NaN), fpRegT0);
     notNaN.link(this);
     
 #if USE(JSVALUE64)

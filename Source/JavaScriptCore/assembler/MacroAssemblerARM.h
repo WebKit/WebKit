@@ -1121,9 +1121,9 @@ public:
         m_assembler.baseIndexTransferFloat(ARMAssembler::LoadDouble, dest, address.base, address.index, static_cast<int>(address.scale), address.offset);
     }
 
-    void loadDouble(const void* address, FPRegisterID dest)
+    void loadDouble(TrustedImmPtr address, FPRegisterID dest)
     {
-        move(TrustedImm32(reinterpret_cast<ARMWord>(address)), ARMRegisters::S0);
+        move(TrustedImm32(reinterpret_cast<ARMWord>(address.m_value)), ARMRegisters::S0);
         m_assembler.doubleDtrUp(ARMAssembler::LoadDouble, dest, ARMRegisters::S0, 0);
     }
 
@@ -1142,9 +1142,9 @@ public:
         m_assembler.baseIndexTransferFloat(ARMAssembler::StoreDouble, src, address.base, address.index, static_cast<int>(address.scale), address.offset);
     }
 
-    void storeDouble(FPRegisterID src, const void* address)
+    void storeDouble(FPRegisterID src, TrustedImmPtr address)
     {
-        move(TrustedImm32(reinterpret_cast<ARMWord>(address)), ARMRegisters::S0);
+        move(TrustedImm32(reinterpret_cast<ARMWord>(address.m_value)), ARMRegisters::S0);
         m_assembler.dataTransferFloat(ARMAssembler::StoreDouble, src, ARMRegisters::S0, 0);
     }
 
@@ -1172,7 +1172,7 @@ public:
 
     void addDouble(AbsoluteAddress address, FPRegisterID dest)
     {
-        loadDouble(address.m_ptr, ARMRegisters::SD0);
+        loadDouble(TrustedImmPtr(address.m_ptr), ARMRegisters::SD0);
         addDouble(ARMRegisters::SD0, dest);
     }
 

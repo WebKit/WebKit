@@ -875,9 +875,9 @@ public:
             m_assembler.vmov(dest, src);
     }
 
-    void loadDouble(const void* address, FPRegisterID dest)
+    void loadDouble(TrustedImmPtr address, FPRegisterID dest)
     {
-        move(TrustedImmPtr(address), addressTempRegister);
+        move(address, addressTempRegister);
         m_assembler.vldr(dest, addressTempRegister, 0);
     }
 
@@ -911,9 +911,9 @@ public:
         m_assembler.fsts(ARMRegisters::asSingle(src), base, offset);
     }
 
-    void storeDouble(FPRegisterID src, const void* address)
+    void storeDouble(FPRegisterID src, TrustedImmPtr address)
     {
-        move(TrustedImmPtr(address), addressTempRegister);
+        move(address, addressTempRegister);
         storeDouble(src, addressTempRegister);
     }
 
@@ -951,7 +951,7 @@ public:
 
     void addDouble(AbsoluteAddress address, FPRegisterID dest)
     {
-        loadDouble(address.m_ptr, fpTempRegister);
+        loadDouble(TrustedImmPtr(address.m_ptr), fpTempRegister);
         m_assembler.vadd(dest, dest, fpTempRegister);
     }
 

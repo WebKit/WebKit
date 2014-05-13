@@ -1,3 +1,53 @@
+2014-05-13  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] Enum type with value zero is compatible with void*, potential cause of crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=132772
+
+        Reviewed by Geoffrey Garen.
+
+        Using the MSVC compiler, an instance of an enum type with value zero, is compatible with void* (see bug 132683 for a code example).
+        This has caused crashes on Windows on two occasions (bug 132683, and bug 121001).
+        This patch tries to prevent these type of crashes by using a type with explicit constructors instead of void*.
+        The void* parameter in the loadDouble and storeDouble methods are replaced with TrustedImmPtr.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::loadDouble):
+        (JSC::MacroAssemblerARM::storeDouble):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::loadDouble):
+        (JSC::MacroAssemblerARM64::storeDouble):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::loadDouble):
+        (JSC::MacroAssemblerARMv7::storeDouble):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::loadDouble):
+        (JSC::MacroAssemblerMIPS::storeDouble):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::loadDouble):
+        (JSC::MacroAssemblerSH4::storeDouble):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::storeDouble):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::absDouble):
+        (JSC::MacroAssemblerX86Common::negateDouble):
+        (JSC::MacroAssemblerX86Common::loadDouble):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::compileClampDoubleToByte):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::purifyNaN):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitLoadDouble):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        * jit/ThunkGenerators.cpp:
+        (JSC::floorThunkGenerator):
+        (JSC::roundThunkGenerator):
+        (JSC::powThunkGenerator):
+
 2014-05-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168642.
