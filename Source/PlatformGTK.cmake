@@ -4,6 +4,7 @@ add_subdirectory(${WEBCORE_DIR}/platform/gtk/po)
 add_custom_target(gir ALL DEPENDS ${GObjectIntrospectionTargets})
 
 set(DocumentationDependencies
+    generate-gdom-symbols-file
     "${CMAKE_SOURCE_DIR}/Source/WebKit/gtk/docs/webkitenvironment.xml"
 )
 

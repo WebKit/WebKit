@@ -501,10 +501,8 @@ $(top_builddir)/DerivedSources/webkitdom/WebKitDOMDeprecated.symbols: $(WebCore)
 DerivedSources/webkitdom/WebKitDOM%.symbols: DerivedSources/webkitdom/WebKitDOM%.h
 	@true
 
-DerivedSources/webkitdom/webkitdom.symbols: $(gdom_symbol_files) $(WebCore)/bindings/gobject/webkitdom.symbols $(WebCore)/bindings/scripts/gobject-run-api-break-test
-	$(AM_V_GEN)cat $(gdom_symbol_files) > gdom-gen-symbols \
-	&& $(PYTHON) $(WebCore)/bindings/scripts/gobject-run-api-break-test $(WebCore)/bindings/gobject/webkitdom.symbols gdom-gen-symbols \
-	&& mv gdom-gen-symbols $@
+DerivedSources/webkitdom/webkitdom.symbols: $(gdom_symbol_files) $(WebCore)/bindings/gobject/webkitdom.symbols $(WebCore)/bindings/scripts/gobject-run-api-break-test $(srcdir)/Tools/gtk/check-gdom-symbols
+	$(AM_V_GEN)$(srcdir)/Tools/gtk/check-gdom-symbols
 
 EXTRA_DIST += \
 	$(WebCore)/bindings/gobject/WebKitDOMCustom.symbols \
