@@ -1,3 +1,14 @@
+2014-05-12  Brady Eidson  <beidson@apple.com>
+
+        Followup to "Teach Editor to support more direct replacement of a Node"
+        <rdar://problem/16817952> and https://bugs.webkit.org/show_bug.cgi?id=132834
+
+        Pair programmed and pair reviewed by Brady Eidson and Darin Adler.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::maybeCopyNodeAttributesToFragment):
+        (WebCore::Editor::replaceNodeFromPasteboard):
+
 2014-05-12  Beth Dakin  <bdakin@apple.com>
 
         Content shadow layer needs to move in sync with the content layer
