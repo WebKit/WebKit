@@ -32,6 +32,7 @@
 #include "LayoutRepainter.h"
 #include "Page.h"
 #include "RenderIterator.h"
+#include "RenderLayer.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceContainer.h"
@@ -58,6 +59,7 @@ RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, PassRef<RenderStyle> style)
     , m_isLayoutSizeChanged(false)
     , m_needsBoundariesOrTransformUpdate(true)
     , m_hasSVGShadow(false)
+    , m_hasBoxDecorations(false)
 {
 }
 
@@ -203,6 +205,8 @@ void RenderSVGRoot::layout()
     }
 
     updateLayerTransform();
+    m_hasBoxDecorations = isRoot() ? hasBoxDecorationStyle() : hasBoxDecorations();
+    invalidateBackgroundObscurationStatus();
 
     repainter.repaintAfterLayout();
 
@@ -357,6 +361,13 @@ void RenderSVGRoot::computeFloatRectForRepaint(const RenderLayerModelObject* rep
     // Apply initial viewport clip
     if (shouldApplyViewportClip())
         repaintRect.intersect(pixelSnappedBorderBoxRect());
+
+    if (m_hasBoxDecorations || hasRenderOverflow()) {
+        // The selectionRect can project outside of the overflowRect, so take their union
+        // for repainting to avoid selection painting glitches.
+        LayoutRect decoratedRepaintRect = unionRect(localSelectionRect(false), visualOverflowRect());
+        repaintRect.unite(decoratedRepaintRect);
+    }
 
     LayoutRect rect = enclosingIntRect(repaintRect);
     RenderReplaced::computeRectForRepaint(repaintContainer, rect, fixed);

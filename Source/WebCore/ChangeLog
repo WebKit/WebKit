@@ -1,3 +1,29 @@
+2014-05-12  Dirk Schulze  <krit@webkit.org>
+
+        SVG root element accepts background color but fails to repaint it
+        https://bugs.webkit.org/show_bug.cgi?id=63153
+
+        Reviewed by Dean Jackson.
+
+        This is back ported from Blink. Don't know the exact commit though.
+        The patch checks if the SVGSVGElement is an outermost root element.
+        If it is, mark the whole element for repaint.
+
+        Test: svg/custom/svg-root-background.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateHasBoxDecorations):
+        (WebCore::RenderBoxModelObject::updateFromStyle):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::paintReplaced):
+        (WebCore::RenderSVGRoot::clippedOverflowRectForRepaint):
+            This is a simple optimization by taking the necessary parts
+            from RenderReplaced and SVGRenderSupport.
+        * rendering/svg/RenderSVGRoot.h:
+
 2014-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Fixed items are sometimes clipped after rubber-banding

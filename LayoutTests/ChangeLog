@@ -1,3 +1,17 @@
+2014-05-12  Dirk Schulze  <krit@webkit.org>
+
+        SVG root element accepts background color but fails to repaint it
+        https://bugs.webkit.org/show_bug.cgi?id=63153
+
+        Reviewed by Dean Jackson.
+
+        Check that background color updates if the size of an outermost
+        root SVG element changes.
+
+        * svg/custom/svg-root-background-expected.png: Added.
+        * svg/custom/svg-root-background-expected.txt: Added.
+        * svg/custom/svg-root-background.html: Added.
+
 2014-05-12  Jeffrey Pfau  <jpfau@apple.com>
 
         Unreviewed, fix mismatched test expectation.
