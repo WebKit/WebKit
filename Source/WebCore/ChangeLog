@@ -1,5 +1,12 @@
 2014-05-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the iOS build.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::contentShadowLayerForFrameView):
+
+2014-05-12  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Fuzzy tiles on some sites on loading
         https://bugs.webkit.org/show_bug.cgi?id=132847
         <rdar://problem/16816178>

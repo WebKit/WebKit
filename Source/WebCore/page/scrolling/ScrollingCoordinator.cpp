@@ -257,9 +257,13 @@ GraphicsLayer* ScrollingCoordinator::insetClipLayerForFrameView(FrameView* frame
 
 GraphicsLayer* ScrollingCoordinator::contentShadowLayerForFrameView(FrameView* frameView)
 {
+#if ENABLE(RUBBER_BANDING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
         return renderView->compositor().layerForContentShadow();
+#else
+    UNUSED_PARAM(frameView);
     return nullptr;
+#endif
 }
 
 GraphicsLayer* ScrollingCoordinator::rootContentLayerForFrameView(FrameView* frameView)
