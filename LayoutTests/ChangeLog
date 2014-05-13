@@ -1,3 +1,20 @@
+2014-05-13  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed GTK gardening
+
+        Rebaseline affected tests after svg root element background repaint changes
+        introduced in r168674.
+
+        * platform/gtk/http/tests/misc/slow-loading-image-in-pattern-expected.txt:
+        * platform/gtk/svg/custom/circle-move-invalidation-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-container-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-container-standalone-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-root-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-root-standalone-expected.txt:
+        * platform/gtk/svg/custom/pattern-userSpaceOnUse-userToBaseTransform-expected.txt:
+        * platform/gtk/svg/custom/svg-float-border-padding-expected.txt:
+        * platform/gtk/svg/text/small-fonts-in-html5-expected.txt:
+
 2014-05-13  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSSION(r168528) Subpixel rendering: Selection rect is not positioned properly when SVG text is selected.
