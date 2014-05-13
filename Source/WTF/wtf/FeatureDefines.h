@@ -327,6 +327,10 @@
 #endif
 #endif
 
+#if !defined(ENABLE_SUBPIXEL_LAYOUT)
+#define ENABLE_SUBPIXEL_LAYOUT 1
+#endif
+
 #if !defined(ENABLE_8BIT_TEXTRUN)
 #define ENABLE_8BIT_TEXTRUN 1
 #endif
