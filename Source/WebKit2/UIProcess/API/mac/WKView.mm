@@ -3040,19 +3040,6 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     return _data->_rootLayer.get();
 }
 
-static RefPtr<IOSurface> createIOSurfaceFromImage(CGImageRef image)
-{
-    size_t width = CGImageGetWidth(image);
-    size_t height = CGImageGetHeight(image);
-
-    RefPtr<IOSurface> surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
-    RetainPtr<CGContextRef> surfaceContext = surface->ensurePlatformContext();
-    CGContextDrawImage(surfaceContext.get(), CGRectMake(0, 0, width, height), image);
-    CGContextFlush(surfaceContext.get());
-
-    return surface;
-}
-
 - (ViewSnapshot)_takeViewSnapshot
 {
     NSWindow *window = self.window;
@@ -3091,8 +3078,12 @@ static RefPtr<IOSurface> createIOSurfaceFromImage(CGImageRef image)
 
     auto croppedSnapshotImage = adoptCF(CGImageCreateWithImageInRect(windowSnapshotImage.get(), NSRectToCGRect([window convertRectToBacking:croppedImageRect])));
 
-    snapshot.surface = createIOSurfaceFromImage(croppedSnapshotImage.get());
-    snapshot.imageSizeInBytes = snapshot.surface->totalBytes();
+    snapshot.image = croppedSnapshotImage.get();
+
+    IntSize imageSize(CGImageGetWidth(croppedSnapshotImage.get()), CGImageGetHeight(croppedSnapshotImage.get()));
+    snapshot.size = imageSize;
+    snapshot.imageSizeInBytes = imageSize.width() * imageSize.height() * 4;
+
     return snapshot;
 }
 

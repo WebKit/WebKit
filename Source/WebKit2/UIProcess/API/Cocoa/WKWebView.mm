@@ -511,6 +511,7 @@ static CGFloat contentZoomScale(WKWebView* webView)
     CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
     CARenderServerCaptureLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, (uint64_t)self.layer, snapshot.slotID, 0, 0, &transform);
 
+    snapshot.size = WebCore::expandedIntSize(WebCore::FloatSize(snapshotSize));
     snapshot.imageSizeInBytes = snapshotSize.width * snapshotSize.height * 4;
 
     return snapshot;
