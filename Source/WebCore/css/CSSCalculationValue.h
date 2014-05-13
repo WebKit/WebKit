@@ -46,6 +46,9 @@ enum CalculationCategory {
     CalcPercent,
     CalcPercentNumber,
     CalcPercentLength,
+    CalcAngle,
+    CalcTime,
+    CalcFrequency,
     CalcOther
 };
 

@@ -1,3 +1,17 @@
+2014-05-13  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        ASSERTION FAILED: leftCategory != CalcOther && rightCategory != CalcOther
+        in WebCore::CSSCalcBinaryOperation::createSimplified
+        https://bugs.webkit.org/show_bug.cgi?id=132870
+
+        Added test contains calc() expressions with angle, time and frequency values,
+        covering all the newly introduced unit types, each of which used to fail. 
+
+        Reviewed by Darin Adler.
+
+        * fast/css/calc-with-angle-time-frequency-expected.txt: Added.
+        * fast/css/calc-with-angle-time-frequency.html: Added.
+
 2014-05-13  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Rebaseline after r168575

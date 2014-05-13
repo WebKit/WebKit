@@ -1558,6 +1558,13 @@ bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags, Rel
 
     bool b = false;
     switch (m_parsedCalculation->category()) {
+    case CalcNumber:
+        b = (unitflags & FNumber);
+        if (!b && (unitflags & FInteger) && m_parsedCalculation->isInt())
+            b = true;
+        if (b && mustBeNonNegative && m_parsedCalculation->isNegative())
+            b = false;
+        break;
     case CalcLength:
         b = (unitflags & FLength);
         break;
@@ -1566,18 +1573,20 @@ bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags, Rel
         if (b && mustBeNonNegative && m_parsedCalculation->isNegative())
             b = false;
         break;
-    case CalcNumber:
-        b = (unitflags & FNumber);
-        if (!b && (unitflags & FInteger) && m_parsedCalculation->isInt())
-            b = true;
-        if (b && mustBeNonNegative && m_parsedCalculation->isNegative())
-            b = false;
-        break;
     case CalcPercentLength:
         b = (unitflags & FPercent) && (unitflags & FLength);
         break;
     case CalcPercentNumber:
         b = (unitflags & FPercent) && (unitflags & FNumber);
+        break;
+    case CalcAngle:
+        b = (unitflags & FAngle);
+        break;
+    case CalcTime:
+        b = (unitflags & FTime);
+        break;
+    case CalcFrequency:
+        b = (unitflags & FFrequency);
         break;
     case CalcOther:
         break;

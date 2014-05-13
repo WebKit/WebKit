@@ -56,8 +56,6 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
     case CSSPrimitiveValue::CSS_NUMBER:
     case CSSPrimitiveValue::CSS_PARSER_INTEGER:
         return CalcNumber;
-    case CSSPrimitiveValue::CSS_PERCENTAGE:
-        return CalcPercent;
     case CSSPrimitiveValue::CSS_EMS:
     case CSSPrimitiveValue::CSS_EXS:
     case CSSPrimitiveValue::CSS_PX:
@@ -69,6 +67,19 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
     case CSSPrimitiveValue::CSS_REMS:
     case CSSPrimitiveValue::CSS_CHS:
         return CalcLength;
+    case CSSPrimitiveValue::CSS_PERCENTAGE:
+        return CalcPercent;
+    case CSSPrimitiveValue::CSS_DEG:
+    case CSSPrimitiveValue::CSS_RAD:
+    case CSSPrimitiveValue::CSS_GRAD:
+    case CSSPrimitiveValue::CSS_TURN:
+        return CalcAngle;
+    case CSSPrimitiveValue::CSS_MS:
+    case CSSPrimitiveValue::CSS_S:
+        return CalcTime;
+    case CSSPrimitiveValue::CSS_HZ:
+    case CSSPrimitiveValue::CSS_KHZ:
+        return CalcFrequency;
     default:
         return CalcOther;
     }
@@ -218,6 +229,9 @@ private:
         // Only types that could be part of a Length expression can be converted
         // to a CalcExpressionNode. CalcPercentNumber makes no sense as a Length.
         case CalcPercentNumber:
+        case CalcAngle:
+        case CalcTime:
+        case CalcFrequency:
         case CalcOther:
             ASSERT_NOT_REACHED();
         }
@@ -242,6 +256,9 @@ private:
             return m_value->getDoubleValue();
         case CalcPercentLength:
         case CalcPercentNumber:
+        case CalcAngle:
+        case CalcTime:
+        case CalcFrequency:
         case CalcOther:
             ASSERT_NOT_REACHED();
             break;
@@ -274,7 +291,7 @@ private:
     RefPtr<CSSPrimitiveValue> m_value;
 };
 
-static const CalculationCategory addSubtractResult[CalcOther][CalcOther] = {
+static const CalculationCategory addSubtractResult[CalcAngle][CalcAngle] = {
 //    CalcNumber         CalcLength         CalcPercent        CalcPercentNumber  CalcPercentLength
     { CalcNumber,        CalcOther,         CalcPercentNumber, CalcPercentNumber, CalcOther }, //         CalcNumber
     { CalcOther,         CalcLength,        CalcPercentLength, CalcOther,         CalcPercentLength }, // CalcLength
@@ -294,7 +311,11 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
     switch (op) {
     case CalcAdd:
     case CalcSubtract:
-        return addSubtractResult[leftCategory][rightCategory];
+        if (leftCategory < CalcAngle || rightCategory < CalcAngle)
+            return addSubtractResult[leftCategory][rightCategory];
+        if (leftCategory == rightCategory)
+            return leftCategory;
+        return CalcOther;
     case CalcMultiply:
         if (leftCategory != CalcNumber && rightCategory != CalcNumber)
             return CalcOther;
@@ -470,6 +491,12 @@ private:
         }
         case CalcPercentLength:
         case CalcPercentNumber:
+        case CalcAngle:
+            return CSSPrimitiveValue::CSS_DEG;
+        case CalcTime:
+            return CSSPrimitiveValue::CSS_MS;
+        case CalcFrequency:
+            return CSSPrimitiveValue::CSS_HZ;
         case CalcOther:
             return CSSPrimitiveValue::CSS_UNKNOWN;
         }

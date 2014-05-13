@@ -1,3 +1,29 @@
+2014-05-13  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        ASSERTION FAILED: leftCategory != CalcOther && rightCategory != CalcOther
+        in WebCore::CSSCalcBinaryOperation::createSimplified
+        https://bugs.webkit.org/show_bug.cgi?id=132870
+
+        According to the standard, calc() should be able to handle angle, time
+        and frequency values as well: http://www.w3.org/TR/css3-values/#calc
+
+        Reviewed by Darin Adler.
+
+        Test: fast/css/calc-with-angle-time-frequency.html
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::unitCategory):
+        (WebCore::CSSCalcPrimitiveValue::createCalcExpression):
+        (WebCore::CSSCalcPrimitiveValue::computeLengthPx):
+        (WebCore::CSSCalcPrimitiveValue::addSubtractResult):
+        (WebCore::CSSCalcPrimitiveValue::determineCategory):
+        (WebCore::CSSCalcBinaryOperation::primitiveType)
+        * css/CSSCalculationValue.h: extending CalculationCategory
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validCalculationUnit):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::primitiveType):
+
 2014-05-13  Darin Adler  <darin@apple.com>
 
         Try to fix the !ENABLE(ICONDATABASE) build
