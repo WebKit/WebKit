@@ -106,6 +106,9 @@ def get_generator_for_config(config_file, virtual_root):
     pkgconfig_file = config.get(module_name, 'pkgconfig_file')
     gtk_version = common.gtk_version_of_pkg_config_file(pkgconfig_file)
 
+    if not os.path.isfile(pkgconfig_file):
+        return None
+
     source_dirs = config.get(module_name, 'source_dirs').replace(';', ' ').split()
     headers = [os.path.abspath(f) for f in config.get(module_name, 'headers').replace(';', ' ').split()]
     return gtkdoc.PkgConfigGTKDoc(pkgconfig_file, {
