@@ -98,10 +98,10 @@ PassRefPtr<ImageControlsButtonElementMac> ImageControlsButtonElementMac::maybeCr
     button->setAttribute(HTMLNames::classAttr, "x-webkit-image-controls-button");
 
     IntSize positionOffset = document.page()->theme().imageControlsButtonPositionOffset();
-    button->setInlineStyleProperty(CSSPropertyTop, String::format("%ipx", positionOffset.height()));
+    button->setInlineStyleProperty(CSSPropertyTop, positionOffset.height(), CSSPrimitiveValue::CSS_PX);
 
     // FIXME: Why is right: 0px off the right edge of the parent?
-    button->setInlineStyleProperty(CSSPropertyRight, String::format("%ipx", positionOffset.width()));
+    button->setInlineStyleProperty(CSSPropertyRight, positionOffset.width(), CSSPrimitiveValue::CSS_PX);
 
     return button.release();
 }
