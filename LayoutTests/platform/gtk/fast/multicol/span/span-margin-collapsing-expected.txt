@@ -60,7 +60,7 @@ layer at (8,413) size 750x381
         text run at (0,0) width 606: "This is a spanning element at the end of the columns block. "
         text run at (606,0) width 90: "It should"
         text run at (0,26) width 504: "collapse its margins with the h2 in the next block."
-    RenderMultiColumnSet at (0,380) size 750x1
+    RenderMultiColumnSet at (0,380) size 750x0
 layer at (8,413) size 367x578
   RenderMultiColumnFlowThread at (0,0) size 367x578
     RenderBlock (anonymous) at (0,0) size 367x578
@@ -159,7 +159,7 @@ layer at (8,1206) size 750x538
         text run at (0,0) width 640: "This is a spanning element in the middle of the columns block. "
         text run at (640,0) width 90: "It should"
         text run at (0,26) width 569: "collapse its margins with the spanning element below it."
-    RenderMultiColumnSet at (0,278) size 750x1
+    RenderMultiColumnSet at (0,278) size 750x0
     RenderBlock {H2} at (0,278) size 750x53 [bgcolor=#CCCCCC]
       RenderText {#text} at (0,0) size 730x52
         text run at (0,0) width 640: "This is a spanning element in the middle of the columns block. "

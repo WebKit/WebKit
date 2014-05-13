@@ -284,7 +284,7 @@ layer at (0,0) size 785x2366
           RenderText {#text} at (596,105) size 512x15
             text run at (596,105) width 492: ". (with monospace font from elements to too)"
             text run at (1108,105) width 0: " "
-      RenderBlock (anonymous) at (0,419) size 769x1
+      RenderBlock (anonymous) at (0,419) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,425) size 769x22

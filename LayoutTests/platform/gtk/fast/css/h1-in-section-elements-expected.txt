@@ -84,7 +84,7 @@ layer at (0,0) size 800x406
                             RenderText {#text} at (1,1) size 30x12
                               text run at (1,1) width 30: "MMM"
                           RenderBlock {HR} at (0,65) size 71x3 [border: (1px inset #000000)]
-                  RenderBlock {DIV} at (0,67) size 71x1
+                  RenderBlock {DIV} at (0,67) size 71x0
             RenderTableCell {TD} at (77,285) size 73x70 [r=4 c=1 rs=1 cs=1]
               RenderBlock {HR} at (1,1) size 71x2 [border: (1px inset #000000)]
               RenderBlock {H6} at (1,27) size 71x15 [border: (1px solid #00FF00)]
@@ -168,7 +168,7 @@ layer at (0,0) size 800x406
                             RenderText {#text} at (1,1) size 12x30
                               text run at (1,1) width 30: "MMM"
                           RenderBlock {HR} at (65,0) size 3x71 [border: (1px inset #000000)]
-                  RenderBlock {DIV} at (67,0) size 1x71
+                  RenderBlock {DIV} at (67,0) size 0x71
             RenderTableCell {TD} at (285,77) size 70x73 [r=4 c=1 rs=1 cs=1]
               RenderBlock {HR} at (1,1) size 2x71 [border: (1px inset #000000)]
               RenderBlock {H6} at (27,1) size 15x71 [border: (1px solid #00FF00)]

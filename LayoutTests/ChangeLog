@@ -1,3 +1,54 @@
+2014-05-13  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed GTK gardening
+
+        Rebaseline affected tests by changes to avoid increasing empty
+        LayoutRects introduced at r168575.
+
+        * platform/gtk/fast/css/css1_forward_compatible_parsing-expected.txt:
+        * platform/gtk/fast/css/first-line-text-decoration-expected.txt:
+        * platform/gtk/fast/css/h1-in-section-elements-expected.txt:
+        * platform/gtk/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/gtk/fast/css/text-overflow-input-expected.txt:
+        * platform/gtk/fast/css/word-space-extra-expected.txt:
+        * platform/gtk/fast/encoding/utf-16-big-endian-expected.txt:
+        * platform/gtk/fast/encoding/utf-16-little-endian-expected.txt:
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt:
+        * platform/gtk/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/gtk/fast/forms/fieldset-align-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-height-expected.txt:
+        * platform/gtk/fast/forms/placeholder-position-expected.txt:
+        * platform/gtk/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/gtk/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/gtk/fast/forms/search/search-size-with-decorations-expected.txt:
+        * platform/gtk/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/gtk/fast/inline/continuation-outlines-expected.txt:
+        * platform/gtk/fast/inline/continuation-outlines-with-layers-expected.txt:
+        * platform/gtk/fast/inline/outline-continuations-expected.txt:
+        * platform/gtk/fast/invalid/nestedh3s-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-spanners-complex-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-spanners-expected.txt:
+        * platform/gtk/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/gtk/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/gtk/fast/overflow/clip-rects-fixed-ancestor-expected.txt:
+        * platform/gtk/fast/regions/repaint/repaint-regions-overflow-expected.txt:
+        * platform/gtk/fast/repaint/search-field-cancel-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/gtk/fast/table/014-expected.txt:
+        * platform/gtk/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt:
+        * platform/gtk/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt:
+        * platform/gtk/svg/custom/use-font-face-crash-expected.txt:
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.txt:
+        * platform/gtk/svg/wicd/rightsizing-grid-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug113235-1-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/gtk/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/gtk/tables/mozilla/other/wa_table_tr_align-expected.txt:
+
 2014-05-12  Mark Lam  <mark.lam@apple.com>
 
         WebKit2 on iOS needs to capture the main thread's floating point environment.

@@ -56,7 +56,7 @@ layer at (8,397) size 760x365
     RenderBlock {H2} at (5,313) size 750x27 [bgcolor=#EEEEEE]
       RenderText {#text} at (0,0) size 600x26
         text run at (0,0) width 600: "This is a spanning element at the end of the columns block."
-    RenderMultiColumnSet at (5,359) size 750x1
+    RenderMultiColumnSet at (5,359) size 750x0
 layer at (13,402) size 367x578
   RenderMultiColumnFlowThread at (5,5) size 367x578
     RenderBlock (anonymous) at (0,0) size 367x578
@@ -304,7 +304,7 @@ layer at (8,2355) size 760x423
       RenderText {#text} at (0,0) size 707x52
         text run at (0,0) width 707: "This is a spanning element at the end of the columns block with block"
         text run at (0,26) width 83: "siblings."
-    RenderMultiColumnSet at (5,417) size 750x1
+    RenderMultiColumnSet at (5,417) size 750x0
 layer at (13,2360) size 367x625
   RenderMultiColumnFlowThread at (5,5) size 367x625
     RenderBlock {P} at (0,16) size 367x187

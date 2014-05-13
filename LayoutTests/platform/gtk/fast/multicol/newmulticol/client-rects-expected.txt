@@ -115,7 +115,7 @@ layer at (496,70) size 48x79
       RenderBR {BR} at (0,0) size 0x25
       RenderSlider {INPUT} at (2,27) size 25x25 [color=#909090] [bgcolor=#ADD8E6]
         RenderFlexibleBox {DIV} at (0,0) size 25x25
-          RenderBlock {DIV} at (0,12) size 25x1
+          RenderBlock {DIV} at (0,12) size 25x0
             RenderBlock {DIV} at (0,0) size 25x0
 layer at (608,62) size 116x66
   RenderBlock {DIV} at (600,10) size 116x66 [color=#ADD8E6] [border: (3px solid #000000)]
@@ -190,7 +190,7 @@ layer at (506,149) size 79x48
       RenderBR {BR} at (0,0) size 25x0
       RenderSlider {INPUT} at (27,2) size 25x25 [color=#909090] [bgcolor=#ADD8E6]
         RenderFlexibleBox {DIV} at (0,0) size 25x25
-          RenderBlock {DIV} at (0,12) size 25x1
+          RenderBlock {DIV} at (0,12) size 25x0
             RenderBlock {DIV} at (0,0) size 25x0
 layer at (588,141) size 66x116
   RenderBlock {DIV} at (580,89) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
@@ -265,7 +265,7 @@ layer at (357,268) size 79x48
       RenderBR {BR} at (0,0) size 25x0
       RenderSlider {INPUT} at (27,2) size 25x25 [color=#909090] [bgcolor=#ADD8E6]
         RenderFlexibleBox {DIV} at (0,0) size 25x25
-          RenderBlock {DIV} at (0,12) size 25x1
+          RenderBlock {DIV} at (0,12) size 25x0
             RenderBlock {DIV} at (0,0) size 25x0
 layer at (468,260) size 66x116
   RenderBlock {DIV} at (460,208) size 66x116 [color=#ADD8E6] [border: (3px solid #000000)]
@@ -345,12 +345,12 @@ layer at (51,320) size 25x26
   RenderBlock (positioned) {DIV} at (51,320) size 25x26 [border: (3px solid #0000FF7F)]
 layer at (26,320) size 25x26
   RenderBlock (positioned) {DIV} at (26,320) size 25x26 [border: (3px solid #0000FF7F)]
-layer at (115,268) size 25x25
-  RenderBlock (positioned) {DIV} at (115,268) size 25x25 [border: (3px solid #0000FF7F)]
-layer at (140,320) size 25x26
-  RenderBlock (positioned) {DIV} at (140,320) size 25x26 [border: (3px solid #0000FF7F)]
-layer at (115,320) size 25x26
-  RenderBlock (positioned) {DIV} at (115,320) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (116,268) size 25x25
+  RenderBlock (positioned) {DIV} at (116,268) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (141,320) size 25x26
+  RenderBlock (positioned) {DIV} at (141,320) size 25x26 [border: (3px solid #0000FF7F)]
+layer at (116,320) size 25x26
+  RenderBlock (positioned) {DIV} at (116,320) size 25x26 [border: (3px solid #0000FF7F)]
 layer at (206,268) size 25x25
   RenderBlock (positioned) {DIV} at (206,268) size 25x25 [border: (3px solid #0000FF7F)]
 layer at (231,320) size 25x26
