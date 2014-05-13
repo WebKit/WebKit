@@ -1,3 +1,14 @@
+2014-05-13  Tim Horton  <timothy_horton@apple.com>
+
+        Speculative build fix for iOS.
+
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.cpp: Removed.
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.mm: Added.
+        (WebKit::WebMemoryPressureHandler::shared):
+        (WebKit::WebMemoryPressureHandler::WebMemoryPressureHandler):
+        * WebKit2.xcodeproj/project.pbxproj:
+        Make WebMemoryPressureHandlerIOS Obj-C.
+
 2014-05-13  Anders Carlsson  <andersca@apple.com>
 
         Another follow-up build fix.
