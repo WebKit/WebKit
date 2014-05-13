@@ -1,5 +1,17 @@
 2014-05-12  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Fuzzy tiles on some sites on loading
+        https://bugs.webkit.org/show_bug.cgi?id=132847
+        <rdar://problem/16816178>
+
+        Reviewed by Benjamin Poulain.
+
+        Export WebCore::TileController::contentsScale() const
+
+        * WebCore.exp.in:
+
+2014-05-12  Simon Fraser  <simon.fraser@apple.com>
+
         Add debug dumping for ViewportConfiguration
         https://bugs.webkit.org/show_bug.cgi?id=132843
 
