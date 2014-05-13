@@ -50,6 +50,7 @@
 #include "FormController.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
@@ -1893,6 +1894,28 @@ void Internals::stopTrackingRepaints(ExceptionCode& ec)
 
     FrameView* frameView = document->view();
     frameView->setTracksRepaints(false);
+}
+
+void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(ExceptionCode& ec)
+{
+    updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(nullptr, ec);
+}
+
+void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node* node, ExceptionCode& ec)
+{
+    Document* document;
+    if (!node)
+        document = contextDocument();
+    else if (node->isDocumentNode())
+        document = toDocument(node);
+    else if (node->hasTagName(HTMLNames::iframeTag))
+        document = toHTMLIFrameElement(node)->contentDocument();
+    else {
+        ec = TypeError;
+        return;
+    }
+
+    document->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasksSynchronously);
 }
 
 #if !PLATFORM(IOS)

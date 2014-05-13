@@ -1,3 +1,49 @@
+2014-05-06  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Don't dispatch 'beforeload' event inside FrameView::layout()
+
+        https://bugs.webkit.org/show_bug.cgi?id=132621
+        <rdar://problem/15661470>
+
+        This merges Blink revision 162073 with minor renaming and style
+        changes. From that commit:
+
+        Executing JavaScript code inside FrameView::layout() is problematic.
+        e.g. an assertion failure tested in fast/events/beforeload-assertion.html.
+        We should avoid it.
+
+        This CL makes 'beforeload' event dispatching for plugins and iframes asynchronous,
+        except plugin access from JavaScript code (HTMLPlugInElement::
+        renderWidgetForJSBindings).
+
+        Reviewed by Brent Fulgham.
+
+        Tests: fast/events/beforeload-assertion.html
+               fast/events/beforeload-iframe-crash.html
+               fast/events/beforeload-input-time-crash.html
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        * dom/Document.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::renderWidgetForJSBindings):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::renderWidgetForJSBindings):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderWidgetForJSBindings):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::updateEmbeddedObjectsTimerFired):
+        (WebCore::FrameView::flushAnyPendingPostLayoutTasks):
+        (WebCore::FrameView::performPostLayoutTasks):
+        * page/FrameView.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-05-12  Roger Fong  <roger_fong@apple.com>
 
         Limit number of active graphics contexts per web process.

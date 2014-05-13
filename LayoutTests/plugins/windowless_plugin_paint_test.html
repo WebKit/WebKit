@@ -14,6 +14,8 @@
         var pluginDiv = document.getElementById("pluginDiv");
         // Create the plugin in the middle of the page.
         pluginDiv.innerHTML = "<embed id=\"testPlugin\" type=\"application/x-webkit-test-netscape\" width=\"200\" height=\"200\" onpaintevent=\"didPaint()\" windowedPlugin=\"false\"></embed>";
+        if (window.internals)
+            internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         testRunner.displayInvalidatedRegion();
       }
 
