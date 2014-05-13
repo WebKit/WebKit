@@ -1,3 +1,9 @@
+2014-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS Simulator build.
+
+        * UIProcess/mac/ViewSnapshotStore.h:
+
 2014-05-13  Tim Horton  <timothy_horton@apple.com>
 
         Speculative build fix for iOS.
