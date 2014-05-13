@@ -36,7 +36,7 @@
     RetainPtr<WKFrameInfo> _targetFrame;
     RetainPtr<NSURLRequest> _request;
     RetainPtr<NSURL> _originalURL;
-    BOOL _isUserInitiated;
+    BOOL _userInitiated;
 }
 
 static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationType)
@@ -114,7 +114,7 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
     _buttonNumber = toNSButtonNumber(navigationActionData.mouseButton);
 #endif
 
-    _isUserInitiated = navigationActionData.isProcessingUserGesture;
+    _userInitiated = navigationActionData.isProcessingUserGesture;
 
     return self;
 }
@@ -167,7 +167,7 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 
 - (BOOL)_isUserInitiated
 {
-    return _isUserInitiated;
+    return _userInitiated;
 }
 
 @end
