@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2011, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3354,15 +3354,19 @@ bool Editor::shouldDetectTelephoneNumbers()
 
 void Editor::scanSelectionForTelephoneNumbers(Timer<Editor>&)
 {
-    if (!shouldDetectTelephoneNumbers())
+    scanSelectionForTelephoneNumbers();
+}
+
+void Editor::scanSelectionForTelephoneNumbers()
+{
+    if (!shouldDetectTelephoneNumbers() || !client())
         return;
 
     Vector<RefPtr<Range>> markedRanges;
 
     RefPtr<Range> selectedRange = m_frame.selection().toNormalizedRange();
     if (!selectedRange || (selectedRange->startContainer() == selectedRange->endContainer() && selectedRange->startOffset() == selectedRange->endOffset())) {
-        if (client())
-            client()->selectedTelephoneNumberRangesChanged(markedRanges);
+        client()->selectedTelephoneNumberRangesChanged(markedRanges);
         return;
     }
 
@@ -3376,8 +3380,7 @@ void Editor::scanSelectionForTelephoneNumbers(Timer<Editor>&)
         scanRangeForTelephoneNumbers(*textChunk.range(), textChunk.text(), markedRanges);
     }
 
-    if (client())
-        client()->selectedTelephoneNumberRangesChanged(markedRanges);
+    client()->selectedTelephoneNumberRangesChanged(markedRanges);
 }
 
 void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView, Vector<RefPtr<Range>>& markedRanges)

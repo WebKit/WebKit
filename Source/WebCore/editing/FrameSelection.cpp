@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -373,6 +373,13 @@ void FrameSelection::updateAndRevealSelection()
     }
 
     notifyAccessibilityForSelectionChange();
+}
+
+void FrameSelection::updateDataDetectorsForSelection()
+{
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+    m_frame->editor().scanSelectionForTelephoneNumbers();
+#endif
 }
 
 static bool removingNodeRemovesPosition(Node* node, const Position& position)
@@ -2132,6 +2139,13 @@ void FrameSelection::setShouldShowBlockCursor(bool shouldShowBlockCursor)
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
     updateAppearance();
+}
+
+void FrameSelection::layoutDidChange()
+{
+    setCaretRectNeedsUpdate();
+    updateAndRevealSelection();
+    updateDataDetectorsForSelection();
 }
 
 #ifndef NDEBUG

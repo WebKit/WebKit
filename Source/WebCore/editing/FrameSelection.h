@@ -145,10 +145,13 @@ public:
     const VisibleSelection& selection() const { return m_selection; }
     void setSelection(const VisibleSelection&, SetSelectionOptions = defaultSetSelectionOptions(), CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
     void updateAndRevealSelection();
+    void updateDataDetectorsForSelection();
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
     void clear();
     void prepareForDestruction();
+
+    void layoutDidChange();
 
     bool contains(const LayoutPoint&);
 

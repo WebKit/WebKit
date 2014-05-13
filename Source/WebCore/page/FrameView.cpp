@@ -2754,8 +2754,7 @@ void FrameView::performPostLayoutTasks()
 {
     m_postLayoutTasksTimer.stop();
 
-    frame().selection().setCaretRectNeedsUpdate();
-    frame().selection().updateAndRevealSelection();
+    frame().selection().layoutDidChange();
 
     if (m_nestedLayoutCount <= 1 && frame().document()->documentElement())
         fireLayoutRelatedMilestonesIfNeeded();
