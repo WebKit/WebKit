@@ -1,5 +1,20 @@
 2014-05-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168654
+
+    2014-05-12  Alexey Proskuryakov  <ap@apple.com>
+
+            REGRESSION (r165972): Can't type into text fields in Flash
+            https://bugs.webkit.org/show_bug.cgi?id=132840
+            <rdar://problem/16671969>
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/API/mac/WKView.mm: (-[WKView inputContext]): Restore a function that
+            got accidentally lost when adding async text input code.
+
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168439
 
     2014-05-07  Jeremy Jones  <jeremyj@apple.com>
