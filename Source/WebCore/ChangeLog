@@ -1,3 +1,10 @@
+2014-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix fix.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::contentShadowLayerForFrameView):
+
 2014-05-12  Brent Fulgham  <bfulgham@apple.com>
 
         DataDetectorUI doesn't update with resize

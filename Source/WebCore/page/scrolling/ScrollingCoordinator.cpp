@@ -260,6 +260,8 @@ GraphicsLayer* ScrollingCoordinator::contentShadowLayerForFrameView(FrameView* f
 #if ENABLE(RUBBER_BANDING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
         return renderView->compositor().layerForContentShadow();
+    
+    return nullptr;
 #else
     UNUSED_PARAM(frameView);
     return nullptr;
