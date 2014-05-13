@@ -31,6 +31,9 @@ sys.path.append(os.path.join(top_level_directory, "Tools", "gtk"))
 import common
 import jhbuildutils
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild"))
+import jhbuildrc_common 
+
 class SkippedTest:
     ENTIRE_SUITE = None
 
@@ -195,7 +198,7 @@ class TestRunner:
     def _setup_testing_environment(self):
         self._test_env = os.environ
         self._test_env['GSETTINGS_BACKEND'] = 'memory'
-        self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = jhbuildrc_common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
         self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.tests_library_build_path()
         self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
 
