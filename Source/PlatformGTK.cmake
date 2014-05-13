@@ -52,3 +52,29 @@ endif ()
 add_custom_target(check
     COMMAND "${TOOLS_DIR}/Scripts/run-gtk-tests"
 )
+
+if (ENABLE_WEBKIT AND ENABLE_WEBKIT2)
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+        DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
+        DEPENDS ${TOOLS_DIR}/gtk/manifest.txt
+        DEPENDS WebKit
+        DEPENDS WebKit2
+        COMMAND ${TOOLS_DIR}/gtk/make-dist.py
+                --source-dir=${CMAKE_SOURCE_DIR}
+                --build-dir=${CMAKE_BINARY_DIR}
+                --tarball-root=/webkitgtk-${PROJECT_VERSION}
+                -o ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+                ${TOOLS_DIR}/gtk/manifest.txt
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
+        DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+        COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+    )
+
+    add_custom_target(dist
+        DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
+    )
+endif ()
