@@ -87,7 +87,12 @@ public:
     static Parameters textDocumentParameters();
     static Parameters imageDocumentParameters();
     static Parameters xhtmlMobileParameters();
-
+    
+#ifndef NDEBUG
+    WTF::CString description() const;
+    void dump() const;
+#endif
+    
 private:
     void updateConfiguration();
     int layoutWidth() const;

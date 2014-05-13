@@ -26,8 +26,10 @@
 #include "config.h"
 #include "ViewportConfiguration.h"
 
+#include <WebCore/TextStream.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/CString.h>
 
 #if PLATFORM(IOS)
 #include "WebCoreSystemInterface.h"
@@ -312,5 +314,148 @@ int ViewportConfiguration::layoutHeight() const
         return std::round(m_minimumLayoutSize.height() * layoutWidth() / m_minimumLayoutSize.width());
     return m_minimumLayoutSize.height();
 }
+
+#ifndef NDEBUG
+class ViewportConfigurationTextStream : public TextStream {
+public:
+    ViewportConfigurationTextStream()
+        : m_indent(0)
+    {
+    }
+
+    using TextStream::operator<<;
+
+    ViewportConfigurationTextStream& operator<<(const ViewportConfiguration::Parameters&);
+    ViewportConfigurationTextStream& operator<<(const ViewportArguments&);
+
+    void increaseIndent() { ++m_indent; }
+    void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
+
+    void writeIndent();
+
+private:
+    int m_indent;
+};
+
+template <typename T>
+static void dumpProperty(ViewportConfigurationTextStream& ts, String name, T value)
+{
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(" << name << " ";
+    ts << value << ")";
+    ts.decreaseIndent();
+}
+
+void ViewportConfigurationTextStream::writeIndent()
+{
+    for (int i = 0; i < m_indent; ++i)
+        *this << "  ";
+}
+
+ViewportConfigurationTextStream& ViewportConfigurationTextStream::operator<<(const ViewportConfiguration::Parameters& parameters)
+{
+    ViewportConfigurationTextStream& ts = *this;
+
+    ts.increaseIndent();
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(width " << parameters.width << ", set: " << (parameters.widthIsSet ? "true" : "false") << ")";
+
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(height " << parameters.height << ", set: " << (parameters.heightIsSet ? "true" : "false") << ")";
+
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(initialScale " << parameters.width << ", set: " << (parameters.initialScaleIsSet ? "true" : "false") << ")";
+    ts.decreaseIndent();
+
+    dumpProperty(ts, "minimumScale", parameters.minimumScale);
+    dumpProperty(ts, "maximumScale", parameters.maximumScale);
+    dumpProperty(ts, "allowsUserScaling", parameters.allowsUserScaling);
+
+    return ts;
+}
+
+ViewportConfigurationTextStream& ViewportConfigurationTextStream::operator<<(const ViewportArguments& viewportArguments)
+{
+    ViewportConfigurationTextStream& ts = *this;
+
+    ts.increaseIndent();
+
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(width " << viewportArguments.width << ", minWidth " << viewportArguments.minWidth << ", maxWidth " << viewportArguments.maxWidth << ")";
+
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(height " << viewportArguments.height << ", minHeight " << viewportArguments.minHeight << ", maxHeight " << viewportArguments.maxHeight << ")";
+
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(zoom " << viewportArguments.zoom << ", minZoom " << viewportArguments.minZoom << ", maxZoom " << viewportArguments.maxZoom << ")";
+    ts.decreaseIndent();
+
+#if PLATFORM(IOS)
+    dumpProperty(ts, "minimalUI", viewportArguments.minimalUI);
+#endif
+    return ts;
+}
+
+CString ViewportConfiguration::description() const
+{
+    ViewportConfigurationTextStream ts;
+
+    ts << "(viewport-configuration " << (void*)this;
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(viewport arguments";
+    ts << m_viewportArguments;
+    ts << ")";
+    ts.decreaseIndent();
+
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(configuration";
+    ts << m_configuration;
+    ts << ")";
+    ts.decreaseIndent();
+
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(default configuration";
+    ts << m_defaultConfiguration;
+    ts << ")";
+    ts.decreaseIndent();
+
+    dumpProperty(ts, "contentSize", m_contentSize);
+    dumpProperty(ts, "minimumLayoutSize", m_minimumLayoutSize);
+
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(computed initial scale " << initialScale() << ")\n";
+    ts.writeIndent();
+    ts << "(computed minimum scale " << minimumScale() << ")\n";
+    ts.writeIndent();
+    ts << "(computed layout size " << layoutSize() << ")";
+    ts.decreaseIndent();
+
+    ts << ")\n";
+
+    return ts.release().utf8();
+}
+
+void ViewportConfiguration::dump() const
+{
+    fprintf(stderr, "%s", description().data());
+}
+
+#endif
 
 } // namespace WebCore

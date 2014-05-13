@@ -1,3 +1,24 @@
+2014-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add debug dumping for ViewportConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=132843
+
+        Reviewed by Benjamin Poulain.
+
+        Add some TextStream-based dumping for ViewportConfiguration.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::updateConfiguration):
+        (WebCore::ViewportConfigurationTextStream::ViewportConfigurationTextStream):
+        (WebCore::ViewportConfigurationTextStream::increaseIndent):
+        (WebCore::ViewportConfigurationTextStream::decreaseIndent):
+        (WebCore::dumpProperty):
+        (WebCore::ViewportConfigurationTextStream::writeIndent):
+        (WebCore::ViewportConfigurationTextStream::operator<<):
+        (WebCore::ViewportConfiguration::description):
+        (WebCore::ViewportConfiguration::dump):
+        * page/ViewportConfiguration.h:
+
 2014-05-12  Brady Eidson  <beidson@apple.com>
 
         Followup to "Teach Editor to support more direct replacement of a Node"
