@@ -61,6 +61,7 @@
 #else
 @interface NSURLConnection (TimingData)
 + (void)_setCollectsTimingData:(BOOL)collect;
+- (NSDictionary *)_timingData;
 @end
 #endif
 
@@ -368,7 +369,32 @@ NSURLConnection *ResourceHandle::connection() const
 {
     return d->m_connection.get();
 }
-
+    
+void ResourceHandle::getTimingData(NSURLConnection *connection, ResourceLoadTiming& timing)
+{
+    if (NSDictionary *timingData = [connection _timingData]) {
+        // This is not the navigationStart time in monotonic time, but the other times are relative to this time
+        // and only the differences between times are stored.
+        double referenceStart = [[timingData valueForKey:@"_kCFNTimingDataTimingDataInit"] doubleValue];
+        
+        double domainLookupStart = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupStart"] doubleValue];
+        double domainLookupEnd = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupEnd"] doubleValue];
+        double connectStart = [[timingData valueForKey:@"_kCFNTimingDataConnectStart"] doubleValue];
+        double secureConnectionStart = [[timingData valueForKey:@"_kCFNTimingDataSecureConnectionStart"] doubleValue];
+        double connectEnd = [[timingData valueForKey:@"_kCFNTimingDataConnectEnd"] doubleValue];
+        double requestStart = [[timingData valueForKey:@"_kCFNTimingDataRequestStart"] doubleValue];
+        double responseStart = [[timingData valueForKey:@"_kCFNTimingDataResponseStart"] doubleValue];
+        
+        timing.domainLookupStart = domainLookupStart <= 0 ? -1 : (domainLookupStart - referenceStart) * 1000;
+        timing.domainLookupEnd = domainLookupEnd <= 0 ? -1 : (domainLookupEnd - referenceStart) * 1000;
+        timing.connectStart = connectStart <= 0 ? -1 : (connectStart - referenceStart) * 1000;
+        timing.secureConnectionStart = secureConnectionStart <= 0 ? -1 : (secureConnectionStart - referenceStart) * 1000;
+        timing.connectEnd = connectEnd <= 0 ? -1 : (connectEnd - referenceStart) * 1000;
+        timing.requestStart = requestStart <= 0 ? -1 : (requestStart - referenceStart) * 1000;
+        timing.responseStart = responseStart <= 0 ? -1 : (responseStart - referenceStart) * 1000;
+    }
+}
+    
 bool ResourceHandle::loadsBlocked()
 {
     return false;

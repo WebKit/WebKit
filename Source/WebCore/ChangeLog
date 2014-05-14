@@ -1,5 +1,22 @@
 2014-05-14  Alex Christensen  <achristensen@webkit.org>
 
+        Refactor duplicate code in web timing.
+        https://bugs.webkit.org/show_bug.cgi?id=132917
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/network/ResourceHandle.h:
+        Added getTimingData declaration.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::getTimingData):
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        Moved duplicate code to ResourceHandle.
+
+2014-05-14  Alex Christensen  <achristensen@webkit.org>
+
         Use references instead of pointers with ResourceLoadTiming.
         https://bugs.webkit.org/show_bug.cgi?id=132846
 

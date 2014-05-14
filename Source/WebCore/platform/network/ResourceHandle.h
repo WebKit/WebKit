@@ -94,6 +94,7 @@ class ProtectionSpace;
 class ResourceError;
 class ResourceHandleClient;
 class ResourceHandleInternal;
+class ResourceLoadTiming;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
@@ -130,6 +131,7 @@ public:
 #if PLATFORM(COCOA) && !USE(CFNETWORK)
     void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
     NSURLConnection *connection() const;
+    static void getTimingData(NSURLConnection*, ResourceLoadTiming&);
     id makeDelegate(bool);
     id delegate();
     void releaseDelegate();
