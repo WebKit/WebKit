@@ -1,3 +1,23 @@
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168599
+
+    2014-05-09  Myles C. Maxfield  <litherum@gmail.com>
+
+            [Mac] [iOS] Underlines are too low
+            https://bugs.webkit.org/show_bug.cgi?id=132770
+
+            Reviewed by Darin Adler.
+
+            See per-file descriptions.
+
+            * fast/css3-text/css3-text-decoration/text-decoration-style-double-space-scales.html: Made
+            test more robust so it does not barely clip underlines, but rather gives them a couple
+            pixels of wiggle room.
+            * fast/css3-text/css3-text-decoration/text-decoration-thickness.html: Not only does this test
+            underline thickness, but it also tests underline position. Updated this test to not expect
+            incorrect results.
+
 2014-05-09  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168460
