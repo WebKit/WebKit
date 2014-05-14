@@ -1,5 +1,48 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168602
+
+    2014-05-11  Beth Dakin  <bdakin@apple.com>
+
+            Headers and footers are not positioned correctly with topContentInset
+            https://bugs.webkit.org/show_bug.cgi?id=132787
+            -and corresponding-
+            <rdar://problem/16641115>
+
+            Reviewed by Tim Horton.
+
+            Headers and footers need to take the inset into account, and they also need to 
+            factor in the fact that the root layer moves around now too.
+
+            The existing yPositionForRootContentLayer() is actually the right calculation for 
+            the header layer. The root content layer wants that value, but pushed down by the 
+            header height. Now there are static functions for both of them and the footer to 
+            avoid duplicated code in the three spots where we need this information.
+            * page/FrameView.cpp:
+            (WebCore::FrameView::yPositionForHeaderLayer):
+            (WebCore::FrameView::yPositionForRootContentLayer):
+            (WebCore::FrameView::yPositionForFooterLayer):
+            * page/FrameView.h:
+
+            Use the static functions to compute the layer positions.
+            * page/scrolling/AsyncScrollingCoordinator.cpp:
+            (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+
+            How did headers ever work with this bug?? I don’t know. We need to return that 
+            layer.
+            * page/scrolling/ScrollingCoordinator.cpp:
+            (WebCore::ScrollingCoordinator::headerLayerForFrameView):
+
+            Use the static functions to compute the layer positions.
+            * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+            (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+            (WebCore::RenderLayerCompositor::updateLayerForHeader):
+            (WebCore::RenderLayerCompositor::updateLayerForFooter):
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168557
 
     2014-05-09  Benjamin Poulain  <bpoulain@apple.com>

@@ -1953,8 +1953,8 @@ void RenderLayerCompositor::updateRootLayerPosition()
     if (m_rootContentLayer) {
         const IntRect& documentRect = m_renderView.documentRect();
         m_rootContentLayer->setSize(documentRect.size());        
-        m_rootContentLayer->setPosition(FloatPoint(documentRect.x(), documentRect.y() + m_renderView.frameView().headerHeight()
-            + FrameView::yPositionForRootContentLayer(m_renderView.frameView().scrollPosition(), m_renderView.frameView().topContentInset())));
+        m_rootContentLayer->setPosition(FloatPoint(documentRect.x(), documentRect.y()
+            + FrameView::yPositionForRootContentLayer(m_renderView.frameView().scrollPosition(), m_renderView.frameView().topContentInset(), m_renderView.frameView().headerHeight())));
         m_rootContentLayer->setAnchorPoint(FloatPoint3D());
     }
     if (m_clipLayer) {
@@ -2966,7 +2966,8 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
         m_renderView.frameView().addPaintPendingMilestones(DidFirstFlushForHeaderLayer);
     }
 
-    m_layerForHeader->setPosition(FloatPoint());
+    m_layerForHeader->setPosition(FloatPoint(0,
+        FrameView::yPositionForHeaderLayer(m_renderView.frameView().scrollPosition(), m_renderView.frameView().topContentInset())));
     m_layerForHeader->setAnchorPoint(FloatPoint3D());
     m_layerForHeader->setSize(FloatSize(m_renderView.frameView().visibleWidth(), m_renderView.frameView().headerHeight()));
 
@@ -3005,7 +3006,9 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
         m_scrollLayer->addChildBelow(m_layerForFooter.get(), m_rootContentLayer.get());
     }
 
-    m_layerForFooter->setPosition(FloatPoint(0, m_rootContentLayer->size().height() + m_renderView.frameView().headerHeight()));
+    float totalContentHeight = m_rootContentLayer->size().height() + m_renderView.frameView().headerHeight() + m_renderView.frameView().footerHeight();
+    m_layerForFooter->setPosition(FloatPoint(0, FrameView::yPositionForFooterLayer(m_renderView.frameView().scrollPosition(),
+        m_renderView.frameView().topContentInset(), totalContentHeight, m_renderView.frameView().footerHeight())));
     m_layerForFooter->setAnchorPoint(FloatPoint3D());
     m_layerForFooter->setSize(FloatSize(m_renderView.frameView().visibleWidth(), m_renderView.frameView().footerHeight()));
 

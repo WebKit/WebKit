@@ -214,18 +214,18 @@ GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView* frameVie
 {
     if (RenderView* renderView = frameView->frame().contentRenderer())
         return renderView->compositor().scrollLayer();
-    return 0;
+    return nullptr;
 }
 
 GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(FrameView* frameView)
 {
 #if ENABLE(RUBBER_BANDING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
-        renderView->compositor().headerLayer();
-    return 0;
+        return renderView->compositor().headerLayer();
+    return nullptr;
 #else
     UNUSED_PARAM(frameView);
-    return 0;
+    return nullptr;
 #endif
 }
 
@@ -234,10 +234,10 @@ GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(FrameView* frameVie
 #if ENABLE(RUBBER_BANDING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
         return renderView->compositor().footerLayer();
-    return 0;
+    return nullptr;
 #else
     UNUSED_PARAM(frameView);
-    return 0;
+    return nullptr;
 #endif
 }
 
@@ -245,21 +245,21 @@ GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(FrameView
 {
     if (RenderView* renderView = frameView->frame().contentRenderer())
         return renderView->compositor().fixedRootBackgroundLayer();
-    return 0;
+    return nullptr;
 }
 
 GraphicsLayer* ScrollingCoordinator::insetClipLayerForFrameView(FrameView* frameView)
 {
     if (RenderView* renderView = frameView->frame().contentRenderer())
         return renderView->compositor().clipLayer();
-    return 0;
+    return nullptr;
 }
 
 GraphicsLayer* ScrollingCoordinator::rootContentLayerForFrameView(FrameView* frameView)
 {
     if (RenderView* renderView = frameView->frame().contentRenderer())
         return renderView->compositor().rootContentLayer();
-    return 0;
+    return nullptr;
 }
 
 void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)

@@ -1615,12 +1615,11 @@ float FrameView::yPositionForInsetClipLayer(const FloatPoint& scrollPosition, fl
     return topContentInset - scrollY;
 }
 
-float FrameView::yPositionForRootContentLayer(const FloatPoint& scrollPosition, float topContentInset)
+float FrameView::yPositionForHeaderLayer(const FloatPoint& scrollPosition, float topContentInset)
 {
     if (!topContentInset)
         return 0;
 
-    // The rootContentLayer should not move for negative scroll values.
     float scrollY = std::max<float>(0, scrollPosition.y());
 
     if (scrollY >= topContentInset)
@@ -1628,7 +1627,17 @@ float FrameView::yPositionForRootContentLayer(const FloatPoint& scrollPosition, 
 
     return scrollY;
 }
-    
+
+float FrameView::yPositionForRootContentLayer(const FloatPoint& scrollPosition, float topContentInset, float headerHeight)
+{
+    return yPositionForHeaderLayer(scrollPosition, topContentInset) + headerHeight;
+}
+
+float FrameView::yPositionForFooterLayer(const FloatPoint& scrollPosition, float topContentInset, float totalContentsHeight, float footerHeight)
+{
+    return yPositionForHeaderLayer(scrollPosition, topContentInset) + totalContentsHeight - footerHeight;
+}
+
 #if PLATFORM(IOS)
 LayoutRect FrameView::rectForViewportConstrainedObjects(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements scrollBehavior)
 {

@@ -277,10 +277,12 @@ public:
     // Static function can be called from another thread.
     static LayoutSize scrollOffsetForFixedPosition(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, const LayoutPoint& scrollPosition, const LayoutPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements, int headerHeight, int footerHeight);
 
-    // These layers are positioned differently when there is a topContentInset. These value need to be computed
+    // These layers are positioned differently when there is a topContentInset, a header, or a footer. These value need to be computed
     // on both the main thread and the scrolling thread.
     static float yPositionForInsetClipLayer(const FloatPoint& scrollPosition, float topContentInset);
-    static float yPositionForRootContentLayer(const FloatPoint& scrollPosition, float topContentInset);
+    static float yPositionForRootContentLayer(const FloatPoint& scrollPosition, float topContentInset, float headerHeight);
+    static float yPositionForHeaderLayer(const FloatPoint& scrollPosition, float topContentInset);
+    static float yPositionForFooterLayer(const FloatPoint& scrollPosition, float topContentInset, float totalContentsHeight, float footerHeight);
 
 #if PLATFORM(IOS)
     LayoutRect viewportConstrainedObjectsRect() const;
