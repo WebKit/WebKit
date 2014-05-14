@@ -591,7 +591,6 @@ private:
     void enableSpeculativeTilingIfNeeded();
     void speculativeTilingEnableTimerFired(Timer<FrameView>&);
 
-    void updateEmbeddedObjectsTimerFired(Timer<FrameView>*);
     bool updateEmbeddedObjects();
     void updateEmbeddedObject(RenderEmbeddedObject&);
     void scrollToAnchor();
@@ -646,7 +645,6 @@ private:
     int m_layoutCount;
     unsigned m_nestedLayoutCount;
     Timer<FrameView> m_postLayoutTasksTimer;
-    Timer<FrameView> m_updateEmbeddedObjectsTimer;
     bool m_firstLayoutCallbackPending;
 
     bool m_firstLayout;

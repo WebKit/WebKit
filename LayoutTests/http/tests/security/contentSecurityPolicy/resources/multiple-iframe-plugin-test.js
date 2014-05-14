@@ -38,11 +38,7 @@ function testImpl(experimental) {
     else
         iframe.src += "&type=application/x-webkit-test-netscape";
 
-    iframe.onload = function() {
-        if (window.internals)
-            internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(iframe);
-        testImpl(experimental);
-    };
+    iframe.onload = function() { testImpl(experimental); };
     document.body.appendChild(iframe);
 }
 
