@@ -1,3 +1,21 @@
+2014-05-14  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION(WK2): Many pages have very wrong text size after rotating.
+        https://bugs.webkit.org/show_bug.cgi?id=132893
+        <rdar://problem/16806958>
+
+        Reviewed by Benjamin Poulain.
+
+        Whenever our viewport width changes we must reset text autosizing
+        on the renderer.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setViewportConfigurationMinimumLayoutSize):
+        (WebKit::WebPage::setMinimumLayoutSizeForMinimalUI):
+        (WebKit::WebPage::resetTextAutosizingBeforeLayoutIfNeeded):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
 2014-05-14  Alex Christensen  <achristensen@webkit.org>
 
         Use references instead of pointers with ResourceLoadTiming.
