@@ -1,5 +1,29 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168568
+
+    2014-05-09  Benjamin Poulain  <benjamin@webkit.org>
+
+            [iOS][WK2] Reset the scroll position on the first frame after didCommitLoad
+            https://bugs.webkit.org/show_bug.cgi?id=132765
+
+            Reviewed by Tim Horton.
+
+            Since WebCore does not update our scroll view on load, we need to do that ourself.
+
+            In case where we need to restore the state from the history, RemoteLayerTreeDrawingAreaProxy
+            will always invoke the scrolling after didCommitLayerTree() (since r167916).
+            Consequently, it is now safe again to reset the scroll position ourself on the first frame.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _didCommitLoadForMainFrame]):
+            (-[WKWebView _didCommitLayerTree:WebKit::]):
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView _didCommitLoadForMainFrame]):
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168566
 
     2014-05-09  Anders Carlsson  <andersca@apple.com>

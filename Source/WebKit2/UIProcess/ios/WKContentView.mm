@@ -413,6 +413,7 @@ static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, 
 - (void)_didCommitLoadForMainFrame
 {
     [self _stopAssistingNode];
+    [_webView _didCommitLoadForMainFrame];
 }
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
