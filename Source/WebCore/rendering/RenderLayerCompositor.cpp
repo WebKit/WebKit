@@ -1549,8 +1549,10 @@ void RenderLayerCompositor::frameViewDidChangeSize()
         updateOverflowControlsLayers();
 
 #if ENABLE(RUBBER_BANDING)
-        if (m_layerForOverhangAreas)
+        if (m_layerForOverhangAreas) {
             m_layerForOverhangAreas->setSize(frameView.frameRect().size());
+            m_layerForOverhangAreas->setPosition(FloatPoint(0, m_renderView.frameView().topContentInset()));
+        }
 #endif
     }
 }
@@ -3082,6 +3084,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             overhangAreaSize.setHeight(overhangAreaSize.height() - topContentInset);
             m_layerForOverhangAreas->setSize(overhangAreaSize);
             m_layerForOverhangAreas->setPosition(FloatPoint(0, topContentInset));
+            m_layerForOverhangAreas->setAnchorPoint(FloatPoint3D());
 
             if (m_renderView.frameView().frame().settings().backgroundShouldExtendBeyondPage())
                 m_layerForOverhangAreas->setBackgroundColor(m_renderView.frameView().documentBackgroundColor());

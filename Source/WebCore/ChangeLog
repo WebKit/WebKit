@@ -1,3 +1,21 @@
+2014-05-13  Beth Dakin  <bdakin@apple.com>
+
+        m_layerForOverhangAreas is sometimes not positioned correctly when topContentInset 
+        has changed
+        https://bugs.webkit.org/show_bug.cgi?id=132898
+        -and corresponding-
+        <rdar://problem/16644710>
+
+        Reviewed by Anders Carlsson.
+
+        This function is called whenever the topContentInset changes, so use it as an 
+        opportunity to ensure that m_layerForOverhangAreas has been positioned correctly.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+
+        Everyone gets an anchor point!
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+
 2014-05-13  Dean Jackson  <dino@apple.com>
 
         Attempted build fix after https://bugs.webkit.org/show_bug.cgi?id=132891
