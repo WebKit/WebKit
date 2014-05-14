@@ -1,5 +1,20 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168629
+
+    2014-05-12  Anders Carlsson  <andersca@apple.com>
+
+            WKWebView should default to _backgroundExtendsBeyondPage = YES
+            https://bugs.webkit.org/show_bug.cgi?id=132829
+            <rdar://problem/16886364>
+
+            Reviewed by Beth Dakin.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView initWithFrame:configuration:]):
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168583
 
     2014-05-10  Anders Carlsson  <andersca@apple.com>
