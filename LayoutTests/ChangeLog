@@ -1,3 +1,9 @@
+2014-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        Fix line ending style for the test.
+
+        * editing/selection/drag-start-event-client-x-y.html:
+
 2014-05-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Revert "Don't dispatch 'beforeload' event inside FrameView::layout()",
