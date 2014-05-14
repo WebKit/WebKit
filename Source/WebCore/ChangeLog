@@ -1,5 +1,18 @@
 2014-05-14  Antti Koivisto  <antti@apple.com>
 
+        RuleData should ref the StyleRule
+        https://bugs.webkit.org/show_bug.cgi?id=132865
+
+        Reviewed by Andreas Kling.
+
+        As a defensive move make RuleData ref the StyleRule. 
+        This adds some ref churn but the overall performance impact should be minimal.
+
+        * css/RuleSet.h:
+        (WebCore::RuleData::rule):
+
+2014-05-14  Antti Koivisto  <antti@apple.com>
+
         GIF animations don't restart after scrolling on iOS WebKit1
         https://bugs.webkit.org/show_bug.cgi?id=132900
 

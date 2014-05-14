@@ -61,7 +61,7 @@ public:
     RuleData(StyleRule*, unsigned selectorIndex, unsigned position, AddRuleFlags);
 
     unsigned position() const { return m_position; }
-    StyleRule* rule() const { return m_rule; }
+    StyleRule* rule() const { return m_rule.get(); }
     const CSSSelector* selector() const { return m_rule->selectorList().selectorAt(m_selectorIndex); }
     unsigned selectorIndex() const { return m_selectorIndex; }
 
@@ -88,7 +88,7 @@ public:
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
 private:
-    StyleRule* m_rule;
+    RefPtr<StyleRule> m_rule;
     unsigned m_selectorIndex : 13;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
