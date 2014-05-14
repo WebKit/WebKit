@@ -1928,10 +1928,14 @@ void RenderBlockFlow::updateRegionForLine(RootInlineBox* lineBox) const
 {
     ASSERT(lineBox);
 
-    if (auto containingRegion = regionAtBlockOffset(lineBox->lineTopWithLeading()))
-        lineBox->setContainingRegion(*containingRegion);
-    else
+    if (!hasRegionRangeInFlowThread())
         lineBox->clearContainingRegion();
+    else {
+        if (auto containingRegion = regionAtBlockOffset(lineBox->lineTopWithLeading()))
+            lineBox->setContainingRegion(*containingRegion);
+        else
+            lineBox->clearContainingRegion();
+    }
 
     RootInlineBox* prevLineBox = lineBox->prevRootBox();
     if (!prevLineBox)

@@ -820,7 +820,7 @@ bool RenderNamedFlowThread::absoluteQuadsForBox(Vector<FloatQuad>& quads, bool* 
     RenderRegion* startRegion = nullptr;
     RenderRegion* endRegion = nullptr;
     // If the box doesn't have a range, we don't know how it is fragmented so fallback to the default behaviour.
-    if (!getRegionRangeForBox(renderer, startRegion, endRegion))
+    if (!computedRegionRangeForBox(renderer, startRegion, endRegion))
         return false;
 
     for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {

@@ -143,6 +143,7 @@ public:
 
     virtual void setRegionRangeForBox(const RenderBox*, RenderRegion*, RenderRegion*);
     bool getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
+    bool computedRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
     bool hasCachedRegionRangeForBox(const RenderBox*) const;
 
     // Check if the object is in region and the region is part of this flow thread.

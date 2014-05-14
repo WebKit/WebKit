@@ -1,3 +1,51 @@
+2014-05-13  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Assertion failure in some cases with inline blocks
+        https://bugs.webkit.org/show_bug.cgi?id=132859
+
+        Reviewed by Mihnea Ovidenie.
+
+        The patch hardens the conditions when the region range caches are
+        populated to avoid desynchronizations when objects move during layout.
+        This is true especially in the case of the boxes found inside
+        inline blocks, that get their range from the containing line.
+
+        There is a new function |computedRegionRangeForBox| that will always
+        return a region range for a box using a best effort algorithm. This should
+        be used only when there's no need to cache region information.
+
+        This change also allows better control over the lifecycle of the
+        |RenderBoxRegionInfo| objects stored on the regions. We can now iterate
+        over the full range of the box when cleaning up the region box info. The
+        same applies for the width change detection function.
+
+        Test: fast/regions/inline-block-shifted-region.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::updateRegionForLine): Don't set the containing
+        region if the block doesn't have a range. The returned value would not
+        be correctly clamped.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBlock::hasRegionRangeInFlowThread):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo): Iterate only over
+        the range of the box, not from the start of the region chain.
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegionsForBlock): Same as
+        above.
+        (WebCore::RenderFlowThread::hasCachedRegionRangeForBox):
+        (WebCore::RenderFlowThread::getRegionRangeForBoxFromCachedInfo):
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+        (WebCore::RenderFlowThread::computedRegionRangeForBox): Best effort function
+        to determine the range of a box. It will always return something as long
+        as the flow thread has regions.
+        (WebCore::RenderFlowThread::objectShouldFragmentInFlowRegion): Use the new function
+        to determine the range.
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::absoluteQuadsForBox): Use the new function to determine
+        the range.
+
 2014-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fix "ASSERTION FAILED: m_representation == PlatformLayerRepresentation" with UI-side compositing

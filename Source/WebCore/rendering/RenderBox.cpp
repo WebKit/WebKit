@@ -150,6 +150,15 @@ RenderRegion* RenderBox::clampToStartAndEndRegions(RenderRegion* region) const
     return region;
 }
 
+bool RenderBox::hasRegionRangeInFlowThread() const
+{
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread || !flowThread->hasValidRegionInfo())
+        return false;
+
+    return flowThread->hasCachedRegionRangeForBox(this);
+}
+
 LayoutRect RenderBox::clientBoxRectInRegion(RenderRegion* region) const
 {
     if (!region)

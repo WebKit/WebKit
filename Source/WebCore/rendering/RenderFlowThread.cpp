@@ -578,12 +578,13 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
 
     RenderRegion* startRegion = nullptr;
     RenderRegion* endRegion = nullptr;
-    getRegionRangeForBox(box, startRegion, endRegion);
-
-    for (auto& region : m_regionList) {
-        region->removeRenderBoxRegionInfo(box);
-        if (region == endRegion)
-            break;
+    if (getRegionRangeForBox(box, startRegion, endRegion)) {
+        for (auto it = m_regionList.find(startRegion), end = m_regionList.end(); it != end; ++it) {
+            RenderRegion* region = *it;
+            region->removeRenderBoxRegionInfo(box);
+            if (region == endRegion)
+                break;
+        }
     }
 
 #ifndef NDEBUG
@@ -640,9 +641,11 @@ void RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* b
 
     RenderRegion* startRegion = nullptr;
     RenderRegion* endRegion = nullptr;
-    getRegionRangeForBox(block, startRegion, endRegion);
+    if (!getRegionRangeForBox(block, startRegion, endRegion))
+        return;
 
-    for (auto& region : m_regionList) {
+    for (auto it = m_regionList.find(startRegion), end = m_regionList.end(); it != end; ++it) {
+        RenderRegion* region = *it;
         ASSERT(!region->needsLayout() || region->isRenderRegionSet());
 
         // We have no information computed for this region so we need to do it.
@@ -754,14 +757,7 @@ bool RenderFlowThread::hasCachedRegionRangeForBox(const RenderBox* box) const
 {
     ASSERT(box);
 
-    if (m_regionRangeMap.contains(box))
-        return true;
-
-    InlineElementBox* boxWrapper = box->inlineBoxWrapper();
-    if (boxWrapper && boxWrapper->root().containingRegion())
-        return true;
-
-    return false;
+    return m_regionRangeMap.contains(box);
 }
 
 bool RenderFlowThread::getRegionRangeForBoxFromCachedInfo(const RenderBox* box, RenderRegion*& startRegion, RenderRegion*& endRegion) const
@@ -775,13 +771,6 @@ bool RenderFlowThread::getRegionRangeForBoxFromCachedInfo(const RenderBox* box, 
         const RenderRegionRange& range = it->value;
         startRegion = range.startRegion();
         endRegion = range.endRegion();
-        ASSERT(m_regionList.contains(startRegion) && m_regionList.contains(endRegion));
-        return true;
-    }
-
-    InlineElementBox* boxWrapper = box->inlineBoxWrapper();
-    if (boxWrapper && boxWrapper->root().containingRegion()) {
-        startRegion = endRegion = boxWrapper->root().containingRegion();
         ASSERT(m_regionList.contains(startRegion) && m_regionList.contains(endRegion));
         return true;
     }
@@ -805,12 +794,31 @@ bool RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
     if (getRegionRangeForBoxFromCachedInfo(box, startRegion, endRegion))
         return true;
 
-    // Check if the box is contained in an unsplittable box.
-    // If the unsplittable box has region range, then the start and end region for the box
-    // should be equal with the region for the unsplittable box if any.
+    return false;
+}
+
+bool RenderFlowThread::computedRegionRangeForBox(const RenderBox* box, RenderRegion*& startRegion, RenderRegion*& endRegion) const
+{
+    ASSERT(box);
+
+    startRegion = endRegion = nullptr;
+    if (!hasValidRegionInfo()) // We clear the ranges when we invalidate the regions.
+        return false;
+
+    if (getRegionRangeForBox(box, startRegion, endRegion))
+        return true;
+
+    // Search the region range using the information provided by the
+    // containing block chain.
     RenderBox* cb = const_cast<RenderBox*>(box);
-    RenderBox* cbToUse = nullptr;
-    while (!cb->isRenderFlowThread() && !cbToUse) {
+    while (!cb->isRenderFlowThread()) {
+        InlineElementBox* boxWrapper = cb->inlineBoxWrapper();
+        if (boxWrapper && boxWrapper->root().containingRegion()) {
+            startRegion = endRegion = boxWrapper->root().containingRegion();
+            ASSERT(m_regionList.contains(startRegion));
+            return true;
+        }
+
         // FIXME: Use the containingBlock() value once we patch all the layout systems to be region range aware
         // (e.g. if we use containingBlock() the shadow controls of a video element won't get the range from the
         // video box because it's not a block; they need to be patched separately).
@@ -818,17 +826,15 @@ bool RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
         cb = cb->parent()->enclosingBox();
         ASSERT(cb);
 
-        if (hasCachedRegionRangeForBox(cb))
-            cbToUse = cb;
+        // If a box doesn't have a cached region range it usually means the box belongs to a line so startRegion should be equal with endRegion.
+        // FIXME: Find the cases when this startRegion should not be equal with endRegion and make sure these boxes have cached region ranges.
+        if (hasCachedRegionRangeForBox(cb)) {
+            startRegion = endRegion = const_cast<RenderFlowThread*>(this)->regionAtBlockOffset(cb, box->offsetFromLogicalTopOfFirstPage(), true, DisallowRegionAutoGeneration);
+            return true;
+        }
     }
 
-    // If a box doesn't have a cached region range it usually means the box belongs to a line so startRegion should be equal with endRegion.
-    // FIXME: Find the cases when this startRegion should not be equal with endRegion and make sure these boxes have cached region ranges.
-    if (cbToUse) {
-        startRegion = endRegion = const_cast<RenderFlowThread*>(this)->regionAtBlockOffset(cbToUse, box->offsetFromLogicalTopOfFirstPage(), true, DisallowRegionAutoGeneration);
-        return true;
-    }
-
+    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -864,7 +870,7 @@ bool RenderFlowThread::objectShouldFragmentInFlowRegion(const RenderObject* obje
     RenderRegion* enclosingBoxEndRegion = nullptr;
     // If the box has no range, do not check regionInRange. Boxes inside inlines do not get ranges.
     // Instead, the containing RootInlineBox will abort when trying to paint inside the wrong region.
-    if (getRegionRangeForBox(enclosingBox, enclosingBoxStartRegion, enclosingBoxEndRegion)
+    if (computedRegionRangeForBox(enclosingBox, enclosingBoxStartRegion, enclosingBoxEndRegion)
         && !regionInRange(region, enclosingBoxStartRegion, enclosingBoxEndRegion))
         return false;
     

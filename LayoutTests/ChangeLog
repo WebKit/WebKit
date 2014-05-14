@@ -1,3 +1,15 @@
+2014-05-13  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Assertion failure in some cases with inline blocks
+        https://bugs.webkit.org/show_bug.cgi?id=132859
+
+        Reviewed by Mihnea Ovidenie.
+
+        Test that moving lines with inline blocks doesn't cause an assertion.
+
+        * fast/regions/inline-block-shifted-region-expected.txt: Added.
+        * fast/regions/inline-block-shifted-region.html: Added.
+
 2014-05-13  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] line height grows around polygon and incorrectly causes text to wrap to next line
