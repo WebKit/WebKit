@@ -1,5 +1,32 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168572
+
+    2014-05-09  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS][WK2] Fix bugs exposed by r168556
+            https://bugs.webkit.org/show_bug.cgi?id=132768
+
+            Reviewed by Ryosuke Niwa.
+
+            Fix two bugs exposed by r168556.
+            1) We were only changing the page scale factor when the scale was not adjusted by live
+               resize. The idea was that the scale would either be the same (responsive content)
+               or that it would be defined by the next viewContentRectUpdate.
+
+               Now that we also send resize and scroll events, we must always update the scale since
+               it affects some APIs observable from JavaScript (like scrolling bounds).
+
+            2) Internally, Page's scaleFactor is stored as a float and not double. The rounding error
+               were causing us to send DynamicViewportUpdateChangedTarget() in cases were there is no change
+               of target.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::withinEpsilon):
+            (WebKit::WebPage::dynamicViewportSizeUpdate):
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168556
 
     2014-05-09  Benjamin Poulain  <bpoulain@apple.com>

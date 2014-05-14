@@ -1891,6 +1891,11 @@ void WebPage::setMinimumLayoutSizeForMinimalUI(const FloatSize& size)
     viewportConfigurationChanged();
 }
 
+static inline bool withinEpsilon(float a, float b)
+{
+    return fabs(a - b) < std::numeric_limits<float>::epsilon();
+}
+
 void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale)
 {
     TemporaryChange<bool> dynamicSizeUpdateGuard(m_inDynamicSizeUpdate, true);
@@ -2031,15 +2036,14 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
     frameView.setUnobscuredContentRect(roundedUnobscuredContentRect);
     m_drawingArea->setExposedContentRect(newExposedContentRect);
 
-    if (scale == targetScale)
-        scalePage(scale, roundedUnobscuredContentRect.location());
+    scalePage(scale, roundedUnobscuredContentRect.location());
 
     FloatSize unobscuredContentRectSizeInContentCoordinates = newUnobscuredContentRect.size();
     unobscuredContentRectSizeInContentCoordinates.scale(scale);
     frameView.setCustomSizeForResizeEvent(expandedIntSize(unobscuredContentRectSizeInContentCoordinates));
     frameView.setScrollOffset(roundedUnobscuredContentRect.location());
 
-    if (pageScaleFactor() != targetScale || roundedIntPoint(targetUnobscuredRect.location()) != frameView.scrollPosition())
+    if (!withinEpsilon(pageScaleFactor(), targetScale) || roundedIntPoint(targetUnobscuredRect.location()) != frameView.scrollPosition())
         send(Messages::WebPageProxy::DynamicViewportUpdateChangedTarget(pageScaleFactor(), frameView.scrollPosition()));
 }
 
