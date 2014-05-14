@@ -33,7 +33,7 @@
 
 @class WKView;
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface _WKThumbnailView : NSView
 
 - (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView;

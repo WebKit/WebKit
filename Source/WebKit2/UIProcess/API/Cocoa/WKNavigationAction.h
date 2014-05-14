@@ -23,10 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
 
 @class WKFrameInfo;
 
@@ -46,12 +47,12 @@ typedef NS_ENUM(NSInteger, WKNavigationType) {
     WKNavigationTypeReload,
     WKNavigationTypeFormResubmitted,
     WKNavigationTypeOther = -1,
-};
+} WK_ENUM_AVAILABLE(10_10, 8_0);
 
 
 /*! Contains information about an action that may cause a navigation, used for making policy decisions.
  */
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKNavigationAction : NSObject
 
 /*! @abstract Represents the frame that is requesting the navigation.

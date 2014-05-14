@@ -23,16 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
 
 @class WKFrameInfo;
 
 /*! Contains information about a navigation response, used for making policy decisions.
  */
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKNavigationResponse : NSObject
 
 /*! @abstract Whether the frame that is being navigated is the main frame or not.

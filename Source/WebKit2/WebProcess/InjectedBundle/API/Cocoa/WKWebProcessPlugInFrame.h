@@ -36,7 +36,7 @@
 @class WKWebProcessPlugInNodeHandle;
 @class WKWebProcessPlugInScriptWorld;
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKWebProcessPlugInFrame : NSObject
 
 @property (nonatomic, readonly) NSURL *URL;

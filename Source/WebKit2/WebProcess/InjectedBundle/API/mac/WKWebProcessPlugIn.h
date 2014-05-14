@@ -41,7 +41,7 @@
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController willDestroyBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
 @end
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKWebProcessPlugInController : NSObject
 
 @property (readonly) WKConnection *connection;

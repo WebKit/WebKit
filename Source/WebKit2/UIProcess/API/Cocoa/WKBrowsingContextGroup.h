@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKUserScriptInjectionTime.h>
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKBrowsingContextGroup : NSObject
 
 - (id)initWithIdentifier:(NSString *)identifier;

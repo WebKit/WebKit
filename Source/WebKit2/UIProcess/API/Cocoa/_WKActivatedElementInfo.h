@@ -32,9 +32,9 @@
 typedef NS_ENUM(NSInteger, _WKActivatedElementType) {
     _WKActivatedElementTypeLink,
     _WKActivatedElementTypeImage,
-};
+} WK_ENUM_AVAILABLE(10_10, 8_0);
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface _WKActivatedElementInfo : NSObject
 
 @property (nonatomic, readonly) NSURL *URL;

@@ -23,16 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <CoreGraphics/CoreGraphics.h>
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
+#import <CoreGraphics/CoreGraphics.h>
+#import <Foundation/Foundation.h>
+
 /*! WKPreferences encapsulates the preferences you can change for one or more WKWebViews. 
  A @link WKWebView @/link can specify which WKPreferences object it uses through its @link WKWebViewConfiguration @/link.
  */
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKPreferences : NSObject
 
 /*! @abstract Returns an initialized WKPreferences object.
@@ -89,4 +90,4 @@ WK_API_CLASS
 
 @end
 
-#endif // WK_API_ENABLED
+#endif

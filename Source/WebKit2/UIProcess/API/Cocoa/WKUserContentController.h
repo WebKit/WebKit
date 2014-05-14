@@ -23,17 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
 
 @protocol WKScriptMessageHandler;
 
 /*! WKUserContentController provides a way for JavaScript to post messages to the @link WKWebView @/link.
  A @link WKWebView @/link can specify which WKUserContentController object it uses through its @link WKWebViewConfiguration @/link.
  */
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKUserContentController : NSObject
 
 /*! @abstract Adds a script message handler.
@@ -51,5 +52,3 @@ WK_API_CLASS
 @end
 
 #endif
-
-

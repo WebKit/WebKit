@@ -1,5 +1,77 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168566
+
+    2014-05-09  Anders Carlsson  <andersca@apple.com>
+
+            Update availability macros
+            https://bugs.webkit.org/show_bug.cgi?id=132763
+            <rdar://problem/15311800>
+
+            Reviewed by Dan Bernstein.
+
+            * Configurations/WebKit.xcconfig:
+            * Shared/API/Cocoa/WKBrowsingContextHandle.h:
+            * Shared/API/Cocoa/WKFoundation.h:
+            * Shared/API/Cocoa/_WKFrameHandle.h:
+            * Shared/API/Cocoa/_WKRemoteObjectInterface.h:
+            * Shared/API/Cocoa/_WKRemoteObjectRegistry.h:
+            * UIProcess/API/Cocoa/WKBackForwardList.h:
+            * UIProcess/API/Cocoa/WKBackForwardListItem.h:
+            * UIProcess/API/Cocoa/WKBackForwardListPrivate.h:
+            * UIProcess/API/Cocoa/WKBrowsingContextController.h:
+            * UIProcess/API/Cocoa/WKBrowsingContextGroup.h:
+            * UIProcess/API/Cocoa/WKConnection.h:
+            * UIProcess/API/Cocoa/WKFrameInfo.h:
+            * UIProcess/API/Cocoa/WKNavigation.h:
+            * UIProcess/API/Cocoa/WKNavigationAction.h:
+            (NS_ENUM):
+            * UIProcess/API/Cocoa/WKNavigationData.h:
+            * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+            (NS_ENUM):
+            * UIProcess/API/Cocoa/WKNavigationResponse.h:
+            * UIProcess/API/Cocoa/WKPreferences.h:
+            * UIProcess/API/Cocoa/WKProcessGroup.h:
+            * UIProcess/API/Cocoa/WKProcessPool.h:
+            * UIProcess/API/Cocoa/WKScriptMessage.h:
+            * UIProcess/API/Cocoa/WKScriptMessageHandler.h:
+            * UIProcess/API/Cocoa/WKTypeRefWrapper.h:
+            * UIProcess/API/Cocoa/WKUIDelegate.h:
+            * UIProcess/API/Cocoa/WKUserContentController.h:
+            * UIProcess/API/Cocoa/WKWebView.h:
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            (NS_OPTIONS):
+            (NS_ENUM):
+            * UIProcess/API/Cocoa/WKWindowFeatures.h:
+            * UIProcess/API/Cocoa/_WKActivatedElementInfo.h:
+            (NS_ENUM):
+            * UIProcess/API/Cocoa/_WKDownload.h:
+            * UIProcess/API/Cocoa/_WKElementAction.h:
+            (NS_ENUM):
+            * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+            * UIProcess/API/Cocoa/_WKScriptWorld.h:
+            * UIProcess/API/Cocoa/_WKThumbnailView.h:
+            * UIProcess/API/Cocoa/_WKVisitedLinkProvider.h:
+            * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+            * WebKit2.xcodeproj/project.pbxproj:
+            * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+            * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.h:
+            * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h:
+            * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.h:
+            * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h:
+            * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h:
+            * WebProcess/InjectedBundle/API/mac/WKDOMElement.h:
+            * WebProcess/InjectedBundle/API/mac/WKDOMNode.h:
+            * WebProcess/InjectedBundle/API/mac/WKDOMRange.h:
+            * WebProcess/InjectedBundle/API/mac/WKDOMText.h:
+            * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.h:
+            * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h:
+            * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h:
+            * mac/rewrite-availability-macros.sh: Added.
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168563
 
     2014-05-09  Enrica Casucci  <enrica@apple.com>
