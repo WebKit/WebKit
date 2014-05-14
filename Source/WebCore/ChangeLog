@@ -1,5 +1,16 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168758
+
+    2014-05-13  Eric Carlson  <eric.carlson@apple.com>
+
+            Unreviewed build fix after r168755.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168755
 
     2014-05-13  Eric Carlson  <eric.carlson@apple.com>
