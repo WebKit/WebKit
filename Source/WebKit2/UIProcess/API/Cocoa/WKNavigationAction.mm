@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "NavigationActionData.h"
 #import <wtf/RetainPtr.h>
 
 @implementation WKNavigationAction {
@@ -35,6 +36,87 @@
     RetainPtr<WKFrameInfo> _targetFrame;
     RetainPtr<NSURLRequest> _request;
     RetainPtr<NSURL> _originalURL;
+    BOOL _isUserInitiated;
+}
+
+static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationType)
+{
+    switch (navigationType) {
+    case WebCore::NavigationTypeLinkClicked:
+        return WKNavigationTypeLinkActivated;
+    case WebCore::NavigationTypeFormSubmitted:
+        return WKNavigationTypeFormSubmitted;
+    case WebCore::NavigationTypeBackForward:
+        return WKNavigationTypeBackForward;
+    case WebCore::NavigationTypeReload:
+        return WKNavigationTypeReload;
+    case WebCore::NavigationTypeFormResubmitted:
+        return WKNavigationTypeFormResubmitted;
+    case WebCore::NavigationTypeOther:
+        return WKNavigationTypeOther;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WKNavigationTypeOther;
+}
+
+#if PLATFORM(MAC)
+
+// FIXME: This really belongs in WebEventFactory.
+static NSEventModifierFlags toNSEventModifierFlags(WebKit::WebEvent::Modifiers modifiers)
+{
+    NSEventModifierFlags modifierFlags = 0;
+
+    if (modifiers & WebKit::WebEvent::CapsLockKey)
+        modifierFlags |= NSAlphaShiftKeyMask;
+    if (modifiers & WebKit::WebEvent::ShiftKey)
+        modifierFlags |= NSShiftKeyMask;
+    if (modifiers & WebKit::WebEvent::ControlKey)
+        modifierFlags |= NSControlKeyMask;
+    if (modifiers & WebKit::WebEvent::AltKey)
+        modifierFlags |= NSAlternateKeyMask;
+    if (modifiers & WebKit::WebEvent::MetaKey)
+        modifierFlags |= NSCommandKeyMask;
+
+    return modifierFlags;
+}
+
+static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
+{
+    switch (mouseButton) {
+    case WebKit::WebMouseEvent::NoButton:
+        return 0;
+
+    case WebKit::WebMouseEvent::LeftButton:
+        return 1 << 0;
+
+    case WebKit::WebMouseEvent::RightButton:
+        return 1 << 1;
+
+    case WebKit::WebMouseEvent::MiddleButton:
+        return 1 << 2;
+
+    default:
+        return 0;
+    }
+}
+#endif
+
+- (instancetype)_initWithNavigationActionData:(const WebKit::NavigationActionData&)navigationActionData
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _navigationType = toWKNavigationType(navigationActionData.navigationType);
+
+#if PLATFORM(MAC)
+    _modifierFlags = toNSEventModifierFlags(navigationActionData.modifiers);
+    _buttonNumber = toNSButtonNumber(navigationActionData.mouseButton);
+#endif
+
+    _isUserInitiated = navigationActionData.isProcessingUserGesture;
+
+    return self;
 }
 
 - (NSString *)description
@@ -83,27 +165,11 @@
     return _originalURL.get();
 }
 
-@end
-
-WKNavigationType toWKNavigationType(WebCore::NavigationType navigationType)
+- (BOOL)_isUserInitiated
 {
-    switch (navigationType) {
-    case WebCore::NavigationTypeLinkClicked:
-        return WKNavigationTypeLinkActivated;
-    case WebCore::NavigationTypeFormSubmitted:
-        return WKNavigationTypeFormSubmitted;
-    case WebCore::NavigationTypeBackForward:
-        return WKNavigationTypeBackForward;
-    case WebCore::NavigationTypeReload:
-        return WKNavigationTypeReload;
-    case WebCore::NavigationTypeFormResubmitted:
-        return WKNavigationTypeFormResubmitted;
-    case WebCore::NavigationTypeOther:
-        return WKNavigationTypeOther;
-    }
-
-    ASSERT_NOT_REACHED();
-    return WKNavigationTypeOther;
+    return _isUserInitiated;
 }
+
+@end
 
 #endif

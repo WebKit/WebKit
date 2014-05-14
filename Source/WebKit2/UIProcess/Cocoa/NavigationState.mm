@@ -248,8 +248,7 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     if (!navigationDelegate)
         return;
 
-    // FIXME: Set up the navigation action object.
-    auto navigationAction = adoptNS([[WKNavigationAction alloc] init]);
+    auto navigationAction = adoptNS([[WKNavigationAction alloc] _initWithNavigationActionData:navigationActionData]);
 
     if (destinationFrame)
         [navigationAction setTargetFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*destinationFrame]).get()];
@@ -261,10 +260,8 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
             [navigationAction setSourceFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*sourceFrame]).get()];
     }
 
-    [navigationAction setNavigationType:toWKNavigationType(navigationActionData.navigationType)];
     [navigationAction setRequest:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
     [navigationAction _setOriginalURL:originalRequest.url()];
-    [navigationAction _setUserInitiated:navigationActionData.isProcessingUserGesture];
 
     [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[listener](WKNavigationActionPolicy actionPolicy) {
         switch (actionPolicy) {
