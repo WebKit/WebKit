@@ -3966,10 +3966,14 @@ bool RenderBlock::updateRegionRangeForBoxChild(const RenderBox& box) const
     RenderRegion* newEndRegion = nullptr;
     flowThread->getRegionRangeForBox(&box, newStartRegion, newEndRegion);
 
+
+    // Changing the start region means we shift everything and a relayout is needed.
+    if (newStartRegion != startRegion)
+        return true;
+
     // The region range of the box has changed. Some boxes (e.g floats) may have been positioned assuming
     // a different range.
-    // FIXME: Be smarter about this. We don't need to relayout all the time.
-    if (newStartRegion != startRegion || newEndRegion != endRegion)
+    if (box.needsLayoutAfterRegionRangeChange() && newEndRegion != endRegion)
         return true;
 
     return false;

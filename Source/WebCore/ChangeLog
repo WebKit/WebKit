@@ -1,3 +1,32 @@
+2014-05-14  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Don't relayout when updating the region range unless necessary
+        https://bugs.webkit.org/show_bug.cgi?id=132120
+
+        Reviewed by Antti Koivisto.
+
+        The patch reduces the cases when a relayout is made for boxes that change the region range.
+        This lowers the amount of nested layouts in most cases and produces big layout speedups for trees
+        without overhanging floats.
+
+        Tests: Major performance improvement with speedups of 50-60% on:
+        Layout/RegionsAuto.html, Layout/RegionsAutoMaxHeight.html and Layout/RegionsFixed.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateRegionRangeForBoxChild): Ask the child box if it needs a relayout
+        in case its region range changes.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlockChild): It's not necessary to do two layouts here because
+        there's no block direction position change between them for the child.
+        (WebCore::RenderBlockFlow::needsLayoutAfterRegionRangeChange): If the block doesn't have floats
+        or if it expands to enclose the floats it doesn't need to relayout after a region range chage.
+        It's not possible for it to have a float inside overflow that must be repositioned using the new
+        range.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::needsLayoutAfterRegionRangeChange): By default don't relayout after a region
+        range change.
+
 2014-05-14  Antti Koivisto  <antti@apple.com>
 
         RuleData should ref the StyleRule

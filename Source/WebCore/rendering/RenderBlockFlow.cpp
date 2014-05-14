@@ -746,15 +746,13 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
             if (!child.needsLayout())
                 child.markForPaginationRelayoutIfNeeded();
         }
-
-        // Our guess was wrong. Make the child lay itself out again.
-        child.layoutIfNeeded();
     }
 
-    if (updateRegionRangeForBoxChild(child)) {
+    if (updateRegionRangeForBoxChild(child))
         child.setNeedsLayout(MarkOnlyThis);
-        child.layoutIfNeeded();
-    }
+
+    // In case our guess was wrong, relayout the child.
+    child.layoutIfNeeded();
 
     // We are no longer at the top of the block if we encounter a non-empty child.  
     // This has to be done after checking for clear, so that margins can be reset if a clear occurred.
@@ -3001,6 +2999,17 @@ void RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded()
         setRenderNamedFlowFragment(flowFragment);
         addChild(renderNamedFlowFragment());
     }
+}
+
+bool RenderBlockFlow::needsLayoutAfterRegionRangeChange() const
+{
+    // A block without floats or that expands to enclose them won't need a relayout
+    // after a region range change. There is no overflow content needing relayout
+    // in the region chain because the region range can only shrink after the estimation.
+    if (!containsFloats() || expandsToEncloseOverhangingFloats())
+        return false;
+
+    return true;
 }
 
 bool RenderBlockFlow::canHaveChildren() const

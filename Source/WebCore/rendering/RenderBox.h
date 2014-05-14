@@ -615,6 +615,7 @@ public:
 
     // True if this box can have a range in an outside fragmentation context.
     bool canHaveOutsideRegionRange() const { return !isInFlowRenderFlowThread(); }
+    virtual bool needsLayoutAfterRegionRangeChange() const { return false; }
 
 protected:
     RenderBox(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);

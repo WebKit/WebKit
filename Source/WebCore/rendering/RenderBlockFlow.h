@@ -388,6 +388,8 @@ public:
     
     void updateColumnProgressionFromStyle(RenderStyle*);
 
+    virtual bool needsLayoutAfterRegionRangeChange() const override;
+
 protected:
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     
