@@ -1,3 +1,31 @@
+2014-05-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Expose the viewport meta tag width on the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=132926
+        <rdar://problem/16892115>
+
+        Reviewed by Sam Weinig.
+
+        Safari requires the viewport meta tag width for legacy stuff on WebApps. Just send it
+        over to the UIProcess when it changes.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView _setViewportMetaTagWidth:]):
+        (-[WKWebView _viewportMetaTagWidth]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didChangeViewportMetaTagWidth):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::viewportMetaTagWidthDidChange):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportPropertiesDidChange):
+
 2014-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Make view debugging easier

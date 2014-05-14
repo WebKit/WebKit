@@ -119,6 +119,7 @@
     CGSize _minimumLayoutSizeOverride;
     CGSize _minimumLayoutSizeOverrideForMinimalUI;
     CGRect _inputViewBounds;
+    CGFloat _viewportMetaTagWidth;
 
     UIEdgeInsets _obscuredInsets;
     bool _isChangingObscuredInsetsInteractively;
@@ -199,6 +200,7 @@
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
     [_scrollView addSubview:_contentView.get()];
+    _viewportMetaTagWidth = -1;
 
     [self _frameOrBoundsChanged];
 
@@ -420,6 +422,11 @@
 {
     ASSERT(_customContentView);
     [_customContentView web_setContentProviderData:data suggestedFilename:suggestedFilename];
+}
+
+- (void)_setViewportMetaTagWidth:(float)newWidth
+{
+    _viewportMetaTagWidth = newWidth;
 }
 
 - (void)_willInvokeUIScrollViewDelegateCallback
@@ -1686,6 +1693,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (![self _isDisplayingPDF])
         return nil;
     return [(WKPDFView *)_customContentView.get() suggestedFilename];
+}
+
+- (CGFloat)_viewportMetaTagWidth
+{
+    return _viewportMetaTagWidth;
 }
 
 // FIXME: Remove this once nobody uses it.

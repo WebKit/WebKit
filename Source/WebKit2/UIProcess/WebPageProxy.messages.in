@@ -171,6 +171,7 @@ messages -> WebPageProxy {
     ZoomToRect(WebCore::FloatRect rect, double minimumScale, double maximumScale)
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)
+    ViewportMetaTagWidthDidChange(float width)
 #endif
 #if PLATFORM(GTK)
     PrintFinishedCallback(WebCore::ResourceError error, uint64_t callbackID)

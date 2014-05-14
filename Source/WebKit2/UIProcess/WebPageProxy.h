@@ -626,6 +626,7 @@ public:
     void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
+    void viewportMetaTagWidthDidChange(float width);
 #endif
 
     const EditorState& editorState() const { return m_editorState; }

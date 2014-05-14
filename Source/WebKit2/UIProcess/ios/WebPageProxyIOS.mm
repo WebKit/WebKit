@@ -603,6 +603,11 @@ void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
     m_uiClient->didNotHandleTapAsClick(point);
 }
 
+void WebPageProxy::viewportMetaTagWidthDidChange(float width)
+{
+    m_pageClient.didChangeViewportMetaTagWidth(width);
+}
+
 #if USE(QUICK_LOOK)
     
 void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)

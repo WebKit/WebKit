@@ -109,6 +109,9 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 // FIXME: This can be removed once WKNavigation's response property is implemented.
 @property (nonatomic, readonly) NSString *_suggestedFilenameForDisplayedPDF;
 
+// The viewport meta tag width is negative if the value is not defined.
+@property (nonatomic, readonly) CGFloat _viewportMetaTagWidth;
+
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;
 

@@ -182,6 +182,11 @@ void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
     [static_cast<_WKDownload *>(download->wrapper()) setOriginatingWebView:m_webView];
 }
 
+void PageClientImpl::didChangeViewportMetaTagWidth(float newWidth)
+{
+    [m_webView _setViewportMetaTagWidth:newWidth];
+}
+
 void PageClientImpl::setCursor(const Cursor&)
 {
     notImplemented();

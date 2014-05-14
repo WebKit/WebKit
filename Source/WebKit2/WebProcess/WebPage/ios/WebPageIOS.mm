@@ -126,8 +126,13 @@ FloatSize WebPage::availableScreenSize() const
 
 void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArguments)
 {
+    float oldWidth = m_viewportConfiguration.viewportArguments().width;
+
     m_viewportConfiguration.setViewportArguments(viewportArguments);
     viewportConfigurationChanged();
+
+    if (oldWidth != viewportArguments.width)
+        send(Messages::WebPageProxy::ViewportMetaTagWidthDidChange(viewportArguments.width));
 }
 
 void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
