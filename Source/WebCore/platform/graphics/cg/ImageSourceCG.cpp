@@ -53,10 +53,6 @@ const CFStringRef WebCoreCGImagePropertyAPNGLoopCount = CFSTR("LoopCount");
 const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
 const CFStringRef kCGImageSourceSkipMetadata = CFSTR("kCGImageSourceSkipMetadata");
 
-#if PLATFORM(IOS)
-bool ImageSource::s_acceleratedImageDecoding;
-#endif
-
 #if !PLATFORM(COCOA)
 size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, size_t count)
 {
@@ -133,11 +129,10 @@ CFDictionaryRef ImageSource::imageSourceOptions(ShouldSkipMetadata skipMetaData,
     if (!options[subsampling]) {
         int subsampleInt = 1 << subsampling; // [0..3] => [1, 2, 4, 8]
         RetainPtr<CFNumberRef> subsampleNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &subsampleInt));
-        const CFIndex numOptions = 5;
+        const CFIndex numOptions = 4;
         const CFBooleanRef imageSourceSkipMetaData = (skipMetaData == ImageSource::SkipMetadata) ? kCFBooleanTrue : kCFBooleanFalse;
-        const CFBooleanRef acceleratedImageDecoding = ImageSource::s_acceleratedImageDecoding ? kCFBooleanTrue : kCFBooleanFalse;
-        const void* keys[numOptions] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32, kCGImageSourceSubsampleFactor, kCGImageSourceSkipMetadata, kCGImageSourceUseHardwareAcceleration };
-        const void* values[numOptions] = { kCFBooleanTrue, kCFBooleanTrue, subsampleNumber.get(), imageSourceSkipMetaData, acceleratedImageDecoding };
+        const void* keys[numOptions] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32, kCGImageSourceSubsampleFactor, kCGImageSourceSkipMetadata };
+        const void* values[numOptions] = { kCFBooleanTrue, kCFBooleanTrue, subsampleNumber.get(), imageSourceSkipMetaData };
         options[subsampling] = CFDictionaryCreate(nullptr, keys, values, numOptions, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     }
     return options[subsampling];

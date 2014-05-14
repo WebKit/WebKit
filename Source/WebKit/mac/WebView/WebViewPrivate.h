@@ -445,7 +445,6 @@ Could be worth adding to the API.
 + (void)_setTileCacheLayerPoolCapacity:(unsigned)capacity;
 
 + (void)_setAcceleratedImageDecoding:(BOOL)enabled;
-+ (BOOL)_acceleratedImageDecoding;
 + (void)_setAllowCookies:(BOOL)allow;
 + (BOOL)_allowCookies;
 + (BOOL)_isUnderMemoryPressure;

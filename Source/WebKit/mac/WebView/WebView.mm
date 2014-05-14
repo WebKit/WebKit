@@ -1590,12 +1590,7 @@ static NSMutableSet *knownPluginMIMETypes()
 
 + (void)_setAcceleratedImageDecoding:(BOOL)enabled
 {
-    ImageSource::setAcceleratedImageDecodingEnabled(enabled);
-}
-
-+ (BOOL)_acceleratedImageDecoding
-{
-    return ImageSource::acceleratedImageDecodingEnabled();
+    UNUSED_PARAM(enabled);
 }
 
 + (void)_setAllowCookies:(BOOL)allow
