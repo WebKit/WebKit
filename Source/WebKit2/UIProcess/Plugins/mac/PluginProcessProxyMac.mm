@@ -125,10 +125,18 @@ bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
     return true;
 }
 
-static bool shouldUseXPC()
+static bool shouldUseXPC(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {
-    if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
+    if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitUseXPCServiceForPlugIns"])
         return [value boolValue];
+
+    // FIXME: This can be removed when <rdar://problem/16856490> is resolved.
+    if (pluginProcessAttributes.moduleInfo.bundleIdentifier == "com.adobe.acrobat.pdfviewerNPAPI")
+        return false;
+
+    // FIXME: We should still use XPC for plug-ins that want the heap to be executable, see <rdar://problem/16059483>.
+    if (launchOptions.executableHeap)
+        return false;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     return true;
@@ -147,8 +155,7 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
     if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicyUnsandboxed)
         launchOptions.extraInitializationData.add("disable-sandbox", "1");
 
-    // FIXME: We should still use XPC for plug-ins that want the heap to be executable, see <rdar://problem/16059483>.
-    launchOptions.useXPC = shouldUseXPC() && !launchOptions.executableHeap;
+    launchOptions.useXPC = shouldUseXPC(launchOptions, pluginProcessAttributes);
 }
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)

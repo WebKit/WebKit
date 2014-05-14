@@ -1,5 +1,25 @@
 2014-04-17  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168489
+
+    2014-05-08  Tim Horton  <timothy_horton@apple.com>
+
+            [wk2] Don't use the XPC-based plugin process for Adobe Reader
+            https://bugs.webkit.org/show_bug.cgi?id=132701
+            <rdar://problem/16792692>
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+            (WebKit::shouldUseXPC):
+            Rename the debugging default to a more modern and accurate name.
+            Don't use XPC for Adobe Reader.
+
+            (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+            Move the check for plugins that need an executable heap into shouldUseXPC.
+
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168473
 
     2014-05-08  Antti Koivisto  <antti@apple.com>
