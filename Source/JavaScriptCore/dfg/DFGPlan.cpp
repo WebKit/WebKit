@@ -386,6 +386,10 @@ bool Plan::isStillValid()
     CodeBlock* replacement = codeBlock->replacement();
     if (!replacement)
         return false;
+    // FIXME: This is almost certainly not necessary. There's no way for the baseline
+    // code to be replaced during a compilation, except if we delete the plan, in which
+    // case we wouldn't be here.
+    // https://bugs.webkit.org/show_bug.cgi?id=132707
     if (codeBlock->alternative() != replacement->baselineVersion())
         return false;
     if (!watchpoints.areStillValid())
