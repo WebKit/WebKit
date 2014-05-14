@@ -1828,13 +1828,6 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 - (UITextInteractionAssistant *)interactionAssistant
 {
-    // This method should only be called when we're in UIWebSelectionModeTextOnly however it is
-    // possible that it can be called while we are transitioning between modes.
-    // assert(!_webSelectionAssistant);
-
-    if (!_textSelectionAssistant)
-        _textSelectionAssistant = [[UIWKTextInteractionAssistant alloc] initWithView:self];
-
     return _textSelectionAssistant.get();
 }
 
