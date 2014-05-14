@@ -1,3 +1,14 @@
+2014-05-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Flakiness dashboard contains outdated list of bots on builders.jsonp
+        https://bugs.webkit.org/show_bug.cgi?id=132874
+
+        Reviewed by Darin Adler.
+
+        * TestResultServer/static-dashboards/builders.jsonp: Regenerate this
+        file by changing to the directory Tools/TestResultServer and executing
+        the script generate_builders_json.py
+
 2014-05-11  Anders Carlsson  <andersca@apple.com>
 
         Replace WKContextSetLocalStorageDirectory with a context configuration getter/setter

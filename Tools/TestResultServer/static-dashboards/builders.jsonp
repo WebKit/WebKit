@@ -6,24 +6,21 @@ LOAD_BUILDBOT_DATA([
         "tests": {
             "layout-tests": {
                 "builders": [
-                    "Apple MountainLion (Leaks)",
+                    "Apple Mavericks Debug WK1 (Tests)", 
+                    "Apple Mavericks Debug WK2 (Tests)", 
+                    "Apple Mavericks Release WK1 (Tests)", 
+                    "Apple Mavericks Release WK2 (Tests)", 
+                    "Apple MountainLion (Leaks)", 
                     "Apple MountainLion Debug WK1 (Tests)", 
                     "Apple MountainLion Debug WK2 (Tests)", 
                     "Apple MountainLion Release WK1 (Tests)", 
                     "Apple MountainLion Release WK2 (Tests)", 
-                    "Apple Mavericks Debug WK1 (Tests)",
-                    "Apple Mavericks Debug WK2 (Tests)",
-                    "Apple Mavericks Release WK1 (Tests)",
-                    "Apple Mavericks Release WK2 (Tests)",
                     "Apple Win 7 Debug (Tests)", 
                     "Apple Win 7 Release (Tests)", 
-                    "EFL Linux 64-bit Debug WK2", 
-                    "EFL Linux 64-bit Release", 
+                    "EFL Linux 64-bit Release WK1", 
                     "EFL Linux 64-bit Release WK2", 
-                    "GTK Linux 32-bit Release",
-                    "GTK Linux 64-bit Debug (Tests)",
-                    "GTK Linux 64-bit Release (Tests)",
-                    "WinCairo Release"
+                    "GTK Linux 64-bit Debug (Tests)", 
+                    "GTK Linux 64-bit Release (Tests)"
                 ]
             }
         }, 
