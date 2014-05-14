@@ -1,3 +1,11 @@
+2014-05-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.submit.sln: This solution
+        was missing commands to build LLInt portions of JSC.
+        * llint/LLIntData.cpp: 64-bit build fix.
+
 2014-05-14  Martin Hodovan <mhodovan.u-szeged@partner.samsung.com>
 
         ARM Traditional buildfix after r168776.

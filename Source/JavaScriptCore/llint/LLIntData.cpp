@@ -40,7 +40,7 @@
 namespace JSC { namespace LLInt {
 
 Instruction* Data::s_exceptionInstructions = 0;
-Opcode Data::s_opcodeMap[numOpcodeIDs] = {0};
+Opcode Data::s_opcodeMap[numOpcodeIDs] = { };
 
 #if !ENABLE(LLINT_C_LOOP)
 extern "C" void llint_entry(void*);
