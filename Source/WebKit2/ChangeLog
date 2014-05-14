@@ -1,5 +1,20 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168739
+
+    2014-05-13  Tim Horton  <timothy_horton@apple.com>
+
+            Speculative build fix for iOS.
+
+            * UIProcess/ios/WebMemoryPressureHandlerIOS.cpp: Removed.
+            * UIProcess/ios/WebMemoryPressureHandlerIOS.mm: Added.
+            (WebKit::WebMemoryPressureHandler::shared):
+            (WebKit::WebMemoryPressureHandler::WebMemoryPressureHandler):
+            * WebKit2.xcodeproj/project.pbxproj:
+            Make WebMemoryPressureHandlerIOS Obj-C.
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168689
 
     2014-05-13  Tim Horton  <timothy_horton@apple.com>

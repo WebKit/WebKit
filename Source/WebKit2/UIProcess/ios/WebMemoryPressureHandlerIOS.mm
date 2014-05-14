@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebMemoryPressureHandlerIOS.h"
+#import "config.h"
+#import "WebMemoryPressureHandlerIOS.h"
 
 #if PLATFORM(IOS)
 
-#include "ViewSnapshotStore.h"
-#include <dispatch/private.h>
+#import "ViewSnapshotStore.h"
+#import <dispatch/private.h>
 
 namespace WebKit {
 
