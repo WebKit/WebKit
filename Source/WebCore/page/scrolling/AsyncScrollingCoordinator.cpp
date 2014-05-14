@@ -119,7 +119,12 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView
 
     if (!coordinatesScrollingForFrameView(frameView))
         return;
-
+    
+    // FIXME: In some navigation scenarios, the FrameView has no RenderView or that RenderView has not been composited.
+    // This needs cleaning up: https://bugs.webkit.org/show_bug.cgi?id=132724
+    if (!frameView->scrollLayerID())
+        return;
+    
     // If the root layer does not have a ScrollingStateNode, then we should create one.
     ensureRootStateNodeForFrameView(frameView);
     ASSERT(m_scrollingStateTree->rootStateNode());
