@@ -1,3 +1,9 @@
+2014-05-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix line ending style for the test (as an experiment).
+
+        * css3/calc/simple-calcs-prefixed.html:
+
 2014-05-13  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Assertion failure in some cases with inline blocks
