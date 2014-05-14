@@ -1,5 +1,48 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168556
+
+    2014-05-09  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS][WK2] Set up the resize events
+            https://bugs.webkit.org/show_bug.cgi?id=132726
+
+            Reviewed by Darin Adler and Simon Fraser.
+
+            Wire the UI Process updates to FrameView to send the resize events appropriately.
+
+            * Shared/VisibleContentRectUpdateInfo.cpp:
+            (WebKit::VisibleContentRectUpdateInfo::encode):
+            (WebKit::VisibleContentRectUpdateInfo::decode):
+            * Shared/VisibleContentRectUpdateInfo.h:
+            (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+            (WebKit::VisibleContentRectUpdateInfo::isChangingObscuredInsetsInteractively):
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _updateVisibleContentRects]):
+            * UIProcess/ios/WKContentView.h:
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:inStableState:isChangingObscuredInsetsInteractively:]):
+            (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:inStableState:]): Deleted.
+            Pass down the status of the content insets with the view update to main frame's FrameView
+            when needed.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::dynamicViewportSizeUpdate):
+            On live resize, send the resize event, then the scroll events (if needed).
+
+            Since JavaScript now gets two chances to change the content (resize event + scroll event),
+            we query the actual scroll offset and scale for the DynamicViewportUpdateChangedTarget.
+
+            (WebKit::WebPage::viewportConfigurationChanged):
+            Define the custom size on load before the app gets a chance to send different rects.
+            If for some reason the app changes its mind about the insets, the content will be notified with a resize event.
+
+            (WebKit::WebPage::updateVisibleContentRects):
+            Send the resize event when the insets are stable.
+            Also move the scroll event after the resize event for consistency with live resize.
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168513
 
     2014-05-08  Simon Fraser  <simon.fraser@apple.com>

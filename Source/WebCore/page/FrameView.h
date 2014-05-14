@@ -130,6 +130,8 @@ public:
     void setCustomFixedPositionLayoutRect(const IntRect&);
     bool updateFixedPositionLayoutRect();
 
+    void setCustomSizeForResizeEvent(IntSize);
+
     void setScrollVelocity(double horizontalVelocity, double verticalVelocity, double scaleChangeRate, double timestamp);
     FloatRect computeCoverageRect(double horizontalMargin, double verticalMargin) const;
 #else
@@ -577,6 +579,7 @@ private:
     virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation) override;
     virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation) override;
 
+    IntSize sizeForResizeEvent() const;
     void sendResizeEventIfNeeded();
 
     void updateScrollableAreaSet();
@@ -694,6 +697,9 @@ private:
 #if PLATFORM(IOS)
     bool m_useCustomFixedPositionLayoutRect;
     IntRect m_customFixedPositionLayoutRect;
+
+    bool m_useCustomSizeForResizeEvent;
+    IntSize m_customSizeForResizeEvent;
 
     double m_horizontalVelocity;
     double m_verticalVelocity;

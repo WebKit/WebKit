@@ -790,7 +790,7 @@ static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProx
     CGFloat scaleFactor = contentZoomScale(self);
 
     BOOL isStableState = !(_isChangingObscuredInsetsInteractively || [_scrollView isDragging] || [_scrollView isDecelerating] || [_scrollView isZooming] || [_scrollView isZoomBouncing] || [_scrollView _isAnimatingZoom]);
-    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates scale:scaleFactor inStableState:isStableState];
+    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates unobscuredRectInScrollViewCoordinates:unobscuredRect scale:scaleFactor inStableState:isStableState isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively];
 }
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView
@@ -1498,7 +1498,7 @@ static void updateTopAndBottomExtendedBackgroundExclusionIfNecessary(WKWebView* 
     CGRect visibleRectInContentCoordinates = [self convertRect:newBounds toView:_contentView.get()];
     CGRect unobscuredRectInContentCoordinates = [self convertRect:futureUnobscuredRectInSelfCoordinates toView:_contentView.get()];
 
-    _page->dynamicViewportSizeUpdate(WebCore::FloatSize(newMinimumLayoutSize.width, newMinimumLayoutSize.height), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, targetScale);
+    _page->dynamicViewportSizeUpdate(WebCore::FloatSize(newMinimumLayoutSize.width, newMinimumLayoutSize.height), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, targetScale);
 }
 
 - (void)_endAnimatedResize

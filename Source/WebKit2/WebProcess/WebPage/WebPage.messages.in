@@ -45,7 +45,7 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(IOS)
     SetViewportConfigurationMinimumLayoutSize(WebCore::FloatSize size)
     SetMinimumLayoutSizeForMinimalUI(WebCore::FloatSize size)
-    DynamicViewportSizeUpdate(WebCore::FloatSize minimumLayoutSize, WebCore::FloatRect targetExposedContentRect, WebCore::FloatRect targetUnobscuredRect, double scale)
+    DynamicViewportSizeUpdate(WebCore::FloatSize minimumLayoutSize, WebCore::FloatRect targetExposedContentRect, WebCore::FloatRect targetUnobscuredRect, WebCore::FloatRect targetUnobscuredRectInScrollViewCoordinates, double scale)
 
     HandleTap(WebCore::IntPoint point)
     PotentialTapAtPosition(uint64_t requestID, WebCore::FloatPoint point)

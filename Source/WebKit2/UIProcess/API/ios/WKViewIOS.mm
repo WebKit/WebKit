@@ -263,7 +263,7 @@ using namespace WebKit;
 
     CGFloat scaleFactor = [_scrollView zoomScale];
 
-    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates scale:scaleFactor inStableState:YES];
+    [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates unobscuredRectInScrollViewCoordinates:unobscuredRect scale:scaleFactor inStableState:YES isChangingObscuredInsetsInteractively:NO];
 }
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView
