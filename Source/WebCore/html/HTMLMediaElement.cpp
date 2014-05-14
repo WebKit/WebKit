@@ -4235,7 +4235,8 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
 
 void HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable(MediaPlayer*)
 {
-    LOG(Media, "HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable");
+    LOG(Media, "HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable(%p) - current display mode = %i", this, (int)displayMode());
+
     beginProcessingMediaPlayerCallback();
     if (displayMode() == PosterWaitingForVideo) {
         setDisplayMode(Video);
@@ -4254,6 +4255,11 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
     if (m_captionDisplayMode == CaptionUserPreferences::Automatic && m_subtitleTrackLanguage != m_player->languageOfPrimaryAudioTrack())
         markCaptionAndSubtitleTracksAsUnconfigured(AfterDelay);
 #endif
+
+    if (potentiallyPlaying() && displayMode() == PosterWaitingForVideo) {
+        setDisplayMode(Video);
+        mediaPlayerRenderingModeChanged(m_player.get());
+    }
 
     if (hasMediaControls())
         mediaControls()->reset();

@@ -1,5 +1,53 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168755
+
+    2014-05-13  Eric Carlson  <eric.carlson@apple.com>
+
+            [Mac] hasVideo should return true when video is ready to display
+            https://bugs.webkit.org/show_bug.cgi?id=132885
+
+            Reviewed by Jer Noble.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::parseAttribute):
+
+            * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+            (WebCore::AudioTrackPrivateAVFObjC::resetPropertiesFromTrack): Don't change the
+                enabled state of the AVPlayerItemTrack during setup.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): Initialize
+                m_cachedIsReadyForDisplay.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad): Remove "enabled" KVO observers.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer): Observe "readyForDisplay"
+                change notifications.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer): Remove for "readyForDisplay"
+                observer.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame): Return cached readyForDisplay
+                state instead of polling every time.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Call setHasVideo(true) if the
+                player layer is ready for display.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::updateAudioTracks): Update logging.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoTracks): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::firstFrameAvailableDidChange): Cache readyForDisplay
+                state, call tracksChanged() if we haven't seen a video track yet.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::trackEnabledDidChange): New.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive): Correct logging.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksDidChange): Remove old "enabled" listeners
+                before release tracks, add new ones to new tracks.
+            (WebCore::assetTrackMetadataKeyNames): Add "enabled" to the list of properties we require to 
+                be loaded before announcing that metadata has loaded.
+            (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]): Observe 
+                "readyForDisplay" and "enabled".
+
+            * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp:
+            (WebCore::VideoTrackPrivateAVFObjC::resetPropertiesFromTrack): Don't change the
+                enabled state of the AVPlayerItemTrack during setup.
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168750
 
     2014-05-13  Myles C. Maxfield  <litherum@gmail.com>

@@ -110,6 +110,8 @@ public:
     void durationDidChange(double);
     void rateDidChange(double);
     void metadataDidArrive(RetainPtr<NSArray>, double);
+    void firstFrameAvailableDidChange(bool);
+    void trackEnabledDidChange(bool);
 
     virtual void setShouldBufferData(bool);
 
@@ -331,6 +333,7 @@ private:
     bool m_cachedBufferFull;
     bool m_cachedHasEnabledAudio;
     bool m_shouldBufferData;
+    bool m_cachedIsReadyForDisplay;
 #if ENABLE(IOS_AIRPLAY)
     mutable bool m_allowsWirelessVideoPlayback;
 #endif
