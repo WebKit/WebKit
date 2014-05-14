@@ -1,3 +1,21 @@
+2014-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Make view debugging easier
+        https://bugs.webkit.org/show_bug.cgi?id=132892
+
+        Reviewed by Tim Horton.
+        
+        Enhance -[WKCompositingView description] to show WebKit-related information
+        which is useful when dumping a window's UIView hierarchy.
+        
+        Also have WKTransformView and WKRemoteView inherit from WKCompositingView,
+        and thereby get the hitTest:withEvent: override for free, as well as better dumping.
+
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (-[WKCompositingView description]):
+        (-[WKTransformView hitTest:withEvent:]): Deleted.
+        (-[WKRemoteView hitTest:withEvent:]): Deleted.
+
 2014-05-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Fixed positioned element must relayout correctly before sending resize events to the page

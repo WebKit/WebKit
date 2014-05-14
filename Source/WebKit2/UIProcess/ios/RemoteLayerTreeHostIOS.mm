@@ -84,9 +84,16 @@ using namespace WebCore;
 {
     return [self _findDescendantViewAtPoint:point withEvent:event];
 }
+
+- (NSString *)description
+{
+    NSString *viewDescription = [super description];
+    NSString *webKitDetails = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeHost::layerID(self.layer), self.layer.name ? self.layer.name : @""];
+    return [viewDescription stringByAppendingString:webKitDetails];
+}
 @end
 
-@interface WKTransformView : UIView
+@interface WKTransformView : WKCompositingView
 @end
 
 @implementation WKTransformView
@@ -95,13 +102,9 @@ using namespace WebCore;
     return [CATransformLayer self];
 }
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-    return [self _findDescendantViewAtPoint:point withEvent:event];
-}
 @end
 
-@interface WKRemoteView : UIView
+@interface WKRemoteView : WKCompositingView
 @end
 
 @implementation WKRemoteView
@@ -117,11 +120,6 @@ using namespace WebCore;
 + (Class)layerClass
 {
     return NSClassFromString(@"CALayerHost");
-}
-
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-    return [self _findDescendantViewAtPoint:point withEvent:event];
 }
 
 @end
