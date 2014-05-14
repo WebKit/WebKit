@@ -414,6 +414,12 @@ public:
         load16(address, dest);
     }
 
+    void abortWithReason(AbortReason reason)
+    {
+        move(TrustedImm32(reason), ARMRegisters::S0);
+        breakpoint();
+    }
+
     ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
     {
         ConvertibleLoadLabel result(this);
