@@ -1,3 +1,21 @@
+2014-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix "ASSERTION FAILED: m_representation == PlatformLayerRepresentation" with UI-side compositing
+        https://bugs.webkit.org/show_bug.cgi?id=132899
+
+        Reviewed by Beth Dakin.
+        
+        The new InsetClipLayer and ContentShadowLayer members on scrolling nodes
+        need to be correctly encoded/decoded for UI-side compositing, and dumped
+        correctly.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        (WebKit::RemoteScrollingTreeTextStream::dump):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+
 2014-05-13  Anders Carlsson  <andersca@apple.com>
 
         Another build fix.

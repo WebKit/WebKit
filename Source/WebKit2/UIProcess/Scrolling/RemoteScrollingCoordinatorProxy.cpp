@@ -108,6 +108,12 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
                 scrollingStateNode->setCounterScrollingLayer(layerTreeHost.getLayer(scrollingStateNode->counterScrollingLayer()));
 
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::InsetClipLayer))
+                scrollingStateNode->setInsetClipLayer(layerTreeHost.getLayer(scrollingStateNode->insetClipLayer()));
+
+            if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ContentShadowLayer))
+                scrollingStateNode->setContentShadowLayer(layerTreeHost.getLayer(scrollingStateNode->contentShadowLayer()));
+
             // FIXME: we should never have header and footer layers coming from the WebProcess.
             if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::HeaderLayer))
                 scrollingStateNode->setHeaderLayer(layerTreeHost.getLayer(scrollingStateNode->headerLayer()));

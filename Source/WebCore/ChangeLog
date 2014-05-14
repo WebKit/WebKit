@@ -1,3 +1,14 @@
+2014-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix "ASSERTION FAILED: m_representation == PlatformLayerRepresentation" with UI-side compositing
+        https://bugs.webkit.org/show_bug.cgi?id=132899
+
+        Reviewed by Beth Dakin.
+
+        Export some things
+
+        * WebCore.exp.in:
+
 2014-05-13  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] line height grows around polygon and incorrectly causes text to wrap to next line

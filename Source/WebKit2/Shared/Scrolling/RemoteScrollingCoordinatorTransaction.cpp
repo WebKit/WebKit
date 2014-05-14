@@ -133,6 +133,12 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(ArgumentEncoder& encoder
 
     if (node.hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.counterScrollingLayer());
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::InsetClipLayer))
+        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.insetClipLayer());
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::ContentShadowLayer))
+        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.contentShadowLayer());
 }
 
 #define SCROLLING_NODE_DECODE(property, type, setter) \
@@ -195,6 +201,20 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(ArgumentDecoder& decoder
         if (!decoder.decode(layerID))
             return false;
         node.setCounterScrollingLayer(layerID);
+    }
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::InsetClipLayer)) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+        node.setInsetClipLayer(layerID);
+    }
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::ContentShadowLayer)) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+        node.setContentShadowLayer(layerID);
     }
 
     return true;
@@ -527,6 +547,9 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateScrollingNode& node
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::InsetClipLayer))
         dumpProperty(ts, "clip-inset-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.insetClipLayer()));
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ContentShadowLayer))
+        dumpProperty(ts, "content-shadow-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.contentShadowLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::HeaderLayer))
         dumpProperty(ts, "header-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.headerLayer()));
