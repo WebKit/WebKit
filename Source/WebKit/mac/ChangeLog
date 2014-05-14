@@ -1,5 +1,21 @@
 2014-05-14  Brady Eidson  <beidson@apple.com>
 
+        Implement NSSharingServiceDelegate method "transitionImageForShareItem"
+        <rdar://problem/16878020> and https://bugs.webkit.org/show_bug.cgi?id=132911
+
+        Reviewed by Tim Horton.
+
+        * Misc/WebSharingServicePickerController.mm:
+        (-[WebSharingServicePickerController sharingService:transitionImageForShareItem:contentRect:]):
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::renderedImageForControlledImage): Paint the entire content rect for the controlled image
+          into an ImageBuffer, then return the resulting NSImage. This only paints the image itself and not any
+          overlapping content by setting the selection and appropriate painting mode.
+
+2014-05-14  Brady Eidson  <beidson@apple.com>
+
         sourceFrameOnScreenForShareItem: can be off by a pixel
         <rdar://problem/16878020> and https://bugs.webkit.org/show_bug.cgi?id=132911
 

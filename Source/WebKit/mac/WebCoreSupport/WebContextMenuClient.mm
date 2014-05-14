@@ -49,6 +49,8 @@
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/GraphicsContext.h>
+#import <WebCore/ImageBuffer.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderBox.h>
@@ -412,6 +414,51 @@ NSRect WebContextMenuClient::screenRectForHitTestNode() const
     IntRect intRect = roundedIntRect(rect);
     return frameView->contentsToScreen(intRect);
 }
+
+#if ENABLE(SERVICE_CONTROLS)
+NSImage *WebContextMenuClient::renderedImageForControlledImage() const
+{
+    Page* page = [m_webView page];
+    if (!page)
+        return nil;
+
+    Node* node = page->contextMenuController().context().hitTestResult().innerNode();
+    if (!node)
+        return nil;
+
+    FrameView* frameView = node->document().view();
+    if (!frameView) {
+        // This method shouldn't be called in cases where the controlled node isn't in a rendered view.
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+
+    FloatRect rect;
+    if (!clientFloatRectForNode(*node, rect))
+        return nil;
+
+    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(rect.size());
+    if (!buffer)
+        return nil;
+
+    VisibleSelection oldSelection = frameView->frame().selection().selection();
+    RefPtr<Range> range = Range::create(node->document(), Position(node, Position::PositionIsBeforeAnchor), Position(node, Position::PositionIsAfterAnchor));
+    frameView->frame().selection().setSelection(VisibleSelection(range.get()), FrameSelection::DoNotSetFocus);
+
+    PaintBehavior oldPaintBehavior = frameView->paintBehavior();
+    frameView->setPaintBehavior(PaintBehaviorSelectionOnly);
+
+    buffer->context()->translate(-toFloatSize(rect.location()));
+    frameView->paintContents(buffer->context(), roundedIntRect(rect));
+
+    frameView->frame().selection().setSelection(oldSelection);
+    frameView->setPaintBehavior(oldPaintBehavior);
+
+    RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore);
+    return [[image->getNSImage() retain] autorelease];
+}
+#endif
+
 
 NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view)
 {

@@ -212,6 +212,14 @@ using namespace WebCore;
     return _menuClient->screenRectForHitTestNode();
 }
 
+- (NSImage *)sharingService:(NSSharingService *)sharingService transitionImageForShareItem:(id <NSPasteboardWriting>)item contentRect:(NSRect *)contentRect
+{
+    if (!_menuClient)
+        return nil;
+
+    return _menuClient->renderedImageForControlledImage();
+}
+
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
 {
     return [_menuClient->webView() window];
