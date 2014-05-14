@@ -1,5 +1,18 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168768
+
+    2014-05-13  Anders Carlsson  <andersca@apple.com>
+
+            Another build fix.
+
+            Reviewed by Dan Bernstein.
+
+            * Shared/API/Cocoa/WKFoundation.h:
+            Make sure to include Availability.h
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168724
 
     2014-05-13  Anders Carlsson  <andersca@apple.com>
