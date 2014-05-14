@@ -101,10 +101,10 @@ for (var child = test.firstChild; child; child = child.nextSibling) {
     for (var z = 0; z < zoomLevels.length; z++) {
         var zoom = zoomLevels[z];
         document.body.style.zoom = zoom;
-        var width = element.offsetWidth;
+        var width = Math.round(element.offsetWidth);
         if (width != 100)
             error.push("@zoom=" + zoom + " expected width of 100, but was " + width);
-        var height = element.offsetHeight;
+        var height = Math.round(element.offsetHeight);
         if (height != 100)
             error.push("@zoom=" + zoom + " expected height of 100, but was " + height);
     }

@@ -1,3 +1,34 @@
+2014-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Change Element.offset* client* scroll* return type to double.
+        https://bugs.webkit.org/show_bug.cgi?id=132895
+
+        Reviewed by Simon Fraser.
+
+        This patch changes Element.offset*, Element.client* and Element.scroll* APIs return
+        type from long to double to match the latest CSSOM View Module spec[1].
+        Element.offset* and Element.client* do return subpixel values from now on.
+        Element.scroll* still return integral values as the scrolling code hasn't adopted to subpixel rendering yet.
+
+        subpixelCSSOMElementMetricsEnabled setting is added to be able to turn this feature on/off
+        from WK2 preferences. It toggles the return value from subpixel to floored integral.
+        It does not change layout/rendering behavior.
+
+        Reference list of what other browsers do:
+        IE: http://blogs.msdn.com/b/ie/archive/2012/02/17/sub-pixel-rendering-and-the-css-object-model.aspx
+        Blink: http://www.chromestatus.com/features/5497402177880064
+        Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=825607
+
+        [1] http://www.w3.org/TR/2013/WD-cssom-view-20131217/
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetSubpixelCSSOMElementMetricsEnabled):
+        (WKPreferencesGetSubpixelCSSOMElementMetricsEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-05-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Expose the viewport meta tag width on the UIProcess

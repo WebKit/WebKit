@@ -226,8 +226,8 @@ shouldBe("nonNumericPolicy('document.elementFromPoint(0, x)')", "'any type allow
 
 shouldBe("nonNumericPolicy('document.body.scrollByLines(x)')", "'any type allowed'");
 shouldBe("nonNumericPolicy('document.body.scrollByPages(x)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('document.body.scrollLeft = x')", "'any type allowed'");
-shouldBe("nonNumericPolicy('document.body.scrollTop = x')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.body.scrollLeft = x')", "'mixed'");
+shouldBe("nonNumericPolicy('document.body.scrollTop = x')", "'mixed'");
 
 // History
 
@@ -392,8 +392,8 @@ Here are other examples of numeric types in function parameters and settable att
 ../../../../WebCore/html/HTMLAppletElement.idl:                 attribute [ConvertFromString] long vspace;
 ../../../../WebCore/html/HTMLAreaElement.idl:        attribute long tabIndex;
 ../../../../WebCore/html/HTMLBaseFontElement.idl:        attribute long size;
-../../../../WebCore/html/HTMLBodyElement.idl:                 attribute long scrollLeft;
-../../../../WebCore/html/HTMLBodyElement.idl:                 attribute long scrollTop;
+../../../../WebCore/html/HTMLBodyElement.idl:                 attribute float scrollLeft;
+../../../../WebCore/html/HTMLBodyElement.idl:                 attribute float scrollTop;
 ../../../../WebCore/html/HTMLButtonElement.idl:                 attribute  long                 tabIndex;
 ../../../../WebCore/html/HTMLCanvasElement.idl:        attribute long width;
 ../../../../WebCore/html/HTMLCanvasElement.idl:        attribute long height;

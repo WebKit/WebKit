@@ -43,8 +43,8 @@ function printSize(tagname, cell)
         var thisRow = thisCell.parentNode;
 
         button.parentNode.nextSibling.innerHTML = 
-            "(" + button.offsetHeight + ", " + button.offsetWidth + ") " +
-            "(" + button.clientHeight + ", " + button.clientWidth + ")";
+            "(" + Math.round(button.offsetHeight) + ", " + Math.round(button.offsetWidth) + ") " +
+            "(" + Math.round(button.clientHeight) + ", " + Math.round(button.clientWidth) + ")";
     }
 }
 

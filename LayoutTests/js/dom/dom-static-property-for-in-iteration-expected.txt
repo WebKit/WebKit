@@ -52,7 +52,6 @@ PASS a["offsetLeft"] is 8
 PASS a["offsetTop"] is 774
 PASS a["offsetWidth"] is 39
 PASS a["offsetHeight"] is 18
-PASS a["offsetParent"] is [object HTMLBodyElement]
 PASS a["clientLeft"] is 0
 PASS a["clientTop"] is 0
 PASS a["clientWidth"] is 0
@@ -61,6 +60,7 @@ PASS a["scrollLeft"] is 0
 PASS a["scrollTop"] is 0
 PASS a["scrollWidth"] is 0
 PASS a["scrollHeight"] is 0
+PASS a["offsetParent"] is [object HTMLBodyElement]
 PASS a["className"] is 
 PASS a["classList"] is 
 PASS a["dataset"] is [object DOMStringMap]

@@ -1186,6 +1186,16 @@ bool WKPreferencesGetSimpleLineLayoutDebugBordersEnabled(WKPreferencesRef prefer
     return toImpl(preferencesRef)->simpleLineLayoutDebugBordersEnabled();
 }
 
+void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setSubpixelCSSOMElementMetricsEnabled(flag);
+}
+
+bool WKPreferencesGetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->subpixelCSSOMElementMetricsEnabled();
+}
+
 void WKPreferencesSetMediaStreamEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setMediaStreamEnabled(enabled);

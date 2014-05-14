@@ -43,10 +43,10 @@
 
             dragStartHandler: function(dragStart, dragDistance) {
                 var resultElement = document.getElementById("result");
-                shouldBe(resultElement, "clientX", dragStart.x, event.clientX);
-                shouldBe(resultElement, "clientY", dragStart.y, event.clientY);
-                shouldBe(resultElement, "pageX", dragStart.x, event.pageX);
-                shouldBe(resultElement, "pageY", dragStart.y, event.pageY);
+                shouldBe(resultElement, "clientX", Math.floor(dragStart.x), event.clientX);
+                shouldBe(resultElement, "clientY", Math.floor(dragStart.y), event.clientY);
+                shouldBe(resultElement, "pageX", Math.floor(dragStart.x), event.pageX);
+                shouldBe(resultElement, "pageY", Math.floor(dragStart.y), event.pageY);
             },
 
             runTest: function() {
@@ -57,7 +57,7 @@
                     testRunner.dumpAsText();
                 
                 var element = document.getElementById("draggable");
-                var dragStart = { x: element.offsetLeft + element.offsetWidth / 2, y:  element.offsetTop + 1.0 };
+                var dragStart = { x: Math.round(element.offsetLeft) + Math.round(element.offsetWidth) / 2, y:  Math.round(element.offsetTop) + 1.0 };
                 var dragDistance = 10.0;
                 element.ondragstart = this.dragStartHandler.bind(this, dragStart, dragDistance);
                 

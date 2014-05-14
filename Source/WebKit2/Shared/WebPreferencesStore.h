@@ -203,6 +203,7 @@ namespace WebKit {
     macro(ThreadedScrollingEnabled, threadedScrollingEnabled, Bool, bool, true) \
     macro(SimpleLineLayoutEnabled, simpleLineLayoutEnabled, Bool, bool, true) \
     macro(SimpleLineLayoutDebugBordersEnabled, simpleLineLayoutDebugBordersEnabled, Bool, bool, false) \
+    macro(SubpixelCSSOMElementMetricsEnabled, subpixelCSSOMElementMetricsEnabled, Bool, bool, true) \
     macro(BackgroundShouldExtendBeyondPage, backgroundShouldExtendBeyondPage, Bool, bool, false) \
     macro(MediaStreamEnabled, mediaStreamEnabled, Bool, bool, false) \
     macro(UseLegacyTextAlignPositionedElementBehavior, useLegacyTextAlignPositionedElementBehavior, Bool, bool, false) \

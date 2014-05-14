@@ -1,3 +1,32 @@
+2014-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Change Element.offset* client* scroll* return type to double.
+        https://bugs.webkit.org/show_bug.cgi?id=132895
+
+        Reviewed by Simon Fraser.
+
+        Some test cases expect integral values, so the test content is updated accordingly.
+        It mostly means adding Math.round() before comparing values in order to match pixelSnappedIntRect()
+        functionality.
+
+        * css3/calc/simple-calcs-prefixed.html: changed file format from Windows to Unix.
+        * css3/calc/simple-calcs.html: changed file format from Windows to Unix.
+        * cssom/subpixel-offsetleft-top-width-height-values-expected.txt: Added.
+        * cssom/subpixel-offsetleft-top-width-height-values.html: Added.
+        * editing/selection/drag-start-event-client-x-y.html: use floor as we compare the return value to a truncated integer.
+        * editing/selection/mixed-editability-10.html:
+        * fast/css/zoom-in-length-round-trip.html:
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+        * fast/forms/basic-buttons.html:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/mac/fast/scrolling/scroll-div-latched-div.html:
+        * platform/mac/fast/scrolling/scroll-div-latched-mainframe.html:
+        * platform/mac/fast/scrolling/scroll-select-bottom-test.html:
+        * platform/mac/fast/scrolling/scroll-select-latched-mainframe.html:
+        * platform/mac/fast/scrolling/scroll-select-latched-select.html:
+        * resources/check-layout.js:
+
 2014-05-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

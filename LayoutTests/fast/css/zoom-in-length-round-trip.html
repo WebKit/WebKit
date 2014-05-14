@@ -29,8 +29,8 @@
     
     for (zoom = 100; zoom <= 200; zoom += 1) {
         containerStyle.setProperty("zoom", zoom / 100);
-        if (target.offsetWidth != 1 || target.offsetHeight != 10) {
-            if (hasSubpixelSupport && (target.offsetWidth == 1 || target.offsetWidth == 2) && (target.offsetHeight == 10 || target.offsetHeight == 11))
+        if (Math.round(target.offsetWidth) != 1 || Math.round(target.offsetHeight) != 10) {
+            if (hasSubpixelSupport && (Math.round(target.offsetWidth) == 1 || Math.round(target.offsetWidth) == 2) && (Math.round(target.offsetHeight) == 10 || Math.round(target.offsetHeight) == 11))
                 continue; // With subpixel layout and pixel snapping we extend the box with one pixel at certain zoom levels.
             failed = true;
             log("FAIL at " + zoom + "% magnification: 1 mapped to " + target.offsetWidth + " and 10 mapped to " + target.offsetHeight + ".");

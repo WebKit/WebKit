@@ -621,16 +621,16 @@ void Element::scrollByPages(int pages)
     scrollByUnits(pages, ScrollByPage);
 }
 
-static float localZoomForRenderer(RenderElement* renderer)
+static double localZoomForRenderer(const RenderElement& renderer)
 {
     // FIXME: This does the wrong thing if two opposing zooms are in effect and canceled each
     // other out, but the alternative is that we'd have to crawl up the whole render tree every
     // time (or store an additional bit in the RenderStyle to indicate that a zoom was specified).
-    float zoomFactor = 1;
-    if (renderer->style().effectiveZoom() != 1) {
+    double zoomFactor = 1;
+    if (renderer.style().effectiveZoom() != 1) {
         // Need to find the nearest enclosing RenderElement that set up
         // a differing zoom, and then we divide our result by it to eliminate the zoom.
-        RenderElement* prev = renderer;
+        const RenderElement* prev = &renderer;
         for (RenderElement* curr = prev->parent(); curr; curr = curr->parent()) {
             if (curr->style().effectiveZoom() != prev->style().effectiveZoom()) {
                 zoomFactor = prev->style().zoom();
@@ -644,57 +644,63 @@ static float localZoomForRenderer(RenderElement* renderer)
     return zoomFactor;
 }
 
-static int adjustForLocalZoom(LayoutUnit value, RenderElement* renderer)
+static double adjustForLocalZoom(LayoutUnit value, const RenderElement& renderer)
 {
-    float zoomFactor = localZoomForRenderer(renderer);
+    double zoomFactor = localZoomForRenderer(renderer);
     if (zoomFactor == 1)
-        return value;
+        return value.toDouble();
 #if ENABLE(SUBPIXEL_LAYOUT)
-    return lroundf(value / zoomFactor);
+    return value.toDouble() / zoomFactor;
 #else
     // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
     if (zoomFactor > 1)
         ++value;
-    return static_cast<int>(value / zoomFactor);
+    return value.toDouble() / zoomFactor;
 #endif
 }
 
-int Element::offsetLeft()
+static double convertToNonSubpixelValueIfNeeded(double value, const Document& document)
+{
+    return document.settings() && !document.settings()->subpixelCSSOMElementMetricsEnabled() ? floor(value) : value;
+}
+
+double Element::offsetLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
-        return adjustForLocalZoom(renderer->pixelSnappedOffsetLeft(), renderer);
+        return convertToNonSubpixelValueIfNeeded(adjustForLocalZoom(renderer->offsetLeft(), *renderer), renderer->document());
     return 0;
 }
 
-int Element::offsetTop()
+double Element::offsetTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
-        return adjustForLocalZoom(renderer->pixelSnappedOffsetTop(), renderer);
+        return convertToNonSubpixelValueIfNeeded(adjustForLocalZoom(renderer->offsetTop(), *renderer), renderer->document());
     return 0;
 }
 
-int Element::offsetWidth()
+double Element::offsetWidth()
+{
+    document().updateLayoutIgnorePendingStylesheets();
+    if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
+#if ENABLE(SUBPIXEL_LAYOUT)
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->offsetWidth(), *renderer).toDouble(), renderer->document());
+#else
+        return adjustForAbsoluteZoom(renderer->offsetWidth(), *renderer);
+#endif
+    }
+    return 0;
+}
+
+double Element::offsetHeight()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedOffsetWidth(), *renderer).round();
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->offsetHeight(), *renderer).toDouble(), renderer->document());
 #else
-        return adjustForAbsoluteZoom(renderer->pixelSnappedOffsetWidth(), *renderer);
-#endif
-    return 0;
-}
-
-int Element::offsetHeight()
-{
-    document().updateLayoutIgnorePendingStylesheets();
-    if (RenderBoxModelObject* renderer = renderBoxModelObject())
-#if ENABLE(SUBPIXEL_LAYOUT)
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedOffsetHeight(), *renderer).round();
-#else
-        return adjustForAbsoluteZoom(renderer->pixelSnappedOffsetHeight(), *renderer);
+        return adjustForAbsoluteZoom(renderer->offsetHeight(), *renderer);
 #endif
     return 0;
 }
@@ -719,25 +725,33 @@ Element* Element::offsetParent()
     return offsetParent->element();
 }
 
-int Element::clientLeft()
+double Element::clientLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
     if (RenderBox* renderer = renderBox())
-        return adjustForAbsoluteZoom(roundToInt(renderer->clientLeft()), *renderer);
+#if ENABLE(SUBPIXEL_LAYOUT)
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->clientLeft(), *renderer).toDouble(), renderer->document());
+#else
+        return adjustForAbsoluteZoom(renderer->clientLeft(), *renderer);
+#endif
     return 0;
 }
 
-int Element::clientTop()
+double Element::clientTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
     if (RenderBox* renderer = renderBox())
-        return adjustForAbsoluteZoom(roundToInt(renderer->clientTop()), *renderer);
+#if ENABLE(SUBPIXEL_LAYOUT)
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->clientTop(), *renderer).toDouble(), renderer->document());
+#else
+        return adjustForAbsoluteZoom(renderer->clientTop(), *renderer);
+#endif
     return 0;
 }
 
-int Element::clientWidth()
+double Element::clientWidth()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -753,14 +767,14 @@ int Element::clientWidth()
     
     if (RenderBox* renderer = renderBox())
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedClientWidth(), *renderer).round();
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->clientWidth(), *renderer).toDouble(), renderer->document());
 #else
-        return adjustForAbsoluteZoom(renderer->pixelSnappedClientWidth(), *renderer);
+        return adjustForAbsoluteZoom(renderer->clientWidth(), *renderer);
 #endif
     return 0;
 }
 
-int Element::clientHeight()
+double Element::clientHeight()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -776,14 +790,14 @@ int Element::clientHeight()
 
     if (RenderBox* renderer = renderBox())
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedClientHeight(), *renderer).round();
+        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(renderer->clientHeight(), *renderer).toDouble(), renderer->document());
 #else
-        return adjustForAbsoluteZoom(renderer->pixelSnappedClientHeight(), *renderer);
+        return adjustForAbsoluteZoom(renderer->clientHeight(), *renderer);
 #endif
     return 0;
 }
 
-int Element::scrollLeft()
+double Element::scrollLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -792,7 +806,7 @@ int Element::scrollLeft()
     return 0;
 }
 
-int Element::scrollTop()
+double Element::scrollTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -801,29 +815,29 @@ int Element::scrollTop()
     return 0;
 }
 
-void Element::setScrollLeft(int newLeft)
+void Element::setScrollLeft(double newLeft)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
     if (RenderBox* renderer = renderBox()) {
-        renderer->setScrollLeft(static_cast<int>(newLeft * renderer->style().effectiveZoom()));
+        renderer->setScrollLeft(round(newLeft * renderer->style().effectiveZoom()));
         if (auto* scrollableArea = renderer->layer())
             scrollableArea->setScrolledProgrammatically(true);
     }
 }
 
-void Element::setScrollTop(int newTop)
+void Element::setScrollTop(double newTop)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
     if (RenderBox* renderer = renderBox()) {
-        renderer->setScrollTop(static_cast<int>(newTop * renderer->style().effectiveZoom()));
+        renderer->setScrollTop(round(newTop * renderer->style().effectiveZoom()));
         if (auto* scrollableArea = renderer->layer())
             scrollableArea->setScrolledProgrammatically(true);
     }
 }
 
-int Element::scrollWidth()
+double Element::scrollWidth()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
@@ -831,7 +845,7 @@ int Element::scrollWidth()
     return 0;
 }
 
-int Element::scrollHeight()
+double Element::scrollHeight()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())

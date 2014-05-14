@@ -69,11 +69,11 @@
 
     // Common extensions
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     readonly attribute long offsetLeft;
     readonly attribute long offsetTop;
     readonly attribute long offsetWidth;
     readonly attribute long offsetHeight;
-    [ImplementedAs=bindingsOffsetParent] readonly attribute Element offsetParent;
     readonly attribute long clientLeft;
     readonly attribute long clientTop;
     readonly attribute long clientWidth;
@@ -82,6 +82,22 @@
     attribute long scrollTop;
     readonly attribute long scrollWidth;
     readonly attribute long scrollHeight;
+#else
+    readonly attribute double offsetLeft;
+    readonly attribute double offsetTop;
+    readonly attribute double offsetWidth;
+    readonly attribute double offsetHeight;
+    readonly attribute double clientLeft;
+    readonly attribute double clientTop;
+    readonly attribute double clientWidth;
+    readonly attribute double clientHeight;
+    attribute double scrollLeft;
+    attribute double scrollTop;
+    readonly attribute double scrollWidth;
+    readonly attribute double scrollHeight;
+#endif
+
+    [ImplementedAs=bindingsOffsetParent] readonly attribute Element offsetParent;
 
     void focus();
     void blur();

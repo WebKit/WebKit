@@ -2688,6 +2688,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setSimpleLineLayoutEnabled(store.getBoolValueForKey(WebPreferencesKey::simpleLineLayoutEnabledKey()));
     settings.setSimpleLineLayoutDebugBordersEnabled(store.getBoolValueForKey(WebPreferencesKey::simpleLineLayoutDebugBordersEnabledKey()));
 
+    settings.setSubpixelCSSOMElementMetricsEnabled(store.getBoolValueForKey(WebPreferencesKey::subpixelCSSOMElementMetricsEnabledKey()));
+
     settings.setUseLegacyTextAlignPositionedElementBehavior(store.getBoolValueForKey(WebPreferencesKey::useLegacyTextAlignPositionedElementBehaviorKey()));
 
 #if ENABLE(MEDIA_SOURCE)

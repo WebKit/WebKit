@@ -55,8 +55,8 @@ function runTest(x, y, elem, offset, refpos) {
     var anchorOffset = selection.anchorOffset;
 
     var coord = caretCoordinates();
-    var anchorString = "Anchor (" + anchorNode + ", " + anchorOffset + " caret[" + coord.x + "," + coord.y + "] refpos=" + refpos + ")";
-    var anchorCorrect = anchorNode == elem && anchorOffset == offset && coord.x == refpos;
+    var anchorString = "Anchor (" + anchorNode + ", " + anchorOffset + " caret[" + coord.x + "," + coord.y + "] refpos=" + Math.round(refpos) + ")";
+    var anchorCorrect = anchorNode == elem && anchorOffset == offset && coord.x == Math.round(refpos);
     if (anchorCorrect)
         log(anchorString + " is correct.");
     else

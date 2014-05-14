@@ -71,7 +71,7 @@ function scrollTest() {
     // Scroll the #source until we reach the #target.
     var startPosX = selectTarget.offsetLeft + 20;
     debug("div display height = " + selectTarget.clientHeight);
-    var startPosY = selectTarget.offsetTop + selectTarget.clientHeight + clientInset - 2; // Very near top (accounting for top content inset).
+    var startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) + clientInset - 2; // Very near top (accounting for top content inset).
     eventSender.mouseMoveTo(startPosX, startPosY);
     debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
