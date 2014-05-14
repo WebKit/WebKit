@@ -58,7 +58,7 @@ class TestTimeout(Exception):
     pass
 
 class TestRunner:
-    TEST_DIRS = [ "WebKit2Gtk", "WebKit2", "JavaScriptCore", "WTF", "WebCore",  "WebCoreGtk" ]
+    TEST_DIRS = [ "WebKit2Gtk", "WebKit2", "JavaScriptCore", "WTF", "WebCore" ]
 
     SKIPPED = [
         SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),

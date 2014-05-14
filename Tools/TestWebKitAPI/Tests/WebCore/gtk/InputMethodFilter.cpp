@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#include "GtkInputMethodFilter.h"
 #include "WTFStringUtilities.h"
+#include <WebCore/GtkInputMethodFilter.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <wtf/gobject/GUniquePtr.h>
@@ -51,7 +51,7 @@ public:
 
     Vector<String>& events() { return m_events; }
 
-    void sendKeyEventToFilter(unsigned int gdkKeyValue, GdkEventType type, unsigned int modifiers = 0)
+    void sendKeyEventToFilter(unsigned gdkKeyValue, GdkEventType type, unsigned modifiers = 0)
     {
         GdkEvent* event = gdk_event_new(type);
         event->key.keyval = gdkKeyValue;
@@ -73,7 +73,7 @@ public:
         gdk_event_free(event);
     }
 
-    void sendPressAndReleaseKeyEventPairToFilter(unsigned int gdkKeyValue, unsigned int modifiers = 0)
+    void sendPressAndReleaseKeyEventPairToFilter(unsigned gdkKeyValue, unsigned modifiers = 0)
     {
         sendKeyEventToFilter(gdkKeyValue, GDK_KEY_PRESS, modifiers);
         sendKeyEventToFilter(gdkKeyValue, GDK_KEY_RELEASE, modifiers);

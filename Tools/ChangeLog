@@ -1,3 +1,19 @@
+2014-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(CMAKE): [GTK] InputMethodFilter unit test is not built
+        https://bugs.webkit.org/show_bug.cgi?id=132686
+
+        Reviewed by Philippe Normand.
+
+        Bring back InputMethodFilter test to the build and compile it into
+        a single binary TestWebCore with the other WebCore tests. Also
+        move it from TestWebKitAPI/gtk/ to TestWebKitAPI/Tests/WebCore/gtk/.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Remove WebCoreGtk from the list of test directories.
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WebCore/gtk/InputMethodFilter.cpp: Renamed from Tools/TestWebKitAPI/Tests/gtk/InputMethodFilter.cpp.
+
 2014-05-14  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         [EFL] Make XVFBDriver optional

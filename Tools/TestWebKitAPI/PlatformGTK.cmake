@@ -111,16 +111,25 @@ add_test(TestWebKit2 ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2/TestWebKi
 set_tests_properties(TestWebKit2 PROPERTIES TIMEOUT 60)
 set_target_properties(TestWebKit2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2)
 
-# The list below works like a test expectation. Tests in the
-# test_{webkit2_api|webcore}_BINARIES list are added to the test runner and
-# tried on the bots on every build. Tests in test_{webkit2_api|webcore}_BINARIES
-# are compiled and suffixed with fail and skipped from the test runner.
-#
-# Make sure that the tests are passing on both Debug and
-# Release builds before adding it to test_{webkit2_api|webcore}_BINARIES.
-
-set(test_webcore_BINARIES
-    LayoutUnit
-    URL
+set(TestWebCoreGtk_SOURCES
+    ${WEBCORE_DIR}/platform/graphics/IntPoint.cpp
+    ${WEBCORE_DIR}/platform/graphics/IntRect.cpp
+    ${WEBCORE_DIR}/platform/graphics/IntSize.cpp
+    ${WEBCORE_DIR}/platform/graphics/cairo/IntRectCairo.cpp
+    ${WEBCORE_DIR}/platform/graphics/gtk/IntRectGtk.cpp
+    ${WEBCORE_DIR}/platform/gtk/GtkInputMethodFilter.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/gtk/InputMethodFilter.cpp
 )
 
+add_executable(TestWebCore
+    ${test_main_SOURCES}
+    ${TestWebCoreGtk_SOURCES}
+    ${TESTWEBKITAPI_DIR}/TestsController.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
+)
+
+target_link_libraries(TestWebCore ${test_webcore_LIBRARIES})
+add_test(TestWebCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore/TestWebCore)
+set_tests_properties(TestWebCore PROPERTIES TIMEOUT 60)
+set_target_properties(TestWebCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore)
