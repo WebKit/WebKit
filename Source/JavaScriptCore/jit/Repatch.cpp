@@ -132,17 +132,18 @@ static void addStructureTransitionCheck(
 {
     if (object->structure() == structure && structure->transitionWatchpointSetIsStillValid()) {
         structure->addTransitionWatchpoint(stubInfo.addWatchpoint(codeBlock));
-#if !ASSERT_DISABLED
-        // If we execute this code, the object must have the structure we expect. Assert
-        // this in debug modes.
-        jit.move(MacroAssembler::TrustedImmPtr(object), scratchGPR);
-        MacroAssembler::Jump ok = branchStructure(jit,
-            MacroAssembler::Equal,
-            MacroAssembler::Address(scratchGPR, JSCell::structureIDOffset()),
-            structure);
-        jit.breakpoint();
-        ok.link(&jit);
-#endif
+        if (!ASSERT_DISABLED) {
+            // If we execute this code, the object must have the structure we expect. Assert
+            // this in debug modes.
+            jit.move(MacroAssembler::TrustedImmPtr(object), scratchGPR);
+            MacroAssembler::Jump ok = branchStructure(
+                jit,
+                MacroAssembler::Equal,
+                MacroAssembler::Address(scratchGPR, JSCell::structureIDOffset()),
+                structure);
+            jit.abortWithReason(RepatchIneffectiveWatchpoint);
+            ok.link(&jit);
+        }
         return;
     }
     
@@ -1571,7 +1572,7 @@ void linkClosureCall(
     if (!ASSERT_DISABLED) {
         CCallHelpers::Jump okArgumentCount = stubJit.branch32(
             CCallHelpers::Below, CCallHelpers::Address(CCallHelpers::stackPointerRegister, static_cast<ptrdiff_t>(sizeof(Register) * JSStack::ArgumentCount) + offsetToFrame + PayloadOffset), CCallHelpers::TrustedImm32(10000000));
-        stubJit.breakpoint();
+        stubJit.abortWithReason(RepatchInsaneArgumentCount);
         okArgumentCount.link(&stubJit);
     }
 

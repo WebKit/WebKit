@@ -211,7 +211,7 @@ static void generateRegisterRestoration(AssemblyHelpers& jit)
     if (!ASSERT_DISABLED) {
         AssemblyHelpers::Jump ok = jit.branchPtr(
             AssemblyHelpers::Above, GPRInfo::regT1, AssemblyHelpers::TrustedImmPtr(static_cast<size_t>(0x1000)));
-        jit.breakpoint();
+        jit.abortWithReason(RPWUnreasonableJumpTarget);
         ok.link(&jit);
     }
     

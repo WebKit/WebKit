@@ -84,7 +84,7 @@ void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
 {
 #if CPU(X86_64)
     Jump checkInt32 = branch64(BelowOrEqual, gpr, TrustedImm64(static_cast<uintptr_t>(0xFFFFFFFFu)));
-    breakpoint();
+    abortWithReason(AHIsNotInt32);
     checkInt32.link(this);
 #else
     UNUSED_PARAM(gpr);
@@ -94,14 +94,14 @@ void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
 void AssemblyHelpers::jitAssertIsJSInt32(GPRReg gpr)
 {
     Jump checkJSInt32 = branch64(AboveOrEqual, gpr, GPRInfo::tagTypeNumberRegister);
-    breakpoint();
+    abortWithReason(AHIsNotJSInt32);
     checkJSInt32.link(this);
 }
 
 void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
 {
     Jump checkJSNumber = branchTest64(MacroAssembler::NonZero, gpr, GPRInfo::tagTypeNumberRegister);
-    breakpoint();
+    abortWithReason(AHIsNotJSNumber);
     checkJSNumber.link(this);
 }
 
@@ -110,25 +110,26 @@ void AssemblyHelpers::jitAssertIsJSDouble(GPRReg gpr)
     Jump checkJSInt32 = branch64(AboveOrEqual, gpr, GPRInfo::tagTypeNumberRegister);
     Jump checkJSNumber = branchTest64(MacroAssembler::NonZero, gpr, GPRInfo::tagTypeNumberRegister);
     checkJSInt32.link(this);
-    breakpoint();
+    abortWithReason(AHIsNotJSDouble);
     checkJSNumber.link(this);
 }
 
 void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
 {
     Jump checkCell = branchTest64(MacroAssembler::Zero, gpr, GPRInfo::tagMaskRegister);
-    breakpoint();
+    abortWithReason(AHIsNotCell);
     checkCell.link(this);
 }
 
 void AssemblyHelpers::jitAssertTagsInPlace()
 {
     Jump ok = branch64(Equal, GPRInfo::tagTypeNumberRegister, TrustedImm64(TagTypeNumber));
+    abortWithReason(AHTagTypeNumberNotInPlace);
     breakpoint();
     ok.link(this);
     
     ok = branch64(Equal, GPRInfo::tagMaskRegister, TrustedImm64(TagMask));
-    breakpoint();
+    abortWithReason(AHTagMaskNotInPlace);
     ok.link(this);
 }
 #elif USE(JSVALUE32_64)
@@ -140,7 +141,7 @@ void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
 void AssemblyHelpers::jitAssertIsJSInt32(GPRReg gpr)
 {
     Jump checkJSInt32 = branch32(Equal, gpr, TrustedImm32(JSValue::Int32Tag));
-    breakpoint();
+    abortWithReason(AHIsNotJSInt32);
     checkJSInt32.link(this);
 }
 
@@ -148,7 +149,7 @@ void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
 {
     Jump checkJSInt32 = branch32(Equal, gpr, TrustedImm32(JSValue::Int32Tag));
     Jump checkJSDouble = branch32(Below, gpr, TrustedImm32(JSValue::LowestTag));
-    breakpoint();
+    abortWithReason(AHIsNotJSNumber);
     checkJSInt32.link(this);
     checkJSDouble.link(this);
 }
@@ -156,14 +157,14 @@ void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
 void AssemblyHelpers::jitAssertIsJSDouble(GPRReg gpr)
 {
     Jump checkJSDouble = branch32(Below, gpr, TrustedImm32(JSValue::LowestTag));
-    breakpoint();
+    abortWithReason(AHIsNotJSDouble);
     checkJSDouble.link(this);
 }
 
 void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
 {
     Jump checkCell = branch32(Equal, gpr, TrustedImm32(JSValue::CellTag));
-    breakpoint();
+    abortWithReason(AHIsNotCell);
     checkCell.link(this);
 }
 
@@ -175,24 +176,53 @@ void AssemblyHelpers::jitAssertTagsInPlace()
 void AssemblyHelpers::jitAssertHasValidCallFrame()
 {
     Jump checkCFR = branchTestPtr(Zero, GPRInfo::callFrameRegister, TrustedImm32(7));
-    breakpoint();
+    abortWithReason(AHCallFrameMisaligned);
     checkCFR.link(this);
 }
 
 void AssemblyHelpers::jitAssertIsNull(GPRReg gpr)
 {
     Jump checkNull = branchTestPtr(Zero, gpr);
-    breakpoint();
+    abortWithReason(AHIsNotNull);
     checkNull.link(this);
 }
 
 void AssemblyHelpers::jitAssertArgumentCountSane()
 {
     Jump ok = branch32(Below, payloadFor(JSStack::ArgumentCount), TrustedImm32(10000000));
-    breakpoint();
+    abortWithReason(AHInsaneArgumentCount);
     ok.link(this);
 }
 #endif // !ASSERT_DISABLED
+
+void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest)
+{
+    const Structure* structurePtr = static_cast<const Structure*>(structure.m_value);
+#if USE(JSVALUE64)
+    jit.store64(TrustedImm64(structurePtr->idBlob()), MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+    if (!ASSERT_DISABLED) {
+        Jump correctStructure = jit.branch32(Equal, MacroAssembler::Address(dest, JSCell::structureIDOffset()), TrustedImm32(structurePtr->id()));
+        jit.abortWithReason(AHStructureIDIsValid);
+        correctStructure.link(&jit);
+
+        Jump correctIndexingType = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::indexingTypeOffset()), TrustedImm32(structurePtr->indexingType()));
+        jit.abortWithReason(AHIndexingTypeIsValid);
+        correctIndexingType.link(&jit);
+
+        Jump correctType = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::typeInfoTypeOffset()), TrustedImm32(structurePtr->typeInfo().type()));
+        jit.abortWithReason(AHTypeInfoIsValid);
+        correctType.link(&jit);
+
+        Jump correctFlags = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::typeInfoFlagsOffset()), TrustedImm32(structurePtr->typeInfo().inlineTypeFlags()));
+        jit.abortWithReason(AHTypeInfoInlineTypeFlagsAreValid);
+        correctFlags.link(&jit);
+    }
+#else
+    // Do a 32-bit wide store to initialize the cell's fields.
+    jit.store32(TrustedImm32(structurePtr->objectInitializationBlob()), MacroAssembler::Address(dest, JSCell::indexingTypeOffset()));
+    jit.storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+#endif
+}
 
 } // namespace JSC
 

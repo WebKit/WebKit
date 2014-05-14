@@ -3709,7 +3709,7 @@ void SpeculativeJIT::compile(Node* node)
 #if !ASSERT_DISABLED
         SpeculateCellOperand op1(this, node->child1());
         JITCompiler::Jump isOK = m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(op1.gpr(), JSCell::structureIDOffset()), TrustedImmPtr(node->structure()));
-        m_jit.breakpoint();
+        m_jit.abortWithReason(DFGIneffectiveWatchpoint);
         isOK.link(&m_jit);
 #else
         speculateCell(node->child1());

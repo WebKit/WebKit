@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -627,6 +627,12 @@ public:
     {
         neg64(srcDest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
+    void abortWithReason(AbortReason reason)
+    {
+        move(TrustedImm32(reason), X86Registers::r11);
+        breakpoint();
     }
 
     ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)

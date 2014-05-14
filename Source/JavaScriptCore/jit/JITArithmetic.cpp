@@ -955,9 +955,8 @@ void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>
     int op2 = currentInstruction[3].u.operand;
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
     if (types.first().definitelyIsNumber() && types.second().definitelyIsNumber()) {
-#ifndef NDEBUG
-        breakpoint();
-#endif
+        if (!ASSERT_DISABLED)
+            abortWithReason(JITDivOperandsAreNotNumbers);
         return;
     }
     if (!isOperandConstantImmediateDouble(op1) && !isOperandConstantImmediateInt(op1)) {

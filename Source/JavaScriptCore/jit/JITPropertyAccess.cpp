@@ -139,11 +139,11 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     
     Label done = label();
     
-#if !ASSERT_DISABLED
-    Jump resultOK = branchTest64(NonZero, regT0);
-    breakpoint();
-    resultOK.link(this);
-#endif
+    if (!ASSERT_DISABLED) {
+        Jump resultOK = branchTest64(NonZero, regT0);
+        abortWithReason(JITGetByValResultIsNotEmpty);
+        resultOK.link(this);
+    }
 
     emitValueProfilingSite();
     emitPutVirtualRegister(dst);
@@ -252,11 +252,11 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID 
         addPtr(TrustedImm32(JSObject::offsetOfInlineStorage() - (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), base, scratch);
         done.link(this);
     } else {
-#if !ASSERT_DISABLED
-        Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
-        breakpoint();
-        isOutOfLine.link(this);
-#endif
+        if (!ASSERT_DISABLED) {
+            Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
+            abortWithReason(JITOffsetIsNotOutOfLine);
+            isOutOfLine.link(this);
+        }
         loadPtr(Address(base, JSObject::butterflyOffset()), scratch);
         neg32(offset);
     }
@@ -974,42 +974,6 @@ void JIT::emitWriteBarrier(JSCell* owner)
 #else
     UNUSED_PARAM(owner);
 #endif // ENABLE(GGC)
-}
-
-JIT::Jump JIT::addStructureTransitionCheck(JSCell* object, Structure* structure, StructureStubInfo* stubInfo, RegisterID scratch)
-{
-    if (object->structure() == structure && structure->transitionWatchpointSetIsStillValid()) {
-        structure->addTransitionWatchpoint(stubInfo->addWatchpoint(m_codeBlock));
-#if !ASSERT_DISABLED
-        move(TrustedImmPtr(object), scratch);
-        Jump ok = branchStructure(Equal, Address(scratch, JSCell::structureIDOffset()), structure);
-        breakpoint();
-        ok.link(this);
-#endif
-        Jump result; // Returning an unset jump this way because otherwise VC++ would complain.
-        return result;
-    }
-    
-    move(TrustedImmPtr(object), scratch);
-    return branchStructure(NotEqual, Address(scratch, JSCell::structureIDOffset()), structure);
-}
-
-void JIT::addStructureTransitionCheck(JSCell* object, Structure* structure, StructureStubInfo* stubInfo, JumpList& failureCases, RegisterID scratch)
-{
-    Jump failureCase = addStructureTransitionCheck(object, structure, stubInfo, scratch);
-    if (!failureCase.isSet())
-        return;
-    
-    failureCases.append(failureCase);
-}
-
-void JIT::testPrototype(JSValue prototype, JumpList& failureCases, StructureStubInfo* stubInfo)
-{
-    if (prototype.isNull())
-        return;
-
-    ASSERT(prototype.isCell());
-    addStructureTransitionCheck(prototype.asCell(), prototype.asCell()->structure(), stubInfo, failureCases, regT3);
 }
 
 void JIT::privateCompileGetByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)

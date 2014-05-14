@@ -62,7 +62,7 @@ public:
         // This check is both unneeded and harder to write correctly for ARM64
 #if !defined(NDEBUG) && !CPU(ARM64)
         Jump stackPointerAligned = branchTestPtr(Zero, stackPointerRegister, TrustedImm32(0xf));
-        breakpoint();
+        abortWithReason(AHStackPointerMisaligned);
         stackPointerAligned.link(this);
 #endif
     }
@@ -629,34 +629,7 @@ public:
 #endif
     }
 
-    static void emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest)
-    {
-        const Structure* structurePtr = static_cast<const Structure*>(structure.m_value);
-#if USE(JSVALUE64)
-        jit.store64(TrustedImm64(structurePtr->idBlob()), MacroAssembler::Address(dest, JSCell::structureIDOffset()));
-#ifndef NDEBUG
-        Jump correctStructure = jit.branch32(Equal, MacroAssembler::Address(dest, JSCell::structureIDOffset()), TrustedImm32(structurePtr->id()));
-        jit.breakpoint();
-        correctStructure.link(&jit);
-
-        Jump correctIndexingType = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::indexingTypeOffset()), TrustedImm32(structurePtr->indexingType()));
-        jit.breakpoint();
-        correctIndexingType.link(&jit);
-
-        Jump correctType = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::typeInfoTypeOffset()), TrustedImm32(structurePtr->typeInfo().type()));
-        jit.breakpoint();
-        correctType.link(&jit);
-
-        Jump correctFlags = jit.branch8(Equal, MacroAssembler::Address(dest, JSCell::typeInfoFlagsOffset()), TrustedImm32(structurePtr->typeInfo().inlineTypeFlags()));
-        jit.breakpoint();
-        correctFlags.link(&jit);
-#endif
-#else
-        // Do a 32-bit wide store to initialize the cell's fields.
-        jit.store32(TrustedImm32(structurePtr->objectInitializationBlob()), MacroAssembler::Address(dest, JSCell::indexingTypeOffset()));
-        jit.storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
-#endif
-    }
+    static void emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest);
 
     Jump checkMarkByte(GPRReg cell)
     {
