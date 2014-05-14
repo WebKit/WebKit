@@ -1,5 +1,13 @@
 2014-05-14  Alex Christensen  <achristensen@webkit.org>
 
+        Another unreviewed build fix.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::getTimingData):
+        Added necessary UNUSED_PARAMs.
+
+2014-05-14  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed build fix after r168849.
 
         * platform/network/mac/ResourceHandleMac.mm:

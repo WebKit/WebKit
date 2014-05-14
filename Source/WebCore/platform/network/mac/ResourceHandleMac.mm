@@ -394,6 +394,9 @@ void ResourceHandle::getTimingData(NSURLConnection *connection, ResourceLoadTimi
         timing.requestStart = requestStart <= 0 ? -1 : (requestStart - referenceStart) * 1000;
         timing.responseStart = responseStart <= 0 ? -1 : (responseStart - referenceStart) * 1000;
     }
+#else
+    UNUSED_PARAM(connection);
+    UNUSED_PARAM(timing);
 #endif
 }
     
