@@ -1,3 +1,17 @@
+2014-05-14  Dean Jackson  <dino@apple.com>
+
+        [Mac] Search fields should not use centered look
+        https://bugs.webkit.org/show_bug.cgi?id=132930
+        <rdar://problem/16825842>
+
+        Reviewed by Beth Dakin.
+
+        We need to explicitly set the centeredLook property
+        to NO on modern releases of Mac.
+
+        * rendering/RenderThemeMac.mm: Declare a new private property and set it to NO.
+        (WebCore::RenderThemeMac::search):
+
 2014-05-14  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Change Element.offset* client* scroll* return type to double.
