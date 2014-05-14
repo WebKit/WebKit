@@ -1,5 +1,22 @@
 2014-05-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168445
+
+    2014-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Speculative fix for crash in PlatformCALayerRemote::recursiveBuildTransaction
+            https://bugs.webkit.org/show_bug.cgi?id=132666
+
+            Reviewed by Tim Horton.
+
+            Crash reports suggest that owner() can be null. Assert and protect
+            against this.
+
+            * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+            (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+
+2014-05-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168654
 
     2014-05-12  Alexey Proskuryakov  <ap@apple.com>
