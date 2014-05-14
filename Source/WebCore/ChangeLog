@@ -1,5 +1,35 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168750
+
+    2014-05-13  Myles C. Maxfield  <litherum@gmail.com>
+
+            Text decorations do not contribute to visual overflow
+            https://bugs.webkit.org/show_bug.cgi?id=132773
+
+            Reviewed by Darin Adler.
+
+            Tests: fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html
+
+            * rendering/InlineTextBox.cpp:
+            (WebCore::textDecorationStrokeThickness): Refactor into a common function
+            (WebCore::wavyOffsetFromDecoration): Ditto
+            (WebCore::InlineTextBox::extendVerticalVisualOverflowForDecorations): Given
+            vertical overflow bounds, possibly extend those to include location of
+            decorations.
+            (WebCore::InlineTextBox::paintDecoration): Use refactored functions.
+            * rendering/InlineTextBox.h: Function signature
+            * rendering/RenderBlockLineLayout.cpp:
+            (WebCore::setLogicalWidthForTextRun): Call extendVerticalVisualOverflowForDecorations()
+            * rendering/style/RenderStyle.cpp:
+            (WebCore::RenderStyle::changeAffectsVisualOverflow): Inspects shadows and text decorations
+            (WebCore::RenderStyle::changeRequiresLayout): Calls changeAffectsVisualOverflow()
+            (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline): Moved code from here
+            to changeAffectsVisualOverflow().
+            * rendering/style/RenderStyle.h: Function signature
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168599
 
     2014-05-09  Myles C. Maxfield  <litherum@gmail.com>
