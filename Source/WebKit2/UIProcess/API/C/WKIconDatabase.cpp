@@ -29,6 +29,9 @@
 #include "APIData.h"
 #include "WKAPICast.h"
 #include "WebIconDatabase.h"
+#include <WebCore/Image.h>
+#include <WebCore/SharedBuffer.h>
+#include <WebKit/WKData.h>
 
 using namespace WebKit;
 
@@ -67,6 +70,19 @@ WKURLRef WKIconDatabaseCopyIconURLForPageURL(WKIconDatabaseRef iconDatabaseRef, 
     String iconURLString;
     toImpl(iconDatabaseRef)->synchronousIconURLForPageURL(toWTFString(pageURLRef), iconURLString);
     return toCopiedURLAPI(iconURLString);
+}
+
+WKDataRef WKIconDatabaseCopyIconDataForPageURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURL)
+{
+    WebCore::Image* image = toImpl(iconDatabaseRef)->imageForPageURL(toWTFString(pageURL));
+    if (!image)
+        return nullptr;
+
+    WebCore::SharedBuffer* iconData = image->data();
+    if (!iconData)
+        return nullptr;
+
+    return WKDataCreate(reinterpret_cast<const unsigned char*>(iconData->data()), iconData->size());
 }
 
 void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabaseRef)
