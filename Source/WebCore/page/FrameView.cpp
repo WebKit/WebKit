@@ -3879,7 +3879,7 @@ IntRect FrameView::convertToRenderer(const RenderElement* renderer, const IntRec
     
     // Convert from FrameView coords into page ("absolute") coordinates.
     if (!delegatesScrolling())
-        rect.moveBy(scrollPositionRelativeToDocument());
+        rect.moveBy(documentScrollPositionRelativeToViewOrigin());
 
     // FIXME: we don't have a way to map an absolute rect down to a local quad, so just
     // move the rect for now.
@@ -3903,7 +3903,7 @@ IntPoint FrameView::convertToRenderer(const RenderElement* renderer, const IntPo
 
     // Convert from FrameView coords into page ("absolute") coordinates.
     if (!delegatesScrolling())
-        point = point + scrollPositionRelativeToDocument();
+        point = point + documentScrollPositionRelativeToViewOrigin();
 
     return roundedIntPoint(renderer->absoluteToLocal(point, UseTransforms));
 }

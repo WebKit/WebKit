@@ -241,12 +241,21 @@ public:
     IntPoint actualScrollPosition() const { return unobscuredContentRect().location(); }
 #endif
 
-    // scrollOffset() anchors its (0,0) point at the top end of the header if this ScrollableArea
-    // has a header, so it is relative to the totalContentsSize(). scrollOffsetRelativeToDocument()
-    // anchors (0,0) at the top of the Document, which will be beneath any headers, so it is relative
-    // to contentsSize().
-    IntSize scrollOffsetRelativeToDocument() const;
-    IntPoint scrollPositionRelativeToDocument() const;
+    // scrollOffset() anchors its (0,0) point at the ScrollableArea's origin. When the Page has a
+    // header, the header is positioned at (0,0), ABOVE the start of the Document. So when a page with
+    // a header is pinned to the top, the scrollOffset() is (0,0), but the Document is actually at
+    // (0, -headerHeight()). documentScrollOffsetRelativeToScrollableAreaOrigin() will return this
+    // version of the offset, which tracks the top of Document relative to where scrolling was achored.
+    IntSize documentScrollOffsetRelativeToScrollableAreaOrigin() const;
+
+    // scrollOffset() anchors its (0,0) point at the ScrollableArea's origin. The top of the scrolling
+    // layer does not represent the top of the view when there is a topContentInset. Additionally, as
+    // detailed above, the origin of the scrolling layer also does not necessarily correspond with the
+    // top of the document anyway, since there could also be header. documentScrollOffsetRelativeToViewOrigin()
+    // will return a version of the current scroll offset which tracks the top of the Document
+    // relative to the very top of the view.
+    IntSize documentScrollOffsetRelativeToViewOrigin() const;
+    IntPoint documentScrollPositionRelativeToViewOrigin() const;
 
     virtual IntSize overhangAmount() const override;
 
