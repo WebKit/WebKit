@@ -1,3 +1,26 @@
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168447
+
+    2014-05-07  Enrica Casucci  <enrica@apple.com>
+
+            WK2: Programatic scroll requests during scroll or zoom animation to reveal focused element are ignored.
+            https://bugs.webkit.org/show_bug.cgi?id=132657
+            <rdar://problem/16468462>
+
+            Reviewed by Benjamin Poulain.
+
+            With the scrolling model we use on iOS, a programatic scroll
+            request can be received while we are still animating to reveal
+            the focused input element. Changing the scroll offset while animating
+            leads to unpredictable results. We now cancel the animation if
+            a programatic scroll request is received.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _scrollToContentOffset:WebCore::]):
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::getAssistedNodeInformation):
+
 2014-05-13  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168445

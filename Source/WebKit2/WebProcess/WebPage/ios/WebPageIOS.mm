@@ -1738,6 +1738,8 @@ void WebPage::focusNextAssistedNode(bool isForward)
 
 void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 {
+    layoutIfNeeded();
+
     if (RenderObject* renderer = m_assistedNode->renderer())
         information.elementRect = m_page->focusController().focusedOrMainFrame().view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
     else

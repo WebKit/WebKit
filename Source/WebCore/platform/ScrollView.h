@@ -192,6 +192,8 @@ public:
     LegacyTileCache* legacyTileCache();
 #endif
 
+    virtual bool inProgrammaticScroll() const { return false; }
+
     // visibleContentRect().size() is computed from unscaledUnobscuredVisibleContentSize() divided by the value of visibleContentScaleFactor.
     // visibleContentScaleFactor is usually 1, except when the setting delegatesPageScaling is true and the
     // ScrollView is the main frame; in that case, visibleContentScaleFactor is equal to the page's pageScaleFactor.

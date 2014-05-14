@@ -1,3 +1,30 @@
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168447
+
+    2014-05-07  Enrica Casucci  <enrica@apple.com>
+
+            WK2: Programatic scroll requests during scroll or zoom animation to reveal focused element are ignored.
+            https://bugs.webkit.org/show_bug.cgi?id=132657
+            <rdar://problem/16468462>
+
+            Reviewed by Benjamin Poulain.
+
+            With the scrolling model we use on iOS, a programatic scroll
+            request can be received while we are still animating to reveal
+            the focused input element. The WebProcess is unaware that the
+            scroll position is being changed in the UIProcess, and does not
+            honor the scroll request from JavaScript.
+            This is patch changes the behavior for clients using scroll delegates
+            to always send the scroll request to the UIProcess without checking
+            the current scroll position.
+
+            * page/FrameView.h:
+            * platform/ScrollView.cpp:
+            (WebCore::ScrollView::setScrollPosition):
+            * platform/ScrollView.h:
+            (WebCore::ScrollView::inProgrammaticScroll):
+
 2014-05-13  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r168742
