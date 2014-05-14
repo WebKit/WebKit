@@ -290,7 +290,6 @@ EXPORTS
         ?setMockScrollbarsEnabled@Settings@WebCore@@SAX_N@Z
         ?mockScrollbarsEnabled@Settings@WebCore@@SA_NXZ
         ?setUsesOverlayScrollbars@Settings@WebCore@@SAX_N@Z
-        symbolWithPointer(?setPageScaleFactor@Page@WebCore@@QAEXMABVIntPoint@2@@Z, ?setPageScaleFactor@Page@WebCore@@QEAAXMAEBVIntPoint@2@@Z)
         symbolWithPointer(?setPagination@Page@WebCore@@QAEXABUPagination@2@@Z, ?setPagination@Page@WebCore@@QEAAXAEBUPagination@2@@Z)
         symbolWithPointer(?setPictographFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z, ?setPictographFontFamily@Settings@WebCore@@QEAAXAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
         symbolWithPointer(?setSansSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z, ?setSansSerifFontFamily@Settings@WebCore@@QEAAXAEBVAtomicString@WTF@@W4UScriptCode@@@Z)

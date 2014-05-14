@@ -1,3 +1,9 @@
+2014-05-13  Dean Jackson  <dino@apple.com>
+
+        Step 1 of fixing the windows build. Remove setPageScaleFactor.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-05-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix after r168668.
