@@ -916,12 +916,13 @@ WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar = function(rep
         return;
 
     var treeElement = selectedSidebarPanel.treeElementForRepresentedObject(representedObject);
+
     if (treeElement)
         treeElement.revealAndSelect(true, false, true, true);
     else if (selectedSidebarPanel.contentTreeOutline.selectedTreeElement)
         selectedSidebarPanel.contentTreeOutline.selectedTreeElement.deselect(true);
 
-    if (!selectedSidebarPanel.contentTreeOutline.selectedTreeElement)
+    if (!selectedSidebarPanel.hasSelectedElement)
         selectedSidebarPanel.showDefaultContentView();
 }
 
@@ -1826,7 +1827,7 @@ WebInspector.addWindowKeydownListener = function(listener)
 {
     if (typeof listener.handleKeydownEvent !== "function")
         return;
-    
+
     this._windowKeydownListeners.push(listener);
 
     this._updateWindowKeydownListener();
@@ -1835,7 +1836,7 @@ WebInspector.addWindowKeydownListener = function(listener)
 WebInspector.removeWindowKeydownListener = function(listener)
 {
     this._windowKeydownListeners.remove(listener);
-    
+
     this._updateWindowKeydownListener();
 };
 
