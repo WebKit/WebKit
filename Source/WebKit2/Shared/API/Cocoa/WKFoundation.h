@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Availability.h>
 #import <TargetConditionals.h>
 
 #if !defined(WK_API_ENABLED)
