@@ -95,11 +95,13 @@ struct AssistedNodeInformation {
     AssistedNodeInformation()
         : minimumScaleFactor(-INFINITY)
         , maximumScaleFactor(INFINITY)
+        , nodeFontSize(0)
         , hasNextNode(false)
         , hasPreviousNode(false)
         , isAutocorrect(false)
         , isMultiSelect(false)
         , isReadOnly(false)
+        , allowsUserScaling(false)
         , autocapitalizeType(WebAutocapitalizeTypeDefault)
         , elementType(WKTypeNone)
         , selectedIndex(-1)
@@ -108,13 +110,16 @@ struct AssistedNodeInformation {
     }
 
     WebCore::IntRect elementRect;
+    WebCore::IntRect selectionRect;
     double minimumScaleFactor;
     double maximumScaleFactor;
+    double nodeFontSize;
     bool hasNextNode;
     bool hasPreviousNode;
     bool isAutocorrect;
     bool isMultiSelect;
     bool isReadOnly;
+    bool allowsUserScaling;
     WebAutocapitalizeType autocapitalizeType;
     WKInputType elementType;
     String formAction;

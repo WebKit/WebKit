@@ -83,6 +83,19 @@
 @interface UIPeripheralHost(UIKitInternal)
 - (CGFloat)getVerticalOverlapForView:(UIView *)view usingKeyboardInfo:(NSDictionary *)info;
 @end
+
+@interface UIView (UIViewInternal)
+- (UIViewController *)_viewControllerForAncestor;
+@end
+
+@interface UIWindow (UIWindowInternal)
+- (BOOL)_isHostedInAnotherProcess;
+@end
+
+@interface UIViewController (UIViewControllerInternal)
+- (UIViewController *)_rootAncestorViewController;
+- (UIViewController *)_viewControllerForSupportedInterfaceOrientations;
+@end
 #endif
 
 #if PLATFORM(MAC)
@@ -105,6 +118,7 @@
     BOOL _hasStaticMinimumLayoutSize;
     CGSize _minimumLayoutSizeOverride;
     CGSize _minimumLayoutSizeOverrideForMinimalUI;
+    CGRect _inputViewBounds;
 
     UIEdgeInsets _obscuredInsets;
     bool _isChangingObscuredInsetsInteractively;
@@ -119,7 +133,6 @@
     CATransform3D _resizeAnimationTransformAdjustments;
     RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;
-    CGFloat _keyboardVerticalOverlap;
 
     std::unique_ptr<WebKit::ViewGestureController> _gestureController;
     BOOL _allowsBackForwardNavigationGestures;
@@ -610,6 +623,122 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _zoomToPoint:origin atScale:[_scrollView minimumZoomScale]];
 }
 
+// focusedElementRect and selectionRect are both in document coordinates.
+- (void)_zoomToFocusRect:(WebCore::FloatRect)focusedElementRectInDocumentCoordinates selectionRect:(WebCore::FloatRect)selectionRectInDocumentCoordinates fontSize:(float)fontSize minimumScale:(double)minimumScale maximumScale:(double)maximumScale allowScaling:(BOOL)allowScaling forceScroll:(BOOL)forceScroll
+{
+    const double WKWebViewStandardFontSize = 16;
+    const double kMinimumHeightToShowContentAboveKeyboard = 106;
+    const CFTimeInterval UIWebFormAnimationDuration = 0.25;
+    const double CaretOffsetFromWindowEdge = 20;
+
+    // Zoom around the element's bounding frame. We use a "standard" size to determine the proper frame.
+    double scale = allowScaling ? std::min(std::max(WKWebViewStandardFontSize / fontSize, minimumScale), maximumScale) : contentZoomScale(self);
+    CGFloat documentWidth = [_contentView bounds].size.width;
+    scale = CGRound(documentWidth * scale) / documentWidth;
+
+    UIWindow *window = [_scrollView window];
+
+    WebCore::FloatRect focusedElementRectInNewScale = focusedElementRectInDocumentCoordinates;
+    focusedElementRectInNewScale.scale(scale);
+    focusedElementRectInNewScale.moveBy([_contentView frame].origin);
+
+    // Find the portion of the view that is visible on the screen.
+    UIViewController *topViewController = [[[_scrollView _viewControllerForAncestor] _rootAncestorViewController] _viewControllerForSupportedInterfaceOrientations];
+    UIView *fullScreenView = topViewController.view;
+    if (!fullScreenView)
+        fullScreenView = window;
+
+    CGRect unobscuredScrollViewRectInWebViewCoordinates = UIEdgeInsetsInsetRect([self bounds], _obscuredInsets);
+    CGRect visibleScrollViewBoundsInWebViewCoordinates = CGRectIntersection(unobscuredScrollViewRectInWebViewCoordinates, [fullScreenView convertRect:[fullScreenView bounds] toView:self]);
+    CGRect formAssistantFrameInWebViewCoordinates = [window convertRect:_inputViewBounds toView:self];
+    CGRect intersectionBetweenScrollViewAndFormAssistant = CGRectIntersection(visibleScrollViewBoundsInWebViewCoordinates, formAssistantFrameInWebViewCoordinates);
+    CGSize visibleSize = visibleScrollViewBoundsInWebViewCoordinates.size;
+
+    CGFloat visibleOffsetFromTop = 0;
+    if (!CGRectIsEmpty(intersectionBetweenScrollViewAndFormAssistant)) {
+        CGFloat heightVisibleAboveFormAssistant = CGRectGetMinY(intersectionBetweenScrollViewAndFormAssistant) - CGRectGetMinY(visibleScrollViewBoundsInWebViewCoordinates);
+        CGFloat heightVisibleBelowFormAssistant = CGRectGetMaxY(visibleScrollViewBoundsInWebViewCoordinates) - CGRectGetMaxY(intersectionBetweenScrollViewAndFormAssistant);
+
+        if (heightVisibleAboveFormAssistant >= kMinimumHeightToShowContentAboveKeyboard || heightVisibleBelowFormAssistant < heightVisibleAboveFormAssistant)
+            visibleSize.height = heightVisibleAboveFormAssistant;
+        else {
+            visibleSize.height = heightVisibleBelowFormAssistant;
+            visibleOffsetFromTop = CGRectGetMaxY(intersectionBetweenScrollViewAndFormAssistant) - CGRectGetMinY(visibleScrollViewBoundsInWebViewCoordinates);
+        }
+    }
+
+    BOOL selectionRectIsNotNull = !selectionRectInDocumentCoordinates.isZero();
+    if (!forceScroll) {
+        CGRect currentlyVisibleRegionInWebViewCoordinates;
+        currentlyVisibleRegionInWebViewCoordinates.origin = unobscuredScrollViewRectInWebViewCoordinates.origin;
+        currentlyVisibleRegionInWebViewCoordinates.origin.y += visibleOffsetFromTop;
+        currentlyVisibleRegionInWebViewCoordinates.size = visibleSize;
+
+        // Don't bother scrolling if the entire node is already visible, whether or not we got a selectionRect.
+        if (CGRectContainsRect(currentlyVisibleRegionInWebViewCoordinates, [self convertRect:focusedElementRectInDocumentCoordinates fromView:_contentView.get()]))
+            return;
+
+        // Don't bother scrolling if we have a valid selectionRect and it is already visible.
+        if (selectionRectIsNotNull && CGRectContainsRect(currentlyVisibleRegionInWebViewCoordinates, [self convertRect:selectionRectInDocumentCoordinates fromView:_contentView.get()]))
+            return;
+    }
+
+    // We want to zoom to the left/top corner of the DOM node, with as much spacing on all sides as we
+    // can get based on the visible area after zooming (workingFrame).  The spacing in either dimension is half the
+    // difference between the size of the DOM node and the size of the visible frame.
+    CGFloat horizontalSpaceInWebViewCoordinates = std::max((visibleSize.width - focusedElementRectInNewScale.width()) / 2.0, 0.0);
+    CGFloat verticalSpaceInWebViewCoordinates = std::max((visibleSize.height - focusedElementRectInNewScale.height()) / 2.0, 0.0);
+
+    CGPoint topLeft;
+    topLeft.x = focusedElementRectInNewScale.x() - horizontalSpaceInWebViewCoordinates;
+    topLeft.y = focusedElementRectInNewScale.y() - verticalSpaceInWebViewCoordinates - visibleOffsetFromTop;
+
+    CGFloat minimumAllowableHorizontalOffsetInWebViewCoordinates = -INFINITY;
+    CGFloat minimumAllowableVerticalOffsetInWebViewCoordinates = -INFINITY;
+    if (selectionRectIsNotNull) {
+        WebCore::FloatRect selectionRectInNewScale = selectionRectInDocumentCoordinates;
+        selectionRectInNewScale.scale(scale);
+        selectionRectInNewScale.moveBy([_contentView frame].origin);
+        minimumAllowableHorizontalOffsetInWebViewCoordinates = CGRectGetMaxX(selectionRectInNewScale) + CaretOffsetFromWindowEdge - visibleSize.width;
+        minimumAllowableVerticalOffsetInWebViewCoordinates = CGRectGetMaxY(selectionRectInNewScale) + CaretOffsetFromWindowEdge - visibleSize.height - visibleOffsetFromTop;
+    }
+
+    WebCore::FloatRect documentBoundsInNewScale = [_contentView bounds];
+    documentBoundsInNewScale.scale(scale);
+    documentBoundsInNewScale.moveBy([_contentView frame].origin);
+
+    // Constrain the left edge in document coordinates so that:
+    //  - it isn't so small that the scrollVisibleRect isn't visible on the screen
+    //  - it isn't so great that the document's right edge is less than the right edge of the screen
+    if (selectionRectIsNotNull && topLeft.x < minimumAllowableHorizontalOffsetInWebViewCoordinates)
+        topLeft.x = minimumAllowableHorizontalOffsetInWebViewCoordinates;
+    else {
+        CGFloat maximumAllowableHorizontalOffset = CGRectGetMaxX(documentBoundsInNewScale) - visibleSize.width;
+        if (topLeft.x > maximumAllowableHorizontalOffset)
+            topLeft.x = maximumAllowableHorizontalOffset;
+    }
+
+    // Constrain the top edge in document coordinates so that:
+    //  - it isn't so small that the scrollVisibleRect isn't visible on the screen
+    //  - it isn't so great that the document's bottom edge is higher than the top of the form assistant
+    if (selectionRectIsNotNull && topLeft.y < minimumAllowableVerticalOffsetInWebViewCoordinates)
+        topLeft.y = minimumAllowableVerticalOffsetInWebViewCoordinates;
+    else {
+        CGFloat maximumAllowableVerticalOffset = CGRectGetMaxY(documentBoundsInNewScale) - visibleSize.height;
+        if (topLeft.y > maximumAllowableVerticalOffset)
+            topLeft.y = maximumAllowableVerticalOffset;
+    }
+
+    WebCore::FloatPoint newCenter = CGPointMake(topLeft.x + unobscuredScrollViewRectInWebViewCoordinates.size.width / 2.0, topLeft.y + unobscuredScrollViewRectInWebViewCoordinates.size.height / 2.0);
+
+    // The newCenter has been computed in the new scale, but _zoomToCenter expected the center to be in the original scale.
+    newCenter.scale(1 / scale, 1 / scale);
+    [_scrollView _zoomToCenter:newCenter
+                        scale:scale
+                     duration:UIWebFormAnimationDuration
+                        force:YES];
+}
+
 - (BOOL)_zoomToRect:(WebCore::FloatRect)targetRect withOrigin:(WebCore::FloatPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(float)minimumScrollDistance
 {
     const float maximumScaleFactorDeltaForPanScroll = 0.02;
@@ -753,7 +882,7 @@ static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProx
 {
     // FIXME: handle split keyboard.
     UIEdgeInsets obscuredInsets = _obscuredInsets;
-    obscuredInsets.bottom = std::max(_obscuredInsets.bottom, _keyboardVerticalOverlap);
+    obscuredInsets.bottom = std::max(_obscuredInsets.bottom, _inputViewBounds.size.height);
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, obscuredInsets);
     return [self convertRect:unobscuredRect toView:_contentView.get()];
 }
@@ -780,7 +909,18 @@ static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProx
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView
 {
-    _keyboardVerticalOverlap = [[UIPeripheralHost sharedInstance] getVerticalOverlapForView:self usingKeyboardInfo:keyboardInfo];
+    NSValue *endFrameValue = [keyboardInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+    if (!endFrameValue)
+        return;
+
+    // The keyboard rect is always in screen coordinates. In the view services case the window does not
+    // have the interface orientation rotation transformation; its host does. So, it makes no sense to
+    // clip the keyboard rect against its screen.
+    if ([[self window] _isHostedInAnotherProcess])
+        _inputViewBounds = [self.window convertRect:[endFrameValue CGRectValue] fromWindow:nil];
+    else
+        _inputViewBounds = [self.window convertRect:CGRectIntersection([endFrameValue CGRectValue], self.window.screen.bounds) fromWindow:nil];
+
     [self _updateVisibleContentRects];
 
     if (adjustScrollView)
