@@ -1,5 +1,31 @@
 2014-04-17  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168519
+
+    2014-05-08  Brent Fulgham  <bfulgham@apple.com>
+
+            Multiple (stacked) cues when shuttling through video while playing closed captions
+            https://bugs.webkit.org/show_bug.cgi?id=132715
+            <rdar://problem/16795782>
+
+            Reviewed by Eric Carlson.
+
+            Tests: media/track/track-in-band-cues-added-once.html
+
+            * html/track/TextTrack.cpp:
+            (WebCore::TextTrack::hasCue): Revise to use a relaxed time equality.
+            * html/track/TextTrackCue.cpp:
+            (WebCore::TextTrackCue::isEqual): Ditto.
+            (WebCore::TextTrackCue::hasEquivalentStartTime): Added.
+            * html/track/TextTrackCue.h:
+            (WebCore::TextTrackCue::startTimeVariance): Added.
+            * html/track/TextTrackCueGeneric.h:
+            * html/track/TextTrackCueGeneric.cpp:
+            (WebCore::TextTrackCueGeneric::isEqual): Do not call the VTTCue::isEqual method from
+            this class, since cueType() will not equal VTTCue, and the equality will fail.
+
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168514
 
     2014-05-08  Simon Fraser  <simon.fraser@apple.com>
