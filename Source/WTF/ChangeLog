@@ -1,3 +1,16 @@
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168459
+
+    2014-05-07  Filip Pizlo  <fpizlo@apple.com>
+
+            UNREACHABLE_FOR_PLATFORM() is meant to be a release crash.
+
+            Rubber stamped by Mark Hahnenberg..
+
+            * wtf/Assertions.h:
+            (UNREACHABLE_FOR_PLATFORM):
+
 2014-05-06  Alberto Garcia  <berto@igalia.com>
 
         There is no HW_AVAILCPU on FreeBSD, NetBSD, and OpenBSD

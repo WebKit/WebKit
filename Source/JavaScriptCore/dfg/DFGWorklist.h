@@ -49,7 +49,7 @@ public:
 
     ~Worklist();
     
-    static PassRefPtr<Worklist> create(unsigned numberOfThreads, int relativePriority = 0);
+    static PassRefPtr<Worklist> create(CString worklistName, unsigned numberOfThreads, int relativePriority = 0);
     
     void enqueue(PassRefPtr<Plan>);
     
@@ -78,7 +78,7 @@ public:
     void dump(PrintStream&) const;
     
 private:
-    Worklist();
+    Worklist(CString worklistName);
     void finishCreation(unsigned numberOfThreads, int);
     
     void runThread(ThreadData*);
@@ -87,7 +87,9 @@ private:
     void removeAllReadyPlansForVM(VM&, Vector<RefPtr<Plan>, 8>&);
 
     void dump(const MutexLocker&, PrintStream&) const;
-
+    
+    CString m_threadName;
+    
     // Used to inform the thread about what work there is left to do.
     Deque<RefPtr<Plan>> m_queue;
     

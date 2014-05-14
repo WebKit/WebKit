@@ -1286,46 +1286,6 @@ char* JIT_OPERATION triggerOSREntryNow(
         exec, codeBlock, jitCode->osrEntryBlock.get(), bytecodeIndex, streamIndex);
     return static_cast<char*>(address);
 }
-
-// FIXME: Make calls work well. Currently they're a pure regression.
-// https://bugs.webkit.org/show_bug.cgi?id=113621
-EncodedJSValue JIT_OPERATION operationFTLCall(ExecState* exec)
-{
-    ExecState* callerExec = exec->callerFrame();
-    
-    VM* vm = &callerExec->vm();
-    NativeCallFrameTracer tracer(vm, callerExec);
-    
-    JSValue callee = exec->calleeAsValue();
-    CallData callData;
-    CallType callType = getCallData(callee, callData);
-    if (callType == CallTypeNone) {
-        vm->throwException(callerExec, createNotAFunctionError(callerExec, callee));
-        return JSValue::encode(jsUndefined());
-    }
-    
-    return JSValue::encode(call(callerExec, callee, callType, callData, exec->thisValue(), exec));
-}
-
-// FIXME: Make calls work well. Currently they're a pure regression.
-// https://bugs.webkit.org/show_bug.cgi?id=113621
-EncodedJSValue JIT_OPERATION operationFTLConstruct(ExecState* exec)
-{
-    ExecState* callerExec = exec->callerFrame();
-    
-    VM* vm = &callerExec->vm();
-    NativeCallFrameTracer tracer(vm, callerExec);
-    
-    JSValue callee = exec->calleeAsValue();
-    ConstructData constructData;
-    ConstructType constructType = getConstructData(callee, constructData);
-    if (constructType == ConstructTypeNone) {
-        vm->throwException(callerExec, createNotAFunctionError(callerExec, callee));
-        return JSValue::encode(jsUndefined());
-    }
-    
-    return JSValue::encode(construct(callerExec, callee, constructType, constructData, exec));
-}
 #endif // ENABLE(FTL_JIT)
 
 } // extern "C"
