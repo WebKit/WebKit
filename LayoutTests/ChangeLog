@@ -1,3 +1,20 @@
+2014-05-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new tests failing.
+        * platform/gtk/editing/apply-style-iframe-crash-expected.txt: Added.
+        Rebaseline after r168641.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-marker-05-f-expected.txt: Added.
+        Rebaseline after r168543.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-marker-06-f-expected.txt: Added.
+        Rebaseline after r168543.
+        * platform/gtk/svg/hixie/mixed/010-expected.txt: Rebaseline after r168674.
+        * platform/gtk/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        Rebaseline after r168350.
+        * platform/gtk/svg/zoom/text/zoom-svg-float-border-padding-expected.txt: Added.
+        Rebaseline after r168674.
+
 2014-05-14  Zalan Bujtas  <zalan@apple.com>
 
         Fix line ending style for the test.

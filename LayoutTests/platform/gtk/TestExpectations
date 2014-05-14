@@ -401,15 +401,20 @@ webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 # HighDPI support is not enabled
 webkit.org/b/131347 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-selection-gap-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ Failure ImageOnlyFailure Timeout ]
-webkit.org/b/131347 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
-webkit.org/b/131347 fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/131347 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -996,7 +1001,6 @@ webkit.org/b/130411 editing/spelling/spelling-changed-text.html [ Timeout ]
 webkit.org/b/130411 editing/spelling/spellcheck-paste-disabled.html [ Timeout ]
 webkit.org/b/130411 editing/spelling/spellcheck-paste-continuous-disabled.html [ Timeout ]
 
-Bug(GTK) plugins/evaluate-js-after-removing-plugin-element.html [ Timeout ]
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
 
 Bug(GTK) http/tests/local/blob/send-hybrid-blob.html [ Timeout ]
@@ -1959,6 +1963,18 @@ webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-
 webkit.org/b/132253 media/volume-bar-empty-when-muted.html [ Failure ]
 
 webkit.org/b/132274 fast/multicol/newmulticol/compare-with-old-impl/column-rules-stacking.html [ ImageOnlyFailure ]
+
+webkit.org/b/132909 accessibility/table-with-footer-section-above-body.html [ Failure ]
+
+webkit.org/b/132910 editing/pasteboard/drag-drop-paragraph-crasher.html [ Failure ]
+
+webkit.org/b/132914 http/tests/security/drag-drop-local-file.html [ Failure ]
+
+webkit.org/b/132919 platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html [ Failure ]
+
+webkit.org/b/132921 plugins/evaluate-js-after-removing-plugin-element.html [ Failure ]
+
+webkit.org/b/132923 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
