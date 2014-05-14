@@ -1,5 +1,15 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168557
+
+    2014-05-09  Benjamin Poulain  <bpoulain@apple.com>
+
+            Fix the export file after r168556
+
+            * WebCore.exp.in: I forgot to fix the export file before landing.
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168556
 
     2014-05-09  Benjamin Poulain  <bpoulain@apple.com>
