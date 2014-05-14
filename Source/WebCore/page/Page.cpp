@@ -707,7 +707,7 @@ void Page::setZoomedOutPageScaleFactor(float scale)
     mainFrame().deviceOrPageScaleFactorChanged();
 }
 
-void Page::setPageScaleFactor(float scale, const IntPoint& origin)
+void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStableState)
 {
     Document* document = mainFrame().document();
     FrameView* view = document->view();
@@ -724,6 +724,12 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
                 view->hostWindow()->delegatedScrollRequested(origin);
 #endif
         }
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+        if (inStableState) {
+            for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
+                frame->document()->pageScaleFactorChangedAndStable();
+        }
+#endif
         return;
     }
 
@@ -757,8 +763,10 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
     }
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
-        frame->document()->pageScaleFactorChanged();
+    if (inStableState) {
+        for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
+            frame->document()->pageScaleFactorChangedAndStable();
+    }
 #endif
 }
 
@@ -783,7 +791,7 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     pageCache()->markPagesForFullStyleRecalc(this);
     GraphicsContext::updateDocumentMarkerResources();
 }
-    
+
 void Page::setTopContentInset(float contentInset)
 {
     if (m_topContentInset == contentInset)

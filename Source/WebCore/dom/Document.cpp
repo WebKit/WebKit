@@ -4204,7 +4204,7 @@ void Document::unregisterForPageScaleFactorChangedCallbacks(HTMLMediaElement* el
     m_pageScaleFactorChangedElements.remove(element);
 }
 
-void Document::pageScaleFactorChanged()
+void Document::pageScaleFactorChangedAndStable()
 {
     for (HTMLMediaElement* mediaElement : m_pageScaleFactorChangedElements)
         mediaElement->pageScaleFactorChanged();

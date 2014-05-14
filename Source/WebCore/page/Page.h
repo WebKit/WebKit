@@ -271,7 +271,7 @@ public:
     float mediaVolume() const { return m_mediaVolume; }
     void setMediaVolume(float);
 
-    void setPageScaleFactor(float scale, const IntPoint& origin);
+    void setPageScaleFactor(float scale, const IntPoint& origin, bool inStableState = true);
     float pageScaleFactor() const { return m_pageScaleFactor; }
 
     void setZoomedOutPageScaleFactor(float);

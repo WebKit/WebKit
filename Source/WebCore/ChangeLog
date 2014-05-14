@@ -1,3 +1,32 @@
+2014-05-13  Dean Jackson  <dino@apple.com>
+
+        [iOS] Page scale update messages for media controls should only fire at the end of zooming
+        https://bugs.webkit.org/show_bug.cgi?id=132857
+        <rdar://problem/16631009>
+
+        Reviewed by Simon Fraser.
+
+        As the user was zooming, the media controls that responded
+        to the page scale (and resized themselves) would do so
+        slightly out of sync with the screen refreshes, and it looked
+        terrible. They really only need to get told at the end
+        of the zoom that they need to relayout.
+
+        Allow setPageScaleFactor to accept another parameter
+        that indicates if the change is stable. That way, changes
+        during a user triggers zoom gesture can be ignored for
+        media controls.
+
+        * WebCore.exp.in: Page::setPageScaleFactor takes a new parameter.
+        * dom/Document.cpp:
+        (WebCore::Document::pageScaleFactorChangedAndStable): Renamed from pageScaleFactorChanged.
+        (WebCore::Document::pageScaleFactorChanged): Deleted.
+        * dom/Document.h:
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor): Accepts a new inStableState parameter,
+        and tells the main frame that the scale factor has changed if it's stable.
+        * page/Page.h:
+
 2014-05-13  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed build fix after r168755.

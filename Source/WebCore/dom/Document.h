@@ -1046,7 +1046,7 @@ public:
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     void registerForPageScaleFactorChangedCallbacks(HTMLMediaElement*);
     void unregisterForPageScaleFactorChangedCallbacks(HTMLMediaElement*);
-    void pageScaleFactorChanged();
+    void pageScaleFactorChangedAndStable();
 #endif
 
 #if ENABLE(PAGE_VISIBILITY_API)

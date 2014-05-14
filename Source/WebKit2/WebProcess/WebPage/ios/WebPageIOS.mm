@@ -2164,15 +2164,23 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     IntPoint scrollPosition = roundedUnobscuredRect.location();
 
     float floatBoundedScale = boundedScale;
+    bool hasSetPageScale = false;
     if (floatBoundedScale != m_page->pageScaleFactor()) {
         m_scaleWasSetByUIProcess = true;
 
         m_dynamicSizeUpdateHistory.clear();
 
-        m_page->setPageScaleFactor(floatBoundedScale, scrollPosition);
+        m_page->setPageScaleFactor(floatBoundedScale, scrollPosition, visibleContentRectUpdateInfo.inStableState());
+        hasSetPageScale = true;
+
         if (LayerTreeHost* layerTreeHost = m_drawingArea->layerTreeHost())
             layerTreeHost->deviceOrPageScaleFactorChanged();
         send(Messages::WebPageProxy::PageScaleFactorDidChange(floatBoundedScale));
+    }
+
+    if (!hasSetPageScale && visibleContentRectUpdateInfo.inStableState()) {
+        m_page->setPageScaleFactor(floatBoundedScale, scrollPosition, true);
+        hasSetPageScale = true;
     }
 
     FrameView& frameView = *m_page->mainFrame().view();
