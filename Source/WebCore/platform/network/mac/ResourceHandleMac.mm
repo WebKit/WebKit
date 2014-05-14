@@ -372,6 +372,7 @@ NSURLConnection *ResourceHandle::connection() const
     
 void ResourceHandle::getTimingData(NSURLConnection *connection, ResourceLoadTiming& timing)
 {
+#if ENABLE(WEB_TIMING)
     if (NSDictionary *timingData = [connection _timingData]) {
         // This is not the navigationStart time in monotonic time, but the other times are relative to this time
         // and only the differences between times are stored.
@@ -393,6 +394,7 @@ void ResourceHandle::getTimingData(NSURLConnection *connection, ResourceLoadTimi
         timing.requestStart = requestStart <= 0 ? -1 : (requestStart - referenceStart) * 1000;
         timing.responseStart = responseStart <= 0 ? -1 : (responseStart - referenceStart) * 1000;
     }
+#endif
 }
     
 bool ResourceHandle::loadsBlocked()
