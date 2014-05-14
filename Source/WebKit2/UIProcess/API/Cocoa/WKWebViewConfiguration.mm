@@ -28,9 +28,12 @@
 
 #if WK_API_ENABLED
 
+#import "WKPreferences.h"
+#import "WKProcessPool.h"
 #import "WKUserContentController.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WeakObjCPtr.h"
+#import "_WKVisitedLinkProvider.h"
 #import "_WKWebsiteDataStore.h"
 #import <wtf/RetainPtr.h>
 
@@ -45,6 +48,24 @@
 #if PLATFORM(IOS)
     RetainPtr<WKWebViewContentProviderRegistry> _contentProviderRegistry;
 #endif
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _processPool = adoptNS([[WKProcessPool alloc] init]);
+    _preferences = adoptNS([[WKPreferences alloc] init]);
+    _userContentController = adoptNS([[WKUserContentController alloc] init]);
+    _visitedLinkProvider = adoptNS([[_WKVisitedLinkProvider alloc] init]);
+    _websiteDataStore = [_WKWebsiteDataStore defaultDataStore];
+
+#if PLATFORM(IOS)
+    _contentProviderRegistry = adoptNS([[WKWebViewContentProviderRegistry alloc] init]);
+#endif
+
+    return self;
 }
 
 - (NSString *)description
@@ -130,6 +151,29 @@
     _contentProviderRegistry = registry;
 }
 #endif
+
+- (void)_validate
+{
+    if (!_processPool)
+        [NSException raise:NSInvalidArgumentException format:@"configuration.processPool is nil"];
+
+    if (!_preferences)
+        [NSException raise:NSInvalidArgumentException format:@"configuration.preferences is nil"];
+
+    if (!_userContentController)
+        [NSException raise:NSInvalidArgumentException format:@"configuration.userContentController is nil"];
+
+    if (!_visitedLinkProvider)
+        [NSException raise:NSInvalidArgumentException format:@"configuration._visitedLinkProvider is nil"];
+
+    if (!_websiteDataStore)
+        [NSException raise:NSInvalidArgumentException format:@"configuration._websiteDataStore is nil"];
+
+#if PLATFORM(IOS)
+    if (!_contentProviderRegistry)
+        [NSException raise:NSInvalidArgumentException format:@"configuration._contentProviderRegistry is nil"];
+#endif
+}
 
 @end
 

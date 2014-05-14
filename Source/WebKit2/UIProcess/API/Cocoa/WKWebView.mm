@@ -152,25 +152,7 @@
         [_configuration setProcessPool:relatedWebViewProcessPool];
     }
 
-    if (![_configuration processPool])
-        [_configuration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
-
-    if (![_configuration preferences])
-        [_configuration setPreferences:adoptNS([[WKPreferences alloc] init]).get()];
-
-    if (![_configuration userContentController])
-        [_configuration setUserContentController:adoptNS([[WKUserContentController alloc] init]).get()];
-
-    if (![_configuration _visitedLinkProvider])
-        [_configuration _setVisitedLinkProvider:adoptNS([[_WKVisitedLinkProvider alloc] init]).get()];
-    
-    if (![_configuration _websiteDataStore])
-        [_configuration _setWebsiteDataStore:[_WKWebsiteDataStore defaultDataStore]];
-    
-#if PLATFORM(IOS)
-    if (![_configuration _contentProviderRegistry])
-        [_configuration _setContentProviderRegistry:adoptNS([[WKWebViewContentProviderRegistry alloc] init]).get()];
-#endif
+    [_configuration _validate];
 
     CGRect bounds = self.bounds;
 

@@ -1,5 +1,24 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168637
+
+    2014-05-12  Anders Carlsson  <andersca@apple.com>
+
+            WKWebViewConfiguration should fill in the blanks
+            https://bugs.webkit.org/show_bug.cgi?id=132832
+            <rdar://problem/16886408>
+
+            Reviewed by Dan Bernstein.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView initWithFrame:configuration:]):
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+            (-[WKWebViewConfiguration init]):
+            (-[WKWebViewConfiguration _validate]):
+            * UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h:
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168629
 
     2014-05-12  Anders Carlsson  <andersca@apple.com>
