@@ -889,10 +889,6 @@ protected:
 
 private:
     RenderFlowThread* locateFlowThreadContainingBlock() const;
-    
-    // This will walk the tree to find the flow thread.
-    RenderFlowThread* locateFlowThreadContainingBlockNoCache() const;
-    
     void removeFromRenderFlowThread();
     void removeFromRenderFlowThreadRecursive(RenderFlowThread*);
 
