@@ -713,6 +713,25 @@ Eina_Bool ewk_view_layout_fixed_get(const Evas_Object* ewkView)
     return WKPageUseFixedLayout(WKViewGetPage(impl->wkView()));
 }
 
+void ewk_view_layout_fixed_size_set(const Evas_Object* ewkView, Evas_Coord width, Evas_Coord height)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
+
+    WKPageSetFixedLayoutSize(WKViewGetPage(impl->wkView()), WKSizeMake(width, height));
+}
+
+void ewk_view_layout_fixed_size_get(const Evas_Object* ewkView, Evas_Coord* width, Evas_Coord* height)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
+
+    WKSize size = WKPageFixedLayoutSize(WKViewGetPage(impl->wkView()));
+
+    if (width)
+        *width = size.width;
+    if (height)
+        *height = size.height;
+}
+
 void ewk_view_bg_color_set(Evas_Object* ewkView, int red, int green, int blue, int alpha)
 {
     if (EINA_UNLIKELY(alpha < 0 || alpha > 255)) {

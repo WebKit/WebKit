@@ -898,6 +898,27 @@ EAPI Eina_Bool ewk_view_layout_fixed_set(Evas_Object *o, Eina_Bool enabled);
 EAPI Eina_Bool ewk_view_layout_fixed_get(const Evas_Object *o);
 
 /**
+ * Sets size of fixed layout to web page.
+ *
+ * The webview size will be set with given size.
+ *
+ * @param o view object to set fixed layout
+ * @param width an integer value in which to set width of fixed layout
+ * @param height an integer value in which to set height of fixed layout
+ */
+EAPI void ewk_view_layout_fixed_size_set(const Evas_Object *o, Evas_Coord width, Evas_Coord height);
+
+/**
+ * Gets the fixed layout size of current web page.
+ *
+ * @param o view object to query the size
+ *
+ * @param width pointer to an integer value in which to get the width of fixed layout
+ * @param height pointer to an integer value in which to get the height of fixed layout
+ */
+EAPI void ewk_view_layout_fixed_size_get(const Evas_Object *o, Evas_Coord *width, Evas_Coord *height);
+
+/**
  * Sets the background color and transparency of the view.
  *
  * @param o view object to change the background color

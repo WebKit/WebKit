@@ -1,3 +1,20 @@
+2014-05-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Add ewk_view_fixed_layout_size_set|get()
+        https://bugs.webkit.org/show_bug.cgi?id=132811
+
+        Reviewed by Christophe Dumez.
+
+        Some EFL applications need to set size of fixed layout when enabling fixed layout.
+        This APIs can pass ownership regarding the size of fixed layout to application side.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_layout_fixed_size_set):
+        (ewk_view_layout_fixed_size_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2014-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fix "ASSERTION FAILED: m_representation == PlatformLayerRepresentation" with UI-side compositing

@@ -1083,6 +1083,26 @@ TEST_F(EWK2ViewTest, ewk_view_layout_fixed)
     EXPECT_TRUE(ewk_view_layout_fixed_get(webView()));
 }
 
+TEST_F(EWK2ViewTest, ewk_view_layout_fixed_size)
+{    
+    // Fixed layout is not enabled in webview as default.
+    EXPECT_FALSE(ewk_view_layout_fixed_get(webView()));
+    EXPECT_TRUE(ewk_view_layout_fixed_set(webView(), true));
+
+    Evas_Coord width = 0;
+    Evas_Coord height = 0;
+
+    ewk_view_layout_fixed_size_set(webView(), 480, 800);
+    ewk_view_layout_fixed_size_get(webView(), &width, &height);
+    EXPECT_EQ(480, width);
+    EXPECT_EQ(800, height);
+
+    ewk_view_layout_fixed_size_set(webView(), 980, 1020);
+    ewk_view_layout_fixed_size_get(webView(), &width, &height);
+    EXPECT_EQ(980, width);
+    EXPECT_EQ(1020, height);
+}
+
 TEST_F(EWK2ViewTest, ewk_view_bg_color)
 {
     const char noBackgroundHTML[] = "<!doctype html><body></body>";
