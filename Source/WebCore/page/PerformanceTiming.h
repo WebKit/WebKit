@@ -77,7 +77,6 @@ private:
     const DocumentTiming* documentTiming() const;
     DocumentLoader* documentLoader() const;
     DocumentLoadTiming* documentLoadTiming() const;
-    ResourceLoadTiming* resourceLoadTiming() const;
     unsigned long long resourceLoadTimeRelativeToAbsolute(int) const;
     unsigned long long monotonicTimeToIntegerMilliseconds(double) const;
 };

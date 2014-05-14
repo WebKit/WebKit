@@ -382,9 +382,6 @@ static void restartedCallback(SoupMessage*, gpointer data)
     if (!handle || handle->cancelledOrClientless())
         return;
 
-    ResourceHandleInternal* d = handle->getInternal();
-    ResourceResponse& redirectResponse = d->m_response;
-    redirectResponse.setResourceLoadTiming(ResourceLoadTiming::create());
     handle->m_requestTime = monotonicallyIncreasingTime();
 }
 #endif
@@ -835,11 +832,7 @@ static int milisecondsSinceRequest(double requestTime)
 
 void ResourceHandle::didStartRequest()
 {
-    ResourceHandleInternal* d = getInternal();
-    if (!d->m_response.resourceLoadTiming())
-        return;
-
-    d->m_response.resourceLoadTiming()->requestStart = milisecondsSinceRequest(m_requestTime);
+    getInternal()->m_response.resourceLoadTiming().requestStart = milisecondsSinceRequest(m_requestTime);
 }
 
 static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStream*, gpointer data)
@@ -855,21 +848,21 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
     int deltaTime = milisecondsSinceRequest(handle->m_requestTime);
     switch (event) {
     case G_SOCKET_CLIENT_RESOLVING:
-        d->m_response.resourceLoadTiming()->domainLookupStart = deltaTime;
+        d->m_response.resourceLoadTiming().domainLookupStart = deltaTime;
         break;
     case G_SOCKET_CLIENT_RESOLVED:
-        d->m_response.resourceLoadTiming()->domainLookupEnd = deltaTime;
+        d->m_response.resourceLoadTiming().domainLookupEnd = deltaTime;
         break;
     case G_SOCKET_CLIENT_CONNECTING:
-        d->m_response.resourceLoadTiming()->connectStart = deltaTime;
-        if (d->m_response.resourceLoadTiming()->domainLookupStart != -1) {
+        d->m_response.resourceLoadTiming().connectStart = deltaTime;
+        if (d->m_response.resourceLoadTiming().domainLookupStart != -1) {
             // WebCore/inspector/front-end/RequestTimingView.js assumes
             // that DNS time is included in connection time so must
             // substract here the DNS delta that will be added later (see
             // WebInspector.RequestTimingView.createTimingTable in the
             // file above for more details).
-            d->m_response.resourceLoadTiming()->connectStart -=
-                d->m_response.resourceLoadTiming()->domainLookupEnd - d->m_response.resourceLoadTiming()->domainLookupStart;
+            d->m_response.resourceLoadTiming().connectStart -=
+                d->m_response.resourceLoadTiming().domainLookupEnd - d->m_response.resourceLoadTiming().domainLookupStart;
         }
         break;
     case G_SOCKET_CLIENT_CONNECTED:
@@ -881,12 +874,12 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
     case G_SOCKET_CLIENT_PROXY_NEGOTIATED:
         break;
     case G_SOCKET_CLIENT_TLS_HANDSHAKING:
-        d->m_response.resourceLoadTiming()->secureConnectionStart = deltaTime;
+        d->m_response.resourceLoadTiming().secureConnectionStart = deltaTime;
         break;
     case G_SOCKET_CLIENT_TLS_HANDSHAKED:
         break;
     case G_SOCKET_CLIENT_COMPLETE:
-        d->m_response.resourceLoadTiming()->connectEnd = deltaTime;
+        d->m_response.resourceLoadTiming().connectEnd = deltaTime;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -942,7 +935,6 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     soup_message_set_flags(d->m_soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(d->m_soupMessage.get()) | SOUP_MESSAGE_NO_REDIRECT));
 
 #if ENABLE(WEB_TIMING)
-    d->m_response.setResourceLoadTiming(ResourceLoadTiming::create());
     g_signal_connect(d->m_soupMessage.get(), "network-event", G_CALLBACK(networkEventCallback), handle);
     g_signal_connect(d->m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), handle);
 #endif
@@ -1017,8 +1009,7 @@ bool ResourceHandle::start()
 void ResourceHandle::sendPendingRequest()
 {
 #if ENABLE(WEB_TIMING)
-    if (d->m_response.resourceLoadTiming())
-        m_requestTime = monotonicallyIncreasingTime();
+    m_requestTime = monotonicallyIncreasingTime();
 #endif
 
     if (d->m_firstRequest.timeoutInterval() > 0) {

@@ -109,8 +109,8 @@ public:
     bool wasCached() const;
     void setWasCached(bool);
 
-    ResourceLoadTiming* resourceLoadTiming() const;
-    void setResourceLoadTiming(PassRefPtr<ResourceLoadTiming>);
+    ResourceLoadTiming& resourceLoadTiming() const;
+    void setResourceLoadTiming(const ResourceLoadTiming&);
 
     // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
     unsigned memoryUsage() const
@@ -147,7 +147,7 @@ protected:
     String m_suggestedFilename;
     AtomicString m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
-    RefPtr<ResourceLoadTiming> m_resourceLoadTiming;
+    mutable ResourceLoadTiming m_resourceLoadTiming;
 
     int m_httpStatusCode;
     unsigned m_connectionID;
@@ -196,7 +196,7 @@ public:
     int m_httpStatusCode;
     String m_httpStatusText;
     OwnPtr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
-    RefPtr<ResourceLoadTiming> m_resourceLoadTiming;
+    ResourceLoadTiming m_resourceLoadTiming;
 };
 
 } // namespace WebCore

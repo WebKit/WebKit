@@ -243,8 +243,7 @@ static PassRefPtr<Inspector::TypeBuilder::Network::Response> buildObjectForResou
         .setConnectionId(response.connectionID());
 
     responseObject->setFromDiskCache(response.wasCached());
-    if (response.resourceLoadTiming())
-        responseObject->setTiming(buildObjectForTiming(*response.resourceLoadTiming(), loader));
+    responseObject->setTiming(buildObjectForTiming(response.resourceLoadTiming(), loader));
 
     return responseObject;
 }

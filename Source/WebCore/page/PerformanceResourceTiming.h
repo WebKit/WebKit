@@ -35,6 +35,7 @@
 #if ENABLE(RESOURCE_TIMING)
 
 #include "PerformanceEntry.h"
+#include "ResourceLoadTiming.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -76,7 +77,7 @@ private:
     double resourceTimeToDocumentMilliseconds(int deltaMilliseconds) const;
 
     AtomicString m_initiatorType;
-    RefPtr<ResourceLoadTiming> m_timing;
+    ResourceLoadTiming m_timing;
     double m_finishTime;
     bool m_didReuseConnection;
     bool m_shouldReportDetails;

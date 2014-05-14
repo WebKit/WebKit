@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2014 Apple, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +21,50 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef ResourceLoadTiming_h
 #define ResourceLoadTiming_h
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
-
-class DocumentLoadTiming;
-
-class ResourceLoadTiming : public RefCounted<ResourceLoadTiming> {
+    
+class ResourceLoadTiming {
 public:
-    static PassRefPtr<ResourceLoadTiming> create()
+    ResourceLoadTiming()
+        : domainLookupStart(-1)
+        , domainLookupEnd(-1)
+        , connectStart(-1)
+        , connectEnd(-1)
+        , requestStart(0)
+        , responseStart(0)
+        , secureConnectionStart(-1)
     {
-        return adoptRef(new ResourceLoadTiming);
     }
-
-    PassRefPtr<ResourceLoadTiming> deepCopy()
+    
+    ResourceLoadTiming(const ResourceLoadTiming& other)
+        : domainLookupStart(other.domainLookupStart)
+        , domainLookupEnd(other.domainLookupEnd)
+        , connectStart(other.connectStart)
+        , connectEnd(other.connectEnd)
+        , requestStart(other.requestStart)
+        , responseStart(other.responseStart)
+        , secureConnectionStart(other.secureConnectionStart)
     {
-        RefPtr<ResourceLoadTiming> timing = create();
-        timing->domainLookupStart = domainLookupStart;
-        timing->domainLookupEnd = domainLookupEnd;
-        timing->connectStart = connectStart;
-        timing->connectEnd = connectEnd;
-        timing->requestStart = requestStart;
-        timing->responseStart = responseStart;
-        timing->secureConnectionStart = secureConnectionStart;
-        return timing.release();
     }
-
+    
+    ResourceLoadTiming& operator=(const ResourceLoadTiming& other)
+    {
+        domainLookupStart = other.domainLookupStart;
+        domainLookupEnd = other.domainLookupEnd;
+        connectStart = other.connectStart;
+        connectEnd = other.connectEnd;
+        requestStart = other.requestStart;
+        responseStart = other.responseStart;
+        secureConnectionStart = other.secureConnectionStart;
+        return *this;
+    }
+    
     bool operator==(const ResourceLoadTiming& other) const
     {
         return domainLookupStart == other.domainLookupStart
@@ -78,18 +89,6 @@ public:
     int requestStart;
     int responseStart;
     int secureConnectionStart;
-    
-private:
-    ResourceLoadTiming()
-        : domainLookupStart(-1)
-        , domainLookupEnd(-1)
-        , connectStart(-1)
-        , connectEnd(-1)
-        , requestStart(0)
-        , responseStart(0)
-        , secureConnectionStart(-1)
-    {
-    }
 };
 
 }

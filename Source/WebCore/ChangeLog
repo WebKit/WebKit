@@ -1,3 +1,58 @@
+2014-05-14  Alex Christensen  <achristensen@webkit.org>
+
+        Use references instead of pointers with ResourceLoadTiming.
+        https://bugs.webkit.org/show_bug.cgi?id=132846
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.exp.in:
+        Removed ResourceResponseBase::setResourceLoadTiming linker symbol.
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForResourceResponse):
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::domainLookupStart):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd):
+        (WebCore::PerformanceResourceTiming::connectStart):
+        (WebCore::PerformanceResourceTiming::connectEnd):
+        (WebCore::PerformanceResourceTiming::secureConnectionStart):
+        (WebCore::PerformanceResourceTiming::requestStart):
+        Use references instead of pointers.
+        * page/PerformanceResourceTiming.h:
+        Make an instance instead of a RefPtr.
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::domainLookupStart):
+        (WebCore::PerformanceTiming::domainLookupEnd):
+        (WebCore::PerformanceTiming::connectStart):
+        (WebCore::PerformanceTiming::connectEnd):
+        (WebCore::PerformanceTiming::secureConnectionStart):
+        (WebCore::PerformanceTiming::requestStart):
+        (WebCore::PerformanceTiming::responseStart):
+        Check to see if the loader exists, then use ResourceLoadTiming reference.
+        (WebCore::PerformanceTiming::resourceLoadTiming): Deleted.
+        * page/PerformanceTiming.h:
+        Removed resourceLoadTiming declaration.
+        * platform/network/ResourceLoadTiming.h:
+        (WebCore::ResourceLoadTiming::ResourceLoadTiming):
+        (WebCore::ResourceLoadTiming::operator=):
+        Replaced reference counting with copy constructors.
+        (WebCore::ResourceLoadTiming::create): Deleted.
+        (WebCore::ResourceLoadTiming::deepCopy): Deleted.
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+        (WebCore::ResourceResponseBase::resourceLoadTiming):
+        (WebCore::ResourceResponseBase::setResourceLoadTiming):
+        (WebCore::ResourceResponseBase::compare):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::didStartRequest):
+        (WebCore::networkEventCallback):
+        Use references instead of pointers.
+
 2014-05-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168837.

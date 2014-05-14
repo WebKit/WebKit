@@ -106,7 +106,7 @@ PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadR
 
     response->lazyInit(CommonAndUncommonFields);
     response->m_httpHeaderFields.adopt(data->m_httpHeaders.release());
-    response->setResourceLoadTiming(data->m_resourceLoadTiming.release());
+    response->setResourceLoadTiming(data->m_resourceLoadTiming);
     response->doPlatformAdopt(data);
     return response.release();
 }
@@ -122,8 +122,7 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() con
     data->m_httpStatusCode = httpStatusCode();
     data->m_httpStatusText = httpStatusText().isolatedCopy();
     data->m_httpHeaders = httpHeaderFields().copyData();
-    if (m_resourceLoadTiming)
-        data->m_resourceLoadTiming = m_resourceLoadTiming->deepCopy();
+    data->m_resourceLoadTiming = m_resourceLoadTiming;
     return asResourceResponse().doPlatformCopyData(data.release());
 }
 
@@ -551,14 +550,14 @@ void ResourceResponseBase::setConnectionID(unsigned connectionID)
     m_connectionID = connectionID;
 }
 
-ResourceLoadTiming* ResourceResponseBase::resourceLoadTiming() const
+ResourceLoadTiming& ResourceResponseBase::resourceLoadTiming() const
 {
     lazyInit(CommonAndUncommonFields);
 
-    return m_resourceLoadTiming.get();
+    return m_resourceLoadTiming;
 }
 
-void ResourceResponseBase::setResourceLoadTiming(PassRefPtr<ResourceLoadTiming> resourceLoadTiming)
+void ResourceResponseBase::setResourceLoadTiming(const ResourceLoadTiming& resourceLoadTiming)
 {
     lazyInit(CommonAndUncommonFields);
 
@@ -590,8 +589,6 @@ bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResp
         return false;
     if (a.httpHeaderFields() != b.httpHeaderFields())
         return false;
-    if (a.resourceLoadTiming() && b.resourceLoadTiming() && *a.resourceLoadTiming() == *b.resourceLoadTiming())
-        return ResourceResponse::platformCompare(a, b);
     if (a.resourceLoadTiming() != b.resourceLoadTiming())
         return false;
     return ResourceResponse::platformCompare(a, b);

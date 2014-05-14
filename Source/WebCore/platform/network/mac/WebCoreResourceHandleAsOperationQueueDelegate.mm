@@ -223,9 +223,6 @@ using namespace WebCore;
         ResourceResponse resourceResponse(r);
 #if ENABLE(WEB_TIMING)
         if (NSDictionary *timingData = [connection _timingData]) {
-            resourceResponse.setResourceLoadTiming(ResourceLoadTiming::create());
-            ResourceLoadTiming* timing = resourceResponse.resourceLoadTiming();
-            
             // This is not the navigationStart time in monotonic time, but the other times are relative to this time
             // and only the differences between times are stored.
             double referenceStart = [[timingData valueForKey:@"_kCFNTimingDataTimingDataInit"] doubleValue];
@@ -238,15 +235,14 @@ using namespace WebCore;
             double requestStart = [[timingData valueForKey:@"_kCFNTimingDataRequestStart"] doubleValue];
             double responseStart = [[timingData valueForKey:@"_kCFNTimingDataResponseStart"] doubleValue];
             
-            if (timing) {
-                timing->domainLookupStart = domainLookupStart <= 0.0 ? -1 : (domainLookupStart - referenceStart) * 1000;
-                timing->domainLookupEnd = domainLookupEnd <= 0.0 ? -1 : (domainLookupEnd - referenceStart) * 1000;
-                timing->connectStart = connectStart <= 0.0 ? -1 : (connectStart - referenceStart) * 1000;
-                timing->secureConnectionStart = secureConnectionStart <= 0.0 ? -1 : (secureConnectionStart - referenceStart) * 1000;
-                timing->connectEnd = connectEnd <= 0.0 ? -1 : (connectEnd - referenceStart) * 1000;
-                timing->requestStart = requestStart <= 0.0 ? -1 : (requestStart - referenceStart) * 1000;
-                timing->responseStart = responseStart <= 0.0 ? -1 : (responseStart - referenceStart) * 1000;
-            }
+            ResourceLoadTiming& timing = resourceResponse.resourceLoadTiming();
+            timing.domainLookupStart = domainLookupStart <= 0.0 ? -1 : (domainLookupStart - referenceStart) * 1000;
+            timing.domainLookupEnd = domainLookupEnd <= 0.0 ? -1 : (domainLookupEnd - referenceStart) * 1000;
+            timing.connectStart = connectStart <= 0.0 ? -1 : (connectStart - referenceStart) * 1000;
+            timing.secureConnectionStart = secureConnectionStart <= 0.0 ? -1 : (secureConnectionStart - referenceStart) * 1000;
+            timing.connectEnd = connectEnd <= 0.0 ? -1 : (connectEnd - referenceStart) * 1000;
+            timing.requestStart = requestStart <= 0.0 ? -1 : (requestStart - referenceStart) * 1000;
+            timing.responseStart = responseStart <= 0.0 ? -1 : (responseStart - referenceStart) * 1000;
         }
 #else
         UNUSED_PARAM(connection);
