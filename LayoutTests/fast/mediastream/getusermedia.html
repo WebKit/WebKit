@@ -36,6 +36,7 @@
                 shouldBeEqualToString('errorArg.name', 'ConstraintNotSatisfiedError');
                 shouldBeEqualToString('errorArg.constraintName', 'valid_but_unsupported_1');
 
+                shouldThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_and_supported_1':1}, optional:[{'valid_but_unsupported_1':0}]}, video:true}, gotStream5, 0);");
                 shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_and_supported_1':1}, optional:[{'valid_but_unsupported_1':0}]}, video:true}, gotStream5, error);");
             }
 
@@ -45,6 +46,7 @@
                 shouldBe('stream.getAudioTracks().length', '1');
                 shouldBe('stream.getVideoTracks().length', '1');
 
+                shouldThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_but_unsupported_1':0}, optional:[]}, video:true}, gotStreamInError, null);");
                 shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_but_unsupported_1':0}, optional:[]}, video:true}, gotStreamInError, error1);");
             }
 
@@ -54,6 +56,7 @@
                 shouldBe('stream.getAudioTracks().length', '1');
                 shouldBe('stream.getVideoTracks().length', '1');
 
+                shouldThrow("navigator.webkitGetUserMedia({audio:{mandatory:{}, optional:[]}, video:true}, gotStream4, null);");
                 shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{}, optional:[]}, video:true}, gotStream4, error);");
             }
 
@@ -63,6 +66,7 @@
                 shouldBe('stream.getAudioTracks().length', '0');
                 shouldBe('stream.getVideoTracks().length', '1');
 
+                shouldThrow("navigator.webkitGetUserMedia({audio:true, video:true}, gotStream3, null);");
                 shouldNotThrow("navigator.webkitGetUserMedia({audio:true, video:true}, gotStream3, error);");
             }
 
@@ -72,10 +76,12 @@
                 shouldBe('stream.getAudioTracks().length', '1');
                 shouldBe('stream.getVideoTracks().length', '0');
 
+                shouldThrow("navigator.webkitGetUserMedia({video:true}, gotStream2, null);")
                 shouldNotThrow("navigator.webkitGetUserMedia({video:true}, gotStream2, error);")
             }
 
             shouldThrow("navigator.webkitGetUserMedia({audio:false, video:false}, error, error);")
+            shouldThrow("navigator.webkitGetUserMedia({audio:false, video:false}, error, null);")
             shouldNotThrow("navigator.webkitGetUserMedia({audio:true}, gotStream1, error);");
 
             window.jsTestIsAsync = true;

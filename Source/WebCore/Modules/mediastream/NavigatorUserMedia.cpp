@@ -48,8 +48,10 @@ NavigatorUserMedia::~NavigatorUserMedia()
 
 void NavigatorUserMedia::webkitGetUserMedia(Navigator* navigator, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback, ExceptionCode& ec)
 {
-    if (!successCallback)
+    if (!successCallback || !errorCallback) {
+        ec = TYPE_MISMATCH_ERR;
         return;
+    }
 
     UserMediaController* userMedia = UserMediaController::from(navigator->frame() ? navigator->frame()->page() : 0);
     if (!userMedia) {

@@ -1,3 +1,18 @@
+2014-05-14  Kiran  <kiran.guduru@samsung.com>
+
+        alidation for getUserMedia() errorCallback is missing.
+        https://bugs.webkit.org/show_bug.cgi?id=132901
+
+        Reviewed by Darin Adler.
+
+        The patch adds the validation for getUserMedia errorCallBack
+        and throws TypeMismatchError.
+
+        Test: fast/mediastream/getusermedia.html 
+
+        * Modules/mediastream/NavigatorUserMedia.cpp:
+        (WebCore::NavigatorUserMedia::webkitGetUserMedia):
+
 2014-05-14  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Remove CSS_STICKY_POSITION guards
