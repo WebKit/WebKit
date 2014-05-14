@@ -1,3 +1,13 @@
+2014-05-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Use the correct client in WebPageProxy::unwrapCryptoKey
+        https://bugs.webkit.org/show_bug.cgi?id=132924
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::unwrapCryptoKey): Match what
+        we now do in wrapCryptoKey().
+
 2014-05-14  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Change Element.offset* client* scroll* return type to double.
