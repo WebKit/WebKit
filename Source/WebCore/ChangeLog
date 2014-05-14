@@ -1,5 +1,21 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168513
+
+    2014-05-08  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Bottom-relative position:fixed elements are misplaced on page load
+            https://bugs.webkit.org/show_bug.cgi?id=132719
+            <rdar://problem/16860837>
+
+            Reviewed by Benjamin Poulain.
+
+            Add a couple of functions, and sort.
+
+            * WebCore.exp.in:
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168536
 
     2014-05-09  Jer Noble  <jer.noble@apple.com>
