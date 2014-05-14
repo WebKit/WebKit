@@ -90,6 +90,8 @@ class EflPort(Port):
         return [TestConfiguration(version=self._version, architecture='x86', build_type=build_type) for build_type in self.ALL_BUILD_TYPES]
 
     def _driver_class(self):
+        if os.environ.get("DISABLE_XVFB_DRIVER"):
+            return Port._driver_class(self)
         return XvfbDriver
 
     def _path_to_driver(self):
