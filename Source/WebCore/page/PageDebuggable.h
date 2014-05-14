@@ -54,6 +54,7 @@ public:
 
 private:
     Page& m_page;
+    bool m_forcedDeveloperExtrasEnabled;
 };
 
 } // namespace WebCore
