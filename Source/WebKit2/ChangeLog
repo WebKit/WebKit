@@ -1,4 +1,4 @@
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168555
 
@@ -29,7 +29,7 @@
             (-[WKGeolocationProviderIOS permissionDenied:]): Deleted.
             (-[WKWebAllowDenyPolicyListener initWithProvider:permissionRequestProxy:]): Deleted.
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168489
 
@@ -49,7 +49,7 @@
             (WebKit::PluginProcessProxy::platformGetLaunchOptions):
             Move the check for plugins that need an executable heap into shouldUseXPC.
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168473
 
@@ -80,7 +80,7 @@
 
                 Factored click event dispatch part of handleSyntheticClick here.
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168447
 
@@ -303,7 +303,7 @@
             * mac/Info-WebKit2.plist: Added.
             New Info.plist file for the WebKit2 shim framework.
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168565
 
@@ -325,7 +325,7 @@
             to the RemoteInspector singleton when the process is created
             so that it can be sent to webinspectord.
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168582
 
@@ -340,7 +340,7 @@
             (-[WKNavigationResponse isForMainFrame]):
             Use a slightly better name.
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168581
 
@@ -405,7 +405,7 @@
             (WKPageSetPageLoaderClient):
             * UIProcess/API/C/WKPageLoaderClient.h:
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168411
 

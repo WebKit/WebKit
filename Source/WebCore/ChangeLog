@@ -1,4 +1,4 @@
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168536
 
@@ -23,7 +23,7 @@
             (WebCore::SourceBufferPrivateAVFObjC::removedFromMediaSource): Ditto.
             (WebCore::SourceBufferPrivateAVFObjC::destroyParser): Call -[WebAVStreamDataParserListener invalidate].
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168519
 
@@ -49,7 +49,7 @@
             (WebCore::TextTrackCueGeneric::isEqual): Do not call the VTTCue::isEqual method from
             this class, since cueType() will not equal VTTCue, and the equality will fail.
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168514
 
@@ -72,7 +72,7 @@
             * page/scrolling/AsyncScrollingCoordinator.cpp:
             (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168508
 
@@ -116,7 +116,7 @@
             (WebCore::SourceBufferPrivateGStreamer::append):
             * platform/graphics/gstreamer/SourceBufferPrivateGStreamer.h:
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168473
 
@@ -132,7 +132,7 @@
 
                 The isDocument() test here had reversed in the merge breaking content change observer callback.
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168452
 
@@ -153,7 +153,7 @@
             * platform/graphics/cg/ImageSourceCG.cpp:
             (WebCore::ImageSource::imageSourceOptions):
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168447
 
@@ -299,7 +299,7 @@
             (WebVideoFullscreenModelMediaElement::requestExitFullscreen):
             Add some protection here since this may be called when not in fullscreen.
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168658
 
@@ -314,7 +314,7 @@
             (WebCore::maybeCopyNodeAttributesToFragment):
             (WebCore::Editor::replaceNodeFromPasteboard):
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168650
 
@@ -370,7 +370,7 @@
 
             * WebCore.exp.in:
 
-2014-04-17  Lucas Forschler  <lforschler@apple.com>
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168565
 
