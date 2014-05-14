@@ -2059,6 +2059,10 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
 
     scalePage(scale, roundedUnobscuredContentRect.location());
 
+    frameView.updateLayoutAndStyleIfNeededRecursive();
+    IntRect fixedPositionLayoutRect = enclosingIntRect(frameView.viewportConstrainedObjectsRect());
+    frameView.setCustomFixedPositionLayoutRect(fixedPositionLayoutRect);
+
     FloatSize unobscuredContentRectSizeInContentCoordinates = newUnobscuredContentRect.size();
     unobscuredContentRectSizeInContentCoordinates.scale(scale);
     frameView.setCustomSizeForResizeEvent(expandedIntSize(unobscuredContentRectSizeInContentCoordinates));
