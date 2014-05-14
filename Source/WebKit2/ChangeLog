@@ -1,5 +1,36 @@
 2014-04-17  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168473
+
+    2014-05-08  Antti Koivisto  <antti@apple.com>
+
+            [iOS WebKit2] Can't activate text fields on Facebook
+            https://bugs.webkit.org/show_bug.cgi?id=132682
+
+            Reviewed by Enrica Casucci.
+
+            * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+            (WebKit::WebChromeClient::observedContentChange):
+
+                Implement content change observer callback.
+
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::handleSyntheticClick):
+
+                If the event gets canceled by a potential change (a started short-duration timer)
+                save the position and node so we can continue later.
+
+            (WebKit::WebPage::completePendingSyntheticClickForContentChangeObserver):
+
+                If it turns out the observed timer changed nothing continue the click event.
+
+            (WebKit::WebPage::completeSyntheticClick):
+
+                Factored click event dispatch part of handleSyntheticClick here.
+
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168447
 
     2014-05-07  Enrica Casucci  <enrica@apple.com>

@@ -65,7 +65,7 @@ void WebChromeClient::setNeedsScrollNotifications(WebCore::Frame*, bool)
 
 void WebChromeClient::observedContentChange(WebCore::Frame*)
 {
-    notImplemented();
+    m_page->completePendingSyntheticClickForContentChangeObserver();
 }
 
 void WebChromeClient::clearContentChangeObservers(WebCore::Frame*)

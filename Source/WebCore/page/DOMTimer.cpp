@@ -125,7 +125,7 @@ void DOMTimer::fired()
     ASSERT(context);
 #if PLATFORM(IOS)
     Document* document = nullptr;
-    if (!context->isDocument()) {
+    if (context->isDocument()) {
         document = toDocument(context);
         ASSERT(!document->frame()->timersPaused());
     }

@@ -325,11 +325,47 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
     Frame& mainframe = m_page->mainFrame();
 
     WKBeginObservingContentChanges(true);
+
     mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, 0));
     mainframe.document()->updateStyleIfNeeded();
+
     WKStopObservingContentChanges();
-    if (WKObservedContentChange() != WKContentNoChange)
+
+    m_pendingSyntheticClickNode = nullptr;
+    m_pendingSyntheticClickLocation = FloatPoint();
+
+    switch (WKObservedContentChange()) {
+    case WKContentVisibilityChange:
+        // The move event caused new contents to appear. Don't send the click event.
         return;
+    case WKContentIndeterminateChange:
+        // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
+        m_pendingSyntheticClickNode = nodeRespondingToClick;
+        m_pendingSyntheticClickLocation = location;
+        return;
+    case WKContentNoChange:
+        completeSyntheticClick(nodeRespondingToClick, location);
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+void WebPage::completePendingSyntheticClickForContentChangeObserver()
+{
+    if (!m_pendingSyntheticClickNode)
+        return;
+    // Only dispatch the click if the document didn't get changed by any timers started by the move event.
+    if (WKObservedContentChange() == WKContentNoChange)
+        completeSyntheticClick(m_pendingSyntheticClickNode.get(), m_pendingSyntheticClickLocation);
+
+    m_pendingSyntheticClickNode = nullptr;
+    m_pendingSyntheticClickLocation = FloatPoint();
+}
+
+void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore::FloatPoint& location)
+{
+    IntPoint roundedAdjustedPoint = roundedIntPoint(location);
+    Frame& mainframe = m_page->mainFrame();
 
     RefPtr<Frame> oldFocusedFrame = m_page->focusController().focusedFrame();
     RefPtr<Element> oldFocusedElement = oldFocusedFrame ? oldFocusedFrame->document()->focusedElement() : nullptr;
