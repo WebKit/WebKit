@@ -99,7 +99,6 @@ private:
     void setTileNeedsDisplayInRect(const TileIndex&, TileInfo&, const IntRect& repaintRectInTileCoords, const IntRect& coverageRectInTileCoords);
 
     IntRect rectForTileIndex(const TileIndex&) const;
-    void adjustRectAtTileIndexForMargin(const TileIndex&, IntRect&) const;
     void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
 
     enum class CoverageType { PrimaryTiles, SecondaryTiles };

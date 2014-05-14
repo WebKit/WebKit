@@ -213,50 +213,13 @@ bool TileGrid::prepopulateRect(const FloatRect& rect)
     return true;
 }
 
-void TileGrid::adjustRectAtTileIndexForMargin(const TileIndex& tileIndex, IntRect& rect) const
-{
-    if (!m_controller.hasMargins())
-        return;
-
-    // This is a tile in the top margin.
-    if (m_controller.topMarginHeight() && tileIndex.y() < 0) {
-        rect.setY(tileIndex.y() * m_controller.topMarginHeight());
-        rect.setHeight(m_controller.topMarginHeight());
-    }
-
-    // This is a tile in the left margin.
-    if (m_controller.leftMarginWidth() && tileIndex.x() < 0) {
-        rect.setX(tileIndex.x() * m_controller.leftMarginWidth());
-        rect.setWidth(m_controller.leftMarginWidth());
-    }
-
-    TileIndex contentTopLeft;
-    TileIndex contentBottomRight;
-    getTileIndexRangeForRect(m_controller.boundsWithoutMargin(), contentTopLeft, contentBottomRight);
-
-    // This is a tile in the bottom margin.
-    if (m_controller.bottomMarginHeight() && tileIndex.y() > contentBottomRight.y())
-        rect.setHeight(m_controller.bottomMarginHeight());
-
-    // This is a tile in the right margin.
-    if (m_controller.rightMarginWidth()  && tileIndex.x() > contentBottomRight.x())
-        rect.setWidth(m_controller.rightMarginWidth());
-}
-
 IntRect TileGrid::rectForTileIndex(const TileIndex& tileIndex) const
 {
     IntSize tileSize = m_controller.tileSize();
     IntRect rect(tileIndex.x() * tileSize.width(), tileIndex.y() * tileSize.height(), tileSize.width(), tileSize.height());
     IntRect scaledBounds(m_controller.bounds());
     scaledBounds.scale(m_scale);
-
     rect.intersect(scaledBounds);
-
-    // These rect computations assume m_tileSize is the correct size to use. However, a tile in the margin area
-    // might be a different size depending on the size of the margins. So adjustRectAtTileIndexForMargin() will
-    // fix the rect we've computed to match the margin sizes if this tile is in the margins.
-    adjustRectAtTileIndexForMargin(tileIndex, rect);
-
     return rect;
 }
 
@@ -270,12 +233,12 @@ void TileGrid::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft,
     if (clampedRect.x() >= 0)
         topLeft.setX(clampedRect.x() / tileSize.width());
     else
-        topLeft.setX(floorf((float)clampedRect.x() / m_controller.leftMarginWidth()));
+        topLeft.setX(floorf((float)clampedRect.x() / tileSize.width()));
 
     if (clampedRect.y() >= 0)
         topLeft.setY(clampedRect.y() / tileSize.height());
     else
-        topLeft.setY(floorf((float)clampedRect.y() / m_controller.topMarginHeight()));
+        topLeft.setY(floorf((float)clampedRect.y() / tileSize.height()));
 
     int bottomXRatio = ceil((float)clampedRect.maxX() / tileSize.width());
     bottomRight.setX(std::max(bottomXRatio - 1, 0));
