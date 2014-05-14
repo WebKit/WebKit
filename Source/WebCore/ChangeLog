@@ -1,3 +1,22 @@
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168764
+
+    2014-05-13  Timothy Hatcher  <timothy@apple.com>
+
+            Force developerExtrasEnabled when a remote Inspector client connects.
+
+            https://bugs.webkit.org/show_bug.cgi?id=132891
+
+            Reviewed by Joseph Pecoraro.
+
+            * page/PageDebuggable.cpp:
+            (WebCore::PageDebuggable::PageDebuggable): Initialize m_forcedDeveloperExtrasEnabled to false.
+            (WebCore::PageDebuggable::connect): Set m_forcedDeveloperExtrasEnabled if the setting is changed.
+            (WebCore::PageDebuggable::disconnect): Switch developerExtrasEnabled back to false
+            if m_forcedDeveloperExtrasEnabled is true.
+            * page/PageDebuggable.h: Added m_forcedDeveloperExtrasEnabled.
+
 2014-05-14  Dean Jackson  <dino@apple.com>
 
         Disable some features on the safari-538.34 branch.
