@@ -317,14 +317,21 @@ static void generateByIdStub(
             MacroAssembler::NotEqual, 
             MacroAssembler::Address(baseGPR, JSCell::typeInfoTypeOffset()), 
             MacroAssembler::TrustedImm32(PureForwardingProxyType)));
-        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSProxy::targetOffset()), baseForGetGPR);
-    } else
+
+        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
+        
+        failureCases.append(branchStructure(stubJit,
+            MacroAssembler::NotEqual, 
+            MacroAssembler::Address(scratchGPR, JSCell::structureIDOffset()),
+            structure));
+    } else {
         baseForGetGPR = baseGPR;
 
-    failureCases.append(branchStructure(stubJit,
-        MacroAssembler::NotEqual, 
-        MacroAssembler::Address(baseForGetGPR, JSCell::structureIDOffset()), 
-        structure));
+        failureCases.append(branchStructure(stubJit,
+            MacroAssembler::NotEqual, 
+            MacroAssembler::Address(baseForGetGPR, JSCell::structureIDOffset()), 
+            structure));
+    }
 
     CodeBlock* codeBlock = exec->codeBlock();
     if (structure->typeInfo().newImpurePropertyFiresWatchpoints())
@@ -351,11 +358,20 @@ static void generateByIdStub(
     
     GPRReg baseForAccessGPR;
     if (chain) {
+        // We could have clobbered scratchGPR earlier, so we have to reload from baseGPR to get the target.
+        if (loadTargetFromProxy)
+            stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSProxy::targetOffset()), baseForGetGPR);
         stubJit.move(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR);
         baseForAccessGPR = scratchGPR;
-    } else
+    } else {
+        // For proxy objects, we need to do all the Structure checks before moving the baseGPR into 
+        // baseForGetGPR because if we fail any of the checks then we would have the wrong value in baseGPR
+        // on the slow path.
+        if (loadTargetFromProxy)
+            stubJit.move(scratchGPR, baseForGetGPR);
         baseForAccessGPR = baseForGetGPR;
-    
+    }
+
     GPRReg loadedValueGPR = InvalidGPRReg;
     if (kind != CallCustomGetter && kind != CallCustomSetter) {
         if (kind == GetValue)
