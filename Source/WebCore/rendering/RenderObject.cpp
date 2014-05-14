@@ -522,16 +522,10 @@ static bool hasFixedPosInNamedFlowContainingBlock(const RenderObject* renderer)
     return false;
 }
 
-RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
+RenderFlowThread* RenderObject::locateFlowThreadContainingBlockNoCache() const
 {
     ASSERT(flowThreadState() != NotInsideFlowThread);
 
-    // See if we have the thread cached because we're in the middle of layout.
-    RenderFlowThread* flowThread = view().flowThreadController().currentRenderFlowThread();
-    if (flowThread && (flowThreadState() == flowThread->flowThreadState()))
-        return flowThread;
-    
-    // Not in the middle of layout so have to find the thread the slow way.
     RenderObject* curr = const_cast<RenderObject*>(this);
     while (curr) {
         if (curr->isRenderFlowThread())
@@ -539,6 +533,22 @@ RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
         curr = curr->containingBlock();
     }
     return 0;
+}
+
+RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
+{
+    ASSERT(flowThreadState() != NotInsideFlowThread);
+
+    // See if we have the thread cached because we're in the middle of layout.
+    RenderFlowThread* flowThread = view().flowThreadController().currentRenderFlowThread();
+    if (flowThread && (flowThreadState() == flowThread->flowThreadState())) {
+        // Make sure the slow path would return the same result as our cache.
+        ASSERT(flowThread == locateFlowThreadContainingBlockNoCache());
+        return flowThread;
+    }
+    
+    // Not in the middle of layout so have to find the thread the slow way.
+    return locateFlowThreadContainingBlockNoCache();
 }
 
 RenderBlock* RenderObject::firstLineBlock() const

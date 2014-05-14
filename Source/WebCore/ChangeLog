@@ -1,3 +1,21 @@
+2014-05-14  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Add ASSERT to make sure using the flowThread cache does not return incorrect results
+        https://bugs.webkit.org/show_bug.cgi?id=132906
+
+        Reviewed by Andrei Bucur.
+
+        If flowThreadContainingBlock() is called on an object which is in a different
+        flow thread than the one currently being laid out, this method will return an incorrect
+        result. I added an assertion for that to make sure we catch and treat any such scenarios.
+
+        No new tests required.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::locateFlowThreadContainingBlockNoCache):
+        (WebCore::RenderObject::locateFlowThreadContainingBlock):
+        * rendering/RenderObject.h:
+
 2014-05-14  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Don't relayout when updating the region range unless necessary
