@@ -38,10 +38,10 @@
 
 using namespace WebCore;
 
-#if PLATFORM(MAC)
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
 static const size_t maximumSnapshotCacheSize = 400 * (1024 * 1024);
-#elif PLATFORM(IOS)
-// Because snapshots are not purgeable, we should keep fewer around.
+#elif USE_JPEG_VIEW_SNAPSHOTS || USE_RENDER_SERVER_VIEW_SNAPSHOTS
+// Because non-IOSurface snapshots are not purgeable, we should keep fewer around.
 static const size_t maximumSnapshotCacheSize = 50 * (1024 * 1024);
 #endif
 
@@ -51,10 +51,16 @@ ViewSnapshotStore::ViewSnapshotStore()
     : m_enabled(true)
     , m_snapshotCacheSize(0)
 {
+#if USE_JPEG_VIEW_SNAPSHOTS
+    m_compressionQueue = dispatch_queue_create("com.apple.WebKit.ViewSnapshotStore.CompressionQueue", nullptr);
+#endif
 }
 
 ViewSnapshotStore::~ViewSnapshotStore()
 {
+#if USE_JPEG_VIEW_SNAPSHOTS
+    dispatch_release(m_compressionQueue);
+#endif
     discardSnapshots();
 }
 
@@ -158,6 +164,10 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
 
     pruneSnapshots(webPageProxy);
 
+    ViewSnapshot snapshot = webPageProxy.takeViewSnapshot();
+    if (!snapshot.hasImage())
+        return;
+
     String oldSnapshotUUID = item->snapshotUUID();
     if (!oldSnapshotUUID.isEmpty()) {
         const auto& oldSnapshotIter = m_snapshotMap.find(oldSnapshotUUID);
@@ -167,15 +177,16 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
         }
     }
 
-    item->setSnapshotUUID(createCanonicalUUIDString());
-
-    ViewSnapshot snapshot = webPageProxy.takeViewSnapshot();
     snapshot.creationTime = std::chrono::steady_clock::now();
     snapshot.renderTreeSize = webPageProxy.renderTreeSize();
     snapshot.deviceScaleFactor = webPageProxy.deviceScaleFactor();
 
+    item->setSnapshotUUID(createCanonicalUUIDString());
+
     m_snapshotMap.add(item->snapshotUUID(), snapshot);
     m_snapshotCacheSize += snapshot.imageSizeInBytes;
+
+    reduceSnapshotMemoryCost(item->snapshotUUID());
 }
 
 bool ViewSnapshotStore::getSnapshot(WebBackForwardListItem* item, ViewSnapshot& snapshot)
@@ -196,6 +207,84 @@ void ViewSnapshotStore::discardSnapshots()
         removeSnapshotImage(snapshot);
 }
 
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
+static RefPtr<IOSurface> createIOSurfaceFromImage(CGImageRef image)
+{
+    size_t width = CGImageGetWidth(image);
+    size_t height = CGImageGetHeight(image);
+
+    RefPtr<IOSurface> surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
+    RetainPtr<CGContextRef> surfaceContext = surface->ensurePlatformContext();
+    CGContextDrawImage(surfaceContext.get(), CGRectMake(0, 0, width, height), image);
+    CGContextFlush(surfaceContext.get());
+
+    surface->setIsVolatile(true);
+
+    return surface;
+}
+#endif
+
+#if USE_JPEG_VIEW_SNAPSHOTS
+static std::pair<RetainPtr<CGImageRef>, size_t> compressImageAsJPEG(CGImageRef image)
+{
+    RetainPtr<NSData> compressedData = adoptNS([[NSMutableData alloc] init]);
+    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)compressedData.get(), kUTTypeJPEG, 1, 0));
+
+    RetainPtr<NSDictionary> options = @{
+        (NSString*)kCGImageDestinationLossyCompressionQuality: @0.9
+    };
+
+    CGImageDestinationAddImage(destination.get(), image, (CFDictionaryRef)options.get());
+    CGImageDestinationFinalize(destination.get());
+
+    RetainPtr<CGImageSourceRef> imageSourceRef = adoptCF(CGImageSourceCreateWithData((CFDataRef)compressedData.get(), 0));
+    RetainPtr<CGImageRef> compressedSnapshot = adoptCF(CGImageSourceCreateImageAtIndex(imageSourceRef.get(), 0, 0));
+    
+    return std::make_pair(compressedSnapshot, [compressedData length]);
+}
+#endif
+
+void ViewSnapshotStore::reduceSnapshotMemoryCost(const String& uuid)
+{
+    const auto& snapshotIterator = m_snapshotMap.find(uuid);
+    if (snapshotIterator == m_snapshotMap.end())
+        return;
+    ViewSnapshot& snapshot = snapshotIterator->value;
+    if (!snapshot.hasImage())
+        return;
+
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
+    snapshot.surface = createIOSurfaceFromImage(snapshot.image.get());
+    snapshot.image = nullptr;
+#elif USE_JPEG_VIEW_SNAPSHOTS
+    RetainPtr<CGImageRef> originalImage = snapshot.image.get();
+    dispatch_async(m_compressionQueue, [uuid, originalImage] {
+        auto imageAndBytes = compressImageAsJPEG(originalImage.get());
+        dispatch_async(dispatch_get_main_queue(), [uuid, imageAndBytes] {
+            ViewSnapshotStore::shared().didCompressSnapshot(uuid, imageAndBytes.first, imageAndBytes.second);
+        });
+    });
+#endif
+}
+
+#if USE_JPEG_VIEW_SNAPSHOTS
+void ViewSnapshotStore::didCompressSnapshot(const String& uuid, RetainPtr<CGImageRef> newImage, size_t newImageSize)
+{
+    const auto& snapshotIterator = m_snapshotMap.find(uuid);
+    if (snapshotIterator == m_snapshotMap.end())
+        return;
+    ViewSnapshot& snapshot = snapshotIterator->value;
+
+    size_t originalImageSize = snapshot.imageSizeInBytes;
+    if (!newImage || newImageSize > originalImageSize)
+        return;
+    snapshot.image = newImage;
+    snapshot.imageSizeInBytes = newImageSize;
+    m_snapshotCacheSize += newImageSize;
+    m_snapshotCacheSize -= originalImageSize;
+}
+#endif
+
 bool ViewSnapshot::hasImage() const
 {
     return imageSizeInBytes;
@@ -203,14 +292,36 @@ bool ViewSnapshot::hasImage() const
 
 void ViewSnapshot::clearImage()
 {
-#if PLATFORM(MAC)
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
     surface = nullptr;
-#elif PLATFORM(IOS)
+#endif
+#if USE_IOSURFACE_VIEW_SNAPSHOTS || USE_JPEG_VIEW_SNAPSHOTS
+    image = nullptr;
+#endif
+#if USE_RENDER_SERVER_VIEW_SNAPSHOTS
     if (slotID)
         [ViewSnapshotStore::snapshottingContext() deleteSlot:slotID];
     slotID = 0;
 #endif
     imageSizeInBytes = 0;
+}
+
+id ViewSnapshot::asLayerContents()
+{
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
+    if (surface) {
+        if (surface->setIsVolatile(false) != IOSurface::SurfaceState::Valid)
+            return nullptr;
+
+        return (id)surface->surface();
+    }
+#endif
+#if USE_IOSURFACE_VIEW_SNAPSHOTS || USE_JPEG_VIEW_SNAPSHOTS
+    return (id)image.get();
+#endif
+#if USE_RENDER_SERVER_VIEW_SNAPSHOTS
+    return [CAContext objectForSlot:slotID];
+#endif
 }
 
 } // namespace WebKit

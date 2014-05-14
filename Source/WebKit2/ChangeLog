@@ -1,5 +1,60 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168689
+
+    2014-05-13  Tim Horton  <timothy_horton@apple.com>
+
+            WebKit2 View Gestures (Swipe): Encode snapshots as JPEG on some platforms
+            https://bugs.webkit.org/show_bug.cgi?id=127788
+            <rdar://problem/15928241>
+
+            Reviewed by Anders Carlsson.
+
+            Allow JPEG snapshots. Compression is done asynchronously.
+            Enable JPEG snapshots (for now) on all PLATFORM(MAC).
+            We'll switch back to IOSurface snapshots on 10.9+ after <rdar://problem/16734031> is resolved.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _takeViewSnapshot]):
+            Store the image size on the ViewSnapshot.
+            Move IOSurface-related code to ViewSnapshotStore.
+
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (WebKit::ViewGestureController::beginSwipeGesture):
+            Adopt asLayerContents().
+
+            * UIProcess/mac/ViewGestureController.h:
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::retrieveSnapshotForItem):
+            (WebKit::ViewGestureController::beginSwipeGesture):
+            (WebKit::ViewGestureController::removeSwipeSnapshot):
+            Adopt asLayerContents().
+            Put the snapshot on the right layer (the parent of the snapshot image layer);
+            if it's on the snapshot image layer itself, if there is no image, the shadow
+            is displayed on top of the white placeholder.
+            Only reset snapshot purgeability if we're using IOSurface snapshots.
+
+            * UIProcess/mac/ViewSnapshotStore.h:
+            Add a bunch of macros to allow us to switch the snapshot backing store implementation.
+
+            * UIProcess/mac/ViewSnapshotStore.mm:
+            (WebKit::ViewSnapshotStore::ViewSnapshotStore):
+            (WebKit::ViewSnapshotStore::~ViewSnapshotStore):
+            (WebKit::ViewSnapshotStore::recordSnapshot):
+            If takeViewSnapshot() fails, don't remove the existing snapshot.
+
+            (WebKit::createIOSurfaceFromImage):
+            (WebKit::compressImageAsJPEG):
+            (WebKit::ViewSnapshotStore::reduceSnapshotMemoryCost):
+            (WebKit::ViewSnapshotStore::didCompressSnapshot):
+            (WebKit::ViewSnapshot::clearImage):
+            (WebKit::ViewSnapshot::asLayerContents):
+            Asynchronously compress snapshots - if we're using JPEG snapshots - for a
+            very large memory win (~20-30x).
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168661
 
     2014-05-12  Simon Fraser  <simon.fraser@apple.com>

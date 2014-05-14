@@ -158,7 +158,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
     ViewSnapshot snapshot;
     if (ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot) && snapshot.hasImage())
-        [m_snapshotView layer].contents = [CAContext objectForSlot:snapshot.slotID];
+        [m_snapshotView layer].contents = snapshot.asLayerContents();
 
     [m_snapshotView setBackgroundColor:[UIColor whiteColor]];
     [m_snapshotView layer].contentsGravity = kCAGravityTopLeft;

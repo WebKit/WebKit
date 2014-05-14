@@ -451,28 +451,21 @@ CALayer *ViewGestureController::determineLayerAdjacentToSnapshotForParent(SwipeD
     return layerAdjacentToSnapshot;
 }
 
-IOSurface* ViewGestureController::retrieveSnapshotForItem(WebBackForwardListItem* targetItem, FloatSize swipeLayerSize, float topContentInset)
+bool ViewGestureController::retrieveSnapshotForItem(WebBackForwardListItem* targetItem, FloatSize swipeLayerSize, float topContentInset, ViewSnapshot& snapshot)
 {
-    ViewSnapshot snapshot;
     if (!ViewSnapshotStore::shared().getSnapshot(targetItem, snapshot))
-        return nullptr;
-
-    if (!snapshot.surface)
-        return nullptr;
+        return false;
 
     float deviceScaleFactor = m_webPageProxy.deviceScaleFactor();
     if (snapshot.deviceScaleFactor != deviceScaleFactor)
-        return nullptr;
+        return false;
 
     FloatSize unobscuredSwipeLayerSizeInDeviceCoordinates = swipeLayerSize - FloatSize(0, topContentInset);
     unobscuredSwipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
-    if (snapshot.surface->size() != unobscuredSwipeLayerSizeInDeviceCoordinates)
-        return nullptr;
+    if (snapshot.size != unobscuredSwipeLayerSizeInDeviceCoordinates)
+        return false;
 
-    if (snapshot.surface->setIsVolatile(false) != IOSurface::SurfaceState::Valid)
-        return nullptr;
-
-    return snapshot.surface.get();
+    return true;
 }
 
 static bool layerGeometryFlippedToRoot(CALayer *layer)
@@ -535,10 +528,12 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     CALayer *snapshotLayerParent = determineSnapshotLayerParent();
     bool geometryIsFlippedToRoot = layerGeometryFlippedToRoot(snapshotLayerParent);
 
-    IOSurface* snapshot = retrieveSnapshotForItem(targetItem, swipeArea.size(), topContentInset);
-    if (snapshot) {
-        m_currentSwipeSnapshotSurface = snapshot;
-        [m_swipeSnapshotLayer setContents:(id)snapshot->surface()];
+    ViewSnapshot snapshot;
+    if (retrieveSnapshotForItem(targetItem, swipeArea.size(), topContentInset, snapshot)) {
+        [m_swipeSnapshotLayer setContents:snapshot.asLayerContents()];
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
+        m_currentSwipeSnapshotSurface = snapshot.surface;
+#endif
     }
 
     [m_swipeLayer setBackgroundColor:CGColorGetConstantColor(kCGColorWhite)];
@@ -571,11 +566,11 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
             [rootContentLayer setShadowRadius:swipeOverlayShadowRadius];
             [rootContentLayer setShadowPath:shadowPath.get()];
         } else {
-            RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect([m_swipeSnapshotLayer bounds], 0));
-            [m_swipeSnapshotLayer setShadowColor:CGColorGetConstantColor(kCGColorBlack)];
-            [m_swipeSnapshotLayer setShadowOpacity:swipeOverlayShadowOpacity];
-            [m_swipeSnapshotLayer setShadowRadius:swipeOverlayShadowRadius];
-            [m_swipeSnapshotLayer setShadowPath:shadowPath.get()];
+            RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect([m_swipeLayer bounds], 0));
+            [m_swipeLayer setShadowColor:CGColorGetConstantColor(kCGColorBlack)];
+            [m_swipeLayer setShadowOpacity:swipeOverlayShadowOpacity];
+            [m_swipeLayer setShadowRadius:swipeOverlayShadowRadius];
+            [m_swipeLayer setShadowPath:shadowPath.get()];
         }
     }
 
@@ -671,9 +666,11 @@ void ViewGestureController::removeSwipeSnapshot()
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
 
+#if USE_IOSURFACE_VIEW_SNAPSHOTS
     if (m_currentSwipeSnapshotSurface)
         m_currentSwipeSnapshotSurface->setIsVolatile(true);
     m_currentSwipeSnapshotSurface = nullptr;
+#endif
 
     for (const auto& layer : m_currentSwipeLiveLayers)
         [layer setTransform:CATransform3DIdentity];

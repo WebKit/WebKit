@@ -50,6 +50,7 @@ class IOSurface;
 
 namespace WebKit {
 
+struct ViewSnapshot;
 class WebBackForwardListItem;
 class WebPageProxy;
 
@@ -131,7 +132,7 @@ private:
     void endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled);
     bool deltaIsSufficientToBeginSwipe(NSEvent *);
     bool scrollEventCanBecomeSwipe(NSEvent *, SwipeDirection&);
-    WebCore::IOSurface* retrieveSnapshotForItem(WebBackForwardListItem*, WebCore::FloatSize swipeLayerSize, float topContentInset);
+    bool retrieveSnapshotForItem(WebBackForwardListItem* targetItem, WebCore::FloatSize swipeLayerSize, float topContentInset, ViewSnapshot&);
 
     CALayer *determineSnapshotLayerParent() const;
     CALayer *determineLayerAdjacentToSnapshotForParent(SwipeDirection, CALayer *snapshotLayerParent) const;
