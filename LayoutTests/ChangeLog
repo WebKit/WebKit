@@ -1,5 +1,16 @@
 2014-05-14  Alexey Proskuryakov  <ap@apple.com>
 
+        Change line endings of some test files to LF to make it easier to commit and test changes.
+
+        * css3/calc/simple-calcs.html:
+        * css3/calc/simple-minmax.html:
+        * css3/calc/transforms-scale-expected.html:
+        * css3/calc/transforms-scale.html:
+        * css3/calc/transforms-translate-expected.html:
+        * css3/calc/transforms-translate.html:
+
+2014-05-14  Alexey Proskuryakov  <ap@apple.com>
+
         Fix line ending style for the test (as an experiment).
 
         * css3/calc/simple-calcs-prefixed.html:
