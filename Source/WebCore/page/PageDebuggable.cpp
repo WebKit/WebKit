@@ -33,11 +33,8 @@
 #include "InspectorForwarding.h"
 #include "MainFrame.h"
 #include "Page.h"
-#include <inspector/InspectorAgentBase.h>
-
-#if PLATFORM(IOS)
 #include "Settings.h"
-#endif
+#include <inspector/InspectorAgentBase.h>
 
 using namespace Inspector;
 

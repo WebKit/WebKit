@@ -1,3 +1,9 @@
+2014-05-13  Dean Jackson  <dino@apple.com>
+
+        Attempted build fix after https://bugs.webkit.org/show_bug.cgi?id=132891
+
+        * page/PageDebuggable.cpp:
+
 2014-05-13  Timothy Hatcher  <timothy@apple.com>
 
         Force developerExtrasEnabled when a remote Inspector client connects.
