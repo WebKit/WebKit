@@ -26,6 +26,7 @@
 #ifndef ViewSnapshotStore_h
 #define ViewSnapshotStore_h
 
+#include <WebCore/IntSize.h>
 #include <WebCore/IOSurface.h>
 #include <chrono>
 #include <wtf/HashMap.h>

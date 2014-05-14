@@ -1,5 +1,15 @@
 2014-05-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168740
+
+    2014-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix the iOS Simulator build.
+
+            * UIProcess/mac/ViewSnapshotStore.h:
+
+2014-05-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168739
 
     2014-05-13  Tim Horton  <timothy_horton@apple.com>
