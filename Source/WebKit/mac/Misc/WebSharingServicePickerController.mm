@@ -207,9 +207,9 @@ using namespace WebCore;
 - (NSRect)sharingService:(NSSharingService *)sharingService sourceFrameOnScreenForShareItem:(id <NSPasteboardWriting>)item
 {
     if (!_menuClient)
-        return NSRect();
+        return NSZeroRect;
 
-    return (NSRect)_menuClient->screenRectForHitTestNode();
+    return _menuClient->screenRectForHitTestNode();
 }
 
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope

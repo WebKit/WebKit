@@ -1,3 +1,25 @@
+2014-05-14  Brady Eidson  <beidson@apple.com>
+
+        sourceFrameOnScreenForShareItem: can be off by a pixel
+        <rdar://problem/16878020> and https://bugs.webkit.org/show_bug.cgi?id=132911
+
+        Reviewed by Simon Fraser.
+
+        In a land of LayoutUnits and sub-pixel rendering, converting between IntRects and
+        FloatRects can be error prone. So we now try to minimize such conversions.
+
+        * Misc/WebSharingServicePickerController.mm:
+        (-[WebSharingServicePickerController sharingService:sourceFrameOnScreenForShareItem:]):
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::clientFloatRectForNode): Split this into a separate utility method
+          as it will be shared with other code very soon. Instead of using absoluteBoundingBoxRect()
+          which does lossy float->int conversions, try to keep things in terms of FloatRects as
+          much as possible.
+        (WebContextMenuClient::screenRectForHitTestNode): Call clientFloatRectForNode to get the
+          FloatRect, then perform the lossy rounding conversion to an IntRect only once.
+
 2014-05-14  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Remove CSS_STICKY_POSITION guards
