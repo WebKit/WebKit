@@ -66,7 +66,7 @@ float OffsetPolygonEdge::xIntercept(float y) const
 
 FloatShapeInterval OffsetPolygonEdge::clippedEdgeXRange(float y1, float y2) const
 {
-    if (!overlapsYRange(y1, y2) || (y1 == maxY() && vertex2().y() < vertex1().y()))
+    if (!overlapsYRange(y1, y2) || (y1 == maxY() && minY() <= y1) || (y2 == minY() && maxY() >= y2))
         return FloatShapeInterval();
 
     if (isWithinYRange(y1, y2))
