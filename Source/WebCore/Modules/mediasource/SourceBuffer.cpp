@@ -472,31 +472,36 @@ void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>&)
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-segment-parser-loop
     // When the segment parser loop algorithm is invoked, run the following steps:
 
-    SourceBufferPrivate::AppendResult result = SourceBufferPrivate::AppendSucceeded;
-    do {
-        // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
-        if (!m_pendingAppendData.size())
-            break;
+    // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
+    if (!m_pendingAppendData.size()) {
+        sourceBufferPrivateAppendComplete(m_private.get(), AppendSucceeded);
+        return;
+    }
 
-        result = m_private->append(m_pendingAppendData.data(), appendSize);
-        m_pendingAppendData.clear();
+    m_private->append(m_pendingAppendData.data(), appendSize);
+    m_pendingAppendData.clear();
+}
 
-        // 2. If the input buffer contains bytes that violate the SourceBuffer byte stream format specification,
-        // then run the end of stream algorithm with the error parameter set to "decode" and abort this algorithm.
-        if (result == SourceBufferPrivate::ParsingFailed) {
-            m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
-            break;
-        }
+void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, AppendResult result)
+{
+    // Section 3.5.5 Buffer Append Algorithm, ctd.
+    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-buffer-append
 
-        // NOTE: Steps 3 - 6 enforced by sourceBufferPrivateDidReceiveInitializationSegment() and
-        // sourceBufferPrivateDidReceiveSample below.
+    // 2. If the input buffer contains bytes that violate the SourceBuffer byte stream format specification,
+    // then run the end of stream algorithm with the error parameter set to "decode" and abort this algorithm.
+    if (result == ParsingFailed) {
+        m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
+        return;
+    }
 
-        // 7. Need more data: Return control to the calling algorithm.
-    } while (0);
+    // NOTE: Steps 3 - 6 enforced by sourceBufferPrivateDidReceiveInitializationSegment() and
+    // sourceBufferPrivateDidReceiveSample below.
+
+    // 7. Need more data: Return control to the calling algorithm.
 
     // NOTE: return to Section 3.5.5
     // 2.If the segment parser loop algorithm in the previous step was aborted, then abort this algorithm.
-    if (result != SourceBufferPrivate::AppendSucceeded)
+    if (result != AppendSucceeded)
         return;
 
     // 3. Set the updating attribute to false.

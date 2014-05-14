@@ -185,7 +185,11 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    _parent->didParseStreamDataAsAsset(asset);
+    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    RetainPtr<AVAsset*> strongAsset = asset;
+    callOnMainThread([strongParent, strongAsset] {
+        strongParent->didParseStreamDataAsAsset(strongAsset.get());
+    });
 }
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didParseStreamDataAsAsset:(AVAsset *)asset withDiscontinuity:(BOOL)discontinuity
@@ -195,7 +199,11 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    _parent->didParseStreamDataAsAsset(asset);
+    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    RetainPtr<AVAsset*> strongAsset = asset;
+    callOnMainThread([strongParent, strongAsset] {
+        strongParent->didParseStreamDataAsAsset(strongAsset.get());
+    });
 }
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didFailToParseStreamDataWithError:(NSError *)error
@@ -204,25 +212,38 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    _parent->didFailToParseStreamDataWithError(error);
+    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    RetainPtr<NSError> strongError = error;
+    callOnMainThread([strongParent, strongError] {
+        strongParent->didFailToParseStreamDataWithError(strongError.get());
+    });
 }
 
-- (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideMediaData:(CMSampleBufferRef)mediaData forTrackID:(CMPersistentTrackID)trackID mediaType:(NSString *)mediaType flags:(NSUInteger)flags
+- (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideMediaData:(CMSampleBufferRef)sample forTrackID:(CMPersistentTrackID)trackID mediaType:(NSString *)nsMediaType flags:(NSUInteger)flags
 {
 #if ASSERT_DISABLED
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    _parent->didProvideMediaDataForTrackID(trackID, mediaData, mediaType, flags);
+    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    RetainPtr<CMSampleBufferRef> strongSample = sample;
+    String mediaType = nsMediaType;
+    callOnMainThread([strongParent, strongSample, trackID, mediaType, flags] {
+        strongParent->didProvideMediaDataForTrackID(trackID, strongSample.get(), mediaType, flags);
+    });
 }
 
-- (void)streamDataParser:(AVStreamDataParser *)streamDataParser didReachEndOfTrackWithTrackID:(CMPersistentTrackID)trackID mediaType:(NSString *)mediaType
+- (void)streamDataParser:(AVStreamDataParser *)streamDataParser didReachEndOfTrackWithTrackID:(CMPersistentTrackID)trackID mediaType:(NSString *)nsMediaType
 {
 #if ASSERT_DISABLED
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    _parent->didReachEndOfTrackWithTrackID(trackID, mediaType);
+    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    String mediaType = nsMediaType;
+    callOnMainThread([strongParent, trackID, mediaType] {
+        strongParent->didReachEndOfTrackWithTrackID(trackID, mediaType);
+    });
 }
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideContentKeyRequestInitializationData:(NSData *)initData forTrackID:(CMPersistentTrackID)trackID
@@ -231,7 +252,11 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    _parent->didProvideContentKeyRequestInitializationDataForTrackID(initData, trackID);
+    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
+    RetainPtr<NSData> strongData = initData;
+    callOnMainThread([strongParent, strongData, trackID] {
+        strongParent->didProvideContentKeyRequestInitializationDataForTrackID(strongData.get(), trackID);
+    });
 }
 @end
 
@@ -453,17 +478,41 @@ void SourceBufferPrivateAVFObjC::setClient(SourceBufferPrivateClient* client)
     m_client = client;
 }
 
-SourceBufferPrivate::AppendResult SourceBufferPrivateAVFObjC::append(const unsigned char* data, unsigned length)
+static dispatch_queue_t globalDataParserQueue()
 {
+    static dispatch_queue_t globalQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        globalQueue = dispatch_queue_create("SourceBufferPrivateAVFObjC data parser queue", DISPATCH_QUEUE_SERIAL);
+    });
+    return globalQueue;
+}
+
+void SourceBufferPrivateAVFObjC::append(const unsigned char* data, unsigned length)
+{
+    LOG(Media, "SourceBufferPrivateAVFObjC::append(%p) - data:%p, length:%d", this, data, length);
+
+    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);
+    RefPtr<SourceBufferPrivateAVFObjC> strongThis = this;
+
     m_parsingSucceeded = true;
 
-    LOG(Media, "SourceBufferPrivateAVFObjC::append(%p) - data:%p, length:%d", this, data, length);
-    [m_parser appendStreamData:[NSData dataWithBytes:data length:length]];
+    dispatch_async(globalDataParserQueue(), [nsData, strongThis] {
+        [strongThis->m_parser appendStreamData:nsData.get()];
 
+        callOnMainThread([strongThis] {
+            strongThis->appendCompleted();
+        });
+    });
+}
+
+void SourceBufferPrivateAVFObjC::appendCompleted()
+{
     if (m_parsingSucceeded && m_mediaSource)
         m_mediaSource->player()->setLoadingProgresssed(true);
 
-    return m_parsingSucceeded ? AppendSucceeded : ParsingFailed;
+    if (m_client)
+        m_client->sourceBufferPrivateAppendComplete(this, m_parsingSucceeded ? SourceBufferPrivateClient::AppendSucceeded : SourceBufferPrivateClient::ParsingFailed);
 }
 
 void SourceBufferPrivateAVFObjC::abort()

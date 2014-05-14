@@ -45,7 +45,7 @@ public:
     ~SourceBufferPrivateGStreamer() { }
 
     void setClient(SourceBufferPrivateClient*) { }
-    AppendResult append(const unsigned char*, unsigned);
+    void append(const unsigned char*, unsigned);
     void abort();
     void removedFromMediaSource();
     MediaPlayer::ReadyState readyState() const { return m_readyState; }

@@ -1,5 +1,49 @@
 2014-04-17  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168508
+
+    2014-05-08  Jer Noble  <jer.noble@apple.com>
+
+            [MSE][Mac] Move AVStreamDataParser off-main-thread.
+            https://bugs.webkit.org/show_bug.cgi?id=132698
+
+            Reviewed by Eric Carlson.
+
+            -[AVStreamDataParser appendStreamData:] can casue the main thread to hang when a
+            large amount of media data is appended at once. Move the actual parsing of data
+            to a background (synchronous) dispatch queue, and split SourceBuffer::appendBufferTimerFired
+            into two functions, the latter of which will be called after the background queue
+            completes.
+
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::appendBufferTimerFired): Split into sourceBufferPrivateAppendComplete.
+            (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete): Split from appendBufferTimerFired.
+            * Modules/mediasource/SourceBuffer.h:
+            * platform/graphics/SourceBufferPrivate.h:
+            * platform/graphics/SourceBufferPrivateClient.h:
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:]): Re-dispatch to the
+                    web thread.
+            (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:withDiscontinuity:]): Ditto.
+            (-[WebAVStreamDataParserListener streamDataParser:didFailToParseStreamDataWithError:]): Ditto.
+            (-[WebAVStreamDataParserListener streamDataParser:didProvideMediaData:forTrackID:mediaType:flags:]): Ditto.
+            (-[WebAVStreamDataParserListener streamDataParser:didReachEndOfTrackWithTrackID:mediaType:]): Ditto.
+            (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeyRequestInitializationData:forTrackID:]): Ditto.
+            (WebCore::globalDataParserQueue): Added.
+            (WebCore::SourceBufferPrivateAVFObjC::append): Dispatch to the globalDataParserQueue.
+            (WebCore::SourceBufferPrivateAVFObjC::appendCompleted): Added.
+            * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+            (WebCore::MockSourceBufferPrivate::append): Adopt sourceBufferPrivateAppendComplete.
+            * platform/mock/mediasource/MockSourceBufferPrivate.h:
+
+            Update SourceBufferPrivateGStreamer to match the new append return value:
+            * platform/graphics/gstreamer/SourceBufferPrivateGStreamer.cpp:
+            (WebCore::SourceBufferPrivateGStreamer::append):
+            * platform/graphics/gstreamer/SourceBufferPrivateGStreamer.h:
+
+2014-04-17  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168473
 
     2014-05-08  Antti Koivisto  <antti@apple.com>

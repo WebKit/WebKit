@@ -46,12 +46,12 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(PassRefPtr<MediaSourc
     m_type = contentType.type();
 }
 
-SourceBufferPrivate::AppendResult SourceBufferPrivateGStreamer::append(const unsigned char* data, unsigned length)
+void SourceBufferPrivateGStreamer::append(const unsigned char* data, unsigned length)
 {
-    AppendResult result = AppendSucceeded;
     ASSERT(m_client);
     m_client->didReceiveData(reinterpret_cast_ptr<const char*>(data), length, m_type);
-    return result;
+
+    // FIXME: call SourceBufferPrivateClient::sourceBufferPrivateAppendComplete().
 }
 
 void SourceBufferPrivateGStreamer::abort()
