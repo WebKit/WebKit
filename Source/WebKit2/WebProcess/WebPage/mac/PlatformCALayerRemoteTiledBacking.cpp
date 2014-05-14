@@ -86,6 +86,11 @@ void PlatformCALayerRemoteTiledBacking::setAcceleratesDrawing(bool acceleratesDr
     m_tileController->setAcceleratesDrawing(acceleratesDrawing);
 }
 
+float PlatformCALayerRemoteTiledBacking::contentsScale() const
+{
+    return m_tileController->contentsScale();
+}
+
 void PlatformCALayerRemoteTiledBacking::setContentsScale(float scale)
 {
     m_tileController->setContentsScale(scale);
