@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010, 2012, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,12 +100,7 @@
 
 - (void)initializeGeolocationForWebView:(WebView *)webView listener:(id<WebGeolocationProviderInitializationListener>)listener
 {
-    [listener initializationAllowedWebView:webView provider:self];
-}
-
-- (void)cancelWarmUpForWebView:(WebView *)webView
-{
-    UNUSED_PARAM(webView);
+    [listener initializationAllowedWebView:webView];
 }
 
 - (void)stopTrackingWebView:(WebView *)webView

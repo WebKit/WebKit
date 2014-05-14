@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -975,8 +975,8 @@ Could be worth adding to the API.
 @protocol WebGeolocationProvider;
 
 @protocol WebGeolocationProviderInitializationListener <NSObject>
-- (void)initializationAllowedWebView:(WebView *)webView provider:(id<WebGeolocationProvider>)provider;
-- (void)initializationDeniedWebView:(WebView *)webView provider:(id<WebGeolocationProvider>)provider;
+- (void)initializationAllowedWebView:(WebView *)webView;
+- (void)initializationDeniedWebView:(WebView *)webView;
 @end
 #endif
 
@@ -992,7 +992,6 @@ Could be worth adding to the API.
 #if TARGET_OS_IPHONE
 - (void)setEnableHighAccuracy:(BOOL)enableHighAccuracy;
 - (void)initializeGeolocationForWebView:(WebView *)webView listener:(id<WebGeolocationProviderInitializationListener>)listener;
-- (void)cancelWarmUpForWebView:(WebView *)webView;
 - (void)stopTrackingWebView:(WebView *)webView;
 #endif
 @end

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,9 +57,8 @@ using namespace WebCore;
 {
     RefPtr<Geolocation> _geolocation;
     RetainPtr<WebView *> _webView;
-    RetainPtr<id<WebGeolocationProvider> > _geolocationProvider;
 }
-- (id)initWithGeolocation:(Geolocation*)geolocation forWebView:(WebView*)webView provider:(id<WebGeolocationProvider>)provider;
+- (id)initWithGeolocation:(Geolocation*)geolocation forWebView:(WebView*)webView;
 @end
 #endif
 
@@ -157,14 +156,13 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
 
 #else
 @implementation WebGeolocationPolicyListener
-- (id)initWithGeolocation:(Geolocation*)geolocation forWebView:(WebView*)webView provider:(id<WebGeolocationProvider>)provider
+- (id)initWithGeolocation:(Geolocation*)geolocation forWebView:(WebView*)webView
 {
     self = [super init];
     if (!self)
         return nil;
     _geolocation = geolocation;
     _webView = webView;
-    _geolocationProvider = provider;
     return self;
 }
 
@@ -179,7 +177,6 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
 {
     WebThreadRun(^{
         _geolocation->setIsAllowed(false);
-        [_geolocationProvider.get() cancelWarmUpForWebView:_webView.get()];
     });
 }
 
@@ -211,17 +208,15 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
     return self;
 }
 
-- (void)initializationAllowedWebView:(WebView *)webView provider:(id<WebGeolocationProvider>)provider
+- (void)initializationAllowedWebView:(WebView *)webView
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     Frame* frame = m_geolocation->frame();
-    if (!frame) {
-        [provider cancelWarmUpForWebView:webView];
+    if (!frame)
         return;
-    }
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
-    WebGeolocationPolicyListener *listener = [[WebGeolocationPolicyListener alloc] initWithGeolocation:m_geolocation.get() forWebView:webView provider:provider];
+    WebGeolocationPolicyListener *listener = [[WebGeolocationPolicyListener alloc] initWithGeolocation:m_geolocation.get() forWebView:webView];
     SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
     CallUIDelegate(webView, selector, webOrigin, kit(frame), listener);
     [webOrigin release];
@@ -230,7 +225,7 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-- (void)initializationDeniedWebView:(WebView *)webView provider:(id<WebGeolocationProvider>)provider
+- (void)initializationDeniedWebView:(WebView *)webView
 {
     m_geolocation->setIsAllowed(false);
 }

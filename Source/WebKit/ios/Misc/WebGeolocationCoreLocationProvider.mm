@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,7 @@ using namespace WebCore;
     _lastAuthorizationStatus = [CLLocationManager authorizationStatus];
 #undef CLLocationManager
 
-    [ _locationManager.get() setDelegate:self];
+    [ _locationManager setDelegate:self];
 }
 
 - (id)initWithListener:(id<WebGeolocationCoreLocationUpdateListener>)listener
@@ -88,67 +88,66 @@ using namespace WebCore;
 - (void)dealloc
 {
     ASSERT_MAIN_THREAD();
-    _locationManager.get().delegate = nil;
+    [_locationManager setDelegate:nil];
     [super dealloc];
 }
 
-- (BOOL)handleExternalAuthorizationStatusChange:(CLAuthorizationStatus)newStatus
+- (void)requestGeolocationAuthorization
 {
-    CLAuthorizationStatus previousStatus = _lastAuthorizationStatus;
-    _lastAuthorizationStatus = newStatus;
-    if (!_isWaitingForAuthorization && previousStatus != newStatus) {
-        [_locationManager.get() stopUpdatingLocation];
-        [_positionListener resetGeolocation];
-        return YES;
+    ASSERT_MAIN_THREAD();
+
+    if (![getCLLocationManagerClass() locationServicesEnabled]) {
+        [_positionListener geolocationAuthorizationDenied];
+        return;
     }
-    return NO;
+
+    switch ([getCLLocationManagerClass() authorizationStatus]) {
+    case kCLAuthorizationStatusNotDetermined: {
+        if (!_isWaitingForAuthorization) {
+            _isWaitingForAuthorization = YES;
+            [_locationManager requestWhenInUseAuthorization];
+        }
+        break;
+    }
+    case kCLAuthorizationStatusAuthorizedAlways:
+    case kCLAuthorizationStatusAuthorizedWhenInUse: {
+        [_positionListener geolocationAuthorizationGranted];
+        break;
+    }
+    case kCLAuthorizationStatusRestricted:
+    case kCLAuthorizationStatusDenied:
+        [_positionListener geolocationAuthorizationDenied];
+        break;
+    }
+}
+
+static bool isAuthorizationGranted(CLAuthorizationStatus authorizationStatus)
+{
+    return authorizationStatus == kCLAuthorizationStatusAuthorizedAlways || authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse;
 }
 
 - (void)start
 {
     ASSERT_MAIN_THREAD();
 
-#define CLLocationManager getCLLocationManagerClass()
-    CLAuthorizationStatus authorizationStatus = [CLLocationManager authorizationStatus];
-    if ([self handleExternalAuthorizationStatusChange:authorizationStatus])
-        return;
-
-    if (![CLLocationManager locationServicesEnabled]) {
-        [_positionListener geolocationDelegateUnableToStart];
+    if (![getCLLocationManagerClass() locationServicesEnabled]
+        || !isAuthorizationGranted([getCLLocationManagerClass() authorizationStatus])) {
+        [_locationManager stopUpdatingLocation];
+        [_positionListener resetGeolocation];
         return;
     }
 
-    switch (authorizationStatus) {
-    case kCLAuthorizationStatusNotDetermined:
-        _isWaitingForAuthorization = YES;
-        [_locationManager.get() startUpdatingLocation];
-        return;
-    case kCLAuthorizationStatusDenied:
-    case kCLAuthorizationStatusRestricted:
-        [_positionListener geolocationDelegateUnableToStart];
-        return;
-    case kCLAuthorizationStatusAuthorizedAlways:
-    case kCLAuthorizationStatusAuthorizedWhenInUse:
-        [_locationManager.get() startUpdatingLocation];
-        [_positionListener geolocationDelegateStarted];
-        return;
-    }
-#undef CLLocationManager
-    ASSERT_NOT_REACHED();
-    [_positionListener geolocationDelegateUnableToStart];
+    [_locationManager startUpdatingLocation];
 }
 
 - (void)stop
 {
     ASSERT_MAIN_THREAD();
-    [_locationManager.get() stopUpdatingLocation];
+    [_locationManager stopUpdatingLocation];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    if ([self handleExternalAuthorizationStatusChange:status])
-        return;
-
     if (_isWaitingForAuthorization) {
         switch (status) {
         case kCLAuthorizationStatusNotDetermined:
@@ -157,15 +156,21 @@ using namespace WebCore;
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
             _isWaitingForAuthorization = NO;
-            [_positionListener geolocationDelegateUnableToStart];
+            [_positionListener geolocationAuthorizationDenied];
             break;
         case kCLAuthorizationStatusAuthorizedAlways:
         case kCLAuthorizationStatusAuthorizedWhenInUse:
             _isWaitingForAuthorization = NO;
-            [_positionListener geolocationDelegateStarted];
+            [_positionListener geolocationAuthorizationGranted];
             break;
         }
+    } else {
+        if (!(isAuthorizationGranted(_lastAuthorizationStatus) && isAuthorizationGranted(status))) {
+            [_locationManager stopUpdatingLocation];
+            [_positionListener resetGeolocation];
+        }
     }
+    _lastAuthorizationStatus = status;
 }
 
 - (void)sendLocation:(CLLocation *)newLocation
@@ -220,7 +225,7 @@ using namespace WebCore;
 - (void)setEnableHighAccuracy:(BOOL)flag
 {
     ASSERT_MAIN_THREAD();
-    [_locationManager.get() setDesiredAccuracy:flag ? kCLLocationAccuracyBest : kCLLocationAccuracyHundredMeters];
+    [_locationManager setDesiredAccuracy:flag ? kCLLocationAccuracyBest : kCLLocationAccuracyHundredMeters];
 }
 
 @end
