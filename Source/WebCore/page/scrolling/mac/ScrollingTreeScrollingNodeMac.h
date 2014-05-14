@@ -90,6 +90,7 @@ private:
     RetainPtr<CALayer> m_scrolledContentsLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;
     RetainPtr<CALayer> m_insetClipLayer;
+    RetainPtr<CALayer> m_contentShadowLayer;
     RetainPtr<CALayer> m_headerLayer;
     RetainPtr<CALayer> m_footerLayer;
     RetainPtr<ScrollbarPainter> m_verticalScrollbarPainter;

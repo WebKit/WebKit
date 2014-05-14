@@ -87,6 +87,9 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     if (hasChangedProperty(InsetClipLayer))
         setInsetClipLayer(stateNode.insetClipLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
+    if (hasChangedProperty(ContentShadowLayer))
+        setContentShadowLayer(stateNode.contentShadowLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
+
     if (hasChangedProperty(HeaderLayer))
         setHeaderLayer(stateNode.headerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
@@ -253,6 +256,15 @@ void ScrollingStateScrollingNode::setInsetClipLayer(const LayerRepresentation& l
     
     m_insetClipLayer = layerRepresentation;
     setPropertyChanged(InsetClipLayer);
+}
+
+void ScrollingStateScrollingNode::setContentShadowLayer(const LayerRepresentation& layerRepresentation)
+{
+    if (layerRepresentation == m_contentShadowLayer)
+        return;
+    
+    m_contentShadowLayer = layerRepresentation;
+    setPropertyChanged(ContentShadowLayer);
 }
 
 void ScrollingStateScrollingNode::setHeaderLayer(const LayerRepresentation& layerRepresentation)

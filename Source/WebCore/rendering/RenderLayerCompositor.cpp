@@ -3102,6 +3102,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #endif
             m_contentShadowLayer->setSize(m_rootContentLayer->size());
             m_contentShadowLayer->setPosition(m_rootContentLayer->position());
+            m_contentShadowLayer->setAnchorPoint(FloatPoint3D());
             m_contentShadowLayer->setCustomAppearance(GraphicsLayer::ScrollingShadow);
 
             m_scrollLayer->addChildBelow(m_contentShadowLayer.get(), m_rootContentLayer.get());

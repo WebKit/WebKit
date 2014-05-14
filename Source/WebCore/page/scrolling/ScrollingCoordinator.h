@@ -205,6 +205,7 @@ protected:
     GraphicsLayer* counterScrollingLayerForFrameView(FrameView*);
     GraphicsLayer* insetClipLayerForFrameView(FrameView*);
     GraphicsLayer* rootContentLayerForFrameView(FrameView*);
+    GraphicsLayer* contentShadowLayerForFrameView(FrameView*);
     GraphicsLayer* headerLayerForFrameView(FrameView*);
     GraphicsLayer* footerLayerForFrameView(FrameView*);
 
