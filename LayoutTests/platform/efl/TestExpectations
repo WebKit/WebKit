@@ -463,9 +463,6 @@ webkit.org/b/116025 compositing/video/video-background-color.html [ Crash Pass ]
 
 webkit.org/b/124574 fast/css/object-fit/object-fit-embed.html [ Crash Pass ]
 
-# EFL media control has broken since r166395.
-webkit.org/b/131044 media [ Skip ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

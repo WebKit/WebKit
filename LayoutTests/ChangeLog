@@ -1,3 +1,10 @@
+2014-05-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        LayoutTests: Unreviewed EFL gardening. Unskip media test both EFL WK1 and WK2.
+        Crash doesn't happen anymore.
+
+        * platform/efl/TestExpectations:
+
 2014-05-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168750.
