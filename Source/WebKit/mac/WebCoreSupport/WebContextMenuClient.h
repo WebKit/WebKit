@@ -32,6 +32,10 @@
 @class WebSharingServicePickerController;
 @class WebView;
 
+namespace WebCore {
+class Node;
+}
+
 class WebContextMenuClient : public WebCore::ContextMenuClient {
 public:
     WebContextMenuClient(WebView *webView);
@@ -51,7 +55,7 @@ public:
     virtual void searchWithSpotlight() override;
     virtual void showContextMenu() override;
 
-    WebCore::IntRect screenRectForHitTestNode() const;
+    NSRect screenRectForHitTestNode() const;
 
 #if ENABLE(SERVICE_CONTROLS)
     void clearSharingServicePickerController();
@@ -61,6 +65,8 @@ public:
         
 private:
     NSMenu *contextMenuForEvent(NSEvent *, NSView *);
+
+    bool clientFloatRectForNode(WebCore::Node&, WebCore::FloatRect&) const;
 
     WebView *m_webView;
 #if ENABLE(SERVICE_CONTROLS)

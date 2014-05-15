@@ -47,14 +47,15 @@
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
-#import <WebCore/URL.h>
-#import <WebCore/LocalizedStrings.h>
-#import <WebCore/Page.h>
-#import <WebCore/RenderObject.h>
-#import <WebCore/SharedBuffer.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/LocalizedStrings.h>
+#import <WebCore/Page.h>
+#import <WebCore/RenderBox.h>
+#import <WebCore/RenderObject.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/URL.h>
 #import <WebKitLegacy/DOMPrivate.h>
 
 using namespace WebCore;
@@ -364,32 +365,52 @@ void WebContextMenuClient::stopSpeaking()
     [NSApp stopSpeaking:nil];
 }
 
-IntRect WebContextMenuClient::screenRectForHitTestNode() const
+bool WebContextMenuClient::clientFloatRectForNode(Node& node, FloatRect& rect) const
 {
-    Page* page = [m_webView page];
-    if (!page)
-        return IntRect();
-
-    Node* node = page->contextMenuController().context().hitTestResult().innerNode();
-    if (!node)
-        return IntRect();
-
-    RenderObject* renderer = node->renderer();
+    RenderObject* renderer = node.renderer();
     if (!renderer) {
         // This method shouldn't be called in cases where the controlled node hasn't rendered.
         ASSERT_NOT_REACHED();
-        return IntRect();
+        return false;
     }
 
-    IntRect rect = renderer->absoluteBoundingBoxRect();
+    if (!renderer->isBox())
+        return false;
+    RenderBox* renderBox = toRenderBox(renderer);
+
+    LayoutRect layoutRect = renderBox->clientBoxRect();
+    FloatQuad floatQuad = renderBox->localToAbsoluteQuad(FloatQuad(layoutRect));
+    rect = floatQuad.boundingBox();
+
+    return true;
+}
+
+NSRect WebContextMenuClient::screenRectForHitTestNode() const
+{
+    Page* page = [m_webView page];
+    if (!page)
+        return NSZeroRect;
+
+    Node* node = page->contextMenuController().context().hitTestResult().innerNode();
+    if (!node)
+        return NSZeroRect;
+
     FrameView* frameView = node->document().view();
     if (!frameView) {
         // This method shouldn't be called in cases where the controlled node isn't in a rendered view.
         ASSERT_NOT_REACHED();
-        return IntRect();
+        return NSZeroRect;
     }
 
-    return frameView->contentsToScreen(rect);
+    FloatRect rect;
+    if (!clientFloatRectForNode(*node, rect))
+        return NSZeroRect;
+
+    // FIXME: https://webkit.org/b/132915
+    // Ideally we'd like to convert the content rect to screen coordinates without the lossy float -> int conversion.
+    // Creating a rounded int rect works well in practice, but might still lead to off-by-one-pixel problems in edge cases.
+    IntRect intRect = roundedIntRect(rect);
+    return frameView->contentsToScreen(intRect);
 }
 
 NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view)
