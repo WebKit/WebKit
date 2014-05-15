@@ -662,6 +662,7 @@ fast/files/file-list-test.html
 fast/files/file-reader-abort.html
 fast/files/file-reader-directory-crash.html
 fast/files/file-reader-event-listener.html
+fast/files/filereader-zip-bundle.html
 fast/files/local-file-drag-security.html
 fast/files/null-origin-string.html
 fast/files/read-blob-async.html
@@ -681,6 +682,7 @@ fast/workers/worker-copy-shared-blob-url.html
 http/tests/local/fileapi/file-last-modified-after-delete.html
 http/tests/local/fileapi/file-last-modified.html
 http/tests/local/fileapi/send-dragged-file.html
+http/tests/local/fileapi/upload-zip-bundle-as-blob.html
 http/tests/local/formdata/form-data-with-unknown-file-extension.html
 http/tests/local/formdata/send-form-data-constructed-from-form.html
 http/tests/local/formdata/send-form-data-with-filename.html

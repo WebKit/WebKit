@@ -1,3 +1,21 @@
+2014-05-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Automatically zip document bundles used via File API
+        https://bugs.webkit.org/show_bug.cgi?id=132713
+        <rdar://problem/13397892>
+
+        Actually land the tests.
+
+        * fast/files/filereader-zip-bundle-expected.txt: Added.
+        * fast/files/filereader-zip-bundle.html: Added.
+        * fast/files/resources/document.rtfd: Added.
+        * fast/files/resources/document.rtfd/TXT.rtf: Added.
+        * http/tests/local/fileapi/resources/document.rtfd: Added.
+        * http/tests/local/fileapi/resources/document.rtfd/TXT.rtf: Added.
+        * http/tests/local/fileapi/upload-zip-bundle-as-blob-expected.txt: Added.
+        * http/tests/local/fileapi/upload-zip-bundle-as-blob.html: Added.
+        * platform/wk2/TestExpectations:
+
 2014-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Move subframe name getter lookup later in JSDOMWindow::getOwnPropertySlot
