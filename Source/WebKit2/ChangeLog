@@ -1,3 +1,24 @@
+2014-05-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] The top/bottom edges should not be sticky when restoring the scroll position from the dynamic size update history
+        https://bugs.webkit.org/show_bug.cgi?id=132931
+
+        Reviewed by Sam Weinig.
+
+        The goal of dynamicSizeUpdateHistory is to make dynamic resize completely reversible.
+        Because of the stick-to-edges heuristics, this was not true near the top and bottom edges.
+
+        For example, start in landscape, scroll the page a bit, then rotate to portrait. Now you have
+        a lot more vertical space, and the top edge of the document is at the edge of the scrollview.
+        Rotate back to landscape: the position is restored  correct, but it is then overriden by
+        the stick-to-edges branch.
+
+        When we restore the position from history, we should only put it back in the valid bounds, skipping
+        stick-to-edges entirely.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
 2014-05-14  Tim Horton  <timothy_horton@apple.com>
 
         Enable IOSurface view snapshots for 10.9+

@@ -2002,12 +2002,14 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
         newUnobscuredContentRect.setWidth(std::min(static_cast<float>(newContentSize.width()), newUnobscuredContentRect.width()));
         newUnobscuredContentRect.setHeight(std::min(static_cast<float>(newContentSize.height()), newUnobscuredContentRect.height()));
 
+        bool positionWasRestoredFromSizeUpdateHistory = false;
         const auto& previousPosition = m_dynamicSizeUpdateHistory.find(std::pair<IntSize, float>(newContentSize, scale));
         if (previousPosition != m_dynamicSizeUpdateHistory.end()) {
             IntPoint restoredPosition = previousPosition->value;
             FloatPoint deltaPosition(restoredPosition.x() - newUnobscuredContentRect.x(), restoredPosition.y() - newUnobscuredContentRect.y());
             newUnobscuredContentRect.moveBy(deltaPosition);
             newExposedContentRect.moveBy(deltaPosition);
+            positionWasRestoredFromSizeUpdateHistory = true;
         } else if (oldContentSize != newContentSize) {
             FloatPoint newRelativeContentCenter;
 
@@ -2030,14 +2032,16 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
         }
 
         // Make the top/bottom edges "sticky" within 1 pixel.
-        if (targetUnobscuredRect.maxY() > oldContentSize.height() - 1) {
-            float bottomVerticalPosition = newContentSize.height() - newUnobscuredContentRect.height();
-            newUnobscuredContentRect.setY(bottomVerticalPosition);
-            newExposedContentRect.setY(bottomVerticalPosition);
-        }
-        if (targetUnobscuredRect.y() < 1) {
-            newUnobscuredContentRect.setY(0);
-            newExposedContentRect.setY(0);
+        if (!positionWasRestoredFromSizeUpdateHistory) {
+            if (targetUnobscuredRect.maxY() > oldContentSize.height() - 1) {
+                float bottomVerticalPosition = newContentSize.height() - newUnobscuredContentRect.height();
+                newUnobscuredContentRect.setY(bottomVerticalPosition);
+                newExposedContentRect.setY(bottomVerticalPosition);
+            }
+            if (targetUnobscuredRect.y() < 1) {
+                newUnobscuredContentRect.setY(0);
+                newExposedContentRect.setY(0);
+            }
         }
 
         float horizontalAdjustment = 0;
