@@ -716,6 +716,14 @@
 			path = WebCore;
 			sourceTree = "<group>";
 		};
+		44A82E7B19251B3500C1C8C4 /* Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				93A7EB3C18FA63A4009E7670 /* URLExtras.mm */,
+			);
+			path = Cocoa;
+			sourceTree = "<group>";
+		};
 		BC029B1A1486B23800817DA9 /* ns */ = {
 			isa = PBXGroup;
 			children = (
@@ -952,6 +960,7 @@
 		BCB9EB66112366D800A137E0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				44A82E7B19251B3500C1C8C4 /* Cocoa */,
 				FE217ECB1640A54A0052988B /* JavaScriptCore */,
 				C07E6CAD13FD67650038B22B /* mac */,
 				C08587F913FEC39B001EF4E5 /* TestWebKitAPI */,
@@ -1000,7 +1009,6 @@
 				939BFE3918E5548900883275 /* StringTruncator.mm */,
 				37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */,
 				E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */,
-				93A7EB3C18FA63A4009E7670 /* URLExtras.mm */,
 				51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */,
 				C2EB2DD116CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm */,
 				37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */,

@@ -1,3 +1,14 @@
+2014-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        TestWebKitAPI: URLExtras.mm should be a shared test for iOS and Mac
+        <http://webkit.org/b/132959>
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add
+        Cocoa directory to project and move URLExtras.mm into it.
+        * TestWebKitAPI/Tests/Cocoa/URLExtras.mm: Renamed from Tools/TestWebKitAPI/Tests/mac/URLExtras.mm.
+
 2014-05-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Compile all installed resources as GResources
