@@ -59,6 +59,7 @@ public:
 
 #if ENABLE(SERVICE_CONTROLS)
     void clearSharingServicePickerController();
+    NSImage *renderedImageForControlledImage() const;
 #endif
 
     WebView *webView() { return m_webView; }

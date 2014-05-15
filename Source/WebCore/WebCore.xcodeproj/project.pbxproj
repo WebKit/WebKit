@@ -967,8 +967,8 @@
 		227777601345DEA9008EA455 /* InspectorForwarding.h in Headers */ = {isa = PBXBuildFile; fileRef = 2277775F1345DEA9008EA455 /* InspectorForwarding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		228C284510D82500009D0D0E /* ScriptWrappable.h in Headers */ = {isa = PBXBuildFile; fileRef = 228C284410D82500009D0D0E /* ScriptWrappable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2292B27C1356669400CF11EF /* ImageBufferDataCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2292B27B1356669400CF11EF /* ImageBufferDataCG.cpp */; };
-		22BD9F7F1353625C009BD102 /* ImageBufferData.h in Headers */ = {isa = PBXBuildFile; fileRef = 22BD9F7D1353625C009BD102 /* ImageBufferData.h */; };
-		22BD9F81135364FE009BD102 /* ImageBufferDataCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 22BD9F80135364FE009BD102 /* ImageBufferDataCG.h */; };
+		22BD9F7F1353625C009BD102 /* ImageBufferData.h in Headers */ = {isa = PBXBuildFile; fileRef = 22BD9F7D1353625C009BD102 /* ImageBufferData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		22BD9F81135364FE009BD102 /* ImageBufferDataCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 22BD9F80135364FE009BD102 /* ImageBufferDataCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		24D9129113CA951E00D21915 /* JSSVGAltGlyphDefElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D9128F13CA951E00D21915 /* JSSVGAltGlyphDefElement.cpp */; };
 		24D9129213CA951E00D21915 /* JSSVGAltGlyphDefElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D9129013CA951E00D21915 /* JSSVGAltGlyphDefElement.h */; };
 		24D9129513CA956100D21915 /* JSSVGAltGlyphItemElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D9129313CA956100D21915 /* JSSVGAltGlyphItemElement.cpp */; };
