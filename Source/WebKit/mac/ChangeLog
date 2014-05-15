@@ -1,3 +1,16 @@
+2014-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Add pointer lock to features without enabling it.
+        https://bugs.webkit.org/show_bug.cgi?id=132961
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Added ENABLE_POINTER_LOCK to list of features.
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        Added extra parameters needed when pointer lock is enabled.
+
 2014-05-14  Brady Eidson  <beidson@apple.com>
 
         Implement NSSharingServiceDelegate method "transitionImageForShareItem"

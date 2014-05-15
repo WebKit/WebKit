@@ -1,3 +1,13 @@
+2014-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Add pointer lock to features without enabling it.
+        https://bugs.webkit.org/show_bug.cgi?id=132961
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Added ENABLE_POINTER_LOCK to list of features.
+
 2014-05-15  Simon Fraser  <simon.fraser@apple.com>
 
         [UI-side compositing] Fix copying animations between layers, and pausing them

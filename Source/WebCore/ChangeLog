@@ -1,3 +1,17 @@
+2014-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Add pointer lock to features without enabling it.
+        https://bugs.webkit.org/show_bug.cgi?id=132961
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Added ENABLE_POINTER_LOCK to list of features.
+        * WebCore.exp.in:
+        Added linker symbols which differ with pointer lock enabled.
+        * WebCore.xcodeproj/project.pbxproj:
+        Added PointerLockController.cpp to build.
+
 2014-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Move subframe name getter lookup later in JSDOMWindow::getOwnPropertySlot

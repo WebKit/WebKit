@@ -2049,6 +2049,7 @@
 		5C4304B1191AC908000E2BC0 /* EXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */; };
 		5C4304B5191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */; };
 		5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */; };
+		5CFC4350192409E300A0D3B5 /* PointerLockController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */; };
 		5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */; };
 		5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
@@ -9078,6 +9079,8 @@
 		5C4304AF191AC908000E2BC0 /* EXTShaderTextureLOD.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTShaderTextureLOD.idl; path = canvas/EXTShaderTextureLOD.idl; sourceTree = "<group>"; };
 		5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTShaderTextureLOD.cpp; sourceTree = "<group>"; };
 		5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTShaderTextureLOD.h; sourceTree = "<group>"; };
+		5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerLockController.cpp; sourceTree = "<group>"; };
+		5CFC434F192406A900A0D3B5 /* PointerLockController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerLockController.h; sourceTree = "<group>"; };
 		5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTParser.cpp; sourceTree = "<group>"; };
 		5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVTTParser.h; sourceTree = "<group>"; };
 		5D4B8C5211E52C8B00BBB62F /* WebCore.exp.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCore.exp.in; sourceTree = "<group>"; };
@@ -16278,6 +16281,8 @@
 		65BF02180974806300C43196 /* page */ = {
 			isa = PBXGroup;
 			children = (
+				5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */,
+				5CFC434F192406A900A0D3B5 /* PointerLockController.h */,
 				316FE1060E6E1D8400BF6088 /* animation */,
 				18A6CD6F0D8F2025001DC3CE /* ios */,
 				93C09A820B064F05005ABD4D /* mac */,
@@ -27343,6 +27348,7 @@
 				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
 				CD7DBB2818CA19A400C11066 /* CSSGridLineNamesValue.cpp in Sources */,
 				E0FEF372B27C53EAC1C1FBEE /* EventSource.cpp in Sources */,
+				5CFC4350192409E300A0D3B5 /* PointerLockController.cpp in Sources */,
 				E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */,
 				BC60D8F20D2A11E000B9918F /* ExceptionBase.cpp in Sources */,
 				973DC63F145A9409002842C2 /* ExceptionCodeDescription.cpp in Sources */,
