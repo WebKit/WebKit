@@ -58,7 +58,8 @@ DatabaseProcessIDBConnection::~DatabaseProcessIDBConnection()
 void DatabaseProcessIDBConnection::disconnectedFromWebProcess()
 {
     // It's possible that the m_uniqueIDBDatabase pointer has already been cleared
-    // if the represented database was deleted.
+    // if the represented database was deleted, or if it was closed between delete
+    // and the delete callback
     if (!m_uniqueIDBDatabase)
         return;
 
@@ -97,11 +98,9 @@ void DatabaseProcessIDBConnection::deleteDatabase(uint64_t requestID, const Stri
 
     RefPtr<DatabaseProcessIDBConnection> connection(this);
     m_uniqueIDBDatabase->deleteDatabase([connection, this, requestID](bool success) {
-        if (success) {
-            // If the database was deleted, this connection should detach from it so it can be cleaned up.
-            m_uniqueIDBDatabase->unregisterConnection(*this);
-            m_uniqueIDBDatabase = nullptr;
-        }
+        if (success)
+            disconnectedFromWebProcess();
+
         connection->send(Messages::WebIDBServerConnection::DidDeleteDatabase(requestID, success));
     });
 }

@@ -1,3 +1,17 @@
+2014-05-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Database Process crashes after loading html5test.com
+        https://bugs.webkit.org/show_bug.cgi?id=132938
+        <rdar://problem/16241419>
+
+        Reviewed by Ryosuke Niwa.
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::disconnectedFromWebProcess): Expand comment
+        about the null check.
+        (WebKit::DatabaseProcessIDBConnection::deleteDatabase): Call disconnectedFromWebProcess
+        to pick up its null check and to avoid duplicating code.
+
 2014-05-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] The top/bottom edges should not be sticky when restoring the scroll position from the dynamic size update history
