@@ -1,3 +1,21 @@
+2014-05-15  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Zoom): Document size changes during zoom gesture cause erratic scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=132944
+        <rdar://problem/15769454>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        If a layer flush occurs and we have an active transient zoom,
+        re-apply the transient zoom to the relevant platform layers, because
+        WebCore might have overwritten the relevant layer properties.
+
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+        Reset m_transientZoomScale before flushLayers() so that we don't
+        re-apply the transient zoom when we're actually trying to commit it.
+
 2014-05-15  Alex Christensen  <achristensen@webkit.org>
 
         Add pointer lock to features without enabling it.

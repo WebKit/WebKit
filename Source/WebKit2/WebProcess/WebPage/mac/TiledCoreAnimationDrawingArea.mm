@@ -281,6 +281,11 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
 
     bool returnValue = m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
 
+    // If we have an active transient zoom, we want the zoom to win over any changes
+    // that WebCore makes to the relevant layers, so re-apply our changes after flushing.
+    if (m_transientZoomScale != 1)
+        adjustTransientZoom(m_transientZoomScale, m_transientZoomOrigin);
+
     [pool drain];
     return returnValue;
 }
@@ -638,9 +643,8 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     FloatRect unobscuredContentRect = m_webPage->mainFrameView()->unobscuredContentRectIncludingScrollbars();
     unscrolledOrigin.moveBy(-unobscuredContentRect.location());
     m_webPage->scalePage(scale, roundedIntPoint(-unscrolledOrigin));
-    flushLayers();
-
     m_transientZoomScale = 1;
+    flushLayers();
 }
 
 void TiledCoreAnimationDrawingArea::setRootLayerTransform(const TransformationMatrix& transform)
