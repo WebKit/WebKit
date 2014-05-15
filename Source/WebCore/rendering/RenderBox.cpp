@@ -1136,12 +1136,14 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
         }
     }
 
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    RenderRegion* regionToUse = flowThread ? toRenderNamedFlowFragment(flowThread->currentRegion()) : nullptr;
+    RenderRegion* regionToUse = locationInContainer.region();
+    if (regionToUse) {
+        RenderFlowThread* flowThread = regionToUse->flowThread();
 
-    // If the box is not contained by this region there's no point in going further.
-    if (regionToUse && !flowThread->objectShouldFragmentInFlowRegion(this, regionToUse))
-        return false;
+        // If the box is not contained by this region there's no point in going further.
+        if (!flowThread->objectShouldFragmentInFlowRegion(this, regionToUse))
+            return false;
+    }
 
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
@@ -1211,7 +1213,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
 
-    LayoutRect paintRect = borderBoxRectInRegion(currentRenderNamedFlowFragment());
+    LayoutRect paintRect = borderBoxRectInRegion(paintInfo.renderNamedFlowFragment);
     paintRect.moveBy(paintOffset);
 
 #if PLATFORM(IOS)
@@ -1683,7 +1685,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
         paintObject(paintInfo, accumulatedOffset);
         paintInfo.phase = PaintPhaseChildBlockBackgrounds;
     }
-    IntRect clipRect = pixelSnappedIntRect(isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, currentRenderNamedFlowFragment(), IgnoreOverlayScrollbarSize, paintInfo.phase));
+    IntRect clipRect = pixelSnappedIntRect(isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, paintInfo.renderNamedFlowFragment, IgnoreOverlayScrollbarSize, paintInfo.phase));
     paintInfo.context->save();
     if (style().hasBorderRadius())
         paintInfo.context->clipRoundedRect(FloatRoundedRect(style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size()))));

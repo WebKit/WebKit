@@ -173,12 +173,10 @@ void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const LayoutPoint& pa
 
 void RootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    RenderNamedFlowFragment* namedFlowFragment = renderer().currentRenderNamedFlowFragment();
-
     // Check if we are in the correct region.
-    if (namedFlowFragment) {
+    if (paintInfo.renderNamedFlowFragment) {
         RenderRegion* region = containingRegion();
-        if (region && region != reinterpret_cast<RenderRegion*>(namedFlowFragment))
+        if (region && region != reinterpret_cast<RenderRegion*>(paintInfo.renderNamedFlowFragment))
             return;
     }
     
