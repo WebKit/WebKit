@@ -1,3 +1,29 @@
+2014-05-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r1267628 from branch.
+        <rdar://problem/15751219>
+
+            Pratik Solanki  <psolanki@apple.com>
+
+            Reviewed by Simon Fraser.",
+
+            TileController relied on the tiling mode in TileCache to determine if it should use low-res
+            tiles when zooming. Unfortunately, sometimes the tiling mode gets set to Zooming even though
+            it's actually a pan. Thus we can end up with blurry tiles. Fix this by adding a new flag on
+            TileCache that controls this behavior and have UIKit set it only when we have an actual zoom
+            operation.
+ 
+        * platform/ios/LegacyTileCache.h:
+        (WebCore::LegacyTileCache::tileControllerShouldUseLowScaleTiles):
+        (WebCore::LegacyTileCache::setTileControllerShouldUseLowScaleTiles):
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::LegacyTileCache):
+        * platform/ios/wak/WAKWindow.h:
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow setTileControllerShouldUseLowScaleTiles:]):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::contentsScaleMultiplierForNewTiles):
+
 2014-05-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168750.

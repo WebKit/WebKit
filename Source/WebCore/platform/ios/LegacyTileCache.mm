@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,6 +87,7 @@ LegacyTileCache::LegacyTileCache(WAKWindow* window)
     , m_currentScale(1.f)
     , m_pendingScale(0)
     , m_pendingZoomedOutScale(0)
+    , m_tileControllerShouldUseLowScaleTiles(false)
 {
     m_zoomedOutTileGrid = LegacyTileGrid::create(this, m_tileSize);
     [hostLayer() insertSublayer:m_zoomedOutTileGrid->tileHostLayer() atIndex:0];

@@ -2801,7 +2801,7 @@ float RenderLayerCompositor::contentsScaleMultiplierForNewTiles(const GraphicsLa
     if (!tileCache)
         return 1;
 
-    return tileCache->tilingMode() == LegacyTileCache::Zooming ? 0.125 : 1;
+    return tileCache->tileControllerShouldUseLowScaleTiles() ? 0.125 : 1;
 #else
     return 1;
 #endif

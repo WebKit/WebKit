@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -660,6 +660,14 @@ static id<OrientationProvider> gOrientationProvider;
     _frozenVisibleRect = savedFrozenVisibleRect;
     _tileCache->dumpTiles();
 }
+
+- (void)setTileControllerShouldUseLowScaleTiles:(BOOL)lowScaleTiles 
+{ 
+    if (!_tileCache) 
+        return; 
+
+    _tileCache->setTileControllerShouldUseLowScaleTiles(lowScaleTiles); 
+} 
 
 - (NSString *)description
 {
