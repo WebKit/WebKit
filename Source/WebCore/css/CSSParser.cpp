@@ -149,7 +149,9 @@ namespace WebCore {
 
 static const unsigned INVALID_NUM_PARSED_PROPERTIES = UINT_MAX;
 static const double MAX_SCALE = 1000000;
+#if ENABLE(CSS_GRID_LAYOUT)
 static const unsigned MAX_GRID_TRACK_REPETITIONS = 10000;
+#endif
 
 template <unsigned N>
 static bool equal(const CSSParserString& a, const char (&b)[N])
