@@ -39,6 +39,9 @@ extern EWK2UnitTestEnvironment* environment;
 
 static const char htmlReply[] = "<html><head><title>Foo</title></head><body>Bar</body></html>";
 
+static bool finishTest = false;
+static constexpr double testTimeoutSeconds = 2.0;
+
 class EWK2ContextTest : public EWK2UnitTestBase {
 public:
     static void schemeRequestCallback(Ewk_Url_Scheme_Request* request, void* userData)
@@ -50,6 +53,8 @@ public:
         const char* path = ewk_url_scheme_request_path_get(request);
         ASSERT_STREQ("MyPath", path);
         ASSERT_TRUE(ewk_url_scheme_request_finish(request, htmlReply, strlen(htmlReply), "text/html"));
+
+        finishTest = true;
     }
 };
 
@@ -110,9 +115,12 @@ TEST_F(EWK2ContextTest, ewk_context_storage_manager_get)
 
 TEST_F(EWK2ContextTest, ewk_context_url_scheme_register)
 {
+#if ENABLE(CUSTOM_PROTOCOL)
     ewk_context_url_scheme_register(ewk_view_context_get(webView()), "fooscheme", schemeRequestCallback, 0);
-    ASSERT_TRUE(loadUrlSync("fooscheme:MyPath"));
-    ASSERT_STREQ("Foo", ewk_view_title_get(webView()));
+    ewk_view_url_set(webView(), "fooscheme:MyPath");
+
+    ASSERT_TRUE(waitUntilTrue(finishTest, testTimeoutSeconds));
+#endif
 }
 
 TEST_F(EWK2ContextTest, ewk_context_cache_model)
