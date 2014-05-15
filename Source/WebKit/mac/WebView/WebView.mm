@@ -2227,13 +2227,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);
     settings.setPictographFontFamily([preferences pictographFontFamily]);
     settings.setPluginsEnabled([preferences arePlugInsEnabled]);
-#if ENABLE(SQL_DATABASE)
-    DatabaseManager::manager().setIsAvailable([preferences databasesEnabled]);
-#endif
     settings.setLocalStorageEnabled([preferences localStorageEnabled]);
-#if !PLATFORM(IOS)
-    settings.setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);
-#endif
+
     _private->page->enableLegacyPrivateBrowsing([preferences privateBrowsingEnabled]);
     settings.setSansSerifFontFamily([preferences sansSerifFontFamily]);
     settings.setSerifFontFamily([preferences serifFontFamily]);
@@ -2244,7 +2239,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setShouldPrintBackgrounds(true);
 #else
     settings.setShouldPrintBackgrounds([preferences shouldPrintBackgrounds]);
-    settings.setTextAreasAreResizable([preferences textAreasAreResizable]);
 #endif
     settings.setShrinksStandaloneImagesToFit([preferences shrinksStandaloneImagesToFit]);
     settings.setEditableLinkBehavior(core([preferences editableLinkBehavior]));
@@ -2253,44 +2247,18 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setUsesPageCache([self usesPageCache]);
     settings.setPageCacheSupportsPlugins([preferences pageCacheSupportsPlugins]);
     settings.setBackForwardCacheExpirationInterval([preferences _backForwardCacheExpirationInterval]);
-#if !PLATFORM(IOS)
-    settings.setShowsURLsInToolTips([preferences showsURLsInToolTips]);
-    settings.setShowsToolTipOverTruncatedText([preferences showsToolTipOverTruncatedText]);
-#endif
+
     settings.setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
     settings.setJavaScriptExperimentsEnabled([preferences javaScriptExperimentsEnabled]);
     settings.setAuthorAndUserStylesEnabled([preferences authorAndUserStylesEnabled]);
     settings.setApplicationChromeMode([preferences applicationChromeModeEnabled]);
-#if !PLATFORM(IOS)
-    if ([preferences userStyleSheetEnabled]) {
-        NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
-        if ([location isEqualToString:@"apple-dashboard://stylesheet"])
-            location = @"file:///System/Library/PrivateFrameworks/DashboardClient.framework/Resources/widget.css";
-        settings.setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
-    } else
-        settings.setUserStyleSheetLocation([NSURL URLWithString:@""]);
-    settings.setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
-    settings.setTreatsAnyTextCSSLinkAsStylesheet([self _needsLinkElementTextCSSQuirk]);
-    settings.setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
-#else
-    // iOS-specific settings
-    settings.setStandalone([preferences _standalone]);
-    settings.setTelephoneNumberParsingEnabled([preferences _telephoneNumberParsingEnabled]);
-    settings.setAlwaysUseBaselineOfPrimaryFont([preferences _alwaysUseBaselineOfPrimaryFont]);
-    settings.setAllowMultiElementImplicitSubmission([preferences _allowMultiElementImplicitFormSubmission]);
-    settings.setLayoutInterval(std::chrono::milliseconds([preferences _layoutInterval]));
-    settings.setMaxParseDuration([preferences _maxParseDuration]);
-    settings.setAlwaysUseAcceleratedOverflowScroll([preferences _alwaysUseAcceleratedOverflowScroll]);
-#endif
+
     settings.setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
     settings.setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
     settings.setLocalFileContentSniffingEnabled([preferences localFileContentSniffingEnabled]);
     settings.setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
     settings.setJavaScriptCanAccessClipboard([preferences javaScriptCanAccessClipboard]);
     settings.setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
-#if !PLATFORM(IOS)
-    settings.setEnforceCSSMIMETypeInNoQuirksMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
-#endif
     settings.setDNSPrefetchingEnabled([preferences isDNSPrefetchingEnabled]);
     
     // FIXME: Enabling accelerated compositing when WebGL is enabled causes tests to fail on Leopard which expect HW compositing to be disabled.
@@ -2301,10 +2269,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setShowDebugBorders([preferences showDebugBorders]);
     settings.setShowRepaintCounter([preferences showRepaintCounter]);
     settings.setWebGLEnabled([preferences webGLEnabled]);
-#if !PLATFORM(IOS)
-    // FIXME: Should we enable this following <rdar://problem/15290404>?
-    settings.setMultithreadedWebGLEnabled([preferences multithreadedWebGLEnabled]);
-#endif
+
     settings.setForceSoftwareWebGLRendering([preferences forceSoftwareWebGLRendering]);
     settings.setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
     settings.setLoadDeferringEnabled(shouldEnableLoadDeferring());
@@ -2314,31 +2279,14 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled([preferences cssRegionsEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setCSSCompositingEnabled([preferences cssCompositingEnabled]);
-#if ENABLE(WEB_AUDIO)
-    settings.setWebAudioEnabled([preferences webAudioEnabled]);
-#endif
-#if ENABLE(FULLSCREEN_API)
-    settings.setFullScreenEnabled([preferences fullScreenEnabled]);
-#endif
+
     settings.setAsynchronousSpellCheckingEnabled([preferences asynchronousSpellCheckingEnabled]);
     settings.setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);
     settings.setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
     settings.setCrossOriginCheckInGetMatchedCSSRulesDisabled([self _needsUnrestrictedGetMatchedCSSRules]);
     settings.setInteractiveFormValidationEnabled([self interactiveFormValidationEnabled]);
     settings.setValidationMessageTimerMagnification([self validationMessageTimerMagnification]);
-#if USE(AVFOUNDATION)
-    settings.setAVFoundationEnabled([preferences isAVFoundationEnabled]);
-#endif
-#if PLATFORM(MAC)
-    settings.setQTKitEnabled([preferences isQTKitEnabled]);
-#endif
-#if PLATFORM(IOS)
-    settings.setMediaPlaybackAllowsAirPlay([preferences mediaPlaybackAllowsAirPlay]);
-    settings.setAudioSessionCategoryOverride([preferences audioSessionCategoryOverride]);
-    settings.setNetworkDataUsageTrackingEnabled([preferences networkDataUsageTrackingEnabled]);
-    settings.setNetworkInterfaceName([preferences networkInterfaceName]);
-    settings.setAVKitEnabled([preferences avKitEnabled]);
-#endif
+
     settings.setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);
     settings.setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
     settings.setSuppressesIncrementalRendering([preferences suppressesIncrementalRendering]);
@@ -2347,32 +2295,15 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setWantsBalancedSetDefersLoadingBehavior([preferences wantsBalancedSetDefersLoadingBehavior]);
     settings.setMockScrollbarsEnabled([preferences mockScrollbarsEnabled]);
 
-#if ENABLE(VIDEO_TRACK)
-    settings.setShouldDisplaySubtitles([preferences shouldDisplaySubtitles]);
-    settings.setShouldDisplayCaptions([preferences shouldDisplayCaptions]);
-    settings.setShouldDisplayTextDescriptions([preferences shouldDisplayTextDescriptions]);
-#endif
-
     settings.setShouldRespectImageOrientation([preferences shouldRespectImageOrientation]);
-#if !PLATFORM(IOS)
-    settings.setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
-#endif
+
     settings.setRequestAnimationFrameEnabled([preferences requestAnimationFrameEnabled]);
     settings.setDiagnosticLoggingEnabled([preferences diagnosticLoggingEnabled]);
     settings.setLowPowerVideoAudioBufferSizeEnabled([preferences lowPowerVideoAudioBufferSizeEnabled]);
 
     settings.setUseLegacyTextAlignPositionedElementBehavior([preferences useLegacyTextAlignPositionedElementBehavior]);
 
-#if ENABLE(MEDIA_SOURCE)
-    settings.setMediaSourceEnabled([preferences mediaSourceEnabled]);
-#endif
-
-#if ENABLE(SERVICE_CONTROLS)
-    settings.setImageControlsEnabled([preferences imageControlsEnabled]);
-#endif
-
     settings.setShouldConvertPositionStyleOnCopy([preferences shouldConvertPositionStyleOnCopy]);
-
     settings.setEnableInheritURIQueryComponent([preferences isInheritURIQueryComponentEnabled]);
 
     switch ([preferences storageBlockingPolicy]) {
@@ -2389,18 +2320,97 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setPlugInSnapshottingEnabled([preferences plugInSnapshottingEnabled]);
 
+    settings.setFixedPositionCreatesStackingContext(true);
+
+#if PLATFORM(IOS)
+    settings.setStandalone([preferences _standalone]);
+    settings.setTelephoneNumberParsingEnabled([preferences _telephoneNumberParsingEnabled]);
+    settings.setAlwaysUseBaselineOfPrimaryFont([preferences _alwaysUseBaselineOfPrimaryFont]);
+    settings.setAllowMultiElementImplicitSubmission([preferences _allowMultiElementImplicitFormSubmission]);
+    settings.setLayoutInterval(std::chrono::milliseconds([preferences _layoutInterval]));
+    settings.setMaxParseDuration([preferences _maxParseDuration]);
+    settings.setAlwaysUseAcceleratedOverflowScroll([preferences _alwaysUseAcceleratedOverflowScroll]);
+    settings.setMediaPlaybackAllowsAirPlay([preferences mediaPlaybackAllowsAirPlay]);
+    settings.setAudioSessionCategoryOverride([preferences audioSessionCategoryOverride]);
+    settings.setNetworkDataUsageTrackingEnabled([preferences networkDataUsageTrackingEnabled]);
+    settings.setNetworkInterfaceName([preferences networkInterfaceName]);
+    settings.setAVKitEnabled([preferences avKitEnabled]);
+    settings.setShouldTransformsAffectOverflow(shouldTransformsAffectOverflow());
+    settings.setShouldDispatchJavaScriptWindowOnErrorEvents(shouldDispatchJavaScriptWindowOnErrorEvents());
+
+    settings.setPasswordEchoEnabled([preferences _allowPasswordEcho]);
+    settings.setPasswordEchoDurationInSeconds([preferences _passwordEchoDuration]);
+
+    ASSERT_WITH_MESSAGE(settings.pageCacheSupportsPlugins(), "PageCacheSupportsPlugins should be enabled on iOS.");
+    settings.setDelegatesPageScaling(true);
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    settings.setMinimumZoomFontSize([preferences _minimumZoomFontSize]);
+#endif
+#endif // PLATFORM(IOS)
+
+#if PLATFORM(MAC)
+    if ([preferences userStyleSheetEnabled]) {
+        NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
+        if ([location isEqualToString:@"apple-dashboard://stylesheet"])
+            location = @"file:///System/Library/PrivateFrameworks/DashboardClient.framework/Resources/widget.css";
+        settings.setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
+    } else
+        settings.setUserStyleSheetLocation([NSURL URLWithString:@""]);
+
+    settings.setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
+    settings.setTreatsAnyTextCSSLinkAsStylesheet([self _needsLinkElementTextCSSQuirk]);
+    settings.setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
+    settings.setEnforceCSSMIMETypeInNoQuirksMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
+    settings.setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
+    settings.setTextAreasAreResizable([preferences textAreasAreResizable]);
+    settings.setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);
+    settings.setShowsURLsInToolTips([preferences showsURLsInToolTips]);
+    settings.setShowsToolTipOverTruncatedText([preferences showsToolTipOverTruncatedText]);
+    settings.setQTKitEnabled([preferences isQTKitEnabled]);
+
+    // FIXME: Should we enable this following <rdar://problem/15290404>?
+    settings.setMultithreadedWebGLEnabled([preferences multithreadedWebGLEnabled]);
+#endif // PLATFORM(MAC)
+
+#if ENABLE(SQL_DATABASE)
+    DatabaseManager::manager().setIsAvailable([preferences databasesEnabled]);
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    settings.setMediaSourceEnabled([preferences mediaSourceEnabled]);
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+    settings.setImageControlsEnabled([preferences imageControlsEnabled]);
+#endif
+
+#if ENABLE(VIDEO_TRACK)
+    settings.setShouldDisplaySubtitles([preferences shouldDisplaySubtitles]);
+    settings.setShouldDisplayCaptions([preferences shouldDisplayCaptions]);
+    settings.setShouldDisplayTextDescriptions([preferences shouldDisplayTextDescriptions]);
+#endif
+
+#if USE(AVFOUNDATION)
+    settings.setAVFoundationEnabled([preferences isAVFoundationEnabled]);
+#endif
+
+#if ENABLE(WEB_AUDIO)
+    settings.setWebAudioEnabled([preferences webAudioEnabled]);
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    settings.setFullScreenEnabled([preferences fullScreenEnabled]);
+#endif
+
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     settings.setHiddenPageDOMTimerThrottlingEnabled([preferences hiddenPageDOMTimerThrottlingEnabled]);
 #endif
+
 #if ENABLE(PAGE_VISIBILITY_API)
     settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
 #endif
 
-    // We have enabled this setting in WebKit2 for the sake of some ScrollingCoordinator work.
-    // To avoid possible rendering differences, we should enable it for WebKit1 too. We also
-    // want to keep this setting enabled for iOS. See <rdar://problem/9813262> for more details.
-    settings.setFixedPositionCreatesStackingContext(true);
-    
     NSTimeInterval timeout = [preferences incrementalRenderingSuppressionTimeoutInSeconds];
     if (timeout > 0)
         settings.setIncrementalRenderingSuppressionTimeoutInSeconds(timeout);
@@ -2411,10 +2421,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     BOOL zoomsTextOnly = [preferences zoomsTextOnly];
     if (_private->zoomsTextOnly != zoomsTextOnly)
         [self _setZoomMultiplier:_private->zoomMultiplier isTextOnly:zoomsTextOnly];
-
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-    settings.setMinimumZoomFontSize([preferences _minimumZoomFontSize]);
-#endif
 
 #if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
     DiskImageCache& diskImageCache = WebCore::diskImageCache();
@@ -2428,15 +2434,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     [[self window] setTilePaintCountsVisible:[preferences showRepaintCounter]];
     [[self window] setAcceleratedDrawingEnabled:[preferences acceleratedDrawingEnabled]];
     [WAKView _setInterpolationQuality:[preferences _interpolationQuality]];
-    settings.setDelegatesPageScaling(true);
-    
-    settings.setShouldTransformsAffectOverflow(shouldTransformsAffectOverflow());
-    settings.setShouldDispatchJavaScriptWindowOnErrorEvents(shouldDispatchJavaScriptWindowOnErrorEvents());
-    ASSERT_WITH_MESSAGE(settings.pageCacheSupportsPlugins(), "PageCacheSupportsPlugins should be enabled on iOS.");
-
-    // Password echo
-    settings.setPasswordEchoEnabled([preferences _allowPasswordEcho]);
-    settings.setPasswordEchoDurationInSeconds([preferences _passwordEchoDuration]);
 #endif
 }
 

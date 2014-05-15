@@ -1,3 +1,20 @@
+2014-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up -[WebView _preferencesChanged]
+        https://bugs.webkit.org/show_bug.cgi?id=132967
+
+        Reviewed by Sam Weinig.
+        
+        -[WebView _preferencesChanged] was a horrible mess of #ifdefs. Clean this up by
+        moving all the #if PLATFORM() code together, and moving all the feature-define related
+        settings to the end.
+        
+        No behavior changes, checked by diffing the resulting Settings with and without
+        the patch, on OS X and iOS.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2014-05-15  Alex Christensen  <achristensen@webkit.org>
 
         Add pointer lock to features without enabling it.
