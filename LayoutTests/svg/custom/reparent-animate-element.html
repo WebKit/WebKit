@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+svg {
+    height: 0;
+    width: 0;
+}
+</style>
+</head>
+<p>This tests that we don't cause an assertion failure when re-parenting a &lt;animate&gt; after temporarily removing its referenced element.</p>
+<svg>
+    <circle id="a"></circle>
+    <animate xlink:href="#a" id="b"></animate>
+</svg>
+<svg id="c"></svg> <!-- This must be a <svg> element. -->
+<div id="a"></div>
+<script>
+var a = document.getElementById("a"); // <circle>
+var b = document.getElementById("b"); // <animate>
+a.parentNode.removeChild(a);
+b.appendChild(a);
+b.parentNode.removeChild(b);
+document.getElementById("c").appendChild(b);
+</script>
+<p>PASS</p>
+</body>
+</html>

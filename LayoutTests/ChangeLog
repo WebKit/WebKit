@@ -1,3 +1,27 @@
+2014-05-15  Daniel Bates  <dabates@apple.com>
+
+        SVG element may reference arbitrary DOM element before running its insertion logic
+        https://bugs.webkit.org/show_bug.cgi?id=132757
+        <rdar://problem/15703817>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add tests to ensure that we don't cause an assertion failure when re-parenting an SVG subtree that
+        contains an element with a duplicate id.
+
+        * svg/custom/reparent-animate-element-expected.txt: Added.
+        * svg/custom/reparent-animate-element.html: Added.
+        * svg/custom/reparent-feimage-element-expected.txt: Added.
+        * svg/custom/reparent-feimage-element.html: Added.
+        * svg/custom/reparent-mpath-element-expected.txt: Added.
+        * svg/custom/reparent-mpath-element.html: Added.
+        * svg/custom/reparent-textpath-element-expected.txt: Added.
+        * svg/custom/reparent-textpath-element.html: Added.
+        * svg/custom/reparent-tref-element-expected.txt: Added.
+        * svg/custom/reparent-tref-element.html: Added.
+        * svg/custom/reparent-use-element-expected.txt: Added.
+        * svg/custom/reparent-use-element.html: Added.
+
 2014-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSDOMWindow should not claim HasImpureGetOwnPropertySlot

@@ -1,3 +1,65 @@
+2014-05-15  Daniel Bates  <dabates@apple.com>
+
+        SVG element may reference arbitrary DOM element before running its insertion logic
+        https://bugs.webkit.org/show_bug.cgi?id=132757
+        <rdar://problem/15703817>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fixes an issue where an SVG element may reference an arbitrary DOM element e before e finished being
+        inserted in the tree.
+
+        Currently when an SVG element A is inserted into a document we use document.getElementById() to find the
+        element B it references (if any). If A is inserted before B and B has the same id as a later element in
+        the document then A can find B before B is notified that its been inserted into the document (i.e. before
+        Element::insertedFrom() is called on B). Instead, A should call document.getElementById() only after
+        cessation of the insertion operation that inserted it to ensure that all inserted nodes (including B)
+        processed their insertion-specific logic.
+
+        Tests: svg/custom/reparent-animate-element.html
+               svg/custom/reparent-feimage-element.html
+               svg/custom/reparent-mpath-element.html
+               svg/custom/reparent-textpath-element.html
+               svg/custom/reparent-tref-element.html
+               svg/custom/reparent-use-element.html
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::insertedInto): Return InsertionShouldCallDidNotifySubtreeInsertions so that
+        we are called back to resolve our target element (i.e. call SVGFEImageElement::buildPendingResources())
+        after the subtree we're in is inserted.
+        (WebCore::SVGFEImageElement::didNotifySubtreeInsertions): Added; turns around and calls SVGFEImageElement::buildPendingResources().
+        * svg/SVGFEImageElement.h:
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::insertedInto): Return InsertionShouldCallDidNotifySubtreeInsertions so that
+        we are called back to resolve our target element (i.e. call SVGMPathElement::buildPendingResources())
+        after the subtree we're in is inserted.
+        (WebCore::SVGMPathElement::didNotifySubtreeInsertions): Added; turns around and calls SVGMPathElement::buildPendingResources().
+        * svg/SVGMPathElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::insertedInto): Return InsertionShouldCallDidNotifySubtreeInsertions so that
+        we are called back to resolve our target element (i.e. call SVGTRefElement::buildPendingResources())
+        after the subtree we're in is inserted.
+        (WebCore::SVGTRefElement::didNotifySubtreeInsertions): Added; turns around and calls SVGTRefElement::buildPendingResources().
+        * svg/SVGTRefElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::insertedInto): Return InsertionShouldCallDidNotifySubtreeInsertions so that
+        we are called back to resolve our target element (i.e. call SVGTextPathElement::buildPendingResources())
+        after the subtree we're in is inserted.
+        (WebCore::SVGTextPathElement::didNotifySubtreeInsertions): Added; turns around and calls SVGTextPathElement::buildPendingResources().
+        * svg/SVGTextPathElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedInto): Return InsertionShouldCallDidNotifySubtreeInsertions so that
+        we are called back to resolve our target element (i.e. call SVGUseElement::buildPendingResources()) after its subtree is
+        inserted.
+        (WebCore::SVGUseElement::didNotifySubtreeInsertions): Added; turns around and calls SVGUseElement::buildPendingResources().
+        * svg/SVGUseElement.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::insertedInto): Return InsertionShouldCallDidNotifySubtreeInsertions so that
+        we are called back to resolve our target element (i.e. call SVGSMILElement::buildPendingResources())
+        after the subtree we're in is inserted.
+        (WebCore::SVGSMILElement::didNotifySubtreeInsertions): Added; turns around and calls SVGSMILElement::buildPendingResources().
+        * svg/animation/SVGSMILElement.h:
+
 2014-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSDOMWindow should not claim HasImpureGetOwnPropertySlot

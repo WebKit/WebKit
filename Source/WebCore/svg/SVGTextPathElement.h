@@ -110,7 +110,10 @@ public:
     };
 
     static PassRefPtr<SVGTextPathElement> create(const QualifiedName&, Document&);
- 
+
+protected:
+    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
+
 private:
     SVGTextPathElement(const QualifiedName&, Document&);
 

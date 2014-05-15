@@ -277,8 +277,13 @@ Node::InsertionNotificationRequest SVGTRefElement::insertedInto(ContainerNode& r
 {
     SVGElement::insertedInto(rootParent);
     if (rootParent.inDocument())
-        buildPendingResource();
+        return InsertionShouldCallDidNotifySubtreeInsertions;
     return InsertionDone;
+}
+
+void SVGTRefElement::didNotifySubtreeInsertions(ContainerNode*)
+{
+    buildPendingResource();
 }
 
 void SVGTRefElement::removedFrom(ContainerNode& rootParent)

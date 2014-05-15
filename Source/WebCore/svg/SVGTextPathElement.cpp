@@ -179,8 +179,12 @@ void SVGTextPathElement::buildPendingResource()
 Node::InsertionNotificationRequest SVGTextPathElement::insertedInto(ContainerNode& rootParent)
 {
     SVGTextContentElement::insertedInto(rootParent);
+    return InsertionShouldCallDidNotifySubtreeInsertions;
+}
+
+void SVGTextPathElement::didNotifySubtreeInsertions(ContainerNode*)
+{
     buildPendingResource();
-    return InsertionDone;
 }
 
 void SVGTextPathElement::removedFrom(ContainerNode& rootParent)
