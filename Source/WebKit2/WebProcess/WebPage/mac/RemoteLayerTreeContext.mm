@@ -107,11 +107,11 @@ void RemoteLayerTreeContext::willStartAnimationOnLayer(PlatformCALayerRemote* la
     m_layersAwaitingAnimationStart.add(layer->layerID(), layer);
 }
 
-void RemoteLayerTreeContext::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, double startTime)
+void RemoteLayerTreeContext::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key, double startTime)
 {
     auto it = m_layersAwaitingAnimationStart.find(layerID);
     if (it != m_layersAwaitingAnimationStart.end())
-        it->value->animationStarted(startTime);
+        it->value->animationStarted(key, startTime);
 }
 
 } // namespace WebKit

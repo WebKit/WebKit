@@ -164,9 +164,9 @@ void RemoteLayerTreeDrawingArea::forceRepaint()
     flushLayers();
 }
 
-void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(uint64_t layerID, double startTime)
+void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime)
 {
-    m_remoteLayerTreeContext->animationDidStart(layerID, startTime);
+    m_remoteLayerTreeContext->animationDidStart(layerID, key, startTime);
 }
 
 void RemoteLayerTreeDrawingArea::setExposedRect(const FloatRect& exposedRect)

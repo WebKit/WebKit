@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS CAAnimation;
 OBJC_CLASS WKAnimationDelegate;
 
 namespace WebKit {
@@ -58,7 +59,7 @@ public:
     typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> LayerAnimationDelegateMap;
     LayerAnimationDelegateMap& animationDelegates() { return m_animationDelegates; }
 
-    void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, double startTime);
+    void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, CAAnimation *, double startTime);
 
 private:
     LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);

@@ -98,7 +98,7 @@ public:
     PlatformCALayerClient* owner() const { return m_owner; }
     virtual void setOwner(PlatformCALayerClient* owner) { m_owner = owner; }
 
-    virtual void animationStarted(CFTimeInterval beginTime) = 0;
+    virtual void animationStarted(const String& key, CFTimeInterval beginTime) = 0;
 
     virtual void setNeedsDisplay(const FloatRect* dirtyRect = 0) = 0;
 

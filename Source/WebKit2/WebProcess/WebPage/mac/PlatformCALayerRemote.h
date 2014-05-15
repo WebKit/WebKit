@@ -66,7 +66,7 @@ public:
     virtual void addAnimationForKey(const String& key, WebCore::PlatformCAAnimation*) override;
     virtual void removeAnimationForKey(const String& key) override;
     virtual PassRefPtr<WebCore::PlatformCAAnimation> animationForKey(const String& key) override;
-    virtual void animationStarted(CFTimeInterval beginTime) override;
+    virtual void animationStarted(const String& key, CFTimeInterval beginTime) override;
 
     virtual void setMask(WebCore::PlatformCALayer*) override;
 
@@ -177,6 +177,7 @@ private:
     WebCore::PlatformCALayerList m_children;
     PlatformCALayerRemote* m_superlayer;
     PlatformCALayerRemote* m_maskLayer;
+    HashMap<String, RefPtr<WebCore::PlatformCAAnimation>> m_animations;
     bool m_acceleratesDrawing;
 
     RemoteLayerTreeContext* m_context;

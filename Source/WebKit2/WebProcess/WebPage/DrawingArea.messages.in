@@ -34,6 +34,6 @@ messages -> DrawingArea LegacyReceiver {
     AdjustTransientZoom(double scale, WebCore::FloatPoint origin)
     CommitTransientZoom(double scale, WebCore::FloatPoint origin)
     
-    AcceleratedAnimationDidStart(uint64_t layerID, double startTime)
+    AcceleratedAnimationDidStart(uint64_t layerID, String key, double startTime)
 #endif
 }

@@ -56,7 +56,7 @@ public:
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer);
 
     // From the UI process
-    void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, double startTime);
+    void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, const String& key, double startTime);
 
     void willStartAnimationOnLayer(PlatformCALayerRemote*);
 

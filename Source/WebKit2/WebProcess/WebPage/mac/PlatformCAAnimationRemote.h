@@ -121,6 +121,12 @@ public:
     virtual void setTimingFunctions(const Vector<const WebCore::TimingFunction*>&, bool reverse = false) override;
     virtual void copyTimingFunctionsFrom(const WebCore::PlatformCAAnimation*) override;
 
+    AnimationType animationType() const { return m_properties.animationType; }
+    void setHasExplicitBeginTime(bool hasExplicitBeginTime) { m_properties.hasExplicitBeginTime = hasExplicitBeginTime; }
+    bool hasExplicitBeginTime() const { return m_properties.hasExplicitBeginTime; }
+
+    void didStart(CFTimeInterval beginTime) { m_properties.beginTime = beginTime; }
+
     class KeyframeValue {
     public:
         enum KeyframeType {

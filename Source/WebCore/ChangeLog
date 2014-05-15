@@ -1,3 +1,23 @@
+2014-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Fix copying animations between layers, and pausing them
+        https://bugs.webkit.org/show_bug.cgi?id=132943
+        <rdar://problem/16906369&16906541>
+
+        Reviewed by Tim Horton.
+
+        Pass the animation key back to animationStarted(), though this isn't used
+        when animations are running in-process.
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (-[WebAnimationDelegate animationDidStart:]):
+        (PlatformCALayerMac::animationStarted):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::animationStarted):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+
 2014-05-15  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Reduce the RenderRegion invasiveness in rendering code

@@ -161,12 +161,6 @@ void PlatformCALayerRemote::didCommit()
     m_properties.resetChangedProperties();
 }
 
-void PlatformCALayerRemote::animationStarted(CFTimeInterval beginTime)
-{
-    if (m_owner)
-        m_owner->platformCALayerAnimationStarted(beginTime);
-}
-
 void PlatformCALayerRemote::ensureBackingStore()
 {
     ASSERT(owner());
@@ -299,6 +293,7 @@ void PlatformCALayerRemote::adoptSublayers(PlatformCALayer* source)
 
 void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnimation* animation)
 {
+    m_animations.set(key, animation);
     m_properties.addedAnimations.set(key, toPlatformCAAnimationRemote(animation)->properties());
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);
 
@@ -308,6 +303,7 @@ void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnim
 
 void PlatformCALayerRemote::removeAnimationForKey(const String& key)
 {
+    m_animations.remove(key);
     m_properties.addedAnimations.remove(key);
     m_properties.keyPathsOfAnimationsToRemove.add(key);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);
@@ -315,8 +311,17 @@ void PlatformCALayerRemote::removeAnimationForKey(const String& key)
 
 PassRefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(const String& key)
 {
-    // FIXME: implement.
-    return nullptr;
+    return m_animations.get(key);
+}
+
+void PlatformCALayerRemote::animationStarted(const String& key, CFTimeInterval beginTime)
+{
+    auto it = m_animations.find(key);
+    if (it != m_animations.end())
+        toPlatformCAAnimationRemote(it->value.get())->didStart(beginTime);
+    
+    if (m_owner)
+        m_owner->platformCALayerAnimationStarted(beginTime);
 }
 
 void PlatformCALayerRemote::setMask(PlatformCALayer* layer)

@@ -113,9 +113,21 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLay
     m_layers.remove(layerID);
 }
 
-void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, double startTime)
+void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, CAAnimation *animation, double startTime)
 {
-    m_drawingArea.acceleratedAnimationDidStart(layerID, startTime);
+    CALayer *layer = asLayer(getLayer(layerID));
+    if (!layer)
+        return;
+
+    String animationKey;
+    for (NSString *key in [layer animationKeys]) {
+        if ([layer animationForKey:key] == animation) {
+            animationKey = key;
+            break;
+        }
+    }
+
+    m_drawingArea.acceleratedAnimationDidStart(layerID, animationKey, startTime);
 }
 
 static NSString* const WKLayerIDPropertyKey = @"WKLayerID";

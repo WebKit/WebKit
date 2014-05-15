@@ -172,7 +172,7 @@ PlatformCALayer* PlatformCALayerWin::rootLayer() const
     return host ? host->rootLayer() : 0;
 }
 
-void PlatformCALayerWin::animationStarted(CFTimeInterval beginTime)
+void PlatformCALayerWin::animationStarted(const String&, CFTimeInterval beginTime)
 {
     // Update start time for any animation not yet started
     CFTimeInterval cacfBeginTime = currentTimeToMediaTime(beginTime);

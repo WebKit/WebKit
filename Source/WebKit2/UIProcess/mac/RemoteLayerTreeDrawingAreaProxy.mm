@@ -152,9 +152,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     scheduleCoreAnimationLayerCommitObserver();
 }
 
-void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t layerID, double startTime)
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime)
 {
-    m_webPageProxy->process().send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, startTime), m_webPageProxy->pageID());
+    m_webPageProxy->process().send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), m_webPageProxy->pageID());
 }
 
 static const float indicatorInset = 10;

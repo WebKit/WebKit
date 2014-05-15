@@ -204,7 +204,7 @@ PassRefPtr<PlatformCAAnimation> PlatformCAAnimationMac::copy() const
 
     setHasExplicitBeginTime(toPlatformCAAnimationMac(animation.get())->platformAnimation(), hasExplicitBeginTime(platformAnimation()));
     
-    // Copy the specific Basic or Keyframe values
+    // Copy the specific Basic or Keyframe values.
     if (animationType() == Keyframe) {
         animation->copyValuesFrom(this);
         animation->copyKeyTimesFrom(this);

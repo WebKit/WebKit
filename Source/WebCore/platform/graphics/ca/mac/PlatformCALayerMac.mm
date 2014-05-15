@@ -116,8 +116,19 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
     } else
         startTime = mediaTimeToCurrentTime([animation beginTime]);
 
-    if (m_owner)
-        m_owner->animationStarted(startTime);
+    if (m_owner) {
+        CALayer *layer = m_owner->platformLayer();
+
+        String animationKey;
+        for (NSString *key in [layer animationKeys]) {
+            if ([layer animationForKey:key] == animation) {
+                animationKey = key;
+                break;
+            }
+        }
+
+        m_owner->animationStarted(animationKey, startTime);
+    }
 }
 
 - (void)setOwner:(PlatformCALayer*)owner
@@ -292,7 +303,7 @@ PlatformCALayerMac::~PlatformCALayerMac()
         [static_cast<WebTiledBackingLayer *>(m_layer.get()) invalidate];
 }
 
-void PlatformCALayerMac::animationStarted(CFTimeInterval beginTime)
+void PlatformCALayerMac::animationStarted(const String&, CFTimeInterval beginTime)
 {
     if (m_owner)
         m_owner->platformCALayerAnimationStarted(beginTime);

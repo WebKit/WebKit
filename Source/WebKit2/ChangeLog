@@ -1,3 +1,56 @@
+2014-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Fix copying animations between layers, and pausing them
+        https://bugs.webkit.org/show_bug.cgi?id=132943
+        <rdar://problem/16906369&16906541>
+
+        Reviewed by Tim Horton.
+        
+        Fix PlatformCAAnimationRemote to support animation copying, and to record
+        the beginTime for implicitly started animations. This fixes animation pausing,
+        and copying of animations between layers when they go between tiled and non-tiled.
+        
+        This requires sending the animation key back through animationDidStart() so that
+        we can record this beginTime on the PlatformCAAnimationRemote in the web process.
+        This path doesn't set the "hasExplicitBeginTime" flag.
+        
+        PlatformCAAnimationRemote also now stores a hash of active animations, so that
+        it can implement animationForKey(), and record the beginTime.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::animationDidStart): Grovel for the key for this
+        animation; sadly CA doesn't give us an easier way.
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::acceleratedAnimationDidStart):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (-[WKAnimationDelegate animationDidStart:]):
+        (WebKit::PlatformCAAnimationRemote::copy):
+        (WebKit::PlatformCAAnimationRemote::copyTimingFunctionFrom):
+        (WebKit::PlatformCAAnimationRemote::copyFromValueFrom):
+        (WebKit::PlatformCAAnimationRemote::copyToValueFrom):
+        (WebKit::PlatformCAAnimationRemote::copyValuesFrom):
+        (WebKit::PlatformCAAnimationRemote::copyKeyTimesFrom):
+        (WebKit::PlatformCAAnimationRemote::copyTimingFunctionsFrom):
+        (WebKit::addAnimationToLayer):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::addAnimationForKey):
+        (WebKit::PlatformCALayerRemote::removeAnimationForKey):
+        (WebKit::PlatformCALayerRemote::animationForKey):
+        (WebKit::PlatformCALayerRemote::animationStarted):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::animationDidStart):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart):
+
 2014-05-14  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up "has non-zero begin time" terminology in animations

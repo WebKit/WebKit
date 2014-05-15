@@ -312,7 +312,7 @@ void CACFLayerTreeHost::notifyAnimationsStarted()
 
     HashSet<RefPtr<PlatformCALayer> >::iterator end = m_pendingAnimatedLayers.end();
     for (HashSet<RefPtr<PlatformCALayer> >::iterator it = m_pendingAnimatedLayers.begin(); it != end; ++it)
-        (*it)->animationStarted(currentTime);
+        (*it)->animationStarted(String(), currentTime);
 
     m_pendingAnimatedLayers.clear();
 }
