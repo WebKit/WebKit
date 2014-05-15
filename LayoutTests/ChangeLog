@@ -1,3 +1,17 @@
+2014-05-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r168893.
+        https://bugs.webkit.org/show_bug.cgi?id=132957
+
+        Lots of media tests still come to crash on EFL layout test
+        (Requested by gyuyoung on #webkit).
+
+        Reverted changeset:
+
+        "LayoutTests: Unreviewed EFL gardening. Unskip media test both
+        EFL WK1 and WK2."
+        http://trac.webkit.org/changeset/168893
+
 2014-05-15  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Add new test expectations after r168544
