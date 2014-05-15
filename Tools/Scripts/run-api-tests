@@ -188,10 +188,13 @@ sub runTest($$$)
     }
 
     my $pid;
-    if (isAppleMacWebKit() && architecture()) {
-        $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), testToolPath(), $gtestArg, @ARGV) or die "Failed to run test: $test.";
+    my @commonArguments = (testToolPath(), $gtestArg, @ARGV);
+    if (isIOSWebKit()) {
+        $pid = open3($childIn, $childOut, $childErr, qw(xcrun -sdk iphonesimulator sim --environment=merge), @commonArguments) or die "Failed to run test: $test.";
+    } elsif (isAppleMacWebKit() && architecture()) {
+        $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), @commonArguments) or die "Failed to run test: $test.";
     } else {
-        $pid = open3($childIn, $childOut, $childErr, testToolPath(), $gtestArg, @ARGV) or die "Failed to run test: $test.";
+        $pid = open3($childIn, $childOut, $childErr, @commonArguments) or die "Failed to run test: $test.";
     }
 
     close($childIn);
@@ -247,10 +250,13 @@ sub listAllTests()
     }
 
     my $pid;
-    if (isAppleMacWebKit() && architecture()) {
-        $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), testToolPath(), "--gtest_list_tests") or die "Failed to build list of tests!";
+    my @commonArguments = (testToolPath(), "--gtest_list_tests");
+    if (isIOSWebKit()) {
+        $pid = open3($childIn, $childOut, $childErr, qw(xcrun -sdk iphonesimulator sim --environment=merge), @commonArguments) or die "Failed to build list of tests!";
+    } elsif (isAppleMacWebKit() && architecture()) {
+        $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), @commonArguments) or die "Failed to build list of tests!";
     } else {
-        $pid = open3($childIn, $childOut, $childErr, testToolPath(), "--gtest_list_tests") or die "Failed to build list of tests!";
+        $pid = open3($childIn, $childOut, $childErr, @commonArguments) or die "Failed to build list of tests!";
     }
 
     close($childIn);
