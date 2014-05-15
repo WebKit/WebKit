@@ -1,3 +1,16 @@
+2014-05-15  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Add new test expectations after r168544
+        https://bugs.webkit.org/show_bug.cgi?id=132908
+
+        Unreviewed gardening
+
+        * platform/efl/TestExpectations:
+        * platform/efl/svg/foreignObject/svg-document-in-html-document-expected.txt:
+        * platform/efl/svg/text/small-fonts-in-html5-expected.txt:
+        * platform/efl/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * platform/efl/svg/zoom/text/zoom-svg-float-border-padding-expected.txt: Added.
+
 2014-05-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         LayoutTests: Unreviewed EFL gardening. Unskip media test both EFL WK1 and WK2.

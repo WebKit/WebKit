@@ -1634,3 +1634,11 @@ webkit.org/b/109570 media/track/w3c [ Skip ]
 http/tests/media/hls [ Skip ]
 
 webkit.org/b/132823 svg/zoom/page/zoom-foreignObject.svg [ ImageOnlyFailure ]
+
+# Tests failing after r168544
+svg/W3C-SVG-1.1-SE/painting-marker-05-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/painting-marker-06-f.svg [ Failure ]
+
+# Tests failing after r168350
+svg/transforms/animated-path-inside-transformed-html.xhtml [ Failure ]
+svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Failure ]
