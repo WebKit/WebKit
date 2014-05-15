@@ -1,3 +1,16 @@
+2014-05-14  Tim Horton  <timothy_horton@apple.com>
+
+        Enable IOSurface view snapshots for 10.9+
+        https://bugs.webkit.org/show_bug.cgi?id=132932
+        <rdar://problem/16900619>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/mac/ViewSnapshotStore.h:
+        r166005 unintentionally worked around <rdar://problem/16734031>.
+        r168689 fixed another bug that caused sometimes randomly white snapshots.
+        It's safe to turn on IOSurface view snapshots where purgeability is supported.
+
 2014-05-14  Alexey Proskuryakov  <ap@apple.com>
 
         Use the correct client in WebPageProxy::unwrapCryptoKey

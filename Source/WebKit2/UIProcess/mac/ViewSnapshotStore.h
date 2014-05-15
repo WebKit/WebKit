@@ -36,8 +36,12 @@
 
 OBJC_CLASS CAContext;
 
-// FIXME: Enable IOSurface snapshots for 10.9+ when <rdar://problem/16734031> is resolved.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#define USE_JPEG_VIEW_SNAPSHOTS false
+#define USE_IOSURFACE_VIEW_SNAPSHOTS true
+#define USE_RENDER_SERVER_VIEW_SNAPSHOTS false
+#elif PLATFORM(MAC)
+// Mountain Lion and before do not support IOSurface purgeability.
 #define USE_JPEG_VIEW_SNAPSHOTS true
 #define USE_IOSURFACE_VIEW_SNAPSHOTS false
 #define USE_RENDER_SERVER_VIEW_SNAPSHOTS false
