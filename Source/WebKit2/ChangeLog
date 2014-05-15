@@ -1,3 +1,20 @@
+2014-05-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] WKWebView sends invalid content offsets at the end of animated resize
+        https://bugs.webkit.org/show_bug.cgi?id=132941
+        <rdar://problem/16921557>
+
+        Reviewed by Tim Horton.
+
+        Since we cannot change the scale and content inset simultaneously while accounting for the obscured insets,
+        we end up with invalid contentOffsets.
+
+        To work around the problem, change the content scale outside of UIScrollView to ensure none of the side effect
+        happens.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _endAnimatedResize]):
+
 2014-05-15  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Zoom): Document size changes during zoom gesture cause erratic scrolling

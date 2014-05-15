@@ -1605,10 +1605,20 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         contentViewLayer.sublayerTransform = CATransform3DIdentity;
 
         CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
-        CGFloat currentScale = [[_resizeAnimationView layer] transform].m11 * [[_contentView layer] transform].m11;
-        CGPoint currentScrollOffset = [_scrollView contentOffset];
-        [_scrollView setZoomScale:adjustmentScale * currentScale];
+        CALayer *contentLayer = [_contentView layer];
+        CATransform3D contentLayerTransform = contentLayer.transform;
+        CGFloat currentScale = [[_resizeAnimationView layer] transform].m11 * contentLayerTransform.m11;
 
+        // We cannot use [UIScrollView setZoomScale:] directly because the UIScrollView delegate would get a callback with
+        // an invalid contentOffset. The real content offset is only set below.
+        // Since there is no public API for setting both the zoomScale and the contentOffset, we set the zoomScale manually
+        // on the zoom layer and then only change the contentOffset.
+        CGFloat adjustedScale = adjustmentScale * currentScale;
+        contentLayerTransform.m11 = adjustedScale;
+        contentLayerTransform.m22 = adjustedScale;
+        contentLayer.transform = contentLayerTransform;
+
+        CGPoint currentScrollOffset = [_scrollView contentOffset];
         double horizontalScrollAdjustement = _resizeAnimationTransformAdjustments.m41 * animatingScaleTarget;
         double verticalScrollAdjustment = _resizeAnimationTransformAdjustments.m42 * animatingScaleTarget;
 
