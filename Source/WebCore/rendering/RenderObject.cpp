@@ -54,7 +54,8 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
-#include "RenderNamedFlowThread.h"
+#include "RenderNamedFlowFragment.h"
+#include "RenderNamedFlowThread.h" 
 #include "RenderSVGResourceContainer.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTheme.h"
@@ -2471,6 +2472,22 @@ bool RenderObject::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const
 {
     ASSERT_NOT_REACHED();
     return false;
+}
+
+RenderNamedFlowFragment* RenderObject::currentRenderNamedFlowFragment() const
+{
+    if (flowThreadState() == NotInsideFlowThread)
+        return nullptr;
+
+    RenderFlowThread* flowThread = view().flowThreadController().currentRenderFlowThread();
+    if (!flowThread)
+        return nullptr;
+
+    ASSERT(flowThread == flowThreadContainingBlock());
+    ASSERT(flowThread->currentRegion() && flowThread->currentRegion()->isRenderNamedFlowFragment());
+
+    RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(flowThread->currentRegion());
+    return namedFlowFragment;
 }
 
 } // namespace WebCore

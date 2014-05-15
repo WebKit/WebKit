@@ -218,6 +218,8 @@ public:
         return locateFlowThreadContainingBlock();
     }
 
+    RenderNamedFlowFragment* currentRenderNamedFlowFragment() const;
+
     // FIXME: The meaning of this function is unclear.
     virtual bool isEmpty() const { return !firstChildSlow(); }
 
