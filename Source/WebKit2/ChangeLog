@@ -1,3 +1,17 @@
+2014-05-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Compile all installed resources as GResources
+        https://bugs.webkit.org/show_bug.cgi?id=131099
+
+        Reviewed by Philippe Normand.
+
+        It avoids conflicts with old WebKit versions, and resources are
+        always found even without installing or using environment variables.
+
+        * PlatformGTK.cmake: Add rules to write the xml file with the
+        resources depending on the configure options and to generate and
+        build the GResources file.
+
 2014-05-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Fix an unit test of ewk_context_url_scheme_register()

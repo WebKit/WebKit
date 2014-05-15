@@ -17,6 +17,7 @@ set(WebKit2_USE_PREFIX_HEADER ON)
 list(APPEND WebKit2_SOURCES
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.c
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2InspectorGResourceBundle.c
+    ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2ResourcesGResourceBundle.c
 
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.cpp
@@ -501,6 +502,47 @@ add_custom_command(
     DEPENDS ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml
             ${WEBKIT2_DIR}/UIProcess/InspectorServer/front-end/inspectorPageIndex.html
     COMMAND glib-compile-resources --generate --sourcedir=${WEBKIT2_DIR}/UIProcess/InspectorServer/front-end --target=${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2InspectorGResourceBundle.c ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml
+    VERBATIM
+)
+
+set(WebKit2Resources
+    "        <file alias=\"images/deleteButton\">deleteButton.png</file>\n"
+    "        <file alias=\"images/missingImage\">missingImage.png</file>\n"
+    "        <file alias=\"images/panIcon\">panIcon.png</file>\n"
+    "        <file alias=\"images/textAreaResizeCorner\">textAreaResizeCorner.png</file>\n"
+)
+
+if (ENABLE_ICONDATABASE)
+    list(APPEND WebKit2Resources
+        "        <file alias=\"images/urlIcon\">urlIcon.png</file>\n"
+    )
+endif ()
+
+if (ENABLE_INPUT_SPEECH)
+    list(APPEND WebKit2Resources
+        "        <file alias=\"images/inputSpeech\">inputSpeech.png</file>\n"
+    )
+endif ()
+
+if (ENABLE_WEB_AUDIO)
+    list(APPEND WebKit2Resources
+        "        <file alias=\"audio/Composite\">Composite.wav</file>\n"
+    )
+endif ()
+
+file(WRITE ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2ResourcesGResourceBundle.xml
+    "<?xml version=1.0 encoding=UTF-8?>\n"
+    "<gresources>\n"
+    "    <gresource prefix=\"/org/webkitgtk/resources\">\n"
+    ${WebKit2Resources}
+    "    </gresource>\n"
+    "</gresources>\n"
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2ResourcesGResourceBundle.c
+    DEPENDS ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2ResourcesGResourceBundle.xml
+    COMMAND glib-compile-resources --generate --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/Resources --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources --target=${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2ResourcesGResourceBundle.c ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2ResourcesGResourceBundle.xml
     VERBATIM
 )
 

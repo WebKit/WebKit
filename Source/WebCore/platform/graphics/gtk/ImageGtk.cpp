@@ -26,49 +26,31 @@
 #include "config.h"
 
 #include "BitmapImage.h"
-#include "FileSystem.h"
 #include "GUniquePtrGtk.h"
 #include "GdkCairoUtilities.h"
 #include "SharedBuffer.h"
-#include <wtf/gobject/GUniquePtr.h>
-#include <wtf/text/CString.h>
 #include <cairo.h>
 #include <gtk/gtk.h>
+#include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace WebCore {
 
-static char* getPathToImageResource(char* resource)
+static PassRefPtr<Image> loadImageFromGResource(const char* iconName)
 {
-    if (g_getenv("WEBKIT_TOP_LEVEL"))
-        return g_build_filename(g_getenv("WEBKIT_TOP_LEVEL"), "Source", "WebCore", "Resources", resource, NULL);
-
-    return g_build_filename(sharedResourcesPath().data(), "images", resource, NULL);
+    RefPtr<BitmapImage> icon = BitmapImage::create();
+    GUniquePtr<char> path(g_strdup_printf("/org/webkitgtk/resources/images/%s", iconName));
+    GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(path.get(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
+    ASSERT(data);
+    icon->setData(SharedBuffer::create(static_cast<const unsigned char*>(g_bytes_get_data(data.get(), nullptr)), g_bytes_get_size(data.get())), true);
+    return icon.release();
 }
 
-static CString getThemeIconFileName(const char* name, int size)
-{
-    GtkIconInfo* iconInfo = gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(),
-                                                       name, size, GTK_ICON_LOOKUP_NO_SVG);
-    // Try to fallback on MISSING_IMAGE.
-    if (!iconInfo)
-        iconInfo = gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(),
-                                              GTK_STOCK_MISSING_IMAGE, size,
-                                              GTK_ICON_LOOKUP_NO_SVG);
-    if (iconInfo) {
-        GUniquePtr<GtkIconInfo> info(iconInfo);
-        return CString(gtk_icon_info_get_filename(info.get()));
-    }
-
-    // No icon was found, this can happen if not GTK theme is set. In
-    // that case an empty Image will be created.
-    return CString();
-}
-
-static PassRefPtr<SharedBuffer> loadResourceSharedBuffer(CString name)
+static PassRefPtr<SharedBuffer> loadResourceSharedBuffer(const char* filename)
 {
     GUniqueOutPtr<gchar> content;
     gsize length;
-    if (!g_file_get_contents(name.data(), &content.outPtr(), &length, 0))
+    if (!g_file_get_contents(filename, &content.outPtr(), &length, nullptr))
         return SharedBuffer::create();
 
     return SharedBuffer::create(content.get(), length);
@@ -78,33 +60,22 @@ void BitmapImage::invalidatePlatformData()
 {
 }
 
-PassRefPtr<Image> loadImageFromFile(CString fileName)
+static PassRefPtr<Image> loadMissingImageIconFromTheme()
 {
-    RefPtr<BitmapImage> img = BitmapImage::create();
-    if (!fileName.isNull()) {
-        RefPtr<SharedBuffer> buffer = loadResourceSharedBuffer(fileName);
-        img->setData(buffer.release(), true);
+    RefPtr<BitmapImage> icon = BitmapImage::create();
+    GUniquePtr<GtkIconInfo> iconInfo(gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(), GTK_STOCK_MISSING_IMAGE, 16, GTK_ICON_LOOKUP_NO_SVG));
+    if (iconInfo) {
+        RefPtr<SharedBuffer> buffer = loadResourceSharedBuffer(gtk_icon_info_get_filename(iconInfo.get()));
+        icon->setData(buffer.release(), true);
+        return icon.release();
     }
-    return img.release();
+
+    return loadImageFromGResource("missingImage");
 }
 
 PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 {
-    CString fileName;
-    if (!strcmp("missingImage", name))
-        fileName = getThemeIconFileName(GTK_STOCK_MISSING_IMAGE, 16);
-    if (fileName.isNull()) {
-        GUniquePtr<gchar> imageName(g_strdup_printf("%s.png", name));
-        GUniquePtr<gchar> glibFileName(getPathToImageResource(imageName.get()));
-        fileName = glibFileName.get();
-    }
-
-    return loadImageFromFile(fileName);
-}
-
-PassRefPtr<Image> Image::loadPlatformThemeIcon(const char* name, int size)
-{
-    return loadImageFromFile(getThemeIconFileName(name, size));
+    return !strcmp("missingImage", name) ? loadMissingImageIconFromTheme() : loadImageFromGResource(name);
 }
 
 GdkPixbuf* BitmapImage::getGdkPixbuf()
