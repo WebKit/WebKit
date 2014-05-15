@@ -1,3 +1,16 @@
+2014-05-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r168750.
+        https://bugs.webkit.org/show_bug.cgi?id=132935
+
+        Caused repaint bugs (Requested by weinig on #webkit).
+
+        Reverted changeset:
+
+        "Text decorations do not contribute to visual overflow"
+        https://bugs.webkit.org/show_bug.cgi?id=132773
+        http://trac.webkit.org/changeset/168750
+
 2014-05-14  Simon Fraser  <simon.fraser@apple.com>
 
         [New multicolumn] Spin in RenderMultiColumnSet::repaintFlowThreadContent()

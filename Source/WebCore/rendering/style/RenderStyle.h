@@ -1936,7 +1936,6 @@ public:
     static ptrdiff_t noninheritedFlagsMemoryOffset() { return OBJECT_OFFSETOF(RenderStyle, noninherited_flags); }
 
 private:
-    bool changeAffectsVisualOverflow(const RenderStyle&) const;
     bool changeRequiresLayout(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
     bool changeRequiresPositionedLayoutOnly(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
     bool changeRequiresLayerRepaint(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
