@@ -162,7 +162,7 @@ if ($llvm) {
     my $useOwnLLVM = 0;
     my $ownLLVMDirectory;
     if (defined($ENV{LLVM_SOURCE_PATH})) {
-        print "Using LLVM from \$LLVM_SOURE_PATH: " . $ENV{LLVM_SOURCE_PATH} . "\n";
+        print "Using LLVM from \$LLVM_SOURCE_PATH: " . $ENV{LLVM_SOURCE_PATH} . "\n";
         $useOwnLLVM = 1;
         $ownLLVMDirectory = $ENV{LLVM_SOURCE_PATH};
     } elsif (-d $llvmSubdirectoryName && -e "$llvmSubdirectoryName/LLVMBuild.txt") {

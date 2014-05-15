@@ -1,3 +1,11 @@
+2014-05-15  Tim Horton  <timothy_horton@apple.com>
+
+        Fix a logging typo in copy-webkitlibraries-to-product-directory
+
+        Reviewed by Dean Jackson.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2014-05-15  David Kilzer  <ddkilzer@apple.com>
 
         TestWebKitAPI: URLExtras.mm should be a shared test for iOS and Mac
