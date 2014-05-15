@@ -1,3 +1,16 @@
+2014-05-15  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] www.wikipedia.org is loading much slower due to FormClient::willBeginInputSession
+        https://bugs.webkit.org/show_bug.cgi?id=132974
+
+        Reviewed by Enrica Casucci.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::elementDidFocus): Don’t call FormClient::willBeginInputSession if the
+        focus isn’t user-initiated, because in that case the UI process will bail out of
+        -_startAssistingNode:userIsInteracting:userObject: before creating an input session and
+        calling the -_webView:didStartInputSession:.
+
 2014-05-15  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] WKWebView sends invalid content offsets at the end of animated resize
