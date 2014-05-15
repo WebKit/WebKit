@@ -254,7 +254,7 @@ public:
             , removedOnCompletion(true)
             , additive(false)
             , reverseTimingFunctions(false)
-            , hasNonZeroBeginTime(false)
+            , hasExplicitBeginTime(false)
         {
         }
 
@@ -277,7 +277,7 @@ public:
         bool removedOnCompletion;
         bool additive;
         bool reverseTimingFunctions;
-        bool hasNonZeroBeginTime;
+        bool hasExplicitBeginTime;
 
         // For basic animations, these vectors have two entries. For keyframe animations, two or more.
         // timingFunctions has n-1 entries.

@@ -1,3 +1,54 @@
+2014-05-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up "has non-zero begin time" terminology in animations
+        https://bugs.webkit.org/show_bug.cgi?id=132942
+
+        Reviewed by Tim Horton.
+
+        Change the "non-zero beginTime" terminology in the platform CA animations
+        code to "explicit beginTime": this flag really means that we explicitly set
+        the beginTime of the animation, rather than let CA set the beginTime when
+        committing the animation. This flag is used for animations with negative
+        delay, and when pausing.
+        
+        The WKNonZeroBeginTimeFlag key was spread across PlatformCALayerMac and PlatformCAAnimationMac,
+        so hide it behind getter/setter functions.
+        
+        Remove lots of m_layer.get() in PlatformCAAnimationMac.
+
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.h:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (WebCore::hasExplicitBeginTime):
+        (WebCore::setHasExplicitBeginTime):
+        (PlatformCAAnimationMac::copy):
+        (PlatformCAAnimationMac::keyPath):
+        (PlatformCAAnimationMac::beginTime):
+        (PlatformCAAnimationMac::setBeginTime):
+        (PlatformCAAnimationMac::duration):
+        (PlatformCAAnimationMac::setDuration):
+        (PlatformCAAnimationMac::speed):
+        (PlatformCAAnimationMac::setSpeed):
+        (PlatformCAAnimationMac::timeOffset):
+        (PlatformCAAnimationMac::setTimeOffset):
+        (PlatformCAAnimationMac::repeatCount):
+        (PlatformCAAnimationMac::setRepeatCount):
+        (PlatformCAAnimationMac::autoreverses):
+        (PlatformCAAnimationMac::setAutoreverses):
+        (PlatformCAAnimationMac::fillMode):
+        (PlatformCAAnimationMac::setFillMode):
+        (PlatformCAAnimationMac::setTimingFunction):
+        (PlatformCAAnimationMac::copyTimingFunctionFrom):
+        (PlatformCAAnimationMac::isRemovedOnCompletion):
+        (PlatformCAAnimationMac::setRemovedOnCompletion):
+        (PlatformCAAnimationMac::isAdditive):
+        (PlatformCAAnimationMac::setAdditive):
+        (PlatformCAAnimationMac::valueFunction):
+        (PlatformCAAnimationMac::setValueFunction):
+        (hasNonZeroBeginTimeFlag): Deleted.
+        (setNonZeroBeginTimeFlag): Deleted.
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (-[WebAnimationDelegate animationDidStart:]):
+
 2014-05-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Compile all installed resources as GResources

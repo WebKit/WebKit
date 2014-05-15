@@ -86,9 +86,6 @@ PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
     return platformCALayer;
 }
 
-// This value must be the same as in PlatformCAAnimationMac.mm
-static NSString * const WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroBeginTimeFlag";
-
 static double mediaTimeToCurrentTime(CFTimeInterval t)
 {
     return monotonicallyIncreasingTime() + t - CACurrentMediaTime();
@@ -111,11 +108,8 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 #if PLATFORM(IOS)
     WebThreadLock();
 #endif
-    // hasNonZeroBeginTime is stored in a key in the animation
-    bool hasNonZeroBeginTime = [[animation valueForKey:WKNonZeroBeginTimeFlag] boolValue];
     CFTimeInterval startTime;
-
-    if (hasNonZeroBeginTime) {
+    if (hasExplicitBeginTime(animation)) {
         // We don't know what time CA used to commit the animation, so just use the current time
         // (even though this will be slightly off).
         startTime = mediaTimeToCurrentTime(CACurrentMediaTime());

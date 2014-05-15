@@ -1,3 +1,26 @@
+2014-05-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up "has non-zero begin time" terminology in animations
+        https://bugs.webkit.org/show_bug.cgi?id=132942
+
+        Reviewed by Tim Horton.
+
+        Change the "non-zero beginTime" terminology in the platform CA animations
+        code to "explicit beginTime": this flag really means that we explicitly set
+        the beginTime of the animation, rather than let CA set the beginTime when
+        committing the animation. This flag is used for animations with negative
+        delay, and when pausing.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (-[WKAnimationDelegate animationDidStart:]):
+        (WebKit::PlatformCAAnimationRemote::Properties::encode):
+        (WebKit::PlatformCAAnimationRemote::Properties::decode):
+        (WebKit::PlatformCAAnimationRemote::setBeginTime):
+        (WebKit::addAnimationToLayer):
+
 2014-05-15  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] Incremental updates during scroll-to-top shouldn’t count as “stable” updates

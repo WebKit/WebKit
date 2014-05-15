@@ -46,7 +46,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
     return monotonicallyIncreasingTime() + t - CACurrentMediaTime();
 }
 
-static NSString * const WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroBeginTimeFlag";
+static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplicitBeginTimeFlag";
 
 @interface WKAnimationDelegate : NSObject {
     GraphicsLayer::PlatformLayerID _layerID;
@@ -69,10 +69,10 @@ static NSString * const WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroB
 
 - (void)animationDidStart:(CAAnimation *)animation
 {
-    bool hasNonZeroBeginTime = [[animation valueForKey:WKNonZeroBeginTimeFlag] boolValue];
+    bool hasExplicitBeginTime = [[animation valueForKey:WKExplicitBeginTimeFlag] boolValue];
     CFTimeInterval startTime;
 
-    if (hasNonZeroBeginTime) {
+    if (hasExplicitBeginTime) {
         // We don't know what time CA used to commit the animation, so just use the current time
         // (even though this will be slightly off).
         startTime = mediaTimeToCurrentTime(CACurrentMediaTime());
@@ -157,7 +157,7 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::ArgumentEncoder& encoder
     encoder << removedOnCompletion;
     encoder << additive;
     encoder << reverseTimingFunctions;
-    encoder << hasNonZeroBeginTime;
+    encoder << hasExplicitBeginTime;
     
     encoder << keyValues;
     encoder << keyTimes;
@@ -221,7 +221,7 @@ bool PlatformCAAnimationRemote::Properties::decode(IPC::ArgumentDecoder& decoder
     if (!decoder.decode(properties.reverseTimingFunctions))
         return false;
 
-    if (!decoder.decode(properties.hasNonZeroBeginTime))
+    if (!decoder.decode(properties.hasExplicitBeginTime))
         return false;
 
     if (!decoder.decode(properties.keyValues))
@@ -308,7 +308,7 @@ void PlatformCAAnimationRemote::setBeginTime(CFTimeInterval value)
     // to the time at which it fired and we need to know whether
     // or not it was 0 to begin with.
     if (value)
-        m_properties.hasNonZeroBeginTime = value;
+        m_properties.hasExplicitBeginTime = value;
 }
 
 CFTimeInterval PlatformCAAnimationRemote::duration() const
@@ -718,8 +718,8 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
     if (properties.valueFunction != PlatformCAAnimation::NoValueFunction)
         [caAnimation setValueFunction:[CAValueFunction functionWithName:toCAValueFunctionType(properties.valueFunction)]];
     
-    if (properties.hasNonZeroBeginTime)
-        [caAnimation.get()  setValue:@YES forKey:WKNonZeroBeginTimeFlag];
+    if (properties.hasExplicitBeginTime)
+        [caAnimation.get()  setValue:@YES forKey:WKExplicitBeginTimeFlag];
     
     if (layerTreeHost) {
         GraphicsLayer::PlatformLayerID layerID = RemoteLayerTreeHost::layerID(layer);

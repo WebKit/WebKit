@@ -31,6 +31,7 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CAMediaTimingFunction;
+OBJC_CLASS CAAnimation;
 OBJC_CLASS CAPropertyAnimation;
 OBJC_CLASS NSString;
 
@@ -41,6 +42,9 @@ namespace WebCore {
 NSString* toCAFillModeType(PlatformCAAnimation::FillModeType);
 NSString* toCAValueFunctionType(PlatformCAAnimation::ValueFunctionType);
 CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction*, bool reverse);
+
+bool hasExplicitBeginTime(CAAnimation *);
+void setHasExplicitBeginTime(CAAnimation *, bool);
 
 class PlatformCAAnimationMac final : public PlatformCAAnimation {
 public:

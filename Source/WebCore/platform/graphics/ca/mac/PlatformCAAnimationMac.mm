@@ -35,17 +35,16 @@
 
 using namespace WebCore;
 
-// This value must be the same as in PlatformCALayerMac.mm
-static NSString * const WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroBeginTimeFlag";
+static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplicitBeginTimeFlag";
 
-static bool hasNonZeroBeginTimeFlag(const PlatformCAAnimation* animation)
+bool WebCore::hasExplicitBeginTime(CAAnimation *animation)
 {
-    return [[toPlatformCAAnimationMac(animation)->platformAnimation() valueForKey:WKNonZeroBeginTimeFlag] boolValue];
+    return [[animation valueForKey:WKExplicitBeginTimeFlag] boolValue];
 }
 
-static void setNonZeroBeginTimeFlag(PlatformCAAnimation* animation, bool value)
+void WebCore::setHasExplicitBeginTime(CAAnimation *animation, bool value)
 {
-    [toPlatformCAAnimationMac(animation)->platformAnimation() setValue:[NSNumber numberWithBool:value] forKey:WKNonZeroBeginTimeFlag];
+    [animation setValue:[NSNumber numberWithBool:value] forKey:WKExplicitBeginTimeFlag];
 }
     
 NSString* WebCore::toCAFillModeType(PlatformCAAnimation::FillModeType type)
@@ -203,7 +202,7 @@ PassRefPtr<PlatformCAAnimation> PlatformCAAnimationMac::copy() const
     animation->copyTimingFunctionFrom(this);
     animation->setValueFunction(valueFunction());
 
-    setNonZeroBeginTimeFlag(animation.get(), hasNonZeroBeginTimeFlag(this));
+    setHasExplicitBeginTime(toPlatformCAAnimationMac(animation.get())->platformAnimation(), hasExplicitBeginTime(platformAnimation()));
     
     // Copy the specific Basic or Keyframe values
     if (animationType() == Keyframe) {
@@ -225,125 +224,125 @@ PlatformAnimationRef PlatformCAAnimationMac::platformAnimation() const
 
 String PlatformCAAnimationMac::keyPath() const
 {
-    return [m_animation.get() keyPath];
+    return [m_animation keyPath];
 }
 
 CFTimeInterval PlatformCAAnimationMac::beginTime() const
 {
-    return [m_animation.get() beginTime];
+    return [m_animation beginTime];
 }
 
 void PlatformCAAnimationMac::setBeginTime(CFTimeInterval value)
 {
-    [m_animation.get() setBeginTime:value];
+    [m_animation setBeginTime:value];
     
     // Also set a flag to tell us if we've passed in a 0 value. 
     // The flag is needed because later beginTime will get changed
     // to the time at which it fired and we need to know whether
     // or not it was 0 to begin with.
     if (value)
-        setNonZeroBeginTimeFlag(this, true);
+        setHasExplicitBeginTime(m_animation.get(), true);
 }
 
 CFTimeInterval PlatformCAAnimationMac::duration() const
 {
-    return [m_animation.get() duration];
+    return [m_animation duration];
 }
 
 void PlatformCAAnimationMac::setDuration(CFTimeInterval value)
 {
-    [m_animation.get() setDuration:value];
+    [m_animation setDuration:value];
 }
 
 float PlatformCAAnimationMac::speed() const
 {
-    return [m_animation.get() speed];
+    return [m_animation speed];
 }
 
 void PlatformCAAnimationMac::setSpeed(float value)
 {
-    [m_animation.get() setSpeed:value];
+    [m_animation setSpeed:value];
 }
 
 CFTimeInterval PlatformCAAnimationMac::timeOffset() const
 {
-    return [m_animation.get() timeOffset];
+    return [m_animation timeOffset];
 }
 
 void PlatformCAAnimationMac::setTimeOffset(CFTimeInterval value)
 {
-    [m_animation.get() setTimeOffset:value];
+    [m_animation setTimeOffset:value];
 }
 
 float PlatformCAAnimationMac::repeatCount() const
 {
-    return [m_animation.get() repeatCount];
+    return [m_animation repeatCount];
 }
 
 void PlatformCAAnimationMac::setRepeatCount(float value)
 {
-    [m_animation.get() setRepeatCount:value];
+    [m_animation setRepeatCount:value];
 }
 
 bool PlatformCAAnimationMac::autoreverses() const
 {
-    return [m_animation.get() autoreverses];
+    return [m_animation autoreverses];
 }
 
 void PlatformCAAnimationMac::setAutoreverses(bool value)
 {
-    [m_animation.get() setAutoreverses:value];
+    [m_animation setAutoreverses:value];
 }
 
 PlatformCAAnimation::FillModeType PlatformCAAnimationMac::fillMode() const
 {
-    return fromCAFillModeType([m_animation.get() fillMode]);
+    return fromCAFillModeType([m_animation fillMode]);
 }
 
 void PlatformCAAnimationMac::setFillMode(FillModeType value)
 {
-    [m_animation.get() setFillMode:toCAFillModeType(value)];
+    [m_animation setFillMode:toCAFillModeType(value)];
 }
 
 void PlatformCAAnimationMac::setTimingFunction(const TimingFunction* value, bool reverse)
 {
-    [m_animation.get() setTimingFunction:toCAMediaTimingFunction(value, reverse)];
+    [m_animation setTimingFunction:toCAMediaTimingFunction(value, reverse)];
 }
 
 void PlatformCAAnimationMac::copyTimingFunctionFrom(const PlatformCAAnimation* value)
 {
-    [m_animation.get() setTimingFunction:[toPlatformCAAnimationMac(value)->m_animation.get() timingFunction]];
+    [m_animation setTimingFunction:[toPlatformCAAnimationMac(value)->m_animation.get() timingFunction]];
 }
 
 bool PlatformCAAnimationMac::isRemovedOnCompletion() const
 {
-    return [m_animation.get() isRemovedOnCompletion];
+    return [m_animation isRemovedOnCompletion];
 }
 
 void PlatformCAAnimationMac::setRemovedOnCompletion(bool value)
 {
-    [m_animation.get() setRemovedOnCompletion:value];
+    [m_animation setRemovedOnCompletion:value];
 }
 
 bool PlatformCAAnimationMac::isAdditive() const
 {
-    return [m_animation.get() isAdditive];
+    return [m_animation isAdditive];
 }
 
 void PlatformCAAnimationMac::setAdditive(bool value)
 {
-    [m_animation.get() setAdditive:value];
+    [m_animation setAdditive:value];
 }
 
 PlatformCAAnimation::ValueFunctionType PlatformCAAnimationMac::valueFunction() const
 {
-    CAValueFunction* vf = [m_animation.get() valueFunction];
+    CAValueFunction* vf = [m_animation valueFunction];
     return fromCAValueFunctionType([vf name]);
 }
 
 void PlatformCAAnimationMac::setValueFunction(ValueFunctionType value)
 {
-    [m_animation.get() setValueFunction:[CAValueFunction functionWithName:toCAValueFunctionType(value)]];
+    [m_animation setValueFunction:[CAValueFunction functionWithName:toCAValueFunctionType(value)]];
 }
 
 void PlatformCAAnimationMac::setFromValue(float value)

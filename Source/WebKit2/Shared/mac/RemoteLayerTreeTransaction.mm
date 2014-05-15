@@ -885,8 +885,8 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const PlatformC
     if (animation.reverseTimingFunctions)
         dumpProperty(ts, "reverseTimingFunctions", animation.reverseTimingFunctions);
 
-    if (animation.hasNonZeroBeginTime)
-        dumpProperty(ts, "hasNonZeroBeginTime", animation.hasNonZeroBeginTime);
+    if (animation.hasExplicitBeginTime)
+        dumpProperty(ts, "hasExplicitBeginTime", animation.hasExplicitBeginTime);
 
     ts << "\n";
     ts.increaseIndent();
