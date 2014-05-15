@@ -985,8 +985,16 @@ FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const Flo
             color = Color(color.red(), color.green(), color.blue(), alpha);
         }
 
+        // Don't offset line from bottom of text if scale is less than offsetUnderLineScale.
+        static const float offsetUnderlineScale = 0.4f;
+        float dy = scale < offsetUnderlineScale ? 0 : 1;
+
+        // If we've increased the thickness of the line, make sure to move the location too.
+        if (thickness > 1)
+            dy += roundf(thickness) - 1;
+
         FloatPoint devicePoint = transform.mapPoint(point);
-        FloatPoint deviceOrigin = FloatPoint(roundf(devicePoint.x()), ceilf(devicePoint.y()));
+        FloatPoint deviceOrigin = FloatPoint(roundf(devicePoint.x()), ceilf(devicePoint.y()) + dy);
         origin = transform.inverse().mapPoint(deviceOrigin);
     }
     return FloatRect(origin.x(), origin.y(), width, thickness);
