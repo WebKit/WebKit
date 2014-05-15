@@ -248,6 +248,13 @@ TEST_F(EWK2ViewTest, ewk_view_type_check)
     ASSERT_FALSE(ewk_view_url_set(rectangle, 0));
 }
 
+TEST_F(EWK2ViewTest, ewk_view_add)
+{
+    Evas_Object* view = ewk_view_add(canvas());
+    ASSERT_EQ(ewk_context_default_get(), ewk_view_context_get(view));
+    evas_object_del(view);
+}
+
 TEST_F(EWK2ViewTest, ewk_view_url_get)
 {
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));

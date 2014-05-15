@@ -109,7 +109,7 @@ Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* co
 
 Evas_Object* ewk_view_add(Evas* canvas)
 {
-    return EWKViewCreate(adoptWK(WKContextCreate()).get(), 0, canvas, 0);
+    return ewk_view_add_with_context(canvas, ewk_context_default_get());
 }
 
 Evas_Object* ewk_view_add_with_context(Evas* canvas, Ewk_Context* context)
