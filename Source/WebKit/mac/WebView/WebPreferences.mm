@@ -507,12 +507,12 @@ public:
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
+        [NSNumber numberWithBool:YES],  WebKitRegionBasedColumnsEnabledKey,
 #if !PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitMediaPlaybackRequiresUserGesturePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSuppressesIncrementalRenderingKey,
-        [NSNumber numberWithBool:YES],  WebKitRegionBasedColumnsEnabledKey,
         [NSNumber numberWithBool:YES],  WebKitBackspaceKeyNavigationEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplaySubtitlesPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayCaptionsPreferenceKey,

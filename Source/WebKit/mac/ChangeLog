@@ -1,5 +1,17 @@
 2014-05-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Initialize the WebKitRegionBasedColumnsEnabled pref on iOS WK1
+        https://bugs.webkit.org/show_bug.cgi?id=132969
+
+        Reviewed by Dan Bernstein.
+        
+        Move this outside the #if !PLATFORM(IOS) block.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
+2014-05-15  Simon Fraser  <simon.fraser@apple.com>
+
         Clean up -[WebView _preferencesChanged]
         https://bugs.webkit.org/show_bug.cgi?id=132967
 
