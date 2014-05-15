@@ -51,6 +51,7 @@ public:
     virtual bool tilesWouldChangeForVisibleRect(const FloatRect&) const = 0;
 
     virtual void setTiledScrollingIndicatorPosition(const FloatPoint&) = 0;
+    virtual void setTopContentInset(float) = 0;
 
     virtual void prepopulateRect(const FloatRect&) = 0;
 

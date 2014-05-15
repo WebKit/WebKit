@@ -69,6 +69,7 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_hasTilesWithTemporaryScaleFactor(false)
     , m_tileDebugBorderWidth(0)
     , m_indicatorMode(AsyncScrollingIndication)
+    , m_topContentInset(0)
 {
 }
 
@@ -188,6 +189,12 @@ bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleR
     if (bounds().isEmpty())
         return false;
     return tileGrid().tilesWouldChangeForVisibleRect(newVisibleRect, m_visibleRect);
+}
+
+void TileController::setTopContentInset(float topContentInset)
+{
+    m_topContentInset = topContentInset;
+    setTiledScrollingIndicatorPosition(FloatPoint(0, m_topContentInset));
 }
 
 void TileController::setTiledScrollingIndicatorPosition(const FloatPoint& position)

@@ -949,6 +949,9 @@ void FrameView::topContentInsetDidChange()
     updateScrollbars(scrollOffset());
     if (renderView->usesCompositing())
         renderView->compositor().frameViewDidChangeSize();
+
+    if (TiledBacking* tiledBacking = this->tiledBacking())
+        tiledBacking->setTopContentInset(topContentInset());
 }
     
 bool FrameView::hasCompositedContent() const

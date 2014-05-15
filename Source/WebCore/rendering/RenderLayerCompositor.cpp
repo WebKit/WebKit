@@ -838,6 +838,9 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
 #endif
                 if (m_renderView.frameView().frame().settings().backgroundShouldExtendBeyondPage())
                     m_rootContentLayer->setMasksToBounds(false);
+
+                if (TiledBacking* tiledBacking = layer.backing()->tiledBacking())
+                    tiledBacking->setTopContentInset(m_renderView.frameView().topContentInset());
             }
 
             // This layer and all of its descendants have cached repaints rects that are relative to

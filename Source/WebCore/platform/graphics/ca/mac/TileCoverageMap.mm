@@ -36,6 +36,7 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     : m_controller(controller)
     , m_layer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeSimpleLayer, this))
     , m_visibleRectIndicatorLayer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
+    , m_position(FloatPoint(0, controller.topContentInset()))
 {
     m_layer.get().setOpacity(0.75);
     m_layer.get().setAnchorPoint(FloatPoint3D());

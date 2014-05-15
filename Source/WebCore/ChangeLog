@@ -1,3 +1,37 @@
+2014-05-14  Beth Dakin  <bdakin@apple.com>
+
+        Tiled scrolling indicator needs to take topContentInset into account
+        https://bugs.webkit.org/show_bug.cgi?id=132940
+
+        Reviewed by Simon Fraser.
+
+        The tiled scrolling indicator needs to move down by the value of the 
+        topContentInset. This patch makes that happen by caching the topContentInset in 
+        the TileController. This does feel a little silly since there is already a 
+        function called setTiledScrollingIndicatorPosition() on TiledBacking. However, it 
+        was often the case that calling that function had no effect because m_coverageMap 
+        had not yet been created, and then the information was lost. So instead, we cache 
+        the value.
+
+        Set TiledBacking’s copy of topContentInset whenever it changes for the FrameView.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::topContentInsetDidChange):
+
+        New function to set the inset. Use the inset to position the coverage map.
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::setTopContentInset):
+
+        When the coverage map is created, consult the value of the inset.
+        * platform/graphics/ca/mac/TileCoverageMap.mm:
+        (WebCore::TileCoverageMap::TileCoverageMap):
+
+        Once the backing has been ensured, set the inset.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+
 2014-05-14  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r1267628 from branch.
