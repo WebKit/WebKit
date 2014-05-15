@@ -42,9 +42,9 @@
             // This'll keep the output consistent on all platforms.
             if (functionName == "showModalDialog") {
                 if (window.showModalDialog != undefined)
-                    shouldBe("typeof window." + functionName, "object", true);
+                    shouldBe("typeof window." + functionName, "function", true);
             } else
-                shouldBe("typeof window." + functionName, "object");
+                shouldBe("typeof window." + functionName, "function");
 
             document.body.removeChild(iframe);
         }

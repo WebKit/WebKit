@@ -196,6 +196,19 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
         return true;
     }
 
+    // Do prototype lookup early so that functions and attributes in the prototype can have
+    // precedence over the index and name getters.  
+    JSValue proto = thisObject->prototype();
+    if (proto.isObject()) {
+        if (asObject(proto)->getPropertySlot(exec, propertyName, slot)) {
+            if (!allowsAccess) {
+                thisObject->printErrorMessage(errorMessage);
+                slot.setUndefined();
+            }
+            return true;
+        }
+    }
+
     // After this point it is no longer valid to cache any results because of
     // the impure nature of the property accesses which follow. We can move this 
     // statement further down when we add ways to mitigate these impurities with, 
@@ -210,19 +223,6 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     if (thisObject->impl().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))) {
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, childFrameGetter);
         return true;
-    }
-
-    // Do prototype lookup early so that functions and attributes in the prototype can have
-    // precedence over the index and name getters.  
-    JSValue proto = thisObject->prototype();
-    if (proto.isObject()) {
-        if (asObject(proto)->getPropertySlot(exec, propertyName, slot)) {
-            if (!allowsAccess) {
-                thisObject->printErrorMessage(errorMessage);
-                slot.setUndefined();
-            }
-            return true;
-        }
     }
 
     // FIXME: Search the whole frame hierarchy somewhere around here.

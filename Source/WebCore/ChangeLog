@@ -1,3 +1,22 @@
+2014-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Move subframe name getter lookup later in JSDOMWindow::getOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=132922
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        In JSDOMWindow::getOwnPropertySlot, we currently look for the property on the JSDOMWindow, 
+        then we search the window's subframes for name getters, then we look in the window's prototype 
+        chain. Apparently we were doing the lookup in this order to be compatible with Mozilla, but 
+        Mozilla no longer implements this behavior. Instead, they do the lookup on the prototype before 
+        looking for subframe name getters. We should change this to match Mozilla. This has the convenient 
+        side effect of allowing us to cache lookups in the window's prototype chain.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+
 2014-05-15  Simon Fraser  <simon.fraser@apple.com>
 
         [UI-side compositing] Fix copying animations between layers, and pausing them

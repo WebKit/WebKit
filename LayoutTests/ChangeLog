@@ -1,3 +1,26 @@
+2014-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Move subframe name getter lookup later in JSDOMWindow::getOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=132922
+
+        Reviewed by Geoffrey Garen.
+
+        In JSDOMWindow::getOwnPropertySlot, we currently look for the property on the JSDOMWindow, 
+        then we search the window's subframes for name getters, then we look in the window's prototype 
+        chain. Apparently we were doing the lookup in this order to be compatible with Mozilla, but 
+        Mozilla no longer implements this behavior. Instead, they do the lookup on the prototype before 
+        looking for subframe name getters. We should change this to match Mozilla. This has the convenient 
+        side effect of allowing us to cache lookups in the window's prototype chain.
+
+        * fast/dom/Window/window-function-frame-getter-precedence-expected.txt: Rebaseline to account
+        for change in behavior.
+        * fast/dom/Window/window-function-frame-getter-precedence.html:
+        * http/tests/security/document-all-expected.txt: Rebaseline due to the presenece of a security check
+        that was previously not done with the old behavior.
+        * http/tests/security/window-named-proto-expected.txt: Ditto.
+        * http/tests/security/window-named-valueOf-expected.txt: Ditto.
+        * http/tests/security/xss-DENIED-window-name-alert.html: Changed test so it actually tests named getters.
+
 2014-05-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r168893.
