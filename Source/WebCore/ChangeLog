@@ -1,3 +1,27 @@
+2014-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSDOMWindow should not claim HasImpureGetOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=132918
+
+        Reviewed by Geoffrey Garen.
+
+        Tests: js/cached-window-properties.html
+               js/cached-window-prototype-properties.html
+
+        We now correctly handle the impurity of JSDOMWindow's custom getOwnPropertySlot without needing the 
+        blanket HasImpureGetOwnPropertySlot. We do this through the use of watchpoints and by explicitly forbidding
+        any caching beyond a certain point using PropertySlot::disableCaching. Getting rid of this flag will allow 
+        us to cache many properties/methods on both the JSDOMWindow and its prototype, which are very commonly used 
+        across the web.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (HasComplexGetOwnProperty):
+        (InterfaceRequiresAttributesOnInstance):
+        (InstanceOverridesGetOwnPropertySlot):
+        (GenerateHeader):
+
 2014-05-15  Alexey Proskuryakov  <ap@apple.com>
 
         NetworkProcess crashes at ResourceHandle::continueDidReceiveResponse

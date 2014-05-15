@@ -589,11 +589,11 @@ sub HasComplexGetOwnProperty
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
 
     my $hasImpureNamedGetter = $namedGetterFunction
-        || $interface->extendedAttributes->{"CustomNamedGetter"}
-        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
+        || $interface->extendedAttributes->{"CustomNamedGetter"};
 
     my $hasComplexGetter = $indexedGetterFunction
         || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
+        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
         || $hasImpureNamedGetter;
 
     return 1 if $interface->extendedAttributes->{"CheckSecurity"};
@@ -616,9 +616,9 @@ sub InterfaceRequiresAttributesOnInstance
     # FIXME: We should rearrange how custom named getters and getOwnPropertySlot
     # overrides are handled so that we get the correct semantics and lookup ordering
     my $hasImpureNamedGetter = $namedGetterFunction
-    || $interface->extendedAttributes->{"CustomNamedGetter"}
-    || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
-    return 1 if $hasImpureNamedGetter;
+        || $interface->extendedAttributes->{"CustomNamedGetter"};
+    return 1 if $hasImpureNamedGetter
+        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
 
     # FIXME: These two should be fixed by removing the custom override of message, etc
     return 1 if $interfaceName =~ "Exception";
@@ -727,11 +727,11 @@ sub InstanceOverridesGetOwnPropertySlot
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
 
     my $hasImpureNamedGetter = $namedGetterFunction
-        || $interface->extendedAttributes->{"CustomNamedGetter"}
-        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
+        || $interface->extendedAttributes->{"CustomNamedGetter"};
 
     my $hasComplexGetter = $indexedGetterFunction
         || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
+        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
         || $hasImpureNamedGetter;
 
     return $numInstanceAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"} || $hasComplexGetter;
@@ -891,14 +891,13 @@ sub GenerateHeader
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
 
-    my $hasImpureNamedGetter =
-        $namedGetterFunction
-        || $interface->extendedAttributes->{"CustomNamedGetter"}
-        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
+    my $hasImpureNamedGetter = $namedGetterFunction
+        || $interface->extendedAttributes->{"CustomNamedGetter"};
 
     my $hasComplexGetter =
         $indexedGetterFunction
         || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
+        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
         || $hasImpureNamedGetter;
     
     my $hasGetter = InstanceOverridesGetOwnPropertySlot($interface);

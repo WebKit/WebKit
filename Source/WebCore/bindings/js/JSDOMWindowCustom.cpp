@@ -192,7 +192,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
 
     entry = JSDOMWindow::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
-        slot.setCustom(thisObject, allowsAccess ? entry->attributes() : ReadOnly | DontDelete | DontEnum, entry->propertyGetter());
+        slot.setCacheableCustom(thisObject, allowsAccess ? entry->attributes() : ReadOnly | DontDelete | DontEnum, entry->propertyGetter());
         return true;
     }
 

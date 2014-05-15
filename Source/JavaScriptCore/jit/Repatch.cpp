@@ -1458,6 +1458,9 @@ static bool tryRepatchIn(
         if (structure->typeInfo().newImpurePropertyFiresWatchpoints())
             vm->registerWatchpointForImpureProperty(ident, stubInfo.addWatchpoint(codeBlock));
 
+        if (slot.watchpointSet())
+            slot.watchpointSet()->add(stubInfo.addWatchpoint(codeBlock));
+
         Structure* currStructure = structure;
         WriteBarrier<Structure>* it = chain->head();
         for (unsigned i = 0; i < count; ++i, ++it) {
