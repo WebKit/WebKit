@@ -34,10 +34,12 @@ void VisibleContentRectUpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_exposedRect;
     encoder << m_unobscuredRect;
+    encoder << m_unobscuredRectInScrollViewCoordinates;
     encoder << m_customFixedPositionRect;
     encoder << m_scale;
     encoder << m_updateID;
     encoder << m_inStableState;
+    encoder << m_isChangingObscuredInsetsInteractively;
     encoder << m_timestamp;
     encoder << m_horizontalVelocity;
     encoder << m_verticalVelocity;
@@ -50,6 +52,8 @@ bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, Visible
         return false;
     if (!decoder.decode(result.m_unobscuredRect))
         return false;
+    if (!decoder.decode(result.m_unobscuredRectInScrollViewCoordinates))
+        return false;
     if (!decoder.decode(result.m_customFixedPositionRect))
         return false;
     if (!decoder.decode(result.m_scale))
@@ -57,6 +61,8 @@ bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, Visible
     if (!decoder.decode(result.m_updateID))
         return false;
     if (!decoder.decode(result.m_inStableState))
+        return false;
+    if (!decoder.decode(result.m_isChangingObscuredInsetsInteractively))
         return false;
     if (!decoder.decode(result.m_timestamp))
         return false;

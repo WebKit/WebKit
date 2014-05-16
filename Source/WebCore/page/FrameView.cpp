@@ -177,6 +177,7 @@ FrameView::FrameView(Frame& frame)
     , m_speculativeTilingEnableTimer(this, &FrameView::speculativeTilingEnableTimerFired)
 #if PLATFORM(IOS)
     , m_useCustomFixedPositionLayoutRect(false)
+    , m_useCustomSizeForResizeEvent(false)
 #endif
     , m_hasOverrideViewportSize(false)
     , m_shouldAutoSize(false)
@@ -1213,11 +1214,7 @@ void FrameView::layout(bool allowSubtree)
 
                     m_firstLayout = false;
                     m_firstLayoutCallbackPending = true;
-                    if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
-                        m_lastViewportSize = fixedLayoutSize();
-                    else
-                        m_lastViewportSize = visibleContentRectIncludingScrollbars().size();
-
+                    m_lastViewportSize = sizeForResizeEvent();
                     m_lastZoomFactor = root->style().zoom();
 
                     // Set the initial vMode to AlwaysOn if we're auto.
@@ -2796,6 +2793,17 @@ void FrameView::performPostLayoutTasks()
     sendResizeEventIfNeeded();
 }
 
+IntSize FrameView::sizeForResizeEvent() const
+{
+#if PLATFORM(IOS)
+    if (m_useCustomSizeForResizeEvent)
+        return m_customSizeForResizeEvent;
+#endif
+    if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
+        return fixedLayoutSize();
+    return visibleContentRectIncludingScrollbars().size();
+}
+
 void FrameView::sendResizeEventIfNeeded()
 {
     RenderView* renderView = this->renderView();
@@ -2804,12 +2812,7 @@ void FrameView::sendResizeEventIfNeeded()
     if (frame().page() && frame().page()->chrome().client().isSVGImageChromeClient())
         return;
 
-    IntSize currentSize;
-    if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
-        currentSize = fixedLayoutSize();
-    else
-        currentSize = visibleContentRectIncludingScrollbars().size();
-
+    IntSize currentSize = sizeForResizeEvent();
     float currentZoomFactor = renderView->style().zoom();
     bool shouldSendResizeEvent = !m_firstLayout && (currentSize != m_lastViewportSize || currentZoomFactor != m_lastZoomFactor);
 
@@ -4156,6 +4159,13 @@ bool FrameView::updateFixedPositionLayoutRect()
         return true;
     }
     return false;
+}
+
+void FrameView::setCustomSizeForResizeEvent(IntSize customSize)
+{
+    m_useCustomSizeForResizeEvent = true;
+    m_customSizeForResizeEvent = customSize;
+    sendResizeEventIfNeeded();
 }
 
 void FrameView::setScrollVelocity(double horizontalVelocity, double verticalVelocity, double scaleChangeRate, double timestamp)

@@ -41,16 +41,19 @@ public:
         : m_scale(-1)
         , m_updateID(0)
         , m_inStableState(false)
+        , m_isChangingObscuredInsetsInteractively(false)
     {
     }
 
-    VisibleContentRectUpdateInfo(uint64_t updateID, const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate)
+    VisibleContentRectUpdateInfo(uint64_t updateID, const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate)
         : m_exposedRect(exposedRect)
         , m_unobscuredRect(unobscuredRect)
+        , m_unobscuredRectInScrollViewCoordinates(unobscuredRectInScrollViewCoordinates)
         , m_customFixedPositionRect(customFixedPositionRect)
         , m_scale(scale)
         , m_updateID(updateID)
         , m_inStableState(inStableState)
+        , m_isChangingObscuredInsetsInteractively(isChangingObscuredInsetsInteractively)
         , m_timestamp(timestamp)
         , m_horizontalVelocity(horizontalVelocity)
         , m_verticalVelocity(verticalVelocity)
@@ -60,10 +63,12 @@ public:
 
     const WebCore::FloatRect& exposedRect() const { return m_exposedRect; }
     const WebCore::FloatRect& unobscuredRect() const { return m_unobscuredRect; }
+    const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates() const { return m_unobscuredRectInScrollViewCoordinates; }
     const WebCore::FloatRect& customFixedPositionRect() const { return m_customFixedPositionRect; }
     double scale() const { return m_scale; }
     uint64_t updateID() const { return m_updateID; }
     bool inStableState() const { return m_inStableState; }
+    bool isChangingObscuredInsetsInteractively() const { return m_isChangingObscuredInsetsInteractively; }
 
     double timestamp() const { return m_timestamp; }
     double horizontalVelocity() const { return m_horizontalVelocity; }
@@ -76,10 +81,12 @@ public:
 private:
     WebCore::FloatRect m_exposedRect;
     WebCore::FloatRect m_unobscuredRect;
+    WebCore::FloatRect m_unobscuredRectInScrollViewCoordinates;
     WebCore::FloatRect m_customFixedPositionRect;
     double m_scale;
     uint64_t m_updateID;
     bool m_inStableState;
+    bool m_isChangingObscuredInsetsInteractively;
     double m_timestamp;
     double m_horizontalVelocity;
     double m_verticalVelocity;
