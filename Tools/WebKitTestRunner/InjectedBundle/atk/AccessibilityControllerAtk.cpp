@@ -33,7 +33,7 @@
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 
-#include <WebKit2/WKBundlePagePrivate.h>
+#include <WebKit/WKBundlePagePrivate.h>
 #include <atk/atk.h>
 #include <cstdio>
 #include <wtf/gobject/GUniquePtr.h>

@@ -31,21 +31,21 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestInvocation.h"
-#include <WebKit2/WKAuthenticationChallenge.h>
-#include <WebKit2/WKAuthenticationDecisionListener.h>
-#include <WebKit2/WKContextConfigurationRef.h>
-#include <WebKit2/WKContextPrivate.h>
-#include <WebKit2/WKCredential.h>
-#include <WebKit2/WKIconDatabase.h>
-#include <WebKit2/WKNotification.h>
-#include <WebKit2/WKNotificationManager.h>
-#include <WebKit2/WKNotificationPermissionRequest.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKPageGroup.h>
-#include <WebKit2/WKPagePrivate.h>
-#include <WebKit2/WKPreferencesRefPrivate.h>
-#include <WebKit2/WKProtectionSpace.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKAuthenticationChallenge.h>
+#include <WebKit/WKAuthenticationDecisionListener.h>
+#include <WebKit/WKContextConfigurationRef.h>
+#include <WebKit/WKContextPrivate.h>
+#include <WebKit/WKCredential.h>
+#include <WebKit/WKIconDatabase.h>
+#include <WebKit/WKNotification.h>
+#include <WebKit/WKNotificationManager.h>
+#include <WebKit/WKNotificationPermissionRequest.h>
+#include <WebKit/WKNumber.h>
+#include <WebKit/WKPageGroup.h>
+#include <WebKit/WKPagePrivate.h>
+#include <WebKit/WKPreferencesRefPrivate.h>
+#include <WebKit/WKProtectionSpace.h>
+#include <WebKit/WKRetainPtr.h>
 #include <algorithm>
 #include <cstdio>
 #include <ctype.h>
@@ -55,11 +55,11 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(COCOA)
-#include <WebKit2/WKPagePrivateMac.h>
+#include <WebKit/WKPagePrivateMac.h>
 #endif
 
 #if !PLATFORM(COCOA)
-#include <WebKit2/WKTextChecker.h>
+#include <WebKit/WKTextChecker.h>
 #endif
 
 namespace WTR {

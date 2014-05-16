@@ -36,7 +36,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #if ATK_CHECK_VERSION(2,11,90)
-#include <WebKit2/WKBundleFrame.h>
+#include <WebKit/WKBundleFrame.h>
 #endif
 #include <atk/atk.h>
 #include <wtf/Assertions.h>

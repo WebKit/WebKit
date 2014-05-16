@@ -37,10 +37,10 @@
 #include "ewk_view_private.h"
 #include <WebCore/EflInspectorUtilities.h>
 #include <WebCore/NotImplemented.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageGroup.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKViewEfl.h>
+#include <WebKit/WKPage.h>
+#include <WebKit/WKPageGroup.h>
+#include <WebKit/WKString.h>
+#include <WebKit/WKViewEfl.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

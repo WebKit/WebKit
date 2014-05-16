@@ -25,9 +25,9 @@
 
 #include "config.h"
 
-#include <WebKit2/SeccompBroker.h>
-#include <WebKit2/SeccompFilters.h>
-#include <WebKit2/SyscallPolicy.h>
+#include <WebKit/SeccompBroker.h>
+#include <WebKit/SeccompFilters.h>
+#include <WebKit/SyscallPolicy.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>

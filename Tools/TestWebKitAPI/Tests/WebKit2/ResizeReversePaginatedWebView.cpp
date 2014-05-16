@@ -29,9 +29,9 @@
 #include "PlatformWebView.h"
 #include "Test.h"
 #include <JavaScriptCore/JSContextRef.h>
-#include <WebKit2/WKContextPrivate.h>
-#include <WebKit2/WKPagePrivate.h>
-#include <WebKit2/WKSerializedScriptValue.h>
+#include <WebKit/WKContextPrivate.h>
+#include <WebKit/WKPagePrivate.h>
+#include <WebKit/WKSerializedScriptValue.h>
 
 namespace TestWebKitAPI {
 

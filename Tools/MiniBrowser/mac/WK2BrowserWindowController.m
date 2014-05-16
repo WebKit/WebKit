@@ -28,11 +28,11 @@
 #if WK_API_ENABLED
 
 #import "AppDelegate.h"
-#import <WebKit2/WKFrameInfo.h>
-#import <WebKit2/WKNavigationDelegate.h>
-#import <WebKit2/WKUIDelegate.h>
-#import <WebKit2/WKWebView.h>
-#import <WebKit2/WKWebViewPrivate.h>
+#import <WebKit/WKFrameInfo.h>
+#import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKUIDelegate.h>
+#import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewPrivate.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
 static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRemoteLayerTreeDrawingArea";

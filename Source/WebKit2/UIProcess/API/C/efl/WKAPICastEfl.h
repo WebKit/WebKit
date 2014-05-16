@@ -25,11 +25,11 @@
 #endif
 
 #include <WebCore/TextDirection.h>
-#include <WebKit2/WKPopupItem.h>
+#include <WebKit/WKPopupItem.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "WebEvent.h"
-#include <WebKit2/WKEventEfl.h>
+#include <WebKit/WKEventEfl.h>
 #endif
 
 namespace WebKit {

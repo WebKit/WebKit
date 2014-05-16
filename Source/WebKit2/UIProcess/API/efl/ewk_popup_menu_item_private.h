@@ -29,7 +29,7 @@
 #include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
 #include "ewk_popup_menu_item.h"
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 /**
  * \struct  Ewk_Popup_Menu_Item

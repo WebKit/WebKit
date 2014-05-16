@@ -27,8 +27,8 @@
 #define EventSendingController_h
 
 #include "JSWrappable.h"
-#include <WebKit2/WKEvent.h>
-#include <WebKit2/WKGeometry.h>
+#include <WebKit/WKEvent.h>
+#include <WebKit/WKGeometry.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WTR {

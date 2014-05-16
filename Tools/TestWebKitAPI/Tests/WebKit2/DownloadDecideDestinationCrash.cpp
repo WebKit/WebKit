@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
-#include <WebKit2/WKDownload.h>
+#include <WebKit/WKDownload.h>
 
 namespace TestWebKitAPI {
 

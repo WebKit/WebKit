@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <WebKit2/WKBundleInitialize.h>
+#include <WebKit/WKBundleInitialize.h>
 
 #ifdef __cplusplus
 extern "C" {

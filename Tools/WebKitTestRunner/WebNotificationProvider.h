@@ -26,9 +26,9 @@
 #ifndef WebNotificationProvider_h
 #define WebNotificationProvider_h
 
-#include <WebKit2/WKNotificationManager.h>
-#include <WebKit2/WKNotificationProvider.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKNotificationManager.h>
+#include <WebKit/WKNotificationProvider.h>
+#include <WebKit/WKRetainPtr.h>
 #include <wtf/HashSet.h>
 
 namespace WTR {

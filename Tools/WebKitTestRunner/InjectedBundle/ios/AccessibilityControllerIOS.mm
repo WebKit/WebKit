@@ -33,9 +33,9 @@
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
-#import <WebKit2/WKBundle.h>
-#import <WebKit2/WKBundlePage.h>
-#import <WebKit2/WKBundlePagePrivate.h>
+#import <WebKit/WKBundle.h>
+#import <WebKit/WKBundlePage.h>
+#import <WebKit/WKBundlePagePrivate.h>
 
 namespace WTR {
 

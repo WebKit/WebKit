@@ -30,7 +30,7 @@
 #include "WKAPICast.h"
 #include "WebViewEfl.h"
 #include <Evas.h>
-#include <WebKit2/WKImageCairo.h>
+#include <WebKit/WKImageCairo.h>
 
 using namespace WebKit;
 

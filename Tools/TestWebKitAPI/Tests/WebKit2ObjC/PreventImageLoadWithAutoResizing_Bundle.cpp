@@ -28,7 +28,7 @@
 #include "PlatformUtilities.h"
 #include "Test.h"
 
-#include <WebKit2/WKBundlePage.h>
+#include <WebKit/WKBundlePage.h>
 
 #include <wtf/Assertions.h>
 

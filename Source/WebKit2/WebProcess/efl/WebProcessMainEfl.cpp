@@ -36,7 +36,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/SoupNetworkSession.h>
-#include <WebKit2/WebProcess.h>
+#include <WebKit/WebProcess.h>
 #include <libsoup/soup.h>
 #include <runtime/JSCInlines.h>
 #include <unistd.h>

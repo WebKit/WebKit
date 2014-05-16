@@ -28,7 +28,7 @@
 #import "WK1BrowserWindowController.h"
 #import "WK2BrowserWindowController.h"
 #import <WebKit/WebHistory.h>
-#import <WebKit2/WebKit2.h>
+#import <WebKit/WebKit2.h>
 
 static NSString *defaultURL = @"http://www.webkit.org/";
 

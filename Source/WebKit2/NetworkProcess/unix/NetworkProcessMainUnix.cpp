@@ -32,7 +32,7 @@
 #include "WKBase.h"
 #include "WebKit2Initialize.h"
 #include <WebCore/SoupNetworkSession.h>
-#include <WebKit2/NetworkProcess.h>
+#include <WebKit/NetworkProcess.h>
 #include <runtime/InitializeThreading.h>
 #include <stdlib.h>
 #include <wtf/MainThread.h>

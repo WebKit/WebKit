@@ -31,7 +31,7 @@
 #import "StringFunctions.h"
 #import "TestController.h"
 #import <Carbon/Carbon.h>
-#import <WebKit2/WKString.h>
+#import <WebKit/WKString.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSApplication (Details)

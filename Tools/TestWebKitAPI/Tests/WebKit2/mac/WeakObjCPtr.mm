@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import <WebKit2/WeakObjCPtr.h>
+#import <WebKit/WeakObjCPtr.h>
 
 using WebKit::WeakObjCPtr;
 

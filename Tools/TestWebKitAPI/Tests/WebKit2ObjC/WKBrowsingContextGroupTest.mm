@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Test.h"
 
-#import <WebKit2/WKBrowsingContextGroup.h>
+#import <WebKit/WKBrowsingContextGroup.h>
 
 #if WK_API_ENABLED
 

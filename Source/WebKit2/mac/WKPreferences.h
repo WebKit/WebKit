@@ -1,1 +1,1 @@
-#import <WebKit2/WKPreferencesRef.h>
+#import <WebKit/WKPreferencesRef.h>

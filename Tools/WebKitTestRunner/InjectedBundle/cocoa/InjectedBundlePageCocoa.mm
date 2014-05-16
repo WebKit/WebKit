@@ -27,8 +27,8 @@
 #import "InjectedBundlePage.h"
 
 #import "CrashReporterInfo.h"
-#import <WebKit2/WKBundleFrame.h>
-#import <WebKit2/WKURLCF.h>
+#import <WebKit/WKBundleFrame.h>
+#import <WebKit/WKURLCF.h>
 
 namespace WTR {
 

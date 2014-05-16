@@ -28,9 +28,9 @@
 
 #import "TestController.h"
 #import "WebKitTestRunnerDraggingInfo.h"
-#import <WebKit2/WKImageCG.h>
-#import <WebKit2/WKPreferencesPrivate.h>
-#import <WebKit2/WKViewPrivate.h>
+#import <WebKit/WKImageCG.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WTR;

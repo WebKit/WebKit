@@ -28,7 +28,7 @@
 
 #include "WKEvent.h"
 #include "WKPageLoadTypes.h"
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 class EwkView;
 

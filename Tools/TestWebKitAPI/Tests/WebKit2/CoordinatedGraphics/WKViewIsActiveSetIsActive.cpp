@@ -27,10 +27,10 @@
 #include "PlatformUtilities.h"
 #include "Test.h"
 
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKView.h>
+#include <WebKit/WKContext.h>
+#include <WebKit/WKPage.h>
+#include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKView.h>
 
 namespace TestWebKitAPI {
 
@@ -112,7 +112,7 @@ TEST(WebKit2, WKViewIsActive)
     didWebProcessCrash = false;
     didWebProcessRelaunch = false;
 
-    WKRetainPtr<WKURLRef> simpleUrl = adoptWK(Util::createURLForResource("../WebKit2/simple", "html"));
+    WKRetainPtr<WKURLRef> simpleUrl = adoptWK(Util::createURLForResource("../WebKit/simple", "html"));
     WKPageLoadURL(WKViewGetPage(view.get()), simpleUrl.get());
     Util::run(&didFinishLoad);
     didFinishLoad = false;

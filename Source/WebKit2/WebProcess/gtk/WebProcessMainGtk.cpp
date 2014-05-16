@@ -32,7 +32,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/SoupNetworkSession.h>
-#include <WebKit2/WebProcess.h>
+#include <WebKit/WebProcess.h>
 #include <gtk/gtk.h>
 #include <libintl.h>
 #include <libsoup/soup.h>

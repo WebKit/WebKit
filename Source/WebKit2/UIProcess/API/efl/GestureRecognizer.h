@@ -30,7 +30,7 @@
 #if ENABLE(TOUCH_EVENTS)
 #include "EflTypedefs.h"
 #include <WebCore/IntPoint.h>
-#include <WebKit2/WKEventEfl.h>
+#include <WebKit/WKEventEfl.h>
 
 class EwkView;
 

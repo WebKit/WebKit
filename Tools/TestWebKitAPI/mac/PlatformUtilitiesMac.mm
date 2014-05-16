@@ -26,10 +26,10 @@
 #include "config.h"
 #include "PlatformUtilities.h"
 
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKStringCF.h>
-#include <WebKit2/WKURLCF.h>
-#include <WebKit2/WKURLResponseNS.h>
+#include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKStringCF.h>
+#include <WebKit/WKURLCF.h>
+#include <WebKit/WKURLResponseNS.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 

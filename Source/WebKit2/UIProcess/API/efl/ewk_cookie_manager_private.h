@@ -30,7 +30,7 @@
 #include "WKCookieManagerSoup.h"
 #include "WKRetainPtr.h"
 #include "ewk_cookie_manager.h"
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 struct Cookie_Change_Handler {
     Ewk_Cookie_Manager_Changes_Watch_Cb callback;

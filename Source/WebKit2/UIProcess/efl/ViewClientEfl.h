@@ -26,8 +26,8 @@
 #ifndef ViewClientEfl_h
 #define ViewClientEfl_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKGeometry.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKGeometry.h>
 
 class EwkView;
 

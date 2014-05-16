@@ -29,7 +29,7 @@
 
 #include "WKPage.h"
 #include "WKPopupItem.h"
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 class EwkView;
 

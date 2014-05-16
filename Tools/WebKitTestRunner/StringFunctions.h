@@ -29,12 +29,12 @@
 
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScript.h>
+#include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKString.h>
+#include <WebKit/WKStringPrivate.h>
+#include <WebKit/WKURL.h>
 #include <sstream>
 #include <string>
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKStringPrivate.h>
-#include <WebKit2/WKURL.h>
 #include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>

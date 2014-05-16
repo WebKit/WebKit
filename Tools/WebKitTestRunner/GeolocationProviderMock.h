@@ -26,7 +26,7 @@
 #ifndef GeolocationProviderMock_h
 #define GeolocationProviderMock_h
 
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKRetainPtr.h>
 
 namespace WTR {
 

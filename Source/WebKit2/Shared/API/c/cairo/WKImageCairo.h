@@ -27,8 +27,8 @@
 #ifndef WKImageCairo_h
 #define WKImageCairo_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKImage.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKImage.h>
 
 typedef struct _cairo_surface cairo_surface_t;
 

@@ -26,7 +26,7 @@
 #ifndef WKViewEfl_h
 #define WKViewEfl_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 typedef struct _Evas_Event_Mouse_Down Evas_Event_Mouse_Down;
 typedef struct _Evas_Event_Mouse_Move Evas_Event_Mouse_Move;

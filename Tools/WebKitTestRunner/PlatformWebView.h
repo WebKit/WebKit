@@ -26,7 +26,7 @@
 #ifndef PlatformWebView_h
 #define PlatformWebView_h
 
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKRetainPtr.h>
 
 #if defined(__APPLE__) && __APPLE__
 #ifdef __OBJC__

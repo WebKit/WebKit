@@ -39,7 +39,7 @@
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/JSObjectRef.h>
-#import <WebKit2/WKBundleFrame.h>
+#import <WebKit/WKBundleFrame.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 

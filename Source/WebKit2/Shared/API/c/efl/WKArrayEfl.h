@@ -26,7 +26,7 @@
 #ifndef WKArrayEfl_h
 #define WKArrayEfl_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 WK_EXPORT WKArrayRef WKArrayCreateWithEinaList(Eina_List*, WKTypeRef (*createWKType)(void*));
 

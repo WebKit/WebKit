@@ -26,8 +26,8 @@
 #ifndef WKContextSoup_h
 #define WKContextSoup_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKSoupRequestManager.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKSoupRequestManager.h>
 
 #ifdef __cplusplus
 extern "C" {

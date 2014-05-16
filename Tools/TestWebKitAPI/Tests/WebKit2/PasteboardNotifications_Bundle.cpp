@@ -27,10 +27,10 @@
 #include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBundlePage.h>
-#include <WebKit2/WKBundleBackForwardListItem.h>
-#include <WebKit2/WKWebArchive.h>
+#include <WebKit/WKArray.h>
+#include <WebKit/WKBundlePage.h>
+#include <WebKit/WKBundleBackForwardListItem.h>
+#include <WebKit/WKWebArchive.h>
 
 namespace TestWebKitAPI {
 

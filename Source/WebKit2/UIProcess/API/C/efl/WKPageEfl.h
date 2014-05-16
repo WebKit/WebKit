@@ -26,9 +26,9 @@
 #ifndef WKPageEfl_h
 #define WKPageEfl_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKGeometry.h>
-#include <WebKit2/WKPopupItem.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKGeometry.h>
+#include <WebKit/WKPopupItem.h>
 
 #ifdef __cplusplus
 extern "C" {

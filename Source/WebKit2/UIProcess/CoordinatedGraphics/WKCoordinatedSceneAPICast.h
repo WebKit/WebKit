@@ -28,7 +28,7 @@
 #ifndef WKCoordinatedSceneAPICast_h
 #define WKCoordinatedSceneAPICast_h
 
-#include <WebKit2/WKCoordinatedScene.h>
+#include <WebKit/WKCoordinatedScene.h>
 
 namespace WebCore {
 

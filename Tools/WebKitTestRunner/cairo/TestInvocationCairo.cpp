@@ -32,7 +32,7 @@
 #include "PixelDumpSupport.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include <WebKit2/WKImageCairo.h>
+#include <WebKit/WKImageCairo.h>
 #include <cairo/cairo.h>
 #include <cstdio>
 #include <wtf/Assertions.h>

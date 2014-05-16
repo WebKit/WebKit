@@ -28,7 +28,7 @@
 
 #include "WKEinaSharedString.h"
 #include "ewk_object_private.h"
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 #include <wtf/PassRefPtr.h>
 
 /**

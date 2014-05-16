@@ -20,7 +20,7 @@
 #include "config.h"
 
 #include "WebGtkExtensionManager.h"
-#include <WebKit2/WKBundleInitialize.h>
+#include <WebKit/WKBundleInitialize.h>
 
 using namespace WebKit;
 

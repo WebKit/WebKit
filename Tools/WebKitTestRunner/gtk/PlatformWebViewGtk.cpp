@@ -28,8 +28,8 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
-#include <WebKit2/WKImageCairo.h>
-#include <WebKit2/WKViewPrivate.h>
+#include <WebKit/WKImageCairo.h>
+#include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
 
 namespace WTR {

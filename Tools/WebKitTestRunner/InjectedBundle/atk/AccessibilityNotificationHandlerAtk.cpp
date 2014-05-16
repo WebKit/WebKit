@@ -25,9 +25,9 @@
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include "JSWrapper.h"
-#include <WebKit2/WKBundleFrame.h>
-#include <WebKit2/WKBundlePage.h>
-#include <WebKit2/WKBundlePagePrivate.h>
+#include <WebKit/WKBundleFrame.h>
+#include <WebKit/WKBundlePage.h>
+#include <WebKit/WKBundlePagePrivate.h>
 #include <wtf/HashMap.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>

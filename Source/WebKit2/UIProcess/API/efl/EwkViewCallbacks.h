@@ -29,7 +29,7 @@
 #include "WKEinaSharedString.h"
 #include "ewk_view.h"
 #include <Evas.h>
-#include <WebKit2/WKGeometry.h>
+#include <WebKit/WKGeometry.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

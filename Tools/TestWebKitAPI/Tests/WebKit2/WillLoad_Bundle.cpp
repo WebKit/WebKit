@@ -27,8 +27,8 @@
 #include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
-#include <WebKit2/WKBundlePage.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKBundlePage.h>
+#include <WebKit/WKRetainPtr.h>
 
 namespace TestWebKitAPI {
 

@@ -31,7 +31,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebKit2/WKError.h>
+#include <WebKit/WKError.h>
 
 using namespace WebCore;
 

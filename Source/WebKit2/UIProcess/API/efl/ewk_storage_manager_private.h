@@ -29,7 +29,7 @@
 #include "WKKeyValueStorageManager.h"
 #include "WKRetainPtr.h"
 #include "ewk_security_origin_private.h"
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 using namespace WebKit;
 

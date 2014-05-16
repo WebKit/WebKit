@@ -25,10 +25,10 @@
 
 #include "config.h"
 #include "InjectedBundleTest.h"
-#include <WebKit2/WKBundlePageGroup.h>
-#include <WebKit2/WKBundlePrivate.h>
-#include <WebKit2/WKBundleScriptWorld.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKBundlePageGroup.h>
+#include <WebKit/WKBundlePrivate.h>
+#include <WebKit/WKBundleScriptWorld.h>
+#include <WebKit/WKRetainPtr.h>
 #include <assert.h>
 
 namespace TestWebKitAPI {

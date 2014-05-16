@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include <WebKit2/WKStringPrivate.h>
+#include <WebKit/WKStringPrivate.h>
 #include <JavaScriptCore/JSStringRef.h>
 
 namespace TestWebKitAPI {

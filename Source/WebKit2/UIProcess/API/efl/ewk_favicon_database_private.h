@@ -28,7 +28,7 @@
 #define ewk_favicon_database_private_h
 
 #include "WKRetainPtr.h"
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 #include <wtf/HashMap.h>
 
 struct IconChangeCallbackData {

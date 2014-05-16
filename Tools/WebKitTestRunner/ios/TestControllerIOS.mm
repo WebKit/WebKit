@@ -29,7 +29,7 @@
 #import "CrashReporterInfo.h"
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
-#import <WebKit2/WKStringCF.h>
+#import <WebKit/WKStringCF.h>
 #include <wtf/MainThread.h>
 
 namespace WTR {

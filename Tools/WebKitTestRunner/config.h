@@ -29,10 +29,9 @@
 #include "cmakeconfig.h"
 #endif
 
+#include <WebKit/WebKit2_C.h>
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
-
-#include <WebKit2/WebKit2_C.h>
 
 #endif

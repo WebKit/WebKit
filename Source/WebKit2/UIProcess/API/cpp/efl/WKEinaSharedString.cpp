@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WKEinaSharedString.h"
 
-#include <WebKit2/WKAPICast.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
+#include <WebKit/WKAPICast.h>
+#include <WebKit/WKString.h>
+#include <WebKit/WKURL.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;

@@ -27,7 +27,7 @@
 #ifndef WebProcessMainGtk_h
 #define WebProcessMainGtk_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 namespace WebKit {
 

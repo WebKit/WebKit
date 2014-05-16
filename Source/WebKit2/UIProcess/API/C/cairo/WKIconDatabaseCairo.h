@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 typedef struct _cairo_surface cairo_surface_t;
 

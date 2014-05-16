@@ -25,7 +25,7 @@
 #include "WebKitDownloadPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
-#include <WebKit2/WKString.h>
+#include <WebKit/WKString.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 

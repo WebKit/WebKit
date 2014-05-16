@@ -27,8 +27,8 @@
 #define RequestManagerClientEfl_h
 
 #include "ewk_context_private.h"
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKRetainPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 

@@ -26,7 +26,7 @@
 #include "config.h"
 
 #include "InjectedBundle.h"
-#include <WebKit2/WKBundleInitialize.h>
+#include <WebKit/WKBundleInitialize.h>
 
 extern "C"
 void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)

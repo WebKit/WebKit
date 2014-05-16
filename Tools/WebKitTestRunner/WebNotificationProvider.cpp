@@ -26,10 +26,10 @@
 #include "config.h"
 #include "WebNotificationProvider.h"
 
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKNotification.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKSecurityOrigin.h>
+#include <WebKit/WKMutableArray.h>
+#include <WebKit/WKNotification.h>
+#include <WebKit/WKNumber.h>
+#include <WebKit/WKSecurityOrigin.h>
 #include <wtf/Assertions.h>
 
 namespace WTR {

@@ -28,8 +28,8 @@
 
 #if ENABLE(SECCOMP_FILTERS)
 
-#include <WebKit2/SeccompFilters.h>
-#include <WebKit2/SyscallPolicy.h>
+#include <WebKit/SeccompFilters.h>
+#include <WebKit/SyscallPolicy.h>
 
 namespace WebKit {
 

@@ -26,7 +26,7 @@
 #ifndef InjectedBundleController_h
 #define InjectedBundleController_h
 
-#include <WebKit2/WKBundle.h>
+#include <WebKit/WKBundle.h>
 #include <map>
 #include <string>
 

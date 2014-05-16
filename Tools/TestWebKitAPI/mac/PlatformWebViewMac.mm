@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PlatformWebView.h"
 
-#import <WebKit2/WKViewPrivate.h>
+#import <WebKit/WKViewPrivate.h>
 #import <Carbon/Carbon.h>
 
 @interface ActiveOffscreenWindow : NSWindow

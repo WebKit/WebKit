@@ -26,7 +26,7 @@
 #include "config.h"
 
 #include "InjectedBundleTest.h"
-#include <WebKit2/WKBundlePage.h>
+#include <WebKit/WKBundlePage.h>
 
 namespace TestWebKitAPI {
 

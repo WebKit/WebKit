@@ -28,7 +28,7 @@
 #import "Test.h"
 #import "WebKitAgnosticTest.h"
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit2/WKViewPrivate.h>
+#import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 // https://bugs.webkit.org/show_bug.cgi?id=130463

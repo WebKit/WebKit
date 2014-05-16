@@ -29,8 +29,8 @@
 #include "ewk_view_private.h"
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKContext.h>
+#include <WebKit/WKRetainPtr.h>
 #include "Test.h"
 
 namespace TestWebKitAPI {

@@ -71,7 +71,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextCairo.h>
-#include <WebKit2/WKImageCairo.h>
+#include <WebKit/WKImageCairo.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 

@@ -29,7 +29,7 @@
 #include "WKArray.h"
 #include "WKString.h"
 #include <Eina.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKRetainPtr.h>
 #include <wtf/Vector.h>
 
 using namespace WebKit;

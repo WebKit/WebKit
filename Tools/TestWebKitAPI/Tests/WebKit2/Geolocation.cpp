@@ -27,7 +27,7 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKRetainPtr.h>
 #include <string.h>
 #include <vector>
 

@@ -26,7 +26,7 @@
 #ifndef WebProcessMainEfl_h
 #define WebProcessMainEfl_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 namespace WebKit {
 

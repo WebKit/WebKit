@@ -32,9 +32,9 @@
 #include "JSAccessibilityController.h"
 
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <WebKit2/WKBundle.h>
-#include <WebKit2/WKBundlePage.h>
-#include <WebKit2/WKBundlePagePrivate.h>
+#include <WebKit/WKBundle.h>
+#include <WebKit/WKBundlePage.h>
+#include <WebKit/WKBundlePagePrivate.h>
 
 namespace WTR {
 

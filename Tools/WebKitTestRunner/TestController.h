@@ -29,7 +29,7 @@
 #include "GeolocationProviderMock.h"
 #include "WebNotificationProvider.h"
 #include "WorkQueueManager.h"
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKRetainPtr.h>
 #include <string>
 #include <vector>
 #include <wtf/OwnPtr.h>

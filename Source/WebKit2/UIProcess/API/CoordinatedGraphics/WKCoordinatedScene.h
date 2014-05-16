@@ -28,7 +28,7 @@
 #ifndef WKCoordinatedScene_h
 #define WKCoordinatedScene_h
 
-#include <WebKit2/WKGeometry.h>
+#include <WebKit/WKGeometry.h>
 
 #ifdef __cplusplus
 extern "C" {

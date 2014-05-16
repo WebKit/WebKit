@@ -29,9 +29,9 @@
 #include "PlatformWebView.h"
 
 #include "EWebKit2.h"
-#include <WebKit2/WKAPICast.h>
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKViewEfl.h>
+#include <WebKit/WKAPICast.h>
+#include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKViewEfl.h>
 #include <Ecore_Evas.h>
 
 extern bool useX11Window;

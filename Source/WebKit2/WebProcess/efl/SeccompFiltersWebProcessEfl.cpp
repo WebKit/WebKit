@@ -29,7 +29,7 @@
 #if ENABLE(SECCOMP_FILTERS)
 
 #include "WebProcessCreationParameters.h"
-#include <WebKit2/SeccompBroker.h>
+#include <WebKit/SeccompBroker.h>
 #include <sys/types.h>
 #include <unistd.h>
 

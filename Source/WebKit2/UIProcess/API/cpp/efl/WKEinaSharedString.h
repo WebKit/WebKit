@@ -27,8 +27,8 @@
 #define WKEinaSharedString_h
 
 #include <Eina.h>
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKRetainPtr.h>
 
 namespace WebKit {
 

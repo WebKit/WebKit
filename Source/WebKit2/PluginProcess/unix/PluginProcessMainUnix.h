@@ -27,7 +27,7 @@
 #ifndef PluginProcessMainUnix_h
 #define PluginProcessMainUnix_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 namespace WebKit {
 

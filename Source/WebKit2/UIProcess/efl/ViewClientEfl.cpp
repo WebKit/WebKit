@@ -31,9 +31,9 @@
 #include "WebViewportAttributes.h"
 #include "ewk_private.h"
 #include "ewk_view.h"
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKView.h>
-#include <WebKit2/WKViewEfl.h>
+#include <WebKit/WKString.h>
+#include <WebKit/WKView.h>
+#include <WebKit/WKViewEfl.h>
 
 using namespace EwkViewCallbacks;
 using namespace WebCore;

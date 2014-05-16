@@ -26,9 +26,9 @@
 #ifndef InjectedBundlePage_h
 #define InjectedBundlePage_h
 
-#include <WebKit2/WKBundlePage.h>
-#include <WebKit2/WKBundleScriptWorld.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKBundlePage.h>
+#include <WebKit/WKBundleScriptWorld.h>
+#include <WebKit/WKRetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {

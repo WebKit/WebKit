@@ -30,14 +30,14 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestController.h"
+#include <WebKit/WKContextPrivate.h>
+#include <WebKit/WKData.h>
+#include <WebKit/WKDictionary.h>
+#include <WebKit/WKInspector.h>
+#include <WebKit/WKPagePrivate.h>
+#include <WebKit/WKRetainPtr.h>
 #include <climits>
 #include <cstdio>
-#include <WebKit2/WKContextPrivate.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKDictionary.h>
-#include <WebKit2/WKInspector.h>
-#include <WebKit2/WKPagePrivate.h>
-#include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -47,7 +47,7 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include <WebKit2/WKPagePrivateMac.h>
+#include <WebKit/WKPagePrivateMac.h>
 #endif
 
 #include <unistd.h> // For getcwd.

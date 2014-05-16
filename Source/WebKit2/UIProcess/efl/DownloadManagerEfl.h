@@ -27,7 +27,7 @@
 #define DownloadManagerEfl_h
 
 #include "ewk_download_job_private.h"
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKRetainPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 

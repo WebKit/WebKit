@@ -65,7 +65,7 @@
 #include <stdint.h>
 
 #if !PLATFORM(IOS) && !PLATFORM(WIN) && !(PLATFORM(GTK) && !defined(BUILDING_WEBKIT2__))
-#include <WebKit2/WebKit2_C.h>
+#include <WebKit/WebKit2_C.h>
 #endif
 
 #ifdef __clang__

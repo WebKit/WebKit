@@ -23,8 +23,8 @@
 #include "ewk_context.h"
 #include "ewk_object_private.h"
 #include <JavaScriptCore/JSContextRef.h>
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKRetainPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

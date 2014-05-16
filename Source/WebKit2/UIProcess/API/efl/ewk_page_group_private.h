@@ -28,9 +28,9 @@
 
 #include "EflTypedefs.h"
 #include "ewk_object_private.h"
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKURL.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKURL.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

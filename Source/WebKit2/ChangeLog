@@ -1,3 +1,100 @@
+2014-05-16  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        [WK2] Change the remaining framework includes from WebKit2 to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=132956
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/unix/NetworkProcessMainUnix.cpp:
+        * NetworkProcess/unix/NetworkProcessMainUnix.h:
+        * PluginProcess/unix/PluginProcessMainUnix.h:
+        * Shared/API/c/cairo/WKImageCairo.h:
+        * Shared/API/c/cf/WKURLRequestCF.h:
+        * Shared/API/c/cf/WKURLResponseCF.h:
+        * Shared/API/c/efl/WKArrayEfl.cpp:
+        * Shared/API/c/efl/WKArrayEfl.h:
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        * UIProcess/API/C/WKBatteryManager.h:
+        * UIProcess/API/C/WKBatteryStatus.h:
+        * UIProcess/API/C/WKGrammarDetail.h:
+        * UIProcess/API/C/WKTextChecker.h:
+        * UIProcess/API/C/WKVibration.h:
+        * UIProcess/API/C/WKViewportAttributes.h:
+        * UIProcess/API/C/cairo/WKIconDatabaseCairo.h:
+        * UIProcess/API/C/efl/WKAPICastEfl.h:
+        * UIProcess/API/C/efl/WKColorPickerResultListener.h:
+        * UIProcess/API/C/efl/WKEventEfl.h:
+        * UIProcess/API/C/efl/WKPageEfl.h:
+        * UIProcess/API/C/efl/WKPopupItem.h:
+        * UIProcess/API/C/efl/WKPopupMenuListener.h:
+        * UIProcess/API/C/efl/WKViewEfl.cpp:
+        * UIProcess/API/C/efl/WKViewEfl.h:
+        * UIProcess/API/C/gtk/WKFullScreenClientGtk.h:
+        * UIProcess/API/C/gtk/WKInspectorClientGtk.h:
+        * UIProcess/API/C/gtk/WKView.h:
+        * UIProcess/API/C/gtk/WKViewPrivate.h:
+        * UIProcess/API/C/soup/WKContextSoup.h:
+        * UIProcess/API/C/soup/WKCookieManagerSoup.h:
+        * UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.h:
+        * UIProcess/API/C/soup/WKSoupRequestManager.h:
+        * UIProcess/API/Cocoa/WKErrorRecoveryAttempting.h:
+        * UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.h:
+        * UIProcess/API/cpp/efl/WKEinaSharedString.cpp:
+        * UIProcess/API/cpp/efl/WKEinaSharedString.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/API/efl/GestureRecognizer.h:
+        * UIProcess/API/efl/ewk_application_cache_manager_private.h:
+        * UIProcess/API/efl/ewk_auth_request_private.h:
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h:
+        * UIProcess/API/efl/ewk_back_forward_list_private.h:
+        * UIProcess/API/efl/ewk_context_menu_item.cpp:
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_cookie_manager_private.h:
+        * UIProcess/API/efl/ewk_database_manager_private.h:
+        * UIProcess/API/efl/ewk_error_private.h:
+        * UIProcess/API/efl/ewk_favicon_database_private.h:
+        * UIProcess/API/efl/ewk_file_chooser_request_private.h:
+        * UIProcess/API/efl/ewk_page_group_private.h:
+        * UIProcess/API/efl/ewk_popup_menu_item_private.h:
+        * UIProcess/API/efl/ewk_popup_menu_private.h:
+        * UIProcess/API/efl/ewk_security_origin_private.h:
+        * UIProcess/API/efl/ewk_settings_private.h:
+        * UIProcess/API/efl/ewk_storage_manager_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_window_features_private.h:
+        * UIProcess/API/efl/tests/InjectedBundle/injected_bundle_sample.cpp:
+        * UIProcess/API/efl/tests/test_ewk2_eina_shared_string.cpp:
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/CoordinatedGraphics/WKCoordinatedSceneAPICast.h:
+        * UIProcess/efl/BatteryProvider.h:
+        * UIProcess/efl/ContextHistoryClientEfl.h:
+        * UIProcess/efl/DownloadManagerEfl.h:
+        * UIProcess/efl/FindClientEfl.h:
+        * UIProcess/efl/FormClientEfl.h:
+        * UIProcess/efl/PageLoadClientEfl.h:
+        * UIProcess/efl/PagePolicyClientEfl.h:
+        * UIProcess/efl/PageUIClientEfl.h:
+        * UIProcess/efl/RequestManagerClientEfl.h:
+        * UIProcess/efl/TextCheckerClientEfl.h:
+        * UIProcess/efl/VibrationClientEfl.h:
+        * UIProcess/efl/ViewClientEfl.cpp:
+        * UIProcess/efl/ViewClientEfl.h:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        * WebProcess/WebCoreSupport/efl/WebErrorsEfl.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp:
+        * WebProcess/efl/SeccompFiltersWebProcessEfl.cpp:
+        * WebProcess/efl/SeccompFiltersWebProcessEfl.h:
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        * WebProcess/efl/WebProcessMainEfl.h:
+        * WebProcess/gtk/WebGtkInjectedBundleMain.cpp:
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        * WebProcess/gtk/WebProcessMainGtk.h:
+        * mac/WKPreferences.h:
+
 2014-05-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Skip failing unit tests

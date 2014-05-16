@@ -28,8 +28,8 @@
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <WebKit2/WKBundleScriptWorld.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKBundleScriptWorld.h>
+#include <WebKit/WKRetainPtr.h>
 #include <string>
 #include <wtf/PassRefPtr.h>
 

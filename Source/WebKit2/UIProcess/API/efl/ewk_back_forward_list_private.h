@@ -28,7 +28,7 @@
 
 #include "WKRetainPtr.h"
 #include "ewk_back_forward_list_item_private.h"
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 #include <wtf/HashMap.h>
 
 typedef HashMap<WKBackForwardListItemRef, RefPtr<EwkBackForwardListItem> > ItemsMap;

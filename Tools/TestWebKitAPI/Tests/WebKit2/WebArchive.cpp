@@ -27,8 +27,8 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <CoreFoundation/CoreFoundation.h>
-#include <WebKit2/WKURLCF.h>
-#include <WebKit2/WKContextPrivate.h>
+#include <WebKit/WKURLCF.h>
+#include <WebKit/WKContextPrivate.h>
 #include <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {

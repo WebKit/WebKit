@@ -32,7 +32,7 @@
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/TextDirection.h>
 #include <WebCore/Timer.h>
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "GestureRecognizer.h"

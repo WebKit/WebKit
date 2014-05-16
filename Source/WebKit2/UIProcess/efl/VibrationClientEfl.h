@@ -28,7 +28,7 @@
 
 #if ENABLE(VIBRATION)
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 class EwkView;
 

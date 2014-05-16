@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
-#include <WebKit2/WKContextPrivate.h>
+#include <WebKit/WKContextPrivate.h>
 
 namespace TestWebKitAPI {
 

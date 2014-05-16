@@ -27,7 +27,7 @@
 #ifndef FindClientEfl_h
 #define FindClientEfl_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 class EwkView;
 

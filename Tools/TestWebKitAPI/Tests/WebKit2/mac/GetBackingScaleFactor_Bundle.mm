@@ -27,7 +27,7 @@
 
 #import "InjectedBundleTest.h"
 #import "PlatformUtilities.h"
-#import <WebKit2/WKBundlePage.h>
+#import <WebKit/WKBundlePage.h>
 #import <assert.h>
 
 namespace TestWebKitAPI {

@@ -28,7 +28,7 @@
 
 #include "WKApplicationCacheManager.h"
 #include "WKRetainPtr.h"
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 class EwkApplicationCacheManager {
 public:

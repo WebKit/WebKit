@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKWebProcessPlugIn.h>
+#import <WebKit/WKWebProcessPlugIn.h>
 
 #if WK_API_ENABLED
 

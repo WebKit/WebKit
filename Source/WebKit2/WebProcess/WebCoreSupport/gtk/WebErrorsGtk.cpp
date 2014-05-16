@@ -33,7 +33,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebKit2/WKError.h>
+#include <WebKit/WKError.h>
 #include <glib/gi18n-lib.h>
 
 using namespace WebCore;

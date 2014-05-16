@@ -31,7 +31,7 @@
 #import "PoseAsClass.h"
 #import "TestInvocation.h"
 #import "WebKitTestRunnerPasteboard.h"
-#import <WebKit2/WKStringCF.h>
+#import <WebKit/WKStringCF.h>
 #import <mach-o/dyld.h> 
 
 @interface NSSound (Details)

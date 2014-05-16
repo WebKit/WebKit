@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#include "WebKit2/WKView.h"
-#include "WebKit2/WKRetainPtr.h"
+#include "WebKit/WKView.h"
+#include "WebKit/WKRetainPtr.h"
 
 namespace TestWebKitAPI {
 

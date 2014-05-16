@@ -27,9 +27,9 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 
-#import <WebKit2/WKImageCG.h>
-#import <WebKit2/WKViewPrivate.h>
-#import <WebKit2/WKPreferencesPrivate.h>
+#import <WebKit/WKImageCG.h>
+#import <WebKit/WKViewPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <wtf/RetainPtr.h>
 
 @interface WebKitTestRunnerWindow : UIWindow {

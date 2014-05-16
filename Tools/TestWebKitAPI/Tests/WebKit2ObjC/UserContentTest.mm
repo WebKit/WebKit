@@ -30,9 +30,9 @@
 #import "TestBrowsingContextLoadDelegate.h"
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JavaScriptCore.h>
-#import <WebKit2/WKSerializedScriptValue.h>
-#import <WebKit2/WKViewPrivate.h>
-#import <WebKit2/WebKit2.h>
+#import <WebKit/WKSerializedScriptValue.h>
+#import <WebKit/WKViewPrivate.h>
+#import <WebKit/WebKit2.h>
 
 #if WK_API_ENABLED
 

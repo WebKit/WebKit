@@ -26,7 +26,7 @@
 #ifndef FormClientEfl_h
 #define FormClientEfl_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 class EwkView;
 

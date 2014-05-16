@@ -27,8 +27,8 @@
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
 #include "WKEinaSharedString.h"
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
+#include <WebKit/WKString.h>
+#include <WebKit/WKURL.h>
 
 using namespace EWK2UnitTest;
 

@@ -28,7 +28,7 @@
 #import "PlatformUtilities.h"
 #import "SyntheticBackingScaleFactorWindow.h"
 #import "Test.h"
-#import <WebKit2/WKViewPrivate.h>
+#import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {

@@ -31,8 +31,8 @@
 #include "GCController.h"
 #include "TestRunner.h"
 #include "TextInputController.h"
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKRetainPtr.h>
 #include <sstream>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>

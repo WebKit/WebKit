@@ -28,7 +28,7 @@
 #include "PlatformWebView.h"
 #include "Test.h"
 
-#include <WebKit2/WKString.h>
+#include <WebKit/WKString.h>
 
 namespace TestWebKitAPI {
 

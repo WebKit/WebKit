@@ -30,11 +30,11 @@
 #import "PlatformUtilities.h"
 #import "TestBrowsingContextLoadDelegate.h"
 #import "TestProtocol.h"
-#import <WebKit2/WKBrowsingContextGroupPrivate.h>
-#import <WebKit2/WKPreferencesPrivate.h>
-#import <WebKit2/WKRetainPtr.h>
-#import <WebKit2/WKString.h>
-#import <WebKit2/WKViewPrivate.h>
+#import <WebKit/WKBrowsingContextGroupPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKRetainPtr.h>
+#import <WebKit/WKString.h>
+#import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED

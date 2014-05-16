@@ -26,8 +26,8 @@
 #include "config.h"
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
-#include <WebKit2/WKCookieManager.h>
-#include <WebKit2/WKRetainPtr.h>
+#include <WebKit/WKCookieManager.h>
+#include <WebKit/WKRetainPtr.h>
 
 namespace TestWebKitAPI {
 

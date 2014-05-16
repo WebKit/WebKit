@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "InjectedBundleController.h"
-#include <WebKit2/WKBundleInitialize.h>
+#include <WebKit/WKBundleInitialize.h>
 
 #if defined(WIN32) || defined(_WIN32)
 extern "C" __declspec(dllexport) 

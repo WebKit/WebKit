@@ -30,7 +30,7 @@
 #include "InjectedBundlePage.h"
 #include "JSTextInputController.h"
 #include "StringFunctions.h"
-#include <WebKit2/WKBundlePagePrivate.h>
+#include <WebKit/WKBundlePagePrivate.h>
 
 namespace WTR {
 

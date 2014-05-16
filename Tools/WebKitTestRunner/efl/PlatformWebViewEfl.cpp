@@ -23,11 +23,11 @@
 #include "PlatformWebView.h"
 
 #include "EWebKit2.h"
-#include "WebKit2/WKAPICast.h"
+#include "WebKit/WKAPICast.h"
 #include <Ecore_Evas.h>
 #include <WebCore/RefPtrCairo.h>
-#include <WebKit2/WKImageCairo.h>
-#include <WebKit2/WKViewEfl.h>
+#include <WebKit/WKImageCairo.h>
+#include <WebKit/WKViewEfl.h>
 #include <cairo.h>
 
 using namespace WebKit;

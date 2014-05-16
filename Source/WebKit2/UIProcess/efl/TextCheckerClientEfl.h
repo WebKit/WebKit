@@ -30,8 +30,8 @@
 
 #include "TextCheckerEnchant.h"
 #include "Timer.h"
-#include <WebKit2/WKTextChecker.h>
-#include <WebKit2/ewk_text_checker_private.h>
+#include <WebKit/WKTextChecker.h>
+#include <WebKit/ewk_text_checker_private.h>
 
 namespace WebKit {
 

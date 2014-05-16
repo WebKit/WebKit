@@ -24,8 +24,8 @@
  */
 
 #include "config.h"
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKURLResponseCF.h>
+#include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKURLResponseCF.h>
 #include <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {

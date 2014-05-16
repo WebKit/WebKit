@@ -27,7 +27,7 @@
 #define ewk_view_private_h
 
 #include <Evas.h>
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 #ifdef __cplusplus
 extern "C" {

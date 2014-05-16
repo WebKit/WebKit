@@ -27,7 +27,7 @@
 #ifndef NetworkProcessMainUnix_h
 #define NetworkProcessMainUnix_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit/WKBase.h>
 
 namespace WebKit {
 
