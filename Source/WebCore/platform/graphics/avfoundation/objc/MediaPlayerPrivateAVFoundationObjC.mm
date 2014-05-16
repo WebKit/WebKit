@@ -2398,7 +2398,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(RetainPtr<NSArray> me
 {
     m_currentMetaData = metadata && ![metadata isKindOfClass:[NSNull class]] ? metadata : nil;
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(%p) - adding %i cues at time %.2f", this, m_currentMetaData ? static_cast<int>[m_currentMetaData.get() count] : 0, mediaTime);
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(%p) - adding %i cues at time %.2f", this, m_currentMetaData ? static_cast<int>([m_currentMetaData.get() count]) : 0, mediaTime);
 
 #if ENABLE(DATACUE_VALUE)
     if (seeking())
