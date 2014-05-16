@@ -58,6 +58,14 @@ public:
         EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/PluginProcessShim.dylib");
 
 #if USE(APPKIT)
+#if defined(__i386__)
+        // We must set the state of AppleMagnifiedMode before NSApplication initialization so that the value will be in
+        // place before Cocoa startup logic runs and caches the value.
+        NSDictionary *defaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"AppleMagnifiedMode", nil];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+        [defaults release];
+#endif
+
         // Initialize AppKit.
         [NSApplication sharedApplication];
 
