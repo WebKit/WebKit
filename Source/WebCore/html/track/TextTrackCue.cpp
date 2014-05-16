@@ -209,12 +209,17 @@ bool TextTrackCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules 
 
     if (match != IgnoreDuration && endTime() != cue.endTime())
         return false;
-    if (startTime() != cue.startTime())
+    if (!hasEquivalentStartTime(cue))
         return false;
     if (id() != cue.id())
         return false;
 
     return true;
+}
+
+bool TextTrackCue::hasEquivalentStartTime(const TextTrackCue& cue) const
+{
+    return std::abs(std::abs(startTime()) - std::abs(cue.startTime())) < startTimeVariance();
 }
 
 } // namespace WebCore
