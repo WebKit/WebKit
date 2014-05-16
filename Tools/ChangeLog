@@ -1,3 +1,16 @@
+2014-05-15  David Farler  <dfarler@apple.com>
+
+        old-run-webkit-tests: allow specifying a simulator app path
+        https://bugs.webkit.org/show_bug.cgi?id=132975
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/old-run-webkit-tests:
+        (openIPhoneSimulator):
+        Add new --simulator-app command line parameter for specifying the
+        absolute path to the simulator app to launch before starting a
+        session.
+
 2014-05-16  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [webkitpy] In case of multiple bug rollout, all bugs should be reopened, not only the oldest one
