@@ -29,19 +29,21 @@
 
 #import <WebCore/FrameLoaderTypes.h>
 
+namespace WebKit {
+struct NavigationActionData;
+}
+
 @interface WKNavigationAction ()
 
 @property (nonatomic, readwrite, strong) WKFrameInfo *sourceFrame;
 @property (nonatomic, readwrite, strong) WKFrameInfo *targetFrame;
 
-@property (nonatomic, readwrite) WKNavigationType navigationType;
 @property (nonatomic, readwrite, copy) NSURLRequest *request;
 
 @property (nonatomic, readwrite, copy, setter=_setOriginalURL:) NSURL *_originalURL;
-@property (nonatomic, readwrite, getter=_isUserInitiated, setter=_setUserInitiated:) BOOL _userInitiated;
+
+- (instancetype)_initWithNavigationActionData:(const WebKit::NavigationActionData&)navigationActionData;
 
 @end
-
-WKNavigationType toWKNavigationType(WebCore::NavigationType);
 
 #endif

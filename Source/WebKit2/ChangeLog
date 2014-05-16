@@ -1,5 +1,50 @@
 2014-05-16  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168690
+
+    2014-05-13  Anders Carlsson  <andersca@apple.com>
+
+            Add -[WKNavigationAction modifierFlags] and -[WKNavigationAction buttonNumber]
+            https://bugs.webkit.org/show_bug.cgi?id=132880
+            <rdar://problem/16901354>
+
+            Reviewed by Dan Bernstein.
+
+            * Shared/API/Cocoa/WKFoundation.h:
+            Add typedef for older systems.
+
+            * UIProcess/API/Cocoa/WKNavigationAction.h:
+            Add -[WKNavigationAction modifierFlags] and -[WKNavigationAction buttonNumber]
+
+            * UIProcess/API/Cocoa/WKNavigationAction.mm:
+            (toWKNavigationType):
+            This can be static now.
+
+            (toNSEventModifierFlags):
+            Helper to convert WebEvent::Modifiers to NSEventModifierFlags.
+
+            (toNSButtonNumber):
+            Helper to convert WebMouseEvent::Button to an AppKit button number.
+
+            (-[WKNavigationAction initWithNavigationActionData:WebKit::]):
+            New initializer that takes a NavigationActionData and fills in the relevant ivars from it.
+
+            (-[WKNavigationAction _isUserInitiated]):
+            Return the new ivar.
+
+            * UIProcess/API/Cocoa/WKNavigationActionInternal.h:
+            Remove readwrite overrides.
+
+            * UIProcess/Cocoa/NavigationState.mm:
+            (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+            Use initWithNavigationActionData:
+
+            * UIProcess/Cocoa/UIDelegate.mm:
+            (WebKit::UIDelegate::UIClient::createNewPage):
+            Use initWithNavigationActionData:
+
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168637
 
     2014-05-12  Anders Carlsson  <andersca@apple.com>
