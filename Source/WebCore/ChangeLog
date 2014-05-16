@@ -1,5 +1,13 @@
 2014-05-15  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the Apple Mavericks Release, Apple MountainLion Release,
+        Apple MountainLion Release (32-bit Build), EFL, and GTK builds following
+        <http://trac.webkit.org/changeset/168921> (https://bugs.webkit.org/show_bug.cgi?id=132669)
+
+        * dom/ContainerNode.cpp: Include SVGElement.h for the definition of Node::hasTagName(const SVGQualifiedName&).
+
+2014-05-15  Daniel Bates  <dabates@apple.com>
+
         ASSERT_NOT_REACHED() in DocumentOrderedMap::get() when removing SVG subtree
         https://bugs.webkit.org/show_bug.cgi?id=132669
         <rdar://problem/14931432>

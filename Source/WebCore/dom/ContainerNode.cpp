@@ -48,6 +48,7 @@
 #include "ResourceLoadScheduler.h"
 #include "RootInlineBox.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElement.h"
 #include "SVGNames.h"
 #include "SelectorQuery.h"
 #include "TemplateContentDocumentFragment.h"
