@@ -51,9 +51,10 @@ public:
 private:
     ServicesController();
 
-    void refreshExistingServicesTimerFired();
+    void refreshExistingServices();
 
-    RunLoop::Timer<ServicesController> m_refreshExistingServicesTimer;
+    dispatch_queue_t m_refreshQueue;
+    bool m_isRefreshing;
 
     bool m_hasImageServices;
     bool m_hasSelectionServices;

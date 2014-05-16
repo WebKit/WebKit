@@ -57,45 +57,57 @@ ServicesController& ServicesController::shared()
 }
 
 ServicesController::ServicesController()
-    : m_refreshExistingServicesTimer(RunLoop::main(), this, &ServicesController::refreshExistingServicesTimerFired)
+    : m_refreshQueue(dispatch_queue_create("com.apple.WebKit.ServicesController", DISPATCH_QUEUE_SERIAL))
+    , m_isRefreshing(false)
     , m_hasImageServices(false)
     , m_hasSelectionServices(false)
 {
-    m_refreshExistingServicesTimer.startOneShot(0);
+    refreshExistingServices();
 }
 
 void ServicesController::refreshExistingServices(WebContext* context)
 {
-    ASSERT(context);
+    ASSERT_ARG(context, context);
+    ASSERT([NSThread isMainThread]);
 
     m_contextsToNotify.add(context);
-    m_refreshExistingServicesTimer.startOneShot(0);
+    refreshExistingServices();
 }
 
-void ServicesController::refreshExistingServicesTimerFired()
+void ServicesController::refreshExistingServices()
 {
-    static NeverDestroyed<NSImage *> image([[NSImage alloc] init]);
-    RetainPtr<NSSharingServicePicker>  picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ image ]]);
-    [picker setStyle:NSSharingServicePickerStyleRollover];
+    if (m_isRefreshing)
+        return;
 
-    bool hasImageServices = picker.get().menu;
+    m_isRefreshing = true;
+    dispatch_async(m_refreshQueue, ^{
+        static NeverDestroyed<NSImage *> image([[NSImage alloc] init]);
+        RetainPtr<NSSharingServicePicker>  picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ image ]]);
+        [picker setStyle:NSSharingServicePickerStyleRollover];
 
-    static NeverDestroyed<NSAttributedString *> attributedString([[NSAttributedString alloc] initWithString:@"a"]);
-    picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ attributedString ]]);
-    [picker setStyle:NSSharingServicePickerStyleTextSelection];
+        bool hasImageServices = picker.get().menu;
 
-    bool hasSelectionServices = picker.get().menu;
+        static NeverDestroyed<NSAttributedString *> attributedString([[NSAttributedString alloc] initWithString:@"a"]);
+        picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ attributedString ]]);
+        [picker setStyle:NSSharingServicePickerStyleTextSelection];
 
-    bool notifyContexts = (hasImageServices != m_hasImageServices) || (hasSelectionServices != m_hasSelectionServices);
-    m_hasSelectionServices = hasSelectionServices;
-    m_hasImageServices = hasImageServices;
+        bool hasSelectionServices = picker.get().menu;
 
-    if (notifyContexts) {
-        for (const RefPtr<WebContext>& context : m_contextsToNotify)
-            context->sendToAllProcesses(Messages::WebProcess::SetEnabledServices(m_hasImageServices, m_hasSelectionServices));
-    }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            bool notifyContexts = (hasImageServices != m_hasImageServices) || (hasSelectionServices != m_hasSelectionServices);
+            m_hasSelectionServices = hasSelectionServices;
+            m_hasImageServices = hasImageServices;
 
-    m_contextsToNotify.clear();
+            if (notifyContexts) {
+                for (const RefPtr<WebContext>& context : m_contextsToNotify)
+                    context->sendToAllProcesses(Messages::WebProcess::SetEnabledServices(m_hasImageServices, m_hasSelectionServices));
+            }
+
+            m_contextsToNotify.clear();
+
+            m_isRefreshing = false;
+        });
+    });
 }
 
 } // namespace WebKit

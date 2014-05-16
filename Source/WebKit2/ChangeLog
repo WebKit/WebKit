@@ -1,3 +1,22 @@
+2014-05-15  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/132976> Move discovery of sharing services off the main thread
+
+        Discovery of sharing services can require disk access and IPC. Since the interface to
+        ServicesController is already asynchronous, we can easily perform the discovery on a
+        background queue. This can eliminate tens to hundreds of milliseconds worth of work
+        from the main thread when creating the first web process.
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/mac/ServicesController.h:
+        * UIProcess/mac/ServicesController.mm:
+        (WebKit::ServicesController::ServicesController):
+        (WebKit::ServicesController::refreshExistingServices): Bail out early if we're already
+        in the process of refreshing the services. Kick the discovery over to a background queue,
+        with it hopping back to the main queue to update the actual state and notify any contexts
+        that were interested.
+
 2014-05-15  Dan Bernstein  <mitz@apple.com>
 
         Fixed a typo in a comment and updated previous change log entry.
