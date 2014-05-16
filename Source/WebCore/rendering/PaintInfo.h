@@ -40,7 +40,6 @@ namespace WebCore {
 class OverlapTestRequestClient;
 class RenderInline;
 class RenderLayerModelObject;
-class RenderNamedFlowFragment;
 class RenderObject;
 
 typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
@@ -51,14 +50,13 @@ typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
  */
 struct PaintInfo {
     PaintInfo(GraphicsContext* newContext, const LayoutRect& newRect, PaintPhase newPhase, PaintBehavior newPaintBehavior,
-        RenderObject* newSubtreePaintRoot = nullptr, RenderNamedFlowFragment* namedFlowFragment = nullptr, ListHashSet<RenderInline*>* newOutlineObjects = nullptr,
+        RenderObject* newSubtreePaintRoot = nullptr, ListHashSet<RenderInline*>* newOutlineObjects = nullptr,
         OverlapTestRequestMap* overlapTestRequests = nullptr, const RenderLayerModelObject* newPaintContainer = nullptr)
             : context(newContext)
             , rect(newRect)
             , phase(newPhase)
             , paintBehavior(newPaintBehavior)
             , subtreePaintRoot(newSubtreePaintRoot)
-            , renderNamedFlowFragment(namedFlowFragment)
             , outlineObjects(newOutlineObjects)
             , overlapTestRequests(overlapTestRequests)
             , paintContainer(newPaintContainer)
@@ -107,7 +105,6 @@ struct PaintInfo {
     PaintPhase phase;
     PaintBehavior paintBehavior;
     RenderObject* subtreePaintRoot; // used to draw just one element and its visual children
-    RenderNamedFlowFragment* renderNamedFlowFragment;
     ListHashSet<RenderInline*>* outlineObjects; // used to list outlines that should be painted by a block with inline children
     OverlapTestRequestMap* overlapTestRequests;
     const RenderLayerModelObject* paintContainer; // the layer object that originates the current painting

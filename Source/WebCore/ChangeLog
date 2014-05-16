@@ -1,3 +1,88 @@
+2014-05-16  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Reduce the RenderRegion invasiveness in rendering code
+        https://bugs.webkit.org/show_bug.cgi?id=132121
+
+        Reviewed by Antti Koivisto.
+
+        Remove the RenderRegion / RenderNamedFlowFragment parameters and fields from
+        the painting / hit testing data structures and use a stateful approach to
+        correctly handle regions.
+
+        When painting or hit testing, the current flow thread is saved along the current
+        region. They are accessed through the |currentRenderNamedFlowFragment| helper
+        method on RenderObject or RenderLayer.
+
+        The patch also changes a bunch of 0s to nullptrs.
+
+        Tests: No new tests, no functional change.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * rendering/HitTestLocation.cpp:
+        (WebCore::HitTestLocation::HitTestLocation):
+        (WebCore::HitTestLocation::operator=):
+        * rendering/HitTestLocation.h:
+        (WebCore::HitTestLocation::region): Deleted.
+        * rendering/HitTestResult.h:
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::PaintInfo):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::pushContentsClip):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::updatePaintingInfoForFragments):
+        (WebCore::RenderLayer::paintTransformedLayerIntoFragments):
+        (WebCore::RenderLayer::paintBackgroundForFragments):
+        (WebCore::RenderLayer::paintForegroundForFragmentsWithPhase):
+        (WebCore::RenderLayer::paintOutlineForFragments):
+        (WebCore::RenderLayer::paintMaskForFragments):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::hitTestFixedLayersInNamedFlows):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestTransformedLayerInFragments):
+        (WebCore::RenderLayer::mapLayerClipRectsToFragmentationLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::clippedByAncestor):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::currentRenderNamedFlowFragment):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+
 2014-05-16  Kiran  <kiran.guduru@samsung.com>
 
         RTCDtmfSender default values need to be updated.

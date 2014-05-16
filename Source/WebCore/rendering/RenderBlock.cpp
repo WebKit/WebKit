@@ -1462,15 +1462,16 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     
     PaintPhase phase = paintInfo.phase;
 
+    RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
     // Check our region range to make sure we need to be painting in this region.
-    if (paintInfo.renderNamedFlowFragment && !paintInfo.renderNamedFlowFragment->flowThread()->objectShouldFragmentInFlowRegion(this, paintInfo.renderNamedFlowFragment))
+    if (namedFlowFragment && !namedFlowFragment->flowThread()->objectShouldFragmentInFlowRegion(this, namedFlowFragment))
         return;
 
     // Check if we need to do anything at all.
     // FIXME: Could eliminate the isRoot() check if we fix background painting so that the RenderView
     // paints the root's background.
     if (!isRoot()) {
-        LayoutRect overflowBox = overflowRectForPaintRejection(paintInfo.renderNamedFlowFragment);
+        LayoutRect overflowBox = overflowRectForPaintRejection(namedFlowFragment);
         flipForWritingMode(overflowBox);
         overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
         overflowBox.moveBy(adjustedPaintOffset);
@@ -1600,7 +1601,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         if (hasBoxDecorations()) {
             bool didClipToRegion = false;
             
-            if (paintInfo.paintContainer && paintInfo.renderNamedFlowFragment && paintInfo.paintContainer->isRenderNamedFlowThread()) {
+            RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
+            if (paintInfo.paintContainer && namedFlowFragment && paintInfo.paintContainer->isRenderNamedFlowThread()) {
                 // If this box goes beyond the current region, then make sure not to overflow the region.
                 // This (overflowing region X altough also fragmented to region X+1) could happen when one of this box's children
                 // overflows region X and is an unsplittable element (like an image).
@@ -1609,7 +1611,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
                 paintInfo.context->save();
                 didClipToRegion = true;
 
-                paintInfo.context->clip(toRenderNamedFlowThread(paintInfo.paintContainer)->decorationsClipRectForBoxInNamedFlowFragment(*this, *paintInfo.renderNamedFlowFragment));
+                paintInfo.context->clip(toRenderNamedFlowThread(paintInfo.paintContainer)->decorationsClipRectForBoxInNamedFlowFragment(*this, *namedFlowFragment));
             }
 
             paintBoxDecorations(paintInfo, paintOffset);
@@ -1917,9 +1919,10 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         return result;
     }
     
-    if (paintInfo && paintInfo->renderNamedFlowFragment && paintInfo->paintContainer->isRenderFlowThread()) {
+    RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
+    if (paintInfo && namedFlowFragment && paintInfo->paintContainer->isRenderFlowThread()) {
         // Make sure the current object is actually flowed into the region being painted.
-        if (!toRenderFlowThread(paintInfo->paintContainer)->objectShouldFragmentInFlowRegion(this, paintInfo->renderNamedFlowFragment))
+        if (!toRenderFlowThread(paintInfo->paintContainer)->objectShouldFragmentInFlowRegion(this, namedFlowFragment))
             return result;
     }
 
@@ -2457,14 +2460,12 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     LayoutPoint adjustedLocation(accumulatedOffset + location());
     LayoutSize localOffset = toLayoutSize(adjustedLocation);
 
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    RenderNamedFlowFragment* namedFlowFragment = flowThread ? toRenderNamedFlowFragment(flowThread->currentRegion()) : nullptr;
     // If we are now searching inside a region, make sure this element
     // is being fragmented into this region.
-    if (locationInContainer.region()) {
-        RenderFlowThread* flowThread = flowThreadContainingBlock();
-        ASSERT(flowThread);
-        if (!flowThread->objectShouldFragmentInFlowRegion(this, locationInContainer.region()))
-            return false;
-    }
+    if (namedFlowFragment && !flowThread->objectShouldFragmentInFlowRegion(this, namedFlowFragment))
+        return false;
 
     if (!isRenderView()) {
         // Check if we need to do anything at all.
@@ -2521,7 +2522,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // If we have clipping, then we can't have any spillout.
     bool useOverflowClip = hasOverflowClip() && !hasSelfPaintingLayer();
     bool useClip = (hasControlClip() || useOverflowClip);
-    bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, locationInContainer.region(), IncludeOverlayScrollbarSize)));
+    bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, namedFlowFragment, IncludeOverlayScrollbarSize)));
     if (checkChildren) {
         // Hit test descendants first.
         LayoutSize scrolledOffset(localOffset - scrolledContentOffset());

@@ -206,8 +206,9 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (style().visibility() != VISIBLE)
         return false;
     
+    RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
     // Check our region range to make sure we need to be painting in this region.
-    if (paintInfo.renderNamedFlowFragment && !paintInfo.renderNamedFlowFragment->flowThread()->objectShouldFragmentInFlowRegion(this, paintInfo.renderNamedFlowFragment))
+    if (namedFlowFragment && !namedFlowFragment->flowThread()->objectShouldFragmentInFlowRegion(this, namedFlowFragment))
         return false;
 
     LayoutPoint adjustedPaintOffset = paintOffset + location();

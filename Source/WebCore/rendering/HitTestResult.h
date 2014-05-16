@@ -43,7 +43,6 @@ class HTMLMediaElement;
 class Image;
 class URL;
 class Node;
-class RenderRegion;
 class Scrollbar;
 
 class HitTestResult {

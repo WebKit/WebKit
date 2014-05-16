@@ -327,7 +327,7 @@ private:
     void drawBoxSideFromPath(GraphicsContext*, const LayoutRect&, const Path&, const BorderEdge[],
         float thickness, float drawThickness, BoxSide, const RenderStyle&,
         Color, EBorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
-    void paintMaskForTextFillBox(ImageBuffer*, const IntRect&, InlineFlowBox*, const LayoutRect&, RenderNamedFlowFragment*);
+    void paintMaskForTextFillBox(ImageBuffer*, const IntRect&, InlineFlowBox*, const LayoutRect&);
 
     void pixelSnapBackgroundImageGeometryForPainting(BackgroundImageGeometry&) const;
 };

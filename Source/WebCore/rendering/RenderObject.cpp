@@ -54,7 +54,8 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
-#include "RenderNamedFlowThread.h"
+#include "RenderNamedFlowFragment.h"
+#include "RenderNamedFlowThread.h" 
 #include "RenderSVGResourceContainer.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTheme.h"
@@ -2471,6 +2472,26 @@ bool RenderObject::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const
 {
     ASSERT_NOT_REACHED();
     return false;
+}
+
+RenderNamedFlowFragment* RenderObject::currentRenderNamedFlowFragment() const
+{
+    if (flowThreadState() == NotInsideFlowThread)
+        return nullptr;
+
+    RenderFlowThread* flowThread = view().flowThreadController().currentRenderFlowThread();
+    if (!flowThread)
+        return nullptr;
+
+    ASSERT(flowThread == flowThreadContainingBlock());
+
+    // FIXME: Once regions are fully integrated with the compositing system we should uncomment this assert.
+    // This assert needs to be disabled because it's possible to ask for the ancestor clipping rectangle of
+    // a layer without knowing the containing region in advance.
+    // ASSERT(flowThread->currentRegion() && flowThread->currentRegion()->isRenderNamedFlowFragment());
+
+    RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(flowThread->currentRegion());
+    return namedFlowFragment;
 }
 
 } // namespace WebCore

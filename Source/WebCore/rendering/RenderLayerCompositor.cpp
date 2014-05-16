@@ -1019,7 +1019,7 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer&
         boundsComputed = true;
     }
 
-    IntRect clipRect = pixelSnappedIntRect(layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), 0, AbsoluteClipRects)).rect()); // FIXME: Incorrect for CSS regions.
+    IntRect clipRect = pixelSnappedIntRect(layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect()); // FIXME: Incorrect for CSS regions.
 
     // On iOS, pageScaleFactor() is not applied by RenderView, so we should not scale here.
     // FIXME: Set Settings::delegatesPageScaling to true for iOS.
@@ -2336,7 +2336,7 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer& layer) const
             return false;
     }
 
-    return layer.backgroundClipRect(RenderLayer::ClipRectsContext(computeClipRoot, 0, TemporaryClipRects)).rect() != LayoutRect::infiniteRect(); // FIXME: Incorrect for CSS regions.
+    return layer.backgroundClipRect(RenderLayer::ClipRectsContext(computeClipRoot, TemporaryClipRects)).rect() != LayoutRect::infiniteRect(); // FIXME: Incorrect for CSS regions.
 }
 
 // Return true if the given layer is a stacking context and has compositing child
