@@ -1454,6 +1454,16 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
     [CATransaction commit];
 }
 
+static AVAssetTrack* firstEnabledTrack(NSArray* tracks)
+{
+    NSUInteger index = [tracks indexOfObjectPassingTest:^(id obj, NSUInteger, BOOL *) {
+        return [static_cast<AVAssetTrack*>(obj) isEnabled];
+    }];
+    if (index == NSNotFound)
+        return nil;
+    return [tracks objectAtIndex:index];
+}
+
 void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 {
     String primaryAudioTrackLanguage = m_languageOfPrimaryAudioTrack;
@@ -1472,11 +1482,14 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
     if (!m_avPlayerItem) {
         // We don't have a player item yet, so check with the asset because some assets support inspection
         // prior to becoming ready to play.
-        setHasVideo([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicVisual] count]);
-        setHasAudio([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicAudible] count]);
+        AVAssetTrack* firstEnabledVideoTrack = firstEnabledTrack([m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicVisual]);
+        setHasVideo(firstEnabledVideoTrack);
+        setHasAudio(firstEnabledTrack([m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicAudible]));
 #if !HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
         hasCaptions = [[m_avAsset.get() tracksWithMediaType:AVMediaTypeClosedCaption] count];
 #endif
+
+        presentationSizeDidChange(firstEnabledVideoTrack ? IntSize(CGSizeApplyAffineTransform([firstEnabledVideoTrack naturalSize], [firstEnabledVideoTrack preferredTransform])) : IntSize());
     } else {
         bool hasVideo = false;
         bool hasAudio = false;

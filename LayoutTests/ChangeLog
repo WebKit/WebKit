@@ -1,3 +1,13 @@
+2014-05-16  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] naturalSize not updated when preload=metadata
+        https://bugs.webkit.org/show_bug.cgi?id=132994
+
+        Reviewed by Eric Carlson.
+
+        * media/video-load-preload-metadata-naturalsize-expected.txt: Added.
+        * media/video-load-preload-metadata-naturalsize.html: Added.
+
 2014-05-16  Enrique Ocaña González  <eocanha@igalia.com>
 
         Unreviewed GTK gardening.

@@ -1,0 +1,9 @@
+
+Test that preload="metadata" results in the correct naturalSize.
+
+EXPECTED (video.preload == 'metadata') OK
+EVENT(loadedmetadata)
+EXPECTED (video.videoWidth == '320') OK
+EXPECTED (video.videoHeight == '240') OK
+END OF TEST
+
