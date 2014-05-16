@@ -1,3 +1,65 @@
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168555
+
+    2014-05-09  Benjamin Poulain  <benjamin@webkit.org>
+
+            [iOS] Switch geolocation to an explicit authorization query model
+            https://bugs.webkit.org/show_bug.cgi?id=132717
+            <rdar://problem/16762390>
+
+            Reviewed by Sam Weinig.
+
+            WebGeolocationCoreLocationProvider is the general WebKit wrapper for CoreLocation.
+
+            The old model was to start WebGeolocationCoreLocationProvider and have the start fail or succeed.
+            The new model is to explicitely ask for authorization through "requestGeolocationAuthorization", and
+            listen to "geolocationAuthorizationGranted" and "geolocationAuthorizationDenied".
+
+            We assume the client of WebGeolocationCoreLocationProvider is well behaved and ask for authorization
+            before invoking "start".
+            If "start" is called and the authorization is not granted, we assume geolocation was reset since
+            the last time authorization was requested, and we reset the client.
+
+
+            WebGeolocationProviderIOS has been adapted to that model. Instead of doing the "warmup" sequence
+            to get the authorization, it queries WebGeolocationCoreLocationProvider explicitly.
+
+            * Misc/WebGeolocationCoreLocationProvider.h:
+            * Misc/WebGeolocationCoreLocationProvider.mm:
+            (-[WebGeolocationCoreLocationProvider createLocationManager]):
+            (-[WebGeolocationCoreLocationProvider dealloc]):
+            (-[WebGeolocationCoreLocationProvider requestGeolocationAuthorization]):
+            (isAuthorizationGranted):
+            (-[WebGeolocationCoreLocationProvider start]):
+            (-[WebGeolocationCoreLocationProvider stop]):
+            (-[WebGeolocationCoreLocationProvider locationManager:didChangeAuthorizationStatus:]):
+            (-[WebGeolocationCoreLocationProvider setEnableHighAccuracy:]):
+            (-[WebGeolocationCoreLocationProvider handleExternalAuthorizationStatusChange:]): Deleted.
+            * Misc/WebGeolocationProviderIOS.mm:
+            (-[WebGeolocationProviderIOS suspend]):
+            (-[WebGeolocationProviderIOS resume]):
+            (-[WebGeolocationProviderIOS registerWebView:]):
+            (-[WebGeolocationProviderIOS unregisterWebView:]):
+            (-[WebGeolocationProviderIOS setEnableHighAccuracy:]):
+            (-[WebGeolocationProviderIOS initializeGeolocationForWebView:listener:]):
+            (-[WebGeolocationProviderIOS geolocationAuthorizationGranted]):
+            (-[WebGeolocationProviderIOS geolocationAuthorizationDenied]):
+            (-[WebGeolocationProviderIOS stopTrackingWebView:]):
+            (-[WebGeolocationProviderIOS resetGeolocation]):
+            (-[_WebCoreLocationUpdateThreadingProxy geolocationAuthorizationGranted]):
+            (-[_WebCoreLocationUpdateThreadingProxy geolocationAuthorizationDenied]):
+            (-[_WebCoreLocationUpdateThreadingProxy positionChanged:WebCore::]):
+            (-[_WebCoreLocationUpdateThreadingProxy errorOccurred:]):
+            (-[_WebCoreLocationUpdateThreadingProxy resetGeolocation]):
+            (-[WebGeolocationProviderIOS _startCoreLocationDelegate]): Deleted.
+            (-[WebGeolocationProviderIOS _stopCoreLocationDelegateIfNeeded]): Deleted.
+            (-[WebGeolocationProviderIOS cancelWarmUpForWebView:]): Deleted.
+            (-[WebGeolocationProviderIOS geolocationDelegateStarted]): Deleted.
+            (-[WebGeolocationProviderIOS geolocationDelegateUnableToStart]): Deleted.
+            (-[_WebCoreLocationUpdateThreadingProxy geolocationDelegateStarted]): Deleted.
+            (-[_WebCoreLocationUpdateThreadingProxy geolocationDelegateUnableToStart]): Deleted.
+
 2014-04-30  Anders Carlsson  <andersca@apple.com>
 
         Move the legacy WebKit API into WebKitLegacy.framework and move it inside WebKit.framework

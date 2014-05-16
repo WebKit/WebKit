@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,23 +50,34 @@ using namespace WebKit;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
-@interface WKGeolocationProviderIOS ()
--(void)_startUpdating;
--(void)_stopUpdating;
--(void)_setEnableHighAccuracy:(BOOL)enable;
-@end
-
 @interface WKGeolocationProviderIOS (WebGeolocationCoreLocationUpdateListener) <WebGeolocationCoreLocationUpdateListener>
 @end
 
 @interface WKWebAllowDenyPolicyListener : NSObject<WebAllowDenyPolicyListener>
-- (id)initWithProvider:(WKGeolocationProviderIOS*)provider permissionRequestProxy:(PassRefPtr<GeolocationPermissionRequestProxy>)permissionRequestProxy;
+- (id)initWithPermissionRequestProxy:(PassRefPtr<GeolocationPermissionRequestProxy>)permissionRequestProxy;
 - (void)denyOnlyThisRequest NO_RETURN_DUE_TO_ASSERT;
 @end
 
 namespace WebKit {
 void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin*, const String& urlString, id<WebAllowDenyPolicyListener>, UIWindow*);
 };
+
+struct GeolocationRequestData {
+    RefPtr<WebCore::SecurityOrigin> origin;
+    RefPtr<WebFrameProxy> frame;
+    RefPtr<GeolocationPermissionRequestProxy> permissionRequest;
+    RetainPtr<UIWindow> window;
+};
+
+@implementation WKGeolocationProviderIOS {
+    RefPtr<WebGeolocationManagerProxy> _geolocationManager;
+    RetainPtr<WebGeolocationCoreLocationProvider> _coreLocationProvider;
+    BOOL _isWebCoreGeolocationActive;
+    RefPtr<WebGeolocationPosition> _lastActivePosition;
+    Vector<GeolocationRequestData> _requestsWaitingForCoreLocationAuthorization;
+}
+
+#pragma mark - WKGeolocationProvider callbacks implementation.
 
 static void startUpdatingCallback(WKGeolocationManagerRef geolocationManager, const void* clientInfo)
 {
@@ -89,34 +100,6 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     [geolocationProvider _setEnableHighAccuracy:enable];
 }
 
-struct GeolocationRequestData {
-    RefPtr<WebCore::SecurityOrigin> origin;
-    RefPtr<WebFrameProxy> frame;
-    RefPtr<GeolocationPermissionRequestProxy> permissionRequest;
-    RetainPtr<UIWindow> window;
-};
-
-@implementation WKGeolocationProviderIOS {
-    RefPtr<WebGeolocationManagerProxy> _geolocationManager;
-    RetainPtr<WebGeolocationCoreLocationProvider> _coreLocationProvider;
-    BOOL _isWebCoreGeolocationActive;
-    RefPtr<WebGeolocationPosition> _lastActivePosition;
-    Vector<GeolocationRequestData> _requestsWaitingForCoreLocationStart;
-    HashSet<void*> _requestsInWarmUp;
-}
-
--(void)_stopUpdatingIfPossible
-{
-    if (_isWebCoreGeolocationActive)
-        return;
-
-    if (_requestsWaitingForCoreLocationStart.isEmpty() && _requestsInWarmUp.isEmpty()) {
-        [_coreLocationProvider stop];
-        _lastActivePosition.clear();
-    }
-}
-
-#pragma mark - WKGeolocationProvider callbacks implementation.
 -(void)_startUpdating
 {
     _isWebCoreGeolocationActive = YES;
@@ -131,7 +114,8 @@ struct GeolocationRequestData {
 -(void)_stopUpdating
 {
     _isWebCoreGeolocationActive = NO;
-    [self _stopUpdatingIfPossible];
+    [_coreLocationProvider stop];
+    _lastActivePosition.clear();
 }
 
 -(void)_setEnableHighAccuracy:(BOOL)enableHighAccuracy
@@ -168,52 +152,36 @@ struct GeolocationRequestData {
 
 -(void)decidePolicyForGeolocationRequestFromOrigin:(WKSecurityOriginRef)origin frame:(WKFrameRef)frame request:(WKGeolocationPermissionRequestRef)permissionRequest window:(UIWindow*)window
 {
+    // Step 1: ask the user if the app can use Geolocation.
     GeolocationRequestData geolocationRequestData;
     geolocationRequestData.origin = toImpl(origin)->securityOrigin();
     geolocationRequestData.frame = toImpl(frame);
     geolocationRequestData.permissionRequest = toImpl(permissionRequest);
     geolocationRequestData.window = window;
-    _requestsWaitingForCoreLocationStart.append(geolocationRequestData);
-    [_coreLocationProvider start];
+    _requestsWaitingForCoreLocationAuthorization.append(geolocationRequestData);
+    [_coreLocationProvider requestGeolocationAuthorization];
 }
 @end
 
 #pragma mark - WebGeolocationCoreLocationUpdateListener implementation.
 
 @implementation WKGeolocationProviderIOS (WebGeolocationCoreLocationUpdateListener)
-- (void)geolocationDelegateStarted
+
+- (void)geolocationAuthorizationGranted
 {
-    Vector<GeolocationRequestData> requests;
-    requests.swap(_requestsWaitingForCoreLocationStart);
-    HashSet<void*> latestRequestsForWarmup;
-    for (size_t i = 0; i < requests.size(); ++i) {
-        GeolocationPermissionRequestProxy* permissionRequest = requests[i].permissionRequest.get();
-        latestRequestsForWarmup.add(permissionRequest);
-        _requestsInWarmUp.add(permissionRequest);
-    }
-
-    // Start the warmup period in which we keep CoreLocation running while waiting for the user response.
-    const int64_t warmUpTimeoutInterval = 20 * NSEC_PER_SEC;
-    dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, warmUpTimeoutInterval);
-    dispatch_after(when, dispatch_get_main_queue(), ^{
-        HashSet<void*>::const_iterator end = latestRequestsForWarmup.end();
-        for (HashSet<void*>::const_iterator it = latestRequestsForWarmup.begin(); it != end; ++it)
-            _requestsInWarmUp.remove(*it);
-        [self _stopUpdatingIfPossible];
-    });
-
-    for (size_t i = 0; i < requests.size(); ++i) {
-        RetainPtr<WKWebAllowDenyPolicyListener> policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithProvider:self permissionRequestProxy:requests[i].permissionRequest.get()]);
-        decidePolicyForGeolocationRequestFromOrigin(requests[i].origin.get(), requests[i].frame->url(), policyListener.get(), requests[i].window.get());
+    // Step 2: ask the user if the this particular page can use gelocation.
+    Vector<GeolocationRequestData> requests = std::move(_requestsWaitingForCoreLocationAuthorization);
+    for (const auto& request : requests) {
+        RetainPtr<WKWebAllowDenyPolicyListener> policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithPermissionRequestProxy:request.permissionRequest.get()]);
+        decidePolicyForGeolocationRequestFromOrigin(request.origin.get(), request.frame->url(), policyListener.get(), request.window.get());
     }
 }
 
-- (void)geolocationDelegateUnableToStart
+- (void)geolocationAuthorizationDenied
 {
-    for (size_t i = 0; i < _requestsWaitingForCoreLocationStart.size(); ++i)
-        _requestsWaitingForCoreLocationStart[i].permissionRequest->deny();
-    _requestsWaitingForCoreLocationStart.clear();
-    [self _stopUpdatingIfPossible];
+    Vector<GeolocationRequestData> requests = std::move(_requestsWaitingForCoreLocationAuthorization);
+    for (const auto& requestData : requests)
+        requestData.permissionRequest->deny();
 }
 
 - (void)positionChanged:(WebCore::GeolocationPosition*)position
@@ -232,28 +200,19 @@ struct GeolocationRequestData {
     _geolocationManager->resetPermissions();
 }
 
-#pragma mark - Methods for udating the state WKWebAllowDenyPolicyListener
-- (void)permissionDenied:(GeolocationPermissionRequestProxy*)permissionRequestProxy
-{
-    _requestsInWarmUp.remove(permissionRequestProxy);
-    [self _stopUpdatingIfPossible];
-}
-
 @end
 
 # pragma mark - Implementation of WKWebAllowDenyPolicyListener
 @implementation WKWebAllowDenyPolicyListener {
-    RetainPtr<WKGeolocationProviderIOS> _provider;
     RefPtr<GeolocationPermissionRequestProxy> _permissionRequestProxy;
 }
 
-- (id)initWithProvider:(WKGeolocationProviderIOS*)provider permissionRequestProxy:(PassRefPtr<GeolocationPermissionRequestProxy>)permissionRequestProxy
+- (id)initWithPermissionRequestProxy:(PassRefPtr<GeolocationPermissionRequestProxy>)permissionRequestProxy
 {
     self = [super init];
     if (!self)
         return nil;
 
-    _provider = provider;
     _permissionRequestProxy = permissionRequestProxy;
     return self;
 }
@@ -265,7 +224,6 @@ struct GeolocationRequestData {
 
 - (void)deny
 {
-    [_provider permissionDenied:_permissionRequestProxy.get()];
     _permissionRequestProxy->deny();
 }
 

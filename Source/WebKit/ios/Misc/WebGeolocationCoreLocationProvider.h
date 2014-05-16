@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,8 @@ class GeolocationPosition;
 // main thread.
 
 @protocol WebGeolocationCoreLocationUpdateListener
-- (void)geolocationDelegateStarted;
-- (void)geolocationDelegateUnableToStart;
+- (void)geolocationAuthorizationGranted;
+- (void)geolocationAuthorizationDenied;
 
 - (void)positionChanged:(WebCore::GeolocationPosition*)position;
 - (void)errorOccurred:(NSString *)errorMessage;
@@ -53,7 +53,10 @@ class GeolocationPosition;
 @interface WebGeolocationCoreLocationProvider : NSObject
 - (id)initWithListener:(id<WebGeolocationCoreLocationUpdateListener>)listener;
 
+- (void)requestGeolocationAuthorization;
+
 - (void)start;
 - (void)stop;
+
 - (void)setEnableHighAccuracy:(BOOL)flag;
 @end
