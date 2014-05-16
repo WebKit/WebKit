@@ -153,14 +153,14 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 #pragma mark WebAVStreamDataParserListener
 
 @interface WebAVStreamDataParserListener : NSObject {
-    WebCore::SourceBufferPrivateAVFObjC* _parent;
+    WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
     AVStreamDataParser* _parser;
 }
-- (id)initWithParser:(AVStreamDataParser*)parser parent:(WebCore::SourceBufferPrivateAVFObjC*)parent;
+- (id)initWithParser:(AVStreamDataParser*)parser parent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>)parent;
 @end
 
 @implementation WebAVStreamDataParserListener
-- (id)initWithParser:(AVStreamDataParser*)parser parent:(WebCore::SourceBufferPrivateAVFObjC*)parent
+- (id)initWithParser:(AVStreamDataParser*)parser parent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>)parent
 {
     self = [super init];
     if (!self)
@@ -182,7 +182,6 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 - (void)invalidate
 {
     [_parser setDelegate:nil];
-    _parent = nullptr;
     _parser = nullptr;
 }
 
@@ -192,13 +191,12 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
-    if (!strongParent)
-        return;
+    RetainPtr<WebAVStreamDataParserListener> strongSelf = self;
 
     RetainPtr<AVAsset*> strongAsset = asset;
-    callOnMainThread([strongParent, strongAsset] {
-        strongParent->didParseStreamDataAsAsset(strongAsset.get());
+    callOnMainThread([strongSelf, strongAsset] {
+        if (strongSelf->_parent)
+            strongSelf->_parent->didParseStreamDataAsAsset(strongAsset.get());
     });
 }
 
@@ -209,13 +207,12 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
-    if (!strongParent)
-        return;
+    RetainPtr<WebAVStreamDataParserListener> strongSelf = self;
 
     RetainPtr<AVAsset*> strongAsset = asset;
-    callOnMainThread([strongParent, strongAsset] {
-        strongParent->didParseStreamDataAsAsset(strongAsset.get());
+    callOnMainThread([strongSelf, strongAsset] {
+        if (strongSelf->_parent)
+            strongSelf->_parent->didParseStreamDataAsAsset(strongAsset.get());
     });
 }
 
@@ -225,13 +222,12 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
-    if (!strongParent)
-        return;
+    RetainPtr<WebAVStreamDataParserListener> strongSelf = self;
 
     RetainPtr<NSError> strongError = error;
-    callOnMainThread([strongParent, strongError] {
-        strongParent->didFailToParseStreamDataWithError(strongError.get());
+    callOnMainThread([strongSelf, strongError] {
+        if (strongSelf->_parent)
+            strongSelf->_parent->didFailToParseStreamDataWithError(strongError.get());
     });
 }
 
@@ -241,14 +237,13 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
-    if (!strongParent)
-        return;
+    RetainPtr<WebAVStreamDataParserListener> strongSelf = self;
 
     RetainPtr<CMSampleBufferRef> strongSample = sample;
     String mediaType = nsMediaType;
-    callOnMainThread([strongParent, strongSample, trackID, mediaType, flags] {
-        strongParent->didProvideMediaDataForTrackID(trackID, strongSample.get(), mediaType, flags);
+    callOnMainThread([strongSelf, strongSample, trackID, mediaType, flags] {
+        if (strongSelf->_parent)
+            strongSelf->_parent->didProvideMediaDataForTrackID(trackID, strongSample.get(), mediaType, flags);
     });
 }
 
@@ -258,13 +253,12 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
-    if (!strongParent)
-        return;
+    RetainPtr<WebAVStreamDataParserListener> strongSelf = self;
 
     String mediaType = nsMediaType;
-    callOnMainThread([strongParent, trackID, mediaType] {
-        strongParent->didReachEndOfTrackWithTrackID(trackID, mediaType);
+    callOnMainThread([strongSelf, trackID, mediaType] {
+        if (strongSelf->_parent)
+            strongSelf->_parent->didReachEndOfTrackWithTrackID(trackID, mediaType);
     });
 }
 
@@ -274,13 +268,12 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     UNUSED_PARAM(streamDataParser);
 #endif
     ASSERT(streamDataParser == _parser);
-    RefPtr<WebCore::SourceBufferPrivateAVFObjC> strongParent = _parent;
-    if (!strongParent)
-        return;
+    RetainPtr<WebAVStreamDataParserListener> strongSelf = self;
 
     RetainPtr<NSData> strongData = initData;
-    callOnMainThread([strongParent, strongData, trackID] {
-        strongParent->didProvideContentKeyRequestInitializationDataForTrackID(strongData.get(), trackID);
+    callOnMainThread([strongSelf, strongData, trackID] {
+        if (strongSelf->_parent)
+            strongSelf->_parent->didProvideContentKeyRequestInitializationDataForTrackID(strongData.get(), trackID);
     });
 }
 @end
@@ -386,8 +379,9 @@ RefPtr<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourc
 }
 
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent)
-    : m_parser(adoptNS([[getAVStreamDataParserClass() alloc] init]))
-    , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:this]))
+    : m_weakFactory(this)
+    , m_parser(adoptNS([[getAVStreamDataParserClass() alloc] init]))
+    , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]))
     , m_mediaSource(parent)
     , m_client(0)
     , m_parsingSucceeded(true)
@@ -398,6 +392,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
 
 SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
 {
+    ASSERT(!m_client);
     destroyParser();
     destroyRenderers();
 }
@@ -469,7 +464,8 @@ bool SourceBufferPrivateAVFObjC::processCodedFrame(int trackID, CMSampleBufferRe
         if (formatSize != m_cachedSize) {
             LOG(Media, "SourceBufferPrivateAVFObjC::processCodedFrame(%p) - size change detected: {width=%lf, height=%lf", formatSize.width(), formatSize.height());
             m_cachedSize = formatSize;
-            m_mediaSource->player()->sizeChanged();
+            if (m_mediaSource)
+                m_mediaSource->player()->sizeChanged();
         }
     }
     if (m_client)
@@ -487,6 +483,9 @@ void SourceBufferPrivateAVFObjC::didReachEndOfTrackWithTrackID(int trackID, cons
 
 void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(NSData* initData, int trackID)
 {
+    if (!m_mediaSource)
+        return;
+
     UNUSED_PARAM(trackID);
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     LOG(Media, "SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(%p) - track:%d", this, trackID);
@@ -519,15 +518,19 @@ void SourceBufferPrivateAVFObjC::append(const unsigned char* data, unsigned leng
     LOG(Media, "SourceBufferPrivateAVFObjC::append(%p) - data:%p, length:%d", this, data, length);
 
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);
-    RefPtr<SourceBufferPrivateAVFObjC> strongThis = this;
+    WeakPtr<SourceBufferPrivateAVFObjC> weakThis = createWeakPtr();
+    RetainPtr<AVStreamDataParser> parser = m_parser;
+    RetainPtr<WebAVStreamDataParserListener> delegate = m_delegate;
 
     m_parsingSucceeded = true;
 
-    dispatch_async(globalDataParserQueue(), [nsData, strongThis] {
-        [strongThis->m_parser appendStreamData:nsData.get()];
+    dispatch_async(globalDataParserQueue(), [nsData, weakThis, parser, delegate] {
 
-        callOnMainThread([strongThis] {
-            strongThis->appendCompleted();
+        [parser appendStreamData:nsData.get()];
+
+        callOnMainThread([weakThis] {
+            if (weakThis)
+                weakThis->appendCompleted();
         });
     });
 }

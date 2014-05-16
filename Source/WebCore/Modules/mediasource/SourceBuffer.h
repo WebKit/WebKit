@@ -156,7 +156,7 @@ private:
     void removeTimerFired(Timer<SourceBuffer>*);
     void removeCodedFrames(const MediaTime& start, const MediaTime& end);
 
-    RefPtr<SourceBufferPrivate> m_private;
+    Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;
     GenericEventQueue m_asyncEventQueue;
 
