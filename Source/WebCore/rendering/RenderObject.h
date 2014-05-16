@@ -891,6 +891,8 @@ protected:
 
 private:
     RenderFlowThread* locateFlowThreadContainingBlock() const;
+    RenderFlowThread* locateFlowThreadContainingBlockNoCache() const;
+    
     void removeFromRenderFlowThread();
     void removeFromRenderFlowThreadRecursive(RenderFlowThread*);
 
