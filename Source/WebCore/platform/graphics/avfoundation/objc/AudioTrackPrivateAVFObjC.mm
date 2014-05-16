@@ -39,7 +39,10 @@ AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVPlayerItemTrack* track)
 
 void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
 {
-    setEnabled(m_impl->enabled());
+    // Don't call this->setEnabled() because it also sets the enabled state of the
+    // AVPlayerItemTrack
+    AudioTrackPrivateAVF::setEnabled(m_impl->enabled());
+
     setKind(m_impl->audioKind());
     setId(m_impl->id());
     setLabel(m_impl->label());

@@ -246,7 +246,9 @@ using namespace WebCore;
 
 enum MediaPlayerAVFoundationObservationContext {
     MediaPlayerAVFoundationObservationContextPlayerItem,
-    MediaPlayerAVFoundationObservationContextPlayer
+    MediaPlayerAVFoundationObservationContextPlayerItemTrack,
+    MediaPlayerAVFoundationObservationContextPlayer,
+    MediaPlayerAVFoundationObservationContextAVPlayerLayer,
 };
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
@@ -375,6 +377,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_cachedBufferFull(false)
     , m_cachedHasEnabledAudio(false)
     , m_shouldBufferData(true)
+    , m_cachedIsReadyForDisplay(false)
 #if ENABLE(IOS_AIRPLAY)
     , m_allowsWirelessVideoPlayback(true)
 #endif
@@ -452,10 +455,13 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
     m_cachedItemStatus = MediaPlayerAVPlayerItemStatusDoesNotExist;
     m_cachedSeekableRanges = nullptr;
     m_cachedLoadedRanges = nullptr;
-    m_cachedTracks = nullptr;
     m_cachedHasEnabledAudio = false;
     m_cachedPresentationSize = FloatSize();
     m_cachedDuration = 0;
+
+    for (AVPlayerItemTrack *track in m_cachedTracks.get())
+        [track removeObserver:m_objcObserver.get() forKeyPath:@"enabled"];
+    m_cachedTracks = nullptr;
 
     setIgnoreLoadStateChanges(false);
 }
@@ -537,6 +543,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
 #ifndef NDEBUG
         [m_videoLayer.get() setName:@"MediaPlayerPrivate AVPlayerLayer"];
 #endif
+        [m_videoLayer.get() addObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextAVPlayerLayer];
         updateVideoLayerGravity();
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
 
@@ -557,6 +564,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer(%p) - destroying %p", this, m_videoLayer.get());
 
+    [m_videoLayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay"];
     [m_videoLayer.get() setPlayer:nil];
 
 #if PLATFORM(IOS)
@@ -570,7 +578,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
 bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
 {
     if (currentRenderingMode() == MediaRenderingToLayer)
-        return m_videoLayer && [m_videoLayer.get() isReadyForDisplay];
+        return m_cachedIsReadyForDisplay;
 
     return m_videoFrameHasDrawn;
 }
@@ -1485,7 +1493,11 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
             }
         }
 
-        setHasVideo(hasVideo);
+        // Always says we have video if the AVPlayerLayer is ready for diaplay to work around
+        // an AVFoundation bug which causes it to sometimes claim a track is disabled even
+        // when it is not.
+        setHasVideo(hasVideo || m_cachedIsReadyForDisplay);
+
         setHasAudio(hasAudio);
 #if ENABLE(DATACUE_VALUE)
         if (hasMetaData)
@@ -1516,7 +1528,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 
     setHasClosedCaptions(hasCaptions);
 
-    LOG(Media, "WebCoreAVFMovieObserver:tracksChanged(%p) - hasVideo = %s, hasAudio = %s, hasCaptions = %s",
+    LOG(Media, "MediaPlayerPrivateAVFoundation:tracksChanged(%p) - hasVideo = %s, hasAudio = %s, hasCaptions = %s",
         this, boolString(hasVideo()), boolString(hasAudio()), boolString(hasClosedCaptions()));
 
     sizeChanged();
@@ -1571,12 +1583,28 @@ void determineChangedTracksFromNewTracksAndOldItems(NSArray* tracks, NSString* t
 
 void MediaPlayerPrivateAVFoundationObjC::updateAudioTracks()
 {
+#if !LOG_DISABLED
+    size_t count = m_audioTracks.size();
+#endif
+
     determineChangedTracksFromNewTracksAndOldItems(m_cachedTracks.get(), AVMediaTypeAudio, m_audioTracks, &AudioTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack);
+
+#if !LOG_DISABLED
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::updateAudioTracks(%p) - audio track count was %lu, is %lu", this, count, m_audioTracks.size());
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
 {
+#if !LOG_DISABLED
+    size_t count = m_videoTracks.size();
+#endif
+
     determineChangedTracksFromNewTracksAndOldItems(m_cachedTracks.get(), AVMediaTypeVideo, m_videoTracks, &VideoTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack);
+
+#if !LOG_DISABLED
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::updateVideoTracks(%p) - video track count was %lu, is %lu", this, count, m_videoTracks.size());
+#endif
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation() const
@@ -2311,6 +2339,20 @@ void MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange(RetainPtr<NSA
     updateStates();
 }
 
+void MediaPlayerPrivateAVFoundationObjC::firstFrameAvailableDidChange(bool isReady)
+{
+    m_cachedIsReadyForDisplay = isReady;
+    if (!hasVideo() && isReady)
+        tracksChanged();
+    updateStates();
+}
+
+void MediaPlayerPrivateAVFoundationObjC::trackEnabledDidChange(bool)
+{
+    tracksChanged();
+    updateStates();
+}
+
 void MediaPlayerPrivateAVFoundationObjC::setShouldBufferData(bool shouldBuffer)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::shouldBufferData(%p) - %s", this, boolString(shouldBuffer));
@@ -2356,7 +2398,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(RetainPtr<NSArray> me
 {
     m_currentMetaData = metadata && ![metadata isKindOfClass:[NSNull class]] ? metadata : nil;
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(%p) - adding %i cues at time %.2f", this, m_currentMetaData ? [m_currentMetaData.get() count] : 0, mediaTime);
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(%p) - adding %i cues at time %.2f", this, m_currentMetaData ? static_cast<int>[m_currentMetaData.get() count] : 0, mediaTime);
 
 #if ENABLE(DATACUE_VALUE)
     if (seeking())
@@ -2396,7 +2438,13 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(RetainPtr<NSArray> me
 
 void MediaPlayerPrivateAVFoundationObjC::tracksDidChange(RetainPtr<NSArray> tracks)
 {
+    for (AVPlayerItemTrack *track in m_cachedTracks.get())
+        [track removeObserver:m_objcObserver.get() forKeyPath:@"enabled"];
+
     m_cachedTracks = tracks;
+    for (AVPlayerItemTrack *track in m_cachedTracks.get())
+        [track addObserver:m_objcObserver.get() forKeyPath:@"enabled" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayerItemTrack];
+
     m_cachedTotalBytes = 0;
 
     tracksChanged();
@@ -2481,7 +2529,7 @@ NSArray* itemKVOProperties()
 
 NSArray* assetTrackMetadataKeyNames()
 {
-    static NSArray* keys = [[NSArray alloc] initWithObjects:@"totalSampleDataLength", @"mediaType", nil];
+    static NSArray* keys = [[NSArray alloc] initWithObjects:@"totalSampleDataLength", @"mediaType", @"enabled", nil];
 
     return keys;
 }
@@ -2534,6 +2582,16 @@ NSArray* assetTrackMetadataKeyNames()
     bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
 
     WTF::Function<void ()> function;
+
+    if (context == MediaPlayerAVFoundationObservationContextAVPlayerLayer) {
+        if ([keyPath isEqualToString:@"readyForDisplay"])
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::firstFrameAvailableDidChange, m_callback, [newValue boolValue]);
+    }
+
+    if (context == MediaPlayerAVFoundationObservationContextPlayerItemTrack) {
+        if ([keyPath isEqualToString:@"enabled"])
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::trackEnabledDidChange, m_callback, [newValue boolValue]);
+    }
 
     if (context == MediaPlayerAVFoundationObservationContextPlayerItem && willChange) {
         if ([keyPath isEqualToString:@"playbackLikelyToKeepUp"])
