@@ -467,10 +467,8 @@ set(EWK2UnitTests_BINARIES
     test_ewk2_color_picker
     test_ewk2_context
     test_ewk2_context_history_callbacks
-    test_ewk2_context_menu
     test_ewk2_cookie_manager
     test_ewk2_database_manager
-    test_ewk2_download_job
     test_ewk2_eina_shared_string
     test_ewk2_favicon_database
     test_ewk2_file_chooser_request
@@ -481,15 +479,16 @@ set(EWK2UnitTests_BINARIES
     test_ewk2_settings
     test_ewk2_ssl
     test_ewk2_storage_manager
-    test_ewk2_text_checker
-    test_ewk2_view
     test_ewk2_window_features
 )
 
 # Skipped unit tests list:
 #
 # webkit.org/b/107422: test_ewk2_auth_request
-#
+# webkit.org/b/132980: test_ewk2_context_menu
+# webkit.org/b/132981: test_ewk2_download_job
+# webkit.org/b/132982: test_ewk2_text_checker
+# webkit.org/b/132983: test_ewk2_view
 
 if (ENABLE_API_TESTS)
     foreach (testName ${EWK2UnitTests_BINARIES})

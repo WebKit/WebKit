@@ -51,7 +51,6 @@ set(test_webcore_BINARIES
 
 # In here we list the bundles that are used by our specific WK2 API Tests
 list(APPEND bundle_harness_SOURCES
-    ${TESTWEBKITAPI_DIR}/Tests/WebKit2/CoordinatedGraphics/WKViewIsActiveSetIsActive_Bundle.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/efl/WKViewClientWebProcessCallbacks_Bundle.cpp
 )
 
@@ -75,8 +74,6 @@ set(test_webkit2_api_BINARIES
     InjectedBundleInitializationUserDataCallbackWins
     LoadAlternateHTMLStringWithNonDirectoryURL
     LoadCanceledNoServerRedirectCallback
-    LoadPageOnCrash
-    MouseMoveAfterCrash
     NewFirstVisuallyNonEmptyLayout
     NewFirstVisuallyNonEmptyLayoutFails
     NewFirstVisuallyNonEmptyLayoutForImages
@@ -85,8 +82,6 @@ set(test_webkit2_api_BINARIES
     ParentFrame
     PreventEmptyUserAgent
     PrivateBrowsingPushStateNoHistoryCallback
-    ReloadPageAfterCrash
-    ResizeWindowAfterCrash
     ResponsivenessTimerDoesntFireEarly
     ShouldGoToBackForwardListItem
     TerminateTwice
@@ -97,7 +92,6 @@ set(test_webkit2_api_BINARIES
     WKURL
     WillLoad
     WillSendSubmitEvent
-    CoordinatedGraphics/WKViewIsActiveSetIsActive
     CoordinatedGraphics/WKViewRestoreZoomAndScrollBackForward
     CoordinatedGraphics/WKViewUserViewportToContents
     efl/WKViewClientWebProcessCallbacks
@@ -108,8 +102,12 @@ set(test_webkit2_api_fail_BINARIES
     DOMWindowExtensionBasic
     DownloadDecideDestinationCrash
     Geolocation
+    LoadPageOnCrash
+    MouseMoveAfterCrash
     NewFirstVisuallyNonEmptyLayoutFrames
+    ReloadPageAfterCrash
     ResizeReversePaginatedWebView
+    ResizeWindowAfterCrash
     RestoreSessionStateContainingFormData
     ScrollPinningBehaviors
     WKPageGetScaleFactorNotZero
@@ -127,3 +125,4 @@ endif ()
 # Tests disabled because of missing features on the test harness:
 #
 #   SpacebarScrolling
+#   CoordinatedGraphics/WKViewIsActiveSetIsActive
