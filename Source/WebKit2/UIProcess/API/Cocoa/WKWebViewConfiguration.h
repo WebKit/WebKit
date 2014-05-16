@@ -44,20 +44,14 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @discussion When the @link WKWebView @/link is initialized with the configuration, a new Web
  Content process from the specified pool will be created for it, or an existing process in
  that pool will be used.
- When this property is set to nil, a unique process pool will be created for each
- @link WKWebView @/link initialized with the configuration.
 */
 @property (nonatomic, strong) WKProcessPool *processPool;
 
 /*! @abstract The preferences that should be used by web views created with this configuration.
- @discussion When this property is set to nil, a unique preferences object will be created for each
- @link WKWebView @/link initialized with the configuration.
 */
 @property (nonatomic, strong) WKPreferences *preferences;
 
 /*! @abstract The user content controller that should be used by web views created with this configuration.
- @discussion When this property is set to nil, a unique user content controller object will be created for each
- @link WKWebView @/link initialized with the configuration.
 */
 @property (nonatomic, strong) WKUserContentController *userContentController;
 
