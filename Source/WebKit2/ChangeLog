@@ -1,3 +1,24 @@
+2014-05-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] On dynamic resize, the content offset is contrained to the old content size
+        https://bugs.webkit.org/show_bug.cgi?id=132972
+
+        Reviewed by Simon Fraser.
+
+        When we set the content offset, UIScrollView limits the value to the current valid range for
+        content size. Since the content size was only updated after the animation, when the first frame
+        comes in, the content offset would sometimes be limited to a smaller rect that the actual content.
+
+        To fix this, set the expected future content size before changing the offset.
+
+        During the animation, the content size could have changed arbitrarily. At the end of the animation,
+        we take the actual frame and set the definite content size.
+        Any update after that will be regular updates through didCommitLayer. 
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _endAnimatedResize]):
+
 2014-05-16  Simon Fraser  <simon.fraser@apple.com>
 
         Remove "region-based columns" prefs

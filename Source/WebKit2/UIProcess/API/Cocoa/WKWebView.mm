@@ -1585,6 +1585,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         contentOffset.y = -_obscuredInsets.top;
 
     // FIXME: if we have content centered after double tap to zoom, we should also try to keep that rect in view.
+    [_scrollView setContentSize:futureContentSizeInSelfCoordinates];
     [_scrollView setContentOffset:contentOffset];
 
     CGRect visibleRectInContentCoordinates = [self convertRect:newBounds toView:_contentView.get()];
@@ -1622,6 +1623,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         double horizontalScrollAdjustement = _resizeAnimationTransformAdjustments.m41 * animatingScaleTarget;
         double verticalScrollAdjustment = _resizeAnimationTransformAdjustments.m42 * animatingScaleTarget;
 
+        [_scrollView setContentSize:[_contentView frame].size];
         [_scrollView setContentOffset:CGPointMake(currentScrollOffset.x - horizontalScrollAdjustement, currentScrollOffset.y - verticalScrollAdjustment)];
 
         [_resizeAnimationView removeFromSuperview];
