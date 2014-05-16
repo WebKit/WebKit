@@ -65,6 +65,10 @@ namespace WebCore {
     NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
 #endif
 
+#if PLATFORM(IOS)
+    float screenPPIFactor();
+#endif
+
 } // namespace WebCore
 
 #endif // PlatformScreen_h

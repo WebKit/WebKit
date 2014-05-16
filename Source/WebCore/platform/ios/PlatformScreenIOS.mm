@@ -33,6 +33,7 @@
 #import "WAKWindow.h"
 #import "WebCoreSystemInterface.h"
 #import "Widget.h"
+#import <MobileGestalt.h>
 
 namespace WebCore {
 
@@ -85,6 +86,34 @@ FloatRect screenAvailableRect(Widget* widget)
         return enclosingIntRect(screenRect);
     }
     return enclosingIntRect(FloatRect(FloatPoint(), widget->root()->hostWindow()->availableScreenSize()));
+}
+
+static float mobileGestaltFloatValue(CFStringRef question)
+{
+    float result = 0;
+    if (CFTypeRef value = MGCopyAnswer(question, 0)) {
+        if (CFGetTypeID(value) == CFNumberGetTypeID())
+            CFNumberGetValue(static_cast<CFNumberRef>(value), kCFNumberFloatType, &result);
+        CFRelease(value);
+    }
+    return result;
+}
+
+float screenPPIFactor()
+{
+    static float ppiFactor;
+
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        float pitch = mobileGestaltFloatValue(kMGQMainScreenPitch);
+        float scale = mobileGestaltFloatValue(kMGQMainScreenScale);
+
+        static const float originalIPhonePPI = 163;
+        float mainScreenPPI = (pitch && scale) ? pitch / scale : originalIPhonePPI;
+        ppiFactor = mainScreenPPI / originalIPhonePPI;
+    });
+    
+    return ppiFactor;
 }
 
 } // namespace WebCore

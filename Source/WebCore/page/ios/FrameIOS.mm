@@ -57,6 +57,7 @@
 #import "NodeTraversal.h"
 #import "Page.h"
 #import "PageTransitionEvent.h"
+#import "PlatformScreen.h"
 #import "PropertySetCSSStyleDeclaration.h"
 #import "RenderLayer.h"
 #import "RenderLayerCompositor.h"
@@ -429,12 +430,15 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
             shouldApproximate = false;
     }
 #endif
+
+
+    float scale = page() ? page()->pageScaleFactor() : 1;
+    float ppiFactor = screenPPIFactor();
+
+    static const float unscaledSearchRadius = 15;
+    int searchRadius = static_cast<int>(unscaledSearchRadius * ppiFactor / scale);
+
     if (approximateNode && shouldApproximate) {
-        float scale = page() ? page()->pageScaleFactor() : 1;
-
-        const int defaultMaxRadius = 15;
-        int maxRadius = scale < 1 ? static_cast<int>(defaultMaxRadius / scale) : defaultMaxRadius;
-
         const float testOffsets[] = {
             -.3f, -.3f,
             -.6f, -.6f,
@@ -444,7 +448,7 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
 
         Node* originalApproximateNode = approximateNode;
         for (unsigned n = 0; n < WTF_ARRAY_LENGTH(testOffsets); n += 2) {
-            IntSize testOffset(testOffsets[n] * maxRadius, testOffsets[n + 1] * maxRadius);
+            IntSize testOffset(testOffsets[n] * searchRadius, testOffsets[n + 1] * searchRadius);
             IntPoint testPoint = testCenter + testOffset;
 
             HitTestResult candidateInfo = eventHandler().hitTestResultAtPoint(testPoint);
@@ -466,12 +470,6 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
         if (candidate)
             failedNode = candidate;
 
-        // We don't approximate the node if we are dragging, we instead force the user to be precise.
-        float scale = page() ? page()->pageScaleFactor() : 1;
-
-        const int defaultMaxRadius = 15;
-        int maxRadius = (scale < 1.0) ? static_cast<int>(defaultMaxRadius / scale) : defaultMaxRadius;
-
         // The center point was tested earlier.
         const float testOffsets[] = {
             -.3f, -.3f,
@@ -489,10 +487,10 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
         };
         IntRect bestFrame;
         IntRect testRect(testCenter, IntSize());
-        testRect.inflate(maxRadius);
+        testRect.inflate(searchRadius);
         int currentTestRadius = 0;
         for (unsigned n = 0; n < WTF_ARRAY_LENGTH(testOffsets); n += 2) {
-            IntSize testOffset(testOffsets[n] * maxRadius, testOffsets[n + 1] * maxRadius);
+            IntSize testOffset(testOffsets[n] * searchRadius, testOffsets[n + 1] * searchRadius);
             IntPoint testPoint = testCenter + testOffset;
             int testRadius = std::max(abs(testOffset.width()), abs(testOffset.height()));
             if (testRadius > currentTestRadius) {
