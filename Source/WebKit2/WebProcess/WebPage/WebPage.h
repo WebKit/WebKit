@@ -715,6 +715,7 @@ public:
     void applicationDidBecomeActive();
     void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);
     void dispatchTouchEvent(const WebTouchEvent&, bool& handled);
+    void completePendingSyntheticClickForContentChangeObserver();
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
@@ -824,6 +825,7 @@ private:
     void getAssistedNodeInformation(AssistedNodeInformation&);
     void platformInitializeAccessibility();
     void handleSyntheticClick(WebCore::Node* nodeRespondingToClick, const WebCore::FloatPoint& location);
+    void completeSyntheticClick(WebCore::Node* nodeRespondingToClick, const WebCore::FloatPoint& location);
     void sendTapHighlightForNodeIfNecessary(uint64_t requestID, WebCore::Node*);
 #endif
 #if !PLATFORM(COCOA)
@@ -1193,6 +1195,8 @@ private:
     WebCore::FloatSize m_minimumLayoutSizeForMinimalUI;
     bool m_inDynamicSizeUpdate;
     HashMap<std::pair<WebCore::IntSize, double>, WebCore::IntPoint> m_dynamicSizeUpdateHistory;
+    RefPtr<WebCore::Node> m_pendingSyntheticClickNode;
+    WebCore::FloatPoint m_pendingSyntheticClickLocation;
 #endif
 
     WebInspectorClient* m_inspectorClient;
