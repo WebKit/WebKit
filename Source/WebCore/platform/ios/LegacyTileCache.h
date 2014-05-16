@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,6 +149,9 @@ public:
     
     enum SynchronousTileCreationMode { CoverVisibleOnly, CoverSpeculative };
 
+    bool tileControllerShouldUseLowScaleTiles() const { return m_tileControllerShouldUseLowScaleTiles; } 
+    void setTileControllerShouldUseLowScaleTiles(bool flag) { m_tileControllerShouldUseLowScaleTiles = flag; } 
+
 private:
     LegacyTileGrid* activeTileGrid() const;
     LegacyTileGrid* inactiveTileGrid() const;
@@ -209,6 +212,8 @@ private:
     mutable Mutex m_tileMutex;
     mutable Mutex m_savedDisplayRectMutex;
     mutable Mutex m_contentReplacementImageMutex;
+
+    bool m_tileControllerShouldUseLowScaleTiles;
 };
 
 } // namespace WebCore
