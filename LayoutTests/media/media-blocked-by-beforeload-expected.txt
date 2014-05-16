@@ -11,8 +11,6 @@ EVENT('beforeload')
 EXPECTED (event.target.tagName == 'VIDEO') OK
 blocking load of 'src'
 
-EVENT('loadstart')
-
 EVENT('error')
 EXPECTED (event.target.tagName == 'VIDEO') OK
 EXPECTED (video.error != 'null') OK
@@ -29,13 +27,8 @@ EVENT('beforeload')
 EXPECTED (event.target.tagName == 'VIDEO') OK
 allowing load of second <source> element
 
-EVENT('loadstart')
-
 EVENT('error')
 EXPECTED (event.target.tagName == 'SOURCE') OK
 EXPECTED (video.error == 'null') OK
-
-EVENT('loadedmetadata')
-
 END OF TEST
 

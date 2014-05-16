@@ -21,6 +21,7 @@
         var test;
         var loadedmetadataFired = false;
         var loadedFired = false;
+        var lastErrorFired = false;
 
         function logEvent(evt)
         {
@@ -29,8 +30,6 @@
 
         function loadedmetadata(evt)
         {
-            logEvent(evt);
-            consoleWrite("");
             loadedmetadataFired = true;
             checkEndTest();
         }
@@ -76,6 +75,8 @@
                     // not be in an error state.
                     testExpected("event.target.tagName", "SOURCE");
                     testExpected("video.error", null);
+                    lastErrorFired = true;
+                    checkEndTest();
                     break;
                 case 3:
                     failTest("Unexpected 'error' event fired!");
@@ -113,13 +114,12 @@
 
         function checkEndTest()
         {
-            if (loadedmetadataFired && loadedFired)
+            if (loadedmetadataFired && loadedFired && lastErrorFired)
                 endTest();
         };
 
         findMediaElement();
 
-        video.addEventListener('loadstart', logEvent, true);
         video.addEventListener('loadedmetadata', loadedmetadata, true);
         video.addEventListener('beforeload', beforeload, true);
         video.addEventListener('error', error, true);

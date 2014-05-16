@@ -1,3 +1,17 @@
+2014-05-16  Piotr Grad  <p.grad@samsung.com>
+
+        [Gtk] media/media-blocked-by-beforeload.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=89811
+
+        Reviewed by Eric Carlson.
+
+        Problem is that we cannot predict when 'error' event would be called,
+        because is called async on 'source' element. Solution is to not log
+        'loadedmetadata' and 'loadstart' events.
+
+        * media/media-blocked-by-beforeload-expected.txt:
+        * media/media-blocked-by-beforeload.html:
+
 2014-05-16  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Push named flows in region to device pixel when painting.
