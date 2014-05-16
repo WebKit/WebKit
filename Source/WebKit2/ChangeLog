@@ -1,5 +1,17 @@
 2014-05-16  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168691
+
+    2014-05-13  Anders Carlsson  <andersca@apple.com>
+
+            Follow-up fix.
+
+            * UIProcess/API/Cocoa/WKNavigationAction.mm:
+            (-[WKNavigationAction _initWithNavigationActionData:WebKit::]):
+            (-[WKNavigationAction _isUserInitiated]):
+
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168690
 
     2014-05-13  Anders Carlsson  <andersca@apple.com>
