@@ -666,6 +666,8 @@ public:
             minimumInputSize = std::min(minimumInputSize, alternative->m_minimumSize);
             maximumCallFrameSize = std::max(maximumCallFrameSize, currentAlternativeCallFrameSize);
             hasFixedSize &= alternative->m_hasFixedSize;
+            if (alternative->m_minimumSize > INT_MAX)
+                m_pattern.m_containsUnsignedLengthPattern = true;
         }
         
         ASSERT(minimumInputSize != UINT_MAX);
@@ -864,6 +866,7 @@ YarrPattern::YarrPattern(const String& pattern, bool ignoreCase, bool multiline,
     , m_multiline(multiline)
     , m_containsBackreferences(false)
     , m_containsBOL(false)
+    , m_containsUnsignedLengthPattern(false)
     , m_numSubpatterns(0)
     , m_maxBackReference(0)
     , newlineCached(0)

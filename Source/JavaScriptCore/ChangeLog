@@ -1,3 +1,32 @@
+2014-05-16  Michael Saboff  <msaboff@apple.com>
+
+        Crash in JSC::Yarr::YarrGenerator<(JSC::Yarr::YarrJITCompileMode)0>::generatePatternCharacterFixed() due to WTF::CrashOnOverflow::overflowed + 9
+        https://bugs.webkit.org/show_bug.cgi?id=133009
+
+        Reviewed by Oliver Hunt.
+
+        If we determine that any alternative requires a minumum match size greater than
+        INT_MAX, we handle the match in the interpreter.
+
+        Check to see if the pattern has unsigned lengths before invoking YARR JIT.
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+
+        * tests/stress/large-regexp.js: New test added.
+
+        Set m_containsUnsignedLengthPattern flag if any alternative's minimum length
+        doesn't fit in an int.
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::setupDisjunctionOffsets):
+
+        Clear new m_containsUnsignedLengthPattern flag.
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::reset):
+        (JSC::Yarr::YarrPattern::containsUnsignedLengthPattern):
+
 2014-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSDOMWindow should not claim HasImpureGetOwnPropertySlot
