@@ -1,3 +1,17 @@
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168873
+
+    2014-05-14  Matthew Hanson  <matthew_hanson@apple.com>
+
+            Only define MAX_GRID_TRACK_REPETITIONS if CSS_GRID_LAYOUT is enabled.
+
+            Reviewed by Dean Jackson.
+
+            This was causing -Wunused-const-variable errors.
+
+            * css/CSSParser.cpp: Add include guard.
+
 2014-05-16  Dean Jackson  <dino@apple.com>
 
         Disable some features on the safari-538.34 branch.
