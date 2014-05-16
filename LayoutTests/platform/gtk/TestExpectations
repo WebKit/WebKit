@@ -866,6 +866,15 @@ webkit.org/b/132280 platform/gtk/accessibility/text-for-table.html [ Failure Pas
 webkit.org/b/132425 fast/multicol/scrolling-overflow.html [ Failure Pass ]
 webkit.org/b/132425 fast/multicol/span/span-as-immediate-child-generated-content.html [ Failure Pass ]
 
+webkit.org/b/132995 transitions/cancel-transition.html [ Failure Pass ]
+webkit.org/b/132996 js/slow-stress/fold-strict-eq.html [ Pass Timeout ]
+webkit.org/b/132997 js/dom/cross-frame-bad-time.html [ Pass Timeout ]
+webkit.org/b/132998 media/track/track-change-event.html [ Pass Timeout ]
+webkit.org/b/132999 html5lib/generated/run-tests16-write.html [ Pass Timeout ]
+webkit.org/b/133000 js/slow-stress/call-spread.html [ Pass Timeout ]
+webkit.org/b/133001 fast/workers/worker-context-gc.html [ Pass Timeout ]
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
