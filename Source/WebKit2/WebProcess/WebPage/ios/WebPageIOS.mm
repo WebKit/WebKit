@@ -1880,7 +1880,7 @@ void WebPage::elementDidFocus(WebCore::Node* node)
         // FIXME: We check m_userIsInteracting so that we don't begin an input session for a
         // programmatic focus that doesn't cause the keyboard to appear. But this misses the case of
         // a programmatic focus happening while the keyboard is already shown. Once we have a way to
-        // know the keyboard state in the Web Porcess, we should refine the condition.
+        // know the keyboard state in the Web Process, we should refine the condition.
         if (m_userIsInteracting)
             m_formClient->willBeginInputSession(this, toElement(node), WebFrame::fromCoreFrame(*node->document().frame()), userData);
 

@@ -1,6 +1,13 @@
 2014-05-15  Dan Bernstein  <mitz@apple.com>
 
-        [iOS] www.wikipedia.org is loading much slower due to FormClient::willBeginInputSession
+        Fixed a typo in a comment and updated previous change log entry.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::elementDidFocus):
+
+2014-05-15  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/16844952> [iOS] www.wikipedia.org is loading much slower due to FormClient::willBeginInputSession
         https://bugs.webkit.org/show_bug.cgi?id=132974
 
         Reviewed by Enrica Casucci.
