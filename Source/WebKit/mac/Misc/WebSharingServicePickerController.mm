@@ -92,6 +92,9 @@ using namespace WebCore;
 
 - (void)clear
 {
+    // Protect self from being dealloc'ed partway through this method.
+    RetainPtr<WebSharingServicePickerController> protector(self);
+
     if (_menuClient)
         _menuClient->clearSharingServicePickerController();
 
