@@ -166,11 +166,6 @@ public:
     static void setMaxPixelsPerDecodedImage(unsigned maxPixels) { s_maxPixelsPerDecodedImage = maxPixels; }
 #endif
 
-#if PLATFORM(IOS)
-    static bool acceleratedImageDecodingEnabled() { return s_acceleratedImageDecoding; }
-    static void setAcceleratedImageDecodingEnabled(bool flag) { s_acceleratedImageDecoding = flag; }
-#endif
-
 private:
     NativeImageDecoderPtr m_decoder;
 
@@ -185,7 +180,6 @@ private:
     mutable int m_baseSubsampling;
     mutable bool m_isProgressive;
     CFDictionaryRef imageSourceOptions(ShouldSkipMetadata, int subsampling = 0) const;
-    static bool s_acceleratedImageDecoding;
 #endif
 };
 
