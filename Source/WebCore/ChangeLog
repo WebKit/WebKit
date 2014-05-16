@@ -1,5 +1,37 @@
 2014-05-16  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168670
+
+    2014-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS] Fixed items are sometimes clipped after rubber-banding
+            https://bugs.webkit.org/show_bug.cgi?id=132851
+            <rdar://problem/16870790>
+
+            Reviewed by Benjamin Poulain.
+
+            On iOS fixed-position layers would get clipped to the document rect,
+            but with rubber-banding, we can now have a custom fixed postion rect
+            that extends outside the document rect.
+
+            Another issue was that we would un-composite fixed elements sometimes
+            when scrolling fast, again because they could fall outside of the document rect.
+
+            A final issue was that pinching could reveal parts of fixed elements that should
+            lie outside the viewport, rather than clipping the layers.
+
+            Fix by converting both call points to use viewportConstrainedVisibleContentRect()
+            rather than viewportConstrainedExtentRect(). On non-iOS platforms these are
+            the same, but on iOS viewportConstrainedVisibleContentRect() uses the
+            custom fixed position rect, which is the correct rect to intersect with.
+
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::updateCompositedBounds):
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168661
 
     2014-05-12  Simon Fraser  <simon.fraser@apple.com>
