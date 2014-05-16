@@ -306,10 +306,6 @@ namespace JSC {
         void emitLoadInt32ToDouble(int index, FPRegisterID value);
         Jump emitJumpIfCellNotObject(RegisterID cellReg);
 
-        Jump addStructureTransitionCheck(JSCell*, Structure*, StructureStubInfo*, RegisterID scratch);
-        void addStructureTransitionCheck(JSCell*, Structure*, StructureStubInfo*, JumpList& failureCases, RegisterID scratch);
-        void testPrototype(JSValue, JumpList& failureCases, StructureStubInfo*);
-
         enum WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterBase, ShouldFilterValue, ShouldFilterBaseAndValue };
         // value register in write barrier is used before any scratch registers
         // so may safely be the same as either of the scratch registers.

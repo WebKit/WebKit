@@ -1036,7 +1036,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
         m_gprs.lock(gpr);
         if (!ASSERT_DISABLED) {
             MacroAssembler::Jump checkCell = branchIsCell(JSValueRegs(gpr));
-            m_jit.breakpoint();
+            m_jit.abortWithReason(DFGIsNotCell);
             checkCell.link(&m_jit);
         }
         return gpr;
@@ -3782,7 +3782,7 @@ void SpeculativeJIT::compile(Node* node)
             JITCompiler::Equal, 
             JITCompiler::Address(op1.gpr(), JSCell::structureIDOffset()), 
             node->structure());
-        m_jit.breakpoint();
+        m_jit.abortWithReason(DFGIneffectiveWatchpoint);
         isOK.link(&m_jit);
 #else
         speculateCell(node->child1());

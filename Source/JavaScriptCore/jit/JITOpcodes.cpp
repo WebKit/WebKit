@@ -1106,7 +1106,7 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
         Jump noOptimizedEntry = branchTestPtr(Zero, returnValueGPR);
         if (!ASSERT_DISABLED) {
             Jump ok = branchPtr(MacroAssembler::Above, regT0, TrustedImmPtr(bitwise_cast<void*>(static_cast<intptr_t>(1000))));
-            breakpoint();
+            abortWithReason(JITUnreasonableLoopHintJumpTarget);
             ok.link(this);
         }
         jump(returnValueGPR);

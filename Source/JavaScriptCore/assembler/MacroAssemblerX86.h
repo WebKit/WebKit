@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,6 +109,12 @@ public:
     void load8(const void* address, RegisterID dest)
     {
         m_assembler.movzbl_mr(address, dest);
+    }
+
+    void abortWithReason(AbortReason reason)
+    {
+        move(TrustedImm32(reason), X86Registers::eax);
+        breakpoint();
     }
 
     ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)

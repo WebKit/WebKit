@@ -1639,16 +1639,14 @@ class YarrGenerator : private MacroAssembler {
                 const RegisterID indexTemporary = regT0;
                 ASSERT(term->quantityCount == 1);
 
-#ifndef NDEBUG
                 // Runtime ASSERT to make sure that the nested alternative handled the
                 // "no input consumed" check.
-                if (term->quantityType != QuantifierFixedCount && !term->parentheses.disjunction->m_minimumSize) {
+                if (!ASSERT_DISABLED && term->quantityType != QuantifierFixedCount && !term->parentheses.disjunction->m_minimumSize) {
                     Jump pastBreakpoint;
                     pastBreakpoint = branch32(NotEqual, index, Address(stackPointerRegister, term->frameLocation * sizeof(void*)));
-                    breakpoint();
+                    abortWithReason(YARRNoInputConsumed);
                     pastBreakpoint.link(this);
                 }
-#endif
 
                 // If the parenthese are capturing, store the ending index value to the
                 // captures array, offsetting as necessary.
@@ -1695,16 +1693,16 @@ class YarrGenerator : private MacroAssembler {
             }
             case OpParenthesesSubpatternTerminalEnd: {
                 YarrOp& beginOp = m_ops[op.m_previousOp];
-#ifndef NDEBUG
-                PatternTerm* term = op.m_term;
-
-                // Runtime ASSERT to make sure that the nested alternative handled the
-                // "no input consumed" check.
-                Jump pastBreakpoint;
-                pastBreakpoint = branch32(NotEqual, index, Address(stackPointerRegister, term->frameLocation * sizeof(void*)));
-                breakpoint();
-                pastBreakpoint.link(this);
-#endif
+                if (!ASSERT_DISABLED) {
+                    PatternTerm* term = op.m_term;
+                    
+                    // Runtime ASSERT to make sure that the nested alternative handled the
+                    // "no input consumed" check.
+                    Jump pastBreakpoint;
+                    pastBreakpoint = branch32(NotEqual, index, Address(stackPointerRegister, term->frameLocation * sizeof(void*)));
+                    abortWithReason(YARRNoInputConsumed);
+                    pastBreakpoint.link(this);
+                }
 
                 // We know that the match is non-zero, we can accept it  and
                 // loop back up to the head of the subpattern.
