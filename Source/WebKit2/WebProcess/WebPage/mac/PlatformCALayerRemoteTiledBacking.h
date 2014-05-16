@@ -45,11 +45,16 @@ private:
     virtual const WebCore::PlatformCALayerList* customSublayers() const override;
 
     virtual void setBounds(const WebCore::FloatRect&) override;
+    
     virtual bool isOpaque() const override;
     virtual void setOpaque(bool) override;
+    
     virtual bool acceleratesDrawing() const override;
     virtual void setAcceleratesDrawing(bool) override;
+    
+    virtual float contentsScale() const override;
     virtual void setContentsScale(float) override;
+    
     virtual void setBorderWidth(float) override;
     virtual void setBorderColor(const WebCore::Color&) override;
 

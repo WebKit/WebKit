@@ -1,5 +1,25 @@
 2014-05-16  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168661
+
+    2014-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Fuzzy tiles on some sites on loading
+            https://bugs.webkit.org/show_bug.cgi?id=132847
+            <rdar://problem/16816178>
+
+            Reviewed by Benjamin Poulain.
+
+            PlatformCALayerRemoteTiledBacking overrode setContentsScale() but not contentsScale(),
+            causing us to early-return from GraphicsLayerCA::updateContentsScale() and leave the
+            scale wrong. Fix by overriding contentsScale() also.
+
+            * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+            (WebKit::PlatformCALayerRemoteTiledBacking::contentsScale):
+            * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.h:
+
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168568
 
     2014-05-09  Benjamin Poulain  <benjamin@webkit.org>
