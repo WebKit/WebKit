@@ -16,14 +16,17 @@
                 finishJSTest();
             }
 
-            var firstCall = true;
+            var lastCall = false;
+            var callCount = 1;
 
             function ontonechange(e) {
                 testPassed("ontonechange was called.");
                 event = e;
-                if (firstCall) {
+                if (!lastCall) {
                     shouldBeEqualToString('event.tone', "1");
-                    firstCall = false;
+                    callCount++;
+                    if (3 == callCount)
+                        lastCall = true;
                 } else {
                     shouldBeEqualToString('event.tone', "");
                     finishJSTest();
@@ -43,6 +46,24 @@
                     dtmfsender.ontonechange = ontonechange;
                     dtmfsender.insertDTMF("1");
                     shouldBeEqualToString('dtmfsender.toneBuffer', "1");
+                    shouldBeEqualToString('dtmfsender.duration', "100");
+                    shouldBeEqualToString('dtmfsender.interToneGap', "70");
+
+                    dtmfsender.insertDTMF("1", "40", "30");
+                    shouldBeEqualToString('dtmfsender.toneBuffer', "1");
+                    shouldBeEqualToString('dtmfsender.duration', "40");
+                    shouldBeEqualToString('dtmfsender.interToneGap', "30");
+
+                    dtmfsender.insertDTMF("1", "6000");
+                    shouldBeEqualToString('dtmfsender.toneBuffer', "1");
+                    shouldBeEqualToString('dtmfsender.duration', "6000");
+                    shouldBeEqualToString('dtmfsender.interToneGap', "70");
+
+                    shouldThrow('dtmfsender.insertDTMF("1", "20");');
+                    shouldThrow('dtmfsender.insertDTMF("1", "7000");');
+                    shouldThrow('dtmfsender.insertDTMF("1", "70", "10");');
+
+
                 }
             }
 

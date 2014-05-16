@@ -1,3 +1,17 @@
+2014-05-16  Kiran  <kiran.guduru@samsung.com>
+
+        RTCDtmfSender default values need to be updated.
+        https://bugs.webkit.org/show_bug.cgi?id=132952
+
+        Reviewed by Eric Carlson.
+
+        The default ToneDuration and ToneGap values are modified in the updated spec.
+        So these values need to be updated.
+
+        Test: fast/mediastream/RTCPeerConnection-dtmf.html.
+
+        * Modules/mediastream/RTCDTMFSender.cpp:
+
 2014-05-15  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Apple Mavericks Release, Apple MountainLion Release,
