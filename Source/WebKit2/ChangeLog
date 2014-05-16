@@ -1,3 +1,21 @@
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r168513
+
+    2014-05-08  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Bottom-relative position:fixed elements are misplaced on page load
+            https://bugs.webkit.org/show_bug.cgi?id=132719
+            <rdar://problem/16860837>
+
+            Reviewed by Benjamin Poulain.
+
+            If we haven't received visible rects from the web process, compute the
+            fixed position rect, but only after scale has been set.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::viewportConfigurationChanged):
+
 2014-05-15  Lucas Forschler  <lforschler@apple.com>
 
         Merge r168447
