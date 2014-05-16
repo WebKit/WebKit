@@ -1886,12 +1886,14 @@ void WebPage::elementDidBlur(WebCore::Node* node)
 
 void WebPage::setViewportConfigurationMinimumLayoutSize(const FloatSize& size)
 {
+    resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSize(), size);
     m_viewportConfiguration.setMinimumLayoutSize(size);
     viewportConfigurationChanged();
 }
 
 void WebPage::setMinimumLayoutSizeForMinimalUI(const FloatSize& size)
 {
+    resetTextAutosizingBeforeLayoutIfNeeded(m_minimumLayoutSizeForMinimalUI, size);
     m_minimumLayoutSizeForMinimalUI = size;
     viewportConfigurationChanged();
 }
@@ -1899,6 +1901,19 @@ void WebPage::setMinimumLayoutSizeForMinimalUI(const FloatSize& size)
 static inline bool withinEpsilon(float a, float b)
 {
     return fabs(a - b) < std::numeric_limits<float>::epsilon();
+}
+
+void WebPage::resetTextAutosizingBeforeLayoutIfNeeded(const FloatSize& oldSize, const FloatSize& newSize)
+{
+    if (oldSize.width() == newSize.width())
+        return;
+
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        Document* document = frame->document();
+        if (!document || !document->renderView())
+            continue;
+        document->renderView()->resetTextAutosizing();
+    }
 }
 
 void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale)
@@ -1937,6 +1952,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
         }
     }
 
+    resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSize(), minimumLayoutSize);
     m_viewportConfiguration.setMinimumLayoutSize(minimumLayoutSize);
     IntSize newLayoutSize = m_viewportConfiguration.layoutSize();
     setFixedLayoutSize(newLayoutSize);
