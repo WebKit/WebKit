@@ -507,7 +507,6 @@ public:
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
-        [NSNumber numberWithBool:YES],  WebKitRegionBasedColumnsEnabledKey,
 #if !PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitMediaPlaybackRequiresUserGesturePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
@@ -2376,16 +2375,6 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)notificationsEnabled
 {
     return [self _boolValueForKey:WebKitNotificationsEnabledKey];
-}
-
-- (void)setRegionBasedColumnsEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitRegionBasedColumnsEnabledKey];
-}
-
-- (BOOL)regionBasedColumnsEnabled
-{
-    return [self _boolValueForKey:WebKitRegionBasedColumnsEnabledKey];
 }
 
 - (void)setShouldRespectImageOrientation:(BOOL)flag

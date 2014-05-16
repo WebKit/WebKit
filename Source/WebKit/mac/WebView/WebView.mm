@@ -2290,7 +2290,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);
     settings.setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
     settings.setSuppressesIncrementalRendering([preferences suppressesIncrementalRendering]);
-    settings.setRegionBasedColumnsEnabled([preferences regionBasedColumnsEnabled]);
     settings.setBackspaceKeyNavigationEnabled([preferences backspaceKeyNavigationEnabled]);
     settings.setWantsBalancedSetDefersLoadingBehavior([preferences wantsBalancedSetDefersLoadingBehavior]);
     settings.setMockScrollbarsEnabled([preferences mockScrollbarsEnabled]);

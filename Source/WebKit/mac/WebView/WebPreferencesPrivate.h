@@ -368,9 +368,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag;
 - (BOOL)isHixie76WebSocketProtocolEnabled;
 
-- (void)setRegionBasedColumnsEnabled:(BOOL)flag;
-- (BOOL)regionBasedColumnsEnabled;
-
 #if TARGET_OS_IPHONE
 - (void)_invalidateCachedPreferences;
 - (void)_synchronizeWebStoragePolicyWithCookiePolicy;

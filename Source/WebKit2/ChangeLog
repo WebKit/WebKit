@@ -1,3 +1,22 @@
+2014-05-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove "region-based columns" prefs
+        https://bugs.webkit.org/show_bug.cgi?id=133006
+        <rdar://problem/16945824>
+
+        Reviewed by Dave Hyatt.
+
+        Remove "region-based columns" prefs and related code, since this is only
+        way to render columns now.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetRegionBasedColumnsEnabled): Deleted.
+        (WKPreferencesGetRegionBasedColumnsEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         Work around bug in Silverlight

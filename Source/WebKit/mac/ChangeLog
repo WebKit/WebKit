@@ -1,3 +1,23 @@
+2014-05-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove "region-based columns" prefs
+        https://bugs.webkit.org/show_bug.cgi?id=133006
+        <rdar://problem/16945824>
+
+        Reviewed by Dave Hyatt.
+
+        Remove "region-based columns" prefs and related code, since this is only
+        way to render columns now.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setRegionBasedColumnsEnabled:]): Deleted.
+        (-[WebPreferences regionBasedColumnsEnabled]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2014-05-15  Brady Eidson  <beidson@apple.com>
 
         Crash in [WebSharingServicePickerController clear]
