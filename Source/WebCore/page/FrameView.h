@@ -442,7 +442,7 @@ public:
     const Pagination& pagination() const;
     void setPagination(const Pagination&);
     
-    bool inProgrammaticScroll() const { return m_inProgrammaticScroll; }
+    bool inProgrammaticScroll() const override { return m_inProgrammaticScroll; }
     void setInProgrammaticScroll(bool programmaticScroll) { m_inProgrammaticScroll = programmaticScroll; }
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)

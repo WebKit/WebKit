@@ -561,6 +561,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (_isAnimatingResize)
         return;
 
+    [_scrollView _stopScrollingAndZoomingAnimations];
+
     WebCore::FloatPoint scaledOffset = contentOffset;
     CGFloat zoomScale = contentZoomScale(self);
     scaledOffset.scale(zoomScale, zoomScale);
