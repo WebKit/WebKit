@@ -1,3 +1,16 @@
+2014-05-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS] ScrollView::visibleContentRectInternal is bypassing the iOS code for unobscuredContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=133008
+
+        Reviewed by Simon Fraser.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRectInternal):
+        ScrollView::visibleContentRectInternal() was calling the internal implementation of visibleContentRect().
+        That was skipping the iOS implementation and getting the framerect directly. That size is invalid on iOS
+        when the exposed rect and unobscured rect are not the same.
+
 2014-05-16  Jer Noble  <jer.noble@apple.com>
 
         [Mac] naturalSize not updated when preload=metadata

@@ -330,7 +330,7 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
         return m_fixedVisibleContentRect;
 #endif
 
-    return unobscuredContentRectInternal(scrollbarInclusion);
+    return unobscuredContentRect(scrollbarInclusion);
 }
 #endif
 
