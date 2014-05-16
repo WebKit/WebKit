@@ -1,5 +1,28 @@
 2014-05-16  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r168514
+
+    2014-05-08  Simon Fraser  <simon.fraser@apple.com>
+
+            Occasional crash under AsyncScrollingCoordinator::frameViewRootLayerDidChange() on history navigation
+            https://bugs.webkit.org/show_bug.cgi?id=132723
+
+            Reviewed by Sam Weinig.
+
+            Crash reports suggest that when we call AsyncScrollingCoordinator::frameViewRootLayerDidChange()
+            from HistoryController::restoreScrollPositionAndViewState(), the FrameView may not have a 
+            scrolling node ID, which suggests that either the FrameView doesn't have a RenderView,
+            or compositing hasn't happened yet.
+
+            So if we enter AsyncScrollingCoordinator::frameViewRootLayerDidChange()
+            and the FrameView has no scrollLayerID, just return. We'll fix things up
+            when compositing kicks in later.
+
+            * page/scrolling/AsyncScrollingCoordinator.cpp:
+            (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
+
+2014-05-16  Lucas Forschler  <lforschler@apple.com>
+
         Merge r168557
 
     2014-05-09  Benjamin Poulain  <bpoulain@apple.com>
