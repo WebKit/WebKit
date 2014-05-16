@@ -23,10 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
 
 @class WKFrameInfo;
 @class WKWebViewConfiguration;
@@ -82,4 +83,4 @@
 
 @end
 
-#endif // WK_API_ENABLED
+#endif

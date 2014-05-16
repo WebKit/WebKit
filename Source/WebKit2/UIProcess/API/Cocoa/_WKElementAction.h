@@ -39,9 +39,9 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeCopy,
     _WKElementActionTypeSaveImage,
     _WKElementActionTypeAddToReadingList,
-};
+} WK_ENUM_AVAILABLE(10_10, 8_0);
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface _WKElementAction : NSObject
 
 + (instancetype)elementActionWithType:(_WKElementActionType)type;

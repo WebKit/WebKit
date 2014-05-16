@@ -23,10 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
 
 @class WKPreferences;
 @class WKProcessPool;
@@ -36,7 +37,7 @@
  view.
  @helps Contains properties used to configure a @link WKWebView @/link.
  */
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKWebViewConfiguration : NSObject <NSCopying>
 
 /*! @abstract The process pool from which the Web Content process for the view should come.

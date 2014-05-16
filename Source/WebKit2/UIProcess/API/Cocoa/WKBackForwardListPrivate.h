@@ -27,6 +27,6 @@
 
 #if WK_API_ENABLED
 
-WK_EXTERN NSString * const _WKBackForwardListDidChangeNotification;
+WK_EXTERN NSString * const _WKBackForwardListDidChangeNotification WK_AVAILABLE(10_0, 8_0);
 
 #endif

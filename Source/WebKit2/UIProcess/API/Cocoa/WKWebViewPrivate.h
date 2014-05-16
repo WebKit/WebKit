@@ -30,7 +30,7 @@
 typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
     _WKRenderingProgressEventFirstLayout = 1 << 0,
     _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
-};
+} WK_ENUM_AVAILABLE(10_10, 8_0);
 
 typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeUnpaginated,
@@ -38,7 +38,7 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeRightToLeft,
     _WKPaginationModeTopToBottom,
     _WKPaginationModeBottomToTop,
-};
+} WK_ENUM_AVAILABLE(10_10, 8_0);
 
 typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
     _WKFindOptionsCaseInsensitive = 1 << 0,
@@ -50,7 +50,7 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
     _WKFindOptionsShowFindIndicator = 1 << 6,
     _WKFindOptionsShowHighlight = 1 << 7,
     _WKFindOptionsDetermineMatchIndex = 1 << 8,
-};
+} WK_ENUM_AVAILABLE(10_10, 8_0);
 
 @class WKBrowsingContextHandle;
 @class _WKRemoteObjectRegistry;

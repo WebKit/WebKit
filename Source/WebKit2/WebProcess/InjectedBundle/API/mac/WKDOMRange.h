@@ -31,7 +31,7 @@
 
 @class WKDOMNode, WKDOMDocument;
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKDOMRange : NSObject
 
 - (id)initWithDocument:(WKDOMDocument *)document;

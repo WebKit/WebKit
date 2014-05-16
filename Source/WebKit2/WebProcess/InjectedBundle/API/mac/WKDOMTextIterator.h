@@ -31,7 +31,7 @@
 
 @class WKDOMRange;
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKDOMTextIterator : NSObject
 
 - (id)initWithRange:(WKDOMRange *)range;

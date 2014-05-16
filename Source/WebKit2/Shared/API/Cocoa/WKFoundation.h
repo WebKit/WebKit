@@ -28,10 +28,8 @@
 #if !defined(WK_API_ENABLED)
 #if TARGET_OS_IPHONE
 #define WK_API_ENABLED 1
-#define WK_API_CLASS NS_CLASS_AVAILABLE_IOS(7_0)
 #else
 #define WK_API_ENABLED (defined(__clang__) && defined(__APPLE__) && !defined(__i386__))
-#define WK_API_CLASS __attribute__((visibility("default")))
 #endif
 #endif
 
@@ -39,6 +37,12 @@
 #define WK_EXTERN extern "C" __attribute__((visibility ("default")))
 #else
 #define WK_EXTERN extern __attribute__((visibility ("default")))
+#endif
+
+#ifndef WK_API_AVAILABILITY_ENABLED
+#define WK_AVAILABLE(_mac, _ios)
+#define WK_CLASS_AVAILABLE(_mac, _ios) __attribute__((visibility ("default")))
+#define WK_ENUM_AVAILABLE(_mac, _ios)
 #endif
 
 #define WK_DESIGNATED_INITIALIZER

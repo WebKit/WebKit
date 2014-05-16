@@ -23,10 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
 
 @class WKNavigation;
 @class WKNavigationAction;
@@ -41,7 +42,7 @@
 typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
     WKNavigationActionPolicyCancel,
     WKNavigationActionPolicyAllow,
-};
+} WK_ENUM_AVAILABLE(10_10, 8_0);
 
 /*! @enum WKNavigationResponsePolicy
  @abstract the policy to pass back to the decision handler in webView:decidePolicyForNavigationResponse:decisionHandler:.
@@ -51,7 +52,7 @@ typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
 typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
     WKNavigationResponsePolicyCancel,
     WKNavigationResponsePolicyAllow,
-};
+} WK_ENUM_AVAILABLE(10_10, 8_0);
 
 /*! A class that conforms to WKNavigationDelegate can provide methods for deciding load policy for main frame and subframe loads
  and track load progress for main frame loads.

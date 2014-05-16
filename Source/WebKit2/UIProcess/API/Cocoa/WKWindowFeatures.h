@@ -23,14 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
+#import <Foundation/Foundation.h>
+
 /*! WKWindowFeatures specifies optional attributes for the containing window when a new WKWebView is requested.
  */
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKWindowFeatures : NSObject
 
 /*! @abstract BOOL. Whether the menu bar should be visible. nil if menu bar visibility was not specified.

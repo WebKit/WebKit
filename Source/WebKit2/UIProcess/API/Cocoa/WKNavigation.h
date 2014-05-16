@@ -23,15 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
+#import <Foundation/Foundation.h>
+
 /*! WKNavigation objects are returned from  the @link WKWebView @/link load methods and are passed to the 
  @link WKNavigationDelegate @/link methods, and can be used to track page loads from start to finish.
  */
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKNavigation : NSObject
 
 /*! @abstract The initial NSURLRequest used to perform the navigation.

@@ -31,7 +31,7 @@
 
 @class WKDOMDocument;
 
-WK_API_CLASS
+WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKDOMNode : NSObject
 
 - (void)insertNode:(WKDOMNode *)node before:(WKDOMNode *)refNode;
