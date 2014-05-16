@@ -187,6 +187,19 @@ void PageClientImpl::didChangeViewportMetaTagWidth(float newWidth)
     [m_webView _setViewportMetaTagWidth:newWidth];
 }
 
+double PageClientImpl::minimumZoomScale() const
+{
+    if (UIScrollView *scroller = [m_webView scrollView])
+        return scroller.minimumZoomScale;
+
+    return 1;
+}
+
+WebCore::FloatSize PageClientImpl::contentsSize() const
+{
+    return FloatSize([m_contentView bounds].size);
+}
+
 void PageClientImpl::setCursor(const Cursor&)
 {
     notImplemented();

@@ -1,3 +1,37 @@
+2014-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] When zoomed, fixed elements jump at the start of a scroll, and jump back at the end.
+        https://bugs.webkit.org/show_bug.cgi?id=132978
+        <rdar://problem/16894428>
+
+        Reviewed by Benjamin Poulain.
+        
+        Move the static function fixedPositionRectFromExposedRect() to a member function on
+        WebPageProxy so we can call it from more places. Also never give WebCore a customFixedPosition
+        rect that extends past the document bounds, but allow rubber-banding/pinching in the UI process to
+        move fixed elements outside the document.
+        
+        * UIProcess/PageClient.h: Need to expose minimumZoomScale() and contentsSize() to WebPageProxy.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::minimumZoomScale):
+        (WebKit::PageClientImpl::contentsSize):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        Pass the computeCustomFixedPositionRect(ConstrainedToDocumentRect) to WebCore, but use computeCustomFixedPositionRect()
+        for the ScrollingCoordinator update.
+        (adjustedUnexposedEdge): Deleted.
+        (adjustedUnexposedMaxEdge): Deleted.
+        (fixedPositionRectFromExposedRect): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::adjustedUnexposedEdge):
+        (WebKit::adjustedUnexposedMaxEdge):
+        (WebKit::WebPageProxy::computeCustomFixedPositionRect):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree): This fixes some flashing when the scrolling tree
+        was being updated while scrolling; we now pass the correct rect.
+
 2014-05-15  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/132976> Move discovery of sharing services off the main thread

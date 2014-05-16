@@ -41,6 +41,7 @@
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import "WebVideoFullscreenManagerProxy.h"
+#import <WebCore/FrameView.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
@@ -192,6 +193,46 @@ bool WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo&
     m_lastVisibleContentRectUpdate = visibleContentRectUpdateInfo;
     m_process->send(Messages::ViewUpdateDispatcher::VisibleContentRectUpdate(m_pageID, visibleContentRectUpdateInfo), 0);
     return true;
+}
+
+static inline float adjustedUnexposedEdge(float documentEdge, float exposedRectEdge, float factor)
+{
+    if (exposedRectEdge < documentEdge)
+        return documentEdge - factor * (documentEdge - exposedRectEdge);
+    
+    return exposedRectEdge;
+}
+
+static inline float adjustedUnexposedMaxEdge(float documentEdge, float exposedRectEdge, float factor)
+{
+    if (exposedRectEdge > documentEdge)
+        return documentEdge + factor * (exposedRectEdge - documentEdge);
+    
+    return exposedRectEdge;
+}
+
+WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect& unobscuredContentRect, double displayedContentScale, UnobscuredRectConstraint constraint) const
+{
+    FloatRect constrainedUnobscuredRect = unobscuredContentRect;
+    FloatSize contentsSize = m_pageClient.contentsSize();
+    FloatRect documentRect = FloatRect(FloatPoint(), contentsSize);
+
+    if (constraint == UnobscuredRectConstraint::ConstrainedToDocumentRect)
+        constrainedUnobscuredRect.intersect(documentRect);
+
+    double minimumScale = m_pageClient.minimumZoomScale();
+    
+    if (displayedContentScale < minimumScale) {
+        const CGFloat slope = 12;
+        CGFloat factor = std::max<CGFloat>(1 - slope * (minimumScale - displayedContentScale), 0);
+            
+        constrainedUnobscuredRect.setX(adjustedUnexposedEdge(documentRect.x(), constrainedUnobscuredRect.x(), factor));
+        constrainedUnobscuredRect.setY(adjustedUnexposedEdge(documentRect.y(), constrainedUnobscuredRect.y(), factor));
+        constrainedUnobscuredRect.setWidth(adjustedUnexposedMaxEdge(documentRect.maxX(), constrainedUnobscuredRect.maxX(), factor) - constrainedUnobscuredRect.x());
+        constrainedUnobscuredRect.setHeight(adjustedUnexposedMaxEdge(documentRect.maxY(), constrainedUnobscuredRect.maxY(), factor) - constrainedUnobscuredRect.y());
+    }
+    
+    return FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(constrainedUnobscuredRect), roundedLayoutSize(contentsSize), displayedContentScale, false, StickToViewportBounds);
 }
 
 void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates,  double targetScale)

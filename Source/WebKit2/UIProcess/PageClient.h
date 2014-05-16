@@ -257,6 +257,8 @@ public:
     virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) = 0;
     virtual void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) = 0;
     virtual void didChangeViewportMetaTagWidth(float) = 0;
+    virtual double minimumZoomScale() const = 0;
+    virtual WebCore::FloatSize contentsSize() const = 0;
 
 #if ENABLE(INSPECTOR)
     virtual void showInspectorIndication() = 0;

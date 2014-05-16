@@ -1,3 +1,19 @@
+2014-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] When zoomed, fixed elements jump at the start of a scroll, and jump back at the end.
+        https://bugs.webkit.org/show_bug.cgi?id=132978
+        <rdar://problem/16894428>
+
+        Reviewed by Benjamin Poulain.
+
+        This was the actual cause of the bug; r168560 changed the rect passed in here
+        to be the customFixedPositionRect rather than the unobscured rect, but we
+        used it to call FrameView::rectForViewportConstrainedObjects() which gave back
+        another bogus rect. So just use the rect passed in.
+
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::updateLayersAfterViewportChange):
+
 2014-05-15  Daniel Bates  <dabates@apple.com>
 
         SVG element may reference arbitrary DOM element before running its insertion logic
