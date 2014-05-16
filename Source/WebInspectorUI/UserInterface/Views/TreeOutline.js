@@ -26,18 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- */
 function TreeOutline(listNode)
 {
     WebInspector.Object.call(this);
 
     this.element = listNode;
 
-    /**
-     * @type {Array.<TreeElement>}
-     */
     this.children = [];
     this.selectedTreeElement = null;
     this._childrenListNode = listNode;
@@ -489,9 +483,6 @@ TreeOutline.prototype.select = function()
     // this is the root, do nothing
 }
 
-/**
- * @param {boolean=} omitFocus
- */
 TreeOutline.prototype.revealAndSelect = function(omitFocus)
 {
     // this is the root, do nothing
@@ -499,11 +490,6 @@ TreeOutline.prototype.revealAndSelect = function(omitFocus)
 
 TreeOutline.prototype.__proto__ = WebInspector.Object.prototype;
 
-/**
- * @constructor
- * @param {Object=} representedObject
- * @param {boolean=} hasChildren
- */
 function TreeElement(title, representedObject, hasChildren)
 {
     WebInspector.Object.call(this);
@@ -937,10 +923,6 @@ TreeElement.prototype.selectOnMouseDown = function(event)
     this.select(false, true);
 }
 
-/**
- * @param {boolean=} omitFocus
- * @param {boolean=} selectedByUser
- */
 TreeElement.prototype.select = function(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect)
 {
     if (!this.treeOutline || !this.selectable)
@@ -978,18 +960,12 @@ TreeElement.prototype.select = function(omitFocus, selectedByUser, suppressOnSel
     delete this.treeOutline.processingSelectionChange;
 }
 
-/**
- * @param {boolean=} omitFocus
- */
 TreeElement.prototype.revealAndSelect = function(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect)
 {
     this.reveal();
     this.select(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect);
 }
 
-/**
- * @param {boolean=} suppressOnDeselect
- */
 TreeElement.prototype.deselect = function(suppressOnDeselect)
 {
     if (!this.treeOutline || this.treeOutline.selectedTreeElement !== this || !this.selected)
@@ -1015,13 +991,6 @@ TreeElement.prototype.onpopulate = function()
     // Overriden by subclasses.
 }
 
-/**
- * @param {boolean} skipUnrevealed
- * @param {(TreeOutline|TreeElement)=} stayWithin
- * @param {boolean=} dontPopulate
- * @param {Object=} info
- * @return {TreeElement}
- */
 TreeElement.prototype.traverseNextTreeElement = function(skipUnrevealed, stayWithin, dontPopulate, info)
 {
     if (!dontPopulate && this.hasChildren)
@@ -1057,11 +1026,6 @@ TreeElement.prototype.traverseNextTreeElement = function(skipUnrevealed, stayWit
     return (skipUnrevealed ? (element.revealed() ? element.nextSibling : null) : element.nextSibling);
 }
 
-/**
- * @param {boolean} skipUnrevealed
- * @param {boolean=} dontPopulate
- * @return {TreeElement}
- */
 TreeElement.prototype.traversePreviousTreeElement = function(skipUnrevealed, dontPopulate)
 {
     var element = skipUnrevealed ? (this.revealed() ? this.previousSibling : null) : this.previousSibling;
@@ -1085,7 +1049,7 @@ TreeElement.prototype.traversePreviousTreeElement = function(skipUnrevealed, don
 
 TreeElement.prototype.isEventWithinDisclosureTriangle = function(event)
 {
-    // FIXME: We should not use getComputedStyle(). For that we need to get rid of using ::before for disclosure triangle. (http://webk.it/74446) 
+    // FIXME: We should not use getComputedStyle(). For that we need to get rid of using ::before for disclosure triangle. (http://webk.it/74446)
     var computedLeftPadding = window.getComputedStyle(this._listItemNode).getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
     var left = this._listItemNode.totalOffsetLeft + computedLeftPadding;
     return event.pageX >= left && event.pageX <= left + this.arrowToggleWidth && this.hasChildren;

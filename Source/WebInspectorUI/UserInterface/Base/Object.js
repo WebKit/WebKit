@@ -23,16 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- */
 WebInspector.Object = function()
 {
 }
 
-/**
- * @param {function} constructor
- */
 WebInspector.Object.addConstructorFunctions = function(subclassConstructor)
 {
     // Copies the relevant functions the subclass constructor.
@@ -46,11 +40,6 @@ WebInspector.Object.addConstructorFunctions = function(subclassConstructor)
     }
 }
 
-/**
- * @param {string} eventType
- * @param {function(WebInspector.Event)} listener
- * @param {Object=} thisObject
- */
 WebInspector.Object.addEventListener = function(eventType, listener, thisObject)
 {
     thisObject = thisObject || null;
@@ -79,11 +68,6 @@ WebInspector.Object.addEventListener = function(eventType, listener, thisObject)
     listeners.push({thisObject: thisObject, listener: listener});
 };
 
-/**
- * @param {string} eventType
- * @param {function(WebInspector.Event)} listener
- * @param {Object=} thisObject
- */
 WebInspector.Object.removeEventListener = function(eventType, listener, thisObject)
 {
     eventType = eventType || null;
@@ -122,10 +106,6 @@ WebInspector.Object.removeAllListeners = function()
     delete this._listeners;
 };
 
-/**
- * @param {string} eventType
- * @return {boolean}
- */
 WebInspector.Object.hasEventListeners = function(eventType)
 {
     if (!this._listeners || !this._listeners[eventType])
@@ -136,33 +116,14 @@ WebInspector.Object.hasEventListeners = function(eventType)
 WebInspector.Object.prototype = {
     constructor: WebInspector.Object,
 
-    /**
-     * @param {string} eventType
-     * @param {function(WebInspector.Event)} listener
-     * @param {Object=} thisObject
-     */
     addEventListener: WebInspector.Object.addEventListener,
 
-    /**
-     * @param {string} eventType
-     * @param {function(WebInspector.Event)} listener
-     * @param {Object=} thisObject
-     */
     removeEventListener: WebInspector.Object.removeEventListener,
 
     removeAllListeners: WebInspector.Object.removeAllListeners,
 
-    /**
-     * @param {string} eventType
-     * @return {boolean}
-     */
     hasEventListeners: WebInspector.Object.hasEventListeners,
 
-    /**
-     * @param {string} eventType
-     * @param {*=} eventData
-     * @return {boolean}
-     */
     dispatchEventToListeners: function(eventType, eventData)
     {
         var event = new WebInspector.Event(this, eventType, eventData);
@@ -204,12 +165,6 @@ WebInspector.Object.prototype = {
     }
 }
 
-/**
- * @constructor
- * @param {WebInspector.Object} target
- * @param {string} type
- * @param {*=} data
- */
 WebInspector.Event = function(target, type, data)
 {
     this.target = target;

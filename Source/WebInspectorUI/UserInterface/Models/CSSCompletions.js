@@ -31,9 +31,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- */
 WebInspector.CSSCompletions = function(properties, acceptEmptyPrefix)
 {
     this._values = [];
@@ -75,10 +72,6 @@ WebInspector.CSSCompletions = function(properties, acceptEmptyPrefix)
     this._acceptEmptyPrefix = acceptEmptyPrefix;
 }
 
-
-/**
- * @type {WebInspector.CSSCompletions}
- */
 WebInspector.CSSCompletions.cssNameCompletions = null;
 
 WebInspector.CSSCompletions.requestCSSNameCompletions = function()

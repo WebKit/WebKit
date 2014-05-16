@@ -1,3 +1,35 @@
+2014-05-15  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Should remove JSDoc comment blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=132984
+
+        Reviewed by Timothy Hatcher.
+
+        Remove JSDoc comment blocks. These are no longer necessary.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Base/Object.js:
+        * UserInterface/Controllers/DOMTreeManager.js:
+        * UserInterface/Models/CSSCompletions.js:
+        * UserInterface/Models/DOMNode.js:
+        * UserInterface/Models/SourceMap.js:
+        * UserInterface/Protocol/InspectorBackend.js:
+        * UserInterface/Protocol/RemoteObject.js:
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        * UserInterface/Views/ConsoleMessage.js:
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        * UserInterface/Views/ContextMenu.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        * UserInterface/Views/DOMTreeOutline.js:
+        * UserInterface/Views/DOMTreeUpdater.js:
+        * UserInterface/Views/DataGrid.js:
+        * UserInterface/Views/DatabaseContentView.js:
+        * UserInterface/Views/EditingSupport.js:
+        * UserInterface/Views/ObjectPropertiesSection.js:
+        * UserInterface/Views/Popover.js:
+        * UserInterface/Views/TreeOutline.js:
+        JSDoc style comment blocks removed.
+
 2014-05-13  Radu Stavila  <stavila@adobe.com>
 
         Web Inspector: Restore regionLayoutUpdated event in iOS7 inspector and remove regionOversetChanged

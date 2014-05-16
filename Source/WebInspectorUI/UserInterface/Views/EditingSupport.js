@@ -74,40 +74,14 @@ WebInspector.isEventTargetAnEditableField = function(event)
     return false;
 }
 
-/**
- * @constructor
- * @param {function(Element,string,string,*,string)} commitHandler
- * @param {function(Element,*)} cancelHandler
- * @param {*=} context
- */
 WebInspector.EditingConfig = function(commitHandler, cancelHandler, context)
 {
     this.commitHandler = commitHandler;
     this.cancelHandler = cancelHandler;
     this.context = context;
-
-    /**
-     * Handles the "paste" event, return values are the same as those for customFinishHandler
-     * @type {function(Element)|undefined}
-     */
     this.pasteHandler;
-
-    /** 
-     * Whether the edited element is multiline
-     * @type {boolean|undefined}
-     */
     this.multiline;
-
-    /**
-     * Custom finish handler for the editing session (invoked on keydown)
-     * @type {function(Element,*)|undefined}
-     */
     this.customFinishHandler;
-
-    /**
-     * Whether or not spellcheck is enabled.
-     * @type {boolean}
-     */
     this.spellcheck = false;
 }
 
@@ -128,10 +102,6 @@ WebInspector.EditingConfig.prototype = {
     }
 }
 
-/** 
- * @param {Element} element
- * @param {WebInspector.EditingConfig=} config
- */
 WebInspector.startEditing = function(element, config)
 {
     if (!WebInspector.markBeingEdited(element, true))
@@ -168,7 +138,6 @@ WebInspector.startEditing = function(element, config)
             return element.textContent;
     }
 
-    /** @this {Element} */
     function cleanUpAfterEditing()
     {
         WebInspector.markBeingEdited(element, false);
@@ -195,7 +164,6 @@ WebInspector.startEditing = function(element, config)
         WebInspector.restoreFocusFromElement(element);
     }
 
-    /** @this {Element} */
     function editingCancelled()
     {
         if (this.tagName === "INPUT" && this.type === "text")
@@ -208,7 +176,6 @@ WebInspector.startEditing = function(element, config)
         cancelledCallback(this, context);
     }
 
-    /** @this {Element} */
     function editingCommitted()
     {
         cleanUpAfterEditing.call(this);

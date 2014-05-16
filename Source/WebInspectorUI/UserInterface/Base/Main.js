@@ -1696,12 +1696,6 @@ WebInspector.redo = function()
     DOMAgent.redo();
 }
 
-/**
- * @param {Element} element
- * @param {Array.<Object>} resultRanges
- * @param {string} styleClass
- * @param {Array.<Object>=} changes
- */
 WebInspector.highlightRangesWithStyleClass = function(element, resultRanges, styleClass, changes)
 {
     changes = changes || [];

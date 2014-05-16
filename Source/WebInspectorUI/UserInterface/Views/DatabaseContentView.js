@@ -141,10 +141,6 @@ WebInspector.DatabaseContentView.prototype = {
         this._appendErrorQueryResult(query, message);
     },
 
-    /**
-     * @param {string} query
-     * @param {WebInspector.View} view
-     */
     _appendViewQueryResult: function(query, view)
     {
         var resultElement = this._appendQueryResult(query);
@@ -156,10 +152,6 @@ WebInspector.DatabaseContentView.prototype = {
         this._promptElement.scrollIntoView(false);
     },
 
-    /**
-     * @param {string} query
-     * @param {string} errorText
-     */
     _appendErrorQueryResult: function(query, errorText)
     {
         var resultElement = this._appendQueryResult(query);

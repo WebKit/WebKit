@@ -41,7 +41,7 @@ WebInspector.Popover = function(delegate) {
     this._canvasId = "popover-" + (WebInspector.Popover.canvasId++);
     this._element.style.backgroundImage = "-webkit-canvas(" + this._canvasId + ")";
     this._element.addEventListener("transitionend", this, true);
-    
+
     this._container = this._element.appendChild(document.createElement("div"));
     this._container.className = "container";
 };
@@ -114,10 +114,6 @@ WebInspector.Popover.prototype = {
             previouslyFocusedElement.focus();
     },
 
-    /**
-     * @param {WebInspector.Rect} targetFrame
-     * @param {WebInspector.RectEdge}[] preferredEdges
-     */
     present: function(targetFrame, preferredEdges)
     {
         this._targetFrame = targetFrame;
@@ -131,7 +127,7 @@ WebInspector.Popover.prototype = {
 
         this._update();
     },
-    
+
     dismiss: function()
     {
         if (this._element.parentNode !== document.body)
@@ -421,7 +417,7 @@ WebInspector.Popover.prototype = {
 
         finalContext.drawImage(scratchCanvas, 0, 0, scaledWidth, scaledHeight);
     },
-    
+
     _bestMetricsForEdge: function(preferredSize, targetFrame, containerFrame, edge)
     {
         var x, y;
@@ -459,7 +455,7 @@ WebInspector.Popover.prototype = {
                 y = containerFrame.maxY() - height;
         } else {
             if (x < containerFrame.minX())
-                x = containerFrame.minX(); 
+                x = containerFrame.minX();
             if (x + width > containerFrame.maxX())
                 x = containerFrame.maxX() - width;
         }
@@ -538,7 +534,7 @@ WebInspector.Popover.prototype = {
         }
         ctx.closePath();
     }
-    
+
 };
 
 WebInspector.Popover.prototype.__proto__ = WebInspector.Object.prototype;

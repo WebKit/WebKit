@@ -28,14 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- * @param {string|undefined} objectId
- * @param {string} type
- * @param {string|undefined} subtype
- * @param {*} value
- * @param {string=} description
- */
 WebInspector.RemoteObject = function(objectId, type, subtype, value, description)
 {
     this._type = type;
@@ -54,35 +46,18 @@ WebInspector.RemoteObject = function(objectId, type, subtype, value, description
     }
 }
 
-/**
- * @param {number|string|boolean} value
- * @return {WebInspector.RemoteObject}
- */
 WebInspector.RemoteObject.fromPrimitiveValue = function(value)
 {
     return new WebInspector.RemoteObject(undefined, typeof value, undefined, value);
 }
 
-/**
- * @param {Object} value
- * @return {WebInspector.RemoteObject}
- */
 WebInspector.RemoteObject.fromLocalObject = function(value)
 {
     return new WebInspector.LocalJSONObject(value);
 }
 
-/**
- * @param {WebInspector.DOMNode} node
- * @param {string} objectGroup
- * @param {function(?WebInspector.RemoteObject)} callback
- */
 WebInspector.RemoteObject.resolveNode = function(node, objectGroup, callback)
 {
-    /**
-     * @param {?Protocol.Error} error
-     * @param {RuntimeAgent.RemoteObject} object
-     */
     function mycallback(error, object)
     {
         if (!callback)
@@ -96,10 +71,6 @@ WebInspector.RemoteObject.resolveNode = function(node, objectGroup, callback)
     DOMAgent.resolveNode(node.id, objectGroup, mycallback);
 }
 
-/**
- * @param {RuntimeAgent.RemoteObject} payload
- * @return {WebInspector.RemoteObject}
- */
 WebInspector.RemoteObject.fromPayload = function(payload)
 {
     console.assert(typeof payload === "object", "Remote object payload should only be an object");
@@ -107,10 +78,6 @@ WebInspector.RemoteObject.fromPayload = function(payload)
     return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description);
 }
 
-/**
- * @param {WebInspector.RemoteObject} remoteObject
- * @return {string}
- */
 WebInspector.RemoteObject.type = function(remoteObject)
 {
     if (remoteObject === null)
@@ -124,56 +91,41 @@ WebInspector.RemoteObject.type = function(remoteObject)
 }
 
 WebInspector.RemoteObject.prototype = {
-    /** @return {RuntimeAgent.RemoteObjectId} */
     get objectId()
     {
         return this._objectId;
     },
 
-    /** @return {string} */
     get type()
     {
         return this._type;
     },
 
-    /** @return {string|undefined} */
     get subtype()
     {
         return this._subtype;
     },
 
-    /** @return {string|undefined} */
     get description()
     {
         return this._description;
     },
 
-    /** @return {boolean} */
     get hasChildren()
     {
         return this._hasChildren;
     },
 
-    /**
-     * @param {function(Array.<WebInspector.RemoteObjectProperty>)} callback
-     */
     getOwnProperties: function(callback)
     {
         this._getProperties(true, callback);
     },
 
-    /**
-     * @param {function(Array.<WebInspector.RemoteObjectProperty>)} callback
-     */
     getAllProperties: function(callback)
     {
         this._getProperties(false, callback);
     },
 
-    /**
-     * @param {boolean} ownProperties
-     * @param {function(Array.<RuntimeAgent.RemoteObject>)} callback
-     */
     _getProperties: function(ownProperties, callback)
     {
         if (!this._objectId) {
@@ -181,10 +133,6 @@ WebInspector.RemoteObject.prototype = {
             return;
         }
 
-        /**
-         * @param {?Protocol.Error} error
-         * @param {Array.<WebInspector.RemoteObjectProperty>} properties
-         */
         function remoteObjectBinder(error, properties)
         {
             if (error) {
@@ -207,11 +155,6 @@ WebInspector.RemoteObject.prototype = {
         RuntimeAgent.getProperties(this._objectId, ownProperties, remoteObjectBinder);
     },
 
-    /**
-     * @param {string} name
-     * @param {string} value
-     * @param {function(string=)} callback
-     */
     setPropertyValue: function(name, value, callback)
     {
         if (!this._objectId) {
@@ -221,11 +164,6 @@ WebInspector.RemoteObject.prototype = {
 
         RuntimeAgent.evaluate.invoke({expression:value, doNotPauseOnExceptionsAndMuteConsole:true}, evaluatedCallback.bind(this));
 
-        /**
-         * @param {?Protocol.Error} error
-         * @param {RuntimeAgent.RemoteObject} result
-         * @param {boolean=} wasThrown
-         */
         function evaluatedCallback(error, result, wasThrown)
         {
             if (error || wasThrown) {
@@ -244,11 +182,6 @@ WebInspector.RemoteObject.prototype = {
                 RuntimeAgent.releaseObject(result._objectId);
         }
 
-        /**
-         * @param {?Protocol.Error} error
-         * @param {RuntimeAgent.RemoteObject} result
-         * @param {boolean=} wasThrown
-         */
         function propertySetCallback(error, result, wasThrown)
         {
             if (error || wasThrown) {
@@ -259,9 +192,6 @@ WebInspector.RemoteObject.prototype = {
         }
     },
 
-    /**
-     * @param {function(DOMAgent.NodeId)} callback
-     */
     pushNodeToFrontend: function(callback)
     {
         if (this._objectId)
@@ -270,10 +200,6 @@ WebInspector.RemoteObject.prototype = {
             callback(0);
     },
 
-    /**
-     * @param {string} functionDeclaration
-     * @param {function(?WebInspector.RemoteObject)} callback
-     */
     callFunction: function(functionDeclaration, args, callback)
     {
         function mycallback(error, result, wasThrown)
@@ -284,10 +210,6 @@ WebInspector.RemoteObject.prototype = {
         RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, undefined, mycallback);
     },
 
-    /**
-     * @param {string} functionDeclaration
-     * @param {function(*)} callback
-     */
     callFunctionJSON: function(functionDeclaration, args, callback)
     {
         function mycallback(error, result, wasThrown)
@@ -303,9 +225,6 @@ WebInspector.RemoteObject.prototype = {
         RuntimeAgent.releaseObject(this._objectId);
     },
 
-    /**
-     * @return {number}
-     */
     arrayLength: function()
     {
         if (this.subtype !== "array")
@@ -318,12 +237,6 @@ WebInspector.RemoteObject.prototype = {
     }
 }
 
-/**
- * @constructor
- * @param {string} name
- * @param {WebInspector.RemoteObject} value 
- * @param {Object=} descriptor
- */
 WebInspector.RemoteObjectProperty = function(name, value, descriptor)
 {
     this.name = name;
@@ -334,11 +247,6 @@ WebInspector.RemoteObjectProperty = function(name, value, descriptor)
         this.wasThrown = true;
 }
 
-/**
- * @param {string} name
- * @param {string} value
- * @return {WebInspector.RemoteObjectProperty}
- */
 WebInspector.RemoteObjectProperty.fromPrimitiveValue = function(name, value)
 {
     return new WebInspector.RemoteObjectProperty(name, WebInspector.RemoteObject.fromPrimitiveValue(value));
@@ -350,20 +258,12 @@ WebInspector.RemoteObjectProperty.fromPrimitiveValue = function(name, value)
 // for traversing prototypes, extracting class names via constuctor, handling properties
 // or functions.
 
-/**
- * @constructor
- * @extends {WebInspector.RemoteObject}
- * @param {Object} value
- */
 WebInspector.LocalJSONObject = function(value)
 {
     this._value = value;
 }
 
 WebInspector.LocalJSONObject.prototype = {
-    /**
-     * @return {string}
-     */
     get description()
     {
         if (this._cachedDescription)
@@ -394,11 +294,6 @@ WebInspector.LocalJSONObject.prototype = {
         return this._cachedDescription;
     },
 
-    /**
-     * @param {string} prefix
-     * @param {string} suffix
-     * @return {string}
-     */
     _concatenate: function(prefix, suffix, formatProperty)
     {
         const previewChars = 100;
@@ -419,17 +314,11 @@ WebInspector.LocalJSONObject.prototype = {
         return buffer;
     },
 
-    /**
-     * @return {string}
-     */
     get type()
     {
         return typeof this._value;
     },
 
-    /**
-     * @return {string|undefined}
-     */
     get subtype()
     {
         if (this._value === null)
@@ -441,33 +330,21 @@ WebInspector.LocalJSONObject.prototype = {
         return undefined;
     },
 
-    /**
-     * @return {boolean}
-     */
     get hasChildren()
     {
         return typeof this._value === "object" && this._value !== null && !isEmptyObject(this._value);
     },
 
-    /**
-     * @param {function(Array.<WebInspector.RemoteObjectProperty>)} callback
-     */
     getOwnProperties: function(callback)
     {
         callback(this._children());
     },
 
-    /**
-     * @param {function(Array.<WebInspector.RemoteObjectProperty>)} callback
-     */
     getAllProperties: function(callback)
     {
         callback(this._children());
     },
 
-    /**
-     * @return {Array.<WebInspector.RemoteObjectProperty>}
-     */
     _children: function()
     {
         if (!this.hasChildren)
@@ -482,9 +359,6 @@ WebInspector.LocalJSONObject.prototype = {
         return this._cachedChildren;
     },
 
-    /**
-     * @return {boolean}
-     */
     isError: function()
     {
         return false;

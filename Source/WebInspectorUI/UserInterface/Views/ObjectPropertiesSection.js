@@ -85,7 +85,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
             this.propertiesTreeOutline.appendChild(infoElement);
         }
         this.propertiesForTest = properties;
-        
+
         this.dispatchEventToListeners(WebInspector.Section.Event.VisibleContentDidChange);
     }
 }
@@ -137,10 +137,6 @@ WebInspector.ObjectPropertiesSection.CompareProperties = function(propertyA, pro
     return diff;
 }
 
-/**
- * @constructor
- * @extends {TreeElement}
- */
 WebInspector.ObjectPropertyTreeElement = function(property)
 {
     this.property = property;

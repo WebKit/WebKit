@@ -30,13 +30,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- * @param {WebInspector.DOMAgent} domAgent
- * @param {?WebInspector.DOMNode} doc
- * @param {boolean} isInShadowTree
- * @param {DOMAgent.Node} payload
- */
 WebInspector.DOMNode = function(domAgent, doc, isInShadowTree, payload) {
     WebInspector.Object.call(this);
 
@@ -205,147 +198,88 @@ WebInspector.DOMNode.prototype = {
     {
         this._childNodeCount = count;
     },
-    
-    /**
-     * @return {string}
-     */
+
     computedRole: function()
     {
         return this._computedRole;
     },
 
-    /**
-     * @return {boolean}
-     */
     hasAttributes: function()
     {
         return this._attributes.length > 0;
     },
 
-    /**
-     * @return {boolean}
-     */
     hasChildNodes: function()
     {
         return this.childNodeCount > 0;
     },
 
-    /**
-     * @return {boolean}
-     */
     hasShadowRoots: function()
     {
         return !!this._shadowRoots.length;
     },
 
-    /**
-     * @return {boolean}
-     */
     isInShadowTree: function()
     {
         return this._isInShadowTree;
     },
 
-    /**
-     * @return {number}
-     */
     nodeType: function()
     {
         return this._nodeType;
     },
 
-    /**
-     * @return {string}
-     */
     nodeName: function()
     {
         return this._nodeName;
     },
 
-    /**
-     * @return {string}
-     */
     nodeNameInCorrectCase: function()
     {
         return this.isXMLNode() ? this.nodeName() : this.nodeName().toLowerCase();
     },
 
-    /**
-     * @param {string} name
-     * @param {function()=} callback
-     */
     setNodeName: function(name, callback)
     {
         DOMAgent.setNodeName(this.id, name, this._makeUndoableCallback(callback));
     },
 
-    /**
-     * @return {string}
-     */
     localName: function()
     {
         return this._localName;
     },
 
-    /**
-     * @return {string}
-     */
     nodeValue: function()
     {
         return this._nodeValue;
     },
 
-    /**
-     * @param {string} value
-     * @param {function(?Protocol.Error)=} callback
-     */
     setNodeValue: function(value, callback)
     {
         DOMAgent.setNodeValue(this.id, value, this._makeUndoableCallback(callback));
     },
 
-    /**
-     * @param {string} name
-     * @return {string}
-     */
     getAttribute: function(name)
     {
         var attr = this._attributesMap[name];
         return attr ? attr.value : undefined;
     },
 
-    /**
-     * @param {string} name
-     * @param {string} text
-     * @param {function()=} callback
-     */
     setAttribute: function(name, text, callback)
     {
         DOMAgent.setAttributesAsText(this.id, text, name, this._makeUndoableCallback(callback));
     },
 
-    /**
-     * @param {string} name
-     * @param {string} value
-     * @param {function()=} callback
-     */
     setAttributeValue: function(name, value, callback)
     {
         DOMAgent.setAttributeValue(this.id, name, value, this._makeUndoableCallback(callback));
     },
 
-    /**
-     * @return {Object}
-     */
     attributes: function()
     {
         return this._attributes;
     },
 
-    /**
-     * @param {string} name
-     * @param {function()=} callback
-     */
     removeAttribute: function(name, callback)
     {
         function mycallback(error, success)
@@ -365,9 +299,6 @@ WebInspector.DOMNode.prototype = {
         DOMAgent.removeAttribute(this.id, name, mycallback.bind(this));
     },
 
-    /**
-     * @param {function(Array.<WebInspector.DOMNode>)=} callback
-     */
     getChildNodes: function(callback)
     {
         if (this.children) {
@@ -376,10 +307,6 @@ WebInspector.DOMNode.prototype = {
             return;
         }
 
-        /**
-         * @this {WebInspector.DOMNode}
-         * @param {?Protocol.Error} error
-         */
         function mycallback(error) {
             if (!error && callback)
                 callback(this.children);
@@ -388,45 +315,27 @@ WebInspector.DOMNode.prototype = {
         DOMAgent.requestChildNodes(this.id, mycallback.bind(this));
     },
 
-     /**
-      * @param {number} depth
-      * @param {function(Array.<WebInspector.DOMNode>)=} callback
-      */
     getSubtree: function(depth, callback)
     {
-        /**
-         * @this {WebInspector.DOMNode}
-         * @param {?Protocol.Error} error
-         */
         function mycallback(error)
         {
             if (callback)
-                callback(error ? null : this.children);                
+                callback(error ? null : this.children);
         }
 
         DOMAgent.requestChildNodes(this.id, depth, mycallback.bind(this));
     },
 
-    /**
-     * @param {function(?Protocol.Error)=} callback
-     */
     getOuterHTML: function(callback)
     {
         DOMAgent.getOuterHTML(this.id, callback);
     },
 
-    /**
-     * @param {string} html
-     * @param {function(?Protocol.Error)=} callback
-     */
     setOuterHTML: function(html, callback)
     {
         DOMAgent.setOuterHTML(this.id, html, this._makeUndoableCallback(callback));
     },
 
-    /**
-     * @param {function(?Protocol.Error)=} callback
-     */
     removeNode: function(callback)
     {
         DOMAgent.removeNode(this.id, this._makeUndoableCallback(callback));
@@ -442,9 +351,6 @@ WebInspector.DOMNode.prototype = {
         DOMAgent.getOuterHTML(this.id, copy);
     },
 
-    /**
-     * @param {function(?Protocol.Error)=} callback
-     */
     eventListeners: function(callback)
     {
         DOMAgent.getEventListenersForNode(this.id, callback);
@@ -489,9 +395,6 @@ WebInspector.DOMNode.prototype = {
         DOMAgent.getAccessibilityPropertiesForNode(this.id, accessibilityPropertiesCallback.bind(this));
     },
 
-    /**
-     * @return {string}
-     */
     path: function()
     {
         var path = [];
@@ -504,10 +407,6 @@ WebInspector.DOMNode.prototype = {
         return path.join(",");
     },
 
-    /**
-     * @param {boolean} justSelector
-     * @return {string}
-     */
     appropriateSelectorFor: function(justSelector)
     {
         var lowerCaseName = this.localName() || this.nodeName().toLowerCase();
@@ -534,10 +433,6 @@ WebInspector.DOMNode.prototype = {
         return lowerCaseName;
     },
 
-    /**
-     * @param {WebInspector.DOMNode} node
-     * @return {boolean}
-     */
     isAncestor: function(node)
     {
         if (!node)
@@ -552,18 +447,11 @@ WebInspector.DOMNode.prototype = {
         return false;
     },
 
-    /**
-     * @param {WebInspector.DOMNode} descendant
-     * @return {boolean}
-     */
     isDescendant: function(descendant)
     {
         return descendant !== null && descendant.isAncestor(this);
     },
 
-    /**
-     * @param {Array.<string>} attrs
-     */
     _setAttributesPayload: function(attrs)
     {
         this._attributes = [];
@@ -572,11 +460,6 @@ WebInspector.DOMNode.prototype = {
             this._addAttribute(attrs[i], attrs[i + 1]);
     },
 
-    /**
-     * @param {WebInspector.DOMNode} prev
-     * @param {DOMAgent.Node} payload
-     * @return {WebInspector.DOMNode}
-     */
     _insertChild: function(prev, payload)
     {
         var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, this._isInShadowTree, payload);
@@ -592,9 +475,6 @@ WebInspector.DOMNode.prototype = {
         return node;
     },
 
-    /**
-     * @param {WebInspector.DOMNode} node
-     */
     _removeChild: function(node)
     {
         this._children.splice(this._children.indexOf(node), 1);
@@ -602,9 +482,6 @@ WebInspector.DOMNode.prototype = {
         this._renumber();
     },
 
-    /**
-     * @param {Array.<DOMAgent.Node>} payloads
-     */
     _setChildrenPayload: function(payloads)
     {
         // We set children in the constructor.
@@ -637,10 +514,6 @@ WebInspector.DOMNode.prototype = {
         }
     },
 
-    /**
-     * @param {string} name
-     * @param {string} value
-     */
     _addAttribute: function(name, value)
     {
         var attr = {
@@ -652,10 +525,6 @@ WebInspector.DOMNode.prototype = {
         this._attributes.push(attr);
     },
 
-    /**
-     * @param {string} name
-     * @param {string} value
-     */
     _setAttribute: function(name, value)
     {
         var attr = this._attributesMap[name];
@@ -665,9 +534,6 @@ WebInspector.DOMNode.prototype = {
             this._addAttribute(name, value);
     },
 
-    /**
-     * @param {string} name
-     */
     _removeAttribute: function(name)
     {
         var attr = this._attributesMap[name];
@@ -677,19 +543,11 @@ WebInspector.DOMNode.prototype = {
         }
     },
 
-    /**
-     * @param {WebInspector.DOMNode} targetNode
-     * @param {?WebInspector.DOMNode} anchorNode
-     * @param {function(?Protocol.Error)=} callback
-     */
     moveTo: function(targetNode, anchorNode, callback)
     {
         DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, this._makeUndoableCallback(callback));
     },
 
-    /**
-     * @return {boolean}
-     */
     isXMLNode: function()
     {
         return !!this.ownerDocument && !!this.ownerDocument.xmlVersion;
@@ -699,7 +557,7 @@ WebInspector.DOMNode.prototype = {
     {
         return this._enabledPseudoClasses;
     },
-    
+
     setPseudoClassEnabled: function(pseudoClass, enabled)
     {
         var pseudoClasses = this._enabledPseudoClasses;

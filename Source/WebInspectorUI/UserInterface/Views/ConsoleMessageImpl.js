@@ -243,9 +243,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
         return formattedResult;
     },
 
-    /**
-     * @param {boolean=} forceObjectFormat
-     */
     _formatParameter: function(output, forceObjectFormat)
     {
         var type;
@@ -661,9 +658,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
         return this._stackTrace;
     },
 
-    /**
-     * @return {WebInspector.ConsoleMessage}
-     */
     clone: function()
     {
         return WebInspector.ConsoleMessage.create(this.source, this.level, this._messageText, this.type, this.url, this.line, this.column, this.repeatCount, this._parameters, this._stackTrace, this._request);
@@ -693,7 +687,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
     toClipboardString: function(isPrefixOptional)
     {
         var isTrace = this._shouldDumpStackTrace();
-        
+
         var clipboardString = "";
         if (this._formattedMessage && !isTrace)
             clipboardString = this._formattedMessage.querySelector("span").innerText;
@@ -720,7 +714,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 urlLine = " (" + components.join(", ") + ")";
             } else if (repeatString)
                 urlLine = " (" + repeatString + ")";
-        
+
             if (urlLine) {
                 var lines = clipboardString.split("\n");
                 lines[0] += urlLine;

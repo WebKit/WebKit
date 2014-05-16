@@ -28,11 +28,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- * @extends {TreeElement}
- * @param {boolean=} elementCloseTag
- */
 WebInspector.DOMTreeElement = function(node, elementCloseTag)
 {
     this._elementCloseTag = elementCloseTag;
@@ -186,7 +181,7 @@ WebInspector.DOMTreeElement.prototype = {
 
     _createTooltipForNode: function()
     {
-        var node = /** @type {WebInspector.DOMNode} */ this.representedObject;
+        var node = this.representedObject;
         if (!node.nodeName() || node.nodeName().toLowerCase() !== "img")
             return;
 
@@ -277,9 +272,6 @@ WebInspector.DOMTreeElement.prototype = {
         this.representedObject.getSubtree(-1, callback.bind(this));
     },
 
-    /**
-     * @param {boolean=} fullRefresh
-     */
     updateChildren: function(fullRefresh)
     {
         if (this._elementCloseTag)
@@ -287,9 +279,6 @@ WebInspector.DOMTreeElement.prototype = {
         this.representedObject.getChildNodes(this._updateChildren.bind(this, fullRefresh));
     },
 
-    /**
-     * @param {boolean=} closingTag
-     */
     insertChildElement: function(child, index, closingTag)
     {
         var newElement = new WebInspector.DOMTreeElement(child, closingTag);
@@ -307,9 +296,6 @@ WebInspector.DOMTreeElement.prototype = {
             child.select();
     },
 
-    /**
-     * @param {boolean=} fullRefresh
-     */
     _updateChildren: function(fullRefresh)
     {
         if (this._updateChildrenInProgress || !this.treeOutline._visible)
@@ -982,9 +968,6 @@ WebInspector.DOMTreeElement.prototype = {
         return (tags.length === 1 ? null : tags[tags.length-1]);
     },
 
-    /**
-     * @param {boolean=} onlySearchQueryChanged
-     */
     updateTitle: function(onlySearchQueryChanged)
     {
         // If we are editing, return early to prevent canceling the edit.
@@ -1008,9 +991,6 @@ WebInspector.DOMTreeElement.prototype = {
         this._highlightSearchResults();
     },
 
-    /**
-     * @param {WebInspector.DOMNode=} node
-     */
     _buildAttributeDOM: function(parentElement, name, value, node)
     {
         var hasText = (value.length > 0);
@@ -1052,7 +1032,7 @@ WebInspector.DOMTreeElement.prototype = {
 
     _buildTagDOM: function(parentElement, tagName, isClosingTag, isDistinctTreeElement)
     {
-        var node = /** @type WebInspector.DOMNode */ this.representedObject;
+        var node = this.representedObject;
         var classes = [ "html-tag" ];
         if (isClosingTag && isDistinctTreeElement)
             classes.push("close");

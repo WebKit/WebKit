@@ -29,14 +29,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- * @param {WebInspector.ContextSubMenuItem} topLevelMenu
- * @param {string} type
- * @param {string=} label
- * @param {boolean=} disabled
- * @param {boolean=} checked
- */
 WebInspector.ContextMenuItem = function(topLevelMenu, type, label, disabled, checked)
 {
     this._type = type;
@@ -59,17 +51,11 @@ WebInspector.ContextMenuItem.prototype = {
         return this._type;
     },
 
-    /**
-     * @return {boolean}
-     */
     isEnabled: function()
     {
         return !this._disabled;
     },
 
-    /**
-     * @param {boolean} enabled
-     */
     setEnabled: function(enabled)
     {
         this._disabled = !enabled;
@@ -88,13 +74,6 @@ WebInspector.ContextMenuItem.prototype = {
     }
 }
 
-/**
- * @constructor
- * @extends {WebInspector.ContextMenuItem}
- * @param topLevelMenu
- * @param {string=} label
- * @param {boolean=} disabled
- */
 WebInspector.ContextSubMenuItem = function(topLevelMenu, label, disabled)
 {
     WebInspector.ContextMenuItem.call(this, topLevelMenu, "subMenu", label, disabled);
@@ -102,12 +81,6 @@ WebInspector.ContextSubMenuItem = function(topLevelMenu, label, disabled)
 }
 
 WebInspector.ContextSubMenuItem.prototype = {
-    /**
-     * @param {string} label
-     * @param {function} handler
-     * @param {boolean=} disabled
-     * @return {WebInspector.ContextMenuItem}
-     */
     appendItem: function(label, handler, disabled)
     {
         var item = new WebInspector.ContextMenuItem(this._contextMenu, "item", label, disabled);
@@ -116,11 +89,6 @@ WebInspector.ContextSubMenuItem.prototype = {
         return item;
     },
 
-    /**
-     * @param {string} label
-     * @param {boolean=} disabled
-     * @return {WebInspector.ContextMenuItem}
-     */
     appendSubMenuItem: function(label, disabled)
     {
         var item = new WebInspector.ContextSubMenuItem(this._contextMenu, label, disabled);
@@ -128,9 +96,6 @@ WebInspector.ContextSubMenuItem.prototype = {
         return item;
     },
 
-    /**
-     * @param {boolean=} disabled
-     */
     appendCheckboxItem: function(label, handler, checked, disabled)
     {
         var item = new WebInspector.ContextMenuItem(this._contextMenu, "checkbox", label, disabled, checked);
@@ -154,9 +119,6 @@ WebInspector.ContextSubMenuItem.prototype = {
         this._items.push(item);
     },
 
-    /**
-     * @return {boolean}
-     */
     isEmpty: function()
     {
         return !this._items.length;
@@ -173,10 +135,6 @@ WebInspector.ContextSubMenuItem.prototype = {
     __proto__: WebInspector.ContextMenuItem.prototype
 }
 
-/**
- * @constructor
- * @extends {WebInspector.ContextSubMenuItem}
- */
 WebInspector.ContextMenu = function(event) {
     WebInspector.ContextSubMenuItem.call(this, this, "");
     this._event = event;
@@ -245,9 +203,6 @@ WebInspector.ContextMenu.prototype = {
             this._handlers[id].call(this);
     },
 
-    /**
-     * @param {Object} target
-     */
     appendApplicableItems: function(target)
     {
         for (var i = 0; i < WebInspector.ContextMenu._providers.length; ++i) {
@@ -261,24 +216,14 @@ WebInspector.ContextMenu.prototype = {
     __proto__: WebInspector.ContextSubMenuItem.prototype
 }
 
-/**
- * @interface
- */
 WebInspector.ContextMenu.Provider = function()
 {
 }
 
 WebInspector.ContextMenu.Provider.prototype = {
-    /** 
-     * @param {WebInspector.ContextMenu} contextMenu
-     * @param {Object} target
-     */
     appendApplicableItems: function(event, contextMenu, target) { }
 }
 
-/**
- * @param {WebInspector.ContextMenu.Provider} provider
- */
 WebInspector.ContextMenu.registerProvider = function(provider)
 {
     WebInspector.ContextMenu._providers.push(provider);

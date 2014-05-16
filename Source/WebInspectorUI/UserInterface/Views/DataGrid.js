@@ -1308,11 +1308,6 @@ WebInspector.DataGrid.ResizeMethod = {
 
 WebInspector.DataGrid.prototype.__proto__ = WebInspector.Object.prototype;
 
-/**
- * @constructor
- * @extends {WebInspector.Object}
- * @param {boolean=} hasChildren
- */
 WebInspector.DataGridNode = function(data, hasChildren)
 {
     this._expanded = false;
@@ -1480,7 +1475,7 @@ WebInspector.DataGridNode.prototype = {
     {
         if (typeof(this._leftPadding) === "number")
             return this._leftPadding;
-        
+
         this._leftPadding = this.depth * this.dataGrid.indentWidth;
         return this._leftPadding;
     },
@@ -1701,9 +1696,6 @@ WebInspector.DataGridNode.prototype = {
         this.dispatchEventToListeners("revealed");
     },
 
-    /**
-     * @param {boolean=} supressSelectedEvent
-     */
     select: function(supressSelectedEvent)
     {
         if (!this.dataGrid || !this.selectable || this.selected)
@@ -1728,9 +1720,6 @@ WebInspector.DataGridNode.prototype = {
         this.select();
     },
 
-    /**
-     * @param {boolean=} supressDeselectedEvent
-     */
     deselect: function(supressDeselectedEvent)
     {
         if (!this.dataGrid || this.dataGrid.selectedNode !== this || !this.selected)

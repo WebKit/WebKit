@@ -28,12 +28,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- * @extends {TreeOutline}
- * @param {boolean=} omitRootDOMNode
- * @param {boolean=} selectEnabled
- */
 WebInspector.DOMTreeOutline = function(omitRootDOMNode, selectEnabled, showInElementsPanelEnabled)
 {
     this.element = document.createElement("ol");

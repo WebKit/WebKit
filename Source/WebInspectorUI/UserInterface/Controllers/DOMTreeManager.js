@@ -30,18 +30,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @extends {WebInspector.Object}
- * @constructor
- */
 WebInspector.DOMTreeManager = function() {
-    /** @type {Object|undefined} */
     this._idToDOMNode = {};
     this._document = null;
     this._attributeLoadNodeIds = {};
     this._flows = new Map;
     this._contentNodesToFlowsMap = new Map;
-}
+};
 
 WebInspector.Object.addConstructorFunctions(WebInspector.DOMTreeManager);
 
@@ -68,9 +63,6 @@ WebInspector.DOMTreeManager._flowPayloadHashKey = function(flowPayload)
 };
 
 WebInspector.DOMTreeManager.prototype = {
-    /**
-     * @param {function(WebInspector.DOMDocument)=} callback
-     */
     requestDocument: function(callback)
     {
         if (this._document) {
@@ -86,11 +78,6 @@ WebInspector.DOMTreeManager.prototype = {
 
         this._pendingDocumentRequestCallbacks = [callback];
 
-        /**
-         * @this {WebInspector.DOMTreeManager}
-         * @param {?Protocol.Error} error
-         * @param {DOMAgent.Node} root
-         */
         function onDocumentAvailable(error, root)
         {
             if (!error)
@@ -107,29 +94,17 @@ WebInspector.DOMTreeManager.prototype = {
         DOMAgent.getDocument(onDocumentAvailable.bind(this));
     },
 
-    /**
-     * @param {RuntimeAgent.RemoteObjectId} objectId
-     * @param {function()=} callback
-     */
     pushNodeToFrontend: function(objectId, callback)
     {
         this._dispatchWhenDocumentAvailable(DOMAgent.requestNode.bind(DOMAgent, objectId), callback);
     },
 
-    /**
-     * @param {string} path
-     * @param {function(?WebInspector.DOMNode)=} callback
-     */
     pushNodeByPathToFrontend: function(path, callback)
     {
-        var callbackCast = /** @type {function(*)} */ callback;
+        var callbackCast = callback;
         this._dispatchWhenDocumentAvailable(DOMAgent.pushNodeByPathToFrontend.bind(DOMAgent, path), callbackCast);
     },
 
-    /**
-     * @param {function(*)=} callback
-     * @return {function(?Protocol.Error,*=)|undefined}
-     */
     _wrapClientCallback: function(callback)
     {
         if (!callback)
@@ -141,13 +116,9 @@ WebInspector.DOMTreeManager.prototype = {
         };
     },
 
-    /**
-     * @param {function(function()=)} func
-     * @param {function(*)=} callback
-     */
     _dispatchWhenDocumentAvailable: function(func, callback)
     {
-        var callbackWrapper = /** @type {function(?Protocol.Error, *=)} */ this._wrapClientCallback(callback);
+        var callbackWrapper = this._wrapClientCallback(callback);
 
         function onDocumentAvailable()
         {
@@ -161,11 +132,6 @@ WebInspector.DOMTreeManager.prototype = {
         this.requestDocument(onDocumentAvailable.bind(this));
     },
 
-    /**
-     * @param {DOMAgent.NodeId} nodeId
-     * @param {string} name
-     * @param {string} value
-     */
     _attributeModified: function(nodeId, name, value)
     {
         var node = this._idToDOMNode[nodeId];
@@ -176,10 +142,6 @@ WebInspector.DOMTreeManager.prototype = {
         node.dispatchEventToListeners(WebInspector.DOMNode.Event.AttributeModified, {name: name});
     },
 
-    /**
-     * @param {DOMAgent.NodeId} nodeId
-     * @param {string} name
-     */
     _attributeRemoved: function(nodeId, name)
     {
         var node = this._idToDOMNode[nodeId];
@@ -190,9 +152,6 @@ WebInspector.DOMTreeManager.prototype = {
         node.dispatchEventToListeners(WebInspector.DOMNode.Event.AttributeRemoved, {name: name});
     },
 
-    /**
-     * @param {Array.<DOMAgent.NodeId>} nodeIds
-     */
     _inlineStyleInvalidated: function(nodeIds)
     {
         for (var i = 0; i < nodeIds.length; ++i)
@@ -204,12 +163,6 @@ WebInspector.DOMTreeManager.prototype = {
 
     _loadNodeAttributes: function()
     {
-        /**
-         * @this {WebInspector.DOMTreeManager}
-         * @param {DOMAgent.NodeId} nodeId
-         * @param {?Protocol.Error} error
-         * @param {Array.<string>} attributes
-         */
         function callback(nodeId, error, attributes)
         {
             if (error) {
@@ -233,10 +186,6 @@ WebInspector.DOMTreeManager.prototype = {
         this._attributeLoadNodeIds = {};
     },
 
-    /**
-     * @param {DOMAgent.NodeId} nodeId
-     * @param {string} newValue
-     */
     _characterDataModified: function(nodeId, newValue)
     {
         var node = this._idToDOMNode[nodeId];
@@ -244,10 +193,6 @@ WebInspector.DOMTreeManager.prototype = {
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.CharacterDataModified, {node: node});
     },
 
-    /**
-     * @param {DOMAgent.NodeId} nodeId
-     * @return {WebInspector.DOMNode|undefined}
-     */
     nodeForId: function(nodeId)
     {
         return this._idToDOMNode[nodeId];
@@ -258,9 +203,6 @@ WebInspector.DOMTreeManager.prototype = {
         this._setDocument(null);
     },
 
-    /**
-     * @param {DOMAgent.Node} payload
-     */
     _setDocument: function(payload)
     {
         this._idToDOMNode = {};
@@ -271,18 +213,11 @@ WebInspector.DOMTreeManager.prototype = {
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.DocumentUpdated, this._document);
     },
 
-    /**
-     * @param {DOMAgent.Node} payload
-     */
     _setDetachedRoot: function(payload)
     {
         new WebInspector.DOMNode(this, null, false, payload);
     },
 
-    /**
-     * @param {DOMAgent.NodeId} parentId
-     * @param {Array.<DOMAgent.Node>} payloads
-     */
     _setChildNodes: function(parentId, payloads)
     {
         if (!parentId && payloads.length) {
@@ -294,10 +229,6 @@ WebInspector.DOMTreeManager.prototype = {
         parent._setChildrenPayload(payloads);
     },
 
-    /**
-     * @param {DOMAgent.NodeId} nodeId
-     * @param {number} newValue
-     */
     _childNodeCountUpdated: function(nodeId, newValue)
     {
         var node = this._idToDOMNode[nodeId];
@@ -305,11 +236,6 @@ WebInspector.DOMTreeManager.prototype = {
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ChildNodeCountUpdated, node);
     },
 
-    /**
-     * @param {DOMAgent.NodeId} parentId
-     * @param {DOMAgent.NodeId} prevId
-     * @param {DOMAgent.Node} payload
-     */
     _childNodeInserted: function(parentId, prevId, payload)
     {
         var parent = this._idToDOMNode[parentId];
@@ -319,10 +245,6 @@ WebInspector.DOMTreeManager.prototype = {
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.NodeInserted, {node: node, parent: parent});
     },
 
-    /**
-     * @param {DOMAgent.NodeId} parentId
-     * @param {DOMAgent.NodeId} nodeId
-     */
     _childNodeRemoved: function(parentId, nodeId)
     {
         var parent = this._idToDOMNode[parentId];
@@ -332,9 +254,6 @@ WebInspector.DOMTreeManager.prototype = {
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.NodeRemoved, {node:node, parent: parent});
     },
 
-    /**
-     * @param {DOMAgent.Node} node
-     */
     _unbind: function(node)
     {
         this._removeContentNodeFromFlowIfNeeded(node);
@@ -344,9 +263,6 @@ WebInspector.DOMTreeManager.prototype = {
             this._unbind(node.children[i]);
     },
 
-    /**
-     * @param {number} nodeId
-     */
     inspectElement: function(nodeId)
     {
         var node = this._idToDOMNode[nodeId];
@@ -373,19 +289,10 @@ WebInspector.DOMTreeManager.prototype = {
         remoteObject.pushNodeToFrontend(nodeAvailable.bind(this));
     },
 
-    /**
-     * @param {string} query
-     * @param {function(number)} searchCallback
-     */
     performSearch: function(query, searchCallback)
     {
         this.cancelSearch();
 
-        /**
-         * @param {?Protocol.Error} error
-         * @param {string} searchId
-         * @param {number} resultsCount
-         */
         function callback(error, searchId, resultsCount)
         {
             this._searchId = searchId;
@@ -394,17 +301,9 @@ WebInspector.DOMTreeManager.prototype = {
         DOMAgent.performSearch(query, callback.bind(this));
     },
 
-    /**
-     * @param {number} index
-     * @param {?function(DOMAgent.Node)} callback
-     */
     searchResult: function(index, callback)
     {
         if (this._searchId) {
-            /**
-             * @param {?Protocol.Error} error
-             * @param {Array.<number>} nodeIds
-             */
             function mycallback(error, nodeIds)
             {
                 if (error) {
@@ -430,32 +329,18 @@ WebInspector.DOMTreeManager.prototype = {
         }
     },
 
-    /**
-     * @param {DOMAgent.NodeId} nodeId
-     * @param {string} selectors
-     * @param {function(?DOMAgent.NodeId)=} callback
-     */
     querySelector: function(nodeId, selectors, callback)
     {
-        var callbackCast = /** @type {function(*)|undefined} */callback;
+        var callbackCast = callback;
         DOMAgent.querySelector(nodeId, selectors, this._wrapClientCallback(callbackCast));
     },
 
-    /**
-     * @param {DOMAgent.NodeId} nodeId
-     * @param {string} selectors
-     * @param {function(?Array.<DOMAgent.NodeId>)=} callback
-     */
     querySelectorAll: function(nodeId, selectors, callback)
     {
-        var callbackCast = /** @type {function(*)|undefined} */callback;
+        var callbackCast = callback;
         DOMAgent.querySelectorAll(nodeId, selectors, this._wrapClientCallback(callbackCast));
     },
 
-    /**
-     * @param {?number} nodeId
-     * @param {string=} mode
-     */
     highlightDOMNode: function(nodeId, mode)
     {
         if (this._hideDOMNodeHighlightTimeout) {
@@ -488,9 +373,6 @@ WebInspector.DOMTreeManager.prototype = {
         this.highlightDOMNode(0);
     },
 
-    /**
-     * @param {?DOMAgent.NodeId} nodeId
-     */
     highlightDOMNodeForTwoSeconds: function(nodeId)
     {
         this.highlightDOMNode(nodeId);
@@ -513,9 +395,6 @@ WebInspector.DOMTreeManager.prototype = {
         DOMAgent.setInspectModeEnabled(enabled, this._buildHighlightConfig(), callback.bind(this));
     },
 
-    /**
-     * @param {string=} mode
-     */
     _buildHighlightConfig: function(mode)
     {
         mode = mode || "all";
@@ -823,6 +702,6 @@ WebInspector.DOMTreeManager.prototype = {
             return result;
         }
     }
-}
+};
 
 WebInspector.DOMTreeManager.prototype.__proto__ = WebInspector.Object.prototype;

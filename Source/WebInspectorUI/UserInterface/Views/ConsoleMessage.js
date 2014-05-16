@@ -43,9 +43,6 @@ WebInspector.ConsoleMessage = function(source, level, url, line, column, repeatC
 }
 
 WebInspector.ConsoleMessage.prototype = {
-    /**
-     * @return {boolean}
-     */
     isErrorOrWarning: function()
     {
         return (this.level === WebInspector.ConsoleMessage.MessageLevel.Warning || this.level === WebInspector.ConsoleMessage.MessageLevel.Error);
@@ -56,29 +53,12 @@ WebInspector.ConsoleMessage.prototype = {
         // Implemented by concrete instances
     },
 
-    /**
-     * @return {WebInspector.ConsoleMessage}
-     */
     clone: function()
     {
         // Implemented by concrete instances
     }
 }
 
-/**
- * @param {string} source
- * @param {string} level
- * @param {string} message
- * @param {string=} type
- * @param {string=} url
- * @param {number=} line
- * @param {number=} repeatCount
- * @param {Array.<RuntimeAgent.RemoteObject>=} parameters
- * @param {ConsoleAgent.StackTrace=} stackTrace
- * @param {WebInspector.Resource=} request
- *
- * @return {WebInspector.ConsoleMessage}
- */
 WebInspector.ConsoleMessage.create = function(source, level, message, type, url, line, column, repeatCount, parameters, stackTrace, request)
 {
     return new WebInspector.ConsoleMessageImpl(source, level, message, null, type, url, line, column, repeatCount, parameters, stackTrace, request);

@@ -23,14 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * Implements Source Map V3 model. See http://code.google.com/p/closure-compiler/wiki/SourceMaps
- * for format description.
- * @constructor
- * @param {string} sourceMappingURL
- * @param {SourceMapV3} payload
- * @param {WebInspector.Resource|WebInspector.Script} originalSourceCode
- */
 WebInspector.SourceMap = function(sourceMappingURL, payload, originalSourceCode)
 {
     if (!WebInspector.SourceMap.prototype._base64Map) {
@@ -101,26 +93,16 @@ WebInspector.SourceMap.prototype = {
         return this._sourceMapResources[url];
     },
 
-    /**
-     * @return {Array.<string>}
-     */
     sources: function()
     {
         return Object.keys(this._sources);
     },
 
-    /**
-     * @param {string} sourceURL
-     * @return {string|undefined}
-     */
     sourceContent: function(sourceURL)
     {
         return this._sourceContentByURL[sourceURL];
     },
 
-    /**
-     * @param {SourceMapV3} mappingPayload
-     */
     _parseMappingPayload: function(mappingPayload)
     {
         if (mappingPayload.sections)
@@ -129,9 +111,6 @@ WebInspector.SourceMap.prototype = {
             this._parseMap(mappingPayload, 0, 0);
     },
 
-    /**
-     * @param {Array.<SourceMapV3.Section>} sections
-     */
     _parseSections: function(sections)
     {
         for (var i = 0; i < sections.length; ++i) {
@@ -140,11 +119,6 @@ WebInspector.SourceMap.prototype = {
         }
     },
 
-    /**
-     * @param {number} lineNumber in compiled resource
-     * @param {number} columnNumber in compiled resource
-     * @return {?Array}
-     */
     findEntry: function(lineNumber, columnNumber)
     {
         var first = 0;
@@ -166,11 +140,6 @@ WebInspector.SourceMap.prototype = {
         return entry;
     },
 
-    /**
-     * @param {string} sourceURL of the originating resource
-     * @param {number} lineNumber in the originating resource
-     * @return {Array}
-     */
     findEntryReversed: function(sourceURL, lineNumber)
     {
         var mappings = this._reverseMappingsBySourceURL[sourceURL];
@@ -182,11 +151,6 @@ WebInspector.SourceMap.prototype = {
         return this._mappings[0];
     },
 
-    /**
-     * @param {SourceMapV3} map
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     */
     _parseMap: function(map, lineNumber, columnNumber)
     {
         var sourceIndex = 0;
@@ -261,19 +225,11 @@ WebInspector.SourceMap.prototype = {
         }
     },
 
-    /**
-     * @param {string} char
-     * @return {boolean}
-     */
     _isSeparator: function(char)
     {
         return char === "," || char === ";";
     },
 
-    /**
-     * @param {WebInspector.SourceMap.StringCharIterator} stringCharIterator
-     * @return {number}
-     */
     _decodeVLQ: function(stringCharIterator)
     {
         // Read unsigned value.
@@ -296,10 +252,6 @@ WebInspector.SourceMap.prototype = {
     _VLQ_CONTINUATION_MASK: 1 << 5
 }
 
-/**
- * @constructor
- * @param {string} string
- */
 WebInspector.SourceMap.StringCharIterator = function(string)
 {
     this._string = string;
@@ -307,25 +259,16 @@ WebInspector.SourceMap.StringCharIterator = function(string)
 }
 
 WebInspector.SourceMap.StringCharIterator.prototype = {
-    /**
-     * @return {string}
-     */
     next: function()
     {
         return this._string.charAt(this._position++);
     },
 
-    /**
-     * @return {string}
-     */
     peek: function()
     {
         return this._string.charAt(this._position);
     },
 
-    /**
-     * @return {boolean}
-     */
     hasNext: function()
     {
         return this._position < this._string.length;

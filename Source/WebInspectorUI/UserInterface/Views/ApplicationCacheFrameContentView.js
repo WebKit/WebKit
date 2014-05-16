@@ -108,9 +108,6 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
         this.updateStatus(frameManifest.status);
     },
 
-    /**
-     * @param {number} status
-     */
     updateStatus: function(status)
     {
         var oldStatus = this._status;
@@ -127,9 +124,6 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
         WebInspector.applicationCacheManager.requestApplicationCache(this._frame, this._updateCallback.bind(this));
     },
 
-    /**
-     * @param {Object} applicationCache
-     */
     _updateCallback: function(applicationCache)
     {
         if (!applicationCache || !applicationCache.manifestURL) {
