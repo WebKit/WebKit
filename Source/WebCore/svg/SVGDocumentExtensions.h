@@ -66,8 +66,11 @@ public:
     HashSet<SVGElement*>* setOfElementsReferencingTarget(SVGElement* referencedElement) const;
     void addElementReferencingTarget(SVGElement* referencingElement, SVGElement* referencedElement);
     void removeAllTargetReferencesForElement(SVGElement*);
-    void rebuildAllElementReferencesForTarget(SVGElement*);
+    void rebuildAllElementReferencesForTarget(SVGElement&);
     void removeAllElementReferencesForTarget(SVGElement*);
+
+    void clearTargetDependencies(SVGElement&);
+    void rebuildElements();
 
 #if ENABLE(SVG_FONTS)
     const HashSet<SVGFontFaceElement*>& svgFontFaceElements() const { return m_svgFontFaceElements; }
@@ -87,6 +90,7 @@ private:
     HashMap<SVGElement*, std::unique_ptr<HashSet<SVGElement*>>> m_elementDependencies;
     std::unique_ptr<SVGResourcesCache> m_resourcesCache;
 
+    Vector<SVGElement*> m_rebuildElements;
 public:
     // This HashMap contains a list of pending resources. Pending resources, are such
     // which are referenced by any object in the SVG document, but do NOT exist yet.

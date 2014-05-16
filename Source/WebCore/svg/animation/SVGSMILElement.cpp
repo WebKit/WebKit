@@ -146,6 +146,11 @@ void SVGSMILElement::clearResourceReferences()
     document().accessSVGExtensions()->removeAllTargetReferencesForElement(this);
 }
 
+void SVGSMILElement::clearTarget()
+{
+    setTargetElement(nullptr);
+}
+
 void SVGSMILElement::buildPendingResource()
 {
     clearResourceReferences();

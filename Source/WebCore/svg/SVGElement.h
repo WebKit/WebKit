@@ -145,6 +145,8 @@ public:
     bool hasTagName(const SVGQualifiedName& name) const { return hasLocalName(name.localName()); }
     virtual short tabIndex() const override;
 
+    void callClearTarget() { clearTarget(); }
+
 protected:
     SVGElement(const QualifiedName&, Document&);
     virtual ~SVGElement();
@@ -180,6 +182,8 @@ private:
     virtual bool willRecalcStyle(Style::Change) override;
 
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
+
+    virtual void clearTarget() { }
 
     void mapInstanceToElement(SVGElementInstance*);
     void removeInstanceMapping(SVGElementInstance*);

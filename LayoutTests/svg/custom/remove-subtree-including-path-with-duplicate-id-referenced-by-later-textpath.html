@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>This tests that we don't cause an assertion failure when implicitly removing a &lt;path&gt; (by removing its parent), with the same id as another element, that is referenced by a later &lt;textpath&gt;.</p>
+<svg style="width: 200px; height: 200px">
+    <path id="A" d="M 0 20 L 100 20 L 100 120 L 0 120" fill="red" />
+    <path id="A" d="M 0 20 L 100 20 L 100 120 L 0 120" fill="red" />
+    <text>
+        <textPath xlink:href="#A">FAIL FAIL FAIL FAIL FAIL FAIL FAIL FAIL</textPath>
+    </text>
+</svg>
+<script>
+var svg = document.querySelector("svg");
+document.body.removeChild(svg);
+</script>
+<p>PASS</p>
+</body>
+</html>

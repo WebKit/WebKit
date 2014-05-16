@@ -126,6 +126,8 @@ private:
     void buildPendingResource() override;
     void clearResourceReferences();
 
+    virtual void clearTarget() override;
+
     virtual void startedActiveInterval() = 0;
     void endedActiveInterval();
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) = 0;

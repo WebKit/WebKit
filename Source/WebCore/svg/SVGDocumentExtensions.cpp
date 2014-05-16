@@ -34,6 +34,7 @@
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
 #include "ScriptableDocumentParser.h"
+#include "ShadowRoot.h"
 #include "XLinkNames.h"
 #include <wtf/text/AtomicString.h>
 
@@ -331,29 +332,48 @@ void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement* refe
         m_elementDependencies.remove(*it);
 }
 
-void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement* referencedElement)
+void SVGDocumentExtensions::rebuildElements()
 {
-    ASSERT(referencedElement);
-    auto it = m_elementDependencies.find(referencedElement);
+    Vector<SVGElement*> shadowRebuildElements = std::move(m_rebuildElements);
+    for (auto* element : shadowRebuildElements)
+        element->svgAttributeChanged(XLinkNames::hrefAttr);
+}
+
+void SVGDocumentExtensions::clearTargetDependencies(SVGElement& referencedElement)
+{
+    if (referencedElement.isInShadowTree()) {
+        // The host element (e.g. <use>) of the shadow root will rebuild the shadow tree
+        // and all its references.
+        ASSERT(referencedElement.shadowRoot());
+        ASSERT(m_rebuildElements.contains(referencedElement.shadowRoot()->hostElement()));
+        return;
+    }
+    auto it = m_elementDependencies.find(&referencedElement);
     if (it == m_elementDependencies.end())
         return;
-    ASSERT(it->key == referencedElement);
-    Vector<SVGElement*> toBeNotified;
+    ASSERT(it->key == &referencedElement);
+    HashSet<SVGElement*>* referencingElements = it->value.get();
+    for (auto* element : *referencingElements) {
+        m_rebuildElements.append(element);
+        element->callClearTarget();
+    }
+}
+
+void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement& referencedElement)
+{
+    auto it = m_elementDependencies.find(&referencedElement);
+    if (it == m_elementDependencies.end())
+        return;
+    ASSERT(it->key == &referencedElement);
 
     HashSet<SVGElement*>* referencingElements = it->value.get();
-    auto setEnd = referencingElements->end();
-    for (auto setIt = referencingElements->begin(); setIt != setEnd; ++setIt)
-        toBeNotified.append(*setIt);
+    Vector<SVGElement*> elementsToRebuild;
+    elementsToRebuild.reserveInitialCapacity(referencingElements->size());
+    for (auto* element : *referencingElements)
+        elementsToRebuild.uncheckedAppend(element);
 
-    // Force rebuilding the referencingElement so it knows about this change.
-    auto vectorEnd = toBeNotified.end();
-    for (auto vectorIt = toBeNotified.begin(); vectorIt != vectorEnd; ++vectorIt) {
-        // Before rebuilding referencingElement ensure it was not removed from under us.
-        if (HashSet<SVGElement*>* referencingElements = setOfElementsReferencingTarget(referencedElement)) {
-            if (referencingElements->contains(*vectorIt))
-                (*vectorIt)->svgAttributeChanged(XLinkNames::hrefAttr);
-        }
-    }
+    for (auto* element : elementsToRebuild)
+        element->svgAttributeChanged(XLinkNames::hrefAttr);
 }
 
 void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement* referencedElement)

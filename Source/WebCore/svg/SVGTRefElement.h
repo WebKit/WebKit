@@ -53,6 +53,8 @@ private:
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
 
+    virtual void clearTarget() override;
+
     void updateReferencedText(Element*);
 
     void detachTarget();

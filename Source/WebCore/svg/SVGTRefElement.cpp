@@ -243,6 +243,11 @@ bool SVGTRefElement::rendererIsNeeded(const RenderStyle& style)
     return false;
 }
 
+void SVGTRefElement::clearTarget()
+{
+    m_targetListener->detach();
+}
+
 void SVGTRefElement::buildPendingResource()
 {
     // Remove any existing event listener.

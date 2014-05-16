@@ -1,3 +1,75 @@
+2014-05-15  Daniel Bates  <dabates@apple.com>
+
+        ASSERT_NOT_REACHED() in DocumentOrderedMap::get() when removing SVG subtree
+        https://bugs.webkit.org/show_bug.cgi?id=132669
+        <rdar://problem/14931432>
+
+        Reviewed by Brent Fulgham and Ryosuke Niwa.
+
+        Fixes an assertion failure when removing an SVG element with a duplicate id.
+
+        When removing an SVG element with id A we synchronously instruct each element that references A
+        to find the first element with id A, call this N, from the document root and register itself to
+        either receive subsequent notifications from N (say, there is another element with id A) or as
+        waiting for an element with id A (say, N = nullptr; => we removed the last element with id A from
+        the document). Because the elements that reference A perform this operation synchronously when
+        removing an element they consult an transient state of the DocumentOrderedMap when querying for the
+        element with id A.
+    
+        Without loss of generality, let E, E_1, E_2, and E_3 be elements, where E_1, E_2, E_3 are children
+        of E in that order and E_1.id = E_2.id = A and E_3.href = #A (that is, it references an element
+        with id A). Suppose we remove E then we remove E_1, update DocumentOrderedMap to decrement its count
+        for id A, and notify E_3 to look for an element with id A. This leads to an assertion failure since
+        DocumentOrderedMap expects to find an element with id A, E_2, but cannot find such an element when
+        traversing from the document root because E was unlinked from the document root (i.e. E_2 is in a
+        disjoint subtree).
+
+        Tests: svg/custom/change-id-of-use-during-removal.html
+               svg/custom/remove-subtree-including-path-with-duplicate-id-referenced-by-later-textpath.html
+               svg/custom/remove-subtree-including-text-with-duplicate-id-referenced-by-later-tref.html
+               svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-earlier-use.html
+               svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-animate.html
+               svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-feimage.html
+               svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-mpath.html
+               svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-use.html
+               svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-use2.html
+               svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-use-in-different-subtree.html
+               svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-use-with-duplicate-id-in-different-subtree.html
+               svg/custom/remove-use-with-duplicate-id-referenced-by-later-use.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild): Call SVGDocumentExtensions::rebuildElements() after we remove
+        a DOM subtree so that applicable SVG elements can update their referenced element when the DocumentOrderedMap
+        is in a stable-state.
+        (WebCore::ContainerNode::removeChildren): Ditto.
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::rebuildElements): Added; notifies SVG elements that their href attribute
+        changed so that they query the DocumentOrderedMap for the element they reference by id in their href attribute.
+        (WebCore::SVGDocumentExtensions::clearTargetDependencies): Added; Called from removing
+        an SVG element S from the DOM. Appends all elements that reference the id of S to the end of a Vector of
+        elements to be rebuilt (when SVGDocumentExtensions::rebuildElements() is called) and notifies these elements
+        that have been marked to be rebuilt so that they can invalidate their state (e.g. stop animating).
+        (WebCore::SVGDocumentExtensions::rebuildAllElementReferencesForTarget): Changed to take its argument by reference
+        (since it's always non-null) and simplified logic to synchronously notify SVG updates that their referenced element
+        may have changed. Calling SVGElement::svgAttributeChanged() on an element E should at most remove the dependencies
+        of E.
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement): Substitute "*this" for "this" as SVGDocumentExtensions::rebuildAllElementReferencesForTarget()
+        now takes a reference instead of a pointer.
+        (WebCore::SVGElement::removedFrom): Modified to call SVGDocumentExtensions::clearTargetDependencies().
+        (WebCore::SVGElement::attributeChanged): Substitute "*this" for "this" as SVGDocumentExtensions::rebuildAllElementReferencesForTarget()
+        now takes a reference instead of a pointer.
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::callClearTarget): Added; calls through to private virtual SVGElement::clearTarget().
+        (WebCore::SVGElement::clearTarget): Added.
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::clearTarget): Added.
+        * svg/SVGTRefElement.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::clearTarget): Added.
+        * svg/animation/SVGSMILElement.h:
+
 2014-05-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] When zoomed, fixed elements jump at the start of a scroll, and jump back at the end.

@@ -1,5 +1,40 @@
 2014-05-15  Daniel Bates  <dabates@apple.com>
 
+        ASSERT_NOT_REACHED() in DocumentOrderedMap::get() when removing SVG subtree
+        https://bugs.webkit.org/show_bug.cgi?id=132669
+        <rdar://problem/14931432>
+
+        Reviewed by Brent Fulgham and Ryosuke Niwa.
+
+        Add tests to ensure that we don't cause an assertion failure when removing an SVG element with a duplicate id.
+
+        * svg/custom/change-id-of-use-during-removal-expected.txt: Added.
+        * svg/custom/change-id-of-use-during-removal.html: Added.
+        * svg/custom/remove-subtree-including-path-with-duplicate-id-referenced-by-later-textpath-expected.txt: Added.
+        * svg/custom/remove-subtree-including-path-with-duplicate-id-referenced-by-later-textpath.html: Added.
+        * svg/custom/remove-subtree-including-text-with-duplicate-id-referenced-by-later-tref-expected.txt: Added.
+        * svg/custom/remove-subtree-including-text-with-duplicate-id-referenced-by-later-tref.html: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-earlier-use-expected.txt: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-earlier-use.html: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-animate-expected.txt: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-animate.html: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-feimage-expected.txt: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-feimage.html: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-mpath-expected.txt: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-mpath.html: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-use-expected.txt: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-use.html: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-use2-expected.txt: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-later-use2.html: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-use-in-different-subtree-expected.txt: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-use-in-different-subtree.html: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-use-with-duplicate-id-in-different-subtree-expected.html: Added.
+        * svg/custom/remove-subtree-including-use-with-duplicate-id-referenced-by-use-with-duplicate-id-in-different-subtree.html: Added.
+        * svg/custom/remove-use-with-duplicate-id-referenced-by-later-use-expected.html: Added.
+        * svg/custom/remove-use-with-duplicate-id-referenced-by-later-use.html: Added.
+
+2014-05-15  Daniel Bates  <dabates@apple.com>
+
         SVG element may reference arbitrary DOM element before running its insertion logic
         https://bugs.webkit.org/show_bug.cgi?id=132757
         <rdar://problem/15703817>
